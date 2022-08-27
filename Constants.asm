@@ -18,3 +18,5 @@ sizeof_priority:	equ $80					; size of one priority section in sprite queue
 sizeof_level:       equ sizeof_levelrow*level_max_height
 
 
+sizeof_vram_hscroll: equ $380
+
