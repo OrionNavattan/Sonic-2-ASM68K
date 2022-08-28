@@ -57,10 +57,9 @@ v_ost_all:          rs.b sizeof_ost*countof_ost    ; $FFFFB000 ; object variable
 
 
                 rsblock ost_level_only
-                rsblock ss_shared_ram
+                ;rsblock ss_shared_ram
 
 v_ost_level_only:          equ sizeof_ost*countof_ost_level_only ; $FFFFD000           
-v_ss_shared_ram:           equ v_ost_level_only ; $FFFFD000	
 
     v_ost_lo_tails_tails:      equ v_ost_level_only ; $FFFFD040
     v_ost_lo_supersonicstars:  equ v_ost_level_only+sizeof_ost
@@ -79,8 +78,8 @@ v_primary_collision:    rs.b    $300 ; $FFFFD600
 v_secondary_collision:  rs.b    $300 ; $FFFFD900
 
 
-				rsblockend ss_shared_ram
-
+				;rsblockend ss_shared_ram
+v_ss_shared_ram_end:
 v_vdp_dma_buffer:       rs.w    7*$12 ; $FFFFDC00 ; stores 18 ($12) VDP commands to issue the next time ProcessDMAQueue is called
 v_vdp_dma_buffer_slot:  rs.l    1 ; stores the address of the next open slot for a queued VDP command
 
@@ -157,7 +156,7 @@ v_bg1_redraw_direction_p2:		rs.w	1	; $FFFFEE5A ; bitfield ; bits 0-3 as above, b
 v_bg2_redraw_direction_p2:		rs.w	1	; $FFFFEE5C ; bitfield ; essentially unused; bit 0 = redraw left-most column, bit 1 = redraw right-most column
 v_bg3_redraw_direction_p2:		rs.w	1	; $FFFFEE5E ; bitfield ; for CPZ; bits 0-3 as Scroll_flags_BG but using Y-dependent BG camera; bits 4-5 = bits 2-3; bits 6-7 = bits 2-3
 
-; Copies of the camera position RAM and scroll redraw flags that are copied over during every V-int
+; Copies of the camera position RAM and scroll redraw flags that are copied during VBlank and used copied during VBlank and used by DrawTilesWhenMoving:
 v_vint_camera_pos:				rs.l	2	; $FFFFEE60
 v_vint_camera_pos_bg:			rs.l	2	; $FFFFEE68
 v_vint_camera_pos_bg2:			rs.l	2	; $FFFFEE70
@@ -201,3 +200,84 @@ v_boundary_right_next:		rs.w	1 ; $FFFFEECA ; right level boundary, next
 v_boundary_top_next:		rs.w	1 ; $FFFFEECC ; top level boundary, next
 v_boundary_bottom:			rs.w	1 ; $FFFFEECE ; bottom level boundary was "Camera_max_scroll_spd"...
 ;v_camera_boundaries_end:
+
+;v_camera_eelay:
+v_horiz_scroll_delay_val:		rs.w	1	; $FFFFEED0 ; if its value is a, where a != 0, X scrolling will be based on the player's X position a-1 frames ago
+v_sonic_pos_tracker_num:		rs.w	1	; $FFFFEED2 ; current location within Sonic's position tracking data
+;v_camera_delay_end:
+
+;Camera_Delay_P2:
+v_horiz_scroll_delay_val_P2:	rs.w	1	; $FFFFEED4 ; same as above, but for Tails in 2P
+v_tails_pos_tracker_num:		rs.w	1	; $FFFFEED6 ; current location within Tails' position tracking data
+;Camera_Delay_P2_End:
+
+v_camera_y_shift:				rs.w	1	; $FFFFEED8 ; camera y position shift when Sonic looks up/down - $60 = default; $C8 = look up; 8 = look down
+;Camera_Y_pos_bias_End:
+
+v_camera_y_shift_p2:			rs.w	1	; $FFFFEEDA ; same as above, but for Tails in 2P
+;Camera_Y_pos_bias_P2_End:
+
+f_disable_scrolling:			rs.b	1	; $FFFFEEDC ; flag to disable all background deformation
+
+unused_EEDD: 					rs.b	1	; $FFFFEEDD ; unused
+
+f_boundary_bottom_change: 		rs.b	1	; $FFFFEEDE ; flag set when bottom level boundary is changing
+v_dle_routine:					rs.b	1	; $FFFFEEDF ; dynamic level event routine counter
+
+unused_EEE0:			rs.w	1	; $FFFFEEE0 ; unused
+
+v_camera_x_pos_offset:			rs.w	1	; $FFFFEEE2 ; used to control horizontal background scrolling during WFZ ending and HTZ earthquakes
+v_camera_y_pos_offset:			rs.w	1	; $FFFFEEE4 ; used to control vertical background scrolling during WFZ ending and HTZ earthquakes
+v_htz_terrain_delay:			rs.w	1	; $FFFFEEE6 ; delay between rising and sinking terrain during which there is no shaking during HTZ earthquakes
+v_htz_terrain_direction:		rs.b	1	; $FFFFEEE8 ; direction of terrain movement during HTZ earthquakes: 0 if terrain/lava is rising, 1 if lowering
+
+unused_EEE9:			rs.b	3	; $FFFFEEE9-$FFFFEEEB ; seems unused
+
+v_fg_y_pos_vsram_p2_h_int:		rs.l	1	; $FFFFEEEC 
+v_camera_x_pos_copy:			rs.l	1	; $FFFFEEF0
+v_camera_y_pos_copy:			rs.l	1	; $FFFFEEF4
+
+;Camera_Boundaries_P2:
+v_boundary_left_next_p2:		rs.w	1	; $FFFFEEF8
+v_boundary_right_next_p2:		rs.w	1	; $FFFFEEFA
+v_boundary_top_next_p2:			rs.w	1 	; $FFFFEEFC ;  seems not actually implemented (only written to)
+v_boundary_bottom_next_p2:		rs.w	1	; $FFFFEEFE 
+;Camera_Boundaries_P2_End:
+
+;Camera_RAM_End:
+
+v_block_cache:					rs.w	512/16*2 ; $FFFFEF00 ; equ 64 ; width of plane in blocks, with each block getting two words.
+v_ring_consumption_table:		rs.b	$80	; $FFFFEF80 ; contains RAM addresses of rings currently being consumed
+;Ring_consumption_table_End:
+
+v_pal_water_next:				rs.b sizeof_pal	; $FFFFF000 ; Thse four are addresses are used by the screen-fading subroutines.
+v_pal_water_next_2:				rs.b sizeof_pal	; $FFFFF020 ; While Underwater_palette contains the blacked-out palette caused by the fading,
+v_pal_water_next_3:				rs.b sizeof_pal	; $FFFFF040 ; Underwater_target_palette will contain the palette the screen will ultimately fade in to.
+v_pal_water_next_4:				rs.b sizeof_pal ; $FFFFF060
+
+v_pal_water:		rs.b sizeof_pal	; $FFFFF080 ; main palette for underwater parts of the screen
+v_pal_water_2:		rs.b sizeof_pal ; $FFFFF0A0
+v_pal_water_3:		rs.b sizeof_pal ; $FFFFF0C0
+v_pal_water_4:		rs.b sizeof_pal ; $FFFFF0E0
+
+unused_F100:		rs.b	$500	; $FFFFF100-$FFFFF5FF ; unused, leftover from the Sonic 1 sound driver (and used by it when you port it to Sonic 2)
+
+v_gamemode:					rs.b	1	; $FFFFF600 ; see GameModesArray (master level trigger, Mstr_Lvl_Trigger)
+unused_F601:				rs.b	1	; $FFFFF601 ; unused
+v_joypad_hold:				rs.w	1	; $FFFFF602	; joypad input - held, can be overridden by demos
+v_joypad_press:				equ __rs-1	; $FFFFF603 ; joypad input - pressed, can be overridden by demos
+v_joypad_hold_actual:		rs.w	1	; $FFFFF604 ; joypad input - held, actual
+v_joypad_press_actual:		equ __rs-1	; $FFFFF605 ; joypad input - pressed, actual
+v_joypad2_hold_actual:		rs.w	1	; $FFFFF606 ; joypad 2 input - held, actual
+v_joypad2_press_actual:		equ __rs-1	; $FFFFF607 ; joypad 2 input - pressed, actual
+
+unused_F608:				rs.b	4	; $FFFFF608-$FFFFF60B ; seems unused
+
+v_vdp_mode_buffer:			rs.w	1	; $FFFFF60C ; VDP register $81 buffer - contains $8134 which is sent to vdp_control_port
+unused_F60E:				rs.b	6	; $FFFFF60E-$FFFFF613 ; seems unused
+
+v_countdown:				rs.w	1	; $FFFFF614 ; decrements every time VBlank runs, used as a general purpose timer
+
+v_ss_shared_ram:           equ v_ost_level_only ; $FFFFD000	
+	v_ss_shared_ram_end:   equ v_vdp_dma_buffer
+	sizeof_ss_shared_ram   equ v_ss_shared_ram_end-v_ss_shared_ram
