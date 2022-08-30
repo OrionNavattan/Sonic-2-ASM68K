@@ -157,22 +157,22 @@ v_bg2_redraw_direction_p2:		rs.w	1	; $FFFFEE5C ; bitfield ; essentially unused; 
 v_bg3_redraw_direction_p2:		rs.w	1	; $FFFFEE5E ; bitfield ; for CPZ; bits 0-3 as Scroll_flags_BG but using Y-dependent BG camera; bits 4-5 = bits 2-3; bits 6-7 = bits 2-3
 
 ; Copies of the camera position RAM and scroll redraw flags that are copied during VBlank and used copied during VBlank and used by DrawTilesWhenMoving:
-v_vint_camera_pos:				rs.l	2	; $FFFFEE60
-v_vint_camera_pos_bg:			rs.l	2	; $FFFFEE68
-v_vint_camera_pos_bg2:			rs.l	2	; $FFFFEE70
-v_vint_camera_pos_bg3:			rs.l	2	; $FFFFEE78
+v_vblank_camera_pos:				rs.l	2	; $FFFFEE60
+v_vblank_camera_pos_bg:			rs.l	2	; $FFFFEE68
+v_vblank_camera_pos_bg2:			rs.l	2	; $FFFFEE70
+v_vblank_camera_pos_bg3:			rs.l	2	; $FFFFEE78
 
-v_vint_camera_pos_p2:			rs.l	8	; $FFFFEE80
+v_vblank_camera_pos_p2:			rs.l	8	; $FFFFEE80
 
-v_vint_fg_redraw_direction: 		rs.w	1	; $FFFFEEA0 
-v_vint_bg1_redraw_direction:		rs.w	1	; $FFFFEEA2
-v_vint_bg2_redraw_direction:		rs.w	1	; $FFFFEEA4
-v_vint_bg3_redraw_direction:		rs.w	1	; $FFFFEEA6
+v_vblank_fg_redraw_direction: 		rs.w	1	; $FFFFEEA0 
+v_vblank_bg1_redraw_direction:		rs.w	1	; $FFFFEEA2
+v_vblank_bg2_redraw_direction:		rs.w	1	; $FFFFEEA4
+v_vblank_bg3_redraw_direction:		rs.w	1	; $FFFFEEA6
 
-v_vint_fg_redraw_direction_p2:		rs.w	1	; $FFFFEEA8
-v_vint_bg1_redraw_direction_p2:		rs.w	1	; $FFFFEEAA
-v_vint_bg2_redraw_direction_p2:		rs.w	1	; $FFFFEEAC
-v_vint_bg3_redraw_direction_p2:		rs.w	1	; $FFFFEEAE
+v_vblank_fg_redraw_direction_p2:		rs.w	1	; $FFFFEEA8
+v_vblank_bg1_redraw_direction_p2:		rs.w	1	; $FFFFEEAA
+v_vblank_bg2_redraw_direction_p2:		rs.w	1	; $FFFFEEAC
+v_vblank_bg3_redraw_direction_p2:		rs.w	1	; $FFFFEEAE
 
 ; Camera differences
 v_camera_x_pos_diff:		rs.w	1 ; $FFFFEEB0 ; (new X pos - old X pos) * 256
@@ -233,7 +233,7 @@ v_htz_terrain_direction:		rs.b	1	; $FFFFEEE8 ; direction of terrain movement dur
 
 unused_EEE9:			rs.b	3	; $FFFFEEE9-$FFFFEEEB ; seems unused
 
-v_fg_y_pos_vsram_p2_h_int:		rs.l	1	; $FFFFEEEC 
+v_hblank_fg_y_pos_vsram_p2:		rs.l	1	; $FFFFEEEC 
 v_camera_x_pos_copy:			rs.l	1	; $FFFFEEF0
 v_camera_y_pos_copy:			rs.l	1	; $FFFFEEF4
 
@@ -255,15 +255,15 @@ v_pal_water_next_2:				rs.b sizeof_pal	; $FFFFF020 ; While Underwater_palette co
 v_pal_water_next_3:				rs.b sizeof_pal	; $FFFFF040 ; Underwater_target_palette will contain the palette the screen will ultimately fade in to.
 v_pal_water_next_4:				rs.b sizeof_pal ; $FFFFF060
 
-v_pal_water:		rs.b sizeof_pal	; $FFFFF080 ; main palette for underwater parts of the screen
-v_pal_water_2:		rs.b sizeof_pal ; $FFFFF0A0
-v_pal_water_3:		rs.b sizeof_pal ; $FFFFF0C0
-v_pal_water_4:		rs.b sizeof_pal ; $FFFFF0E0
+v_pal_water:					rs.b sizeof_pal	; $FFFFF080 ; main palette for underwater parts of the screen
+v_pal_water_2:					rs.b sizeof_pal ; $FFFFF0A0
+v_pal_water_3:					rs.b sizeof_pal ; $FFFFF0C0
+v_pal_water_4:					rs.b sizeof_pal ; $FFFFF0E0
 
 unused_F100:		rs.b	$500	; $FFFFF100-$FFFFF5FF ; unused, leftover from the Sonic 1 sound driver (and used by it when you port it to Sonic 2)
 
-v_gamemode:					rs.b	1	; $FFFFF600 ; see GameModesArray (master level trigger, Mstr_Lvl_Trigger)
-unused_F601:				rs.b	1	; $FFFFF601 ; unused
+v_gamemode:						rs.b	1	; $FFFFF600 ; see GameModesArray (master level trigger, Mstr_Lvl_Trigger)
+unused_F601:					rs.b	1	; $FFFFF601 ; unused
 v_joypad_hold:				rs.w	1	; $FFFFF602	; joypad input - held, can be overridden by demos
 v_joypad_press:				equ __rs-1	; $FFFFF603 ; joypad input - pressed, can be overridden by demos
 v_joypad_hold_actual:		rs.w	1	; $FFFFF604 ; joypad input - held, actual
@@ -271,12 +271,95 @@ v_joypad_press_actual:		equ __rs-1	; $FFFFF605 ; joypad input - pressed, actual
 v_joypad2_hold_actual:		rs.w	1	; $FFFFF606 ; joypad 2 input - held, actual
 v_joypad2_press_actual:		equ __rs-1	; $FFFFF607 ; joypad 2 input - pressed, actual
 
-unused_F608:				rs.b	4	; $FFFFF608-$FFFFF60B ; seems unused
+unused_F608:		rs.l	1	; $FFFFF608-$FFFFF60B ; seems unused
 
 v_vdp_mode_buffer:			rs.w	1	; $FFFFF60C ; VDP register $81 buffer - contains $8134 which is sent to vdp_control_port
 unused_F60E:				rs.b	6	; $FFFFF60E-$FFFFF613 ; seems unused
 
 v_countdown:				rs.w	1	; $FFFFF614 ; decrements every time VBlank runs, used as a general purpose timer
+
+v_fg_y_pos_vsram:			rs.w	1 ; $FFFFF616 ; foreground y position, sent to VSRAM during VBlank
+v_bg_y_pos_vsram:			rs.w	1 ; $FFFFF618 ; background y position, sent to VSRAM during VBlank
+
+unused_F61A:		rs.l	1 ; $FFFFF61A ; only ever cleared, never used
+
+v_fg_y_pos_vsram_p2:		rs.w	1 ; $FFFFF61E ; foreground y position for player 2
+v_bg_y_pos_vsram_p2:		rs.w	1 ; $FFFFF620 ; background y position for player 2
+v_teleport_timer:			rs.b	1 ; $FFFFF622 ; timer for teleport effect
+f_teleport_flag:			rs.b	1 ; $FFFFF623 ; flag to indicate a teleport is in progress
+v_vdp_hint_counter:			rs.w	1 ; $FFFFF624 ; ; VDP register $8A buffer - horizontal interrupt counter ($8Axx)
+v_palfade_start:			rs.b	1 ; $FFFFF626 ; palette fading - start position in bytes
+v_palfade_size:				rs.b	1 ; $FFFFF627 ; palette fading - number of colors
+
+MiscLevelVariables:
+v_vblank_0e_counter:		rs.b	1 ; $FFFFF628 ; counter that increments when VBlank routine $E is run - unused
+	
+unused_F629:		rs.b	1 ; $FFFFF629 ; seems unused
+
+v_vblank_routine:			rs.b	1 ; $FFFFF62A ; VBlank routine counter
+				
+unused_F62B:		rs.b	1 ; $FFFFF62B ; seems unused
+
+v_spritecount:				rs.b	1 ; $FFFFF62C ; number of sprites on-screen
+				
+unused_F62D:		rs.b	5	; $FFFFF62D-$FFFFF631 ; seems unused
+
+v_palcycle_num:				rs.w	1 ; $FFFFF632 ; palette cycling - current index number
+v_palcycle_time:			rs.w	1 ; $FFFFF634 ; palette cycling - time until the next change
+v_random:					rs.l	1 ; $FFFFF636 ; pseudo random number generator result
+f_pause:					rs.w	1 ; $FFFFF63A ; flag set to pause the game	
+
+unused_F63C:				rs.b	4 ; $FFFFF63C-$FFFFF63F ; seems unused
+
+v_vdp_dma_buffer:			rs.w	1 ; $FFFFF640 ; VDP DMA command buffer. Data will NOT be preserved across V-INTs, so consider this space reserved.
+
+unused_F642:				rs.w	1 ; $FFFFF642-$FFFFF643 ; seems unused
+
+f_hblank:					rs.w	1 ; $FFFFF644 ; flag to run HBlank routine
+v_water_height_actual:		rs.w	1 ; $FFFFF646 ; water height, actual
+v_water_height_normal:		rs.w	1 ; $FFFFF648 ; water height, ignoring wobble
+v_water_height_next:		rs.w	1 ; $FFFFF64A ; water height, next target
+
+v_water_direction:			rs.b	1 ; $FFFFF64C ; water setting - 0 = no water; 1 = water moves down; -1 = water moves up
+v_water_routine:			rs.b	1 ; $FFFFF64D ; water event routine counter
+f_water_pal_full:			rs.b	1 ; $FFFFF64E ; flag set when water covers the entire screen (00 = partly/all dry; 01 = all underwater)
+f_hblank_run_snd:			rs.b	1 ; $FFFFF64F ; flag set when sound driver should be run from HBlank (technically an unnecessary leftover from Sonic 1)
+
+v_palcycle_num_cnz:			rs.w	1 ; $FFFFF650
+v_palcycle_num2:			rs.w	1 ; $FFFFF652
+v_palcycle_num3:			rs.w	1 ; $FFFFF654
+v_palcycle_num2_cnz:		rs.w	1 ; $FFFFF656
+
+unused_F658:				rs.b	4 ; $FFFFF658-$FFFFF65B ; seems unused
+
+v_palette_frame:			rs.w	1 ; $FFFFF65C 
+v_palette_timer:			rs.b	1 ; $FFFFF65E ; was "Palette_frame_count"
+v_super_sonic_palette:		rs.b	1 ; $FFFFF65F
+
+; Following five variables share a single address, and are used at different times.
+v_dez_eggman:					; Word
+v_dez_shake_timer:				; Word
+v_wfz_levevent_subrout:				; Word
+f_segascr_paldone_flag:				; Byte (cleared once as a word)
+f_credits_trigger:			rs.b	1	; cleared as a word a couple times
+
+f_ending_palcycle_flag:		rs.b	1
+
+SegaScr_VInt_Subrout:
+Ending_VInt_Subrout:
+WFZ_BG_Y_Speed:			ds.w	1
+				ds.w	1	; $FFFFF664-$FFFFF665 ; seems unused
+v_palcycle_time2:		ds.w	1
+v_palcycle_time3:		ds.w	1
+
+Ctrl_2_Logical:					; 2 bytes
+Ctrl_2_Held_Logical:		ds.b	1	; 1 byte
+Ctrl_2_Press_Logical:		ds.b	1	; 1 byte
+v_sonic_look_delay_counter:	ds.w	1	; 2 bytes
+v_tails_look_delay_counter:	ds.w	1	; 2 bytes
+v_super_sonic_frame_count:	ds.w	1
+Camera_ARZ_BG_X_pos:		ds.l	1
+
 
 v_ss_shared_ram:           equ v_ost_level_only ; $FFFFD000	
 	v_ss_shared_ram_end:   equ v_vdp_dma_buffer
