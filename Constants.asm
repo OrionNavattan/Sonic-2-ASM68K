@@ -20,7 +20,9 @@ level_max_height:	equ 8
 sizeof_levelrow:	equ level_max_width*2			; level row, followed by background row
 sizeof_level:       equ sizeof_levelrow*level_max_height
 
-
+sizeof_ram:			equ $10000
+sizeof_vram:		equ $10000
+sizeof_vsram:		equ $50
 sizeof_vram_hscroll: equ $380
 
 countof_color:		equ 16					; colors per palette line

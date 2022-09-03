@@ -6,6 +6,7 @@
 		opt	ae+	; enable auto evens
 
 ; Major data blocks:
+RAM_Start:
 v_128x128_tiles:		equ   $FF0000 ; 128x128 tile mappings ($8000 bytes)
 				rsset $FFFF0000+sizeof_128x128_all 
 v_level_layout:         rs.b sizeof_level ; $FFFF8000 ; level and background layouts ($1000 bytes)
@@ -336,29 +337,36 @@ v_palette_frame:			rs.w	1 ; $FFFFF65C
 v_palette_timer:			rs.b	1 ; $FFFFF65E ; was "Palette_frame_count"
 v_super_sonic_palette:		rs.b	1 ; $FFFFF65F
 
-; Following five variables share a single address, and are used at different times.
+; Following five variables share a single address ($FFFFF660), and are used at different times.
 v_dez_eggman:					; Word
 v_dez_shake_timer:				; Word
 v_wfz_levevent_subrout:				; Word
 f_segascr_paldone_flag:				; Byte (cleared once as a word)
-f_credits_trigger:			rs.b	1	; cleared as a word a couple times
+f_credits_trigger:			rs.b	1 ; cleared as a word a couple times
 
-f_ending_palcycle_flag:		rs.b	1
+f_ending_palcycle_flag:		rs.b	1 ; $FFFFF661
 
-SegaScr_VInt_Subrout:
-Ending_VInt_Subrout:
-WFZ_BG_Y_Speed:			ds.w	1
+v_segascr_vblank_subr:
+v_ending_vint_subrout:
+v_wfz_bg_y_speed:			rs.w	1  ; $FFFFF662
 				ds.w	1	; $FFFFF664-$FFFFF665 ; seems unused
-v_palcycle_time2:		ds.w	1
-v_palcycle_time3:		ds.w	1
+v_palcycle_time2:		ds.w	1 ; $FFFFF666
+v_palcycle_time3:		ds.w	1 ; $FFFFF668
 
-Ctrl_2_Logical:					; 2 bytes
-Ctrl_2_Held_Logical:		ds.b	1	; 1 byte
-Ctrl_2_Press_Logical:		ds.b	1	; 1 byte
+v_joypad2_hold      		rs.w	1	; $FFFFF66A ; joypad 2 input - held, can be overridden by demos
+v_joypad2_press:		    equ __rs-1	; $FFFFF66B ; joypad 2 input - pressed, can be overridden by demos
 v_sonic_look_delay_counter:	ds.w	1	; 2 bytes
 v_tails_look_delay_counter:	ds.w	1	; 2 bytes
 v_super_sonic_frame_count:	ds.w	1
 Camera_ARZ_BG_X_pos:		ds.l	1
+
+
+
+v_keep_after_reset:         equ v_stack_pointer ; $FFFFFE00 ; everything after this address is kept in RAM after a soft reset
+
+v_console_region:           rs.b    1   ; $FFFFFFF8 ; Mega Drive console type - 0 = JP; $80 = US/EU; +0 = NTSC; +$40 = PAL
+
+v_checksum_pass:            rs.l    1   ; $FFFFFFFC ; set to the text string "init" when checksum is passed
 
 
 v_ss_shared_ram:           equ v_ost_level_only ; $FFFFD000	

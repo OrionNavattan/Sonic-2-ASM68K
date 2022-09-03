@@ -1,37 +1,91 @@
+
+
 		opt	l.					; . is the local label symbol
 		opt	ae-					; automatic evens are disabled by default
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
 		opt	m+					; do not expand macros - if enabled, this can break assembling
+		
+		cpu 68000
+		
+		include "Mega Drive.asm"
+		include "Macros - More CPUs.asm"
+		include "Macros.asm"
+		
+	if ~def(Revision) 
+Revision = 1
+;	| If 0, a REV00 ROM is built
+;	| If 1, a REV01 ROM is built, which contains some fixes
+;	| If 2, a (probable) REV02 ROM is built, which contains even more fixes
+
+FixBugs = 0 ; If 1, enables a number of engine and gameplay bug-fixes. See also the 'FixDriverBugs' flag in 's2.sounddriver.asm'
+
+AllOptimizations = 0 ; If 1, enables all optimizations
+
+;SkipChecksumCheck = 0
+;	| If 1, disables the slow bootup checksum calculation
+
+;zeroOffsetOptimization = 0|allOptimizations
+;	| If 1, makes a handful of zero-offset instructions smaller
+
+;RemoveJmpTos = 0|(gameRevision=2)|allOptimizations
+;	| If 1, many unnecessary JmpTos are removed, improving performance
+
+AddSubOptimize = 0|(gameRevision=2)|allOptimizations
+;	| If 1, some add/sub instructions are optimized to addq/subq
+
+RelativeLea = 0|(gameRevision<>2)|allOptimizations
+;	| If 1, makes some instructions use pc-relative addressing, instead of absolute long
+
+;UseFullWaterTables = 0
+;	| If 1, zone offset tables for water levels cover all level slots instead of only slots 8-$F
+;	| Set to 1 if you've shifted level IDs around or you want water in levels with a level slot below 8	
+		
 
 ; Grep pattern to delete xrefs: ; .{4} XREF: h+.*+
-
-Vectors:	dc.l $FFFFFE00,	EntryPoint, ErrorTrap, ErrorTrap; 0
-					
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 4
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 8
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 12
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 16
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 20
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 24
-		dc.l loc_F54, ErrorTrap, loc_408, ErrorTrap; 28
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 32
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 36
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 40
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 44
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 48
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 52
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 56
-		dc.l ErrorTrap,	ErrorTrap, ErrorTrap, ErrorTrap; 60
+ROM_Start:
+Vectors:						
+		dc.l $$FFFFFE00	; Initial stack pointer value
+		dc.l EntryPoint		; Start of program
+		dc.l ErrorTrap		; Bus error
+		dc.l ErrorTrap		; Address error (4)
+		dc.l ErrorTrap		; Illegal instruction
+		dc.l ErrorTrap		; Division by zero
+		dc.l ErrorTrap		; CHK exception
+		dc.l ErrorTrap		; TRAPV exception (8)
+		dc.l ErrorTrap		; Privilege violation
+		dc.l ErrorTrap		; TRACE exception
+		dc.l ErrorTrap		; Line-A emulator
+		dc.l ErrorTrap		; Line-F emulator (12)
+		dcb.l 2,ErrorTrap   ; Unused (reserved)
+		dc.l ErrorTrap		; Format error
+		dc.l ErrorTrap		; Uninitialized interrupt
+		dcb.l 8,ErrorTrap	; Unused (reserved)
+		dc.l ErrorTrap		; Spurious exception
+		dc.l ErrorTrap		; IRQ level 1
+		dc.l ErrorTrap		; IRQ level 2
+		dc.l ErrorTrap		; IRQ level 3 (28)
+		dc.l HBlank		; IRQ level 4 (horizontal retrace interrupt)
+		dc.l ErrorTrap		; IRQ level 5
+		dc.l VBlank		; IRQ level 6 (vertical retrace interrupt)
+		dc.l ErrorTrap		; IRQ level 7 (32)
+		dcb.l 16,ErrorTrap				; TRAP #00..#15 exceptions
+		dcb.l 16,ErrorTrap				; Unused (reserved)
+	
 Header:		dc.b 'SEGA GENESIS    ' ; Console name
 		dc.b '(C)SEGA 1992.SEP' ; Copyright/Date
 		dc.b 'SONIC THE             HEDGEHOG 2                ' ; Domestic name
 		dc.b 'SONIC THE             HEDGEHOG 2                ' ; International name
-		dc.b 'GM 00001051-01'   ; Version
-Checksum:	dc.w $D951		
-					; Checksum
+    if Revision=0
+		dc.b "GM 00001051-00"   ; Version (REV00)
+    elseif Revision=1
+		dc.b "GM 00001051-01"   ; Version (REV01)
+    elseif Revision=2
+		dc.b "GM 00001051-02"   ; Version (REV02)
+    endc
+Checksum:	dc.w $D951			; Checksum
 		dc.b 'J               ' ; I/O Support
-ROMStartLoc:	dc.l 0			; ROM Start
+ROMStartLoc:	dc.l Rom_Start			; ROM Start
 ROMEndLoc:	dc.l $FFFFF		; DATA XREF: ROM:0000032Eo
 					; ROM End
 RAMStartLoc:	dc.l $FF0000		; RAM Start
@@ -39,156 +93,243 @@ RAMEndLoc:	dc.l $FFFFFF		; RAM End
 		dc.b '                                                          ' ; Notes
 		dc.b '      '
 		dc.b 'JUE             ' ; Country
+EndOfHeader:		
 ; ===========================================================================
 
 ErrorTrap:				; CODE XREF: ROM:00000204j
 					; DATA XREF: ROM:00000000o
 		nop	
 		nop	
-		bra.s	ErrorTrap
+		bra.s	ErrorTrap ; any exceptions are dumped in this infinite loop
 ; ===========================================================================
 
 EntryPoint:
 		tst.l	(port_1_control_hi).l 		; test port 1 & 2 control registers
-		bne.s	loc_214					; branch if not 0
+		bne.s	.skip						; branch if not 0
 		tst.w	(port_e_control_hi).l		; test ext port control register
 
-loc_214:				; CODE XREF: ROM:0000020Cj
-		bne.s	loc_292
+	.skip:				; CODE XREF: ROM:0000020Cj
+		bne.s	SkipSetup				; branch if not 0
 		; If both of the above tests return 0, then this is a cold boot or we were handed off 
-		; from the TMSS ROM. 
-		lea	byte_294(pc),a5
-		movem.w	(a5)+,d5-d7
-		movem.l	(a5)+,a0-a4
-		move.b	-$10FF(a1),d0
+		; from the TMSS ROM. We need to handle the TMSS if necessary, and initialize the VDP
+		lea	SetupValues(pc),a5 			; load setup values array address
+		movem.w	(a5)+,d5-d7				; d5 = VDP reg baseline; d6 = RAM size; d7 = VDP reg diff
+		movem.l	(a5)+,a0-a4				; a0 = z80_ram ; a1 = z80_bus_request; a2 = z80_reset; a3 = vdp_data_port; a4 = vdp_control_port
+		move.b	-$10FF(a1),d0			; get hardware version (from $A10001)
 		andi.b	#$F,d0
-		beq.s	loc_234
-		move.l	#'SEGA',$2F00(a1)
+		beq.s	.no_tmss				; if this is a Model 1 VA5 or older (no TMSS), branch
+		move.l	#'SEGA',$2F00(a1)		; if this is a Model 1 VA6 or later, satisfy the TMSS
 		
 	; Initialize the VDP and clear the RAM, VRAM, VSRAM, and CRAM.	
 
-loc_234:				; CODE XREF: ROM:0000022Aj
-		move.w	(a4),d0
-		moveq	#0,d0
-		movea.l	d0,a6
-		move.l	a6,usp
-		moveq	#$17,d1
-
-loc_23E:				; CODE XREF: ROM:00000244j
-		move.b	(a5)+,d5
-		move.w	d5,(a4)
-		add.w	d7,d5
-		dbf	d1,loc_23E
+.no_tmss:				; CODE XREF: ROM:0000022Aj
+		move.w	(a4),d0					; clear write-pending flag in VDP to prevent issues if the 68k has been reset in the middle of writing a command long word to the VDP.
+		moveq	#0,d0					; clear d0
+		movea.l	d0,a6					; clear a6
+		move.l	a6,usp					; set usp to $0
+		
+		moveq	#$17,d1					; number of times to loop
+.loop_vdp:				; CODE XREF: ROM:00000244j
+		move.b	(a5)+,d5				; add $8000 to value
+		move.w	d5,(a4)					; move value to VDP register
+		add.w	d7,d5					; next register
+		dbf	d1,.loop_vdp				; repeat until all registers have been written
+		
 		move.l	(a5)+,(a4)
-		move.w	d0,(a3)
-		move.w	d7,(a1)
-		move.w	d7,(a2)
+		move.w	d0,(a3)					; clear the VRAM
+		move.w	d7,(a1)					; stop the Z80
+		move.w	d7,(a2)					; reset the Z80
 
-loc_250:				; CODE XREF: ROM:00000252j
-		btst	d0,(a1)
-		bne.s	loc_250
-		moveq	#$25,d2	; '%'
+.waitz80:				; CODE XREF: ROM:00000252j
+		btst	d0,(a1)					; has the Z80 stopped?
+		bne.s	.waitz80				; if not, branch
+		moveq	#$25,d2				; load the number of bytes in Z80_Startup program into d2
 
-loc_256:				; CODE XREF: ROM:00000258j
-		move.b	(a5)+,(a0)+
-		dbf	d2,loc_256
+.loadz80:				; CODE XREF: ROM:00000258j
+		move.b	(a5)+,(a0)+				; load the Z80_Startup program byte by byte to Z80 RAM
+		dbf	d2,.loadz80					
+		
 		move.w	d0,(a2)
-		move.w	d0,(a1)
-		move.w	d7,(a2)
+		move.w	d0,(a1)					; start the z80
+		move.w	d7,(a2)					; reset the z80
 
-loc_262:				; CODE XREF: ROM:00000264j
-		move.l	d0,-(a6)
-		dbf	d6,loc_262
-		move.l	(a5)+,(a4)
-		move.l	(a5)+,(a4)
-		moveq	#$1F,d3
-
-loc_26E:				; CODE XREF: ROM:00000270j
-		move.l	d0,(a3)
-		dbf	d3,loc_26E
-		move.l	(a5)+,(a4)
-		moveq	#$13,d4
-
-loc_278:				; CODE XREF: ROM:0000027Aj
-		move.l	d0,(a3)
-		dbf	d4,loc_278
+.loop_ram:				; CODE XREF: ROM:00000264j
+		move.l	d0,-(a6)				; clear 4 bytes of RAM and deincrement
+		dbf	d6,.loop_ram				; repeat until entire RAM is clear
+		move.l	(a5)+,(a4)				; set VDP display mode and increment mode
+		move.l	(a5)+,(a4)				; set VDP to CRAM write
+		
+		moveq	#$1F,d3					; set repeat times
+.loop_cram:				; CODE XREF: ROM:00000270j
+		move.l	d0,(a3)					; clear 2 palette entries
+		dbf	d3,.loop_cram					; repeat until entire CRAM is clear
+		move.l	(a5)+,(a4)				; set VDP to VSRAM write
+		
+		moveq	#(sizeof_vsram/4)-1,d4					
+.loop_vsram:				; CODE XREF: ROM:0000027Aj
+		move.l	d0,(a3)					; clear 4 bytes of VSRAM
+		dbf	d4,.loop_vsram					; repeat until entire VSRAM is clear
+		
 		moveq	#3,d5
-
-loc_280:				; CODE XREF: ROM:00000284j
-		move.b	(a5)+,$11(a3)
-		dbf	d5,loc_280
+.loop_psg:				; CODE XREF: ROM:00000284j
+		move.b	(a5)+,$11(a3)			; reset PSG0
+		dbf	d5,.loop_psg					; repeat for all other channels
+		
 		move.w	d0,(a2)
-		movem.l	(a6),d0-a6
-		move	#$2700,sr
+		movem.l	(a6),d0-a6				; clear all registers
+		disable_ints					; disable interrupts
 
-loc_292:				; CODE XREF: ROM:00000214j
-		bra.s	loc_300
+SkipSetup:				; CODE XREF: ROM:00000214j
+		bra.s	GameProgram					; begin game
 ; ===========================================================================
-byte_294:	dc.b $80,  0,$3F,$FF,  1,  0,  0,$A0,  0,  0,  0,$A1,$11,  0,  0,$A1; 0
-					; DATA XREF: ROM:00000216t
-		dc.b $12,  0,  0,$C0,  0,  0,  0,$C0,  0,  4,  4,$14,$30,$3C,  7,$6C; 16
-		dc.b   0,  0,  0,  0,$FF,  0,$81,$37,  0,  1,  1,  0,  0,$FF,$FF,  0; 32
-		dc.b   0,$80,$40,  0,  0,$80,$AF,  1,$D9,$1F,$11,$27,  0,$21,$26,  0; 48
-		dc.b $F9,$77,$ED,$B0,$DD,$E1,$FD,$E1,$ED,$47,$ED,$4F,$D1,$E1,$F1,  8; 64
-		dc.b $D9,$C1,$D1,$E1,$F1,$F9,$F3,$ED,$56,$36,$E9,$E9,$81,  4,$8F,  2; 80
-		dc.b $C0,  0,  0,  0,$40,  0,  0,$10,$9F,$BF,$DF,$FF; 96
+SetupValues:	
+		dc.w $8000					; VDP register start number
+		dc.w (sizeof_ram/4)-1				; size of RAM/4
+		dc.w $100					; VDP register diff
+
+		dc.l z80_ram					; start	of Z80 RAM
+		dc.l z80_bus_request				; Z80 bus request
+		dc.l z80_reset					; Z80 reset
+		dc.l vdp_data_port				; VDP data
+		dc.l vdp_control_port				; VDP control
+
+; The following values are overwritten by VDPSetupGame (and later by game modes), so end up basically unused.
+SetupVDP:	dc.b 4						; VDP $80 - normal colour mode
+		dc.b $14					; VDP $81 - Mega Drive mode, DMA enable
+		dc.b ($C000>>10)				; VDP $82 - foreground nametable address
+		dc.b ($F000>>10)				; VDP $83 - window nametable address
+		dc.b ($E000>>13)				; VDP $84 - background nametable address
+		dc.b ($D800>>9)					; VDP $85 - sprite table address
+		dc.b 0						; VDP $86 - unused
+		dc.b 0						; VDP $87 - background colour
+		dc.b 0						; VDP $88 - unused
+		dc.b 0						; VDP $89 - unused
+		dc.b 255					; VDP $8A - HBlank register
+		dc.b 0						; VDP $8B - full screen scroll
+		dc.b $81					; VDP $8C - 40 cell display
+		dc.b ($DC00>>10)				; VDP $8D - hscroll table address
+		dc.b 0						; VDP $8E - unused
+		dc.b 1						; VDP $8F - VDP increment
+		dc.b 1						; VDP $90 - 64x32 cell plane size
+		dc.b 0						; VDP $91 - window h position
+		dc.b 0						; VDP $92 - window v position
+		dc.w $FFFF					; VDP $93/94 - DMA length
+		dc.w 0						; VDP $95/96 - DMA source
+		dc.b $80					; VDP $97 - DMA fill VRAM
+SetupVDP_end:
+		dc.l $40000080					; VRAM DMA write address 0
+
+Z80_Startup:
+		cpu	z80
+		phase 	0
+
+	; fill the Z80 RAM with 00's (with the exception of this program)
+		xor	a					; a = 00h
+		ld	bc,2000h-(.end+1)			; load the number of bytes to fill
+		ld	de,.end+1				; load the destination address of the RAM fill (1 byte after end of program)
+		ld	hl,.end					; load the source address of the RAM fill (a single 00 byte)
+		ld	sp,hl					; set stack pointer to end of program(?)
+		ld	(hl),a					; clear the first byte after the program code
+		ldir						; fill the rest of the Z80 RAM with 00's
+
+	; clear all registers
+		pop	ix
+		pop	iy
+		ld	i,a
+		ld	r,a
+		pop	de
+		pop	hl
+		pop	af
+
+		ex	af,af					; swap af with af'
+		exx						; swap bc, de, and hl
+		pop	bc
+		pop	de
+		pop	hl
+		pop	af
+		ld	sp,hl					; clear stack pointer
+
+	; put z80 into an infinite loop
+		di						; disable interrupts
+		im	1					; set interrupt mode to 1 (the only officially supported interrupt mode on the MD)
+		ld	(hl),0E9h				; set the first byte into a jp	(hl) instruction
+		jp	(hl)					; jump to the first byte, causing an infinite loop to occur.
+
+	.end:							; the space from here til end of Z80 RAM will be filled with 00's
+		even						; align the Z80 start up code to the next even byte. Values below require alignment
+
+Z80_Startup_size:
+		cpu	68000
+		dephase
+
+		dc.w $8104					; VDP display mode
+		dc.w $8F02					; VDP increment
+		dc.l $C0000000					; CRAM write address 0
+		dc.l $40000010					; VSRAM write address 0
+
+		dc.b $9F, $BF, $DF, $FF				; values for PSG channel volumes
 ; ===========================================================================
 
-loc_300:				; CODE XREF: ROM:00000292j
+GameProgram:				; CODE XREF: ROM:00000292j
 		tst.w	(vdp_control_port).l
 
-loc_306:				; CODE XREF: ROM:00000310j
+CheckSumCheck:				; CODE XREF: ROM:00000310j
 		move.w	(vdp_control_port).l,d1
+	if Revision>0
 		btst	#1,d1
-		bne.s	loc_306
-		btst	#6,($A1000D).l
-		beq.s	loc_328
-		cmpi.l	#$696E6974,($FFFFFFFC).w
-		beq.w	loc_370
+		bne.s	CheckSumCheck		; wait until DMA is completed
+	endc
+		btst	#6,(port_e_control).l
+		beq.s	ChecksumTest
+		cmpi.l	#'init',(v_checksum_pass).w  ; has checksum routine already run?
+		beq.w	GameInit				   ; if it has, branch
 
-loc_328:				; CODE XREF: ROM:0000031Aj
-		movea.l	#$200,a0
-		movea.l	#ROMEndLoc,a1	; ROM End
+ChecksumTest:				; CODE XREF: ROM:0000031Aj
+		movea.l	#EndOfHeader,a0	; start checking bytes after the header ($200)
+		movea.l	#ROM_End,a1		; stop at end of ROM
 		move.l	(a1),d0
 		moveq	#0,d1
 
-loc_338:				; CODE XREF: ROM:0000033Cj
-		add.w	(a0)+,d1
-		cmp.l	a0,d0
-		bcc.s	loc_338
-		movea.l	#Checksum,a1	; Checksum
-		cmp.w	(a1),d1
-		bne.w	loc_3CE
-		lea	($FFFFFE00).w,a6
+	.loop:				; CODE XREF: ROM:0000033Cj
+		add.w	(a0)+,d1		; add bytes at current address to d1
+		cmp.l	a0,d0			; have we reached tne end?
+		bcc.s	.loop			; if not, branch
+		movea.l	#Checksum,a1	; read the checksum
+		cmp.w	(a1),d1			; compare checksum in header to rom
+		bne.w	ChecksumError			; if they don't match, branch
+
+	;.checksumok:	
+		lea	(v_keep_after_reset).w,a6
 		moveq	#0,d7
-		move.w	#$7F,d6	; ''
+		move.w	#(($FFFFFFFF-v_keep_after_reset+1)/4)-1,d6
 
-loc_354:				; CODE XREF: ROM:00000356j
-		move.l	d7,(a6)+
-		dbf	d6,loc_354
-		move.b	(console_version).l,d0
+	.clearramloop:				; CODE XREF: ROM:00000356j
+		move.l	d7,(a6)+		; clear RAM ($FE00-$FFFF) only on a cold bot
+		dbf	d6,.clearramloop
+
+		move.b	(console_version).l,d0	; get console region
 		andi.b	#-$40,d0
-		move.b	d0,($FFFFFFF8).w
-		move.l	#$696E6974,($FFFFFFFC).w
+		move.b	d0,(v_console_region).w		; set region variable in RAM
+		move.l	#'init',(v_checksum_pass).w	; set flag so checksum won't run again
 
-loc_370:				; CODE XREF: ROM:00000324j
-		lea	($FF0000).l,a6
+GameInit:				; CODE XREF: ROM:00000324j
+		lea	(RAM_Start&$FFFFFF).l,a6
 		moveq	#0,d7
 		move.w	#$3F7F,d6
 
-loc_37C:				; CODE XREF: ROM:0000037Ej
-		move.l	d7,(a6)+
-		dbf	d6,loc_37C
-		bsr.w	sub_1158
-		bsr.w	sub_130A
-		bsr.w	sub_10EC
-		move.b	#0,(v_gamemode).w
+	.clearRAM:				; CODE XREF: ROM:0000037Ej
+		move.l	d7,(a6)+			; clear RAM ($0000-$FDFF)
+		dbf	d6,.clearRAM
+		bsr.w	VDPSetupGame
+		bsr.w	JmpTo_SoundDriverLoad
+		bsr.w	JoypadInit
+		move.b	#0,(v_gamemode).w		; set initial game mode (Sega screen)
 
-loc_394:				; CODE XREF: ROM:000003A0j
-		move.b	(v_gamemode).w,d0
-		andi.w	#$3C,d0	; '<'
-		jsr	loc_3A2(pc,d0.w)
-		bra.s	loc_394
+MainGameLoop:				; CODE XREF: ROM:000003A0j
+		move.b	(v_gamemode).w,d0		; load game mode
+		andi.w	#$3C,d0					; limit to $1C mac
+		jsr	loc_3A2(pc,d0.w)			; jump to apt location in ROM
+		bra.s	MainGameLoop			; infinite loop
 ; ===========================================================================
 
 loc_3A2:
@@ -215,11 +356,11 @@ loc_3A2:
 		bra.w	loc_402
 ; ===========================================================================
 
-loc_3CE:				; CODE XREF: ROM:00000346j
+ChecksumError:				; CODE XREF: ROM:00000346j
 		move.l	d1,-(sp)
-		bsr.w	sub_1158
+		bsr.w	VDPSetupGame
 		move.l	(sp)+,d1
-		move.l	#-$40000000,(vdp_control_port).l
+		move.l	#$C0000000,(vdp_control_port).l
 		moveq	#$3F,d7	; '?'
 
 	loc_3E2:				; CODE XREF: ROM:000003EAj
@@ -246,7 +387,7 @@ loc_402:				; CODE XREF: ROM:000003CAj
 		jmp	loc_8BD4
 ; ===========================================================================
 
-loc_408:				; DATA XREF: ROM:00000000o
+VBlank:				; DATA XREF: ROM:00000000o
 		movem.l	d0-a6,-(sp)
 		tst.b	(v_vblank_routine).w
 		beq.w	loc_484
@@ -257,7 +398,7 @@ loc_414:				; CODE XREF: ROM:0000041Ej
 		beq.s	loc_414
 		move.l	#$40000010,(vdp_control_port).l
 		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l
-		btst	#6,($FFFFFFF8).w
+		btst	#6,(v_console_region).w
 		beq.s	loc_442
 		move.w	#$700,d0
 
@@ -320,7 +461,7 @@ loc_4C4:				; CODE XREF: ROM:0000048Aj
 		tst.b	($FFFFF730).w
 		beq.w	loc_566
 		move.w	(vdp_control_port).l,d0
-		btst	#6,($FFFFFFF8).w
+		btst	#6,(v_console_region).w
 		beq.s	loc_4E2
 		move.w	#$700,d0
 
@@ -367,7 +508,7 @@ loc_566:				; CODE XREF: ROM:000004C8j
 		move.w	(vdp_control_port).l,d0
 		move.l	#$40000010,(vdp_control_port).l
 		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l
-		btst	#6,($FFFFFFF8).w
+		btst	#6,(v_console_region).w
 		beq.s	loc_58E
 		move.w	#$700,d0
 
@@ -1131,7 +1272,7 @@ loc_EFE:				; CODE XREF: sub_E98+40j
 
 ; ===========================================================================
 
-loc_F54:				; DATA XREF: ROM:00000000o
+HBlank:				; DATA XREF: ROM:00000000o
 		tst.w	(f_hblank).w
 		beq.w	locret_FFE
 		tst.w	($FFFFFFD8).w
@@ -1301,19 +1442,19 @@ sub_10E6:				; CODE XREF: ROM:00000618p
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_10EC:				; CODE XREF: ROM:0000038Ap
+JoypadInit:				; CODE XREF: ROM:0000038Ap
 		move.w	#$100,($A11100).l
 
-loc_10F4:				; CODE XREF: sub_10EC+10j
+loc_10F4:				; CODE XREF: JoypadInit+10j
 		btst	#0,($A11100).l
 		bne.s	loc_10F4
 		moveq	#$40,d0	; '@'
 		move.b	d0,($A10009).l
 		move.b	d0,($A1000B).l
-		move.b	d0,($A1000D).l
+		move.b	d0,(port_e_control).l
 		move.w	#0,($A11100).l
 		rts	
-; End of function sub_10EC
+; End of function JoypadInit
 
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -1357,14 +1498,14 @@ sub_112A:				; CODE XREF: sub_111C+Ap
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_1158:				; CODE XREF: ROM:00000382p
+VDPSetupGame:				; CODE XREF: ROM:00000382p
 					; ROM:000003D0p
 		lea	(vdp_control_port).l,a0
 		lea	(vdp_data_port).l,a1
 		lea	(word_11E2).l,a2
 		moveq	#$12,d7
 
-loc_116C:				; CODE XREF: sub_1158+16j
+loc_116C:				; CODE XREF: VDPSetupGame+16j
 		move.w	(a2)+,(a0)
 		dbf	d7,loc_116C
 		move.w	(word_11E2+2).l,d0
@@ -1377,7 +1518,7 @@ loc_116C:				; CODE XREF: sub_1158+16j
 		move.l	#-$40000000,(vdp_control_port).l
 		move.w	#$3F,d7	; '?'
 
-loc_11A0:				; CODE XREF: sub_1158+4Aj
+loc_11A0:				; CODE XREF: VDPSetupGame+4Aj
 		move.w	d0,(a1)
 		dbf	d7,loc_11A0
 		clr.l	(v_fg_y_pos_vsram).w
@@ -1390,18 +1531,18 @@ loc_11A0:				; CODE XREF: sub_1158+4Aj
 		move.l	#$40000080,(a5)
 		move.w	#0,(vdp_data_port).l
 
-loc_11D2:				; CODE XREF: sub_1158+80j
+loc_11D2:				; CODE XREF: VDPSetupGame+80j
 		move.w	(a5),d1
 		btst	#1,d1
 		bne.s	loc_11D2
 		move.w	#-$70FE,(a5)
 		move.l	(sp)+,d1
 		rts	
-; End of function sub_1158
+; End of function VDPSetupGame
 
 ; ===========================================================================
-word_11E2:	dc.w $8004		; 0 ; DATA XREF: sub_1158+Co
-					; sub_1158+1Ar
+word_11E2:	dc.w $8004		; 0 ; DATA XREF: VDPSetupGame+Co
+					; VDPSetupGame+1Ar
 		dc.w $8134		; 1
 		dc.w $8230		; 2
 		dc.w $8328		; 3
@@ -1507,10 +1648,10 @@ loc_12FA:				; CODE XREF: sub_1208+F4j
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_130A:				; CODE XREF: ROM:00000386p
+JmpTo_SoundDriverLoad:				; CODE XREF: ROM:00000386p
 		nop	
 		jmp	loc_EC000
-; End of function sub_130A
+; End of function JmpTo_SoundDriverLoad
 
 ; ===========================================================================
 		move.w	#$100,($A11100).l
@@ -4131,7 +4272,7 @@ loc_384A:				; CODE XREF: ROM:00003850j
 		moveq	#$27,d1	; '''
 		moveq	#$1B,d2
 		bsr.w	sub_396E
-		tst.b	($FFFFFFF8).w
+		tst.b	(v_console_region).w
 		bmi.s	loc_38CE
 		lea	($FFFFB080).w,a1
 		move.b	#$B1,(a1)
@@ -4521,7 +4662,7 @@ sub_3DB4:				; CODE XREF: ROM:00003C4Cp
 		addq.w	#1,($FFFFFFD4).w
 		tst.b	1(a0)
 		bne.s	locret_3DEC
-		bchg	#7,($FFFFFFF8).w
+		bchg	#7,(v_console_region).w
 		move.b	#-$4B,d0
 		bsr.w	sub_1370
 
@@ -4664,7 +4805,7 @@ loc_3F20:				; CODE XREF: ROM:00003F1Aj
 		addq.w	#1,d0
 
 loc_3F3C:				; CODE XREF: ROM:00003F30j
-		tst.b	($FFFFFFF8).w
+		tst.b	(v_console_region).w
 		bpl.s	loc_3F44
 		addq.w	#2,d0
 
@@ -8953,7 +9094,7 @@ Sprite_6FC0:				; DATA XREF: ROM:0001600Co
 		tst.b	($FFFFFE00).w
 		beq.s	loc_7002
 		addq.w	#6,d1
-		tst.b	($FFFFFFF8).w
+		tst.b	(v_console_region).w
 		bpl.s	loc_7012
 		addq.w	#1,d1
 		bra.s	loc_7012
@@ -8962,7 +9103,7 @@ Sprite_6FC0:				; DATA XREF: ROM:0001600Co
 loc_7002:				; CODE XREF: ROM:00006FF4j
 		move.w	($FFFFFF70).w,d1
 		andi.w	#3,d1
-		tst.b	($FFFFFFF8).w
+		tst.b	(v_console_region).w
 		bpl.s	loc_7012
 		addq.w	#3,d1
 
@@ -11897,7 +12038,7 @@ loc_9258:				; CODE XREF: sub_9186+C6j
 
 loc_9268:				; CODE XREF: sub_9186p	sub_9186+72p
 		lea	(off_92D2).l,a4
-		tst.b	($FFFFFFF8).w
+		tst.b	(v_console_region).w
 		bpl.s	loc_927A
 		lea	(off_92DE).l,a4
 
@@ -12807,7 +12948,7 @@ loc_9FE6:				; CODE XREF: sub_9EF4+134j
 		bsr.w	sub_B262
 		bsr.w	sub_23C6
 		move.w	#$18E,d0
-		btst	#6,($FFFFFFF8).w
+		btst	#6,(v_console_region).w
 		beq.s	loc_A002
 		move.w	#$144,d0
 
@@ -12956,7 +13097,7 @@ off_A208:	dc.w loc_A218-off_A208	; 0 ; DATA XREF: ROM:0000A208o
 loc_A218:				; DATA XREF: ROM:0000A208o
 		moveq	#4,d0
 		move.w	#$180,d1
-		btst	#6,($FFFFFFF8).w
+		btst	#6,(v_console_region).w
 		beq.s	sub_A22A
 		move.w	#$100,d1
 
@@ -13099,7 +13240,7 @@ loc_A366:				; CODE XREF: ROM:0000A350j
 		cmpi.w	#4,($FFFFF750).w
 		bne.s	locret_A38C
 		move.w	#$880,$3C(a0)
-		btst	#6,($FFFFFFF8).w
+		btst	#6,(v_console_region).w
 		beq.s	locret_A38C
 		move.w	#$660,$3C(a0)
 
@@ -13109,7 +13250,7 @@ locret_A38C:				; CODE XREF: ROM:0000A376j
 ; ===========================================================================
 
 loc_A38E:				; DATA XREF: ROM:0000A208o
-		btst	#6,($FFFFFFF8).w
+		btst	#6,(v_console_region).w
 		beq.s	loc_A3A2
 		cmpi.w	#$E40,$32(a0)
 		beq.s	loc_A3BE
@@ -13210,7 +13351,7 @@ loc_A480:				; CODE XREF: ROM:0000A4B4j
 loc_A48A:				; CODE XREF: ROM:0000A47Aj
 		addq.b	#2,$25(a0)
 		move.w	#$480,$3C(a0)
-		btst	#6,($FFFFFFF8).w
+		btst	#6,(v_console_region).w
 		beq.s	loc_A4A2
 		move.w	#$3D0,$3C(a0)
 
@@ -26082,7 +26223,7 @@ loc_12FD2:				; CODE XREF: ROM:00012FA0j
 ; ===========================================================================
 
 loc_12FD6:				; DATA XREF: ROM:00012E76o
-		btst	#6,($FFFFFFF8).w
+		btst	#6,(v_console_region).w
 		beq.s	loc_12FEA
 		cmpi.w	#$190,$34(a0)
 		beq.s	loc_12FF6
@@ -26213,7 +26354,7 @@ off_130E2:	dc.w loc_130E6-off_130E2; 0 ; DATA XREF: ROM:000130E2o
 
 loc_130E6:				; DATA XREF: ROM:000130E2o
 		move.b	#$B,$1A(a0)
-		tst.b	($FFFFFFF8).w
+		tst.b	(v_console_region).w
 		bmi.s	loc_130F8
 		move.b	#$A,$1A(a0)
 
@@ -27618,7 +27759,7 @@ loc_14102:				; DATA XREF: ROM:00014094o
 		cmpi.w	#2,($FFFFFF70).w
 		bne.s	loc_14118
 		addq.w	#1,d0
-		btst	#7,($FFFFFFF8).w
+		btst	#7,(v_console_region).w
 		beq.s	loc_14118
 		addq.w	#1,d0
 
@@ -27996,7 +28137,7 @@ loc_1449A:				; CODE XREF: ROM:0001448Ej
 		cmpi.w	#2,($FFFFFF70).w
 		bne.s	loc_144AE
 		addq.w	#1,d0
-		btst	#7,($FFFFFFF8).w
+		btst	#7,(v_console_region).w
 		beq.s	loc_144AE
 		addq.w	#1,d0
 
@@ -28042,7 +28183,7 @@ loc_144DC:				; DATA XREF: ROM:000143D0o
 		cmpi.b	#$26,($FFFFB824).w ; '&'
 		beq.w	loc_164E6
 		moveq	#$E,d0
-		btst	#7,($FFFFFFF8).w
+		btst	#7,(v_console_region).w
 		beq.s	loc_144FA
 		addq.w	#1,d0
 
@@ -28071,7 +28212,7 @@ loc_14532:				; CODE XREF: ROM:00014506j
 		subq.w	#1,d0
 		beq.s	loc_14554
 		moveq	#$E,d0
-		btst	#7,($FFFFFFF8).w
+		btst	#7,(v_console_region).w
 		beq.s	loc_1454E
 		addq.w	#1,d0
 
@@ -73609,7 +73750,7 @@ loc_358C4:				; CODE XREF: h+1E89Cj
 		subi.b	#$10,($FFFFDB93).w
 		addi.b	#1,($FFFFDB93).w
 		move.w	#$E,d0
-		tst.b	($FFFFFFF8).w
+		tst.b	(v_console_region).w
 		bpl.s	loc_35926
 		move.w	#$14,d0
 
@@ -97072,7 +97213,7 @@ Sprites_Null6:		incbin	level\sprites\0X6009~1.BIN
 ; --------------------------------------------------------------------------------------
 		align $1000
 
-loc_EC000:				; CODE XREF: sub_130A+2j
+loc_EC000:				; CODE XREF: JmpTo_SoundDriverLoad+2j
 		move	sr,-(sp)
 		movem.l	d0-a6,-(sp)
 		move	#$2700,sr
@@ -97633,5 +97774,5 @@ Snd_Sound6F:		incbin	sound\soundf~1\0X0FFF~3.BIN
 Snd_Sound70:		incbin	sound\soundf~1\0X0FFF~4.BIN
 ; end of 'ROM'
 
-
+ROM_End:
 		END
