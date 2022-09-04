@@ -16,7 +16,7 @@ align:		macro
 ; Almost all possible add/sub optimizations were made in Revision 2.
 ; ---------------------------------------------------------------------------
 	
-    if addsubOptimize
+    if AddSubOptimize
 	; if addsubOptimize, optimize these...
 addi_:		macro	src,dest
 		addq.\0	src,dest

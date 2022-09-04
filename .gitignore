@@ -39,3 +39,7 @@ luac.out
 *.x86_64
 *.hex
 
+sonic2.lst
+errors.txt
+art/.DS_Store
+.DS_Store
