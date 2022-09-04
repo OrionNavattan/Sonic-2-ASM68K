@@ -247,7 +247,7 @@ v_boundary_bottom_next_p2:		rs.w	1	; $FFFFEEFE
 
 ;Camera_RAM_End:
 
-v_block_cache:					rs.w	512/16*2 ; $FFFFEF00 ; equ 64 ; width of plane in blocks, with each block getting two words.
+v_block_cache:					rs.w	512/16*2 ; $FFFFEF00 ; equ 64 ; width of plane in blocks, with each block getting two worrs.
 v_ring_consumption_table:		rs.b	$80	; $FFFFEF80 ; contains RAM addresses of rings currently being consumed
 ;Ring_consumption_table_End:
 
@@ -292,7 +292,7 @@ v_vdp_hint_counter:			rs.w	1 ; $FFFFF624 ; ; VDP register $8A buffer - horizonta
 v_palfade_start:			rs.b	1 ; $FFFFF626 ; palette fading - start position in bytes
 v_palfade_size:				rs.b	1 ; $FFFFF627 ; palette fading - number of colors
 
-MiscLevelVariables:
+;MiscLevelVariables:
 v_vblank_0e_counter:		rs.b	1 ; $FFFFF628 ; counter that increments when VBlank routine $E is run - unused
 	
 unused_F629:		rs.b	1 ; $FFFFF629 ; seems unused
@@ -349,19 +349,250 @@ f_ending_palcycle_flag:		rs.b	1 ; $FFFFF661
 v_segascr_vblank_subr:
 v_ending_vint_subrout:
 v_wfz_bg_y_speed:			rs.w	1  ; $FFFFF662
-				ds.w	1	; $FFFFF664-$FFFFF665 ; seems unused
-v_palcycle_time2:		ds.w	1 ; $FFFFF666
-v_palcycle_time3:		ds.w	1 ; $FFFFF668
 
-v_joypad2_hold      		rs.w	1	; $FFFFF66A ; joypad 2 input - held, can be overridden by demos
-v_joypad2_press:		    equ __rs-1	; $FFFFF66B ; joypad 2 input - pressed, can be overridden by demos
-v_sonic_look_delay_counter:	ds.w	1	; 2 bytes
-v_tails_look_delay_counter:	ds.w	1	; 2 bytes
-v_super_sonic_frame_count:	ds.w	1
-Camera_ARZ_BG_X_pos:		ds.l	1
+unused_F664:		rs.w	1	; $FFFFF664-$FFFFF665 ; seems unused
+
+v_palcycle_time2:			rs.w	1 ; $FFFFF666
+v_palcycle_time3:			rs.w	1 ; $FFFFF668
+
+v_joypad2_hold      		rs.w	1 ; $FFFFF66A ; joypad 2 input - held, can be overridden by demos
+v_joypad2_press:		    equ __rs-1  ; $FFFFF66B ; joypad 2 input - pressed, can be overridden by demos
+v_sonic_look_delay_counter:	rs.w	1 ; $FFFFF66C ; timer for delay until Sonic looks up while up is pressed
+v_tails_look_delay_counter:	rs.w	1 ; $FFFFF66E ; timer for delay until Tails looks up while up is pressed
+v_super_sonic_frame_count:	rs.w	1 ; $FFFFF670 
+v_camera_arz_bg_x_pos:		rs.l	1 ; $FFFFF672
+
+unused_F676:		rs.b	$A	; $FFFFF676-$FFFFF67F ; seems unused
+;MiscLevelVariables_End
 
 
+v_plc_buffer:				rs.b	$60	; $FFFFF680 ; pattern load cues buffer, maximum $10 PLCs, 6 bytes each, $60 bytes total
+v_plc_buffer_dest:			equ v_plc_buffer+4 ; $FFFFF684 ; VRAM destination for 1st item in PLC buffer (2 bytes)
+;Plc_Buffer_Only_End:
+				; variables used to store nemesis decompression state, allowing decompression to occur over multiple frames
+v_nem_mode_ptr:				rs.l	1 ; $FFFFF6E0 ; pointer for nemesis decompression code ($1502 or $150C)
+v_nem_repeat:				rs.l	1 ; $FFFFF6E4 ; Nemesis register buffer - d0: repeat counter	
+v_nem_pixel:				rs.l	1 ; $FFFFF6E8 ; Nemesis register buffer - d1: pixel value	
+v_nem_d2:					rs.l	1 ; $FFFFF6EC ; Nemesis register buffer - d2	
+v_nem_header:				rs.l	1 ; $FFFFF6F0 ; Nemesis register buffer - d5: 3rd & 4th bytes of Nemesis archive header	
+v_nem_shift:				rs.l	1 ; $FFFFF6F4 ; Nemesis register buffer - d6: shift value
+v_nem_tile_count:			rs.w	1 ; $FFFFF6F8 ; number of 8x8 tiles in a Nemesis archive
+v_nem_tile_count_frame:		rs.w	1 ; $FFFFF6FA ; number of 8x8 tiles to process in 1 frame	
+	
+unused_F6FC:		rs.b	4 ; $FFFFF6FC-FFFFF6FF ; seems unused
+;Plc_Buffer_End:
 
+;Misc_Variables:
+unused_F700:		rs.w	1	; $FFFFF700 ; unused
+
+; extra variables for Tails' AI in 1-player mode
+v_tails_control_counter:	rs.w	1 ; $FFFFF702 ; time until CPU takes control; also used as a flag to indicate that Tails is human-controlled
+v_tails_respawn_counter:	rs.w	1 ; $FFFFF704 ; time until Tails respawns
+
+unused_F706:		rs.w	1	; $FFFFF706 ; unused
+
+v_tails_cpu_routine:		rs.w	1 ; $FFFFF708 ; current routine for Tails' AI code
+v_tails_cpu_target_x:		rs.w	1 ; $FFFFF70A ; target x-pos when Tails is flying
+v_tails_cpu_target_y:		rs.w	1 ; $FFFFF70C ; target y-pos when Tails is flying
+v_tails_interact_id:		rs.b	1 ; $FFFFF70E ; object ID of last object Tails stood on
+f_tails_cpu_jumping:		rs.b	1 ; $FFFFF70F ; flag to indicate Tails is jumping
+
+; end AI variables
+
+v_ring_manager_routine:		rs.b	1 ; $FFFFF710
+f_level_started_flag:		rs.b	1 ; $FFFFF711
+
+;Ring_Manager_Addresses:
+v_ring_start_addr:			rs.w	1 ; $FFFFF712
+v_ring_end_addr:			rs.w	1 ; $FFFFF714
+;Ring_Manager_Addresses_End:
+
+;Ring_Manager_Addresses_P2:
+v_ring_start_addr_P2:		rs.w	1 ; $FFFFF716
+v_ring_end_addr_P2:			rs.w	1 ; $FFFFF718
+;Ring_Manager_Addresses_P2_End:
+
+v_cnz_bumper_routine:		rs.b	1 ; $FFFFF71A ; routine for the CNZ bumper psuedo-object
+f_unused_cnz_bumper_flag:	rs.b	1 ; $FFFFF71B ; set by the CNZ bumper psuedo-object, but never used
+
+;Bumper_Manager_Addresses:
+v_cnz_visible_bumpers_start:		rs.l	1 ; $FFFFF71C
+v_cnz_visible_bumpers_end:			rs.l	1 ; $FFFFF720
+;Bumper_Manager_Addresses_End:
+
+;Bumper_Manager_Addresses_P2:
+v_cnz_visible_bumpers_start_P2:		rs.l	1 ; $FFFFF724
+v_cnz_visible_bumpers_end_P2:		rs.l	1 ; $FFFFF728
+;Bumper_Manager_Addresses_P2_End:
+
+f_screen_redraw_flag:		rs.b	1 ; $FFFFF72C ; flag indicating whole screen needs to redraw, such as when you destroy the piston before the boss in WFZ
+v_unused_cpz_scroll_timer:	rs.b	1 ; $FFFFF72D ; used only in unused CPZ scrolling function
+f_wfz_scz_fire_toggle:		rs.b	1 ; $FFFFF72E ; flag used by the WFZ palette cycle switcher
+				
+unused_F72F:	rs.b	1 ; $FFFFF72F ; seems unused
+
+f_water_flag:				rs.b	1 ; $FFFFF730 flag indicating if the level has water or oil
+			
+unused_F731:	rs.b	1 ; $FFFFF731 ; seems unused
+
+v_demo_input_counter_P2:	rs.w	1 ; $FFFFF732 ; tracks progress in the demo input data for player 2, increases by 2 when input changes
+v_demo_input_time_P2:		rs.w	1 ; $FFFFF734 ; time remaining for current demo "button press" for player 2
+v_tornado_x_vel:			rs.w	1 ; $FFFFF736 ; x_vel of the Tornado in SCZ
+v_tornado_y_vel:			rs.w	1 ; $FFFFF738 ; y_vel of the Tornado in SCZ
+
+
+;Boss_variables:
+v_boss_spawn_delay:			rs.b	1 ; $FFFFF73A ; timer for delay until boss spawns
+
+unused_F73B:	rs.b	4	; $FFFFF73B-$FFFFF73E; unused
+
+v_boss_collision_routine:	rs.b	1 ; $FFFFF73F
+v_boss_animation_array:		rs.b	$10	; $FFFFF740 ; up to $10 bytes; 2 bytes per entry
+
+v_ending_routine:			rs.w	1 ; $FFFFF750 ; which version of the ending cutscene to play
+v_boss_x_pos:				equ 	v_ending_routine ; x_pos of current boss
+							rs.w	1 ; $FFFFF752 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
+v_boss_y_pos:				rs.w	1 ; $FFFFF754 ; y_pos of current boss
+							rs.w	1 ; $FFFFF756 ; same here
+
+v_boss_x_vel:				rs.w	1 ; $FFFFF758 ; x_vel of current boss
+v_boss_y_vel:				rs.w	1 ; $FFFFF75A ; y_vel of current boss
+
+v_boss_timer:				rs.w	1 ; $FFFFF75C ; general timer used by boss objects
+
+unused_F75E:	rs.w	1	; $FFFFF75E-$FFFFF75F ; unused
+
+;Boss_variables_end:
+
+;Sonic_Speeds:
+v_sonic_max_speed:			rs.w	1
+v_sonic_acceleration:		rs.w	1
+v_sonic_deceleration:		rs.w	1
+;Sonic_Speeds_End:
+
+Sonic_LastLoadedDPLC:		rs.b	1	; mapping frame number when Sonic last had his tiles requested to be transferred from ROM to VRAM. can be set to a dummy value like -1 to force a refresh DMA. was: Sonic_mapping_frame
+
+unused_F767:			rs.b	1	; $FFFFF767 ; seems unused
+
+Primary_Angle:			rs.b	1
+
+unused_F769:			rs.b	1	; $FFFFF769 ; seems unused
+
+Secondary_Angle:		rs.b	1
+
+unused_F76B:				rs.b	1	; $FFFFF76B ; seems unused
+
+Obj_placement_routine:		rs.b	1
+
+unused_F76D:				rs.b	1	; $FFFFF76D ; seems unused
+
+Camera_X_pos_last:		rs.w	1	; Camera_X_pos_coarse from the previous frame
+Camera_X_pos_last_End:
+
+Object_Manager_Addresses:
+Obj_load_addr_right:		rs.l	1	; contains the address of the next object to load when moving right
+Obj_load_addr_left:		rs.l	1	; contains the address of the last object loaded when moving left
+Object_Manager_Addresses_End:
+
+Object_Manager_Addresses_P2:
+Obj_load_addr_right_P2:		rs.l	1
+Obj_load_addr_left_P2:		rs.l	1
+Object_Manager_Addresses_P2_End:
+
+Object_manager_2P_RAM:	; The next 16 bytes belong to this.
+Object_RAM_block_indices:	rs.b	6	; seems to be an array of horizontal chunk positions, used for object position range checks
+Player_1_loaded_object_blocks:	rs.b	3
+Player_2_loaded_object_blocks:	rs.b	3
+
+Camera_X_pos_last_P2:		rs.w	1
+Camera_X_pos_last_P2_End:
+
+Obj_respawn_index_P2:		rs.b	2	; respawn table indices of the next objects when moving left or right for the second player
+Obj_respawn_index_P2_End:
+Object_manager_2P_RAM_End:
+
+v_demo_input_counter:		rs.w	1	; index into button press demo data, for player 1
+v_demo_input_time:		rs.b	1	; frames remaining until next button press, for player 1
+				rs.b	1	; $FFFFF793 ; seems unused
+PalChangeSpeed:			rs.w	1
+Collision_addr:			rs.l	1
+
+unused_			rs.b	$D	; $FFFFF79A-$FFFFF7A6 ; seems unused
+
+Boss_defeated_flag:		rs.b	1
+
+unused_				rs.b	2	; $FFFFF7A8-$FFFFF7A9 ; seems unused
+
+Current_Boss_ID:		rs.b	1
+
+unused_				rs.b	5	; $FFFFF7AB-$FFFFF7AF ; seems unused
+
+MTZ_Platform_Cog_X:		rs.w	1	; X position of moving MTZ platform for cog animation.
+MTZCylinder_Angle_Sonic:	rs.b	1
+MTZCylinder_Angle_Tails:	rs.b	1
+				rs.b	$A	; $FFFFF7B4-$FFFFF7BD ; seems unused
+BigRingGraphics:		rs.w	1	; S1 holdover
+
+unused_				rs.b	7	; $FFFFF7C0-$FFFFF7C6 ; seems unused
+
+WindTunnel_flag:		rs.b	1
+
+unused_				rs.b	1	; $FFFFF7C8 ; seems unused
+
+WindTunnel_holding_flag:	rs.b	1
+
+unused_				rs.b	2	; $FFFFF7CA-$FFFFF7CB ; seems unused
+
+Control_Locked:			rs.b	1
+SpecialStage_flag_2P:		rs.b	1
+				rs.b	1	; $FFFFF7CE ; seems unused
+Control_Locked_P2:		rs.b	1
+Chain_Bonus_counter:		rs.w	1	; counts up when you destroy things that give points, resets when you touch the ground
+Bonus_Countdown_1:		rs.w	1	; level results time bonus or special stage Sonic ring bonus
+Bonus_Countdown_2:		rs.w	1	; level results ring bonus or special stage Tails ring bonus
+Update_Bonus_score:		rs.b	1
+
+unused_F7D7:				rs.b	3	; $FFFFF7D7-$FFFFF7D9 ; seems unused
+
+Camera_X_pos_coarse:		rs.w	1	; (Camera_X_pos - 128) / 256
+Camera_X_pos_coarse_End:
+
+Camera_X_pos_coarse_P2:		rs.w	1
+Camera_X_pos_coarse_P2_End:
+
+Tails_LastLoadedDPLC:		rs.b	1	; mapping frame number when Tails last had his tiles requested to be transferred from ROM to VRAM. can be set to a dummy value like -1 to force a refresh DMA.
+TailsTails_LastLoadedDPLC:	rs.b	1	; mapping frame number when Tails' tails last had their tiles requested to be transferred from ROM to VRAM. can be set to a dummy value like -1 to force a refresh DMA.
+ButtonVine_Trigger:		rs.b	$10	; 16 bytes flag array, #subtype byte set when button/vine of respective subtype activated
+Anim_Counters:			rs.b	$10	; $FFFFF7F0-$FFFFF7FF
+Misc_Variables_End:
+
+Sprite_Table:			rs.b	$280	; Sprite attribute table buffer
+Sprite_Table_End:
+
+unused_				rs.b	$80	; unused, but SAT buffer can spill over into this area when there are too many sprites on-screen
+
+Normal_palette:			rs.b	palette_line_size	; main palette for non-underwater parts of the screen
+Normal_palette_line2:		rs.b	palette_line_size
+Normal_palette_line3:		rs.b	palette_line_size
+Normal_palette_line4:		rs.b	palette_line_size
+Normal_palette_End:
+
+Target_palette:			rs.b	palette_line_size	; This is used by the screen-fading subroutines.
+Target_palette_line2:		rs.b	palette_line_size	; While Normal_palette contains the blacked-out palette caused by the fading,
+Target_palette_line3:		rs.b	palette_line_size	; Target_palette will contain the palette the screen will ultimately fade in to.
+Target_palette_line4:		rs.b	palette_line_size
+Target_palette_End:
+
+Object_Respawn_Table:
+Obj_respawn_index:		rs.b	2		; respawn table indices of the next objects when moving left or right for the first player
+Obj_respawn_index_End:
+Obj_respawn_data:		rs.b	$BE	; For stock S2, $80 is enough
+Obj_respawn_data_End:
+
+v_stack:				rs.b	$140	; Stack; the first $BE bytes are cleared by ObjectsManager_Init, with possibly disastrous consequences. At least $A0 bytes are needed.
+
+
+v_stack_pointer:			rs.w	1
 v_keep_after_reset:         equ v_stack_pointer ; $FFFFFE00 ; everything after this address is kept in RAM after a soft reset
 
 v_console_region:           rs.b    1   ; $FFFFFFF8 ; Mega Drive console type - 0 = JP; $80 = US/EU; +0 = NTSC; +$40 = PAL
