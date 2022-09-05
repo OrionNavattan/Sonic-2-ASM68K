@@ -93663,605 +93663,107 @@ ArtUnc_4FAFE:		incbin	"art/uncompressed/Animated background section (CPZ and DEZ
 ;
 ;Waterfall patterns from ARZ
 ;---------------------------------------------------------------------------------------
-ArtUnc_4FCFE:		incbin	"art/uncompressed/ARZ waterfall patterns - 1.bin"
-ArtUnc_4FDFE:		incbin	"art/uncompressed/ARZ waterfall patterns - 2.bin"
-ArtUnc_4FEFE:		incbin	"art/uncompressed/ARZ waterfall patterns - 2.bin"
-		dc.b   0 ;  
-		dc.b   0 ;  
+ArtUnc_4FCFE:	incbin	"art/uncompressed/ARZ waterfall patterns - 1.bin"
+
+ArtUnc_4FDFE:	incbin	"art/uncompressed/ARZ waterfall patterns - 2.bin"
+
+ArtUnc_4FEFE:	
+		incbin	"art/uncompressed/ARZ waterfall patterns - 2.bin"
+		align $20
 ;---------------------------------------------------------------------------------------
 ;Uncompressed art
 ;
 ;Patterns for Sonic
 ;---------------------------------------------------------------------------------------
-ArtUnc_50000:		incbin	"art/uncompressed/Sonic's art.bin"
+ArtUnc_50000:		
+		incbin	"art/uncompressed/Sonic's art.bin"
+		align $20
 ;---------------------------------------------------------------------------------------
 ;Uncompressed art
 ;
 ;Patterns for Tails
 ;---------------------------------------------------------------------------------------
-ArtUnc_64320:		incbin	"art/uncompressed/Tails's art.bin"
+ArtUnc_64320:		
+		incbin	"art/uncompressed/Tails's art.bin"
 ; --------------------------------------------------------------------------------------
 ; Sprite Mappings
 ;
 ; Sonic
 ; --------------------------------------------------------------------------------------
-MapUnc_6FBE0:		include	"mappings/sprite/Sonic.asm"
+MapUnc_6FBE0:		
+		include	"mappings/sprite/Sonic.asm"
 ; --------------------------------------------------------------------------------------
 ; Sprite Dynamic Pattern Reloading
 ;
 ; Sonic
 ; --------------------------------------------------------------------------------------
-MapRUnc_714E0:		include	"mappings/spriteDPLC/Sonic.asm"
+MapRUnc_714E0:		
+		include	"mappings/spriteDPLC/Sonic.asm"
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 32 blocks
 ; Bubble
 ; --------------------------------------------------------------------------------------
-ArtNem_71D8E:		incbin	"art/nemesis/Shield.bin"
-	even
+ArtNem_71D8E:		
+		incbin	"art/nemesis/Shield.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 34 blocks
 ; Invincibility	stars
 ; --------------------------------------------------------------------------------------
-ArtNem_71F14:		incbin	art/nemesis/0X071F~1.BIN
+ArtNem_71F14:		
+		incbin	"art/nemesis/Invincibility stars.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Uncompressed art
 ;
 ; Splash in water
 ; --------------------------------------------------------------------------------------
-ArtUnc_71FFC:		incbin	art/uncomp~1/0X071F~1.BIN
+ArtUnc_71FFC:		
+		incbin	"art/uncompressed/Splash and skid dust.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Uncompressed art
 ;
 ; Smoke	from dashing
 ; --------------------------------------------------------------------------------------
-ArtUnc_7287C:		incbin	art/uncomp~1/0X0728~1.BIN
+;ArtUnc_7287C:		incbin	art/uncomp~1/0X0728~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 14 blocks
 ; Supersonic stars
 ; --------------------------------------------------------------------------------------
-ArtNem_7393C:		incbin	art/nemesis/0X0739~1.BIN
+ArtNem_7393C:		
+		incbin "art/nemesis/Super Sonic stars.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Sprite Mappings
 ;
 ; Tails
 ; --------------------------------------------------------------------------------------
-MapUnc_739E2:		incbin	mappings/sprite/0X0739~1.BIN
+MapUnc_739E2:		
+		include	"mappings/sprite/Tails.asm"
 ; --------------------------------------------------------------------------------------
 ; Sprite Dynamic Pattern Reloading
 ;
 ; Tails
 ; --------------------------------------------------------------------------------------
-MapRUnc_7446C:	dc.w word_74582-MapRUnc_7446C; 0 ; DATA	XREF: h+6220o h+6248o	...
-		dc.w word_74584-MapRUnc_7446C; 1
-		dc.w word_7458A-MapRUnc_7446C; 2
-		dc.w word_74590-MapRUnc_7446C; 3
-		dc.w word_74596-MapRUnc_7446C; 4
-		dc.w word_7459C-MapRUnc_7446C; 5
-		dc.w word_745A0-MapRUnc_7446C; 6
-		dc.w word_745A4-MapRUnc_7446C; 7
-		dc.w word_745AA-MapRUnc_7446C; 8
-		dc.w word_745B0-MapRUnc_7446C; 9
-		dc.w word_745B4-MapRUnc_7446C; 10
-		dc.w word_745B8-MapRUnc_7446C; 11
-		dc.w word_745BC-MapRUnc_7446C; 12
-		dc.w word_745C0-MapRUnc_7446C; 13
-		dc.w word_745C4-MapRUnc_7446C; 14
-		dc.w word_745CC-MapRUnc_7446C; 15
-		dc.w word_745D4-MapRUnc_7446C; 16
-		dc.w word_745DC-MapRUnc_7446C; 17
-		dc.w word_745E4-MapRUnc_7446C; 18
-		dc.w word_745EC-MapRUnc_7446C; 19
-		dc.w word_745F4-MapRUnc_7446C; 20
-		dc.w word_745FC-MapRUnc_7446C; 21
-		dc.w word_74604-MapRUnc_7446C; 22
-		dc.w word_7460C-MapRUnc_7446C; 23
-		dc.w word_74614-MapRUnc_7446C; 24
-		dc.w word_7461C-MapRUnc_7446C; 25
-		dc.w word_74624-MapRUnc_7446C; 26
-		dc.w word_7462C-MapRUnc_7446C; 27
-		dc.w word_74634-MapRUnc_7446C; 28
-		dc.w word_7463C-MapRUnc_7446C; 29
-		dc.w word_74644-MapRUnc_7446C; 30
-		dc.w word_7464C-MapRUnc_7446C; 31
-		dc.w word_74654-MapRUnc_7446C; 32
-		dc.w word_7465C-MapRUnc_7446C; 33
-		dc.w word_74664-MapRUnc_7446C; 34
-		dc.w word_7466C-MapRUnc_7446C; 35
-		dc.w word_74674-MapRUnc_7446C; 36
-		dc.w word_7467C-MapRUnc_7446C; 37
-		dc.w word_74684-MapRUnc_7446C; 38
-		dc.w word_7468A-MapRUnc_7446C; 39
-		dc.w word_74692-MapRUnc_7446C; 40
-		dc.w word_74698-MapRUnc_7446C; 41
-		dc.w word_746A0-MapRUnc_7446C; 42
-		dc.w word_746A6-MapRUnc_7446C; 43
-		dc.w word_746AE-MapRUnc_7446C; 44
-		dc.w word_746B4-MapRUnc_7446C; 45
-		dc.w word_746BC-MapRUnc_7446C; 46
-		dc.w word_746C2-MapRUnc_7446C; 47
-		dc.w word_746C8-MapRUnc_7446C; 48
-		dc.w word_746C2-MapRUnc_7446C; 49
-		dc.w word_746CE-MapRUnc_7446C; 50
-		dc.w word_746D4-MapRUnc_7446C; 51
-		dc.w word_746DA-MapRUnc_7446C; 52
-		dc.w word_746E2-MapRUnc_7446C; 53
-		dc.w word_746EA-MapRUnc_7446C; 54
-		dc.w word_746F2-MapRUnc_7446C; 55
-		dc.w word_746FA-MapRUnc_7446C; 56
-		dc.w word_74702-MapRUnc_7446C; 57
-		dc.w word_7470A-MapRUnc_7446C; 58
-		dc.w word_74712-MapRUnc_7446C; 59
-		dc.w word_7471A-MapRUnc_7446C; 60
-		dc.w word_74712-MapRUnc_7446C; 61
-		dc.w word_74722-MapRUnc_7446C; 62
-		dc.w word_7472A-MapRUnc_7446C; 63
-		dc.w word_74732-MapRUnc_7446C; 64
-		dc.w word_7473A-MapRUnc_7446C; 65
-		dc.w word_74742-MapRUnc_7446C; 66
-		dc.w word_7474A-MapRUnc_7446C; 67
-		dc.w word_74752-MapRUnc_7446C; 68
-		dc.w word_7475A-MapRUnc_7446C; 69
-		dc.w word_74762-MapRUnc_7446C; 70
-		dc.w word_74766-MapRUnc_7446C; 71
-		dc.w word_7476A-MapRUnc_7446C; 72
-		dc.w word_7476E-MapRUnc_7446C; 73
-		dc.w word_74772-MapRUnc_7446C; 74
-		dc.w word_74776-MapRUnc_7446C; 75
-		dc.w word_7477A-MapRUnc_7446C; 76
-		dc.w word_7477E-MapRUnc_7446C; 77
-		dc.w word_74782-MapRUnc_7446C; 78
-		dc.w word_74786-MapRUnc_7446C; 79
-		dc.w word_7478A-MapRUnc_7446C; 80
-		dc.w word_7478E-MapRUnc_7446C; 81
-		dc.w word_74792-MapRUnc_7446C; 82
-		dc.w word_74796-MapRUnc_7446C; 83
-		dc.w word_7479A-MapRUnc_7446C; 84
-		dc.w word_7479E-MapRUnc_7446C; 85
-		dc.w word_747A2-MapRUnc_7446C; 86
-		dc.w word_747A6-MapRUnc_7446C; 87
-		dc.w word_747AA-MapRUnc_7446C; 88
-		dc.w word_747AE-MapRUnc_7446C; 89
-		dc.w word_747B4-MapRUnc_7446C; 90
-		dc.w word_747BA-MapRUnc_7446C; 91
-		dc.w word_747BE-MapRUnc_7446C; 92
-		dc.w word_747C2-MapRUnc_7446C; 93
-		dc.w word_747C6-MapRUnc_7446C; 94
-		dc.w word_747C6-MapRUnc_7446C; 95
-		dc.w word_747CC-MapRUnc_7446C; 96
-		dc.w word_747D0-MapRUnc_7446C; 97
-		dc.w word_747D4-MapRUnc_7446C; 98
-		dc.w word_747D8-MapRUnc_7446C; 99
-		dc.w word_747DE-MapRUnc_7446C; 100
-		dc.w word_747E4-MapRUnc_7446C; 101
-		dc.w word_747EA-MapRUnc_7446C; 102
-		dc.w word_747F0-MapRUnc_7446C; 103
-		dc.w word_747F6-MapRUnc_7446C; 104
-		dc.w word_747FC-MapRUnc_7446C; 105
-		dc.w word_74802-MapRUnc_7446C; 106
-		dc.w word_74808-MapRUnc_7446C; 107
-		dc.w word_7480C-MapRUnc_7446C; 108
-		dc.w word_74812-MapRUnc_7446C; 109
-		dc.w word_74818-MapRUnc_7446C; 110
-		dc.w word_7481E-MapRUnc_7446C; 111
-		dc.w word_74818-MapRUnc_7446C; 112
-		dc.w word_74824-MapRUnc_7446C; 113
-		dc.w word_74824-MapRUnc_7446C; 114
-		dc.w word_7482A-MapRUnc_7446C; 115
-		dc.w word_74830-MapRUnc_7446C; 116
-		dc.w word_74834-MapRUnc_7446C; 117
-		dc.w word_74838-MapRUnc_7446C; 118
-		dc.w word_7483E-MapRUnc_7446C; 119
-		dc.w word_74842-MapRUnc_7446C; 120
-		dc.w word_74846-MapRUnc_7446C; 121
-		dc.w word_7484A-MapRUnc_7446C; 122
-		dc.w word_7484E-MapRUnc_7446C; 123
-		dc.w word_74852-MapRUnc_7446C; 124
-		dc.w word_74856-MapRUnc_7446C; 125
-		dc.w word_7485A-MapRUnc_7446C; 126
-		dc.w word_7485E-MapRUnc_7446C; 127
-		dc.w word_74864-MapRUnc_7446C; 128
-		dc.w word_7476E-MapRUnc_7446C; 129
-		dc.w word_74772-MapRUnc_7446C; 130
-		dc.w word_74776-MapRUnc_7446C; 131
-		dc.w word_7477A-MapRUnc_7446C; 132
-		dc.w word_7486A-MapRUnc_7446C; 133
-		dc.w word_74870-MapRUnc_7446C; 134
-		dc.w word_7476E-MapRUnc_7446C; 135
-		dc.w word_74772-MapRUnc_7446C; 136
-		dc.w word_74776-MapRUnc_7446C; 137
-		dc.w word_7477A-MapRUnc_7446C; 138
-word_74582:	dc.w 0			; DATA XREF: ROM:0007446Co
-word_74584:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5000		; 0
-		dc.w $5006		; 1
-word_7458A:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $500C		; 0
-		dc.w $5006		; 1
-word_74590:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5012		; 0
-		dc.w $5006		; 1
-word_74596:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5018		; 0
-		dc.w $5006		; 1
-word_7459C:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B01E
-word_745A0:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B02A
-word_745A4:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5036		; 0
-		dc.w $503C		; 1
-word_745AA:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5036		; 0
-		dc.w $5042		; 1
-word_745B0:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $7048
-word_745B4:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B050
-word_745B8:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B05C
-word_745BC:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $5068
-word_745C0:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B06E
-word_745C4:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $507A		; 0
-		dc.w $7080		; 1
-		dc.w $50CA		; 2
-word_745CC:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $5088		; 0
-		dc.w $708E		; 1
-		dc.w $50D0		; 2
-word_745D4:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $5096		; 0
-		dc.w $509C		; 1
-		dc.w $50D6		; 2
-word_745DC:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $50A2		; 0
-		dc.w $50A8		; 1
-		dc.w $50DC		; 2
-word_745E4:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $507A		; 0
-		dc.w $70AE		; 1
-		dc.w $50CA		; 2
-word_745EC:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $5088		; 0
-		dc.w $70B6		; 1
-		dc.w $50D0		; 2
-word_745F4:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $5096		; 0
-		dc.w $50BE		; 1
-		dc.w $50D6		; 2
-word_745FC:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $50A2		; 0
-		dc.w $50C4		; 1
-		dc.w $50DC		; 2
-word_74604:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $10E2		; 0
-		dc.w $30E4		; 1
-		dc.w $B0E8		; 2
-word_7460C:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $30F4		; 0
-		dc.w $B0F8		; 1
-		dc.w $3104		; 2
-word_74614:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $3108		; 0
-		dc.w $310C		; 1
-		dc.w $B110		; 2
-word_7461C:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $111C		; 0
-		dc.w $F11E		; 1
-		dc.w $112E		; 2
-word_74624:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $10E2		; 0
-		dc.w $30E4		; 1
-		dc.w $B130		; 2
-word_7462C:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $30F4		; 0
-		dc.w $B13C		; 1
-		dc.w $3148		; 2
-word_74634:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $3108		; 0
-		dc.w $310C		; 1
-		dc.w $B14C		; 2
-word_7463C:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $111C		; 0
-		dc.w $F158		; 1
-		dc.w $1168		; 2
-word_74644:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $716A		; 0
-		dc.w $7172		; 1
-		dc.w $71CA		; 2
-word_7464C:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $717A		; 0
-		dc.w $7182		; 1
-		dc.w $71D2		; 2
-word_74654:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $718A		; 0
-		dc.w $7192		; 1
-		dc.w $71DA		; 2
-word_7465C:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $719A		; 0
-		dc.w $71A2		; 1
-		dc.w $75BE		; 2
-word_74664:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $716A		; 0
-		dc.w $71AA		; 1
-		dc.w $71CA		; 2
-word_7466C:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $717A		; 0
-		dc.w $71B2		; 1
-		dc.w $71D2		; 2
-word_74674:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $718A		; 0
-		dc.w $71BA		; 1
-		dc.w $71DA		; 2
-word_7467C:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $719A		; 0
-		dc.w $71C2		; 1
-		dc.w $75BE		; 2
-word_74684:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $11EA		; 0
-		dc.w $F1EC		; 1
-word_7468A:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $31FC		; 0
-		dc.w $1200		; 1
-		dc.w $F202		; 2
-word_74692:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $1212		; 0
-		dc.w $F214		; 1
-word_74698:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $1224		; 0
-		dc.w $1226		; 1
-		dc.w $F228		; 2
-word_746A0:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $11EA		; 0
-		dc.w $F238		; 1
-word_746A6:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $1248		; 0
-		dc.w $1200		; 1
-		dc.w $F24A		; 2
-word_746AE:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $1212		; 0
-		dc.w $F25A		; 1
-word_746B4:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $126A		; 0
-		dc.w $1224		; 1
-		dc.w $F26C		; 2
-word_746BC:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $F27C		; 0
-		dc.w $729C		; 1
-word_746C2:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $F28C		; 0
-		dc.w $32A4		; 1
-word_746C8:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $F27C		; 0
-		dc.w $32A8		; 1
-word_746CE:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $F27C		; 0
-		dc.w $72AC		; 1
-word_746D4:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $F28C		; 0
-		dc.w $72AC		; 1
-word_746DA:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $12B4		; 0
-		dc.w $B2B6		; 1
-		dc.w $B2D2		; 2
-word_746E2:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $32C2		; 0
-		dc.w $B2C6		; 1
-		dc.w $32DE		; 2
-word_746EA:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $12B4		; 0
-		dc.w $B2B6		; 1
-		dc.w $32E2		; 2
-word_746F2:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $32C2		; 0
-		dc.w $B2C6		; 1
-		dc.w $32E6		; 2
-word_746FA:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $12B4		; 0
-		dc.w $B2B6		; 1
-		dc.w $B2EA		; 2
-word_74702:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $32C2		; 0
-		dc.w $B2C6		; 1
-		dc.w $B2EA		; 2
-word_7470A:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $52F6		; 0
-		dc.w $72FC		; 1
-		dc.w $7312		; 2
-word_74712:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $5304		; 0
-		dc.w $730A		; 1
-		dc.w $331E		; 2
-word_7471A:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $52F6		; 0
-		dc.w $72FC		; 1
-		dc.w $331A		; 2
-word_74722:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $52F6		; 0
-		dc.w $72FC		; 1
-		dc.w $7322		; 2
-word_7472A:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $5304		; 0
-		dc.w $730A		; 1
-		dc.w $7322		; 2
-word_74732:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $B32A		; 0
-		dc.w $3336		; 1
-		dc.w $B2D2		; 2
-word_7473A:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $B33A		; 0
-		dc.w $3346		; 1
-		dc.w $32DE		; 2
-word_74742:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $B32A		; 0
-		dc.w $3336		; 1
-		dc.w $32E2		; 2
-word_7474A:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $B33A		; 0
-		dc.w $3346		; 1
-		dc.w $32E6		; 2
-word_74752:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $B32A		; 0
-		dc.w $3336		; 1
-		dc.w $B2EA		; 2
-word_7475A:	dc.w 3			; DATA XREF: ROM:0007446Co
-		dc.w $B33A		; 0
-		dc.w $3346		; 1
-		dc.w $B2EA		; 2
-word_74762:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $F34A
-word_74766:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $F35A
-word_7476A:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $F36A
-word_7476E:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $50CA
-word_74772:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $50D0
-word_74776:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $50D6
-word_7477A:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $50DC
-word_7477E:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $537A
-word_74782:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $5380
-word_74786:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $5386
-word_7478A:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $538C
-word_7478E:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $71CA
-word_74792:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $71D2
-word_74796:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $71DA
-word_7479A:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $75BE
-word_7479E:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $7392
-word_747A2:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $739A
-word_747A6:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $73A2
-word_747AA:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $73AA
-word_747AE:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $33B2		; 0
-		dc.w $B3B6		; 1
-word_747B4:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $33B2		; 0
-		dc.w $B3C2		; 1
-word_747BA:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B3CE
-word_747BE:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $F3DA
-word_747C2:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $F3EA
-word_747C6:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $F3FA		; 0
-		dc.w $740A		; 1
-word_747CC:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $F412
-word_747D0:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $F422
-word_747D4:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $F432
-word_747D8:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5442		; 0
-		dc.w $7448		; 1
-word_747DE:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5442		; 0
-		dc.w $5450		; 1
-word_747E4:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5442		; 0
-		dc.w $5456		; 1
-word_747EA:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5442		; 0
-		dc.w $545C		; 1
-word_747F0:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5462		; 0
-		dc.w $7468		; 1
-word_747F6:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5470		; 0
-		dc.w $7476		; 1
-word_747FC:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $147E		; 0
-		dc.w $B480		; 1
-word_74802:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $548C		; 0
-		dc.w $7492		; 1
-word_74808:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $F49A
-word_7480C:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $F4AA		; 0
-		dc.w $34BA		; 1
-word_74812:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $F4BE		; 0
-		dc.w $34CE		; 1
-word_74818:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $34D2		; 0
-		dc.w $B4D6		; 1
-word_7481E:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $74E2		; 0
-		dc.w $74E2		; 1
-word_74824:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $74EA		; 0
-		dc.w $34F2		; 1
-word_7482A:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $34F6		; 0
-		dc.w $B4FA		; 1
-word_74830:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $F506
-word_74834:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B516
-word_74838:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $3522		; 0
-		dc.w $B526		; 1
-word_7483E:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B532
-word_74842:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B53E
-word_74846:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B54A
-word_7484A:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B556
-word_7484E:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B562
-word_74852:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B56E
-word_74856:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B57A
-word_7485A:	dc.w 1			; DATA XREF: ROM:0007446Co
-		dc.w $B586
-word_7485E:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $5592		; 0
-		dc.w $3598		; 1
-word_74864:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $759C		; 0
-		dc.w $35A4		; 1
-word_7486A:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $55A8		; 0
-		dc.w $75AE		; 1
-word_74870:	dc.w 2			; DATA XREF: ROM:0007446Co
-		dc.w $55A8		; 0
-		dc.w $75B6		; 1
-
+MapRUnc_7446C:		
+		include	"mappings/spriteDPLC/Tails.asm"
+		even
 ; -------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; 
 ; 127 blocks
 ; "SEGA" Patterns
 ; -------------------------------------------------------------------------------------
-ArtNem_74876:		incbin	"art/nemesis/SEGA.bin"
+ArtNem_74876:		
+		incbin	"art/nemesis/SEGA.bin"
+		even
 ; -------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ; 
@@ -94269,31 +93771,37 @@ ArtNem_74876:		incbin	"art/nemesis/SEGA.bin"
 ; Shaded blocks	from intro
 ; -------------------------------------------------------------------------------------
 ArtNem_74CF6:		incbin	"art/nemesis/Shaded blocks from intro.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ;Enigma	compressed art mappings
 ;
 ;"SEGA"	mappings
 ;---------------------------------------------------------------------------------------
-MapEng_74D0E:		incbin	mappings\misc\0X074D~1.BIN
+MapEng_74D0E:		incbin	"mappings/misc/SEGA mappings.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ;Enigma	compressed art mappings
 ;
 ;Mappings for title screen background
 ;---------------------------------------------------------------------------------------
-MapEng_74DC6:		incbin	mappings\misc\0X074D~2.BIN
+MapEng_74DC6:		
+		incbin	"mappings/misc/Mappings for title screen background.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed art	mappings
 ;
 ; Unknown mappings
 ; --------------------------------------------------------------------------------------
-MapEng_74E3A:		incbin	"mappings/misc/Mappings for title screen background 2.bin"
+MapEng_74E3A:		
+		incbin	"mappings/misc/Mappings for title screen background 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Enigma	compressed art mappings
 ;
 ;"Sonic	the Hedgehog 2"	title screen logo mappings
 ;---------------------------------------------------------------------------------------
-MapEng_74E86:		incbin	mappings\misc\0X074E~2.BIN
+MapEng_74E86:		
+		incbin	"mappings/misc/Sonic the Hedgehog 2 title screen logo mappings.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94301,7 +93809,7 @@ MapEng_74E86:		incbin	mappings\misc\0X074E~2.BIN
 ;336 blocks
 ;Main patterns from title screen
 ;---------------------------------------------------------------------------------------
-ArtNem_74F6C:		incbin	art\nemesis\0X074F~1.BIN
+ArtNem_74F6C:		incbin	"art/nemesis/Main patterns from title screen.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94309,7 +93817,7 @@ ArtNem_74F6C:		incbin	art\nemesis\0X074F~1.BIN
 ;674 blocks
 ;Sonic and tails from title screen 
 ;---------------------------------------------------------------------------------------
-ArtNem_7667A:		incbin	art\nemesis\0X0766~1.BIN
+ArtNem_7667A:		incbin	"art/nemesis/Sonic and Tails from title screen.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94317,14 +93825,15 @@ ArtNem_7667A:		incbin	art\nemesis\0X0766~1.BIN
 ;10 blocks
 ;A few menu patterns
 ;---------------------------------------------------------------------------------------
-ArtNem_78CBC:		incbin	art\nemesis\0X078C~1.BIN
+ArtNem_78CBC:		incbin	"art/nemesis/A few menu blocks.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
 ;
 ;16 blocks
 ;Button
 ;---------------------------------------------------------------------------------------
-ArtNem_78DAC:		incbin	art\nemesis\0X078D~1.BIN
+ArtNem_78DAC:		incbin	"art/nemesis/Button.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94333,6 +93842,7 @@ ArtNem_78DAC:		incbin	art\nemesis\0X078D~1.BIN
 ;Vertical Spring
 ;---------------------------------------------------------------------------------------
 ArtNem_78E84:		incbin	"art/nemesis/Vertical spring.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
 ;
@@ -94363,7 +93873,7 @@ ArtNem_7923E:		incbin	"art/nemesis/HUD.bin"
 ;12 blocks
 ;Sonic lives counter
 ;---------------------------------------------------------------------------------------
-ArtNem_79346:		incbin	art\nemesis\0X0793~1.BIN
+ArtNem_79346:		incbin	"art/nemesis/Sonic lives counter.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94371,14 +93881,14 @@ ArtNem_79346:		incbin	art\nemesis\0X0793~1.BIN
 ;14 blocks
 ;Ring
 ;---------------------------------------------------------------------------------------
-ArtNem_7945C:		incbin	art\nemesis\0X0794~1.BIN
+ArtNem_7945C:		incbin	"art/nemesis/Ring.bin"
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
 ;
 ;60 blocks
 ;Monitors and contents
 ;---------------------------------------------------------------------------------------
-ArtNem_79550:		incbin	art\nemesis\0X0795~1.BIN
+ArtNem_79550:		incbin	"art/nemesis/Monitor and contents.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94386,7 +93896,7 @@ ArtNem_79550:		incbin	art\nemesis\0X0795~1.BIN
 ;8 blocks
 ;Spikes
 ;---------------------------------------------------------------------------------------
-ArtNem_7995C:		incbin	art\nemesis\0X0799~1.BIN
+ArtNem_7995C:		incbin	"art/nemesis/Spikes.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94394,29 +93904,30 @@ ArtNem_7995C:		incbin	art\nemesis\0X0799~1.BIN
 ;18 blocks
 ;Numbers
 ;---------------------------------------------------------------------------------------
-ArtNem_799AC:		incbin	art\nemesis\0X0799~2.BIN
+ArtNem_799AC:		incbin	"art/nemesis/Numbers.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
 ;
 ;16 blocks
-;Starpoll
+;Star pole
 ;---------------------------------------------------------------------------------------
-ArtNem_79A86:		incbin	art\nemesis\0X079A~1.BIN
+ArtNem_79A86:		incbin	"art/nemesis/Star pole.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
 ;
 ;78 blocks
 ;Signpost
 ;---------------------------------------------------------------------------------------
-ArtNem_79BDE:		incbin	art\nemesis\0X079B~1.BIN
+ArtNem_79BDE:		incbin	"art/nemesis/Signpost.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Uncompressed art
 ;
 ;Signpost
 ;---------------------------------------------------------------------------------------
-ArtUnc_7A18A:		incbin	art\uncomp~1\0X07A1~1.BIN
+ArtUnc_7A18A:		incbin	"art/uncompressed/Signpost.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94424,7 +93935,7 @@ ArtUnc_7A18A:		incbin	art\uncomp~1\0X07A1~1.BIN
 ;28 blocks
 ;Lever spring
 ;---------------------------------------------------------------------------------------
-ArtNem_7AB4A:		incbin	art\nemesis\0X07AB~1.BIN
+ArtNem_7AB4A:		incbin	"art/nemesis/Lever spring.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94432,14 +93943,15 @@ ArtNem_7AB4A:		incbin	art\nemesis\0X07AB~1.BIN
 ;8 blocks
 ;Long horizontal spike
 ;---------------------------------------------------------------------------------------
-ArtNem_7AC9A:		incbin	art\nemesis\0X07AC~1.BIN
+ArtNem_7AC9A:		incbin	"art/nemesis/Long horizontal spike.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
 ;
 ;24 blocks
 ;Bubble	thing from underwater
 ;---------------------------------------------------------------------------------------
-ArtNem_7AD16:		incbin	art\nemesis\0X07AD~1.BIN
+ArtNem_7AD16:		incbin	"art/nemesis/Bubble generator.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94447,13 +93959,14 @@ ArtNem_7AD16:		incbin	art\nemesis\0X07AD~1.BIN
 ;10 blocks
 ;Bubbles from character
 ;---------------------------------------------------------------------------------------
-ArtNem_7AEE2:		incbin	art\nemesis\0X07AE~1.BIN
+ArtNem_7AEE2:		incbin	"art/nemesis/Bubbles.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ;Uncompressed art
 ;
 ;Countdown text	for drowning
 ;---------------------------------------------------------------------------------------
-ArtUnc_7AF80:		incbin	art\uncomp~1\0X07AF~1.BIN
+ArtUnc_7AF80:		incbin	"art/uncompressed/Numbers for drowning countdown.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94461,7 +93974,7 @@ ArtUnc_7AF80:		incbin	art\uncomp~1\0X07AF~1.BIN
 ;34 blocks
 ;Game/Time over	text
 ;---------------------------------------------------------------------------------------
-ArtNem_7B400:		incbin	art\nemesis\0X07B4~1.BIN
+ArtNem_7B400:		incbin	"art/nemesis/Game and Time Over text.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94469,7 +93982,7 @@ ArtNem_7B400:		incbin	art\nemesis\0X07B4~1.BIN
 ;68 blocks
 ;Explosion
 ;---------------------------------------------------------------------------------------
-ArtNem_7B592:		incbin	art\nemesis\0X07B5~1.BIN
+ArtNem_7B592:		incbin	"art/nemesis/Explosion.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94477,7 +93990,7 @@ ArtNem_7B592:		incbin	art\nemesis\0X07B5~1.BIN
 ;12 blocks
 ;Miles life counter
 ;---------------------------------------------------------------------------------------
-ArtNem_7B946:		incbin	art\nemesis\0X07B9~1.BIN
+ArtNem_7B946:		incbin	"art/nemesis/Miles life counter.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94485,22 +93998,20 @@ ArtNem_7B946:		incbin	art\nemesis\0X07B9~1.BIN
 ;49 blocks
 ;Egg prison
 ;---------------------------------------------------------------------------------------
-ArtNem_7BA32:		incbin	art\nemesis\0X07BA~1.BIN
+ArtNem_7BA32:		incbin	"art/nemesis/Egg Prison.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;36 blocks
-;Image of tails	in plane when sonic is on final	frame at end of	game
-;---------------------------------------------------------------------------------------
-ArtNem_7BDBE:		incbin	art\nemesis\0X07BD~1.BIN
+; Nemesis compressed art (36 blocks)
+; Tails on the continue screen (nagging Sonic)	; ArtNem_7BDBE:
+ArtNem_7BDBE:		incbin	"art/nemesis/Tails on continue screen.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
 ;
 ;12 blocks
 ;Sonic continue
 ;---------------------------------------------------------------------------------------
-ArtNem_7C0AA:		incbin	art\nemesis\0X07C0~1.BIN
+ArtNem_7C0AA:		incbin	"art/nemesis/Sonic continue.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94508,7 +94019,7 @@ ArtNem_7C0AA:		incbin	art\nemesis\0X07C0~1.BIN
 ;12 blocks
 ;Tails life counter
 ;---------------------------------------------------------------------------------------
-ArtNem_7C20C:		incbin	art\nemesis\0X07C2~1.BIN
+ArtNem_7C20C:		incbin	"art/nemesis/Tails life counter.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94516,7 +94027,7 @@ ArtNem_7C20C:		incbin	art\nemesis\0X07C2~1.BIN
 ;12 blocks
 ;Tails continue
 ;---------------------------------------------------------------------------------------
-ArtNem_7C2F2:		incbin	art\nemesis\0X07C2~2.BIN
+ArtNem_7C2F2:		incbin	"art/nemesis/Tails continue.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94524,7 +94035,7 @@ ArtNem_7C2F2:		incbin	art\nemesis\0X07C2~2.BIN
 ;88 blocks
 ;Standard font
 ;---------------------------------------------------------------------------------------
-ArtNem_7C43A:		incbin	art\nemesis\0X07C4~1.BIN
+ArtNem_7C43A:		incbin	"art/nemesis/Standard font.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94532,28 +94043,29 @@ ArtNem_7C43A:		incbin	art\nemesis\0X07C4~1.BIN
 ;38 blocks
 ;1P/2P wins text from 2P mode
 ;---------------------------------------------------------------------------------------
-ArtNem_7C9AE:		incbin	art\nemesis\0X07C9~1.BIN
+ArtNem_7C9AE:		incbin	"art/nemesis/1P and 2P wins text from 2P mode.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Enigma	compressed art mappings
 ;
 ;Sonic/Miles animated background mappings
 ;---------------------------------------------------------------------------------------
-MapEng_7CB80:		incbin	mappings\misc\0X07CB~1.BIN
+MapEng_7CB80:		incbin	"mappings/misc/Sonic and Miles animated background.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Uncompressed art
 ;
 ;Sonic/Miles animated background patterns
 ;---------------------------------------------------------------------------------------
-ArtUnc_7CD2C:		incbin	art\uncomp~1\0X07CD~1.BIN
+ArtUnc_7CD2C:		incbin	"art/uncompressed/Sonic and Miles animated background.bin"
+		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
 ;
 ;94 blocks
 ;Title card patterns
 ;---------------------------------------------------------------------------------------
-ArtNem_7D22C:		incbin	art\nemesis\0X07D2~1.BIN
+ArtNem_7D22C:		incbin	"art/nemesis/Title card.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94561,7 +94073,7 @@ ArtNem_7D22C:		incbin	art\nemesis\0X07D2~1.BIN
 ; 92 blocks
 ; Alphabet for font using large	broken letters
 ; --------------------------------------------------------------------------------------
-ArtNem_7D58A:		incbin	art\nemesis\0X07D5~1.BIN
+ArtNem_7D58A:		incbin	"art/nemesis/Font using large broken letters.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94569,7 +94081,7 @@ ArtNem_7D58A:		incbin	art\nemesis\0X07D5~1.BIN
 ;21 blocks
 ;A menu	box with a shadow
 ;---------------------------------------------------------------------------------------
-ArtNem_7D990:		incbin	art\nemesis\0X07D9~1.BIN
+ArtNem_7D990:		incbin	"art/nemesis/A menu box with a shadow.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94577,7 +94089,7 @@ ArtNem_7D990:		incbin	art\nemesis\0X07D9~1.BIN
 ;170 blocks
 ;Pictures in level preview box in level	select
 ;---------------------------------------------------------------------------------------
-ArtNem_7DA10:		incbin	art\nemesis\0X07DA~1.BIN
+ArtNem_7DA10:		incbin	"art/nemesis/Pictures in level preview box from level select.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94585,7 +94097,7 @@ ArtNem_7DA10:		incbin	art\nemesis\0X07DA~1.BIN
 ;68 blocks
 ;Unknown. More text I haven't figured out
 ;---------------------------------------------------------------------------------------
-ArtNem_7E86A:		incbin	art\nemesis\0X07E8~1.BIN
+ArtNem_7E86A:		incbin	"art/nemesis/End of level results text.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94593,7 +94105,7 @@ ArtNem_7E86A:		incbin	art\nemesis\0X07E8~1.BIN
 ;72 blocks
 ;Text for end of special stage,	along with patterns for	3 emeralds.
 ;---------------------------------------------------------------------------------------
-ArtNem_7EB58:		incbin	art\nemesis\0X07EB~1.BIN
+ArtNem_7EB58:		incbin	"art/nemesis/Special stage results screen art and some emeralds.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94601,7 +94113,7 @@ ArtNem_7EB58:		incbin	art\nemesis\0X07EB~1.BIN
 ;14 blocks
 ;"Perfect" text
 ;---------------------------------------------------------------------------------------
-ArtNem_7EEBE:		incbin	art\nemesis\0X07EE~1.BIN
+ArtNem_7EEBE:		incbin	"art/nemesis/Perfect text.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94609,7 +94121,7 @@ ArtNem_7EEBE:		incbin	art\nemesis\0X07EE~1.BIN
 ;16 blocks
 ;Bluebird
 ;---------------------------------------------------------------------------------------
-ArtNem_7EF60:		incbin	art\nemesis\0X07EF~1.BIN
+ArtNem_7EF60:		incbin	"art/nemesis/Flicky.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94617,7 +94129,7 @@ ArtNem_7EF60:		incbin	art\nemesis\0X07EF~1.BIN
 ;20 blocks
 ;Squirrel
 ;---------------------------------------------------------------------------------------
-ArtNem_7F0A2:		incbin	art\nemesis\0X07F0~1.BIN
+ArtNem_7F0A2:		incbin	"art/nemesis/Squirrel.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94625,7 +94137,7 @@ ArtNem_7F0A2:		incbin	art\nemesis\0X07F0~1.BIN
 ;16 blocks
 ;Mouse
 ;---------------------------------------------------------------------------------------
-ArtNem_7F206:		incbin	art\nemesis\0X07F2~1.BIN
+ArtNem_7F206:		incbin	"art/nemesis/Mouse.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94633,7 +94145,7 @@ ArtNem_7F206:		incbin	art\nemesis\0X07F2~1.BIN
 ;16 blocks
 ;Chicken
 ;---------------------------------------------------------------------------------------
-ArtNem_7F340:		incbin	art\nemesis\0X07F3~1.BIN
+ArtNem_7F340:		incbin	"art/nemesis/Chicken.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94641,7 +94153,7 @@ ArtNem_7F340:		incbin	art\nemesis\0X07F3~1.BIN
 ;20 blocks
 ;Beaver
 ;---------------------------------------------------------------------------------------
-ArtNem_7F4A2:		incbin	art\nemesis\0X07F4~1.BIN
+ArtNem_7F4A2:		incbin	"art/nemesis/Beaver.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94649,7 +94161,7 @@ ArtNem_7F4A2:		incbin	art\nemesis\0X07F4~1.BIN
 ;16 blocks
 ;Penguin
 ;---------------------------------------------------------------------------------------
-ArtNem_7F5E2:		incbin	art\nemesis\0X07F5~1.BIN
+ArtNem_7F5E2:		incbin	"art/nemesis/Penguin.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94657,7 +94169,7 @@ ArtNem_7F5E2:		incbin	art\nemesis\0X07F5~1.BIN
 ;10 blocks
 ;Pig
 ;---------------------------------------------------------------------------------------
-ArtNem_7F710:		incbin	art\nemesis\0X07F7~1.BIN
+ArtNem_7F710:		incbin	"art/nemesis/Pig.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94665,7 +94177,7 @@ ArtNem_7F710:		incbin	art\nemesis\0X07F7~1.BIN
 ;14 blocks
 ;Seal
 ;---------------------------------------------------------------------------------------
-ArtNem_7F846:		incbin	art\nemesis\0X07F8~1.BIN
+ArtNem_7F846:		incbin	"art/nemesis/Seal.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94673,7 +94185,7 @@ ArtNem_7F846:		incbin	art\nemesis\0X07F8~1.BIN
 ;18 blocks
 ;Penguin
 ;---------------------------------------------------------------------------------------
-ArtNem_7F962:		incbin	art\nemesis\0X07F9~1.BIN
+ArtNem_7F962:		incbin	"art/nemesis/Penguin 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94681,7 +94193,7 @@ ArtNem_7F962:		incbin	art\nemesis\0X07F9~1.BIN
 ;20 blocks
 ;Turtle
 ;---------------------------------------------------------------------------------------
-ArtNem_7FADE:		incbin	art\nemesis\0X07FA~1.BIN
+ArtNem_7FADE:		incbin	"art/nemesis/Turtle.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94689,7 +94201,7 @@ ArtNem_7FADE:		incbin	art\nemesis\0X07FA~1.BIN
 ;20 blocks
 ;Bears
 ;---------------------------------------------------------------------------------------
-ArtNem_7FC90:		incbin	art\nemesis\0X07FC~1.BIN
+ArtNem_7FC90:		incbin	"art/nemesis/Bear.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94697,7 +94209,7 @@ ArtNem_7FC90:		incbin	art\nemesis\0X07FC~1.BIN
 ;18 blocks
 ;Rabbit
 ;---------------------------------------------------------------------------------------
-ArtNem_7FDD2:		incbin	art\nemesis\0X07FD~1.BIN
+ArtNem_7FDD2:		incbin	"art/nemesis/Rabbit.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94705,7 +94217,7 @@ ArtNem_7FDD2:		incbin	art\nemesis\0X07FD~1.BIN
 ;4 blocks
 ;Rivet thing that you bust to get inside ship at the end of WFZ
 ;---------------------------------------------------------------------------------------
-ArtNem_7FF2A:		incbin	art\nemesis\0X07FF~1.BIN
+ArtNem_7FF2A:		incbin	"art/nemesis/WFZ boss chamber switch.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94713,7 +94225,7 @@ ArtNem_7FF2A:		incbin	art\nemesis\0X07FF~1.BIN
 ; 15 blocks
 ; Breakaway panels in WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_7FF98:		incbin	art\nemesis\0X07FF~2.BIN
+ArtNem_7FF98:		incbin	"art/nemesis/Breakaway panels from WFZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94721,7 +94233,7 @@ ArtNem_7FF98:		incbin	art\nemesis\0X07FF~2.BIN
 ; 32 blocks
 ; Spiked ball from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8007C:		incbin	art\nemesis\0X0800~1.BIN
+ArtNem_8007C:		incbin	"art/nemesis/Spiked ball from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94729,7 +94241,7 @@ ArtNem_8007C:		incbin	art\nemesis\0X0800~1.BIN
 ; 6 blocks
 ; Unknown. HPZ style shaded blocks
 ; --------------------------------------------------------------------------------------
-ArtNem_80274:		incbin	art\nemesis\0X0802~1.BIN
+ArtNem_80274:		incbin	"art/nemesis/Burner Platform from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94737,7 +94249,7 @@ ArtNem_80274:		incbin	art\nemesis\0X0802~1.BIN
 ; 4 blocks
 ; Striped blocks from CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8030A:		incbin	art\nemesis\0X0803~1.BIN
+ArtNem_8030A:		incbin	"art/nemesis/Striped blocks from CPZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94745,14 +94257,15 @@ ArtNem_8030A:		incbin	art\nemesis\0X0803~1.BIN
 ; 16 blocks
 ; Oil falling into oil in OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_80376:		incbin	art\nemesis\0X0803~2.BIN
+ArtNem_80376:		incbin	"art/nemesis/Cascading oil hitting oil from OOZ.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 13 blocks
 ; Cascading oild from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_804F2:		incbin	art\nemesis\0X0804~1.BIN
+ArtNem_804F2:		incbin	"art/nemesis/Cascading oil from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94760,7 +94273,7 @@ ArtNem_804F2:		incbin	art\nemesis\0X0804~1.BIN
 ; 20 blocks
 ; Ball on spring from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_805C0:		incbin	art\nemesis\0X0805~1.BIN
+ArtNem_805C0:		incbin	"art/nemesis/Ball on spring from OOZ (beta holdovers).bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94768,7 +94281,7 @@ ArtNem_805C0:		incbin	art\nemesis\0X0805~1.BIN
 ; 53 blocks
 ; Spinball from	OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_806E0:		incbin	art\nemesis\0X0806~1.BIN
+ArtNem_806E0:		incbin	"art/nemesis/Transporter ball from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94776,7 +94289,7 @@ ArtNem_806E0:		incbin	art\nemesis\0X0806~1.BIN
 ; 40 blocks
 ; Collapsing platform from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_809D0:		incbin	art\nemesis\0X0809~1.BIN
+ArtNem_809D0:		incbin	"art/nemesis/OOZ collapsing platform.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94784,7 +94297,7 @@ ArtNem_809D0:		incbin	art\nemesis\0X0809~1.BIN
 ; 30 blocks
 ; Diagonal and vertical	weird spring from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_80C64:		incbin	art\nemesis\0X080C~1.BIN
+ArtNem_80C64:		incbin	"art/nemesis/Push spring from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94792,15 +94305,14 @@ ArtNem_80C64:		incbin	art\nemesis\0X080C~1.BIN
 ; 28 blocks
 ; Swinging platform from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_80E26:		incbin	art\nemesis\0X080E~1.BIN
+ArtNem_80E26:		incbin	"art/nemesis/Swinging platform from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 4 blocks
-; 4 stripy blocks from OOZ
+; Nemesis compressed art (4 blocks)
+; 4 stripy blocks from OOZ	; ArtNem_81048:
 ; --------------------------------------------------------------------------------------
-ArtNem_81048:		incbin	art\nemesis\0X0810~1.BIN
+ArtNem_81048:		incbin	"art/nemesis/4 stripy blocks from OOZ.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
@@ -95279,12 +94791,11 @@ ArtNem_8D540:		incbin	art\nemesis\0X08D5~1.BIN
 ; --------------------------------------------------------------------------------------
 ArtNem_8D7D8:		incbin	art\nemesis\0X08D7~1.BIN
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 12 blocks
-; Moving platform in WFZ
+; Nemesis compressed art (12 blocks)
+; Moving platform in WFZ	8D96E:
 ; --------------------------------------------------------------------------------------
-ArtNem_8D96E:		incbin	art\nemesis\0X08D9~1.BIN
+ArtNem_8D96E:		incbin	"art/nemesis/Moving platform from WFZ.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
@@ -95380,19 +94891,17 @@ ArtNem_8E886:		incbin	art\nemesis\0X08E8~1.BIN
 ; --------------------------------------------------------------------------------------
 ArtNem_8EA5A:		incbin	art\nemesis\0X08EA~1.BIN
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 28 blocks
-; Robotnic's lower half
+; Nemesis compressed art (28 blocks)
+; Robotnik's lower half	; ArtNem_8EE52:
 ; --------------------------------------------------------------------------------------
-ArtNem_8EE52:		incbin	art\nemesis\0X08EE~1.BIN
+ArtNem_8EE52:		incbin	"art/nemesis/Robotnik's lover half.bin"
+		even
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 8 blocks
-; Window in back that Robotnic looks through in	DEZ
+; Nemesis compressed art (8 blocks)
+; Window in back that Robotnic looks through in DEZ	; ArtNem_8EF96:
 ; --------------------------------------------------------------------------------------
-ArtNem_8EF96:		incbin	art\nemesis\0X08EF~1.BIN
+ArtNem_8EF96:		incbin	"art/nemesis/Window in back that Robotnik looks through in DEZ.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
@@ -95545,14 +95054,65 @@ ArtNem_93848:		incbin	art\nemesis\0X0938~1.BIN
 ; 181 blocks
 ; Final	image of Tails
 ; --------------------------------------------------------------------------------------
-ArtNem_93F3C:		incbin	art\nemesis\0X093F~1.BIN
+ArtNem_93F3C:		incbin	"art/nemesis/Final image of Tails.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 72 blocks
 ; Sonic	the Hedgehog 2 image at	end of credits
 ; --------------------------------------------------------------------------------------
-ArtNem_94B28:		incbin	art\nemesis\0X094B~1.BIN
+ArtNem_94B28:		incbin	"art/nemesis/Sonic the Hedgehog 2 image at end of credits.bin"
+
+
+; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+; LEVEL ART AND BLOCK MAPPINGS (16x16 and 128x128)
+;
+; #define BLOCK_TBL_LEN  // table length unknown
+; #define BIGBLOCK_TBL_LEN // table length unknown
+; typedef uint16_t uword
+;
+; struct blockMapElement {
+;  uword unk : 5;    // u
+;  uword patternIndex : 11; };  // i
+; // uuuu uiii iiii iiii
+;
+; blockMapElement (*blockMapTable)[BLOCK_TBL_LEN][4] = 0xFFFF9000
+;
+; struct bigBlockMapElement {
+;  uword : 4
+;  uword blockMapIndex : 12; };  //I
+; // 0000 IIII IIII IIII
+;
+; bigBlockMapElement (*bigBlockMapTable)[BIGBLOCK_TBL_LEN][64] = 0xFFFF0000
+;
+; /*
+; This data determines how the level blocks will be constructed graphically. There are
+; two kinds of block mappings: 16x16 and 128x128.
+;
+; 16x16 blocks are made up of four cells arranged in a square (thus, 16x16 pixels).
+; Two bytes are used to define each cell, so the block is 8 bytes long. It can be
+; represented by the bitmap blockMapElement, of which the members are:
+;
+; unk
+;  These bits have to do with pattern orientation. I do not know their exact
+;  meaning.
+; patternIndex
+;  The pattern's address divided by $20. Otherwise said: an index into the
+;  pattern array.
+;
+; Each mapping can be expressed as an array of four blockMapElements, while the
+; whole table is expressed as a two-dimensional array of blockMapElements (blockMapTable).
+; The maps are read in left-to-right, top-to-bottom order.
+;
+; 128x128 maps are basically lists of indices into blockMapTable. The levels are built
+; out of these "big blocks", rather than the "small" 16x16 blocks. bigBlockMapTable is,
+; predictably, the table of big block mappings.
+; Each big block is 8 16x16 blocks, or 16 cells, square. This produces a total of 16
+; blocks or 64 cells.
+; As noted earlier, each element of the table provides 'i' for blockMapTable[i][j].
+; */
+
 ; ----------------------------------------------------------------------------------
 ; EHZ 16x16 block mappings (Kozinski compression)
 ; ----------------------------------------------------------------------------------
