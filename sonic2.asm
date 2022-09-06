@@ -2565,7 +2565,7 @@ loc_192A:				; CODE XREF: EniDec_17BC+3Ap
 locret_1938:				; CODE XREF: ROM:00001930j
 		rts	
 ; ------------------------------------------------------------------------
-; Kozinski decompression algorithm
+; Kosinski decompression algorithm
 ; ------------------------------------------------------------------------
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -4311,16 +4311,16 @@ loc_384A:				; CODE XREF: ROM:00003850j
 		bne.s	loc_384A
 		move.w	#$8F02,(a5)
 		move.l	#$40200000,(vdp_control_port).l
-		lea	(ArtNem_74876).l,a0
+		lea	(Nem_Sega).l,a0
 		bsr.w	NemDec_14DE
 		move.l	#$50000000,(vdp_control_port).l
-		lea	(ArtNem_74CF6).l,a0
+		lea	(Nem_IntroTrails).l,a0
 		bsr.w	NemDec_14DE
 		move.l	#$51000000,(vdp_control_port).l
-		lea	(ArtNem_8BE12).l,a0
+		lea	(Nem_8BE12).l,a0
 		bsr.w	NemDec_14DE
 		lea	(v_128x128_tiles).l,a1
-		lea	(MapEng_74D0E).l,a0
+		lea	(Eni_SEGA).l,a0
 		move.w	#0,d0
 		bsr.w	EniDec_17BC
 		lea	(v_128x128_tiles).l,a1
@@ -4457,7 +4457,7 @@ loc_3A14:				; CODE XREF: ROM:00003A16j
 		move.l	d0,(a1)+
 		dbf	d1,loc_3A14
 		move.l	#$60000002,(vdp_control_port).l
-		lea	(ArtNem_BD26).l,a0
+		lea	(Nem_BD26).l,a0
 		bsr.w	NemDec_14DE
 		lea	(off_B2B0).l,a1
 		jsr	loc_B272
@@ -4473,19 +4473,19 @@ loc_3A44:				; CODE XREF: ROM:00003A46j
 		bsr.w	sub_23C6
 	disable_ints
 		move.l	#$40000000,(vdp_control_port).l
-		lea	(ArtNem_74F6C).l,a0
+		lea	(Nem_Title).l,a0
 		bsr.w	NemDec_14DE
 		move.l	#$6A000000,(vdp_control_port).l
-		lea	(ArtNem_7667A).l,a0
+		lea	(Nem_TitleSprites).l,a0
 		bsr.w	NemDec_14DE
 		move.l	#$7E400001,(vdp_control_port).l
-		lea	(ArtNem_78CBC).l,a0
+		lea	(Nem_MenuJunk).l,a0
 		bsr.w	NemDec_14DE
 		move.l	#$40400002,(vdp_control_port).l
-		lea	(ArtNem_3DF4).l,a0
+		lea	(Nem_3DF4).l,a0
 		bsr.w	NemDec_14DE
 		move.l	#$50000003,(vdp_control_port).l
-		lea	(ArtNem_7C43A).l,a0
+		lea	(Nem_7C43A).l,a0
 		bsr.w	NemDec_14DE
 		move.b	#0,($FFFFFE30).w
 		move.b	#0,($FFFFFEE0).w
@@ -4498,7 +4498,7 @@ loc_3A44:				; CODE XREF: ROM:00003A46j
 		bsr.w	sub_246A
 	disable_ints
 		lea	(v_128x128_tiles).l,a1
-		lea	(MapEng_74DC6).l,a0
+		lea	(Eni_TitleScreen).l,a0
 		move.w	#$4000,d0
 		bsr.w	EniDec_17BC
 		lea	(v_128x128_tiles).l,a1
@@ -4507,7 +4507,7 @@ loc_3A44:				; CODE XREF: ROM:00003A46j
 		moveq	#$1B,d2
 		bsr.w	sub_140E
 		lea	(v_128x128_tiles).l,a1
-		lea	(MapEng_74E3A).l,a0
+		lea	(Eni_TitleBack).l,a0
 		move.w	#$4000,d0
 		bsr.w	EniDec_17BC
 		lea	(v_128x128_tiles).l,a1
@@ -4516,7 +4516,7 @@ loc_3A44:				; CODE XREF: ROM:00003A46j
 		moveq	#$1B,d2
 		bsr.w	sub_140E
 		lea	(v_128x128_tiles).l,a1
-		lea	(MapEng_74E86).l,a0
+		lea	(Eni_TitleLogo).l,a0
 		move.w	#-$2000,d0
 		bsr.w	EniDec_17BC
 		lea	($FFFF0858).l,a1
@@ -4742,7 +4742,7 @@ byte_3DEE:	dc.b	 1		; 0 ; DATA XREF: sub_3DB4o
 ; 10 blocks
 ; Unknown
 ; ---------------------------------------------------------------------------------
-ArtNem_3DF4:	dc.b   0, $A,$80,  4,  9,$14, $A,$26,$3B,$34,  8,$74, $B,$81,  2,  0; 0
+Nem_3DF4:	dc.b   0, $A,$80,  4,  9,$14, $A,$26,$3B,$34,  8,$74, $B,$81,  2,  0; 0
 					; DATA XREF: ROM:00003A9Eo
 		dc.b $25,$1B,$35,$1C,$47,$7C,$58,$FA,$78,$FB,$86,  6,$3D,$15,$18,$22; 16
 		dc.b   1,$46,$3A,$55,$19,$66,$3C,$87,  5,$1A,$FF,$B9,$FD,$B1,  9,  9; 32
@@ -6606,7 +6606,7 @@ loc_52F4:				; CODE XREF: ROM:000052EEj
 		lea	(word_7822)(pc),a0
 		bsr.w	sub_784A
 		move.l	#$72000002,(vdp_control_port).l
-		lea	(ArtNem_7EB58).l,a0
+		lea	(Nem_7EB58).l,a0
 		bsr.w	NemDec_14DE
 		move.w	($FFFFFF70).w,d0
 		beq.s	loc_5374
@@ -8789,11 +8789,11 @@ loc_6D10:				; CODE XREF: sub_6CE6+3Aj
 sub_6D52:				; CODE XREF: ROM:00005170p
 	disable_ints
 		movea.l	#v_128x128_tiles,a1
-		lea	(MapEng_DD30C).l,a0
+		lea	(Eni_DD30C).l,a0
 		move.w	#$700,d0
 		bsr.w	EniDec_17BC
 		movea.l	#-$FC00,a1
-		lea	(MapEng_DD1DE).l,a0
+		lea	(Eni_DD1DE).l,a0
 		move.w	#$700,d0
 		bsr.w	EniDec_17BC
 		lea	(v_128x128_tiles).l,a1
@@ -8825,7 +8825,7 @@ sub_6D52:				; CODE XREF: ROM:00005170p
 
 
 sub_6DD4:				; CODE XREF: ROM:00005174p
-		lea	(ArtNem_DEEAE).l,a0
+		lea	(Nem_DEEAE).l,a0
 		lea	($FF0000).l,a4
 		bra.w	NemDec_14F0
 ; End of function sub_6DD4
@@ -9140,7 +9140,7 @@ locret_6FBE:				; CODE XREF: ROM:00006FB0j
 Sprite_6FC0:				; DATA XREF: ROM:0001600Co
 		move.b	$24(a0),d0
 		bne.w	loc_7844
-		move.l	#MapUnc_7070,4(a0)
+		move.l	#Map_7070,4(a0)
 		move.w	#$1FA,2(a0)
 		move.b	#4,1(a0)
 		move.b	#0,$18(a0)
@@ -9204,11 +9204,11 @@ byte_706C:	dc.b   2,$80,  0,  2	; 0 ; DATA XREF: ROM:00007042o
 ; -----------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------------
-MapUnc_7070:	dc.w word_7078-MapUnc_7070; 0 ;	DATA XREF: ROM:00006FC8o
+Map_7070:	dc.w word_7078-Map_7070; 0 ;	DATA XREF: ROM:00006FC8o
 					; ROM:00007070o ...
-		dc.w word_709A-MapUnc_7070; 1
-		dc.w word_70BC-MapUnc_7070; 2
-		dc.w word_70DE-MapUnc_7070; 3
+		dc.w word_709A-Map_7070; 1
+		dc.w word_70BC-Map_7070; 2
+		dc.w word_70DE-Map_7070; 3
 word_7078:	dc.w 4			; DATA XREF: ROM:00007070o
 		dc.w $100C,$A000,$A000,$FFA0; 0
 		dc.w $1000,$A004,$A002,$FFC0; 4
@@ -9278,7 +9278,7 @@ loc_7158:				; CODE XREF: ROM:0000714Ej
 		move.w	#$80,8(a0) ; '='
 		move.w	#-$40,$C(a0)
 		move.w	#$100,$12(a0)
-		move.l	#MapUnc_7240,4(a0)
+		move.l	#Map_7240,4(a0)
 		move.w	#$38A,2(a0)
 		move.b	#4,1(a0)
 		move.b	#1,$18(a0)
@@ -9357,16 +9357,16 @@ locret_723E:				; DATA XREF: ROM:000070FEo
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_7240:	dc.w word_7252-MapUnc_7240; 0 ;	DATA XREF: ROM:0000716Ao
+Map_7240:	dc.w word_7252-Map_7240; 0 ;	DATA XREF: ROM:0000716Ao
 					; ROM:00007240o ...
-		dc.w word_728C-MapUnc_7240; 1
-		dc.w word_728C-MapUnc_7240; 2
-		dc.w word_7296-MapUnc_7240; 3
-		dc.w word_72A0-MapUnc_7240; 4
-		dc.w word_72AA-MapUnc_7240; 5
-		dc.w word_72B4-MapUnc_7240; 6
-		dc.w word_72BE-MapUnc_7240; 7
-		dc.w word_72C8-MapUnc_7240; 8
+		dc.w word_728C-Map_7240; 1
+		dc.w word_728C-Map_7240; 2
+		dc.w word_7296-Map_7240; 3
+		dc.w word_72A0-Map_7240; 4
+		dc.w word_72AA-Map_7240; 5
+		dc.w word_72B4-Map_7240; 6
+		dc.w word_72BE-Map_7240; 7
+		dc.w word_72C8-Map_7240; 8
 word_7252:	dc.w   7		; 0 ; DATA XREF: ROM:00007240o
 		dc.w	$F,$A000,$A000,$FFB8; 0
 		dc.w	 7,$A010,$A008,$FFD8; 4
@@ -9393,18 +9393,18 @@ word_72C8:	dc.w   1		; 0 ; DATA XREF: ROM:00007240o
 ; -----------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------------
-MapUnc_72D2:	dc.w word_72E8-MapUnc_72D2; 0 ;	DATA XREF: ROM:000072D2o
+Map_72D2:	dc.w word_72E8-Map_72D2; 0 ;	DATA XREF: ROM:000072D2o
 					; ROM:000072D4o ...
-		dc.w word_72F2-MapUnc_72D2; 1
-		dc.w word_72FC-MapUnc_72D2; 2
-		dc.w word_7306-MapUnc_72D2; 3
-		dc.w word_7310-MapUnc_72D2; 4
-		dc.w word_731A-MapUnc_72D2; 5
-		dc.w word_7324-MapUnc_72D2; 6
-		dc.w word_732E-MapUnc_72D2; 7
-		dc.w word_7338-MapUnc_72D2; 8
-		dc.w word_7342-MapUnc_72D2; 9
-		dc.w word_734C-MapUnc_72D2; 10
+		dc.w word_72F2-Map_72D2; 1
+		dc.w word_72FC-Map_72D2; 2
+		dc.w word_7306-Map_72D2; 3
+		dc.w word_7310-Map_72D2; 4
+		dc.w word_731A-Map_72D2; 5
+		dc.w word_7324-Map_72D2; 6
+		dc.w word_732E-Map_72D2; 7
+		dc.w word_7338-Map_72D2; 8
+		dc.w word_7342-Map_72D2; 9
+		dc.w word_734C-Map_72D2; 10
 word_72E8:	dc.w 1			; DATA XREF: ROM:000072D2o
 		dc.w $F801,$8012,$8009,$FFFC; 0
 word_72F2:	dc.w 1			; DATA XREF: ROM:000072D2o
@@ -9449,7 +9449,7 @@ off_7364:	dc.w loc_736C-off_7364	; 0 ; DATA XREF: ROM:00007364o
 
 loc_736C:				; DATA XREF: ROM:00007364o
 		move.b	#2,$A(a0)
-		move.l	#MapUnc_72D2,4(a0)
+		move.l	#Map_72D2,4(a0)
 		move.w	#$41FA,2(a0)
 		move.b	#4,1(a0)
 		bset	#6,1(a0)
@@ -9481,7 +9481,7 @@ loc_73E0:				; CODE XREF: ROM:000073D2j
 		bne.s	locret_7428
 		move.b	#-$79,(a1)
 		move.b	#4,$A(a1)
-		move.l	#MapUnc_72D2,4(a1)
+		move.l	#Map_72D2,4(a1)
 		move.w	#$41FA,2(a1)
 		move.b	#4,1(a1)
 		bset	#6,1(a1)
@@ -9503,7 +9503,7 @@ loc_742A:				; CODE XREF: ROM:000073CAj
 		bne.s	locret_7428
 		move.b	#-$79,(a1)
 		move.b	#6,$A(a1)
-		move.l	#MapUnc_72D2,4(a1)
+		move.l	#Map_72D2,4(a1)
 		move.w	#$41FA,2(a1)
 		move.b	#4,1(a1)
 		bset	#6,1(a1)
@@ -9989,13 +9989,13 @@ loc_78A2:				; CODE XREF: ROM:000078A4j
 		dbf	d1,loc_78A2
 		bsr.w	sub_7A04
 		move.l	#$60000002,(vdp_control_port).l
-		lea	(ArtNem_7BDBE).l,a0
+		lea	(Nem_7BDBE).l,a0
 		bsr.w	NemDec_14DE
 		move.l	#$64800002,(vdp_control_port).l
-		lea	(ArtNem_7C0AA).l,a0
+		lea	(Nem_7C0AA).l,a0
 		cmpi.w	#2,($FFFFFF70).w
 		bne.s	loc_78DE
-		lea	(ArtNem_7C2F2).l,a0
+		lea	(Nem_7C2F2).l,a0
 
 loc_78DE:				; CODE XREF: ROM:000078D6j
 		bsr.w	NemDec_14DE
@@ -10074,10 +10074,10 @@ loc_79BA:				; CODE XREF: ROM:000079A0j
 
 sub_7A04:				; CODE XREF: ROM:000078A8p
 		move.l	#$70000002,(vdp_control_port).l
-		lea	(ArtNem_7D22C).l,a0
+		lea	(Nem_7D22C).l,a0
 		bsr.w	NemDec_14DE
 		lea	(v_level_layout).w,a4
-		lea	(ArtNem_7D58A).l,a0
+		lea	(Nem_7D58A).l,a0
 		bsr.w	NemDec_14F0
 		lea	(word_7A5E).l,a0
 		move.l	#$72000002,(vdp_control_port).l
@@ -10133,7 +10133,7 @@ off_7A76:	dc.w loc_7A7E-off_7A76	; 0 ; DATA XREF: ROM:00007A76o
 
 loc_7A7E:				; DATA XREF: ROM:00007A76o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_7CB6,4(a0)
+		move.l	#Map_7CB6,4(a0)
 		move.w	#-$7B00,2(a0)
 		bsr.w	sub_7D4A
 		move.b	#0,1(a0)
@@ -10243,7 +10243,7 @@ loc_7BA2:				; DATA XREF: ROM:00007B96o
 		addq.b	#2,$24(a0)
 		move.w	#$9C,8(a0) ; '='
 		move.w	#$19C,$C(a0)
-		move.l	#MapUnc_6FBE0,4(a0)
+		move.l	#Map_Sonic,4(a0)
 		move.w	#$780,2(a0)
 		move.b	#4,1(a0)
 		move.b	#2,$18(a0)
@@ -10283,7 +10283,7 @@ loc_7C22:				; DATA XREF: ROM:00007B96o
 		addq.b	#2,$24(a0)
 		move.w	#$B8,8(a0) ; '='
 		move.w	#$1A0,$C(a0)
-		move.l	#MapUnc_7CB6,4(a0)
+		move.l	#Map_7CB6,4(a0)
 		move.w	#$500,2(a0)
 		move.b	#4,1(a0)
 		move.b	#2,$18(a0)
@@ -10298,7 +10298,7 @@ loc_7C52:				; DATA XREF: ROM:00007B96o
 
 loc_7C64:				; CODE XREF: ROM:00007C56j
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_739E2,4(a0)
+		move.l	#Map_Tails,4(a0)
 		move.w	#$7A0,2(a0)
 		move.b	#0,$1C(a0)
 		clr.w	$14(a0)
@@ -10326,13 +10326,13 @@ byte_7CB2:	dc.b   9,  2,  3,$FF	; 0 ; DATA XREF: ROM:00007CB0o
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_7CB6:	dc.w word_7CC2-MapUnc_7CB6; 0 ;	DATA XREF: ROM:00007A82o
+Map_7CB6:	dc.w word_7CC2-Map_7CB6; 0 ;	DATA XREF: ROM:00007A82o
 					; ROM:00007C32o ...
-		dc.w word_7CC2-MapUnc_7CB6; 1
-		dc.w word_7D1C-MapUnc_7CB6; 2
-		dc.w word_7D26-MapUnc_7CB6; 3
-		dc.w word_7D30-MapUnc_7CB6; 4
-		dc.w word_7D3A-MapUnc_7CB6; 5
+		dc.w word_7CC2-Map_7CB6; 1
+		dc.w word_7D1C-Map_7CB6; 2
+		dc.w word_7D26-Map_7CB6; 3
+		dc.w word_7D30-Map_7CB6; 4
+		dc.w word_7D3A-Map_7CB6; 5
 word_7CC2:	dc.w $B			; DATA XREF: ROM:00007CB6o
 		dc.w $F805,  $90,  $48,$FFC4; 0
 		dc.w $F805,  $88,  $44,$FFD4; 4
@@ -10401,13 +10401,13 @@ loc_7DA6:				; CODE XREF: ROM:00007DA8j
 		move.l	d0,(a1)+
 		dbf	d1,loc_7DA6
 		move.l	#$42000000,(vdp_control_port).l
-		lea	(ArtNem_7C43A).l,a0
+		lea	(Nem_7C43A).l,a0
 		bsr.w	NemDec_14DE
 		move.l	#$4E000000,(vdp_control_port).l
-		lea	(ArtNem_7C9AE).l,a0
+		lea	(Nem_7C9AE).l,a0
 		bsr.w	NemDec_14DE
 		lea	(v_128x128_tiles).l,a1
-		lea	(MapEng_7CB80).l,a0
+		lea	(Eni_7CB80).l,a0
 		move.w	#$6000,d0
 		bsr.w	EniDec_17BC
 		lea	(v_128x128_tiles).l,a1
@@ -10712,7 +10712,7 @@ loc_80E4:				; DATA XREF: ROM:000080CCo
 		add.w	d0,d0
 		add.w	d0,d0
 		move.l	off_80CC+4(pc,d0.w),8(a0)
-		move.l	#MapUnc_8146,4(a0)
+		move.l	#Map_8146,4(a0)
 		move.w	#$70,2(a0) ; 'p'
 		bsr.w	sub_8BC8
 		move.b	#0,1(a0)
@@ -10745,10 +10745,10 @@ loc_8140:				; CODE XREF: ROM:00008138j
 ; --------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; --------------------------------------------------------------------------
-MapUnc_8146:	dc.w word_814C-MapUnc_8146; 0 ;	DATA XREF: ROM:000080F6o
+Map_8146:	dc.w word_814C-Map_8146; 0 ;	DATA XREF: ROM:000080F6o
 					; ROM:00008146o ...
-		dc.w word_8166-MapUnc_8146; 1
-		dc.w word_8188-MapUnc_8146; 2
+		dc.w word_8166-Map_8146; 1
+		dc.w word_8188-Map_8146; 2
 word_814C:	dc.w 3			; DATA XREF: ROM:00008146o
 		dc.w $F80D,    0,    0,	   0; 0
 		dc.w $F80D,   $C,    6,	 $28; 4
@@ -11401,7 +11401,7 @@ byte_87C1:	dc.b   3,  0,  0,  0,  0; 0 ; DATA XREF: sub_84C4+50o
 word_87C6:	dc.w   0		; 0 ; DATA XREF: ROM:00007E4Ao
 					; ROM:00007EBEo ...
 ; Sonic/Miles animated background
-		dc.l $FF000000+ArtUnc_7CD2C
+		dc.l $FF000000+Art_7CD2C
 		dc.w $20
 		dc.b 6
 		dc.b $A
@@ -11542,16 +11542,16 @@ loc_8C2A:				; CODE XREF: ROM:00008C2Cj
 		clr.w	(v_vdp_command_buffer).w
 		move.l	#-$2400,($FFFFDCFC).w
 		move.l	#$42000000,(vdp_control_port).l
-		lea	(ArtNem_7C43A).l,a0
+		lea	(Nem_7C43A).l,a0
 		bsr.w	NemDec_14DE
 		move.l	#$4E000000,(vdp_control_port).l
-		lea	(ArtNem_7D990).l,a0
+		lea	(Nem_7D990).l,a0
 		bsr.w	NemDec_14DE
 		move.l	#$52000000,(vdp_control_port).l
-		lea	(ArtNem_7DA10).l,a0
+		lea	(Nem_7DA10).l,a0
 		bsr.w	NemDec_14DE
 		lea	(v_128x128_tiles).l,a1
-		lea	(MapEng_7CB80).l,a0
+		lea	(Eni_7CB80).l,a0
 		move.w	#$6000,d0
 		bsr.w	EniDec_17BC
 		lea	(v_128x128_tiles).l,a1
@@ -12831,19 +12831,19 @@ loc_9D7C:				; CODE XREF: ROM:00009D74j
 		bsr.w	sub_ABE2
 		bsr.w	sub_AC30
 		move.l	#$6AC00000,(vdp_control_port).l
-		lea	(ArtNem_91F3C).l,a0
+		lea	(Nem_91F3C).l,a0
 		bsr.w	j_NemDec_14DE
 		move.l	#$65000001,(vdp_control_port).l
-		lea	(ArtNem_90992).l,a0
+		lea	(Nem_90992).l,a0
 		bsr.w	j_NemDec_14DE
 		move.l	#$52600002,(vdp_control_port).l
-		lea	(ArtNem_927E0).l,a0
+		lea	(Nem_927E0).l,a0
 		bsr.w	j_NemDec_14DE
 		move.l	#$60000002,(vdp_control_port).l
-		lea	(ArtNem_8CC44).l,a0
+		lea	(Nem_8CC44).l,a0
 		bsr.w	j_NemDec_14DE
 		move.l	#$69E00002,(vdp_control_port).l
-		lea	(ArtNem_8DAFC).l,a0
+		lea	(Nem_8DAFC).l,a0
 		bsr.w	j_NemDec_14DE
 		move.w	#$E00,($FFFFFE10).w
 		move	#$2300,sr
@@ -12995,7 +12995,7 @@ loc_9FB2:				; CODE XREF: sub_9EF4+C0j
 		move.w	#$EEE,($FFFFFB8C).w
 		move.w	#$EE,($FFFFFBAC).w ; '='
 		move.l	#$40200000,(vdp_control_port).l
-		lea	(ArtNem_BD26).l,a0
+		lea	(Nem_BD26).l,a0
 		bsr.w	j_NemDec_14DE
 		clr.w	($FFFFFF4C).w
 
@@ -13023,7 +13023,7 @@ loc_A002:				; CODE XREF: sub_9EF4+108j
 		bsr.w	sub_246A
 		bsr.w	sub_BF92
 		move.l	#$40000000,(vdp_control_port).l
-		lea	(ArtNem_94B28).l,a0
+		lea	(Nem_94B28).l,a0
 		bsr.w	j_NemDec_14DE
 		lea	(byte_B23A).l,a0
 		lea	(v_128x128_tiles).l,a1
@@ -13210,10 +13210,10 @@ loc_A256:				; DATA XREF: ROM:0000A208o
 		movea.l	(sp)+,a0
 		rts	
 ; ===========================================================================
-off_A29C:	dc.l MapEng_906E0
-		dc.l MapEng_906F8
-		dc.l MapEng_90722
-		dc.l MapEng_9073C
+off_A29C:	dc.l Eni_906E0
+		dc.l Eni_906F8
+		dc.l Eni_90722
+		dc.l Eni_9073C
 ; ===========================================================================
 
 loc_A2AC:				; CODE XREF: ROM:0000A25Ej
@@ -13365,10 +13365,10 @@ loc_A3FC:				; CODE XREF: ROM:0000A3EEj
 		move.b	#3,$18(a0)
 		move.w	#4,($FFFFF662).w
 		move.l	a0,-(sp)
-		lea	(MapEng_9076E).l,a0
+		lea	(Eni_9076E).l,a0
 		cmpi.w	#4,($FFFFF750).w
 		bne.s	loc_A43C
-		lea	(MapEng_907C0).l,a0
+		lea	(Eni_907C0).l,a0
 
 loc_A43C:				; CODE XREF: ROM:0000A434j
 		lea	(v_128x128_tiles).l,a1
@@ -13444,7 +13444,7 @@ loc_A4F4:				; CODE XREF: ROM:0000A4DEj
 		clr.b	$1C(a0)
 		clr.b	$1B(a0)
 		clr.b	$1E(a0)
-		move.l	#MapUnc_ADA2,4(a0)
+		move.l	#Map_ADA2,4(a0)
 		move.w	#0,2(a0)
 		jsr	sub_16D6E
 		subi.w	#$14,8(a0)
@@ -13783,7 +13783,7 @@ off_A8A2:	dc.w loc_A8AA-off_A8A2	; 0 ; DATA XREF: ROM:0000A8A2o
 loc_A8AA:				; DATA XREF: ROM:0000A8A2o
 		lea	(off_3B322).l,a1
 		bsr.w	sub_BFB6
-		move.l	#MapUnc_ADA2,4(a0)
+		move.l	#Map_ADA2,4(a0)
 		move.w	#-$8000,2(a0)
 		move.b	#1,$18(a0)
 		jsr	sub_16D6E
@@ -13885,7 +13885,7 @@ off_A996:	dc.w loc_A99A-off_A996	; 0 ; DATA XREF: ROM:0000A996o
 loc_A99A:				; DATA XREF: ROM:0000A996o
 		lea	(off_3B322).l,a1
 		bsr.w	sub_BFB6
-		move.l	#MapUnc_ADA2,4(a0)
+		move.l	#Map_ADA2,4(a0)
 		move.w	#-$8000,2(a0)
 		move.b	#3,$18(a0)
 		jsr	sub_16D6E
@@ -14143,19 +14143,19 @@ off_ABEE:	dc.w loc_ABF4-off_ABEE	; 0 ; DATA XREF: ROM:0000ABEEo
 
 loc_ABF4:				; DATA XREF: ROM:0000ABEEo
 		move.l	#$43200000,(vdp_control_port).l
-		lea	(ArtNem_92F0A).l,a0
+		lea	(Nem_92F0A).l,a0
 		bra.w	j_NemDec_14DE
 ; ===========================================================================
 
 loc_AC08:				; DATA XREF: ROM:0000ABEEo
 		move.l	#$43200000,(vdp_control_port).l
-		lea	(ArtNem_93848).l,a0
+		lea	(Nem_93848).l,a0
 		bra.w	j_NemDec_14DE
 ; ===========================================================================
 
 loc_AC1C:				; DATA XREF: ROM:0000ABEEo
 		move.l	#$43200000,(vdp_control_port).l
-		lea	(ArtNem_93F3C).l,a0
+		lea	(Nem_93F3C).l,a0
 		bra.w	j_NemDec_14DE
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -14176,19 +14176,19 @@ off_AC3C:	dc.w loc_AC42-off_AC3C	; 0 ; DATA XREF: ROM:0000AC3Co
 
 loc_AC42:				; DATA XREF: ROM:0000AC3Co
 		move.l	#$72800002,(vdp_control_port).l
-		lea	(ArtNem_7EF60).l,a0
+		lea	(Nem_7EF60).l,a0
 		bra.w	j_NemDec_14DE
 ; ===========================================================================
 
 loc_AC56:				; DATA XREF: ROM:0000AC3Co
 		move.l	#$72800002,(vdp_control_port).l
-		lea	(ArtNem_7F5E2).l,a0
+		lea	(Nem_7F5E2).l,a0
 		bra.w	j_NemDec_14DE
 ; ===========================================================================
 
 loc_AC6A:				; DATA XREF: ROM:0000AC3Co
 		move.l	#$72800002,(vdp_control_port).l
-		lea	(ArtNem_7F340).l,a0
+		lea	(Nem_7F340).l,a0
 		bra.w	j_NemDec_14DE
 ; ===========================================================================
 word_AC7E:	dc.w  $EEE,    0, $A22,	$C42, $E44, $E66, $EEE,	$AAA, $888, $444, $8AE,	$46A,	$E,    8,  $AE,	 $8E; 0
@@ -14210,7 +14210,7 @@ dword_AD62:	dc.l $3ECC00		; DATA XREF: ROM:0000A3B0o
 dword_AD66:	dc.l $3ECD00		; DATA XREF: sub_ABBA+1Co
 dword_AD6A:	dc.l $3ECE00		; DATA XREF: ROM:0000A73Eo
 dword_AD6E:	dc.l $3ECF00		; DATA XREF: ROM:0000A72Co
-off_AD72:	dc.l MapUnc_11E1C	; 0 ; DATA XREF: ROM:0000AAC0o
+off_AD72:	dc.l Map_11E1C	; 0 ; DATA XREF: ROM:0000AAC0o
 		dc.w $594
 		dc.w $402
 		dc.w $800
@@ -14231,33 +14231,33 @@ byte_AD9E:	dc.b   1,  5,  6,$FF	; 0 ; DATA XREF: ROM:0000AD82o
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-MapUnc_ADA2:	dc.w word_ADD6-MapUnc_ADA2; 0 ;	DATA XREF: ROM:0000A500o
+Map_ADA2:	dc.w word_ADD6-Map_ADA2; 0 ;	DATA XREF: ROM:0000A500o
 					; ROM:0000A8B4o ...
-		dc.w word_AE10-MapUnc_ADA2; 1
-		dc.w word_AE32-MapUnc_ADA2; 2
-		dc.w word_AE44-MapUnc_ADA2; 3
-		dc.w word_AE56-MapUnc_ADA2; 4
-		dc.w word_AE70-MapUnc_ADA2; 5
-		dc.w word_AEA2-MapUnc_ADA2; 6
-		dc.w word_AED4-MapUnc_ADA2; 7
-		dc.w word_AF16-MapUnc_ADA2; 8
-		dc.w word_AF40-MapUnc_ADA2; 9
-		dc.w word_AF62-MapUnc_ADA2; 10
-		dc.w word_AF84-MapUnc_ADA2; 11
-		dc.w word_AFA6-MapUnc_ADA2; 12
-		dc.w word_AFC0-MapUnc_ADA2; 13
-		dc.w word_AFE2-MapUnc_ADA2; 14
-		dc.w word_B044-MapUnc_ADA2; 15
-		dc.w word_B066-MapUnc_ADA2; 16
-		dc.w word_B080-MapUnc_ADA2; 17
-		dc.w word_B11A-MapUnc_ADA2; 18
-		dc.w word_B12C-MapUnc_ADA2; 19
-		dc.w word_B136-MapUnc_ADA2; 20
-		dc.w word_B140-MapUnc_ADA2; 21
-		dc.w word_B14A-MapUnc_ADA2; 22
-		dc.w word_B154-MapUnc_ADA2; 23
-		dc.w word_B1CE-MapUnc_ADA2; 24
-		dc.w word_B210-MapUnc_ADA2; 25
+		dc.w word_AE10-Map_ADA2; 1
+		dc.w word_AE32-Map_ADA2; 2
+		dc.w word_AE44-Map_ADA2; 3
+		dc.w word_AE56-Map_ADA2; 4
+		dc.w word_AE70-Map_ADA2; 5
+		dc.w word_AEA2-Map_ADA2; 6
+		dc.w word_AED4-Map_ADA2; 7
+		dc.w word_AF16-Map_ADA2; 8
+		dc.w word_AF40-Map_ADA2; 9
+		dc.w word_AF62-Map_ADA2; 10
+		dc.w word_AF84-Map_ADA2; 11
+		dc.w word_AFA6-Map_ADA2; 12
+		dc.w word_AFC0-Map_ADA2; 13
+		dc.w word_AFE2-Map_ADA2; 14
+		dc.w word_B044-Map_ADA2; 15
+		dc.w word_B066-Map_ADA2; 16
+		dc.w word_B080-Map_ADA2; 17
+		dc.w word_B11A-Map_ADA2; 18
+		dc.w word_B12C-Map_ADA2; 19
+		dc.w word_B136-Map_ADA2; 20
+		dc.w word_B140-Map_ADA2; 21
+		dc.w word_B14A-Map_ADA2; 22
+		dc.w word_B154-Map_ADA2; 23
+		dc.w word_B1CE-Map_ADA2; 24
+		dc.w word_B210-Map_ADA2; 25
 word_ADD6:	dc.w 7			; DATA XREF: ROM:0000ADA2o
 		dc.w $F004, $493, $249,$FFE0; 0
 		dc.w $F809, $495, $24A,$FFE0; 4
@@ -14963,7 +14963,7 @@ byte_BD1A:	dc.b   5,$24,$25,$1C,$1D,$1A,$1B,$11,  5,  6,$FF,  0; 0
 ; 64 blocks
 ; Standard font	used in	credits
 ; -------------------------------------------------------------------------------
-ArtNem_BD26:	dc.b $80,$40,$80,  4, $A,$13,  3,$23,  4,$35,$1A,$44, $C,$55,$1B,$67; 0
+Nem_BD26:	dc.b $80,$40,$80,  4, $A,$13,  3,$23,  4,$35,$1A,$44, $C,$55,$1B,$67; 0
 					; DATA XREF: ROM:00003A24o
 					; sub_9EF4+E4o
 		dc.b $7C,$73,  1,$86,  3,  0,$13,  2,$27,$7D,$34, $B,$45,$1C,$55,$1D; 16
@@ -20693,7 +20693,7 @@ loc_F196:				; DATA XREF: ROM:0000F154o
 		clr.b	(v_boss_spawn_delay).w
 		move.l	#$6C000002,(vdp_control_port).l
 		lea	(vdp_data_port).l,a6
-		lea	(ArtUnc_894E4).l,a2
+		lea	(Art_894E4).l,a2
 		moveq	#7,d0
 
 loc_F1DE:				; CODE XREF: ROM:0000F1EEj
@@ -21240,13 +21240,13 @@ off_F68C:	dc.w loc_F694-off_F68C	; 0 ; DATA XREF: ROM:0000F68Co
 
 loc_F694:				; DATA XREF: ROM:0000F68Co
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_FC70,4(a0)
+		move.l	#Map_FC70,4(a0)
 		move.w	#$43B6,2(a0)
 		move.b	#3,$18(a0)
 		cmpi.b	#8,($FFFFFE10).w
 		bne.s	loc_F6C6
 		addq.b	#4,$24(a0)
-		move.l	#MapUnc_FC28,4(a0)
+		move.l	#Map_FC28,4(a0)
 		move.w	#$6300,2(a0)
 
 loc_F6C6:				; CODE XREF: ROM:0000F6B2j
@@ -21752,13 +21752,13 @@ byte_FB28:	dc.b $FF,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0;
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_FC28:	dc.w word_FC34-MapUnc_FC28; 0 ;	DATA XREF: ROM:0000F6B8o
+Map_FC28:	dc.w word_FC34-Map_FC28; 0 ;	DATA XREF: ROM:0000F6B8o
 					; ROM:0000FC28o ...
-		dc.w word_FC3E-MapUnc_FC28; 1
-		dc.w word_FC48-MapUnc_FC28; 2
-		dc.w word_FC52-MapUnc_FC28; 3
-		dc.w word_FC5C-MapUnc_FC28; 4
-		dc.w word_FC66-MapUnc_FC28; 5
+		dc.w word_FC3E-Map_FC28; 1
+		dc.w word_FC48-Map_FC28; 2
+		dc.w word_FC52-Map_FC28; 3
+		dc.w word_FC5C-Map_FC28; 4
+		dc.w word_FC66-Map_FC28; 5
 word_FC34:	dc.w 1			; DATA XREF: ROM:0000FC28o
 		dc.w $F805,    0,    0,$FFF8; 0
 word_FC3E:	dc.w 1			; DATA XREF: ROM:0000FC28o
@@ -21774,9 +21774,9 @@ word_FC66:	dc.w 1			; DATA XREF: ROM:0000FC28o
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_FC70:	dc.w word_FC74-MapUnc_FC70; 0 ;	DATA XREF: ROM:0000F698o
+Map_FC70:	dc.w word_FC74-Map_FC70; 0 ;	DATA XREF: ROM:0000F698o
 					; ROM:0000FC70o ...
-		dc.w word_FC7E-MapUnc_FC70; 1
+		dc.w word_FC7E-Map_FC70; 1
 word_FC74:	dc.w 1			; DATA XREF: ROM:0000FC70o
 		dc.w $F805,    4,    2,$FFF8; 0
 word_FC7E:	dc.w 1			; DATA XREF: ROM:0000FC70o
@@ -21840,7 +21840,7 @@ off_FCBC:	dc.w loc_FCCA-off_FCBC	; 0 ; DATA XREF: ROM:0000FCBCo
 
 loc_FCCA:				; DATA XREF: ROM:0000FCBCo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_101E8,4(a0)
+		move.l	#Map_101E8,4(a0)
 		move.w	#$43E3,2(a0)
 		move.b	#4,1(a0)
 		move.b	#3,$18(a0)
@@ -21850,7 +21850,7 @@ loc_FCCA:				; DATA XREF: ROM:0000FCBCo
 		move.w	8(a0),$3A(a0)
 		cmpi.b	#$B,($FFFFFE10).w
 		bne.s	loc_FD22
-		move.l	#MapUnc_10256,4(a0)
+		move.l	#Map_10256,4(a0)
 		move.w	#0,2(a0)
 		move.b	#$18,$19(a0)
 		move.b	#8,$16(a0)
@@ -21858,7 +21858,7 @@ loc_FCCA:				; DATA XREF: ROM:0000FCBCo
 loc_FD22:				; CODE XREF: ROM:0000FD06j
 		cmpi.b	#$F,($FFFFFE10).w
 		bne.s	loc_FD44
-		move.l	#MapUnc_1021E,4(a0)
+		move.l	#Map_1021E,4(a0)
 		move.w	#0,2(a0)
 		move.b	#$20,$19(a0) ; ' '
 		move.b	#8,$16(a0)
@@ -21933,7 +21933,7 @@ loc_FE24:				; CODE XREF: ROM:0000FD6Aj
 		move.b	d1,$28(a0)
 		cmpi.b	#$40,d1	; '@'
 		bne.s	loc_FE50
-		move.l	#MapUnc_102DE,4(a0)
+		move.l	#Map_102DE,4(a0)
 		move.b	#$A7,$20(a0)
 
 loc_FE50:				; CODE XREF: ROM:0000FE40j
@@ -22301,11 +22301,11 @@ loc_101D0:				; CODE XREF: ROM:00010184j
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-MapUnc_101E8:	dc.w word_101F0-MapUnc_101E8; 0	; DATA XREF: ROM:0000FCCEo
+Map_101E8:	dc.w word_101F0-Map_101E8; 0	; DATA XREF: ROM:0000FCCEo
 					; ROM:000101E8o ...
-		dc.w word_10212-MapUnc_101E8; 1
-		dc.w word_10212-MapUnc_101E8; 2
-		dc.w word_1021C-MapUnc_101E8; 3
+		dc.w word_10212-Map_101E8; 1
+		dc.w word_10212-Map_101E8; 2
+		dc.w word_1021C-Map_101E8; 3
 word_101F0:	dc.w 4			; DATA XREF: ROM:000101E8o
 		dc.w $F00D,$2004,$2002,$FFE0; 0
 		dc.w $F00D,$200C,$2006,	   0; 4
@@ -22317,11 +22317,11 @@ word_1021C:	dc.w 0			; DATA XREF: ROM:000101E8o
 ; ------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ------------------------------------------------------------------------------
-MapUnc_1021E:	dc.w word_10226-MapUnc_1021E; 0	; DATA XREF: ROM:0000FD2Ao
+Map_1021E:	dc.w word_10226-Map_1021E; 0	; DATA XREF: ROM:0000FD2Ao
 					; ROM:0001021Eo ...
-		dc.w word_10238-MapUnc_1021E; 1
-		dc.w word_10242-MapUnc_1021E; 2
-		dc.w word_10254-MapUnc_1021E; 3
+		dc.w word_10238-Map_1021E; 1
+		dc.w word_10242-Map_1021E; 2
+		dc.w word_10254-Map_1021E; 3
 word_10226:	dc.w 2			; DATA XREF: ROM:0001021Eo
 		dc.w $F80D,$6055,$602A,$FFE0; 0
 		dc.w $F80D,$6055,$602A,	   0; 4
@@ -22334,11 +22334,11 @@ word_10254:	dc.w 0			; DATA XREF: ROM:0001021Eo
 ; ---------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ---------------------------------------------------------------------------------
-MapUnc_10256:	dc.w word_1025E-MapUnc_10256; 0	; DATA XREF: ROM:0000FD08o
+Map_10256:	dc.w word_1025E-Map_10256; 0	; DATA XREF: ROM:0000FD08o
 					; ROM:00010256o ...
-		dc.w word_10270-MapUnc_10256; 1
-		dc.w word_1027A-MapUnc_10256; 2
-		dc.w word_1028C-MapUnc_10256; 3
+		dc.w word_10270-Map_10256; 1
+		dc.w word_1027A-Map_10256; 2
+		dc.w word_1028C-Map_10256; 3
 word_1025E:	dc.w 2			; DATA XREF: ROM:00010256o
 		dc.w $F809,$6060,$6030,$FFE8; 0
 		dc.w $F809,$6860,$6830,	   0; 4
@@ -22361,7 +22361,7 @@ word_1028C:	dc.w $A			; DATA XREF: ROM:00010256o
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_102DE:	dc.w 6			; DATA XREF: ROM:0000FE42o
+Map_102DE:	dc.w 6			; DATA XREF: ROM:0000FE42o
 		dc.w $FF92,$FF9C,    2,$F80D; 0
 		dc.w $6058,$602C,$FFE0,$F80D; 4
 		dc.w $6858,$682C,    0	; 8
@@ -22422,7 +22422,7 @@ off_1031E:	dc.w loc_10324-off_1031E; 0 ; DATA XREF: ROM:0001031Eo
 
 loc_10324:				; DATA XREF: ROM:0001031Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_10452,4(a0)
+		move.l	#Map_10452,4(a0)
 		move.w	#$4398,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#4,1(a0)
@@ -22536,15 +22536,15 @@ loc_1044A:				; DATA XREF: ROM:0001031Eo
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-MapUnc_10452:	dc.w word_10462-MapUnc_10452; 0	; DATA XREF: ROM:00010328o
+Map_10452:	dc.w word_10462-Map_10452; 0	; DATA XREF: ROM:00010328o
 					; ROM:00010452o ...
-		dc.w word_1046C-MapUnc_10452; 1
-		dc.w word_10476-MapUnc_10452; 2
-		dc.w word_10480-MapUnc_10452; 3
-		dc.w word_1048A-MapUnc_10452; 4
-		dc.w word_10494-MapUnc_10452; 5
-		dc.w word_104A8-MapUnc_10452; 6
-		dc.w word_1049E-MapUnc_10452; 7
+		dc.w word_1046C-Map_10452; 1
+		dc.w word_10476-Map_10452; 2
+		dc.w word_10480-Map_10452; 3
+		dc.w word_1048A-Map_10452; 4
+		dc.w word_10494-Map_10452; 5
+		dc.w word_104A8-Map_10452; 6
+		dc.w word_1049E-Map_10452; 7
 word_10462:	dc.w 1			; DATA XREF: ROM:00010452o
 		dc.w $F001,    0,    0,$FFFC; 0
 word_1046C:	dc.w 1			; DATA XREF: ROM:00010452o
@@ -22596,11 +22596,11 @@ loc_104CE:				; DATA XREF: ROM:000104BAo
 		lea	word_104C4(pc,d0.w),a2
 		move.b	(a2)+,$19(a0)
 		move.b	(a2)+,$1A(a0)
-		move.l	#MapUnc_107F6,4(a0)
+		move.l	#Map_107F6,4(a0)
 		move.w	#$4000,2(a0)
 		cmpi.b	#$F,($FFFFFE10).w
 		bne.s	loc_1050E
-		move.l	#MapUnc_1084E,4(a0)
+		move.l	#Map_1084E,4(a0)
 		move.w	#$4000,2(a0)
 
 loc_1050E:				; CODE XREF: ROM:000104FEj
@@ -22962,9 +22962,9 @@ loc_107EE:				; CODE XREF: ROM:0001068Ej
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_107F6:	dc.w byte_107FA-MapUnc_107F6; 0	; DATA XREF: ROM:000104EAo
+Map_107F6:	dc.w byte_107FA-Map_107F6; 0	; DATA XREF: ROM:000104EAo
 					; ROM:000107F6o ...
-		dc.w byte_1080C-MapUnc_107F6; 1
+		dc.w byte_1080C-Map_107F6; 1
 byte_107FA:	dc.b   0,  2,$F4, $F,  0,$56,  0,$2B,$FF,$E0,$F4, $F,  8,$56,  8,$2B; 0
 					; DATA XREF: ROM:000107F6o
 		dc.b   0,  0		; 16
@@ -22977,9 +22977,9 @@ byte_1080C:	dc.b   0,  8,$CC,  7,  0, $A,  0,  5,$FF,$E0,$CC, $D,  0,$12,  0,  9
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_1084E:	dc.w byte_10852-MapUnc_1084E; 0	; DATA XREF: ROM:00010500o
+Map_1084E:	dc.w byte_10852-Map_1084E; 0	; DATA XREF: ROM:00010500o
 					; ROM:0001084Eo ...
-		dc.w byte_10874-MapUnc_1084E; 1
+		dc.w byte_10874-Map_1084E; 1
 byte_10852:	dc.b   0,  4,$F0, $E,  0,  1,  0,  0,$FF,$E0,$F0, $E,  8,  1,  8,  0; 0
 					; DATA XREF: ROM:0001084Eo
 		dc.b   0,  0,  8, $E,  0,$2D,  0,$16,$FF,$E0,  8, $E,  0,$39,  0,$1C; 16
@@ -23038,7 +23038,7 @@ off_108CA:	dc.w loc_108D0-off_108CA; 0 ; DATA XREF: ROM:000108CAo
 
 loc_108D0:				; DATA XREF: ROM:000108CAo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_10C6C,4(a0)
+		move.l	#Map_10C6C,4(a0)
 		move.w	#$4000,2(a0)
 		bsr.w	sub_16D6E
 		ori.b	#4,1(a0)
@@ -23048,7 +23048,7 @@ loc_108D0:				; DATA XREF: ROM:000108CAo
 		move.l	#byte_10BF2,$34(a0)
 		cmpi.b	#8,($FFFFFE10).w
 		bne.s	loc_10938
-		move.l	#MapUnc_1101C,4(a0)
+		move.l	#Map_1101C,4(a0)
 		move.w	#$434A,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#$30,$19(a0) ; '0'
@@ -23060,7 +23060,7 @@ loc_108D0:				; DATA XREF: ROM:000108CAo
 loc_10938:				; CODE XREF: ROM:0001090Cj
 		cmpi.b	#$A,($FFFFFE10).w
 		bne.s	loc_10962
-		move.l	#MapUnc_110C6,4(a0)
+		move.l	#Map_110C6,4(a0)
 		move.w	#$639D,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#$40,$19(a0) ; '@'
@@ -23164,7 +23164,7 @@ off_10A16:	dc.w loc_10A1C-off_10A16; 0 ; DATA XREF: ROM:00010A16o
 
 loc_10A1C:				; DATA XREF: ROM:00010A16o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_10F0C,4(a0)
+		move.l	#Map_10F0C,4(a0)
 		move.w	#$42B8,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#4,$18(a0)
@@ -23179,7 +23179,7 @@ loc_10A5A:				; CODE XREF: ROM:00010A52j
 		move.l	a4,$34(a0)
 		cmpi.b	#$A,($FFFFFE10).w
 		bne.s	loc_10A86
-		move.l	#MapUnc_110C6,4(a0)
+		move.l	#Map_110C6,4(a0)
 		move.w	#$639D,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#$40,$19(a0) ; '@'
@@ -23188,7 +23188,7 @@ loc_10A5A:				; CODE XREF: ROM:00010A52j
 loc_10A86:				; CODE XREF: ROM:00010A64j
 		cmpi.b	#$B,($FFFFFE10).w
 		bne.s	loc_10AAE
-		move.l	#MapUnc_11106,4(a0)
+		move.l	#Map_11106,4(a0)
 		move.w	#$63F4,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#$20,$19(a0) ; ' '
@@ -23197,7 +23197,7 @@ loc_10A86:				; CODE XREF: ROM:00010A64j
 loc_10AAE:				; CODE XREF: ROM:00010A8Cj
 		cmpi.b	#$F,($FFFFFE10).w
 		bne.s	loc_10AD6
-		move.l	#MapUnc_1115E,4(a0)
+		move.l	#Map_1115E,4(a0)
 		move.w	#$4000,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#$20,$19(a0) ; ' '
@@ -23343,11 +23343,11 @@ byte_10C3C:	dc.b $20,$20,$20,$20,$20,$20,$20,$20,$21,$21,$22,$22,$23,$23,$24,$24
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_10C6C:	dc.w word_10C74-MapUnc_10C6C; 0	; DATA XREF: ROM:000108D4o
+Map_10C6C:	dc.w word_10C74-Map_10C6C; 0	; DATA XREF: ROM:000108D4o
 					; ROM:00010C6Co ...
-		dc.w word_10CF6-MapUnc_10C6C; 1
-		dc.w word_10D78-MapUnc_10C6C; 2
-		dc.w word_10E42-MapUnc_10C6C; 3
+		dc.w word_10CF6-Map_10C6C; 1
+		dc.w word_10D78-Map_10C6C; 2
+		dc.w word_10E42-Map_10C6C; 3
 word_10C74:	dc.w $10		; DATA XREF: ROM:00010C6Co
 		dc.w $C80E,  $57,  $2B,	 $10; 0
 		dc.w $D00D,  $63,  $31,$FFF0; 4
@@ -23437,11 +23437,11 @@ word_10E42:	dc.w $19		; DATA XREF: ROM:00010C6Co
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_10F0C:	dc.w word_10F14-MapUnc_10F0C ; DATA XREF: ROM:00010A20o
+Map_10F0C:	dc.w word_10F14-Map_10F0C ; DATA XREF: ROM:00010A20o
 					; ROM:00010F0Co ...
-		dc.w word_10F36-MapUnc_10F0C
-		dc.w word_10F78-MapUnc_10F0C
-		dc.w word_10F9A-MapUnc_10F0C
+		dc.w word_10F36-Map_10F0C
+		dc.w word_10F78-Map_10F0C
+		dc.w word_10F9A-Map_10F0C
 word_10F14:	dc.w 4			; DATA XREF: ROM:00010F0Co
 		dc.w $F80D,    0,    0,$FFE0; 0
 		dc.w  $80D,    0,    0,$FFE0; 4
@@ -23479,10 +23479,10 @@ byte_10FEC:	dc.b $10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10,$10
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_1101C:	dc.w word_11022-MapUnc_1101C; 0	; DATA XREF: ROM:0001090Eo
+Map_1101C:	dc.w word_11022-Map_1101C; 0	; DATA XREF: ROM:0001090Eo
 					; ROM:0001101Co ...
-		dc.w word_11064-MapUnc_1101C; 1
-		dc.w word_11064-MapUnc_1101C; 2
+		dc.w word_11064-Map_1101C; 1
+		dc.w word_11064-Map_1101C; 2
 word_11022:	dc.w 8			; DATA XREF: ROM:0001101Co
 		dc.w $F00D,    0,    0,$FFD0; 0
 		dc.w	$D,    8,    4,$FFD0; 4
@@ -23508,10 +23508,10 @@ word_11064:	dc.w $C			; DATA XREF: ROM:0001101Co
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_110C6:	dc.w byte_110CC-MapUnc_110C6; 0	; DATA XREF: ROM:00010940o
+Map_110C6:	dc.w byte_110CC-Map_110C6; 0	; DATA XREF: ROM:00010940o
 					; ROM:00010A66o ...
-		dc.w byte_110CC-MapUnc_110C6; 1
-		dc.w byte_110CC-MapUnc_110C6; 2
+		dc.w byte_110CC-Map_110C6; 1
+		dc.w byte_110CC-Map_110C6; 2
 byte_110CC:	dc.b   0,  7,$F0, $F,  8,$10,  8,  8,$FF,$C0,$F0, $F,  8,$10,  8,  8; 0
 					; DATA XREF: ROM:000110C6o
 		dc.b $FF,$E0,$F0, $F,  8,$10,  8,  8,  0,  0,$F0, $F,  8,  0,  8,  0; 16
@@ -23520,9 +23520,9 @@ byte_110CC:	dc.b   0,  7,$F0, $F,  8,$10,  8,  8,$FF,$C0,$F0, $F,  8,$10,  8,  8
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_11106:	dc.w byte_1110A-MapUnc_11106; 0	; DATA XREF: ROM:00010A8Eo
+Map_11106:	dc.w byte_1110A-Map_11106; 0	; DATA XREF: ROM:00010A8Eo
 					; ROM:00011106o ...
-		dc.w byte_1112C-MapUnc_11106; 1
+		dc.w byte_1112C-Map_11106; 1
 byte_1110A:	dc.b   0,  4,$F0, $D,  0,  0,  0,  0,$FF,$E0,$F0, $D,  8,  0,  8,  0; 0
 					; DATA XREF: ROM:00011106o
 		dc.b   0,  0,  0,  9,  0,  8,  0,  4,$FF,$F0,  0, $B,  0, $E,  0,  7; 16
@@ -23532,9 +23532,9 @@ byte_1112C:	dc.b   0,  6,$F0,  5,  0,  0,  0,  0,$FF,$E0,$F0,  5,  0,  4,  0,  2
 		dc.b $FF,$F0,$F0,  5,  8,  4,  8,  2,  0,  0,$F0,  5,  8,  0,  8,  0; 16
 		dc.b   0,$10,  0,  9,  0,  8,  0,  4,$FF,$F0,  0, $B,  0, $E,  0,  7; 32
 		dc.b   0,  8		; 48
-MapUnc_1115E:	dc.w byte_11162-MapUnc_1115E; 0	; DATA XREF: ROM:00010AB6o
+Map_1115E:	dc.w byte_11162-Map_1115E; 0	; DATA XREF: ROM:00010AB6o
 					; ROM:0001115Eo ...
-		dc.w byte_11184-MapUnc_1115E; 1
+		dc.w byte_11184-Map_1115E; 1
 byte_11162:	dc.b   0,  4,$F0, $D,  0,$55,  0,$2A,$FF,$E0,$F0, $D,  8,$55,  8,$2A; 0
 					; DATA XREF: ROM:0001115Eo
 		dc.b   0,  0,  0, $D,  0,$A3,  0,$51,$FF,$E0,  0, $D,  8,$A3,  8,$51; 16
@@ -23579,67 +23579,67 @@ Sprite_111D4:				; DATA XREF: ROM:0001600Co
 off_111E2:	dc.w loc_112A4-off_111E2; 0 ; DATA XREF: ROM:000111E2o
 					; ROM:000111E4o ...
 		dc.w loc_112EC-off_111E2; 1
-dword_111E6:	dc.l $00000000+MapUnc_11552; 0 ; DATA XREF: ROM:000112B2t
+dword_111E6:	dc.l $00000000+Map_11552; 0 ; DATA XREF: ROM:000112B2t
 		dc.w $43FD
 		dc.w $406
-		dc.l $1000000+MapUnc_11552
+		dc.l $1000000+Map_11552
 		dc.w $43FD
 		dc.w $406
-		dc.l $1000000+MapUnc_FC70
+		dc.l $1000000+Map_FC70
 		dc.w $43B6
 		dc.w $401
-		dc.l $2000000+MapUnc_11552
+		dc.l $2000000+Map_11552
 		dc.w $23FD
 		dc.w $1006
-		dc.l $3000000+MapUnc_21F14
+		dc.l $3000000+Map_21F14
 		dc.w $43E6
 		dc.w $804
-		dc.l $4000000+MapUnc_21F14
+		dc.l $4000000+Map_21F14
 		dc.w $43E6
 		dc.w $804
-		dc.l $1000000+MapUnc_21F14
+		dc.l $1000000+Map_21F14
 		dc.w $43E6
 		dc.w $2001
-		dc.l $00000000+MapUnc_113D6
+		dc.l $00000000+Map_113D6
 		dc.w $4000
 		dc.w $801
-		dc.l $1000000+MapUnc_113D6
+		dc.l $1000000+Map_113D6
 		dc.w $4000
 		dc.w $801
-		dc.l $000000+MapUnc_113EE
+		dc.l $000000+Map_113EE
 		dc.w $4428
 		dc.w $404
-		dc.l $000000+MapUnc_11406
+		dc.l $000000+Map_11406
 		dc.w $4346
 		dc.w $404
-		dc.l $1000000+MapUnc_11406
+		dc.l $1000000+Map_11406
 		dc.w $4346
 		dc.w $404
-		dc.l $2000000+MapUnc_11406
+		dc.l $2000000+Map_11406
 		dc.w $4346
 		dc.w $404
-		dc.l $3000000+MapUnc_11406
+		dc.l $3000000+Map_11406
 		dc.w $4346
 		dc.w $404
-		dc.l $4000000+MapUnc_11406
+		dc.l $4000000+Map_11406
 		dc.w $4346
 		dc.w $404
-		dc.l $5000000+MapUnc_11406
+		dc.l $5000000+Map_11406
 		dc.w $4346
 		dc.w $404
-		dc.l $000000+MapUnc_114AE
+		dc.l $000000+Map_114AE
 		dc.w $4346
 		dc.w $1804
-		dc.l $1000000+MapUnc_114AE
+		dc.l $1000000+Map_114AE
 		dc.w $4346
 		dc.w $1804
-		dc.l $2000000+MapUnc_114AE
+		dc.l $2000000+Map_114AE
 		dc.w $4346
 		dc.w $804
-		dc.l $3000000+MapUnc_114AE
+		dc.l $3000000+Map_114AE
 		dc.w $4346
 		dc.w $804
-		dc.l $4000000+MapUnc_114AE
+		dc.l $4000000+Map_114AE
 		dc.w $4346
 		dc.w $804
 byte_1128E:	dc.b   0		; 0 ; DATA XREF: ROM:000112D8t
@@ -23706,13 +23706,13 @@ Sprite_112F0:				; DATA XREF: ROM:0001600Co
 off_112FE:	dc.w loc_1131A-off_112FE; 0 ; DATA XREF: ROM:000112FEo
 					; ROM:00011300o ...
 		dc.w loc_1135C-off_112FE; 1
-dword_11302:	dc.l $3000000+MapUnc_FC28; 0 ; DATA XREF: ROM:00011328t
+dword_11302:	dc.l $3000000+Map_FC28; 0 ; DATA XREF: ROM:00011328t
 		dc.w $6300
 		dc.w $401
-		dc.l $000000+MapUnc_11396
+		dc.l $000000+Map_11396
 		dc.w $E35A
 		dc.w $1001
-		dc.l $000000+MapUnc_11576
+		dc.l $000000+Map_11576
 		dc.w $4536
 		dc.w $1001
 ; ===========================================================================
@@ -23755,11 +23755,11 @@ byte_11392:	dc.b $7F,  6,$FD,  2	; 0 ; DATA XREF: ROM:0001136Ao
 ; --------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; --------------------------------------------------------------------------------
-MapUnc_11396:	dc.w word_1139E-MapUnc_11396; 0	; DATA XREF: ROM:0001130At
+Map_11396:	dc.w word_1139E-Map_11396; 0	; DATA XREF: ROM:0001130At
 					; ROM:00011396o ...
-		dc.w word_113A8-MapUnc_11396; 1
-		dc.w word_113B2-MapUnc_11396; 2
-		dc.w word_113C4-MapUnc_11396; 3
+		dc.w word_113A8-Map_11396; 1
+		dc.w word_113B2-Map_11396; 2
+		dc.w word_113C4-Map_11396; 3
 word_1139E:	dc.w 1			; DATA XREF: ROM:00011396o
 		dc.w $F40A,    0,    0,$FFF4; 0
 word_113A8:	dc.w 1			; DATA XREF: ROM:00011396o
@@ -23773,9 +23773,9 @@ word_113C4:	dc.w 2			; DATA XREF: ROM:00011396o
 ; ----------------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------------------
-MapUnc_113D6:	dc.w word_113DA-MapUnc_113D6; 0	; DATA XREF: ROM:0001121Et
+Map_113D6:	dc.w word_113DA-Map_113D6; 0	; DATA XREF: ROM:0001121Et
 					; ROM:00011226t ...
-		dc.w word_113E4-MapUnc_113D6; 1
+		dc.w word_113E4-Map_113D6; 1
 word_113DA:	dc.w 1			; DATA XREF: ROM:000113D6o
 		dc.w $F805,    2,    1,$FFF8; 0
 word_113E4:	dc.w 1			; DATA XREF: ROM:000113D6o
@@ -23783,9 +23783,9 @@ word_113E4:	dc.w 1			; DATA XREF: ROM:000113D6o
 ; --------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; --------------------------------------------------------------------------------
-MapUnc_113EE:	dc.w word_113F2-MapUnc_113EE; 0	; DATA XREF: ROM:000113EEo
+Map_113EE:	dc.w word_113F2-Map_113EE; 0	; DATA XREF: ROM:000113EEo
 					; ROM:000113F0o
-		dc.w word_113FC-MapUnc_113EE; 1
+		dc.w word_113FC-Map_113EE; 1
 word_113F2:	dc.w 1			; DATA XREF: ROM:000113EEo
 		dc.w $F801,    0,    0,$FFFC; 0
 word_113FC:	dc.w 1			; DATA XREF: ROM:000113EEo
@@ -23793,13 +23793,13 @@ word_113FC:	dc.w 1			; DATA XREF: ROM:000113EEo
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_11406:	dc.w word_11412-MapUnc_11406; 0	; DATA XREF: ROM:00011236t
+Map_11406:	dc.w word_11412-Map_11406; 0	; DATA XREF: ROM:00011236t
 					; ROM:0001123Et ...
-		dc.w word_1141C-MapUnc_11406; 1
-		dc.w word_11426-MapUnc_11406; 2
-		dc.w word_11438-MapUnc_11406; 3
-		dc.w word_11452-MapUnc_11406; 4
-		dc.w word_11474-MapUnc_11406; 5
+		dc.w word_1141C-Map_11406; 1
+		dc.w word_11426-Map_11406; 2
+		dc.w word_11438-Map_11406; 3
+		dc.w word_11452-Map_11406; 4
+		dc.w word_11474-Map_11406; 5
 word_11412:	dc.w 1			; DATA XREF: ROM:00011406o
 		dc.w $F801,    0,    0,$FFFC; 0
 word_1141C:	dc.w 1			; DATA XREF: ROM:00011406o
@@ -23827,12 +23827,12 @@ word_11474:	dc.w 7			; DATA XREF: ROM:00011406o
 ; --------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; --------------------------------------------------------------------------------
-MapUnc_114AE:	dc.w word_114B8-MapUnc_114AE; 0	; DATA XREF: ROM:00011266t
+Map_114AE:	dc.w word_114B8-Map_114AE; 0	; DATA XREF: ROM:00011266t
 					; ROM:0001126Et ...
-		dc.w word_114CA-MapUnc_114AE; 1
-		dc.w word_114EC-MapUnc_114AE; 2
-		dc.w word_11506-MapUnc_114AE; 3
-		dc.w word_11528-MapUnc_114AE; 4
+		dc.w word_114CA-Map_114AE; 1
+		dc.w word_114EC-Map_114AE; 2
+		dc.w word_11506-Map_114AE; 3
+		dc.w word_11528-Map_114AE; 4
 word_114B8:	dc.w 2			; DATA XREF: ROM:000114AEo
 		dc.w $F007,    5,    2,$FFE8; 0
 		dc.w $F007,    5,    2,	   8; 4
@@ -23859,10 +23859,10 @@ word_11528:	dc.w 5			; DATA XREF: ROM:000114AEo
 ; --------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; --------------------------------------------------------------------------------
-MapUnc_11552:	dc.w word_11558-MapUnc_11552; 0	; DATA XREF: ROM:000111E6t
+Map_11552:	dc.w word_11558-Map_11552; 0	; DATA XREF: ROM:000111E6t
 					; ROM:000111EEt ...
-		dc.w word_11562-MapUnc_11552; 1
-		dc.w word_1156C-MapUnc_11552; 2
+		dc.w word_11562-Map_11552; 1
+		dc.w word_1156C-Map_11552; 2
 word_11558:	dc.w 1			; DATA XREF: ROM:00011552o
 		dc.w $F801,    4,    2,$FFFC; 0
 word_11562:	dc.w 1			; DATA XREF: ROM:00011552o
@@ -23872,14 +23872,14 @@ word_1156C:	dc.w 1			; DATA XREF: ROM:00011552o
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_11576:	dc.w word_11584-MapUnc_11576; 0	; DATA XREF: ROM:00011312t
+Map_11576:	dc.w word_11584-Map_11576; 0	; DATA XREF: ROM:00011312t
 					; ROM:00011576o ...
-		dc.w word_1158E-MapUnc_11576; 1
-		dc.w word_11598-MapUnc_11576; 2
-		dc.w word_115A2-MapUnc_11576; 3
-		dc.w word_115AC-MapUnc_11576; 4
-		dc.w word_115B6-MapUnc_11576; 5
-		dc.w byte_115C0-MapUnc_11576; 6
+		dc.w word_1158E-Map_11576; 1
+		dc.w word_11598-Map_11576; 2
+		dc.w word_115A2-Map_11576; 3
+		dc.w word_115AC-Map_11576; 4
+		dc.w word_115B6-Map_11576; 5
+		dc.w byte_115C0-Map_11576; 6
 word_11584:	dc.w 1			; DATA XREF: ROM:00011576o
 		dc.w  $204,    0,    0,$FFF8; 0
 word_1158E:	dc.w 1			; DATA XREF: ROM:00011576o
@@ -23915,7 +23915,7 @@ off_115D2:	dc.w loc_115D6-off_115D2; 0 ; DATA XREF: ROM:000115D2o
 
 loc_115D6:				; DATA XREF: ROM:000115D2o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_11666,4(a0)
+		move.l	#Map_11666,4(a0)
 		move.w	#$4000,2(a0)
 		bsr.w	sub_16D6E
 		ori.b	#4,1(a0)
@@ -23959,7 +23959,7 @@ loc_1163C:				; CODE XREF: ROM:00011620j
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_11666:	dc.w word_11668-MapUnc_11666; 0	; DATA XREF: ROM:000115DAo
+Map_11666:	dc.w word_11668-Map_11666; 0	; DATA XREF: ROM:000115DAo
 					; ROM:00011666o
 word_11668:	dc.w 6			; DATA XREF: ROM:00011666o
 		dc.w $B009,  $1A,   $D,$FFF0; 0
@@ -23988,7 +23988,7 @@ off_116A8:	dc.w loc_116AC-off_116A8; 0 ; DATA XREF: ROM:000116A8o
 
 loc_116AC:				; DATA XREF: ROM:000116A8o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_11822,4(a0)
+		move.l	#Map_11822,4(a0)
 		move.w	#$2426,2(a0)
 		move.b	#8,$19(a0)
 		cmpi.b	#4,($FFFFFE10).w
@@ -24125,11 +24125,11 @@ locret_11820:				; CODE XREF: sub_117F4+6j sub_117F4+Cj ...
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_11822:	dc.w word_1182A-MapUnc_11822; 0	; DATA XREF: ROM:000116B0o
+Map_11822:	dc.w word_1182A-Map_11822; 0	; DATA XREF: ROM:000116B0o
 					; ROM:00011822o ...
-		dc.w word_1184C-MapUnc_11822; 1
-		dc.w word_1185E-MapUnc_11822; 2
-		dc.w word_11870-MapUnc_11822; 3
+		dc.w word_1184C-Map_11822; 1
+		dc.w word_1185E-Map_11822; 2
+		dc.w word_11870-Map_11822; 3
 word_1182A:	dc.w 4			; DATA XREF: ROM:00011822o
 		dc.w $E005,    0,    0,$FFF8; 0
 		dc.w $F005,    0,    0,$FFF8; 4
@@ -24234,40 +24234,40 @@ byte_118CE:	dc.b   6		; 0 ; DATA XREF: ROM:00011A50t
 		dc.b   1		; 33
 word_118F0:	dc.w $FE00		; 0 ; DATA XREF: ROM:00011A5Et
 		dc.w $FC00
-		dc.l MapUnc_11EAC
+		dc.l Map_11EAC
 		dc.w $FE00
 		dc.w $FD00
-		dc.l MapUnc_11E1C
+		dc.l Map_11E1C
 		dc.w $FE80
 		dc.w $FD00
-		dc.l MapUnc_11EAC
+		dc.l Map_11EAC
 		dc.w $FEC0
 		dc.w $FE80
-		dc.l MapUnc_11E88
+		dc.l Map_11E88
 		dc.w $FE40
 		dc.w $FD00
-		dc.l MapUnc_11E64
+		dc.l Map_11E64
 		dc.w $FD00
 		dc.w $FC00
-		dc.l MapUnc_11E1C
+		dc.l Map_11E1C
 		dc.w $FD80
 		dc.w $FC80
-		dc.l MapUnc_11E40
+		dc.l Map_11E40
 		dc.w $FD80
 		dc.w $FD00
-		dc.l MapUnc_11E1C
+		dc.l Map_11E1C
 		dc.w $FE00
 		dc.w $FC80
-		dc.l MapUnc_11E40
+		dc.l Map_11E40
 		dc.w $FD40
 		dc.w $FD00
-		dc.l MapUnc_11E40
+		dc.l Map_11E40
 		dc.w $FEC0
 		dc.w $FE00
-		dc.l MapUnc_11E40
+		dc.l Map_11E40
 		dc.w $FE00
 		dc.w $FD00
-		dc.l MapUnc_11E40
+		dc.l Map_11E40
 word_11950:	dc.w $FBC0		; 0 ; DATA XREF: ROM:000119E4t
 		dc.w $FC00		; 1
 		dc.w $FBC0		; 2
@@ -24290,17 +24290,17 @@ word_11950:	dc.w $FBC0		; 0 ; DATA XREF: ROM:000119E4t
 		dc.w $FD00		; 19
 		dc.w $FD80		; 20
 		dc.w $FC80		; 21
-off_1197C:	dc.l MapUnc_11E1C	; 0
-		dc.l MapUnc_11E1C	; 1
-		dc.l MapUnc_11E1C	; 2
-		dc.l MapUnc_11EAC	; 3
-		dc.l MapUnc_11EAC	; 4
-		dc.l MapUnc_11EAC	; 5
-		dc.l MapUnc_11EAC	; 6
-		dc.l MapUnc_11E88	; 7
-		dc.l MapUnc_11E64	; 8
-		dc.l MapUnc_11E1C	; 9
-		dc.l MapUnc_11E40	; 10
+off_1197C:	dc.l Map_11E1C	; 0
+		dc.l Map_11E1C	; 1
+		dc.l Map_11E1C	; 2
+		dc.l Map_11EAC	; 3
+		dc.l Map_11EAC	; 4
+		dc.l Map_11EAC	; 5
+		dc.l Map_11EAC	; 6
+		dc.l Map_11E88	; 7
+		dc.l Map_11E64	; 8
+		dc.l Map_11E1C	; 9
+		dc.l Map_11E40	; 10
 word_119A8:	dc.w  $5A5		; 0
 		dc.w  $5A5		; 1
 		dc.w  $5A5		; 2
@@ -24702,7 +24702,7 @@ off_11DD4:	dc.w loc_11DD8-off_11DD4; 0 ; DATA XREF: ROM:00011DD4o
 
 loc_11DD8:				; DATA XREF: ROM:00011DD4o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_11ED0,4(a0)
+		move.l	#Map_11ED0,4(a0)
 		move.w	#-$7B54,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#4,1(a0)
@@ -24720,10 +24720,10 @@ loc_11E06:				; DATA XREF: ROM:00011DD4o
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_11E1C:	dc.w word_11E2C-MapUnc_11E1C; 0	; DATA XREF: ROM:0000AD72o
+Map_11E1C:	dc.w word_11E2C-Map_11E1C; 0	; DATA XREF: ROM:0000AD72o
 					; ROM:000118FCo ...
-		dc.w word_11E36-MapUnc_11E1C; 1
-		dc.w word_11E22-MapUnc_11E1C; 2
+		dc.w word_11E36-Map_11E1C; 1
+		dc.w word_11E22-Map_11E1C; 2
 word_11E22:	dc.w 1			; DATA XREF: ROM:00011E1Co
 		dc.w $EC07,    0,    0,$FFF8; 0
 word_11E2C:	dc.w 1			; DATA XREF: ROM:00011E1Co
@@ -24733,10 +24733,10 @@ word_11E36:	dc.w 1			; DATA XREF: ROM:00011E1Co
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_11E40:	dc.w word_11E50-MapUnc_11E40; 0	; DATA XREF: ROM:00011924o
+Map_11E40:	dc.w word_11E50-Map_11E40; 0	; DATA XREF: ROM:00011924o
 					; ROM:00011934o ...
-		dc.w word_11E5A-MapUnc_11E40; 1
-		dc.w word_11E46-MapUnc_11E40; 2
+		dc.w word_11E5A-Map_11E40; 1
+		dc.w word_11E46-Map_11E40; 2
 word_11E46:	dc.w 1			; DATA XREF: ROM:00011E40o
 		dc.w $EC07,    0,    0,$FFF8; 0
 word_11E50:	dc.w 1			; DATA XREF: ROM:00011E40o
@@ -24746,10 +24746,10 @@ word_11E5A:	dc.w 1			; DATA XREF: ROM:00011E40o
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_11E64:	dc.w word_11E74-MapUnc_11E64; 0	; DATA XREF: ROM:00011914o
+Map_11E64:	dc.w word_11E74-Map_11E64; 0	; DATA XREF: ROM:00011914o
 					; ROM:0001197Co ...
-		dc.w word_11E7E-MapUnc_11E64; 1
-		dc.w word_11E6A-MapUnc_11E64; 2
+		dc.w word_11E7E-Map_11E64; 1
+		dc.w word_11E6A-Map_11E64; 2
 word_11E6A:	dc.w 1			; DATA XREF: ROM:00011E64o
 		dc.w $F406,    0,    0,$FFF8; 0
 word_11E74:	dc.w 1			; DATA XREF: ROM:00011E64o
@@ -24759,10 +24759,10 @@ word_11E7E:	dc.w 1			; 0 ; DATA XREF: ROM:00011E64o
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_11E88:	dc.w word_11E98-MapUnc_11E88; 0	; DATA XREF: ROM:0001190Co
+Map_11E88:	dc.w word_11E98-Map_11E88; 0	; DATA XREF: ROM:0001190Co
 					; ROM:0001197Co ...
-		dc.w word_11EA2-MapUnc_11E88; 1
-		dc.w word_11E8E-MapUnc_11E88; 2
+		dc.w word_11EA2-Map_11E88; 1
+		dc.w word_11E8E-Map_11E88; 2
 word_11E8E:	dc.w 1			; DATA XREF: ROM:00011E88o
 		dc.w $F406,    0,    0,$FFF8; 0
 word_11E98:	dc.w 1			; DATA XREF: ROM:00011E88o
@@ -24772,10 +24772,10 @@ word_11EA2:	dc.w 1			; DATA XREF: ROM:00011E88o
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_11EAC:	dc.w word_11EBC-MapUnc_11EAC; 0	; DATA XREF: ROM:000118F4o
+Map_11EAC:	dc.w word_11EBC-Map_11EAC; 0	; DATA XREF: ROM:000118F4o
 					; ROM:00011904o ...
-		dc.w word_11EC6-MapUnc_11EAC; 1
-		dc.w word_11EB2-MapUnc_11EAC; 2
+		dc.w word_11EC6-Map_11EAC; 1
+		dc.w word_11EB2-Map_11EAC; 2
 word_11EB2:	dc.w 1			; DATA XREF: ROM:00011EACo
 		dc.w $F406,    0,    0,$FFF8; 0
 word_11EBC:	dc.w 1			; DATA XREF: ROM:00011EACo
@@ -24785,14 +24785,14 @@ word_11EC6:	dc.w 1			; DATA XREF: ROM:00011EACo
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_11ED0:	dc.w word_11EDE-MapUnc_11ED0; 0	; DATA XREF: ROM:00011DDCo
+Map_11ED0:	dc.w word_11EDE-Map_11ED0; 0	; DATA XREF: ROM:00011DDCo
 					; ROM:00011ED0o ...
-		dc.w word_11EE8-MapUnc_11ED0; 1
-		dc.w word_11EF2-MapUnc_11ED0; 2
-		dc.w word_11EFC-MapUnc_11ED0; 3
-		dc.w word_11F0E-MapUnc_11ED0; 4
-		dc.w word_11F18-MapUnc_11ED0; 5
-		dc.w word_11F2A-MapUnc_11ED0; 6
+		dc.w word_11EE8-Map_11ED0; 1
+		dc.w word_11EF2-Map_11ED0; 2
+		dc.w word_11EFC-Map_11ED0; 3
+		dc.w word_11F0E-Map_11ED0; 4
+		dc.w word_11F18-Map_11ED0; 5
+		dc.w word_11F2A-Map_11ED0; 6
 word_11EDE:	dc.w 1			; DATA XREF: ROM:00011ED0o
 		dc.w $F805,    2,    1,$FFF8; 0
 word_11EE8:	dc.w 1			; DATA XREF: ROM:00011ED0o
@@ -24844,7 +24844,7 @@ off_11F52:	dc.w loc_11F5C-off_11F52; 0 ; DATA XREF: ROM:00011F52o
 loc_11F5C:				; DATA XREF: ROM:00011F52o
 		addq.b	#2,$24(a0)
 		move.w	8(a0),$32(a0)
-		move.l	#MapUnc_12382,4(a0)
+		move.l	#Map_12382,4(a0)
 		move.w	#$26BC,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#4,1(a0)
@@ -25000,7 +25000,7 @@ loc_120BA:				; CODE XREF: ROM:000120B0j
 		move.b	#8,$17(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
-		move.l	#MapUnc_12382,4(a1)
+		move.l	#Map_12382,4(a1)
 		move.w	#$26BC,2(a1)
 		bsr.w	sub_16D8A
 		move.b	#-$7C,1(a1)
@@ -25115,7 +25115,7 @@ off_1220E:	dc.w loc_12216-off_1220E; 0 ; DATA XREF: ROM:0001220Eo
 ; ===========================================================================
 
 loc_12216:				; DATA XREF: ROM:0001220Eo
-		move.l	#MapUnc_123E6,4(a0)
+		move.l	#Map_123E6,4(a0)
 		move.w	#$2400,2(a0)
 		bsr.w	sub_16D6E
 		ori.b	#4,1(a0)
@@ -25184,7 +25184,7 @@ off_122D2:	dc.w loc_122D8-off_122D2; 0 ; DATA XREF: ROM:000122D2o
 
 loc_122D8:				; DATA XREF: ROM:000122D2o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_124E6,4(a0)
+		move.l	#Map_124E6,4(a0)
 		move.w	#$2462,2(a0)
 		bsr.w	sub_16D6E
 		ori.b	#4,1(a0)
@@ -25250,16 +25250,16 @@ byte_1237A:	dc.b 0			; 0 ; DATA XREF: ROM:00011FB0o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_12382:	dc.w byte_12394-MapUnc_12382; 0	; DATA XREF: ROM:00011F66o
+Map_12382:	dc.w byte_12394-Map_12382; 0	; DATA XREF: ROM:00011F66o
 					; ROM:000120DCo ...
-		dc.w byte_1239E-MapUnc_12382; 1
-		dc.w byte_123A8-MapUnc_12382; 2
-		dc.w byte_123B2-MapUnc_12382; 3
-		dc.w byte_123BC-MapUnc_12382; 4
-		dc.w byte_123C6-MapUnc_12382; 5
-		dc.w byte_123D0-MapUnc_12382; 6
-		dc.w byte_123DA-MapUnc_12382; 7
-		dc.w byte_123E4-MapUnc_12382; 8
+		dc.w byte_1239E-Map_12382; 1
+		dc.w byte_123A8-Map_12382; 2
+		dc.w byte_123B2-Map_12382; 3
+		dc.w byte_123BC-Map_12382; 4
+		dc.w byte_123C6-Map_12382; 5
+		dc.w byte_123D0-Map_12382; 6
+		dc.w byte_123DA-Map_12382; 7
+		dc.w byte_123E4-Map_12382; 8
 byte_12394:	dc.b   0,  1,$F8,  5,  0,  0,  0,  0,$FF,$F8; 0	; DATA XREF: ROM:00012382o
 byte_1239E:	dc.b   0,  1,$F8,  5,  0,  4,  0,  2,$FF,$F8; 0	; DATA XREF: ROM:00012382o
 byte_123A8:	dc.b   0,  1,$F8,  1,  0,  8,  0,  4,$FF,$FC; 0	; DATA XREF: ROM:00012382o
@@ -25272,11 +25272,11 @@ byte_123E4:	dc.b   0,  0		; 0 ; DATA XREF: ROM:00012382o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_123E6:	dc.w byte_123EE-MapUnc_123E6; 0	; DATA XREF: ROM:00012216o
+Map_123E6:	dc.w byte_123EE-Map_123E6; 0	; DATA XREF: ROM:00012216o
 					; ROM:000123E6o ...
-		dc.w byte_12440-MapUnc_123E6; 1
-		dc.w byte_12482-MapUnc_123E6; 2
-		dc.w byte_124A4-MapUnc_123E6; 3
+		dc.w byte_12440-Map_123E6; 1
+		dc.w byte_12482-Map_123E6; 2
+		dc.w byte_124A4-Map_123E6; 3
 byte_123EE:	dc.b   0, $A,$E0,  8,  0,  0,  0,  0,$FF,$E8,$E0,  8,  0,  3,  0,  1; 0
 					; DATA XREF: ROM:000123E6o
 		dc.b   0,  0,$E8, $C,  0,  6,  0,  3,$FF,$E0,$E8, $C,  0, $A,  0,  5; 16
@@ -25303,15 +25303,15 @@ byte_124A4:	dc.b   0,  8,$E0, $C,  8,$2C,  8,$16,$FF,$F0,$E8,  8,  8,$30,  8,$18
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_124E6:	dc.w byte_124F6-MapUnc_124E6; 0	; DATA XREF: ROM:000122DCo
+Map_124E6:	dc.w byte_124F6-Map_124E6; 0	; DATA XREF: ROM:000122DCo
 					; ROM:000124E6o ...
-		dc.w byte_12508-MapUnc_124E6; 1
-		dc.w byte_1252A-MapUnc_124E6; 2
-		dc.w byte_1254C-MapUnc_124E6; 3
-		dc.w byte_1256E-MapUnc_124E6; 4
-		dc.w byte_12590-MapUnc_124E6; 5
-		dc.w byte_125B2-MapUnc_124E6; 6
-		dc.w byte_125C4-MapUnc_124E6; 7
+		dc.w byte_12508-Map_124E6; 1
+		dc.w byte_1252A-Map_124E6; 2
+		dc.w byte_1254C-Map_124E6; 3
+		dc.w byte_1256E-Map_124E6; 4
+		dc.w byte_12590-Map_124E6; 5
+		dc.w byte_125B2-Map_124E6; 6
+		dc.w byte_125C4-Map_124E6; 7
 byte_124F6:	dc.b   0,  2,$E0, $F,  0,  0,  0,  0,  0,  0,  0, $F,$10,  0,$10,  0; 0
 					; DATA XREF: ROM:000124E6o
 		dc.b   0,  0		; 16
@@ -25441,7 +25441,7 @@ loc_12688:				; DATA XREF: ROM:0001267Eo
 		addq.b	#2,$24(a0)
 		move.b	#$E,$16(a0)
 		move.b	#$E,$17(a0)
-		move.l	#MapUnc_12D36,4(a0)
+		move.l	#Map_12D36,4(a0)
 		move.w	#$680,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#4,1(a0)
@@ -25655,7 +25655,7 @@ loc_128C2:				; CODE XREF: ROM:000128B0j
 loc_128C6:				; CODE XREF: ROM:00012898j
 		addq.b	#1,d0
 		move.b	d0,$1A(a0)
-		movea.l	#MapUnc_12D36,a1
+		movea.l	#Map_12D36,a1
 		add.b	d0,d0
 		adda.w	(a1,d0.w),a1
 		addq.w	#2,a1
@@ -26036,19 +26036,19 @@ byte_12D30:	dc.b   2,  0,  1, $B,$FE,  1; 0	; DATA XREF: ROM:00012CCEo
 ; ---------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ---------------------------------------------------------------------------------
-MapUnc_12D36:	dc.w word_12D4E-MapUnc_12D36; 0	; DATA XREF: ROM:00012698o
+Map_12D36:	dc.w word_12D4E-Map_12D36; 0	; DATA XREF: ROM:00012698o
 					; ROM:000128CCo ...
-		dc.w word_12D58-MapUnc_12D36; 1
-		dc.w word_12D6A-MapUnc_12D36; 2
-		dc.w word_12D7C-MapUnc_12D36; 3
-		dc.w word_12D8E-MapUnc_12D36; 4
-		dc.w word_12DA0-MapUnc_12D36; 5
-		dc.w word_12DB2-MapUnc_12D36; 6
-		dc.w word_12DC4-MapUnc_12D36; 7
-		dc.w word_12DD6-MapUnc_12D36; 8
-		dc.w word_12DE8-MapUnc_12D36; 9
-		dc.w word_12DFA-MapUnc_12D36; 10
-		dc.w word_12E0C-MapUnc_12D36; 11
+		dc.w word_12D58-Map_12D36; 1
+		dc.w word_12D6A-Map_12D36; 2
+		dc.w word_12D7C-Map_12D36; 3
+		dc.w word_12D8E-Map_12D36; 4
+		dc.w word_12DA0-Map_12D36; 5
+		dc.w word_12DB2-Map_12D36; 6
+		dc.w word_12DC4-Map_12D36; 7
+		dc.w word_12DD6-Map_12D36; 8
+		dc.w word_12DE8-Map_12D36; 9
+		dc.w word_12DFA-Map_12D36; 10
+		dc.w word_12E0C-Map_12D36; 11
 word_12D4E:	dc.w 1			; DATA XREF: ROM:00012D36o
 		dc.w $EF0F,    0,    0,$FFF0; 0
 word_12D58:	dc.w 2			; DATA XREF: ROM:00012D36o
@@ -26112,7 +26112,7 @@ off_12E26:	dc.w loc_12E38-off_12E26; 0 ; DATA XREF: ROM:00012E26o
 
 loc_12E38:				; DATA XREF: ROM:00012E26o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_136A8,4(a0)
+		move.l	#Map_136A8,4(a0)
 		move.w	#$150,2(a0)
 		move.b	#4,$18(a0)
 		move.b	$28(a0),$24(a0)
@@ -26899,7 +26899,7 @@ locret_135E8:				; CODE XREF: sub_134BC+4j
 
 sub_135EA:				; CODE XREF: sub_134BC+44p
 					; sub_134BC+74p ...
-		move.l	#MapUnc_136A8,4(a1)
+		move.l	#Map_136A8,4(a1)
 		move.w	#$150,2(a1)
 		move.b	#4,$18(a1)
 		rts	
@@ -26928,7 +26928,7 @@ loc_13616:				; DATA XREF: ROM:00013612o
 		addq.b	#2,$24(a0)
 		move.w	#$128,8(a0)
 		move.w	#$14C,$A(a0)
-		move.l	#MapUnc_13B70,4(a0)
+		move.l	#Map_13B70,4(a0)
 		move.w	#0,2(a0)
 		bsr.w	sub_16D6E
 		andi.b	#1,($FFFFFF86).w
@@ -27000,27 +27000,27 @@ byte_136A4:	dc.b   3		; 0 ; DATA XREF: ROM:00013686o
 ; -----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -----------------------------------------------------------------------------
-MapUnc_136A8:	dc.w word_136D0-MapUnc_136A8; 0	; DATA XREF: ROM:00012E3Co
+Map_136A8:	dc.w word_136D0-Map_136A8; 0	; DATA XREF: ROM:00012E3Co
 					; sub_135EAo ...
-		dc.w word_13702-MapUnc_136A8; 1
-		dc.w word_1374C-MapUnc_136A8; 2
-		dc.w word_1378E-MapUnc_136A8; 3
-		dc.w word_137F8-MapUnc_136A8; 4
-		dc.w word_13862-MapUnc_136A8; 5
-		dc.w word_138CC-MapUnc_136A8; 6
-		dc.w word_13936-MapUnc_136A8; 7
-		dc.w word_139B0-MapUnc_136A8; 8
-		dc.w word_13A1A-MapUnc_136A8; 9
-		dc.w word_13A34-MapUnc_136A8; 10
-		dc.w word_13A66-MapUnc_136A8; 11
-		dc.w word_13AA0-MapUnc_136A8; 12
-		dc.w word_13AAA-MapUnc_136A8; 13
-		dc.w word_13AB4-MapUnc_136A8; 14
-		dc.w word_13ABE-MapUnc_136A8; 15
-		dc.w word_13AC8-MapUnc_136A8; 16
-		dc.w word_13AD2-MapUnc_136A8; 17
-		dc.w word_13AF4-MapUnc_136A8; 18
-		dc.w word_13B66-MapUnc_136A8; 19
+		dc.w word_13702-Map_136A8; 1
+		dc.w word_1374C-Map_136A8; 2
+		dc.w word_1378E-Map_136A8; 3
+		dc.w word_137F8-Map_136A8; 4
+		dc.w word_13862-Map_136A8; 5
+		dc.w word_138CC-Map_136A8; 6
+		dc.w word_13936-Map_136A8; 7
+		dc.w word_139B0-Map_136A8; 8
+		dc.w word_13A1A-Map_136A8; 9
+		dc.w word_13A34-Map_136A8; 10
+		dc.w word_13A66-Map_136A8; 11
+		dc.w word_13AA0-Map_136A8; 12
+		dc.w word_13AAA-Map_136A8; 13
+		dc.w word_13AB4-Map_136A8; 14
+		dc.w word_13ABE-Map_136A8; 15
+		dc.w word_13AC8-Map_136A8; 16
+		dc.w word_13AD2-Map_136A8; 17
+		dc.w word_13AF4-Map_136A8; 18
+		dc.w word_13B66-Map_136A8; 19
 word_136D0:	dc.w 6			; DATA XREF: ROM:000136A8o
 		dc.w $100C,$A000,$A000,	 $30; 0
 		dc.w $180F,$A004,$A002,	 $18; 4
@@ -27187,10 +27187,10 @@ word_13B66:	dc.w 1			; DATA XREF: ROM:000136A8o
 ; -----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -----------------------------------------------------------------------------
-MapUnc_13B70:	dc.w word_13B76-MapUnc_13B70; 0	; DATA XREF: ROM:00013626o
+Map_13B70:	dc.w word_13B76-Map_13B70; 0	; DATA XREF: ROM:00013626o
 					; ROM:00013B70o ...
-		dc.w word_13BB8-MapUnc_13B70; 1
-		dc.w word_13BFA-MapUnc_13B70; 2
+		dc.w word_13BB8-Map_13B70; 1
+		dc.w word_13BFA-Map_13B70; 2
 word_13B76:	dc.w 8			; DATA XREF: ROM:00013B70o
 		dc.w $F400,$6402,$6201,$FFD4; 0
 		dc.w $F40C,$6403,$6201,$FFE4; 4
@@ -27272,7 +27272,7 @@ loc_13C6E:				; DATA XREF: ROM:00013C56o
 loc_13C76:				; CODE XREF: ROM:00013CAEj
 		move.b	#$34,0(a1) ; '4'
 		move.b	(a2)+,$24(a1)
-		move.l	#MapUnc_147BA,4(a1)
+		move.l	#Map_147BA,4(a1)
 		move.b	(a2)+,$1A(a1)
 		move.b	(a2)+,$19(a1)
 		move.b	(a2)+,$1E(a1)
@@ -27667,7 +27667,7 @@ loc_13F90:				; CODE XREF: ROM:00013F8Cj
 
 loc_13FA8:				; CODE XREF: ROM:00013FA0j
 		move.w	#$F0,$A(a0) ; '='
-		move.l	#MapUnc_14C6C,4(a0)
+		move.l	#Map_14C6C,4(a0)
 		move.w	#-$7B22,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#0,1(a0)
@@ -27804,7 +27804,7 @@ loc_140CE:				; CODE XREF: ROM:000140C0j
 		move.w	(a2)+,$A(a1)
 		move.b	(a2)+,$24(a1)
 		move.b	(a2)+,$1A(a1)
-		move.l	#MapUnc_14CBC,4(a1)
+		move.l	#Map_14CBC,4(a1)
 		bsr.w	sub_16D8A
 		move.b	#0,1(a1)
 		lea	$40(a1),a1
@@ -27934,7 +27934,7 @@ loc_14220:				; CODE XREF: ROM:00014218j
 		move.b	#$12,$24(a1)
 		move.w	#$188,8(a1)
 		move.w	#$118,$A(a1)
-		move.l	#MapUnc_14CBC,4(a1)
+		move.l	#Map_14CBC,4(a1)
 		bsr.w	sub_16D8A
 		move.b	#0,1(a1)
 		move.w	#$3C,$1E(a1) ; '<'
@@ -28489,30 +28489,30 @@ byte_14752:	dc.b   2,$40,  1,$20,  0,$AA,  2,  0,  0,  0,  1,$20,  0,$98,  4,  1
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_147BA:	dc.w word_147E8-MapUnc_147BA; 0	; DATA XREF: ROM:00013C80o
+Map_147BA:	dc.w word_147E8-Map_147BA; 0	; DATA XREF: ROM:00013C80o
 					; ROM:000147BAo ...
-		dc.w word_147E8-MapUnc_147BA; 1
-		dc.w word_147E8-MapUnc_147BA; 2
-		dc.w word_147E8-MapUnc_147BA; 3
-		dc.w word_14842-MapUnc_147BA; 4
-		dc.w word_14842-MapUnc_147BA; 5
-		dc.w word_14B24-MapUnc_147BA; 6
-		dc.w word_14894-MapUnc_147BA; 7
-		dc.w word_148CE-MapUnc_147BA; 8
-		dc.w word_147E8-MapUnc_147BA; 9
-		dc.w word_14930-MapUnc_147BA; 10
-		dc.w word_14972-MapUnc_147BA; 11
-		dc.w word_149C4-MapUnc_147BA; 12
-		dc.w word_14A1E-MapUnc_147BA; 13
-		dc.w word_14B86-MapUnc_147BA; 14
-		dc.w word_14A88-MapUnc_147BA; 15
-		dc.w word_14AE2-MapUnc_147BA; 16
-		dc.w word_14BC8-MapUnc_147BA; 17
-		dc.w word_14BEA-MapUnc_147BA; 18
-		dc.w word_14BF4-MapUnc_147BA; 19
-		dc.w word_14BFE-MapUnc_147BA; 20
-		dc.w word_14C08-MapUnc_147BA; 21
-		dc.w word_14C32-MapUnc_147BA; 22
+		dc.w word_147E8-Map_147BA; 1
+		dc.w word_147E8-Map_147BA; 2
+		dc.w word_147E8-Map_147BA; 3
+		dc.w word_14842-Map_147BA; 4
+		dc.w word_14842-Map_147BA; 5
+		dc.w word_14B24-Map_147BA; 6
+		dc.w word_14894-Map_147BA; 7
+		dc.w word_148CE-Map_147BA; 8
+		dc.w word_147E8-Map_147BA; 9
+		dc.w word_14930-Map_147BA; 10
+		dc.w word_14972-Map_147BA; 11
+		dc.w word_149C4-Map_147BA; 12
+		dc.w word_14A1E-Map_147BA; 13
+		dc.w word_14B86-Map_147BA; 14
+		dc.w word_14A88-Map_147BA; 15
+		dc.w word_14AE2-Map_147BA; 16
+		dc.w word_14BC8-Map_147BA; 17
+		dc.w word_14BEA-Map_147BA; 18
+		dc.w word_14BF4-Map_147BA; 19
+		dc.w word_14BFE-Map_147BA; 20
+		dc.w word_14C08-Map_147BA; 21
+		dc.w word_14C32-Map_147BA; 22
 word_147E8:	dc.w $B			; DATA XREF: ROM:000147BAo
 		dc.w	 5,$8580,$82C0,$FFC3; 0
 		dc.w	 9,$85DE,$82EF,$FFD0; 4
@@ -28678,11 +28678,11 @@ word_14C32:	dc.w 7			; DATA XREF: ROM:000147BAo
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_14C6C:	dc.w word_14C74-MapUnc_14C6C; 0	; DATA XREF: ROM:00013FAEo
+Map_14C6C:	dc.w word_14C74-Map_14C6C; 0	; DATA XREF: ROM:00013FAEo
 					; ROM:00014C6Co ...
-		dc.w word_14C86-MapUnc_14C6C; 1
-		dc.w word_14C98-MapUnc_14C6C; 2
-		dc.w word_14CAA-MapUnc_14C6C; 3
+		dc.w word_14C86-Map_14C6C; 1
+		dc.w word_14C98-Map_14C6C; 2
+		dc.w word_14CAA-Map_14C6C; 3
 word_14C74:	dc.w 2			; DATA XREF: ROM:00014C6Co
 		dc.w $F80D,    0,    0,$FFB8; 0
 		dc.w $F80D,    8,    4,$FFD8; 4
@@ -28698,22 +28698,22 @@ word_14CAA:	dc.w 2			; DATA XREF: ROM:00014C6Co
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_14CBC:	dc.w word_14CDA-MapUnc_14CBC; 0	; DATA XREF: ROM:000140E8o
+Map_14CBC:	dc.w word_14CDA-Map_14CBC; 0	; DATA XREF: ROM:000140E8o
 					; ROM:00014238o ...
-		dc.w word_14D1C-MapUnc_14CBC
-		dc.w word_14D5E-MapUnc_14CBC
-		dc.w word_14DA0-MapUnc_14CBC
-		dc.w word_14DDA-MapUnc_14CBC
-		dc.w word_14BC8-MapUnc_14CBC
-		dc.w word_14BEA-MapUnc_14CBC
-		dc.w word_14BF4-MapUnc_14CBC
-		dc.w word_14BFE-MapUnc_14CBC
-		dc.w word_14DF4-MapUnc_14CBC
-		dc.w word_14E1E-MapUnc_14CBC
-		dc.w word_14E50-MapUnc_14CBC
-		dc.w word_14E82-MapUnc_14CBC
-		dc.w word_14E8C-MapUnc_14CBC
-		dc.w word_14E96-MapUnc_14CBC
+		dc.w word_14D1C-Map_14CBC
+		dc.w word_14D5E-Map_14CBC
+		dc.w word_14DA0-Map_14CBC
+		dc.w word_14DDA-Map_14CBC
+		dc.w word_14BC8-Map_14CBC
+		dc.w word_14BEA-Map_14CBC
+		dc.w word_14BF4-Map_14CBC
+		dc.w word_14BFE-Map_14CBC
+		dc.w word_14DF4-Map_14CBC
+		dc.w word_14E1E-Map_14CBC
+		dc.w word_14E50-Map_14CBC
+		dc.w word_14E82-Map_14CBC
+		dc.w word_14E8C-Map_14CBC
+		dc.w word_14E96-Map_14CBC
 word_14CDA:	dc.w 8			; DATA XREF: ROM:00014CBCo
 		dc.w	 5,$85D0,$82E8,$FFC0; 0
 		dc.w	 5,$8588,$82C4,$FFD0; 4
@@ -29296,10 +29296,10 @@ loc_157A4:				; CODE XREF: sub_784Aj
 sub_157B0:				; CODE XREF: ROM:000157A8p
 					; sub_157B0+22p
 		move.l	#$70000002,(vdp_control_port).l
-		lea	(ArtNem_7D22C).l,a0
+		lea	(Nem_7D22C).l,a0
 		bsr.w	loc_158E8
 		lea	(v_level_layout).w,a4
-		lea	(ArtNem_7D58A).l,a0
+		lea	(Nem_7D58A).l,a0
 		bra.w	loc_158EE
 ; ===========================================================================
 
@@ -29420,7 +29420,7 @@ byte_15916:	dc.b $10		; 0 ; DATA XREF: ROM:00015952t
 
 loc_15926:				; DATA XREF: ROM:0001590Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_15B68,4(a0)
+		move.l	#Map_15B68,4(a0)
 		move.w	#$2434,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#4,$18(a0)
@@ -29659,15 +29659,15 @@ locret_15B66:				; CODE XREF: sub_15B06+Aj
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_15B68:	dc.w word_15B78-MapUnc_15B68; 0	; DATA XREF: ROM:0001592Ao
+Map_15B68:	dc.w word_15B78-Map_15B68; 0	; DATA XREF: ROM:0001592Ao
 					; ROM:00015B68o ...
-		dc.w word_15B8A-MapUnc_15B68; 1
-		dc.w word_15BAC-MapUnc_15B68; 2
-		dc.w word_15BDE-MapUnc_15B68; 3
-		dc.w word_15C20-MapUnc_15B68; 4
-		dc.w word_15C32-MapUnc_15B68; 5
-		dc.w word_15C54-MapUnc_15B68; 6
-		dc.w word_15C86-MapUnc_15B68; 7
+		dc.w word_15B8A-Map_15B68; 1
+		dc.w word_15BAC-Map_15B68; 2
+		dc.w word_15BDE-Map_15B68; 3
+		dc.w word_15C20-Map_15B68; 4
+		dc.w word_15C32-Map_15B68; 5
+		dc.w word_15C54-Map_15B68; 6
+		dc.w word_15C86-Map_15B68; 7
 word_15B78:	dc.w 2			; DATA XREF: ROM:00015B68o
 		dc.w $F007,    0,    0,$FFF0; 0
 		dc.w $F007,    0,    0,	   0; 4
@@ -29736,7 +29736,7 @@ off_15CD6:	dc.w loc_15CDA-off_15CD6; 0 ; DATA XREF: ROM:00015CD6o
 
 loc_15CDA:				; DATA XREF: ROM:00015CD6o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_15D2E,4(a0)
+		move.l	#Map_15D2E,4(a0)
 		move.w	#$66C0,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#4,1(a0)
@@ -29759,7 +29759,7 @@ loc_15D02:				; DATA XREF: ROM:00015CD6o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_15D2E:	dc.w word_15D30-MapUnc_15D2E ; DATA XREF: ROM:00015CDEo
+Map_15D2E:	dc.w word_15D30-Map_15D2E ; DATA XREF: ROM:00015CDEo
 					; ROM:00015D2Eo
 word_15D30:	dc.w 2			; DATA XREF: ROM:00015D2Eo
 		dc.w $F00B,    0,    0,$FFE8; 0
@@ -29788,7 +29788,7 @@ off_15D56:	dc.w loc_15D5C-off_15D56; 0 ; DATA XREF: ROM:00015D56o
 
 loc_15D5C:				; DATA XREF: ROM:00015D56o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_15ECC,4(a0)
+		move.l	#Map_15ECC,4(a0)
 		move.w	#$4590,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#4,1(a0)
@@ -29922,10 +29922,10 @@ word_15EAC:	dc.w $FA00		; 0 ; DATA XREF: ROM:00015DE8o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_15ECC:	dc.w word_15ED2-MapUnc_15ECC; 0	; DATA XREF: ROM:00015D60o
+Map_15ECC:	dc.w word_15ED2-Map_15ECC; 0	; DATA XREF: ROM:00015D60o
 					; ROM:00015ECCo ...
-		dc.w word_15F14-MapUnc_15ECC; 1
-		dc.w word_15F56-MapUnc_15ECC; 2
+		dc.w word_15F14-Map_15ECC; 1
+		dc.w word_15F56-Map_15ECC; 2
 word_15ED2:	dc.w 8			; DATA XREF: ROM:00015ECCo
 		dc.w $E005,    0,    0,$FFF0; 0
 		dc.w $F005,    0,    0,$FFF0; 4
@@ -33781,7 +33781,7 @@ off_1889C:	dc.w loc_188A8-off_1889C; 0 ; DATA XREF: h+1928o h+192Ao ...
 
 loc_188A8:				; DATA XREF: h+1928o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1901C,4(a0)
+		move.l	#Map_1901C,4(a0)
 		move.w	#$45C,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#$10,$19(a0)
@@ -33837,7 +33837,7 @@ loc_18954:				; CODE XREF: h+1992j h+19A6j ...
 		btst	#1,d0
 		beq.s	loc_18976
 		bset	#5,2(a0)
-		move.l	#MapUnc_19032,4(a0)
+		move.l	#Map_19032,4(a0)
 
 loc_18976:				; CODE XREF: h+19F2j
 		bsr.w	sub_16D6E
@@ -34416,33 +34416,33 @@ byte_1900F:	dc.b   0		; 0 ; DATA XREF: h+206Eo
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_1901C:				; DATA XREF: h+1938o h+20A8o ...
-		dc.w word_19048-MapUnc_1901C; 0
-		dc.w word_1905A-MapUnc_1901C; 1
-		dc.w word_19064-MapUnc_1901C; 2
-		dc.w word_19076-MapUnc_1901C; 3
-		dc.w word_19088-MapUnc_1901C; 4
-		dc.w word_19092-MapUnc_1901C; 5
-		dc.w word_190A4-MapUnc_1901C; 6
-		dc.w word_190B6-MapUnc_1901C; 7
-		dc.w word_190D8-MapUnc_1901C; 8
-		dc.w word_190F2-MapUnc_1901C; 9
-		dc.w word_19114-MapUnc_1901C; 10
+Map_1901C:				; DATA XREF: h+1938o h+20A8o ...
+		dc.w word_19048-Map_1901C; 0
+		dc.w word_1905A-Map_1901C; 1
+		dc.w word_19064-Map_1901C; 2
+		dc.w word_19076-Map_1901C; 3
+		dc.w word_19088-Map_1901C; 4
+		dc.w word_19092-Map_1901C; 5
+		dc.w word_190A4-Map_1901C; 6
+		dc.w word_190B6-Map_1901C; 7
+		dc.w word_190D8-Map_1901C; 8
+		dc.w word_190F2-Map_1901C; 9
+		dc.w word_19114-Map_1901C; 10
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_19032:				; DATA XREF: h+19FAo h+20BEo ...
-		dc.w word_19048-MapUnc_19032; 0
-		dc.w word_1905A-MapUnc_19032; 1
-		dc.w word_19064-MapUnc_19032; 2
-		dc.w word_19076-MapUnc_19032; 3
-		dc.w word_19088-MapUnc_19032; 4
-		dc.w word_19092-MapUnc_19032; 5
-		dc.w word_190A4-MapUnc_19032; 6
-		dc.w word_19136-MapUnc_19032; 7
-		dc.w word_19158-MapUnc_19032; 8
-		dc.w word_19172-MapUnc_19032; 9
-		dc.w word_19194-MapUnc_19032; 10
+Map_19032:				; DATA XREF: h+19FAo h+20BEo ...
+		dc.w word_19048-Map_19032; 0
+		dc.w word_1905A-Map_19032; 1
+		dc.w word_19064-Map_19032; 2
+		dc.w word_19076-Map_19032; 3
+		dc.w word_19088-Map_19032; 4
+		dc.w word_19092-Map_19032; 5
+		dc.w word_190A4-Map_19032; 6
+		dc.w word_19136-Map_19032; 7
+		dc.w word_19158-Map_19032; 8
+		dc.w word_19172-Map_19032; 9
+		dc.w word_19194-Map_19032; 10
 word_19048:	dc.w 2			; DATA XREF: h+20A8o h+20BEo
 		dc.w $F00D,    0,    0,$FFF0; 0
 		dc.w	 5,    8,    4,$FFF8; 4
@@ -34525,7 +34525,7 @@ off_191D8:	dc.w loc_191DC-off_191D8; 0 ; DATA XREF: h+2264o h+2266o
 loc_191DC:				; DATA XREF: h+2264o
 		tst.w	($FFFFFFD8).w
 		beq.s	loc_19208
-		move.l	#MapUnc_19656,4(a0)
+		move.l	#Map_19656,4(a0)
 		move.w	#$5E8,2(a0)
 		move.b	#-1,($FFFFFFCA).w
 		moveq	#0,d1
@@ -34546,7 +34546,7 @@ loc_19208:				; CODE XREF: h+226Cj
 ; ===========================================================================
 
 loc_1921E:				; CODE XREF: h+229Aj h+22A0j
-		move.l	#MapUnc_195BE,4(a0)
+		move.l	#Map_195BE,4(a0)
 		move.w	#$434,2(a0)
 
 loc_1922C:				; CODE XREF: h+2292j
@@ -34680,7 +34680,7 @@ loc_19398:				; CODE XREF: h+23F8j h+240Aj ...
 		ext.w	d0
 		add.w	$C(a0),d0
 		move.w	d0,$C(a1)
-		move.l	#MapUnc_12382,4(a1)
+		move.l	#Map_12382,4(a1)
 		move.w	#$26BC,2(a1)
 		bsr.w	sub_16D8A
 		move.b	#4,1(a1)
@@ -34846,7 +34846,7 @@ loc_19564:				; CODE XREF: h+228Ep
 		addi.w	#$10,d3
 		andi.w	#$FFF,d1
 		lsl.l	#5,d1
-		addi.l	#ArtUnc_7A18A,d1
+		addi.l	#Art_Signpost,d1
 		move.w	d4,d2
 		add.w	d3,d4
 		add.w	d3,d4
@@ -34871,13 +34871,13 @@ byte_195BA:	dc.b  $F,  1,$FF,  0	; 0 ; DATA XREF: h+261Ao
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_195BE:				; DATA XREF: h+22AAo h+264Ao ...
-		dc.w word_195CA-MapUnc_195BE; 0
-		dc.w word_195E4-MapUnc_195BE; 1
-		dc.w word_19606-MapUnc_195BE; 2
-		dc.w word_19620-MapUnc_195BE; 3
-		dc.w word_19632-MapUnc_195BE; 4
-		dc.w word_19644-MapUnc_195BE; 5
+Map_195BE:				; DATA XREF: h+22AAo h+264Ao ...
+		dc.w word_195CA-Map_195BE; 0
+		dc.w word_195E4-Map_195BE; 1
+		dc.w word_19606-Map_195BE; 2
+		dc.w word_19620-Map_195BE; 3
+		dc.w word_19632-Map_195BE; 4
+		dc.w word_19644-Map_195BE; 5
 word_195CA:	dc.w 3			; DATA XREF: h+264Ao
 		dc.w $F00B,  $22,  $11,$FFE8; 0
 		dc.w $F00B,  $2E,  $17,	   0; 4
@@ -34903,13 +34903,13 @@ word_19644:	dc.w 2			; DATA XREF: h+264Ao
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_19656:				; DATA XREF: h+226Eo h+26E2o ...
-		dc.w word_19662-MapUnc_19656; 0
-		dc.w word_1967C-MapUnc_19656; 1
-		dc.w word_1969E-MapUnc_19656; 2
-		dc.w word_196B8-MapUnc_19656; 3
-		dc.w word_196CA-MapUnc_19656; 4
-		dc.w word_196DC-MapUnc_19656; 5
+Map_19656:				; DATA XREF: h+226Eo h+26E2o ...
+		dc.w word_19662-Map_19656; 0
+		dc.w word_1967C-Map_19656; 1
+		dc.w word_1969E-Map_19656; 2
+		dc.w word_196B8-Map_19656; 3
+		dc.w word_196CA-Map_19656; 4
+		dc.w word_196DC-Map_19656; 5
 word_19662:	dc.w	 3		; 0 ; DATA XREF: h+26E2o
 		dc.w $F00B,    0,    0,$FFE8; 0
 		dc.w $F00B,   $C,    6,	   0; 4
@@ -35875,7 +35875,7 @@ loc_19F76:				; DATA XREF: h+2FF6o
 		addq.b	#2,$24(a0)
 		move.b	#$13,$16(a0)
 		move.b	#9,$17(a0)
-		move.l	#MapUnc_6FBE0,4(a0)
+		move.l	#Map_Sonic,4(a0)
 		move.b	#2,$18(a0)
 		move.b	#$18,$19(a0)
 		move.b	#4,1(a0)
@@ -38156,7 +38156,7 @@ loc_1B84E:				; CODE XREF: h+27B1Cj
 		cmp.b	(v_sonic_last_frame_id).w,d0
 		beq.s	locret_1B89A
 		move.b	d0,(v_sonic_last_frame_id).w
-		lea	(MapRUnc_714E0).l,a2
+		lea	(DPLC_Sonic).l,a2
 		add.w	d0,d0
 		adda.w	(a2,d0.w),a2
 		move.w	(a2)+,d5
@@ -38173,7 +38173,7 @@ loc_1B86E:				; CODE XREF: h+4922j
 		addi.w	#$10,d3
 		andi.w	#$FFF,d1
 		lsl.l	#5,d1
-		addi.l	#ArtUnc_50000,d1
+		addi.l	#Art_Sonic,d1
 		move.w	d4,d2
 		add.w	d3,d4
 		add.w	d3,d4
@@ -38221,7 +38221,7 @@ loc_1B8D8:				; DATA XREF: h+4958o
 		addq.b	#2,$24(a0)
 		move.b	#$F,$16(a0)
 		move.b	#9,$17(a0)
-		move.l	#MapUnc_739E2,4(a0)
+		move.l	#Map_Tails,4(a0)
 		move.b	#2,$18(a0)
 		move.b	#$18,$19(a0)
 		move.b	#-$7C,1(a0)
@@ -40561,7 +40561,7 @@ loc_1D184:				; CODE XREF: h+631Ep
 		cmp.b	($FFFFF7DF).w,d0
 		beq.s	locret_1D1FE
 		move.b	d0,($FFFFF7DF).w
-		lea	(MapRUnc_7446C).l,a2
+		lea	(DPLC_Tails).l,a2
 		add.w	d0,d0
 		adda.w	(a2,d0.w),a2
 		move.w	(a2)+,d5
@@ -40579,7 +40579,7 @@ loc_1D1B2:				; CODE XREF: h+27B16j
 		cmp.b	($FFFFF7DE).w,d0
 		beq.s	locret_1D1FE
 		move.b	d0,($FFFFF7DE).w
-		lea	(MapRUnc_7446C).l,a2
+		lea	(DPLC_Tails).l,a2
 		add.w	d0,d0
 		adda.w	(a2,d0.w),a2
 		move.w	(a2)+,d5
@@ -40596,7 +40596,7 @@ loc_1D1D2:				; CODE XREF: h+6236j h+6286j
 		addi.w	#$10,d3
 		andi.w	#$FFF,d1
 		lsl.l	#5,d1
-		addi.l	#ArtUnc_64320,d1
+		addi.l	#Art_64320,d1
 		move.w	d4,d2
 		add.w	d3,d4
 		add.w	d3,d4
@@ -40624,7 +40624,7 @@ off_1D20E:	dc.w loc_1D212-off_1D20E; 0 ; DATA XREF: h+629Ao h+629Co
 
 loc_1D212:				; DATA XREF: h+629Ao
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_739E2,4(a0)
+		move.l	#Map_Tails,4(a0)
 		move.w	#$7B0,2(a0)
 		bsr.w	sub_16D6E
 		move.b	#2,$18(a0)
@@ -40720,10 +40720,10 @@ off_1D32E:	dc.w loc_1D340-off_1D32E; 0 ; DATA XREF: h+63BAo h+63BCo ...
 
 loc_1D340:				; DATA XREF: h+63BAo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1FBF6,4(a0)
+		move.l	#Map_1FBF6,4(a0)
 		tst.b	$3F(a0)
 		beq.s	loc_1D35A
-		move.l	#MapUnc_1FC18,4(a0)
+		move.l	#Map_1FC18,4(a0)
 
 loc_1D35A:				; CODE XREF: h+63DCj
 		move.w	#-$7AA5,2(a0)
@@ -40886,7 +40886,7 @@ loc_1D5C0:				; CODE XREF: h+64EAp
 		add.w	d1,d1
 		add.w	d0,d1
 		lsl.w	#6,d1
-		addi.l	#ArtUnc_7AF80,d1
+		addi.l	#Art_Countdown,d1
 		move.w	#-$6C80,d2
 		tst.b	$3F(a0)
 		beq.s	loc_1D5FA
@@ -41148,7 +41148,7 @@ off_1D900:	dc.w loc_1D904-off_1D900; 0 ; DATA XREF: h+698Co h+698Eo
 
 loc_1D904:				; DATA XREF: h+698Co
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1DBE4,4(a0)
+		move.l	#Map_1DBE4,4(a0)
 		move.b	#4,1(a0)
 		move.b	#1,$18(a0)
 		move.b	#$18,$19(a0)
@@ -41373,13 +41373,13 @@ byte_1DBD6:	dc.b   0,  2,  0,  5,  0,  5,  1,  5,  2,  5,  3,  5,  4,$FF; 0
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_1DBE4:				; DATA XREF: h+6994o h+6C70o ...
-		dc.w word_1DBF0-MapUnc_1DBE4; 0
-		dc.w word_1DC12-MapUnc_1DBE4; 1
-		dc.w word_1DC34-MapUnc_1DBE4; 2
-		dc.w word_1DC56-MapUnc_1DBE4; 3
-		dc.w word_1DC78-MapUnc_1DBE4; 4
-		dc.w word_1DC9A-MapUnc_1DBE4; 5
+Map_1DBE4:				; DATA XREF: h+6994o h+6C70o ...
+		dc.w word_1DBF0-Map_1DBE4; 0
+		dc.w word_1DC12-Map_1DBE4; 1
+		dc.w word_1DC34-Map_1DBE4; 2
+		dc.w word_1DC56-Map_1DBE4; 3
+		dc.w word_1DC78-Map_1DBE4; 4
+		dc.w word_1DC9A-Map_1DBE4; 5
 word_1DBF0:	dc.w 4			; DATA XREF: h+6C70o
 		dc.w $F005,    0,    0,$FFF0; 0
 		dc.w $F005, $800, $800,	   0; 4
@@ -41460,7 +41460,7 @@ off_1DD2E:	dc.w loc_1DD36-off_1DD2E; 0 ; DATA XREF: h+6DBAo h+6DBCo ...
 
 loc_1DD36:				; DATA XREF: h+6DBAo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1DF5E,4(a0)
+		move.l	#Map_1DF5E,4(a0)
 		ori.b	#4,1(a0)
 		move.b	#1,$18(a0)
 		move.b	#$10,$19(a0)
@@ -41616,7 +41616,7 @@ loc_1DF0A:				; CODE XREF: h+6FBEj
 		addi.w	#$10,d3
 		andi.w	#$FFF,d1
 		lsl.l	#5,d1
-		addi.l	#ArtUnc_71FFC,d1
+		addi.l	#Art_SplashAndDust,d1
 		move.w	d4,d2
 		add.w	d3,d4
 		add.w	d3,d4
@@ -41637,29 +41637,29 @@ byte_1DF58:	dc.b   3,$11,$12,$13,$14,$FC; 0	; DATA XREF: h+6FC4o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_1DF5E:				; DATA XREF: h+6DC6o h+6FEAo ...
-		dc.w word_1DF8A-MapUnc_1DF5E; 0
-		dc.w word_1DF8C-MapUnc_1DF5E; 1
-		dc.w word_1DF96-MapUnc_1DF5E; 2
-		dc.w word_1DFA0-MapUnc_1DF5E; 3
-		dc.w word_1DFAA-MapUnc_1DF5E; 4
-		dc.w word_1DFB4-MapUnc_1DF5E; 5
-		dc.w word_1DFBE-MapUnc_1DF5E; 6
-		dc.w word_1DFC8-MapUnc_1DF5E; 7
-		dc.w word_1DFD2-MapUnc_1DF5E; 8
-		dc.w word_1DFDC-MapUnc_1DF5E; 9
-		dc.w word_1DFE6-MapUnc_1DF5E; 10
-		dc.w word_1DFF0-MapUnc_1DF5E; 11
-		dc.w word_1DFFA-MapUnc_1DF5E; 12
-		dc.w word_1E004-MapUnc_1DF5E; 13
-		dc.w word_1E016-MapUnc_1DF5E; 14
-		dc.w word_1E028-MapUnc_1DF5E; 15
-		dc.w word_1E03A-MapUnc_1DF5E; 16
-		dc.w word_1E04C-MapUnc_1DF5E; 17
-		dc.w word_1E056-MapUnc_1DF5E; 18
-		dc.w word_1E060-MapUnc_1DF5E; 19
-		dc.w word_1E06A-MapUnc_1DF5E; 20
-		dc.w word_1DF8A-MapUnc_1DF5E; 21
+Map_1DF5E:				; DATA XREF: h+6DC6o h+6FEAo ...
+		dc.w word_1DF8A-Map_1DF5E; 0
+		dc.w word_1DF8C-Map_1DF5E; 1
+		dc.w word_1DF96-Map_1DF5E; 2
+		dc.w word_1DFA0-Map_1DF5E; 3
+		dc.w word_1DFAA-Map_1DF5E; 4
+		dc.w word_1DFB4-Map_1DF5E; 5
+		dc.w word_1DFBE-Map_1DF5E; 6
+		dc.w word_1DFC8-Map_1DF5E; 7
+		dc.w word_1DFD2-Map_1DF5E; 8
+		dc.w word_1DFDC-Map_1DF5E; 9
+		dc.w word_1DFE6-Map_1DF5E; 10
+		dc.w word_1DFF0-Map_1DF5E; 11
+		dc.w word_1DFFA-Map_1DF5E; 12
+		dc.w word_1E004-Map_1DF5E; 13
+		dc.w word_1E016-Map_1DF5E; 14
+		dc.w word_1E028-Map_1DF5E; 15
+		dc.w word_1E03A-Map_1DF5E; 16
+		dc.w word_1E04C-Map_1DF5E; 17
+		dc.w word_1E056-Map_1DF5E; 18
+		dc.w word_1E060-Map_1DF5E; 19
+		dc.w word_1E06A-Map_1DF5E; 20
+		dc.w word_1DF8A-Map_1DF5E; 21
 word_1DF8A:	dc.w 0			; DATA XREF: h+6FEAo
 word_1DF8C:	dc.w 1			; DATA XREF: h+6FEAo
 		dc.w $F20D,    0,    0,$FFF0; 0
@@ -41786,7 +41786,7 @@ off_1E0FE:	dc.w loc_1E102-off_1E0FE; 0 ; DATA XREF: h+718Ao h+718Co
 
 loc_1E102:				; DATA XREF: h+718Ao
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1E1BE,4(a0)
+		move.l	#Map_1E1BE,4(a0)
 		move.b	#4,1(a0)
 		move.b	#1,$18(a0)
 		move.b	#$18,$19(a0)
@@ -41853,13 +41853,13 @@ loc_1E1B8:				; CODE XREF: h+71C8j
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_1E1BE:				; DATA XREF: h+7192o h+724Ao ...
-		dc.w word_1E1CA-MapUnc_1E1BE; 0
-		dc.w word_1E1EC-MapUnc_1E1BE; 1
-		dc.w word_1E20E-MapUnc_1E1BE; 2
-		dc.w word_1E1EC-MapUnc_1E1BE; 3
-		dc.w word_1E1CA-MapUnc_1E1BE; 4
-		dc.w word_1E230-MapUnc_1E1BE; 5
+Map_1E1BE:				; DATA XREF: h+7192o h+724Ao ...
+		dc.w word_1E1CA-Map_1E1BE; 0
+		dc.w word_1E1EC-Map_1E1BE; 1
+		dc.w word_1E20E-Map_1E1BE; 2
+		dc.w word_1E1EC-Map_1E1BE; 3
+		dc.w word_1E1CA-Map_1E1BE; 4
+		dc.w word_1E230-Map_1E1BE; 5
 word_1E1CA:	dc.w 4			; DATA XREF: h+724Ao
 		dc.w $F800,    0,    0,$FFF8; 0
 		dc.w $F800, $800, $800,	   0; 4
@@ -43367,7 +43367,7 @@ off_1F0C2:	dc.w loc_1F0CC-off_1F0C2; 0 ; DATA XREF: h+814Eo h+8150o ...
 
 loc_1F0CC:				; DATA XREF: h+814Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1F424,4(a0)
+		move.l	#Map_1F424,4(a0)
 		move.w	#$47C,2(a0)
 		bsr.w	loc_1F61C
 		move.b	#4,1(a0)
@@ -43617,12 +43617,12 @@ byte_1F414:	dc.b   0		; 0 ; DATA XREF: h+82BCo
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_1F424:				; DATA XREF: h+815Co h+84B0o ...
-		dc.w word_1F42E-MapUnc_1F424; 0
-		dc.w word_1F450-MapUnc_1F424; 1
-		dc.w word_1F46A-MapUnc_1F424; 2
-		dc.w word_1F474-MapUnc_1F424; 3
-		dc.w word_1F47E-MapUnc_1F424; 4
+Map_1F424:				; DATA XREF: h+815Co h+84B0o ...
+		dc.w word_1F42E-Map_1F424; 0
+		dc.w word_1F450-Map_1F424; 1
+		dc.w word_1F46A-Map_1F424; 2
+		dc.w word_1F474-Map_1F424; 3
+		dc.w word_1F47E-Map_1F424; 4
 word_1F42E:	dc.w 4			; DATA XREF: h+84B0o
 word_1F430:	dc.w $E801,$2004,$2002,$FFFC; 0
 		dc.w $F803,$2006,$2003,$FFF8; 4
@@ -43839,7 +43839,7 @@ loc_1F636:				; DATA XREF: h+86BEo
 		tst.b	($FFFFF7CD).w
 		bne.s	loc_1F6B8
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1F6FE,4(a0)
+		move.l	#Map_1F6FE,4(a0)
 		move.w	#-$7B4A,2(a0)
 		bsr.w	loc_1F728
 		ori.b	#4,1(a0)
@@ -43890,11 +43890,11 @@ loc_1F6F8:				; CODE XREF: h+876Aj h+877Cj
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_1F6FE:				; DATA XREF: h+86F8o h+878Ao ...
-		dc.w word_1F706-MapUnc_1F6FE; 0
-		dc.w word_1F708-MapUnc_1F6FE; 1
-		dc.w word_1F712-MapUnc_1F6FE; 2
-		dc.w word_1F71C-MapUnc_1F6FE; 3
+Map_1F6FE:				; DATA XREF: h+86F8o h+878Ao ...
+		dc.w word_1F706-Map_1F6FE; 0
+		dc.w word_1F708-Map_1F6FE; 1
+		dc.w word_1F712-Map_1F6FE; 2
+		dc.w word_1F71C-Map_1F6FE; 3
 word_1F706:	dc.w 0			; DATA XREF: h+878Ao
 word_1F708:	dc.w 1			; DATA XREF: h+878Ao
 		dc.w $F40E,    0,    0,$FFF0; 0
@@ -43929,7 +43929,7 @@ off_1F73E:	dc.w loc_1F742-off_1F73E; 0 ; DATA XREF: h+87CAo h+87CCo
 
 loc_1F742:				; DATA XREF: h+87CAo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1F85A,4(a0)
+		move.l	#Map_1F85A,4(a0)
 		move.w	#$439A,2(a0)
 		bsr.w	loc_1F8A0
 		move.b	#4,1(a0)
@@ -44022,9 +44022,9 @@ byte_1F853:	dc.b   3,  1,  0,  1,$FD,  0,  0; 0 ; DATA XREF: h+88D8o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_1F85A:				; DATA XREF: h+87D2o h+88E6o ...
-		dc.w word_1F85E-MapUnc_1F85A; 0
-		dc.w word_1F870-MapUnc_1F85A; 1
+Map_1F85A:				; DATA XREF: h+87D2o h+88E6o ...
+		dc.w word_1F85E-Map_1F85A; 0
+		dc.w word_1F870-Map_1F85A; 1
 word_1F85E:	dc.w 2			; DATA XREF: h+88E6o
 		dc.w $F007,    0,    0,$FFF0; 0
 		dc.w $F007, $800, $800,	   0; 4
@@ -44072,7 +44072,7 @@ off_1F8B6:	dc.w loc_1F8C2-off_1F8B6; 0 ; DATA XREF: h+8942o h+8944o ...
 
 loc_1F8C2:				; DATA XREF: h+8942o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1FBF6,4(a0)
+		move.l	#Map_1FBF6,4(a0)
 		move.w	#-$7AA5,2(a0)
 		bsr.w	loc_1FCD0
 		move.b	#-$7C,1(a0)
@@ -44352,44 +44352,44 @@ byte_1FBF2:	dc.b  $F, $E, $F,$FF	; 0 ; DATA XREF: h+8C58o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_1FBF6:	dc.w word_1FC3A-MapUnc_1FBF6; 0	; DATA XREF: h+63D0o h+8952o ...
-		dc.w word_1FC44-MapUnc_1FBF6; 1
-		dc.w word_1FC44-MapUnc_1FBF6; 2
-		dc.w word_1FC4E-MapUnc_1FBF6; 3
-		dc.w word_1FC58-MapUnc_1FBF6; 4
-		dc.w word_1FC62-MapUnc_1FBF6; 5
-		dc.w word_1FC6C-MapUnc_1FBF6; 6
-		dc.w word_1FC76-MapUnc_1FBF6; 7
-		dc.w word_1FC98-MapUnc_1FBF6; 8
-		dc.w word_1FC98-MapUnc_1FBF6; 9
-		dc.w word_1FC98-MapUnc_1FBF6; 10
-		dc.w word_1FC98-MapUnc_1FBF6; 11
-		dc.w word_1FC98-MapUnc_1FBF6; 12
-		dc.w word_1FC98-MapUnc_1FBF6; 13
-		dc.w word_1FCA2-MapUnc_1FBF6; 14
-		dc.w word_1FCAC-MapUnc_1FBF6; 15
-		dc.w word_1FCB6-MapUnc_1FBF6; 16
+Map_1FBF6:	dc.w word_1FC3A-Map_1FBF6; 0	; DATA XREF: h+63D0o h+8952o ...
+		dc.w word_1FC44-Map_1FBF6; 1
+		dc.w word_1FC44-Map_1FBF6; 2
+		dc.w word_1FC4E-Map_1FBF6; 3
+		dc.w word_1FC58-Map_1FBF6; 4
+		dc.w word_1FC62-Map_1FBF6; 5
+		dc.w word_1FC6C-Map_1FBF6; 6
+		dc.w word_1FC76-Map_1FBF6; 7
+		dc.w word_1FC98-Map_1FBF6; 8
+		dc.w word_1FC98-Map_1FBF6; 9
+		dc.w word_1FC98-Map_1FBF6; 10
+		dc.w word_1FC98-Map_1FBF6; 11
+		dc.w word_1FC98-Map_1FBF6; 12
+		dc.w word_1FC98-Map_1FBF6; 13
+		dc.w word_1FCA2-Map_1FBF6; 14
+		dc.w word_1FCAC-Map_1FBF6; 15
+		dc.w word_1FCB6-Map_1FBF6; 16
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_1FC18:				; DATA XREF: h+63DEo h+8CA4o ...
-		dc.w word_1FC3A-MapUnc_1FC18; 0
-		dc.w word_1FC44-MapUnc_1FC18; 1
-		dc.w word_1FC44-MapUnc_1FC18; 2
-		dc.w word_1FC4E-MapUnc_1FC18; 3
-		dc.w word_1FC58-MapUnc_1FC18; 4
-		dc.w word_1FC62-MapUnc_1FC18; 5
-		dc.w word_1FC6C-MapUnc_1FC18; 6
-		dc.w word_1FC76-MapUnc_1FC18; 7
-		dc.w word_1FCB8-MapUnc_1FC18; 8
-		dc.w word_1FCB8-MapUnc_1FC18; 9
-		dc.w word_1FCB8-MapUnc_1FC18; 10
-		dc.w word_1FCB8-MapUnc_1FC18; 11
-		dc.w word_1FCB8-MapUnc_1FC18; 12
-		dc.w word_1FCB8-MapUnc_1FC18; 13
-		dc.w word_1FCA2-MapUnc_1FC18; 14
-		dc.w word_1FCAC-MapUnc_1FC18; 15
-		dc.w word_1FCB6-MapUnc_1FC18; 16
+Map_1FC18:				; DATA XREF: h+63DEo h+8CA4o ...
+		dc.w word_1FC3A-Map_1FC18; 0
+		dc.w word_1FC44-Map_1FC18; 1
+		dc.w word_1FC44-Map_1FC18; 2
+		dc.w word_1FC4E-Map_1FC18; 3
+		dc.w word_1FC58-Map_1FC18; 4
+		dc.w word_1FC62-Map_1FC18; 5
+		dc.w word_1FC6C-Map_1FC18; 6
+		dc.w word_1FC76-Map_1FC18; 7
+		dc.w word_1FCB8-Map_1FC18; 8
+		dc.w word_1FCB8-Map_1FC18; 9
+		dc.w word_1FCB8-Map_1FC18; 10
+		dc.w word_1FCB8-Map_1FC18; 11
+		dc.w word_1FCB8-Map_1FC18; 12
+		dc.w word_1FCB8-Map_1FC18; 13
+		dc.w word_1FCA2-Map_1FC18; 14
+		dc.w word_1FCAC-Map_1FC18; 15
+		dc.w word_1FCB6-Map_1FC18; 16
 word_1FC3A:	dc.w 1			; DATA XREF: h+8C82o h+8CA4o
 		dc.w $FC00,  $8D,  $46,$FFFC; 0
 word_1FC44:	dc.w 1			; DATA XREF: h+8C82o h+8CA4o
@@ -44454,7 +44454,7 @@ off_1FCF0:	dc.w loc_1FCF6-off_1FCF0; 0 ; DATA XREF: h+8D7Co h+8D7Eo ...
 
 loc_1FCF6:				; DATA XREF: h+8D7Co
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1FFB8,4(a0)
+		move.l	#Map_1FFB8,4(a0)
 		move.w	#$26BC,2(a0)
 
 loc_1FD08:
@@ -44689,15 +44689,15 @@ locret_1FFB6:				; CODE XREF: h+8F3Ej h+8F5Cj ...
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_1FFB8:				; DATA XREF: h+8D86o h+9044o ...
-		dc.w word_1FFC8-MapUnc_1FFB8; 0
-		dc.w word_1FFEA-MapUnc_1FFB8; 1
-		dc.w word_2000C-MapUnc_1FFB8; 2
-		dc.w word_2000C-MapUnc_1FFB8; 3
-		dc.w word_2002E-MapUnc_1FFB8; 4
-		dc.w word_20050-MapUnc_1FFB8; 5
-		dc.w word_20072-MapUnc_1FFB8; 6
-		dc.w word_20072-MapUnc_1FFB8; 7
+Map_1FFB8:				; DATA XREF: h+8D86o h+9044o ...
+		dc.w word_1FFC8-Map_1FFB8; 0
+		dc.w word_1FFEA-Map_1FFB8; 1
+		dc.w word_2000C-Map_1FFB8; 2
+		dc.w word_2000C-Map_1FFB8; 3
+		dc.w word_2002E-Map_1FFB8; 4
+		dc.w word_20050-Map_1FFB8; 5
+		dc.w word_20072-Map_1FFB8; 6
+		dc.w word_20072-Map_1FFB8; 7
 word_1FFC8:	dc.w 4			; DATA XREF: h+9044o
 word_1FFCA:	dc.w $E005,    0,    0,$FFF8; 0
 		dc.w $F005,    0,    0,$FFF8; 4
@@ -44755,7 +44755,7 @@ off_200AA:	dc.w loc_200B0-off_200AA; 0 ; DATA XREF: h+9136o h+9138o ...
 
 loc_200B0:				; DATA XREF: h+9136o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_201A0,4(a0)
+		move.l	#Map_201A0,4(a0)
 		move.w	#-$1C50,2(a0)
 		bsr.w	loc_2020A
 		ori.b	#4,1(a0)
@@ -44833,12 +44833,12 @@ byte_20198:	dc.b   7,  4,  3,  2,  1,  0,$FE,  1; 0	; DATA XREF: h+9218o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_201A0:				; DATA XREF: h+9140o h+922Co ...
-		dc.w word_201AA-MapUnc_201A0; 0
-		dc.w word_201BC-MapUnc_201A0; 1
-		dc.w word_201CE-MapUnc_201A0; 2
-		dc.w word_201E0-MapUnc_201A0; 3
-		dc.w word_201F2-MapUnc_201A0; 4
+Map_201A0:				; DATA XREF: h+9140o h+922Co ...
+		dc.w word_201AA-Map_201A0; 0
+		dc.w word_201BC-Map_201A0; 1
+		dc.w word_201CE-Map_201A0; 2
+		dc.w word_201E0-Map_201A0; 3
+		dc.w word_201F2-Map_201A0; 4
 word_201AA:	dc.w 2			; DATA XREF: h+922Co
 		dc.w $F00C,    0,    0,$FFF0; 0
 		dc.w $F80E,  $24,  $12,$FFF0; 4
@@ -44881,7 +44881,7 @@ off_2021E:	dc.w loc_20222-off_2021E; 0 ; DATA XREF: h+92AAo h+92ACo
 
 loc_20222:				; DATA XREF: h+92AAo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_202FA,4(a0)
+		move.l	#Map_202FA,4(a0)
 		move.w	#-$1BE8,2(a0)
 		bsr.w	loc_2030E
 		ori.b	#4,1(a0)
@@ -44956,8 +44956,8 @@ loc_202E6:				; CODE XREF: h+934Aj
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_202FA:				; DATA XREF: h+92B2o h+9386o
-		dc.w word_202FC-MapUnc_202FA; 0
+Map_202FA:				; DATA XREF: h+92B2o h+9386o
+		dc.w word_202FC-Map_202FA; 0
 word_202FC:	dc.w 1			; DATA XREF: h+9386o
 word_202FE:	dc.w $F80D,  0,	 0,$FFF0; 0
 ; ===========================================================================
@@ -44995,7 +44995,7 @@ off_2032A:	dc.w loc_2032E-off_2032A; 0 ; DATA XREF: h+93B6o h+93B8o
 
 loc_2032E:				; DATA XREF: h+93B6o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_20382,4(a0)
+		move.l	#Map_20382,4(a0)
 		move.w	#$6392,2(a0)
 		bsr.w	loc_203A4
 		move.b	#4,1(a0)
@@ -45018,8 +45018,8 @@ loc_20356:				; DATA XREF: h+93B6o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_20382:				; DATA XREF: h+93BEo h+940Eo
-		dc.w word_20384-MapUnc_20382; 0
+Map_20382:				; DATA XREF: h+93BEo h+940Eo
+		dc.w word_20384-Map_20382; 0
 word_20384:	dc.w 2			; DATA XREF: h+940Eo
 		dc.w $F00F,    0,    0,$FFE0; 0
 		dc.w $F00F,  $10,    8,	   0; 4
@@ -45059,7 +45059,7 @@ off_203BA:	dc.w loc_203C0-off_203BA; 0 ; DATA XREF: h+9446o h+9448o ...
 
 loc_203C0:				; DATA XREF: h+9446o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_20528,4(a0)
+		move.l	#Map_20528,4(a0)
 		move.w	#-$1CEB,2(a0)
 		bsr.w	loc_208D6
 		move.b	#4,1(a0)
@@ -45090,7 +45090,7 @@ loc_20428:				; CODE XREF: h+947Ap h+94A0p
 		addq.b	#4,$24(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
-		move.l	#MapUnc_20528,4(a1)
+		move.l	#Map_20528,4(a1)
 		move.w	#-$1CEB,2(a1)
 		bsr.w	loc_208D0
 		move.b	#4,1(a1)
@@ -45180,35 +45180,35 @@ loc_20510:				; DATA XREF: h+9446o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_20528:				; DATA XREF: h+9450o h+94D2o ...
-		dc.w word_20562-MapUnc_20528; 0
-		dc.w word_2056C-MapUnc_20528; 1
-		dc.w word_2057E-MapUnc_20528; 2
-		dc.w word_20590-MapUnc_20528; 3
-		dc.w word_205AA-MapUnc_20528; 4
-		dc.w word_205C4-MapUnc_20528; 5
-		dc.w word_205E6-MapUnc_20528; 6
-		dc.w word_20608-MapUnc_20528; 7
-		dc.w word_20632-MapUnc_20528; 8
-		dc.w word_2065C-MapUnc_20528; 9
-		dc.w word_2068E-MapUnc_20528; 10
-		dc.w word_206C0-MapUnc_20528; 11
-		dc.w word_206FA-MapUnc_20528; 12
-		dc.w word_20734-MapUnc_20528; 13
-		dc.w word_20776-MapUnc_20528; 14
-		dc.w word_207B8-MapUnc_20528; 15
-		dc.w word_20802-MapUnc_20528; 16
-		dc.w word_20802-MapUnc_20528; 17
-		dc.w word_20802-MapUnc_20528; 18
-		dc.w word_20560-MapUnc_20528; 19
-		dc.w word_20814-MapUnc_20528; 20
-		dc.w word_2081E-MapUnc_20528; 21
-		dc.w word_20828-MapUnc_20528; 22
-		dc.w word_2083A-MapUnc_20528; 23
-		dc.w word_2084C-MapUnc_20528; 24
-		dc.w word_20866-MapUnc_20528; 25
-		dc.w word_20880-MapUnc_20528; 26
-		dc.w word_208A2-MapUnc_20528; 27
+Map_20528:				; DATA XREF: h+9450o h+94D2o ...
+		dc.w word_20562-Map_20528; 0
+		dc.w word_2056C-Map_20528; 1
+		dc.w word_2057E-Map_20528; 2
+		dc.w word_20590-Map_20528; 3
+		dc.w word_205AA-Map_20528; 4
+		dc.w word_205C4-Map_20528; 5
+		dc.w word_205E6-Map_20528; 6
+		dc.w word_20608-Map_20528; 7
+		dc.w word_20632-Map_20528; 8
+		dc.w word_2065C-Map_20528; 9
+		dc.w word_2068E-Map_20528; 10
+		dc.w word_206C0-Map_20528; 11
+		dc.w word_206FA-Map_20528; 12
+		dc.w word_20734-Map_20528; 13
+		dc.w word_20776-Map_20528; 14
+		dc.w word_207B8-Map_20528; 15
+		dc.w word_20802-Map_20528; 16
+		dc.w word_20802-Map_20528; 17
+		dc.w word_20802-Map_20528; 18
+		dc.w word_20560-Map_20528; 19
+		dc.w word_20814-Map_20528; 20
+		dc.w word_2081E-Map_20528; 21
+		dc.w word_20828-Map_20528; 22
+		dc.w word_2083A-Map_20528; 23
+		dc.w word_2084C-Map_20528; 24
+		dc.w word_20866-Map_20528; 25
+		dc.w word_20880-Map_20528; 26
+		dc.w word_208A2-Map_20528; 27
 word_20560:	dc.w 0			; DATA XREF: h+95B4o
 word_20562:	dc.w 1			; DATA XREF: h+95B4o
 		dc.w $800C,  $10,    8,$FFF0; 0
@@ -45373,7 +45373,7 @@ off_208EA:	dc.w loc_208F0-off_208EA; 0 ; DATA XREF: h+9976o h+9978o ...
 
 loc_208F0:				; DATA XREF: h+9976o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_20A0E,4(a0)
+		move.l	#Map_20A0E,4(a0)
 
 loc_208FC:
 		move.w	#-$7C00,2(a0)
@@ -45386,7 +45386,7 @@ loc_20902:
 		cmpi.b	#$F,($FFFFFE10).w
 		bne.s	loc_20930
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_20AFE,4(a0)
+		move.l	#Map_20AFE,4(a0)
 		bra.w	loc_209C2
 ; ===========================================================================
 
@@ -45457,13 +45457,13 @@ loc_20A0A:				; CODE XREF: h+9A6Ej h+9A74j ...
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_20A0E:				; DATA XREF: h+9980o h+9A9Ao ...
-		dc.w word_20A1A-MapUnc_20A0E; 0
-		dc.w word_20A34-MapUnc_20A0E; 1
-		dc.w word_20A4E-MapUnc_20A0E; 2
-		dc.w word_20A68-MapUnc_20A0E; 3
-		dc.w word_20A9A-MapUnc_20A0E; 4
-		dc.w word_20ACC-MapUnc_20A0E; 5
+Map_20A0E:				; DATA XREF: h+9980o h+9A9Ao ...
+		dc.w word_20A1A-Map_20A0E; 0
+		dc.w word_20A34-Map_20A0E; 1
+		dc.w word_20A4E-Map_20A0E; 2
+		dc.w word_20A68-Map_20A0E; 3
+		dc.w word_20A9A-Map_20A0E; 4
+		dc.w word_20ACC-Map_20A0E; 5
 word_20A1A:	dc.w 3			; DATA XREF: h+9A9Ao
 		dc.w $F80D,    0,    0,$FFA0; 0
 		dc.w $F80D,    0,    0,$FFE0; 4
@@ -45500,11 +45500,11 @@ word_20ACC:	dc.w 6			; DATA XREF: h+9A9Ao
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_20AFE:				; DATA XREF: h+99B0o h+9B8Ao ...
-		dc.w word_20B06-MapUnc_20AFE; 0
-		dc.w word_20B20-MapUnc_20AFE; 1
-		dc.w word_20B3A-MapUnc_20AFE; 2
-		dc.w word_20B6C-MapUnc_20AFE; 3
+Map_20AFE:				; DATA XREF: h+99B0o h+9B8Ao ...
+		dc.w word_20B06-Map_20AFE; 0
+		dc.w word_20B20-Map_20AFE; 1
+		dc.w word_20B3A-Map_20AFE; 2
+		dc.w word_20B6C-Map_20AFE; 3
 word_20B06:	dc.w 3			; DATA XREF: h+9B8Ao
 		dc.w $FC0D,    0,    0,$FFA0; 0
 		dc.w $FC0D,    0,    0,$FFE0; 4
@@ -45546,7 +45546,7 @@ off_20BAC:	dc.w loc_20BB0-off_20BAC; 0 ; DATA XREF: h+9C38o h+9C3Ao
 
 loc_20BB0:				; DATA XREF: h+9C38o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_20C50,4(a0)
+		move.l	#Map_20C50,4(a0)
 		move.w	#$239E,2(a0)
 		bsr.w	loc_214BE
 		move.b	#4,1(a0)
@@ -45597,15 +45597,15 @@ loc_20C48:				; CODE XREF: h+9CC8j h+9CCCj
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_20C50:				; DATA XREF: h+9C40o h+9CDCo ...
-		dc.w word_20C60-MapUnc_20C50; 0
-		dc.w word_20C72-MapUnc_20C50; 1
-		dc.w word_20D04-MapUnc_20C50; 2
-		dc.w word_20D06-MapUnc_20C50; 3
-		dc.w word_20D04-MapUnc_20C50; 4
-		dc.w word_20D28-MapUnc_20C50; 5
-		dc.w word_20C60-MapUnc_20C50; 6
-		dc.w word_20D7A-MapUnc_20C50; 7
+Map_20C50:				; DATA XREF: h+9C40o h+9CDCo ...
+		dc.w word_20C60-Map_20C50; 0
+		dc.w word_20C72-Map_20C50; 1
+		dc.w word_20D04-Map_20C50; 2
+		dc.w word_20D06-Map_20C50; 3
+		dc.w word_20D04-Map_20C50; 4
+		dc.w word_20D28-Map_20C50; 5
+		dc.w word_20C60-Map_20C50; 6
+		dc.w word_20D7A-Map_20C50; 7
 word_20C60:	dc.w 2			; DATA XREF: h+9CDCo
 		dc.w $800D,    0,    0,$FFE0; 0
 		dc.w $800D,    0,    0,	   0; 4
@@ -45686,10 +45686,10 @@ loc_20E02:				; DATA XREF: h+9E86o
 		moveq	#0,d0
 		move.b	$28(a0),d0
 		move.b	byte_20DFE(pc,d0.w),$20(a0)
-		move.l	#MapUnc_20E6C,4(a0)
+		move.l	#Map_20E6C,4(a0)
 		tst.w	($FFFFFE08).w
 		beq.s	loc_20E28
-		move.l	#MapUnc_20E74,4(a0)
+		move.l	#Map_20E74,4(a0)
 
 loc_20E28:				; CODE XREF: h+9EAAj
 		move.w	#-$7980,2(a0)
@@ -45720,18 +45720,18 @@ locret_20E6A:				; CODE XREF: h+9EF0j
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_20E6C:				; DATA XREF: h+9E9Eo h+9EF8o ...
-		dc.w word_20E72-MapUnc_20E6C; 0
-		dc.w word_20E72-MapUnc_20E6C; 1
-		dc.w word_20E72-MapUnc_20E6C; 2
+Map_20E6C:				; DATA XREF: h+9E9Eo h+9EF8o ...
+		dc.w word_20E72-Map_20E6C; 0
+		dc.w word_20E72-Map_20E6C; 1
+		dc.w word_20E72-Map_20E6C; 2
 word_20E72:	dc.w 0			; DATA XREF: h+9EF8o
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_20E74:				; DATA XREF: h+9EACo h+9F00o ...
-		dc.w word_20E7A-MapUnc_20E74; 0
-		dc.w word_20E9C-MapUnc_20E74; 1
-		dc.w word_20EBE-MapUnc_20E74; 2
+Map_20E74:				; DATA XREF: h+9EACo h+9F00o ...
+		dc.w word_20E7A-Map_20E74; 0
+		dc.w word_20E9C-Map_20E74; 1
+		dc.w word_20EBE-Map_20E74; 2
 word_20E7A:	dc.w 4			; DATA XREF: h+9F00o
 		dc.w $E005,  $34,  $1A,$FFE0; 0
 		dc.w $E005,  $34,  $1A,	 $10; 4
@@ -45761,7 +45761,7 @@ off_20EEE:	dc.w loc_20EF2-off_20EEE; 0 ; DATA XREF: h+9F7Ao h+9F7Co
 
 loc_20EF2:				; DATA XREF: h+9F7Ao
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_20F66,4(a0)
+		move.l	#Map_20F66,4(a0)
 		move.w	#-$7980,2(a0)
 		bsr.w	loc_214BE
 		ori.b	#4,1(a0)
@@ -45800,10 +45800,10 @@ locret_20F64:				; CODE XREF: h+9FDAj
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_20F66:				; DATA XREF: h+9F82o h+9FF2o ...
-		dc.w word_20F6C-MapUnc_20F66; 0
-		dc.w word_20F8E-MapUnc_20F66; 1
-		dc.w word_20FB0-MapUnc_20F66; 2
+Map_20F66:				; DATA XREF: h+9F82o h+9FF2o ...
+		dc.w word_20F6C-Map_20F66; 0
+		dc.w word_20F8E-Map_20F66; 1
+		dc.w word_20FB0-Map_20F66; 2
 word_20F6C:	dc.w 4			; DATA XREF: h+9FF2o
 		dc.w $F005,  $1C,   $E,$FFF0; 0
 		dc.w $F005,  $1C,   $E,	   0; 4
@@ -45838,7 +45838,7 @@ off_20FE0:	dc.w loc_20FE4-off_20FE0; 0 ; DATA XREF: h+A06Co h+A06Eo
 
 loc_20FE4:				; DATA XREF: h+A06Co
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2103C,4(a0)
+		move.l	#Map_2103C,4(a0)
 		move.w	#-$3C8D,2(a0)
 		bsr.w	loc_214BE
 		move.b	#$10,$19(a0)
@@ -45874,8 +45874,8 @@ locret_2103A:				; CODE XREF: h+A09Ej
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_2103C:				; DATA XREF: h+A074o h+A0C8o
-		dc.w word_2103E-MapUnc_2103C
+Map_2103C:				; DATA XREF: h+A074o h+A0C8o
+		dc.w word_2103E-Map_2103C
 word_2103E:	dc.w 9			; DATA XREF: h+A0C8o
 		dc.w $800F,$A000,$A000,$FFF0; 0
 		dc.w $A00F,$B000,$B000,$FFF0; 4
@@ -45918,7 +45918,7 @@ loc_2109C:				; DATA XREF: h+A122o
 loc_210BE:				; CODE XREF: h+A130j
 					; DATA XREF: h+A122o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_21120,4(a0)
+		move.l	#Map_21120,4(a0)
 		move.w	#$5A4,2(a0)
 		bsr.w	loc_214BE
 		move.b	#4,1(a0)
@@ -45944,12 +45944,12 @@ loc_2111C:				; CODE XREF: h+A192j
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_21120:				; DATA XREF: h+A14Eo h+A1ACo ...
-		dc.w word_2112A-MapUnc_21120; 0
-		dc.w word_21134-MapUnc_21120; 1
-		dc.w word_2113E-MapUnc_21120; 2
-		dc.w word_21148-MapUnc_21120; 3
-		dc.w word_21152-MapUnc_21120; 4
+Map_21120:				; DATA XREF: h+A14Eo h+A1ACo ...
+		dc.w word_2112A-Map_21120; 0
+		dc.w word_21134-Map_21120; 1
+		dc.w word_2113E-Map_21120; 2
+		dc.w word_21148-Map_21120; 3
+		dc.w word_21152-Map_21120; 4
 word_2112A:	dc.w 1			; DATA XREF: h+A1ACo
 		dc.w $F805,    0,    0,$FFF8; 0
 word_21134:	dc.w 1			; DATA XREF: h+A1ACo
@@ -45981,7 +45981,7 @@ off_21170:	dc.w loc_21176-off_21170; 0 ; DATA XREF: h+A1FCo h+A1FEo ...
 
 loc_21176:				; DATA XREF: h+A1FCo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1FFB8,4(a0)
+		move.l	#Map_1FFB8,4(a0)
 		move.w	#$6BC,2(a0)
 		bsr.w	loc_214BE
 		ori.b	#4,1(a0)
@@ -46207,7 +46207,7 @@ word_213AA:	dc.w   $20		; 0
 
 loc_213B2:				; DATA XREF: h+A432o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1FFB8,4(a0)
+		move.l	#Map_1FFB8,4(a0)
 		move.w	#$6BC,2(a0)
 
 loc_213C4:
@@ -46646,7 +46646,7 @@ off_2193E:	dc.w loc_2194A-off_2193E; 0 ; DATA XREF: h+A9CAo h+A9CCo ...
 
 loc_2194A:				; DATA XREF: h+A9CAo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_21CF0,4(a0)
+		move.l	#Map_21CF0,4(a0)
 		move.w	#$3C6,2(a0)
 		bsr.w	loc_21D9A
 		ori.b	#4,1(a0)
@@ -46786,7 +46786,7 @@ locret_21AA0:				; CODE XREF: h+AB08j h+AB24j
 
 loc_21AA2:				; DATA XREF: h+A9CAo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_21D7C,4(a0)
+		move.l	#Map_21D7C,4(a0)
 		move.w	#$3DE,2(a0)
 		bsr.w	loc_21D9A
 		ori.b	#4,1(a0)
@@ -46972,11 +46972,11 @@ byte_21CBF:	dc.b   5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_21CF0:				; DATA XREF: h+A9DAo h+AD7Co ...
-		dc.w word_21CF8-MapUnc_21CF0; 0
-		dc.w word_21D3A-MapUnc_21CF0; 1
-		dc.w word_21CF8-MapUnc_21CF0; 2
-		dc.w word_21D3A-MapUnc_21CF0; 3
+Map_21CF0:				; DATA XREF: h+A9DAo h+AD7Co ...
+		dc.w word_21CF8-Map_21CF0; 0
+		dc.w word_21D3A-Map_21CF0; 1
+		dc.w word_21CF8-Map_21CF0; 2
+		dc.w word_21D3A-Map_21CF0; 3
 word_21CF8:	dc.w 8			; DATA XREF: h+AD7Co
 		dc.w $FC05,$4014,$400A,$FFF8; 0
 		dc.w  $C01,$2012,$2009,$FFFC; 4
@@ -46998,9 +46998,9 @@ word_21D3A:	dc.w 8			; DATA XREF: h+AD7Co
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_21D7C:				; DATA XREF: h+AB32o h+AE08o ...
-		dc.w word_21D80-MapUnc_21D7C; 0
-		dc.w word_21D8A-MapUnc_21D7C; 1
+Map_21D7C:				; DATA XREF: h+AB32o h+AE08o ...
+		dc.w word_21D80-Map_21D7C; 0
+		dc.w word_21D8A-Map_21D7C; 1
 word_21D80:	dc.w 1			; DATA XREF: h+AE08o
 		dc.w $F805,    0,    0,$FFF8; 0
 word_21D8A:	dc.w 1			; DATA XREF: h+AE08o
@@ -47040,7 +47040,7 @@ off_21DBA:	dc.w loc_21DBE-off_21DBA; 0 ; DATA XREF: h+AE46o h+AE48o
 
 loc_21DBE:				; DATA XREF: h+AE46o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_21F14,4(a0)
+		move.l	#Map_21F14,4(a0)
 		move.w	#$43E6,2(a0)
 		bsr.w	loc_22004
 		ori.b	#4,1(a0)
@@ -47152,12 +47152,12 @@ locret_21F12:				; CODE XREF: h+AF64j
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_21F14:				; DATA XREF: h+AE4Eo h+AFA0o ...
-		dc.w word_21F1E-MapUnc_21F14; 0
-		dc.w word_21F70-MapUnc_21F14; 1
-		dc.w word_21FB2-MapUnc_21F14; 2
-		dc.w word_21FC4-MapUnc_21F14; 3
-		dc.w word_21FDE-MapUnc_21F14; 4
+Map_21F14:				; DATA XREF: h+AE4Eo h+AFA0o ...
+		dc.w word_21F1E-Map_21F14; 0
+		dc.w word_21F70-Map_21F14; 1
+		dc.w word_21FB2-Map_21F14; 2
+		dc.w word_21FC4-Map_21F14; 3
+		dc.w word_21FDE-Map_21F14; 4
 word_21F1E:	dc.w $A			; DATA XREF: h+AFA0o
 		dc.w $C105,    0,    0,$FFE4; 0
 		dc.w $D003,    4,    2,$FFE6; 4
@@ -47235,7 +47235,7 @@ word_2202A:	dc.w $2000		; 0
 
 loc_22032:				; DATA XREF: h+B0B2o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2222A,4(a0)
+		move.l	#Map_2222A,4(a0)
 		move.w	#$63A0,2(a0)
 		cmpi.b	#$A,($FFFFFE10).w
 		bne.s	loc_22052
@@ -47451,11 +47451,11 @@ loc_22216:				; CODE XREF: h+B29Cj
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_2222A:				; DATA XREF: h+B0C2o h+B2B6o ...
-		dc.w word_22232-MapUnc_2222A; 0
-		dc.w word_22244-MapUnc_2222A; 1
-		dc.w word_22256-MapUnc_2222A; 2
-		dc.w word_22278-MapUnc_2222A; 3
+Map_2222A:				; DATA XREF: h+B0C2o h+B2B6o ...
+		dc.w word_22232-Map_2222A; 0
+		dc.w word_22244-Map_2222A; 1
+		dc.w word_22256-Map_2222A; 2
+		dc.w word_22278-Map_2222A; 3
 word_22232:	dc.w 2			; DATA XREF: h+B2B6o
 		dc.w $F00F,    0,    0,$FFE0; 0
 		dc.w $F00F, $800, $800,	   0; 4
@@ -47515,7 +47515,7 @@ word_222BE:	dc.w $1000		; 0
 
 loc_222C2:				; DATA XREF: h+B346o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_223E2,4(a0)
+		move.l	#Map_223E2,4(a0)
 		move.w	#-$1C64,2(a0)
 		bsr.w	loc_22402
 		ori.b	#4,1(a0)
@@ -47604,10 +47604,10 @@ loc_223D8:				; CODE XREF: h+B426j
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_223E2:				; DATA XREF: h+B352o h+B46Eo ...
-		dc.w word_223E8-MapUnc_223E2; 0
-		dc.w word_223E8-MapUnc_223E2; 1
-		dc.w word_223FA-MapUnc_223E2; 2
+Map_223E2:				; DATA XREF: h+B352o h+B46Eo ...
+		dc.w word_223E8-Map_223E2; 0
+		dc.w word_223E8-Map_223E2; 1
+		dc.w word_223FA-Map_223E2; 2
 word_223E8:	dc.w 2			; DATA XREF: h+B46Eo
 		dc.w $F805,    0,    0,$FFE8; 0
 		dc.w $F805,    0,    0,	   8; 4
@@ -47672,7 +47672,7 @@ loc_22458:				; CODE XREF: h+B4DCj
 		move.b	d5,$24(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
-		move.l	#MapUnc_22576,4(a1)
+		move.l	#Map_22576,4(a1)
 		move.w	#$643C,2(a1)
 		bsr.w	loc_22590
 		move.b	#4,1(a1)
@@ -47762,8 +47762,8 @@ loc_22572:				; CODE XREF: h+B5E6j
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_22576:				; DATA XREF: h+B4FAo h+B602o
-		dc.w word_22578-MapUnc_22576
+Map_22576:				; DATA XREF: h+B4FAo h+B602o
+		dc.w word_22578-Map_22576
 word_22578:	dc.w 1			; DATA XREF: h+B602o
 		dc.w $F805,    0,    0,$FFF8; 0
 ; ===========================================================================
@@ -48361,7 +48361,7 @@ loc_23014:				; DATA XREF: h+C092o
 		addq.b	#2,$24(a0)
 		move.b	#8,$16(a0)
 		move.b	#8,$17(a0)
-		move.l	#MapUnc_23254,4(a0)
+		move.l	#Map_23254,4(a0)
 		move.w	#-$7BEA,2(a0)
 		bsr.w	loc_232F4
 		ori.b	#4,1(a0)
@@ -48472,7 +48472,7 @@ loc_23176:				; CODE XREF: h+C1FCj
 		move.b	#2,$1C(a0)
 		move.b	#4,$1A(a0)
 		move.w	#0,$12(a0)
-		move.l	#MapUnc_23294,4(a0)
+		move.l	#Map_23294,4(a0)
 		move.w	#-$7C62,2(a0)
 		bsr.w	loc_232F4
 		move.b	#0,$1A(a0)
@@ -48531,13 +48531,13 @@ byte_23246:	dc.b   5,  4,  5,  2,  3,  0,  1,  0,  1,  2,  3,  4,  5,$FC; 0
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_23254:				; DATA XREF: h+C0B0o h+C2E0o ...
-		dc.w word_23260-MapUnc_23254; 0
-		dc.w word_2326A-MapUnc_23254; 1
-		dc.w word_23274-MapUnc_23254; 2
-		dc.w word_2327E-MapUnc_23254; 3
-		dc.w word_23288-MapUnc_23254; 4
-		dc.w word_23292-MapUnc_23254; 5
+Map_23254:				; DATA XREF: h+C0B0o h+C2E0o ...
+		dc.w word_23260-Map_23254; 0
+		dc.w word_2326A-Map_23254; 1
+		dc.w word_23274-Map_23254; 2
+		dc.w word_2327E-Map_23254; 3
+		dc.w word_23288-Map_23254; 4
+		dc.w word_23292-Map_23254; 5
 word_23260:	dc.w 1			; DATA XREF: h+C2E0o
 		dc.w $F805,    0,    0,$FFF8; 0
 word_2326A:	dc.w 1			; DATA XREF: h+C2E0o
@@ -48552,7 +48552,7 @@ word_23292:	dc.w 0			; DATA XREF: h+C2E0o h+C320o ...
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; -------------------------------------------------------------------------------
-MapUnc_23294:				; DATA XREF: h+C236o h+190C0o
+Map_23294:				; DATA XREF: h+C236o h+190C0o
 		dc.w byte_2329E-word_23292; 0
 		dc.w byte_232A8-word_23292; 1
 		dc.w byte_232B2-word_23292; 2
@@ -48619,7 +48619,7 @@ byte_23314:	dc.b $24		; 0
 
 loc_2331E:				; DATA XREF: h+C39Ao
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_236FA,4(a0)
+		move.l	#Map_236FA,4(a0)
 		move.w	#-$4000,2(a0)
 		bsr.w	loc_238C4
 		move.b	#4,1(a0)
@@ -48841,13 +48841,13 @@ off_23528:	dc.w loc_2352E-off_23528; 0 ; DATA XREF: h+C5B4o h+C5B6o ...
 
 loc_2352E:				; DATA XREF: h+C5B4o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_23852,4(a0)
+		move.l	#Map_23852,4(a0)
 		move.w	#$43B2,2(a0)
 		move.b	#$18,$19(a0)
 		move.l	#byte_23680,$3C(a0)
 		cmpi.b	#$D,($FFFFFE10).w
 		bne.s	loc_23572
-		move.l	#MapUnc_23886,4(a0)
+		move.l	#Map_23886,4(a0)
 		move.w	#$6430,2(a0)
 		move.b	#$10,$19(a0)
 		move.l	#byte_23698,$3C(a0)
@@ -48987,17 +48987,17 @@ word_236F2:	dc.w	$A		; 0 ; DATA XREF: h+C780o h+C782o ...
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_236FA:				; DATA XREF: h+C3AEo h+C786o ...
-		dc.w word_2370E-MapUnc_236FA; 0
-		dc.w word_23758-MapUnc_236FA; 1
-		dc.w word_237AA-MapUnc_236FA; 2
-		dc.w word_237AA-MapUnc_236FA; 3
-		dc.w word_237EC-MapUnc_236FA; 4
-		dc.w word_237EC-MapUnc_236FA; 5
-		dc.w word_2381E-MapUnc_236FA; 6
-		dc.w word_2381E-MapUnc_236FA; 7
-		dc.w word_23840-MapUnc_236FA; 8
-		dc.w word_23840-MapUnc_236FA; 9
+Map_236FA:				; DATA XREF: h+C3AEo h+C786o ...
+		dc.w word_2370E-Map_236FA; 0
+		dc.w word_23758-Map_236FA; 1
+		dc.w word_237AA-Map_236FA; 2
+		dc.w word_237AA-Map_236FA; 3
+		dc.w word_237EC-Map_236FA; 4
+		dc.w word_237EC-Map_236FA; 5
+		dc.w word_2381E-Map_236FA; 6
+		dc.w word_2381E-Map_236FA; 7
+		dc.w word_23840-Map_236FA; 8
+		dc.w word_23840-Map_236FA; 9
 word_2370E:	dc.w 9			; DATA XREF: h+C786o
 		dc.w $D80D,  $12,    9,$FFF0; 0
 		dc.w $E805,  $4A,  $25,$FFF0; 4
@@ -49046,8 +49046,8 @@ word_23840:	dc.w 2			; DATA XREF: h+C786o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_23852:				; DATA XREF: h+C5BEo h+C8DEo
-		dc.w word_23854-MapUnc_23852
+Map_23852:				; DATA XREF: h+C5BEo h+C8DEo
+		dc.w word_23854-Map_23852
 word_23854:	dc.w 6			; DATA XREF: h+C8DEo
 		dc.w $F005,    0,    0,$FFE8; 0
 		dc.w $F005,    4,    2,$FFF8; 4
@@ -49058,8 +49058,8 @@ word_23854:	dc.w 6			; DATA XREF: h+C8DEo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_23886:				; DATA XREF: h+C5E2o h+C912o
-		dc.w word_23888-MapUnc_23886
+Map_23886:				; DATA XREF: h+C5E2o h+C912o
+		dc.w word_23888-Map_23886
 word_23888:	dc.w 4			; DATA XREF: h+C912o
 		dc.w $F005,    0,    0,$FFF0; 0
 		dc.w $F005, $800, $800,	   0; 4
@@ -49289,7 +49289,7 @@ off_23B02:	dc.w loc_23B08-off_23B02; 0 ; DATA XREF: h+CB8Eo h+CB90o ...
 
 loc_23B08:				; DATA XREF: h+CB8Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_23DDC,4(a0)
+		move.l	#Map_23DDC,4(a0)
 		move.w	#$632C,2(a0)
 		move.b	#4,1(a0)
 		move.b	#3,$18(a0)
@@ -49510,8 +49510,8 @@ byte_23DD2:	dc.b   2,  2,  0,  2,  0,  2,  0,  1,$FF,  0; 0	; DATA XREF: h+CE5C
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_23DDC:				; DATA XREF: h+CB98o h+CE68o
-		dc.w word_23DDE-MapUnc_23DDC
+Map_23DDC:				; DATA XREF: h+CB98o h+CE68o
+		dc.w word_23DDE-Map_23DDC
 word_23DDE:	dc.w 2			; DATA XREF: h+CE68o
 		dc.w $F809,    0,    0,$FFE8; 0
 		dc.w $F809, $800, $800,	   0; 4
@@ -49600,7 +49600,7 @@ loc_23E84:				; CODE XREF: h+CF60j
 		move.b	#1,$36(a1)
 
 loc_23EA8:				; CODE XREF: h+CF0Ej
-		move.l	#MapUnc_23FE0,4(a1)
+		move.l	#Map_23FE0,4(a1)
 		move.w	2(a0),2(a1)
 		move.b	#4,1(a1)
 		move.b	#4,$18(a1)
@@ -49716,8 +49716,8 @@ locret_23FDE:				; CODE XREF: h+D052j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_23FE0:				; DATA XREF: h+CF34o h+D06Co
-		dc.w word_23FE2-MapUnc_23FE0
+Map_23FE0:				; DATA XREF: h+CF34o h+D06Co
+		dc.w word_23FE2-Map_23FE0
 word_23FE2:	dc.w 6			; DATA XREF: h+D06Co
 word_23FE4:	dc.w $E005,    0,    0,$FFE8; 0
 		dc.w $D80F,    4,    2,$FFF8; 4
@@ -49848,7 +49848,7 @@ off_2410A:	dc.w loc_24110-off_2410A; 0 ; DATA XREF: h+D196o h+D198o ...
 
 loc_24110:				; DATA XREF: h+D196o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2451A,4(a0)
+		move.l	#Map_2451A,4(a0)
 		move.w	#$43C5,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#$10,$19(a0)
@@ -50200,36 +50200,36 @@ byte_244F8:	dc.b   0, $A, $B, $C, $D, $E, $F,$10,$11,$12,$13,$13,$13,$13,$13,$13
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2451A:				; DATA XREF: h+D1A0o h+D5A6o ...
-		dc.w word_24554-MapUnc_2451A; 0
-		dc.w word_2457E-MapUnc_2451A; 1
-		dc.w word_245A8-MapUnc_2451A; 2
-		dc.w word_245D2-MapUnc_2451A; 3
-		dc.w word_245FC-MapUnc_2451A; 4
-		dc.w word_24626-MapUnc_2451A; 5
-		dc.w word_24650-MapUnc_2451A; 6
-		dc.w word_2467A-MapUnc_2451A; 7
-		dc.w word_246A4-MapUnc_2451A; 8
-		dc.w word_246CE-MapUnc_2451A; 9
-		dc.w word_246F8-MapUnc_2451A; 10
-		dc.w word_24722-MapUnc_2451A; 11
-		dc.w word_2474C-MapUnc_2451A; 12
-		dc.w word_24776-MapUnc_2451A; 13
-		dc.w word_247A0-MapUnc_2451A; 14
-		dc.w word_247CA-MapUnc_2451A; 15
-		dc.w word_247F4-MapUnc_2451A; 16
-		dc.w word_2481E-MapUnc_2451A; 17
-		dc.w word_24848-MapUnc_2451A; 18
-		dc.w word_24872-MapUnc_2451A; 19
-		dc.w word_2489C-MapUnc_2451A; 20
-		dc.w word_248C6-MapUnc_2451A; 21
-		dc.w word_248F0-MapUnc_2451A; 22
-		dc.w word_2491A-MapUnc_2451A; 23
-		dc.w word_24944-MapUnc_2451A; 24
-		dc.w word_2496E-MapUnc_2451A; 25
-		dc.w word_24998-MapUnc_2451A; 26
-		dc.w word_249C2-MapUnc_2451A; 27
-		dc.w word_249EC-MapUnc_2451A; 28
+Map_2451A:				; DATA XREF: h+D1A0o h+D5A6o ...
+		dc.w word_24554-Map_2451A; 0
+		dc.w word_2457E-Map_2451A; 1
+		dc.w word_245A8-Map_2451A; 2
+		dc.w word_245D2-Map_2451A; 3
+		dc.w word_245FC-Map_2451A; 4
+		dc.w word_24626-Map_2451A; 5
+		dc.w word_24650-Map_2451A; 6
+		dc.w word_2467A-Map_2451A; 7
+		dc.w word_246A4-Map_2451A; 8
+		dc.w word_246CE-Map_2451A; 9
+		dc.w word_246F8-Map_2451A; 10
+		dc.w word_24722-Map_2451A; 11
+		dc.w word_2474C-Map_2451A; 12
+		dc.w word_24776-Map_2451A; 13
+		dc.w word_247A0-Map_2451A; 14
+		dc.w word_247CA-Map_2451A; 15
+		dc.w word_247F4-Map_2451A; 16
+		dc.w word_2481E-Map_2451A; 17
+		dc.w word_24848-Map_2451A; 18
+		dc.w word_24872-Map_2451A; 19
+		dc.w word_2489C-Map_2451A; 20
+		dc.w word_248C6-Map_2451A; 21
+		dc.w word_248F0-Map_2451A; 22
+		dc.w word_2491A-Map_2451A; 23
+		dc.w word_24944-Map_2451A; 24
+		dc.w word_2496E-Map_2451A; 25
+		dc.w word_24998-Map_2451A; 26
+		dc.w word_249C2-Map_2451A; 27
+		dc.w word_249EC-Map_2451A; 28
 word_24554:	dc.w 5			; DATA XREF: h+D5A6o
 		dc.w $EC0C,$3000,$3000,$FFF0; 0
 		dc.w  $C08,$3004,$3002,$FFF4; 4
@@ -50436,7 +50436,7 @@ loc_24A48:				; CODE XREF: h+DAC2j
 		addq.b	#2,$24(a0)
 		move.b	#$F,$16(a0)
 		move.b	#$F,$17(a0)
-		move.l	#MapUnc_24C52,4(a0)
+		move.l	#Map_24C52,4(a0)
 		move.w	#$6354,2(a0)
 		bsr.w	loc_24CD6
 		move.b	#4,1(a0)
@@ -50454,7 +50454,7 @@ loc_24A48:				; CODE XREF: h+DAC2j
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
 		addi.w	#$12,$C(a1)
-		move.l	#MapUnc_2451A,4(a1)
+		move.l	#Map_2451A,4(a1)
 		move.w	#$43C5,2(a1)
 		ori.b	#4,1(a1)
 		move.b	#$10,$19(a1)
@@ -50624,11 +50624,11 @@ loc_24C4C:				; CODE XREF: h+DCD4j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_24C52:				; DATA XREF: h+DAE4o h+DCDEo ...
-		dc.w word_24C5A-MapUnc_24C52; 0
-		dc.w word_24C7C-MapUnc_24C52; 1
-		dc.w word_24C9E-MapUnc_24C52; 2
-		dc.w word_24CB0-MapUnc_24C52; 3
+Map_24C52:				; DATA XREF: h+DAE4o h+DCDEo ...
+		dc.w word_24C5A-Map_24C52; 0
+		dc.w word_24C7C-Map_24C52; 1
+		dc.w word_24C9E-Map_24C52; 2
+		dc.w word_24CB0-Map_24C52; 3
 word_24C5A:	dc.w 4			; DATA XREF: h+DCDEo
 		dc.w $F005,    0,    0,$FFF0; 0
 		dc.w $F005,    4,    2,	   0; 4
@@ -50697,7 +50697,7 @@ off_24D02:	dc.w loc_24D06-off_24D02; 0 ; DATA XREF: h+DD8Eo h+DD90o
 
 loc_24D06:				; DATA XREF: h+DD8Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_24D96,4(a0)
+		move.l	#Map_24D96,4(a0)
 		move.w	#$424,2(a0)
 		bsr.w	loc_24DC2
 		move.b	#4,1(a0)
@@ -50747,10 +50747,10 @@ loc_24D92:				; CODE XREF: h+DDC2j h+DE06j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_24D96:				; DATA XREF: h+DD96o h+DE22o ...
-		dc.w word_24D9C-MapUnc_24D96; 0
-		dc.w word_24DA6-MapUnc_24D96; 1
-		dc.w word_24DB0-MapUnc_24D96; 2
+Map_24D96:				; DATA XREF: h+DD96o h+DE22o ...
+		dc.w word_24D9C-Map_24D96; 0
+		dc.w word_24DA6-Map_24D96; 1
+		dc.w word_24DB0-Map_24D96; 2
 word_24D9C:	dc.w 1			; DATA XREF: h+DE22o
 		dc.w $F40D,    0,    0,$FFF0; 0
 word_24DA6:	dc.w 1			; DATA XREF: h+DE22o
@@ -50794,7 +50794,7 @@ off_24DDE:	dc.w loc_24DE6-off_24DDE; 0 ; DATA XREF: h+DE6Ao h+DE6Co ...
 
 loc_24DE6:				; DATA XREF: h+DE6Ao
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_250BA,4(a0)
+		move.l	#Map_250BA,4(a0)
 		move.w	#$6332,2(a0)
 		tst.b	$28(a0)
 		beq.s	loc_24E0A
@@ -51059,11 +51059,11 @@ word_2507A:	dc.w $FC00		; 0 ; DATA XREF: h+DFB4o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_250BA:				; DATA XREF: h+DE76o h+E146o ...
-		dc.w word_250C2-MapUnc_250BA; 0
-		dc.w word_250E4-MapUnc_250BA; 1
-		dc.w word_25166-MapUnc_250BA; 2
-		dc.w word_25188-MapUnc_250BA; 3
+Map_250BA:				; DATA XREF: h+DE76o h+E146o ...
+		dc.w word_250C2-Map_250BA; 0
+		dc.w word_250E4-Map_250BA; 1
+		dc.w word_25166-Map_250BA; 2
+		dc.w word_25188-Map_250BA; 3
 word_250C2:	dc.w 4			; DATA XREF: h+E146o
 word_250C4:	dc.w $F003,    0,    0,$FFF0; 0
 		dc.w $F003,    0,    0,$FFF8; 4
@@ -51179,7 +51179,7 @@ byte_25266:	dc.b   4,  0		; 0
 
 loc_25276:				; DATA XREF: h+E2EEo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_254FE,4(a0)
+		move.l	#Map_254FE,4(a0)
 		move.w	#$6368,2(a0)
 		bsr.w	loc_2568C
 		move.b	$28(a0),d0
@@ -51402,15 +51402,15 @@ locret_254FC:				; CODE XREF: h+E582j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_254FE:				; DATA XREF: h+E306o h+E58Ao ...
-		dc.w word_2550E-MapUnc_254FE; 0
-		dc.w word_25550-MapUnc_254FE; 1
-		dc.w word_25582-MapUnc_254FE; 2
-		dc.w word_255A4-MapUnc_254FE; 3
-		dc.w word_255C6-MapUnc_254FE; 4
-		dc.w word_255E8-MapUnc_254FE; 5
-		dc.w word_2560A-MapUnc_254FE; 6
-		dc.w word_2563C-MapUnc_254FE; 7
+Map_254FE:				; DATA XREF: h+E306o h+E58Ao ...
+		dc.w word_2550E-Map_254FE; 0
+		dc.w word_25550-Map_254FE; 1
+		dc.w word_25582-Map_254FE; 2
+		dc.w word_255A4-Map_254FE; 3
+		dc.w word_255C6-Map_254FE; 4
+		dc.w word_255E8-Map_254FE; 5
+		dc.w word_2560A-Map_254FE; 6
+		dc.w word_2563C-Map_254FE; 7
 word_2550E:	dc.w 8			; DATA XREF: h+E58Ao
 		dc.w $D804,    0,    0,$FFF0; 0
 		dc.w $D804, $800, $800,	   0; 4
@@ -51501,7 +51501,7 @@ off_256A2:	dc.w loc_256AC-off_256A2; 0 ; DATA XREF: h+E72Eo h+E730o ...
 
 loc_256AC:				; DATA XREF: h+E72Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_25804,4(a0)
+		move.l	#Map_25804,4(a0)
 		move.w	#$417,2(a0)
 		bsr.w	loc_25880
 		ori.b	#4,1(a0)
@@ -51617,12 +51617,12 @@ byte_257FB:	dc.b   7,  3,  4,$FC,  4,  3,  1,$FD,  0; 0 ; DATA XREF: h+E87Ao
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_25804:				; DATA XREF: h+E73Co h+E890o ...
-		dc.w word_2580E-MapUnc_25804; 0
-		dc.w word_25818-MapUnc_25804; 1
-		dc.w word_2582A-MapUnc_25804; 2
-		dc.w word_25844-MapUnc_25804; 3
-		dc.w word_25856-MapUnc_25804; 4
+Map_25804:				; DATA XREF: h+E73Co h+E890o ...
+		dc.w word_2580E-Map_25804; 0
+		dc.w word_25818-Map_25804; 1
+		dc.w word_2582A-Map_25804; 2
+		dc.w word_25844-Map_25804; 3
+		dc.w word_25856-Map_25804; 4
 word_2580E:	dc.w 1			; DATA XREF: h+E890o
 		dc.w $FC0C,$2000,$2000,$FFF0; 0
 word_25818:	dc.w 2			; DATA XREF: h+E890o
@@ -51681,7 +51681,7 @@ off_2589A:	dc.w loc_2589E-off_2589A; 0 ; DATA XREF: h+E926o h+E928o
 
 loc_2589E:				; DATA XREF: h+E926o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_259E6,4(a0)
+		move.l	#Map_259E6,4(a0)
 		move.w	#$2000,2(a0)
 		bsr.w	loc_260F0
 		ori.b	#4,1(a0)
@@ -51801,10 +51801,10 @@ locret_259E4:				; CODE XREF: h+EA54j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_259E6:				; DATA XREF: h+E92Eo h+EA72o ...
-		dc.w word_259EC-MapUnc_259E6; 0
-		dc.w word_25A1E-MapUnc_259E6; 1
-		dc.w word_25A38-MapUnc_259E6; 2
+Map_259E6:				; DATA XREF: h+E92Eo h+EA72o ...
+		dc.w word_259EC-Map_259E6; 0
+		dc.w word_25A1E-Map_259E6; 1
+		dc.w word_25A38-Map_259E6; 2
 word_259EC:	dc.w 6			; DATA XREF: h+EA72o
 word_259EE:	dc.w $E005,  $5D,  $2E,$FFE0; 0
 		dc.w $E005, $85D, $82E,	 $10; 4
@@ -51841,7 +51841,7 @@ off_25A68:	dc.w loc_25A6E-off_25A68; 0 ; DATA XREF: h+EAF4o h+EAF6o ...
 
 loc_25A6E:				; DATA XREF: h+EAF4o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_25C6E,4(a0)
+		move.l	#Map_25C6E,4(a0)
 		move.w	#$2000,2(a0)
 		bsr.w	loc_260F0
 		ori.b	#4,1(a0)
@@ -52027,21 +52027,21 @@ loc_25C64:				; CODE XREF: h+ECACj
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_25C6E:				; DATA XREF: h+EAFEo h+ECFAo ...
-		dc.w word_25C8A-MapUnc_25C6E; 0
-		dc.w word_25CBC-MapUnc_25C6E; 1
-		dc.w word_25CF6-MapUnc_25C6E; 2
-		dc.w word_25D30-MapUnc_25C6E; 3
-		dc.w word_25D72-MapUnc_25C6E; 4
-		dc.w word_25DB4-MapUnc_25C6E; 5
-		dc.w word_25DFE-MapUnc_25C6E; 6
-		dc.w word_25E48-MapUnc_25C6E; 7
-		dc.w word_25E8A-MapUnc_25C6E; 8
-		dc.w word_25EDC-MapUnc_25C6E; 9
-		dc.w word_25F2E-MapUnc_25C6E; 10
-		dc.w word_25F90-MapUnc_25C6E; 11
-		dc.w word_25FF2-MapUnc_25C6E; 12
-		dc.w word_26064-MapUnc_25C6E; 13
+Map_25C6E:				; DATA XREF: h+EAFEo h+ECFAo ...
+		dc.w word_25C8A-Map_25C6E; 0
+		dc.w word_25CBC-Map_25C6E; 1
+		dc.w word_25CF6-Map_25C6E; 2
+		dc.w word_25D30-Map_25C6E; 3
+		dc.w word_25D72-Map_25C6E; 4
+		dc.w word_25DB4-Map_25C6E; 5
+		dc.w word_25DFE-Map_25C6E; 6
+		dc.w word_25E48-Map_25C6E; 7
+		dc.w word_25E8A-Map_25C6E; 8
+		dc.w word_25EDC-Map_25C6E; 9
+		dc.w word_25F2E-Map_25C6E; 10
+		dc.w word_25F90-Map_25C6E; 11
+		dc.w word_25FF2-Map_25C6E; 12
+		dc.w word_26064-Map_25C6E; 13
 word_25C8A:	dc.w 6			; DATA XREF: h+ECFAo
 		dc.w $100D,$208B,$2045,$FFF0; 0
 		dc.w $E805,  $5D,  $2E,$FFE0; 4
@@ -52249,7 +52249,7 @@ loc_2611C:				; DATA XREF: h+F19Eo
 		moveq	#0,d0
 		move.b	$28(a0),d0
 		move.b	byte_26118(pc,d0.w),$20(a0)
-		move.l	#MapUnc_20E74,4(a0)
+		move.l	#Map_20E74,4(a0)
 		move.w	#-$7980,2(a0)
 		move.b	#-$7C,1(a0)
 		move.b	#-$80,$19(a0)
@@ -52488,7 +52488,7 @@ word_26386:	dc.w $FC00		; 0
 
 loc_2638C:				; DATA XREF: h+F40Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_265F4,4(a0)
+		move.l	#Map_265F4,4(a0)
 		move.w	#$440,2(a0)
 		bsr.w	loc_26628
 		ori.b	#4,1(a0)
@@ -52661,9 +52661,9 @@ byte_265EF:	dc.b   3,  1,  0,$FD,  0; 0 ; DATA XREF: h+F674o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_265F4:				; DATA XREF: h+F41Co h+F680o ...
-		dc.w word_265F8-MapUnc_265F4; 0
-		dc.w word_2660A-MapUnc_265F4; 1
+Map_265F4:				; DATA XREF: h+F41Co h+F680o ...
+		dc.w word_265F8-Map_265F4; 0
+		dc.w word_2660A-Map_265F4; 1
 word_265F8:	dc.w 2			; DATA XREF: h+F680o
 		dc.w $E809,    0,    0,$FFE4; 0
 		dc.w $E80D,    6,    3,$FFFC; 4
@@ -52706,7 +52706,7 @@ off_26642:	dc.w loc_26648-off_26642; 0 ; DATA XREF: h+F6CEo h+F6D0o ...
 
 loc_26648:				; DATA XREF: h+F6CEo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2686C,4(a0)
+		move.l	#Map_2686C,4(a0)
 		move.w	#$6000,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#$10,$19(a0)
@@ -52884,15 +52884,15 @@ loc_26868:				; CODE XREF: h+F8CAj
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2686C:				; DATA XREF: h+F6D8o h+F8F8o ...
-		dc.w word_2687C-MapUnc_2686C; 0
-		dc.w word_26886-MapUnc_2686C; 1
-		dc.w word_26890-MapUnc_2686C; 2
-		dc.w word_2689A-MapUnc_2686C; 3
-		dc.w word_268AC-MapUnc_2686C; 4
-		dc.w word_268BE-MapUnc_2686C; 5
-		dc.w word_268D8-MapUnc_2686C; 6
-		dc.w word_268EA-MapUnc_2686C; 7
+Map_2686C:				; DATA XREF: h+F6D8o h+F8F8o ...
+		dc.w word_2687C-Map_2686C; 0
+		dc.w word_26886-Map_2686C; 1
+		dc.w word_26890-Map_2686C; 2
+		dc.w word_2689A-Map_2686C; 3
+		dc.w word_268AC-Map_2686C; 4
+		dc.w word_268BE-Map_2686C; 5
+		dc.w word_268D8-Map_2686C; 6
+		dc.w word_268EA-Map_2686C; 7
 word_2687C:	dc.w 1			; DATA XREF: h+F8F8o
 		dc.w $FF00,    0,    0,$FFE8; 0
 word_26886:	dc.w 1			; DATA XREF: h+F8F8o
@@ -52976,7 +52976,7 @@ loc_2693A:				; DATA XREF: h+F9BAo
 		bset	#4,1(a0)
 
 loc_2696A:				; CODE XREF: h+F9E8j
-		move.l	#MapUnc_26A5C,4(a0)
+		move.l	#Map_26A5C,4(a0)
 		move.w	#$2000,2(a0)
 		bsr.w	loc_26AD4
 		ori.b	#4,1(a0)
@@ -53072,9 +53072,9 @@ loc_26A50:				; CODE XREF: h+FAD4j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_26A5C:				; DATA XREF: h+F9F6o h+FAE8o ...
-		dc.w word_26A60-MapUnc_26A5C; 0
-		dc.w word_26AB2-MapUnc_26A5C; 1
+Map_26A5C:				; DATA XREF: h+F9F6o h+FAE8o ...
+		dc.w word_26A60-Map_26A5C; 0
+		dc.w word_26AB2-Map_26A5C; 1
 word_26A60:	dc.w $A			; DATA XREF: h+FAE8o
 		dc.w $F40E,    1,    0,$FFC0; 0
 		dc.w $F40E, $801, $800,$FFE0; 4
@@ -53128,7 +53128,7 @@ byte_26AF6:	dc.b $40, $C		; 0
 
 loc_26B06:				; DATA XREF: h+FB7Ao
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_26EC8,4(a0)
+		move.l	#Map_26EC8,4(a0)
 		move.w	#$6000,2(a0)
 		bsr.w	loc_26F4C
 		ori.b	#4,1(a0)
@@ -53150,7 +53150,7 @@ loc_26B52:				; CODE XREF: h+FBD6j
 		cmpi.b	#2,d0
 		bne.s	loc_26B6E
 		addq.b	#4,$24(a0)
-		move.l	#MapUnc_26F04,4(a0)
+		move.l	#Map_26F04,4(a0)
 		move.w	#$655F,2(a0)
 		bra.w	loc_26EC2
 ; ===========================================================================
@@ -53186,7 +53186,7 @@ loc_26BA4:				; CODE XREF: h+FC28j
 		bset	#0,1(a1)
 
 loc_26BE0:				; CODE XREF: h+FC5Ej
-		move.l	#MapUnc_26F04,4(a1)
+		move.l	#Map_26F04,4(a1)
 		move.w	#$655F,2(a1)
 		ori.b	#4,1(a1)
 		move.b	#$10,$19(a1)
@@ -53506,11 +53506,11 @@ loc_26EC2:				; CODE XREF: h+FBF6j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_26EC8:				; DATA XREF: h+FB96o h+FF54o ...
-		dc.w word_26ED0-MapUnc_26EC8; 0
-		dc.w word_26EF2-MapUnc_26EC8; 1
-		dc.w word_26ED0-MapUnc_26EC8; 2
-		dc.w word_26ED0-MapUnc_26EC8; 3
+Map_26EC8:				; DATA XREF: h+FB96o h+FF54o ...
+		dc.w word_26ED0-Map_26EC8; 0
+		dc.w word_26EF2-Map_26EC8; 1
+		dc.w word_26ED0-Map_26EC8; 2
+		dc.w word_26ED0-Map_26EC8; 3
 word_26ED0:	dc.w 4			; DATA XREF: h+FF54o
 		dc.w $F40E,  $4B,  $25,$FFC0; 0
 		dc.w $F40E,  $4B,  $25,$FFE0; 4
@@ -53522,10 +53522,10 @@ word_26EF2:	dc.w 2			; DATA XREF: h+FF54o
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_26F04:				; DATA XREF: h+FBE8o h+FC6Co ...
-		dc.w word_26F0A-MapUnc_26F04; 0
-		dc.w word_26F1C-MapUnc_26F04; 1
-		dc.w word_26F2E-MapUnc_26F04; 2
+Map_26F04:				; DATA XREF: h+FBE8o h+FC6Co ...
+		dc.w word_26F0A-Map_26F04; 0
+		dc.w word_26F1C-Map_26F04; 1
+		dc.w word_26F2E-Map_26F04; 2
 word_26F0A:	dc.w 2			; DATA XREF: h+FF90o
 		dc.w $F406,    0,    0,$FFF0; 0
 		dc.w $F406, $800, $800,	   0; 4
@@ -53570,7 +53570,7 @@ off_26F66:	dc.w loc_26F6A-off_26F66; 0 ; DATA XREF: h+FFF2o h+FFF4o
 
 loc_26F6A:				; DATA XREF: h+FFF2o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_27120,4(a0)
+		move.l	#Map_27120,4(a0)
 		move.w	#-$7980,2(a0)
 		bsr.w	loc_2714E
 		ori.b	#4,1(a0)
@@ -53711,9 +53711,9 @@ loc_27104:				; CODE XREF: h+10182j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_27120:				; DATA XREF: h+FFFAo h+101ACo	...
-		dc.w word_27124-MapUnc_27120; 0
-		dc.w word_27136-MapUnc_27120; 1
+Map_27120:				; DATA XREF: h+FFFAo h+101ACo	...
+		dc.w word_27124-Map_27120; 0
+		dc.w word_27136-Map_27120; 1
 word_27124:	dc.w 2			; DATA XREF: h+101ACo
 		dc.w $C005,  $34,  $1A,$FFF8; 0
 		dc.w $3005,  $34,  $1A,$FFF8; 4
@@ -53760,7 +53760,7 @@ off_27184:	dc.w loc_27188-off_27184; 0 ; DATA XREF: h+10210o h+10212o
 
 loc_27188:				; DATA XREF: h+10210o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_27548,4(a0)
+		move.l	#Map_27548,4(a0)
 		move.w	#$656B,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#$10,$19(a0)
@@ -54058,9 +54058,9 @@ byte_2752E:	dc.b   0,  4,  0,  7,$1F,  0,$FF,  1,  1,  0,  0,  0,  0,  0,  1,  0
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_27548:				; DATA XREF: h+10218o h+105D4o ...
-		dc.w word_2754C-MapUnc_27548; 0
-		dc.w word_2754E-MapUnc_27548; 1
+Map_27548:				; DATA XREF: h+10218o h+105D4o ...
+		dc.w word_2754C-Map_27548; 0
+		dc.w word_2754E-Map_27548; 1
 word_2754C:	dc.w 0			; DATA XREF: h+105D4o
 word_2754E:	dc.w 6			; DATA XREF: h+105D4o
 		dc.w $E005,    0,    0,$FFEC; 0
@@ -54106,7 +54106,7 @@ off_275A2:	dc.w loc_275A8-off_275A2; 0 ; DATA XREF: h+1062Eo h+10630o ...
 
 loc_275A8:				; DATA XREF: h+1062Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_27750,4(a0)
+		move.l	#Map_27750,4(a0)
 		move.w	#$6414,2(a0)
 		bsr.w	loc_27870
 		move.b	#4,1(a0)
@@ -54247,12 +54247,12 @@ byte_2774C:	dc.b $84		; 0 ; DATA XREF: h+106C4o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_27750:				; DATA XREF: h+10638o h+107DCo ...
-		dc.w word_2775A-MapUnc_27750; 0
-		dc.w word_27764-MapUnc_27750; 1
-		dc.w word_2776E-MapUnc_27750; 2
-		dc.w word_27778-MapUnc_27750; 3
-		dc.w word_27782-MapUnc_27750; 4
+Map_27750:				; DATA XREF: h+10638o h+107DCo ...
+		dc.w word_2775A-Map_27750; 0
+		dc.w word_27764-Map_27750; 1
+		dc.w word_2776E-Map_27750; 2
+		dc.w word_27778-Map_27750; 3
+		dc.w word_27782-Map_27750; 4
 word_2775A:	dc.w 1			; DATA XREF: h+107DCo
 		dc.w $F003,$1000,$1000,$FFFC; 0
 word_27764:	dc.w 1			; DATA XREF: h+107DCo
@@ -54283,7 +54283,7 @@ off_277A2:	dc.w loc_277A6-off_277A2; 0 ; DATA XREF: h+1082Eo h+10830o
 
 loc_277A6:				; DATA XREF: h+1082Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_27750,4(a0)
+		move.l	#Map_27750,4(a0)
 		move.w	#$241C,2(a0)
 		bsr.w	loc_27870
 		ori.b	#4,1(a0)
@@ -54385,7 +54385,7 @@ off_27892:	dc.w loc_2789A-off_27892; 0 ; DATA XREF: h+1091Eo h+10920o ...
 
 loc_2789A:				; DATA XREF: h+1091Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_27A26,4(a0)
+		move.l	#Map_27A26,4(a0)
 		move.w	#$2500,2(a0)
 		bsr.w	loc_27A9C
 		move.b	#4,1(a0)
@@ -54538,11 +54538,11 @@ loc_27A22:				; CODE XREF: h+10A98j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_27A26:				; DATA XREF: h+1092Ao h+10AB2o ...
-		dc.w word_27A2E-MapUnc_27A26; 0
-		dc.w word_27A40-MapUnc_27A26; 1
-		dc.w word_27A5A-MapUnc_27A26; 2
-		dc.w word_27A74-MapUnc_27A26; 3
+Map_27A26:				; DATA XREF: h+1092Ao h+10AB2o ...
+		dc.w word_27A2E-Map_27A26; 0
+		dc.w word_27A40-Map_27A26; 1
+		dc.w word_27A5A-Map_27A26; 2
+		dc.w word_27A74-Map_27A26; 3
 word_27A2E:	dc.w 2			; DATA XREF: h+10AB2o
 		dc.w $F40E,    0,    0,$FFE0; 0
 		dc.w $F40E,   $C,    6,	   0; 4
@@ -54602,7 +54602,7 @@ off_27ABE:	dc.w loc_27AC4-off_27ABE; 0 ; DATA XREF: h+10B4Ao h+10B4Co ...
 
 loc_27AC4:				; DATA XREF: h+10B4Ao
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_26EC8,4(a0)
+		move.l	#Map_26EC8,4(a0)
 		move.w	#$6000,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#4,$18(a0)
@@ -54613,7 +54613,7 @@ loc_27AC4:				; DATA XREF: h+10B4Ao
 		cmpi.b	#$B,($FFFFFE10).w
 		bne.w	loc_27BC4
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_27D30,4(a0)
+		move.l	#Map_27D30,4(a0)
 		move.w	#$63D4,2(a0)
 		move.b	#$20,$19(a0) ; ' '
 		move.b	#$20,$16(a0) ; ' '
@@ -54783,8 +54783,8 @@ byte_27D12:	dc.b   0,  0,  1,  0,  0,$40,  1,  0,  0,  0,  0,$80,  0,  0,$FF,  0
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_27D30:				; DATA XREF: h+10B96o h+10DBCo
-		dc.w word_27D32-MapUnc_27D30
+Map_27D30:				; DATA XREF: h+10B96o h+10DBCo
+		dc.w word_27D32-Map_27D30
 word_27D32:	dc.w 4			; DATA XREF: h+10DBCo
 		dc.w $E00F,    0,    0,$FFE0; 0
 		dc.w $E00F,  $10,    8,	   0; 4
@@ -54833,11 +54833,11 @@ byte_27D7E:	dc.b $20		; 0
 
 loc_27D86:				; DATA XREF: h+10E06o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_26EC8,4(a0)
+		move.l	#Map_26EC8,4(a0)
 		move.w	#$6000,2(a0)
 		cmpi.b	#$D,($FFFFFE10).w
 		bne.s	loc_27DAE
-		move.l	#MapUnc_2800E,4(a0)
+		move.l	#Map_2800E,4(a0)
 		move.w	#$6418,2(a0)
 
 loc_27DAE:				; CODE XREF: h+10E2Aj
@@ -55114,8 +55114,8 @@ locret_2800C:
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2800E:				; DATA XREF: h+10E2Co h+1109Ao ...
-		dc.w word_28010-MapUnc_2800E
+Map_2800E:				; DATA XREF: h+10E2Co h+1109Ao ...
+		dc.w word_28010-Map_2800E
 word_28010:	dc.w 1			; DATA XREF: h+1109Ao
 		dc.w $F00F,    0,    0,$FFF0; 0
 ; ===========================================================================
@@ -55166,7 +55166,7 @@ loc_28060:				; DATA XREF: h+110E8o
 		move.b	$28(a0),d0
 		bmi.w	loc_28112
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_28372,4(a0)
+		move.l	#Map_28372,4(a0)
 		move.w	#$63F9,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#$10,$19(a0)
@@ -55388,8 +55388,8 @@ byte_28340:	dc.b   0,  7,  0,  0,  0,  0,  0,$21,$FF,$E0,  0,$7A,  0,$23,$FF,$E0
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_28372:				; DATA XREF: h+110F8o h+113FEo
-		dc.w word_28374-MapUnc_28372; 0
+Map_28372:				; DATA XREF: h+110F8o h+113FEo
+		dc.w word_28374-Map_28372; 0
 word_28374:	dc.w 2			; DATA XREF: h+113FEo
 		dc.w $F805,    0,    0,$FFF0; 0
 		dc.w $F805, $800, $800,	   0; 4
@@ -55442,7 +55442,7 @@ byte_283C0:	dc.b $10, $C		; 0
 
 loc_283C8:				; DATA XREF: h+11446o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2852C,4(a0)
+		move.l	#Map_2852C,4(a0)
 		move.w	#$6000,2(a0)
 		bsr.w	loc_285B4
 		ori.b	#4,1(a0)
@@ -55567,11 +55567,11 @@ loc_28526:				; CODE XREF: h+115AAj
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2852C:				; DATA XREF: h+11458o h+115B8o ...
-		dc.w word_28534-MapUnc_2852C; 0
-		dc.w word_2853E-MapUnc_2852C; 1
-		dc.w word_28558-MapUnc_2852C; 2
-		dc.w word_285AA-MapUnc_2852C; 3
+Map_2852C:				; DATA XREF: h+11458o h+115B8o ...
+		dc.w word_28534-Map_2852C; 0
+		dc.w word_2853E-Map_2852C; 1
+		dc.w word_28558-Map_2852C; 2
+		dc.w word_285AA-Map_2852C; 3
 word_28534:	dc.w 1			; DATA XREF: h+115B8o
 		dc.w $F40E,  $25,  $12,$FFF0; 0
 word_2853E:	dc.w 3			; DATA XREF: h+115B8o
@@ -55634,7 +55634,7 @@ loc_285EE:				; CODE XREF: h+116DAj
 loc_285F4:				; CODE XREF: h+11678j
 		move.b	0(a0),0(a1)
 		addq.b	#2,$24(a1)
-		move.l	#MapUnc_28786,4(a1)
+		move.l	#Map_28786,4(a1)
 		move.w	#$6378,2(a1)
 		bsr.w	loc_2892E
 		move.b	#4,1(a1)
@@ -55748,39 +55748,39 @@ byte_28726:	dc.b   0,$B8,  0,$32,$CE,  4,$48,  0,  8,$32,$32, $C,  0,$48,$10,$CE
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_28786:				; DATA XREF: h+1168Ao h+11812o ...
-		dc.w word_287C6-MapUnc_28786; 0
-		dc.w word_287D8-MapUnc_28786; 1
-		dc.w word_287E2-MapUnc_28786; 2
-		dc.w word_287EC-MapUnc_28786; 3
-		dc.w word_287F6-MapUnc_28786; 4
-		dc.w word_28800-MapUnc_28786; 5
-		dc.w word_2880A-MapUnc_28786; 6
-		dc.w word_28814-MapUnc_28786; 7
-		dc.w word_2881E-MapUnc_28786; 8
-		dc.w word_28830-MapUnc_28786; 9
-		dc.w word_2883A-MapUnc_28786; 10
-		dc.w word_28844-MapUnc_28786; 11
-		dc.w word_2884E-MapUnc_28786; 12
-		dc.w word_28858-MapUnc_28786; 13
-		dc.w word_28862-MapUnc_28786; 14
-		dc.w word_2886C-MapUnc_28786; 15
-		dc.w word_28876-MapUnc_28786; 16
-		dc.w word_28888-MapUnc_28786; 17
-		dc.w word_28892-MapUnc_28786; 18
-		dc.w word_2889C-MapUnc_28786; 19
-		dc.w word_288A6-MapUnc_28786; 20
-		dc.w word_288B0-MapUnc_28786; 21
-		dc.w word_288BA-MapUnc_28786; 22
-		dc.w word_288C4-MapUnc_28786; 23
-		dc.w word_288CE-MapUnc_28786; 24
-		dc.w word_288E0-MapUnc_28786; 25
-		dc.w word_288EA-MapUnc_28786; 26
-		dc.w word_288F4-MapUnc_28786; 27
-		dc.w word_288FE-MapUnc_28786; 28
-		dc.w word_28908-MapUnc_28786; 29
-		dc.w word_28912-MapUnc_28786; 30
-		dc.w word_2891C-MapUnc_28786; 31
+Map_28786:				; DATA XREF: h+1168Ao h+11812o ...
+		dc.w word_287C6-Map_28786; 0
+		dc.w word_287D8-Map_28786; 1
+		dc.w word_287E2-Map_28786; 2
+		dc.w word_287EC-Map_28786; 3
+		dc.w word_287F6-Map_28786; 4
+		dc.w word_28800-Map_28786; 5
+		dc.w word_2880A-Map_28786; 6
+		dc.w word_28814-Map_28786; 7
+		dc.w word_2881E-Map_28786; 8
+		dc.w word_28830-Map_28786; 9
+		dc.w word_2883A-Map_28786; 10
+		dc.w word_28844-Map_28786; 11
+		dc.w word_2884E-Map_28786; 12
+		dc.w word_28858-Map_28786; 13
+		dc.w word_28862-Map_28786; 14
+		dc.w word_2886C-Map_28786; 15
+		dc.w word_28876-Map_28786; 16
+		dc.w word_28888-Map_28786; 17
+		dc.w word_28892-Map_28786; 18
+		dc.w word_2889C-Map_28786; 19
+		dc.w word_288A6-Map_28786; 20
+		dc.w word_288B0-Map_28786; 21
+		dc.w word_288BA-Map_28786; 22
+		dc.w word_288C4-Map_28786; 23
+		dc.w word_288CE-Map_28786; 24
+		dc.w word_288E0-Map_28786; 25
+		dc.w word_288EA-Map_28786; 26
+		dc.w word_288F4-Map_28786; 27
+		dc.w word_288FE-Map_28786; 28
+		dc.w word_28908-Map_28786; 29
+		dc.w word_28912-Map_28786; 30
+		dc.w word_2891C-Map_28786; 31
 word_287C6:	dc.w 2			; DATA XREF: h+11812o
 		dc.w $F007,    0,    0,$FFF0; 0
 		dc.w $F007, $800, $800,	   0; 4
@@ -55947,7 +55947,7 @@ off_289E2:	dc.w loc_289E8-off_289E2; 0 ; DATA XREF: h+11A6Eo h+11A70o ...
 
 loc_289E8:				; DATA XREF: h+11A6Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_28B9C,4(a0)
+		move.l	#Map_28B9C,4(a0)
 		move.w	#$26BC,2(a0)
 		bsr.w	loc_28BBA
 		move.b	#4,1(a0)
@@ -56091,8 +56091,8 @@ loc_28B7E:				; DATA XREF: h+11A6Eo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_28B9C:				; DATA XREF: h+11A78o h+11C28o
-		dc.w word_28B9E-MapUnc_28B9C
+Map_28B9C:				; DATA XREF: h+11A78o h+11C28o
+		dc.w word_28B9E-Map_28B9C
 word_28B9E:	dc.w 1			; DATA XREF: h+11C28o
 		dc.w $F805,    0,    0,$FFF8; 0
 ; ===========================================================================
@@ -56145,7 +56145,7 @@ off_28BE8:	dc.w loc_28BEE-off_28BE8; 0 ; DATA XREF: h+11C74o h+11C76o ...
 
 loc_28BEE:				; DATA XREF: h+11C74o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_28D8A,4(a0)
+		move.l	#Map_28D8A,4(a0)
 		move.w	#$2000,2(a0)
 		bsr.w	loc_28DE4
 		move.b	#4,1(a0)
@@ -56279,10 +56279,10 @@ loc_28D6C:				; DATA XREF: h+11C74o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_28D8A:				; DATA XREF: h+11C7Eo h+11E16o ...
-		dc.w word_28D90-MapUnc_28D8A; 0
-		dc.w word_28DA2-MapUnc_28D8A; 1
-		dc.w word_28DAC-MapUnc_28D8A; 2
+Map_28D8A:				; DATA XREF: h+11C7Eo h+11E16o ...
+		dc.w word_28D90-Map_28D8A; 0
+		dc.w word_28DA2-Map_28D8A; 1
+		dc.w word_28DAC-Map_28D8A; 2
 word_28D90:	dc.w 2			; DATA XREF: h+11E16o
 		dc.w $F00D,  $7A,  $3D,$FFF0; 0
 		dc.w	$D,$187A,$183D,$FFF0; 4
@@ -56354,7 +56354,7 @@ byte_28E0A:	dc.b $40		; 0
 
 loc_28E0E:				; DATA XREF: h+11E92o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_28F3A,4(a0)
+		move.l	#Map_28F3A,4(a0)
 		move.w	#0,2(a0)
 		bsr.w	loc_28F76
 		ori.b	#4,1(a0)
@@ -56461,8 +56461,8 @@ locret_28F38:				; CODE XREF: h+11FAEj
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_28F3A:				; DATA XREF: h+11E9Eo h+11FC6o
-		dc.w word_28F3C-MapUnc_28F3A
+Map_28F3A:				; DATA XREF: h+11E9Eo h+11FC6o
+		dc.w word_28F3C-Map_28F3A
 word_28F3C:	dc.w 6			; DATA XREF: h+11FC6o
 		dc.w $F005,$242C,$2216,$FFC0; 0
 		dc.w	 5,$242C,$2216,$FFC0; 4
@@ -56506,7 +56506,7 @@ off_28F96:	dc.w loc_28F9A-off_28F96; 0 ; DATA XREF: h+12022o h+12024o
 
 loc_28F9A:				; DATA XREF: h+12022o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_29064,4(a0)
+		move.l	#Map_29064,4(a0)
 		move.w	#$643C,2(a0)
 		bsr.w	loc_291BE
 		ori.b	#4,1(a0)
@@ -56573,12 +56573,12 @@ byte_2905C:	dc.b   3,  0,  1,  2,  3,  4,$FE,  1; 0	; DATA XREF: h+120DCo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_29064:				; DATA XREF: h+1202Ao h+120F0o ...
-		dc.w word_2906E-MapUnc_29064; 0
-		dc.w word_290B0-MapUnc_29064; 1
-		dc.w word_290F2-MapUnc_29064; 2
-		dc.w word_29134-MapUnc_29064; 3
-		dc.w word_29176-MapUnc_29064; 4
+Map_29064:				; DATA XREF: h+1202Ao h+120F0o ...
+		dc.w word_2906E-Map_29064; 0
+		dc.w word_290B0-Map_29064; 1
+		dc.w word_290F2-Map_29064; 2
+		dc.w word_29134-Map_29064; 3
+		dc.w word_29176-Map_29064; 4
 word_2906E:	dc.w 8			; DATA XREF: h+120F0o
 		dc.w $F805,    0,    0,$FFC0; 0
 		dc.w $F805,    0,    0,$FFD0; 4
@@ -56682,7 +56682,7 @@ loc_29206:				; CODE XREF: h+122F4j
 
 loc_29214:				; CODE XREF: h+12290j
 		move.b	0(a0),0(a1)
-		move.l	#MapUnc_2800E,4(a1)
+		move.l	#Map_2800E,4(a1)
 		move.w	#$6418,2(a1)
 		bsr.w	loc_2938E
 		move.b	#4,1(a1)
@@ -56895,11 +56895,11 @@ byte_293B4:	dc.b   0		; 0
 
 loc_293CC:				; DATA XREF: h+1243Ao
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_29564,4(a0)
+		move.l	#Map_29564,4(a0)
 		move.w	#-$1BE8,2(a0)
 		cmpi.b	#$B,($FFFFFE10).w
 		bne.s	loc_293F4
-		move.l	#MapUnc_10256,4(a0)
+		move.l	#Map_10256,4(a0)
 		move.w	#0,2(a0)
 
 loc_293F4:				; CODE XREF: h+12470j
@@ -57049,8 +57049,8 @@ locret_29562:				; CODE XREF: h+125E0j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_29564:				; DATA XREF: h+1245Co h+125F0o
-		dc.w word_29566-MapUnc_29564
+Map_29564:				; DATA XREF: h+1245Co h+125F0o
+		dc.w word_29566-Map_29564
 word_29566:	dc.w 2			; DATA XREF: h+125F0o
 		dc.w $F809,  $10,    8,$FFE8; 0
 		dc.w $F809, $810, $808,	   0; 4
@@ -57105,7 +57105,7 @@ byte_295C4:	dc.b $F0		; 0
 
 loc_295C8:				; DATA XREF: h+1264Co
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_29780,4(a0)
+		move.l	#Map_29780,4(a0)
 		move.w	#$3E0,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#$10,$19(a0)
@@ -57242,12 +57242,12 @@ byte_29777:	dc.b   5,  1,  2,  2,  2,  4,$FD,  0,  0; 0 ; DATA XREF: h+127F4o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_29780:				; DATA XREF: h+12658o h+12804o ...
-		dc.w word_2978A-MapUnc_29780; 0
-		dc.w word_29794-MapUnc_29780; 1
-		dc.w word_297A6-MapUnc_29780; 2
-		dc.w word_297B8-MapUnc_29780; 3
-		dc.w word_29794-MapUnc_29780; 4
+Map_29780:				; DATA XREF: h+12658o h+12804o ...
+		dc.w word_2978A-Map_29780; 0
+		dc.w word_29794-Map_29780; 1
+		dc.w word_297A6-Map_29780; 2
+		dc.w word_297B8-Map_29780; 3
+		dc.w word_29794-Map_29780; 4
 word_2978A:	dc.w 1			; DATA XREF: h+1280Co
 		dc.w $F00D,    0,    0,$FFF0; 0
 word_29794:	dc.w 2			; DATA XREF: h+1280Co
@@ -57301,7 +57301,7 @@ off_297F2:	dc.w loc_297F6-off_297F2; 0 ; DATA XREF: h+1287Eo h+12880o
 
 loc_297F6:				; DATA XREF: h+1287Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_29938,4(a0)
+		move.l	#Map_29938,4(a0)
 		move.w	#$640E,2(a0)
 		bsr.w	loc_29976
 		move.b	#4,1(a0)
@@ -57399,9 +57399,9 @@ locret_29936:				; CODE XREF: h+128D0j h+12918j ...
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_29938:				; DATA XREF: h+12886o h+129C4o ...
-		dc.w word_2993C-MapUnc_29938; 0
-		dc.w word_29956-MapUnc_29938; 1
+Map_29938:				; DATA XREF: h+12886o h+129C4o ...
+		dc.w word_2993C-Map_29938; 0
+		dc.w word_29956-Map_29938; 1
 word_2993C:	dc.w 3			; DATA XREF: h+129C4o
 		dc.w $D007,    0,    0,$FFF8; 0
 		dc.w $F007,    0,    0,$FFF8; 4
@@ -57447,7 +57447,7 @@ loc_29990:				; DATA XREF: h+12A16o
 		cmpi.b	#6,($FFFFFE10).w
 		bne.s	loc_29A1C
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_29DD0,4(a0)
+		move.l	#Map_29DD0,4(a0)
 		move.w	#$23FE,2(a0)
 		bsr.w	loc_29FFA
 		move.w	#$A0,$2E(a0) ; '='
@@ -57475,7 +57475,7 @@ loc_29A18:				; CODE XREF: h+12A88j
 ; ===========================================================================
 
 loc_29A1C:				; CODE XREF: h+12A4Aj
-		move.l	#MapUnc_29C64,4(a0)
+		move.l	#Map_29C64,4(a0)
 		move.w	#$641E,2(a0)
 		bsr.w	loc_29FFA
 		move.w	#$B0,$2E(a0) ; '='
@@ -57698,14 +57698,14 @@ loc_29C42:				; CODE XREF: h+12CA2j h+12CAEj
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_29C64:				; DATA XREF: h+12AA8o h+12CF0o ...
-		dc.w word_29C72-MapUnc_29C64; 0
-		dc.w word_29C8C-MapUnc_29C64; 1
-		dc.w word_29CAE-MapUnc_29C64; 2
-		dc.w word_29CD8-MapUnc_29C64; 3
-		dc.w word_29D0A-MapUnc_29C64; 4
-		dc.w word_29D44-MapUnc_29C64; 5
-		dc.w word_29D86-MapUnc_29C64; 6
+Map_29C64:				; DATA XREF: h+12AA8o h+12CF0o ...
+		dc.w word_29C72-Map_29C64; 0
+		dc.w word_29C8C-Map_29C64; 1
+		dc.w word_29CAE-Map_29C64; 2
+		dc.w word_29CD8-Map_29C64; 3
+		dc.w word_29D0A-Map_29C64; 4
+		dc.w word_29D44-Map_29C64; 5
+		dc.w word_29D86-Map_29C64; 6
 word_29C72:	dc.w 3			; DATA XREF: h+12CF0o
 		dc.w $3003,    0,    0,$FFFC; 0
 		dc.w $5003,    0,    0,$FFFC; 4
@@ -57758,20 +57758,20 @@ word_29D86:	dc.w 9			; DATA XREF: h+12CF0o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_29DD0:				; DATA XREF: h+12A50o h+12E5Co ...
-		dc.w word_29DEA-MapUnc_29DD0; 0
-		dc.w word_29DFC-MapUnc_29DD0; 1
-		dc.w word_29E0E-MapUnc_29DD0; 2
-		dc.w word_29E28-MapUnc_29DD0; 3
-		dc.w word_29E42-MapUnc_29DD0; 4
-		dc.w word_29E64-MapUnc_29DD0; 5
-		dc.w word_29E86-MapUnc_29DD0; 6
-		dc.w word_29EB0-MapUnc_29DD0; 7
-		dc.w word_29EDA-MapUnc_29DD0; 8
-		dc.w word_29F0C-MapUnc_29DD0; 9
-		dc.w word_29F3E-MapUnc_29DD0; 10
-		dc.w word_29F78-MapUnc_29DD0; 11
-		dc.w word_29FB2-MapUnc_29DD0; 12
+Map_29DD0:				; DATA XREF: h+12A50o h+12E5Co ...
+		dc.w word_29DEA-Map_29DD0; 0
+		dc.w word_29DFC-Map_29DD0; 1
+		dc.w word_29E0E-Map_29DD0; 2
+		dc.w word_29E28-Map_29DD0; 3
+		dc.w word_29E42-Map_29DD0; 4
+		dc.w word_29E64-Map_29DD0; 5
+		dc.w word_29E86-Map_29DD0; 6
+		dc.w word_29EB0-Map_29DD0; 7
+		dc.w word_29EDA-Map_29DD0; 8
+		dc.w word_29F0C-Map_29DD0; 9
+		dc.w word_29F3E-Map_29DD0; 10
+		dc.w word_29F78-Map_29DD0; 11
+		dc.w word_29FB2-Map_29DD0; 12
 word_29DEA:	dc.w 2			; DATA XREF: h+12E5Co
 		dc.w $5001,    0,    0,$FFFC; 0
 		dc.w $600B,    4,    2,$FFF4; 4
@@ -57882,7 +57882,7 @@ off_2A020:	dc.w loc_2A026-off_2A020; 0 ; DATA XREF: h+130ACo h+130AEo ...
 
 loc_2A026:				; DATA XREF: h+130ACo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2A24E,4(a0)
+		move.l	#Map_2A24E,4(a0)
 		move.w	#$643C,2(a0)
 		bsr.w	loc_2A27E
 		move.b	#4,1(a0)
@@ -58064,9 +58064,9 @@ locret_2A24C:				; CODE XREF: h+1327Aj h+1329Cj
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2A24E:				; DATA XREF: h+130B6o h+132DAo ...
-		dc.w word_2A252-MapUnc_2A24E; 0
-		dc.w word_2A254-MapUnc_2A24E; 1
+Map_2A24E:				; DATA XREF: h+130B6o h+132DAo ...
+		dc.w word_2A252-Map_2A24E; 0
+		dc.w word_2A254-Map_2A24E; 1
 word_2A252:	dc.w 0			; DATA XREF: h+132DAo
 word_2A254:	dc.w	 1		; 0 ; DATA XREF: h+132DAo
 		dc.w $F805,    0,    0,$FFF8; 0
@@ -58130,7 +58130,7 @@ byte_2A2A2:	dc.b $20		; 0
 
 loc_2A2AA:				; DATA XREF: h+1332Ao
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2A476,4(a0)
+		move.l	#Map_2A476,4(a0)
 		move.w	#0,2(a0)
 		bsr.w	loc_2A4DE
 		move.b	#4,1(a0)
@@ -58325,9 +58325,9 @@ locret_2A474:				; CODE XREF: h+134C2j h+134D2j ...
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2A476:				; DATA XREF: h+1333Ao h+13502o ...
-		dc.w word_2A47A-MapUnc_2A476; 0
-		dc.w word_2A48C-MapUnc_2A476; 1
+Map_2A476:				; DATA XREF: h+1333Ao h+13502o ...
+		dc.w word_2A47A-Map_2A476; 0
+		dc.w word_2A48C-Map_2A476; 1
 word_2A47A:	dc.w 2			; DATA XREF: h+13502o
 		dc.w $F80D,$6055,$602A,$FFE0; 0
 		dc.w $F80D,$6055,$602A,	   0; 4
@@ -58393,7 +58393,7 @@ off_2A51C:	dc.w loc_2A522-off_2A51C; 0 ; DATA XREF: h+135A8o h+135AAo ...
 
 loc_2A522:				; DATA XREF: h+135A8o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_1021E,4(a0)
+		move.l	#Map_1021E,4(a0)
 		move.w	#0,2(a0)
 		bsr.w	loc_2A796
 		move.b	#4,1(a0)
@@ -58648,7 +58648,7 @@ off_2A7BE:	dc.w loc_2A7C4-off_2A7BE; 0 ; DATA XREF: h+1384Ao h+1384Co ...
 
 loc_2A7C4:				; DATA XREF: h+1384Ao
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2AA12,4(a0)
+		move.l	#Map_2AA12,4(a0)
 		move.w	#$6403,2(a0)
 		bsr.w	loc_2AB7E
 		ori.b	#4,1(a0)
@@ -58657,7 +58657,7 @@ loc_2A7C4:				; DATA XREF: h+1384Ao
 		tst.b	$28(a0)
 		bpl.s	loc_2A802
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2AAC4,4(a0)
+		move.l	#Map_2AAC4,4(a0)
 		bra.w	loc_2A8FE
 ; ===========================================================================
 
@@ -58857,18 +58857,18 @@ locret_2AA10:				; CODE XREF: h+13A22j h+13A28j ...
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2AA12:				; DATA XREF: h+13854o h+13A9Eo ...
-		dc.w word_2AA28-MapUnc_2AA12; 0
-		dc.w word_2AA42-MapUnc_2AA12; 1
-		dc.w word_2AA5C-MapUnc_2AA12; 2
-		dc.w word_2AA76-MapUnc_2AA12; 3
-		dc.w word_2AA90-MapUnc_2AA12; 4
-		dc.w word_2AAAA-MapUnc_2AA12; 5
-		dc.w word_2AA90-MapUnc_2AA12; 6
-		dc.w word_2AA76-MapUnc_2AA12; 7
-		dc.w word_2AA5C-MapUnc_2AA12; 8
-		dc.w word_2AA42-MapUnc_2AA12; 9
-		dc.w word_2AA28-MapUnc_2AA12; 10
+Map_2AA12:				; DATA XREF: h+13854o h+13A9Eo ...
+		dc.w word_2AA28-Map_2AA12; 0
+		dc.w word_2AA42-Map_2AA12; 1
+		dc.w word_2AA5C-Map_2AA12; 2
+		dc.w word_2AA76-Map_2AA12; 3
+		dc.w word_2AA90-Map_2AA12; 4
+		dc.w word_2AAAA-Map_2AA12; 5
+		dc.w word_2AA90-Map_2AA12; 6
+		dc.w word_2AA76-Map_2AA12; 7
+		dc.w word_2AA5C-Map_2AA12; 8
+		dc.w word_2AA42-Map_2AA12; 9
+		dc.w word_2AA28-Map_2AA12; 10
 word_2AA28:	dc.w 3			; DATA XREF: h+13A9Eo
 		dc.w $F302,    0,    0,$FFF4; 0
 		dc.w $F005,    7,    3,$FFFC; 4
@@ -58893,7 +58893,7 @@ word_2AAAA:	dc.w 3			; DATA XREF: h+13A9Eo
 		dc.w $F003,    3,    1,$FFF4; 0
 		dc.w $F005,   $B,    5,$FFFC; 4
 		dc.w	 5,$100B,$1005,$FFFC; 8
-MapUnc_2AAC4:				; DATA XREF: h+13882o
+Map_2AAC4:				; DATA XREF: h+13882o
 		dc.w $16
 		dc.w   $30,  $4A,  $64,	 $7E; 0
 		dc.w   $98,  $7E,  $64,	 $4A; 4
@@ -58970,11 +58970,11 @@ off_2ABCE:	dc.w loc_2ABD4-off_2ABCE; 0 ; DATA XREF: h+13C5Ao h+13C5Co ...
 
 loc_2ABD4:				; DATA XREF: h+13C5Ao
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2B07E,4(a0)
+		move.l	#Map_2B07E,4(a0)
 		move.w	#$422,2(a0)
 		tst.b	$28(a0)
 		beq.s	loc_2ABFA
-		move.l	#MapUnc_2B0EC,4(a0)
+		move.l	#Map_2B0EC,4(a0)
 		move.w	#$402,2(a0)
 
 loc_2ABFA:				; CODE XREF: h+13C76j
@@ -59357,13 +59357,13 @@ loc_2B068:				; CODE XREF: h+140DAj
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2B07E:				; DATA XREF: h+13C64o h+1410Ao ...
-		dc.w word_2B08A-MapUnc_2B07E; 0
-		dc.w word_2B0AC-MapUnc_2B07E; 1
-		dc.w word_2B0B6-MapUnc_2B07E; 2
-		dc.w word_2B0D0-MapUnc_2B07E; 3
-		dc.w word_2B0E2-MapUnc_2B07E; 4
-		dc.w word_2B0E2-MapUnc_2B07E; 5
+Map_2B07E:				; DATA XREF: h+13C64o h+1410Ao ...
+		dc.w word_2B08A-Map_2B07E; 0
+		dc.w word_2B0AC-Map_2B07E; 1
+		dc.w word_2B0B6-Map_2B07E; 2
+		dc.w word_2B0D0-Map_2B07E; 3
+		dc.w word_2B0E2-Map_2B07E; 4
+		dc.w word_2B0E2-Map_2B07E; 5
 word_2B08A:	dc.w 4			; DATA XREF: h+1410Ao
 		dc.w $C809,    0,    0,$FFF4; 0
 		dc.w $D809,    6,    3,$FFF4; 4
@@ -59380,7 +59380,7 @@ word_2B0D0:	dc.w 2			; DATA XREF: h+1410Ao
 		dc.w $F009,   $C,    6,$FFF4; 4
 word_2B0E2:	dc.w 1			; DATA XREF: h+1410Ao
 		dc.w $E009,$2000,$2000,$FFF4; 0
-MapUnc_2B0EC:				; DATA XREF: h+13C78o
+Map_2B0EC:				; DATA XREF: h+13C78o
 		dc.w $C
 		dc.w   $1E,  $28,  $28,	 $32; 0
 		dc.w   $32,    2,$F00F,	   0; 4
@@ -59427,7 +59427,7 @@ off_2B152:	dc.w loc_2B158-off_2B152; 0 ; DATA XREF: h+141DEo h+141E0o ...
 
 loc_2B158:				; DATA XREF: h+141DEo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2B45A,4(a0)
+		move.l	#Map_2B45A,4(a0)
 		move.w	#$43B2,2(a0)
 		bsr.w	loc_2B510
 		ori.b	#4,1(a0)
@@ -59661,13 +59661,13 @@ byte_2B451:	dc.b   0,  3,  4,  5,  5,  5,  5,$FD,  2; 0 ; DATA XREF: h+144BEo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2B45A:				; DATA XREF: h+141E8o h+144E6o ...
-		dc.w word_2B466-MapUnc_2B45A; 0
-		dc.w word_2B480-MapUnc_2B45A; 1
-		dc.w word_2B492-MapUnc_2B45A; 2
-		dc.w word_2B4AC-MapUnc_2B45A; 3
-		dc.w word_2B4C6-MapUnc_2B45A; 4
-		dc.w word_2B4E8-MapUnc_2B45A; 5
+Map_2B45A:				; DATA XREF: h+141E8o h+144E6o ...
+		dc.w word_2B466-Map_2B45A; 0
+		dc.w word_2B480-Map_2B45A; 1
+		dc.w word_2B492-Map_2B45A; 2
+		dc.w word_2B4AC-Map_2B45A; 3
+		dc.w word_2B4C6-Map_2B45A; 4
+		dc.w word_2B4E8-Map_2B45A; 5
 word_2B466:	dc.w 3			; DATA XREF: h+144E6o
 		dc.w $F70B,   $C,    6,$FFE7; 0
 		dc.w $FE01,  $18,   $C,$FFFF; 4
@@ -59737,7 +59737,7 @@ off_2B536:	dc.w loc_2B53A-off_2B536; 0 ; DATA XREF: h+145C2o h+145C4o
 
 loc_2B53A:				; DATA XREF: h+145C2o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2B694,4(a0)
+		move.l	#Map_2B694,4(a0)
 		move.w	#$437C,2(a0)
 		bsr.w	loc_2B83A
 		ori.b	#4,1(a0)
@@ -59841,23 +59841,23 @@ byte_2B654:	dc.b $D8,$18,  8,  8,$D8,$10,  8,$10,$D8,  8,  8,$18,$D8,  0,  8,$20
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2B694:				; DATA XREF: h+145CAo h+14720o ...
-		dc.w word_2B6B4-MapUnc_2B694; 0
-		dc.w word_2B6BE-MapUnc_2B694; 1
-		dc.w word_2B6D0-MapUnc_2B694; 2
-		dc.w word_2B6EA-MapUnc_2B694; 3
-		dc.w word_2B70C-MapUnc_2B694; 4
-		dc.w word_2B736-MapUnc_2B694; 5
-		dc.w word_2B760-MapUnc_2B694; 6
-		dc.w word_2B78A-MapUnc_2B694; 7
-		dc.w word_2B78A-MapUnc_2B694; 8
-		dc.w word_2B7B4-MapUnc_2B694; 9
-		dc.w word_2B7DE-MapUnc_2B694; 10
-		dc.w word_2B808-MapUnc_2B694; 11
-		dc.w word_2B6EA-MapUnc_2B694; 12
-		dc.w word_2B6D0-MapUnc_2B694; 13
-		dc.w word_2B6BE-MapUnc_2B694; 14
-		dc.w word_2B6B4-MapUnc_2B694; 15
+Map_2B694:				; DATA XREF: h+145CAo h+14720o ...
+		dc.w word_2B6B4-Map_2B694; 0
+		dc.w word_2B6BE-Map_2B694; 1
+		dc.w word_2B6D0-Map_2B694; 2
+		dc.w word_2B6EA-Map_2B694; 3
+		dc.w word_2B70C-Map_2B694; 4
+		dc.w word_2B736-Map_2B694; 5
+		dc.w word_2B760-Map_2B694; 6
+		dc.w word_2B78A-Map_2B694; 7
+		dc.w word_2B78A-Map_2B694; 8
+		dc.w word_2B7B4-Map_2B694; 9
+		dc.w word_2B7DE-Map_2B694; 10
+		dc.w word_2B808-Map_2B694; 11
+		dc.w word_2B6EA-Map_2B694; 12
+		dc.w word_2B6D0-Map_2B694; 13
+		dc.w word_2B6BE-Map_2B694; 14
+		dc.w word_2B6B4-Map_2B694; 15
 word_2B6B4:	dc.w 1			; DATA XREF: h+14720o
 		dc.w $F805,    0,    0,$FFF8; 0
 word_2B6BE:	dc.w 2			; DATA XREF: h+14720o
@@ -59989,8 +59989,8 @@ loc_2B8D0:				; CODE XREF: h+1494Aj h+14950j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2B8D4:				; DATA XREF: h+14960o h+14D50o
-		dc.w word_2B8D6-MapUnc_2B8D4
+Map_2B8D4:				; DATA XREF: h+14960o h+14D50o
+		dc.w word_2B8D6-Map_2B8D4
 word_2B8D6:	dc.w 1			; DATA XREF: h+14960o
 		dc.w $F805,    0,    0,$FFF8; 0
 ; ===========================================================================
@@ -60020,7 +60020,7 @@ off_2B8FA:	dc.w loc_2B8FE-off_2B8FA; 0 ; DATA XREF: h+14986o h+14988o
 
 loc_2B8FE:				; DATA XREF: h+14986o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2B9CA,4(a0)
+		move.l	#Map_2B9CA,4(a0)
 		move.w	#$436C,2(a0)
 		bsr.w	loc_2B9F0
 		move.b	#4,1(a0)
@@ -60090,8 +60090,8 @@ loc_2B9C4:				; CODE XREF: h+14A4Cj
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2B9CA:				; DATA XREF: h+1498Eo h+14A56o
-		dc.w word_2B9CC-MapUnc_2B9CA
+Map_2B9CA:				; DATA XREF: h+1498Eo h+14A56o
+		dc.w word_2B9CC-Map_2B9CA
 word_2B9CC:	dc.w 4			; DATA XREF: h+14A56o
 		dc.w $E00F,    0,    0,$FFE0; 0
 		dc.w $E00F, $800, $800,	   0; 4
@@ -60133,7 +60133,7 @@ off_2BA16:	dc.w loc_2BA1A-off_2BA16; 0 ; DATA XREF: h+14AA2o h+14AA4o
 
 loc_2BA1A:				; DATA XREF: h+14AA2o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2BB40,4(a0)
+		move.l	#Map_2BB40,4(a0)
 		move.w	#$4384,2(a0)
 		bsr.w	loc_2BB5A
 		move.b	#4,1(a0)
@@ -60248,8 +60248,8 @@ locret_2BB3E:				; CODE XREF: h+14BA6j h+14BC2j
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2BB40:				; DATA XREF: h+14AAAo h+14BCCo
-		dc.w word_2BB42-MapUnc_2BB40
+Map_2BB40:				; DATA XREF: h+14AAAo h+14BCCo
+		dc.w word_2BB42-Map_2BB40
 word_2BB42:	dc.w 2			; DATA XREF: h+14BCCo
 		dc.w $F805,    0,    0,$FFF0; 0
 		dc.w $F805, $800, $800,	   0; 4
@@ -60288,7 +60288,7 @@ off_2BB7A:	dc.w loc_2BB7E-off_2BB7A; 0 ; DATA XREF: h+14C06o h+14C08o
 
 loc_2BB7E:				; DATA XREF: h+14C06o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2BEBC,4(a0)
+		move.l	#Map_2BEBC,4(a0)
 		move.w	#$388,2(a0)
 		bsr.w	loc_2C434
 		move.b	#4,1(a0)
@@ -60381,7 +60381,7 @@ loc_2BC9A:				; CODE XREF: h+14D1Ej
 		bsr.w	loc_2C41C
 		bne.w	loc_2BD48
 		move.b	#-$2D,0(a1)
-		move.l	#MapUnc_2B8D4,4(a1)
+		move.l	#Map_2B8D4,4(a1)
 		move.w	#$380,2(a1)
 		bsr.w	loc_2C42E
 		move.b	#4,1(a1)
@@ -60426,7 +60426,7 @@ loc_2BD4E:				; CODE XREF: h+14D16j
 		bsr.w	loc_2C41C
 		bne.w	locret_2BDF6
 		move.b	#-$24,0(a1)
-		move.l	#MapUnc_12382,4(a1)
+		move.l	#Map_12382,4(a1)
 		move.w	#$26BC,2(a1)
 		bsr.w	loc_2C42E
 		move.b	#4,1(a1)
@@ -60534,9 +60534,9 @@ byte_2BEB7:	dc.b   1,  1,  0,$FF,  0; 0 ; DATA XREF: h+14F3Co
 ; ------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ------------------------------------------------------------------------------
-MapUnc_2BEBC:				; DATA XREF: h+14C0Eo h+14F48o ...
-		dc.w byte_2BEC0-MapUnc_2BEBC; 0
-		dc.w byte_2BEF2-MapUnc_2BEBC; 1
+Map_2BEBC:				; DATA XREF: h+14C0Eo h+14F48o ...
+		dc.w byte_2BEC0-Map_2BEBC; 0
+		dc.w byte_2BEF2-Map_2BEBC; 1
 byte_2BEC0:	dc.b   0,  6,$EC,  9,  0,  0,  0,  0,$FF,$E8,$EC,  9,  8,  0,  8,  0; 0
 					; DATA XREF: h+14F48o
 		dc.b   0,  0,$FC,  9,  0,  0,  0,  0,$FF,$E8,$FC,  9,  8,  0,  8,  0; 16
@@ -60946,7 +60946,7 @@ loc_2C2B8:				; CODE XREF: h+152F4p h+15320p
 		move.b	(a3,d0.w),d0
 		andi.w	#7,d0
 		ror.w	#7,d0
-		lea	(ArtUnc_4EEFE).l,a2
+		lea	(Art_CNZSlotPics).l,a2
 		adda.w	d0,a2
 		move.w	d3,d0
 		andi.w	#$F8,d0	; '='
@@ -61147,7 +61147,7 @@ off_2C456:	dc.w loc_2C45A-off_2C456; 0 ; DATA XREF: h+154E2o h+154E4o
 
 loc_2C45A:				; DATA XREF: h+154E2o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2C626,4(a0)
+		move.l	#Map_2C626,4(a0)
 		move.w	#$4394,2(a0)
 		bsr.w	loc_2C6A6
 		move.b	#4,1(a0)
@@ -61310,10 +61310,10 @@ byte_2C61F:	dc.b   3,  2,  0,  2,$FD,  0,  0; 0 ; DATA XREF: h+1569Co
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2C626:				; DATA XREF: h+154EAo h+156B2o ...
-		dc.w word_2C62C-MapUnc_2C626; 0
-		dc.w word_2C64E-MapUnc_2C626; 1
-		dc.w word_2C670-MapUnc_2C626; 2
+Map_2C626:				; DATA XREF: h+154EAo h+156B2o ...
+		dc.w word_2C62C-Map_2C626; 0
+		dc.w word_2C64E-Map_2C626; 1
+		dc.w word_2C670-Map_2C626; 2
 word_2C62C:	dc.w 4			; DATA XREF: h+156B2o
 		dc.w $F009,    0,    0,$FFE8; 0
 		dc.w $F009, $800, $800,	   0; 4
@@ -61366,7 +61366,7 @@ off_2C6BA:	dc.w loc_2C6C0-off_2C6BA; 0 ; DATA XREF: h+15746o h+15748o ...
 
 loc_2C6C0:				; DATA XREF: h+15746o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2C8C4,4(a0)
+		move.l	#Map_2C8C4,4(a0)
 		move.w	#$43E6,2(a0)
 		bsr.w	loc_2C924
 		move.b	#4,1(a0)
@@ -61557,13 +61557,13 @@ byte_2C8BD:	dc.b   3,  5,  2,  5,$FD,  2,  0; 0 ; DATA XREF: h+15928o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2C8C4:				; DATA XREF: h+15750o h+15950o ...
-		dc.w word_2C8D0-MapUnc_2C8C4; 0
-		dc.w word_2C8DA-MapUnc_2C8C4; 1
-		dc.w word_2C8E4-MapUnc_2C8C4; 2
-		dc.w word_2C8EE-MapUnc_2C8C4; 3
-		dc.w word_2C8F8-MapUnc_2C8C4; 4
-		dc.w word_2C902-MapUnc_2C8C4; 5
+Map_2C8C4:				; DATA XREF: h+15750o h+15950o ...
+		dc.w word_2C8D0-Map_2C8C4; 0
+		dc.w word_2C8DA-Map_2C8C4; 1
+		dc.w word_2C8E4-Map_2C8C4; 2
+		dc.w word_2C8EE-Map_2C8C4; 3
+		dc.w word_2C8F8-Map_2C8C4; 4
+		dc.w word_2C902-Map_2C8C4; 5
 word_2C8D0:	dc.w 1			; DATA XREF: h+15950o
 		dc.w $F80D,    0,    0,$FFF0; 0
 word_2C8DA:	dc.w 1			; DATA XREF: h+15950o
@@ -61730,7 +61730,7 @@ loc_2CA46:				; DATA XREF: h+15AAEo
 ; ===========================================================================
 
 loc_2CA52:				; DATA XREF: h+15AAEo
-		move.l	#MapUnc_2CBFE,4(a0)
+		move.l	#Map_2CBFE,4(a0)
 		move.w	#$2538,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#$A,$20(a0)
@@ -61843,7 +61843,7 @@ loc_2CB70:				; CODE XREF: h+15BC2j
 		bne.s	locret_2CBDA
 		move.b	#$4A,0(a1) ; 'J'
 		move.b	#6,$24(a1)
-		move.l	#MapUnc_2CBFE,4(a1)
+		move.l	#Map_2CBFE,4(a1)
 		move.w	#$2538,2(a1)
 		move.b	#4,$18(a1)
 		move.b	#$10,$19(a1)
@@ -61875,14 +61875,14 @@ byte_2CBF8:	dc.b   7,  0,  1,$FD,  1,  0; 0	; DATA XREF: h+15C68o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2CBFE:				; DATA XREF: h+15ADEo h+15C10o ...
-		dc.w word_2CC0C-MapUnc_2CBFE; 0
-		dc.w word_2CC1E-MapUnc_2CBFE; 1
-		dc.w word_2CC38-MapUnc_2CBFE; 2
-		dc.w word_2CC52-MapUnc_2CBFE; 3
-		dc.w word_2CC6C-MapUnc_2CBFE; 4
-		dc.w word_2CC8E-MapUnc_2CBFE; 5
-		dc.w word_2CC98-MapUnc_2CBFE; 6
+Map_2CBFE:				; DATA XREF: h+15ADEo h+15C10o ...
+		dc.w word_2CC0C-Map_2CBFE; 0
+		dc.w word_2CC1E-Map_2CBFE; 1
+		dc.w word_2CC38-Map_2CBFE; 2
+		dc.w word_2CC52-Map_2CBFE; 3
+		dc.w word_2CC6C-Map_2CBFE; 4
+		dc.w word_2CC8E-Map_2CBFE; 5
+		dc.w word_2CC98-Map_2CBFE; 6
 word_2CC0C:	dc.w 2			; DATA XREF: h+15C8Ao
 		dc.w $EB0D,    0,    0,$FFF0; 0
 		dc.w $FB0D,    8,    4,$FFF0; 4
@@ -61953,7 +61953,7 @@ off_2CCD6:	dc.w loc_2CCDE-off_2CCD6; 0 ; DATA XREF: h+15D62o h+15D64o ...
 
 loc_2CCDE:				; DATA XREF: h+15D62o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2CF94,4(a0)
+		move.l	#Map_2CF94,4(a0)
 		move.w	#$2500,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#$A,$20(a0)
@@ -61982,7 +61982,7 @@ loc_2CCDE:				; DATA XREF: h+15D62o
 		move.w	$C(a0),$C(a1)
 		addi.w	#$A,8(a1)
 		addi.w	#-6,$C(a1)
-		move.l	#MapUnc_2CF94,4(a1)
+		move.l	#Map_2CF94,4(a1)
 		move.w	#$2500,2(a1)
 		ori.b	#4,1(a1)
 		move.b	#3,$18(a1)
@@ -62066,7 +62066,7 @@ loc_2CE24:				; CODE XREF: h+15EAAp
 		move.b	#6,$24(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
-		move.l	#MapUnc_2CF94,4(a1)
+		move.l	#Map_2CF94,4(a1)
 		move.w	#$2500,2(a1)
 		ori.b	#4,1(a1)
 		move.b	#3,$18(a1)
@@ -62179,16 +62179,16 @@ byte_2CF90:	dc.b  $E,  8,$FF,  0	; 0 ; DATA XREF: h+15FF8o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2CF94:				; DATA XREF: h+15D6Eo h+15DFAo ...
-		dc.w word_2CFA6-MapUnc_2CF94; 0
-		dc.w word_2CFC0-MapUnc_2CF94; 1
-		dc.w word_2CFCA-MapUnc_2CF94; 2
-		dc.w word_2CFD4-MapUnc_2CF94; 3
-		dc.w word_2CFEE-MapUnc_2CF94; 4
-		dc.w word_2D008-MapUnc_2CF94; 5
-		dc.w word_2D012-MapUnc_2CF94; 6
-		dc.w word_2D01C-MapUnc_2CF94; 7
-		dc.w word_2D026-MapUnc_2CF94; 8
+Map_2CF94:				; DATA XREF: h+15D6Eo h+15DFAo ...
+		dc.w word_2CFA6-Map_2CF94; 0
+		dc.w word_2CFC0-Map_2CF94; 1
+		dc.w word_2CFCA-Map_2CF94; 2
+		dc.w word_2CFD4-Map_2CF94; 3
+		dc.w word_2CFEE-Map_2CF94; 4
+		dc.w word_2D008-Map_2CF94; 5
+		dc.w word_2D012-Map_2CF94; 6
+		dc.w word_2D01C-Map_2CF94; 7
+		dc.w word_2D026-Map_2CF94; 8
 word_2CFA6:	dc.w 3			; DATA XREF: h+16020o
 		dc.w $E80D,    0,    0,$FFF0; 0
 		dc.w $F809,    8,    4,$FFF8; 4
@@ -62298,7 +62298,7 @@ loc_2D0A2:				; CODE XREF: h+1612Aj
 ; ===========================================================================
 
 loc_2D0C8:				; DATA XREF: h+16102o
-		move.l	#MapUnc_2D2EA,4(a0)
+		move.l	#Map_2D2EA,4(a0)
 		move.w	#$3D2,2(a0)
 		bsr.w	loc_2D386
 		ori.b	#4,1(a0)
@@ -62313,7 +62313,7 @@ loc_2D0C8:				; DATA XREF: h+16102o
 		bne.s	locret_2D172
 		move.b	#$4B,0(a1) ; 'K'
 		move.b	#4,$24(a1)
-		move.l	#MapUnc_2D2EA,4(a1)
+		move.l	#Map_2D2EA,4(a1)
 		move.w	#$3D2,2(a1)
 		bsr.w	loc_2D37A
 		move.b	#4,$18(a1)
@@ -62433,7 +62433,7 @@ loc_2D24E:				; CODE XREF: h+162D0j
 		bne.s	loc_2D2C8
 		move.b	#$4B,0(a1) ; 'K'
 		move.b	#6,$24(a1)
-		move.l	#MapUnc_2D2EA,4(a1)
+		move.l	#Map_2D2EA,4(a1)
 		move.w	#$3D2,2(a1)
 		bsr.w	loc_2D37A
 		move.b	#4,$18(a1)
@@ -62468,14 +62468,14 @@ byte_2D2E1:	dc.b   9,  1,  1,  1,  1,  1,$FD,  0,  0; 0 ; DATA XREF: h+1635Ao
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2D2EA:				; DATA XREF: h+16154o h+161A6o ...
-		dc.w word_2D2F8-MapUnc_2D2EA; 0
-		dc.w word_2D30A-MapUnc_2D2EA; 1
-		dc.w word_2D324-MapUnc_2D2EA; 2
-		dc.w word_2D33E-MapUnc_2D2EA; 3
-		dc.w word_2D348-MapUnc_2D2EA; 4
-		dc.w word_2D352-MapUnc_2D2EA; 5
-		dc.w word_2D35C-MapUnc_2D2EA; 6
+Map_2D2EA:				; DATA XREF: h+16154o h+161A6o ...
+		dc.w word_2D2F8-Map_2D2EA; 0
+		dc.w word_2D30A-Map_2D2EA; 1
+		dc.w word_2D324-Map_2D2EA; 2
+		dc.w word_2D33E-Map_2D2EA; 3
+		dc.w word_2D348-Map_2D2EA; 4
+		dc.w word_2D352-Map_2D2EA; 5
+		dc.w word_2D35C-Map_2D2EA; 6
 word_2D2F8:	dc.w 2			; DATA XREF: h+16376o
 		dc.w $F809,    0,    0,$FFE8; 0
 		dc.w $F809,    6,    3,	   0; 4
@@ -62547,7 +62547,7 @@ off_2D3A6:	dc.w loc_2D3AA-off_2D3A6; 0 ; DATA XREF: h+16432o h+16434o
 
 loc_2D3AA:				; DATA XREF: h+16432o
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2D442,4(a0)
+		move.l	#Map_2D442,4(a0)
 		move.w	#$414,2(a0)
 		bsr.w	loc_2D488
 		move.b	#4,1(a0)
@@ -62590,9 +62590,9 @@ byte_2D43E:	dc.b   7,  0,$FF,  0	; 0 ; DATA XREF: h+164BCo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2D442:				; DATA XREF: h+1643Ao h+164CEo ...
-		dc.w word_2D446-MapUnc_2D442; 0
-		dc.w word_2D460-MapUnc_2D442; 1
+Map_2D442:				; DATA XREF: h+1643Ao h+164CEo ...
+		dc.w word_2D446-Map_2D442; 0
+		dc.w word_2D460-Map_2D442; 1
 word_2D446:	dc.w 3			; DATA XREF: h+164CEo
 		dc.w $F005,    0,    0,$FFF4; 0
 		dc.w $F001,    4,    2,	   4; 4
@@ -62637,7 +62637,7 @@ off_2D4A2:	dc.w loc_2D4A6-off_2D4A2; 0 ; DATA XREF: h+1652Eo h+16530o
 
 loc_2D4A6:				; DATA XREF: h+1652Eo
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_2D50A,4(a0)
+		move.l	#Map_2D50A,4(a0)
 		move.w	#-$7A80,2(a0)
 		bsr.w	loc_2D72C
 		move.b	#4,1(a0)
@@ -62666,14 +62666,14 @@ loc_2D506:				; CODE XREF: h+1657Cj
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2D50A:				; DATA XREF: h+16536o h+16596o ...
-		dc.w word_2D518-MapUnc_2D50A; 0
-		dc.w word_2D522-MapUnc_2D50A; 1
-		dc.w word_2D52C-MapUnc_2D50A; 2
-		dc.w word_2D536-MapUnc_2D50A; 3
-		dc.w word_2D540-MapUnc_2D50A; 4
-		dc.w word_2D54A-MapUnc_2D50A; 5
-		dc.w word_2D554-MapUnc_2D50A; 6
+Map_2D50A:				; DATA XREF: h+16536o h+16596o ...
+		dc.w word_2D518-Map_2D50A; 0
+		dc.w word_2D522-Map_2D50A; 1
+		dc.w word_2D52C-Map_2D50A; 2
+		dc.w word_2D536-Map_2D50A; 3
+		dc.w word_2D540-Map_2D50A; 4
+		dc.w word_2D54A-Map_2D50A; 5
+		dc.w word_2D554-Map_2D50A; 6
 word_2D518:	dc.w 1			; DATA XREF: h+16596o
 		dc.w $F805,    0,    0,$FFF8; 0
 word_2D522:	dc.w 1			; DATA XREF: h+16596o
@@ -62940,7 +62940,7 @@ off_2D742:	dc.w loc_2D75E-off_2D742; 0 ; DATA XREF: h+167CEo h+167D0o ...
 ; ===========================================================================
 
 loc_2D75E:				; DATA XREF: h+167CEo
-		move.l	#MapUnc_2ED8C,4(a0)
+		move.l	#Map_2ED8C,4(a0)
 		move.w	#$2420,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#$20,$19(a0) ; ' '
@@ -62959,7 +62959,7 @@ loc_2D75E:				; DATA XREF: h+167CEo
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
 		move.l	a1,$34(a0)
-		move.l	#MapUnc_2ED8C,4(a1)
+		move.l	#Map_2ED8C,4(a1)
 		move.w	#$420,2(a1)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1) ; ' '
@@ -62976,7 +62976,7 @@ loc_2D75E:				; DATA XREF: h+167CEo
 		bne.w	loc_2D8AC
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
-		move.l	#MapUnc_2EE88,4(a1)
+		move.l	#Map_2EE88,4(a1)
 		move.w	#$418,2(a1)
 		bsr.w	loc_2EEE8
 		move.b	#1,$1E(a0)
@@ -62991,7 +62991,7 @@ loc_2D75E:				; DATA XREF: h+167CEo
 		bne.s	loc_2D8AC
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1) ; ' '
@@ -63005,7 +63005,7 @@ loc_2D8AC:				; CODE XREF: h+16842j h+1689Aj ...
 		bne.s	loc_2D908
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1) ; ' '
@@ -63023,7 +63023,7 @@ loc_2D908:				; CODE XREF: h+1693Ej
 		bne.s	locret_2D94C
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1) ; ' '
@@ -63397,7 +63397,7 @@ loc_2DD26:				; CODE XREF: h+16E28j
 		jsr	loc_17FDA
 		bne.w	loc_2EED6
 		move.b	#$5D,0(a1) ; ']'
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 		move.b	d3,$1A(a1)
 		move.b	#$14,$24(a1)
 		move.w	#$2500,2(a1)
@@ -63462,7 +63462,7 @@ loc_2DDF0:				; CODE XREF: h+16E6Cj
 		subq.w	#1,$2C(a0)
 		blt.s	loc_2DE56
 		move.b	#$5D,0(a1) ; ']'
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 
 loc_2DE04:
 		move.w	#$2500,2(a1)
@@ -63508,7 +63508,7 @@ loc_2DE7A:				; DATA XREF: h+16F00o
 		move.b	#6,$24(a1)
 		move.b	#2,$25(a1)
 		move.b	#$5D,0(a1) ; ']'
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1) ; ' '
@@ -63688,7 +63688,7 @@ off_2E092:	dc.w loc_2E098-off_2E092; 0 ; DATA XREF: h+1711Eo h+17120o ...
 loc_2E098:				; DATA XREF: h+1711Eo
 		addq.b	#2,$25(a0)
 		move.b	#$5D,0(a0) ; ']'
-		move.l	#MapUnc_2EADC,4(a0)
+		move.l	#Map_2EADC,4(a0)
 		move.w	#$6500,2(a0)
 		move.b	#4,1(a0)
 		move.b	#$20,$19(a0) ; ' '
@@ -63772,7 +63772,7 @@ loc_2E1AC:				; DATA XREF: h+1722Co
 		bne.s	loc_2E20E
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1) ; ' '
@@ -63788,7 +63788,7 @@ loc_2E20E:				; CODE XREF: h+17242j h+17250j
 		bne.s	loc_2E258
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 		move.w	#$6500,2(a1)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1) ; ' '
@@ -63890,7 +63890,7 @@ loc_2E35C:				; CODE XREF: h+1746Ej
 		jsr	loc_17FDA
 		bne.w	loc_2EED6
 		move.b	#$5D,0(a1) ; ']'
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 		move.b	#$21,$1A(a1) ; '!'
 		move.b	#$14,$24(a1)
 		move.w	#$2500,2(a1)
@@ -63979,7 +63979,7 @@ loc_2E464:				; CODE XREF: h+174B0j h+174DCj
 		move.l	a0,$34(a1)
 		move.b	#$10,$24(a1)
 		move.b	#8,$25(a1)
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1) ; ' '
@@ -64011,7 +64011,7 @@ loc_2E4DA:				; CODE XREF: h+17562j
 		bne.s	locret_2E550
 		move.b	#$5D,0(a1) ; ']'
 		move.l	$34(a0),$34(a1)
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1) ; ' '
@@ -64277,7 +64277,7 @@ loc_2E834:				; CODE XREF: h+17950j
 		bne.w	loc_2E8C8
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
-		move.l	#MapUnc_2EADC,4(a1)
+		move.l	#Map_2EADC,4(a1)
 		move.w	#$6500,2(a1)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1) ; ' '
@@ -64398,7 +64398,7 @@ loc_2E9A8:				; CODE XREF: h+179E0j
 
 loc_2E9B6:				; CODE XREF: h+17A3Ej
 		addq.b	#2,$25(a0)
-		move.l	#MapUnc_2EEA0,4(a0)
+		move.l	#Map_2EEA0,4(a0)
 		move.w	#$418,2(a0)
 		bsr.w	loc_2EEFA
 		move.b	#0,$1A(a0)
@@ -64488,47 +64488,47 @@ byte_2EAD9:	dc.b  $F,$1E,$FF	; 0 ; DATA XREF: h+17AC8o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2EADC:				; DATA XREF: h+16906o h+1694Ao ...
-		dc.w word_2EB2C-MapUnc_2EADC; 0
-		dc.w word_2EB46-MapUnc_2EADC; 1
-		dc.w word_2EB50-MapUnc_2EADC; 2
-		dc.w word_2EB5A-MapUnc_2EADC; 3
-		dc.w word_2EB64-MapUnc_2EADC; 4
-		dc.w word_2EB6E-MapUnc_2EADC; 5
-		dc.w word_2EB78-MapUnc_2EADC; 6
-		dc.w word_2EB82-MapUnc_2EADC; 7
-		dc.w word_2EB8C-MapUnc_2EADC; 8
-		dc.w word_2EB96-MapUnc_2EADC; 9
-		dc.w word_2EBA0-MapUnc_2EADC; 10
-		dc.w word_2EBB2-MapUnc_2EADC; 11
-		dc.w word_2EBBC-MapUnc_2EADC; 12
-		dc.w word_2EBC6-MapUnc_2EADC; 13
-		dc.w word_2EBD0-MapUnc_2EADC; 14
-		dc.w word_2EBDA-MapUnc_2EADC; 15
-		dc.w word_2EBE4-MapUnc_2EADC; 16
-		dc.w word_2EBEE-MapUnc_2EADC; 17
-		dc.w word_2EBF8-MapUnc_2EADC; 18
-		dc.w word_2EC02-MapUnc_2EADC; 19
-		dc.w word_2EC0C-MapUnc_2EADC; 20
-		dc.w word_2EC1E-MapUnc_2EADC; 21
-		dc.w word_2EC30-MapUnc_2EADC; 22
-		dc.w word_2EC42-MapUnc_2EADC; 23
-		dc.w word_2EC54-MapUnc_2EADC; 24
-		dc.w word_2EC6E-MapUnc_2EADC; 25
-		dc.w word_2EC88-MapUnc_2EADC; 26
-		dc.w word_2ECA2-MapUnc_2EADC; 27
-		dc.w word_2ECBC-MapUnc_2EADC; 28
-		dc.w word_2ECD6-MapUnc_2EADC; 29
-		dc.w word_2ECE0-MapUnc_2EADC; 30
-		dc.w word_2ED02-MapUnc_2EADC; 31
-		dc.w word_2ED0C-MapUnc_2EADC; 32
-		dc.w word_2ED16-MapUnc_2EADC; 33
-		dc.w word_2ED20-MapUnc_2EADC; 34
-		dc.w word_2ED2A-MapUnc_2EADC; 35
-		dc.w word_2ED34-MapUnc_2EADC; 36
-		dc.w word_2ED3E-MapUnc_2EADC; 37
-		dc.w word_2ED48-MapUnc_2EADC; 38
-		dc.w word_2ED52-MapUnc_2EADC; 39
+Map_2EADC:				; DATA XREF: h+16906o h+1694Ao ...
+		dc.w word_2EB2C-Map_2EADC; 0
+		dc.w word_2EB46-Map_2EADC; 1
+		dc.w word_2EB50-Map_2EADC; 2
+		dc.w word_2EB5A-Map_2EADC; 3
+		dc.w word_2EB64-Map_2EADC; 4
+		dc.w word_2EB6E-Map_2EADC; 5
+		dc.w word_2EB78-Map_2EADC; 6
+		dc.w word_2EB82-Map_2EADC; 7
+		dc.w word_2EB8C-Map_2EADC; 8
+		dc.w word_2EB96-Map_2EADC; 9
+		dc.w word_2EBA0-Map_2EADC; 10
+		dc.w word_2EBB2-Map_2EADC; 11
+		dc.w word_2EBBC-Map_2EADC; 12
+		dc.w word_2EBC6-Map_2EADC; 13
+		dc.w word_2EBD0-Map_2EADC; 14
+		dc.w word_2EBDA-Map_2EADC; 15
+		dc.w word_2EBE4-Map_2EADC; 16
+		dc.w word_2EBEE-Map_2EADC; 17
+		dc.w word_2EBF8-Map_2EADC; 18
+		dc.w word_2EC02-Map_2EADC; 19
+		dc.w word_2EC0C-Map_2EADC; 20
+		dc.w word_2EC1E-Map_2EADC; 21
+		dc.w word_2EC30-Map_2EADC; 22
+		dc.w word_2EC42-Map_2EADC; 23
+		dc.w word_2EC54-Map_2EADC; 24
+		dc.w word_2EC6E-Map_2EADC; 25
+		dc.w word_2EC88-Map_2EADC; 26
+		dc.w word_2ECA2-Map_2EADC; 27
+		dc.w word_2ECBC-Map_2EADC; 28
+		dc.w word_2ECD6-Map_2EADC; 29
+		dc.w word_2ECE0-Map_2EADC; 30
+		dc.w word_2ED02-Map_2EADC; 31
+		dc.w word_2ED0C-Map_2EADC; 32
+		dc.w word_2ED16-Map_2EADC; 33
+		dc.w word_2ED20-Map_2EADC; 34
+		dc.w word_2ED2A-Map_2EADC; 35
+		dc.w word_2ED34-Map_2EADC; 36
+		dc.w word_2ED3E-Map_2EADC; 37
+		dc.w word_2ED48-Map_2EADC; 38
+		dc.w word_2ED52-Map_2EADC; 39
 word_2EB2C:	dc.w 3			; DATA XREF: h+17B68o
 		dc.w $B80D,    0,    0,$FFF8; 0
 		dc.w $C80A,    8,    4,	   8; 4
@@ -64643,14 +64643,14 @@ byte_2ED7F:	dc.b  $F,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,$FD,  1; 0
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2ED8C:				; DATA XREF: h+167EAo h+16854o ...
-		dc.w word_2ED9A-MapUnc_2ED8C; 0
-		dc.w word_2EDBC-MapUnc_2ED8C; 1
-		dc.w word_2EDDE-MapUnc_2ED8C; 2
-		dc.w word_2EE00-MapUnc_2ED8C; 3
-		dc.w word_2EE22-MapUnc_2ED8C; 4
-		dc.w word_2EE44-MapUnc_2ED8C; 5
-		dc.w word_2EE66-MapUnc_2ED8C; 6
+Map_2ED8C:				; DATA XREF: h+167EAo h+16854o ...
+		dc.w word_2ED9A-Map_2ED8C; 0
+		dc.w word_2EDBC-Map_2ED8C; 1
+		dc.w word_2EDDE-Map_2ED8C; 2
+		dc.w word_2EE00-Map_2ED8C; 3
+		dc.w word_2EE22-Map_2ED8C; 4
+		dc.w word_2EE44-Map_2ED8C; 5
+		dc.w word_2EE66-Map_2ED8C; 6
 word_2ED9A:	dc.w 4			; DATA XREF: h+17E18o
 		dc.w $F805,    0,    0,$FFE0; 0
 		dc.w  $805,    4,    2,$FFE0; 4
@@ -64689,9 +64689,9 @@ word_2EE66:	dc.w 4			; DATA XREF: h+17E18o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2EE88:				; DATA XREF: h+168B2o h+17F14o ...
-		dc.w word_2EE8C-MapUnc_2EE88; 0
-		dc.w word_2EE96-MapUnc_2EE88; 1
+Map_2EE88:				; DATA XREF: h+168B2o h+17F14o ...
+		dc.w word_2EE8C-Map_2EE88; 0
+		dc.w word_2EE96-Map_2EE88; 1
 word_2EE8C:	dc.w 1			; DATA XREF: h+17F14o
 		dc.w	 5,    0,    0,	 $1C; 0
 word_2EE96:	dc.w 1			; DATA XREF: h+17F14o
@@ -64699,11 +64699,11 @@ word_2EE96:	dc.w 1			; DATA XREF: h+17F14o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2EEA0:				; DATA XREF: h+17A46o h+17F2Co ...
-		dc.w word_2EEA8-MapUnc_2EEA0; 0
-		dc.w word_2EEB2-MapUnc_2EEA0; 1
-		dc.w word_2EEBC-MapUnc_2EEA0; 2
-		dc.w word_2EEC6-MapUnc_2EEA0; 3
+Map_2EEA0:				; DATA XREF: h+17A46o h+17F2Co ...
+		dc.w word_2EEA8-Map_2EEA0; 0
+		dc.w word_2EEB2-Map_2EEA0; 1
+		dc.w word_2EEBC-Map_2EEA0; 2
+		dc.w word_2EEC6-Map_2EEA0; 3
 word_2EEA8:	dc.w 1			; DATA XREF: h+17F2Co
 		dc.w $F805,    0,    0,$FFF8; 0
 word_2EEB2:	dc.w 1			; DATA XREF: h+17F2Co
@@ -64784,7 +64784,7 @@ off_2EF26:	dc.w loc_2EF36-off_2EF26; 0 ; DATA XREF: h+17FB2o h+17FB4o ...
 ; ===========================================================================
 
 loc_2EF36:				; DATA XREF: h+17FB2o
-		move.l	#MapUnc_2FAF8,4(a0)
+		move.l	#Map_2FAF8,4(a0)
 		move.w	#$23A0,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#-$7F,$28(a0)
@@ -64804,7 +64804,7 @@ loc_2EF36:				; DATA XREF: h+17FB2o
 		move.b	#$56,0(a1) ; 'V'
 		move.l	a0,$34(a1)
 		move.l	a1,$34(a0)
-		move.l	#MapUnc_2FAF8,4(a1)
+		move.l	#Map_2FAF8,4(a1)
 		move.w	#$3A0,2(a1)
 		move.b	#4,1(a1)
 		move.b	#$20,$19(a1) ; ' '
@@ -65689,14 +65689,14 @@ byte_2FAEB:	dc.b  $F,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,$FD,  1; 0
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_2FAF8:				; DATA XREF: h+17FC2o h+18032o ...
-		dc.w word_2FB06-MapUnc_2FAF8; 0
-		dc.w word_2FB28-MapUnc_2FAF8; 1
-		dc.w word_2FB4A-MapUnc_2FAF8; 2
-		dc.w word_2FB6C-MapUnc_2FAF8; 3
-		dc.w word_2FB8E-MapUnc_2FAF8; 4
-		dc.w word_2FBB0-MapUnc_2FAF8; 5
-		dc.w word_2FBD2-MapUnc_2FAF8; 6
+Map_2FAF8:				; DATA XREF: h+17FC2o h+18032o ...
+		dc.w word_2FB06-Map_2FAF8; 0
+		dc.w word_2FB28-Map_2FAF8; 1
+		dc.w word_2FB4A-Map_2FAF8; 2
+		dc.w word_2FB6C-Map_2FAF8; 3
+		dc.w word_2FB8E-Map_2FAF8; 4
+		dc.w word_2FBB0-Map_2FAF8; 5
+		dc.w word_2FBD2-Map_2FAF8; 6
 word_2FB06:	dc.w 4			; DATA XREF: h+18B84o
 		dc.w $F805,    0,    0,$FFE0; 0
 		dc.w  $805,    4,    2,$FFE0; 4
@@ -65816,7 +65816,7 @@ off_2FC5E:	dc.w loc_2FC68-off_2FC5E; 0 ; DATA XREF: h+18CEAo h+18CECo ...
 ; ===========================================================================
 
 loc_2FC68:				; DATA XREF: h+18CEAo
-		move.l	#MapUnc_302BC,4(a0)
+		move.l	#Map_302BC,4(a0)
 		move.w	#$3C1,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#-$70,$E(a0)
@@ -66031,7 +66031,7 @@ off_2FEFE:	dc.w loc_2FF02-off_2FEFE; 0 ; DATA XREF: h+18F8Ao h+18F8Co
 ; ===========================================================================
 
 loc_2FF02:				; DATA XREF: h+18F8Ao
-		move.l	#MapUnc_302BC,4(a0)
+		move.l	#Map_302BC,4(a0)
 		move.w	#$421,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#4,$18(a0)
@@ -66086,7 +66086,7 @@ loc_2FF80:				; CODE XREF: h+1908Ej
 loc_2FF94:				; CODE XREF: h+1900Aj
 		move.b	#$52,(a1) ; 'R'
 		move.b	#6,$A(a1)
-		move.l	#MapUnc_302BC,4(a1)
+		move.l	#Map_302BC,4(a1)
 		move.w	#$421,2(a1)
 		ori.b	#4,1(a1)
 		move.b	#3,$18(a1)
@@ -66134,7 +66134,7 @@ loc_3000C:
 
 loc_3002E:
 		move.w	#0,$12(a0)
-		move.l	#MapUnc_23294,4(a0)
+		move.l	#Map_23294,4(a0)
 		move.w	#-$7C62,2(a0)
 		bsr.w	loc_3046C
 		move.b	#0,$1A(a0)
@@ -66355,24 +66355,24 @@ byte_302B7:	dc.b   3, $E, $F,$FF,  0; 0 ; DATA XREF: h+19314o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_302BC:				; DATA XREF: h+18CF4o h+18F8Eo ...
-		dc.w MapUnc_302BC-MapUnc_302BC;	0
-		dc.w word_302DE-MapUnc_302BC; 1
-		dc.w word_30320-MapUnc_302BC; 2
-		dc.w word_3032A-MapUnc_302BC; 3
-		dc.w word_30334-MapUnc_302BC; 4
-		dc.w word_3033E-MapUnc_302BC; 5
-		dc.w word_30350-MapUnc_302BC; 6
-		dc.w word_30362-MapUnc_302BC; 7
-		dc.w word_3037C-MapUnc_302BC; 8
-		dc.w word_30396-MapUnc_302BC; 9
-		dc.w word_303B0-MapUnc_302BC; 10
-		dc.w word_303C2-MapUnc_302BC; 11
-		dc.w word_303CC-MapUnc_302BC; 12
-		dc.w word_303D6-MapUnc_302BC; 13
-		dc.w word_303E0-MapUnc_302BC; 14
-		dc.w word_303EA-MapUnc_302BC; 15
-		dc.w word_303F4-MapUnc_302BC; 16
+Map_302BC:				; DATA XREF: h+18CF4o h+18F8Eo ...
+		dc.w Map_302BC-Map_302BC;	0
+		dc.w word_302DE-Map_302BC; 1
+		dc.w word_30320-Map_302BC; 2
+		dc.w word_3032A-Map_302BC; 3
+		dc.w word_30334-Map_302BC; 4
+		dc.w word_3033E-Map_302BC; 5
+		dc.w word_30350-Map_302BC; 6
+		dc.w word_30362-Map_302BC; 7
+		dc.w word_3037C-Map_302BC; 8
+		dc.w word_30396-Map_302BC; 9
+		dc.w word_303B0-Map_302BC; 10
+		dc.w word_303C2-Map_302BC; 11
+		dc.w word_303CC-Map_302BC; 12
+		dc.w word_303D6-Map_302BC; 13
+		dc.w word_303E0-Map_302BC; 14
+		dc.w word_303EA-Map_302BC; 15
+		dc.w word_303F4-Map_302BC; 16
 word_302DE:	dc.w 8			; DATA XREF: h+19348o
 		dc.w  $405,$2000,$2000,$FFE0; 0
 		dc.w $1405,$2004,$2002,$FFE0; 4
@@ -66527,7 +66527,7 @@ loc_3049C:				; CODE XREF: h+19524j
 loc_304D4:				; CODE XREF: h+1952Cj h+19548j
 		move.b	#1,(f_screen_shaking_flag).w
 		move.w	#$3E0,2(a0)
-		move.l	#MapUnc_30E04,4(a0)
+		move.l	#Map_30E04,4(a0)
 		ori.b	#4,1(a0)
 		move.b	#$20,$E(a0) ; ' '
 		move.b	#2,$18(a0)
@@ -66558,7 +66558,7 @@ loc_30500:
 		bsr.w	loc_30F60
 		bne.w	loc_305F4
 		move.b	#-$77,(a1)
-		move.l	#MapUnc_30D68,4(a1)
+		move.l	#Map_30D68,4(a1)
 		ori.b	#4,1(a1)
 		move.w	#$3E0,2(a1)
 		move.b	#$10,$19(a1)
@@ -67040,7 +67040,7 @@ loc_30AB4:				; CODE XREF: h+19ABEp
 		move.b	#-$77,0(a1)
 		move.b	#4,$A(a1)
 		move.b	#8,$25(a1)
-		move.l	#MapUnc_30D68,4(a1)
+		move.l	#Map_30D68,4(a1)
 		move.w	#$3E0,2(a1)
 		ori.b	#4,1(a1)
 		moveq	#0,d6
@@ -67128,7 +67128,7 @@ off_30BBE:	dc.w loc_30BC8-off_30BBE; 0 ; DATA XREF: h+19C4Ao h+19C4Co ...
 ; ===========================================================================
 
 loc_30BC8:				; DATA XREF: h+19C4Ao
-		move.l	#MapUnc_30D68,4(a0)
+		move.l	#Map_30D68,4(a0)
 		move.w	#$3E0,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#-$70,$E(a0)
@@ -67268,14 +67268,14 @@ byte_30D47:	dc.b  $F,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_30D68:				; DATA XREF: h+19614o h+19B5Ao ...
-		dc.w word_30D76-MapUnc_30D68; 0
-		dc.w word_30DA0-MapUnc_30D68; 1
-		dc.w word_30DA0-MapUnc_30D68; 2
-		dc.w word_30DAA-MapUnc_30D68; 3
-		dc.w word_30DAA-MapUnc_30D68; 4
-		dc.w word_30DB4-MapUnc_30D68; 5
-		dc.w word_30DBE-MapUnc_30D68; 6
+Map_30D68:				; DATA XREF: h+19614o h+19B5Ao ...
+		dc.w word_30D76-Map_30D68; 0
+		dc.w word_30DA0-Map_30D68; 1
+		dc.w word_30DA0-Map_30D68; 2
+		dc.w word_30DAA-Map_30D68; 3
+		dc.w word_30DAA-Map_30D68; 4
+		dc.w word_30DB4-Map_30D68; 5
+		dc.w word_30DBE-Map_30D68; 6
 word_30D76:	dc.w 5			; DATA XREF: h+19DF4o
 		dc.w $280F,$2088,$2044,	   0; 0
 		dc.w  $80F,$2088,$2044,	   0; 4
@@ -67308,19 +67308,19 @@ byte_30E00:	dc.b   7,  5,$FF,  0	; 0 ; DATA XREF: h+19E54o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_30E04:				; DATA XREF: h+1956Co h+19E90o ...
-		dc.w word_30E1C-MapUnc_30E04; 0
-		dc.w word_30E2E-MapUnc_30E04; 1
-		dc.w word_30E40-MapUnc_30E04; 2
-		dc.w word_30E52-MapUnc_30E04; 3
-		dc.w word_30E64-MapUnc_30E04; 4
-		dc.w word_30E76-MapUnc_30E04; 5
-		dc.w word_30E88-MapUnc_30E04; 6
-		dc.w word_30E9A-MapUnc_30E04; 7
-		dc.w word_30EAC-MapUnc_30E04; 8
-		dc.w word_30EE6-MapUnc_30E04; 9
-		dc.w word_30F10-MapUnc_30E04; 10
-		dc.w word_30F3A-MapUnc_30E04; 11
+Map_30E04:				; DATA XREF: h+1956Co h+19E90o ...
+		dc.w word_30E1C-Map_30E04; 0
+		dc.w word_30E2E-Map_30E04; 1
+		dc.w word_30E40-Map_30E04; 2
+		dc.w word_30E52-Map_30E04; 3
+		dc.w word_30E64-Map_30E04; 4
+		dc.w word_30E76-Map_30E04; 5
+		dc.w word_30E88-Map_30E04; 6
+		dc.w word_30E9A-Map_30E04; 7
+		dc.w word_30EAC-Map_30E04; 8
+		dc.w word_30EE6-Map_30E04; 9
+		dc.w word_30F10-Map_30E04; 10
+		dc.w word_30F3A-Map_30E04; 11
 word_30E1C:	dc.w 2			; DATA XREF: h+19E90o
 		dc.w $E80D, $150,  $A8,$FFE8; 0
 		dc.w $E805, $148,  $A4,$FFD8; 4
@@ -67443,7 +67443,7 @@ off_30FB2:	dc.w loc_30FB8-off_30FB2; 0 ; DATA XREF: h+1A03Eo h+1A040o ...
 ; ===========================================================================
 
 loc_30FB8:				; DATA XREF: h+1A03Eo
-		move.l	#MapUnc_316EC,4(a0)
+		move.l	#Map_316EC,4(a0)
 		move.w	#$3C0,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#3,$18(a0)
@@ -67763,7 +67763,7 @@ loc_313DA:				; CODE XREF: h+1A45Cj h+1A478j
 		move.b	#4,$A(a1)
 		move.w	d1,8(a1)
 		move.w	#$5F0,$C(a1)
-		move.l	#MapUnc_316EC,4(a1)
+		move.l	#Map_316EC,4(a1)
 		move.w	#$560,2(a1)
 		ori.b	#4,1(a1)
 		move.b	#3,$18(a1)
@@ -68000,28 +68000,28 @@ byte_316E8:	dc.b   7,$12,$FF,  0	; 0 ; DATA XREF: h+1A696o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_316EC:				; DATA XREF: h+1A044o h+1A494o ...
-		dc.w word_31716-MapUnc_316EC; 0
-		dc.w word_31740-MapUnc_316EC; 1
-		dc.w word_3176A-MapUnc_316EC; 2
-		dc.w word_3177C-MapUnc_316EC; 3
-		dc.w word_3178E-MapUnc_316EC; 4
-		dc.w word_317A0-MapUnc_316EC; 5
-		dc.w word_317B2-MapUnc_316EC; 6
-		dc.w word_317C4-MapUnc_316EC; 7
-		dc.w word_317CE-MapUnc_316EC; 8
-		dc.w word_317F8-MapUnc_316EC; 9
-		dc.w word_3180A-MapUnc_316EC; 10
-		dc.w word_3181C-MapUnc_316EC; 11
-		dc.w word_3182E-MapUnc_316EC; 12
-		dc.w word_31838-MapUnc_316EC; 13
-		dc.w word_31842-MapUnc_316EC; 14
-		dc.w word_31854-MapUnc_316EC; 15
-		dc.w word_31866-MapUnc_316EC; 16
-		dc.w word_31878-MapUnc_316EC; 17
-		dc.w word_3188A-MapUnc_316EC; 18
-		dc.w word_3189C-MapUnc_316EC; 19
-		dc.w word_318AE-MapUnc_316EC; 20
+Map_316EC:				; DATA XREF: h+1A044o h+1A494o ...
+		dc.w word_31716-Map_316EC; 0
+		dc.w word_31740-Map_316EC; 1
+		dc.w word_3176A-Map_316EC; 2
+		dc.w word_3177C-Map_316EC; 3
+		dc.w word_3178E-Map_316EC; 4
+		dc.w word_317A0-Map_316EC; 5
+		dc.w word_317B2-Map_316EC; 6
+		dc.w word_317C4-Map_316EC; 7
+		dc.w word_317CE-Map_316EC; 8
+		dc.w word_317F8-Map_316EC; 9
+		dc.w word_3180A-Map_316EC; 10
+		dc.w word_3181C-Map_316EC; 11
+		dc.w word_3182E-Map_316EC; 12
+		dc.w word_31838-Map_316EC; 13
+		dc.w word_31842-Map_316EC; 14
+		dc.w word_31854-Map_316EC; 15
+		dc.w word_31866-Map_316EC; 16
+		dc.w word_31878-Map_316EC; 17
+		dc.w word_3188A-Map_316EC; 18
+		dc.w word_3189C-Map_316EC; 19
+		dc.w word_318AE-Map_316EC; 20
 word_31716:	dc.w 5			; DATA XREF: h+1A778o
 		dc.w $F80F,$2148,$20A4,$FFF0; 0
 		dc.w $F807,$2158,$20AC,	 $10; 4
@@ -68148,7 +68148,7 @@ off_318FE:	dc.w loc_31904-off_318FE; 0 ; DATA XREF: h+1A98Ao h+1A98Co ...
 ; ===========================================================================
 
 loc_31904:				; DATA XREF: h+1A98Ao
-		move.l	#MapUnc_320EA,4(a0)
+		move.l	#Map_320EA,4(a0)
 		move.w	#$3A7,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#3,$18(a0)
@@ -68644,7 +68644,7 @@ off_31F40:	dc.w loc_31F48-off_31F40; 0 ; DATA XREF: h+1AFCCo h+1AFCEo ...
 ; ===========================================================================
 
 loc_31F48:				; DATA XREF: h+1AFCCo
-		move.l	#MapUnc_320EA,4(a0)
+		move.l	#Map_320EA,4(a0)
 		move.w	#$3A7,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#7,$18(a0)
@@ -68772,28 +68772,28 @@ byte_320E4:	dc.b   1, $F,$10,$11,$FF,  0; 0	; DATA XREF: h+1B128o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_320EA:				; DATA XREF: h+1A990o h+1AFD4o ...
-		dc.w MapUnc_320EA-MapUnc_320EA;	0
-		dc.w word_32114-MapUnc_320EA; 1
-		dc.w word_3213E-MapUnc_320EA; 2
-		dc.w word_32148-MapUnc_320EA; 3
-		dc.w word_32152-MapUnc_320EA; 4
-		dc.w word_3215C-MapUnc_320EA; 5
-		dc.w word_3216E-MapUnc_320EA; 6
-		dc.w word_32180-MapUnc_320EA; 7
-		dc.w word_32192-MapUnc_320EA; 8
-		dc.w word_321A4-MapUnc_320EA; 9
-		dc.w word_321B6-MapUnc_320EA; 10
-		dc.w word_321C8-MapUnc_320EA; 11
-		dc.w word_321DA-MapUnc_320EA; 12
-		dc.w word_321E4-MapUnc_320EA; 13
-		dc.w word_321EE-MapUnc_320EA; 14
-		dc.w word_321F8-MapUnc_320EA; 15
-		dc.w word_3220A-MapUnc_320EA; 16
-		dc.w word_3221C-MapUnc_320EA; 17
-		dc.w word_3222E-MapUnc_320EA; 18
-		dc.w word_32238-MapUnc_320EA; 19
-		dc.w word_32242-MapUnc_320EA; 20
+Map_320EA:				; DATA XREF: h+1A990o h+1AFD4o ...
+		dc.w Map_320EA-Map_320EA;	0
+		dc.w word_32114-Map_320EA; 1
+		dc.w word_3213E-Map_320EA; 2
+		dc.w word_32148-Map_320EA; 3
+		dc.w word_32152-Map_320EA; 4
+		dc.w word_3215C-Map_320EA; 5
+		dc.w word_3216E-Map_320EA; 6
+		dc.w word_32180-Map_320EA; 7
+		dc.w word_32192-Map_320EA; 8
+		dc.w word_321A4-Map_320EA; 9
+		dc.w word_321B6-Map_320EA; 10
+		dc.w word_321C8-Map_320EA; 11
+		dc.w word_321DA-Map_320EA; 12
+		dc.w word_321E4-Map_320EA; 13
+		dc.w word_321EE-Map_320EA; 14
+		dc.w word_321F8-Map_320EA; 15
+		dc.w word_3220A-Map_320EA; 16
+		dc.w word_3221C-Map_320EA; 17
+		dc.w word_3222E-Map_320EA; 18
+		dc.w word_32238-Map_320EA; 19
+		dc.w word_32242-Map_320EA; 20
 word_32114:	dc.w 5			; DATA XREF: h+1B176o
 		dc.w $F005, $17D,  $BE,	 $10; 0
 		dc.w $D80E,$2060,$2030,$FFF9; 4
@@ -68908,7 +68908,7 @@ off_32296:	dc.w loc_3229E-off_32296; 0 ; DATA XREF: h+1B322o h+1B324o ...
 ; ===========================================================================
 
 loc_3229E:				; DATA XREF: h+1B322o
-		move.l	#MapUnc_32DC6,4(a0)
+		move.l	#Map_32DC6,4(a0)
 		move.w	#$37C,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#3,$18(a0)
@@ -68946,7 +68946,7 @@ loc_3233C:
 		move.b	#$54,(a1) ; 'T'
 		move.b	#6,$A(a1)
 		move.b	#$13,$1A(a1)
-		move.l	#MapUnc_32DC6,4(a1)
+		move.l	#Map_32DC6,4(a1)
 		move.w	#$37C,2(a1)
 		ori.b	#4,1(a1)
 		move.b	#6,$18(a1)
@@ -69512,7 +69512,7 @@ loc_32966:				; CODE XREF: h+1B9EAj
 		move.b	#$20,$19(a1) ; ' '
 		move.l	$34(a0),$34(a1)
 		move.b	#$53,(a1) ; 'S'
-		move.l	#MapUnc_32DC6,4(a1)
+		move.l	#Map_32DC6,4(a1)
 		move.w	#$37C,2(a1)
 		ori.b	#4,1(a1)
 		move.b	#3,$18(a1)
@@ -69828,7 +69828,7 @@ off_32CBC:	dc.w loc_32CC0-off_32CBC; 0 ; DATA XREF: h+1BD48o h+1BD4Ao
 ; ===========================================================================
 
 loc_32CC0:				; DATA XREF: h+1BD48o
-		move.l	#MapUnc_32DC6,4(a0)
+		move.l	#Map_32DC6,4(a0)
 		move.w	#$37C,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#5,$18(a0)
@@ -69894,28 +69894,28 @@ byte_32DC3:	dc.b   7,$11,$FF	; 0 ; DATA XREF: h+1BE06o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_32DC6:				; DATA XREF: h+1B32Ao h+1B3EAo ...
-		dc.w word_32DF0-MapUnc_32DC6; 0
-		dc.w word_32DFA-MapUnc_32DC6; 1
-		dc.w word_32E04-MapUnc_32DC6; 2
-		dc.w word_32E2E-MapUnc_32DC6; 3
-		dc.w word_32E38-MapUnc_32DC6; 4
-		dc.w word_32E42-MapUnc_32DC6; 5
-		dc.w word_32E4C-MapUnc_32DC6; 6
-		dc.w word_32E56-MapUnc_32DC6; 7
-		dc.w word_32E60-MapUnc_32DC6; 8
-		dc.w word_32E6A-MapUnc_32DC6; 9
-		dc.w word_32E74-MapUnc_32DC6; 10
-		dc.w word_32E7E-MapUnc_32DC6; 11
-		dc.w word_32EA0-MapUnc_32DC6; 12
-		dc.w word_32EB2-MapUnc_32DC6; 13
-		dc.w word_32EC4-MapUnc_32DC6; 14
-		dc.w word_32ED6-MapUnc_32DC6; 15
-		dc.w word_32EE8-MapUnc_32DC6; 16
-		dc.w word_32EFA-MapUnc_32DC6; 17
-		dc.w word_32F0C-MapUnc_32DC6; 18
-		dc.w word_32F1E-MapUnc_32DC6; 19
-		dc.w word_32F28-MapUnc_32DC6; 20
+Map_32DC6:				; DATA XREF: h+1B32Ao h+1B3EAo ...
+		dc.w word_32DF0-Map_32DC6; 0
+		dc.w word_32DFA-Map_32DC6; 1
+		dc.w word_32E04-Map_32DC6; 2
+		dc.w word_32E2E-Map_32DC6; 3
+		dc.w word_32E38-Map_32DC6; 4
+		dc.w word_32E42-Map_32DC6; 5
+		dc.w word_32E4C-Map_32DC6; 6
+		dc.w word_32E56-Map_32DC6; 7
+		dc.w word_32E60-Map_32DC6; 8
+		dc.w word_32E6A-Map_32DC6; 9
+		dc.w word_32E74-Map_32DC6; 10
+		dc.w word_32E7E-Map_32DC6; 11
+		dc.w word_32EA0-Map_32DC6; 12
+		dc.w word_32EB2-Map_32DC6; 13
+		dc.w word_32EC4-Map_32DC6; 14
+		dc.w word_32ED6-Map_32DC6; 15
+		dc.w word_32EE8-Map_32DC6; 16
+		dc.w word_32EFA-Map_32DC6; 17
+		dc.w word_32F0C-Map_32DC6; 18
+		dc.w word_32F1E-Map_32DC6; 19
+		dc.w word_32F28-Map_32DC6; 20
 word_32DF0:	dc.w 1			; DATA XREF: h+1BE52o
 		dc.w	 5, $1E4,  $F2,	 $1C; 0
 word_32DFA:	dc.w 1			; DATA XREF: h+1BE52o
@@ -70045,7 +70045,7 @@ off_32F9E:	dc.w loc_32FA8-off_32F9E; 0 ; DATA XREF: h+1C02Ao h+1C02Co ...
 ; ===========================================================================
 
 loc_32FA8:				; DATA XREF: h+1C02Ao
-		move.l	#MapUnc_33756,4(a0)
+		move.l	#Map_33756,4(a0)
 		move.w	#$38C,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#3,$18(a0)
@@ -70585,7 +70585,7 @@ off_3357E:	dc.w loc_33586-off_3357E; 0 ; DATA XREF: h+1C60Ao h+1C60Co ...
 
 loc_33586:				; DATA XREF: h+1C60Ao
 		addq.b	#2,$25(a0)
-		move.l	#MapUnc_33756,4(a0)
+		move.l	#Map_33756,4(a0)
 		move.w	#$38C,2(a0)
 		ori.b	#4,1(a0)
 		move.b	#4,$18(a0)
@@ -70660,7 +70660,7 @@ loc_3365C:
 		move.b	#2,$1C(a1)
 		move.b	#$D,$1A(a1)
 		move.w	#0,$12(a1)
-		move.l	#MapUnc_33756,4(a1)
+		move.l	#Map_33756,4(a1)
 		move.w	#$38C,2(a1)
 		bsr.w	loc_338CC
 		ori.b	#4,1(a1)
@@ -70734,29 +70734,29 @@ byte_33753:	dc.b  $F,  8,$FF	; 0 ; DATA XREF: h+1C79Eo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_33756:				; DATA XREF: h+1C034o h+1C616o ...
-		dc.w MapUnc_33756-MapUnc_33756;	0
-		dc.w word_33782-MapUnc_33756; 1
-		dc.w word_337BC-MapUnc_33756; 2
-		dc.w word_337CE-MapUnc_33756; 3
-		dc.w word_337E8-MapUnc_33756; 4
-		dc.w word_33814-MapUnc_33756; 5
-		dc.w word_33826-MapUnc_33756; 6
-		dc.w word_33838-MapUnc_33756; 7
-		dc.w word_33842-MapUnc_33756; 8
-		dc.w word_3384C-MapUnc_33756; 9
-		dc.w word_33856-MapUnc_33756; 10
-		dc.w word_33860-MapUnc_33756; 11
-		dc.w word_3386A-MapUnc_33756; 12
-		dc.w word_33874-MapUnc_33756; 13
-		dc.w word_3387E-MapUnc_33756; 14
-		dc.w word_33888-MapUnc_33756; 15
-		dc.w word_33892-MapUnc_33756; 16
-		dc.w word_33874-MapUnc_33756; 17
-		dc.w word_3387E-MapUnc_33756; 18
-		dc.w word_33888-MapUnc_33756; 19
-		dc.w word_33892-MapUnc_33756; 20
-		dc.w word_33802-MapUnc_33756; 21
+Map_33756:				; DATA XREF: h+1C034o h+1C616o ...
+		dc.w Map_33756-Map_33756;	0
+		dc.w word_33782-Map_33756; 1
+		dc.w word_337BC-Map_33756; 2
+		dc.w word_337CE-Map_33756; 3
+		dc.w word_337E8-Map_33756; 4
+		dc.w word_33814-Map_33756; 5
+		dc.w word_33826-Map_33756; 6
+		dc.w word_33838-Map_33756; 7
+		dc.w word_33842-Map_33756; 8
+		dc.w word_3384C-Map_33756; 9
+		dc.w word_33856-Map_33756; 10
+		dc.w word_33860-Map_33756; 11
+		dc.w word_3386A-Map_33756; 12
+		dc.w word_33874-Map_33756; 13
+		dc.w word_3387E-Map_33756; 14
+		dc.w word_33888-Map_33756; 15
+		dc.w word_33892-Map_33756; 16
+		dc.w word_33874-Map_33756; 17
+		dc.w word_3387E-Map_33756; 18
+		dc.w word_33888-Map_33756; 19
+		dc.w word_33892-Map_33756; 20
+		dc.w word_33802-Map_33756; 21
 word_33782:	dc.w 7			; DATA XREF: h+1C7E2o
 		dc.w $E00D,$2001,$2000,	   0; 0
 		dc.w $E800,$2000,$2000,$FFF8; 4
@@ -70905,7 +70905,7 @@ loc_3391C:				; DATA XREF: h+1C98Ao
 		move.w	d1,$C(a0)
 		move.b	#$E,$16(a0)
 		move.b	#7,$17(a0)
-		move.l	#MapUnc_34212,4(a0)
+		move.l	#Map_34212,4(a0)
 		move.w	#$22E5,2(a0)
 		move.b	#4,1(a0)
 		move.b	#3,$18(a0)
@@ -71758,25 +71758,25 @@ byte_34208:	dc.b   3,  0,  4, $C,  4,  0,  4, $C,  4,$FF; 0	; DATA XREF: h+1D270
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_34212:				; DATA XREF: h+1C9DCo h+1D29Eo ...
-		dc.w word_34236-MapUnc_34212; 0
-		dc.w word_34250-MapUnc_34212; 1
-		dc.w word_3426A-MapUnc_34212; 2
-		dc.w word_34284-MapUnc_34212; 3
-		dc.w word_3429E-MapUnc_34212; 4
-		dc.w word_342C0-MapUnc_34212; 5
-		dc.w word_342EA-MapUnc_34212; 6
-		dc.w word_34314-MapUnc_34212; 7
-		dc.w word_3433E-MapUnc_34212; 8
-		dc.w word_34360-MapUnc_34212; 9
-		dc.w word_3438A-MapUnc_34212; 10
-		dc.w word_343B4-MapUnc_34212; 11
-		dc.w word_343E6-MapUnc_34212; 12
-		dc.w word_34400-MapUnc_34212; 13
-		dc.w word_3441A-MapUnc_34212; 14
-		dc.w word_34434-MapUnc_34212; 15
-		dc.w word_3444E-MapUnc_34212; 16
-		dc.w word_34470-MapUnc_34212; 17
+Map_34212:				; DATA XREF: h+1C9DCo h+1D29Eo ...
+		dc.w word_34236-Map_34212; 0
+		dc.w word_34250-Map_34212; 1
+		dc.w word_3426A-Map_34212; 2
+		dc.w word_34284-Map_34212; 3
+		dc.w word_3429E-Map_34212; 4
+		dc.w word_342C0-Map_34212; 5
+		dc.w word_342EA-Map_34212; 6
+		dc.w word_34314-Map_34212; 7
+		dc.w word_3433E-Map_34212; 8
+		dc.w word_34360-Map_34212; 9
+		dc.w word_3438A-Map_34212; 10
+		dc.w word_343B4-Map_34212; 11
+		dc.w word_343E6-Map_34212; 12
+		dc.w word_34400-Map_34212; 13
+		dc.w word_3441A-Map_34212; 14
+		dc.w word_34434-Map_34212; 15
+		dc.w word_3444E-Map_34212; 16
+		dc.w word_34470-Map_34212; 17
 word_34236:	dc.w 3			; DATA XREF: h+1D29Eo
 		dc.w $E40F,$8000,$8000,$FFF0; 0
 		dc.w  $40A,$8010,$8008,$FFF0; 4
@@ -72242,7 +72242,7 @@ loc_34804:				; DATA XREF: h+1D886o
 		move.w	d1,$C(a0)
 		move.b	#$E,$16(a0)
 		move.b	#7,$17(a0)
-		move.l	#MapUnc_34B3E,4(a0)
+		move.l	#Map_34B3E,4(a0)
 		move.w	#$4300,2(a0)
 		move.b	#4,1(a0)
 		move.b	#2,$18(a0)
@@ -72510,25 +72510,25 @@ byte_34B3A:	dc.b   1,$10,$11,$FF	; 0 ; DATA XREF: h+1DBA8o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_34B3E:				; DATA XREF: h+1D8BEo h+1DBCAo ...
-		dc.w word_34B62-MapUnc_34B3E; 0
-		dc.w word_34B7C-MapUnc_34B3E; 1
-		dc.w word_34B9E-MapUnc_34B3E; 2
-		dc.w word_34BC0-MapUnc_34B3E; 3
-		dc.w word_34BEA-MapUnc_34B3E; 4
-		dc.w word_34C04-MapUnc_34B3E; 5
-		dc.w word_34C26-MapUnc_34B3E; 6
-		dc.w word_34C50-MapUnc_34B3E; 7
-		dc.w word_34C72-MapUnc_34B3E; 8
-		dc.w word_34C94-MapUnc_34B3E; 9
-		dc.w word_34CBE-MapUnc_34B3E; 10
-		dc.w word_34CE8-MapUnc_34B3E; 11
-		dc.w word_34D0A-MapUnc_34B3E; 12
-		dc.w word_34D1C-MapUnc_34B3E; 13
-		dc.w word_34D36-MapUnc_34B3E; 14
-		dc.w word_34D48-MapUnc_34B3E; 15
-		dc.w word_34D62-MapUnc_34B3E; 16
-		dc.w word_34D74-MapUnc_34B3E; 17
+Map_34B3E:				; DATA XREF: h+1D8BEo h+1DBCAo ...
+		dc.w word_34B62-Map_34B3E; 0
+		dc.w word_34B7C-Map_34B3E; 1
+		dc.w word_34B9E-Map_34B3E; 2
+		dc.w word_34BC0-Map_34B3E; 3
+		dc.w word_34BEA-Map_34B3E; 4
+		dc.w word_34C04-Map_34B3E; 5
+		dc.w word_34C26-Map_34B3E; 6
+		dc.w word_34C50-Map_34B3E; 7
+		dc.w word_34C72-Map_34B3E; 8
+		dc.w word_34C94-Map_34B3E; 9
+		dc.w word_34CBE-Map_34B3E; 10
+		dc.w word_34CE8-Map_34B3E; 11
+		dc.w word_34D0A-Map_34B3E; 12
+		dc.w word_34D1C-Map_34B3E; 13
+		dc.w word_34D36-Map_34B3E; 14
+		dc.w word_34D48-Map_34B3E; 15
+		dc.w word_34D62-Map_34B3E; 16
+		dc.w word_34D74-Map_34B3E; 17
 word_34B62:	dc.w 3			; DATA XREF: h+1DBCAo
 		dc.w $E80A,$8000,$8000,$FFF4; 0
 		dc.w	 9,$8009,$8004,$FFF4; 4
@@ -72714,7 +72714,7 @@ loc_34EC6:				; DATA XREF: h+1DF4Ao
 		addq.b	#2,$24(a0)
 		move.w	#$7F,8(a0) ; ''
 		move.w	#$58,$C(a0) ; 'X'
-		move.l	#MapUnc_36508,4(a0)
+		move.l	#Map_36508,4(a0)
 		move.w	#$238A,2(a0)
 		move.b	#4,1(a0)
 		move.b	#3,$18(a0)
@@ -72801,7 +72801,7 @@ loc_34FB6:				; DATA XREF: h+1E03Ao
 		addq.b	#2,$24(a0)
 		move.w	#$7F,8(a0) ; ''
 		move.w	#$58,$C(a0) ; 'X'
-		move.l	#MapUnc_3632A,4(a0)
+		move.l	#Map_3632A,4(a0)
 		move.w	#$6322,2(a0)
 		move.b	#4,1(a0)
 		move.b	#3,$18(a0)
@@ -73346,7 +73346,7 @@ loc_35478:				; CODE XREF: h+1E56Aj
 loc_3547E:				; CODE XREF: h+1E502j
 		move.b	#$5B,(a1) ; '['
 		move.b	#2,$24(a1)
-		move.l	#MapUnc_3632A,4(a1)
+		move.l	#Map_3632A,4(a1)
 		move.w	#$6322,2(a1)
 		move.b	#4,1(a1)
 		move.b	#5,$18(a1)
@@ -73451,7 +73451,7 @@ loc_3559C:				; CODE XREF: h+1E662j
 		bne.s	loc_355D6
 		move.b	#$5A,(a1) ; 'Z'
 		move.b	#2,$24(a1)
-		move.l	#MapUnc_3632A,4(a1)
+		move.l	#Map_3632A,4(a1)
 		move.w	#$6322,2(a1)
 		move.b	#4,1(a1)
 		move.b	#5,$18(a1)
@@ -73504,7 +73504,7 @@ loc_3561E:				; CODE XREF: ROM:000051BEp
 		st	($FFFFDBA7).w
 		bsr.w	loc_365EC
 		bne.w	locret_356E4
-		move.l	#MapUnc_72D2,4(a1)
+		move.l	#Map_72D2,4(a1)
 		move.w	#$41FA,2(a1)
 		move.b	#$5A,(a1) ; 'Z'
 		move.b	#4,1(a1)
@@ -73576,7 +73576,7 @@ locret_356E4:				; CODE XREF: h+1E6B2j h+1E716j ...
 
 loc_356E6:				; CODE XREF: h+1E718p h+1E73Ep ...
 		move.b	#$5A,(a1) ; 'Z'
-		move.l	#MapUnc_35E1E,4(a1)
+		move.l	#Map_35E1E,4(a1)
 		move.w	#$41A2,2(a1)
 		move.b	#4,1(a1)
 		move.b	#1,$18(a1)
@@ -73980,7 +73980,7 @@ loc_35AC4:				; CODE XREF: h+1EB4Aj
 		bne.w	locret_35B58
 		move.b	#$5A,(a1) ; 'Z'
 		move.b	#6,$24(a1)
-		move.l	#MapUnc_35E1E,4(a1)
+		move.l	#Map_35E1E,4(a1)
 		move.w	#$21A2,2(a1)
 		move.b	#4,1(a1)
 		move.b	#1,$18(a1)
@@ -73993,7 +73993,7 @@ loc_35AC4:				; CODE XREF: h+1EB4Aj
 		bne.s	locret_35B58
 		move.b	#$5A,(a1) ; 'Z'
 		move.b	#6,$24(a1)
-		move.l	#MapUnc_35E1E,4(a1)
+		move.l	#Map_35E1E,4(a1)
 		move.w	#$21A2,2(a1)
 		move.b	#4,1(a1)
 		move.b	#0,$18(a1)
@@ -74050,7 +74050,7 @@ loc_35BD6:				; CODE XREF: h+1EDA4p
 		bsr.w	loc_365E6
 		bne.s	locret_35C12
 		move.b	d0,$1A(a1)
-		move.l	#MapUnc_72D2,4(a1)
+		move.l	#Map_72D2,4(a1)
 		move.w	#$41FA,2(a1)
 		move.b	#$5A,(a1) ; 'Z'
 		move.b	#4,$24(a1)
@@ -74074,7 +74074,7 @@ loc_35C1C:				; CODE XREF: h+1ECEAj
 		bsr.w	loc_365E6
 		bne.s	locret_35C60
 		move.b	d0,$1A(a1)
-		move.l	#MapUnc_35E1E,4(a1)
+		move.l	#Map_35E1E,4(a1)
 		move.w	#$41A2,2(a1)
 		move.b	#$5A,(a1) ; 'Z'
 		move.b	#4,$24(a1)
@@ -74270,29 +74270,29 @@ byte_35E19:	dc.b   2,$24,$26,$1C,$FF; 0 ; DATA XREF: h+1EE6Ao
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_35E1E:				; DATA XREF: h+1E776o h+1EB62o ...
-		dc.w word_35E4A-MapUnc_35E1E; 0
-		dc.w word_35E54-MapUnc_35E1E; 1
-		dc.w word_35E5E-MapUnc_35E1E; 2
-		dc.w word_35E68-MapUnc_35E1E; 3
-		dc.w word_35E72-MapUnc_35E1E; 4
-		dc.w word_35E7C-MapUnc_35E1E; 5
-		dc.w word_35E86-MapUnc_35E1E; 6
-		dc.w word_35E90-MapUnc_35E1E; 7
-		dc.w word_35E9A-MapUnc_35E1E; 8
-		dc.w word_35EA4-MapUnc_35E1E; 9
-		dc.w word_35EAE-MapUnc_35E1E; 10
-		dc.w word_35EB8-MapUnc_35E1E; 11
-		dc.w word_35EC2-MapUnc_35E1E; 12
-		dc.w word_35ECC-MapUnc_35E1E; 13
-		dc.w word_35ED6-MapUnc_35E1E; 14
-		dc.w word_35EE0-MapUnc_35E1E; 15
-		dc.w word_35EEA-MapUnc_35E1E; 16
-		dc.w word_35EF4-MapUnc_35E1E; 17
-		dc.w word_35EFE-MapUnc_35E1E; 18
-		dc.w word_35F08-MapUnc_35E1E; 19
-		dc.w word_35F12-MapUnc_35E1E; 20
-		dc.w word_35F54-MapUnc_35E1E; 21
+Map_35E1E:				; DATA XREF: h+1E776o h+1EB62o ...
+		dc.w word_35E4A-Map_35E1E; 0
+		dc.w word_35E54-Map_35E1E; 1
+		dc.w word_35E5E-Map_35E1E; 2
+		dc.w word_35E68-Map_35E1E; 3
+		dc.w word_35E72-Map_35E1E; 4
+		dc.w word_35E7C-Map_35E1E; 5
+		dc.w word_35E86-Map_35E1E; 6
+		dc.w word_35E90-Map_35E1E; 7
+		dc.w word_35E9A-Map_35E1E; 8
+		dc.w word_35EA4-Map_35E1E; 9
+		dc.w word_35EAE-Map_35E1E; 10
+		dc.w word_35EB8-Map_35E1E; 11
+		dc.w word_35EC2-Map_35E1E; 12
+		dc.w word_35ECC-Map_35E1E; 13
+		dc.w word_35ED6-Map_35E1E; 14
+		dc.w word_35EE0-Map_35E1E; 15
+		dc.w word_35EEA-Map_35E1E; 16
+		dc.w word_35EF4-Map_35E1E; 17
+		dc.w word_35EFE-Map_35E1E; 18
+		dc.w word_35F08-Map_35E1E; 19
+		dc.w word_35F12-Map_35E1E; 20
+		dc.w word_35F54-Map_35E1E; 21
 word_35E4A:	dc.w 1			; DATA XREF: h+1EEAAo
 		dc.w $F801,$8004,$8002,$FFFC; 0
 word_35E54:	dc.w 1			; DATA XREF: h+1EEAAo
@@ -74402,7 +74402,7 @@ loc_35FEC:				; CODE XREF: h+1F074j
 		move.b	($FFFFFE16).w,d0
 		bsr.s	loc_35F76
 		addq.b	#2,$24(a0)
-		move.l	#MapUnc_3625A,4(a0)
+		move.l	#Map_3625A,4(a0)
 		move.w	#$6174,2(a0)
 		move.b	#4,1(a0)
 		move.b	#4,$18(a0)
@@ -74634,17 +74634,17 @@ byte_36257:	dc.b  $B,  9,$FF	; 0 ; DATA XREF: h+1F2B4o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3625A:				; DATA XREF: h+1F084o h+1F2E6o ...
-		dc.w word_3626E-MapUnc_3625A; 0
-		dc.w word_36278-MapUnc_3625A; 1
-		dc.w word_36282-MapUnc_3625A; 2
-		dc.w word_3628C-MapUnc_3625A; 3
-		dc.w word_36296-MapUnc_3625A; 4
-		dc.w word_362A0-MapUnc_3625A; 5
-		dc.w word_362AA-MapUnc_3625A; 6
-		dc.w word_362B4-MapUnc_3625A; 7
-		dc.w word_362BE-MapUnc_3625A; 8
-		dc.w word_362C8-MapUnc_3625A; 9
+Map_3625A:				; DATA XREF: h+1F084o h+1F2E6o ...
+		dc.w word_3626E-Map_3625A; 0
+		dc.w word_36278-Map_3625A; 1
+		dc.w word_36282-Map_3625A; 2
+		dc.w word_3628C-Map_3625A; 3
+		dc.w word_36296-Map_3625A; 4
+		dc.w word_362A0-Map_3625A; 5
+		dc.w word_362AA-Map_3625A; 6
+		dc.w word_362B4-Map_3625A; 7
+		dc.w word_362BE-Map_3625A; 8
+		dc.w word_362C8-Map_3625A; 9
 word_3626E:	dc.w 1			; DATA XREF: h+1F2E6o
 		dc.w $FC00,$8000,$8000,$FFFC; 0
 word_36278:	dc.w 1			; DATA XREF: h+1F2E6o
@@ -74690,40 +74690,40 @@ byte_36324:	dc.b   1,$1E,$1F,$20,$FF,  0; 0	; DATA XREF: h+1F35Eo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3632A:				; DATA XREF: h+1E052o h+1E514o ...
-		dc.w word_3636C-MapUnc_3632A; 0
-		dc.w word_36376-MapUnc_3632A; 1
-		dc.w word_36380-MapUnc_3632A; 2
-		dc.w word_3638A-MapUnc_3632A; 3
-		dc.w word_36394-MapUnc_3632A; 4
-		dc.w word_3639E-MapUnc_3632A; 5
-		dc.w word_363A8-MapUnc_3632A; 6
-		dc.w word_363B2-MapUnc_3632A; 7
-		dc.w word_363BC-MapUnc_3632A; 8
-		dc.w word_363C6-MapUnc_3632A; 9
-		dc.w word_363D0-MapUnc_3632A; 10
-		dc.w word_363DA-MapUnc_3632A; 11
-		dc.w word_363E4-MapUnc_3632A; 12
-		dc.w word_363EE-MapUnc_3632A; 13
-		dc.w word_363F8-MapUnc_3632A; 14
-		dc.w word_36402-MapUnc_3632A; 15
-		dc.w word_3640C-MapUnc_3632A; 16
-		dc.w word_36416-MapUnc_3632A; 17
-		dc.w word_36420-MapUnc_3632A; 18
-		dc.w word_3642A-MapUnc_3632A; 19
-		dc.w word_36434-MapUnc_3632A; 20
-		dc.w word_3643E-MapUnc_3632A; 21
-		dc.w word_36448-MapUnc_3632A; 22
-		dc.w word_36452-MapUnc_3632A; 23
-		dc.w word_3645C-MapUnc_3632A; 24
-		dc.w word_36466-MapUnc_3632A; 25
-		dc.w word_36470-MapUnc_3632A; 26
-		dc.w word_3647A-MapUnc_3632A; 27
-		dc.w word_36484-MapUnc_3632A; 28
-		dc.w word_3648E-MapUnc_3632A; 29
-		dc.w word_36498-MapUnc_3632A; 30
-		dc.w word_364AA-MapUnc_3632A; 31
-		dc.w word_364BC-MapUnc_3632A; 32
+Map_3632A:				; DATA XREF: h+1E052o h+1E514o ...
+		dc.w word_3636C-Map_3632A; 0
+		dc.w word_36376-Map_3632A; 1
+		dc.w word_36380-Map_3632A; 2
+		dc.w word_3638A-Map_3632A; 3
+		dc.w word_36394-Map_3632A; 4
+		dc.w word_3639E-Map_3632A; 5
+		dc.w word_363A8-Map_3632A; 6
+		dc.w word_363B2-Map_3632A; 7
+		dc.w word_363BC-Map_3632A; 8
+		dc.w word_363C6-Map_3632A; 9
+		dc.w word_363D0-Map_3632A; 10
+		dc.w word_363DA-Map_3632A; 11
+		dc.w word_363E4-Map_3632A; 12
+		dc.w word_363EE-Map_3632A; 13
+		dc.w word_363F8-Map_3632A; 14
+		dc.w word_36402-Map_3632A; 15
+		dc.w word_3640C-Map_3632A; 16
+		dc.w word_36416-Map_3632A; 17
+		dc.w word_36420-Map_3632A; 18
+		dc.w word_3642A-Map_3632A; 19
+		dc.w word_36434-Map_3632A; 20
+		dc.w word_3643E-Map_3632A; 21
+		dc.w word_36448-Map_3632A; 22
+		dc.w word_36452-Map_3632A; 23
+		dc.w word_3645C-Map_3632A; 24
+		dc.w word_36466-Map_3632A; 25
+		dc.w word_36470-Map_3632A; 26
+		dc.w word_3647A-Map_3632A; 27
+		dc.w word_36484-Map_3632A; 28
+		dc.w word_3648E-Map_3632A; 29
+		dc.w word_36498-Map_3632A; 30
+		dc.w word_364AA-Map_3632A; 31
+		dc.w word_364BC-Map_3632A; 32
 word_3636C:	dc.w 1			; DATA XREF: h+1F3B6o
 		dc.w $FC00,$8000,$8000,$FFFC; 0
 word_36376:	dc.w 1			; DATA XREF: h+1F3B6o
@@ -74818,20 +74818,20 @@ byte_36502:	dc.b   2, $A, $B, $C,$FF,  0; 0	; DATA XREF: h+1F55Ao
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_36508:				; DATA XREF: h+1DF62o h+1F594o ...
-		dc.w word_36522-MapUnc_36508; 0
-		dc.w word_3652C-MapUnc_36508; 1
-		dc.w word_36536-MapUnc_36508; 2
-		dc.w word_36540-MapUnc_36508; 3
-		dc.w word_3654A-MapUnc_36508; 4
-		dc.w word_36554-MapUnc_36508; 5
-		dc.w word_3655E-MapUnc_36508; 6
-		dc.w word_36568-MapUnc_36508; 7
-		dc.w word_36572-MapUnc_36508; 8
-		dc.w word_3657C-MapUnc_36508; 9
-		dc.w word_36586-MapUnc_36508; 10
-		dc.w word_36590-MapUnc_36508; 11
-		dc.w word_365A2-MapUnc_36508; 12
+Map_36508:				; DATA XREF: h+1DF62o h+1F594o ...
+		dc.w word_36522-Map_36508; 0
+		dc.w word_3652C-Map_36508; 1
+		dc.w word_36536-Map_36508; 2
+		dc.w word_36540-Map_36508; 3
+		dc.w word_3654A-Map_36508; 4
+		dc.w word_36554-Map_36508; 5
+		dc.w word_3655E-Map_36508; 6
+		dc.w word_36568-Map_36508; 7
+		dc.w word_36572-Map_36508; 8
+		dc.w word_3657C-Map_36508; 9
+		dc.w word_36586-Map_36508; 10
+		dc.w word_36590-Map_36508; 11
+		dc.w word_365A2-Map_36508; 12
 word_36522:	dc.w 1			; DATA XREF: h+1F594o
 		dc.w $FC00,$8000,$8000,$FFFC; 0
 word_3652C:	dc.w 1			; DATA XREF: h+1F594o
@@ -75383,7 +75383,7 @@ loc_36A26:				; CODE XREF: h+1FA1Ej
 		jsr	sub_16544
 		jmp	loc_163D2
 ; ===========================================================================
-off_36A3E:	dc.l MapUnc_36A4E	; DATA XREF: h+1F6B4o
+off_36A3E:	dc.l Map_36A4E	; DATA XREF: h+1F6B4o
 		dc.w $A500
 		dc.w $404
 		dc.w $C0B
@@ -75392,9 +75392,9 @@ byte_36A4A:	dc.b   1,  0,  1,$FF	; 0 ; DATA XREF: h+1FAD4o
 ; ------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ------------------------------------------------------------------------
-MapUnc_36A4E:				; DATA XREF: h+1FACAo h+1FADAo ...
-		dc.w byte_36A52-MapUnc_36A4E; 0
-		dc.w byte_36A64-MapUnc_36A4E; 1
+Map_36A4E:				; DATA XREF: h+1FACAo h+1FADAo ...
+		dc.w byte_36A52-Map_36A4E; 0
+		dc.w byte_36A64-Map_36A4E; 1
 byte_36A52:	dc.b   0,  2,$F8,  8,  0,  0,  0,  0,$FF,$F4,  0,  8,  0,  3,  0,  1; 0
 					; DATA XREF: h+1FADAo
 		dc.b $FF,$F4		; 16
@@ -75673,15 +75673,15 @@ byte_36CBC:	dc.b   0,$EC		; 0
 		dc.b $10,$FC		; 2
 		dc.b   0, $C		; 4
 		dc.b $F0,$FC		; 6
-off_36CC4:	dc.l MapUnc_36CF0	; DATA XREF: h+1F6B4o
+off_36CC4:	dc.l Map_36CF0	; DATA XREF: h+1F6B4o
 		dc.w $A509
 		dc.w $405
 		dc.w $1002
-off_36CCE:	dc.l MapUnc_36D00	; DATA XREF: h+1F6B4o
+off_36CCE:	dc.l Map_36D00	; DATA XREF: h+1F6B4o
 		dc.w 0
 		dc.w $8404
 		dc.w $1000
-off_36CD8:	dc.l MapUnc_36CFA	; DATA XREF: h+1F6B4o
+off_36CD8:	dc.l Map_36CFA	; DATA XREF: h+1F6B4o
 		dc.w $A509
 		dc.w $8404
 		dc.w $800
@@ -75692,23 +75692,23 @@ byte_36CEC:	dc.b   7,  0,  1,$FC	; 0 ; DATA XREF: h+1FD76o h+1FD7Eo ...
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-MapUnc_36CF0:	dc.w word_36D02-MapUnc_36CF0 ; DATA XREF: h+1FD50o h+1FD7Co ...
-		dc.w word_36D24-MapUnc_36CF0
-		dc.w word_36D46-MapUnc_36CF0
-		dc.w word_36D58-MapUnc_36CF0
-		dc.w word_36D6A-MapUnc_36CF0
+Map_36CF0:	dc.w word_36D02-Map_36CF0 ; DATA XREF: h+1FD50o h+1FD7Co ...
+		dc.w word_36D24-Map_36CF0
+		dc.w word_36D46-Map_36CF0
+		dc.w word_36D58-Map_36CF0
+		dc.w word_36D6A-Map_36CF0
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-MapUnc_36CFA:				; DATA XREF: h+1FD64o h+1FD86o ...
-		dc.w word_36D7C-MapUnc_36CFA
-		dc.w word_36D86-MapUnc_36CFA
-		dc.w word_36D90-MapUnc_36CFA
+Map_36CFA:				; DATA XREF: h+1FD64o h+1FD86o ...
+		dc.w word_36D7C-Map_36CFA
+		dc.w word_36D86-Map_36CFA
+		dc.w word_36D90-Map_36CFA
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-MapUnc_36D00:				; DATA XREF: h+1FD5Ao h+1FD8Co
-		dc.w word_36D9A-MapUnc_36D00
+Map_36D00:				; DATA XREF: h+1FD5Ao h+1FD8Co
+		dc.w word_36D9A-Map_36D00
 word_36D02:	dc.w 4			; DATA XREF: h+1FD7Co
 		dc.w $F400,    0,    0,$FFF8; 0
 		dc.w $FC06,    1,    0,$FFF0; 4
@@ -75887,7 +75887,7 @@ loc_36EE2:				; CODE XREF: h+1FF68j
 		moveq	#1,d2
 		rts	
 ; ===========================================================================
-off_36EE6:	dc.l MapUnc_36EF6	; DATA XREF: h+1F6B4o
+off_36EE6:	dc.l Map_36EF6	; DATA XREF: h+1F6B4o
 		dc.w $253B
 		dc.w $404
 		dc.w $1002
@@ -75896,9 +75896,9 @@ byte_36EF2:	dc.b   4,  0,  1,$FF	; 0 ; DATA XREF: h+1FF7Co
 ; --------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; --------------------------------------------------------------------------
-MapUnc_36EF6:				; DATA XREF: h+1FF72o h+1FF82o ...
-		dc.w word_36EFA-MapUnc_36EF6; 0
-		dc.w word_36F04-MapUnc_36EF6; 1
+Map_36EF6:				; DATA XREF: h+1FF72o h+1FF82o ...
+		dc.w word_36EFA-Map_36EF6; 0
+		dc.w word_36F04-Map_36EF6; 1
 word_36EFA:	dc.w 1			; DATA XREF: h+1FF82o
 		dc.w $F40E,    0,    0,$FFF0; 0
 word_36F04:	dc.w 1			; DATA XREF: h+1FF82o
@@ -76060,7 +76060,7 @@ loc_37066:				; CODE XREF: h+200ECj
 		moveq	#1,d0
 		rts	
 ; ===========================================================================
-off_3707C:	dc.l MapUnc_37092	; DATA XREF: h+1F6B4o
+off_3707C:	dc.l Map_37092	; DATA XREF: h+1F6B4o
 		dc.w 0
 		dc.w $404
 		dc.w $1012
@@ -76071,12 +76071,12 @@ byte_3708E:	dc.b   9,  2,  3,$FF	; 0 ; DATA XREF: h+20112o
 ; ---------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ---------------------------------------------------------------------------
-MapUnc_37092:				; DATA XREF: h+20108o h+2011Eo ...
-		dc.w word_3709C-MapUnc_37092; 0
-		dc.w word_370B6-MapUnc_37092; 1
-		dc.w word_370D0-MapUnc_37092; 2
-		dc.w word_370E2-MapUnc_37092; 3
-		dc.w word_370F4-MapUnc_37092; 4
+Map_37092:				; DATA XREF: h+20108o h+2011Eo ...
+		dc.w word_3709C-Map_37092; 0
+		dc.w word_370B6-Map_37092; 1
+		dc.w word_370D0-Map_37092; 2
+		dc.w word_370E2-Map_37092; 3
+		dc.w word_370F4-Map_37092; 4
 word_3709C:	dc.w 3			; DATA XREF: h+2011Eo
 		dc.w  $809, $520, $290,$FFF4; 0
 		dc.w $E807,$252C,$2296,$FFF8; 4
@@ -76114,7 +76114,7 @@ off_3710C:	dc.w loc_37116-off_3710C; 0 ; DATA XREF: h+20198o h+2019Ao ...
 ; ===========================================================================
 
 loc_37116:				; DATA XREF: h+20198o
-		move.l	#MapUnc_372E6,4(a0)
+		move.l	#Map_372E6,4(a0)
 		move.w	#0,2(a0)
 		bsr.w	loc_3EA9C
 		ori.b	#4,1(a0)
@@ -76270,12 +76270,12 @@ byte_372E2:	dc.b   5,  3,  4,$FF	; 0 ; DATA XREF: h+2036Co
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_372E6:				; DATA XREF: h+201A2o h+20372o ...
-		dc.w word_372F0-MapUnc_372E6; 0
-		dc.w word_372FA-MapUnc_372E6; 1
-		dc.w word_37304-MapUnc_372E6; 2
-		dc.w word_3730E-MapUnc_372E6; 3
-		dc.w word_37318-MapUnc_372E6; 4
+Map_372E6:				; DATA XREF: h+201A2o h+20372o ...
+		dc.w word_372F0-Map_372E6; 0
+		dc.w word_372FA-Map_372E6; 1
+		dc.w word_37304-Map_372E6; 2
+		dc.w word_3730E-Map_372E6; 3
+		dc.w word_37318-Map_372E6; 4
 word_372F0:	dc.w 1			; DATA XREF: h+20372o
 		dc.w $F805, $3DE, $1EF,$FFF8; 0
 word_372FA:	dc.w 1			; DATA XREF: h+20372o
@@ -76649,18 +76649,18 @@ loc_37668:				; DATA XREF: h+206DEo
 		neg.w	d2
 		rts	
 ; ===========================================================================
-off_3766E:	dc.l MapUnc_37678	; DATA XREF: h+1F6B4o
+off_3766E:	dc.l Map_37678	; DATA XREF: h+1F6B4o
 		dc.w $637E
 		dc.w $404
 		dc.w $1000
 ; ------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ------------------------------------------------------------------------
-MapUnc_37678:				; DATA XREF: h+206FAo h+20704o ...
-		dc.w word_37680-MapUnc_37678; 0
-		dc.w word_3768A-MapUnc_37678; 1
-		dc.w word_37694-MapUnc_37678; 2
-		dc.w word_3769E-MapUnc_37678; 3
+Map_37678:				; DATA XREF: h+206FAo h+20704o ...
+		dc.w word_37680-Map_37678; 0
+		dc.w word_3768A-Map_37678; 1
+		dc.w word_37694-Map_37678; 2
+		dc.w word_3769E-Map_37678; 3
 word_37680:	dc.w   1		; 0 ; DATA XREF: h+20704o
 		dc.w $FA09,    0,    0,$FFEC; 0
 word_3768A:	dc.w   1		; 0 ; DATA XREF: h+20704o
@@ -76765,43 +76765,43 @@ loc_37756:				; DATA XREF: h+24A88t
 		lea	(off_3BA40).l,a1
 		bra.w	loc_3EA6C
 ; ===========================================================================
-off_37764:	dc.l MapUnc_37678	; DATA XREF: h+1F6B4o
+off_37764:	dc.l Map_37678	; DATA XREF: h+1F6B4o
 		dc.w $237E
 		dc.w $8404
 		dc.w $498
-off_3776E:	dc.l MapUnc_3789A	; DATA XREF: h+1F6B4o
+off_3776E:	dc.l Map_3789A	; DATA XREF: h+1F6B4o
 		dc.w $A36E
 		dc.w $8404
 		dc.w $88B
-off_37778:	dc.l MapUnc_37B62	; DATA XREF: h+1F6B4o
+off_37778:	dc.l Map_37B62	; DATA XREF: h+1F6B4o
 		dc.w $38A
 		dc.w $8404
 		dc.w $498
-off_37782:	dc.l MapUnc_37D96	; DATA XREF: h+1F6B4o
+off_37782:	dc.l Map_37D96	; DATA XREF: h+1F6B4o
 		dc.w $3EE
 		dc.w $8404
 		dc.w $88B
-off_3778C:	dc.l MapUnc_38A96	; DATA XREF: h+1F6B4o
+off_3778C:	dc.l Map_38A96	; DATA XREF: h+1F6B4o
 		dc.w $8368
 		dc.w $8405
 		dc.w $498
-off_37796:	dc.l MapUnc_38CCA	; DATA XREF: h+1F6B4o
+off_37796:	dc.l Map_38CCA	; DATA XREF: h+1F6B4o
 		dc.w $252D
 		dc.w $8405
 		dc.w $498
-off_377A0:	dc.l MapUnc_3921A	; DATA XREF: h+1F6B4o
+off_377A0:	dc.l Map_3921A	; DATA XREF: h+1F6B4o
 		dc.w $A500
 		dc.w $8404
 		dc.w $498
-off_377AA:	dc.l MapUnc_395B4	; DATA XREF: h+1F6B4o
+off_377AA:	dc.l Map_395B4	; DATA XREF: h+1F6B4o
 		dc.w $379
 		dc.w $8405
 		dc.w $498
-off_377B4:	dc.l MapUnc_39E68	; DATA XREF: h+1F6B4o
+off_377B4:	dc.l Map_39E68	; DATA XREF: h+1F6B4o
 		dc.w $2380
 		dc.w $8405
 		dc.w $498
-off_377BE:	dc.l MapUnc_3BA46	; DATA XREF: h+1F6B4o
+off_377BE:	dc.l Map_3BA46	; DATA XREF: h+1F6B4o
 		dc.w $3AB
 		dc.w $8403
 		dc.w $498
@@ -76885,7 +76885,7 @@ loc_37850:				; CODE XREF: h+208BCp
 locret_37886:				; CODE XREF: h+208E4j
 		rts	
 ; ===========================================================================
-off_37888:	dc.l MapUnc_3789A	; DATA XREF: h+1F6B4o
+off_37888:	dc.l Map_3789A	; DATA XREF: h+1F6B4o
 		dc.w $A36E
 		dc.w $404
 		dc.w $1006
@@ -76894,12 +76894,12 @@ byte_37894:	dc.b   3,  0,  1,  2,  3,$FF; 0	; DATA XREF: h+2091Eo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3789A:				; DATA XREF: h+207FAo h+20914o ...
-		dc.w word_378A4-MapUnc_3789A; 0
-		dc.w word_378C6-MapUnc_3789A; 1
-		dc.w word_378E8-MapUnc_3789A; 2
-		dc.w word_3790A-MapUnc_3789A; 3
-		dc.w word_3792C-MapUnc_3789A; 4
+Map_3789A:				; DATA XREF: h+207FAo h+20914o ...
+		dc.w word_378A4-Map_3789A; 0
+		dc.w word_378C6-Map_3789A; 1
+		dc.w word_378E8-Map_3789A; 2
+		dc.w word_3790A-Map_3789A; 3
+		dc.w word_3792C-Map_3789A; 4
 word_378A4:	dc.w 4			; DATA XREF: h+20926o
 		dc.w $EC08,  $12,    9,$FFE8; 0
 		dc.w $EC08,$1812,$1809,	   0; 4
@@ -77134,15 +77134,15 @@ loc_37AF2:				; CODE XREF: h+20A72j
 locret_37B30:				; CODE XREF: h+20B82j
 		rts	
 ; ===========================================================================
-off_37B32:	dc.l MapUnc_37B62	; DATA XREF: h+1F6B4o
+off_37B32:	dc.l Map_37B62	; DATA XREF: h+1F6B4o
 		dc.w $38A
 		dc.w $405
 		dc.w $1800
-off_37B3C:	dc.l MapUnc_37B62	; DATA XREF: h+1F6B4o
+off_37B3C:	dc.l Map_37B62	; DATA XREF: h+1F6B4o
 		dc.w $38A
 		dc.w $404
 		dc.w $C1A
-off_37B46:	dc.l MapUnc_37B62	; DATA XREF: h+1F6B4o
+off_37B46:	dc.l Map_37B62	; DATA XREF: h+1F6B4o
 		dc.w $38A
 		dc.w $405
 		dc.w $800
@@ -77155,16 +77155,16 @@ byte_37B5E:	dc.b   1,  8,  9,$FF	; 0 ; DATA XREF: h+20BE8o h+20BF0o ...
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_37B62:	dc.w word_37B76-MapUnc_37B62 ; DATA XREF: h+20804o h+20BBEo ...
-		dc.w word_37B90-MapUnc_37B62
-		dc.w word_37BAA-MapUnc_37B62
-		dc.w word_37BB4-MapUnc_37B62
-		dc.w word_37BBE-MapUnc_37B62
-		dc.w word_37BC8-MapUnc_37B62
-		dc.w word_37BD2-MapUnc_37B62
-		dc.w word_37BDC-MapUnc_37B62
-		dc.w word_37BE6-MapUnc_37B62
-		dc.w word_37BF0-MapUnc_37B62
+Map_37B62:	dc.w word_37B76-Map_37B62 ; DATA XREF: h+20804o h+20BBEo ...
+		dc.w word_37B90-Map_37B62
+		dc.w word_37BAA-Map_37B62
+		dc.w word_37BB4-Map_37B62
+		dc.w word_37BBE-Map_37B62
+		dc.w word_37BC8-Map_37B62
+		dc.w word_37BD2-Map_37B62
+		dc.w word_37BDC-Map_37B62
+		dc.w word_37BE6-Map_37B62
+		dc.w word_37BF0-Map_37B62
 word_37B76:	dc.w 3			; DATA XREF: h+20BEEo
 		dc.w $F009,$A000,$A000,$FFE4; 0
 		dc.w $F00F,$A006,$A003,$FFFC; 4
@@ -77355,23 +77355,23 @@ word_37D76:	dc.w $FFF5		; 0
 		dc.w  $100		; 1
 		dc.w	$B		; 2
 		dc.w $FF00		; 3
-off_37D7E:	dc.l MapUnc_37D96	; DATA XREF: h+1F6B4o
+off_37D7E:	dc.l Map_37D96	; DATA XREF: h+1F6B4o
 		dc.w $3EE
 		dc.w $405
 		dc.w $C09
 off_37D88:	dc.w byte_37D8C-off_37D88; 0 ; DATA XREF: h+20D44o h+20E14o ...
-		dc.w MapUnc_37D90-off_37D88; 1
+		dc.w Map_37D90-off_37D88; 1
 byte_37D8C:	dc.b   5,  0,  1,$FF	; 0 ; DATA XREF: h+20E14o
-MapUnc_37D90:				; DATA XREF: h+20E14o
+Map_37D90:				; DATA XREF: h+20E14o
 		dc.b   9,  1,  2,  1,$FF,  0; 0
 ; ------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ------------------------------------------------------------------------
-MapUnc_37D96:				; DATA XREF: h+2080Eo h+20E0Ao ...
-		dc.w byte_37D9E-MapUnc_37D96; 0
-		dc.w byte_37DC0-MapUnc_37D96; 1
-		dc.w byte_37DE2-MapUnc_37D96; 2
-		dc.w byte_37E04-MapUnc_37D96; 3
+Map_37D96:				; DATA XREF: h+2080Eo h+20E0Ao ...
+		dc.w byte_37D9E-Map_37D96; 0
+		dc.w byte_37DC0-Map_37D96; 1
+		dc.w byte_37DE2-Map_37D96; 2
+		dc.w byte_37E04-Map_37D96; 3
 byte_37D9E:	dc.b   0,  4,  0,  5,  0,$1A,  0, $D,$FF,$FE,$F0,  9,  0,  0,  0,  0; 0
 					; DATA XREF: h+20E22o
 		dc.b $FF,$FC,  0, $D,  0,  6,  0,  3,$FF,$F4,$10,  1,  0, $E,  0,  7; 16
@@ -77568,17 +77568,17 @@ loc_37FD6:				; CODE XREF: h+2106Ej
 locret_37FE6:				; CODE XREF: h+21004j
 		rts	
 ; ===========================================================================
-off_37FE8:	dc.l MapUnc_37FF2	; DATA XREF: h+1F6B4o
+off_37FE8:	dc.l Map_37FF2	; DATA XREF: h+1F6B4o
 		dc.w $23C0
 		dc.w $404
 		dc.w $800B
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_37FF2:				; DATA XREF: h+21074o h+2107Eo ...
-		dc.w byte_37FF8-MapUnc_37FF2; 0
-		dc.w byte_37FF8-MapUnc_37FF2; 1
-		dc.w byte_38002-MapUnc_37FF2; 2
+Map_37FF2:				; DATA XREF: h+21074o h+2107Eo ...
+		dc.w byte_37FF8-Map_37FF2; 0
+		dc.w byte_37FF8-Map_37FF2; 1
+		dc.w byte_38002-Map_37FF2; 2
 byte_37FF8:	dc.b   0,  1,$F8,  9,  0,  0,  0,  0,$FF,$F0; 0	; DATA XREF: h+2107Eo
 byte_38002:	dc.b   0,  1,$F8,  5,  0,  6,  0,  3,$FF,$F8; 0	; DATA XREF: h+2107Eo
 ; ===========================================================================
@@ -77925,11 +77925,11 @@ loc_382D8:				; CODE XREF: h+21358j h+2135Ej
 locret_382EE:				; CODE XREF: h+21326j
 		rts	
 ; ===========================================================================
-off_382F0:	dc.l MapUnc_38314	; DATA XREF: h+1F6B4o
+off_382F0:	dc.l Map_38314	; DATA XREF: h+1F6B4o
 		dc.w $31C
 		dc.w $405
 		dc.w $180A
-off_382FA:	dc.l MapUnc_38314	; DATA XREF: h+1F6B4o
+off_382FA:	dc.l Map_38314	; DATA XREF: h+1F6B4o
 		dc.w $31C
 		dc.w $404
 		dc.w $C9A
@@ -77940,13 +77940,13 @@ byte_3830E:	dc.b  $E,  0,  2,  1,$FF,  0; 0	; DATA XREF: h+21390o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_38314:				; DATA XREF: h+2137Co h+21386o ...
-		dc.w word_38320-MapUnc_38314; 0
-		dc.w word_38342-MapUnc_38314; 1
-		dc.w word_38364-MapUnc_38314; 2
-		dc.w word_38386-MapUnc_38314; 3
-		dc.w word_383A0-MapUnc_38314; 4
-		dc.w word_383AA-MapUnc_38314; 5
+Map_38314:				; DATA XREF: h+2137Co h+21386o ...
+		dc.w word_38320-Map_38314; 0
+		dc.w word_38342-Map_38314; 1
+		dc.w word_38364-Map_38314; 2
+		dc.w word_38386-Map_38314; 3
+		dc.w word_383A0-Map_38314; 4
+		dc.w word_383AA-Map_38314; 5
 word_38320:	dc.w 4			; DATA XREF: h+213A0o
 		dc.w $EC0A,  $18,   $C,$FFE0; 0
 		dc.w $F804,  $21,  $10,	   8; 4
@@ -78194,11 +78194,11 @@ byte_385BC:	dc.b   6		; 0
 		dc.b   0		; 1
 		dc.b $F0		; 2
 		dc.b   0		; 3
-off_385C0:	dc.l MapUnc_385E2	; DATA XREF: h+1F6B4o
+off_385C0:	dc.l Map_385E2	; DATA XREF: h+1F6B4o
 		dc.w $243C
 		dc.w $405
 		dc.w $1006
-off_385CA:	dc.l MapUnc_385E2	; DATA XREF: h+1F6B4o
+off_385CA:	dc.l Map_385E2	; DATA XREF: h+1F6B4o
 		dc.w $243C
 		dc.w $404
 		dc.w $109A
@@ -78209,16 +78209,16 @@ byte_385DC:	dc.b   3,  5,  6,  7,  8,$FF; 0	; DATA XREF: h+21666o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_385E2:				; DATA XREF: h+2164Co h+21656o ...
-		dc.w word_385F4-MapUnc_385E2; 0
-		dc.w word_3862E-MapUnc_385E2; 1
-		dc.w word_38668-MapUnc_385E2; 2
-		dc.w word_386A2-MapUnc_385E2; 3
-		dc.w word_386DC-MapUnc_385E2; 4
-		dc.w word_386F6-MapUnc_385E2; 5
-		dc.w word_38708-MapUnc_385E2; 6
-		dc.w word_3871A-MapUnc_385E2; 7
-		dc.w word_3872C-MapUnc_385E2; 8
+Map_385E2:				; DATA XREF: h+2164Co h+21656o ...
+		dc.w word_385F4-Map_385E2; 0
+		dc.w word_3862E-Map_385E2; 1
+		dc.w word_38668-Map_385E2; 2
+		dc.w word_386A2-Map_385E2; 3
+		dc.w word_386DC-Map_385E2; 4
+		dc.w word_386F6-Map_385E2; 5
+		dc.w word_38708-Map_385E2; 6
+		dc.w word_3871A-Map_385E2; 7
+		dc.w word_3872C-Map_385E2; 8
 word_385F4:	dc.w 7			; DATA XREF: h+2166Eo
 		dc.w $F904,  $1A,   $D,$FFF4; 0
 		dc.w  $100,  $1C,   $E,$FFF4; 4
@@ -78430,7 +78430,7 @@ loc_3888E:				; DATA XREF: h+217D8o
 		clr.w	$1E(a0)
 		bra.w	loc_3EA7E
 ; ===========================================================================
-off_388AC:	dc.l MapUnc_388F0	; DATA XREF: h+1F6B4o
+off_388AC:	dc.l Map_388F0	; DATA XREF: h+1F6B4o
 		dc.w $83A8
 		dc.w $404
 		dc.w $1006
@@ -78441,18 +78441,18 @@ byte_388B8:	dc.b   0,  0,  1,  0,  0,  0,  0,  0,  1,  0,  0,  0,  1,  0,  0,  1
 		dc.b $FC,  0		; 32
 off_388DA:	dc.w byte_388DC-off_388DA ; DATA XREF: h+218EEo h+21966o
 byte_388DC:	dc.b   0,  2,  0,  3,  0,  4,  0,  3,  0,$FF; 0	; DATA XREF: h+21966o
-off_388E6:	dc.w MapUnc_388E8-off_388E6 ; DATA XREF: h+2190Co h+21972o
-MapUnc_388E8:				; DATA XREF: h+21972o
+off_388E6:	dc.w Map_388E8-off_388E6 ; DATA XREF: h+2190Co h+21972o
+Map_388E8:				; DATA XREF: h+21972o
 		dc.b   3,  4,  3,  2,  1,  0,$FC,  0; 0
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_388F0:				; DATA XREF: h+21938o h+2197Co ...
-		dc.w word_388FA-MapUnc_388F0; 0
-		dc.w word_38904-MapUnc_388F0; 1
-		dc.w word_38916-MapUnc_388F0; 2
-		dc.w word_38938-MapUnc_388F0; 3
-		dc.w word_3896A-MapUnc_388F0; 4
+Map_388F0:				; DATA XREF: h+21938o h+2197Co ...
+		dc.w word_388FA-Map_388F0; 0
+		dc.w word_38904-Map_388F0; 1
+		dc.w word_38916-Map_388F0; 2
+		dc.w word_38938-Map_388F0; 3
+		dc.w word_3896A-Map_388F0; 4
 word_388FA:	dc.w 1			; DATA XREF: h+2197Co
 		dc.w $F809,    0,    0,$FFF0; 0
 word_38904:	dc.w 2			; DATA XREF: h+2197Co
@@ -78595,21 +78595,21 @@ word_38A68:	dc.w $F8		; 0 ; DATA XREF: h+21AEAo
 		dc.w $F8FC
 		dc.w $FDFF
 		dc.w $300
-off_38A86:	dc.l MapUnc_38A96	; DATA XREF: h+1F6B4o
+off_38A86:	dc.l Map_38A96	; DATA XREF: h+1F6B4o
 		dc.w $8368
 		dc.w $404
 		dc.w $100B
-off_38A90:	dc.w MapUnc_38A92-off_38A90 ; DATA XREF: h+21AC2o h+21B1Co
-MapUnc_38A92:				; DATA XREF: h+21B1Co
+off_38A90:	dc.w Map_38A92-off_38A90 ; DATA XREF: h+21AC2o h+21B1Co
+Map_38A92:				; DATA XREF: h+21B1Co
 		dc.b   1,  0,  1,$FF	; 0
 ; ----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ----------------------------------------------------------------------------
-MapUnc_38A96:	dc.w word_38AA0-MapUnc_38A96; 0	; DATA XREF: h+20818o h+21B12o ...
-		dc.w word_38AB2-MapUnc_38A96; 1
-		dc.w word_38ACC-MapUnc_38A96; 2
-		dc.w word_38AD6-MapUnc_38A96; 3
-		dc.w word_38AE0-MapUnc_38A96; 4
+Map_38A96:	dc.w word_38AA0-Map_38A96; 0	; DATA XREF: h+20818o h+21B12o ...
+		dc.w word_38AB2-Map_38A96; 1
+		dc.w word_38ACC-Map_38A96; 2
+		dc.w word_38AD6-Map_38A96; 3
+		dc.w word_38AE0-Map_38A96; 4
 word_38AA0:	dc.w 2			; DATA XREF: h+21B22o
 		dc.w $F007,    0,    0,$FFF0; 0
 		dc.w $F007, $800, $800,	   0; 4
@@ -78817,7 +78817,7 @@ loc_38CA0:				; CODE XREF: h+21D28j
 locret_38CAC:				; CODE XREF: h+21CFEj
 		rts	
 ; ===========================================================================
-off_38CAE:	dc.l MapUnc_38CCA	; DATA XREF: h+1F6B4o
+off_38CAE:	dc.l Map_38CCA	; DATA XREF: h+1F6B4o
 		dc.w $252D
 		dc.w $404
 		dc.w $80B
@@ -78830,10 +78830,10 @@ byte_38CC6:	dc.b   3,  6,  7,$FF	; 0 ; DATA XREF: h+21D50o h+21D56o ...
 ; ------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ------------------------------------------------------------------------------
-MapUnc_38CCA:	dc.w byte_38CD6-byte_38CC6; 0 ;	DATA XREF: h+20822o h+21D3Ao
+Map_38CCA:	dc.w byte_38CD6-byte_38CC6; 0 ;	DATA XREF: h+20822o h+21D3Ao
 		dc.w byte_38CF8-byte_38CC6; 1
 		dc.w byte_38D1A-byte_38CC6; 2
-		dc.w MapUnc_38D3C-byte_38CC6; 3
+		dc.w Map_38D3C-byte_38CC6; 3
 		dc.w byte_38D5E-byte_38CC6; 4
 		dc.w byte_38D80-byte_38CC6; 5
 byte_38CD6:	dc.b   0,$DC,  0,$E6,  0,  4,$F4,  0,  0,  0,  0,  0,$FF,$F8,$FC,  9; 0
@@ -78848,7 +78848,7 @@ byte_38D1A:	dc.b   8,  3,  0,  0,  0,  4,$F4,  4,  0, $D,  0,  6,$FF,$F0,$FC,  9
 					; DATA XREF: h+21D56o
 		dc.b   0,  1,  0,  0,$FF,$E8,$F4,  4,  8, $D,  8,  6,  0,  0,$FC,  9; 16
 		dc.b   8,  1		; 32
-MapUnc_38D3C:				; DATA XREF: h+21D56o
+Map_38D3C:				; DATA XREF: h+21D56o
 		dc.b   8,  0,  0,  0,  0,  4,$E8,  6,  0, $F,  0,  7,$FF,$F4,$F8,  0; 0
 		dc.b   0,$15,  0, $A,  0,  4,  0,  6,$10, $F,$10,  7,$FF,$F4,  0,  0; 16
 		dc.b $10,$15		; 32
@@ -79334,19 +79334,19 @@ byte_391E8:	dc.b   0		; 0 ; DATA XREF: h+21E8Eo
 		dc.b $3A		; 1
 		dc.b $AA		; 2
 		dc.b $3C		; 3
-off_391EC:	dc.l MapUnc_3921A	; 0 ; DATA XREF: h+1F6B4o
+off_391EC:	dc.l Map_3921A	; 0 ; DATA XREF: h+1F6B4o
 		dc.w $A500
 		dc.w $404
 		dc.w $100B
-off_391F6:	dc.l MapUnc_3921A	; DATA XREF: h+1F6B4o
+off_391F6:	dc.l Map_3921A	; DATA XREF: h+1F6B4o
 		dc.w $A500
 		dc.w $401
 		dc.w $10D7
-off_39200:	dc.l MapUnc_3921A	; DATA XREF: h+1F6B4o
+off_39200:	dc.l Map_3921A	; DATA XREF: h+1F6B4o
 		dc.w $A500
 		dc.w $404
 		dc.w $400
-off_3920A:	dc.l MapUnc_39228	; DATA XREF: h+1F6B4o
+off_3920A:	dc.l Map_39228	; DATA XREF: h+1F6B4o
 		dc.w $A500
 		dc.w $405
 		dc.w $400
@@ -79355,27 +79355,27 @@ byte_39216:	dc.b   7,  0,  1,$FF	; 0 ; DATA XREF: h+222A0o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3921A:				; DATA XREF: h+2082Co h+22278o ...
-		dc.w word_3923A-MapUnc_3921A; 0
-		dc.w word_39254-MapUnc_3921A; 1
-		dc.w word_3926E-MapUnc_3921A; 2
-		dc.w word_39278-MapUnc_3921A; 3
-		dc.w word_39282-MapUnc_3921A; 4
-		dc.w word_3928C-MapUnc_3921A; 5
-		dc.w word_39296-MapUnc_3921A; 6
+Map_3921A:				; DATA XREF: h+2082Co h+22278o ...
+		dc.w word_3923A-Map_3921A; 0
+		dc.w word_39254-Map_3921A; 1
+		dc.w word_3926E-Map_3921A; 2
+		dc.w word_39278-Map_3921A; 3
+		dc.w word_39282-Map_3921A; 4
+		dc.w word_3928C-Map_3921A; 5
+		dc.w word_39296-Map_3921A; 6
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-MapUnc_39228:				; DATA XREF: h+22296o h+222B4o ...
-		dc.w word_392A0-MapUnc_39228; 0
-		dc.w word_392AA-MapUnc_39228; 1
-		dc.w word_392B4-MapUnc_39228; 2
-		dc.w word_392C6-MapUnc_39228; 3
-		dc.w word_392D8-MapUnc_39228; 4
-		dc.w word_3930C-MapUnc_39228; 5
-		dc.w word_392F2-MapUnc_39228; 6
-		dc.w word_3932E-MapUnc_39228; 7
-		dc.w word_3932E-MapUnc_39228; 8
+Map_39228:				; DATA XREF: h+22296o h+222B4o ...
+		dc.w word_392A0-Map_39228; 0
+		dc.w word_392AA-Map_39228; 1
+		dc.w word_392B4-Map_39228; 2
+		dc.w word_392C6-Map_39228; 3
+		dc.w word_392D8-Map_39228; 4
+		dc.w word_3930C-Map_39228; 5
+		dc.w word_392F2-Map_39228; 6
+		dc.w word_3932E-Map_39228; 7
+		dc.w word_3932E-Map_39228; 8
 word_3923A:	dc.w 3			; DATA XREF: h+222A6o
 		dc.w $F801,    0,    0,$FFE5; 0
 		dc.w $F80D,    2,    1,$FFED; 4
@@ -79464,16 +79464,16 @@ loc_393B6:				; DATA XREF: h+22414o
 		bsr.w	loc_36776
 		bra.w	loc_36788
 ; ===========================================================================
-off_393C2:	dc.l MapUnc_393CC	; DATA XREF: h+1F6B4o
+off_393C2:	dc.l Map_393CC	; DATA XREF: h+1F6B4o
 		dc.w $565
 		dc.w $404
 		dc.w $2008
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_393CC:				; DATA XREF: h+2244Eo h+22458o ...
-		dc.w word_393D0-MapUnc_393CC; 0
-		dc.w word_393F2-MapUnc_393CC; 1
+Map_393CC:				; DATA XREF: h+2244Eo h+22458o ...
+		dc.w word_393D0-Map_393CC; 0
+		dc.w word_393F2-Map_393CC; 1
 word_393D0:	dc.w 4			; DATA XREF: h+22458o
 		dc.w $F40D,$8000,$8000,$FFDC; 0
 		dc.w $EC04,$8008,$8004,	  $C; 4
@@ -79639,11 +79639,11 @@ loc_39564:				; CODE XREF: h+225EAj
 locret_39574:				; CODE XREF: h+225B6j
 		rts	
 ; ===========================================================================
-off_39576:	dc.l MapUnc_395B4	; DATA XREF: h+1F6B4o
+off_39576:	dc.l Map_395B4	; DATA XREF: h+1F6B4o
 		dc.w $379
 		dc.w $404
 		dc.w $1800
-off_39580:	dc.l MapUnc_395B4	; DATA XREF: h+1F6B4o
+off_39580:	dc.l Map_395B4	; DATA XREF: h+1F6B4o
 		dc.w $379
 		dc.w $405
 		dc.w $1000
@@ -79658,29 +79658,29 @@ byte_395AA:	dc.b   3, $D, $E, $F,$10,$11,$12,$13,$14,$FF; 0	; DATA XREF: h+22634
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_395B4:				; DATA XREF: h+20836o h+22602o ...
-		dc.w word_395E0-MapUnc_395B4; 0
-		dc.w word_395EA-MapUnc_395B4; 1
-		dc.w word_395F4-MapUnc_395B4; 2
-		dc.w word_395FE-MapUnc_395B4; 3
-		dc.w word_39610-MapUnc_395B4; 4
-		dc.w word_39622-MapUnc_395B4; 5
-		dc.w word_39634-MapUnc_395B4; 6
-		dc.w word_39646-MapUnc_395B4; 7
-		dc.w word_39658-MapUnc_395B4; 8
-		dc.w word_39672-MapUnc_395B4; 9
-		dc.w word_3968C-MapUnc_395B4; 10
-		dc.w word_396A6-MapUnc_395B4; 11
-		dc.w word_396C0-MapUnc_395B4; 12
-		dc.w word_396D2-MapUnc_395B4; 13
-		dc.w word_396DC-MapUnc_395B4; 14
-		dc.w word_396E6-MapUnc_395B4; 15
-		dc.w word_396F0-MapUnc_395B4; 16
-		dc.w word_396FA-MapUnc_395B4; 17
-		dc.w word_39704-MapUnc_395B4; 18
-		dc.w word_3970E-MapUnc_395B4; 19
-		dc.w word_39718-MapUnc_395B4; 20
-		dc.w word_39722-MapUnc_395B4; 21
+Map_395B4:				; DATA XREF: h+20836o h+22602o ...
+		dc.w word_395E0-Map_395B4; 0
+		dc.w word_395EA-Map_395B4; 1
+		dc.w word_395F4-Map_395B4; 2
+		dc.w word_395FE-Map_395B4; 3
+		dc.w word_39610-Map_395B4; 4
+		dc.w word_39622-Map_395B4; 5
+		dc.w word_39634-Map_395B4; 6
+		dc.w word_39646-Map_395B4; 7
+		dc.w word_39658-Map_395B4; 8
+		dc.w word_39672-Map_395B4; 9
+		dc.w word_3968C-Map_395B4; 10
+		dc.w word_396A6-Map_395B4; 11
+		dc.w word_396C0-Map_395B4; 12
+		dc.w word_396D2-Map_395B4; 13
+		dc.w word_396DC-Map_395B4; 14
+		dc.w word_396E6-Map_395B4; 15
+		dc.w word_396F0-Map_395B4; 16
+		dc.w word_396FA-Map_395B4; 17
+		dc.w word_39704-Map_395B4; 18
+		dc.w word_3970E-Map_395B4; 19
+		dc.w word_39718-Map_395B4; 20
+		dc.w word_39722-Map_395B4; 21
 word_395E0:	dc.w 1			; DATA XREF: h+22640o
 		dc.w  $C0D,$2000,$2000,$FFF0; 0
 word_395EA:	dc.w 1			; DATA XREF: h+22640o
@@ -80412,11 +80412,11 @@ byte_39DCA:	dc.b   0		; 0 ; DATA XREF: h+22826o
 		dc.b $3A		; 1
 		dc.b $AF		; 2
 		dc.b $A4		; 3
-off_39DCE:	dc.l MapUnc_39E68	; DATA XREF: h+1F6B4o
+off_39DCE:	dc.l Map_39E68	; DATA XREF: h+1F6B4o
 		dc.w $2380
 		dc.w $404
 		dc.w $101A
-off_39DD8:	dc.l MapUnc_3A08C	; DATA XREF: h+1F6B4o
+off_39DD8:	dc.l Map_3A08C	; DATA XREF: h+1F6B4o
 		dc.w $378
 		dc.w $406
 		dc.w $1000
@@ -80455,30 +80455,30 @@ byte_39E64:	dc.b   3,  7,  7,$FF	; 0 ; DATA XREF: h+22ECEo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_39E68:				; DATA XREF: h+20840o h+22E5Ao ...
-		dc.w word_39E96-MapUnc_39E68; 0
-		dc.w word_39EC0-MapUnc_39E68; 1
-		dc.w word_39EEA-MapUnc_39E68; 2
-		dc.w word_39F14-MapUnc_39E68; 3
-		dc.w word_39F36-MapUnc_39E68; 4
-		dc.w word_39F58-MapUnc_39E68; 5
-		dc.w word_39F7A-MapUnc_39E68; 6
-		dc.w word_39F9C-MapUnc_39E68; 7
-		dc.w word_39FBE-MapUnc_39E68; 8
-		dc.w word_39FE0-MapUnc_39E68; 9
-		dc.w word_39FF2-MapUnc_39E68; 10
-		dc.w word_3A004-MapUnc_39E68; 11
-		dc.w word_3A016-MapUnc_39E68; 12
-		dc.w word_3A028-MapUnc_39E68; 13
-		dc.w word_3A032-MapUnc_39E68; 14
-		dc.w word_3A03C-MapUnc_39E68; 15
-		dc.w word_3A046-MapUnc_39E68; 16
-		dc.w word_3A050-MapUnc_39E68; 17
-		dc.w word_3A05A-MapUnc_39E68; 18
-		dc.w word_3A064-MapUnc_39E68; 19
-		dc.w word_3A06E-MapUnc_39E68; 20
-		dc.w word_3A078-MapUnc_39E68; 21
-		dc.w word_3A082-MapUnc_39E68; 22
+Map_39E68:				; DATA XREF: h+20840o h+22E5Ao ...
+		dc.w word_39E96-Map_39E68; 0
+		dc.w word_39EC0-Map_39E68; 1
+		dc.w word_39EEA-Map_39E68; 2
+		dc.w word_39F14-Map_39E68; 3
+		dc.w word_39F36-Map_39E68; 4
+		dc.w word_39F58-Map_39E68; 5
+		dc.w word_39F7A-Map_39E68; 6
+		dc.w word_39F9C-Map_39E68; 7
+		dc.w word_39FBE-Map_39E68; 8
+		dc.w word_39FE0-Map_39E68; 9
+		dc.w word_39FF2-Map_39E68; 10
+		dc.w word_3A004-Map_39E68; 11
+		dc.w word_3A016-Map_39E68; 12
+		dc.w word_3A028-Map_39E68; 13
+		dc.w word_3A032-Map_39E68; 14
+		dc.w word_3A03C-Map_39E68; 15
+		dc.w word_3A046-Map_39E68; 16
+		dc.w word_3A050-Map_39E68; 17
+		dc.w word_3A05A-Map_39E68; 18
+		dc.w word_3A064-Map_39E68; 19
+		dc.w word_3A06E-Map_39E68; 20
+		dc.w word_3A078-Map_39E68; 21
+		dc.w word_3A082-Map_39E68; 22
 word_39E96:	dc.w 5			; DATA XREF: h+22EF4o
 		dc.w $E409,    0,    0,$FFF3; 0
 		dc.w $F40F,    6,    3,$FFEF; 4
@@ -80562,15 +80562,15 @@ word_3A082:	dc.w 1			; DATA XREF: h+22EF4o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3A08C:				; DATA XREF: h+22E64o h+23118o ...
-		dc.w word_3A09C-MapUnc_3A08C; 0
-		dc.w word_3A0C6-MapUnc_3A08C; 1
-		dc.w word_3A0F0-MapUnc_3A08C; 2
-		dc.w word_3A11A-MapUnc_3A08C; 3
-		dc.w word_3A154-MapUnc_3A08C; 4
-		dc.w word_3A18E-MapUnc_3A08C; 5
-		dc.w word_3A1A8-MapUnc_3A08C; 6
-		dc.w word_3A1C2-MapUnc_3A08C; 7
+Map_3A08C:				; DATA XREF: h+22E64o h+23118o ...
+		dc.w word_3A09C-Map_3A08C; 0
+		dc.w word_3A0C6-Map_3A08C; 1
+		dc.w word_3A0F0-Map_3A08C; 2
+		dc.w word_3A11A-Map_3A08C; 3
+		dc.w word_3A154-Map_3A08C; 4
+		dc.w word_3A18E-Map_3A08C; 5
+		dc.w word_3A1A8-Map_3A08C; 6
+		dc.w word_3A1C2-Map_3A08C; 7
 word_3A09C:	dc.w 5			; DATA XREF: h+23118o
 		dc.w $F406,$2000,$2000,$FFF0; 0
 		dc.w $F406,$2800,$2800,	   0; 4
@@ -80657,7 +80657,7 @@ loc_3A22A:				; CODE XREF: h+232BCj
 		addq.w	#8,a1
 		dbf	d6,loc_3A22A
 		lea	(off_3A294)(pc),a1
-		lea	(ArtUnc_50000).l,a3
+		lea	(Art_Sonic).l,a3
 		lea	(v_128x128_tiles).l,a5
 		moveq	#3,d5
 
@@ -81028,11 +81028,11 @@ word_3A514:	dc.w  $407		; 0 ; DATA XREF: h+23466t
 		dc.w  $E84		; 56
 		dc.w  $E62		; 57
 		dc.w  $E60		; 58
-off_3A58A:	dc.l ArtUnc_3A5A6	; DATA XREF: h+1F6B4o
+off_3A58A:	dc.l Art_3A5A6	; DATA XREF: h+1F6B4o
 		dc.w $C088
 		dc.w 1
 		dc.w $1000
-off_3A594:	dc.l ArtUnc_3A5A6	; DATA XREF: h+1F6B4o
+off_3A594:	dc.l Art_3A5A6	; DATA XREF: h+1F6B4o
 		dc.w 3
 		dc.w 2
 		dc.w $800
@@ -81041,12 +81041,12 @@ byte_3A5A0:	dc.b   0,  0,  1,  2,  3,$FF; 0	; DATA XREF: h+2362Ao
 ; ------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ------------------------------------------------------------------------------
-ArtUnc_3A5A6:				; DATA XREF: h+23616o h+23620o ...
-		dc.w word_3A5B0-ArtUnc_3A5A6; 0
-		dc.w word_3A5E2-ArtUnc_3A5A6; 1
-		dc.w word_3A614-ArtUnc_3A5A6; 2
-		dc.w word_3A646-ArtUnc_3A5A6; 3
-		dc.w word_3A678-ArtUnc_3A5A6; 4
+Art_3A5A6:				; DATA XREF: h+23616o h+23620o ...
+		dc.w word_3A5B0-Art_3A5A6; 0
+		dc.w word_3A5E2-Art_3A5A6; 1
+		dc.w word_3A614-Art_3A5A6; 2
+		dc.w word_3A646-Art_3A5A6; 3
+		dc.w word_3A678-Art_3A5A6; 4
 word_3A5B0:	dc.w 6			; DATA XREF: h+23632o
 		dc.w $D80F,    0,    0,$FFF0; 0
 		dc.w $D807,  $10,    8,	 $10; 4
@@ -82050,12 +82050,12 @@ word_3AFC0:	dc.w   $3A		; 0 ; DATA XREF: h+23A86o
 		dc.w $B25C		; 1
 		dc.w   $3E		; 0
 		dc.w $B25A		; 1
-off_3AFC8:	dc.l MapUnc_3AFF2	; 0 ; DATA XREF: ROM:0000A3DEo
+off_3AFC8:	dc.l Map_3AFF2	; 0 ; DATA XREF: ROM:0000A3DEo
 					; h+1F6B4o
 		dc.w $8500
 		dc.w $404
 		dc.w $6000
-off_3AFD2:	dc.l MapUnc_3B292	; DATA XREF: h+1F6B4o
+off_3AFD2:	dc.l Map_3B292	; DATA XREF: h+1F6B4o
 		dc.w $561
 		dc.w $403
 		dc.w $4000
@@ -82069,7 +82069,7 @@ byte_3AFEE:	dc.b   0,  1,  2,$FF	; 0 ; DATA XREF: h+24078o h+2407Eo ...
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-MapUnc_3AFF2:				; DATA XREF: h+24054o
+Map_3AFF2:				; DATA XREF: h+24054o
 		dc.w byte_3AFFE-byte_3AFEE; 0
 		dc.w byte_3B050-byte_3AFEE; 1
 		dc.w byte_3B0A2-byte_3AFEE; 2
@@ -82134,10 +82134,10 @@ byte_3B198:	dc.b   0,$21,$FF,$F4,  0, $A,$F0, $B,  0,  0,  0,  0,$FF,$A0,$10,  8
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-MapUnc_3B292:				; DATA XREF: h+2405Eo h+2431Eo ...
-		dc.w word_3B298-MapUnc_3B292; 0
-		dc.w word_3B2AA-MapUnc_3B292; 1
-		dc.w word_3B2C4-MapUnc_3B292; 2
+Map_3B292:				; DATA XREF: h+2405Eo h+2431Eo ...
+		dc.w word_3B298-Map_3B292; 0
+		dc.w word_3B2AA-Map_3B292; 1
+		dc.w word_3B2C4-Map_3B292; 2
 word_3B298:	dc.w 2			; DATA XREF: h+2431Eo
 		dc.w $F809,$2000,$2000,$FFE4; 0
 		dc.w $F80D,$2006,$2003,$FFFC; 4
@@ -82189,16 +82189,16 @@ loc_3B312:				; DATA XREF: h+24378o
 		add.w	d0,8(a0)
 		bra.w	loc_36788
 ; ===========================================================================
-off_3B322:	dc.l MapUnc_3B32C	; DATA XREF: ROM:0000A8AAo
+off_3B322:	dc.l Map_3B32C	; DATA XREF: ROM:0000A8AAo
 					; ROM:0000A99Ao ...
 		dc.w $454F
 		dc.w $406
 		dc.w $3000
-MapUnc_3B32C:				; DATA XREF: h+243AEo h+243B8o ...
-		dc.w byte_3B334-MapUnc_3B32C; 0
-		dc.w byte_3B34E-MapUnc_3B32C; 1
-		dc.w byte_3B360-MapUnc_3B32C; 2
-		dc.w byte_3B334-MapUnc_3B32C; 3
+Map_3B32C:				; DATA XREF: h+243AEo h+243B8o ...
+		dc.w byte_3B334-Map_3B32C; 0
+		dc.w byte_3B34E-Map_3B32C; 1
+		dc.w byte_3B360-Map_3B32C; 2
+		dc.w byte_3B334-Map_3B32C; 3
 byte_3B334:	dc.b   0,  3,$FC, $C,  0,  0,  0,  0,$FF,$D8,$FC, $C,  0,  4,  0,  2; 0
 					; DATA XREF: h+243B8o
 		dc.b $FF,$F8,$FC,  4,  0,  8,  0,  4,  0,$18; 16
@@ -82245,7 +82245,7 @@ loc_3B38E:				; DATA XREF: h+24404o
 loc_3B3A8:				; CODE XREF: h+2442Cj
 		bra.w	loc_3EA54
 ; ===========================================================================
-off_3B3AC:	dc.l MapUnc_3B3BE	; DATA XREF: h+1F6B4o
+off_3B3AC:	dc.l Map_3B3BE	; DATA XREF: h+1F6B4o
 		dc.w $A561
 		dc.w $404
 		dc.w $4A8
@@ -82254,10 +82254,10 @@ byte_3B3B8:	dc.b   1,  0,  1,  2,$FF,  0; 0	; DATA XREF: h+24442o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3B3BE:				; DATA XREF: h+24438o h+2444Ao ...
-		dc.w word_3B3C4-MapUnc_3B3BE; 0
-		dc.w word_3B3D6-MapUnc_3B3BE; 1
-		dc.w word_3B3E8-MapUnc_3B3BE; 2
+Map_3B3BE:				; DATA XREF: h+24438o h+2444Ao ...
+		dc.w word_3B3C4-Map_3B3BE; 0
+		dc.w word_3B3D6-Map_3B3BE; 1
+		dc.w word_3B3E8-Map_3B3BE; 2
 word_3B3C4:	dc.w 2			; DATA XREF: h+2444Ao
 		dc.w $C003,    0,    0,$FFFC; 0
 		dc.w $E003,$1000,$1000,$FFFC; 4
@@ -82360,7 +82360,7 @@ loc_3B4A0:				; CODE XREF: h+24526j
 locret_3B4DC:				; CODE XREF: h+244E8j h+24506j ...
 		rts	
 ; ===========================================================================
-off_3B4DE:	dc.l MapUnc_3B548	; DATA XREF: h+1F6B4o
+off_3B4DE:	dc.l Map_3B548	; DATA XREF: h+1F6B4o
 		dc.w $A3CD
 		dc.w $404
 		dc.w $4000
@@ -82387,13 +82387,13 @@ byte_3B544:	dc.b $7E,  0,$FF,  0	; 0 ; DATA XREF: h+24574o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3B548:				; DATA XREF: h+2456Ao h+245D4o ...
-		dc.w word_3B554-MapUnc_3B548; 0
-		dc.w word_3B576-MapUnc_3B548; 1
-		dc.w word_3B588-MapUnc_3B548; 2
-		dc.w word_3B59A-MapUnc_3B548; 3
-		dc.w word_3B5AC-MapUnc_3B548; 4
-		dc.w word_3B5BE-MapUnc_3B548; 5
+Map_3B548:				; DATA XREF: h+2456Ao h+245D4o ...
+		dc.w word_3B554-Map_3B548; 0
+		dc.w word_3B576-Map_3B548; 1
+		dc.w word_3B588-Map_3B548; 2
+		dc.w word_3B59A-Map_3B548; 3
+		dc.w word_3B5AC-Map_3B548; 4
+		dc.w word_3B5BE-Map_3B548; 5
 word_3B554:	dc.w 4			; DATA XREF: h+245D4o
 		dc.w $FC0C,    0,    0,$FFC0; 0
 		dc.w $FC08,    4,    2,$FFE0; 4
@@ -82691,7 +82691,7 @@ loc_3B80A:
 locret_3B816:				; CODE XREF: h+24888j
 		rts	
 ; ===========================================================================
-off_3B818:	dc.l MapUnc_3B856	; DATA XREF: h+1F6B4o
+off_3B818:	dc.l Map_3B856	; DATA XREF: h+1F6B4o
 		dc.w $A393
 		dc.w $404
 		dc.w $1000
@@ -82712,11 +82712,11 @@ byte_3B850:	dc.b   3,  0,  1,  2,$FA,  0; 0	; DATA XREF: h+248AEo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3B856:				; DATA XREF: h+248A4o h+248E2o ...
-		dc.w word_3B85E-MapUnc_3B856; 0
-		dc.w word_3B870-MapUnc_3B856; 1
-		dc.w word_3B882-MapUnc_3B856; 2
-		dc.w word_3B894-MapUnc_3B856; 3
+Map_3B856:				; DATA XREF: h+248A4o h+248E2o ...
+		dc.w word_3B85E-Map_3B856; 0
+		dc.w word_3B870-Map_3B856; 1
+		dc.w word_3B882-Map_3B856; 2
+		dc.w word_3B894-Map_3B856; 3
 word_3B85E:	dc.w 2			; DATA XREF: h+248E2o
 		dc.w $FC08,    0,    0,$FFE8; 0
 		dc.w $FC08, $800, $800,	   0; 4
@@ -82759,12 +82759,12 @@ loc_3B8C4:				; DATA XREF: h+24940o
 		beq.w	locret_37A48
 		bra.w	loc_3EA54
 ; ===========================================================================
-off_3B8DA:	dc.l MapUnc_3B8E4	; DATA XREF: h+1F6B4o
+off_3B8DA:	dc.l Map_3B8E4	; DATA XREF: h+1F6B4o
 		dc.w $C39F
 		dc.w $404
 		dc.w $18A9
-MapUnc_3B8E4:				; DATA XREF: h+24966o h+24970o
-		dc.w byte_3B8E6-MapUnc_3B8E4
+Map_3B8E4:				; DATA XREF: h+24966o h+24970o
+		dc.w byte_3B8E6-Map_3B8E4
 byte_3B8E6:	dc.b   0,$10,$90, $B,  0,  0,  0,  0,$FF,$E8,$90, $B,  8,  0,  8,  0; 0
 					; DATA XREF: h+24970o
 		dc.b   0,  0,$B0, $B,  0,  0,  0,  0,$FF,$E8,$B0, $B,  8,  0,  8,  0; 16
@@ -82877,7 +82877,7 @@ byte_3BA2A:	dc.b   0		; 0
 		dc.b $10		; 9
 		dc.b   1		; 10
 		dc.b   1		; 11
-off_3BA36:	dc.l MapUnc_3BA46	; DATA XREF: h+1F6B4o
+off_3BA36:	dc.l Map_3BA46	; DATA XREF: h+1F6B4o
 		dc.w $3AB
 		dc.w $404
 		dc.w $1000
@@ -82886,12 +82886,12 @@ byte_3BA42:	dc.b   2,  3,  4,$FF	; 0 ; DATA XREF: h+24ACCo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3BA46:				; DATA XREF: h+2084Ao h+24AC2o ...
-		dc.w word_3BA50-MapUnc_3BA46; 0
-		dc.w word_3BA72-MapUnc_3BA46; 1
-		dc.w word_3BA8C-MapUnc_3BA46; 2
-		dc.w word_3BAA6-MapUnc_3BA46; 3
-		dc.w word_3BAB0-MapUnc_3BA46; 4
+Map_3BA46:				; DATA XREF: h+2084Ao h+24AC2o ...
+		dc.w word_3BA50-Map_3BA46; 0
+		dc.w word_3BA72-Map_3BA46; 1
+		dc.w word_3BA8C-Map_3BA46; 2
+		dc.w word_3BAA6-Map_3BA46; 3
+		dc.w word_3BAB0-Map_3BA46; 4
 word_3BA50:	dc.w 4			; DATA XREF: h+24AD2o
 		dc.w $F007,$E000,$E000,$FFF0; 0
 		dc.w $F007,$E008,$E004,	   0; 4
@@ -82957,15 +82957,15 @@ loc_3BAF8:				; CODE XREF: h+24B64j h+24B78j
 		blt.w	loc_3EA48
 		bra.w	loc_3EA42
 ; ===========================================================================
-off_3BB0E:	dc.l MapUnc_3BB18	; 0 ; DATA XREF: h+1F6B4o
+off_3BB0E:	dc.l Map_3BB18	; 0 ; DATA XREF: h+1F6B4o
 		dc.w $C3C3
 		dc.w $401
 		dc.w $6000
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3BB18:				; DATA XREF: h+24B9Ao h+24BA4o
-		dc.w word_3BB1A-MapUnc_3BB18
+Map_3BB18:				; DATA XREF: h+24B9Ao h+24BA4o
+		dc.w word_3BB1A-Map_3BB18
 word_3BB1A:	dc.w 6			; DATA XREF: h+24BA4o
 		dc.w $F801,    0,    0,$FFB8; 0
 		dc.w $F80D,    2,    1,$FFC0; 4
@@ -82997,15 +82997,15 @@ loc_3BB5E:				; DATA XREF: h+24BE6o
 loc_3BB62:				; DATA XREF: h+24BE6o
 		bra.w	loc_3EA54
 ; ===========================================================================
-off_3BB66:	dc.l MapUnc_3BB70	; DATA XREF: h+1F6B4o
+off_3BB66:	dc.l Map_3BB70	; DATA XREF: h+1F6B4o
 		dc.w $C3EA
 		dc.w $404
 		dc.w $1000
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3BB70:				; DATA XREF: h+24BF2o h+24BFCo
-		dc.w word_3BB72-MapUnc_3BB70
+Map_3BB70:				; DATA XREF: h+24BF2o h+24BFCo
+		dc.w word_3BB72-Map_3BB70
 word_3BB72:	dc.w 1			; DATA XREF: h+24BFCo
 		dc.w $F00F,    0,    0,$FFF0; 0
 ; ===========================================================================
@@ -83032,15 +83032,15 @@ loc_3BB8E:				; DATA XREF: h+24C16o
 loc_3BB92:				; DATA XREF: h+24C16o
 		bra.w	loc_3EA54
 ; ===========================================================================
-off_3BB96:	dc.l MapUnc_3BBA0	; DATA XREF: h+1F6B4o
+off_3BB96:	dc.l Map_3BBA0	; DATA XREF: h+1F6B4o
 		dc.w $23FA
 		dc.w $404
 		dc.w $C09
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3BBA0:				; DATA XREF: h+24C22o h+24C2Co
-		dc.w word_3BBA2-MapUnc_3BBA0
+Map_3BBA0:				; DATA XREF: h+24C22o h+24C2Co
+		dc.w word_3BBA2-Map_3BBA0
 word_3BBA2:	dc.w 3			; DATA XREF: h+24C2Co
 		dc.w $C005,    0,    0,$FFF4; 0
 		dc.w $D003,    4,    2,$FFFC; 4
@@ -83079,15 +83079,15 @@ loc_3BBDA:				; DATA XREF: h+24C56o
 		beq.w	locret_37A48
 		bra.w	loc_3EA42
 ; ===========================================================================
-off_3BBFE:	dc.l MapUnc_3BC08	; DATA XREF: h+1F6B4o
+off_3BBFE:	dc.l Map_3BC08	; DATA XREF: h+1F6B4o
 		dc.w $4465
 		dc.w $404
 		dc.w $1000
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3BC08:				; DATA XREF: h+24C8Ao h+24C94o
-		dc.w word_3BC0A-MapUnc_3BC08
+Map_3BC08:				; DATA XREF: h+24C8Ao h+24C94o
+		dc.w word_3BC0A-Map_3BC08
 word_3BC0A:	dc.w 2			; DATA XREF: h+24C94o
 		dc.w $F00D,    0,    0,$FFF0; 0
 		dc.w	$D,$1000,$1000,$FFF0; 4
@@ -83211,7 +83211,7 @@ loc_3BCF8:				; CODE XREF: h+24CD4p
 locret_3BD22:				; CODE XREF: h+24D88j
 		rts	
 ; ===========================================================================
-off_3BD24:	dc.l MapUnc_3BD3E	; DATA XREF: h+1F6B4o
+off_3BD24:	dc.l Map_3BD3E	; DATA XREF: h+1F6B4o
 		dc.w $E40E
 		dc.w $404
 		dc.w $1800
@@ -83222,10 +83222,10 @@ byte_3BD38:	dc.b   1,  0,  1,  2,$FA,  0; 0	; DATA XREF: h+24DBAo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3BD3E:				; DATA XREF: h+24DB0o h+24DCAo ...
-		dc.w word_3BD44-MapUnc_3BD3E; 0
-		dc.w word_3BD56-MapUnc_3BD3E; 1
-		dc.w word_3BD68-MapUnc_3BD3E; 2
+Map_3BD3E:				; DATA XREF: h+24DB0o h+24DCAo ...
+		dc.w word_3BD44-Map_3BD3E; 0
+		dc.w word_3BD56-Map_3BD3E; 1
+		dc.w word_3BD68-Map_3BD3E; 2
 word_3BD44:	dc.w 2			; DATA XREF: h+24DCAo
 		dc.w $FC08,    0,    0,$FFE8; 0
 		dc.w $FC08,    3,    1,	   0; 4
@@ -83319,7 +83319,7 @@ loc_3BE16:				; CODE XREF: h+24E98j
 		move.w	(sp)+,d4
 		bra.w	loc_3EAAE
 ; ===========================================================================
-off_3BE2C:	dc.l MapUnc_3BE46	; DATA XREF: h+1F6B4o
+off_3BE2C:	dc.l Map_3BE46	; DATA XREF: h+1F6B4o
 		dc.w $E41A
 		dc.w $404
 		dc.w $1800
@@ -83330,12 +83330,12 @@ byte_3BE40:	dc.b   5,  3,  2,  1,  0,$FC; 0	; DATA XREF: h+24EC2o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3BE46:				; DATA XREF: h+24EB8o h+24ED2o ...
-		dc.w word_3BE50-MapUnc_3BE46; 0
-		dc.w word_3BE62-MapUnc_3BE46; 1
-		dc.w word_3BE74-MapUnc_3BE46; 2
-		dc.w word_3BE86-MapUnc_3BE46; 3
-		dc.w word_3BE98-MapUnc_3BE46; 4
+Map_3BE46:				; DATA XREF: h+24EB8o h+24ED2o ...
+		dc.w word_3BE50-Map_3BE46; 0
+		dc.w word_3BE62-Map_3BE46; 1
+		dc.w word_3BE74-Map_3BE46; 2
+		dc.w word_3BE86-Map_3BE46; 3
+		dc.w word_3BE98-Map_3BE46; 4
 word_3BE50:	dc.w 2			; DATA XREF: h+24ED2o
 		dc.w $E809,    0,    0,$FFE8; 0
 		dc.w $E809,    6,    3,	   0; 4
@@ -83377,16 +83377,16 @@ loc_3BEC0:				; DATA XREF: h+24F44o
 		bsr.w	loc_3EA6C
 		bra.w	loc_3EA54
 ; ===========================================================================
-off_3BECE:	dc.l MapUnc_3BEE0	; DATA XREF: h+1F6B4o
+off_3BECE:	dc.l Map_3BEE0	; DATA XREF: h+1F6B4o
 		dc.w $E450
 		dc.w $404
 		dc.w $404
 off_3BED8:	dc.w byte_3BEDA-off_3BED8 ; DATA XREF: h+24F4Co h+24F64o
 byte_3BEDA:	dc.b   1,  0,  1,  2,$FF,  0; 0	; DATA XREF: h+24F64o
-MapUnc_3BEE0:				; DATA XREF: h+24F5Ao h+24F6Co ...
-		dc.w word_3BEE6-MapUnc_3BEE0; 0
-		dc.w word_3BEF0-MapUnc_3BEE0; 1
-		dc.w word_3BEFA-MapUnc_3BEE0; 2
+Map_3BEE0:				; DATA XREF: h+24F5Ao h+24F6Co ...
+		dc.w word_3BEE6-Map_3BEE0; 0
+		dc.w word_3BEF0-Map_3BEE0; 1
+		dc.w word_3BEFA-Map_3BEE0; 2
 word_3BEE6:	dc.w 1			; DATA XREF: h+24F6Co
 		dc.w $F003,    0,    0,$FFFC; 0
 word_3BEF0:	dc.w 1			; DATA XREF: h+24F6Co
@@ -83570,15 +83570,15 @@ loc_3C088:				; CODE XREF: h+2510Aj
 		move.w	d0,8(a0)
 		rts	
 ; ===========================================================================
-off_3C08E:	dc.l MapUnc_3C098	; DATA XREF: h+1F6B4o
+off_3C08E:	dc.l Map_3C098	; DATA XREF: h+1F6B4o
 		dc.w $245C
 		dc.w $404
 		dc.w $1000
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3C098:				; DATA XREF: h+2511Ao h+25124o
-		dc.w word_3C09A-MapUnc_3C098
+Map_3C098:				; DATA XREF: h+2511Ao h+25124o
+		dc.w word_3C09A-Map_3C098
 word_3C09A:	dc.w 2			; DATA XREF: h+25124o
 		dc.w $E908,    0,    0,$FFF0; 0
 		dc.w $E101,    3,    1,	   8; 4
@@ -83754,20 +83754,20 @@ loc_3C26C:				; CODE XREF: h+25298j
 		move.w	#$CB,d0	; '='
 		jmp	(sub_1370).l
 ; ===========================================================================
-off_3C276:	dc.l MapUnc_3C280	; DATA XREF: h+1F6B4o
+off_3C276:	dc.l Map_3C280	; DATA XREF: h+1F6B4o
 		dc.w $E48C
 		dc.w $404
 		dc.w $40E1
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3C280:				; DATA XREF: h+25302o h+2530Co ...
-		dc.w word_3C28C-MapUnc_3C280; 0
-		dc.w word_3C2CE-MapUnc_3C280; 1
-		dc.w word_3C2E0-MapUnc_3C280; 2
-		dc.w word_3C2F2-MapUnc_3C280; 3
-		dc.w word_3C304-MapUnc_3C280; 4
-		dc.w word_3C316-MapUnc_3C280; 5
+Map_3C280:				; DATA XREF: h+25302o h+2530Co ...
+		dc.w word_3C28C-Map_3C280; 0
+		dc.w word_3C2CE-Map_3C280; 1
+		dc.w word_3C2E0-Map_3C280; 2
+		dc.w word_3C2F2-Map_3C280; 3
+		dc.w word_3C304-Map_3C280; 4
+		dc.w word_3C316-Map_3C280; 5
 word_3C28C:	dc.w 8			; DATA XREF: h+2530Co
 		dc.w $E007,    0,    0,$FFE0; 0
 		dc.w $E007, $800, $800,$FFF0; 4
@@ -83846,15 +83846,15 @@ loc_3C366:				; CODE XREF: h+253ECj
 loc_3C3B4:				; CODE XREF: h+253F8j
 		bra.w	loc_3EA54
 ; ===========================================================================
-off_3C3B8:	dc.l MapUnc_3C3C2	; DATA XREF: h+1F6B4o
+off_3C3B8:	dc.l Map_3C3C2	; DATA XREF: h+1F6B4o
 		dc.w $A461
 		dc.w $404
 		dc.w $1000
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3C3C2:				; DATA XREF: h+25444o h+2544Eo
-		dc.w word_3C3C4-MapUnc_3C3C2
+Map_3C3C2:				; DATA XREF: h+25444o h+2544Eo
+		dc.w word_3C3C4-Map_3C3C2
 word_3C3C4:	dc.w 2			; DATA XREF: h+2544Eo
 		dc.w $F805,    0,    0,$FFF0; 0
 		dc.w $F805, $800, $800,	   0; 4
@@ -83900,7 +83900,7 @@ loc_3C416:				; DATA XREF: h+25470o
 loc_3C434:				; CODE XREF: h+254AAj
 		bra.w	loc_3EA42
 ; ===========================================================================
-off_3C438:	dc.l MapUnc_21120	; DATA XREF: h+1F6B4o
+off_3C438:	dc.l Map_21120	; DATA XREF: h+1F6B4o
 		dc.w $5A4
 		dc.w $405
 		dc.w $C00
@@ -84767,23 +84767,23 @@ byte_3CC7C:	dc.b   0		; 0 ; DATA XREF: h+25BFAo
 		dc.b $3E		; 1
 		dc.b $C5		; 2
 		dc.b $A2		; 3
-off_3CC80:	dc.l MapUnc_3CCD8	; DATA XREF: h+1F6B4o
+off_3CC80:	dc.l Map_3CCD8	; DATA XREF: h+1F6B4o
 		dc.w $379
 		dc.w $404
 		dc.w $2000
-off_3CC8A:	dc.l MapUnc_3CCD8	; DATA XREF: h+1F6B4o
+off_3CC8A:	dc.l Map_3CCD8	; DATA XREF: h+1F6B4o
 		dc.w $379
 		dc.w $401
 		dc.w $800
-off_3CC94:	dc.l MapUnc_3CCD8	; DATA XREF: h+1F6B4o
+off_3CC94:	dc.l Map_3CCD8	; DATA XREF: h+1F6B4o
 		dc.w $379
 		dc.w $405
 		dc.w $1000
-off_3CC9E:	dc.l MapUnc_3D0EE	; DATA XREF: h+1F6B4o
+off_3CC9E:	dc.l Map_3D0EE	; DATA XREF: h+1F6B4o
 		dc.w 0
 		dc.w $405
 		dc.w $2000
-off_3CCA8:	dc.l MapUnc_3CEBC	; DATA XREF: h+1F6B4o
+off_3CCA8:	dc.l Map_3CEBC	; DATA XREF: h+1F6B4o
 		dc.w $A46D
 		dc.w $405
 		dc.w $2000
@@ -84798,26 +84798,26 @@ byte_3CCD0:	dc.b   3,  7,  8,  9, $A, $B,$FF,  0; 0	; DATA XREF: h+25D3Eo
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3CCD8:				; DATA XREF: h+25D0Co h+25D16o ...
-		dc.w word_3CCFE-MapUnc_3CCD8; 0
-		dc.w word_3CD20-MapUnc_3CCD8; 1
-		dc.w word_3CD42-MapUnc_3CCD8; 2
-		dc.w word_3CD64-MapUnc_3CCD8; 3
-		dc.w word_3CD86-MapUnc_3CCD8; 4
-		dc.w word_3CD98-MapUnc_3CCD8; 5
-		dc.w word_3CDAA-MapUnc_3CCD8; 6
-		dc.w word_3CDB4-MapUnc_3CCD8; 7
-		dc.w word_3CDBE-MapUnc_3CCD8; 8
-		dc.w word_3CDC8-MapUnc_3CCD8; 9
-		dc.w word_3CDD2-MapUnc_3CCD8; 10
-		dc.w word_3CDDC-MapUnc_3CCD8; 11
-		dc.w word_3CDE6-MapUnc_3CCD8; 12
-		dc.w word_3CE08-MapUnc_3CCD8; 13
-		dc.w word_3CE12-MapUnc_3CCD8; 14
-		dc.w word_3CE24-MapUnc_3CCD8; 15
-		dc.w word_3CE3E-MapUnc_3CCD8; 16
-		dc.w word_3CE60-MapUnc_3CCD8; 17
-		dc.w word_3CE8A-MapUnc_3CCD8; 18
+Map_3CCD8:				; DATA XREF: h+25D0Co h+25D16o ...
+		dc.w word_3CCFE-Map_3CCD8; 0
+		dc.w word_3CD20-Map_3CCD8; 1
+		dc.w word_3CD42-Map_3CCD8; 2
+		dc.w word_3CD64-Map_3CCD8; 3
+		dc.w word_3CD86-Map_3CCD8; 4
+		dc.w word_3CD98-Map_3CCD8; 5
+		dc.w word_3CDAA-Map_3CCD8; 6
+		dc.w word_3CDB4-Map_3CCD8; 7
+		dc.w word_3CDBE-Map_3CCD8; 8
+		dc.w word_3CDC8-Map_3CCD8; 9
+		dc.w word_3CDD2-Map_3CCD8; 10
+		dc.w word_3CDDC-Map_3CCD8; 11
+		dc.w word_3CDE6-Map_3CCD8; 12
+		dc.w word_3CE08-Map_3CCD8; 13
+		dc.w word_3CE12-Map_3CCD8; 14
+		dc.w word_3CE24-Map_3CCD8; 15
+		dc.w word_3CE3E-Map_3CCD8; 16
+		dc.w word_3CE60-Map_3CCD8; 17
+		dc.w word_3CE8A-Map_3CCD8; 18
 word_3CCFE:	dc.w 4			; DATA XREF: h+25D64o
 		dc.w $F80C,$2000,$2000,$FFE0; 0
 		dc.w $F80C,$2004,$2002,	   0; 4
@@ -84891,8 +84891,8 @@ word_3CE8A:	dc.w 6			; DATA XREF: h+25D64o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3CEBC:				; DATA XREF: h+25D34o h+25F48o
-		dc.w word_3CEBE-MapUnc_3CEBC
+Map_3CEBC:				; DATA XREF: h+25D34o h+25F48o
+		dc.w word_3CEBE-Map_3CEBC
 word_3CEBE:	dc.w 2			; DATA XREF: h+25F48o
 		dc.w $F40E,    0,    0,$FFE0; 0
 		dc.w $F40E, $800, $800,	   0; 4
@@ -85093,15 +85093,15 @@ loc_3D09C:				; DATA XREF: h+25F6Ao
 		bsr.w	loc_3EAC0
 		bra.w	loc_3EA54
 ; ===========================================================================
-off_3D0B2:	dc.l MapUnc_3D0EE	; DATA XREF: h+1F6B4o
+off_3D0B2:	dc.l Map_3D0EE	; DATA XREF: h+1F6B4o
 		dc.w 0
 		dc.w $405
 		dc.w $1800
-off_3D0BC:	dc.l MapUnc_3D1DE	; DATA XREF: h+1F6B4o
+off_3D0BC:	dc.l Map_3D1DE	; DATA XREF: h+1F6B4o
 		dc.w $2328
 		dc.w $401
 		dc.w $800
-off_3D0C6:	dc.l MapUnc_3D0EE	; DATA XREF: h+1F6B4o
+off_3D0C6:	dc.l Map_3D0EE	; DATA XREF: h+1F6B4o
 		dc.w 0
 		dc.w $405
 		dc.w $400
@@ -85122,15 +85122,15 @@ byte_3D0E8:	dc.b   1,  0,  1,  2,  3,$FA; 0	; DATA XREF: h+26172o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3D0EE:				; DATA XREF: h+25D2Ao h+2613Eo ...
-		dc.w word_3D0FE-MapUnc_3D0EE; 0
-		dc.w word_3D118-MapUnc_3D0EE; 1
-		dc.w word_3D132-MapUnc_3D0EE; 2
-		dc.w word_3D15C-MapUnc_3D0EE; 3
-		dc.w word_3D17E-MapUnc_3D0EE; 4
-		dc.w word_3D1A0-MapUnc_3D0EE; 5
-		dc.w word_3D1AA-MapUnc_3D0EE; 6
-		dc.w word_3D1C4-MapUnc_3D0EE; 7
+Map_3D0EE:				; DATA XREF: h+25D2Ao h+2613Eo ...
+		dc.w word_3D0FE-Map_3D0EE; 0
+		dc.w word_3D118-Map_3D0EE; 1
+		dc.w word_3D132-Map_3D0EE; 2
+		dc.w word_3D15C-Map_3D0EE; 3
+		dc.w word_3D17E-Map_3D0EE; 4
+		dc.w word_3D1A0-Map_3D0EE; 5
+		dc.w word_3D1AA-Map_3D0EE; 6
+		dc.w word_3D1C4-Map_3D0EE; 7
 word_3D0FE:	dc.w 3			; DATA XREF: h+2617Ao
 		dc.w $E60D, $500, $280,$FFF0; 0
 		dc.w $F60E, $564, $2B2,$FFF0; 4
@@ -85168,11 +85168,11 @@ word_3D1C4:	dc.w 3			; DATA XREF: h+2617Ao
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3D1DE:				; DATA XREF: h+26148o h+2626Ao ...
-		dc.w word_3D1E6-MapUnc_3D1DE; 0
-		dc.w word_3D208-MapUnc_3D1DE; 1
-		dc.w word_3D222-MapUnc_3D1DE; 2
-		dc.w word_3D234-MapUnc_3D1DE; 3
+Map_3D1DE:				; DATA XREF: h+26148o h+2626Ao ...
+		dc.w word_3D1E6-Map_3D1DE; 0
+		dc.w word_3D208-Map_3D1DE; 1
+		dc.w word_3D222-Map_3D1DE; 2
+		dc.w word_3D234-Map_3D1DE; 3
 word_3D1E6:	dc.w 4			; DATA XREF: h+2626Ao
 		dc.w $E005,    0,    0,$FFF8; 0
 		dc.w $F005,    0,    0,$FFF8; 4
@@ -85386,7 +85386,7 @@ loc_3D416:				; CODE XREF: h+26312p h+26338p
 locret_3D43E:				; CODE XREF: h+264AEj h+264B8j
 		rts	
 ; ===========================================================================
-off_3D440:	dc.l MapUnc_3D450	; DATA XREF: h+1F6B4o
+off_3D440:	dc.l Map_3D450	; DATA XREF: h+1F6B4o
 		dc.w $8340
 		dc.w $403
 		dc.w $10D7
@@ -85395,11 +85395,11 @@ byte_3D44C:	dc.b $13,  0,  1,$FF	; 0 ; DATA XREF: h+264D6o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3D450:				; DATA XREF: h+264CCo h+264DCo ...
-		dc.w word_3D458-MapUnc_3D450; 0
-		dc.w word_3D472-MapUnc_3D450; 1
-		dc.w word_3D48C-MapUnc_3D450; 2
-		dc.w word_3D4A6-MapUnc_3D450; 3
+Map_3D450:				; DATA XREF: h+264CCo h+264DCo ...
+		dc.w word_3D458-Map_3D450; 0
+		dc.w word_3D472-Map_3D450; 1
+		dc.w word_3D48C-Map_3D450; 2
+		dc.w word_3D4A6-Map_3D450; 3
 word_3D458:	dc.w 3			; DATA XREF: h+264DCo
 		dc.w $F00B,$2010,$2008,	   0; 0
 		dc.w $F00F,$2000,$2000,$FFF0; 4
@@ -86594,7 +86594,7 @@ loc_3DF36:				; DATA XREF: h+26F5Co
 
 loc_3DF4C:				; CODE XREF: h+26F9Aj h+26FCCj ...
 		move.b	#6,$25(a0)
-		move.l	#MapUnc_2D50A,4(a0)
+		move.l	#Map_2D50A,4(a0)
 		move.w	#$580,2(a0)
 		move.b	#1,$18(a0)
 		move.b	#7,$1E(a0)
@@ -87037,15 +87037,15 @@ byte_3E2E0:	dc.b   6		; 0 ; DATA XREF: h+2662Ao h+26686o ...
 		dc.b $3E		; 19
 		dc.b   4		; 20
 		dc.b $24		; 21
-off_3E2F6:	dc.l MapUnc_3E318	; 0 ; DATA XREF: h+268E8o
+off_3E2F6:	dc.l Map_3E318	; 0 ; DATA XREF: h+268E8o
 		dc.w 1
 		dc.w $203
 		dc.w $FF00
-off_3E300:	dc.l MapUnc_3E318	; 0 ; DATA XREF: h+26944o
+off_3E300:	dc.l Map_3E318	; 0 ; DATA XREF: h+26944o
 		dc.w $506
 		dc.w $708
 		dc.w $FF00
-off_3E30A:	dc.l MapUnc_3E318	; 0 ; DATA XREF: h+2687Co
+off_3E30A:	dc.l Map_3E318	; 0 ; DATA XREF: h+2687Co
 		dc.w 1
 		dc.w $203
 		dc.w $405
@@ -87054,16 +87054,16 @@ off_3E30A:	dc.l MapUnc_3E318	; 0 ; DATA XREF: h+2687Co
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-MapUnc_3E318:				; DATA XREF: h+27382o h+2738Co ...
-		dc.w byte_3E32A-MapUnc_3E318; 0
-		dc.w byte_3E33E-MapUnc_3E318; 1
-		dc.w byte_3E352-MapUnc_3E318; 2
-		dc.w byte_3E366-MapUnc_3E318; 3
-		dc.w byte_3E37A-MapUnc_3E318; 4
-		dc.w byte_3E380-MapUnc_3E318; 5
-		dc.w byte_3E394-MapUnc_3E318; 6
-		dc.w byte_3E3A8-MapUnc_3E318; 7
-		dc.w byte_3E3BC-MapUnc_3E318; 8
+Map_3E318:				; DATA XREF: h+27382o h+2738Co ...
+		dc.w byte_3E32A-Map_3E318; 0
+		dc.w byte_3E33E-Map_3E318; 1
+		dc.w byte_3E352-Map_3E318; 2
+		dc.w byte_3E366-Map_3E318; 3
+		dc.w byte_3E37A-Map_3E318; 4
+		dc.w byte_3E380-Map_3E318; 5
+		dc.w byte_3E394-Map_3E318; 6
+		dc.w byte_3E3A8-Map_3E318; 7
+		dc.w byte_3E3BC-Map_3E318; 8
 byte_3E32A:	dc.b   5,  8,  0,$E0, $C,$30,$E0, $C,$32,$E0, $C,$3C,$E0, $C,$34,$F8; 0
 					; DATA XREF: h+273A4o
 		dc.b   4,$3E,$F8,  4	; 16
@@ -87089,16 +87089,16 @@ byte_3E3A8:	dc.b   5,  8,  0,$18,$F4,$30,$18,$F4,$32,$18,$F4,$3C,$18,$F4,$34,  4
 byte_3E3BC:	dc.b   5,  8,  0,$18,$FC,$30,$18,$FC,$32,$18,$FC,$3C,$18,$FC,$34,  6; 0
 					; DATA XREF: h+273A4o
 		dc.b $FE,$3E,  6,$FE	; 16
-off_3E3D0:	dc.l MapUnc_3E3D8	; 0 ; DATA XREF: h+267ACo
+off_3E3D0:	dc.l Map_3E3D8	; 0 ; DATA XREF: h+267ACo
 		dc.w 1
 		dc.w $2C0
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-MapUnc_3E3D8:				; DATA XREF: h+2745Co h+27464o ...
-		dc.w byte_3E3DE-MapUnc_3E3D8; 0
-		dc.w byte_3E3F2-MapUnc_3E3D8; 1
-		dc.w byte_3E3F8-MapUnc_3E3D8; 2
+Map_3E3D8:				; DATA XREF: h+2745Co h+27464o ...
+		dc.w byte_3E3DE-Map_3E3D8; 0
+		dc.w byte_3E3F2-Map_3E3D8; 1
+		dc.w byte_3E3F8-Map_3E3D8; 2
 byte_3E3DE:	dc.b   5,$10,  0,  0,  4,$30,  0,  4,$32,  0,  4,$3C,  0,  4,$34,  0; 0
 					; DATA XREF: h+27464o
 		dc.b   4,$3E,  0,  4	; 16
@@ -87106,10 +87106,10 @@ byte_3E3F2:	dc.b   0,$10,  0,  0,  0,  0; 0	; DATA XREF: h+27464o
 byte_3E3F8:	dc.b   5,  8,  0,  0,$F8,$30,  0,$F8,$32,  0,$F8,$3C,  0,$F8,$34,  0; 0
 					; DATA XREF: h+27464o
 		dc.b $F8,$3E,  0,$F8	; 16
-off_3E40C:	dc.l MapUnc_3E438	; 0 ; DATA XREF: h+2675Ao
+off_3E40C:	dc.l Map_3E438	; 0 ; DATA XREF: h+2675Ao
 		dc.b   0,  1,  2,  3,$40,$BD,  4,  5,  6,  7,  8,$40,$BD,  9, $A,  1; 0
 		dc.b   2,  3,$40,$BD,  4,  5,  6,  7,  8,$40,$BD,$C0; 16
-off_3E42C:	dc.l MapUnc_3E438	; 0 ; DATA XREF: h+26774o
+off_3E42C:	dc.l Map_3E438	; 0 ; DATA XREF: h+26774o
 		dc.w $8887
 		dc.w $8685
 		dc.w $B40
@@ -87117,19 +87117,19 @@ off_3E42C:	dc.l MapUnc_3E438	; 0 ; DATA XREF: h+26774o
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-MapUnc_3E438:				; DATA XREF: h+27498o h+274B8o ...
-		dc.w byte_3E450-MapUnc_3E438; 0
-		dc.w byte_3E468-MapUnc_3E438; 1
-		dc.w byte_3E480-MapUnc_3E438; 2
-		dc.w byte_3E494-MapUnc_3E438; 3
-		dc.w byte_3E4AC-MapUnc_3E438; 4
-		dc.w byte_3E4C4-MapUnc_3E438; 5
-		dc.w byte_3E4D6-MapUnc_3E438; 6
-		dc.w byte_3E4EE-MapUnc_3E438; 7
-		dc.w byte_3E502-MapUnc_3E438; 8
-		dc.w byte_3E51A-MapUnc_3E438; 9
-		dc.w byte_3E532-MapUnc_3E438; 10
-		dc.w byte_3E544-MapUnc_3E438; 11
+Map_3E438:				; DATA XREF: h+27498o h+274B8o ...
+		dc.w byte_3E450-Map_3E438; 0
+		dc.w byte_3E468-Map_3E438; 1
+		dc.w byte_3E480-Map_3E438; 2
+		dc.w byte_3E494-Map_3E438; 3
+		dc.w byte_3E4AC-Map_3E438; 4
+		dc.w byte_3E4C4-Map_3E438; 5
+		dc.w byte_3E4D6-Map_3E438; 6
+		dc.w byte_3E4EE-Map_3E438; 7
+		dc.w byte_3E502-Map_3E438; 8
+		dc.w byte_3E51A-Map_3E438; 9
+		dc.w byte_3E532-Map_3E438; 10
+		dc.w byte_3E544-Map_3E438; 11
 byte_3E450:	dc.b   6,$20,$34,$F8,$F8,$2E,$F8,$F8,  0,  0,$FC,$30,  4,$FB,$32,  3; 0
 					; DATA XREF: h+274C4o
 		dc.b $FB,$3C,$FC,$FB,$3E,  0,$FE,  0; 16
@@ -87218,7 +87218,7 @@ byte_3E58C:	dc.b   0		; 0 ; DATA XREF: h+271C8o
 		dc.b $10		; 1
 		dc.b $C7		; 2
 		dc.b $1C		; 3
-off_3E590:	dc.l ArtUnc_3E5F8	; 0 ; DATA XREF: h+26584t
+off_3E590:	dc.l Art_3E5F8	; 0 ; DATA XREF: h+26584t
 		dc.w $330
 		dc.w $404
 		dc.w $3800
@@ -87242,30 +87242,30 @@ byte_3E5F0:	dc.b   3,$13,$12,$11,$10,$16,$FF,  0; 0	; DATA XREF: h+2767Ao
 ; ------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; ------------------------------------------------------------------------------
-ArtUnc_3E5F8:				; DATA XREF: h+2761Co h+27684o ...
-		dc.w word_3E626-ArtUnc_3E5F8; 0
-		dc.w word_3E630-ArtUnc_3E5F8; 1
-		dc.w word_3E64A-ArtUnc_3E5F8; 2
-		dc.w word_3E664-ArtUnc_3E5F8; 3
-		dc.w word_3E6B6-ArtUnc_3E5F8; 4
-		dc.w word_3E6C0-ArtUnc_3E5F8; 5
-		dc.w word_3E6CA-ArtUnc_3E5F8; 6
-		dc.w word_3E6DC-ArtUnc_3E5F8; 7
-		dc.w word_3E6DC-ArtUnc_3E5F8; 8
-		dc.w word_3E6DC-ArtUnc_3E5F8; 9
-		dc.w word_3E6DC-ArtUnc_3E5F8; 10
-		dc.w word_3E6E6-ArtUnc_3E5F8; 11
-		dc.w word_3E718-ArtUnc_3E5F8; 12
-		dc.w word_3E722-ArtUnc_3E5F8; 13
-		dc.w word_3E72C-ArtUnc_3E5F8; 14
-		dc.w word_3E736-ArtUnc_3E5F8; 15
-		dc.w word_3E740-ArtUnc_3E5F8; 16
-		dc.w word_3E782-ArtUnc_3E5F8; 17
-		dc.w word_3E7C4-ArtUnc_3E5F8; 18
-		dc.w word_3E806-ArtUnc_3E5F8; 19
-		dc.w word_3E848-ArtUnc_3E5F8; 20
-		dc.w word_3E852-ArtUnc_3E5F8; 21
-		dc.w word_3E85C-ArtUnc_3E5F8; 22
+Art_3E5F8:				; DATA XREF: h+2761Co h+27684o ...
+		dc.w word_3E626-Art_3E5F8; 0
+		dc.w word_3E630-Art_3E5F8; 1
+		dc.w word_3E64A-Art_3E5F8; 2
+		dc.w word_3E664-Art_3E5F8; 3
+		dc.w word_3E6B6-Art_3E5F8; 4
+		dc.w word_3E6C0-Art_3E5F8; 5
+		dc.w word_3E6CA-Art_3E5F8; 6
+		dc.w word_3E6DC-Art_3E5F8; 7
+		dc.w word_3E6DC-Art_3E5F8; 8
+		dc.w word_3E6DC-Art_3E5F8; 9
+		dc.w word_3E6DC-Art_3E5F8; 10
+		dc.w word_3E6E6-Art_3E5F8; 11
+		dc.w word_3E718-Art_3E5F8; 12
+		dc.w word_3E722-Art_3E5F8; 13
+		dc.w word_3E72C-Art_3E5F8; 14
+		dc.w word_3E736-Art_3E5F8; 15
+		dc.w word_3E740-Art_3E5F8; 16
+		dc.w word_3E782-Art_3E5F8; 17
+		dc.w word_3E7C4-Art_3E5F8; 18
+		dc.w word_3E806-Art_3E5F8; 19
+		dc.w word_3E848-Art_3E5F8; 20
+		dc.w word_3E852-Art_3E5F8; 21
+		dc.w word_3E85C-Art_3E5F8; 22
 word_3E626:	dc.w 1			; DATA XREF: h+27684o
 		dc.w $F00B,    0,    0,	  $C; 0
 word_3E630:	dc.w 3			; DATA XREF: h+27684o
@@ -87667,7 +87667,7 @@ loc_3EADA:				; DATA XREF: h+27B62o
 		addq.b	#2,$24(a0)
 		move.w	#$120,8(a0)
 		move.w	#$F0,$A(a0) ; '='
-		move.l	#MapUnc_3EB4E,4(a0)
+		move.l	#Map_3EB4E,4(a0)
 		move.w	#$5A0,2(a0)
 		bsr.w	loc_3F1DC
 		move.w	($FFFFFFF4).w,d0
@@ -87698,18 +87698,18 @@ loc_3EB48:				; CODE XREF: h+27BA2j h+27BB8j ...
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3EB4E:				; DATA XREF: h+27B76o h+27BDAo ...
-		dc.w word_3EB64-MapUnc_3EB4E; 0
-		dc.w word_3EBD6-MapUnc_3EB4E; 1
-		dc.w word_3EC58-MapUnc_3EB4E; 2
-		dc.w word_3ECAA-MapUnc_3EB4E; 3
-		dc.w word_3ED6C-MapUnc_3EB4E; 4
-		dc.w word_3EE0E-MapUnc_3EB4E; 5
-		dc.w word_3EEE0-MapUnc_3EB4E; 6
-		dc.w word_3EF9A-MapUnc_3EB4E; 7
-		dc.w word_3F094-MapUnc_3EB4E; 8
-		dc.w word_3F10E-MapUnc_3EB4E; 9
-		dc.w word_3F150-MapUnc_3EB4E; 10
+Map_3EB4E:				; DATA XREF: h+27B76o h+27BDAo ...
+		dc.w word_3EB64-Map_3EB4E; 0
+		dc.w word_3EBD6-Map_3EB4E; 1
+		dc.w word_3EC58-Map_3EB4E; 2
+		dc.w word_3ECAA-Map_3EB4E; 3
+		dc.w word_3ED6C-Map_3EB4E; 4
+		dc.w word_3EE0E-Map_3EB4E; 5
+		dc.w word_3EEE0-Map_3EB4E; 6
+		dc.w word_3EF9A-Map_3EB4E; 7
+		dc.w word_3F094-Map_3EB4E; 8
+		dc.w word_3F10E-Map_3EB4E; 9
+		dc.w word_3F150-Map_3EB4E; 10
 word_3EB64:	dc.w $E			; DATA XREF: h+27BDAo
 		dc.w $F805,  $2E,  $17,$FF88; 0
 		dc.w $F805,  $26,  $13,$FF98; 4
@@ -87992,7 +87992,7 @@ loc_3F228:				; CODE XREF: h+282AAj
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
 		move.w	$C(a0),$30(a1)
-		move.l	#MapUnc_3F436,4(a1)
+		move.l	#Map_3F436,4(a1)
 		move.w	#$2680,2(a1)
 		move.b	#-$7C,1(a1)
 		moveq	#0,d0
@@ -88175,13 +88175,13 @@ byte_3F42F:	dc.b   3,  0,  1,  2,  3,$FE,  1; 0 ; DATA XREF: h+284B4o
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
-MapUnc_3F436:				; DATA XREF: h+282CCo h+284C2o ...
-		dc.w word_3F442-MapUnc_3F436; 0
-		dc.w word_3F47C-MapUnc_3F436; 1
-		dc.w word_3F4BE-MapUnc_3F436; 2
-		dc.w word_3F500-MapUnc_3F436; 3
-		dc.w word_3F52A-MapUnc_3F436; 4
-		dc.w word_3F53C-MapUnc_3F436; 5
+Map_3F436:				; DATA XREF: h+282CCo h+284C2o ...
+		dc.w word_3F442-Map_3F436; 0
+		dc.w word_3F47C-Map_3F436; 1
+		dc.w word_3F4BE-Map_3F436; 2
+		dc.w word_3F500-Map_3F436; 3
+		dc.w word_3F52A-Map_3F436; 4
+		dc.w word_3F53C-Map_3F436; 5
 word_3F442:	dc.w 7			; DATA XREF: h+284C2o
 		dc.w $E00D,    0,    0,$FFE0; 0
 		dc.w $E00D, $800, $800,	   0; 4
@@ -89278,7 +89278,7 @@ loc_3FE5C:				; CODE XREF: h+28E24j
 		neg.w	d2
 		asr.w	#3,d2
 		move.l	a2,-(sp)
-		lea	(ArtUnc_4A33E).l,a0
+		lea	(Art_HTZClouds).l,a0
 		lea	($FFFF7C00).l,a2
 		moveq	#$F,d1
 
@@ -89415,7 +89415,7 @@ loc_3FF82:				; CODE XREF: h+2900Aj
 Animated_EHZ:				; DATA XREF: h+28D6Co
 		dc.w 4
 ; Flowers
-		dc.l $FF000000+ArtUnc_49714
+		dc.l $FF000000+Art_Flowers1
 		dc.w $7280
 		dc.b 6
 		dc.b 2
@@ -89426,7 +89426,7 @@ Animated_EHZ:				; DATA XREF: h+28D6Co
 		dc.b   0,  7		; 8
 		dc.b   2,  7		; 10
 ; Flowers
-		dc.l $FF000000+ArtUnc_49794
+		dc.l $FF000000+Art_Flowers2
 		dc.w $72C0
 		dc.b 8
 		dc.b 2
@@ -89439,14 +89439,14 @@ Animated_EHZ:				; DATA XREF: h+28D6Co
 		dc.b   2,  5		; 12
 		dc.b   0,  5		; 14
 ; Flowers
-		dc.l $7000000+ArtUnc_49814
+		dc.l $7000000+Art_Flowers3
 		dc.w $7300
 		dc.b 2
 		dc.b 2
 		dc.b   0		; 0
 		dc.b   2		; 1
 ; Flowers
-		dc.l $FF000000+ArtUnc_49894
+		dc.l $FF000000+Art_Flowers4
 		dc.w $7340
 		dc.b 8
 		dc.b 2
@@ -89459,7 +89459,7 @@ Animated_EHZ:				; DATA XREF: h+28D6Co
 		dc.b   0, $B		; 12
 		dc.b   2, $B		; 14
 ; Pulsing thing	against	checkered background
-		dc.l $FF000000+ArtUnc_49914
+		dc.l $FF000000+Art_EHZPulseBall
 		dc.w $7380
 		dc.b 6
 		dc.b 2
@@ -89472,7 +89472,7 @@ Animated_EHZ:				; DATA XREF: h+28D6Co
 Animated_MTZ:				; DATA XREF: h+28D6Co
 		dc.w 3
 ; Spinning metal cylinder
-		dc.l $00000000+ArtUnc_4A73E
+		dc.l $00000000+Art_MTZCylinder
 		dc.w $6980
 		dc.b 8
 		dc.b $10
@@ -89485,7 +89485,7 @@ byte_40002:	dc.b   0		; 0
 		dc.b $60		; 6
 		dc.b $70		; 7
 ; lava
-		dc.l $D000000+ArtUnc_4B73E
+		dc.l $D000000+Art_Lava
 		dc.w $6800
 		dc.b 6
 		dc.b $C
@@ -89496,7 +89496,7 @@ byte_40002:	dc.b   0		; 0
 		dc.b $18		; 4
 		dc.b  $C		; 5
 ; MTZ background animated section
-		dc.l $FF000000+ArtUnc_4BD3E
+		dc.l $FF000000+Art_MTZAnimBack
 		dc.w $6B80
 		dc.b 4
 		dc.b 6
@@ -89505,7 +89505,7 @@ byte_40002:	dc.b   0		; 0
 		dc.b  $C,$13		; 4
 		dc.b   6,  7		; 6
 ; MTZ background animated section
-		dc.l $FF000000+ArtUnc_4BD3E
+		dc.l $FF000000+Art_MTZAnimBack
 		dc.w $6C40
 		dc.b 4
 		dc.b 6
@@ -89516,7 +89516,7 @@ byte_40002:	dc.b   0		; 0
 Animated_HTZ:				; DATA XREF: h+28D6Co
 		dc.w 4
 ; Flowers
-		dc.l $FF000000+ArtUnc_49714
+		dc.l $FF000000+Art_Flowers1
 		dc.w $7280
 		dc.b 6
 		dc.b 2
@@ -89527,7 +89527,7 @@ Animated_HTZ:				; DATA XREF: h+28D6Co
 		dc.b   0,  7		; 8
 		dc.b   2,  7		; 10
 ; Flowers
-		dc.l $FF000000+ArtUnc_49794
+		dc.l $FF000000+Art_Flowers2
 		dc.w $72C0
 		dc.b 8
 		dc.b 2
@@ -89540,14 +89540,14 @@ Animated_HTZ:				; DATA XREF: h+28D6Co
 		dc.b   2,  5		; 12
 		dc.b   0,  5		; 14
 ; Flowers
-		dc.l $7000000+ArtUnc_49814
+		dc.l $7000000+Art_Flowers3
 		dc.w $7300
 		dc.b 2
 		dc.b 2
 		dc.b   0		; 0
 		dc.b   2		; 1
 ; Flowers
-		dc.l $FF000000+ArtUnc_49894
+		dc.l $FF000000+Art_Flowers4
 		dc.w $7340
 		dc.b 8
 		dc.b 2
@@ -89560,7 +89560,7 @@ Animated_HTZ:				; DATA XREF: h+28D6Co
 		dc.b   0, $B		; 12
 		dc.b   2, $B		; 14
 ; Pulsing thing	against	checkered background
-		dc.l $FF000000+ArtUnc_49914
+		dc.l $FF000000+Art_EHZPulseBall
 		dc.w $7380
 		dc.b 6
 		dc.b 2
@@ -89573,7 +89573,7 @@ Animated_HTZ:				; DATA XREF: h+28D6Co
 Animated_HPZ:				; DATA XREF: h+28D6Co
 		dc.w 2
 ; Pulsing ball from OOZ
-		dc.l $8000000+ArtUnc_4BF7E
+		dc.l $8000000+Art_OOZPulseBall
 		dc.w $5D00
 		dc.b 6
 		dc.b 8
@@ -89584,7 +89584,7 @@ Animated_HPZ:				; DATA XREF: h+28D6Co
 		dc.b $10		; 4
 		dc.b   8		; 5
 ; Pulsing ball from OOZ
-		dc.l $8000000+ArtUnc_4BF7E
+		dc.l $8000000+Art_OOZPulseBall
 		dc.w $5E00
 		dc.b 6
 		dc.b 8
@@ -89595,7 +89595,7 @@ Animated_HPZ:				; DATA XREF: h+28D6Co
 		dc.b   0		; 4
 		dc.b   0		; 5
 ; Pulsing ball from OOZ
-		dc.l $8000000+ArtUnc_4BF7E
+		dc.l $8000000+Art_OOZPulseBall
 		dc.w $5F00
 		dc.b 6
 		dc.b 8
@@ -89608,7 +89608,7 @@ Animated_HPZ:				; DATA XREF: h+28D6Co
 Animated_OOZ:				; DATA XREF: h+28D6Co
 		dc.w 4
 ; Pusling ball from OOZ
-		dc.l $FF000000+ArtUnc_4BF7E
+		dc.l $FF000000+Art_OOZPulseBall
 		dc.w $56C0
 		dc.b 4
 		dc.b 4
@@ -89621,7 +89621,7 @@ Animated_OOZ:				; DATA XREF: h+28D6Co
 		dc.b   4		; 6
 		dc.b   3		; 7
 ; Square rotating around ball in OOZ
-		dc.l $6000000+ArtUnc_4C0FE
+		dc.l $6000000+Art_OOZSquareBall1
 		dc.w $5740
 		dc.b 4
 		dc.b 4
@@ -89630,7 +89630,7 @@ Animated_OOZ:				; DATA XREF: h+28D6Co
 		dc.b   8		; 2
 		dc.b  $C		; 3
 ; Square rotating around ball
-		dc.l $6000000+ArtUnc_4C2FE
+		dc.l $6000000+Art_OOZSquareBall2
 		dc.w $57C0
 		dc.b 4
 		dc.b 4
@@ -89639,7 +89639,7 @@ Animated_OOZ:				; DATA XREF: h+28D6Co
 		dc.b   8		; 2
 		dc.b  $C		; 3
 ; Oil
-		dc.l $11000000+ArtUnc_4C4FE
+		dc.l $11000000+Art_Oil1
 		dc.w $5840
 		dc.b 6
 		dc.b $10
@@ -89650,7 +89650,7 @@ Animated_OOZ:				; DATA XREF: h+28D6Co
 		dc.b $20		; 4
 		dc.b $10		; 5
 ; Oil
-		dc.l $11000000+ArtUnc_4CCFE
+		dc.l $11000000+Art_Oil2
 		dc.w $5A40
 		dc.b 6
 		dc.b $10
@@ -89663,7 +89663,7 @@ Animated_OOZ:				; DATA XREF: h+28D6Co
 Animated_CNZ:				; DATA XREF: h+28D6Co h+28F9Co
 		dc.w 1
 ; Flipping foreground section in CNZ
-		dc.l $FF000000+ArtUnc_4D4FE
+		dc.l $FF000000+Art_CNZFlipTiles
 		dc.w $A800
 		dc.b $10
 		dc.b $10
@@ -89684,7 +89684,7 @@ Animated_CNZ:				; DATA XREF: h+28D6Co h+28F9Co
 		dc.b $20,  5		; 28
 		dc.b $60,  5		; 30
 ; Flipping foreground section in CNZ
-		dc.l $FF000000+ArtUnc_4D4FE
+		dc.l $FF000000+Art_CNZFlipTiles
 		dc.w $6600
 		dc.b $10
 		dc.b $10
@@ -89706,7 +89706,7 @@ Animated_CNZ:				; DATA XREF: h+28D6Co h+28F9Co
 		dc.b $C0,  5		; 30
 word_40160:	dc.w 1			; DATA XREF: h+28FA8o
 ; Flipping foreground section in CNZ
-		dc.l $FF000000+ArtUnc_4D4FE
+		dc.l $FF000000+Art_CNZFlipTiles
 		dc.w $E800
 		dc.b $10
 		dc.b $10
@@ -89727,7 +89727,7 @@ word_40160:	dc.w 1			; DATA XREF: h+28FA8o
 		dc.b $20,  5		; 28
 		dc.b $60,  5		; 30
 ; Flipping foreground section in CNZ
-		dc.l $FF000000+ArtUnc_4D4FE
+		dc.l $FF000000+Art_CNZFlipTiles
 		dc.w $6600
 		dc.b $10
 		dc.b $10
@@ -89750,7 +89750,7 @@ word_40160:	dc.w 1			; DATA XREF: h+28FA8o
 Animated_CPZ:				; DATA XREF: h+28D6Co
 		dc.w 0
 ; Animated background section in CPZ and DEZ
-		dc.l $4000000+ArtUnc_4FAFE; 0
+		dc.l $4000000+Art_CPZAnimBack; 0
 		dc.w $6E00
 		dc.b 8
 		dc.b 2
@@ -89765,7 +89765,7 @@ Animated_CPZ:				; DATA XREF: h+28D6Co
 Animated_DEZ:				; DATA XREF: h+28D6Co
 		dc.w 0
 ; Animated background section in CPZ and DEZ
-		dc.l $4000000+ArtUnc_4FAFE
+		dc.l $4000000+Art_CPZAnimBack
 		dc.w $64C0
 		dc.b 8
 		dc.b 2
@@ -89780,28 +89780,28 @@ Animated_DEZ:				; DATA XREF: h+28D6Co
 Animated_ARZ:				; DATA XREF: h+28D6Co
 		dc.w 3
 ; Waterfall patterns
-		dc.l $5000000+ArtUnc_4FCFE
+		dc.l $5000000+Art_Waterfall1
 		dc.w $AAE0
 		dc.b 2
 		dc.b 4
 		dc.b   0		; 0
 		dc.b   4		; 1
 ; Waterfall patterns
-		dc.l $5000000+ArtUnc_4FCFE
+		dc.l $5000000+Art_Waterfall1
 		dc.w $8600
 		dc.b 2
 		dc.b 4
 		dc.b   4		; 0
 		dc.b   0		; 1
 ; Waterfall patterns
-		dc.l $5000000+ArtUnc_4FDFE
+		dc.l $5000000+Art_Waterfall2
 		dc.w $8580
 		dc.b 2
 		dc.b 4
 		dc.b   0		; 0
 		dc.b   4		; 1
 ; Waterfall patterns
-		dc.l $5000000+ArtUnc_4FEFE
+		dc.l $5000000+Art_Waterfall3
 		dc.w $8500
 		dc.b 2
 		dc.b 4
@@ -90034,7 +90034,7 @@ byte_407BE:	dc.b   0,  0		; 0 ; DATA XREF: h+293DCo
 ; ===========================================================================
 
 loc_407C0:				; CODE XREF: h+29368p
-		lea	(ArtNem_49A14).l,a0
+		lea	(Nem_HTZCliffs).l,a0
 		lea	($FFFFB800).w,a4
 		bsr.w	loc_407FC
 		lea	($FFFFB800).w,a1
@@ -90822,7 +90822,7 @@ loc_4106E:				; CODE XREF: ROM:0000410Ep sub_7868j
 		move.w	#$E,d2
 
 loc_41090:				; CODE XREF: sub_4105A+12j
-		lea	(ArtUnc_4134C)(pc),a1
+		lea	(Art_4134C)(pc),a1
 
 loc_41094:				; CODE XREF: sub_4105A+50j
 		move.w	#$F,d1
@@ -90852,7 +90852,7 @@ loc_410B0:				; CODE XREF: sub_4105A+40j
 
 loc_410BC:				; CODE XREF: sub_4105A+22j
 		bsr.w	sub_412D4
-		move.l	#ArtUnc_4134C,d1
+		move.l	#Art_4134C,d1
 		move.w	#$DC40,d2
 		move.w	#$160,d3
 		jmp	(sub_144E).l
@@ -90889,7 +90889,7 @@ sub_410E4:				; CODE XREF: sub_40D8A+110p
 
 loc_41104:				; CODE XREF: sub_410E4+14p
 		moveq	#7,d6
-		lea	(ArtUnc_4178C).l,a1
+		lea	(Art_4178C).l,a1
 
 loc_4110C:				; CODE XREF: sub_410E4+52j
 		rol.w	#4,d1
@@ -90936,7 +90936,7 @@ sub_41146:				; CODE XREF: sub_40D8A+2Cp
 
 loc_4114E:				; CODE XREF: sub_4113C+8j
 		moveq	#0,d4
-		lea	(ArtUnc_4134C)(pc),a1
+		lea	(Art_4134C)(pc),a1
 
 loc_41154:				; CODE XREF: sub_41146+58j
 		moveq	#0,d2
@@ -90995,7 +90995,7 @@ sub_411A4:				; CODE XREF: ROM:000078E4p
 		lea	(byte_4120C).l,a2
 		moveq	#1,d6
 		moveq	#0,d4
-		lea	(ArtUnc_4134C)(pc),a1
+		lea	(Art_4134C)(pc),a1
 
 loc_411C2:				; CODE XREF: sub_411A4+52j
 		moveq	#0,d2
@@ -91075,7 +91075,7 @@ loc_4121C:				; CODE XREF: sub_40D8A+AAp
 
 loc_41222:				; CODE XREF: sub_41214+6j
 		moveq	#0,d4
-		lea	(ArtUnc_4134C)(pc),a1
+		lea	(Art_4134C)(pc),a1
 
 loc_41228:				; CODE XREF: sub_41214+5Aj
 		moveq	#0,d2
@@ -91126,7 +91126,7 @@ loc_41274:				; CODE XREF: sub_40D8A+D6p
 		lea	(byte_41204)(pc),a2
 		moveq	#3,d6
 		moveq	#0,d4
-		lea	(ArtUnc_4134C)(pc),a1
+		lea	(Art_4134C)(pc),a1
 
 loc_41280:				; CODE XREF: ROM:000412C0j
 		moveq	#0,d2
@@ -91205,7 +91205,7 @@ loc_412EE:				; CODE XREF: sub_412D4+Cj
 		lea	(byte_4120C)(pc),a2
 		moveq	#1,d6
 		moveq	#0,d4
-		lea	(ArtUnc_4164C)(pc),a1
+		lea	(Art_4164C)(pc),a1
 
 loc_412FA:				; CODE XREF: sub_412E2+52j
 		move.l	d0,4(a6)
@@ -91259,9 +91259,9 @@ loc_41340:				; CODE XREF: sub_412E2+64j
 ; End of function sub_412E2
 
 ; ===========================================================================
-ArtUnc_4134C:		incbin	"art/uncompressed/Big and small numbers used on counters - 1.bin"
-ArtUnc_4164C:		incbin	"art/uncompressed/Big and small numbers used on counters - 2.bin"
-ArtUnc_4178C:		incbin	"art/uncompressed/Big and small numbers used on counters - 3.bin"
+Art_4134C:		incbin	"art/uncompressed/Big and small numbers used on counters - 1.bin"
+Art_4164C:		incbin	"art/uncompressed/Big and small numbers used on counters - 2.bin"
+Art_4178C:		incbin	"art/uncompressed/Big and small numbers used on counters - 3.bin"
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -91475,7 +91475,7 @@ loc_41C56:				; CODE XREF: sub_41B34+E4j
 		moveq	#0,d0
 		move.w	d0,($FFFFFE08).w
 		lea	($FFFFB000).w,a1
-		move.l	#MapUnc_6FBE0,4(a1)
+		move.l	#Map_Sonic,4(a1)
 		move.w	#$780,2(a1)
 		tst.w	($FFFFFFD8).w
 		beq.s	loc_41C82
@@ -91556,809 +91556,809 @@ off_41D0C:	dc.w DbgEHZ_41D40-off_41D0C; 0 ; DATA XREF: ROM:00041AE2o
 		dc.w DbgARZ_42438-off_41D0C; 15
 		dc.w DbgSCZ_42522-off_41D0C; 16
 DbgDef_41D2E:	dc.w 2			; DATA XREF: ROM:00041D0Co
-		dc.l $25000000+MapUnc_12382; 0
+		dc.l $25000000+Map_12382; 0
 		dc.w 0
 		dc.w $26BC
-		dc.l $26000000+MapUnc_12D36
+		dc.l $26000000+Map_12D36
 		dc.w $800
 		dc.w $680
 DbgEHZ_41D40:	dc.w $13		; DATA XREF: ROM:00041D0Co
-		dc.l $25000000+MapUnc_12382; 0
+		dc.l $25000000+Map_12382; 0
 		dc.w 0
 		dc.w $26BC
-		dc.l $26000000+MapUnc_12D36
+		dc.l $26000000+Map_12D36
 		dc.w $800
 		dc.w $680
-		dc.l $79000000+MapUnc_1F424
+		dc.l $79000000+Map_1F424
 		dc.w $100
 		dc.w $47C
-		dc.l $3000000+MapUnc_1FFB8
+		dc.l $3000000+Map_1FFB8
 		dc.w $901
 		dc.w $26BC
-		dc.l $49000000+MapUnc_20C50
+		dc.l $49000000+Map_20C50
 		dc.w 0
 		dc.w $239E
-		dc.l $49000000+MapUnc_20C50
+		dc.l $49000000+Map_20C50
 		dc.w $203
 		dc.w $239E
-		dc.l $49000000+MapUnc_20C50
+		dc.l $49000000+Map_20C50
 		dc.w $405
 		dc.w $239E
-		dc.l $18000000+MapUnc_107F6
+		dc.l $18000000+Map_107F6
 		dc.w $100
 		dc.w $4000
-		dc.l $18000000+MapUnc_107F6
+		dc.l $18000000+Map_107F6
 		dc.w $9A01
 		dc.w $4000
-		dc.l $36000000+MapUnc_15B68
+		dc.l $36000000+Map_15B68
 		dc.w 0
 		dc.w $2434
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $8100
 		dc.w $45C
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $9003
 		dc.w $470
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $A006
 		dc.w $45C
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $3007
 		dc.w $43C
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $400A
 		dc.w $43C
-		dc.l $4B000000+MapUnc_2D2EA
+		dc.l $4B000000+Map_2D2EA
 		dc.w 0
 		dc.w $3D2
-		dc.l $5C000000+MapUnc_2D442
+		dc.l $5C000000+Map_2D442
 		dc.w 0
 		dc.w $414
-		dc.l $9D000000+MapUnc_37D96
+		dc.l $9D000000+Map_37D96
 		dc.w $1E00
 		dc.w $3EE
-		dc.l $3E000000+MapUnc_3F436
+		dc.l $3E000000+Map_3F436
 		dc.w 0
 		dc.w $2680
 DbgMTZ_41DDA:	dc.w $22		; DATA XREF: ROM:00041D0Co
-		dc.l $25000000+MapUnc_12382; 0
+		dc.l $25000000+Map_12382; 0
 		dc.w 0
 		dc.w $26BC
-		dc.l $26000000+MapUnc_12D36
+		dc.l $26000000+Map_12D36
 		dc.w $800
 		dc.w $680
-		dc.l $79000000+MapUnc_1F424
+		dc.l $79000000+Map_1F424
 		dc.w $100
 		dc.w $47C
-		dc.l $3000000+MapUnc_1FFB8
+		dc.l $3000000+Map_1FFB8
 		dc.w $901
 		dc.w $26BC
-		dc.l $42000000+MapUnc_2686C
+		dc.l $42000000+Map_2686C
 		dc.w $107
 		dc.w $6000
-		dc.l $64000000+MapUnc_26A5C
+		dc.l $64000000+Map_26A5C
 		dc.w $100
 		dc.w $2000
-		dc.l $64000000+MapUnc_26A5C
+		dc.l $64000000+Map_26A5C
 		dc.w $1101
 		dc.w $2000
-		dc.l $65000000+MapUnc_26EC8
+		dc.l $65000000+Map_26EC8
 		dc.w $8000
 		dc.w $6000
-		dc.l $65000000+MapUnc_26EC8
+		dc.l $65000000+Map_26EC8
 		dc.w $1301
 		dc.w $6000
-		dc.l $47000000+MapUnc_24D96
+		dc.l $47000000+Map_24D96
 		dc.w 2
 		dc.w $424
-		dc.l $2D000000+MapUnc_11822
+		dc.l $2D000000+Map_11822
 		dc.w $101
 		dc.w $6000
-		dc.l $66000000+MapUnc_27120
+		dc.l $66000000+Map_27120
 		dc.w $100
 		dc.w $8680
-		dc.l $66000000+MapUnc_27120
+		dc.l $66000000+Map_27120
 		dc.w $1101
 		dc.w $8680
-		dc.l $68000000+MapUnc_27750
+		dc.l $68000000+Map_27750
 		dc.w 4
 		dc.w $6414
-		dc.l $69000000+MapUnc_27A26
+		dc.l $69000000+Map_27A26
 		dc.w $400
 		dc.w $2500
-		dc.l $6A000000+MapUnc_26EC8
+		dc.l $6A000000+Map_26EC8
 		dc.w 1
 		dc.w $6000
-		dc.l $6B000000+MapUnc_26EC8
+		dc.l $6B000000+Map_26EC8
 		dc.w $701
 		dc.w $6000
-		dc.l $6D000000+MapUnc_27750
+		dc.l $6D000000+Map_27750
 		dc.w 0
 		dc.w $241C
-		dc.l $6E000000+MapUnc_2852C
+		dc.l $6E000000+Map_2852C
 		dc.w 0
 		dc.w $6000
-		dc.l $6E000000+MapUnc_2852C
+		dc.l $6E000000+Map_2852C
 		dc.w $1001
 		dc.w $6000
-		dc.l $6E000000+MapUnc_2852C
+		dc.l $6E000000+Map_2852C
 		dc.w $2002
 		dc.w $6000
-		dc.l $70000000+MapUnc_28786
+		dc.l $70000000+Map_28786
 		dc.w $1000
 		dc.w $E378
-		dc.l $71000000+MapUnc_11576
+		dc.l $71000000+Map_11576
 		dc.w $2205
 		dc.w $4536
-		dc.l $1C000000+MapUnc_11552
+		dc.l $1C000000+Map_11552
 		dc.w 0
 		dc.w $43FD
-		dc.l $1C000000+MapUnc_11552
+		dc.l $1C000000+Map_11552
 		dc.w $101
 		dc.w $43FD
-		dc.l $1C000000+MapUnc_11552
+		dc.l $1C000000+Map_11552
 		dc.w $302
 		dc.w $23FD
-		dc.l $65000000+MapUnc_26EC8
+		dc.l $65000000+Map_26EC8
 		dc.w $B000
 		dc.w $6000
-		dc.l $9F000000+MapUnc_38314
+		dc.l $9F000000+Map_38314
 		dc.w $2400
 		dc.w $31C
-		dc.l $A4000000+MapUnc_38A96
+		dc.l $A4000000+Map_38A96
 		dc.w $2E00
 		dc.w $8368
-		dc.l $A1000000+MapUnc_385E2
+		dc.l $A1000000+Map_385E2
 		dc.w $2800
 		dc.w $243C
-		dc.l $31000000+MapUnc_20E74
+		dc.l $31000000+Map_20E74
 		dc.w 0
 		dc.w $8680
-		dc.l $31000000+MapUnc_20E74
+		dc.l $31000000+Map_20E74
 		dc.w $101
 		dc.w $8680
-		dc.l $31000000+MapUnc_20E74
+		dc.l $31000000+Map_20E74
 		dc.w $202
 		dc.w $8680
-		dc.l $3E000000+MapUnc_3F436
+		dc.l $3E000000+Map_3F436
 		dc.w 0
 		dc.w $2680
 DbgWFZ_41EEC:	dc.w $20		; DATA XREF: ROM:00041D0Co
-		dc.l $25000000+MapUnc_12382; 0
+		dc.l $25000000+Map_12382; 0
 		dc.w 0
 		dc.w $26BC
-		dc.l $26000000+MapUnc_12D36
+		dc.l $26000000+Map_12D36
 		dc.w $800
 		dc.w $680
-		dc.l $8B000000+MapUnc_1FFB8
+		dc.l $8B000000+Map_1FFB8
 		dc.w 0
 		dc.w $6BC
-		dc.l $79000000+MapUnc_1F424
+		dc.l $79000000+Map_1F424
 		dc.w $100
 		dc.w $47C
-		dc.l $B3000000+MapUnc_3B32C
+		dc.l $B3000000+Map_3B32C
 		dc.w $5E00
 		dc.w $454F
-		dc.l $B3000000+MapUnc_3B32C
+		dc.l $B3000000+Map_3B32C
 		dc.w $6001
 		dc.w $454F
-		dc.l $B3000000+MapUnc_3B32C
+		dc.l $B3000000+Map_3B32C
 		dc.w $6202
 		dc.w $454F
-		dc.l $B4000000+MapUnc_3B3BE
+		dc.l $B4000000+Map_3B3BE
 		dc.w $6400
 		dc.w $A561
-		dc.l $B5000000+MapUnc_3B548
+		dc.l $B5000000+Map_3B548
 		dc.w $6600
 		dc.w $A3CD
-		dc.l $B5000000+MapUnc_3B548
+		dc.l $B5000000+Map_3B548
 		dc.w $6800
 		dc.w $A3CD
-		dc.l $AD000000+MapUnc_395B4
+		dc.l $AD000000+Map_395B4
 		dc.w $420C
 		dc.w $379
-		dc.l $AE000000+MapUnc_395B4
+		dc.l $AE000000+Map_395B4
 		dc.w $440B
 		dc.w $379
-		dc.l $B6000000+MapUnc_3B856
+		dc.l $B6000000+Map_3B856
 		dc.w $6A00
 		dc.w $A393
-		dc.l $B6000000+MapUnc_3B856
+		dc.l $B6000000+Map_3B856
 		dc.w $6C00
 		dc.w $A393
-		dc.l $B6000000+MapUnc_3B856
+		dc.l $B6000000+Map_3B856
 		dc.w $6E00
 		dc.w $A393
-		dc.l $B6000000+MapUnc_3B856
+		dc.l $B6000000+Map_3B856
 		dc.w $7000
 		dc.w $A393
-		dc.l $B7000000+MapUnc_3B8E4
+		dc.l $B7000000+Map_3B8E4
 		dc.w $7200
 		dc.w $C39F
-		dc.l $B8000000+MapUnc_3BA46
+		dc.l $B8000000+Map_3BA46
 		dc.w $7400
 		dc.w $3AB
-		dc.l $B9000000+MapUnc_3BB18
+		dc.l $B9000000+Map_3BB18
 		dc.w $7600
 		dc.w $C3C3
-		dc.l $BA000000+MapUnc_3BB70
+		dc.l $BA000000+Map_3BB70
 		dc.w $7800
 		dc.w $C3EA
-		dc.l $BC000000+MapUnc_3BC08
+		dc.l $BC000000+Map_3BC08
 		dc.w $7C00
 		dc.w $4465
-		dc.l $BD000000+MapUnc_3BD3E
+		dc.l $BD000000+Map_3BD3E
 		dc.w $7E00
 		dc.w $E40E
-		dc.l $BD000000+MapUnc_3BD3E
+		dc.l $BD000000+Map_3BD3E
 		dc.w $8000
 		dc.w $E40E
-		dc.l $BE000000+MapUnc_3BE46
+		dc.l $BE000000+Map_3BE46
 		dc.w $8200
 		dc.w $E41A
-		dc.l $BF000000+MapUnc_3BEE0
+		dc.l $BF000000+Map_3BEE0
 		dc.w $8400
 		dc.w $E450
-		dc.l vdp_data_port00+MapUnc_3C098
+		dc.l vdp_data_port00+Map_3C098
 		dc.w $800
 		dc.w $245C
-		dc.l $C1000000+MapUnc_3C280
+		dc.l $C1000000+Map_3C280
 		dc.w $8800
 		dc.w $E48C
-		dc.l $C2000000+MapUnc_3C3C2
+		dc.l $C2000000+Map_3C3C2
 		dc.w $8A00
 		dc.w $A461
-		dc.l $19000000+MapUnc_2222A
+		dc.l $19000000+Map_2222A
 		dc.w $3803
 		dc.w $A46D
-		dc.l $D9000000+MapUnc_12382
+		dc.l $D9000000+Map_12382
 		dc.w 0
 		dc.w $26BC
-		dc.l $80000000+MapUnc_29DD0
+		dc.l $80000000+Map_29DD0
 		dc.w 0
 		dc.w $23FE
-		dc.l $3E000000+MapUnc_3F436
+		dc.l $3E000000+Map_3F436
 		dc.w 0
 		dc.w $2680
 DbgHTZ_41FEE:	dc.w $1F		; DATA XREF: ROM:00041D0Co
-		dc.l $25000000+MapUnc_12382; 0
+		dc.l $25000000+Map_12382; 0
 		dc.w 0
 		dc.w $26BC
-		dc.l $26000000+MapUnc_12D36
+		dc.l $26000000+Map_12D36
 		dc.w $800
 		dc.w $680
-		dc.l $79000000+MapUnc_1F424
+		dc.l $79000000+Map_1F424
 		dc.w $100
 		dc.w $47C
-		dc.l $84000000+MapUnc_1FFB8
+		dc.l $84000000+Map_1FFB8
 		dc.w 0
 		dc.w $6BC
-		dc.l $84000000+MapUnc_1FFB8
+		dc.l $84000000+Map_1FFB8
 		dc.w $404
 		dc.w $6BC
-		dc.l $3000000+MapUnc_1FFB8
+		dc.l $3000000+Map_1FFB8
 		dc.w $901
 		dc.w $26BC
-		dc.l $18000000+MapUnc_107F6
+		dc.l $18000000+Map_107F6
 		dc.w $100
 		dc.w $4000
-		dc.l $18000000+MapUnc_107F6
+		dc.l $18000000+Map_107F6
 		dc.w $9A01
 		dc.w $4000
-		dc.l $36000000+MapUnc_15B68
+		dc.l $36000000+Map_15B68
 		dc.w 0
 		dc.w $2434
-		dc.l $14000000+MapUnc_21CF0
+		dc.l $14000000+Map_21CF0
 		dc.w 0
 		dc.w $3C6
-		dc.l $2D000000+MapUnc_11822
+		dc.l $2D000000+Map_11822
 		dc.w 0
 		dc.w $2426
-		dc.l $2F000000+MapUnc_236FA
+		dc.l $2F000000+Map_236FA
 		dc.w 0
 		dc.w $C000
-		dc.l $20000000+MapUnc_23254
+		dc.l $20000000+Map_23254
 		dc.w $4402
 		dc.w $8416
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $8100
 		dc.w $45C
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $9003
 		dc.w $470
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $A006
 		dc.w $45C
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $3007
 		dc.w $43C
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $400A
 		dc.w $43C
-		dc.l $16000000+MapUnc_21F14
+		dc.l $16000000+Map_21F14
 		dc.w 0
 		dc.w $43E6
-		dc.l $1C000000+MapUnc_21F14
+		dc.l $1C000000+Map_21F14
 		dc.w $403
 		dc.w $43E6
-		dc.l $1C000000+MapUnc_21F14
+		dc.l $1C000000+Map_21F14
 		dc.w $504
 		dc.w $43E6
-		dc.l $1C000000+MapUnc_113D6
+		dc.l $1C000000+Map_113D6
 		dc.w $700
 		dc.w $4000
-		dc.l $1C000000+MapUnc_113D6
+		dc.l $1C000000+Map_113D6
 		dc.w $801
 		dc.w $4000
-		dc.l $32000000+MapUnc_23852
+		dc.l $32000000+Map_23852
 		dc.w 0
 		dc.w $43B2
-		dc.l $31000000+MapUnc_20E74
+		dc.l $31000000+Map_20E74
 		dc.w 0
 		dc.w $8680
-		dc.l $31000000+MapUnc_20E74
+		dc.l $31000000+Map_20E74
 		dc.w $101
 		dc.w $8680
-		dc.l $31000000+MapUnc_20E74
+		dc.l $31000000+Map_20E74
 		dc.w $202
 		dc.w $8680
-		dc.l $96000000+MapUnc_37678
+		dc.l $96000000+Map_37678
 		dc.w $E02
 		dc.w $637E
-		dc.l $92000000+MapUnc_37092
+		dc.l $92000000+Map_37092
 		dc.w $A00
 		dc.w 0
-		dc.l $95000000+MapUnc_372E6
+		dc.l $95000000+Map_372E6
 		dc.w 0
 		dc.w 0
-		dc.l $3E000000+MapUnc_3F436
+		dc.l $3E000000+Map_3F436
 		dc.w 0
 		dc.w $2680
 DbgOOZ_420E8:	dc.w $21		; DATA XREF: ROM:00041D0Co
-		dc.l $25000000+MapUnc_12382; 0
+		dc.l $25000000+Map_12382; 0
 		dc.w 0
 		dc.w $26BC
-		dc.l $26000000+MapUnc_12D36
+		dc.l $26000000+Map_12D36
 		dc.w $800
 		dc.w $680
-		dc.l $79000000+MapUnc_1F424
+		dc.l $79000000+Map_1F424
 		dc.w $100
 		dc.w $47C
-		dc.l $33000000+MapUnc_23DDC
+		dc.l $33000000+Map_23DDC
 		dc.w $100
 		dc.w $632C
-		dc.l $43000000+MapUnc_23FE0
+		dc.l $43000000+Map_23FE0
 		dc.w 0
 		dc.w $C30C
-		dc.l $19000000+MapUnc_2222A
+		dc.l $19000000+Map_2222A
 		dc.w $2302
 		dc.w $62F4
-		dc.l $45000000+MapUnc_2451A
+		dc.l $45000000+Map_2451A
 		dc.w $200
 		dc.w $43C5
-		dc.l $45000000+MapUnc_2451A
+		dc.l $45000000+Map_2451A
 		dc.w $120A
 		dc.w $43C5
-		dc.l $46000000+MapUnc_24C52
+		dc.l $46000000+Map_24C52
 		dc.w 1
 		dc.w $6354
-		dc.l $47000000+MapUnc_24D96
+		dc.l $47000000+Map_24D96
 		dc.w 2
 		dc.w $424
-		dc.l $15000000+MapUnc_101E8
+		dc.l $15000000+Map_101E8
 		dc.w $8801
 		dc.w $43E3
-		dc.l $3D000000+MapUnc_250BA
+		dc.l $3D000000+Map_250BA
 		dc.w 0
 		dc.w $6332
-		dc.l $48000000+MapUnc_254FE
+		dc.l $48000000+Map_254FE
 		dc.w $8000
 		dc.w $6368
-		dc.l $48000000+MapUnc_254FE
+		dc.l $48000000+Map_254FE
 		dc.w $8101
 		dc.w $6368
-		dc.l $48000000+MapUnc_254FE
+		dc.l $48000000+Map_254FE
 		dc.w $8202
 		dc.w $6368
-		dc.l $48000000+MapUnc_254FE
+		dc.l $48000000+Map_254FE
 		dc.w $8303
 		dc.w $6368
-		dc.l $1F000000+MapUnc_110C6
+		dc.l $1F000000+Map_110C6
 		dc.w 0
 		dc.w $639D
-		dc.l $3F000000+MapUnc_2AA12
+		dc.l $3F000000+Map_2AA12
 		dc.w 0
 		dc.w $6403
-		dc.l $3F000000+MapUnc_2AAC4
+		dc.l $3F000000+Map_2AAC4
 		dc.w $8000
 		dc.w $6403
-		dc.l $50000000+MapUnc_2CF94
+		dc.l $50000000+Map_2CF94
 		dc.w 0
 		dc.w $2500
-		dc.l $4A000000+MapUnc_2CBFE
+		dc.l $4A000000+Map_2CBFE
 		dc.w 0
 		dc.w $2538
-		dc.l $1C000000+MapUnc_11406
+		dc.l $1C000000+Map_11406
 		dc.w $A00
 		dc.w $4346
-		dc.l $1C000000+MapUnc_11406
+		dc.l $1C000000+Map_11406
 		dc.w $B01
 		dc.w $4346
-		dc.l $1C000000+MapUnc_11406
+		dc.l $1C000000+Map_11406
 		dc.w $C02
 		dc.w $4346
-		dc.l $1C000000+MapUnc_11406
+		dc.l $1C000000+Map_11406
 		dc.w $D03
 		dc.w $4346
-		dc.l $1C000000+MapUnc_11406
+		dc.l $1C000000+Map_11406
 		dc.w $E04
 		dc.w $4346
-		dc.l $1C000000+MapUnc_11406
+		dc.l $1C000000+Map_11406
 		dc.w $F05
 		dc.w $4346
-		dc.l $1C000000+MapUnc_114AE
+		dc.l $1C000000+Map_114AE
 		dc.w $1000
 		dc.w $4346
-		dc.l $1C000000+MapUnc_114AE
+		dc.l $1C000000+Map_114AE
 		dc.w $1101
 		dc.w $4346
-		dc.l $1C000000+MapUnc_114AE
+		dc.l $1C000000+Map_114AE
 		dc.w $1202
 		dc.w $4346
-		dc.l $1C000000+MapUnc_114AE
+		dc.l $1C000000+Map_114AE
 		dc.w $1303
 		dc.w $4346
-		dc.l $1C000000+MapUnc_114AE
+		dc.l $1C000000+Map_114AE
 		dc.w $1404
 		dc.w $4346
-		dc.l $3E000000+MapUnc_3F436
+		dc.l $3E000000+Map_3F436
 		dc.w 0
 		dc.w $2680
 DbgMCZ_421F2:	dc.w $18		; DATA XREF: ROM:00041D0Co
-		dc.l $25000000+MapUnc_12382; 0
+		dc.l $25000000+Map_12382; 0
 		dc.w 0
 		dc.w $26BC
-		dc.l $26000000+MapUnc_12D36
+		dc.l $26000000+Map_12D36
 		dc.w $800
 		dc.w $680
-		dc.l $79000000+MapUnc_1F424
+		dc.l $79000000+Map_1F424
 		dc.w $100
 		dc.w $47C
-		dc.l $15000000+MapUnc_10256
+		dc.l $15000000+Map_10256
 		dc.w $4802
 		dc.w 0
-		dc.l $1F000000+MapUnc_11106
+		dc.l $1F000000+Map_11106
 		dc.w 0
 		dc.w $63F4
-		dc.l $73000000+MapUnc_28B9C
+		dc.l $73000000+Map_28B9C
 		dc.w $F500
 		dc.w $26BC
-		dc.l $6A000000+MapUnc_27D30
+		dc.l $6A000000+Map_27D30
 		dc.w $1800
 		dc.w $63D4
-		dc.l $2A000000+MapUnc_11666
+		dc.l $2A000000+Map_11666
 		dc.w 0
 		dc.w $4000
-		dc.l $36000000+MapUnc_15B68
+		dc.l $36000000+Map_15B68
 		dc.w 0
 		dc.w $2434
-		dc.l $36000000+MapUnc_15B68
+		dc.l $36000000+Map_15B68
 		dc.w $4004
 		dc.w $242C
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $8100
 		dc.w $45C
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $9003
 		dc.w $470
-		dc.l $40000000+MapUnc_265F4
+		dc.l $40000000+Map_265F4
 		dc.w $100
 		dc.w $440
-		dc.l $74000000+MapUnc_20F66
+		dc.l $74000000+Map_20F66
 		dc.w $1100
 		dc.w $8680
-		dc.l $75000000+MapUnc_28D8A
+		dc.l $75000000+Map_28D8A
 		dc.w $1802
 		dc.w $2000
-		dc.l $76000000+MapUnc_28F3A
+		dc.l $76000000+Map_28F3A
 		dc.w 0
 		dc.w 0
-		dc.l $77000000+MapUnc_29064
+		dc.l $77000000+Map_29064
 		dc.w $100
 		dc.w $643C
-		dc.l $7F000000+MapUnc_29938
+		dc.l $7F000000+Map_29938
 		dc.w 0
 		dc.w $640E
-		dc.l $80000000+MapUnc_29C64
+		dc.l $80000000+Map_29C64
 		dc.w 0
 		dc.w $641E
-		dc.l $81000000+MapUnc_2A24E
+		dc.l $81000000+Map_2A24E
 		dc.w 1
 		dc.w $643C
-		dc.l $7A000000+MapUnc_10256
+		dc.l $7A000000+Map_10256
 		dc.w $1200
 		dc.w 0
-		dc.l $A3000000+MapUnc_388F0
+		dc.l $A3000000+Map_388F0
 		dc.w $2C00
 		dc.w $83A8
-		dc.l $9E000000+MapUnc_37FF2
+		dc.l $9E000000+Map_37FF2
 		dc.w $2200
 		dc.w $23C0
-		dc.l $3E000000+MapUnc_3F436
+		dc.l $3E000000+Map_3F436
 		dc.w 0
 		dc.w $2680
 DbgCNZ_422B4:	dc.w $18		; DATA XREF: ROM:00041D0Co
-		dc.l $25000000+MapUnc_12382; 0
+		dc.l $25000000+Map_12382; 0
 		dc.w 0
 		dc.w $26BC
-		dc.l $26000000+MapUnc_12D36
+		dc.l $26000000+Map_12D36
 		dc.w $800
 		dc.w $680
-		dc.l $79000000+MapUnc_1F424
+		dc.l $79000000+Map_1F424
 		dc.w $100
 		dc.w $47C
-		dc.l $84000000+MapUnc_1FFB8
+		dc.l $84000000+Map_1FFB8
 		dc.w 0
 		dc.w $6BC
-		dc.l $84000000+MapUnc_1FFB8
+		dc.l $84000000+Map_1FFB8
 		dc.w $404
 		dc.w $6BC
-		dc.l $3000000+MapUnc_1FFB8
+		dc.l $3000000+Map_1FFB8
 		dc.w $901
 		dc.w $26BC
-		dc.l $3000000+MapUnc_1FFB8
+		dc.l $3000000+Map_1FFB8
 		dc.w $D05
 		dc.w $26BC
-		dc.l $44000000+MapUnc_1F85A
+		dc.l $44000000+Map_1F85A
 		dc.w 0
 		dc.w $439A
-		dc.l $85000000+MapUnc_2B07E
+		dc.l $85000000+Map_2B07E
 		dc.w 0
 		dc.w $422
-		dc.l $85000000+MapUnc_2B0EC
+		dc.l $85000000+Map_2B0EC
 		dc.w $8100
 		dc.w $402
-		dc.l $86000000+MapUnc_2B45A
+		dc.l $86000000+Map_2B45A
 		dc.w 0
 		dc.w $43B2
-		dc.l $86000000+MapUnc_2B45A
+		dc.l $86000000+Map_2B45A
 		dc.w $104
 		dc.w $43B2
-		dc.l $D2000000+MapUnc_2B694
+		dc.l $D2000000+Map_2B694
 		dc.w $100
 		dc.w $437C
-		dc.l $D3000000+MapUnc_2B8D4
+		dc.l $D3000000+Map_2B8D4
 		dc.w 0
 		dc.w $380
-		dc.l $D4000000+MapUnc_2B9CA
+		dc.l $D4000000+Map_2B9CA
 		dc.w 0
 		dc.w $436C
-		dc.l $D4000000+MapUnc_2B9CA
+		dc.l $D4000000+Map_2B9CA
 		dc.w $200
 		dc.w $436C
-		dc.l $D5000000+MapUnc_2BB40
+		dc.l $D5000000+Map_2BB40
 		dc.w $1800
 		dc.w $4384
-		dc.l $D6000000+MapUnc_2BEBC
+		dc.l $D6000000+Map_2BEBC
 		dc.w $100
 		dc.w $388
-		dc.l $D7000000+MapUnc_2C626
+		dc.l $D7000000+Map_2C626
 		dc.w 0
 		dc.w $4394
-		dc.l $D8000000+MapUnc_2C8C4
+		dc.l $D8000000+Map_2C8C4
 		dc.w 0
 		dc.w $43E6
-		dc.l $D8000000+MapUnc_2C8C4
+		dc.l $D8000000+Map_2C8C4
 		dc.w $4001
 		dc.w $43E6
-		dc.l $D8000000+MapUnc_2C8C4
+		dc.l $D8000000+Map_2C8C4
 		dc.w $8002
 		dc.w $43E6
-		dc.l $C8000000+MapUnc_3D450
+		dc.l $C8000000+Map_3D450
 		dc.w $AC00
 		dc.w $8340
-		dc.l $3E000000+MapUnc_3F436
+		dc.l $3E000000+Map_3F436
 		dc.w 0
 		dc.w $2680
 DbgCPZ_42376:	dc.w $18		; DATA XREF: ROM:00041D0Co
-		dc.l $25000000+MapUnc_12382; 0
+		dc.l $25000000+Map_12382; 0
 		dc.w 0
 		dc.w $26BC
-		dc.l $26000000+MapUnc_12D36
+		dc.l $26000000+Map_12D36
 		dc.w $800
 		dc.w $680
-		dc.l $79000000+MapUnc_1F424
+		dc.l $79000000+Map_1F424
 		dc.w $100
 		dc.w $47C
-		dc.l $B000000+MapUnc_201A0
+		dc.l $B000000+Map_201A0
 		dc.w $7000
 		dc.w $E3B0
-		dc.l $1B000000+MapUnc_223E2
+		dc.l $1B000000+Map_223E2
 		dc.w 0
 		dc.w $E39C
-		dc.l $1D000000+MapUnc_22576
+		dc.l $1D000000+Map_22576
 		dc.w $500
 		dc.w $E43C
-		dc.l $19000000+MapUnc_2222A
+		dc.l $19000000+Map_2222A
 		dc.w $600
 		dc.w $63A0
-		dc.l $2D000000+MapUnc_11822
+		dc.l $2D000000+Map_11822
 		dc.w $202
 		dc.w $2394
-		dc.l $32000000+MapUnc_23886
+		dc.l $32000000+Map_23886
 		dc.w 0
 		dc.w $6430
-		dc.l $6B000000+MapUnc_2800E
+		dc.l $6B000000+Map_2800E
 		dc.w $1000
 		dc.w $6418
-		dc.l $78000000+MapUnc_2800E
+		dc.l $78000000+Map_2800E
 		dc.w 0
 		dc.w $6418
-		dc.l $7A000000+MapUnc_29564
+		dc.l $7A000000+Map_29564
 		dc.w 0
 		dc.w $E418
-		dc.l $7B000000+MapUnc_29780
+		dc.l $7B000000+Map_29780
 		dc.w $200
 		dc.w $3E0
-		dc.l $3000000+MapUnc_1FFB8
+		dc.l $3000000+Map_1FFB8
 		dc.w $901
 		dc.w $26BC
-		dc.l $3000000+MapUnc_1FFB8
+		dc.l $3000000+Map_1FFB8
 		dc.w $D05
 		dc.w $26BC
-		dc.l $36000000+MapUnc_15B68
+		dc.l $36000000+Map_15B68
 		dc.w 0
 		dc.w $2434
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $8100
 		dc.w $45C
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $9003
 		dc.w $470
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $A006
 		dc.w $45C
-		dc.l $40000000+MapUnc_265F4
+		dc.l $40000000+Map_265F4
 		dc.w $100
 		dc.w $440
-		dc.l $A5000000+MapUnc_38CCA
+		dc.l $A5000000+Map_38CCA
 		dc.w $3200
 		dc.w $252D
-		dc.l $A6000000+MapUnc_38CCA
+		dc.l $A6000000+Map_38CCA
 		dc.w $3203
 		dc.w $252D
-		dc.l $A7000000+MapUnc_3921A
+		dc.l $A7000000+Map_3921A
 		dc.w $3600
 		dc.w $A500
-		dc.l $3E000000+MapUnc_3F436
+		dc.l $3E000000+Map_3F436
 		dc.w 0
 		dc.w $2680
 DbgARZ_42438:	dc.w $1D		; DATA XREF: ROM:00041D0Co
-		dc.l $25000000+MapUnc_12382; 0
+		dc.l $25000000+Map_12382; 0
 		dc.w 0
 		dc.w $26BC
-		dc.l $26000000+MapUnc_12D36
+		dc.l $26000000+Map_12D36
 		dc.w $800
 		dc.w $680
-		dc.l $79000000+MapUnc_1F424
+		dc.l $79000000+Map_1F424
 		dc.w $100
 		dc.w $47C
-		dc.l $15000000+MapUnc_1021E
+		dc.l $15000000+Map_1021E
 		dc.w $8802
 		dc.w 0
-		dc.l $18000000+MapUnc_1084E
+		dc.l $18000000+Map_1084E
 		dc.w $100
 		dc.w $4000
-		dc.l $18000000+MapUnc_1084E
+		dc.l $18000000+Map_1084E
 		dc.w $9A01
 		dc.w $4000
-		dc.l $22000000+MapUnc_25804
+		dc.l $22000000+Map_25804
 		dc.w 1
 		dc.w $417
-		dc.l $23000000+MapUnc_259E6
+		dc.l $23000000+Map_259E6
 		dc.w 0
 		dc.w $2000
-		dc.l $2B000000+MapUnc_25C6E
+		dc.l $2B000000+Map_25C6E
 		dc.w 0
 		dc.w $2000
-		dc.l $2C000000+MapUnc_20E74
+		dc.l $2C000000+Map_20E74
 		dc.w 0
 		dc.w $8680
-		dc.l $2C000000+MapUnc_20E74
+		dc.l $2C000000+Map_20E74
 		dc.w $101
 		dc.w $8680
-		dc.l $2C000000+MapUnc_20E74
+		dc.l $2C000000+Map_20E74
 		dc.w $202
 		dc.w $8680
-		dc.l $40000000+MapUnc_265F4
+		dc.l $40000000+Map_265F4
 		dc.w $100
 		dc.w $440
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $8100
 		dc.w $45C
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $9003
 		dc.w $470
-		dc.l $41000000+MapUnc_1901C
+		dc.l $41000000+Map_1901C
 		dc.w $A006
 		dc.w $45C
-		dc.l $3000000+MapUnc_1FFB8
+		dc.l $3000000+Map_1FFB8
 		dc.w $901
 		dc.w $26BC
-		dc.l $36000000+MapUnc_15B68
+		dc.l $36000000+Map_15B68
 		dc.w 0
 		dc.w $2434
-		dc.l $2D000000+MapUnc_11822
+		dc.l $2D000000+Map_11822
 		dc.w $303
 		dc.w $23F8
-		dc.l $1F000000+MapUnc_1115E
+		dc.l $1F000000+Map_1115E
 		dc.w 0
 		dc.w $4000
-		dc.l $82000000+MapUnc_2A476
+		dc.l $82000000+Map_2A476
 		dc.w $300
 		dc.w 0
-		dc.l $82000000+MapUnc_2A476
+		dc.l $82000000+Map_2A476
 		dc.w $1101
 		dc.w 0
-		dc.l $83000000+MapUnc_1021E
+		dc.l $83000000+Map_1021E
 		dc.w $1001
 		dc.w 0
-		dc.l $24000000+MapUnc_1FBF6
+		dc.l $24000000+Map_1FBF6
 		dc.w $810E
 		dc.w $855B
-		dc.l $91000000+MapUnc_36EF6
+		dc.l $91000000+Map_36EF6
 		dc.w $800
 		dc.w $253B
-		dc.l $8C000000+MapUnc_36A4E
+		dc.l $8C000000+Map_36A4E
 		dc.w 0
 		dc.w $A500
-		dc.l $8D000000+MapUnc_36CF0
+		dc.l $8D000000+Map_36CF0
 		dc.w $200
 		dc.w $A509
-		dc.l $8E000000+MapUnc_36CF0
+		dc.l $8E000000+Map_36CF0
 		dc.w $200
 		dc.w $A509
-		dc.l $3E000000+MapUnc_3F436
+		dc.l $3E000000+Map_3F436
 		dc.w 0
 		dc.w $2680
 DbgSCZ_42522:	dc.w $D			; DATA XREF: ROM:00041D0Co
-		dc.l $25000000+MapUnc_12382; 0
+		dc.l $25000000+Map_12382; 0
 		dc.w 0
 		dc.w $26BC
-		dc.l $26000000+MapUnc_12D36
+		dc.l $26000000+Map_12D36
 		dc.w $800
 		dc.w $680
-		dc.l $8B000000+MapUnc_1FFB8
+		dc.l $8B000000+Map_1FFB8
 		dc.w 0
 		dc.w $6BC
-		dc.l $B3000000+MapUnc_3B32C
+		dc.l $B3000000+Map_3B32C
 		dc.w $5E00
 		dc.w $454F
-		dc.l $B3000000+MapUnc_3B32C
+		dc.l $B3000000+Map_3B32C
 		dc.w $6001
 		dc.w $454F
-		dc.l $B3000000+MapUnc_3B32C
+		dc.l $B3000000+Map_3B32C
 		dc.w $6202
 		dc.w $454F
-		dc.l $B4000000+MapUnc_3B3BE
+		dc.l $B4000000+Map_3B3BE
 		dc.w $6400
 		dc.w $A561
-		dc.l $B5000000+MapUnc_3B548
+		dc.l $B5000000+Map_3B548
 		dc.w $6600
 		dc.w $A3CD
-		dc.l $B5000000+MapUnc_3B548
+		dc.l $B5000000+Map_3B548
 		dc.w $6800
 		dc.w $A3CD
-		dc.l $9A000000+MapUnc_37B62
+		dc.l $9A000000+Map_37B62
 		dc.w $1600
 		dc.w $38A
-		dc.l $AC000000+MapUnc_393CC
+		dc.l $AC000000+Map_393CC
 		dc.w $4000
 		dc.w $565
-		dc.l $99000000+MapUnc_3789A
+		dc.l $99000000+Map_3789A
 		dc.w $1200
 		dc.w $A36E
-		dc.l $3E000000+MapUnc_3F436
+		dc.l $3E000000+Map_3F436
 		dc.w 0
 		dc.w $2680
 
@@ -92500,13 +92500,13 @@ Off_PLC:	dc.w PLC_0-Off_PLC	; 0 ; DATA XREF: sub_161E+4o
 ;Standard block	1
 ;---------------------------------------------------------------------------------------
 PLC_0:		dc.w 3			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7923E
+		dc.l Nem_HUD
 		dc.w $D940
-		dc.l ArtNem_79346
+		dc.l Nem_Sonic_Life_Counter
 		dc.w $FA80
-		dc.l ArtNem_7945C
+		dc.l Nem_Ring
 		dc.w $D780
-		dc.l ArtNem_799AC
+		dc.l Nem_Numbers
 		dc.w $9580
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92514,13 +92514,13 @@ PLC_0:		dc.w 3			; DATA XREF: ROM:00042660o
 ;Standard block	2
 ;---------------------------------------------------------------------------------------
 PLC_1:		dc.w 3			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_79A86
+		dc.l Nem_Checkpoint
 		dc.w $8F80
-		dc.l ArtNem_79550
+		dc.l Nem_Monitors_and_PowerUps
 		dc.w $D000
-		dc.l ArtNem_71D8E
+		dc.l Nem_Shield
 		dc.w $97C0
-		dc.l ArtNem_71F14
+		dc.l Nem_Invinciblity_Stars
 		dc.w $9BC0
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92528,11 +92528,11 @@ PLC_1:		dc.w 3			; DATA XREF: ROM:00042660o
 ;Water level standard block
 ;---------------------------------------------------------------------------------------
 PLC_2:		dc.w 2			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7B592
+		dc.l Nem_7B592
 		dc.w $B480
-		dc.l ArtNem_7393C
+		dc.l Nem_SuperSonic_Stars
 		dc.w $BE40
-		dc.l ArtNem_7AEE2
+		dc.l Nem_Bubbles
 		dc.w $BD00
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92540,7 +92540,7 @@ PLC_2:		dc.w 2			; DATA XREF: ROM:00042660o
 ;Game/Time over
 ;---------------------------------------------------------------------------------------
 PLC_3:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7B400
+		dc.l Nem_Game_Over
 		dc.w $9BC0
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92548,17 +92548,17 @@ PLC_3:		dc.w 0			; DATA XREF: ROM:00042660o
 ;EHZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_4:		dc.w 5			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_F02D6
+		dc.l Nem_F02D6
 		dc.w $73C0
-		dc.l ArtNem_F052A
+		dc.l Nem_F052A
 		dc.w $76C0
-		dc.l ArtNem_F0160
+		dc.l Nem_F0160
 		dc.w $77C0
-		dc.l ArtNem_8316A
+		dc.l Nem_8316A
 		dc.w $7A40
-		dc.l ArtNem_8A87A
+		dc.l Nem_8A87A
 		dc.w $7DC0
-		dc.l ArtNem_839EA
+		dc.l Nem_839EA
 		dc.w $8280
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92566,13 +92566,13 @@ PLC_4:		dc.w 5			; DATA XREF: ROM:00042660o
 ;EHZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_5:		dc.w 3			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7995C
+		dc.l Nem_Spikes
 		dc.w $8680
-		dc.l ArtNem_7906A
+		dc.l Nem_DignlSprng
 		dc.w $8780
-		dc.l ArtNem_78E84
+		dc.l Nem_VrtclSprng
 		dc.w $8B80
-		dc.l ArtNem_78FA0
+		dc.l Nem_HrzntlSprng
 		dc.w $8E00
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92580,7 +92580,7 @@ PLC_5:		dc.w 3			; DATA XREF: ROM:00042660o
 ;Miles 1up patch
 ;---------------------------------------------------------------------------------------
 PLC_6:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7B946
+		dc.l Nem_7B946
 		dc.w $DE80
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92588,7 +92588,7 @@ PLC_6:		dc.w 0			; DATA XREF: ROM:00042660o
 ;Miles life counter
 ;---------------------------------------------------------------------------------------
 PLC_7:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7B946
+		dc.l Nem_7B946
 		dc.w $FA80
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92596,7 +92596,7 @@ PLC_7:		dc.w 0			; DATA XREF: ROM:00042660o
 ;Tails 1up patch
 ;---------------------------------------------------------------------------------------
 PLC_8:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7C20C
+		dc.l Nem_7C20C
 		dc.w $DE80
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92604,7 +92604,7 @@ PLC_8:		dc.w 0			; DATA XREF: ROM:00042660o
 ;Tails life counter
 ;---------------------------------------------------------------------------------------
 PLC_9:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7C20C
+		dc.l Nem_7C20C
 		dc.w $FA80
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92612,23 +92612,23 @@ PLC_9:		dc.w 0			; DATA XREF: ROM:00042660o
 ;MTZ primary
 ;---------------------------------------------------------------------------------------
 PLC_A:		dc.w 8			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_F0DB6
+		dc.l Nem_F0DB6
 		dc.w $6F00
-		dc.l ArtNem_F120E
+		dc.l Nem_F120E
 		dc.w $7E00
-		dc.l ArtNem_F167C
+		dc.l Nem_F167C
 		dc.w $7F20
-		dc.l ArtNem_F16EC
+		dc.l Nem_F16EC
 		dc.w $7FA0
-		dc.l ArtNem_F1384
+		dc.l Nem_F1384
 		dc.w $80A0
-		dc.l ArtNem_F12B6
+		dc.l Nem_F12B6
 		dc.w $8280
-		dc.l ArtNem_F148E
+		dc.l Nem_F148E
 		dc.w $8380
-		dc.l ArtNem_8B058
+		dc.l Nem_8B058
 		dc.w $6380
-		dc.l ArtNem_8B300
+		dc.l Nem_8B300
 		dc.w $6D00
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92636,23 +92636,23 @@ PLC_A:		dc.w 8			; DATA XREF: ROM:00042660o
 ;MTZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_B:		dc.w 8			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_78DAC
+		dc.l Nem_Button
 		dc.w $8480
-		dc.l ArtNem_7995C
+		dc.l Nem_Spikes
 		dc.w $8680
-		dc.l ArtNem_8AD80
+		dc.l Nem_8AD80
 		dc.w $8780
-		dc.l ArtNem_78E84
+		dc.l Nem_VrtclSprng
 		dc.w $8B80
-		dc.l ArtNem_78FA0
+		dc.l Nem_HrzntlSprng
 		dc.w $8E00
-		dc.l ArtNem_F1550
+		dc.l Nem_F1550
 		dc.w $A000
-		dc.l ArtNem_F15C6
+		dc.l Nem_F15C6
 		dc.w $A6C0
-		dc.l ArtNem_F178E
+		dc.l Nem_F178E
 		dc.w $ABE0
-		dc.l ArtNem_F1870
+		dc.l Nem_F1870
 		dc.w $AD60
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92660,25 +92660,25 @@ PLC_B:		dc.w 8			; DATA XREF: ROM:00042660o
 ;WFZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_C:		dc.w 9			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_8CC44
+		dc.l Nem_8CC44
 		dc.w $A000
-		dc.l ArtNem_8DAFC
+		dc.l Nem_8DAFC
 		dc.w $A9E0
-		dc.l ArtNem_8DEB8
+		dc.l Nem_8DEB8
 		dc.w $AC20
-		dc.l ArtNem_8DEE8
+		dc.l Nem_8DEE8
 		dc.w $79A0
-		dc.l ArtNem_8BC16
+		dc.l Nem_8BC16
 		dc.w $ACA0
-		dc.l ArtNem_7FF98
+		dc.l Nem_7FF98
 		dc.w $9180
-		dc.l ArtNem_8B9DC
+		dc.l Nem_8B9DC
 		dc.w $6F20
-		dc.l ArtNem_8E010
+		dc.l Nem_8E010
 		dc.w $7260
-		dc.l ArtNem_8CC44
+		dc.l Nem_8CC44
 		dc.w $A000
-		dc.l ArtNem_8DAFC
+		dc.l Nem_8DAFC
 		dc.w $A9E0
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92686,33 +92686,33 @@ PLC_C:		dc.w 9			; DATA XREF: ROM:00042660o
 ;WFZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_D:		dc.w $D			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_8DEB8
+		dc.l Nem_8DEB8
 		dc.w $AC20
-		dc.l ArtNem_8DEE8
+		dc.l Nem_8DEE8
 		dc.w $79A0
-		dc.l ArtNem_8DA6E
+		dc.l Nem_8DA6E
 		dc.w $73E0
-		dc.l ArtNem_8D1A0
+		dc.l Nem_8D1A0
 		dc.w $7560
-		dc.l ArtNem_8DC42
+		dc.l Nem_8DC42
 		dc.w $7860
-		dc.l ArtNem_8D7D8
+		dc.l Nem_8D7D8
 		dc.w $7D40
-		dc.l ArtNem_8D388
+		dc.l Nem_8D388
 		dc.w $7F40
-		dc.l ArtNem_8E0C4
+		dc.l Nem_8E0C4
 		dc.w $8CA0
-		dc.l ArtNem_8DD0C
+		dc.l Nem_8DD0C
 		dc.w $81C0
-		dc.l ArtNem_8D540
+		dc.l Nem_8D540
 		dc.w $8340
-		dc.l ArtNem_8DDF6
+		dc.l Nem_8DDF6
 		dc.w $8A00
-		dc.l ArtNem_8DCA2
+		dc.l Nem_8DCA2
 		dc.w $8B80
-		dc.l ArtNem_7FF2A
+		dc.l Nem_7FF2A
 		dc.w $8C20
-		dc.l ArtNem_8D96E
+		dc.l Nem_8D96E
 		dc.w $8DA0
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92720,25 +92720,25 @@ PLC_D:		dc.w $D			; DATA XREF: ROM:00042660o
 ;HTZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_E:		dc.w 9			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_F0160
+		dc.l Nem_F0160
 		dc.w $73C0
-		dc.l ArtNem_F0C14
+		dc.l Nem_F0C14
 		dc.w $7640
-		dc.l ArtNem_F096E
+		dc.l Nem_F096E
 		dc.w $78C0
-		dc.l ArtNem_F0D4A
+		dc.l Nem_F0D4A
 		dc.w $7BC0
-		dc.l ArtNem_89DEC
+		dc.l Nem_89DEC
 		dc.w $6FC0
-		dc.l ArtNem_89FAA
+		dc.l Nem_89FAA
 		dc.w $A400
-		dc.l ArtNem_7995C
+		dc.l Nem_Spikes
 		dc.w $8680
-		dc.l ArtNem_7906A
+		dc.l Nem_DignlSprng
 		dc.w $8780
-		dc.l ArtNem_78E84
+		dc.l Nem_VrtclSprng
 		dc.w $8B80
-		dc.l ArtNem_78FA0
+		dc.l Nem_HrzntlSprng
 		dc.w $8E00
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92746,11 +92746,11 @@ PLC_E:		dc.w 9			; DATA XREF: ROM:00042660o
 ;HTZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_F:		dc.w 2			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_F0602
+		dc.l Nem_F0602
 		dc.w $7CC0
-		dc.l ArtNem_F03DC
+		dc.l Nem_F03DC
 		dc.w $82C0
-		dc.l ArtNem_F08F6
+		dc.l Nem_F08F6
 		dc.w $84C0
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92758,23 +92758,23 @@ PLC_F:		dc.w 2			; DATA XREF: ROM:00042660o
 ;OOZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_10:		dc.w 8			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_81514
+		dc.l Nem_81514
 		dc.w $5C40
-		dc.l ArtNem_810B8
+		dc.l Nem_810B8
 		dc.w $5E80
-		dc.l ArtNem_8007C
+		dc.l Nem_8007C
 		dc.w $6180
-		dc.l ArtNem_80274
+		dc.l Nem_80274
 		dc.w $6580
-		dc.l ArtNem_8030A
+		dc.l Nem_8030A
 		dc.w $6640
-		dc.l ArtNem_80376
+		dc.l Nem_80376
 		dc.w $66C0
-		dc.l ArtNem_804F2
+		dc.l Nem_804F2
 		dc.w $68C0
-		dc.l ArtNem_805C0
+		dc.l Nem_805C0
 		dc.w $6A80
-		dc.l ArtNem_806E0
+		dc.l Nem_806E0
 		dc.w $6D00
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92782,29 +92782,29 @@ PLC_10:		dc.w 8			; DATA XREF: ROM:00042660o
 ;OOZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_11:		dc.w $B			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_809D0
+		dc.l Nem_809D0
 		dc.w $73A0
-		dc.l ArtNem_80C64
+		dc.l Nem_80C64
 		dc.w $78A0
-		dc.l ArtNem_80E26
+		dc.l Nem_80E26
 		dc.w $7C60
-		dc.l ArtNem_81048
+		dc.l Nem_81048
 		dc.w $7FE0
-		dc.l ArtNem_81254
+		dc.l Nem_81254
 		dc.w $8060
-		dc.l ArtNem_78DAC
+		dc.l Nem_Button
 		dc.w $8480
-		dc.l ArtNem_7995C
+		dc.l Nem_Spikes
 		dc.w $8680
-		dc.l ArtNem_7906A
+		dc.l Nem_DignlSprng
 		dc.w $8780
-		dc.l ArtNem_78E84
+		dc.l Nem_VrtclSprng
 		dc.w $8B80
-		dc.l ArtNem_78FA0
+		dc.l Nem_HrzntlSprng
 		dc.w $8E00
-		dc.l ArtNem_8368A
+		dc.l Nem_8368A
 		dc.w $A000
-		dc.l ArtNem_8336A
+		dc.l Nem_8336A
 		dc.w $A700
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92812,17 +92812,17 @@ PLC_11:		dc.w $B			; DATA XREF: ROM:00042660o
 ;MCZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_12:		dc.w 5			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_F187C
+		dc.l Nem_F187C
 		dc.w $7A80
-		dc.l ArtNem_F1ABA
+		dc.l Nem_F1ABA
 		dc.w $7E80
-		dc.l ArtNem_F1C64
+		dc.l Nem_F1C64
 		dc.w $81C0
-		dc.l ArtNem_F1D5C
+		dc.l Nem_F1D5C
 		dc.w $83C0
-		dc.l ArtNem_8AC5E
+		dc.l Nem_8AC5E
 		dc.w $7500
-		dc.l ArtNem_8AB36
+		dc.l Nem_8AB36
 		dc.w $7800
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92830,17 +92830,17 @@ PLC_12:		dc.w 5			; DATA XREF: ROM:00042660o
 ;MCZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_13:		dc.w 5			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7AC9A
+		dc.l Nem_HorizSpike
 		dc.w $8580
-		dc.l ArtNem_7995C
+		dc.l Nem_Spikes
 		dc.w $8680
-		dc.l ArtNem_F1E06
+		dc.l Nem_F1E06
 		dc.w $8780
-		dc.l ArtNem_7AB4A
+		dc.l Nem_LeverSpring
 		dc.w $8800
-		dc.l ArtNem_78E84
+		dc.l Nem_VrtclSprng
 		dc.w $8B80
-		dc.l ArtNem_78FA0
+		dc.l Nem_HrzntlSprng
 		dc.w $8E00
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92848,25 +92848,25 @@ PLC_13:		dc.w 5			; DATA XREF: ROM:00042660o
 ;CNZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_14:		dc.w 9			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_901A4
+		dc.l Nem_901A4
 		dc.w $6800
-		dc.l ArtNem_816C8
+		dc.l Nem_816C8
 		dc.w $6D80
-		dc.l ArtNem_81600
+		dc.l Nem_81600
 		dc.w $6F80
-		dc.l ArtNem_81668
+		dc.l Nem_81668
 		dc.w $7000
-		dc.l ArtNem_817B4
+		dc.l Nem_817B4
 		dc.w $7080
-		dc.l ArtNem_81826
+		dc.l Nem_81826
 		dc.w $7100
-		dc.l ArtNem_81894
+		dc.l Nem_81894
 		dc.w $7280
-		dc.l ArtNem_8191E
+		dc.l Nem_8191E
 		dc.w $7340
-		dc.l ArtNem_81EF2
+		dc.l Nem_81EF2
 		dc.w $7640
-		dc.l ArtNem_81DCC
+		dc.l Nem_81DCC
 		dc.w $7CC0
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92874,17 +92874,17 @@ PLC_14:		dc.w 9			; DATA XREF: ROM:00042660o
 ;CNZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_15:		dc.w 5			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_81AB0
+		dc.l Nem_81AB0
 		dc.w $8040
-		dc.l ArtNem_81C96
+		dc.l Nem_81C96
 		dc.w $8440
-		dc.l ArtNem_7995C
+		dc.l Nem_Spikes
 		dc.w $8680
-		dc.l ArtNem_7906A
+		dc.l Nem_DignlSprng
 		dc.w $8780
-		dc.l ArtNem_78E84
+		dc.l Nem_VrtclSprng
 		dc.w $8B80
-		dc.l ArtNem_78FA0
+		dc.l Nem_HrzntlSprng
 		dc.w $8E00
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92892,23 +92892,23 @@ PLC_15:		dc.w 5			; DATA XREF: ROM:00042660o
 ;CPZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_16:		dc.w 8			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_825AE
+		dc.l Nem_825AE
 		dc.w $6E60
-		dc.l ArtNem_827F8
+		dc.l Nem_827F8
 		dc.w $7280
-		dc.l ArtNem_824D4
+		dc.l Nem_824D4
 		dc.w $7380
-		dc.l ArtNem_82216
+		dc.l Nem_82216
 		dc.w $7400
-		dc.l ArtNem_82864
+		dc.l Nem_82864
 		dc.w $7600
-		dc.l ArtNem_82C06
+		dc.l Nem_82C06
 		dc.w $7C00
-		dc.l ArtNem_82364
+		dc.l Nem_82364
 		dc.w $8000
-		dc.l ArtNem_82A46
+		dc.l Nem_82A46
 		dc.w $8300
-		dc.l ArtNem_827B8
+		dc.l Nem_827B8
 		dc.w $8600
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92916,19 +92916,19 @@ PLC_16:		dc.w 8			; DATA XREF: ROM:00042660o
 ;CPZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_17:		dc.w 6			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_8B6B4
+		dc.l Nem_8B6B4
 		dc.w $A000
-		dc.l ArtNem_8B430
+		dc.l Nem_8B430
 		dc.w $A5A0
-		dc.l ArtNem_7995C
+		dc.l Nem_Spikes
 		dc.w $8680
-		dc.l ArtNem_8253C
+		dc.l Nem_8253C
 		dc.w $8780
-		dc.l ArtNem_7AB4A
+		dc.l Nem_LeverSpring
 		dc.w $8800
-		dc.l ArtNem_78E84
+		dc.l Nem_VrtclSprng
 		dc.w $8B80
-		dc.l ArtNem_78FA0
+		dc.l Nem_HrzntlSprng
 		dc.w $8E00
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92936,7 +92936,7 @@ PLC_17:		dc.w 6			; DATA XREF: ROM:00042660o
 ;DEZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_18:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_827F8
+		dc.l Nem_827F8
 		dc.w $6500
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92944,15 +92944,15 @@ PLC_18:		dc.w 0			; DATA XREF: ROM:00042660o
 ;DEZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_19:		dc.w 4			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_8BE12
+		dc.l Nem_8BE12
 		dc.w $7000
-		dc.l ArtNem_8EF96
+		dc.l Nem_8EF96
 		dc.w $6F00
-		dc.l ArtNem_8EA5A
+		dc.l Nem_8EA5A
 		dc.w $A300
-		dc.l ArtNem_8E886
+		dc.l Nem_8E886
 		dc.w $A000
-		dc.l ArtNem_8EE52
+		dc.l Nem_8EE52
 		dc.w $AC80
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92960,13 +92960,13 @@ PLC_19:		dc.w 4			; DATA XREF: ROM:00042660o
 ;ARZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_1A:		dc.w 3			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_830D2
+		dc.l Nem_830D2
 		dc.w $7F00
-		dc.l ArtNem_82E02
+		dc.l Nem_82E02
 		dc.w $8000
-		dc.l ArtNem_82EE8
+		dc.l Nem_82EE8
 		dc.w $8200
-		dc.l ArtNem_82F74
+		dc.l Nem_82F74
 		dc.w $82E0
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92974,21 +92974,21 @@ PLC_1A:		dc.w 3			; DATA XREF: ROM:00042660o
 ;ARZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_1B:		dc.w 7			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_89B9A
+		dc.l Nem_89B9A
 		dc.w $A760
-		dc.l ArtNem_895E4
+		dc.l Nem_895E4
 		dc.w $A000
-		dc.l ArtNem_8970E
+		dc.l Nem_8970E
 		dc.w $A120
-		dc.l ArtNem_7AD16
+		dc.l Nem_BubbleGenerator
 		dc.w $AB60
-		dc.l ArtNem_7995C
+		dc.l Nem_Spikes
 		dc.w $8680
-		dc.l ArtNem_7AB4A
+		dc.l Nem_LeverSpring
 		dc.w $8800
-		dc.l ArtNem_78E84
+		dc.l Nem_VrtclSprng
 		dc.w $8B80
-		dc.l ArtNem_78FA0
+		dc.l Nem_HrzntlSprng
 		dc.w $8E00
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92996,7 +92996,7 @@ PLC_1B:		dc.w 7			; DATA XREF: ROM:00042660o
 ;SCZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_1C:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_8CC44
+		dc.l Nem_8CC44
 		dc.w $A000
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93004,17 +93004,17 @@ PLC_1C:		dc.w 0			; DATA XREF: ROM:00042660o
 ;SCZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_1D:		dc.w 5			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_8DAFC
+		dc.l Nem_8DAFC
 		dc.w $A9E0
-		dc.l ArtNem_8DEB8
+		dc.l Nem_8DEB8
 		dc.w $AC20
-		dc.l ArtNem_8DEE8
+		dc.l Nem_8DEE8
 		dc.w $79A0
-		dc.l ArtNem_8BC16
+		dc.l Nem_8BC16
 		dc.w $ACA0
-		dc.l ArtNem_8A362
+		dc.l Nem_8A362
 		dc.w $7140
-		dc.l ArtNem_8A142
+		dc.l Nem_8A142
 		dc.w $6DC0
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93022,13 +93022,13 @@ PLC_1D:		dc.w 5			; DATA XREF: ROM:00042660o
 ;Sonic end of level results screen
 ;---------------------------------------------------------------------------------------
 PLC_1E:		dc.w 3			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7D22C
+		dc.l Nem_7D22C
 		dc.w $B000
-		dc.l ArtNem_7E86A
+		dc.l Nem_7E86A
 		dc.w $B600
-		dc.l ArtNem_7C0AA
+		dc.l Nem_7C0AA
 		dc.w $BE80
-		dc.l ArtNem_7EEBE
+		dc.l Nem_7EEBE
 		dc.w $A800
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93036,7 +93036,7 @@ PLC_1E:		dc.w 3			; DATA XREF: ROM:00042660o
 ;End of	level signpost
 ;---------------------------------------------------------------------------------------
 PLC_1F:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_79BDE
+		dc.l Nem_Signpost
 		dc.w $8680
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93044,15 +93044,15 @@ PLC_1F:		dc.w 0			; DATA XREF: ROM:00042660o
 ;CPZ Boss
 ;---------------------------------------------------------------------------------------
 PLC_20:		dc.w 4			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_83BF6
+		dc.l Nem_83BF6
 		dc.w $8400
-		dc.l ArtNem_84332
+		dc.l Nem_84332
 		dc.w $A000
-		dc.l ArtNem_84F18
+		dc.l Nem_84F18
 		dc.w $8300
-		dc.l ArtNem_84F96
+		dc.l Nem_84F96
 		dc.w $AE00
-		dc.l ArtNem_84890
+		dc.l Nem_84890
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93060,13 +93060,13 @@ PLC_20:		dc.w 4			; DATA XREF: ROM:00042660o
 ;EHZ Boss
 ;---------------------------------------------------------------------------------------
 PLC_21:		dc.w 3			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_83BF6
+		dc.l Nem_83BF6
 		dc.w $7400
-		dc.l ArtNem_8507C
+		dc.l Nem_8507C
 		dc.w $8000
-		dc.l ArtNem_85868
+		dc.l Nem_85868
 		dc.w $AD80
-		dc.l ArtNem_84890
+		dc.l Nem_84890
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93074,13 +93074,13 @@ PLC_21:		dc.w 3			; DATA XREF: ROM:00042660o
 ;HTZ Boss
 ;---------------------------------------------------------------------------------------
 PLC_22:		dc.w 3			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_83BF6
+		dc.l Nem_83BF6
 		dc.w $7820
-		dc.l ArtNem_8595C
+		dc.l Nem_8595C
 		dc.w $8420
-		dc.l ArtNem_84890
+		dc.l Nem_84890
 		dc.w $B000
-		dc.l ArtNem_84F96
+		dc.l Nem_84F96
 		dc.w $BC80
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93088,11 +93088,11 @@ PLC_22:		dc.w 3			; DATA XREF: ROM:00042660o
 ;ARZ Boss
 ;---------------------------------------------------------------------------------------
 PLC_23:		dc.w 2			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_83BF6
+		dc.l Nem_83BF6
 		dc.w $A000
-		dc.l ArtNem_86128
+		dc.l Nem_86128
 		dc.w $7C00
-		dc.l ArtNem_84890
+		dc.l Nem_84890
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93100,11 +93100,11 @@ PLC_23:		dc.w 2			; DATA XREF: ROM:00042660o
 ;MCZ Boss
 ;---------------------------------------------------------------------------------------
 PLC_24:		dc.w 2			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_83BF6
+		dc.l Nem_83BF6
 		dc.w $A000
-		dc.l ArtNem_86B6E
+		dc.l Nem_86B6E
 		dc.w $7800
-		dc.l ArtNem_84890
+		dc.l Nem_84890
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93112,11 +93112,11 @@ PLC_24:		dc.w 2			; DATA XREF: ROM:00042660o
 ;CNZ Boss
 ;---------------------------------------------------------------------------------------
 PLC_25:		dc.w 2			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_83BF6
+		dc.l Nem_83BF6
 		dc.w $A000
-		dc.l ArtNem_87AAC
+		dc.l Nem_87AAC
 		dc.w $80E0
-		dc.l ArtNem_84890
+		dc.l Nem_84890
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93124,13 +93124,13 @@ PLC_25:		dc.w 2			; DATA XREF: ROM:00042660o
 ;MTZ Boss
 ;---------------------------------------------------------------------------------------
 PLC_26:		dc.w 3			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_83BF6
+		dc.l Nem_83BF6
 		dc.w $A000
-		dc.l ArtNem_88DA6
+		dc.l Nem_88DA6
 		dc.w $6F80
-		dc.l ArtNem_84F18
+		dc.l Nem_84F18
 		dc.w $AC00
-		dc.l ArtNem_84890
+		dc.l Nem_84890
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93138,9 +93138,9 @@ PLC_26:		dc.w 3			; DATA XREF: ROM:00042660o
 ;OOZ Boss
 ;---------------------------------------------------------------------------------------
 PLC_27:		dc.w 1			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_882D6
+		dc.l Nem_882D6
 		dc.w $7180
-		dc.l ArtNem_84890
+		dc.l Nem_84890
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93148,7 +93148,7 @@ PLC_27:		dc.w 1			; DATA XREF: ROM:00042660o
 ;Unknown
 ;---------------------------------------------------------------------------------------
 PLC_28:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_84890
+		dc.l Nem_84890
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93156,7 +93156,7 @@ PLC_28:		dc.w 0			; DATA XREF: ROM:00042660o
 ;Death Egg
 ;---------------------------------------------------------------------------------------
 PLC_29:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_8F024
+		dc.l Nem_8F024
 		dc.w $6600
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93164,9 +93164,9 @@ PLC_29:		dc.w 0			; DATA XREF: ROM:00042660o
 ;EHZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_2A:		dc.w 1			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7F0A2
+		dc.l Nem_7F0A2
 		dc.w $B000
-		dc.l ArtNem_7EF60
+		dc.l Nem_7EF60
 		dc.w $B280
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93174,9 +93174,9 @@ PLC_2A:		dc.w 1			; DATA XREF: ROM:00042660o
 ;MCZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_2B:		dc.w 1			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7F206
+		dc.l Nem_7F206
 		dc.w $B000
-		dc.l ArtNem_7F340
+		dc.l Nem_7F340
 		dc.w $B280
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93184,9 +93184,9 @@ PLC_2B:		dc.w 1			; DATA XREF: ROM:00042660o
 ;HTZ/MTZ/WFZ animals
 ;---------------------------------------------------------------------------------------
 PLC_2C:		dc.w 1			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7F4A2
+		dc.l Nem_7F4A2
 		dc.w $B000
-		dc.l ArtNem_7F5E2
+		dc.l Nem_7F5E2
 		dc.w $B280
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93194,9 +93194,9 @@ PLC_2C:		dc.w 1			; DATA XREF: ROM:00042660o
 ;DEZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_2D:		dc.w 1			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7F710
+		dc.l Nem_7F710
 		dc.w $B000
-		dc.l ArtNem_7F340
+		dc.l Nem_7F340
 		dc.w $B280
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93204,9 +93204,9 @@ PLC_2D:		dc.w 1			; DATA XREF: ROM:00042660o
 ;HPZ animals
 ;---------------------------------------------------------------------------------------
 PLC_2E:		dc.w 1			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7F206
+		dc.l Nem_7F206
 		dc.w $B000
-		dc.l ArtNem_7F846
+		dc.l Nem_7F846
 		dc.w $B280
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93214,9 +93214,9 @@ PLC_2E:		dc.w 1			; DATA XREF: ROM:00042660o
 ;OOZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_2F:		dc.w 1			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7F962
+		dc.l Nem_7F962
 		dc.w $B000
-		dc.l ArtNem_7F846
+		dc.l Nem_7F846
 		dc.w $B280
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93224,9 +93224,9 @@ PLC_2F:		dc.w 1			; DATA XREF: ROM:00042660o
 ;SCZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_30:		dc.w 1			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7FADE
+		dc.l Nem_7FADE
 		dc.w $B000
-		dc.l ArtNem_7F340
+		dc.l Nem_7F340
 		dc.w $B280
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93234,9 +93234,9 @@ PLC_30:		dc.w 1			; DATA XREF: ROM:00042660o
 ;CNZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_31:		dc.w 1			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7FC90
+		dc.l Nem_7FC90
 		dc.w $B000
-		dc.l ArtNem_7EF60
+		dc.l Nem_7EF60
 		dc.w $B280
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93244,9 +93244,9 @@ PLC_31:		dc.w 1			; DATA XREF: ROM:00042660o
 ;CPZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_32:		dc.w 1			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7FDD2
+		dc.l Nem_7FDD2
 		dc.w $B000
-		dc.l ArtNem_7F5E2
+		dc.l Nem_7F5E2
 		dc.w $B280
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93254,9 +93254,9 @@ PLC_32:		dc.w 1			; DATA XREF: ROM:00042660o
 ;ARZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_33:		dc.w 1			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7F962
+		dc.l Nem_7F962
 		dc.w $B000
-		dc.l ArtNem_7EF60
+		dc.l Nem_7EF60
 		dc.w $B280
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93264,31 +93264,31 @@ PLC_33:		dc.w 1			; DATA XREF: ROM:00042660o
 ;Special Stage
 ;---------------------------------------------------------------------------------------
 PLC_34:		dc.w $C			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_DE8AC
+		dc.l Nem_DE8AC
 		dc.w $2E80
-		dc.l ArtNem_DEAF4
+		dc.l Nem_DEAF4
 		dc.w $3440
-		dc.l ArtNem_DD48A
+		dc.l Nem_DD48A
 		dc.w $3F40
-		dc.l ArtNem_DDFA4
+		dc.l Nem_DDFA4
 		dc.w $4780
-		dc.l ArtNem_DE05A
+		dc.l Nem_DE05A
 		dc.w $4C40
-		dc.l ArtNem_DE120
+		dc.l Nem_DE120
 		dc.w $5380
-		dc.l ArtNem_DE188
+		dc.l Nem_DE188
 		dc.w $56A0
-		dc.l ArtNem_DDA7E
+		dc.l Nem_DDA7E
 		dc.w $6440
-		dc.l ArtNem_DD790
+		dc.l Nem_DD790
 		dc.w $7140
-		dc.l ArtNem_DD9C8
+		dc.l Nem_DD9C8
 		dc.w $7BE0
-		dc.l ArtNem_DCD68
+		dc.l Nem_DCD68
 		dc.w $E000
-		dc.l ArtNem_DD8CE
+		dc.l Nem_DD8CE
 		dc.w $EFE0
-		dc.l ArtNem_E247E
+		dc.l Nem_E247E
 		dc.w $F480
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93296,7 +93296,7 @@ PLC_34:		dc.w $C			; DATA XREF: ROM:00042660o
 ;Unknown
 ;---------------------------------------------------------------------------------------
 PLC_35:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_DE4BC
+		dc.l Nem_DE4BC
 		dc.w $7140
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93304,15 +93304,15 @@ PLC_35:		dc.w 0			; DATA XREF: ROM:00042660o
 ;WFZ Boss
 ;---------------------------------------------------------------------------------------
 PLC_36:		dc.w 4			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_8E138
+		dc.l Nem_8E138
 		dc.w $6F20
-		dc.l ArtNem_8EA5A
+		dc.l Nem_8EA5A
 		dc.w $A300
-		dc.l ArtNem_8E886
+		dc.l Nem_8E886
 		dc.w $A000
-		dc.l ArtNem_8EE52
+		dc.l Nem_8EE52
 		dc.w $AC80
-		dc.l ArtNem_84890
+		dc.l Nem_84890
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93320,11 +93320,11 @@ PLC_36:		dc.w 4			; DATA XREF: ROM:00042660o
 ;Tornado
 ;---------------------------------------------------------------------------------------
 PLC_37:		dc.w 2			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_8CC44
+		dc.l Nem_8CC44
 		dc.w $A000
-		dc.l ArtNem_90520
+		dc.l Nem_90520
 		dc.w $AC20
-		dc.l ArtNem_8DAFC
+		dc.l Nem_8DAFC
 		dc.w $A9E0
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93332,7 +93332,7 @@ PLC_37:		dc.w 2			; DATA XREF: ROM:00042660o
 ;Egg Prison
 ;---------------------------------------------------------------------------------------
 PLC_38:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7BA32
+		dc.l Nem_7BA32
 		dc.w $D000
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93340,7 +93340,7 @@ PLC_38:		dc.w 0			; DATA XREF: ROM:00042660o
 ;Normal	explosion
 ;---------------------------------------------------------------------------------------
 PLC_39:		dc.w 0			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7B592
+		dc.l Nem_7B592
 		dc.w $B480
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93348,13 +93348,13 @@ PLC_39:		dc.w 0			; DATA XREF: ROM:00042660o
 ;Tails end of level results screen
 ;---------------------------------------------------------------------------------------
 PLC_3A:		dc.w 3			; DATA XREF: ROM:00042660o
-		dc.l ArtNem_7D22C
+		dc.l Nem_7D22C
 		dc.w $B000
-		dc.l ArtNem_7E86A
+		dc.l Nem_7E86A
 		dc.w $B600
-		dc.l ArtNem_7C2F2
+		dc.l Nem_7C2F2
 		dc.w $BE80
-		dc.l ArtNem_7EEBE
+		dc.l Nem_7EEBE
 		dc.w $A800
 ;---------------------------------------------------------------------------------------
 ;Curve and resistance mapping
@@ -93368,67 +93368,67 @@ ColArray1:		incbin	"collision/Collision array 1.bin"
 ColArray2:		incbin	"collision/Collision array 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;EHZ and HTZ primary 16x16 collision index (Kozinski compression)
+;EHZ and HTZ primary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColP_EHZHTZ:	incbin	"collision/EHZ and HTZ primary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;EHZ and HTZ secondary 16x16 collision index (Kozinski compression)
+;EHZ and HTZ secondary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColS_EHZHTZ:		incbin	"collision/EHZ and HTZ secondary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;MTZ primary 16x16 collision index (Kozinski compression)
+;MTZ primary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColP_MTZ:		incbin "collision/MTZ primary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;OOZ primary 16x16 collision index (Kozinski compression)
+;OOZ primary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColP_OOZ:		incbin	"collision/OOZ primary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;MCZ primary 16x16 collision index (Kozinski compression)
+;MCZ primary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColP_MCZ:		incbin	"collision/MCZ primary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;CNZ primary 16x16 collision index (Kozinski compression)
+;CNZ primary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColP_CNZ:		incbin	"collision/CNZ primary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;CNZ secondary 16x16 collision index (Kozinski compression)
+;CNZ secondary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColS_CNZ:		incbin	"collision/CNZ secondary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;CPZ and DEZ primary 16x16 collision index (Kozinski compression)
+;CPZ and DEZ primary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColP_CPZDEZ:		incbin	"collision/CPZ and DEZ primary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;CPZ and DEZ secondary 16x16 collision index (Kozinski compression)
+;CPZ and DEZ secondary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColS_CPZDEZ:		incbin	"collision/CPZ and DEZ secondary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;ARZ primary 16x16 collision index (Kozinski compression)
+;ARZ primary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColP_ARZ:		incbin	"collision/ARZ primary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;ARZ secondary 16x16 collision index (Kozinski compression)
+;ARZ secondary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColS_ARZ:		incbin	"collision/ARZ secondary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;WFZ/SCZ primary 16x16 collision index (Kozinski compression)
+;WFZ/SCZ primary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColP_WFZSCZ:		incbin	"collision/WFZ and SCZ primary 16x16 collision index.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;WFZ/SCZ secondary 16x16 collision index (Kozinski compression)
+;WFZ/SCZ secondary 16x16 collision index (Kosinski compression)
 ;---------------------------------------------------------------------------------------
 ColS_WFZSCZ:		incbin	"collision/WFZ and SCZ secondary 16x16 collision index.bin"
 		even
@@ -93474,507 +93474,340 @@ Off_Level:	dc.w Level_EHZ1-Off_Level; 0 ; DATA XREF: ROM:000049E8o
 		dc.w Level_SCZ-Off_Level; 32
 		dc.w Level_SCZ-Off_Level; 33
 ;---------------------------------------------------------------------------------------
-;EHZ act 1 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+; EHZ act 1 level layout (Kosinski compression)
 Level_EHZ1:		incbin	"level/layout/EHZ_1.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;EHZ act 2 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+; EHZ act 2 level layout (Kosinski compression)
 Level_EHZ2:		incbin	"level/layout/EHZ_2.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;MTZ act 1 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+; MTZ act 1 level layout (Kosinski compression)
 Level_MTZ1:		incbin  "level/layout/MTZ_1.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;MTZ act 2 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;MTZ act 2 level layout	(Kosinski compression)
 Level_MTZ2:		incbin  "level/layout/MTZ_2.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;MTZ act 3 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;MTZ act 3 level layout	(Kosinski compression)
 Level_MTZ3:		incbin	"level/layout/MTZ_3.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;WFZ level layout (Kozinski compression)
-;---------------------------------------------------------------------------------------
+;WFZ level layout (Kosinski compression)
 Level_WFZ:		incbin	"level/layout/WFZ.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;HTZ act 1 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;HTZ act 1 level layout	(Kosinski compression)
 Level_HTZ1:		incbin	"level/layout/HTZ_1.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;HTZ act 2 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;HTZ act 2 level layout	(Kosinski compression)
 Level_HTZ2:		incbin	"level/layout/HTZ_2.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;OOZ act 1 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;OOZ act 1 level layout	(Kosinski compression)
 Level_OOZ1:		incbin	"level/layout/OOZ_1.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;OOZ act 2 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;OOZ act 2 level layout	(Kosinski compression)
 Level_OOZ2:		incbin	"level/layout/OOZ_2.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;MCZ act 1 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;MCZ act 1 level layout	(Kosinski compression)
 Level_MCZ1:		incbin	"level/layout/MCZ_1.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;MCZ act 2 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;MCZ act 2 level layout	(Kosinski compression)
 Level_MCZ2:		incbin	"level/layout/MCZ_2.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;CNZ act 1 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;CNZ act 1 level layout	(Kosinski compression)
 Level_CNZ1:		incbin	"level/layout/CNZ_1.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;CNZ act 2 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;CNZ act 2 level layout	(Kosinski compression)
 Level_CNZ2:		incbin	"level/layout/CNZ_2.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;CPZ act 1 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;CPZ act 1 level layout	(Kosinski compression)
 Level_CPZ1:		incbin  "level/layout/CPZ_1.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;CPZ act 2 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;CPZ act 2 level layout	(Kosinski compression)
 Level_CPZ2:		incbin	"level/layout/CPZ_2.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;DEZ level layout (Kozinski compression)
-;---------------------------------------------------------------------------------------
+;DEZ level layout (Kosinski compression)
 Level_DEZ:		incbin	"level/layout/DEZ.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;ARZ act 1 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;ARZ act 1 level layout	(Kosinski compression)
 Level_ARZ1:		incbin	"level/layout/ARZ_1.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;ARZ act 2 level layout	(Kozinski compression)
-;---------------------------------------------------------------------------------------
+;ARZ act 2 level layout	(Kosinski compression)
 Level_ARZ2:		incbin	"level/layout/SCZ.bin"
-	even
+		even
 ;---------------------------------------------------------------------------------------
-;SCZ level layout (Kozinski compression)
-;---------------------------------------------------------------------------------------
+;SCZ level layout (Kosinski compression)
 Level_SCZ:		incbin	"level/layout/SCZ.bin"
-	even
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Animated flowers in EHZ and HTZ
-;---------------------------------------------------------------------------------------
-ArtUnc_49714:		incbin	"art/uncompressed/EHZ and HTZ flowers - 1.bin"
-ArtUnc_49794:		incbin	"art/uncompressed/EHZ and HTZ flowers - 2.bin"
-ArtUnc_49814:		incbin	"art/uncompressed/EHZ and HTZ flowers - 3.bin"
-ArtUnc_49894:		incbin	"art/uncompressed/EHZ and HTZ flowers - 4.bin"
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Pulsing thing against checkered backing from EHZ
-;---------------------------------------------------------------------------------------
-ArtUnc_49914:		incbin	"art/uncompressed/Pulsing ball against checkered background (EHZ).bin"
-;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;192 blocks
-;
-;Dynamically reloaded cliffs in	background from	HTZ
-;---------------------------------------------------------------------------------------
-ArtNem_49A14:		incbin	"art/nemesis/Dynamically reloaded cliffs in HTZ background.bin"
-	even
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Dynamically reloaded clouds in	background from	HTZ
-;---------------------------------------------------------------------------------------
-ArtUnc_4A33E:		incbin	"art/uncompressed/Background clouds (HTZ).bin"
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Spinning metal	cylinder patterns in MTZ
-;---------------------------------------------------------------------------------------
-ArtUnc_4A73E:		incbin	"art/uncompressed/Spinning metal cylinder (MTZ).bin"
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Lava patterns in MTZ and HTZ
-;---------------------------------------------------------------------------------------
-ArtUnc_4B73E:		incbin	"art/uncompressed/Lava.bin"
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Animated section of MTZ background
-;---------------------------------------------------------------------------------------
-ArtUnc_4BD3E:		incbin	"art/uncompressed/Animated section of MTZ background.bin"
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Pulsing ball in OOZ
-;---------------------------------------------------------------------------------------
-ArtUnc_4BF7E:		incbin	"art/uncompressed/Pulsing ball (OOZ).bin"
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Square	rotating around	ball in	OOZ
-;---------------------------------------------------------------------------------------
-ArtUnc_4C0FE:		incbin	"art/uncompressed/Square rotating around ball in OOZ - 1.bin"
-ArtUnc_4C2FE:		incbin	"art/uncompressed/Square rotating around ball in OOZ - 2.bin"
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Oil in	OOZ
-;---------------------------------------------------------------------------------------
-ArtUnc_4C4FE:		incbin	"art/uncompressed/Oil - 1.bin"
-ArtUnc_4CCFE:		incbin	"art/uncompressed/Oil - 2.bin"
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Flipping foreground section in	CNZ
-;---------------------------------------------------------------------------------------
-ArtUnc_4D4FE:		incbin	"art/uncompressed/Flipping foreground section (CNZ).bin"
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Bonus pictures	for pokie in CNZ
-;---------------------------------------------------------------------------------------
-ArtUnc_4EEFE:		incbin	"art/uncompressed/Slot pictures.bin"
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Animated background section in	CPZ and	DEZ
-;---------------------------------------------------------------------------------------
-ArtUnc_4FAFE:		incbin	"art/uncompressed/Animated background section (CPZ and DEZ).bin"
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Waterfall patterns from ARZ
-;---------------------------------------------------------------------------------------
-ArtUnc_4FCFE:	incbin	"art/uncompressed/ARZ waterfall patterns - 1.bin"
+		even
 
-ArtUnc_4FDFE:	incbin	"art/uncompressed/ARZ waterfall patterns - 2.bin"
 
-ArtUnc_4FEFE:	
-		incbin	"art/uncompressed/ARZ waterfall patterns - 2.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed graphics - Animated flowers in EHZ and HTZ 
+; ArtUnc_49714: ArtUnc_49794: ArtUnc_49814: ArtUnc_49894:
+Art_Flowers1:		incbin	"art/uncompressed/EHZ & HTZ Flowers - 1.bin"
+Art_Flowers2:		incbin	"art/uncompressed/EHZ & HTZ Flowers - 2.bin"
+Art_Flowers3:		incbin	"art/uncompressed/EHZ & HTZ Flowers - 3.bin"
+Art_Flowers4:		incbin	"art/uncompressed/EHZ & HTZ Flowers - 4.bin"
+;---------------------------------------------------------------------------------------
+;Uncompressed graphics - Pulsing thing against checkered backing from EHZ ; ArtUnc_49914:
+Art_EHZPulseBall:	incbin	"art/uncompressed/EHZ Pulsing Ball.bin"
+;---------------------------------------------------------------------------------------
+; Nemesis compressed graphics (192 blocks)
+; Dynamically reloaded cliffs in background from HTZ ; ArtNem_49A14: ArtUnc_HTZCliffs:
+Nem_HTZCliffs:	incbin	"art/nemesis/HTZ Background Cliffs.bin"
+		even
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Dynamically reloaded clouds in background from HTZ ; ArtUnc_4A33E:
+Art_HTZClouds:		incbin	"art/uncompressed/HTZ Background Clouds.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Spinning metal cylinder patterns in MTZ ; ArtUnc_4A73E:
+Art_MTZCylinder:	incbin	"art/uncompressed/MTZ Spinning Metal Cylinder.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Lava patterns in MTZ and HTZ  ; ArtUnc_4B73E:
+Art_Lava:	incbin	"art/uncompressed/HTZ & MTZ Lava.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Animated section of MTZ background ; ArtUnc_4BD3E:
+Art_MTZAnimBack:	incbin	"art/uncompressed/MTZ Animated Background.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Pulsing orb in HPZ
+;Art_HPZPulseOrb:	;incbin	"art/uncompressed/Pulsing orb (HPZ).bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Pulsing ball in OOZ   ; ArtUnc_4BF7E:
+Art_OOZPulseBall:	incbin	"art/uncompressed/OOZ Pulsing Ball.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Square rotating around ball in OOZ ; ArtUnc_4C0FE: ArtUnc_4C2FE:
+Art_OOZSquareBall1:	incbin	"art/uncompressed/OOZ Spinning Square & Ball - 1.bin"
+Art_OOZSquareBall2:	incbin	"art/uncompressed/OOZ Spinning Square & Ball - 2.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Oil in OOZ    ; ArtUnc_4C4FE: ArtUnc_4CCFE:
+Art_Oil1:	incbin	"art/uncompressed/OOZ Oil - 1.bin"
+Art_Oil2:	incbin	"art/uncompressed/OOZ Oil - 2.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Flipping foreground section in CNZ ; ArtUnc_4D4FE:
+Art_CNZFlipTiles:	incbin	"art/uncompressed/CNZ Flipping Foreground Panel.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+;Ppictures for slot machines in CNZ ; ArtUnc_4EEFE:
+Art_CNZSlotPics:	incbin	"art/uncompressed/CNZ Slot Pictures.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Animated background section in CPZ and DEZ ; ArtUnc_4FAFE:
+Art_CPZAnimBack:	incbin	"art/uncompressed/CPZ & DEZ Animated Background.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Animated background section in CPZ and DEZ ; ArtUnc_4FAFE:
+Art_Waterfall1:	incbin	"art/uncompressed/ARZ Waterfalls - 1.bin"
+Art_Waterfall2:	incbin	"art/uncompressed/ARZ Waterfalls - 2.bin"
+Art_Waterfall3:	incbin	"art/uncompressed/ARZ Waterfalls - 3.bin"
+;---------------------------------------------------------------------------------------
+; Uncompressed art
+; Patterns for Sonic  ; ArtUnc_50000:
 		align $20
+Art_Sonic:	incbin	"art/uncompressed/Sonic.bin"
 ;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Patterns for Sonic
-;---------------------------------------------------------------------------------------
-ArtUnc_50000:		
-		incbin	"art/uncompressed/Sonic's art.bin"
+; Uncompressed art
+; Patterns for Tails  ; ArtUnc_64320:
 		align $20
-;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Patterns for Tails
-;---------------------------------------------------------------------------------------
-ArtUnc_64320:		
-		incbin	"art/uncompressed/Tails's art.bin"
+Art_64320:	incbin	"art/uncompressed/Tails.bin"
 ; --------------------------------------------------------------------------------------
 ; Sprite Mappings
-;
-; Sonic
-; --------------------------------------------------------------------------------------
-MapUnc_6FBE0:		
-		include	"mappings/sprite/Sonic.asm"
+; Sonic			; MapUnc_6FBE0: SprTbl_Sonic:
+Map_Sonic:	include	"mappings/sprite/Sonic.asm"
 ; --------------------------------------------------------------------------------------
 ; Sprite Dynamic Pattern Reloading
-;
-; Sonic
+; Sonic DPLCs   		; MapRUnc_714E0:
+DPLC_Sonic:	include	"mappings/spriteDPLC/Sonic.asm"
 ; --------------------------------------------------------------------------------------
-MapRUnc_714E0:		
-		include	"mappings/spriteDPLC/Sonic.asm"
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 32 blocks
-; Bubble
-; --------------------------------------------------------------------------------------
-ArtNem_71D8E:		
-		incbin	"art/nemesis/Shield.bin"
+; Nemesis compressed art (32 blocks)
+; Shield			; ArtNem_71D8E:
+Nem_Shield:	incbin	"art/nemesis/Shield.bin"
 		even
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 34 blocks
-; Invincibility	stars
-; --------------------------------------------------------------------------------------
-ArtNem_71F14:		
-		incbin	"art/nemesis/Invincibility stars.bin"
+; Nemesis compressed art (34 blocks)
+; Invincibility stars		; ArtNem_71F14:
+Nem_Invinciblity_Stars:	incbin	"art/nemesis/Invincibility Stars.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Uncompressed art
-;
-; Splash in water
-; --------------------------------------------------------------------------------------
-ArtUnc_71FFC:		
-		incbin	"art/uncompressed/Splash and skid dust.bin"
+; Splash in water and dust from skidding	; ArtUnc_71FFC:
+Art_SplashAndDust:	incbin	"art/uncompressed/Water Splash & Skid Dust.bin"
 		even
 ; --------------------------------------------------------------------------------------
-; Uncompressed art
-;
-; Smoke	from dashing
-; --------------------------------------------------------------------------------------
-;ArtUnc_7287C:		incbin	art/uncomp~1/0X0728~1.BIN
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 14 blocks
-; Supersonic stars
-; --------------------------------------------------------------------------------------
-ArtNem_7393C:		
-		incbin "art/nemesis/Super Sonic stars.bin"
+; Nemesis compressed art (14 blocks)
+; Super Sonic stars		; ArtNem_7393C:
+Nem_SuperSonic_Stars:	incbin "art/nemesis/Super Sonic Stars.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Sprite Mappings
-;
-; Tails
-; --------------------------------------------------------------------------------------
-MapUnc_739E2:		
-		include	"mappings/sprite/Tails.asm"
+; Tails			; MapUnc_739E2:
+Map_Tails:	include	"mappings/sprite/Tails.asm"
 ; --------------------------------------------------------------------------------------
 ; Sprite Dynamic Pattern Reloading
-;
-; Tails
-; --------------------------------------------------------------------------------------
-MapRUnc_7446C:		
-		include	"mappings/spriteDPLC/Tails.asm"
+; Tails DPLCs	; MapRUnc_7446C:
+DPLC_Tails:	include	"mappings/spriteDPLC/Tails.asm"
 		even
 ; -------------------------------------------------------------------------------------
-; Nemesis compressed art
-; 
-; 127 blocks
-; "SEGA" Patterns
-; -------------------------------------------------------------------------------------
-ArtNem_74876:		
-		incbin	"art/nemesis/SEGA.bin"
+; Nemesis compressed art (127 blocks)
+; "SEGA" Patterns	; ArtNem_74876:
+Nem_Sega:	incbin	"art/nemesis/SEGA.bin"
 		even
 ; -------------------------------------------------------------------------------------
-; Nemesis compressed art
-; 
-; 9 blocks
-; Shaded blocks	from intro
-; -------------------------------------------------------------------------------------
-ArtNem_74CF6:		incbin	"art/nemesis/Shaded blocks from intro.bin"
+; Nemesis compressed art (9 blocks)
+; Shaded blocks from intro	; ArtNem_74CF6:
+Nem_IntroTrails:incbin	"art/nemesis/Sega Screen Trails.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Enigma	compressed art mappings
-;
-;"SEGA"	mappings
-;---------------------------------------------------------------------------------------
-MapEng_74D0E:		incbin	"mappings/misc/SEGA mappings.bin"
+; Enigma compressed art mappings
+; SEGA logo mappings		; MapEng_74D0E:
+Eni_SEGA:	incbin	"mappings/misc/SEGA Logo.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Enigma	compressed art mappings
-;
-;Mappings for title screen background
-;---------------------------------------------------------------------------------------
-MapEng_74DC6:		
-		incbin	"mappings/misc/Mappings for title screen background.bin"
+; Enigma compressed art mappings
+; Mappings for title screen background	; ArtNem_74DC6:
+Eni_TitleScreen: incbin	"mappings/misc/Title Screen Background 1.bin"
 		even
 ; --------------------------------------------------------------------------------------
-; Enigma compressed art	mappings
-;
-; Unknown mappings
-; --------------------------------------------------------------------------------------
-MapEng_74E3A:		
-		incbin	"mappings/misc/Mappings for title screen background 2.bin"
+; Enigma compressed art mappings
+; Mappings for title screen background (smaller part, water/horizon)	; MapEng_74E3A:
+Eni_TitleBack:	incbin	"mappings/misc/Title Screen Background 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Enigma	compressed art mappings
-;
-;"Sonic	the Hedgehog 2"	title screen logo mappings
-;---------------------------------------------------------------------------------------
-MapEng_74E86:		
-		incbin	"mappings/misc/Sonic the Hedgehog 2 title screen logo mappings.bin"
+; Enigma compressed art mappings
+; "Sonic the Hedgehog 2" title screen logo mappings	; MapEng_74E86:
+Eni_TitleLogo:	incbin	"mappings/misc/Title Screen Logo.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;336 blocks
-;Main patterns from title screen
-;---------------------------------------------------------------------------------------
-ArtNem_74F6C:		incbin	"art/nemesis/Main patterns from title screen.bin"
+; Nemesis compressed art (336 blocks)
+; Main patterns from title screen	; ArtNem_74F6C:
+Nem_Title:	incbin	"art/nemesis/Title Screen Patterns.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;674 blocks
-;Sonic and tails from title screen 
-;---------------------------------------------------------------------------------------
-ArtNem_7667A:		incbin	"art/nemesis/Sonic and Tails from title screen.bin"
+; Nemesis compressed art (674 blocks)
+; Sonic and Tails from title screen	; ArtNem_7667A:
+Nem_TitleSprites:	incbin	"art/nemesis/Title Screen Sonic & Tails.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;10 blocks
-;A few menu patterns
-;---------------------------------------------------------------------------------------
-ArtNem_78CBC:		incbin	"art/nemesis/A few menu blocks.bin"
+; Nemesis compressed art (10 blocks)
+; A few menu patterns	; ArtNem_78CBC:
+Nem_MenuJunk:	incbin	"art/nemesis/Menu Blocks.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;16 blocks
-;Button
-;---------------------------------------------------------------------------------------
-ArtNem_78DAC:		incbin	"art/nemesis/Button.bin"
+; Nemesis compressed art (16 blocks)
+; Button			ArtNem_78DAC:
+Nem_Button:	incbin	"art/nemesis/Button.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;20 blocks
-;Vertical Spring
-;---------------------------------------------------------------------------------------
-ArtNem_78E84:		incbin	"art/nemesis/Vertical spring.bin"
+; Nemesis compressed art (20 blocks)
+; Vertical Spring		ArtNem_78E84:
+Nem_VrtclSprng:	incbin	"art/nemesis/Vertical Spring.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;12 blocks
-;Horizontal spring
-;---------------------------------------------------------------------------------------
-ArtNem_78FA0:		incbin	"art/nemesis/Horizontal spring.bin"
+; Nemesis compressed art (12 blocks)
+; Horizontal spring		ArtNem_78FA0:
+Nem_HrzntlSprng: incbin	"art/nemesis/Horizontal Spring.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;32 blocks
-;Diagonal spring
-;---------------------------------------------------------------------------------------
-ArtNem_7906A:		incbin	"art/nemesis/Diagonal spring.bin"
+; Nemesis compressed art (32 blocks)
+; Diagonal spring		ArtNem_7906A:
+Nem_DignlSprng:	incbin	"art/nemesis/Diagonal Spring.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;24 blocks
-;Score,	Rings, Time patterns 
-;---------------------------------------------------------------------------------------
-ArtNem_7923E:		incbin	"art/nemesis/HUD.bin"
+; Nemesis compressed art (24 blocks)
+; Score, Rings, Time patterns	ArtNem_7923E:
+Nem_HUD:	incbin	"art/nemesis/HUD.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;12 blocks
-;Sonic lives counter
-;---------------------------------------------------------------------------------------
-ArtNem_79346:		incbin	"art/nemesis/Sonic lives counter.bin"
+; Nemesis compressed art (12 blocks)
+; Sonic lives counter		ArtNem_79346:
+Nem_Sonic_Life_Counter:	incbin	"art/nemesis/Sonic Lives Counter.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;14 blocks
-;Ring
+; Nemesis compressed art (14 blocks)
+; Ring				ArtNem_7945C:
+Nem_Ring:	incbin	"art/nemesis/Ring.bin"
 ;---------------------------------------------------------------------------------------
-ArtNem_7945C:		incbin	"art/nemesis/Ring.bin"
-;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;60 blocks
-;Monitors and contents
-;---------------------------------------------------------------------------------------
-ArtNem_79550:		incbin	"art/nemesis/Monitor and contents.bin"
+; Nemesis compressed art (60 blocks)
+; Monitors and contents		ArtNem_79550:  Nem_Monitors_and_PowerUps:
+Nem_Monitors_and_PowerUps:	incbin	"art/nemesis/Monitors & Monitor Contents.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;8 blocks
-;Spikes
-;---------------------------------------------------------------------------------------
-ArtNem_7995C:		incbin	"art/nemesis/Spikes.bin"
+; Nemesis compressed art (8 blocks)
+; Spikes			ArtNem_7995C:
+Nem_Spikes:	incbin	"art/nemesis/Spikes.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;18 blocks
-;Numbers
-;---------------------------------------------------------------------------------------
-ArtNem_799AC:		incbin	"art/nemesis/Numbers.bin"
+; Nemesis compressed art (18 blocks)
+; Numbers			ArtNem_799AC:
+Nem_Numbers:	incbin	"art/nemesis/Numbers.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;16 blocks
-;Star pole
-;---------------------------------------------------------------------------------------
-ArtNem_79A86:		incbin	"art/nemesis/Star pole.bin"
+; Nemesis compressed art (16 blocks)
+; Star pole			ArtNem_79A86:
+Nem_Checkpoint:	incbin	"art/nemesis/Star Pole.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;78 blocks
-;Signpost
-;---------------------------------------------------------------------------------------
-ArtNem_79BDE:		incbin	"art/nemesis/Signpost.bin"
+; Nemesis compressed art (78 blocks)
+; Signpost		; ArtNem_79BDE:
+Nem_Signpost:	incbin	"art/nemesis/Signpost.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Signpost
-;---------------------------------------------------------------------------------------
-ArtUnc_7A18A:		incbin	"art/uncompressed/Signpost.bin"
+; Uncompressed art
+; Signpost		; ArtUnc_7A18A:
+; Yep, it's in the ROM twice: once compressed and once uncompressed
+Art_Signpost:	incbin	"art/uncompressed/Signpost.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;28 blocks
-;Lever spring
-;---------------------------------------------------------------------------------------
-ArtNem_7AB4A:		incbin	"art/nemesis/Lever spring.bin"
+; Nemesis compressed art (28 blocks)
+; Lever spring		; ArtNem_7AB4A:
+Nem_LeverSpring:	incbin	"art/nemesis/Diving Board Spring.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;8 blocks
-;Long horizontal spike
-;---------------------------------------------------------------------------------------
-ArtNem_7AC9A:		incbin	"art/nemesis/Long horizontal spike.bin"
+; Nemesis compressed art (8 blocks)
+; Long horizontal spike		; ArtNem_7AC9A:
+Nem_HorizSpike:	incbin	"art/nemesis/Long Horizontal Spike.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;24 blocks
-;Bubble	thing from underwater
-;---------------------------------------------------------------------------------------
-ArtNem_7AD16:		incbin	"art/nemesis/Bubble generator.bin"
+; Nemesis compressed art (24 blocks)
+; Bubble thing from underwater	; ArtNem_7AD16: ArtNem_BigBubbles:
+Nem_BubbleGenerator:incbin	"art/nemesis/ARZ Bubble Generator.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;10 blocks
-;Bubbles from character
-;---------------------------------------------------------------------------------------
-ArtNem_7AEE2:		incbin	"art/nemesis/Bubbles.bin"
+; Nemesis compressed art (10 blocks)
+; Bubbles from character	ArtNem_7AEE2:
+Nem_Bubbles: incbin	"art/nemesis/Bubbles.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Uncompressed art
-;
-;Countdown text	for drowning
-;---------------------------------------------------------------------------------------
-ArtUnc_7AF80:		incbin	"art/uncompressed/Numbers for drowning countdown.bin"
+; Uncompressed art
+; Countdown text for drowning	; ArtUnc_7AF80:
+Art_Countdown:	incbin	"art/uncompressed/Drowning Countdown Numbers.bin"
 		even
 ;---------------------------------------------------------------------------------------
-;Nemesis compressed art
-;
-;34 blocks
-;Game/Time over	text
-;---------------------------------------------------------------------------------------
-ArtNem_7B400:		incbin	"art/nemesis/Game and Time Over text.bin"
+; Nemesis compressed art (34 blocks)
+; Game/Time over text		ArtNem_7B400:
+Nem_Game_Over:	incbin	"art/nemesis/Game Over & Time Over Text.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -93982,7 +93815,7 @@ ArtNem_7B400:		incbin	"art/nemesis/Game and Time Over text.bin"
 ;68 blocks
 ;Explosion
 ;---------------------------------------------------------------------------------------
-ArtNem_7B592:		incbin	"art/nemesis/Explosion.bin"
+Nem_7B592:		incbin	"art/nemesis/Explosion.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -93990,7 +93823,7 @@ ArtNem_7B592:		incbin	"art/nemesis/Explosion.bin"
 ;12 blocks
 ;Miles life counter
 ;---------------------------------------------------------------------------------------
-ArtNem_7B946:		incbin	"art/nemesis/Miles life counter.bin"
+Nem_7B946:		incbin	"art/nemesis/Miles Life Counter.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -93998,12 +93831,12 @@ ArtNem_7B946:		incbin	"art/nemesis/Miles life counter.bin"
 ;49 blocks
 ;Egg prison
 ;---------------------------------------------------------------------------------------
-ArtNem_7BA32:		incbin	"art/nemesis/Egg Prison.bin"
+Nem_7BA32:		incbin	"art/nemesis/Egg Prison.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (36 blocks)
-; Tails on the continue screen (nagging Sonic)	; ArtNem_7BDBE:
-ArtNem_7BDBE:		incbin	"art/nemesis/Tails on continue screen.bin"
+; Tails on the continue screen (nagging Sonic)	; Nem_7BDBE:
+Nem_7BDBE:		incbin	"art/nemesis/Continue Screen Tails.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94011,7 +93844,7 @@ ArtNem_7BDBE:		incbin	"art/nemesis/Tails on continue screen.bin"
 ;12 blocks
 ;Sonic continue
 ;---------------------------------------------------------------------------------------
-ArtNem_7C0AA:		incbin	"art/nemesis/Sonic continue.bin"
+Nem_7C0AA:		incbin	"art/nemesis/Sonic Continue Icon.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94019,7 +93852,7 @@ ArtNem_7C0AA:		incbin	"art/nemesis/Sonic continue.bin"
 ;12 blocks
 ;Tails life counter
 ;---------------------------------------------------------------------------------------
-ArtNem_7C20C:		incbin	"art/nemesis/Tails life counter.bin"
+Nem_7C20C:		incbin	"art/nemesis/Tails Life Counter.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94027,7 +93860,7 @@ ArtNem_7C20C:		incbin	"art/nemesis/Tails life counter.bin"
 ;12 blocks
 ;Tails continue
 ;---------------------------------------------------------------------------------------
-ArtNem_7C2F2:		incbin	"art/nemesis/Tails continue.bin"
+Nem_7C2F2:		incbin	"art/nemesis/Tails Continue Icon.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94035,7 +93868,7 @@ ArtNem_7C2F2:		incbin	"art/nemesis/Tails continue.bin"
 ;88 blocks
 ;Standard font
 ;---------------------------------------------------------------------------------------
-ArtNem_7C43A:		incbin	"art/nemesis/Standard font.bin"
+Nem_7C43A:		incbin	"art/nemesis/Standard font.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94043,21 +93876,21 @@ ArtNem_7C43A:		incbin	"art/nemesis/Standard font.bin"
 ;38 blocks
 ;1P/2P wins text from 2P mode
 ;---------------------------------------------------------------------------------------
-ArtNem_7C9AE:		incbin	"art/nemesis/1P and 2P wins text from 2P mode.bin"
+Nem_7C9AE:		incbin	"art/nemesis/1P and 2P wins text from 2P mode.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Enigma	compressed art mappings
 ;
 ;Sonic/Miles animated background mappings
 ;---------------------------------------------------------------------------------------
-MapEng_7CB80:		incbin	"mappings/misc/Sonic and Miles animated background.bin"
+Eni_7CB80:		incbin	"mappings/misc/Sonic and Miles animated background.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Uncompressed art
 ;
 ;Sonic/Miles animated background patterns
 ;---------------------------------------------------------------------------------------
-ArtUnc_7CD2C:		incbin	"art/uncompressed/Sonic and Miles animated background.bin"
+Art_7CD2C:		incbin	"art/uncompressed/Sonic and Miles animated background.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94065,7 +93898,7 @@ ArtUnc_7CD2C:		incbin	"art/uncompressed/Sonic and Miles animated background.bin"
 ;94 blocks
 ;Title card patterns
 ;---------------------------------------------------------------------------------------
-ArtNem_7D22C:		incbin	"art/nemesis/Title card.bin"
+Nem_7D22C:		incbin	"art/nemesis/Title card.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94073,7 +93906,7 @@ ArtNem_7D22C:		incbin	"art/nemesis/Title card.bin"
 ; 92 blocks
 ; Alphabet for font using large	broken letters
 ; --------------------------------------------------------------------------------------
-ArtNem_7D58A:		incbin	"art/nemesis/Font using large broken letters.bin"
+Nem_7D58A:		incbin	"art/nemesis/Font using large broken letters.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94081,7 +93914,7 @@ ArtNem_7D58A:		incbin	"art/nemesis/Font using large broken letters.bin"
 ;21 blocks
 ;A menu	box with a shadow
 ;---------------------------------------------------------------------------------------
-ArtNem_7D990:		incbin	"art/nemesis/A menu box with a shadow.bin"
+Nem_7D990:		incbin	"art/nemesis/A menu box with a shadow.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94089,7 +93922,7 @@ ArtNem_7D990:		incbin	"art/nemesis/A menu box with a shadow.bin"
 ;170 blocks
 ;Pictures in level preview box in level	select
 ;---------------------------------------------------------------------------------------
-ArtNem_7DA10:		incbin	"art/nemesis/Pictures in level preview box from level select.bin"
+Nem_7DA10:		incbin	"art/nemesis/Pictures in level preview box from level select.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94097,7 +93930,7 @@ ArtNem_7DA10:		incbin	"art/nemesis/Pictures in level preview box from level sele
 ;68 blocks
 ;Unknown. More text I haven't figured out
 ;---------------------------------------------------------------------------------------
-ArtNem_7E86A:		incbin	"art/nemesis/End of level results text.bin"
+Nem_7E86A:		incbin	"art/nemesis/End of level results text.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94105,7 +93938,7 @@ ArtNem_7E86A:		incbin	"art/nemesis/End of level results text.bin"
 ;72 blocks
 ;Text for end of special stage,	along with patterns for	3 emeralds.
 ;---------------------------------------------------------------------------------------
-ArtNem_7EB58:		incbin	"art/nemesis/Special stage results screen art and some emeralds.bin"
+Nem_7EB58:		incbin	"art/nemesis/Special stage results screen art and some emeralds.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94113,7 +93946,7 @@ ArtNem_7EB58:		incbin	"art/nemesis/Special stage results screen art and some eme
 ;14 blocks
 ;"Perfect" text
 ;---------------------------------------------------------------------------------------
-ArtNem_7EEBE:		incbin	"art/nemesis/Perfect text.bin"
+Nem_7EEBE:		incbin	"art/nemesis/Perfect text.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94121,7 +93954,7 @@ ArtNem_7EEBE:		incbin	"art/nemesis/Perfect text.bin"
 ;16 blocks
 ;Bluebird
 ;---------------------------------------------------------------------------------------
-ArtNem_7EF60:		incbin	"art/nemesis/Flicky.bin"
+Nem_7EF60:		incbin	"art/nemesis/Flicky.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94129,7 +93962,7 @@ ArtNem_7EF60:		incbin	"art/nemesis/Flicky.bin"
 ;20 blocks
 ;Squirrel
 ;---------------------------------------------------------------------------------------
-ArtNem_7F0A2:		incbin	"art/nemesis/Squirrel.bin"
+Nem_7F0A2:		incbin	"art/nemesis/Squirrel.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94137,7 +93970,7 @@ ArtNem_7F0A2:		incbin	"art/nemesis/Squirrel.bin"
 ;16 blocks
 ;Mouse
 ;---------------------------------------------------------------------------------------
-ArtNem_7F206:		incbin	"art/nemesis/Mouse.bin"
+Nem_7F206:		incbin	"art/nemesis/Mouse.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94145,7 +93978,7 @@ ArtNem_7F206:		incbin	"art/nemesis/Mouse.bin"
 ;16 blocks
 ;Chicken
 ;---------------------------------------------------------------------------------------
-ArtNem_7F340:		incbin	"art/nemesis/Chicken.bin"
+Nem_7F340:		incbin	"art/nemesis/Chicken.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94153,7 +93986,7 @@ ArtNem_7F340:		incbin	"art/nemesis/Chicken.bin"
 ;20 blocks
 ;Beaver
 ;---------------------------------------------------------------------------------------
-ArtNem_7F4A2:		incbin	"art/nemesis/Beaver.bin"
+Nem_7F4A2:		incbin	"art/nemesis/Beaver.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94161,7 +93994,7 @@ ArtNem_7F4A2:		incbin	"art/nemesis/Beaver.bin"
 ;16 blocks
 ;Penguin
 ;---------------------------------------------------------------------------------------
-ArtNem_7F5E2:		incbin	"art/nemesis/Penguin.bin"
+Nem_7F5E2:		incbin	"art/nemesis/Penguin.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94169,7 +94002,7 @@ ArtNem_7F5E2:		incbin	"art/nemesis/Penguin.bin"
 ;10 blocks
 ;Pig
 ;---------------------------------------------------------------------------------------
-ArtNem_7F710:		incbin	"art/nemesis/Pig.bin"
+Nem_7F710:		incbin	"art/nemesis/Pig.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94177,7 +94010,7 @@ ArtNem_7F710:		incbin	"art/nemesis/Pig.bin"
 ;14 blocks
 ;Seal
 ;---------------------------------------------------------------------------------------
-ArtNem_7F846:		incbin	"art/nemesis/Seal.bin"
+Nem_7F846:		incbin	"art/nemesis/Seal.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94185,7 +94018,7 @@ ArtNem_7F846:		incbin	"art/nemesis/Seal.bin"
 ;18 blocks
 ;Penguin
 ;---------------------------------------------------------------------------------------
-ArtNem_7F962:		incbin	"art/nemesis/Penguin 2.bin"
+Nem_7F962:		incbin	"art/nemesis/Penguin 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94193,7 +94026,7 @@ ArtNem_7F962:		incbin	"art/nemesis/Penguin 2.bin"
 ;20 blocks
 ;Turtle
 ;---------------------------------------------------------------------------------------
-ArtNem_7FADE:		incbin	"art/nemesis/Turtle.bin"
+Nem_7FADE:		incbin	"art/nemesis/Turtle.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94201,7 +94034,7 @@ ArtNem_7FADE:		incbin	"art/nemesis/Turtle.bin"
 ;20 blocks
 ;Bears
 ;---------------------------------------------------------------------------------------
-ArtNem_7FC90:		incbin	"art/nemesis/Bear.bin"
+Nem_7FC90:		incbin	"art/nemesis/Bear.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94209,7 +94042,7 @@ ArtNem_7FC90:		incbin	"art/nemesis/Bear.bin"
 ;18 blocks
 ;Rabbit
 ;---------------------------------------------------------------------------------------
-ArtNem_7FDD2:		incbin	"art/nemesis/Rabbit.bin"
+Nem_7FDD2:		incbin	"art/nemesis/Rabbit.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94217,7 +94050,7 @@ ArtNem_7FDD2:		incbin	"art/nemesis/Rabbit.bin"
 ;4 blocks
 ;Rivet thing that you bust to get inside ship at the end of WFZ
 ;---------------------------------------------------------------------------------------
-ArtNem_7FF2A:		incbin	"art/nemesis/WFZ boss chamber switch.bin"
+Nem_7FF2A:		incbin	"art/nemesis/WFZ boss chamber switch.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94225,7 +94058,7 @@ ArtNem_7FF2A:		incbin	"art/nemesis/WFZ boss chamber switch.bin"
 ; 15 blocks
 ; Breakaway panels in WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_7FF98:		incbin	"art/nemesis/Breakaway panels from WFZ.bin"
+Nem_7FF98:		incbin	"art/nemesis/Breakaway panels from WFZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94233,7 +94066,7 @@ ArtNem_7FF98:		incbin	"art/nemesis/Breakaway panels from WFZ.bin"
 ; 32 blocks
 ; Spiked ball from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8007C:		incbin	"art/nemesis/Spiked ball from OOZ.bin"
+Nem_8007C:		incbin	"art/nemesis/Spiked ball from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94241,7 +94074,7 @@ ArtNem_8007C:		incbin	"art/nemesis/Spiked ball from OOZ.bin"
 ; 6 blocks
 ; Unknown. HPZ style shaded blocks
 ; --------------------------------------------------------------------------------------
-ArtNem_80274:		incbin	"art/nemesis/Burner Platform from OOZ.bin"
+Nem_80274:		incbin	"art/nemesis/Burner Platform from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94249,7 +94082,7 @@ ArtNem_80274:		incbin	"art/nemesis/Burner Platform from OOZ.bin"
 ; 4 blocks
 ; Striped blocks from CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8030A:		incbin	"art/nemesis/Striped blocks from CPZ.bin"
+Nem_8030A:		incbin	"art/nemesis/Striped blocks from CPZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94257,15 +94090,15 @@ ArtNem_8030A:		incbin	"art/nemesis/Striped blocks from CPZ.bin"
 ; 16 blocks
 ; Oil falling into oil in OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_80376:		incbin	"art/nemesis/Cascading oil hitting oil from OOZ.bin"
+Nem_80376:		incbin	"art/nemesis/Cascading oil hitting oil from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 13 blocks
-; Cascading oild from OOZ
+; Cascading oil from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_804F2:		incbin	"art/nemesis/Cascading oil from OOZ.bin"
+Nem_804F2:		incbin	"art/nemesis/Cascading oil from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94273,7 +94106,7 @@ ArtNem_804F2:		incbin	"art/nemesis/Cascading oil from OOZ.bin"
 ; 20 blocks
 ; Ball on spring from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_805C0:		incbin	"art/nemesis/Ball on spring from OOZ (beta holdovers).bin"
+Nem_805C0:		incbin	"art/nemesis/Ball on spring from OOZ (beta holdovers).bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94281,7 +94114,7 @@ ArtNem_805C0:		incbin	"art/nemesis/Ball on spring from OOZ (beta holdovers).bin"
 ; 53 blocks
 ; Spinball from	OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_806E0:		incbin	"art/nemesis/Transporter ball from OOZ.bin"
+Nem_806E0:		incbin	"art/nemesis/Transporter ball from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94289,7 +94122,7 @@ ArtNem_806E0:		incbin	"art/nemesis/Transporter ball from OOZ.bin"
 ; 40 blocks
 ; Collapsing platform from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_809D0:		incbin	"art/nemesis/OOZ collapsing platform.bin"
+Nem_809D0:		incbin	"art/nemesis/OOZ collapsing platform.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94297,7 +94130,7 @@ ArtNem_809D0:		incbin	"art/nemesis/OOZ collapsing platform.bin"
 ; 30 blocks
 ; Diagonal and vertical	weird spring from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_80C64:		incbin	"art/nemesis/Push spring from OOZ.bin"
+Nem_80C64:		incbin	"art/nemesis/Push spring from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94305,13 +94138,13 @@ ArtNem_80C64:		incbin	"art/nemesis/Push spring from OOZ.bin"
 ; 28 blocks
 ; Swinging platform from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_80E26:		incbin	"art/nemesis/Swinging platform from OOZ.bin"
+Nem_80E26:		incbin	"art/nemesis/Swinging platform from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
-; 4 stripy blocks from OOZ	; ArtNem_81048:
+; 4 stripy blocks from OOZ	; Nem_81048:
 ; --------------------------------------------------------------------------------------
-ArtNem_81048:		incbin	"art/nemesis/4 stripy blocks from OOZ.bin"
+Nem_81048:		incbin	"art/nemesis/4 stripy blocks from OOZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94319,482 +94152,486 @@ ArtNem_81048:		incbin	"art/nemesis/4 stripy blocks from OOZ.bin"
 ; 24 blocks
 ; Raising platform from	OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_810B8:		incbin	art\nemesis\0X0810~2.BIN
+Nem_810B8:		incbin	art\nemesis\0X0810~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 30 blocks
 ; Fan in OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_81254:		incbin	art\nemesis\0X0812~1.BIN
+Nem_81254:		incbin	art\nemesis\0X0812~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 18 blocks
 ; Green	flame thing that shoots	platform up in OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_81514:		incbin	art\nemesis\0X0815~1.BIN
+Nem_81514:		incbin	art\nemesis\0X0815~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 4 blocks
 ; Patterns for appearing and disappearing string of platforms in CNZ
 ; --------------------------------------------------------------------------------------
-ArtNem_81600:		incbin	art\nemesis\0X0816~1.BIN
+Nem_81600:		incbin	art\nemesis\0X0816~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 4 blocks
 ; Spikey ball from pokie in CNZ
 ; --------------------------------------------------------------------------------------
-ArtNem_81668:		incbin	art\nemesis\0X0816~2.BIN
+Nem_81668:		incbin	art\nemesis\0X0816~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 16 blocks
 ; Moving cube from either CNZ or CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_816C8:		incbin	art\nemesis\0X0816~3.BIN
+Nem_816C8:		incbin	art\nemesis\0X0816~3.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 4 blocks
 ; Elevator in CNZ
 ; --------------------------------------------------------------------------------------
-ArtNem_817B4:		incbin	art\nemesis\0X0817~1.BIN
+Nem_817B4:		incbin	art\nemesis\0X0817~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 12 blocks
 ; Bars from pokies in CNZ
 ; --------------------------------------------------------------------------------------
-ArtNem_81826:		incbin	art\nemesis\0X0818~1.BIN
+Nem_81826:		incbin	art\nemesis\0X0818~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 6 blocks
 ; Hexagonal bumper in CNZ
 ; --------------------------------------------------------------------------------------
-ArtNem_81894:		incbin	art\nemesis\0X0818~2.BIN
+Nem_81894:		incbin	art\nemesis\0X0818~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 24 blocks
 ; Normal round bumper from CNZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8191E:		incbin	art\nemesis\0X0819~1.BIN
+Nem_8191E:		incbin	art\nemesis\0X0819~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 32 blocks
 ; Diagonal spring from CNZ that	you charge up
 ; --------------------------------------------------------------------------------------
-ArtNem_81AB0:		incbin	art\nemesis\0X081A~1.BIN
+Nem_81AB0:		incbin	art\nemesis\0X081A~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 18 blocks
 ; Vertical red spring
 ; --------------------------------------------------------------------------------------
-ArtNem_81C96:		incbin	art\nemesis\0X081C~1.BIN
+Nem_81C96:		incbin	art\nemesis\0X081C~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 28 blocks
 ; Weird	blocks from CNZ	that you hit 3 times to	get rid	of
 ; --------------------------------------------------------------------------------------
-ArtNem_81DCC:		incbin	art\nemesis\0X081D~1.BIN
+Nem_81DCC:		incbin	art\nemesis\0X081D~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 52 blocks
 ; Flippers from	CNZ
 ; --------------------------------------------------------------------------------------
-ArtNem_81EF2:		incbin	art\nemesis\0X081E~1.BIN
+Nem_81EF2:		incbin	art\nemesis\0X081E~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 16 blocks
 ; Large	moving platform	from CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_82216:		incbin	art\nemesis\0X0822~1.BIN
+Nem_82216:		incbin	art\nemesis\0X0822~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 24 blocks
 ; Top of water in HPZ and CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_82364:		incbin	art\nemesis\0X0823~1.BIN
+Nem_82364:		incbin	art\nemesis\0X0823~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 4 blocks
 ; Booster things in CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_824D4:		incbin	art\nemesis\0X0824~1.BIN
+Nem_824D4:		incbin	art\nemesis\0X0824~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 4 blocks
 ; CPZ enemy made up of a string	of balls
 ; --------------------------------------------------------------------------------------
-ArtNem_8253C:		incbin	art\nemesis\0X0825~1.BIN
+Nem_8253C:		incbin	art\nemesis\0X0825~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 33 blocks
 ; CPZ metal things
 ; --------------------------------------------------------------------------------------
-ArtNem_825AE:		incbin	art\nemesis\0X0825~2.BIN
+Nem_825AE:		incbin	art\nemesis\0X0825~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 4 blocks
 ; CPZ large moving platform blocks
 ; --------------------------------------------------------------------------------------
-ArtNem_827B8:		incbin	art\nemesis\0X0827~1.BIN
+Nem_827B8:		incbin	art\nemesis\0X0827~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 8 blocks
 ; Stripy blocks	from CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_827F8:		incbin	art\nemesis\0X0827~2.BIN
+Nem_827F8:		incbin	art\nemesis\0X0827~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 48 blocks
 ; Small	yellow moving platform from CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_82864:		incbin	art\nemesis\0X0828~1.BIN
+Nem_82864:		incbin	art\nemesis\0X0828~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 24 blocks
 ; Moving block from CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_82A46:		incbin	art\nemesis\0X082A~1.BIN
+Nem_82A46:		incbin	art\nemesis\0X082A~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 32 blocks
 ; Spring that covers tube in CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_82C06:		incbin	art\nemesis\0X082C~1.BIN
+Nem_82C06:		incbin	art\nemesis\0X082C~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 16 blocks
 ; Top of water in ARZ
 ; --------------------------------------------------------------------------------------
-ArtNem_82E02:		incbin	art\nemesis\0X082E~1.BIN
+Nem_82E02:		incbin	art\nemesis\0X082E~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 7 blocks
 ; Leaves from ARZ
 ; --------------------------------------------------------------------------------------
-ArtNem_82EE8:		incbin	art\nemesis\0X082E~2.BIN
+Nem_82EE8:		incbin	art\nemesis\0X082E~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 17 blocks
 ; Arrow	shooter	and arrow from ARZ
 ; --------------------------------------------------------------------------------------
-ArtNem_82F74:		incbin	art\nemesis\0X082F~1.BIN
+Nem_82F74:		incbin	art\nemesis\0X082F~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 8 blocks
 ; One way barrier from ARZ
 ; --------------------------------------------------------------------------------------
-ArtNem_830D2:		incbin	art\nemesis\0X0830~1.BIN
+Nem_830D2:		incbin	art\nemesis\0X0830~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 28 blocks
 ; Buzz bomber
 ; --------------------------------------------------------------------------------------
-ArtNem_8316A:		incbin	art\nemesis\0X0831~1.BIN
+Nem_8316A:		incbin	art\nemesis\0X0831~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 58 blocks
 ; Octopus badnick from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8336A:		incbin	art\nemesis\0X0833~1.BIN
+Nem_8336A:		incbin	art\nemesis\0X0833~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 56 blocks
 ; Flying badnick from OOZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8368A:		incbin	art\nemesis\0X0836~1.BIN
+Nem_8368A:		incbin	art\nemesis\0X0836~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 22 blocks
 ; Fish badnick from EHZ
 ; --------------------------------------------------------------------------------------
-ArtNem_839EA:		incbin	art\nemesis\0X0839~1.BIN
+Nem_839EA:		incbin	art\nemesis\0X0839~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 96 blocks
 ; Robotnic's main ship
 ; --------------------------------------------------------------------------------------
-ArtNem_83BF6:		incbin	art\nemesis\0X083B~1.BIN
+Nem_83BF6:		incbin	art\nemesis\0X083B~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 111 blocks
 ; CPZ Boss
 ; --------------------------------------------------------------------------------------
-ArtNem_84332:		incbin	art\nemesis\0X0843~1.BIN
+Nem_84332:		incbin	art\nemesis\0X0843~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 100 blocks
 ; Large	explosion
 ; --------------------------------------------------------------------------------------
-ArtNem_84890:		incbin	art\nemesis\0X0848~1.BIN
+Nem_84890:		incbin	art\nemesis\0X0848~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 8 blocks
 ; Mini explosion
 ; --------------------------------------------------------------------------------------
-ArtNem_84F18:		incbin	art\nemesis\0X084F~1.BIN
+Nem_84F18:		incbin	art\nemesis\0X084F~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 16 blocks
 ; Unknown. Trail Of smoke of some kind.
 ; --------------------------------------------------------------------------------------
-ArtNem_84F96:		incbin	art\nemesis\0X084F~2.BIN
+Nem_84F96:		incbin	art\nemesis\0X084F~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 128 blocks
 ; EHZ Boss
 ; --------------------------------------------------------------------------------------
-ArtNem_8507C:		incbin	art\nemesis\0X0850~1.BIN
+Nem_8507C:		incbin	art\nemesis\0X0850~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 20 blocks
 ; Chopper blades for EHZ boss
 ; --------------------------------------------------------------------------------------
-ArtNem_85868:		incbin	art\nemesis\0X0858~1.BIN
+Nem_85868:		incbin	art\nemesis\0X0858~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 107 blocks
 ; HTZ boss
 ; --------------------------------------------------------------------------------------
-ArtNem_8595C:		incbin	art\nemesis\0X0859~1.BIN
+Nem_8595C:		incbin	art\nemesis\0X0859~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 166 blocks
 ; ARZ boss
 ; --------------------------------------------------------------------------------------
-ArtNem_86128:		incbin	art\nemesis\0X0861~1.BIN
+Nem_86128:		incbin	art\nemesis\0X0861~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 204 blocks
 ; MCZ boss
 ; --------------------------------------------------------------------------------------
-ArtNem_86B6E:		incbin	art\nemesis\0X086B~1.BIN
+Nem_86B6E:		incbin	art\nemesis\0X086B~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 133 blocks
 ; CNZ boss
 ; --------------------------------------------------------------------------------------
-ArtNem_87AAC:		incbin	art\nemesis\0X087A~1.BIN
+Nem_87AAC:		incbin	art\nemesis\0X087A~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 181 blocks
 ; OOZ boss
 ; --------------------------------------------------------------------------------------
-ArtNem_882D6:		incbin	art\nemesis\0X0882~1.BIN
+Nem_882D6:		incbin	art\nemesis\0X0882~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 124 blocks
 ; MTZ boss
 ; --------------------------------------------------------------------------------------
-ArtNem_88DA6:		incbin	art\nemesis\0X088D~1.BIN
-ArtUnc_894E4:		incbin	art\uncomp~1\0X0894~1.BIN
+Nem_88DA6:		incbin	art\nemesis\0X088D~1.BIN
+;--------------------------------------------------------------------------------------
+; Uncompressed art (8 blocks)
+; Falling rocks and stalactites from MCZ	; Art_894E4:
+Art_894E4:		incbin	art\uncomp~1\0X0894~1.BIN
+even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 9 blocks
 ; Blowfly from ARZ
 ; --------------------------------------------------------------------------------------
-ArtNem_895E4:		incbin	art\nemesis\0X0895~1.BIN
+Nem_895E4:		incbin	art\nemesis\0X0895~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 50 blocks
 ; Grounder from	ARZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8970E:		incbin	art\nemesis\0X0897~1.BIN
+Nem_8970E:		incbin	art\nemesis\0X0897~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 24 blocks
 ; Fish from ARZ
 ; --------------------------------------------------------------------------------------
-ArtNem_89B9A:		incbin	art\nemesis\0X089B~1.BIN
+Nem_89B9A:		incbin	art\nemesis\0X089B~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 19 blocks
 ; Lava snake from HTZ
 ; --------------------------------------------------------------------------------------
-ArtNem_89DEC:		incbin	art\nemesis\0X089D~1.BIN
+Nem_89DEC:		incbin	art\nemesis\0X089D~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 20 blocks
 ; Enemy	with spike cone	on top from HTZ
 ; --------------------------------------------------------------------------------------
-ArtNem_89FAA:		incbin	art\nemesis\0X089F~1.BIN
+Nem_89FAA:		incbin	art\nemesis\0X089F~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 28 blocks
 ; Circular badnick from	SCZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8A142:		incbin	art\nemesis\0X08A1~1.BIN
+Nem_8A142:		incbin	art\nemesis\0X08A1~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 57 blocks
 ; Turtle badnick from SCZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8A362:		incbin	art\nemesis\0X08A3~1.BIN
+Nem_8A362:		incbin	art\nemesis\0X08A3~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 38 blocks
 ; Coconuts from	EHZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8A87A:		incbin	art\nemesis\0X08A8~1.BIN
+Nem_8A87A:		incbin	art\nemesis\0X08A8~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 10 blocks
 ; Snake	like badnick from MCZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8AB36:		incbin	art\nemesis\0X08AB~1.BIN
+Nem_8AB36:		incbin	art\nemesis\0X08AB~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 20 blocks
 ; Firefly from MCZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8AC5E:		incbin	art\nemesis\0X08AC~1.BIN
+Nem_8AC5E:		incbin	art\nemesis\0X08AC~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 32 blocks
 ; Praying mantis badnick from MTZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8AD80:		incbin	art\nemesis\0X08AD~1.BIN
+Nem_8AD80:		incbin	art\nemesis\0X08AD~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 36 blocks
 ; Crab badnick from MCZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8B058:		incbin	art\nemesis\0X08B0~1.BIN
+Nem_8B058:		incbin	art\nemesis\0X08B0~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 15 blocks
 ; Exploding star badnick from MTZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8B300:		incbin	art\nemesis\0X08B3~1.BIN
+Nem_8B300:		incbin	art\nemesis\0X08B3~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 32 blocks
 ; Weird	crawling badnick from CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8B430:		incbin	art\nemesis\0X08B4~1.BIN
+Nem_8B430:		incbin	art\nemesis\0X08B4~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 45 blocks
 ; Spider badnick from CPZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8B6B4:		incbin	art\nemesis\0X08B6~1.BIN
+Nem_8B6B4:		incbin	art\nemesis\0X08B6~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 26 blocks
 ; Scratch from WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8B9DC:		incbin	art\nemesis\0X08B9~1.BIN
+Nem_8B9DC:		incbin	art\nemesis\0X08B9~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 25 blocks
 ; Jet like badnick from	SCZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8BC16:		incbin	art\nemesis\0X08BC~1.BIN
+Nem_8BC16:		incbin	art\nemesis\0X08BC~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 217 blocks
 ; Silver Sonic
 ; --------------------------------------------------------------------------------------
-ArtNem_8BE12:		incbin	art\nemesis\0X08BE~1.BIN
+Nem_8BE12:		incbin	art\nemesis\0X08BE~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 79 blocks
 ; The Tornado
 ; --------------------------------------------------------------------------------------
-ArtNem_8CC44:		incbin	art\nemesis\0X08CC~1.BIN
+Nem_8CC44:		incbin	art\nemesis\0X08CC~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 24 blocks
 ; Wall turret from WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8D1A0:		incbin	art\nemesis\0X08D1~1.BIN
+Nem_8D1A0:		incbin	art\nemesis\0X08D1~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 20 blocks
 ; Hook on chain	in WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8D388:		incbin	art\nemesis\0X08D3~1.BIN
+Nem_8D388:		incbin	art\nemesis\0X08D3~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 54 blocks
 ; Retracting platform from WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8D540:		incbin	art\nemesis\0X08D5~1.BIN
+Nem_8D540:		incbin	art\nemesis\0X08D5~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 16 blocks
 ; Wheel	for belt in  WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8D7D8:		incbin	art\nemesis\0X08D7~1.BIN
+Nem_8D7D8:		incbin	art\nemesis\0X08D7~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Moving platform in WFZ	8D96E:
 ; --------------------------------------------------------------------------------------
-ArtNem_8D96E:		incbin	"art/nemesis/Moving platform from WFZ.bin"
+Nem_8D96E:		incbin	"art/nemesis/Moving platform from WFZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94802,14 +94639,14 @@ ArtNem_8D96E:		incbin	"art/nemesis/Moving platform from WFZ.bin"
 ; 12 blocks
 ; Giant	unused vertical	red laser in WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8DA6E:		incbin	art\nemesis\0X08DA~1.BIN
+Nem_8DA6E:		incbin	art\nemesis\0X08DA~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 18 blocks
 ; Clouds
 ; --------------------------------------------------------------------------------------
-ArtNem_8DAFC:		incbin	art\nemesis\0X08DA~2.BIN
+Nem_8DAFC:		incbin	art\nemesis\0X08DA~2.BIN
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94817,7 +94654,7 @@ ArtNem_8DAFC:		incbin	art\nemesis\0X08DA~2.BIN
 ; 10 blocks
 ; Red horizontal laser in WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8DC42:		incbin	art\nemesis\0X08DC~1.BIN
+Nem_8DC42:		incbin	art\nemesis\0X08DC~1.BIN
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94825,7 +94662,7 @@ ArtNem_8DC42:		incbin	art\nemesis\0X08DC~1.BIN
 ; 5 blocks
 ; Trolley thing	that shoots sonic across quickly in WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8DCA2:		incbin	art\nemesis\0X08DC~2.BIN
+Nem_8DCA2:		incbin	art\nemesis\0X08DC~2.BIN
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94833,74 +94670,74 @@ ArtNem_8DCA2:		incbin	art\nemesis\0X08DC~2.BIN
 ; 12 blocks
 ; Rising platforms on belt from	WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8DD0C:		incbin	art\nemesis\0X08DD~1.BIN
+Nem_8DD0C:		incbin	art\nemesis\0X08DD~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 12 blocks
 ; Unused badnick in WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8DDF6:		incbin	art\nemesis\0X08DD~2.BIN
+Nem_8DDF6:		incbin	art\nemesis\0X08DD~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 4 blocks
 ; Vertical spinning blades from	WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8DEB8:		incbin	art\nemesis\0X08DE~1.BIN
+Nem_8DEB8:		incbin	art\nemesis\0X08DE~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 29 blocks
 ; Horizontal spinning blades from WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8DEE8:		incbin	art\nemesis\0X08DE~2.BIN
+Nem_8DEE8:		incbin	art\nemesis\0X08DE~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 12 blocks
 ; Platforms that tilt in WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8E010:		incbin	art\nemesis\0X08E0~1.BIN
+Nem_8E010:		incbin	art\nemesis\0X08E0~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 8 blocks
 ; Thrust from Robotnic's getaway ship in WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8E0C4:		incbin	art\nemesis\0X08E0~2.BIN
+Nem_8E0C4:		incbin	art\nemesis\0X08E0~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 117 blocks
 ; Laser	boss from WFZ
 ; --------------------------------------------------------------------------------------
-ArtNem_8E138:		incbin	art\nemesis\0X08E1~1.BIN
+Nem_8E138:		incbin	art\nemesis\0X08E1~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 24 blocks
 ; Robotnic's head
 ; --------------------------------------------------------------------------------------
-ArtNem_8E886:		incbin	art\nemesis\0X08E8~1.BIN
+Nem_8E886:		incbin	art\nemesis\0X08E8~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 76 blocks
 ; Robotnic
 ; --------------------------------------------------------------------------------------
-ArtNem_8EA5A:		incbin	art\nemesis\0X08EA~1.BIN
+Nem_8EA5A:		incbin	art\nemesis\0X08EA~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
-; Robotnik's lower half	; ArtNem_8EE52:
+; Robotnik's lower half	; Nem_8EE52:
 ; --------------------------------------------------------------------------------------
-ArtNem_8EE52:		incbin	"art/nemesis/Robotnik's lover half.bin"
+Nem_8EE52:		incbin	"art/nemesis/Robotnik's lover half.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
-; Window in back that Robotnic looks through in DEZ	; ArtNem_8EF96:
+; Window in back that Robotnic looks through in DEZ	; Nem_8EF96:
 ; --------------------------------------------------------------------------------------
-ArtNem_8EF96:		incbin	"art/nemesis/Window in back that Robotnik looks through in DEZ.bin"
+Nem_8EF96:		incbin	"art/nemesis/Window in back that Robotnik looks through in DEZ.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94908,153 +94745,153 @@ ArtNem_8EF96:		incbin	"art/nemesis/Window in back that Robotnik looks through in
 ; 327 blocks
 ; Death	Egg
 ; --------------------------------------------------------------------------------------
-ArtNem_8F024:		incbin	art\nemesis\0X08F0~1.BIN
+Nem_8F024:		incbin	art\nemesis\0X08F0~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 42 blocks
 ; Bouncer badnick from CNZ
 ; --------------------------------------------------------------------------------------
-ArtNem_901A4:		incbin	art\nemesis\0X0901~1.BIN
+Nem_901A4:		incbin	art\nemesis\0X0901~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 26 blocks
 ; Rocket thruster for Tornado
 ; --------------------------------------------------------------------------------------
-ArtNem_90520:		incbin	art\nemesis\0X0905~1.BIN
+Nem_90520:		incbin	art\nemesis\0X0905~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Frame	1 of end of game sequence
 ; --------------------------------------------------------------------------------------
-MapEng_906E0:		incbin	mappings\misc\0X0906~1.BIN
+Eni_906E0:		incbin	mappings\misc\0X0906~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Frame	2 of end of game sequence
 ; --------------------------------------------------------------------------------------
-MapEng_906F8:		incbin	mappings\misc\0X0906~2.BIN
+Eni_906F8:		incbin	mappings\misc\0X0906~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Frame	3 of end of game sequence
 ; --------------------------------------------------------------------------------------
-MapEng_90722:		incbin	mappings\misc\0X0907~1.BIN
+Eni_90722:		incbin	mappings\misc\0X0907~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Frame	4 of end of game sequence
 ; --------------------------------------------------------------------------------------
-MapEng_9073C:		incbin	mappings\misc\0X0907~2.BIN
+Eni_9073C:		incbin	mappings\misc\0X0907~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Closeup of Tails flying plane	in ending sequence
 ; --------------------------------------------------------------------------------------
-MapEng_9076E:		incbin	mappings\misc\0X0907~3.BIN
+Eni_9076E:		incbin	mappings\misc\0X0907~3.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Closeup of Sonic flying plane	in ending sequence
 ; --------------------------------------------------------------------------------------
-MapEng_907C0:		incbin	mappings\misc\0X0907~4.BIN
+Eni_907C0:		incbin	mappings\misc\0X0907~4.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Strange unused mappings
 ; --------------------------------------------------------------------------------------
-MapEng_9082A:		incbin	mappings\misc\0X0908~1.BIN
+Eni_9082A:		incbin	mappings\misc\0X0908~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Strange unused mappings (same	as above)
 ; --------------------------------------------------------------------------------------
-MapEng_90852:		incbin	mappings\misc\0X0908~2.BIN
+Eni_90852:		incbin	mappings\misc\0X0908~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Strange unused mappings (same	as above)
 ; --------------------------------------------------------------------------------------
-MapEng_9087A:		incbin	mappings\misc\0X0908~3.BIN
+Eni_9087A:		incbin	mappings\misc\0X0908~3.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Strange unused mappings (same	as above)
 ; --------------------------------------------------------------------------------------
-MapEng_908A2:		incbin	mappings\misc\0X0908~4.BIN
+Eni_908A2:		incbin	mappings\misc\0X0908~4.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Strange unused mappings (same	as above)
 ; --------------------------------------------------------------------------------------
-MapEng_908CA:		incbin	mappings\misc\0XD9FC~1.BIN
+Eni_908CA:		incbin	mappings\misc\0XD9FC~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Strange unused mappings (same	as above)
 ; --------------------------------------------------------------------------------------
-MapEng_908F2:		incbin	mappings\misc\0X1FE4~1.BIN
+Eni_908F2:		incbin	mappings\misc\0X1FE4~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Strange unused mappings (same	as above)
 ; --------------------------------------------------------------------------------------
-MapEng_9091A:		incbin	mappings\misc\0X0909~1.BIN
+Eni_9091A:		incbin	mappings\misc\0X0909~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Strange unused mappings (same	as above)
 ; --------------------------------------------------------------------------------------
-MapEng_90942:		incbin	mappings\misc\0X0909~2.BIN
+Eni_90942:		incbin	mappings\misc\0X0909~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ;
 ; Strange unused mappings (different)
 ; --------------------------------------------------------------------------------------
-MapEng_9096A:		incbin	mappings\misc\0X0909~3.BIN
+Eni_9096A:		incbin	mappings\misc\0X0909~3.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 363 blocks
 ; Movie	sequence at end	of game
 ; --------------------------------------------------------------------------------------
-ArtNem_90992:		incbin	art\nemesis\0X0909~1.BIN
+Nem_90992:		incbin	art\nemesis\0X0909~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 127 blocks
 ; Final	image of Tornado with it and Sonic facing screen
 ; --------------------------------------------------------------------------------------
-ArtNem_91F3C:		incbin	art\nemesis\0X091F~1.BIN
+Nem_91F3C:		incbin	art\nemesis\0X091F~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 109 blocks
 ; Mini pictures	of Tornado in final ending sequence
 ; --------------------------------------------------------------------------------------
-ArtNem_927E0:		incbin	art\nemesis\0X0927~1.BIN
+Nem_927E0:		incbin	art\nemesis\0X0927~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 135 blocks
 ; Mini pictures	of Sonic and final image of Sonic
 ; --------------------------------------------------------------------------------------
-ArtNem_92F0A:		incbin	art\nemesis\0X092F~1.BIN
+Nem_92F0A:		incbin	art\nemesis\0X092F~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 117 blocks
 ; Mini pictures	of Sonic and final image of Sonic in supersonic	mode
 ; --------------------------------------------------------------------------------------
-ArtNem_93848:		incbin	art\nemesis\0X0938~1.BIN
+Nem_93848:		incbin	art\nemesis\0X0938~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 181 blocks
 ; Final	image of Tails
 ; --------------------------------------------------------------------------------------
-ArtNem_93F3C:		incbin	"art/nemesis/Final image of Tails.bin"
+Nem_93F3C:		incbin	"art/nemesis/Final image of Tails.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -95062,7 +94899,7 @@ ArtNem_93F3C:		incbin	"art/nemesis/Final image of Tails.bin"
 ; 72 blocks
 ; Sonic	the Hedgehog 2 image at	end of credits
 ; --------------------------------------------------------------------------------------
-ArtNem_94B28:		incbin	"art/nemesis/Sonic the Hedgehog 2 image at end of credits.bin"
+Nem_94B28:		incbin	"art/nemesis/Sonic the Hedgehog 2 image at end of credits.bin"
 
 
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -95114,86 +94951,86 @@ ArtNem_94B28:		incbin	"art/nemesis/Sonic the Hedgehog 2 image at end of credits.
 ; */
 
 ; ----------------------------------------------------------------------------------
-; EHZ 16x16 block mappings (Kozinski compression)
+; EHZ 16x16 block mappings (Kosinski compression)
 ; ----------------------------------------------------------------------------------
 BM16_EHZ:		incbin	mappings\16x16\0X094E~1.BIN
 ;-----------------------------------------------------------------------------------
-;EHZ/HTZ main level patterns (Kozinski compression)
-ArtKoz_95C24:		incbin	art\kozinski\0X095C~1.BIN
+;EHZ/HTZ main level patterns (Kosinski compression)
+ArtKoz_95C24:		incbin	art\Kosinski\0X095C~1.BIN
 ;-----------------------------------------------------------------------------------
-;HTZ 16x16 block mappings (Kozinski compression)
+;HTZ 16x16 block mappings (Kosinski compression)
 BM16_HTZ:		incbin	mappings\16x16\0X0985~1.BIN
 ;-----------------------------------------------------------------------------------
-;HTZ pattern suppliment	to EHZ level patterns (Kozinski	compression)
-ArtKoz_98AB4:		incbin	art\kozinski\0X098A~1.BIN
+;HTZ pattern suppliment	to EHZ level patterns (Kosinski	compression)
+ArtKoz_98AB4:		incbin	art\Kosinski\0X098A~1.BIN
 ;-----------------------------------------------------------------------------------
-;EHZ/HTZ 128x128 block mappings	(Kozinski compression)
+;EHZ/HTZ 128x128 block mappings	(Kosinski compression)
 BM128_EHZ:		incbin	mappings\128x128\0X099D~1.BIN
 ;-----------------------------------------------------------------------------------
-;MTZ 16x16 block mappings (Kozinski compression)
+;MTZ 16x16 block mappings (Kosinski compression)
 BM16_MTZ:		incbin	mappings\16x16\0X09CF~1.BIN
 ;-----------------------------------------------------------------------------------
-;MTZ main level	patterns (Kozinski compression)
-ArtKoz_9DB64:		incbin	art\kozinski\0X09DB~1.BIN
+;MTZ main level	patterns (Kosinski compression)
+ArtKoz_9DB64:		incbin	art\Kosinski\0X09DB~1.BIN
 ;-----------------------------------------------------------------------------------
-;MTZ 128x128 block mappings (Kozinski compression)
+;MTZ 128x128 block mappings (Kosinski compression)
 BM128_MTZ:		incbin	mappings\128x128\0X0A06~1.BIN
 ;-----------------------------------------------------------------------------------
-;OOZ 16x16 block mappings (Kozinski compression)
+;OOZ 16x16 block mappings (Kosinski compression)
 BM16_OOZ:		incbin	mappings\16x16\0X0A33~1.BIN
 ;-----------------------------------------------------------------------------------
-;OOZ main level	patterns (Kozinski compression)
-ArtKoz_A4204:		incbin	art\kozinski\0X0A42~1.BIN
+;OOZ main level	patterns (Kosinski compression)
+ArtKoz_A4204:		incbin	art\Kosinski\0X0A42~1.BIN
 ;-----------------------------------------------------------------------------------
-;OOZ 128x128 block mappings (Kozinski compression)
+;OOZ 128x128 block mappings (Kosinski compression)
 BM128_OOZ:		incbin	mappings\128x128\0X0A68~1.BIN
 ;-----------------------------------------------------------------------------------
-;MCZ 16x16 block mappings (Kozinski compression)
+;MCZ 16x16 block mappings (Kosinski compression)
 BM16_MCZ:		incbin	mappings\16x16\0X0A8D~1.BIN
 ;-----------------------------------------------------------------------------------
-;MCZ main level	patterns (Kozinski compression)
-ArtKoz_A9D74:		incbin	art\kozinski\0X0A9D~1.BIN
+;MCZ main level	patterns (Kosinski compression)
+ArtKoz_A9D74:		incbin	art\Kosinski\0X0A9D~1.BIN
 ;-----------------------------------------------------------------------------------
-;MCZ 128x128 block mappings (Kozinski compression)
+;MCZ 128x128 block mappings (Kosinski compression)
 BM128_MCZ:		incbin	mappings\128x128\0X0AD4~1.BIN
 ;-----------------------------------------------------------------------------------
-;CNZ 16x16 block mappings (Kozinski compression)
+;CNZ 16x16 block mappings (Kosinski compression)
 BM16_CNZ:		incbin	mappings\16x16\0X0AFF~1.BIN
 ;-----------------------------------------------------------------------------------
-;CNZ main level	patterns (Kozinski compression)
-ArtKoz_B0894:		incbin	art\kozinski\0X0B08~1.BIN
+;CNZ main level	patterns (Kosinski compression)
+ArtKoz_B0894:		incbin	art\Kosinski\0X0B08~1.BIN
 ;-----------------------------------------------------------------------------------
-;CNZ 128x128 block mappings (Kozinski compression)
+;CNZ 128x128 block mappings (Kosinski compression)
 BM128_CNZ:		incbin	mappings\128x128\0X0B2C~1.BIN
 ;-----------------------------------------------------------------------------------
-;CPZ/DEZ 16x16 block mappings (Kozinski	compression)
+;CPZ/DEZ 16x16 block mappings (Kosinski	compression)
 BM16_CPZ:		incbin	mappings\16x16\0X0B52~1.BIN
 ;-----------------------------------------------------------------------------------
-;CPZ/DEZ main level patterns (Kozinski compression)
-ArtKoz_B6174:		incbin	art\kozinski\0X0B61~1.BIN
+;CPZ/DEZ main level patterns (Kosinski compression)
+ArtKoz_B6174:		incbin	art\Kosinski\0X0B61~1.BIN
 ;-----------------------------------------------------------------------------------
-;CPZ/DEZ 128x128 block mappings	(Kozinski compression)
+;CPZ/DEZ 128x128 block mappings	(Kosinski compression)
 BM128_CPZ:		incbin	mappings\128x128\0X0B90~1.BIN
 ;-----------------------------------------------------------------------------------
-;ARZ 16x16 block mappings (Kozinski compression)
+;ARZ 16x16 block mappings (Kosinski compression)
 BM16_ARZ:		incbin	mappings\16x16\0X0BB9~1.BIN
 ;-----------------------------------------------------------------------------------
-;ARZ main level	patterns (Kozinski compression)
-ArtKoz_BCC24:		incbin	art\kozinski\0X0BCC~1.BIN
+;ARZ main level	patterns (Kosinski compression)
+ArtKoz_BCC24:		incbin	art\Kosinski\0X0BCC~1.BIN
 ;-----------------------------------------------------------------------------------
-;ARZ 128x128 block mappings (Kozinski compression)
+;ARZ 128x128 block mappings (Kosinski compression)
 BM128_ARZ:		incbin	mappings\128x128\0X0C14~1.BIN
 ;-----------------------------------------------------------------------------------
-;WFZ/SCZ 16x16 block mappings (Kozinski	compression)
+;WFZ/SCZ 16x16 block mappings (Kosinski	compression)
 BM16_WFZ:		incbin	mappings\16x16\0X0C40~1.BIN
 ;-----------------------------------------------------------------------------------
-;WFZ/SCZ main level patterns (Kozinski compression)
-ArtKoz_C5004:		incbin	art\kozinski\0X0C50~1.BIN
+;WFZ/SCZ main level patterns (Kosinski compression)
+ArtKoz_C5004:		incbin	art\Kosinski\0X0C50~1.BIN
 ;-----------------------------------------------------------------------------------
-;WFZ pattern suppliment	to SCZ tiles (Kozinski compression)
-ArtKoz_C7EC4:		incbin	art\kozinski\0X0C7E~1.BIN
+;WFZ pattern suppliment	to SCZ tiles (Kosinski compression)
+ArtKoz_C7EC4:		incbin	art\Kosinski\0X0C7E~1.BIN
 ;-----------------------------------------------------------------------------------
-;WFZ/SCZ 128x128 block mappings	(Kozinski compression)
+;WFZ/SCZ 128x128 block mappings	(Kosinski compression)
 BM128_WFZ:		incbin	mappings\128x128\0X0C85~1.BIN
 ; -----------------------------------------------------------------------------------
 ; Special stage	tube mappings
@@ -95533,133 +95370,133 @@ MapSpec_DC154:		incbin	mappings\specia~1\0X0DC1~1.BIN
 ;Frame 7
 MapSpec_DC5E8:		incbin	mappings\specia~1\0X0DC5~1.BIN
 ; --------------------------------------------------------------------------------------
-; Kozinski compressed art
+; Kosinski compressed art
 ;
 ; Special stage	level patterns
 ; Note:	Only one line of each tile is stored in	this archive. The other	7 lines	are
 ;	the same at this one line, so to get the full tiles, each line needs to	be
 ;	duplicated 7 times over.
 ; --------------------------------------------------------------------------------------
-ArtKoz_DCA38:		incbin	art\kozinski\0X0DCA~1.BIN
+ArtKoz_DCA38:		incbin	art\Kosinski\0X0DCA~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 127 blocks
 ; Background patterns for special stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DCD68:		incbin	art\nemesis\0X0DCD~1.BIN
+Nem_DCD68:		incbin	art\nemesis\0X0DCD~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed tile mappings
 ;
 ; Main background mappings for special stage
 ; --------------------------------------------------------------------------------------
-MapEng_DD1DE:		incbin	mappings\misc\0X0DD1~1.BIN
+Eni_DD1DE:		incbin	mappings\misc\0X0DD1~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Enigam compressed tile mappings
 ;
 ; Lower	background mappings for	special	stage
 ; --------------------------------------------------------------------------------------
-MapEng_DD30C:		incbin	mappings\misc\0X0DD3~1.BIN
+Eni_DD30C:		incbin	mappings\misc\0X0DD3~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 62 blocks
 ; Sonic/Miles and number text from special stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DD48A:		incbin	art\nemesis\0X0DD4~1.BIN
+Nem_DD48A:		incbin	art\nemesis\0X0DD4~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 48 blocks
 ; "Start" patterns in special stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DD790:		incbin	art\nemesis\0X0DD7~1.BIN
+Nem_DD790:		incbin	art\nemesis\0X0DD7~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 37 blocks
 ; Stars	in special stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DD8CE:		incbin	art\nemesis\0X0DD8~1.BIN
+Nem_DD8CE:		incbin	art\nemesis\0X0DD8~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 13 blocks
 ; Unknown. Text	in special stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DD9C8:		incbin	art\nemesis\0X0DD9~1.BIN
+Nem_DD9C8:		incbin	art\nemesis\0X0DD9~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 104 blocks
 ; Ring patterns	in special stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DDA7E:		incbin	art\nemesis\0X0DDA~1.BIN
+Nem_DDA7E:		incbin	art\nemesis\0X0DDA~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 38 blocks
 ; Horizontal shadow patterns in	special	stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DDFA4:		incbin	art\nemesis\0X0DDF~1.BIN
+Nem_DDFA4:		incbin	art\nemesis\0X0DDF~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 58 blocks
 ; Diagonal shadow patterns in special stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DE05A:		incbin	art\nemesis\0X0DE0~1.BIN
+Nem_DE05A:		incbin	art\nemesis\0X0DE0~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 25 blocks
 ; Vertical shadow patterns in special stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DE120:		incbin	art\nemesis\0X0DE1~1.BIN
+Nem_DE120:		incbin	art\nemesis\0X0DE1~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 48 blocks
 ; Explosion patterns in	special	stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DE188:		incbin	art\nemesis\0X0DE1~2.BIN
+Nem_DE188:		incbin	art\nemesis\0X0DE1~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 80 blocks
 ; Bomb patterns	in special stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DE4BC:		incbin	art\nemesis\0X0DE4~1.BIN
+Nem_DE4BC:		incbin	art\nemesis\0X0DE4~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 46 blocks
 ; Emerald patterns in special stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DE8AC:		incbin	art\nemesis\0X0DE8~1.BIN
+Nem_DE8AC:		incbin	art\nemesis\0X0DE8~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 99 blocks
 ; Unknown. Text	in special stage.
 ; --------------------------------------------------------------------------------------
-ArtNem_DEAF4:		incbin	art\nemesis\0X0DEA~1.BIN
+Nem_DEAF4:		incbin	art\nemesis\0X0DEA~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 851 blocks
 ; Sonic	and Tails animation frames from	special	stage
 ; --------------------------------------------------------------------------------------
-ArtNem_DEEAE:		incbin	art\nemesis\0X0DEE~1.BIN
+Nem_DEEAE:		incbin	art\nemesis\0X0DEE~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 5 blocks
 ; "Tails" patterns from	special	stage
 ; --------------------------------------------------------------------------------------
-ArtNem_E247E:		incbin	art\nemesis\0X0E24~1.BIN
+Nem_E247E:		incbin	art\nemesis\0X0E24~1.BIN
 ; --------------------------------------------------------------------------------------
-; Special stage	object perspective data	(Kozinski compression)
+; Special stage	object perspective data	(Kosinski compression)
 ; --------------------------------------------------------------------------------------
 MiscKoz_E24FE:		incbin	misc\0X0E24~1.BIN
 ; --------------------------------------------------------------------------------------
@@ -95667,7 +95504,7 @@ MiscKoz_E24FE:		incbin	misc\0X0E24~1.BIN
 ; --------------------------------------------------------------------------------------
 MiscNem_E34EE:		incbin	misc\0X0E34~1.BIN
 ; --------------------------------------------------------------------------------------
-; Special stage	object location	list (Kozinski compression)
+; Special stage	object location	list (Kosinski compression)
 ; --------------------------------------------------------------------------------------
 MiscKoz_E35F2:		incbin	misc\0X0E35~1.BIN
 ; --------------------------------------------------------------------------------------
@@ -95968,182 +95805,182 @@ Mus_Continue:		incbin	sound\music\0X0F00~1.BIN
 ; 20 blocks
 ; Fireball from	EHZ
 ; --------------------------------------------------------------------
-ArtNem_F0160:		incbin	art\nemesis\0X0F01~1.BIN
+Nem_F0160:		incbin	art\nemesis\0X0F01~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 24 blocks
 ; Waterfall tiles
 ; --------------------------------------------------------------------
-ArtNem_F02D6:		incbin	art\nemesis\0X0F02~1.BIN
+Nem_F02D6:		incbin	art\nemesis\0X0F02~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 16 blocks
 ; Another fireball
 ; --------------------------------------------------------------------
-ArtNem_F03DC:		incbin	art\nemesis\0X0F03~1.BIN
+Nem_F03DC:		incbin	art\nemesis\0X0F03~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 8 blocks
 ; Bridge in EHZ
 ; --------------------------------------------------------------------
-ArtNem_F052A:		incbin	art\nemesis\0X0F05~1.BIN
+Nem_F052A:		incbin	art\nemesis\0X0F05~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 48 blocks
 ; Diagonally moving lift in HTZ
 ; --------------------------------------------------------------------
-ArtNem_F0602:		incbin	art\nemesis\0X0F06~1.BIN
+Nem_F0602:		incbin	art\nemesis\0X0F06~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 4 blocks
 ; One way barrier from HTZ
 ; --------------------------------------------------------------------
-ArtNem_F08F6:		incbin	art\nemesis\0X0F08~1.BIN
+Nem_F08F6:		incbin	art\nemesis\0X0F08~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 24 blocks
 ; See-saw in HTZ
 ; --------------------------------------------------------------------
-ArtNem_F096E:		incbin	art\nemesis\0X0F09~1.BIN
+Nem_F096E:		incbin	art\nemesis\0X0F09~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 24 blocks
 ; Fireball
 ; --------------------------------------------------------------------
-ArtNem_F0B06:		incbin	art\nemesis\0X0F0B~1.BIN
+Nem_F0B06:		incbin	art\nemesis\0X0F0B~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 20 blocks
 ; Rock from HTZ
 ; --------------------------------------------------------------------
-ArtNem_F0C14:		incbin	art\nemesis\0X0F0C~1.BIN
+Nem_F0C14:		incbin	art\nemesis\0X0F0C~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 4 blocks
 ; Orbit	badnick	from HTZ
 ; --------------------------------------------------------------------
-ArtNem_F0D4A:		incbin	art\nemesis\0X0F0D~1.BIN
+Nem_F0D4A:		incbin	art\nemesis\0X0F0D~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 120 blocks
 ; Large	spinning wheel from MTZ
 ; --------------------------------------------------------------------
-ArtNem_F0DB6:		incbin	art\nemesis\0X0F0D~2.BIN
+Nem_F0DB6:		incbin	art\nemesis\0X0F0D~2.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 9 blocks
 ; Indent in large spinning wheel from MTZ
 ; --------------------------------------------------------------------
-ArtNem_F120E:		incbin	art\nemesis\0X0F12~1.BIN
+Nem_F120E:		incbin	art\nemesis\0X0F12~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 8 blocks
 ; Unknown. MTZ block
 ; --------------------------------------------------------------------
-ArtNem_F12B6:		incbin	art\nemesis\0X0F12~2.BIN
+Nem_F12B6:		incbin	art\nemesis\0X0F12~2.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 15 blocks
 ; Steam	from MTZ
 ; --------------------------------------------------------------------
-ArtNem_F1384:		incbin	art\nemesis\0X0F13~1.BIN
+Nem_F1384:		incbin	art\nemesis\0X0F13~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 8 blocks
 ; Spike	from MTZ
 ; --------------------------------------------------------------------
-ArtNem_F148E:		incbin	art\nemesis\0X0F14~1.BIN
+Nem_F148E:		incbin	art\nemesis\0X0F14~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 54 blocks
 ; Similarly shaded blocks from MTZ
 ; --------------------------------------------------------------------
-ArtNem_F1550:		incbin	art\nemesis\0X0F15~1.BIN
+Nem_F1550:		incbin	art\nemesis\0X0F15~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 9 blocks
 ; Lava bubble from MTZ
 ; --------------------------------------------------------------------
-ArtNem_F15C6:		incbin	art\nemesis\0X0F15~2.BIN
+Nem_F15C6:		incbin	art\nemesis\0X0F15~2.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 4 blocks
 ; Unknown. A steam vent?
 ; --------------------------------------------------------------------
-ArtNem_F167C:		incbin	art\nemesis\0X0F16~1.BIN
+Nem_F167C:		incbin	art\nemesis\0X0F16~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 8 blocks
 ; Things from MTZ
 ; --------------------------------------------------------------------
-ArtNem_F16EC:		incbin	art\nemesis\0X0F16~2.BIN
+Nem_F16EC:		incbin	art\nemesis\0X0F16~2.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 12 blocks
 ; Small	cog from MTZ
 ; --------------------------------------------------------------------
-ArtNem_F178E:		incbin	art\nemesis\0X0F17~1.BIN
+Nem_F178E:		incbin	art\nemesis\0X0F17~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 4 blocks
 ; Unknown. Four	blocks that are	all the	same colour from MTZ.
 ; --------------------------------------------------------------------
-ArtNem_F1870:		incbin	art\nemesis\0X0F18~1.BIN
+Nem_F1870:		incbin	art\nemesis\0X0F18~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 32 blocks
 ; Large	wooden box from	MCZ
 ; --------------------------------------------------------------------
-ArtNem_F187C:		incbin	art\nemesis\0X0F18~2.BIN
+Nem_F187C:		incbin	art\nemesis\0X0F18~2.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 26 blocks
 ; Collapsing platform from MCZ
 ; --------------------------------------------------------------------
-ArtNem_F1ABA:		incbin	art\nemesis\0X0F1A~1.BIN
+Nem_F1ABA:		incbin	art\nemesis\0X0F1A~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 16 blocks
 ; Switch that you pull on from MCZ
 ; --------------------------------------------------------------------
-ArtNem_F1C64:		incbin	art\nemesis\0X0F1C~1.BIN
+Nem_F1C64:		incbin	art\nemesis\0X0F1C~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 10 blocks
 ; Vine that lowers in MCZ
 ; --------------------------------------------------------------------
-ArtNem_F1D5C:		incbin	art\nemesis\0X0F1D~1.BIN
+Nem_F1D5C:		incbin	art\nemesis\0X0F1D~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art
 ;
 ; 20 blocks
 ; Unknown. A log viewed	from the end?
 ; --------------------------------------------------------------------
-ArtNem_F1E06:		incbin	art\nemesis\0X0F1E~1.BIN
+Nem_F1E06:		incbin	art\nemesis\0X0F1E~1.BIN
 ; ----------------------------------------------------------------------------------
 ; Filler (free space)
 ; ----------------------------------------------------------------------------------
