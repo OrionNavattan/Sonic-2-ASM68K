@@ -51,9 +51,9 @@ RelativeLea = (0|(Revision<>2)|AllOptimizations=1)
 
 ; Grep pattern to delete xrefs: ; .{4} XREF: h+.*+
 ROM_Start:
-    if * <> 0
-	inform 3,"ROM_Start was $\{*} but it should be 0."
-    endc
+;   if * <> 0
+;	inform 3,"ROM_Start was $%h but it should be 0.",ROM_Start 
+;   endc
 Vectors:						
 		dc.l v_stack_pointer	; Initial stack pointer value
 		dc.l EntryPoint		; Start of program
@@ -25864,7 +25864,7 @@ locret_12AB8:				; CODE XREF: ROM:00012AAEj
 ; ===========================================================================
 
 loc_12ABA:				; CODE XREF: ROM:00012AB6j
-		lea	(byte_12C52).l,a3
+		lea	(Teleport_Swap_Table).l,a3
 		moveq	#$11,d2
 
 loc_12AC2:				; CODE XREF: ROM:00012AD2j
@@ -25990,7 +25990,16 @@ loc_12C3C:				; CODE XREF: ROM:00012C1Ej
 		move.w	#$EC,d0	; '='
 		jmp	(sub_135E).l
 ; ===========================================================================
-byte_12C52:	dc.b $B0,  8,$B0,$48,  0,$1B,$F7,$6E,$F7,$8C,  0,  0,$FC,  0,$F7,$8E; 0
+;teleport_table_entry macro addressA, addressB
+;sizeA equ addressA_End-addressA
+;sizeB equ addressB_End-addressB
+;	if (sizeA<>sizeB)
+;		inform 3,"The space between 'addressA' and 'addressA_End' ($%h bytes), and 'addressB' and 'addressB_End' ($%h bytes) need to be the same size.",sizeA,sizeB
+;	endif
+;	dc.w	addressA, addressB, (.sizeA/2)-1
+;	endm
+
+Teleport_Swap_Table:	dc.b $B0,  8,$B0,$48,  0,$1B,$F7,$6E,$F7,$8C,  0,  0,$FC,  0,$F7,$8E; 0
 					; DATA XREF: ROM:00012ABAo
 		dc.b   0,  0,$F7,$70,$F7,$78,  0,  3,$F7,$60,$FE,$C0,  0,  2,$F7,$12; 16
 		dc.b $F7,$16,  0,  1,$F7,$1C,$F7,$24,  0,  3,$EE,  0,$EE,$20,  0, $F; 32
@@ -40596,7 +40605,7 @@ loc_1D1D2:				; CODE XREF: h+6236j h+6286j
 		addi.w	#$10,d3
 		andi.w	#$FFF,d1
 		lsl.l	#5,d1
-		addi.l	#Art_64320,d1
+		addi.l	#Art_Tails,d1
 		move.w	d4,d2
 		add.w	d3,d4
 		add.w	d3,d4
@@ -93631,7 +93640,7 @@ Art_Sonic:	incbin	"art/uncompressed/Sonic.bin"
 ; Uncompressed art
 ; Patterns for Tails  ; ArtUnc_64320:
 		align $20
-Art_64320:	incbin	"art/uncompressed/Tails.bin"
+Art_Tails:	incbin	"art/uncompressed/Tails.bin"
 ; --------------------------------------------------------------------------------------
 ; Sprite Mappings
 ; Sonic			; MapUnc_6FBE0: SprTbl_Sonic:
