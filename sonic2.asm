@@ -51,9 +51,9 @@ RelativeLea = (0|(Revision<>2)|AllOptimizations=1)
 
 ; Grep pattern to delete xrefs: ; .{4} XREF: h+.*+
 ROM_Start:
-;   if * <> 0
-;	inform 3,"ROM_Start was $%h but it should be 0.",ROM_Start 
-;   endc
+   if * <> 0
+	inform 3,"ROM_Start was $%h but it should be 0.",ROM_Start 
+   endc
 Vectors:						
 		dc.l v_stack_pointer	; Initial stack pointer value
 		dc.l EntryPoint		; Start of program
@@ -231,7 +231,7 @@ SetupVDP_end:
 
 Z80_Startup:
 		cpu	z80
-		phase 	0
+		obj 	0
 
 	; fill the Z80 RAM with 00's (with the exception of this program)
 		xor	a					; a = 00h
@@ -270,7 +270,7 @@ Z80_Startup:
 
 Z80_Startup_size:
 		cpu	68000
-		dephase
+		objend
 
 		dc.w $8104					; VDP display mode
 		dc.w $8F02					; VDP increment
@@ -318,7 +318,7 @@ ChecksumTest:				; CODE XREF: ROM:0000031Aj
 		dbf	d6,.clearramloop
 
 		move.b	(console_version).l,d0	; get console region
-		andi.b	#-$40,d0
+		andi.b	#$C0,d0
 		move.b	d0,(v_console_region).w		; set region variable in RAM
 		move.l	#'init',(v_checksum_pass).w	; set flag so checksum won't run again
 
@@ -337,91 +337,112 @@ GameInit:				; CODE XREF: ROM:00000324j
 
 MainGameLoop:				; CODE XREF: ROM:000003A0j
 		move.b	(v_gamemode).w,d0		; load game mode
-		andi.w	#$3C,d0					; limit to $1C mac
-		jsr	loc_3A2(pc,d0.w)			; jump to apt location in ROM
+		andi.w	#$3C,d0					; limit to $1C max
+		jsr	GameModeArray(pc,d0.w)		; jump to apt location in ROM
 		bra.s	MainGameLoop			; infinite loop
 ; ===========================================================================
+gmptr:		macro
+		id_\1:	equ *-GameModeArray
+		if narg=1
+		bra.w	GM_\1
+		else
+		bra.w	GM_\2
+		endc
+		endm
 
-loc_3A2:
-		bra.w	GM_Sega
+GameModeArray:
+
+		gmptr	SegaScreen
+		gmptr	TitleScreen
+		gmptr	Demo, Level
+		gmptr	Level
+		gmptr	SpecialStage
+		gmptr	ContinueScreen
+		gmptr	TwoPlayerResults
+		gmptr	LevelSelectMenu2P
+		gmptr	JmpTo_EndingSequence
+		gmptr	OptionsMenu
+		gmptr	LevelSelectMenu
+
+;		bra.w	SegaScreen		; SEGA Screen
 ; ===========================================================================
-		bra.w	loc_3998
+;		bra.w	TitleScreen		; Title Screen
 ; ===========================================================================
-		bra.w	loc_3EC4
+;		bra.w	Level		; Demo
 ; ===========================================================================
-		bra.w	loc_3EC4
+;		bra.w	Level		; Zone play
 ; ===========================================================================
-		bra.w	loc_4F64
+;		bra.w	SpecialStage
 ; ===========================================================================
-		bra.w	loc_7870
+;		bra.w	ContinueScreen
 ; ===========================================================================
-		bra.w	loc_7D50
+;		bra.w	TwoPlayerResults
 ; ===========================================================================
-		bra.w	loc_3F0
+;		bra.w	LevelSelectMenu2P
 ; ===========================================================================
-		bra.w	loc_3F6
+;		bra.w	JmpTo_EndingSequence
 ; ===========================================================================
-		bra.w	loc_3FC
+;		bra.w	OptionsMenu
 ; ===========================================================================
-		bra.w	loc_402
+;		bra.w	LevelSelectMenu
 ; ===========================================================================
 
-ChecksumError:				; CODE XREF: ROM:00000346j
-		move.l	d1,-(sp)
+ChecksumError:
+		move.l	d1,-(sp)     ; back up incorrect checksum to stack
 		bsr.w	VDPSetupGame
-		move.l	(sp)+,d1
-		move.l	#$C0000000,(vdp_control_port).l
-		moveq	#$3F,d7	; '?'
+		move.l	(sp)+,d1 	; restore incorrect checksum from stack (possibly used when determining what it should be)
+		move.l	#$C0000000,(vdp_control_port).l ; set VDP to CRAM write
+		moveq	#(sizeof_pal_all/2)-1,d7
 
-	loc_3E2:				; CODE XREF: ROM:000003EAj
-		move.w	#$E,(vdp_data_port).l
-		dbf	d7,loc_3E2
+	.fillred:
+		move.w	#cRed,(vdp_data_port).l ; fill palette with red
+		dbf	d7,.fillred					; repeat $3F more time
 
-	loc_3EE:				; CODE XREF: ROM:000003EEj
-		bra.s	loc_3EE
+	.endlessloop:				; CODE XREF: ROM:000003EEj
+		bra.s	.endlessloop
 ; ===========================================================================
 
-loc_3F0:				; CODE XREF: ROM:000003BEj
-		jmp	loc_8BD4
+LevelSelectMenu2P:				; CODE XREF: ROM:000003BEj
+		jmp	(MenuScreen).l
 ; ===========================================================================
 
-loc_3F6:				; CODE XREF: ROM:000003C2j
-		jmp	loc_9C7C
+JmpTo_EndingSequence:				; CODE XREF: ROM:000003C2j
+		jmp	(EndingSequence).l
 ; ===========================================================================
 
-loc_3FC:				; CODE XREF: ROM:000003C6j
-		jmp	loc_8BD4
+OptionsMenu:				; CODE XREF: ROM:000003C6j
+		jmp	(MenuScreen).l
 ; ===========================================================================
 
-loc_402:				; CODE XREF: ROM:000003CAj
-		jmp	loc_8BD4
+LevelSelectMenu:				; CODE XREF: ROM:000003CAj
+		jmp	(MenuScreen).l
 ; ===========================================================================
 
-VBlank:				; DATA XREF: ROM:00000000o
-		movem.l	d0-a6,-(sp)
-		tst.b	(v_vblank_routine).w
-		beq.w	loc_484
+VBlank:
+		pushr	d0-a6				; save all registers to stack
+		tst.b	(v_vblank_routine).w		; is routine number 0?
+		beq.w	VBlank_Lag				; if yes, branch
 
-loc_414:				; CODE XREF: ROM:0000041Ej
-		move.w	(vdp_control_port).l,d0
-		andi.w	#8,d0
-		beq.s	loc_414
-		move.l	#$40000010,(vdp_control_port).l
-		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l
-		btst	#6,(v_console_region).w
-		beq.s	loc_442
+	.waitvblank:
+		move.w	(vdp_control_port).l,d0 ; get status register
+		andi.w	#8,d0					; is VBlank register set?
+		beq.s	.waitvblank				; if not, branch
+		move.l	#$40000010,(vdp_control_port).l  ; set VDP to VSRAM write, destination address 0
+		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l ; send screen y-axis pos. to VSRAM
+		btst	#6,(v_console_region).w		; is Mega Drive PAL?
+		beq.s	.notPAL
 		move.w	#$700,d0
 
-loc_43E:				; CODE XREF: ROM:0000043Ej
-		dbf	d0,loc_43E
+	.waitPAL:
+		dbf	d0,.waitPAL	; wait here in a loop doing nothing for a while...
 
-loc_442:				; CODE XREF: ROM:00000438j
-		move.b	(v_vblank_routine).w,d0
-		move.b	#0,(v_vblank_routine).w
-		move.w	#1,(f_hblank).w
-		andi.w	#$3E,d0	; '>'
-		move.w	off_468(pc,d0.w),d0
-		jsr	off_468(pc,d0.w)
+	.notPAL:
+		move.b	(v_vblank_routine).w,d0	; get routine number
+		move.b	#0,(v_vblank_routine).w ; reset to 0
+		move.w	#1,(f_hblank).w		; set flag to let HBlank know a frame has finished
+		andi.w	#$3E,d0
+		move.w	VBlank_Index(pc,d0.w),d0
+		jsr	VBlank_Index(pc,d0.w)
 
 loc_45E:				; CODE XREF: ROM:000004C2j
 					; ROM:00000562j ...
@@ -429,24 +450,39 @@ loc_45E:				; CODE XREF: ROM:000004C2j
 		movem.l	(sp)+,d0-a6
 		rte	
 ; ===========================================================================
-off_468:	dc.w loc_484-off_468	; 0 ; DATA XREF: ROM:00000468o
-					; ROM:0000046Ao ...
-		dc.w loc_5F0-off_468	; 1
-		dc.w loc_660-off_468	; 2
-		dc.w loc_676-off_468	; 3
-		dc.w loc_686-off_468	; 4
-		dc.w loc_878-off_468	; 5
-		dc.w loc_B70-off_468	; 6
-		dc.w loc_C5E-off_468	; 7
-		dc.w loc_67C-off_468	; 8
-		dc.w loc_C6E-off_468	; 9
-		dc.w loc_62A-off_468	; 10
-		dc.w loc_DF4-off_468	; 11
-		dc.w loc_C7A-off_468	; 12
-		dc.w loc_B4E-off_468	; 13
+VBlank_Index:	index *,,2
+
+		ptr	 VBlank_Lag				; 0
+		ptr  VBlank_Sega			; 2
+		ptr	 VBlank_Title			; 4
+		ptr	 VBlank_Unused6			; 6
+		ptr  VBlank_Level			; 8
+		ptr  VBlank_SpecialStage	; $A
+		ptr  VBlank_TitleCard		; $C
+		ptr  VBlank_UnusedE			; $E
+		ptr	 VBlank_Pause			; $10
+		ptr  VBlank_Fade			; $12
+		ptr  VBlank_PCM				; $14
+		ptr  VBlank_Menu			; $16
+		ptr  VBlank_Ending			; $18
+		ptr  VBlank_CtrlDMA			; $1A
+;		dc.w VBlank_Lag-VBlank_Index	; 0 
+;		dc.w VBlank_Sega-VBlank_Index	; 2
+;		dc.w VBlank_Title-VBlank_Index	; 4
+;		dc.w VBlank_Unused6-VBlank_Index	; 6
+;		dc.w VBlank_Level-VBlank_Index	; 8
+;		dc.w VBlank_SpecialStage-VBlank_Index	; $A
+;		dc.w VBlank_TitleCard-VBlank_Index	; $C
+;		dc.w VBlank_UnusedE-VBlank_Index	; $E
+;		dc.w VBlank_Pause-VBlank_Index	; $10
+;		dc.w VBlank_Fade-VBlank_Index	; $12
+;		dc.w VBlank_PCM-VBlank_Index	; $14
+;		dc.w VBlank_Menu-VBlank_Index	; $16
+;		dc.w VBlank_Ending-VBlank_Index	; $18
+;		dc.w VBlank_CtrlDMA-VBlank_Index	; $1A
 ; ===========================================================================
 
-loc_484:				; CODE XREF: ROM:00000410j
+VBlank_Lag:				; CODE XREF: ROM:00000410j
 					; DATA XREF: ROM:00000468o
 		cmpi.b	#-$78,(v_gamemode).w
 		beq.s	loc_4C4
@@ -456,13 +492,10 @@ loc_484:				; CODE XREF: ROM:00000410j
 		beq.s	loc_4C4
 		cmpi.b	#$C,(v_gamemode).w
 		beq.s	loc_4C4
-		move.w	#$100,($A11100).l
-
-loc_4AC:				; CODE XREF: ROM:000004B4j
-		btst	#0,($A11100).l
-		bne.s	loc_4AC
+		stopZ80
+		waitz80
 		bsr.w	sub_1084
-		move.w	#0,($A11100).l
+		startZ80
 		bra.s	loc_45E
 ; ===========================================================================
 
@@ -480,11 +513,8 @@ loc_4DE:				; CODE XREF: ROM:000004DEj
 
 loc_4E2:				; CODE XREF: ROM:000004D8j
 		move.w	#1,(f_hblank).w
-		move.w	#$100,($A11100).l
-
-loc_4F0:				; CODE XREF: ROM:000004F8j
-		btst	#0,($A11100).l
-		bne.s	loc_4F0
+		stopZ80
+		waitz80
 		tst.b	(f_water_pal_full).w
 		bne.s	loc_526
 		lea	(vdp_control_port).l,a5
@@ -510,7 +540,7 @@ loc_54A:				; CODE XREF: ROM:00000524j
 		move.w	(v_vdp_hint_counter).w,(a5)
 		move.w	#-$7DD0,(vdp_control_port).l
 		bsr.w	sub_1084
-		move.w	#0,($A11100).l
+		startZ80
 		bra.w	loc_45E
 ; ===========================================================================
 
@@ -530,11 +560,8 @@ loc_58E:				; CODE XREF: ROM:00000584j
 		move.w	(v_vdp_hint_counter).w,(vdp_control_port).l
 		move.w	#-$7DD0,(vdp_control_port).l
 		move.l	(v_fg_y_pos_vsram_p2).w,(v_hblank_fg_y_pos_vsram_p2).w
-		move.w	#$100,($A11100).l
-
-loc_5B2:				; CODE XREF: ROM:000005BAj
-		btst	#0,($A11100).l
-		bne.s	loc_5B2
+		stopZ80
+		waitz80
 		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFE6CC0,(a5)
 		move.l	#-$69036B00,(a5)
@@ -543,11 +570,11 @@ loc_5B2:				; CODE XREF: ROM:000005BAj
 		move.w	#$83,(v_vdp_dma_buffer).w ; '='
 		move.w	(v_vdp_dma_buffer).w,(a5)
 		bsr.w	sub_1084
-		move.w	#0,($A11100).l
+		startZ80
 		bra.w	loc_45E
 ; ===========================================================================
 
-loc_5F0:				; DATA XREF: ROM:00000468o
+VBlank_Sega:				; DATA XREF: ROM:00000468o
 		bsr.w	sub_E98
 		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFE6C40,(a5)
@@ -565,7 +592,7 @@ locret_628:				; CODE XREF: ROM:00000620j
 		rts	
 ; ===========================================================================
 
-loc_62A:				; DATA XREF: ROM:00000468o
+VBlank_PCM:				; DATA XREF: ROM:00000468o
 		move.b	($FFFFFE0F).w,d0
 		andi.w	#$F,d0
 		bne.s	loc_652
@@ -575,7 +602,7 @@ loc_63C:				; CODE XREF: ROM:00000644j
 		btst	#0,($A11100).l
 		bne.s	loc_63C
 		bsr.w	sub_111C
-		move.w	#0,($A11100).l
+		startZ80
 
 loc_652:				; CODE XREF: ROM:00000632j
 		tst.w	(v_countdown).w
@@ -586,7 +613,7 @@ locret_65E:				; CODE XREF: ROM:00000656j
 		rts	
 ; ===========================================================================
 
-loc_660:				; DATA XREF: ROM:00000468o
+VBlank_Title:				; DATA XREF: ROM:00000468o
 		bsr.w	sub_E98
 
 loc_664:
@@ -599,21 +626,18 @@ locret_674:				; CODE XREF: ROM:0000066Cj
 		rts	
 ; ===========================================================================
 
-loc_676:				; DATA XREF: ROM:00000468o
+VBlank_Unused6:				; DATA XREF: ROM:00000468o
 		bsr.w	sub_E98
 		rts	
 ; ===========================================================================
 
-loc_67C:				; DATA XREF: ROM:00000468o
+VBlank_Pause:				; DATA XREF: ROM:00000468o
 		cmpi.b	#$10,(v_gamemode).w
 		beq.w	loc_802
 
-loc_686:				; DATA XREF: ROM:00000468o
-		move.w	#$100,($A11100).l
-
-loc_68E:				; CODE XREF: ROM:00000696j
-		btst	#0,($A11100).l
-		bne.s	loc_68E
+VBlank_Level:				; DATA XREF: ROM:00000468o
+		stopZ80
+		waitz80
 		bsr.w	sub_111C
 		tst.b	(v_teleport_timer).w
 		beq.s	loc_6F8
@@ -687,9 +711,9 @@ loc_748:				; CODE XREF: ROM:000006ACj
 		move.w	#$7800,(a5)
 		move.w	#$83,(v_vdp_dma_buffer).w ; '='
 		move.w	(v_vdp_dma_buffer).w,(a5)
-		bsr.w	sub_14AC
+		bsr.w	ProcessDMAQueue
 		bsr.w	sub_1084
-		move.w	#0,($A11100).l
+		startZ80
 		movem.l	(v_camera_x_pos).w,d0-d7
 		movem.l	d0-d7,(v_vblank_camera_pos).w
 		movem.l	(v_camera_x_pos_p2).w,d0-d7
@@ -722,11 +746,8 @@ locret_800:				; CODE XREF: sub_7E6+12j
 
 ; ===========================================================================
 loc_802:				; CODE XREF: ROM:00000682j
-		move.w	#$100,($A11100).l
-
-loc_80A:				; CODE XREF: ROM:00000812j
-		btst	#0,($A11100).l
-		bne.s	loc_80A
+		stopZ80
+		waitz80
 		bsr.w	sub_111C
 		jsr	(sub_1084).l
 		tst.b	($FFFFDB11).w
@@ -751,16 +772,13 @@ loc_84A:				; CODE XREF: ROM:00000822j
 		move.w	(v_vdp_dma_buffer).w,(a5)
 
 loc_86E:				; CODE XREF: ROM:00000848j
-		move.w	#0,($A11100).l
+		startZ80
 		rts	
 ; ===========================================================================
 
-loc_878:				; DATA XREF: ROM:00000468o
-		move.w	#$100,($A11100).l
-
-loc_880:				; CODE XREF: ROM:00000888j
-		btst	#0,($A11100).l
-		bne.s	loc_880
+VBlank_SpecialStage:				; DATA XREF: ROM:00000468o
+		stopZ80
+		waitz80
 		bsr.w	sub_111C
 		bsr.w	sub_AE8
 		lea	(vdp_control_port).l,a5
@@ -848,9 +866,9 @@ loc_98E:				; CODE XREF: ROM:00000978j
 		eori.b	#1,($FFFFDB0C).w
 
 loc_994:				; CODE XREF: ROM:00000960j
-		bsr.w	sub_14AC
+		bsr.w	ProcessDMAQueue
 		jsr	(sub_1084).l
-		move.w	#0,($A11100).l
+		startZ80
 		bsr.w	loc_16FC
 		tst.w	(v_countdown).w
 		beq.w	locret_9B6
@@ -1000,23 +1018,17 @@ byte_B46:	dc.b $3C		; 0 ; DATA XREF: sub_B02+1Eo
 		dc.b   0		; 7
 ; ===========================================================================
 
-loc_B4E:				; DATA XREF: ROM:00000468o
-		move.w	#$100,($A11100).l
-
-loc_B56:				; CODE XREF: ROM:00000B5Ej
-		btst	#0,($A11100).l
-		bne.s	loc_B56
-		jsr	(sub_14AC).l
-		move.w	#0,($A11100).l
+VBlank_CtrlDMA:				; DATA XREF: ROM:00000468o
+		stopZ80
+		waitz80
+		jsr	(ProcessDMAQueue).l ; can be reduced to a bsr,w
+		startZ80
 		rts	
 ; ===========================================================================
 
-loc_B70:				; DATA XREF: ROM:00000468o
-		move.w	#$100,($A11100).l
-
-loc_B78:				; CODE XREF: ROM:00000B80j
-		btst	#0,($A11100).l
-		bne.s	loc_B78
+VBlank_TitleCard:				; DATA XREF: ROM:00000468o
+		stopZ80
+		waitz80
 		bsr.w	sub_111C
 		tst.b	(f_water_pal_full).w
 		bne.s	loc_BB2
@@ -1057,10 +1069,10 @@ loc_C04:
 		move.w	#$7800,(a5)
 		move.w	#$83,(v_vdp_dma_buffer).w ; '='
 		move.w	(v_vdp_dma_buffer).w,(a5)
-		bsr.w	sub_14AC
+		bsr.w	ProcessDMAQueue
 		jsr	loc_15584
 		jsr	(sub_1084).l
-		move.w	#0,($A11100).l
+		startZ80
 		movem.l	(v_camera_x_pos).w,d0-d7
 		movem.l	d0-d7,(v_vblank_camera_pos).w
 		movem.l	(v_fg_redraw_direction).w,d0-d1
@@ -1070,25 +1082,22 @@ loc_C04:
 		rts	
 ; ===========================================================================
 
-loc_C5E:				; DATA XREF: ROM:00000468o
+VBlank_UnusedE:				; DATA XREF: ROM:00000468o
 		bsr.w	sub_E98
 		addq.b	#1,(v_vblank_0e_counter).w
 		move.b	#$E,(v_vblank_routine).w
 		rts	
 ; ===========================================================================
 
-loc_C6E:				; DATA XREF: ROM:00000468o
+VBlank_Fade:				; DATA XREF: ROM:00000468o
 		bsr.w	sub_E98
 		move.w	(v_vdp_hint_counter).w,(a5)
 		bra.w	sub_16E0
 ; ===========================================================================
 
-loc_C7A:				; DATA XREF: ROM:00000468o
-		move.w	#$100,($A11100).l
-
-loc_C82:				; CODE XREF: ROM:00000C8Aj
-		btst	#0,($A11100).l
-		bne.s	loc_C82
+VBlank_Ending:				; DATA XREF: ROM:00000468o
+		stopZ80
+		waitz80
 		bsr.w	sub_111C
 		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFF6CC0,(a5)
@@ -1113,14 +1122,14 @@ loc_C9C:
 		move.w	#$7C00,(a5)
 		move.w	#$83,(v_vdp_dma_buffer).w ; '='
 		move.w	(v_vdp_dma_buffer).w,(a5)
-		bsr.w	sub_14AC
+		bsr.w	ProcessDMAQueue
 		bsr.w	sub_1084
 		movem.l	(v_camera_x_pos).w,d0-d7
 		movem.l	d0-d7,(v_vblank_camera_pos).w
 		movem.l	(v_fg_redraw_direction).w,d0-d3
 		movem.l	d0-d3,(v_vblank_fg_redraw_direction).w
 		bsr.w	sub_10E0
-		move.w	#0,($A11100).l
+		startZ80
 		move.w	($FFFFF662).w,d0
 		beq.s	locret_D3A
 		clr.w	($FFFFF662).w
@@ -1188,12 +1197,9 @@ loc_DC0:				; CODE XREF: ROM:00000DC6j
 		rts	
 ; ===========================================================================
 
-loc_DF4:				; DATA XREF: ROM:00000468o
-		move.w	#$100,($A11100).l
-
-loc_DFC:				; CODE XREF: ROM:00000E04j
-		btst	#0,($A11100).l
-		bne.s	loc_DFC
+VBlank_Menu:				; DATA XREF: ROM:00000468o
+		stopZ80
+		waitz80
 		bsr.w	sub_111C
 		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFF6CC0,(a5)
@@ -1216,9 +1222,9 @@ loc_DFC:				; CODE XREF: ROM:00000E04j
 		move.w	#$7C00,(a5)
 		move.w	#$83,(v_vdp_dma_buffer).w ; '='
 		move.w	(v_vdp_dma_buffer).w,(a5)
-		bsr.w	sub_14AC
+		bsr.w	ProcessDMAQueue
 		bsr.w	sub_1084
-		move.w	#0,($A11100).l
+		startZ80
 		bsr.w	sub_16E0
 		tst.w	(v_countdown).w
 		beq.w	locret_E96
@@ -1275,7 +1281,7 @@ loc_EFE:				; CODE XREF: sub_E98+40j
 		move.w	#$83,(v_vdp_dma_buffer).w ; '='
 		move.w	(v_vdp_dma_buffer).w,(a5)
 		bsr.w	sub_1084
-		move.w	#0,($A11100).l
+		startZ80
 		rts	
 ; End of function sub_E98
 
@@ -1300,11 +1306,8 @@ loc_F6E:				; CODE XREF: ROM:00000F78j
 		move.w	#-$7DD8,(vdp_control_port).l
 		move.l	#$40000010,(vdp_control_port).l
 		move.l	(v_hblank_fg_y_pos_vsram_p2).w,(vdp_data_port).l
-		move.w	#$100,($A11100).l
-
-loc_FAA:				; CODE XREF: ROM:00000FB2j
-		btst	#0,($A11100).l
-		bne.s	loc_FAA
+		stopZ80
+		waitz80
 		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFE6CC0,(a5)
 		move.l	#-$69116A80,(a5)
@@ -1312,7 +1315,7 @@ loc_FAA:				; CODE XREF: ROM:00000FB2j
 		move.w	#$7800,(a5)
 		move.w	#$83,(v_vdp_dma_buffer).w ; '='
 		move.w	(v_vdp_dma_buffer).w,(a5)
-		move.w	#0,($A11100).l
+		startZ80
 
 loc_FE0:				; CODE XREF: ROM:00000FEAj
 		move.w	(vdp_control_port).l,d0
@@ -1461,7 +1464,7 @@ loc_10F4:				; CODE XREF: JoypadInit+10j
 		move.b	d0,($A10009).l
 		move.b	d0,($A1000B).l
 		move.b	d0,(port_e_control).l
-		move.w	#0,($A11100).l
+		startZ80
 		rts	
 ; End of function JoypadInit
 
@@ -1649,7 +1652,7 @@ loc_12EA:				; CODE XREF: sub_1208+E4j
 loc_12FA:				; CODE XREF: sub_1208+F4j
 		move.l	d0,(a1)+
 		dbf	d1,loc_12FA
-		move.w	#0,($A11100).l
+		startZ80
 		rts	
 ; End of function sub_1208
 
@@ -1677,7 +1680,7 @@ JmpTo_SoundDriverLoad:				; CODE XREF: ROM:00000386p
 		nop	
 		nop	
 		move.w	#$100,($A11200).l
-		move.w	#0,($A11100).l
+		startZ80
 		rts	
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -1876,12 +1879,12 @@ locret_14AA:				; CODE XREF: sub_144E+8j sub_144E+56j
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_14AC:				; CODE XREF: ROM:0000079Cp
+ProcessDMAQueue:				; CODE XREF: ROM:0000079Cp
 					; ROM:00000994p ...
 		lea	(vdp_control_port).l,a5
 		lea	(v_vdp_command_buffer).w,a1
 
-loc_14B6:				; CODE XREF: sub_14AC+20j
+loc_14B6:				; CODE XREF: ProcessDMAQueue+20j
 		move.w	(a1)+,d0
 		beq.s	loc_14CE
 		move.w	d0,(a5)
@@ -1894,11 +1897,11 @@ loc_14B6:				; CODE XREF: sub_14AC+20j
 		cmpa.w	#-$2304,a1
 		bne.s	loc_14B6
 
-loc_14CE:				; CODE XREF: sub_14AC+Cj
+loc_14CE:				; CODE XREF: ProcessDMAQueue+Cj
 		move.w	#0,(v_vdp_command_buffer).w
 		move.l	#-$2400,($FFFFDCFC).w
 		rts	
-; End of function sub_14AC
+; End of function ProcessDMAQueue
 
 ; ------------------------------------------------------------------------
 ; Nemesis decompression	algorithm
@@ -4264,7 +4267,7 @@ Angle_Data:	dc.b   0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2
 		nop	
 	endc
 
-GM_Sega:				; CODE XREF: ROM:000003A2j
+SegaScreen:				; CODE XREF: ROM:000003A2j
 		move.b	#-3,d0
 		bsr.w	sub_135E
 		bsr.w	sub_167C
@@ -4411,7 +4414,7 @@ sub_3990:				; CODE XREF: ROM:00003918p
 		dc.w 0
 ; ===========================================================================
 
-loc_3998:				; CODE XREF: ROM:000003A6j
+TitleScreen:				; CODE XREF: ROM:000003A6j
 		move.b	#-3,d0
 		bsr.w	sub_135E
 		bsr.w	sub_167C
@@ -4817,7 +4820,7 @@ byte_3EB2:	dc.b $8C		; 0 ; DATA XREF: ROM:000040C4t
 		dc.b   0		; 17
 ; ===========================================================================
 
-loc_3EC4:				; CODE XREF: ROM:000003AAj
+Level:				; CODE XREF: ROM:000003AAj
 					; ROM:000003AEj ...
 		bset	#7,(v_gamemode).w
 		tst.w	($FFFFFFF0).w
@@ -5200,7 +5203,7 @@ loc_4360:				; CODE XREF: ROM:000043D6j
 		bsr.w	sub_450E
 		jsr	sub_15F9C
 		tst.w	($FFFFFE02).w
-		bne.w	loc_3EC4
+		bne.w	Level
 		bsr.w	sub_4F52
 		bsr.w	sub_44E4
 		jsr	loc_16F88
@@ -6313,7 +6316,7 @@ sub_4F5E:				; CODE XREF: ROM:0000414Ap
 
 ; ===========================================================================
 
-loc_4F64:				; CODE XREF: ROM:000003B2j
+SpecialStage:				; CODE XREF: ROM:000003B2j
 		cmpi.b	#7,($FFFFFE16).w
 		bcs.s	loc_4F72
 		move.b	#0,($FFFFFE16).w
@@ -7764,7 +7767,7 @@ off_5DD4:	dc.w loc_5F82-off_5DD4	; 0 ; DATA XREF: sub_5604+7D0o
 					; sub_5604+7D2o ...
 		dc.w loc_5F58-off_5DD4	; 1
 		dc.w loc_5F2E-off_5DD4	; 2
-		dc.w loc_5F04-off_5DD4	; 3
+		dc.w VBlank_Sega4-off_5DD4	; 3
 		dc.w loc_5EDA-off_5DD4	; 4
 		dc.w loc_5EBA-off_5DD4	; 5
 		dc.w loc_5E8A-off_5DD4	; 6
@@ -7838,7 +7841,7 @@ off_5E50:	dc.w loc_63B8-off_5E50	; 0 ; DATA XREF: sub_5604+84Co
 		dc.w loc_6336-off_5E50	; 3
 		dc.w loc_6306-off_5E50	; 4
 		dc.w loc_62D6-off_5E50	; 5
-		dc.w loc_62A6-off_5E50	; 6
+		dc.w VBlank_PCM6-off_5E50	; 6
 		dc.w loc_6280-off_5E50	; 7
 ; ===========================================================================
 
@@ -7913,7 +7916,7 @@ loc_5EDA:				; DATA XREF: sub_5604+7D0o
 		bra.w	loc_5DA8
 ; ===========================================================================
 
-loc_5F04:				; DATA XREF: sub_5604+7D0o
+VBlank_Sega4:				; DATA XREF: sub_5604+7D0o
 		move.b	d4,d0
 		lsl.w	#2,d0
 		andi.w	#$3C0,d0
@@ -8314,7 +8317,7 @@ loc_629C:				; CODE XREF: sub_5604+C9Aj
 		bra.w	loc_5DA8
 ; ===========================================================================
 
-loc_62A6:				; DATA XREF: sub_5604+84Co
+VBlank_PCM6:				; DATA XREF: sub_5604+84Co
 		move.b	d2,d0
 		lsr.b	#2,d0
 		andi.w	#$20,d0	; ' '
@@ -9970,7 +9973,7 @@ sub_7868:				; CODE XREF: ROM:0000531Ep
 		dc.b   0 ;  
 ; ===========================================================================
 
-loc_7870:				; CODE XREF: ROM:000003B6j
+ContinueScreen:				; CODE XREF: ROM:000003B6j
 		bsr.w	sub_246A
 	disable_ints
 		move.w	(v_vdp_mode_buffer).w,d0
@@ -10371,7 +10374,7 @@ sub_7D4A:				; CODE XREF: ROM:00007A90p
 
 ; ===========================================================================
 
-loc_7D50:				; CODE XREF: ROM:000003BAj
+TwoPlayerResults:				; CODE XREF: ROM:000003BAj
 		bsr.w	sub_246A
 	disable_ints
 		move.w	(v_vdp_mode_buffer).w,d0
@@ -11509,7 +11512,7 @@ j_Dynamic_Normal_0:			; CODE XREF: ROM:00007E50p
 
 ; ===========================================================================
 
-loc_8BD4:				; CODE XREF: ROM:000003F0j
+MenuScreen:				; CODE XREF: ROM:000003F0j
 					; ROM:000003FCj ...
 		bsr.w	sub_246A
 	disable_ints
@@ -12744,7 +12747,7 @@ j_Dynamic_Normal:			; CODE XREF: ROM:00008D56p
 
 ; ===========================================================================
 
-loc_9C7C:				; CODE XREF: ROM:000003F6j
+EndingSequence:				; CODE XREF: ROM:000003F6j
 		lea	($FFFFB000).w,a1
 		moveq	#0,d0
 		move.w	#$7FF,d1
@@ -12789,7 +12792,7 @@ loc_9CF2:				; CODE XREF: ROM:00009CF8j
 		move.w	#-$70FE,(a5)
 		clr.l	(v_fg_y_pos_vsram).w
 		clr.l	($FFFFF61A).w
-		move.w	#0,($A11100).l
+		startZ80
 		lea	(vdp_control_port).l,a6
 		move.w	#-$74FD,(a6)
 		move.w	#-$7DD0,(a6)
@@ -15855,13 +15858,13 @@ loc_C784:				; CODE XREF: sub_C71A+6Cj
 		asr.w	#3,d3
 		move.w	#$27,d1	; '''
 
-loc_C7AA:				; CODE XREF: sub_C71A+9Aj
+VBlank_EndingA:				; CODE XREF: sub_C71A+9Aj
 		move.w	d2,(a1)+
 		move.w	d3,(a1)+
 		swap	d3
 		add.l	d0,d3
 		swap	d3
-		dbf	d1,loc_C7AA
+		dbf	d1,VBlank_EndingA
 		rts	
 ; End of function sub_C71A
 
@@ -18670,10 +18673,10 @@ loc_DF1E:				; CODE XREF: sub_DF04+4Aj
 		addi.w	#$10,d4
 		move.w	d4,d0
 		andi.w	#$70,d0	; 'p'
-		bne.s	loc_DF4E
+		bne.s	VBlank_MenuE
 		bsr.w	sub_E09E
 
-loc_DF4E:				; CODE XREF: sub_DF04+44j
+VBlank_MenuE:				; CODE XREF: sub_DF04+44j
 		dbf	d6,loc_DF1E
 		rts	
 ; ===========================================================================
