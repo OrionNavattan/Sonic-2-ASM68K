@@ -3634,11 +3634,14 @@ loc_261C:
 		rts	
 ; End of function sub_25E0
 
+
+; Sonic 1 leftover - dead code/data for old SEGA screen:
+
 ; ===========================================================================
 		tst.b	($FFFFF635).w
 		bne.s	loc_2680
 		lea	($FFFFFB20).w,a1
-		lea	(Pal_26D6).l,a0
+		lea	(Pal_Sega1).l,a0
 		moveq	#5,d1
 		move.w	(v_palcycle_num).w,d0
 
@@ -3698,7 +3701,7 @@ loc_2680:
 
 loc_269E:				
 		move.w	d0,(v_palcycle_num).w
-		lea	(Pal_26E2).l,a0
+		lea	(Pal_Sega2).l,a0
 		lea	(a0,d0.w),a0
 		lea	($FFFFFB04).w,a1
 		move.l	(a0)+,(a1)+
@@ -3724,15 +3727,15 @@ loc_26D2:
 		rts	
 ; ===========================================================================
 ;----------------------------------------------------------------------------
-;Unknown Palette
+; Unused palette for the Sega logo
 ;----------------------------------------------------------------------------
-Pal_26D6:	dc.w  $EEE, $EEA, $EE4,	$EC0, $EE4, $EEA; 0 
+Pal_Sega1:	incbin 	"art/palettes/Unused Sega Logo 1.bin"
 ;----------------------------------------------------------------------------
-;Unknown Palette
+; Unused palette for the Sega logo (fading?)
 ;----------------------------------------------------------------------------
-Pal_26E2:	dc.w  $EEC, $EEA, $EEA,	$EEA, $EEA, $EEA, $EEC,	$EEA, $EE4, $EC0, $EC0,	$EC0, $EEC, $EEA, $EE4,	$EC0; 0
-					
-		dc.w  $EA0, $E60, $EEA,	$EE4, $EC0, $EA0, $E80,	$E00; 16
+Pal_Sega2:	incbin  "art/palettes/Unused Sega Logo 2.bin"
+
+; end of dead code/data
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -3984,7 +3987,7 @@ Pal_HPZ:		incbin	"art/palettes/HPZ.bin"
 ;----------------------------------------------------------------------------
 ;HPZ Underwater	Palette
 ;----------------------------------------------------------------------------
-Pal_HPZ_U:		incbin	"art/palettes/HPZ underwater.bin"
+Pal_HPZ_U:		incbin	"art/palettes/HPZ Underwater.bin"
 ;----------------------------------------------------------------------------
 ;OOZ Palette
 ;----------------------------------------------------------------------------
@@ -4004,7 +4007,7 @@ Pal_CPZ:		incbin	"art/palettes/CNZ.bin"
 ;----------------------------------------------------------------------------
 ;CPZ Underwater	Palette
 ;----------------------------------------------------------------------------
-Pal_CPZ_U:		incbin	"art/palettes/CPZ underwater.bin"
+Pal_CPZ_U:		incbin	"art/palettes/CPZ Underwater.bin"
 ;----------------------------------------------------------------------------
 ;DEZ Palette
 ;----------------------------------------------------------------------------
@@ -32942,10 +32945,10 @@ byte_1781A:
 	; and load random bumpers.
 		dc.w	$0000, $0000, $0000
    	endif	
-		incbin	"level/objects/CNZ 1 bumpers.bin"
+		incbin	"level/objects/CNZ 1 Bumpers.bin"
 
 byte_1795E:		
-		incbin	"level/objects/CNZ 2 bumpers.bin"
+		incbin	"level/objects/CNZ 2 Bumpers.bin"
 ; ===========================================================================
 		nop	
 
@@ -74369,14 +74372,7 @@ loc_35F76:
 		rts	
 ; ===========================================================================
 word_35F92:	
-		incbin	"art/palettes/SS Emerald.bin"
-;		dc.w  $EE8, $EC0, $E80	; 0
-;		dc.w  $E6A, $C08, $806	; 3
-;		dc.w  $A6E,   $E,   $A	; 6
-;		dc.w  $EAE, $E6E, $E4E	; 9
-;		dc.w  $AEE,  $CE,  $8A	; 12
-;		dc.w   $EA,  $C6,  $82	; 15
-;		dc.w  $CCC, $AAA, $888	; 18
+		incbin	"art/palettes/Special Stage Emerald.bin"
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite
@@ -93484,23 +93480,23 @@ Off_Level:	dc.w Level_EHZ1-Off_Level; 0
 		dc.w Level_SCZ-Off_Level; 33
 ;---------------------------------------------------------------------------------------
 ; EHZ act 1 level layout (Kosinski compression)
-Level_EHZ1:		incbin	"level/layout/EHZ_1.bin"
+Level_EHZ1:		incbin	"level/layout/EHZ 1.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ; EHZ act 2 level layout (Kosinski compression)
-Level_EHZ2:		incbin	"level/layout/EHZ_2.bin"
+Level_EHZ2:		incbin	"level/layout/EHZ 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ; MTZ act 1 level layout (Kosinski compression)
-Level_MTZ1:		incbin  "level/layout/MTZ_1.bin"
+Level_MTZ1:		incbin  "level/layout/MTZ 1.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;MTZ act 2 level layout	(Kosinski compression)
-Level_MTZ2:		incbin  "level/layout/MTZ_2.bin"
+Level_MTZ2:		incbin  "level/layout/MTZ 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;MTZ act 3 level layout	(Kosinski compression)
-Level_MTZ3:		incbin	"level/layout/MTZ_3.bin"
+Level_MTZ3:		incbin	"level/layout/MTZ 3.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;WFZ level layout (Kosinski compression)
@@ -93508,43 +93504,43 @@ Level_WFZ:		incbin	"level/layout/WFZ.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;HTZ act 1 level layout	(Kosinski compression)
-Level_HTZ1:		incbin	"level/layout/HTZ_1.bin"
+Level_HTZ1:		incbin	"level/layout/HTZ 1.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;HTZ act 2 level layout	(Kosinski compression)
-Level_HTZ2:		incbin	"level/layout/HTZ_2.bin"
+Level_HTZ2:		incbin	"level/layout/HTZ 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;OOZ act 1 level layout	(Kosinski compression)
-Level_OOZ1:		incbin	"level/layout/OOZ_1.bin"
+Level_OOZ1:		incbin	"level/layout/OOZ 1.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;OOZ act 2 level layout	(Kosinski compression)
-Level_OOZ2:		incbin	"level/layout/OOZ_2.bin"
+Level_OOZ2:		incbin	"level/layout/OOZ 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;MCZ act 1 level layout	(Kosinski compression)
-Level_MCZ1:		incbin	"level/layout/MCZ_1.bin"
+Level_MCZ1:		incbin	"level/layout/MCZ 1.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;MCZ act 2 level layout	(Kosinski compression)
-Level_MCZ2:		incbin	"level/layout/MCZ_2.bin"
+Level_MCZ2:		incbin	"level/layout/MCZ 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;CNZ act 1 level layout	(Kosinski compression)
-Level_CNZ1:		incbin	"level/layout/CNZ_1.bin"
+Level_CNZ1:		incbin	"level/layout/CNZ 1.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;CNZ act 2 level layout	(Kosinski compression)
-Level_CNZ2:		incbin	"level/layout/CNZ_2.bin"
+Level_CNZ2:		incbin	"level/layout/CNZ 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;CPZ act 1 level layout	(Kosinski compression)
-Level_CPZ1:		incbin  "level/layout/CPZ_1.bin"
+Level_CPZ1:		incbin  "level/layout/CPZ 1.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;CPZ act 2 level layout	(Kosinski compression)
-Level_CPZ2:		incbin	"level/layout/CPZ_2.bin"
+Level_CPZ2:		incbin	"level/layout/CPZ 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;DEZ level layout (Kosinski compression)
@@ -93552,7 +93548,7 @@ Level_DEZ:		incbin	"level/layout/DEZ.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;ARZ act 1 level layout	(Kosinski compression)
-Level_ARZ1:		incbin	"level/layout/ARZ_1.bin"
+Level_ARZ1:		incbin	"level/layout/ARZ 1.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;ARZ act 2 level layout	(Kosinski compression)
@@ -93877,7 +93873,7 @@ Nem_7C2F2:		incbin	"art/nemesis/Tails Continue Icon.bin"
 ;88 blocks
 ;Standard font
 ;---------------------------------------------------------------------------------------
-Nem_7C43A:		incbin	"art/nemesis/Standard font.bin"
+Nem_7C43A:		incbin	"art/nemesis/Standard Font.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -93885,21 +93881,21 @@ Nem_7C43A:		incbin	"art/nemesis/Standard font.bin"
 ;38 blocks
 ;1P/2P wins text from 2P mode
 ;---------------------------------------------------------------------------------------
-Nem_7C9AE:		incbin	"art/nemesis/1P and 2P wins text from 2P mode.bin"
+Nem_7C9AE:		incbin	"art/nemesis/1P & 2P Wins Text.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Enigma	compressed art mappings
 ;
 ;Sonic/Miles animated background mappings
 ;---------------------------------------------------------------------------------------
-Eni_7CB80:		incbin	"mappings/misc/Sonic and Miles animated background.bin"
+Eni_7CB80:		incbin	"mappings/misc/Sonic & Miles Animated Background.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Uncompressed art
 ;
 ;Sonic/Miles animated background patterns
 ;---------------------------------------------------------------------------------------
-Art_7CD2C:		incbin	"art/uncompressed/Sonic and Miles animated background.bin"
+Art_7CD2C:		incbin	"art/uncompressed/Sonic & Miles Animated Background.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -93907,7 +93903,7 @@ Art_7CD2C:		incbin	"art/uncompressed/Sonic and Miles animated background.bin"
 ;94 blocks
 ;Title card patterns
 ;---------------------------------------------------------------------------------------
-Nem_7D22C:		incbin	"art/nemesis/Title card.bin"
+Nem_7D22C:		incbin	"art/nemesis/Title Card.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -93915,7 +93911,7 @@ Nem_7D22C:		incbin	"art/nemesis/Title card.bin"
 ; 92 blocks
 ; Alphabet for font using large	broken letters
 ; --------------------------------------------------------------------------------------
-Nem_7D58A:		incbin	"art/nemesis/Font using large broken letters.bin"
+Nem_7D58A:		incbin	"art/nemesis/Title Card Font.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -93923,7 +93919,7 @@ Nem_7D58A:		incbin	"art/nemesis/Font using large broken letters.bin"
 ;21 blocks
 ;A menu	box with a shadow
 ;---------------------------------------------------------------------------------------
-Nem_7D990:		incbin	"art/nemesis/A menu box with a shadow.bin"
+Nem_7D990:		incbin	"art/nemesis/Menu Box & Shadow.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -93931,7 +93927,7 @@ Nem_7D990:		incbin	"art/nemesis/A menu box with a shadow.bin"
 ;170 blocks
 ;Pictures in level preview box in level	select
 ;---------------------------------------------------------------------------------------
-Nem_7DA10:		incbin	"art/nemesis/Pictures in level preview box from level select.bin"
+Nem_7DA10:		incbin	"art/nemesis/Level Select Thumbnails.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -93939,7 +93935,7 @@ Nem_7DA10:		incbin	"art/nemesis/Pictures in level preview box from level select.
 ;68 blocks
 ;Unknown. More text I haven't figured out
 ;---------------------------------------------------------------------------------------
-Nem_7E86A:		incbin	"art/nemesis/End of level results text.bin"
+Nem_7E86A:		incbin	"art/nemesis/End of Level Results Text.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -93947,7 +93943,7 @@ Nem_7E86A:		incbin	"art/nemesis/End of level results text.bin"
 ;72 blocks
 ;Text for end of special stage,	along with patterns for	3 emeralds.
 ;---------------------------------------------------------------------------------------
-Nem_7EB58:		incbin	"art/nemesis/Special stage results screen art and some emeralds.bin"
+Nem_7EB58:		incbin	"art/nemesis/Special Stage Results Screen & Emeralds.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -93955,7 +93951,7 @@ Nem_7EB58:		incbin	"art/nemesis/Special stage results screen art and some emeral
 ;14 blocks
 ;"Perfect" text
 ;---------------------------------------------------------------------------------------
-Nem_7EEBE:		incbin	"art/nemesis/Perfect text.bin"
+Nem_7EEBE:		incbin	"art/nemesis/Perfect Text.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94003,7 +93999,7 @@ Nem_7F4A2:		incbin	"art/nemesis/Beaver.bin"
 ;16 blocks
 ;Penguin
 ;---------------------------------------------------------------------------------------
-Nem_7F5E2:		incbin	"art/nemesis/Penguin.bin"
+Nem_7F5E2:		incbin	"art/nemesis/Penguin 1.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;Nemesis compressed art
@@ -94059,7 +94055,7 @@ Nem_7FDD2:		incbin	"art/nemesis/Rabbit.bin"
 ;4 blocks
 ;Rivet thing that you bust to get inside ship at the end of WFZ
 ;---------------------------------------------------------------------------------------
-Nem_7FF2A:		incbin	"art/nemesis/WFZ boss chamber switch.bin"
+Nem_7FF2A:		incbin	"art/nemesis/WFZ Boss Chamber Switch.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94067,7 +94063,7 @@ Nem_7FF2A:		incbin	"art/nemesis/WFZ boss chamber switch.bin"
 ; 15 blocks
 ; Breakaway panels in WFZ
 ; --------------------------------------------------------------------------------------
-Nem_7FF98:		incbin	"art/nemesis/Breakaway panels from WFZ.bin"
+Nem_7FF98:		incbin	"art/nemesis/WFZ Breakaway Panels.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94075,7 +94071,7 @@ Nem_7FF98:		incbin	"art/nemesis/Breakaway panels from WFZ.bin"
 ; 32 blocks
 ; Spiked ball from OOZ
 ; --------------------------------------------------------------------------------------
-Nem_8007C:		incbin	"art/nemesis/Spiked ball from OOZ.bin"
+Nem_8007C:		incbin	"art/nemesis/OOZ Spiked Ball.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94083,7 +94079,7 @@ Nem_8007C:		incbin	"art/nemesis/Spiked ball from OOZ.bin"
 ; 6 blocks
 ; Unknown. HPZ style shaded blocks
 ; --------------------------------------------------------------------------------------
-Nem_80274:		incbin	"art/nemesis/Burner Platform from OOZ.bin"
+Nem_80274:		incbin	"art/nemesis/OOZ Green Popping Platform.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94091,7 +94087,7 @@ Nem_80274:		incbin	"art/nemesis/Burner Platform from OOZ.bin"
 ; 4 blocks
 ; Striped blocks from CPZ
 ; --------------------------------------------------------------------------------------
-Nem_8030A:		incbin	"art/nemesis/Striped blocks from CPZ.bin"
+Nem_8030A:		incbin	"art/nemesis/CPZ Striped Blocks 1.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94099,7 +94095,7 @@ Nem_8030A:		incbin	"art/nemesis/Striped blocks from CPZ.bin"
 ; 16 blocks
 ; Oil falling into oil in OOZ
 ; --------------------------------------------------------------------------------------
-Nem_80376:		incbin	"art/nemesis/Cascading oil hitting oil from OOZ.bin"
+Nem_80376:		incbin	"art/nemesis/OOZ Oil Falling Into Oil.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94107,7 +94103,7 @@ Nem_80376:		incbin	"art/nemesis/Cascading oil hitting oil from OOZ.bin"
 ; 13 blocks
 ; Cascading oil from OOZ
 ; --------------------------------------------------------------------------------------
-Nem_804F2:		incbin	"art/nemesis/Cascading oil from OOZ.bin"
+Nem_804F2:		incbin	"art/nemesis/OOZ Oil Cascades.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94115,7 +94111,7 @@ Nem_804F2:		incbin	"art/nemesis/Cascading oil from OOZ.bin"
 ; 20 blocks
 ; Ball on spring from OOZ
 ; --------------------------------------------------------------------------------------
-Nem_805C0:		incbin	"art/nemesis/Ball on spring from OOZ (beta holdovers).bin"
+Nem_805C0:		incbin	"art/nemesis/OOZ Ball on Spring (Beta Leftover).bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94123,7 +94119,7 @@ Nem_805C0:		incbin	"art/nemesis/Ball on spring from OOZ (beta holdovers).bin"
 ; 53 blocks
 ; Spinball from	OOZ
 ; --------------------------------------------------------------------------------------
-Nem_806E0:		incbin	"art/nemesis/Transporter ball from OOZ.bin"
+Nem_806E0:		incbin	"art/nemesis/OOZ Transporter Ball.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94131,7 +94127,7 @@ Nem_806E0:		incbin	"art/nemesis/Transporter ball from OOZ.bin"
 ; 40 blocks
 ; Collapsing platform from OOZ
 ; --------------------------------------------------------------------------------------
-Nem_809D0:		incbin	"art/nemesis/OOZ collapsing platform.bin"
+Nem_809D0:		incbin	"art/nemesis/OOZ Collapsing Platform.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94139,7 +94135,7 @@ Nem_809D0:		incbin	"art/nemesis/OOZ collapsing platform.bin"
 ; 30 blocks
 ; Diagonal and vertical	weird spring from OOZ
 ; --------------------------------------------------------------------------------------
-Nem_80C64:		incbin	"art/nemesis/Push spring from OOZ.bin"
+Nem_80C64:		incbin	"art/nemesis/OOZ Pressure Spring.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
@@ -94147,13 +94143,13 @@ Nem_80C64:		incbin	"art/nemesis/Push spring from OOZ.bin"
 ; 28 blocks
 ; Swinging platform from OOZ
 ; --------------------------------------------------------------------------------------
-Nem_80E26:		incbin	"art/nemesis/Swinging platform from OOZ.bin"
+Nem_80E26:		incbin	"art/nemesis/OOZ Pressure Springs.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; 4 stripy blocks from OOZ	; Nem_81048:
 ; --------------------------------------------------------------------------------------
-Nem_81048:		incbin	"art/nemesis/4 stripy blocks from OOZ.bin"
+Nem_81048:		incbin	"art/nemesis/OOZ Striped Blocks.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
