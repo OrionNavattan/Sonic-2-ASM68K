@@ -18,19 +18,19 @@
       <MapFile type="ASM" filename="../mappings/sprite/obj36.asm" frame="3" startpal="1" />
     </ImageFromMappings>
     <ImageFromMappings id="vert1">
-      <ArtFile filename="../art/nemesis/Long horizontal spike.bin" />
+      <ArtFile filename="../art/nemesis/Long Horizontal Spike.bin" />
       <MapFile type="ASM" filename="../mappings/sprite/obj36.asm" frame="4" startpal="1" />
     </ImageFromMappings>
     <ImageFromMappings id="vert2">
-      <ArtFile filename="../art/nemesis/Long horizontal spike.bin" />
+      <ArtFile filename="../art/nemesis/Long Horizontal Spike.bin" />
       <MapFile type="ASM" filename="../mappings/sprite/obj36.asm" frame="5" startpal="1" />
     </ImageFromMappings>
     <ImageFromMappings id="vert3">
-      <ArtFile filename="../art/nemesis/Long horizontal spike.bin" />
+      <ArtFile filename="../art/nemesis/Long Horizontal Spike.bin" />
       <MapFile type="ASM" filename="../mappings/sprite/obj36.asm" frame="6" startpal="1" />
     </ImageFromMappings>
     <ImageFromMappings id="vert4">
-      <ArtFile filename="../art/nemesis/Long horizontal spike.bin" />
+      <ArtFile filename="../art/nemesis/Long Horizontal Spike.bin" />
       <MapFile type="ASM" filename="../mappings/sprite/obj36.asm" frame="7" startpal="1" />
     </ImageFromMappings>
   </Images>

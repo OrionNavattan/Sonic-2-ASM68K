@@ -16,7 +16,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/uncompressed/Sonic's art.bin",
+                        "path": "art/uncompressed/Sonic.bin",
                         "compression": "Uncompressed",
                         "offset": 0
                     },
@@ -62,7 +62,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/uncompressed/Tails's art.bin",
+                        "path": "art/uncompressed/Tails.bin",
                         "compression": "Uncompressed",
                         "offset": 0
                     },
@@ -168,7 +168,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Monitor and contents.bin",
+                        "path": "art/nemesis/Monitors & Monitor Contents.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -193,7 +193,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Monitor and contents.bin",
+                        "path": "art/nemesis/Monitors & Monitor Contents.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -268,7 +268,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Vertical spring.bin",
+                        "path": "art/nemesis/Vertical Spring.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -293,7 +293,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Monitor and contents.bin",
+                        "path": "art/nemesis/Monitors & Monitor Contents.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -318,7 +318,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Star pole.bin",
+                        "path": "art/nemesis/Star Pole.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -500,7 +500,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Bubble generator.bin",
+                        "path": "art/nemesis/ARZ Bubble Generator.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -558,7 +558,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Monitor and contents.bin",
+                        "path": "art/nemesis/Monitors & Monitor Contents.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -616,7 +616,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Lever spring.bin",
+                        "path": "art/nemesis/Diving Board Spring.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -885,7 +885,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Lever spring.bin",
+                        "path": "art/nemesis/Diving Board Spring.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1684,7 +1684,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Monitor and contents.bin",
+                        "path": "art/nemesis/Monitors & Monitor Contents.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2214,7 +2214,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Lever spring.bin",
+                        "path": "art/nemesis/Diving Board Spring.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2541,7 +2541,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/OOZ Green Popping Platform.bin",
+                        "path": "art/nemesis/OOZ Burner Platform.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
