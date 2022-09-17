@@ -1,3 +1,6 @@
+; -------------------------------------------------------------------------------
+; Mappings - CPZ Dumping Pipe Platform
+; -------------------------------------------------------------------------------
 Map_obj0B:	mappingsTable
 	mappingsTableEntry.w	Map_obj0B_000A
 	mappingsTableEntry.w	Map_obj0B_001C

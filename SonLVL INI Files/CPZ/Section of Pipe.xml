@@ -2,8 +2,8 @@
 <ObjDef xmlns="http://www.sonicretro.org" Name="Section of Pipe" Image="section">
   <Images>
     <ImageFromMappings id="section">
-      <ArtFile filename="../art/nemesis/Small yellow moving platform from CPZ.bin" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj0B.asm" frame="0" startpal="3" />
+      <ArtFile filename="../art/nemesis/CPZ Dumping Pipe Platform.bin" />
+      <MapFile type="ASM" filename="../mappings/sprite/CPZ Dumping Pipe Platform.asm" frame="0" startpal="3" />
     </ImageFromMappings>
   </Images>
   <Properties>

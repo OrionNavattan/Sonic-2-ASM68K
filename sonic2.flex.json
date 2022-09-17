@@ -442,7 +442,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Arrow shooter and arrow from ARZ.bin",
+                        "path": "art/nemesis/ARZ Arrow Shooter & Arrow.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -587,7 +587,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/One way barrier from ARZ.bin",
+                        "path": "art/nemesis/ARZ One-Way Barrier.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1183,7 +1183,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Round bumper from CNZ.bin",
+                        "path": "art/nemesis/CNZ Round Bumper.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1241,7 +1241,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Vertical impulse spring.bin",
+                        "path": "art/nemesis/CNZ Vertical Pinball Launcher.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1270,7 +1270,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Flippers.bin",
+                        "path": "art/nemesis/CNZ Flipper.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1328,7 +1328,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Caterpiller platforms from CNZ.bin",
+                        "path": "art/nemesis/CNZ Caterpillar Platforms.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1357,7 +1357,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Moving block from CNZ and CPZ.bin",
+                        "path": "art/nemesis/CNZ Big Moving Block.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1386,7 +1386,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/CNZ elevator.bin",
+                        "path": "art/nemesis/CNZ Elevator.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1415,7 +1415,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/CNZ slot machine bars.bin",
+                        "path": "art/nemesis/CNZ Cages.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1444,7 +1444,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Hexagonal bumper from CNZ.bin",
+                        "path": "art/nemesis/CNZ Hexagonal Bumper.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1473,7 +1473,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Drop target from CNZ.bin",
+                        "path": "art/nemesis/CNZ Saucer Bumper.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2040,7 +2040,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Small yellow moving platform from CPZ.bin",
+                        "path": "art/nemesis/CPZ Dumping Pipe Platform.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2069,7 +2069,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Large moving platform from CNZ.bin",
+                        "path": "art/nemesis/CPZ Elevator.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2098,7 +2098,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Speed booster from CPZ.bin",
+                        "path": "art/nemesis/CPZ Speed Booster.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2127,7 +2127,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/CPZ worm enemy.bin",
+                        "path": "art/nemesis/CPZ Blue Balls.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2156,7 +2156,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Stripy blocks from CPZ.bin",
+                        "path": "art/nemesis/CPZ & DEZ Yellow & Black Striped Blocks.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2185,7 +2185,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/CPZ large moving platform blocks.bin",
+                        "path": "art/nemesis/CPZ Breakable Metal Block.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2243,7 +2243,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Moving block from CPZ.bin",
+                        "path": "art/nemesis/CPZ Stair Block.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2272,7 +2272,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Moving block from CPZ.bin",
+                        "path": "art/nemesis/CPZ Stair Block.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2301,7 +2301,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/CPZ spintube exit cover.bin",
+                        "path": "art/nemesis/CPZ Spintube Exit Cover & Spring.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2454,7 +2454,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Rising platform from OOZ.bin",
+                        "path": "art/nemesis/OOZ Elevator.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2715,7 +2715,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Octopus badnik from OOZ.bin",
+                        "path": "art/nemesis/Octus.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2744,7 +2744,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Seahorse from OOZ.bin",
+                        "path": "art/nemesis/Aquis.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2781,7 +2781,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Stripy blocks from CPZ.bin",
+                        "path": "art/nemesis/CPZ & DEZ Yellow & Black Striped Blocks.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -3203,7 +3203,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Buzzer enemy.bin",
+                        "path": "art/nemesis/Buzzer.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -3232,7 +3232,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/EHZ Pirahna badnik.bin",
+                        "path": "art/nemesis/Masher.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
