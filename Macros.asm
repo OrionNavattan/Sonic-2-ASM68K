@@ -1,36 +1,84 @@
 ; ---------------------------------------------------------------------------
+; Test if argument is used
+; ---------------------------------------------------------------------------
+
+ifarg		macros
+		if strlen("\1")>0
+
+ifnotarg	macros
+		if strlen("\1")=0
+
+; ---------------------------------------------------------------------------
+
+; ---------------------------------------------------------------------------
 ; Align and pad.
 ; input: length to align to, value to use as padding (default is 0)
 ; ---------------------------------------------------------------------------
 
-align:		macro
-		if narg=1
-		dcb.b (\1-(*%\1))%\1,0
+align:		macro length,value
+		ifarg \value
+		dcb.b (\length-(*%\length))%\length,\value
 		else
-		dcb.b (\1-(*%\1))%\1,\2
+		dcb.b (\length-(*%\length))%\length,0
 		endc
 		endm
-
+		
 ; ---------------------------------------------------------------------------
 ; Save and restore registers from the stack.
 ; ---------------------------------------------------------------------------
 
-pushr:		macro
-		if strlen("\1")>2
-		movem.l	\1,-(sp)				; save multiple registers
+
+chkifreg:	macro
+		isreg: = 1					; assume string is register
+		isregm: = 0					; assume single register
+		regtmp: equs \1					; copy input
+		rept strlen(\1)
+		regchr:	substr ,1,"\regtmp"			; get first character
+		regtmp:	substr 2,,"\regtmp"			; remove first character
+		if instr("ad01234567/-","\regchr")
 		else
-		move.l	\1,-(sp)				; save one register
+		isreg: = 0					; string isn't register if it contains characters besides those listed
+		endc
+		if instr("/-","\regchr")
+		isregm: = 1					; string is multi-register
+		endc
+		endr
+		endm
+
+pushr:		macro
+		chkifreg "\1"
+		if (isreg=1)&(isregm=1)
+			ifarg \0				; check if size is specified
+			movem.\0	\1,-(sp)		; save multiple registers (b/w)
+			else
+			movem.l	\1,-(sp)			; save multiple registers
+			endc
+		else
+			ifarg \0				; check if size is specified
+			move.\0	\1,-(sp)			; save one register (b/w)
+			else
+			move.l	\1,-(sp)			; save one whole register
+			endc
 		endc
 		endm
 
 popr:		macro
-		if strlen("\1")>2
-		movem.l	(sp)+,\1				; restore multiple registers
+		chkifreg "\1"
+		if (isreg=1)&(isregm=1)
+			ifarg \0				; check if size is specified
+			movem.\0	(sp)+,\1		; restore multiple registers (b/w)
+			else
+			movem.l	(sp)+,\1			; restore multiple whole registers
+			endc
 		else
-		move.l	(sp)+,\1				; restore one register
+			ifarg \0				; check if size is specified
+			move.\0	(sp)+,\1			; restore one register (b/w)
+			else
+			move.l	(sp)+,\1			; restore one whole register
+			endc
 		endc
-		endm		
-
+		endm
+		
 ; ---------------------------------------------------------------------------
 ; Add/sub optimizations.
 ; Almost all possible add/sub optimizations were made in Revision 2.
@@ -134,7 +182,7 @@ rsblockend:	macro
 
 rsobj:		macro name,start
 		rsobj_name: equs "\name"			; remember name of current object
-		if strlen("\start")>0
+		ifarg \start
 		rsset \start					; start at specified position
 		else
 		rsset ost_used					; start at end of regular OST usage
@@ -147,7 +195,7 @@ rsobjend:	macro
 		if __rs>sizeof_ost
 		inform	3,"OST for \rsobj_name exceeds maximum by $%h bytes.",__rs-sizeof_ost
 		else
-		inform	0,"0-$%h bytes of OST for \rsobj_name used, leaving $%h bytes unused.",__rs-1,sizeof_ost-__rs
+		;inform	0,"0-$%h bytes of OST for \rsobj_name used, leaving $%h bytes unused.",__rs-1,sizeof_ost-__rs
 		endc
 		popo
 		endm
@@ -191,37 +239,38 @@ clear_ram:		 macro startaddr,endaddr
 ; relative to themselves), id start (default 0), id increment (default 1)
 ; ---------------------------------------------------------------------------
 
-index:		macro
+index:		macro start,idstart,idinc
 		nolist
 		pusho
 		opt	m-
 
-		if strlen("\1")>0				; check if start is defined
-		index_start: = \1
+		ifarg \start					; check if start is defined
+		index_start: = \start
 		else
 		index_start: = -1
 		endc
-		if strlen("\0")=0				; check if width is defined (b, w, l)
-		index_width: equs "w"				; use w by default
-		else
+
+		ifarg \0					; check if width is defined (b, w, l)
 		index_width: equs "\0"
+		else
+		index_width: equs "w"				; use w by default
 		endc
 		
-		if strlen("\2")=0				; check if first pointer id is defined
+		ifarg \idstart					; check if first pointer id is defined
+		ptr_id: = \idstart
+		else
 		ptr_id: = 0					; use 0 by default
-		else
-		ptr_id: = \2
 		endc
-		if strlen("\3")=0				; check if pointer id increment is defined
-		ptr_id_inc: = 1					; use 1 by default
+
+		ifarg \idinc					; check if pointer id increment is defined
+		ptr_id_inc: = \idinc
 		else
-		ptr_id_inc: = \3
+		ptr_id_inc: = 1					; use 1 by default
 		endc
 		
 		popo
 		list
 		endm
-
 ; ---------------------------------------------------------------------------
 ; Item in a pointer index.
 ; input: pointer target, pointer label array (optional)
@@ -263,7 +312,7 @@ ptr:		macro
 ; ---------------------------------------------------------------------------
 
 locVRAM:	macro loc,controlport
-		if narg=1
+		ifarg \controlport
 		move.l	#($40000000+(((loc)&$3FFF)<<16)+(((loc)&$C000)>>14)),(vdp_control_port).l
 		else
 		move.l	#($40000000+(((loc)&$3FFF)<<16)+(((loc)&$C000)>>14)),\controlport
@@ -273,7 +322,7 @@ locVRAM:	macro loc,controlport
 ; ---------------------------------------------------------------------------
 ; DMA copy data from 68K (ROM/RAM) to VRAM/CRAM/VSRAM.
 ; input: source, length, destination ([vram address]|cram|vsram),
-;  cram/vsram destination (0 by default)
+; cram/vsram destination (0 by default)
 ; ---------------------------------------------------------------------------
 
 dma:		macro
@@ -308,21 +357,28 @@ dma:		macro
 		endm
 
 ; ---------------------------------------------------------------------------
-; DMA fill VRAM with a value.
+; DMA fill VRAM with a byte value.
 ; input: value, length, destination
+; uses d1, a5
 ; ---------------------------------------------------------------------------
 
-dma_fill:	macro value,length,loc
+dma_fill:	macro value,length,dest
 		lea	(vdp_control_port).l,a5
-		move.w	#$8F01,(a5)
-		move.l	#$94000000+(((length)&$FF00)<<8)+$9300+((length)&$FF),(a5)
-		move.w	#$9780,(a5)
-		move.l	#$40000080+(((loc)&$3FFF)<<16)+(((loc)&$C000)>>14),(a5)
-		move.w	#value,(vdp_data_port).l
+		move.w	#$8F01,(a5)				; set VDP increment to 1 byte
+		move.l	#$94000000+(((length)&$FF00)<<8)+$9300+((length)&$FF),(a5) ; set length of DMA
+		move.w	#$9780,(a5)				; set DMA mode to fill
+		move.l	#$40000080+(((dest)&$3FFF)<<16)+(((dest)&$C000)>>14),(a5) ; set target of DMA
+		move.w	#value<<8,(vdp_data_port).l		; set byte to fill with
+	.wait_for_dma\@:
+		move.w	(a5),d1					; get status register
+		btst	#1,d1					; is DMA in progress?
+		bne.s	.wait_for_dma\@				; if yes, branch
+		move.w	#$8F02,(a5)				; set VDP increment 2 bytes
 		endm
 
 ; ---------------------------------------------------------------------------
 ; Disable display
+; uses d0
 ; ---------------------------------------------------------------------------
 
 disable_display:	macro
@@ -333,6 +389,7 @@ disable_display:	macro
 
 ; ---------------------------------------------------------------------------
 ; Enable display
+; uses d0
 ; ---------------------------------------------------------------------------
 
 enable_display:	macro
@@ -371,10 +428,11 @@ copy_tilemap:	macro source,loc,x,y,width,height
 ; ---------------------------------------------------------------------------
 ; check if object moves out of range
 ; input: location to jump to if out of range, x-axis pos (ost_x_pos(a0) by default)
+; uses d0, d1
 ; ---------------------------------------------------------------------------
 
 out_of_range:	macro exit,pos
-		if narg=2
+		ifarg \pos
 		move.w	pos,d0					; get object position (if specified as not ost_x_pos)
 		else
 		move.w	ost_x_pos(a0),d0			; get object position
