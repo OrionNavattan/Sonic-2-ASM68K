@@ -17,8 +17,8 @@
 		opt	m+					; do not expand macros - if enabled, this can break assembling
 			
 			
-		section main
-		org(0)	
+;		section main
+;		org(0)	
 	
 
 	if ~def(Revision) 
@@ -92549,11 +92549,11 @@ PLC_3:		dc.w 0
 ;EHZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_4:		dc.w 5			
-		dc.l Nem_F02D6
+		dc.l Nem_Waterfall
 		dc.w $73C0
-		dc.l Nem_F052A
+		dc.l Nem_EHZBridge
 		dc.w $76C0
-		dc.l Nem_F0160
+		dc.l Nem_HTZFireball1
 		dc.w $77C0
 		dc.l Nem_Buzzer
 		dc.w $7A40
@@ -92721,11 +92721,11 @@ PLC_D:		dc.w $D
 ;HTZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_E:		dc.w 9			
-		dc.l Nem_F0160
+		dc.l Nem_HTZFireball1
 		dc.w $73C0
 		dc.l Nem_F0C14
 		dc.w $7640
-		dc.l Nem_F096E
+		dc.l Nem_HTZSeeSaw
 		dc.w $78C0
 		dc.l Nem_F0D4A
 		dc.w $7BC0
@@ -92747,11 +92747,11 @@ PLC_E:		dc.w 9
 ;HTZ Secondary
 ;---------------------------------------------------------------------------------------
 PLC_F:		dc.w 2			
-		dc.l Nem_F0602
+		dc.l Nem_HTZZipline
 		dc.w $7CC0
-		dc.l Nem_F03DC
+		dc.l Nem_HTZFireball2
 		dc.w $82C0
-		dc.l Nem_F08F6
+		dc.l Nem_HTZOneWayBarrier
 		dc.w $84C0
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -95494,35 +95494,34 @@ Mus_Continue:		incbin	sound\music\0X0F00~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; HTZ boss lava ball / Sol fireball
-Nem_F0160:		incbin	"art/nemesis/0X0F01~1.BIN
+Nem_HTZFireball1:		incbin	"art/nemesis/HTZ Fireball 1.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Waterfall tiles
-Nem_F02D6:		incbin	"art/nemesis/0X0F02~1.BIN
+Nem_Waterfall:		incbin	"art/nemesis/0X0F02~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Another fireball
-Nem_F03DC:		incbin	"art/nemesis/0X0F03~1.BIN
+Nem_HTZFireball2:		incbin	"art/nemesis/0X0F03~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Bridge in EHZ
-Nem_F052A:		incbin	"art/nemesis/0X0F05~1.BIN
+Nem_EHZBridge:		incbin	"art/nemesis/0X0F05~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (48 blocks)
 ; Diagonally moving lift in HTZ
-Nem_F0602:		incbin	"art/nemesis/0X0F06~1.BIN
+Nem_HTZZipline:		incbin	"art/nemesis/0X0F06~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
-; One way barrier from HTZ
-Nem_F08F6:		incbin	"art/nemesis/0X0F08~1.BIN
+; One way barrier from HTZ ;ArtNem_HtzValveBarrier
+Nem_HTZOneWayBarrier:		incbin	"art/nemesis/0X0F08~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; See-saw in HTZ
-Nem_F096E:		incbin	"art/nemesis/0X0F09~1.BIN
+Nem_HTZSeeSaw:		incbin	"art/nemesis/0X0F09~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
-; Unused Fireball
-; Nem_F0B06:	
+; Unused Fireball; Nem_F0B06:	
 incbin	"art/nemesis/0X0F0B~1.BIN
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
