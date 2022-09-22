@@ -140,7 +140,7 @@ rev02even:	 macro
 ; to the destination, or create a branch to a JmpTo
 ; ---------------------------------------------------------------------------
 jsrto:		 macro directaddr,indirectaddr
-	if removeJmpTos
+	if RemoveJmpTos
 		jsr (directaddr).l	; jump directly to address
 	else
 		bsr.w indirectaddr	; otherwise, branch to an indirect JmpTo
@@ -148,7 +148,7 @@ jsrto:		 macro directaddr,indirectaddr
     endm
 
 jmpto:		 macro directaddr,indirectaddr
-	if removeJmpTos
+	if RemoveJmpTos
 		jmp (directaddr).l	; jump directly to address
 	else
 		bra.w indirectaddr	; otherwise, branch to an indirect JmpTo
@@ -545,6 +545,37 @@ endobj:		macro
 		objpos $FFFF,0,0,0
 		endm
 
+; ---------------------------------------------------------------------------
+; Define a little-endian 16-bit pointer for the z80 sound driver
+; input: address of pointer target
+; ---------------------------------------------------------------------------
+
+;rom_ptr_z80: macro addr
+;		dc.w	((((addr&$7FFF)+$8000)<<8)&$FF00)+(((addr&$7FFF)+$8000)>>8)
+
+
+; ---------------------------------------------------------------------------
+; Define and align the start of a sound bank
+; ---------------------------------------------------------------------------
+start_bank macro *
+	align	$8000
+sound_bank_start = \*
+sound_bank_name = "\*"
+    endm
+
+; ---------------------------------------------------------------------------
+; End a sound bank and halt assembly if it is too large
+; Can also print the amount of free space in a bank with DebugSoundbanks set
+; ---------------------------------------------------------------------------
+DebugSoundbanks = 0
+
+finish_bank macro *
+	if * > sound_bank_start+$8000
+		inform 3,"SoundBank %s must fit in $8000 bytes but was $%h. Try moving something to another bank.",sound_bank_name,*-sound_bank_start
+	elseif DebugSoundbanks<>0
+		inform 0,"SoundBank %s has $%h bytes free at end.",sound_bank_name,$8000+sound_bank_start-*
+	endif
+    endm
 ; ---------------------------------------------------------------------------
 ; Define an external file
 ; input: label, file name (including folder), extension (actual),

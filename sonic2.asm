@@ -1,3 +1,13 @@
+;  =========================================================================
+; |           Sonic the Hedgehog 2 Disassembly for Sega Mega Drive          |
+;  =========================================================================
+
+; created by Nemesis in 2004
+; sound driver disassembly by Xenowhirl in 2007
+; ported to AXM68K/Z80 Macros by Orion Navattan, including documentation
+; from Sonic Retro AS and Sonic 1 Hivebrain 2022
+		
+;  =========================================================================
 
 
 		opt	l.					; . is the local label symbol
@@ -5,15 +15,19 @@
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
 		opt	m+					; do not expand macros - if enabled, this can break assembling
-		
+			
+			
+		section main
+		org(0)	
 	
+
 	if ~def(Revision) 
 Revision = 1
 ;	| If 0, a REV00 ROM is built
 ;	| If 1, a REV01 ROM is built, which contains some fixes
 ;	| If 2, a (probable) REV02 ROM is built, which contains even more fixes
 
-FixBugs = 0 ; If 1, enables a number of engine and gameplay bug-fixes. See also the 'FixDriverBugs' flag in 's2.sounddriver.asm'
+FixBugs = 0 ; If 1, enables a number of engine and gameplay bug-fixes. See also the 'FixDriverBugs' flag in 'Sound Driver.asm'
 
 AllOptimizations = 0 ; If 1, enables all optimizations
 
@@ -37,7 +51,6 @@ RelativeLea = (0|(Revision<>2)|AllOptimizations=1)
 ;	| Set to 1 if you've shifted level IDs around or you want water in levels with a level slot below 8	
 		
 
-
 		include "Macros - More CPUs.asm"
 		cpu 68000
 
@@ -49,7 +62,6 @@ RelativeLea = (0|(Revision<>2)|AllOptimizations=1)
 		
 
 
-; Grep pattern to delete xrefs: 
 ROM_Start:
    if * <> 0
 	inform 3,"ROM_Start was $%h but it should be 0.",ROM_Start 
@@ -95441,7 +95453,24 @@ locret_EC0E6:
 ; --------------------------------------------------------------------------------------
 ; S2 sound driver (Sound driver	compression)
 ; --------------------------------------------------------------------------------------
+
+;		pushs
+;SoundDriver:
+;		section	
+;		org(0), 
+;		file("sound/.z80")	; new section for the sound driver
+;		cpu Z80
+
 Snd_Driver:		incbin	sound\0X0EC0~1.BIN
+;		pops ; end sound driver section
+
+;MergeCode:
+;		pushs	
+;		section org(0), file("AMPS/.z80.dat")	; create settings file for storing info about how to merge things
+;		dc.l offset(Snd_Driver), Z80_Space		; store info about location of file and size available
+;		pops
+;		ds.b Z80_Space	; reserve space for the compressed sound driver
+;		even
 ; ----------------------------------------------------------------------------------
 ; Filler (free space)
 ; ----------------------------------------------------------------------------------
@@ -95463,186 +95492,110 @@ MusicPoint1:	dc.w (((Mus_Continue-(MusicPoint1-$8000))<<8)&$FF00)+((Mus_Continue
 					
 Mus_Continue:		incbin	sound\music\0X0F00~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 20 blocks
-; Fireball from	EHZ
-; --------------------------------------------------------------------
+; Nemesis compressed art (20 blocks)
+; HTZ boss lava ball / Sol fireball
 Nem_F0160:		incbin	"art/nemesis/0X0F01~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 24 blocks
+; Nemesis compressed art (24 blocks)
 ; Waterfall tiles
-; --------------------------------------------------------------------
 Nem_F02D6:		incbin	"art/nemesis/0X0F02~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 16 blocks
+; Nemesis compressed art (16 blocks)
 ; Another fireball
-; --------------------------------------------------------------------
 Nem_F03DC:		incbin	"art/nemesis/0X0F03~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 8 blocks
+; Nemesis compressed art (8 blocks)
 ; Bridge in EHZ
-; --------------------------------------------------------------------
 Nem_F052A:		incbin	"art/nemesis/0X0F05~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 48 blocks
+; Nemesis compressed art (48 blocks)
 ; Diagonally moving lift in HTZ
-; --------------------------------------------------------------------
 Nem_F0602:		incbin	"art/nemesis/0X0F06~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 4 blocks
+; Nemesis compressed art (4 blocks)
 ; One way barrier from HTZ
-; --------------------------------------------------------------------
 Nem_F08F6:		incbin	"art/nemesis/0X0F08~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 24 blocks
+; Nemesis compressed art (24 blocks)
 ; See-saw in HTZ
-; --------------------------------------------------------------------
 Nem_F096E:		incbin	"art/nemesis/0X0F09~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 24 blocks
-; Fireball
+; Nemesis compressed art (24 blocks)
+; Unused Fireball
+; Nem_F0B06:	
+incbin	"art/nemesis/0X0F0B~1.BIN
 ; --------------------------------------------------------------------
-Nem_F0B06:		incbin	"art/nemesis/0X0F0B~1.BIN
-; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 20 blocks
+; Nemesis compressed art (20 blocks)
 ; Rock from HTZ
-; --------------------------------------------------------------------
 Nem_F0C14:		incbin	"art/nemesis/0X0F0C~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 4 blocks
-; Orbit	badnick	from HTZ
-; --------------------------------------------------------------------
+; Nemesis compressed art (4 blocks)
+; Orbit badnik from HTZ		; ArtNem_HtzSol:
 Nem_F0D4A:		incbin	"art/nemesis/0X0F0D~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 120 blocks
-; Large	spinning wheel from MTZ
-; --------------------------------------------------------------------
+; Nemesis compressed art (120 blocks)
+; Large spinning wheel from MTZ
 Nem_F0DB6:		incbin	"art/nemesis/0X0F0D~2.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 9 blocks
+; Nemesis compressed art (9 blocks)
 ; Indent in large spinning wheel from MTZ
-; --------------------------------------------------------------------
 Nem_F120E:		incbin	"art/nemesis/0X0F12~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 8 blocks
-; Unknown. MTZ block
-; --------------------------------------------------------------------
+; Nemesis compressed art (8 blocks)
+; Spike block from MTZ
 Nem_F12B6:		incbin	"art/nemesis/0X0F12~2.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 15 blocks
-; Steam	from MTZ
-; --------------------------------------------------------------------
+; Nemesis compressed art (15 blocks)
+; Steam from MTZ
 Nem_F1384:		incbin	"art/nemesis/0X0F13~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 8 blocks
-; Spike	from MTZ
-; --------------------------------------------------------------------
+; Nemesis compressed art (8 blocks)
+; Spike from MTZ
 Nem_F148E:		incbin	"art/nemesis/0X0F14~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 54 blocks
+; Nemesis compressed art (54 blocks)
 ; Similarly shaded blocks from MTZ
-; --------------------------------------------------------------------
 Nem_F1550:		incbin	"art/nemesis/0X0F15~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 9 blocks
+; Nemesis compressed art (9 blocks)
 ; Lava bubble from MTZ
-; --------------------------------------------------------------------
 Nem_F15C6:		incbin	"art/nemesis/0X0F15~2.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 4 blocks
-; Unknown. A steam vent?
-; --------------------------------------------------------------------
+; Nemesis compressed art (4 blocks)
+; Lava cup
 Nem_F167C:		incbin	"art/nemesis/0X0F16~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 8 blocks
-; Things from MTZ
-; --------------------------------------------------------------------
+; Nemesis compressed art (8 blocks)
+; End of a bolt and rope from MTZ
 Nem_F16EC:		incbin	"art/nemesis/0X0F16~2.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 12 blocks
-; Small	cog from MTZ
-; --------------------------------------------------------------------
+; Nemesis compressed art (12 blocks)
+; Small cog from MTZ
 Nem_F178E:		incbin	"art/nemesis/0X0F17~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 4 blocks
-; Unknown. Four	blocks that are	all the	same colour from MTZ.
-; --------------------------------------------------------------------
+; Nemesis compressed art (4 blocks)
+; Flash inside spin tube from MTZ
 Nem_F1870:		incbin	"art/nemesis/0X0F18~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 32 blocks
-; Large	wooden box from	MCZ
-; --------------------------------------------------------------------
+; Nemesis compressed art (32 blocks)
+; Large wooden box from MCZ	; ArtNem_F187C:
 Nem_F187C:		incbin	"art/nemesis/0X0F18~2.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 26 blocks
-; Collapsing platform from MCZ
-; --------------------------------------------------------------------
+; Nemesis compressed art (26 blocks)
+; Collapsing platform from MCZ	; ArtNem_F1ABA:
 Nem_F1ABA:		incbin	"art/nemesis/0X0F1A~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 16 blocks
-; Switch that you pull on from MCZ
-; --------------------------------------------------------------------
+; Nemesis compressed art (16 blocks)
+; Switch that you pull on from MCZ	; ArtNem_F1C64:
 Nem_F1C64:		incbin	"art/nemesis/0X0F1C~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 10 blocks
-; Vine that lowers in MCZ
-; --------------------------------------------------------------------
+; Nemesis compressed art (10 blocks)
+; Vine that lowers in MCZ	; ArtNem_F1D5C:
 Nem_F1D5C:		incbin	"art/nemesis/0X0F1D~1.BIN
 ; --------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 20 blocks
-; Unknown. A log viewed	from the end?
-; --------------------------------------------------------------------
+; Nemesis compressed art (20 blocks)
+; Log viewed from the end for folding gates in MCZ (start of MCZ2)	; ArtNem_F1E06:
+	even
 Nem_F1E06:		incbin	"art/nemesis/0X0F1E~1.BIN
 ; ----------------------------------------------------------------------------------
 ; Filler (free space)
@@ -95658,6 +95611,8 @@ Snd_Sega:		incbin	sound\PCM\0X0F1E~1.BIN
 ; Music	pointers
 ; ------------------------------------------------------------------------------
 		cnop 0,$8000
+
+						
 MusicPoint2:	dc.w ((((Mus_CNZ_2P&$7FFF)+$8000)<<8)&$FF00)+(((Mus_CNZ_2P&$7FFF)+$8000)>>8)
 		dc.w ((((Mus_EHZ&$7FFF)+$8000)<<8)&$FF00)+(((Mus_EHZ&$7FFF)+$8000)>>8)
 		dc.w ((((Mus_MTZ&$7FFF)+$8000)<<8)&$FF00)+(((Mus_MTZ&$7FFF)+$8000)>>8)
