@@ -1299,7 +1299,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Bouncer badnik from CNZ.bin",
+                        "path": "art/nemesis/Crawl.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1510,7 +1510,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Bolt end and rope from MTZ.bin",
+                        "path": "art/nemesis/MTZ Bolt End & Rope.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1713,7 +1713,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/MTZ spike block.bin",
+                        "path": "art/nemesis/MTZ Spike Block.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1742,7 +1742,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Similarly shaded blocks from MTZ.bin",
+                        "path": "art/nemesis/MTZ Misc Blocks.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1800,7 +1800,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Lava cup from MTZ.bin",
+                        "path": "art/nemesis/MTZ Lava Cup.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1829,7 +1829,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Spike from MTZ.bin",
+                        "path": "art/nemesis/MTZ Spike.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1887,7 +1887,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Large spinning wheel from MTZ.bin",
+                        "path": "art/nemesis/MTZ Large Spinning Wheel.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -1916,7 +1916,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Lava bubble from MTZ.bin",
+                        "path": "art/nemesis/MTZ Lava Bubble.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -2810,7 +2810,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/Robotnik's head.bin:40960",
+                        "path": "art/nemesis/Eggman's Head.bin:40960",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -3087,7 +3087,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/EHZ bridge.bin",
+                        "path": "art/nemesis/EHZ Bridge.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -3145,7 +3145,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/nemesis/EHZ bridge.bin",
+                        "path": "art/nemesis/EHZ Bridge.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },
@@ -3174,7 +3174,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/nemesis/Waterfall tiles.bin",
+                        "path": "art/nemesis/Waterfall.bin",
                         "compression": "Nemesis",
                         "offset": 0
                     },

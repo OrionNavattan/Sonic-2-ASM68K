@@ -12846,13 +12846,13 @@ loc_9D7C:
 		bsr.w	sub_ABE2
 		bsr.w	sub_AC30
 		move.l	#$6AC00000,(vdp_control_port).l
-		lea	(Nem_91F3C).l,a0
+		lea	(Nem_EndingFinalTornado).l,a0
 		bsr.w	j_NemDec_14DE
 		move.l	#$65000001,(vdp_control_port).l
-		lea	(Nem_90992).l,a0
+		lea	(Nem_EndingPics).l,a0
 		bsr.w	j_NemDec_14DE
 		move.l	#$52600002,(vdp_control_port).l
-		lea	(Nem_927E0).l,a0
+		lea	(Nem_EndingMiniTornado).l,a0
 		bsr.w	j_NemDec_14DE
 		move.l	#$60000002,(vdp_control_port).l
 		lea	(Nem_Tornado).l,a0
@@ -13038,7 +13038,7 @@ loc_A002:
 		bsr.w	sub_246A
 		bsr.w	sub_BF92
 		move.l	#$40000000,(vdp_control_port).l
-		lea	(Nem_94B28).l,a0
+		lea	(Nem_EndingTitle).l,a0
 		bsr.w	j_NemDec_14DE
 		lea	(byte_B23A).l,a0
 		lea	(v_128x128_tiles).l,a1
@@ -13383,7 +13383,7 @@ loc_A3FC:
 		lea	(Eni_EndingTailsPlane).l,a0
 		cmpi.w	#4,($FFFFF750).w
 		bne.s	loc_A43C
-		lea	(Eni_907C0).l,a0
+		lea	(Eni_EndingSonicPlane).l,a0
 
 loc_A43C:				
 		lea	(v_128x128_tiles).l,a1
@@ -14158,19 +14158,19 @@ off_ABEE:	dc.w loc_ABF4-off_ABEE	; 0
 
 loc_ABF4:				
 		move.l	#$43200000,(vdp_control_port).l
-		lea	(Nem_92F0A).l,a0
+		lea	(Nem_EndingSonic).l,a0
 		bra.w	j_NemDec_14DE
 ; ===========================================================================
 
 loc_AC08:				
 		move.l	#$43200000,(vdp_control_port).l
-		lea	(Nem_93848).l,a0
+		lea	(Nem_EndingSuperSonic).l,a0
 		bra.w	j_NemDec_14DE
 ; ===========================================================================
 
 loc_AC1C:				
 		move.l	#$43200000,(vdp_control_port).l
-		lea	(Nem_93F3C).l,a0
+		lea	(Nem_EndingTails).l,a0
 		bra.w	j_NemDec_14DE
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -92613,19 +92613,19 @@ PLC_9:		dc.w 0
 ;MTZ primary
 ;---------------------------------------------------------------------------------------
 PLC_A:		dc.w 8			
-		dc.l Nem_F0DB6
+		dc.l Nem_MTZWheel
 		dc.w $6F00
-		dc.l Nem_F120E
+		dc.l Nem_MTZWheelIndent
 		dc.w $7E00
-		dc.l Nem_F167C
+		dc.l Nem_MTZLavaCup
 		dc.w $7F20
-		dc.l Nem_F16EC
+		dc.l Nem_MTZBoltEnd_Rope
 		dc.w $7FA0
-		dc.l Nem_F1384
+		dc.l Nem_MTZSteam
 		dc.w $80A0
-		dc.l Nem_F12B6
+		dc.l Nem_MTZSpikeBlock
 		dc.w $8280
-		dc.l Nem_F148E
+		dc.l Nem_MTZSpike
 		dc.w $8380
 		dc.l Nem_Shellcracker
 		dc.w $6380
@@ -92647,13 +92647,13 @@ PLC_B:		dc.w 8
 		dc.w $8B80
 		dc.l Nem_HrzntlSprng
 		dc.w $8E00
-		dc.l Nem_F1550
+		dc.l Nem_MTZAsstBlocks
 		dc.w $A000
-		dc.l Nem_F15C6
+		dc.l Nem_MTZLavaBubble
 		dc.w $A6C0
-		dc.l Nem_F178E
+		dc.l Nem_MTZCog
 		dc.w $ABE0
-		dc.l Nem_F1870
+		dc.l Nem_MTZSpinTubeFlash
 		dc.w $AD60
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -92723,11 +92723,11 @@ PLC_D:		dc.w $D
 PLC_E:		dc.w 9			
 		dc.l Nem_HTZFireball1
 		dc.w $73C0
-		dc.l Nem_F0C14
+		dc.l Nem_HTZRock
 		dc.w $7640
 		dc.l Nem_HTZSeeSaw
 		dc.w $78C0
-		dc.l Nem_F0D4A
+		dc.l Nem_Sol
 		dc.w $7BC0
 		dc.l Nem_Rexon
 		dc.w $6FC0
@@ -92813,13 +92813,13 @@ PLC_11:		dc.w $B
 ;MCZ Primary
 ;---------------------------------------------------------------------------------------
 PLC_12:		dc.w 5			
-		dc.l Nem_F187C
+		dc.l Nem_MCZCrate
 		dc.w $7A80
-		dc.l Nem_F1ABA
+		dc.l Nem_MCZCollapsingPlat
 		dc.w $7E80
-		dc.l Nem_F1C64
+		dc.l Nem_MCZVineSwitch
 		dc.w $81C0
-		dc.l Nem_F1D5C
+		dc.l Nem_MCZVinePulley
 		dc.w $83C0
 		dc.l Nem_Flasher
 		dc.w $7500
@@ -92835,7 +92835,7 @@ PLC_13:		dc.w 5
 		dc.w $8580
 		dc.l Nem_Spikes
 		dc.w $8680
-		dc.l Nem_F1E06
+		dc.l Nem_MCZDrawbridgeLogs
 		dc.w $8780
 		dc.l Nem_LeverSpring
 		dc.w $8800
@@ -94435,134 +94435,134 @@ Nem_WFZBoss:		incbin	"art/nemesis/WFZ Boss.bin"
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Robotnik's head	; ArtNem_RobotnikUpper:
-Nem_RobotnikUpper:		incbin	"art/nemesis/0X08E8~1.BIN
+Nem_RobotnikUpper:		incbin	"art/nemesis/Eggman's Head.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (76 blocks)
 ; Robotnik		; ArtNem_RobotnikRunning:
-Nem_RobotnikRunning:		incbin	"art/nemesis/0X08EA~1.BIN
+Nem_RobotnikRunning:		incbin	"art/nemesis/Eggman.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
 ; Robotnik's lower half	; Nem_RobotnikLower:
 ; --------------------------------------------------------------------------------------
-Nem_RobotnikLower:		incbin	"art/nemesis/Robotnik's lover half.bin"
+Nem_RobotnikLower:		incbin	"art/nemesis/Eggman's Lower Half.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
-; Window in back that Robotnic looks through in DEZ	; Nem_DEZWindow:
+; Window in back that Robotnik looks through in DEZ	; Nem_DEZWindow:
 ; --------------------------------------------------------------------------------------
-Nem_DEZWindow:		incbin	"art/nemesis/Window in back that Robotnik looks through in DEZ.bin"
+Nem_DEZWindow:		incbin	"art/nemesis/Eggman's Window in Mecha Sonic Boss Arena.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (327 blocks)
 ; Eggrobo		; ArtNem_DEZBoss:
-Nem_DEZBoss:		incbin	"art/nemesis/0X08F0~1.BIN
+Nem_DEZBoss:		incbin	"art/nemesis/Eggrobo.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (42 blocks)
 ; Bouncer badnik from CNZ	; ArtNem_Crawl:
-Nem_Crawl:		incbin	"art/nemesis/0X0901~1.BIN
+Nem_Crawl:		incbin	"art/nemesis/Crawl.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (26 blocks)
 ; Rocket thruster for Tornado	; ArtNem_TornadoThruster:
-Nem_TornadoThruster:		incbin	"art/nemesis/0X0905~1.BIN
+Nem_TornadoThruster:		incbin	"art/nemesis/The Tornado's Rocket Booster.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Frame 1 of end of game sequence	; MapEng_906E0:
-Eni_Ending1:		incbin	mappings/misc/0X0906~1.BIN
+Eni_Ending1:		incbin	"mappings/misc/Ending Still 1.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Frame 2 of end of game sequence	; MapEng_906F8:
-Eni_Ending2:		incbin	mappings/misc/0X0906~2.BIN
+Eni_Ending2:		incbin	"mappings/misc/Ending Still 2.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Frame 3 of end of game sequence	; MapEng_90722:
-Eni_Ending3:		incbin	mappings/misc/0X0907~1.BIN
+Eni_Ending3:		incbin	"mappings/misc/Ending Still 3.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Frame 4 of end of game sequence	; MapEng_9073C:
-Eni_Ending4:		incbin	mappings/misc/0X0907~2.BIN
+Eni_Ending4:		incbin	"mappings/misc/Ending Still 4.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Closeup of Tails flying plane in ending sequence	; MapEng_9076E:
-Eni_EndingTailsPlane:		incbin	mappings/misc/0X0907~3.BIN
+Eni_EndingTailsPlane:		incbin	"mappings/misc/Tails Piloting Tornado in Ending Cutscene.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Closeup of Sonic flying plane in ending sequence	; MapEng_907C0:
-Eni_907C0:		incbin	mappings/misc/0X0907~4.BIN
+Eni_EndingSonicPlane:		incbin	"mappings/misc/Sonic Piloting Tornado in Ending Cutscene.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Unused duplicates of MapEng_EndGameLogo
 ;Eni_9082A:		
-		incbin	mappings/misc/0X0908~1.BIN
+		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
 		even
 ;Eni_90852:		
-		incbin	mappings/misc/0X0908~2.BIN
+		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
 		even
 ;Eni_9087A:		
-		incbin	mappings/misc/0X0908~3.BIN
+		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
 		even
 ;Eni_908A2:		
-		incbin	mappings/misc/0X0908~4.BIN
+		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
 		even
 ;Eni_908CA:		
-		incbin	mappings/misc/0XD9FC~1.BIN
+		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
 		even
 ;Eni_908F2:	
-		incbin	mappings/misc/0X1FE4~1.BIN
+		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
 		even
 ;Eni_9091A:		
-		incbin	mappings/misc/0X0909~1.BIN
+		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
 		even
 ;Eni_90942:		
-		incbin	mappings/misc/0X0909~2.BIN
+		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
 		even
 ;Eni_9096A:		
-		incbin	mappings/misc/0X0909~3.BIN
+		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (363 blocks)
-; Movie sequence at end of game		; ArtNem_90992:
-Nem_90992:		incbin	"art/nemesis/0X0909~1.BIN
+; Movie sequence at end of game		; ArtNem_EndingPics:
+Nem_EndingPics:		incbin	"art/nemesis/Ending Stills.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (127 blocks)
-; Final image of Tornado with it and Sonic facing screen	; ArtNem_91F3C:
-Nem_91F3C:		incbin	"art/nemesis/0X091F~1.BIN
+; Final image of Tornado with it and Sonic facing screen	; ArtNem_EndingFinalTornado:
+Nem_EndingFinalTornado:		incbin	"art/nemesis/Tornado Facing Camera at End of Ending Sequence.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (109 blocks)
-; Mini pictures of Tornado in final ending sequence	; ArtNem_927E0:
-Nem_927E0:		incbin	"art/nemesis/0X0927~1.BIN
+; Mini pictures of Tornado in final ending sequence	; ArtNem_EndingMiniTornado:
+Nem_EndingMiniTornado:		incbin	"art/nemesis/Tornado Distant Shots in Ending Sequence.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (135 blocks)
 ; Mini pictures of Sonic and final image of Sonic
-Nem_92F0A:		incbin	"art/nemesis/0X092F~1.BIN
+Nem_EndingSonic:		incbin	"art/nemesis/Ending Sequence Sonic.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (117 blocks)
-; Mini pictures of Sonic and final image of Sonic in Super Sonic mode	; ArtNem_93848:
-Nem_93848:		incbin	"art/nemesis/0X0938~1.BIN
+; Mini pictures of Sonic and final image of Sonic in Super Sonic mode	; ArtNem_EndingSuperSonic:
+Nem_EndingSuperSonic:		incbin	"art/nemesis/Ending Sequence Super Sonic.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (181 blocks)
 ; Final image of Tails		; ArtNem_93F3C:
-Nem_93F3C:		incbin	"art/nemesis/Final image of Tails.bin"
+Nem_EndingTails:		incbin	"art/nemesis/Ending Sequence Tails.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (72 blocks)
 ; Sonic the Hedgehog 2 image at end of credits	; ArtNem_94B28:
-Nem_94B28:		incbin	"art/nemesis/Sonic the Hedgehog 2 image at end of credits.bin"
+Nem_EndingTitle:		incbin	"art/nemesis/Sonic the Hedgehog 2 Credits Logo.bin"
 
 
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -94652,290 +94652,193 @@ Kos_HPZ:		;incbin	"art/kosinski/HPZ.bin"
 BM128_HPZ:		;incbin	"mappings/128x128/HPZ.bin"
 ;-----------------------------------------------------------------------------------
 ;OOZ 16x16 block mappings (Kosinski compression)
-BM16_OOZ:		incbin	"art/16x16/0X0A33~1.BIN
+BM16_OOZ:		incbin	"mappings/16x16/OOZ.bin"
 ;-----------------------------------------------------------------------------------
 ;OOZ main level	patterns (Kosinski compression)
-Koz_A4204:		incbin	"art/kosinski/0X0A42~1.BIN
+Koz_A4204:		incbin	"art/kosinski/OOZ.bin
 ;-----------------------------------------------------------------------------------
 ;OOZ 128x128 block mappings (Kosinski compression)
-BM128_OOZ:		incbin	"art/128x128/0X0A68~1.BIN
+BM128_OOZ:		incbin	"mappings/128x128/OOZ.bin"
 ;-----------------------------------------------------------------------------------
 ;MCZ 16x16 block mappings (Kosinski compression)
-BM16_MCZ:		incbin	"art/16x16/0X0A8D~1.BIN
+BM16_MCZ:		incbin	"mappings/16x16/MCZ.bin"
 ;-----------------------------------------------------------------------------------
 ;MCZ main level	patterns (Kosinski compression)
-Koz_A9D74:		incbin	"art/kosinski/0X0A9D~1.BIN
+Koz_A9D74:		incbin	"art/kosinski/MCZ.bin
 ;-----------------------------------------------------------------------------------
 ;MCZ 128x128 block mappings (Kosinski compression)
-BM128_MCZ:		incbin	"art/128x128/0X0AD4~1.BIN
+BM128_MCZ:		incbin	"mappings/128x128/MCZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CNZ 16x16 block mappings (Kosinski compression)
-BM16_CNZ:		incbin	"art/16x16/0X0AFF~1.BIN
+BM16_CNZ:		incbin	"mappings/16x16/CNZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CNZ main level	patterns (Kosinski compression)
-Koz_B0894:		incbin	"art/kosinski/0X0B08~1.BIN
+Koz_B0894:		incbin	"mappings/128x128/CNZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CNZ 128x128 block mappings (Kosinski compression)
-BM128_CNZ:		incbin	"art/128x128/0X0B2C~1.BIN
+BM128_CNZ:		incbin	"mappings/128x128/CNZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CPZ/DEZ 16x16 block mappings (Kosinski	compression)
-BM16_CPZ:		incbin	"art/16x16/0X0B52~1.BIN
+BM16_CPZ:		incbin	"mappings/16x16/CPZ_DEZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CPZ/DEZ main level patterns (Kosinski compression)
-Koz_B6174:		incbin	"art/kosinski/0X0B61~1.BIN
+Koz_B6174:		incbin	"art/kosinski/CPZ_DEZ.bin
 ;-----------------------------------------------------------------------------------
 ;CPZ/DEZ 128x128 block mappings	(Kosinski compression)
-BM128_CPZ:		incbin	"art/128x128/0X0B90~1.BIN
+BM128_CPZ:		incbin	"mappings/128x128/CPZ_DEZ.bin"
 ;-----------------------------------------------------------------------------------
 ;ARZ 16x16 block mappings (Kosinski compression)
-BM16_ARZ:		incbin	"art/16x16/0X0BB9~1.BIN
+; This file contains $320 blocks, overflowing the 'Block_table' buffer. This causes
+; 'TempArray_LayerDef' to be overwritten with (empty) block data.
+BM16_ARZ:		incbin	"mappings/16x16/ARZ.bin"
 ;-----------------------------------------------------------------------------------
 ;ARZ main level	patterns (Kosinski compression)
-Koz_BCC24:		incbin	"art/kosinski/0X0BCC~1.BIN
+Koz_BCC24:		incbin	"art/kosinski/ARZ.bin
 ;-----------------------------------------------------------------------------------
 ;ARZ 128x128 block mappings (Kosinski compression)
-BM128_ARZ:		incbin	"art/128x128/0X0C14~1.BIN
+BM128_ARZ:		incbin		"mappings/128x128/ARZ.bin"
 ;-----------------------------------------------------------------------------------
 ;WFZ/SCZ 16x16 block mappings (Kosinski	compression)
-BM16_WFZ:		incbin	"art/16x16/0X0C40~1.BIN
+BM16_WFZ:		incbin	"mappings/16x16/WFZ_SCZ.bin"
 ;-----------------------------------------------------------------------------------
 ;WFZ/SCZ main level patterns (Kosinski compression)
-Koz_C5004:		incbin	"art/kosinski/0X0C50~1.BIN
+Koz_C5004:		incbin	"art/kosinski/WFZ_SCZ.bin
 ;-----------------------------------------------------------------------------------
 ;WFZ pattern suppliment	to SCZ tiles (Kosinski compression)
-Koz_C7EC4:		incbin	"art/kosinski/0X0C7E~1.BIN
+Koz_C7EC4:		incbin	"art/kosinski/WFZ_Supp.bin
 ;-----------------------------------------------------------------------------------
 ;WFZ/SCZ 128x128 block mappings	(Kosinski compression)
-BM128_WFZ:		incbin	"art/128x128/0X0C85~1.BIN
-; -----------------------------------------------------------------------------------
-; Special stage	tube mappings
-;
-; End curve right, slope up, slope down, begin curve right
+BM128_WFZ:		incbin	"mappings/128x128/WFZ_SCZ.bin"
+;-----------------------------------------------------------------------------------
+
+
+;-----------------------------------------------------------------------------------
+; Special stage	tube mappings - End curve right, slope up, slope down, begin curve right
 ; Frame	1
-; -----------------------------------------------------------------------------------
-MapSpec_CA904:		incbin	"mappings/special stage/Slope up - Frame 1.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
+MapSpec_CA904:		incbin	"mappings/special stage/Slope up - Frame 1.bin
+;-----------------------------------------------------------------------------------
 ;Frame 2
-MapSpec_CADA8:		incbin	mappings/special stage/0X0CAD~1.BIN
+MapSpec_CADA8:		incbin	"mappings/special stage/Slope up - Frame 2.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 3
-MapSpec_CB376:		incbin	mappings/special stage/0X0CB3~1.BIN
+MapSpec_CB376:		incbin	"mappings/special stage/Slope up - Frame 3.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 4
-MapSpec_CB92E:		incbin	mappings/special stage/0X0CB9~1.BIN
+MapSpec_CB92E:		incbin	"mappings/special stage/Slope up - Frame 4.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 5
-MapSpec_CBF92:		incbin	mappings/special stage/0X0CBF~1.BIN
+MapSpec_CBF92:		incbin	"mappings/special stage/Slope up - Frame 5.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 6
-MapSpec_CC5BE:		incbin	mappings/special stage/0X0CC5~1.BIN
+MapSpec_CC5BE:		incbin	"mappings/special stage/Slope up - Frame 6.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 7
-MapSpec_CCC7A:		incbin	mappings/special stage/0X0CCC~1.BIN
+MapSpec_CCC7A:		incbin	"mappings/special stage/Slope up - Frame 7.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 8
-MapSpec_CD282:		incbin	mappings/special stage/0X0CD2~1.BIN
+MapSpec_CD282:		incbin	"mappings/special stage/Slope up - Frame 8.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 9
-MapSpec_CD7C0:		incbin	mappings/special stage/0X0CD7~1.BIN
+MapSpec_CD7C0:		incbin	"mappings/special stage/Slope up - Frame 9.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 10
-MapSpec_CDD44:		incbin	mappings/special stage/0X0CDD~1.BIN
+MapSpec_CDD44:		incbin	"mappings/special stage/Slope up - Frame 10.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 11
-MapSpec_CE2BE:		incbin	mappings/special stage/0X0CE2~1.BIN
+MapSpec_CE2BE:		incbin	"mappings/special stage/Slope up - Frame 11.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 12
-MapSpec_CE7DE:		incbin	mappings/special stage/0X0CE7~1.BIN
+MapSpec_CE7DE:		incbin	"mappings/special stage/Slope up - Frame 12.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 13
-MapSpec_CEC52:		incbin	mappings/special stage/0X0CEC~1.BIN
+MapSpec_CEC52:		incbin	"mappings/special stage/Slope up - Frame 13.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 14
-MapSpec_CF0BC:		incbin	mappings/special stage/0X0CF0~1.BIN
+MapSpec_CF0BC:		incbin	"mappings/special stage/Slope up - Frame 14.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 15
-MapSpec_CF580:		incbin	mappings/special stage/0X0CF5~1.BIN
+MapSpec_CF580:		incbin	"mappings/special stage/Slope up - Frame 15.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 16
-MapSpec_CFA00:		incbin	mappings/special stage/0X0CFA~1.BIN
+MapSpec_CFA00:		incbin	"mappings/special stage/Slope up - Frame 16.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	up, slope down,	begin curve right
 ;Frame 17
-MapSpec_CFE4A:		incbin	mappings/special stage/0X0CFE~1.BIN
+MapSpec_CFE4A:		incbin	"mappings/special stage/Slope up - Frame 17.bin
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Straight path
+
+;-----------------------------------------------------------------------------------
+;Special stage tube mappings - Straight path
 ;Frame 1
 MapSpec_D028C:		incbin	mappings/special stage/0X0D02~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Straight path
 ;Frame 2
 MapSpec_D090A:		incbin	mappings/special stage/0X0D09~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Straight path
 ;Frame 3
 MapSpec_D0EA6:		incbin	mappings/special stage/0X0D0E~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Straight path
 ;Frame 4
 MapSpec_D1400:		incbin	mappings/special stage/0X0D14~1.BIN
 ;-----------------------------------------------------------------------------------
+
+
+;-----------------------------------------------------------------------------------
 ;Special stage tube mappings
-;
 ;End curve right, slope	down, begin curve right
 ;Frame 1
 MapSpec_D19FC:		incbin	mappings/special stage/0X0D19~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 2
 MapSpec_D1EAC:		incbin	mappings/special stage/0X0D1E~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 3
 MapSpec_D23AE:		incbin	mappings/special stage/0X0D23~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 4
 MapSpec_D27C6:		incbin	mappings/special stage/0X0D27~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 5
 MapSpec_D2C14:		incbin	mappings/special stage/0X0D2C~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 6
 MapSpec_D3092:		incbin	mappings/special stage/0X0D30~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 7
 MapSpec_D3522:		incbin	mappings/special stage/0X0D35~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 8
 MapSpec_D39EC:		incbin	mappings/special stage/0X0D39~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 9
 MapSpec_D3F78:		incbin	mappings/special stage/0X0D3F~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 10
 MapSpec_D4660:		incbin	mappings/special stage/0X0D46~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 11
 MapSpec_D4DA6:		incbin	mappings/special stage/0X0D4D~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 12
 MapSpec_D53FC:		incbin	mappings/special stage/0X0D53~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 13
 MapSpec_D5958:		incbin	mappings/special stage/0X0D59~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 14
 MapSpec_D5F02:		incbin	mappings/special stage/0X0D5F~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 15
 MapSpec_D6596:		incbin	mappings/special stage/0X0D65~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 16
 MapSpec_D6BAA:		incbin	mappings/special stage/0X0D6B~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;End curve right, slope	down, begin curve right
 ;Frame 17
 MapSpec_D702E:		incbin	mappings/special stage/0X0D70~1.BIN
+;-----------------------------------------------------------------------------------
+
+
 ;-----------------------------------------------------------------------------------
 ;Special stage tube mappings
 ;
@@ -95498,104 +95401,104 @@ Nem_HTZFireball1:		incbin	"art/nemesis/HTZ Fireball 1.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Waterfall tiles
-Nem_Waterfall:		incbin	"art/nemesis/0X0F02~1.BIN
+Nem_Waterfall:		incbin	"art/nemesis/Waterfall.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Another fireball
-Nem_HTZFireball2:		incbin	"art/nemesis/0X0F03~1.BIN
+Nem_HTZFireball2:		incbin	"art/nemesis/HTZ Fireball 2.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Bridge in EHZ
-Nem_EHZBridge:		incbin	"art/nemesis/0X0F05~1.BIN
+Nem_EHZBridge:		incbin	"art/nemesis//EHZ Bridge.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (48 blocks)
 ; Diagonally moving lift in HTZ
-Nem_HTZZipline:		incbin	"art/nemesis/0X0F06~1.BIN
+Nem_HTZZipline:		incbin	"art/nemesis/HTZ Zipline Platform.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; One way barrier from HTZ ;ArtNem_HtzValveBarrier
-Nem_HTZOneWayBarrier:		incbin	"art/nemesis/0X0F08~1.BIN
+Nem_HTZOneWayBarrier:		incbin	"art/nemesis/HTZ One-Way Barrier.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; See-saw in HTZ
-Nem_HTZSeeSaw:		incbin	"art/nemesis/0X0F09~1.BIN
+Nem_HTZSeeSaw:		incbin	"art/nemesis/HTZ See-saw.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Unused Fireball; Nem_F0B06:	
-incbin	"art/nemesis/0X0F0B~1.BIN
+incbin	"art/nemesis/Unused Fireball.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Rock from HTZ
-Nem_F0C14:		incbin	"art/nemesis/0X0F0C~1.BIN
+Nem_HTZRock:		incbin	"art/nemesis/HTZ Rock.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Orbit badnik from HTZ		; ArtNem_HtzSol:
-Nem_F0D4A:		incbin	"art/nemesis/0X0F0D~1.BIN
+Nem_Sol:		incbin	"art/nemesis/Sol.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (120 blocks)
 ; Large spinning wheel from MTZ
-Nem_F0DB6:		incbin	"art/nemesis/0X0F0D~2.BIN
+Nem_MTZWheel:		incbin	"art/nemesis/MTZ Large Spinning Wheel.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (9 blocks)
 ; Indent in large spinning wheel from MTZ
-Nem_F120E:		incbin	"art/nemesis/0X0F12~1.BIN
+Nem_MTZWheelIndent:		incbin	"art/nemesis/MTZ Large Spinning Wheel Indent.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Spike block from MTZ
-Nem_F12B6:		incbin	"art/nemesis/0X0F12~2.BIN
+Nem_MTZSpikeBlock:		incbin	"art/nemesis/MTZ Spike Block.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (15 blocks)
 ; Steam from MTZ
-Nem_F1384:		incbin	"art/nemesis/0X0F13~1.BIN
+Nem_MTZSteam:		incbin	"art/nemesis/MTZ Steam.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Spike from MTZ
-Nem_F148E:		incbin	"art/nemesis/0X0F14~1.BIN
+Nem_MTZSpike:		incbin	"art/nemesis/MTZ Spike.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (54 blocks)
 ; Similarly shaded blocks from MTZ
-Nem_F1550:		incbin	"art/nemesis/0X0F15~1.BIN
+Nem_MTZAsstBlocks:		incbin	"art/nemesis/MTZ Misc Blocks.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (9 blocks)
 ; Lava bubble from MTZ
-Nem_F15C6:		incbin	"art/nemesis/0X0F15~2.BIN
+Nem_MTZLavaBubble:		incbin	"art/nemesis/MTZ Lava Bubble.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Lava cup
-Nem_F167C:		incbin	"art/nemesis/0X0F16~1.BIN
+Nem_MTZLavaCup:		incbin	"art/nemesis/MTZ Lava Cup.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; End of a bolt and rope from MTZ
-Nem_F16EC:		incbin	"art/nemesis/0X0F16~2.BIN
+Nem_MTZBoltEnd_Rope:		incbin	"art/nemesis/MTZ Bolt End & Rope.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Small cog from MTZ
-Nem_F178E:		incbin	"art/nemesis/0X0F17~1.BIN
+Nem_MTZCog:		incbin	"art/nemesis/Small cog from MTZ.bin
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Flash inside spin tube from MTZ
-Nem_F1870:		incbin	"art/nemesis/0X0F18~1.BIN
+Nem_MTZSpinTubeFlash:		incbin	"art/nemesis/Spin tube flash from MTZ.bin
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Large wooden box from MCZ	; ArtNem_F187C:
-Nem_F187C:		incbin	"art/nemesis/0X0F18~2.BIN
+Nem_MCZCrate:		incbin	"art/nemesis/Large wooden box from MCZ.bin
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (26 blocks)
 ; Collapsing platform from MCZ	; ArtNem_F1ABA:
-Nem_F1ABA:		incbin	"art/nemesis/0X0F1A~1.BIN
+Nem_MCZCollapsingPlat:		incbin	"art/nemesis/Collapsing platform from MCZ.bin
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Switch that you pull on from MCZ	; ArtNem_F1C64:
-Nem_F1C64:		incbin	"art/nemesis/0X0F1C~1.BIN
+Nem_MCZVineSwitch:		incbin	"art/nemesis/Pull switch from MCZ.bin
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (10 blocks)
 ; Vine that lowers in MCZ	; ArtNem_F1D5C:
-Nem_F1D5C:		incbin	"art/nemesis/0X0F1D~1.BIN
+Nem_MCZVinePulley:		incbin	"art/nemesis/Vine that lowers from MCZ.bin
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
-; Log viewed from the end for folding gates in MCZ (start of MCZ2)	; ArtNem_F1E06:
+; Log viewed from the end for folding gates in MCZ (start of MCZ2)	; ArtNem_MCZDrawbridgeLogs:
 	even
-Nem_F1E06:		incbin	"art/nemesis/0X0F1E~1.BIN
+Nem_MCZDrawbridgeLogs:		incbin	"art/nemesis/Drawbridge logs from MCZ.bin
 ; ----------------------------------------------------------------------------------
 ; Filler (free space)
 ; ----------------------------------------------------------------------------------
