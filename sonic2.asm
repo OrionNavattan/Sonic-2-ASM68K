@@ -6256,7 +6256,7 @@ sub_4E98:
 loc_4EE4:				
 		cmpi.b	#6,($FFFFFE10).w
 		bne.s	loc_4F00
-		lea	(Koz_C7EC4).l,a0
+		lea	(Kos_WFZ).l,a0
 		lea	($FFFF60E0).l,a1
 		bsr.w	KozDec_193A
 		move.w	#$6F20,d3
@@ -8489,23 +8489,23 @@ byte_6422:	dc.b $11,$12,$13,$14,$11,$12,$13,$14,$11,$12,$13,$14,$11,$12,$13,$14;
 					
 byte_6432:	dc.b $11,$12,$13,$14,$31,$32,$33,$34,$35,$36,$37,  0; 0
 					
-off_643E:	dc.l MapSpec_CA904	; 0 
-		dc.l MapSpec_CADA8	; 1
-		dc.l MapSpec_CB376	; 2
-		dc.l MapSpec_CB92E	; 3
-		dc.l MapSpec_CBF92	; 4
-		dc.l MapSpec_CC5BE	; 5
-		dc.l MapSpec_CCC7A	; 6
-		dc.l MapSpec_CD282	; 7
-		dc.l MapSpec_CD7C0	; 8
-		dc.l MapSpec_CDD44	; 9
-		dc.l MapSpec_CE2BE	; 10
-		dc.l MapSpec_CE7DE	; 11
-		dc.l MapSpec_CEC52	; 12
-		dc.l MapSpec_CF0BC	; 13
-		dc.l MapSpec_CF580	; 14
-		dc.l MapSpec_CFA00	; 15
-		dc.l MapSpec_CFE4A	; 16
+off_643E:	dc.l MapSpec_Rise1	; 0 
+		dc.l MapSpec_Rise2	; 1
+		dc.l MapSpec_Rise3	; 2
+		dc.l MapSpec_Rise4	; 3
+		dc.l MapSpec_Rise5	; 4
+		dc.l MapSpec_Rise6	; 5
+		dc.l MapSpec_Rise7	; 6
+		dc.l MapSpec_Rise8	; 7
+		dc.l MapSpec_Rise9	; 8
+		dc.l MapSpec_Rise10	; 9
+		dc.l MapSpec_Rise11	; 10
+		dc.l MapSpec_Rise12	; 11
+		dc.l MapSpec_Rise13	; 12
+		dc.l MapSpec_Rise14	; 13
+		dc.l MapSpec_Rise15	; 14
+		dc.l MapSpec_Rise16	; 15
+		dc.l MapSpec_Rise17	; 16
 		dc.l MapSpec_D028C	; 17
 		dc.l MapSpec_D090A	; 18
 		dc.l MapSpec_D0EA6	; 19
@@ -8686,9 +8686,9 @@ loc_6C34:
 
 loc_6C4A:				
 					
-		cmpa.l	#MapSpec_CF0BC,a0
+		cmpa.l	#MapSpec_Rise14,a0
 		blt.s	loc_6C6A
-		cmpa.l	#MapSpec_CF580,a0
+		cmpa.l	#MapSpec_Rise15,a0
 		bge.s	loc_6C6A
 		movea.l	($FFFFDB8E).w,a5
 		move.b	($FFFFDB0A).w,d1
@@ -15590,7 +15590,7 @@ loc_C4D0:
 ; level, pointing to the section of code that handles the warping of the
 ; background/foreground	in a level.
 ; ---------------------------------------------------------------------------
-Misc_C4FC:	dc.w loc_C57E-Misc_C4FC	; 0 
+Misc_C4FC:	dc.w SwScrl_EHZ-Misc_C4FC	; 0 
 					
 		dc.w loc_D666-Misc_C4FC	; 1
 		dc.w loc_C7BA-Misc_C4FC	; 2
@@ -15651,70 +15651,89 @@ loc_C570:
 		rts	
 ; ===========================================================================
 
-loc_C57E:				
+SwScrl_EHZ:				
 		tst.w	($FFFFFFD8).w
-		bne.w	loc_C6C4
+		bne.w	SwScrl_EHZ_2P 			; Use different background scrolling code for two player mode.
+
+		; Update the background's vertical scrolling.
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
+		
+		; Update the background's (and foreground's) horizontal scrolling.
+		; This creates an elaborate parallax effect.
 		lea	(v_hscroll_buffer).w,a1
 		move.w	(v_camera_x_pos).w,d0
 		neg.w	d0
 		move.w	d0,d2
 		swap	d0
 		move.w	#0,d0
-		move.w	#$15,d1
-
-loc_C5A2:				
+		
+		; Do 22 lines.
+		move.w	#22-1,d1
+	.loop22:				
 		move.l	d0,(a1)+
-		dbf	d1,loc_C5A2
+		dbf	d1,.loop22
+		
 		move.w	d2,d0
 		asr.w	#6,d0
-		move.w	#$39,d1	; '9'
-
-loc_C5B0:				
+		
+		; Do 58 lines.
+		move.w	#58-1,d1	; '9'
+	.loop58:				
 		move.l	d0,(a1)+
-		dbf	d1,loc_C5B0
+		dbf	d1,.loop58
+		
 		move.w	d0,d3
-		move.b	($FFFFFE0F).w,d1
+
+		; Make the 'ripple' animate every 8 frames.		
+		move.b	(v_vblank_counter+3).w,d1
 		andi.w	#7,d1
-		bne.s	loc_C5C6
+		bne.s	.skipripple
 		subq.w	#1,(v_bgscroll_buffer).w
 
-loc_C5C6:				
+	.skipripple:				
 		move.w	(v_bgscroll_buffer).w,d1
 		andi.w	#$1F,d1
 		lea	(SwScrl_RippleData).l,a2
 		lea	(a2,d1.w),a2
-		move.w	#$14,d1
-
-loc_C5DC:				
+		
+		; Do 21 lines.
+		move.w	#21-1,d1
+	.loop21:				
 		move.b	(a2)+,d0
 		ext.w	d0
 		add.w	d3,d0
 		move.l	d0,(a1)+
-		dbf	d1,loc_C5DC
+		dbf	d1,.loop21
+		
 		move.w	#0,d0
-		move.w	#$A,d1
 
-loc_C5F0:				
+		; Do 11 lines.
+		move.w	#11-1,d1
+	.loop11:				
 		move.l	d0,(a1)+
-		dbf	d1,loc_C5F0
+		dbf	d1,.loop11
+		
 		move.w	d2,d0
 		asr.w	#4,d0
-		move.w	#$F,d1
 
-loc_C5FE:				
+		; Do 16 lines.
+		move.w	#16-1,d1
+	.loop16_1:				
 		move.l	d0,(a1)+
-		dbf	d1,loc_C5FE
+		dbf	d1,.loop16_1
+		
 		move.w	d2,d0
 		asr.w	#4,d0
 		move.w	d0,d1
 		asr.w	#1,d1
 		add.w	d1,d0
-		move.w	#$F,d1
-
-loc_C612:				
+		
+		; Do 16 lines.
+		move.w	#16-1,d1
+	.loop16_2:				
 		move.l	d0,(a1)+
-		dbf	d1,loc_C612
+		dbf	d1,.loop16_2
+		
 		move.l	d0,d4
 		swap	d4
 		move.w	d2,d0
@@ -15724,137 +15743,193 @@ loc_C612:
 		sub.w	d1,d0
 		ext.l	d0
 		asl.l	#8,d0
-		divs.w	#$30,d0	; '0'
+		divs.w	#$30,d0
 		ext.l	d0
 		asl.l	#8,d0
 		moveq	#0,d3
 		move.w	d2,d3
 		asr.w	#3,d3
-		move.w	#$E,d1
 
-loc_C63C:				
+		; Do 15 lines.		
+		move.w	#15-1,d1
+	.loop15:				
 		move.w	d4,(a1)+
 		move.w	d3,(a1)+
 		swap	d3
 		add.l	d0,d3
 		swap	d3
-		dbf	d1,loc_C63C
-		move.w	#8,d1
+		dbf	d1,.loop15
+			
+		; Do 18 lines.
+		move.w	#18/2-1,d1
+	.loop18:				
+		move.w	d4,(a1)+
+		move.w	d3,(a1)+
+		move.w	d4,(a1)+
+		move.w	d3,(a1)+
+		swap	d3
+		add.l	d0,d3
+		add.l	d0,d3
+		swap	d3
+		dbf	d1,.loop18
+		
+		; Do 45 lines.		
+		move.w	#45/3-1,d1
+	.loop45:				
+		move.w	d4,(a1)+
+		move.w	d3,(a1)+
+		move.w	d4,(a1)+
+		move.w	d3,(a1)+
+		move.w	d4,(a1)+
+		move.w	d3,(a1)+
+		swap	d3
+		add.l	d0,d3
+		add.l	d0,d3
+		add.l	d0,d3
+		swap	d3
+		dbf	d1,.loop45
+		
 
-loc_C64E:				
-		move.w	d4,(a1)+
-		move.w	d3,(a1)+
-		move.w	d4,(a1)+
-		move.w	d3,(a1)+
-		swap	d3
-		add.l	d0,d3
-		add.l	d0,d3
-		swap	d3
-		dbf	d1,loc_C64E
-		move.w	#$E,d1
+		; 22+58+21+11+16+16+15+18+45=222.
+		; Only 222 out of 224 lines have been processed.
 
-loc_C666:				
+    if fixBugs
+		; The bottom two lines haven't had their H-scroll values set.
+		; Knuckles in Sonic 2 fixes this with the following code:
 		move.w	d4,(a1)+
 		move.w	d3,(a1)+
 		move.w	d4,(a1)+
 		move.w	d3,(a1)+
-		move.w	d4,(a1)+
-		move.w	d3,(a1)+
-		swap	d3
-		add.l	d0,d3
-		add.l	d0,d3
-		add.l	d0,d3
-		swap	d3
-		dbf	d1,loc_C666
+    endif
+		
+		
 		rts	
 ; ===========================================================================
-SwScrl_RippleData:	dc.b   1,  2,  1,  3,  1,  2,  2,  1,  2,  3,  1,  2,  1,  2,  0,  0; 0
-					
-					
-		dc.b   2,  0,  3,  2,  2,  3,  2,  2,  1,  3,  0,  0,  1,  0,  1,  3; 16
-		dc.b   1,  2,  1,  3,  1,  2,  2,  1,  2,  3,  1,  2,  1,  2,  0,  0; 32
-		dc.b   2,  0,  3,  2,  2,  3,  2,  2,  1,  3,  0,  0,  1,  0,  1,  3; 48
-		dc.b   1,  2		; 64
+; horizontal offsets for the water rippling effect
+; byte_C682:
+SwScrl_RippleData:
+		dc.b   1,  2,  1,  3,  1,  2,  2,  1,  2,  3,  1,  2,  1,  2,  0,  0; 16									
+		dc.b   2,  0,  3,  2,  2,  3,  2,  2,  1,  3,  0,  0,  1,  0,  1,  3; 32
+		dc.b   1,  2,  1,  3,  1,  2,  2,  1,  2,  3,  1,  2,  1,  2,  0,  0; 48
+		dc.b   2,  0,  3,  2,  2,  3,  2,  2,  1,  3,  0,  0,  1,  0,  1,  3; 64
+		dc.b   1,  2		; 66
 ; ===========================================================================
 
-loc_C6C4:				
-		move.b	($FFFFFE0F).w,d1
+SwScrl_EHZ_2P:
+		; Make the 'ripple' animate every 8 frames.				
+		move.b	(v_vblank_counter+3).w,d1
 		andi.w	#7,d1
-		bne.s	loc_C6D2
+		bne.s	.skipripple
 		subq.w	#1,(v_bgscroll_buffer).w
 
-loc_C6D2:				
+	.skipripple:	
+		; Do Player 1's screen.
+
+		; Update the background's vertical scrolling.			
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
-		andi.l	#-$10002,(v_fg_y_pos_vsram).w
+
+		; Only allow the screen to vertically scroll two pixels at a time.
+		andi.l	#$FFFEFFFE,(v_fg_y_pos_vsram).w
+
+		; Update the background's (and foreground's) horizontal scrolling.
+		; This creates an elaborate parallax effect.
 		lea	(v_hscroll_buffer).w,a1
 		move.w	(v_camera_x_pos).w,d0
-		move.w	#$A,d1
-		bsr.s	sub_C71A
+		
+		; Do 11 lines.	
+		move.w	#11-1,d1	
+		bsr.s	.dobackground
+		
+		; Do Player 2's screen.
+
+		; Update the background's vertical scrolling.
 		moveq	#0,d0
 		move.w	d0,(v_bg_y_pos_vsram_p2).w
-		subi.w	#$E0,(v_bg_y_pos_vsram_p2).w ; '='
+		subi.w	#$E0,(v_bg_y_pos_vsram_p2).w
+		
+		; Update the foregrounds's vertical scrolling.
 		move.w	(v_camera_y_pos_p2).w,(v_fg_y_pos_vsram_p2).w
-		subi.w	#$E0,(v_fg_y_pos_vsram_p2).w ; '='
-		andi.l	#-$10002,(v_fg_y_pos_vsram_p2).w
-		lea	($FFFFE1B0).w,a1
+		subi.w	#$E0,(v_fg_y_pos_vsram_p2).w
+		
+		; Only allow the screen to vertically scroll two pixels at a time.
+		andi.l	#$FFFEFFFE,(v_fg_y_pos_vsram_p2).w
+		
+		; Update the background's (and foreground's) horizontal scrolling.
+		; This creates an elaborate parallax effect.
+		; Tails' screen is slightly taller, to fill the gap between the two
+		; screens.
+		lea	(v_hscroll_buffer+(112-4)*2*2).w,a1
 		move.w	(v_camera_x_pos_p2).w,d0
-		move.w	#$E,d1
+		
+		; Do 15 lines.
+		move.w	#11+4-1,d1
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_C71A:				
+.dobackground:				
 		neg.w	d0
 		move.w	d0,d2
 		swap	d0
 		move.w	#0,d0
 
-loc_C724:				
+	.loop11or15: ; runs 11 times for player 1, 15 times for player 2			
 		move.l	d0,(a1)+
-		dbf	d1,loc_C724
+		dbf	d1,.loop11or15
+		
 		move.w	d2,d0
 		asr.w	#6,d0
-		move.w	#$1C,d1
 
-loc_C732:				
+		; Do 29 lines.
+		move.w	#29-1,d1
+	.loop29:				
 		move.l	d0,(a1)+
-		dbf	d1,loc_C732
+		dbf	d1,.loop29
+		
 		move.w	d0,d3
 		move.w	(v_bgscroll_buffer).w,d1
 		andi.w	#$1F,d1
-		lea	(SwScrl_RippleData)(pc),a2
+		lea_	(SwScrl_RippleData)(pc),a2
 		lea	(a2,d1.w),a2
-		move.w	#$A,d1
 
-loc_C74E:				
+		; Do 11 lines.		
+		move.w	#11-1,d1
+	.loop11:				
 		move.b	(a2)+,d0
 		ext.w	d0
 		add.w	d3,d0
 		move.l	d0,(a1)+
-		dbf	d1,loc_C74E
+		dbf	d1,.loop11
+		
 		move.w	#0,d0
-		move.w	#4,d1
 
-loc_C762:				
+		; Do 5 lines.
+		move.w	#5-1,d1
+	.loop5:				
 		move.l	d0,(a1)+
-		dbf	d1,loc_C762
+		dbf	d1,.loop5
+		
 		move.w	d2,d0
 		asr.w	#4,d0
-		move.w	#7,d1
-
-loc_C770:				
+		
+		; Do 8 lines.		
+		move.w	#8-1,d1
+	.loop8_1:				
 		move.l	d0,(a1)+
-		dbf	d1,loc_C770
+		dbf	d1,.loop8_1
+		
 		move.w	d2,d0
 		asr.w	#4,d0
 		move.w	d0,d1
 		asr.w	#1,d1
 		add.w	d1,d0
-		move.w	#7,d1
 
-loc_C784:				
+		; Do 8 lines.
+		move.w	#8-1,d1
+	.loop8_2:				
 		move.l	d0,(a1)+
-		dbf	d1,loc_C784
+		dbf	d1,.loop8_2
+		
 		move.w	d2,d0
 		asr.w	#1,d0
 		move.w	d2,d1
@@ -15862,27 +15937,33 @@ loc_C784:
 		sub.w	d1,d0
 		ext.l	d0
 		asl.l	#8,d0
-		divs.w	#$30,d0	; '0'
+		divs.w	#$30,d0
 		ext.l	d0
 		asl.l	#8,d0
 		moveq	#0,d3
 		move.w	d2,d3
 		asr.w	#3,d3
-		move.w	#$27,d1	; '''
-
-VBlank_EndingA:				
+		
+		; Do 40 lines.
+		move.w	#40-1,d1
+	.loop40:				
 		move.w	d2,(a1)+
 		move.w	d3,(a1)+
 		swap	d3
 		add.l	d0,d3
 		swap	d3
-		dbf	d1,VBlank_EndingA
+		dbf	d1,.loop40
+		
+		
+	; 11+29+11+5+8+8+40=112.
+	; No missing lines here.
 		rts	
-; End of function sub_C71A
 
 ; ===========================================================================
 
-loc_C7BA:				
+loc_C7BA:
+    if Revision<2
+	; Just a duplicate of 'SwScrl_Minimal'.				
 		move.w	(v_camera_x_pos_diff).w,d4
 		ext.l	d4
 		asl.l	#5,d4
@@ -15902,6 +15983,7 @@ loc_C7BA:
 loc_C7EA:				
 		move.l	d0,(a1)+
 		dbf	d1,loc_C7EA
+	endc
 		rts	
 ; ===========================================================================
 
@@ -94655,7 +94737,7 @@ BM128_HPZ:		;incbin	"mappings/128x128/HPZ.bin"
 BM16_OOZ:		incbin	"mappings/16x16/OOZ.bin"
 ;-----------------------------------------------------------------------------------
 ;OOZ main level	patterns (Kosinski compression)
-Koz_A4204:		incbin	"art/kosinski/OOZ.bin
+Kos_OOZ:		incbin	"art/kosinski/OOZ.bin"
 ;-----------------------------------------------------------------------------------
 ;OOZ 128x128 block mappings (Kosinski compression)
 BM128_OOZ:		incbin	"mappings/128x128/OOZ.bin"
@@ -94664,7 +94746,7 @@ BM128_OOZ:		incbin	"mappings/128x128/OOZ.bin"
 BM16_MCZ:		incbin	"mappings/16x16/MCZ.bin"
 ;-----------------------------------------------------------------------------------
 ;MCZ main level	patterns (Kosinski compression)
-Koz_A9D74:		incbin	"art/kosinski/MCZ.bin
+Kos_MCZ:		incbin	"art/kosinski/MCZ.bin"
 ;-----------------------------------------------------------------------------------
 ;MCZ 128x128 block mappings (Kosinski compression)
 BM128_MCZ:		incbin	"mappings/128x128/MCZ.bin"
@@ -94673,7 +94755,7 @@ BM128_MCZ:		incbin	"mappings/128x128/MCZ.bin"
 BM16_CNZ:		incbin	"mappings/16x16/CNZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CNZ main level	patterns (Kosinski compression)
-Koz_B0894:		incbin	"mappings/128x128/CNZ.bin"
+Kos_CNZ:		incbin	"mappings/128x128/CNZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CNZ 128x128 block mappings (Kosinski compression)
 BM128_CNZ:		incbin	"mappings/128x128/CNZ.bin"
@@ -94682,7 +94764,7 @@ BM128_CNZ:		incbin	"mappings/128x128/CNZ.bin"
 BM16_CPZ:		incbin	"mappings/16x16/CPZ_DEZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CPZ/DEZ main level patterns (Kosinski compression)
-Koz_B6174:		incbin	"art/kosinski/CPZ_DEZ.bin
+Kos_CPZ_DEZ:		incbin	"art/kosinski/CPZ_DEZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CPZ/DEZ 128x128 block mappings	(Kosinski compression)
 BM128_CPZ:		incbin	"mappings/128x128/CPZ_DEZ.bin"
@@ -94693,7 +94775,7 @@ BM128_CPZ:		incbin	"mappings/128x128/CPZ_DEZ.bin"
 BM16_ARZ:		incbin	"mappings/16x16/ARZ.bin"
 ;-----------------------------------------------------------------------------------
 ;ARZ main level	patterns (Kosinski compression)
-Koz_BCC24:		incbin	"art/kosinski/ARZ.bin
+Kos_ARZ:		incbin	"art/kosinski/ARZ.bin"
 ;-----------------------------------------------------------------------------------
 ;ARZ 128x128 block mappings (Kosinski compression)
 BM128_ARZ:		incbin		"mappings/128x128/ARZ.bin"
@@ -94702,10 +94784,10 @@ BM128_ARZ:		incbin		"mappings/128x128/ARZ.bin"
 BM16_WFZ:		incbin	"mappings/16x16/WFZ_SCZ.bin"
 ;-----------------------------------------------------------------------------------
 ;WFZ/SCZ main level patterns (Kosinski compression)
-Koz_C5004:		incbin	"art/kosinski/WFZ_SCZ.bin
+Kos_SCZ:		incbin	"art/kosinski/WFZ_SCZ.bin"
 ;-----------------------------------------------------------------------------------
 ;WFZ pattern suppliment	to SCZ tiles (Kosinski compression)
-Koz_C7EC4:		incbin	"art/kosinski/WFZ_Supp.bin
+Kos_WFZ:		incbin	"art/kosinski/WFZ_Supp.bin"
 ;-----------------------------------------------------------------------------------
 ;WFZ/SCZ 128x128 block mappings	(Kosinski compression)
 BM128_WFZ:		incbin	"mappings/128x128/WFZ_SCZ.bin"
@@ -94715,56 +94797,55 @@ BM128_WFZ:		incbin	"mappings/128x128/WFZ_SCZ.bin"
 ;-----------------------------------------------------------------------------------
 ; Special stage	tube mappings - End curve right, slope up, slope down, begin curve right
 ; Frame	1
-;-----------------------------------------------------------------------------------
-MapSpec_CA904:		incbin	"mappings/special stage/Slope up - Frame 1.bin
+MapSpec_Rise1:		incbin	"mappings/special stage/Slope Up 1.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 2
-MapSpec_CADA8:		incbin	"mappings/special stage/Slope up - Frame 2.bin
+MapSpec_Rise2:		incbin	"mappings/special stage/Slope Up 2.bin""
 ;-----------------------------------------------------------------------------------
 ;Frame 3
-MapSpec_CB376:		incbin	"mappings/special stage/Slope up - Frame 3.bin
+MapSpec_Rise3:		incbin	"mappings/special stage/Slope Up 3.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 4
-MapSpec_CB92E:		incbin	"mappings/special stage/Slope up - Frame 4.bin
+MapSpec_Rise4:		incbin	"mappings/special stage/Slope Up 4.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 5
-MapSpec_CBF92:		incbin	"mappings/special stage/Slope up - Frame 5.bin
+MapSpec_Rise5:		incbin	"mappings/special stage/Slope Up 5.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 6
-MapSpec_CC5BE:		incbin	"mappings/special stage/Slope up - Frame 6.bin
+MapSpec_Rise6:		incbin	"mappings/special stage/Slope Up 6.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 7
-MapSpec_CCC7A:		incbin	"mappings/special stage/Slope up - Frame 7.bin
+MapSpec_Rise7:		incbin	"mappings/special stage/Slope Up 7.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 8
-MapSpec_CD282:		incbin	"mappings/special stage/Slope up - Frame 8.bin
+MapSpec_Rise8:		incbin	"mappings/special stage/Slope Up 8.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 9
-MapSpec_CD7C0:		incbin	"mappings/special stage/Slope up - Frame 9.bin
+MapSpec_Rise9:		incbin	"mappings/special stage/Slope Up 9.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 10
-MapSpec_CDD44:		incbin	"mappings/special stage/Slope up - Frame 10.bin
+MapSpec_Rise10:		incbin	"mappings/special stage/Slope Up 10.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 11
-MapSpec_CE2BE:		incbin	"mappings/special stage/Slope up - Frame 11.bin
+MapSpec_Rise11:		incbin	"mappings/special stage/Slope Up 11.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 12
-MapSpec_CE7DE:		incbin	"mappings/special stage/Slope up - Frame 12.bin
+MapSpec_Rise12:		incbin	"mappings/special stage/Slope Up 12.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 13
-MapSpec_CEC52:		incbin	"mappings/special stage/Slope up - Frame 13.bin
+MapSpec_Rise13:		incbin	"mappings/special stage/Slope Up 13.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 14
-MapSpec_CF0BC:		incbin	"mappings/special stage/Slope up - Frame 14.bin
+MapSpec_Rise14:		incbin	"mappings/special stage/Slope Up 14.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 15
-MapSpec_CF580:		incbin	"mappings/special stage/Slope up - Frame 15.bin
+MapSpec_Rise15:		incbin	"mappings/special stage/Slope Up 15.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 16
-MapSpec_CFA00:		incbin	"mappings/special stage/Slope up - Frame 16.bin
+MapSpec_Rise16:		incbin	"mappings/special stage/Slope Up 16.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 17
-MapSpec_CFE4A:		incbin	"mappings/special stage/Slope up - Frame 17.bin
+MapSpec_Rise17:		incbin	"mappings/special stage/Slope Up 17.bin"
 ;-----------------------------------------------------------------------------------
 
 ;-----------------------------------------------------------------------------------
