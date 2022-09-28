@@ -87,26 +87,26 @@ popr:		macro
     if AddSubOptimize
 	; if addsubOptimize, optimize these...
 addi_:		macro	src,dest
-		addq.\0	src,dest
+		addq.\0	\src,\dest
 	endm
 subi_:		macro
-		subq.\0	src,dest
+		subq.\0	\src,\dest
 	endm
 adda_:		macro
-		addq.\0	src,dest
+		addq.\0	\src,\dest
 	endm
 
     else
 
 	; ...otherwise, leave them unoptimized.
 addi_:		macro	src,dest
-		addi.\0	src,dest
+		addi.\0	\src,\dest
 	endm
 subi_:		macro
-		subi.\0	src,dest
+		subi.\0	\src,\dest
 	endm
 adda_:		macro
-		adda.\0	src,dest
+		adda.\0	\src,\dest
 	endm
     endc
     
@@ -114,14 +114,14 @@ adda_:		macro
 ; ------------------------------------------------------------------------------
 ; Relative lea.
 ; Optimize various lea instructions to be PC relative instead of absolute long.
-; These were unoptimized to absolute long in Revision 2.
+; These were deoptimized to absolute long in Revision 2.
 ; ------------------------------------------------------------------------------
 
 lea_: 		macro address,reg
-	if relativeLea
-		lea address(pc),reg
+	if RelativeLea
+		lea \address(pc),\reg
 	else
-		lea (address).l,reg
+		lea (\address).l,\reg
 	endc
     endm
 
@@ -141,17 +141,17 @@ rev02even:	 macro
 ; ---------------------------------------------------------------------------
 jsrto:		 macro directaddr,indirectaddr
 	if RemoveJmpTos
-		jsr (directaddr).l	; jump directly to address
+		jsr (\directaddr).l	; jump directly to address
 	else
-		bsr.w indirectaddr	; otherwise, branch to an indirect JmpTo
+		bsr.w \indirectaddr	; otherwise, branch to an indirect JmpTo
 	endc
     endm
 
 jmpto:		 macro directaddr,indirectaddr
 	if RemoveJmpTos
-		jmp (directaddr).l	; jump directly to address
+		jmp (\directaddr).l	; jump directly to address
 	else
-		bra.w indirectaddr	; otherwise, branch to an indirect JmpTo
+		bra.w \indirectaddr	; otherwise, branch to an indirect JmpTo
 	endc
     endm
 

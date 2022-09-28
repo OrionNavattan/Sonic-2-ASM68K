@@ -15,10 +15,10 @@
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
 		opt	m+					; do not expand macros - if enabled, this can break assembling
+
 			
 			
-;		section main
-;		org(0)	
+;Main	section org(0)
 	
 
 	if ~def(Revision) 
@@ -34,16 +34,16 @@ AllOptimizations = 0 ; If 1, enables all optimizations
 ;SkipChecksumCheck = 0
 ;	| If 1, disables the slow bootup checksum calculation
 
-;zeroOffsetOptimization = 0|allOptimizations
+;zeroOffsetOptimization = 0|AllOptimizations
 ;	| If 1, makes a handful of zero-offset instructions smaller
 
-RemoveJmpTos = 0|(Revision=2)|allOptimizations
+RemoveJmpTos = 0|(Revision=2)|AllOptimizations
 ;	| If 1, many unnecessary JmpTos are removed, improving performance
 
-AddSubOptimize = (0|(Revision=2)|AllOptimizations=1)
+AddSubOptimize = (0|(Revision=2)|AllOptimizations)
 ;	| If 1, some add/sub instructions are optimized to addq/subq
 
-RelativeLea = (0|(Revision<>2)|AllOptimizations=1)
+RelativeLea = (0|Revision<>2|AllOptimizations)
 ;	| If 1, makes some instructions use pc-relative addressing, instead of absolute long
 
 ;UseFullWaterTables = 0
@@ -235,8 +235,10 @@ SetupVDP:	dc.b 4						; VDP $80 - normal colour mode
 		dc.b 1						; VDP $90 - 64x32 cell plane size
 		dc.b 0						; VDP $91 - window h position
 		dc.b 0						; VDP $92 - window v position
-		dc.w $FFFF					; VDP $93/94 - DMA length
-		dc.w 0						; VDP $95/96 - DMA source
+		dc.b $FF					; VDP $93/94 - DMA length
+		dc.b $FF		
+		dc.b 0						; VDP $95/96 - DMA source
+		dc.b 0
 		dc.b $80					; VDP $97 - DMA fill VRAM
 SetupVDP_end:
 		dc.l $40000080					; VRAM DMA write address 0
@@ -15793,7 +15795,7 @@ SwScrl_EHZ:
 		; 22+58+21+11+16+16+15+18+45=222.
 		; Only 222 out of 224 lines have been processed.
 
-    if fixBugs
+    if FixBugs
 		; The bottom two lines haven't had their H-scroll values set.
 		; Knuckles in Sonic 2 fixes this with the following code:
 		move.w	d4,(a1)+
@@ -15889,7 +15891,7 @@ SwScrl_EHZ_2P:
 		move.w	d0,d3
 		move.w	(v_bgscroll_buffer).w,d1
 		andi.w	#$1F,d1
-		lea_	(SwScrl_RippleData)(pc),a2
+		lea_	SwScrl_RippleData,a2
 		lea	(a2,d1.w),a2
 
 		; Do 11 lines.		
@@ -16088,7 +16090,7 @@ loc_C964:
 		tst.w	($FFFFFFD8).w
 		bne.w	loc_CB10
 		tst.b	(f_screen_shaking_flag_htz).w
-		bne.w	loc_CA92
+		bne.w	HTZ_Screen_Shake
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
 		lea	(v_hscroll_buffer).w,a1
 		move.w	(v_camera_x_pos).w,d0
@@ -16227,7 +16229,8 @@ loc_CA7A:
 		rts	
 ; ===========================================================================
 
-loc_CA92:				
+;loc_CA92:
+HTZ_Screen_Shake:				
 		move.w	(v_bg1_x_pos_diff).w,d4
 		ext.l	d4
 		lsl.l	#8,d4
@@ -16246,7 +16249,7 @@ loc_CA92:
 		beq.s	loc_CAEE
 		move.w	($FFFFFE04).w,d0
 		andi.w	#$3F,d0	; '?'
-		lea	(SwScrl_RippleData)(pc),a1
+		lea_	SwScrl_RippleData,a1
 		lea	(a1,d0.w),a1
 		moveq	#0,d0
 		move.b	(a1)+,d0
@@ -16258,7 +16261,7 @@ loc_CA92:
 
 loc_CAEE:				
 		lea	(v_hscroll_buffer).w,a1
-		move.w	#$DF,d1	; '='
+		move.w	#224-1,d1
 		move.w	(v_camera_x_pos).w,d0
 		add.w	d2,d0
 		neg.w	d0
