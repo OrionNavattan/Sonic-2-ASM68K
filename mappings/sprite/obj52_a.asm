@@ -1,23 +1,23 @@
-Map_obj52_a:	mappingsTable
+Map_obj52_a:	mappingsTable offset(*)
 	mappingsTableEntry.w	Map_obj52_a_0008
 	mappingsTableEntry.w	Map_obj52_a_0012
 	mappingsTableEntry.w	Map_obj52_a_001C
 	mappingsTableEntry.w	Map_obj52_a_0026
 
-Map_obj52_a_0008:	spriteHeader
+Map_obj52_a_0008:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, 0, 0, 0, 1, 0
-Map_obj52_a_0008_End
+	spriteFooter offset(*)
 
-Map_obj52_a_0012:	spriteHeader
+Map_obj52_a_0012:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, 4, 0, 0, 1, 0
-Map_obj52_a_0012_End
+	spriteFooter offset(*)
 
-Map_obj52_a_001C:	spriteHeader
+Map_obj52_a_001C:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, 8, 0, 0, 1, 0
-Map_obj52_a_001C_End
+	spriteFooter offset(*)
 
-Map_obj52_a_0026:	spriteHeader
+Map_obj52_a_0026:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, $C, 0, 0, 1, 0
-Map_obj52_a_0026_End
+	spriteFooter offset(*)
 
 	even

@@ -1,4 +1,4 @@
-Map_obj56_b:	mappingsTable
+Map_obj56_b:	mappingsTable offset(*)
 	mappingsTableEntry.w	Map_obj56_b_0010
 	mappingsTableEntry.w	Map_obj56_b_002A
 	mappingsTableEntry.w	Map_obj56_b_0034
@@ -8,38 +8,38 @@ Map_obj56_b:	mappingsTable
 	mappingsTableEntry.w	Map_obj56_b_005C
 	mappingsTableEntry.w	Map_obj56_b_0066
 
-Map_obj56_b_0010:	spriteHeader
+Map_obj56_b_0010:	spriteHeader offset(*)
 	spritePiece	-$30, -$10, 4, 4, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$10, 4, 4, $10, 0, 0, 0, 0
 	spritePiece	$10, -$10, 4, 4, $20, 0, 0, 0, 0
-Map_obj56_b_0010_End
+	spriteFooter offset(*)
 
-Map_obj56_b_002A:	spriteHeader
+Map_obj56_b_002A:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $30, 0, 0, 0, 0
-Map_obj56_b_002A_End
+	spriteFooter offset(*)
 
-Map_obj56_b_0034:	spriteHeader
+Map_obj56_b_0034:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $40, 0, 0, 0, 0
-Map_obj56_b_0034_End
+	spriteFooter offset(*)
 
-Map_obj56_b_003E:	spriteHeader
+Map_obj56_b_003E:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $50, 0, 0, 0, 0
-Map_obj56_b_003E_End
+	spriteFooter offset(*)
 
-Map_obj56_b_0048:	spriteHeader
+Map_obj56_b_0048:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $60, 0, 0, 0, 0
-Map_obj56_b_0048_End
+	spriteFooter offset(*)
 
-Map_obj56_b_0052:	spriteHeader
+Map_obj56_b_0052:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $60, 0, 1, 0, 0
-Map_obj56_b_0052_End
+	spriteFooter offset(*)
 
-Map_obj56_b_005C:	spriteHeader
+Map_obj56_b_005C:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $70, 0, 0, 0, 0
-Map_obj56_b_005C_End
+	spriteFooter offset(*)
 
-Map_obj56_b_0066:	spriteHeader
+Map_obj56_b_0066:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $70, 0, 1, 0, 0
-Map_obj56_b_0066_End
+	spriteFooter offset(*)
 
 	even

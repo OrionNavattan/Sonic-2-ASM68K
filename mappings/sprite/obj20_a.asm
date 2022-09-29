@@ -1,4 +1,4 @@
-Map_obj20_a:	mappingsTable
+Map_obj20_a:	mappingsTable offset(*)
 	mappingsTableEntry.w	Map_obj20_a_000C
 	mappingsTableEntry.w	Map_obj20_a_0016
 	mappingsTableEntry.w	Map_obj20_a_0020
@@ -6,27 +6,27 @@ Map_obj20_a:	mappingsTable
 	mappingsTableEntry.w	Map_obj20_a_0034
 	mappingsTableEntry.w	Map_obj20_a_003E
 
-Map_obj20_a_000C:	spriteHeader
+Map_obj20_a_000C:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
-Map_obj20_a_000C_End
+	spriteFooter offset(*)
 
-Map_obj20_a_0016:	spriteHeader
+Map_obj20_a_0016:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, 4, 0, 0, 0, 0
-Map_obj20_a_0016_End
+	spriteFooter offset(*)
 
-Map_obj20_a_0020:	spriteHeader
+Map_obj20_a_0020:	spriteHeader offset(*)
 	spritePiece	-8, -7, 2, 2, 8, 0, 0, 0, 0
-Map_obj20_a_0020_End
+	spriteFooter offset(*)
 
-Map_obj20_a_002A:	spriteHeader
+Map_obj20_a_002A:	spriteHeader offset(*)
 	spritePiece	-8, -$A, 2, 2, 8, 0, 0, 0, 0
-Map_obj20_a_002A_End
+	spriteFooter offset(*)
 
-Map_obj20_a_0034:	spriteHeader
+Map_obj20_a_0034:	spriteHeader offset(*)
 	spritePiece	-8, -$A, 2, 2, $C, 0, 0, 0, 0
-Map_obj20_a_0034_End
+	spriteFooter offset(*)
 
-Map_obj20_a_003E:	spriteHeader
-Map_obj20_a_003E_End
+Map_obj20_a_003E:	spriteHeader offset(*)
+	spriteFooter offset(*)
 
 	even

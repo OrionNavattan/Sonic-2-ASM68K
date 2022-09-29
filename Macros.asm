@@ -15,11 +15,11 @@ ifnotarg	macros
 ; input: length to align to, value to use as padding (default is 0)
 ; ---------------------------------------------------------------------------
 
-align:		macro length,value
+align:		macro loc,length,value
 		ifarg \value
-		dcb.b (\length-(*%\length))%\length,\value
+		dcb.b (\length-(loc%\length))%\length,\value
 		else
-		dcb.b (\length-(*%\length))%\length,0
+		dcb.b (\length-(loc%\length))%\length,0
 		endc
 		endm
 		
@@ -235,7 +235,7 @@ clear_ram:		 macro startaddr,endaddr
 
 ; ---------------------------------------------------------------------------
 ; Create a pointer index.
-; input: start location (usually * or 0; leave blank to make pointers
+; input: start location (usually offset(*) or 0; leave blank to make pointers
 ; relative to themselves), id start (default 0), id increment (default 1)
 ; ---------------------------------------------------------------------------
 
@@ -282,7 +282,7 @@ ptr:		macro
 		opt	m-
 
 		if index_start=-1
-		dc.\index_width \1-*
+		dc.\index_width \1-offset(*)
 		else
 		dc.\index_width \1-index_start
 		endc

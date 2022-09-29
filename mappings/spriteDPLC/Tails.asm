@@ -1,4 +1,4 @@
-DPLC_Tails:	mappingsTable
+DPLC_Tails:	mappingsTable offset(*)
 	mappingsTableEntry.w	DPLC_Tails_0116
 	mappingsTableEntry.w	DPLC_Tails_0118
 	mappingsTableEntry.w	DPLC_Tails_011E

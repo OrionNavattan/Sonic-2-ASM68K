@@ -1,4 +1,4 @@
-Map_obj70:	mappingsTable
+Map_obj70:	mappingsTable offset(*)
 	mappingsTableEntry.w	Map_obj70_0040
 	mappingsTableEntry.w	Map_obj70_0052
 	mappingsTableEntry.w	Map_obj70_005C
@@ -32,136 +32,136 @@ Map_obj70:	mappingsTable
 	mappingsTableEntry.w	Map_obj70_018C
 	mappingsTableEntry.w	Map_obj70_0196
 
-Map_obj70_0040:	spriteHeader
+Map_obj70_0040:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	0, -$10, 2, 4, 0, 1, 0, 0, 0
-Map_obj70_0040_End
+	spriteFooter offset(*)
 
-Map_obj70_0052:	spriteHeader
+Map_obj70_0052:	spriteHeader offset(*)
 	spritePiece	-$C, -$10, 3, 4, 8, 1, 0, 0, 0
-Map_obj70_0052_End
+	spriteFooter offset(*)
 
-Map_obj70_005C:	spriteHeader
+Map_obj70_005C:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $14, 1, 0, 0, 0
-Map_obj70_005C_End
+	spriteFooter offset(*)
 
-Map_obj70_0066:	spriteHeader
+Map_obj70_0066:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $24, 1, 0, 0, 0
-Map_obj70_0066_End
+	spriteFooter offset(*)
 
-Map_obj70_0070:	spriteHeader
+Map_obj70_0070:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $34, 1, 0, 0, 0
-Map_obj70_0070_End
+	spriteFooter offset(*)
 
-Map_obj70_007A:	spriteHeader
+Map_obj70_007A:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $44, 1, 0, 0, 0
-Map_obj70_007A_End
+	spriteFooter offset(*)
 
-Map_obj70_0084:	spriteHeader
+Map_obj70_0084:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $54, 1, 0, 0, 0
-Map_obj70_0084_End
+	spriteFooter offset(*)
 
-Map_obj70_008E:	spriteHeader
+Map_obj70_008E:	spriteHeader offset(*)
 	spritePiece	-$10, -$C, 4, 3, $64, 1, 0, 0, 0
-Map_obj70_008E_End
+	spriteFooter offset(*)
 
-Map_obj70_0098:	spriteHeader
+Map_obj70_0098:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 2, $70, 1, 0, 0, 0
 	spritePiece	-$10, 0, 4, 2, $70, 1, 1, 0, 0
-Map_obj70_0098_End
+	spriteFooter offset(*)
 
-Map_obj70_00AA:	spriteHeader
+Map_obj70_00AA:	spriteHeader offset(*)
 	spritePiece	-$10, -$C, 4, 3, $64, 1, 1, 0, 0
-Map_obj70_00AA_End
+	spriteFooter offset(*)
 
-Map_obj70_00B4:	spriteHeader
+Map_obj70_00B4:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $54, 1, 1, 0, 0
-Map_obj70_00B4_End
+	spriteFooter offset(*)
 
-Map_obj70_00BE:	spriteHeader
+Map_obj70_00BE:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $44, 1, 1, 0, 0
-Map_obj70_00BE_End
+	spriteFooter offset(*)
 
-Map_obj70_00C8:	spriteHeader
+Map_obj70_00C8:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $34, 1, 1, 0, 0
-Map_obj70_00C8_End
+	spriteFooter offset(*)
 
-Map_obj70_00D2:	spriteHeader
+Map_obj70_00D2:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $24, 1, 1, 0, 0
-Map_obj70_00D2_End
+	spriteFooter offset(*)
 
-Map_obj70_00DC:	spriteHeader
+Map_obj70_00DC:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $14, 1, 1, 0, 0
-Map_obj70_00DC_End
+	spriteFooter offset(*)
 
-Map_obj70_00E6:	spriteHeader
+Map_obj70_00E6:	spriteHeader offset(*)
 	spritePiece	-$C, -$10, 3, 4, 8, 1, 1, 0, 0
-Map_obj70_00E6_End
+	spriteFooter offset(*)
 
-Map_obj70_00F0:	spriteHeader
+Map_obj70_00F0:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 2, 4, 0, 0, 1, 0, 0
 	spritePiece	0, -$10, 2, 4, 0, 1, 1, 0, 0
-Map_obj70_00F0_End
+	spriteFooter offset(*)
 
-Map_obj70_0102:	spriteHeader
+Map_obj70_0102:	spriteHeader offset(*)
 	spritePiece	-$C, -$10, 3, 4, 8, 0, 1, 0, 0
-Map_obj70_0102_End
+	spriteFooter offset(*)
 
-Map_obj70_010C:	spriteHeader
+Map_obj70_010C:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $14, 0, 1, 0, 0
-Map_obj70_010C_End
+	spriteFooter offset(*)
 
-Map_obj70_0116:	spriteHeader
+Map_obj70_0116:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $24, 0, 1, 0, 0
-Map_obj70_0116_End
+	spriteFooter offset(*)
 
-Map_obj70_0120:	spriteHeader
+Map_obj70_0120:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $34, 0, 1, 0, 0
-Map_obj70_0120_End
+	spriteFooter offset(*)
 
-Map_obj70_012A:	spriteHeader
+Map_obj70_012A:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $44, 0, 1, 0, 0
-Map_obj70_012A_End
+	spriteFooter offset(*)
 
-Map_obj70_0134:	spriteHeader
+Map_obj70_0134:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $54, 0, 1, 0, 0
-Map_obj70_0134_End
+	spriteFooter offset(*)
 
-Map_obj70_013E:	spriteHeader
+Map_obj70_013E:	spriteHeader offset(*)
 	spritePiece	-$10, -$C, 4, 3, $64, 0, 1, 0, 0
-Map_obj70_013E_End
+	spriteFooter offset(*)
 
-Map_obj70_0148:	spriteHeader
+Map_obj70_0148:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 2, $70, 0, 0, 0, 0
 	spritePiece	-$10, 0, 4, 2, $70, 0, 1, 0, 0
-Map_obj70_0148_End
+	spriteFooter offset(*)
 
-Map_obj70_015A:	spriteHeader
+Map_obj70_015A:	spriteHeader offset(*)
 	spritePiece	-$10, -$C, 4, 3, $64, 0, 0, 0, 0
-Map_obj70_015A_End
+	spriteFooter offset(*)
 
-Map_obj70_0164:	spriteHeader
+Map_obj70_0164:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $54, 0, 0, 0, 0
-Map_obj70_0164_End
+	spriteFooter offset(*)
 
-Map_obj70_016E:	spriteHeader
+Map_obj70_016E:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $44, 0, 0, 0, 0
-Map_obj70_016E_End
+	spriteFooter offset(*)
 
-Map_obj70_0178:	spriteHeader
+Map_obj70_0178:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $34, 0, 0, 0, 0
-Map_obj70_0178_End
+	spriteFooter offset(*)
 
-Map_obj70_0182:	spriteHeader
+Map_obj70_0182:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $24, 0, 0, 0, 0
-Map_obj70_0182_End
+	spriteFooter offset(*)
 
-Map_obj70_018C:	spriteHeader
+Map_obj70_018C:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, $14, 0, 0, 0, 0
-Map_obj70_018C_End
+	spriteFooter offset(*)
 
-Map_obj70_0196:	spriteHeader
+Map_obj70_0196:	spriteHeader offset(*)
 	spritePiece	-$C, -$10, 3, 4, 8, 0, 0, 0, 0
-Map_obj70_0196_End
+	spriteFooter offset(*)
 
 	even

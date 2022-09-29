@@ -1,4 +1,4 @@
-Map_hud_c:	mappingsTable
+Map_hud_c:	mappingsTable offset(*)
 	mappingsTableEntry.w	Map_hud_c_0016
 	mappingsTableEntry.w	Map_hud_c_0020
 	mappingsTableEntry.w	Map_hud_c_002A
@@ -11,48 +11,48 @@ Map_hud_c:	mappingsTable
 	mappingsTableEntry.w	Map_hud_c_0070
 	mappingsTableEntry.w	Map_hud_c_007A
 
-Map_hud_c_0016:	spriteHeader
+Map_hud_c_0016:	spriteHeader offset(*)
 	spritePiece	0, 0, 1, 2, 0, 0, 0, 1, 0
-Map_hud_c_0016_End
+	spriteFooter offset(*)
 
-Map_hud_c_0020:	spriteHeader
+Map_hud_c_0020:	spriteHeader offset(*)
 	spritePiece	0, 0, 1, 2, 2, 0, 0, 1, 0
-Map_hud_c_0020_End
+	spriteFooter offset(*)
 
-Map_hud_c_002A:	spriteHeader
+Map_hud_c_002A:	spriteHeader offset(*)
 	spritePiece	0, 0, 1, 2, 4, 0, 0, 1, 0
-Map_hud_c_002A_End
+	spriteFooter offset(*)
 
-Map_hud_c_0034:	spriteHeader
+Map_hud_c_0034:	spriteHeader offset(*)
 	spritePiece	0, 0, 1, 2, 6, 0, 0, 1, 0
-Map_hud_c_0034_End
+	spriteFooter offset(*)
 
-Map_hud_c_003E:	spriteHeader
+Map_hud_c_003E:	spriteHeader offset(*)
 	spritePiece	0, 0, 1, 2, 8, 0, 0, 1, 0
-Map_hud_c_003E_End
+	spriteFooter offset(*)
 
-Map_hud_c_0048:	spriteHeader
+Map_hud_c_0048:	spriteHeader offset(*)
 	spritePiece	0, 0, 1, 2, $A, 0, 0, 1, 0
-Map_hud_c_0048_End
+	spriteFooter offset(*)
 
-Map_hud_c_0052:	spriteHeader
+Map_hud_c_0052:	spriteHeader offset(*)
 	spritePiece	0, 0, 1, 2, $C, 0, 0, 1, 0
-Map_hud_c_0052_End
+	spriteFooter offset(*)
 
-Map_hud_c_005C:	spriteHeader
+Map_hud_c_005C:	spriteHeader offset(*)
 	spritePiece	0, 0, 1, 2, $E, 0, 0, 1, 0
-Map_hud_c_005C_End
+	spriteFooter offset(*)
 
-Map_hud_c_0066:	spriteHeader
+Map_hud_c_0066:	spriteHeader offset(*)
 	spritePiece	0, 0, 1, 2, $10, 0, 0, 1, 0
-Map_hud_c_0066_End
+	spriteFooter offset(*)
 
-Map_hud_c_0070:	spriteHeader
+Map_hud_c_0070:	spriteHeader offset(*)
 	spritePiece	0, 0, 1, 2, $12, 0, 0, 1, 0
-Map_hud_c_0070_End
+	spriteFooter offset(*)
 
-Map_hud_c_007A:	spriteHeader
+Map_hud_c_007A:	spriteHeader offset(*)
 	spritePiece	0, 0, 1, 2, $14, 0, 0, 1, 0
-Map_hud_c_007A_End
+	spriteFooter offset(*)
 
 	even

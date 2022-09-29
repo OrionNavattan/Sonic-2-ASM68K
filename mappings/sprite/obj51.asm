@@ -1,4 +1,4 @@
-Map_obj51:	mappingsTable
+Map_obj51:	mappingsTable offset(*)
 	mappingsTableEntry.w	Map_obj51
 	mappingsTableEntry.w	Map_obj51_002A
 	mappingsTableEntry.w	Map_obj51_0054
@@ -21,98 +21,98 @@ Map_obj51:	mappingsTable
 	mappingsTableEntry.w	Map_obj51_014E
 	mappingsTableEntry.w	Map_obj51_0158
 
-Map_obj51_002A:	spriteHeader
+Map_obj51_002A:	spriteHeader offset(*)
 	spritePiece	$10, -$10, 2, 2, $17D, 0, 0, 0, 0
 	spritePiece	-7, -$28, 4, 3, $60, 0, 0, 1, 0
 	spritePiece	-$28, 0, 4, 4, $6C, 0, 0, 1, 0
 	spritePiece	-8, 0, 4, 4, $7C, 0, 0, 1, 0
 	spritePiece	$18, 0, 2, 3, $8C, 0, 0, 1, 0
-Map_obj51_002A_End
+	spriteFooter offset(*)
 
-Map_obj51_0054:	spriteHeader
+Map_obj51_0054:	spriteHeader offset(*)
 	spritePiece	-$1C, $18, 2, 3, $AA, 0, 0, 1, 0
-Map_obj51_0054_End
+	spriteFooter offset(*)
 
-Map_obj51_005E:	spriteHeader
+Map_obj51_005E:	spriteHeader offset(*)
 	spritePiece	-$25, $10, 2, 3, $B0, 0, 0, 1, 0
-Map_obj51_005E_End
+	spriteFooter offset(*)
 
-Map_obj51_0068:	spriteHeader
+Map_obj51_0068:	spriteHeader offset(*)
 	spritePiece	8, $10, 3, 4, $92, 0, 0, 1, 0
-Map_obj51_0068_End
+	spriteFooter offset(*)
 
-Map_obj51_0072:	spriteHeader
+Map_obj51_0072:	spriteHeader offset(*)
 	spritePiece	8, $10, 3, 2, $9E, 0, 0, 1, 0
 	spritePiece	$20, $10, 2, 3, $A4, 0, 0, 1, 0
-Map_obj51_0072_End
+	spriteFooter offset(*)
 
-Map_obj51_0084:	spriteHeader
+Map_obj51_0084:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 2, $189, 0, 0, 0, 0
 	spritePiece	-$20, -$10, 2, 2, $181, 0, 0, 0, 0
-Map_obj51_0084_End
+	spriteFooter offset(*)
 
-Map_obj51_0096:	spriteHeader
+Map_obj51_0096:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 2, $191, 0, 0, 0, 0
 	spritePiece	-$20, -$10, 2, 2, $181, 0, 0, 0, 0
-Map_obj51_0096_End
+	spriteFooter offset(*)
 
-Map_obj51_00A8:	spriteHeader
+Map_obj51_00A8:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 2, $199, 0, 0, 0, 0
 	spritePiece	-$20, -$10, 2, 2, $185, 0, 0, 0, 0
-Map_obj51_00A8_End
+	spriteFooter offset(*)
 
-Map_obj51_00BA:	spriteHeader
+Map_obj51_00BA:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 2, $1A1, 0, 0, 0, 0
 	spritePiece	-$20, -$10, 2, 2, $185, 0, 0, 0, 0
-Map_obj51_00BA_End
+	spriteFooter offset(*)
 
-Map_obj51_00CC:	spriteHeader
+Map_obj51_00CC:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 2, $1A9, 0, 0, 0, 0
 	spritePiece	-$20, -$10, 2, 2, $185, 0, 0, 0, 0
-Map_obj51_00CC_End
+	spriteFooter offset(*)
 
-Map_obj51_00DE:	spriteHeader
+Map_obj51_00DE:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 2, $1B1, 0, 0, 0, 0
 	spritePiece	-$20, -$10, 2, 2, $185, 0, 0, 0, 0
-Map_obj51_00DE_End
+	spriteFooter offset(*)
 
-Map_obj51_00F0:	spriteHeader
+Map_obj51_00F0:	spriteHeader offset(*)
 	spritePiece	-$10, $28, 4, 1, $B6, 0, 0, 1, 0
-Map_obj51_00F0_End
+	spriteFooter offset(*)
 
-Map_obj51_00FA:	spriteHeader
+Map_obj51_00FA:	spriteHeader offset(*)
 	spritePiece	-$10, $28, 4, 1, $BA, 0, 0, 1, 0
-Map_obj51_00FA_End
+	spriteFooter offset(*)
 
-Map_obj51_0104:	spriteHeader
+Map_obj51_0104:	spriteHeader offset(*)
 	spritePiece	-$10, $28, 4, 1, $BE, 0, 0, 1, 0
-Map_obj51_0104_End
+	spriteFooter offset(*)
 
-Map_obj51_010E:	spriteHeader
+Map_obj51_010E:	spriteHeader offset(*)
 	spritePiece	-$1C, $20, 4, 1, $C2, 0, 0, 1, 0
 	spritePiece	4, $20, 4, 1, $C6, 0, 0, 1, 0
-Map_obj51_010E_End
+	spriteFooter offset(*)
 
-Map_obj51_0120:	spriteHeader
+Map_obj51_0120:	spriteHeader offset(*)
 	spritePiece	-$1C, $20, 4, 1, $CA, 0, 0, 1, 0
 	spritePiece	4, $20, 4, 1, $CE, 0, 0, 1, 0
-Map_obj51_0120_End
+	spriteFooter offset(*)
 
-Map_obj51_0132:	spriteHeader
+Map_obj51_0132:	spriteHeader offset(*)
 	spritePiece	-$1C, $20, 4, 1, $D2, 0, 0, 1, 0
 	spritePiece	4, $20, 4, 1, $D6, 0, 0, 1, 0
-Map_obj51_0132_End
+	spriteFooter offset(*)
 
-Map_obj51_0144:	spriteHeader
+Map_obj51_0144:	spriteHeader offset(*)
 	spritePiece	-$C, -$C, 3, 3, $DA, 0, 0, 0, 0
-Map_obj51_0144_End
+	spriteFooter offset(*)
 
-Map_obj51_014E:	spriteHeader
+Map_obj51_014E:	spriteHeader offset(*)
 	spritePiece	-4, -4, 1, 1, $E3, 0, 0, 0, 0
-Map_obj51_014E_End
+	spriteFooter offset(*)
 
-Map_obj51_0158:	spriteHeader
+Map_obj51_0158:	spriteHeader offset(*)
 	spritePiece	-4, -4, 1, 1, $E4, 0, 0, 0, 0
-Map_obj51_0158_End
+	spriteFooter offset(*)
 
 	even

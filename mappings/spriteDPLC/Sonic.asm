@@ -1,4 +1,4 @@
-DPLC_Sonic:	mappingsTable
+DPLC_Sonic:	mappingsTable offset(*)
 	mappingsTableEntry.w	DPLC_Sonic_01AC
 	mappingsTableEntry.w	DPLC_Sonic_01AE
 	mappingsTableEntry.w	DPLC_Sonic_01B8

@@ -1,4 +1,4 @@
-DPLC_obj0D:	mappingsTable
+DPLC_obj0D:	mappingsTable offset(*)
 	mappingsTableEntry.w	DPLC_obj0D_000C
 	mappingsTableEntry.w	DPLC_obj0D_0012
 	mappingsTableEntry.w	DPLC_obj0D_001A

@@ -2,7 +2,7 @@
 ; |           Sonic the Hedgehog 2 Disassembly for Sega Mega Drive          |
 ;  =========================================================================
 
-; created by Nemesis in 2004
+; originally created by Nemesis in 2004
 ; sound driver disassembly by Xenowhirl in 2007
 ; ported to AXM68K/Z80 Macros by Orion Navattan, including documentation
 ; from Sonic Retro AS and Sonic 1 Hivebrain 2022
@@ -11,14 +11,12 @@
 
 
 		opt	l.					; . is the local label symbol
-		opt	ae-					; automatic evens are disabled by default
+		opt	ae-					; automatic evens disabled by default
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
 		opt	m+					; do not expand macros - if enabled, this can break assembling
-
 			
-			
-;Main	section org(0)
+Main	section org(0)
 	
 
 	if ~def(Revision) 
@@ -26,10 +24,13 @@ Revision = 1
 ;	| If 0, a REV00 ROM is built
 ;	| If 1, a REV01 ROM is built, which contains some fixes
 ;	| If 2, a (probable) REV02 ROM is built, which contains even more fixes
+	endc
+	
+FixBugs = 0 ; If 1, enables a number of engine and gameplay bug-fixes, including some in the sound driver.
 
-FixBugs = 0 ; If 1, enables a number of engine and gameplay bug-fixes. See also the 'FixDriverBugs' flag in 'Sound Driver.asm'
+OptimizeSoundDriver = 0	; If 1, enables a number of optimizations in the sound driver
 
-AllOptimizations = 0 ; If 1, enables all optimizations
+AllOptimizations = 0 ; If 1, enables all REV02 assembler optimizations, plus optimized leas for REV00 & REV01
 
 ;SkipChecksumCheck = 0
 ;	| If 1, disables the slow bootup checksum calculation
@@ -37,10 +38,10 @@ AllOptimizations = 0 ; If 1, enables all optimizations
 ;zeroOffsetOptimization = 0|AllOptimizations
 ;	| If 1, makes a handful of zero-offset instructions smaller
 
-RemoveJmpTos = 0|(Revision=2)|AllOptimizations
+RemoveJmpTos = (0|Revision=2|AllOptimizations)
 ;	| If 1, many unnecessary JmpTos are removed, improving performance
 
-AddSubOptimize = (0|(Revision=2)|AllOptimizations)
+AddSubOptimize = (0|Revision=2|AllOptimizations)
 ;	| If 1, some add/sub instructions are optimized to addq/subq
 
 RelativeLea = (0|Revision<>2|AllOptimizations)
@@ -63,7 +64,7 @@ RelativeLea = (0|Revision<>2|AllOptimizations)
 
 
 ROM_Start:
-   if * <> 0
+   if offset(*) <> 0
 	inform 3,"ROM_Start was $%h but it should be 0.",ROM_Start 
    endc
 Vectors:						
@@ -356,7 +357,7 @@ MainGameLoop:
 		bra.s	MainGameLoop			; infinite loop
 ; ===========================================================================
 gmptr:		macro
-		id_\1:	equ *-GameModeArray
+		id_\1:	equ offset(*)-GameModeArray
 		if narg=1
 		bra.w	GM_\1
 		else
@@ -464,7 +465,7 @@ loc_45E:
 		movem.l	(sp)+,d0-a6
 		rte	
 ; ===========================================================================
-VBlank_Index:	index *,,2
+VBlank_Index:	index offset(*),,2
 
 		ptr	 VBlank_Lag				; 0
 		ptr  VBlank_Sega			; 2
@@ -44951,7 +44952,7 @@ JmpTo3_MarkObjGone:
 JmpTo8_Adjust2PArtPointer:				
 		jmp	Adjust2PArtPointer
 		
-		align 4
+		align offset(*),4
 		
     endif
 		
@@ -93633,7 +93634,7 @@ Level_ARZ1:		incbin	"level/layout/ARZ 1.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;ARZ act 2 level layout	(Kosinski compression)
-Level_ARZ2:		incbin	"level/layout/SCZ.bin"
+Level_ARZ2:		incbin	"level/layout/ARZ 2.bin"
 		even
 ;---------------------------------------------------------------------------------------
 ;SCZ level layout (Kosinski compression)
@@ -93711,17 +93712,17 @@ Art_Waterfall3:	incbin	"art/uncompressed/ARZ Waterfalls - 3.bin"
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Patterns for Sonic  ; ArtUnc_50000:
-		align $20
+		align offset(*),$20
 Art_Sonic:	incbin	"art/uncompressed/Sonic.bin"
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Patterns for Tails  ; ArtUnc_64320:
-		align $20
+		align offset(*),$20
 Art_Tails:	incbin	"art/uncompressed/Tails.bin"
 ; --------------------------------------------------------------------------------------
 ; Sprite Mappings
-; Sonic			; MapUnc_6FBE0: SprTbl_Sonic:
-Map_Sonic:	include	"mappings/sprite/Sonic.asm"
+; Sonic			; MapUnc_6FBE0: SprTbl_Sonic: Map_Sonic:
+	include	"mappings/sprite/Sonic.asm"
 ; --------------------------------------------------------------------------------------
 ; Sprite Dynamic Pattern Reloading
 ; Sonic DPLCs   		; MapRUnc_714E0:
@@ -93748,8 +93749,8 @@ Nem_SuperSonic_Stars:	incbin "art/nemesis/Super Sonic Stars.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Sprite Mappings
-; Tails			; MapUnc_739E2:
-Map_Tails:	include	"mappings/sprite/Tails.asm"
+; Tails			; MapUnc_739E2: ; Map_Tails
+	include	"mappings/sprite/Tails.asm"
 ; --------------------------------------------------------------------------------------
 ; Sprite Dynamic Pattern Reloading
 ; Tails DPLCs	; MapRUnc_7446C:
@@ -95172,7 +95173,7 @@ MiscKoz_E35F2:		incbin	misc/0X0E35~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Filler (free space)
 ; --------------------------------------------------------------------------------------
-		align $100
+		align offset(*),$100
 ; --------------------------------------------------------------------------------------
 ; Offset index of ring locations
 ; --------------------------------------------------------------------------------------
@@ -95248,7 +95249,7 @@ Rings_SCZ_2:		incbin	level/rings/0X0E66~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Filler (free space)
 ; --------------------------------------------------------------------------------------
-		align $200
+		align offset(*),$200
 ; --------------------------------------------------------------------------------------
 ; Offset index of sprite locations
 ; --------------------------------------------------------------------------------------
@@ -95321,7 +95322,7 @@ Sprites_Null6:		incbin	level/sprites/0X6009~1.BIN
 ; --------------------------------------------------------------------------------------
 ; Filler (free space)
 ; --------------------------------------------------------------------------------------
-		align $1000
+		align offset(*),$1000
 
 loc_EC000:				; CODE XREF: JmpTo_SoundDriverLoad+2j
 		move	sr,-(sp)

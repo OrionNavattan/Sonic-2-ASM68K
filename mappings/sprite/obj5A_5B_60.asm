@@ -1,4 +1,4 @@
-Map_obj5A_5B_60:	mappingsTable
+Map_obj5A_5B_60:	mappingsTable offset(*)
 	mappingsTableEntry.w	Map_obj5A_5B_60_0042
 	mappingsTableEntry.w	Map_obj5A_5B_60_004C
 	mappingsTableEntry.w	Map_obj5A_5B_60_0056
@@ -33,139 +33,139 @@ Map_obj5A_5B_60:	mappingsTable
 	mappingsTableEntry.w	Map_obj5A_5B_60_0180
 	mappingsTableEntry.w	Map_obj5A_5B_60_0192
 
-Map_obj5A_5B_60_0042:	spriteHeader
+Map_obj5A_5B_60_0042:	spriteHeader offset(*)
 	spritePiece	-4, -4, 1, 1, 0, 0, 0, 0, 1
-Map_obj5A_5B_60_0042_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_004C:	spriteHeader
+Map_obj5A_5B_60_004C:	spriteHeader offset(*)
 	spritePiece	-4, -4, 1, 1, 1, 0, 0, 0, 1
-Map_obj5A_5B_60_004C_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0056:	spriteHeader
+Map_obj5A_5B_60_0056:	spriteHeader offset(*)
 	spritePiece	-4, -4, 1, 1, 2, 0, 0, 0, 1
-Map_obj5A_5B_60_0056_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0060:	spriteHeader
+Map_obj5A_5B_60_0060:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, 3, 0, 0, 0, 1
-Map_obj5A_5B_60_0060_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_006A:	spriteHeader
+Map_obj5A_5B_60_006A:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, 7, 0, 0, 0, 1
-Map_obj5A_5B_60_006A_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0074:	spriteHeader
+Map_obj5A_5B_60_0074:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, $B, 0, 0, 0, 1
-Map_obj5A_5B_60_0074_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_007E:	spriteHeader
+Map_obj5A_5B_60_007E:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, $F, 0, 0, 0, 1
-Map_obj5A_5B_60_007E_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0088:	spriteHeader
+Map_obj5A_5B_60_0088:	spriteHeader offset(*)
 	spritePiece	-$C, -$C, 3, 3, $13, 0, 0, 0, 1
-Map_obj5A_5B_60_0088_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0092:	spriteHeader
+Map_obj5A_5B_60_0092:	spriteHeader offset(*)
 	spritePiece	-$C, -$C, 3, 3, $1C, 0, 0, 0, 1
-Map_obj5A_5B_60_0092_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_009C:	spriteHeader
+Map_obj5A_5B_60_009C:	spriteHeader offset(*)
 	spritePiece	-$C, -$C, 3, 3, $25, 0, 0, 0, 1
-Map_obj5A_5B_60_009C_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_00A6:	spriteHeader
+Map_obj5A_5B_60_00A6:	spriteHeader offset(*)
 	spritePiece	-4, -4, 1, 1, $2E, 0, 0, 0, 1
-Map_obj5A_5B_60_00A6_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_00B0:	spriteHeader
+Map_obj5A_5B_60_00B0:	spriteHeader offset(*)
 	spritePiece	-4, -4, 1, 1, $2F, 0, 0, 0, 1
-Map_obj5A_5B_60_00B0_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_00BA:	spriteHeader
+Map_obj5A_5B_60_00BA:	spriteHeader offset(*)
 	spritePiece	-4, -4, 1, 1, $30, 0, 0, 0, 1
-Map_obj5A_5B_60_00BA_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_00C4:	spriteHeader
+Map_obj5A_5B_60_00C4:	spriteHeader offset(*)
 	spritePiece	-4, -8, 1, 2, $31, 0, 0, 0, 1
-Map_obj5A_5B_60_00C4_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_00CE:	spriteHeader
+Map_obj5A_5B_60_00CE:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, $33, 0, 0, 0, 1
-Map_obj5A_5B_60_00CE_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_00D8:	spriteHeader
+Map_obj5A_5B_60_00D8:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, $37, 0, 0, 0, 1
-Map_obj5A_5B_60_00D8_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_00E2:	spriteHeader
+Map_obj5A_5B_60_00E2:	spriteHeader offset(*)
 	spritePiece	-8, -8, 2, 2, $3B, 0, 0, 0, 1
-Map_obj5A_5B_60_00E2_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_00EC:	spriteHeader
+Map_obj5A_5B_60_00EC:	spriteHeader offset(*)
 	spritePiece	-8, -$C, 2, 3, $3F, 0, 0, 0, 1
-Map_obj5A_5B_60_00EC_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_00F6:	spriteHeader
+Map_obj5A_5B_60_00F6:	spriteHeader offset(*)
 	spritePiece	-8, -$C, 2, 3, $45, 0, 0, 0, 1
-Map_obj5A_5B_60_00F6_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0100:	spriteHeader
+Map_obj5A_5B_60_0100:	spriteHeader offset(*)
 	spritePiece	-$C, -$C, 3, 3, $4B, 0, 0, 0, 1
-Map_obj5A_5B_60_0100_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_010A:	spriteHeader
+Map_obj5A_5B_60_010A:	spriteHeader offset(*)
 	spritePiece	-4, -4, 1, 1, $54, 0, 0, 0, 1
-Map_obj5A_5B_60_010A_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0114:	spriteHeader
+Map_obj5A_5B_60_0114:	spriteHeader offset(*)
 	spritePiece	-4, -4, 1, 1, $55, 0, 0, 0, 1
-Map_obj5A_5B_60_0114_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_011E:	spriteHeader
+Map_obj5A_5B_60_011E:	spriteHeader offset(*)
 	spritePiece	-4, -4, 1, 1, $56, 0, 0, 0, 1
-Map_obj5A_5B_60_011E_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0128:	spriteHeader
+Map_obj5A_5B_60_0128:	spriteHeader offset(*)
 	spritePiece	-4, -8, 1, 2, $57, 0, 0, 0, 1
-Map_obj5A_5B_60_0128_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0132:	spriteHeader
+Map_obj5A_5B_60_0132:	spriteHeader offset(*)
 	spritePiece	-4, -8, 1, 2, $59, 0, 0, 0, 1
-Map_obj5A_5B_60_0132_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_013C:	spriteHeader
+Map_obj5A_5B_60_013C:	spriteHeader offset(*)
 	spritePiece	-4, -8, 1, 2, $5B, 0, 0, 0, 1
-Map_obj5A_5B_60_013C_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0146:	spriteHeader
+Map_obj5A_5B_60_0146:	spriteHeader offset(*)
 	spritePiece	-4, -8, 1, 2, $5D, 0, 0, 0, 1
-Map_obj5A_5B_60_0146_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0150:	spriteHeader
+Map_obj5A_5B_60_0150:	spriteHeader offset(*)
 	spritePiece	-4, -$C, 1, 3, $5F, 0, 0, 0, 1
-Map_obj5A_5B_60_0150_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_015A:	spriteHeader
+Map_obj5A_5B_60_015A:	spriteHeader offset(*)
 	spritePiece	-4, -$C, 1, 3, $62, 0, 0, 0, 1
-Map_obj5A_5B_60_015A_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0164:	spriteHeader
+Map_obj5A_5B_60_0164:	spriteHeader offset(*)
 	spritePiece	-4, -$C, 1, 3, $65, 0, 0, 0, 1
-Map_obj5A_5B_60_0164_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_016E:	spriteHeader
+Map_obj5A_5B_60_016E:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 1
 	spritePiece	0, -8, 2, 2, 8, 0, 0, 0, 1
-Map_obj5A_5B_60_016E_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0180:	spriteHeader
+Map_obj5A_5B_60_0180:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 3, $C, 0, 0, 0, 1
 	spritePiece	-8, 8, 1, 1, $18, 0, 0, 0, 1
-Map_obj5A_5B_60_0180_End
+	spriteFooter offset(*)
 
-Map_obj5A_5B_60_0192:	spriteHeader
+Map_obj5A_5B_60_0192:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 1, 3, $19, 0, 0, 0, 1
 	spritePiece	-8, -8, 3, 3, $1C, 0, 0, 0, 1
-Map_obj5A_5B_60_0192_End
+	spriteFooter offset(*)
 
 	even

@@ -1,4 +1,4 @@
-Map_Rings:	mappingsTable
+Map_Rings:	mappingsTable offset(*)
 	mappingsTableEntry.w	MapUnc_Rings_1
 	mappingsTableEntry.w	MapUnc_Rings_2
 	mappingsTableEntry.w	MapUnc_Rings_3

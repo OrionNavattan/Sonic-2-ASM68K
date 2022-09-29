@@ -1,4 +1,4 @@
-Map_Sonic:	mappingsTable
+Map_Sonic:	mappingsTable offset(*)
 	mappingsTableEntry.w	Map_Sonic_01AC
 	mappingsTableEntry.w	Map_Sonic_01AE
 	mappingsTableEntry.w	Map_Sonic_01D0
@@ -214,1339 +214,1339 @@ Map_Sonic:	mappingsTable
 	mappingsTableEntry.w	Map_Sonic_18CC
 	mappingsTableEntry.w	Map_Sonic_18EE
 
-Map_Sonic_01AC:	spriteHeader
-Map_Sonic_01AC_End
+Map_Sonic_01AC:	spriteHeader offset(*)
+	spriteFooter offset(*)
 
-Map_Sonic_01AE:	spriteHeader
+Map_Sonic_01AE:	spriteHeader offset(*)
 	spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$14, 1, 4, 4, 0, 0, 0, 0
 	spritePiece	-8, -$C, 3, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, 4, 3, 2, $E, 0, 0, 0, 0
-Map_Sonic_01AE_End
+	spriteFooter offset(*)
 
-Map_Sonic_01D0:	spriteHeader
+Map_Sonic_01D0:	spriteHeader offset(*)
 	spritePiece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
-Map_Sonic_01D0_End
+	spriteFooter offset(*)
 
-Map_Sonic_01E2:	spriteHeader
+Map_Sonic_01E2:	spriteHeader offset(*)
 	spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	-8, -4, 2, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
-Map_Sonic_01E2_End
+	spriteFooter offset(*)
 
-Map_Sonic_0204:	spriteHeader
+Map_Sonic_0204:	spriteHeader offset(*)
 	spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	-8, -4, 2, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
-Map_Sonic_0204_End
+	spriteFooter offset(*)
 
-Map_Sonic_0226:	spriteHeader
+Map_Sonic_0226:	spriteHeader offset(*)
 	spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	-8, -4, 2, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, $C, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	0, $C, 2, 2, $E, 0, 0, 0, 0
-Map_Sonic_0226_End
+	spriteFooter offset(*)
 
-Map_Sonic_0250:	spriteHeader
+Map_Sonic_0250:	spriteHeader offset(*)
 	spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 4, 4, 0, 0, 0, 0
 	spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
-Map_Sonic_0250_End
+	spriteFooter offset(*)
 
-Map_Sonic_026A:	spriteHeader
+Map_Sonic_026A:	spriteHeader offset(*)
 	spritePiece	-$10, -$C, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	8, 4, 1, 2, $C, 0, 0, 0, 0
-Map_Sonic_026A_End
+	spriteFooter offset(*)
 
-Map_Sonic_027C:	spriteHeader
+Map_Sonic_027C:	spriteHeader offset(*)
 	spritePiece	-$18, -$C, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	0, 4, 2, 2, $C, 0, 0, 0, 0
-Map_Sonic_027C_End
+	spriteFooter offset(*)
 
-Map_Sonic_028E:	spriteHeader
+Map_Sonic_028E:	spriteHeader offset(*)
 	spritePiece	-$18, -$C, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	0, 4, 2, 2, $C, 0, 0, 0, 0
-Map_Sonic_028E_End
+	spriteFooter offset(*)
 
-Map_Sonic_02A0:	spriteHeader
+Map_Sonic_02A0:	spriteHeader offset(*)
 	spritePiece	-$10, -$1C, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-$10, 4, 4, 2, $C, 0, 0, 0, 0
-Map_Sonic_02A0_End
+	spriteFooter offset(*)
 
-Map_Sonic_02B2:	spriteHeader
+Map_Sonic_02B2:	spriteHeader offset(*)
 	spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$14, 1, 4, 4, 0, 0, 0, 0
 	spritePiece	-8, -$C, 3, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, 4, 3, 2, $E, 0, 0, 0, 0
-Map_Sonic_02B2_End
+	spriteFooter offset(*)
 
-Map_Sonic_02D4:	spriteHeader
+Map_Sonic_02D4:	spriteHeader offset(*)
 	spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, -$1C, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	-8, -$C, 2, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, 4, 3, 2, $C, 0, 0, 0, 0
-Map_Sonic_02D4_End
+	spriteFooter offset(*)
 
-Map_Sonic_02F6:	spriteHeader
+Map_Sonic_02F6:	spriteHeader offset(*)
 	spritePiece	-$12, -$15, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, 3, 1, 2, 8, 0, 0, 0, 0
 	spritePiece	-$C, -5, 4, 4, $A, 0, 0, 0, 0
-Map_Sonic_02F6_End
+	spriteFooter offset(*)
 
-Map_Sonic_0310:	spriteHeader
+Map_Sonic_0310:	spriteHeader offset(*)
 	spritePiece	-$12, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, 4, 1, 2, 8, 0, 0, 0, 0
 	spritePiece	-$C, -4, 3, 4, $A, 0, 0, 0, 0
 	spritePiece	$C, 4, 1, 2, $16, 0, 0, 0, 0
-Map_Sonic_0310_End
+	spriteFooter offset(*)
 
-Map_Sonic_0332:	spriteHeader
+Map_Sonic_0332:	spriteHeader offset(*)
 	spritePiece	-$13, -$13, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$C, -3, 3, 2, 8, 0, 0, 0, 0
 	spritePiece	-9, $D, 2, 2, $E, 0, 0, 0, 0
-Map_Sonic_0332_End
+	spriteFooter offset(*)
 
-Map_Sonic_034C:	spriteHeader
+Map_Sonic_034C:	spriteHeader offset(*)
 	spritePiece	-$C, -$14, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$12, -4, 4, 4, 6, 0, 0, 0, 0
-Map_Sonic_034C_End
+	spriteFooter offset(*)
 
-Map_Sonic_035E:	spriteHeader
+Map_Sonic_035E:	spriteHeader offset(*)
 	spritePiece	-$C, -$15, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$12, -5, 4, 4, 6, 0, 0, 0, 0
 	spritePiece	$E, -5, 1, 2, $16, 0, 0, 0, 0
-Map_Sonic_035E_End
+	spriteFooter offset(*)
 
-Map_Sonic_0378:	spriteHeader
+Map_Sonic_0378:	spriteHeader offset(*)
 	spritePiece	-$C, -$14, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, 4, 1, 2, 6, 0, 0, 0, 0
 	spritePiece	-$C, -4, 3, 4, 8, 0, 0, 0, 0
 	spritePiece	$C, 4, 1, 2, $14, 0, 0, 0, 0
-Map_Sonic_0378_End
+	spriteFooter offset(*)
 
-Map_Sonic_039A:	spriteHeader
+Map_Sonic_039A:	spriteHeader offset(*)
 	spritePiece	-$13, -$13, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$C, -3, 3, 2, 8, 0, 0, 0, 0
 	spritePiece	-9, $D, 2, 2, $E, 0, 0, 0, 0
-Map_Sonic_039A_End
+	spriteFooter offset(*)
 
-Map_Sonic_03B4:	spriteHeader
+Map_Sonic_03B4:	spriteHeader offset(*)
 	spritePiece	-$12, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$D, -4, 3, 4, 8, 0, 0, 0, 0
-Map_Sonic_03B4_End
+	spriteFooter offset(*)
 
-Map_Sonic_03C6:	spriteHeader
+Map_Sonic_03C6:	spriteHeader offset(*)
 	spritePiece	-$16, -$15, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$16, -5, 3, 2, 6, 0, 0, 0, 0
 	spritePiece	2, -$D, 2, 2, $C, 0, 0, 0, 0
 	spritePiece	-6, $B, 1, 2, $10, 0, 0, 0, 0
-Map_Sonic_03C6_End
+	spriteFooter offset(*)
 
-Map_Sonic_03E8:	spriteHeader
+Map_Sonic_03E8:	spriteHeader offset(*)
 	spritePiece	-$15, -$14, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	3, -$14, 1, 2, 6, 0, 0, 0, 0
 	spritePiece	-$15, -4, 4, 2, 8, 0, 0, 0, 0
 	spritePiece	$B, -4, 2, 2, $10, 0, 0, 0, 0
 	spritePiece	-5, $C, 1, 2, $14, 0, 0, 0, 0
-Map_Sonic_03E8_End
+	spriteFooter offset(*)
 
-Map_Sonic_0412:	spriteHeader
+Map_Sonic_0412:	spriteHeader offset(*)
 	spritePiece	-$14, -$13, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$13, 1, 4, 8, 0, 0, 0, 0
 	spritePiece	4, -$B, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	4, 5, 2, 2, $E, 0, 0, 0, 0
-Map_Sonic_0412_End
+	spriteFooter offset(*)
 
-Map_Sonic_0434:	spriteHeader
+Map_Sonic_0434:	spriteHeader offset(*)
 	spritePiece	-$15, -$14, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	3, -$14, 1, 2, 6, 0, 0, 0, 0
 	spritePiece	-$15, -4, 2, 2, 8, 0, 0, 0, 0
 	spritePiece	-5, -4, 3, 4, $C, 0, 0, 0, 0
-Map_Sonic_0434_End
+	spriteFooter offset(*)
 
-Map_Sonic_0456:	spriteHeader
+Map_Sonic_0456:	spriteHeader offset(*)
 	spritePiece	-$16, -$15, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	2, -$15, 1, 2, 6, 0, 0, 0, 0
 	spritePiece	-$16, -5, 4, 2, 8, 0, 0, 0, 0
 	spritePiece	$A, -$D, 1, 2, $10, 0, 0, 0, 0
 	spritePiece	-$E, $B, 2, 2, $12, 0, 0, 0, 0
-Map_Sonic_0456_End
+	spriteFooter offset(*)
 
-Map_Sonic_0480:	spriteHeader
+Map_Sonic_0480:	spriteHeader offset(*)
 	spritePiece	-$15, -$14, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	3, -$14, 1, 2, 6, 0, 0, 0, 0
 	spritePiece	-$15, -4, 4, 2, 8, 0, 0, 0, 0
 	spritePiece	$B, -6, 2, 2, $10, 0, 0, 0, 0
 	spritePiece	-5, $C, 1, 2, $14, 0, 0, 0, 0
-Map_Sonic_0480_End
+	spriteFooter offset(*)
 
-Map_Sonic_04AA:	spriteHeader
+Map_Sonic_04AA:	spriteHeader offset(*)
 	spritePiece	-$14, -$13, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$13, 1, 4, 8, 0, 0, 0, 0
 	spritePiece	4, -$B, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	4, 5, 2, 2, $E, 0, 0, 0, 0
-Map_Sonic_04AA_End
+	spriteFooter offset(*)
 
-Map_Sonic_04CC:	spriteHeader
+Map_Sonic_04CC:	spriteHeader offset(*)
 	spritePiece	-$15, -$14, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$15, -4, 3, 2, 6, 0, 0, 0, 0
 	spritePiece	3, -$C, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	-5, $C, 1, 2, $E, 0, 0, 0, 0
 	spritePiece	3, 4, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_04CC_End
+	spriteFooter offset(*)
 
-Map_Sonic_04F6:	spriteHeader
+Map_Sonic_04F6:	spriteHeader offset(*)
 	spritePiece	-$15, -$E, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-5, -$14, 3, 4, 8, 0, 0, 0, 0
 	spritePiece	3, $C, 2, 2, $14, 0, 0, 0, 0
-Map_Sonic_04F6_End
+	spriteFooter offset(*)
 
-Map_Sonic_0510:	spriteHeader
+Map_Sonic_0510:	spriteHeader offset(*)
 	spritePiece	-$14, -$E, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$14, 3, 4, 8, 0, 0, 0, 0
 	spritePiece	4, $C, 2, 2, $14, 0, 0, 0, 0
-Map_Sonic_0510_End
+	spriteFooter offset(*)
 
-Map_Sonic_052A:	spriteHeader
+Map_Sonic_052A:	spriteHeader offset(*)
 	spritePiece	-$13, -$D, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-3, -$C, 1, 4, 8, 0, 0, 0, 0
 	spritePiece	5, -7, 2, 2, $C, 0, 0, 0, 0
-Map_Sonic_052A_End
+	spriteFooter offset(*)
 
-Map_Sonic_0544:	spriteHeader
+Map_Sonic_0544:	spriteHeader offset(*)
 	spritePiece	-$14, -$C, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$E, 3, 4, 8, 0, 0, 0, 0
-Map_Sonic_0544_End
+	spriteFooter offset(*)
 
-Map_Sonic_0556:	spriteHeader
+Map_Sonic_0556:	spriteHeader offset(*)
 	spritePiece	-$15, -$C, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-5, -$1D, 2, 2, 8, 0, 0, 0, 0
 	spritePiece	-5, -$D, 3, 4, $C, 0, 0, 0, 0
-Map_Sonic_0556_End
+	spriteFooter offset(*)
 
-Map_Sonic_0570:	spriteHeader
+Map_Sonic_0570:	spriteHeader offset(*)
 	spritePiece	-$14, -$C, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$14, 3, 4, 8, 0, 0, 0, 0
 	spritePiece	4, $C, 2, 2, $14, 0, 0, 0, 0
-Map_Sonic_0570_End
+	spriteFooter offset(*)
 
-Map_Sonic_058A:	spriteHeader
+Map_Sonic_058A:	spriteHeader offset(*)
 	spritePiece	-$13, -$D, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-3, -$C, 1, 4, 8, 0, 0, 0, 0
 	spritePiece	5, -7, 2, 2, $C, 0, 0, 0, 0
-Map_Sonic_058A_End
+	spriteFooter offset(*)
 
-Map_Sonic_05A4:	spriteHeader
+Map_Sonic_05A4:	spriteHeader offset(*)
 	spritePiece	-$14, -$E, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$C, 3, 4, 8, 0, 0, 0, 0
-Map_Sonic_05A4_End
+	spriteFooter offset(*)
 
-Map_Sonic_05B6:	spriteHeader
+Map_Sonic_05B6:	spriteHeader offset(*)
 	spritePiece	-$D, -$12, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$15, -2, 2, 4, 4, 0, 0, 0, 0
 	spritePiece	-5, -2, 4, 2, $C, 0, 0, 0, 0
 	spritePiece	-5, $E, 1, 2, $14, 0, 0, 0, 0
-Map_Sonic_05B6_End
+	spriteFooter offset(*)
 
-Map_Sonic_05D8:	spriteHeader
+Map_Sonic_05D8:	spriteHeader offset(*)
 	spritePiece	-4, -$23, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
 	spritePiece	-$14, -3, 2, 4, $A, 0, 0, 0, 0
 	spritePiece	-4, -3, 4, 2, $12, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 2, $1A, 0, 0, 0, 0
-Map_Sonic_05D8_End
+	spriteFooter offset(*)
 
-Map_Sonic_0602:	spriteHeader
+Map_Sonic_0602:	spriteHeader offset(*)
 	spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$13, -4, 2, 4, 8, 0, 0, 0, 0
 	spritePiece	-3, -4, 2, 2, $10, 0, 0, 0, 0
 	spritePiece	-3, $C, 1, 2, $14, 0, 0, 0, 0
-Map_Sonic_0602_End
+	spriteFooter offset(*)
 
-Map_Sonic_0624:	spriteHeader
+Map_Sonic_0624:	spriteHeader offset(*)
 	spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, -3, 2, 4, 8, 0, 0, 0, 0
 	spritePiece	-4, -3, 3, 2, $10, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 2, $16, 0, 0, 0, 0
-Map_Sonic_0624_End
+	spriteFooter offset(*)
 
-Map_Sonic_0646:	spriteHeader
+Map_Sonic_0646:	spriteHeader offset(*)
 	spritePiece	-$D, -$12, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$15, -2, 2, 4, 6, 0, 0, 0, 0
 	spritePiece	-5, -2, 4, 2, $E, 0, 0, 0, 0
 	spritePiece	-5, $E, 1, 2, $16, 0, 0, 0, 0
-Map_Sonic_0646_End
+	spriteFooter offset(*)
 
-Map_Sonic_0668:	spriteHeader
+Map_Sonic_0668:	spriteHeader offset(*)
 	spritePiece	-6, -$23, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
 	spritePiece	-$14, -3, 2, 4, $A, 0, 0, 0, 0
 	spritePiece	-4, -3, 4, 2, $12, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 2, $1A, 0, 0, 0, 0
-Map_Sonic_0668_End
+	spriteFooter offset(*)
 
-Map_Sonic_0692:	spriteHeader
+Map_Sonic_0692:	spriteHeader offset(*)
 	spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$13, -4, 2, 4, 8, 0, 0, 0, 0
 	spritePiece	-3, -4, 2, 2, $10, 0, 0, 0, 0
 	spritePiece	-3, $C, 1, 2, $14, 0, 0, 0, 0
-Map_Sonic_0692_End
+	spriteFooter offset(*)
 
-Map_Sonic_06B4:	spriteHeader
+Map_Sonic_06B4:	spriteHeader offset(*)
 	spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, -3, 2, 4, 8, 0, 0, 0, 0
 	spritePiece	-4, -3, 3, 2, $10, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 2, $16, 0, 0, 0, 0
-Map_Sonic_06B4_End
+	spriteFooter offset(*)
 
-Map_Sonic_06D6:	spriteHeader
+Map_Sonic_06D6:	spriteHeader offset(*)
 	spritePiece	-8, -$12, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -2, 4, 4, 6, 0, 0, 0, 0
-Map_Sonic_06D6_End
+	spriteFooter offset(*)
 
-Map_Sonic_06E8:	spriteHeader
+Map_Sonic_06E8:	spriteHeader offset(*)
 	spritePiece	-8, -$12, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -2, 4, 4, 6, 0, 0, 0, 0
-Map_Sonic_06E8_End
+	spriteFooter offset(*)
 
-Map_Sonic_06FA:	spriteHeader
+Map_Sonic_06FA:	spriteHeader offset(*)
 	spritePiece	-8, -$12, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -2, 4, 4, 6, 0, 0, 0, 0
-Map_Sonic_06FA_End
+	spriteFooter offset(*)
 
-Map_Sonic_070C:	spriteHeader
+Map_Sonic_070C:	spriteHeader offset(*)
 	spritePiece	-8, -$12, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -2, 4, 4, 6, 0, 0, 0, 0
-Map_Sonic_070C_End
+	spriteFooter offset(*)
 
-Map_Sonic_071E:	spriteHeader
+Map_Sonic_071E:	spriteHeader offset(*)
 	spritePiece	-$13, -$14, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	5, -$14, 1, 2, 6, 0, 0, 0, 0
 	spritePiece	-$C, -4, 4, 2, 8, 0, 0, 0, 0
 	spritePiece	-6, $C, 3, 2, $10, 0, 0, 0, 0
-Map_Sonic_071E_End
+	spriteFooter offset(*)
 
-Map_Sonic_0740:	spriteHeader
+Map_Sonic_0740:	spriteHeader offset(*)
 	spritePiece	-$13, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$B, -4, 4, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, $C, 3, 2, $10, 0, 0, 0, 0
-Map_Sonic_0740_End
+	spriteFooter offset(*)
 
-Map_Sonic_075A:	spriteHeader
+Map_Sonic_075A:	spriteHeader offset(*)
 	spritePiece	-$13, -$14, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	5, -$14, 1, 2, 6, 0, 0, 0, 0
 	spritePiece	-$C, -4, 4, 2, 8, 0, 0, 0, 0
 	spritePiece	-3, $C, 3, 2, $10, 0, 0, 0, 0
-Map_Sonic_075A_End
+	spriteFooter offset(*)
 
-Map_Sonic_077C:	spriteHeader
+Map_Sonic_077C:	spriteHeader offset(*)
 	spritePiece	-$13, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$B, -4, 4, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, $C, 3, 2, $10, 0, 0, 0, 0
-Map_Sonic_077C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0796:	spriteHeader
+Map_Sonic_0796:	spriteHeader offset(*)
 	spritePiece	-$12, -$10, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-2, -$10, 3, 4, 8, 0, 0, 0, 0
-Map_Sonic_0796_End
+	spriteFooter offset(*)
 
-Map_Sonic_07A8:	spriteHeader
+Map_Sonic_07A8:	spriteHeader offset(*)
 	spritePiece	-$12, -$10, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-2, -$10, 3, 4, 8, 0, 0, 0, 0
-Map_Sonic_07A8_End
+	spriteFooter offset(*)
 
-Map_Sonic_07BA:	spriteHeader
+Map_Sonic_07BA:	spriteHeader offset(*)
 	spritePiece	-$12, -$10, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-2, -$10, 3, 4, 8, 0, 0, 0, 0
-Map_Sonic_07BA_End
+	spriteFooter offset(*)
 
-Map_Sonic_07CC:	spriteHeader
+Map_Sonic_07CC:	spriteHeader offset(*)
 	spritePiece	-$12, -$10, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-2, -$10, 3, 4, 8, 0, 0, 0, 0
-Map_Sonic_07CC_End
+	spriteFooter offset(*)
 
-Map_Sonic_07DE:	spriteHeader
+Map_Sonic_07DE:	spriteHeader offset(*)
 	spritePiece	-$C, -$17, 1, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, -7, 2, 4, 2, 0, 0, 0, 0
 	spritePiece	-4, -$14, 3, 4, $A, 0, 0, 0, 0
-Map_Sonic_07DE_End
+	spriteFooter offset(*)
 
-Map_Sonic_07F8:	spriteHeader
+Map_Sonic_07F8:	spriteHeader offset(*)
 	spritePiece	-$14, -$D, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$15, 3, 4, 8, 0, 0, 0, 0
-Map_Sonic_07F8_End
+	spriteFooter offset(*)
 
-Map_Sonic_080A:	spriteHeader
+Map_Sonic_080A:	spriteHeader offset(*)
 	spritePiece	-$C, -$17, 1, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, -7, 2, 4, 2, 0, 0, 0, 0
 	spritePiece	-4, -$14, 3, 4, $A, 0, 0, 0, 0
-Map_Sonic_080A_End
+	spriteFooter offset(*)
 
-Map_Sonic_0824:	spriteHeader
+Map_Sonic_0824:	spriteHeader offset(*)
 	spritePiece	-$14, -$D, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$15, 3, 4, 8, 0, 0, 0, 0
-Map_Sonic_0824_End
+	spriteFooter offset(*)
 
-Map_Sonic_0836:	spriteHeader
+Map_Sonic_0836:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_0836_End
+	spriteFooter offset(*)
 
-Map_Sonic_0840:	spriteHeader
+Map_Sonic_0840:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_0840_End
+	spriteFooter offset(*)
 
-Map_Sonic_084A:	spriteHeader
+Map_Sonic_084A:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_084A_End
+	spriteFooter offset(*)
 
-Map_Sonic_0854:	spriteHeader
+Map_Sonic_0854:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_0854_End
+	spriteFooter offset(*)
 
-Map_Sonic_085E:	spriteHeader
+Map_Sonic_085E:	spriteHeader offset(*)
 	spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_085E_End
+	spriteFooter offset(*)
 
-Map_Sonic_0868:	spriteHeader
+Map_Sonic_0868:	spriteHeader offset(*)
 	spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_0868_End
+	spriteFooter offset(*)
 
-Map_Sonic_0872:	spriteHeader
+Map_Sonic_0872:	spriteHeader offset(*)
 	spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_0872_End
+	spriteFooter offset(*)
 
-Map_Sonic_087C:	spriteHeader
+Map_Sonic_087C:	spriteHeader offset(*)
 	spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_087C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0886:	spriteHeader
+Map_Sonic_0886:	spriteHeader offset(*)
 	spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_0886_End
+	spriteFooter offset(*)
 
-Map_Sonic_0890:	spriteHeader
+Map_Sonic_0890:	spriteHeader offset(*)
 	spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_0890_End
+	spriteFooter offset(*)
 
-Map_Sonic_089A:	spriteHeader
+Map_Sonic_089A:	spriteHeader offset(*)
 	spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_089A_End
+	spriteFooter offset(*)
 
-Map_Sonic_08A4:	spriteHeader
+Map_Sonic_08A4:	spriteHeader offset(*)
 	spritePiece	-$D, -$1B, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$D, -$B, 3, 2, 6, 0, 0, 0, 0
 	spritePiece	-$15, 5, 4, 2, $C, 0, 0, 0, 0
-Map_Sonic_08A4_End
+	spriteFooter offset(*)
 
-Map_Sonic_08BE:	spriteHeader
+Map_Sonic_08BE:	spriteHeader offset(*)
 	spritePiece	-$D, -$1C, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$D, -$C, 3, 2, 6, 0, 0, 0, 0
 	spritePiece	-$D, 4, 3, 2, $C, 0, 0, 0, 0
-Map_Sonic_08BE_End
+	spriteFooter offset(*)
 
-Map_Sonic_08D8:	spriteHeader
+Map_Sonic_08D8:	spriteHeader offset(*)
 	spritePiece	-$D, -$1B, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$D, -$B, 3, 2, 6, 0, 0, 0, 0
 	spritePiece	-$15, 5, 4, 2, $C, 0, 0, 0, 0
-Map_Sonic_08D8_End
+	spriteFooter offset(*)
 
-Map_Sonic_08F2:	spriteHeader
+Map_Sonic_08F2:	spriteHeader offset(*)
 	spritePiece	-$D, -$1B, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$D, -$B, 3, 2, 6, 0, 0, 0, 0
 	spritePiece	-$D, 5, 3, 2, $C, 0, 0, 0, 0
-Map_Sonic_08F2_End
+	spriteFooter offset(*)
 
-Map_Sonic_090C:	spriteHeader
+Map_Sonic_090C:	spriteHeader offset(*)
 	spritePiece	-$A, -$C, 3, 4, 0, 0, 0, 0, 0
-Map_Sonic_090C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0916:	spriteHeader
+Map_Sonic_0916:	spriteHeader offset(*)
 	spritePiece	-$E, -$C, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_0916_End
+	spriteFooter offset(*)
 
-Map_Sonic_0920:	spriteHeader
+Map_Sonic_0920:	spriteHeader offset(*)
 	spritePiece	-$14, -8, 1, 2, 0, 0, 0, 0, 0
 	spritePiece	-$C, -$10, 4, 4, 2, 0, 0, 0, 0
-Map_Sonic_0920_End
+	spriteFooter offset(*)
 
-Map_Sonic_0932:	spriteHeader
+Map_Sonic_0932:	spriteHeader offset(*)
 	spritePiece	-$14, -$10, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-$C, -$10, 4, 4, 4, 0, 0, 0, 0
-Map_Sonic_0932_End
+	spriteFooter offset(*)
 
-Map_Sonic_0944:	spriteHeader
+Map_Sonic_0944:	spriteHeader offset(*)
 	spritePiece	-$18, -$18, 4, 4, 0, 0, 0, 0, 0
 	spritePiece	8, -$18, 1, 2, $10, 0, 0, 0, 0
 	spritePiece	8, -8, 2, 2, $12, 0, 0, 0, 0
-Map_Sonic_0944_End
+	spriteFooter offset(*)
 
-Map_Sonic_095E:	spriteHeader
+Map_Sonic_095E:	spriteHeader offset(*)
 	spritePiece	-$18, -$18, 4, 4, 0, 0, 0, 0, 0
 	spritePiece	8, -$18, 1, 2, $10, 0, 0, 0, 0
 	spritePiece	8, -8, 2, 2, $12, 0, 0, 0, 0
-Map_Sonic_095E_End
+	spriteFooter offset(*)
 
-Map_Sonic_0978:	spriteHeader
+Map_Sonic_0978:	spriteHeader offset(*)
 	spritePiece	-$C, -$18, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-$C, 8, 3, 2, $C, 0, 0, 0, 0
-Map_Sonic_0978_End
+	spriteFooter offset(*)
 
-Map_Sonic_098A:	spriteHeader
+Map_Sonic_098A:	spriteHeader offset(*)
 	spritePiece	-$C, -$18, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-$C, 8, 3, 2, $C, 0, 0, 0, 0
-Map_Sonic_098A_End
+	spriteFooter offset(*)
 
-Map_Sonic_099C:	spriteHeader
+Map_Sonic_099C:	spriteHeader offset(*)
 	spritePiece	-$14, -4, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-4, -$C, 3, 4, 4, 0, 0, 0, 0
 	spritePiece	$14, -$C, 1, 2, $10, 0, 0, 0, 0
-Map_Sonic_099C_End
+	spriteFooter offset(*)
 
-Map_Sonic_09B6:	spriteHeader
+Map_Sonic_09B6:	spriteHeader offset(*)
 	spritePiece	-$18, -$C, 1, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$C, 2, 4, 2, 0, 0, 0, 0
 	spritePiece	0, -$C, 2, 4, 2, 1, 0, 0, 0
 	spritePiece	$10, -$C, 1, 2, 0, 1, 0, 0, 0
-Map_Sonic_09B6_End
+	spriteFooter offset(*)
 
-Map_Sonic_09D8:	spriteHeader
+Map_Sonic_09D8:	spriteHeader offset(*)
 	spritePiece	4, -4, 2, 2, 0, 1, 0, 0, 0
 	spritePiece	-$14, -$C, 3, 4, 4, 1, 0, 0, 0
 	spritePiece	-$1C, -$C, 1, 2, $10, 1, 0, 0, 0
-Map_Sonic_09D8_End
+	spriteFooter offset(*)
 
-Map_Sonic_09F2:	spriteHeader
+Map_Sonic_09F2:	spriteHeader offset(*)
 	spritePiece	-$1C, -$C, 1, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, -$C, 3, 4, 2, 0, 0, 0, 0
 	spritePiece	4, -4, 1, 2, $E, 0, 0, 0, 0
-Map_Sonic_09F2_End
+	spriteFooter offset(*)
 
-Map_Sonic_0A0C:	spriteHeader
+Map_Sonic_0A0C:	spriteHeader offset(*)
 	spritePiece	$14, -$C, 1, 2, 0, 1, 0, 0, 0
 	spritePiece	-4, -$C, 3, 4, 2, 1, 0, 0, 0
 	spritePiece	-$C, -4, 1, 2, $E, 1, 0, 0, 0
-Map_Sonic_0A0C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0A26:	spriteHeader
+Map_Sonic_0A26:	spriteHeader offset(*)
 	spritePiece	-$14, -4, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-4, -$C, 3, 4, 4, 0, 0, 0, 0
 	spritePiece	$14, -$C, 1, 2, $10, 0, 0, 0, 0
-Map_Sonic_0A26_End
+	spriteFooter offset(*)
 
-Map_Sonic_0A40:	spriteHeader
+Map_Sonic_0A40:	spriteHeader offset(*)
 	spritePiece	-$C, -$1C, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, -$C, 4, 4, 6, 0, 0, 0, 0
 	spritePiece	$C, 4, 1, 2, $16, 0, 0, 0, 0
-Map_Sonic_0A40_End
+	spriteFooter offset(*)
 
-Map_Sonic_0A5A:	spriteHeader
+Map_Sonic_0A5A:	spriteHeader offset(*)
 	spritePiece	-$C, -$18, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, 8, 2, 2, $C, 0, 0, 0, 0
-Map_Sonic_0A5A_End
+	spriteFooter offset(*)
 
-Map_Sonic_0A6C:	spriteHeader
+Map_Sonic_0A6C:	spriteHeader offset(*)
 	spritePiece	-$18, -$16, 1, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$16, 3, 4, 2, 0, 0, 0, 0
 	spritePiece	8, -$16, 1, 2, $E, 0, 0, 0, 0
 	spritePiece	-$10, $A, 4, 2, $10, 0, 0, 0, 0
-Map_Sonic_0A6C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0A8E:	spriteHeader
+Map_Sonic_0A8E:	spriteHeader offset(*)
 	spritePiece	-$18, -$16, 1, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$16, 3, 4, 2, 0, 0, 0, 0
 	spritePiece	8, -$16, 1, 2, $E, 0, 0, 0, 0
 	spritePiece	-$10, $A, 4, 2, $10, 0, 0, 0, 0
-Map_Sonic_0A8E_End
+	spriteFooter offset(*)
 
-Map_Sonic_0AB0:	spriteHeader
+Map_Sonic_0AB0:	spriteHeader offset(*)
 	spritePiece	-$18, -$16, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	8, -$16, 1, 2, 8, 0, 0, 0, 0
 	spritePiece	-$10, -6, 3, 4, $A, 0, 0, 0, 0
-Map_Sonic_0AB0_End
+	spriteFooter offset(*)
 
-Map_Sonic_0ACA:	spriteHeader
+Map_Sonic_0ACA:	spriteHeader offset(*)
 	spritePiece	-$10, -$1C, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$C, 3, 4, 6, 0, 0, 0, 0
 	spritePiece	8, -$C, 1, 2, $12, 0, 0, 0, 0
-Map_Sonic_0ACA_End
+	spriteFooter offset(*)
 
-Map_Sonic_0AE4:	spriteHeader
+Map_Sonic_0AE4:	spriteHeader offset(*)
 	spritePiece	-$10, -$1B, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	8, -$C, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	-8, 5, 2, 2, $E, 0, 0, 0, 0
-Map_Sonic_0AE4_End
+	spriteFooter offset(*)
 
-Map_Sonic_0AFE:	spriteHeader
+Map_Sonic_0AFE:	spriteHeader offset(*)
 	spritePiece	-$F, -$14, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	9, -4, 1, 2, $C, 0, 0, 0, 0
-Map_Sonic_0AFE_End
+	spriteFooter offset(*)
 
-Map_Sonic_0B10:	spriteHeader
+Map_Sonic_0B10:	spriteHeader offset(*)
 	spritePiece	-$10, -$12, 4, 4, 0, 0, 0, 0, 0
-Map_Sonic_0B10_End
+	spriteFooter offset(*)
 
-Map_Sonic_0B1A:	spriteHeader
+Map_Sonic_0B1A:	spriteHeader offset(*)
 	spritePiece	-$10, -$E, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	8, -6, 1, 2, $C, 0, 0, 0, 0
-Map_Sonic_0B1A_End
+	spriteFooter offset(*)
 
-Map_Sonic_0B2C:	spriteHeader
+Map_Sonic_0B2C:	spriteHeader offset(*)
 	spritePiece	0, -$1C, 1, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$C, 3, 4, 2, 0, 0, 0, 0
 	spritePiece	8, -$C, 1, 2, $E, 0, 0, 0, 0
-Map_Sonic_0B2C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0B46:	spriteHeader
+Map_Sonic_0B46:	spriteHeader offset(*)
 	spritePiece	-$10, -$1B, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$B, 3, 4, 6, 0, 0, 0, 0
 	spritePiece	8, -$13, 1, 4, $12, 0, 0, 0, 0
-Map_Sonic_0B46_End
+	spriteFooter offset(*)
 
-Map_Sonic_0B60:	spriteHeader
+Map_Sonic_0B60:	spriteHeader offset(*)
 	spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$C, 3, 4, 4, 0, 0, 0, 0
 	spritePiece	8, -$C, 1, 2, $10, 0, 0, 0, 0
-Map_Sonic_0B60_End
+	spriteFooter offset(*)
 
-Map_Sonic_0B7A:	spriteHeader
+Map_Sonic_0B7A:	spriteHeader offset(*)
 	spritePiece	-$10, -$13, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	8, -$B, 1, 2, $C, 0, 0, 0, 0
-Map_Sonic_0B7A_End
+	spriteFooter offset(*)
 
-Map_Sonic_0B8C:	spriteHeader
+Map_Sonic_0B8C:	spriteHeader offset(*)
 	spritePiece	-$10, -$C, 1, 2, 0, 0, 0, 0, 0
 	spritePiece	-8, -$F, 3, 4, 2, 0, 0, 0, 0
-Map_Sonic_0B8C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0B9E:	spriteHeader
+Map_Sonic_0B9E:	spriteHeader offset(*)
 	spritePiece	-$F, -$1C, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$C, 3, 4, 4, 0, 0, 0, 0
 	spritePiece	8, -$C, 1, 2, $10, 0, 0, 0, 0
-Map_Sonic_0B9E_End
+	spriteFooter offset(*)
 
-Map_Sonic_0BB8:	spriteHeader
+Map_Sonic_0BB8:	spriteHeader offset(*)
 	spritePiece	-$10, -$1F, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$F, 4, 4, 4, 0, 0, 0, 0
-Map_Sonic_0BB8_End
+	spriteFooter offset(*)
 
-Map_Sonic_0BCA:	spriteHeader
+Map_Sonic_0BCA:	spriteHeader offset(*)
 	spritePiece	-$10, -$18, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	0, -$20, 1, 4, 8, 0, 0, 0, 0
 	spritePiece	0, 0, 3, 2, $C, 0, 0, 0, 0
-Map_Sonic_0BCA_End
+	spriteFooter offset(*)
 
-Map_Sonic_0BE4:	spriteHeader
+Map_Sonic_0BE4:	spriteHeader offset(*)
 	spritePiece	-$10, -$18, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	0, -$20, 1, 4, 8, 0, 0, 0, 0
 	spritePiece	0, 0, 3, 2, $C, 0, 0, 0, 0
-Map_Sonic_0BE4_End
+	spriteFooter offset(*)
 
-Map_Sonic_0BFE:	spriteHeader
+Map_Sonic_0BFE:	spriteHeader offset(*)
 	spritePiece	-$B, -$10, 3, 4, 0, 0, 0, 0, 0
-Map_Sonic_0BFE_End
+	spriteFooter offset(*)
 
-Map_Sonic_0C08:	spriteHeader
+Map_Sonic_0C08:	spriteHeader offset(*)
 	spritePiece	-$10, -$1A, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	8, -$12, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	-$10, 6, 3, 2, $E, 0, 0, 0, 0
-Map_Sonic_0C08_End
+	spriteFooter offset(*)
 
-Map_Sonic_0C22:	spriteHeader
+Map_Sonic_0C22:	spriteHeader offset(*)
 	spritePiece	-$10, -$1C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	8, -4, 1, 1, 9, 0, 0, 0, 0
 	spritePiece	-$10, -4, 3, 3, $A, 0, 0, 0, 0
-Map_Sonic_0C22_End
+	spriteFooter offset(*)
 
-Map_Sonic_0C3C:	spriteHeader
+Map_Sonic_0C3C:	spriteHeader offset(*)
 	spritePiece	-$10, -$1C, 3, 1, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$14, 1, 2, 3, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 2, 5, 0, 0, 0, 0
 	spritePiece	-$10, -4, 3, 3, 9, 0, 0, 0, 0
 	spritePiece	8, -3, 1, 1, $12, 0, 0, 0, 0
-Map_Sonic_0C3C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0C66:	spriteHeader
+Map_Sonic_0C66:	spriteHeader offset(*)
 	spritePiece	-$10, -$1C, 3, 1, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$14, 1, 2, 3, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 2, 5, 0, 0, 0, 0
 	spritePiece	-$10, -4, 3, 3, 9, 0, 0, 0, 0
 	spritePiece	8, -3, 1, 1, $12, 0, 0, 0, 0
-Map_Sonic_0C66_End
+	spriteFooter offset(*)
 
-Map_Sonic_0C90:	spriteHeader
+Map_Sonic_0C90:	spriteHeader offset(*)
 	spritePiece	-$F, -$19, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$D, -1, 3, 3, 9, 0, 0, 0, 0
-Map_Sonic_0C90_End
+	spriteFooter offset(*)
 
-Map_Sonic_0CA2:	spriteHeader
+Map_Sonic_0CA2:	spriteHeader offset(*)
 	spritePiece	-$F, -$19, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$D, -1, 3, 3, 9, 0, 0, 0, 0
-Map_Sonic_0CA2_End
+	spriteFooter offset(*)
 
-Map_Sonic_0CB4:	spriteHeader
+Map_Sonic_0CB4:	spriteHeader offset(*)
 	spritePiece	-$F, -$19, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$D, -1, 3, 3, 9, 0, 0, 0, 0
-Map_Sonic_0CB4_End
+	spriteFooter offset(*)
 
-Map_Sonic_0CC6:	spriteHeader
+Map_Sonic_0CC6:	spriteHeader offset(*)
 	spritePiece	-$12, -$1D, 4, 3, 0, 0, 0, 0, 0
 	spritePiece	-$14, 3, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	-$C, -5, 4, 4, $E, 0, 0, 0, 0
-Map_Sonic_0CC6_End
+	spriteFooter offset(*)
 
-Map_Sonic_0CE0:	spriteHeader
+Map_Sonic_0CE0:	spriteHeader offset(*)
 	spritePiece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
 	spritePiece	-$14, 4, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	-$C, -4, 3, 4, $E, 0, 0, 0, 0
 	spritePiece	$C, 4, 1, 2, $1A, 0, 0, 0, 0
-Map_Sonic_0CE0_End
+	spriteFooter offset(*)
 
-Map_Sonic_0D02:	spriteHeader
+Map_Sonic_0D02:	spriteHeader offset(*)
 	spritePiece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
 	spritePiece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
 	spritePiece	-9, $D, 2, 2, $12, 0, 0, 0, 0
-Map_Sonic_0D02_End
+	spriteFooter offset(*)
 
-Map_Sonic_0D1C:	spriteHeader
+Map_Sonic_0D1C:	spriteHeader offset(*)
 	spritePiece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$12, -4, 4, 4, 9, 0, 0, 0, 0
-Map_Sonic_0D1C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0D2E:	spriteHeader
+Map_Sonic_0D2E:	spriteHeader offset(*)
 	spritePiece	-$C, -$1D, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$12, -5, 4, 4, 9, 0, 0, 0, 0
 	spritePiece	$E, -5, 1, 2, $19, 0, 0, 0, 0
-Map_Sonic_0D2E_End
+	spriteFooter offset(*)
 
-Map_Sonic_0D48:	spriteHeader
+Map_Sonic_0D48:	spriteHeader offset(*)
 	spritePiece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$14, 4, 1, 2, 9, 0, 0, 0, 0
 	spritePiece	-$C, -4, 3, 4, $B, 0, 0, 0, 0
 	spritePiece	$C, 4, 1, 2, $17, 0, 0, 0, 0
-Map_Sonic_0D48_End
+	spriteFooter offset(*)
 
-Map_Sonic_0D6A:	spriteHeader
+Map_Sonic_0D6A:	spriteHeader offset(*)
 	spritePiece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
 	spritePiece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
 	spritePiece	-9, $D, 2, 2, $12, 0, 0, 0, 0
-Map_Sonic_0D6A_End
+	spriteFooter offset(*)
 
-Map_Sonic_0D84:	spriteHeader
+Map_Sonic_0D84:	spriteHeader offset(*)
 	spritePiece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
 	spritePiece	-$D, -4, 3, 4, $C, 0, 0, 0, 0
-Map_Sonic_0D84_End
+	spriteFooter offset(*)
 
-Map_Sonic_0D96:	spriteHeader
+Map_Sonic_0D96:	spriteHeader offset(*)
 	spritePiece	-$1E, -$15, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	2, -$D, 2, 2, 8, 0, 0, 0, 0
 	spritePiece	-$16, -5, 3, 2, $C, 0, 0, 0, 0
 	spritePiece	-6, $B, 1, 2, $12, 0, 0, 0, 0
-Map_Sonic_0D96_End
+	spriteFooter offset(*)
 
-Map_Sonic_0DB8:	spriteHeader
+Map_Sonic_0DB8:	spriteHeader offset(*)
 	spritePiece	-$1D, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	3, -$14, 1, 2, 8, 0, 0, 0, 0
 	spritePiece	-$15, -4, 4, 2, $A, 0, 0, 0, 0
 	spritePiece	$B, -4, 2, 2, $12, 0, 0, 0, 0
 	spritePiece	-5, $C, 1, 2, $16, 0, 0, 0, 0
-Map_Sonic_0DB8_End
+	spriteFooter offset(*)
 
-Map_Sonic_0DE2:	spriteHeader
+Map_Sonic_0DE2:	spriteHeader offset(*)
 	spritePiece	-$1C, -$13, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-4, -$13, 1, 4, 9, 0, 0, 0, 0
 	spritePiece	-$C, 5, 1, 1, $D, 0, 0, 0, 0
 	spritePiece	4, -$B, 1, 2, $E, 0, 0, 0, 0
 	spritePiece	4, 5, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_0DE2_End
+	spriteFooter offset(*)
 
-Map_Sonic_0E0C:	spriteHeader
+Map_Sonic_0E0C:	spriteHeader offset(*)
 	spritePiece	-$F, -$1C, 1, 1, 0, 0, 0, 0, 0
 	spritePiece	-$1D, -$14, 4, 2, 1, 0, 0, 0, 0
 	spritePiece	3, -$14, 1, 2, 9, 0, 0, 0, 0
 	spritePiece	-$15, -4, 2, 2, $B, 0, 0, 0, 0
 	spritePiece	-5, -4, 3, 4, $F, 0, 0, 0, 0
-Map_Sonic_0E0C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0E36:	spriteHeader
+Map_Sonic_0E36:	spriteHeader offset(*)
 	spritePiece	-$10, -$1D, 1, 1, 0, 0, 0, 0, 0
 	spritePiece	-$1E, -$15, 4, 2, 1, 0, 0, 0, 0
 	spritePiece	2, -$15, 1, 2, 9, 0, 0, 0, 0
 	spritePiece	$A, -$D, 1, 2, $B, 0, 0, 0, 0
 	spritePiece	-$16, -5, 4, 2, $D, 0, 0, 0, 0
 	spritePiece	-$E, $B, 2, 2, $15, 0, 0, 0, 0
-Map_Sonic_0E36_End
+	spriteFooter offset(*)
 
-Map_Sonic_0E68:	spriteHeader
+Map_Sonic_0E68:	spriteHeader offset(*)
 	spritePiece	-$F, -$1C, 1, 1, 0, 0, 0, 0, 0
 	spritePiece	-$1D, -$14, 4, 2, 1, 0, 0, 0, 0
 	spritePiece	3, -$14, 1, 2, 9, 0, 0, 0, 0
 	spritePiece	-$15, -4, 4, 2, $B, 0, 0, 0, 0
 	spritePiece	$B, -6, 2, 2, $13, 0, 0, 0, 0
 	spritePiece	-5, $C, 1, 2, $17, 0, 0, 0, 0
-Map_Sonic_0E68_End
+	spriteFooter offset(*)
 
-Map_Sonic_0E9A:	spriteHeader
+Map_Sonic_0E9A:	spriteHeader offset(*)
 	spritePiece	-$1C, -$13, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-4, -$13, 1, 4, 9, 0, 0, 0, 0
 	spritePiece	-$C, 5, 1, 1, $D, 0, 0, 0, 0
 	spritePiece	4, -$B, 1, 2, $E, 0, 0, 0, 0
 	spritePiece	4, 5, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_0E9A_End
+	spriteFooter offset(*)
 
-Map_Sonic_0EC4:	spriteHeader
+Map_Sonic_0EC4:	spriteHeader offset(*)
 	spritePiece	-$1D, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	3, -$C, 1, 2, 8, 0, 0, 0, 0
 	spritePiece	-$15, -4, 3, 2, $A, 0, 0, 0, 0
 	spritePiece	-5, $C, 1, 1, $10, 0, 0, 0, 0
 	spritePiece	3, 4, 2, 2, $11, 0, 0, 0, 0
-Map_Sonic_0EC4_End
+	spriteFooter offset(*)
 
-Map_Sonic_0EEE:	spriteHeader
+Map_Sonic_0EEE:	spriteHeader offset(*)
 	spritePiece	-$1D, -$E, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-5, -$14, 3, 4, $C, 0, 0, 0, 0
 	spritePiece	3, $C, 2, 2, $18, 0, 0, 0, 0
-Map_Sonic_0EEE_End
+	spriteFooter offset(*)
 
-Map_Sonic_0F08:	spriteHeader
+Map_Sonic_0F08:	spriteHeader offset(*)
 	spritePiece	-$1C, -$E, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$14, 3, 4, $C, 0, 0, 0, 0
 	spritePiece	4, $C, 2, 2, $18, 0, 0, 0, 0
-Map_Sonic_0F08_End
+	spriteFooter offset(*)
 
-Map_Sonic_0F22:	spriteHeader
+Map_Sonic_0F22:	spriteHeader offset(*)
 	spritePiece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
 	spritePiece	5, -7, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_0F22_End
+	spriteFooter offset(*)
 
-Map_Sonic_0F3C:	spriteHeader
+Map_Sonic_0F3C:	spriteHeader offset(*)
 	spritePiece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-4, -$E, 3, 4, 9, 0, 0, 0, 0
-Map_Sonic_0F3C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0F4E:	spriteHeader
+Map_Sonic_0F4E:	spriteHeader offset(*)
 	spritePiece	-$1D, -$C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-5, -$1D, 2, 2, 9, 0, 0, 0, 0
 	spritePiece	-5, -$D, 3, 4, $D, 0, 0, 0, 0
-Map_Sonic_0F4E_End
+	spriteFooter offset(*)
 
-Map_Sonic_0F68:	spriteHeader
+Map_Sonic_0F68:	spriteHeader offset(*)
 	spritePiece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-4, -$14, 3, 4, 9, 0, 0, 0, 0
 	spritePiece	4, $C, 2, 2, $15, 0, 0, 0, 0
-Map_Sonic_0F68_End
+	spriteFooter offset(*)
 
-Map_Sonic_0F82:	spriteHeader
+Map_Sonic_0F82:	spriteHeader offset(*)
 	spritePiece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
 	spritePiece	5, -7, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_0F82_End
+	spriteFooter offset(*)
 
-Map_Sonic_0F9C:	spriteHeader
+Map_Sonic_0F9C:	spriteHeader offset(*)
 	spritePiece	-$1C, -$C, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$E, 3, 4, $C, 0, 0, 0, 0
-Map_Sonic_0F9C_End
+	spriteFooter offset(*)
 
-Map_Sonic_0FAE:	spriteHeader
+Map_Sonic_0FAE:	spriteHeader offset(*)
 	spritePiece	-$D, -$12, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$15, -2, 2, 4, 4, 0, 0, 0, 0
 	spritePiece	-5, -2, 4, 2, $C, 0, 0, 0, 0
 	spritePiece	-5, $E, 1, 1, $14, 0, 0, 0, 0
-Map_Sonic_0FAE_End
+	spriteFooter offset(*)
 
-Map_Sonic_0FD0:	spriteHeader
+Map_Sonic_0FD0:	spriteHeader offset(*)
 	spritePiece	-4, -$23, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
 	spritePiece	-$14, -3, 2, 4, $A, 0, 0, 0, 0
 	spritePiece	-4, -3, 4, 2, $12, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 1, $1A, 0, 0, 0, 0
-Map_Sonic_0FD0_End
+	spriteFooter offset(*)
 
-Map_Sonic_0FFA:	spriteHeader
+Map_Sonic_0FFA:	spriteHeader offset(*)
 	spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$13, -4, 2, 4, 8, 0, 0, 0, 0
 	spritePiece	-3, -4, 2, 2, $10, 0, 0, 0, 0
 	spritePiece	-3, $C, 1, 2, $14, 0, 0, 0, 0
-Map_Sonic_0FFA_End
+	spriteFooter offset(*)
 
-Map_Sonic_101C:	spriteHeader
+Map_Sonic_101C:	spriteHeader offset(*)
 	spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$1C, -3, 3, 4, 8, 0, 0, 0, 0
 	spritePiece	-4, -3, 3, 2, $14, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 1, $1A, 0, 0, 0, 0
-Map_Sonic_101C_End
+	spriteFooter offset(*)
 
-Map_Sonic_103E:	spriteHeader
+Map_Sonic_103E:	spriteHeader offset(*)
 	spritePiece	-$D, -$12, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$1D, -2, 3, 4, 6, 0, 0, 0, 0
 	spritePiece	-5, -2, 4, 2, $12, 0, 0, 0, 0
 	spritePiece	-5, $E, 1, 1, $1A, 0, 0, 0, 0
-Map_Sonic_103E_End
+	spriteFooter offset(*)
 
-Map_Sonic_1060:	spriteHeader
+Map_Sonic_1060:	spriteHeader offset(*)
 	spritePiece	-6, -$23, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
 	spritePiece	-$1C, -3, 3, 4, $A, 0, 0, 0, 0
 	spritePiece	-4, -3, 4, 2, $16, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 1, $1E, 0, 0, 0, 0
-Map_Sonic_1060_End
+	spriteFooter offset(*)
 
-Map_Sonic_108A:	spriteHeader
+Map_Sonic_108A:	spriteHeader offset(*)
 	spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$13, -4, 2, 4, 8, 0, 0, 0, 0
 	spritePiece	-3, -4, 2, 2, $10, 0, 0, 0, 0
 	spritePiece	-3, $C, 1, 2, $14, 0, 0, 0, 0
-Map_Sonic_108A_End
+	spriteFooter offset(*)
 
-Map_Sonic_10AC:	spriteHeader
+Map_Sonic_10AC:	spriteHeader offset(*)
 	spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, -3, 2, 4, 8, 0, 0, 0, 0
 	spritePiece	-4, -3, 3, 2, $10, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 1, $16, 0, 0, 0, 0
-Map_Sonic_10AC_End
+	spriteFooter offset(*)
 
-Map_Sonic_10CE:	spriteHeader
+Map_Sonic_10CE:	spriteHeader offset(*)
 	spritePiece	-$12, -$1D, 4, 3, 0, 0, 0, 0, 0
 	spritePiece	-$14, 3, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	-$C, -5, 4, 4, $E, 0, 0, 0, 0
-Map_Sonic_10CE_End
+	spriteFooter offset(*)
 
-Map_Sonic_10E8:	spriteHeader
+Map_Sonic_10E8:	spriteHeader offset(*)
 	spritePiece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
 	spritePiece	-$14, 4, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	-$C, -4, 3, 4, $E, 0, 0, 0, 0
 	spritePiece	$C, 4, 1, 2, $1A, 0, 0, 0, 0
-Map_Sonic_10E8_End
+	spriteFooter offset(*)
 
-Map_Sonic_110A:	spriteHeader
+Map_Sonic_110A:	spriteHeader offset(*)
 	spritePiece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
 	spritePiece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
 	spritePiece	-9, $D, 2, 2, $12, 0, 0, 0, 0
-Map_Sonic_110A_End
+	spriteFooter offset(*)
 
-Map_Sonic_1124:	spriteHeader
+Map_Sonic_1124:	spriteHeader offset(*)
 	spritePiece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$12, -4, 4, 4, 9, 0, 0, 0, 0
-Map_Sonic_1124_End
+	spriteFooter offset(*)
 
-Map_Sonic_1136:	spriteHeader
+Map_Sonic_1136:	spriteHeader offset(*)
 	spritePiece	-$C, -$1D, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$12, -5, 4, 4, 9, 0, 0, 0, 0
 	spritePiece	$E, -5, 1, 2, $19, 0, 0, 0, 0
-Map_Sonic_1136_End
+	spriteFooter offset(*)
 
-Map_Sonic_1150:	spriteHeader
+Map_Sonic_1150:	spriteHeader offset(*)
 	spritePiece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$14, 4, 1, 2, 9, 0, 0, 0, 0
 	spritePiece	-$C, -4, 3, 4, $B, 0, 0, 0, 0
 	spritePiece	$C, 4, 1, 2, $17, 0, 0, 0, 0
-Map_Sonic_1150_End
+	spriteFooter offset(*)
 
-Map_Sonic_1172:	spriteHeader
+Map_Sonic_1172:	spriteHeader offset(*)
 	spritePiece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
 	spritePiece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
 	spritePiece	-9, $D, 2, 2, $12, 0, 0, 0, 0
-Map_Sonic_1172_End
+	spriteFooter offset(*)
 
-Map_Sonic_118C:	spriteHeader
+Map_Sonic_118C:	spriteHeader offset(*)
 	spritePiece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
 	spritePiece	-$D, -4, 3, 4, $C, 0, 0, 0, 0
-Map_Sonic_118C_End
+	spriteFooter offset(*)
 
-Map_Sonic_119E:	spriteHeader
+Map_Sonic_119E:	spriteHeader offset(*)
 	spritePiece	-$16, -$1D, 2, 1, 0, 0, 0, 0, 0
 	spritePiece	-$1E, -$15, 4, 2, 2, 0, 0, 0, 0
 	spritePiece	-$16, -5, 3, 2, $A, 0, 0, 0, 0
 	spritePiece	2, -$D, 2, 2, $10, 0, 0, 0, 0
 	spritePiece	-6, $B, 1, 2, $14, 0, 0, 0, 0
-Map_Sonic_119E_End
+	spriteFooter offset(*)
 
-Map_Sonic_11C8:	spriteHeader
+Map_Sonic_11C8:	spriteHeader offset(*)
 	spritePiece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
 	spritePiece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
 	spritePiece	3, -$14, 1, 2, $A, 0, 0, 0, 0
 	spritePiece	-$15, -4, 4, 2, $C, 0, 0, 0, 0
 	spritePiece	$B, -4, 2, 2, $14, 0, 0, 0, 0
 	spritePiece	-5, $C, 1, 2, $18, 0, 0, 0, 0
-Map_Sonic_11C8_End
+	spriteFooter offset(*)
 
-Map_Sonic_11FA:	spriteHeader
+Map_Sonic_11FA:	spriteHeader offset(*)
 	spritePiece	-$1C, -$15, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, -5, 2, 2, 6, 0, 0, 0, 0
 	spritePiece	-4, -$13, 1, 4, $A, 0, 0, 0, 0
 	spritePiece	4, -$B, 1, 2, $E, 0, 0, 0, 0
 	spritePiece	4, 5, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_11FA_End
+	spriteFooter offset(*)
 
-Map_Sonic_1224:	spriteHeader
+Map_Sonic_1224:	spriteHeader offset(*)
 	spritePiece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
 	spritePiece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
 	spritePiece	3, -$14, 1, 2, $A, 0, 0, 0, 0
 	spritePiece	-$15, -4, 2, 2, $C, 0, 0, 0, 0
 	spritePiece	-5, -4, 3, 4, $10, 0, 0, 0, 0
-Map_Sonic_1224_End
+	spriteFooter offset(*)
 
-Map_Sonic_124E:	spriteHeader
+Map_Sonic_124E:	spriteHeader offset(*)
 	spritePiece	-$16, -$1D, 2, 1, 0, 0, 0, 0, 0
 	spritePiece	-$1E, -$15, 4, 2, 2, 0, 0, 0, 0
 	spritePiece	2, -$15, 1, 2, $A, 0, 0, 0, 0
 	spritePiece	$A, -$D, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	-$16, -5, 4, 2, $E, 0, 0, 0, 0
 	spritePiece	-$E, $B, 2, 2, $16, 0, 0, 0, 0
-Map_Sonic_124E_End
+	spriteFooter offset(*)
 
-Map_Sonic_1280:	spriteHeader
+Map_Sonic_1280:	spriteHeader offset(*)
 	spritePiece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
 	spritePiece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
 	spritePiece	3, -$14, 1, 2, $A, 0, 0, 0, 0
 	spritePiece	-$15, -4, 4, 2, $C, 0, 0, 0, 0
 	spritePiece	$B, -6, 2, 2, $14, 0, 0, 0, 0
 	spritePiece	-5, $C, 1, 2, $18, 0, 0, 0, 0
-Map_Sonic_1280_End
+	spriteFooter offset(*)
 
-Map_Sonic_12B2:	spriteHeader
+Map_Sonic_12B2:	spriteHeader offset(*)
 	spritePiece	-$1C, -$15, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, -5, 2, 2, 6, 0, 0, 0, 0
 	spritePiece	-4, -$13, 1, 4, $A, 0, 0, 0, 0
 	spritePiece	4, -$B, 1, 2, $E, 0, 0, 0, 0
 	spritePiece	4, 5, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_12B2_End
+	spriteFooter offset(*)
 
-Map_Sonic_12DC:	spriteHeader
+Map_Sonic_12DC:	spriteHeader offset(*)
 	spritePiece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
 	spritePiece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
 	spritePiece	-$15, -4, 3, 2, $A, 0, 0, 0, 0
 	spritePiece	3, -$C, 1, 2, $10, 0, 0, 0, 0
 	spritePiece	3, 4, 2, 2, $12, 0, 0, 0, 0
 	spritePiece	-5, $C, 1, 2, $16, 0, 0, 0, 0
-Map_Sonic_12DC_End
+	spriteFooter offset(*)
 
-Map_Sonic_130E:	spriteHeader
+Map_Sonic_130E:	spriteHeader offset(*)
 	spritePiece	-$1D, -$E, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-5, -$14, 3, 4, $C, 0, 0, 0, 0
 	spritePiece	3, $C, 2, 2, $18, 0, 0, 0, 0
-Map_Sonic_130E_End
+	spriteFooter offset(*)
 
-Map_Sonic_1328:	spriteHeader
+Map_Sonic_1328:	spriteHeader offset(*)
 	spritePiece	-$1C, -$E, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$14, 3, 4, $C, 0, 0, 0, 0
 	spritePiece	4, $C, 2, 2, $18, 0, 0, 0, 0
-Map_Sonic_1328_End
+	spriteFooter offset(*)
 
-Map_Sonic_1342:	spriteHeader
+Map_Sonic_1342:	spriteHeader offset(*)
 	spritePiece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
 	spritePiece	5, -7, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_1342_End
+	spriteFooter offset(*)
 
-Map_Sonic_135C:	spriteHeader
+Map_Sonic_135C:	spriteHeader offset(*)
 	spritePiece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-4, -$E, 3, 4, 9, 0, 0, 0, 0
-Map_Sonic_135C_End
+	spriteFooter offset(*)
 
-Map_Sonic_136E:	spriteHeader
+Map_Sonic_136E:	spriteHeader offset(*)
 	spritePiece	-$1D, -$C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-5, -$1D, 2, 2, 9, 0, 0, 0, 0
 	spritePiece	-5, -$D, 3, 4, $D, 0, 0, 0, 0
-Map_Sonic_136E_End
+	spriteFooter offset(*)
 
-Map_Sonic_1388:	spriteHeader
+Map_Sonic_1388:	spriteHeader offset(*)
 	spritePiece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-4, -$14, 3, 4, 9, 0, 0, 0, 0
 	spritePiece	4, $C, 2, 2, $15, 0, 0, 0, 0
-Map_Sonic_1388_End
+	spriteFooter offset(*)
 
-Map_Sonic_13A2:	spriteHeader
+Map_Sonic_13A2:	spriteHeader offset(*)
 	spritePiece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
 	spritePiece	5, -7, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_13A2_End
+	spriteFooter offset(*)
 
-Map_Sonic_13BC:	spriteHeader
+Map_Sonic_13BC:	spriteHeader offset(*)
 	spritePiece	-$1C, -$E, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$C, 3, 4, $C, 0, 0, 0, 0
-Map_Sonic_13BC_End
+	spriteFooter offset(*)
 
-Map_Sonic_13CE:	spriteHeader
+Map_Sonic_13CE:	spriteHeader offset(*)
 	spritePiece	-$D, -$12, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$1D, -2, 3, 4, 4, 0, 0, 0, 0
 	spritePiece	-5, -2, 4, 2, $10, 0, 0, 0, 0
 	spritePiece	-5, $E, 1, 1, $18, 0, 0, 0, 0
-Map_Sonic_13CE_End
+	spriteFooter offset(*)
 
-Map_Sonic_13F0:	spriteHeader
+Map_Sonic_13F0:	spriteHeader offset(*)
 	spritePiece	-4, -$23, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
 	spritePiece	-$1C, -3, 3, 4, $A, 0, 0, 0, 0
 	spritePiece	-4, -3, 4, 2, $16, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 1, $1E, 0, 0, 0, 0
-Map_Sonic_13F0_End
+	spriteFooter offset(*)
 
-Map_Sonic_141A:	spriteHeader
+Map_Sonic_141A:	spriteHeader offset(*)
 	spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$1B, 4, 1, 2, 8, 0, 0, 0, 0
 	spritePiece	-$13, -4, 2, 4, $A, 0, 0, 0, 0
 	spritePiece	-3, -4, 2, 2, $12, 0, 0, 0, 0
 	spritePiece	-3, $C, 1, 1, $16, 0, 0, 0, 0
-Map_Sonic_141A_End
+	spriteFooter offset(*)
 
-Map_Sonic_1444:	spriteHeader
+Map_Sonic_1444:	spriteHeader offset(*)
 	spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$1C, -3, 3, 4, 8, 0, 0, 0, 0
 	spritePiece	-4, -3, 3, 2, $14, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 1, $1A, 0, 0, 0, 0
-Map_Sonic_1444_End
+	spriteFooter offset(*)
 
-Map_Sonic_1466:	spriteHeader
+Map_Sonic_1466:	spriteHeader offset(*)
 	spritePiece	-$D, -$12, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$1D, -2, 3, 4, 6, 0, 0, 0, 0
 	spritePiece	-5, -2, 4, 2, $12, 0, 0, 0, 0
 	spritePiece	-5, $E, 1, 1, $1A, 0, 0, 0, 0
-Map_Sonic_1466_End
+	spriteFooter offset(*)
 
-Map_Sonic_1488:	spriteHeader
+Map_Sonic_1488:	spriteHeader offset(*)
 	spritePiece	-6, -$23, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
 	spritePiece	-$1C, -3, 3, 4, $A, 0, 0, 0, 0
 	spritePiece	-4, -3, 4, 2, $16, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 1, $1E, 0, 0, 0, 0
-Map_Sonic_1488_End
+	spriteFooter offset(*)
 
-Map_Sonic_14B2:	spriteHeader
+Map_Sonic_14B2:	spriteHeader offset(*)
 	spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$1B, 4, 1, 2, 8, 0, 0, 0, 0
 	spritePiece	-$13, -4, 2, 4, $A, 0, 0, 0, 0
 	spritePiece	-3, -4, 2, 2, $12, 0, 0, 0, 0
 	spritePiece	-3, $C, 1, 1, $16, 0, 0, 0, 0
-Map_Sonic_14B2_End
+	spriteFooter offset(*)
 
-Map_Sonic_14DC:	spriteHeader
+Map_Sonic_14DC:	spriteHeader offset(*)
 	spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$1C, 5, 1, 2, 8, 0, 0, 0, 0
 	spritePiece	-$14, -3, 2, 4, $A, 0, 0, 0, 0
 	spritePiece	-4, -3, 3, 2, $12, 0, 0, 0, 0
 	spritePiece	-4, $D, 1, 1, $18, 0, 0, 0, 0
-Map_Sonic_14DC_End
+	spriteFooter offset(*)
 
-Map_Sonic_1506:	spriteHeader
+Map_Sonic_1506:	spriteHeader offset(*)
 	spritePiece	-4, -$10, 3, 1, 0, 0, 0, 0, 0
 	spritePiece	-4, -8, 1, 1, 3, 0, 0, 0, 0
 	spritePiece	4, -8, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	-$14, 0, 3, 2, 8, 0, 0, 0, 0
-Map_Sonic_1506_End
+	spriteFooter offset(*)
 
-Map_Sonic_1528:	spriteHeader
+Map_Sonic_1528:	spriteHeader offset(*)
 	spritePiece	-6, -$1A, 2, 1, 0, 0, 0, 0, 0
 	spritePiece	-$E, -$12, 3, 4, 2, 0, 0, 0, 0
 	spritePiece	$A, -$12, 1, 3, $E, 0, 0, 0, 0
 	spritePiece	-6, $E, 2, 1, $11, 0, 0, 0, 0
-Map_Sonic_1528_End
+	spriteFooter offset(*)
 
-Map_Sonic_154A:	spriteHeader
+Map_Sonic_154A:	spriteHeader offset(*)
 	spritePiece	-$10, -$14, 1, 3, 0, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 2, 3, 0, 0, 0, 0
 	spritePiece	-8, -4, 3, 1, 7, 0, 0, 0, 0
 	spritePiece	0, 4, 2, 2, $A, 0, 0, 0, 0
-Map_Sonic_154A_End
+	spriteFooter offset(*)
 
-Map_Sonic_156C:	spriteHeader
+Map_Sonic_156C:	spriteHeader offset(*)
 	spritePiece	-$12, -$12, 3, 1, 0, 0, 0, 0, 0
 	spritePiece	-$1A, -$A, 4, 2, 3, 0, 0, 0, 0
 	spritePiece	6, -$A, 2, 2, $B, 0, 0, 0, 0
 	spritePiece	-$12, 6, 2, 1, $F, 0, 0, 0, 0
 	spritePiece	6, 6, 1, 1, $11, 0, 0, 0, 0
-Map_Sonic_156C_End
+	spriteFooter offset(*)
 
-Map_Sonic_1596:	spriteHeader
+Map_Sonic_1596:	spriteHeader offset(*)
 	spritePiece	-4, -$18, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-4, -8, 1, 1, 6, 0, 0, 0, 0
 	spritePiece	4, -8, 2, 2, 7, 0, 0, 0, 0
 	spritePiece	-$14, 0, 3, 2, $B, 0, 0, 0, 0
-Map_Sonic_1596_End
+	spriteFooter offset(*)
 
-Map_Sonic_15B8:	spriteHeader
+Map_Sonic_15B8:	spriteHeader offset(*)
 	spritePiece	-6, -$1A, 2, 1, 0, 0, 0, 0, 0
 	spritePiece	-$E, -$12, 3, 4, 2, 0, 0, 0, 0
 	spritePiece	$A, -$12, 1, 3, $E, 0, 0, 0, 0
 	spritePiece	-6, $E, 1, 1, $11, 0, 0, 0, 0
-Map_Sonic_15B8_End
+	spriteFooter offset(*)
 
-Map_Sonic_15DA:	spriteHeader
+Map_Sonic_15DA:	spriteHeader offset(*)
 	spritePiece	-$18, -$14, 2, 3, 0, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 2, 6, 0, 0, 0, 0
 	spritePiece	-8, -4, 1, 1, $A, 0, 0, 0, 0
 	spritePiece	0, -4, 2, 3, $B, 0, 0, 0, 0
-Map_Sonic_15DA_End
+	spriteFooter offset(*)
 
-Map_Sonic_15FC:	spriteHeader
+Map_Sonic_15FC:	spriteHeader offset(*)
 	spritePiece	-$12, -$12, 3, 1, 0, 0, 0, 0, 0
 	spritePiece	-$1A, -$A, 4, 2, 3, 0, 0, 0, 0
 	spritePiece	6, -$A, 2, 2, $B, 0, 0, 0, 0
 	spritePiece	-$12, 6, 2, 1, $F, 0, 0, 0, 0
 	spritePiece	6, 6, 1, 1, $11, 0, 0, 0, 0
-Map_Sonic_15FC_End
+	spriteFooter offset(*)
 
-Map_Sonic_1626:	spriteHeader
+Map_Sonic_1626:	spriteHeader offset(*)
 	spritePiece	-$12, -$1B, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$15, -$B, 2, 2, 6, 0, 0, 0, 0
 	spritePiece	-5, -$B, 2, 2, $A, 0, 0, 0, 0
 	spritePiece	-$15, 5, 4, 2, $E, 0, 0, 0, 0
-Map_Sonic_1626_End
+	spriteFooter offset(*)
 
-Map_Sonic_1648:	spriteHeader
+Map_Sonic_1648:	spriteHeader offset(*)
 	spritePiece	-$12, -$1C, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$15, -$C, 2, 2, 6, 0, 0, 0, 0
 	spritePiece	-5, -$C, 2, 2, $A, 0, 0, 0, 0
 	spritePiece	-$15, 4, 4, 2, $E, 0, 0, 0, 0
-Map_Sonic_1648_End
+	spriteFooter offset(*)
 
-Map_Sonic_166A:	spriteHeader
+Map_Sonic_166A:	spriteHeader offset(*)
 	spritePiece	-$12, -$1B, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$15, -$B, 2, 2, 6, 0, 0, 0, 0
 	spritePiece	-5, -$B, 2, 2, $A, 0, 0, 0, 0
 	spritePiece	-$15, 5, 4, 2, $E, 0, 0, 0, 0
-Map_Sonic_166A_End
+	spriteFooter offset(*)
 
-Map_Sonic_168C:	spriteHeader
+Map_Sonic_168C:	spriteHeader offset(*)
 	spritePiece	-$12, -$1C, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$15, -$C, 2, 2, 6, 0, 0, 0, 0
 	spritePiece	-5, -$C, 2, 2, $A, 0, 0, 0, 0
 	spritePiece	-$15, 4, 4, 2, $E, 0, 0, 0, 0
-Map_Sonic_168C_End
+	spriteFooter offset(*)
 
-Map_Sonic_16AE:	spriteHeader
+Map_Sonic_16AE:	spriteHeader offset(*)
 	spritePiece	-$10, -4, 1, 3, 0, 0, 0, 0, 0
 	spritePiece	-8, -$C, 3, 4, 3, 0, 0, 0, 0
-Map_Sonic_16AE_End
+	spriteFooter offset(*)
 
-Map_Sonic_16C0:	spriteHeader
+Map_Sonic_16C0:	spriteHeader offset(*)
 	spritePiece	-$14, -$1C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$14, -4, 3, 1, 9, 0, 0, 0, 0
 	spritePiece	-$F, 4, 2, 2, $C, 0, 0, 0, 0
-Map_Sonic_16C0_End
+	spriteFooter offset(*)
 
-Map_Sonic_16DA:	spriteHeader
+Map_Sonic_16DA:	spriteHeader offset(*)
 	spritePiece	-$14, -$1C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$14, -4, 3, 1, 9, 0, 0, 0, 0
 	spritePiece	-$F, 4, 2, 2, $C, 0, 0, 0, 0
-Map_Sonic_16DA_End
+	spriteFooter offset(*)
 
-Map_Sonic_16F4:	spriteHeader
+Map_Sonic_16F4:	spriteHeader offset(*)
 	spritePiece	-$14, -$1C, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$14, -4, 3, 1, 9, 0, 0, 0, 0
 	spritePiece	-$F, 4, 2, 2, $C, 0, 0, 0, 0
-Map_Sonic_16F4_End
+	spriteFooter offset(*)
 
-Map_Sonic_170E:	spriteHeader
+Map_Sonic_170E:	spriteHeader offset(*)
 	spritePiece	-$13, -$1B, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$13, -3, 3, 1, 9, 0, 0, 0, 0
 	spritePiece	-$F, 5, 2, 2, $C, 0, 0, 0, 0
-Map_Sonic_170E_End
+	spriteFooter offset(*)
 
-Map_Sonic_1728:	spriteHeader
+Map_Sonic_1728:	spriteHeader offset(*)
 	spritePiece	-$13, -$1B, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$13, -3, 3, 1, 9, 0, 0, 0, 0
 	spritePiece	-$F, 5, 2, 2, $C, 0, 0, 0, 0
-Map_Sonic_1728_End
+	spriteFooter offset(*)
 
-Map_Sonic_1742:	spriteHeader
+Map_Sonic_1742:	spriteHeader offset(*)
 	spritePiece	-$13, -$1B, 3, 3, 0, 0, 0, 0, 0
 	spritePiece	-$13, -3, 3, 1, 9, 0, 0, 0, 0
 	spritePiece	-$F, 5, 2, 2, $C, 0, 0, 0, 0
-Map_Sonic_1742_End
+	spriteFooter offset(*)
 
-Map_Sonic_175C:	spriteHeader
+Map_Sonic_175C:	spriteHeader offset(*)
 	spritePiece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	8, -$14, 1, 4, $C, 0, 0, 0, 0
 	spritePiece	-$F, $C, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_175C_End
+	spriteFooter offset(*)
 
-Map_Sonic_1776:	spriteHeader
+Map_Sonic_1776:	spriteHeader offset(*)
 	spritePiece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	8, -$14, 1, 4, $C, 0, 0, 0, 0
 	spritePiece	-$F, $C, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_1776_End
+	spriteFooter offset(*)
 
-Map_Sonic_1790:	spriteHeader
+Map_Sonic_1790:	spriteHeader offset(*)
 	spritePiece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	8, -$14, 1, 4, $C, 0, 0, 0, 0
 	spritePiece	-$F, $C, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_1790_End
+	spriteFooter offset(*)
 
-Map_Sonic_17AA:	spriteHeader
+Map_Sonic_17AA:	spriteHeader offset(*)
 	spritePiece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	8, -$14, 1, 2, $C, 0, 0, 0, 0
 	spritePiece	$10, -$14, 1, 2, $E, 0, 0, 0, 0
 	spritePiece	8, -4, 1, 2, $10, 0, 0, 0, 0
 	spritePiece	-$F, $C, 2, 2, $12, 0, 0, 0, 0
-Map_Sonic_17AA_End
+	spriteFooter offset(*)
 
-Map_Sonic_17D4:	spriteHeader
+Map_Sonic_17D4:	spriteHeader offset(*)
 	spritePiece	-$15, -$14, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-5, -$14, 3, 2, 8, 0, 0, 0, 0
 	spritePiece	-5, -4, 2, 2, $E, 0, 0, 0, 0
 	spritePiece	-$12, $C, 3, 2, $12, 0, 0, 0, 0
-Map_Sonic_17D4_End
+	spriteFooter offset(*)
 
-Map_Sonic_17F6:	spriteHeader
+Map_Sonic_17F6:	spriteHeader offset(*)
 	spritePiece	-$14, -$14, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$14, 3, 2, 8, 0, 0, 0, 0
 	spritePiece	-4, -4, 2, 2, $E, 0, 0, 0, 0
 	spritePiece	-$11, $C, 3, 2, $12, 0, 0, 0, 0
-Map_Sonic_17F6_End
+	spriteFooter offset(*)
 
-Map_Sonic_1818:	spriteHeader
+Map_Sonic_1818:	spriteHeader offset(*)
 	spritePiece	-$14, -$14, 2, 4, 0, 0, 0, 0, 0
 	spritePiece	-4, -$14, 3, 2, 8, 0, 0, 0, 0
 	spritePiece	-4, -4, 3, 2, $E, 0, 0, 0, 0
 	spritePiece	-$10, $C, 3, 2, $14, 0, 0, 0, 0
-Map_Sonic_1818_End
+	spriteFooter offset(*)
 
-Map_Sonic_183A:	spriteHeader
+Map_Sonic_183A:	spriteHeader offset(*)
 	spritePiece	-$18, -$C, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$14, 3, 4, 4, 0, 0, 0, 0
 	spritePiece	-$10, $C, 2, 2, $10, 0, 0, 0, 0
-Map_Sonic_183A_End
+	spriteFooter offset(*)
 
-Map_Sonic_1854:	spriteHeader
+Map_Sonic_1854:	spriteHeader offset(*)
 	spritePiece	$C, -$C, 1, 4, 0, 1, 0, 0, 0
 	spritePiece	-$C, -$14, 3, 4, 4, 1, 0, 0, 0
 	spritePiece	-4, $C, 2, 2, $10, 1, 0, 0, 0
-Map_Sonic_1854_End
+	spriteFooter offset(*)
 
-Map_Sonic_186E:	spriteHeader
+Map_Sonic_186E:	spriteHeader offset(*)
 	spritePiece	$C, -$C, 1, 4, 0, 1, 0, 0, 0
 	spritePiece	-$C, -$14, 3, 4, 4, 1, 0, 0, 0
 	spritePiece	-4, $C, 2, 2, $10, 1, 0, 0, 0
-Map_Sonic_186E_End
+	spriteFooter offset(*)
 
-Map_Sonic_1888:	spriteHeader
+Map_Sonic_1888:	spriteHeader offset(*)
 	spritePiece	-$13, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$11, -4, 4, 2, 8, 0, 0, 0, 0
 	spritePiece	$F, -4, 1, 2, $10, 0, 0, 0, 0
 	spritePiece	1, $C, 2, 2, $12, 0, 0, 0, 0
-Map_Sonic_1888_End
+	spriteFooter offset(*)
 
-Map_Sonic_18AA:	spriteHeader
+Map_Sonic_18AA:	spriteHeader offset(*)
 	spritePiece	-$12, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$11, -4, 4, 2, 8, 0, 0, 0, 0
 	spritePiece	$F, -4, 1, 2, $10, 0, 0, 0, 0
 	spritePiece	1, $C, 2, 2, $12, 0, 0, 0, 0
-Map_Sonic_18AA_End
+	spriteFooter offset(*)
 
-Map_Sonic_18CC:	spriteHeader
+Map_Sonic_18CC:	spriteHeader offset(*)
 	spritePiece	-$11, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$11, -4, 4, 2, 8, 0, 0, 0, 0
 	spritePiece	$F, -4, 1, 2, $10, 0, 0, 0, 0
 	spritePiece	1, $C, 2, 2, $12, 0, 0, 0, 0
-Map_Sonic_18CC_End
+	spriteFooter offset(*)
 
-Map_Sonic_18EE:	spriteHeader
+Map_Sonic_18EE:	spriteHeader offset(*)
 	spritePiece	-$C, -$14, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-9, -4, 3, 4, 6, 0, 0, 0, 0
-Map_Sonic_18EE_End
+	spriteFooter offset(*)
 
 	even
