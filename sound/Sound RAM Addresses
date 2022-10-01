@@ -1,0 +1,127 @@
+; ---------------------------------------------------------------------------
+; Z80 Mega Drive hardware addresses
+; ---------------------------------------------------------------------------
+ym_reg_a0: 			equ	$4000
+ym_reg_d0:			equ	$4001
+ym_reg_a1:			equ	$4002
+ym_reg_d1: 			equ	$4003
+z_bank_select:		equ	$6000
+z_psg_input: 		equ	$7F11
+z_rom_window: 		equ	$8000
+
+
+; ---------------------------------------------------------------------------
+; Constants for global sound driver variables
+; This setup is used because these are accessed both via direct addressing, 
+; and indirectly relative to  the head of the Z80 stack. 
+; z_soundqueue is additionally accessed by the 68K.
+; ---------------------------------------------------------------------------
+				rsset 0
+v_priority:				rs.b 1 ; 0 ; sound priority (priority of new music/SFX must be higher or equal to this value or it won't play; bit 7 of priority being set prevents this value from changing)
+f_tempo_counter:		rs.b 1 ; 1 ; counts down to zero; when zero, resets to next value and delays song by 1 frame
+f_current_tempo:		rs.b 1 ; 2 ; stores current music tempo value
+f_pause_sound:			rs.b 1 ; 3 ; Set to 7Fh to pause music, set to 80h to unpause. Otherwise 00h
+v_fadeout_counter:		rs.b 1 ; 4
+v_fadeout_delay:		rs.b 1 ; 5
+v_timing:				rs.b 1 ; 6 ; Unused byte used to synchronise gameplay events with music (e.g., used in Ristar to sync with a boss' attacks)
+f_updating_dac:			rs.b 1 ; 7 ; Set to FFh while DAC is updating, 0 otherwise
+z_soundqueue:			rs.b 1 ; 8 ; The head of the sound queue
+z_queue_0:				rs.b 1 ; 9 ; slot 0
+z_queue_1:				rs.b 1 ; 10 ; slot 1
+z_queue_2:				rs.b 1 ; 11 ; slot 2 (unused). This slot was totally broken in Sonic 1's driver. It's mostly fixed here, but it's still a little broken (see 'zInitMusicPlayback').
+v_music_voice_table:	rs.b 2 ; 12 ; voice data pointer (2 bytes)
+f_fadein_flag:			rs.b 1 ; 14 ; flag for fade in
+v_fadein_delay:			rs.b 1 ; 15
+v_fadein_counter:		rs.b 1 ; 16
+f_has_backup:			rs.b 1 ; 17 ; flag indicating 1-up song is playing
+v_tempo_main:			rs.b 1 ; 18 ; music - tempo modifier
+v_tempo_speed:			rs.b 1 ; 19 ; music - tempo modifier with speed shoes (or 7Bh is played otherwise)
+f_speedup:				rs.b 1 ; 20 ; flag indicating whether speed shoes tempo is on (FFh) or off (0)
+f_dac_enabled:			rs.b 1 ; 21
+v_bank_number:			rs.b 1 ; 22 ; current ROM bank
+f_pal_flag:				rs.b 1 ; 23 ; flag if the system is a PAL console
+
+z_global_variables:		equ __rs ; $18 bytes
+
+; ---------------------------------------------------------------------------
+; Constants for track variables
+; This structure is duplicated 26 times in the Z80 RAM: once for each channel
+; for music, a duplicate used to back up each channel for when the extra life 
+; music is played, and additional duplicates of FM3-5 and all PSG tracks 
+; for SFX.
+; ---------------------------------------------------------------------------
+					rsset 0
+
+PlaybackControl:	ds.b 1
+	; 	"playback control"; bits:
+	; 	1 (02h): track is at rest
+	; 	2 (04h): SFX is overriding this track
+	; 	3 (08h): modulation on
+	; 	4 (10h): do not attack next note
+	; 	7 (80h): track is playing
+
+	; 	"voice control"; bits:
+	; 	2 (04h): If set, bound for part II, otherwise 0 (see zWriteFMIorII)
+	; 		-- bit 2 has to do with sending key on/off, which uses this differentiation bit directly
+	; 	7 (80h): PSG track
+	VoiceControl:		ds.b 1
+	TempoDivider:		ds.b 1	; Timing divisor; 1 = Normal, 2 = Half, 3 = Third...
+	DataPointerLow:		ds.b 1	; Track's position low byte
+	DataPointerHigh:	ds.b 1	; Track's position high byte
+	Transpose:		ds.b 1	; Transpose (from coord flag E9)
+	Volume:			ds.b 1	; Channel volume (only applied at voice changes)
+	AMSFMSPan:		ds.b 1	; Panning / AMS / FMS settings
+	VoiceIndex:		ds.b 1	; Current voice in use OR current PSG tone
+	VolFlutter:		ds.b 1	; PSG flutter (dynamically effects PSG volume for decay effects)
+	StackPointer:		ds.b 1	; "Gosub" stack position offset (starts at 2Ah, i.e. end of track, and each jump decrements by 2)
+	DurationTimeout:	ds.b 1	; Current duration timeout; counting down to zero
+	SavedDuration:		ds.b 1	; Last set duration (if a note follows a note, this is reapplied to 0Bh)
+	;
+	; 	; 0Dh / 0Eh change a little depending on track -- essentially they hold data relevant to the next note to play
+	SavedDAC:			; DAC: Next drum to play
+	FreqLow:		ds.b 1	; FM/PSG: frequency low byte
+	FreqHigh:		ds.b 1	; FM/PSG: frequency high byte
+	NoteFillTimeout:	ds.b 1	; Currently set note fill; counts down to zero and then cuts off note
+	NoteFillMaster:		ds.b 1	; Reset value for current note fill
+	ModulationPtrLow:	ds.b 1	; Low byte of address of current modulation setting
+	ModulationPtrHigh:	ds.b 1	; High byte of address of current modulation setting
+	ModulationWait:		ds.b 1	; Wait for ww period of time before modulation starts
+	ModulationSpeed:	ds.b 1	; Modulation speed
+	ModulationDelta:	ds.b 1	; Modulation change per mod. Step
+	ModulationSteps:	ds.b 1	; Number of steps in modulation (divided by 2)
+	ModulationValLow:	ds.b 1	; Current modulation value low byte
+	ModulationValHigh:	ds.b 1	; Current modulation value high byte
+	Detune:			ds.b 1	; Set by detune coord flag E1; used to add directly to FM/PSG frequency
+	VolTLMask:		ds.b 1	; zVolTLMaskTbl value set during voice setting (value based on algorithm indexing zGain table)
+	PSGNoise:		ds.b 1	; PSG noise setting
+	VoicePtrLow:		ds.b 1	; Low byte of custom voice table (for SFX)
+	VoicePtrHigh:		ds.b 1	; High byte of custom voice table (for SFX)
+	TLPtrLow:		ds.b 1	; Low byte of where TL bytes of current voice begin (set during voice setting)
+	TLPtrHigh:		ds.b 1	; High byte of where TL bytes of current voice begin (set during voice setting)
+	LoopCounters:		ds.b $A	; Loop counter index 0
+	;   ... open ...
+	GoSubStack:			; start of next track, every two bytes below this is a coord flag "gosub" (F8h) return stack
+	;
+	;	The bytes between +20h and +29h are "open"; starting at +20h and going up are possible loop counters
+	;	(for coord flag F7) while +2Ah going down (never AT 2Ah though) are stacked return addresses going
+	;	down after calling coord flag F8h.  Of course, this does mean collisions are possible with either
+	;	or other track memory if you're not careful with these!  No range checking is performed!
+	;
+	; 	All tracks are 2Ah bytes long
+
+; ---------------------------------------------------------------------------
+; RAM addresses specific to this program
+; ---------------------------------------------------------------------------
+			rsset $1380
+z_music_data: 	rs.b $800		; $1380 ; don't change this unless you change all the pointers in the BINCLUDE'd music too...
+z_stack: 		equ	zMusicData+$800	; $1B80 ; Z80 stack
+
+	obj zStack	
+; zVar: used for indirect addressing with a register
+; zAbsVar: used for absolute addressing
+
+
+z_absvar:	equ z_global_variables
+
+
+

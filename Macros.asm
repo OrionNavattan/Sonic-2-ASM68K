@@ -166,16 +166,13 @@ rsalign:	macro
 
 rsblock:	macro
 		rsalign 2					; align to even address
-		rsblock_\1: equ __rs
+		\1: equ __rs
 		
 		endm
 
-rsblockend:	macro
-;		rs.b (4-((__rs-rsblock_\1)%4))%4		; align to 4 (starting from rsblock)
-;		loops_to_clear_\1: equ ((__rs-rsblock_\1)/4)-1	; number of loops needed to clear block with longword writes
-		rsblock_\1\_end:	equ __rs
+rsblockend:	macro ; Adapted to Sonic 2's macro-based RAM clearing
+		\1\_end:	equ __rs
 		endm
-
 ; ---------------------------------------------------------------------------
 ; Organise object RAM usage.
 ; ---------------------------------------------------------------------------

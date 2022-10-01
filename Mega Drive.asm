@@ -51,7 +51,7 @@ bank_reg_5:		equ $A130FB	; Bank register for address $280000-$2FFFFF
 bank_reg_6:		equ $A130FD	; Bank register for address $300000-$37FFFF
 bank_reg_7:		equ $A130FF	; Bank register for address $380000-$3FFFFF
 tmss_sega:		equ $A14000	; contains the string "SEGA"
-tmss_reg:		equ $A14101
+tmss_reg:		equ $A14101 ; bankswitch between cartridge and TMSS ROM
 
 ; ---------------------------------------------------------------------------
 ; stop the Z80

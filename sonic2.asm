@@ -611,10 +611,10 @@ VBlank_PCM:
 		move.b	($FFFFFE0F).w,d0
 		andi.w	#$F,d0
 		bne.s	loc_652
-		move.w	#$100,($A11100).l
+		move.w	#$100,(z80_bus_request).l
 
 loc_63C:				
-		btst	#0,($A11100).l
+		btst	#0,(z80_bus_request).l
 		bne.s	loc_63C
 		bsr.w	ReadJoypads
 		startZ80
@@ -1591,10 +1591,10 @@ word_11E2:	dc.w $8004		; 0 ; DATA XREF: VDPSetupGame+Co
 
 sub_1208:				
 					
-		move.w	#$100,($A11100).l
+		move.w	#$100,(z80_bus_request).l
 
 loc_1210:				
-		btst	#0,($A11100).l
+		btst	#0,(z80_bus_request).l
 		bne.s	loc_1210
 		lea	(vdp_control_port).l,a5
 		move.w	#-$70FF,(a5)
@@ -1674,24 +1674,24 @@ loc_12FA:
 
 JmpTo_SoundDriverLoad:				
 		nop	
-		jmp	loc_EC000
+		jmp	SoundDriverLoad
 ; End of function JmpTo_SoundDriverLoad
 
 ; ===========================================================================
-		move.w	#$100,($A11100).l
-		move.w	#$100,($A11200).l
-		lea	($A00000).l,a1
+		move.w	#$100,(z80_bus_request).l
+		move.w	#$100,(z80_reset).l
+		lea	(z80_ram).l,a1
 		move.b	#-$D,(a1)+
 		move.b	#-$D,(a1)+
 		move.b	#-$3D,(a1)+
 		move.b	#0,(a1)+
 		move.b	#0,(a1)+
-		move.w	#0,($A11200).l
+		move.w	#0,(z80_reset).l
 		nop	
 		nop	
 		nop	
 		nop	
-		move.w	#$100,($A11200).l
+		move.w	#$100,(z80_reset).l
 		startZ80
 		rts	
 
@@ -12788,10 +12788,10 @@ loc_9CA6:
 		move.w	(v_vdp_mode_buffer).w,d0
 		andi.b	#-$41,d0
 		move.w	d0,(vdp_control_port).l
-		move.w	#$100,($A11100).l
+		move.w	#$100,(z80_bus_request).l
 
 loc_9CC6:				
-		btst	#0,($A11100).l
+		btst	#0,(z80_bus_request).l
 		bne.s	loc_9CC6
 		lea	(vdp_control_port).l,a5
 		move.w	#-$70FF,(a5)
@@ -95320,126 +95320,142 @@ Sprites_Null4:		incbin	level/sprites/0X0EBD~3.BIN
 Sprites_Null5:		incbin	level/sprites/0X0EBD~4.BIN
 Sprites_Null6:		incbin	level/sprites/0X6009~1.BIN
 ; --------------------------------------------------------------------------------------
-; Filler (free space)
+; Filler (free space) (unnecessary; could be replaced with "even")
 ; --------------------------------------------------------------------------------------
 		align offset(*),$1000
 
-loc_EC000:				; CODE XREF: JmpTo_SoundDriverLoad+2j
+; ---------------------------------------------------------------------------
+; Subroutine to load the sound driver
+; ---------------------------------------------------------------------------
+SoundDriverLoad:
 		move	sr,-(sp)
 		movem.l	d0-a6,-(sp)
 		disable_ints
-		lea	($A11100).l,a3
-		lea	($A11200).l,a2
+		lea	(z80_bus_request).l,a3
+		lea	(z80_reset).l,a2
 		moveq	#0,d2
 		move.w	#$100,d1
-		move.w	d1,(a3)
-		move.w	d1,(a2)
+		move.w	d1,(a3)	; get Z80 bus
+		move.w	d1,(a2)	; release Z80 reset (was held high by console on startup)
 
-loc_EC020:				
+	.waitforbus:				
 		btst	d2,(a3)
-		bne.s	loc_EC020
-		jsr	(sub_EC04A)(pc)
-		btst	#0,($C00005).l
-		sne	($A00007).l
-		move.w	d2,(a2)
-		move.w	d2,(a3)
+		bne.s	.waitforbus
+		jsr	DecompressSoundDriver(pc)
+		btst	#0,(vdp_control_port+1).l	; check video mode
+		sne	(z80_ram+7).l					; set if PAL
+		move.w	d2,(a2)	; hold Z80 reset
+		move.w	d2,(a3)	; release Z80 bus
 		moveq	#-$1A,d0
 
-loc_EC03C:				
-		dbf	d0,loc_EC03C
-		move.w	d1,(a2)
+	.wait:				
+		dbf	d0,.wait	; wait for 2,314 cycles
+		move.w	d1,(a2)	; release Z80 reset
 		movem.l	(sp)+,d0-a6
 		move	(sp)+,sr
 		rts	
 
 ; =============== S U B	R O U T	I N E =======================================
 
-
-sub_EC04A:				
-		lea	(Snd_Driver)(pc),a6
-		move.w	#Snd_Driver_End-Snd_Driver,d7
-		moveq	#0,d6
-		lea	($A00000).l,a5
+;sub_EC04A:
+DecompressSoundDriver:				
+		lea	Snd_Driver(pc),a6
+ ; WARNING: SndDriverCompress.exe needs a source code edit if you rename this label
+movewZ80CompSize:		move.w	#Snd_Driver_End-Snd_Driver,d7 ; patched after compression by SndDriverCompress.exe, since thh compressed size is impossible to know beforehand
+		moveq	#0,d6	; The decompressor knows it's run out of descriptor bits when it starts reading 0's in bit 8
+		lea	(z80_ram).l,a5
 		moveq	#0,d5
-		lea	($A00000).l,a4
+		lea	(z80_ram).l,a4
 
-loc_EC062:				
-					
-		lsr.w	#1,d6
-		btst	#8,d6
-		bne.s	loc_EC074
-		jsr	(sub_EC0DE)(pc)
+;loc_EC062:
+SaxDec_Loop:								
+		lsr.w	#1,d6	; Next descriptor bit
+		btst	#8,d6	; Check if we've run out of bits
+		bne.s	.bitsremaining	; (lsr 'shifts in' 0's)
+		jsr	SaxDec_GetByte(pc)
 		move.b	d0,d6
-		ori.w	#$FF00,d6
+		ori.w	#$FF00,d6	; These set bits will disappear from the high byte as the register is shifted
 
-loc_EC074:				
+	.bitsremaining:				
 		btst	#0,d6
 		beq.s	loc_EC086
-		jsr	(sub_EC0DE)(pc)
+
+; SaxDec_ReadUncompressed:		
+		jsr	SaxDec_GetByte(pc)
 		move.b	d0,(a5)+
 		addq.w	#1,d5
-		bra.w	loc_EC062
+		bra.w	SaxDec_Loop
 ; ===========================================================================
 
 loc_EC086:				
-		jsr	(sub_EC0DE)(pc)
+		jsr	SaxDec_GetByte(pc)
 		moveq	#0,d4
 		move.b	d0,d4
-		jsr	(sub_EC0DE)(pc)
+		jsr	SaxDec_GetByte(pc)
 		move.b	d0,d3
 		andi.w	#$F,d3
-		addq.w	#2,d3
-		andi.w	#$F0,d0	; '='
+		addq.w	#2,d3	; d3 is the length of the match minus 1
+		andi.w	#$F0,d0
 		lsl.w	#4,d0
 		add.w	d0,d4
 		addi.w	#$12,d4
-		andi.w	#$FFF,d4
+		andi.w	#$FFF,d4	; d4 is the offset into the current $1000-byte window
+		; This part is a little tricky. You see, d4 currently contains the low three nibbles of an offset into the decompressed data,
+		; where the dictionary match lies. The way the high nibble is decided is first by taking it from d5 - the offset of the end
+		; of the decompressed data so far. Then, we see if the resulting offset in d4 is somehow higher than d5.
+		; If it is, then it's invalid... *unless* you subtract $1000 from it, in which case it refers to data in the previous $1000 block of bytes.
+		; This is all just a really gimmicky way of having an offset with a range of $1000 bytes from the end of the decompressed data.
+		; If, however, we cannot subtract $1000 because that would put the pointer before the start of the decompressed data, then
+		; this is actually a 'zero-fill' match, which encodes a series of zeroes.		
 		move.w	d5,d0
 		andi.w	#$F000,d0
 		add.w	d0,d4
 		cmp.w	d4,d5
-		bcc.s	loc_EC0CC
+		bcc.s	SaxDec_IsDictionaryReference
 		subi.w	#$1000,d4
-		bcc.s	loc_EC0CC
+		bcc.s	SaxDec_IsDictionaryReference
+		
+	; SaxDec_IsSequenceOfZeroes:		
 		add.w	d3,d5
 		addq.w	#1,d5
 
-loc_EC0C0:				
+	.loop:				
 		move.b	#0,(a5)+
-		dbf	d3,loc_EC0C0
-		bra.w	loc_EC062
-; ===========================================================================
+		dbf	d3,.loop
 
-loc_EC0CC:				
-					
+		bra.w	SaxDec_Loop
+		
+; ===========================================================================
+; loc_EC0CC:
+SaxDec_IsDictionaryReference:								
 		add.w	d3,d5
 		addq.w	#1,d5
 
-loc_EC0D0:				
+	.loop:				
 		move.b	(a4,d4.w),(a5)+
 		addq.w	#1,d4
-		dbf	d3,loc_EC0D0
-		bra.w	loc_EC062
-; End of function sub_EC04A
+		dbf	d3,.loop
+		
+		bra.w	SaxDec_Loop
+
+; End of function DecompressSoundDriver
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
-
-sub_EC0DE:				
-					
+; sub_EC0DE
+SaxDec_GetByte:						
 		move.b	(a6)+,d0
-		subq.w	#1,d7
-		bne.s	locret_EC0E6
-		addq.w	#4,sp
+		subq.w	#1,d7	; Decrement remaining number of bytes
+		bne.s	.exit
+		addq.w	#4,sp	; Exit the decompressor by meddling with the stack
 
-locret_EC0E6:				
+	.exit:				
 		rts	
-; End of function sub_EC0DE
 
 ; ===========================================================================
 ; --------------------------------------------------------------------------------------
-; S2 sound driver (Sound driver	compression)
+; S2 sound driver (Saxman compression)
 ; --------------------------------------------------------------------------------------
 
 ;		pushs
@@ -95455,7 +95471,7 @@ Snd_Driver:		incbin	sound\0X0EC0~1.BIN
 ;MergeCode:
 ;		pushs	
 ;		section org(0), file("AMPS/.z80.dat")	; create settings file for storing info about how to merge things
-;		dc.l offset(Snd_Driver), Z80_Space		; store info about location of file and size available
+;		dc.l offset(Snd_Driver),Z80_Space		; store info about location of file and size available
 ;		pops
 ;		ds.b Z80_Space	; reserve space for the compressed sound driver
 ;		even
