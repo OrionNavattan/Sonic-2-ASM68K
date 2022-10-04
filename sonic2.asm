@@ -60,6 +60,7 @@ RelativeLea = (0|Revision<>2|AllOptimizations)
 		include "SpritePiece.asm"
 		include "Constants.asm"
 		include "RAM Addresses.asm"
+		include "sound/Sound Equates.asm"
 		
 
 
@@ -246,7 +247,7 @@ SetupVDP_end:
 
 Z80_Startup:
 		cpu	z80
-		obj 	0
+		obj 0
 
 	; fill the Z80 RAM with 00's (with the exception of this program)
 		xor	a					; a = 00h
@@ -8509,38 +8510,38 @@ off_643E:	dc.l MapSpec_Rise1	; 0
 		dc.l MapSpec_Rise15	; 14
 		dc.l MapSpec_Rise16	; 15
 		dc.l MapSpec_Rise17	; 16
-		dc.l MapSpec_D028C	; 17
-		dc.l MapSpec_D090A	; 18
-		dc.l MapSpec_D0EA6	; 19
-		dc.l MapSpec_D1400	; 20
-		dc.l MapSpec_D19FC	; 21
-		dc.l MapSpec_D1EAC	; 22
-		dc.l MapSpec_D23AE	; 23
-		dc.l MapSpec_D27C6	; 24
-		dc.l MapSpec_D2C14	; 25
-		dc.l MapSpec_D3092	; 26
-		dc.l MapSpec_D3522	; 27
-		dc.l MapSpec_D39EC	; 28
-		dc.l MapSpec_D3F78	; 29
-		dc.l MapSpec_D4660	; 30
-		dc.l MapSpec_D4DA6	; 31
-		dc.l MapSpec_D53FC	; 32
-		dc.l MapSpec_D5958	; 33
-		dc.l MapSpec_D5F02	; 34
-		dc.l MapSpec_D6596	; 35
-		dc.l MapSpec_D6BAA	; 36
-		dc.l MapSpec_D702E	; 37
-		dc.l MapSpec_D749C	; 38
-		dc.l MapSpec_D7912	; 39
-		dc.l MapSpec_D7DAA	; 40
-		dc.l MapSpec_D8250	; 41
-		dc.l MapSpec_D85F8	; 42
-		dc.l MapSpec_D89EC	; 43
-		dc.l MapSpec_D8E24	; 44
-		dc.l MapSpec_D92B6	; 45
-		dc.l MapSpec_D9778	; 46
-		dc.l MapSpec_D9B80	; 47
-		dc.l MapSpec_DA016	; 48
+		dc.l MapSpec_Straight1	; 17
+		dc.l MapSpec_Straight2	; 18
+		dc.l MapSpec_Straight3	; 19
+		dc.l MapSpec_Straight4	; 20
+		dc.l MapSpec_Drop1	; 21
+		dc.l MapSpec_Drop2	; 22
+		dc.l MapSpec_Drop3	; 23
+		dc.l MapSpec_Drop4	; 24
+		dc.l MapSpec_Drop5	; 25
+		dc.l MapSpec_Drop6	; 26
+		dc.l MapSpec_Drop7	; 27
+		dc.l MapSpec_Drop8	; 28
+		dc.l MapSpec_Drop9	; 29
+		dc.l MapSpec_Drop10	; 30
+		dc.l MapSpec_Drop11	; 31
+		dc.l MapSpec_Drop12	; 32
+		dc.l MapSpec_Drop13	; 33
+		dc.l MapSpec_Drop14	; 34
+		dc.l MapSpec_Drop15	; 35
+		dc.l MapSpec_Drop16	; 36
+		dc.l MapSpec_Drop17	; 37
+		dc.l MapSpec_Turning1	; 38
+		dc.l MapSpec_Turning2	; 39
+		dc.l MapSpec_Turning3	; 40
+		dc.l MapSpec_Turning4	; 41
+		dc.l MapSpec_Turning5	; 42
+		dc.l MapSpec_Turning6	; 43
+		dc.l  "mappings/	; 44
+		dc.l MapSpec_Unturn2	; 45
+		dc.l MapSpec_Unturn3	; 46
+		dc.l MapSpec_Unturn4	; 47
+		dc.l MapSpec_Unturn5	; 48
 		dc.l MapSpec_DA4CE	; 49
 		dc.l MapSpec_DAB20	; 50
 		dc.l MapSpec_DB086	; 51
@@ -8668,9 +8669,9 @@ loc_6C0A:
 		move.b	($FFFFDB0F).w,($FFFFDB11).w
 		moveq	#0,d1
 		movea.l	($FFFFDB00).w,a0
-		cmpa.l	#MapSpec_D090A,a0
+		cmpa.l	#MapSpec_Straight2,a0
 		blt.s	loc_6C4A
-		cmpa.l	#MapSpec_D0EA6,a0
+		cmpa.l	#MapSpec_Straight3,a0
 		bge.s	loc_6C4A
 		movea.l	($FFFFDB8E).w,a5
 		move.b	($FFFFDB0A).w,d1
@@ -8702,9 +8703,9 @@ loc_6C4A:
 
 loc_6C6A:				
 					
-		cmpa.l	#MapSpec_D3092,a0
+		cmpa.l	#MapSpec_Drop6,a0
 		blt.s	locret_6C9A
-		cmpa.l	#MapSpec_D3522,a0
+		cmpa.l	#MapSpec_Drop7,a0
 		bge.s	locret_6C9A
 		movea.l	($FFFFDB8E).w,a5
 		move.b	($FFFFDB0A).w,d1
@@ -8788,7 +8789,7 @@ loc_6D10:
 		move.l	(a0),(a1)
 		move.l	(a0)+,(a1)
 		dbf	d0,loc_6D10
-		lea	(MiscKoz_E24FE).l,a0
+		lea	(Kos_SpecialPerspective).l,a0
 		lea	($FFFF6A60).l,a1
 		bsr.w	KozDec_193A
 		lea	(MiscNem_E34EE).l,a0
@@ -8843,7 +8844,7 @@ sub_6D52:
 
 
 sub_6DD4:				
-		lea	(Nem_DEEAE).l,a0
+		lea	(Nem_SpecialSonicAndTails).l,a0
 		lea	($FF0000).l,a4
 		bra.w	NemDec_14F0
 ; End of function sub_6DD4
@@ -73531,9 +73532,9 @@ loc_35578:
 		movea.l	($FFFFDB28).w,a1
 
 loc_35582:
-		cmpa.l	#MapSpec_D1400,a1
+		cmpa.l	#MapSpec_Straight4,a1
 		blt.s	locret_355DE
-		cmpa.l	#MapSpec_D19FC,a1
+		cmpa.l	#MapSpec_Drop1,a1
 		bge.s	locret_355DE
 		moveq	#6,d0
 		bsr.s	loc_35534
@@ -94759,7 +94760,7 @@ BM128_MCZ:		incbin	"mappings/128x128/MCZ.bin"
 BM16_CNZ:		incbin	"mappings/16x16/CNZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CNZ main level	patterns (Kosinski compression)
-Kos_CNZ:		incbin	"mappings/128x128/CNZ.bin"
+Kos_CNZ:		incbin	"art/kosinski/CNZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CNZ 128x128 block mappings (Kosinski compression)
 BM128_CNZ:		incbin	"mappings/128x128/CNZ.bin"
@@ -94804,7 +94805,7 @@ BM128_WFZ:		incbin	"mappings/128x128/WFZ_SCZ.bin"
 MapSpec_Rise1:		incbin	"mappings/special stage/Slope Up 1.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 2
-MapSpec_Rise2:		incbin	"mappings/special stage/Slope Up 2.bin""
+MapSpec_Rise2:		incbin	"mappings/special stage/Slope Up 2.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 3
 MapSpec_Rise3:		incbin	"mappings/special stage/Slope Up 3.bin"
@@ -94855,190 +94856,147 @@ MapSpec_Rise17:		incbin	"mappings/special stage/Slope Up 17.bin"
 ;-----------------------------------------------------------------------------------
 ;Special stage tube mappings - Straight path
 ;Frame 1
-MapSpec_D028C:		incbin	mappings/special stage/0X0D02~1.BIN
+MapSpec_Straight1:		incbin	"mappings/special stage/Straight Path 1.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 2
-MapSpec_D090A:		incbin	mappings/special stage/0X0D09~1.BIN
+MapSpec_Straight2:		incbin	"mappings/special stage/Straight Path 2.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 3
-MapSpec_D0EA6:		incbin	mappings/special stage/0X0D0E~1.BIN
+MapSpec_Straight3:		incbin	"mappings/special stage/Straight Path 3.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 4
-MapSpec_D1400:		incbin	mappings/special stage/0X0D14~1.BIN
+MapSpec_Straight4:		incbin	"mappings/special stage/Straight Path 4.bin"
 ;-----------------------------------------------------------------------------------
 
 
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;End curve right, slope	down, begin curve right
+;Special stage tube mappings - Exit curve & slope down
 ;Frame 1
-MapSpec_D19FC:		incbin	mappings/special stage/0X0D19~1.BIN
+MapSpec_Drop1:		incbin	"mappings/special stage/Slope Down 1.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 2
-MapSpec_D1EAC:		incbin	mappings/special stage/0X0D1E~1.BIN
+MapSpec_Drop2:		incbin	"mappings/special stage/Slope Down 2.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 3
-MapSpec_D23AE:		incbin	mappings/special stage/0X0D23~1.BIN
+MapSpec_Drop3:		incbin	"mappings/special stage/Slope Down 3.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 4
-MapSpec_D27C6:		incbin	mappings/special stage/0X0D27~1.BIN
+MapSpec_Drop4:		incbin	"mappings/special stage/Slope Down 4.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 5
-MapSpec_D2C14:		incbin	mappings/special stage/0X0D2C~1.BIN
+MapSpec_Drop5:		incbin	"mappings/special stage/Slope Down 5.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 6
-MapSpec_D3092:		incbin	mappings/special stage/0X0D30~1.BIN
+MapSpec_Drop6:		incbin	"mappings/special stage/Slope Down 6.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 7
-MapSpec_D3522:		incbin	mappings/special stage/0X0D35~1.BIN
+MapSpec_Drop7:		incbin	"mappings/special stage/Slope Down 7.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 8
-MapSpec_D39EC:		incbin	mappings/special stage/0X0D39~1.BIN
+MapSpec_Drop8:		incbin	"mappings/special stage/Slope Down 8.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 9
-MapSpec_D3F78:		incbin	mappings/special stage/0X0D3F~1.BIN
+MapSpec_Drop9:		incbin	"mappings/special stage/Slope Down 9.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 10
-MapSpec_D4660:		incbin	mappings/special stage/0X0D46~1.BIN
+MapSpec_Drop10:		incbin	"mappings/special stage/Slope Down 10.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 11
-MapSpec_D4DA6:		incbin	mappings/special stage/0X0D4D~1.BIN
+MapSpec_Drop11:		incbin	"mappings/special stage/Slope Down 11.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 12
-MapSpec_D53FC:		incbin	mappings/special stage/0X0D53~1.BIN
+MapSpec_Drop12:		incbin	"mappings/special stage/Slope Down 12.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 13
-MapSpec_D5958:		incbin	mappings/special stage/0X0D59~1.BIN
+MapSpec_Drop13:		incbin	"mappings/special stage/Slope Down 13.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 14
-MapSpec_D5F02:		incbin	mappings/special stage/0X0D5F~1.BIN
+MapSpec_Drop14:		incbin	"mappings/special stage/Slope Down 14.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 15
-MapSpec_D6596:		incbin	mappings/special stage/0X0D65~1.BIN
+MapSpec_Drop15:		incbin	"mappings/special stage/Slope Down 15.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 16
-MapSpec_D6BAA:		incbin	mappings/special stage/0X0D6B~1.BIN
+MapSpec_Drop16:		incbin	"mappings/special stage/Slope Down 16.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 17
-MapSpec_D702E:		incbin	mappings/special stage/0X0D70~1.BIN
+MapSpec_Drop17:		incbin	"mappings/special stage/Slope Down 17.bin"
 ;-----------------------------------------------------------------------------------
 
 
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Curve right
+;Special stage tube mappings - Curve
 ;Frame 1
-MapSpec_D749C:		incbin	mappings/special stage/0X0D74~1.BIN
+MapSpec_Turning1:		incbin	"mappings/special stage/Curve 1.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Curve right
 ;Frame 2
-MapSpec_D7912:		incbin	mappings/special stage/0X0D79~1.BIN
+MapSpec_Turning2:		incbin	"mappings/special stage/Curve 2.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Curve right
 ;Frame 3
-MapSpec_D7DAA:		incbin	mappings/special stage/0X0D7D~1.BIN
+MapSpec_Turning3:		incbin	"mappings/special stage/Curve 3.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Curve right
 ;Frame 4
-MapSpec_D8250:		incbin	mappings/special stage/0X0D82~1.BIN
+MapSpec_Turning4:		incbin	"mappings/special stage/Curve 4.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Curve right
 ;Frame 5
-MapSpec_D85F8:		incbin	mappings/special stage/0X0D85~1.BIN
+MapSpec_Turning5:		incbin	"mappings/special stage/Curve 5.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Curve right
 ;Frame 6
-MapSpec_D89EC:		incbin	mappings/special stage/0X0D89~1.BIN
+MapSpec_Turning6:		incbin	"mappings/special stage/Curve 6.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Curve right
-;Frame 7
-MapSpec_D8E24:		incbin	mappings/special stage/0X0D8E~1.BIN
+
+
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Curve right
-;Frame 8
-MapSpec_D92B6:		incbin	mappings/special stage/0X0D92~1.BIN
-;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Curve right
-;Frame 9
-MapSpec_D9778:		incbin	mappings/special stage/0X0D97~1.BIN
-;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Curve right
-;Frame 10
-MapSpec_D9B80:		incbin	mappings/special stage/0X0D9B~1.BIN
-;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Curve right
-;Frame 11
-MapSpec_DA016:		incbin	mappings/special stage/0X0DA0~1.BIN
-;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Begin curve right
+;Special stage tube mappings - Exit curve
 ;Frame 1
-MapSpec_DA4CE:		incbin	mappings/special stage/0X0DA4~1.BIN
+MapSpec_Unturn1:		incbin "mappings/special stage/Exit Curve 1.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Begin curve right
 ;Frame 2
-MapSpec_DAB20:		incbin	mappings/special stage/0X0DAB~1.BIN
+MapSpec_Unturn2:		incbin "mappings/special stage/Exit Curve 2.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Begin curve right
 ;Frame 3
-MapSpec_DB086:		incbin	mappings/special stage/0X0DB0~1.BIN
+MapSpec_Unturn3:		incbin "mappings/special stage/Exit Curve 3.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Begin curve right
 ;Frame 4
-MapSpec_DB5AE:		incbin	mappings/special stage/0X0DB5~1.BIN
+MapSpec_Unturn4:		incbin "mappings/special stage/Exit Curve 4.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Begin curve right
 ;Frame 5
-MapSpec_DBB62:		incbin	mappings/special stage/0X0DBB~1.BIN
+MapSpec_Unturn5:		incbin "mappings/special stage/Exit Curve 5.bin"
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Begin curve right
+
+
+;-----------------------------------------------------------------------------------
+; Special stage tube mappings - Begin curve right
+;Frame 1
+MapSpec_DA4CE:		incbin "mappings/special stage/0X0DA4~1.BIN
+;-----------------------------------------------------------------------------------
+;Frame 2
+MapSpec_DAB20:		incbin "mappings/special stage/0X0DAB~1.BIN
+;-----------------------------------------------------------------------------------
+;Frame 3
+MapSpec_DB086:		incbin "mappings/special stage/0X0DB0~1.BIN
+;-----------------------------------------------------------------------------------
+;Frame 4
+MapSpec_DB5AE:		incbin "mappings/special stage/0X0DB5~1.BIN
+;-----------------------------------------------------------------------------------
+;Frame 5
+MapSpec_DBB62:		incbin "mappings/special stage/0X0DBB~1.BIN
+;-----------------------------------------------------------------------------------
 ;Frame 6
-MapSpec_DC154:		incbin	mappings/special stage/0X0DC1~1.BIN
+MapSpec_DC154:		incbin "mappings/special stage/0X0DC1~1.BIN
 ;-----------------------------------------------------------------------------------
-;Special stage tube mappings
-;
-;Begin curve right
 ;Frame 7
-MapSpec_DC5E8:		incbin	mappings/special stage/0X0DC5~1.BIN
+MapSpec_DC5E8:		incbin "mappings/special stage/0X0DC5~1.BIN
 ; --------------------------------------------------------------------------------------
+
+
+
 ; Kosinski compressed art
 ;
 ; Special stage	level patterns
-; Note:	Only one line of each tile is stored in	this archive. The other	7 lines	are
+;  Note:	Only one line of each tile is stored in	this archive. The other	7 lines	are
 ;	the same at this one line, so to get the full tiles, each line needs to	be
-;	duplicated 7 times over.
+;	duplicated 7 times over. A clever optimization documented in Coding Secrets.
 ; --------------------------------------------------------------------------------------
 Koz_DCA38:		incbin	"art/kosinski/0X0DCA~1.BIN
 ; --------------------------------------------------------------------------------------
@@ -95144,13 +95102,15 @@ Nem_DE8AC:		incbin	"art/nemesis/0X0DE8~1.BIN
 ; Unknown. Text	in special stage.
 ; --------------------------------------------------------------------------------------
 Nem_DEAF4:		incbin	"art/nemesis/0X0DEA~1.BIN
+		even
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 851 blocks
-; Sonic	and Tails animation frames from	special	stage
+; Nemesis compressed art - 851 blocks
+; Sonic	and Tails animation frames from	special	stage ; Nem_DEEAE
+; [FixBugs] In this file, Tails' arms are tan instead of orange.
+; Art for Obj09 and Obj10 and Obj88
 ; --------------------------------------------------------------------------------------
-Nem_DEEAE:		incbin	"art/nemesis/0X0DEE~1.BIN
+Nem_SpecialSonicAndTails:		incbin	"art/nemesis/0X0DEE~1.BIN
+		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art
 ;
@@ -95159,9 +95119,10 @@ Nem_DEEAE:		incbin	"art/nemesis/0X0DEE~1.BIN
 ; --------------------------------------------------------------------------------------
 Nem_E247E:		incbin	"art/nemesis/0X0E24~1.BIN
 ; --------------------------------------------------------------------------------------
-; Special stage	object perspective data	(Kosinski compression)
+; Special stage	object perspective data	(Kosinski compression) ; MiscKoz_E24FE
 ; --------------------------------------------------------------------------------------
-MiscKoz_E24FE:		incbin	misc/0X0E24~1.BIN
+Kos_SpecialPerspective:		incbin	misc/0X0E24~1.BIN
+		even
 ; --------------------------------------------------------------------------------------
 ; Special stage	level layout (Nemesis compression)
 ; --------------------------------------------------------------------------------------

@@ -136,7 +136,7 @@ rev02even:	 macro
     endm
 
 ; ---------------------------------------------------------------------------
-; Depending on if removeJmpTos is set or not, these macros will create a jump directly
+; Depending on if RemoveJmpTos is set or not, these macros will create a jump directly
 ; to the destination, or create a branch to a JmpTo
 ; ---------------------------------------------------------------------------
 jsrto:		 macro directaddr,indirectaddr
@@ -157,7 +157,8 @@ jmpto:		 macro directaddr,indirectaddr
 
 
 ; ---------------------------------------------------------------------------
-; Align and pad RAM sections so that they are divisible by a longword.
+; Align and pad RAM sections so that they are divisible by a longword,
+; and organize ram into blocks for clear_ram macro
 ; ---------------------------------------------------------------------------
 
 rsalign:	macro
@@ -166,8 +167,7 @@ rsalign:	macro
 
 rsblock:	macro
 		rsalign 2					; align to even address
-		\1: equ __rs
-		
+		\1\: equ __rs
 		endm
 
 rsblockend:	macro ; Adapted to Sonic 2's macro-based RAM clearing
@@ -203,31 +203,31 @@ rsobjend:	macro
 ; ---------------------------------------------------------------------------		
 		
 clear_ram:		 macro startaddr,endaddr
-		if startaddr>endaddr
+	if startaddr>endaddr
 		inform 3,"Starting address of clearRAM $%h is after ending address $%h.",startaddr,endaddr
-    	elseif startaddr=endaddr
+    elseif startaddr=endaddr
 		inform 1,"clearRAM is clearing zero bytes. Turning this into a nop instead."
 		mexit
-    	endc
-    	if ((startaddr)&$8000)=0
+    endc
+    if ((startaddr)&$8000)=0
 		lea	(startaddr).l,a1
-    	else
+    else
 		lea	(startaddr).w,a1
-   		endc
+   	endc
 		moveq	#0,d0
-    	if ((startaddr)&1)
+    if ((startaddr)&1)
 		move.b	d0,(a1)+
-    	endc
-		move.w	#bytesToLcnt((endaddr-startaddr)-((startaddr)&1)),d1
-	.loop:	
+    endc
+		move.w	(endaddr-startaddr)/4)-1,d1
+	.loop\@:	
 		move.l	d0,(a1)+
-		dbf	d1,.loop
-    	if (((endaddr-startaddr)-((startaddr)&1))&2)
+		dbf	d1,.loop\@
+    if (((endaddr-startaddr)-((startaddr)&1))&2)
 		move.w	d0,(a1)+
-    	endc
-    	if (((endaddr-startaddr)-((startaddr)&1))&1)
+    endc
+    if (((endaddr-startaddr)-((startaddr)&1))&1)
 		move.b	d0,(a1)+
-    	endc
+    endc
     	endm		
 
 ; ---------------------------------------------------------------------------

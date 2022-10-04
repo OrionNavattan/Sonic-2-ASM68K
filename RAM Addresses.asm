@@ -6,9 +6,9 @@
 		opt	ae+	; enable auto evens
 
 ; Major data blocks:
-RAM_Start:
-v_128x128_tiles:		equ   $FF0000 ; 128x128 tile mappings ($8000 bytes)
-				rsset $FFFF0000+sizeof_128x128_all 
+						rsset $FFFF0000
+RAM_Start:				equ __rs
+v_128x128_tiles:		rs.b $8000 ;equ   $FFFF0000 ; 128x128 tile mappings ($8000 bytes)
 v_level_layout:         rs.b sizeof_level ; $FFFF8000 ; level and background layouts ($1000 bytes)
 v_16x16_tiles:          rs.w sizeof_16x16_all ; $FFFF9000 ; 16x16 tile mappings ($C00 bytes)
 v_bgscroll_buffer:      rs.b $200 ; $FFFFA800 ; used by some layer deformation routines
@@ -38,9 +38,9 @@ v_ost_all:          rs.b sizeof_ost*countof_ost    ; $FFFFB000 ; object variable
 
     v_ost_cpzpylon:			equ v_ost_all+(sizeof_ost*$D) ; $FFFFB340 ; Pylon in the foreground in CPZ
     v_ost_watersurface1:			; First water surface
-    v_ost_oil:						equ v_ost_all+(sizeof_ost*$E) ; $FFFFB380 ; Oil at the bottom of OOZ
-    v_ost_watersurface2:			equ v_ost_all+(sizeof_ost*$F) ; $FFFFB3C0 ; Second water surface
-    v_ost_reserved_end:
+    v_ost_oil:				equ v_ost_all+(sizeof_ost*$E) ; $FFFFB380 ; Oil at the bottom of OOZ
+    v_ost_watersurface2:	equ v_ost_all+(sizeof_ost*$F) ; $FFFFB3C0 ; Second water surface
+    v_ost_reserved_end:		;equ v_ost_dynamic	
 
     v_ost_dynamic:         equ v_ost_all+(sizeof_ost*$10)  ;  $FFFFFB400
     v_ost_dynamic_end:     equ v_ost_all+(sizeof_ost*countof_ost)
@@ -52,7 +52,7 @@ v_ost_all:          rs.b sizeof_ost*countof_ost    ; $FFFFB000 ; object variable
                 rsblock ost_level_only
                 rsblock ss_shared_ram
 
-v_ost_level_only:          rs.b sizeof_ost*countof_ost_level_only ; $FFFFD000           
+v_ost_level_only:          rs.b sizeof_ost*countof_ost_level_only ; $FFFFD000       
 
     v_ost_lo_tails_tails:      equ v_ost_level_only ; $FFFFD040
     v_ost_lo_supersonicstars:  equ v_ost_level_only+sizeof_ost
@@ -63,15 +63,14 @@ v_ost_level_only:          rs.b sizeof_ost*countof_ost_level_only ; $FFFFD000
     v_ost_lo_sonic_shield:  equ v_ost_level_only+(sizeof_ost*6) ; $FFFFD180
     v_ost_lo_tails_shield:  equ v_ost_level_only+(sizeof_ost*7) ; $FFFFD1C0
     v_ost_lo_sonic_invincibilitystars: equ v_ost_level_only+(sizeof_ost*$B) ; $FFFFD200
-    v_ost_lo_tails_invincibilitystars: equ v_ost_level_only+(sizeof_ost*F) ; $FFFFD300
+    v_ost_lo_tails_invincibilitystars: equ v_ost_level_only+(sizeof_ost*$C) ; $FFFFD300
     v_ost_level_only_end:   equ v_ost_level_only+(sizeof_ost*countof_ost_level_only) ; $FFFFD400
                 rsblockend ost_level_only
 
-unused_D400:			rs.b	$200	; unused
+unused_D400:			rs.b $200	; unused
 
 v_primary_collision:    rs.b $300 ; $FFFFD600
 v_secondary_collision:  rs.b $300 ; $FFFFD900
-
 
 				rsblockend ss_shared_ram
 
@@ -92,18 +91,18 @@ v_sonic_stat_tracker:   rs.b    $100 ; $FFFFE400
 
 
 v_sonic_pos_tracker:    rs.b    $100 ; $FFFFE500
-v_sonic_pos_tracker_end:			 ; required for teleport swap table
+v_sonic_pos_tracker_end:	equ __rs ; required for teleport swap table
 
 v_tails_pos_tracker:    rs.b    $100 ; $FFFFE600
-v_tails_pos_tracker_end:			 ; required for teleport swap table
+v_tails_pos_tracker_end:	equ __rs ; required for teleport swap table
 
 v_cnz_saucer_data:      rs.b    $40 ; $FFFFE700 the number of CNZ saucer bumpers in a group which have been destroyed; used to determine when to give 500 points instead of 10
-v_cnz_saucer_data_end:				; required for clear_ram
+v_cnz_saucer_data_end:		equ __rs ; required for clear_ram
     
 unused_E740:            rs.b    $C0 ; $FFFFE740-$FFFFE7FF ; unused
 
 v_ring_positions:       rs.b    $600 ; $FFFFE800
-v_ring_positions_end:        		 ; required for clear_ram    
+v_ring_positions_end:   equ __rs    		 ; required for clear_ram    
 
 
 				rsblock camera_ram
@@ -178,7 +177,7 @@ v_vblank_camera_pos_bg3:			rs.l 2	; $FFFFEE78
 				rsblockend vblank_camera_copies
 
 v_vblank_camera_pos_p2:				rs.l 8	; $FFFFEE80
-v_vblank_camera_pos_p2_end:					; required for teleport swap table
+v_vblank_camera_pos_p2_end:			equ __rs ; required for teleport swap table
 
 				rsblock	vblank_scroll_redraw_flags ; required for teleport swap table
 v_vblank_fg_redraw_direction: 		rs.w 1	; $FFFFEEA0 
@@ -236,10 +235,10 @@ v_tails_pos_tracker_num:		rs.w 1	; $FFFFEED6 ; current location within Tails' po
 				rsblockend horiz_scroll_delay_p2
 
 v_camera_y_shift:				rs.w 1	; $FFFFEED8 ; camera y position shift when Sonic looks up/down - $60 = default; $C8 = look up; 8 = look down
-v_camera_y_shift_end:					; required for teleport swap table (Camera_Y_pos_bias)
+v_camera_y_shift_end:			equ _rs		; required for teleport swap table (Camera_Y_pos_bias)
 
 v_camera_y_shift_p2:			rs.w 1	; $FFFFEEDA ; same as above, but for Tails in 2P
-v_camera_y_shift_p2_end:				; required for teleport swap table (Camera_Y_pos_bias_P2)
+v_camera_y_shift_p2_end:		equ __rs	; required for teleport swap table (Camera_Y_pos_bias_P2)
 
 f_disable_scrolling:			rs.b 1	; $FFFFEEDC ; flag to disable all background deformation
 
@@ -271,7 +270,7 @@ v_boundary_bottom_next_p2:		rs.w 1	; $FFFFEEFE
 
 v_block_cache:					rs.w 512/16*2 ; $FFFFEF00 ; equ 64 ; width of plane in blocks, with each block getting two worrs.
 v_ring_consumption_table:		rs.b $80	; $FFFFEF80 ; contains RAM addresses of rings currently being consumed
-v_ring_consumption_table_end:
+v_ring_consumption_table_end:	equ __rs
 
 v_pal_water_next:				rs.w sizeof_pal_all/2	; $FFFFF000 ; These four are addresses are used by the screen-fading subroutines.
 v_pal_water_next_line1:			equ v_pal_water_next
@@ -298,6 +297,7 @@ v_joypad2_press_actual:		equ __rs-1	; $FFFFF607 ; joypad 2 input - pressed, actu
 
 unused_F608:		rs.l 1	; $FFFFF608-$FFFFF60B ; seems unused
 
+;v_ss_shared_ram_end:
 v_vdp_mode_buffer:			rs.w 1	; $FFFFF60C ; VDP register $81 buffer - contains $8134 which is sent to vdp_control_port
 unused_F60E:				rs.b 6	; $FFFFF60E-$FFFFF613 ; seems unused
 
@@ -329,6 +329,7 @@ v_random:					rs.l 1 ; $FFFFF636 ; pseudo random number generator result
 f_pause:					rs.w 1 ; $FFFFF63A ; flag set to pause the game	
 unused_F63C:				rs.b 4 ; $FFFFF63C-$FFFFF63F ; seems unused
 v_vdp_dma_buffer:			rs.w 1 ; $FFFFF640 ; VDP DMA command buffer. Data will NOT be preserved across V-INTs, so consider this space reserved.
+v_ss_shared_ram_end			equ  v_vdp_dma_buffer
 unused_F642:				rs.w 1 ; $FFFFF642-$FFFFF643 ; seems unused
 f_hblank:					rs.w 1 ; $FFFFF644 ; flag to run HBlank routine
 v_water_height_actual:		rs.w 1 ; $FFFFF646 ; water height, actual
@@ -375,7 +376,7 @@ unused_F676:				rs.b $A	; $FFFFF676-$FFFFF67F ; seems unused
 
 					rsblock plc_buffer_and_regs
 v_plc_buffer:				rs.b $60 ; $FFFFF680 ; pattern load cues buffer, maximum $10 PLCs, 6 bytes each, $60 bytes total
-v_plc_buffer_end:				   ; required for clear_ram				
+v_plc_buffer_end:			equ __rs	   ; required for clear_ram				
 				; variables used to store nemesis decompression state, allowing decompression to occur over multiple frames
 v_nem_mode_ptr:				rs.l 1 ; $FFFFF6E0 ; pointer for nemesis decompression code ($1502 or $150C)
 v_nem_repeat:				rs.l 1 ; $FFFFF6E4 ; Nemesis register buffer - d0: repeat counter	
@@ -444,13 +445,14 @@ v_tornado_y_vel:			rs.w 1 ; $FFFFF738 ; y_vel of the Tornado in SCZ
 
 				rsblock boss_variables
 v_boss_spawn_delay:			rs.b 1 ; $FFFFF73A ; timer for delay until boss spawns
-unused_F73B:				rs.b 4	; $FFFFF73B-$FFFFF73E; unused
+unused_F73B:				rs.b 4 ; $FFFFF73B-$FFFFF73E; unused
 v_boss_collision_routine:	rs.b 1 ; $FFFFF73F
-v_boss_animation_array:		rs.b $10	; $FFFFF740 ; up to $10 bytes; 2 bytes per entry
+v_boss_animation_array:		rs.b $10 ; $FFFFF740 ; up to $10 bytes; 2 bytes per entry
 v_ending_routine:			rs.l 1 ; $FFFFF750 ; which version of the ending cutscene to play
-v_boss_x_pos:				equ 	v_ending_routine ; x_pos of current boss							rs.w 1 ; $FFFFF752 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
+v_boss_x_pos:				equ v_ending_routine ; x_pos of current boss							
+								   ; $FFFFF752 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
 v_boss_y_pos:				rs.l 1 ; $FFFFF754 ; y_pos of current boss
-;							rs.w 1 ; $FFFFF756 ; same here
+								   ; $FFFFF756 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
 v_boss_x_vel:				rs.w 1 ; $FFFFF758 ; x_vel of current boss
 v_boss_y_vel:				rs.w 1 ; $FFFFF75A ; y_vel of current boss
 v_boss_timer:				rs.w 1 ; $FFFFF75C ; general timer used by boss objects
@@ -491,10 +493,10 @@ v_opl_loaded_object_blocks_p1:	rs.b 3 ; $FFFFF786
 v_opl_loaded_object_blocks_p2:	rs.b 3 ; $FFFFF789
 
 v_opl_screen_x_pos_p2:		rs.w 1 ; $FFFFF78C
-v_opl_screen_x_pos_p2_end:		   ; required for teleport swap table
+v_opl_screen_x_pos_p2_end:	equ __rs	   ; required for teleport swap table
 
 v_respawn_list_p2:			rs.b 2 ; $FFFFF78E ; respawn table indices of the next objects when moving left or right for the second player
-v_respawn_list_p2_end:		; required for teleport swap table
+v_respawn_list_p2_end:		equ __rs ; required for teleport swap table
 				rsblockend object_manager_2p
 
 v_demo_input_counter:		rs.w 1 ; $FFFFF790 ; tracks progress in the demo input data for player 1, increases by 2 when input changes
@@ -530,10 +532,10 @@ f_pass_bonus_update:		rs.b 1 ; $FFFFF7D6 ; flag set to update bonuses at the end
 unused_F7D7:				rs.b 3 ; $FFFFF7D7-$FFFFF7D9 ; seems unused
 
 v_camera_x_pos_coarse:		rs.w 1 ; $FFFFF7DA ; (v_camera_x_pos - 128) / 256 ; used by MarkObjGone
-v_camera_x_pos_coarse_end:		   ; required for teleport swap table
+v_camera_x_pos_coarse_end:	equ __rs	   ; required for teleport swap table
 
 v_camera_x_pos_coarse_p2:		rs.w 1 ; $FFFFF7DC
-v_camera_x_pos_coarse_p2_end:		   ; required for teleport swap table
+v_camera_x_pos_coarse_p2_end:	equ __rs	   ; required for teleport swap table
 
 v_tails_last_frame_id:			rs.b 1 ; $FFFFF7DE ; Tails' previous frame id; compared with current frame to determine if graphics need updating. can be set to a dummy value like -1 to force a refresh DMA.
 v_tailstails_last_frame_id:		rs.b 1 ; $FFFFF7DF ; Previous frame id of Tails' tails; compared with current frame to determine if graphics need updating. can be set to a dummy value like -1 to force a refresh DMA.
@@ -542,7 +544,7 @@ v_anim_counters:				rs.b $10	; $FFFFF7F0-$FFFFF7FF
 				rsblockend misc_variables
 
 v_sprite_buffer:			rs.b sizeof_vram_sprites ; $FFFFF800 ; Sprite attribute table buffer
-v_sprite_buffer_end:		; required by clear_ram
+v_sprite_buffer_end:		equ __rs ; required by clear_ram
 
 unused_FA80:				rs.b $80	; unused, but SAT buffer can spill over into this area when there are too many sprites on-screen
 
@@ -570,10 +572,10 @@ v_respawn_data_end:			; required by clear_ram
 
 v_stack:					rs.b $140 ; $FFFFFCC0 ; system stack; the first $BE bytes are cleared by ObjectsManager_Init due to a bug, with possibly disastrous consequences. At least $A0 bytes are needed.
 
-v_stack_pointer:			rs.w 1  ; $FFFFFE00 ; initial stack pointer - items are added to the stack backwards from this address
-v_keep_after_reset:         equ v_stack_pointer ; $FFFFFE00 ; everything after this address is kept in RAM after a soft reset
+v_stack_pointer:					 ; $FFFFFE00 ; initial stack pointer - items are added to the stack backwards from this address
+v_keep_after_reset:         equ __rs ; $FFFFFE00 ; everything after this address is kept in RAM after a soft reset
 
-f_ss_2p_flag:				equ v_stack_pointer ; $FFFFFE00-$FFFFFE01 ; flag indicating Special Stage 2P mode
+f_ss_2p_flag:				rs.w 1 ; $FFFFFE00-$FFFFFE01 ; flag indicating Special Stage 2P mode
 f_restart:					rs.w 1 ; $FFFFFE02 ; flag set to end/restart level(2 bytes)
 v_frame_counter:			rs.w 1 ; $FFFFFE04 ; frame counter, increments every frame
 v_debug_item_index:			rs.b 1 ; $FFFFFE06 ; debug item currently selected (NOT the object id of the item)
@@ -587,7 +589,7 @@ v_vblank_counter:			rs.l 1 ; $FFFFFE0C ; vertical interrupt counter, increments 
 
 v_zone:						rs.w 1 ; $FFFFFE10 ; high byte is current zone number, low byte is current act number ; read as a byte if we only want the zone
 v_act:						equ __rs-1 ; $FFFFFE11 ; read if we only want the act number
-v_lives:					rs.b	1 ; $FFFFFE12 ; number of lives
+v_lives:					rs.b 1 ; $FFFFFE12 ; number of lives
 
 unused_FE13:	rs.b	3 ; $FFFFFE13-$FFFFFE15 ; unused ($FE14 was used by the air counter in Sonic 1, which is now implemented in the player's object RAM)
 
@@ -730,12 +732,12 @@ v_results_screen_2p:		rs.w 1 ; $FFFFFF10 ; 0 = act, 1 = zone, 2 = game, 3 = SS, 
 				
 unused_FF12:				rs.b $E	; $FFFFFF12-$FFFFFF1F ; seems unused	
 
-				rsblock 2p_results_data	; $18 (24) bytes, 6 bytes for each zone
+				rsblock two_player_results_data	; $18 (24) bytes, 6 bytes for each zone
 v_ehz_results_2p:			rs.b 6 ; $FFFFFF20
 v_mcz_results_2p:			rs.b 6 ; $FFFFFF26
 v_cnz_results_2p:			rs.b 6 ; $FFFFFF2C
 v_ss_results_2p:			rs.b 6 ; $FFFFFF32
-				rsblockend 2p_results_data	
+				rsblockend two_player_results_data	
 				
 v_ss_total_won:				rs.w 1 ; $FFFFFF38 ; high byte is player 1, low byte is player 2					
 
@@ -751,11 +753,10 @@ f_slot_machine_flag:		equ v_credits_index ; flag indicating a CNZ slot machine i
 
 ; CNZ slot machine variables; $12 values
 ; v_slot_machine_routine and v_slot_machine_reward are accessed via absolute addressing, 
-; as they are used by the CNZ cage object to trigger the machines and retrieve the reward.
-; The others are only accessed via indirect displacement relative to v_slot_machine_variables.
-; I've only declared the former here, but the latter are nevertheless listed below in comments
-; for the sake of documentation and compatibility.
-
+; as they are used by the CNZ cage object to trigger the machines and retrieve the reward respectively.
+; The others are used solely by the slot machine psuedo-object, and are only accessed via 
+; indirect displacement relative to v_slot_machine_variables. I've only declared the former here, 
+; but the latter are nevertheless listed below in comments for the sake of documentation and compatibility.
 
 v_slot_machine_variables:		rs.b $12 ; $FFFFFF4E
 v_slot_machine_routine:			equ v_slot_machine_variables ; $FFFFFF4E ; current routine of the slot machine psuedoobject
@@ -790,6 +791,7 @@ v_sound_test_sound:				rs.w 1 ; $FFFFFF84 ; current sound test selection
 v_title_screen_option:			rs.b 1 ; $FFFFFF86 ; selected option on the title screen
 	
 unused_FF87:					rs.b 1 ; $FFFFFF87 ; unused
+
 v_zone_2p:						rs.w 1 ; $FFFFFF88; high byte is current zone number, low byte is current act number ; read as a byte if we only want the zone
 v_act_2p:						equ __rs-1 ; $FFFFFF89 ; read if we only want the act number
 f_two_player_mode_copy:			rs.w 1 ; $FFFFFF8A ; second flag set to indicate two player mode; read twice in Special Stage
@@ -798,21 +800,309 @@ v_options_menu_box:				rs.b 1 ; $FFFFFF8C ; currently selected box in options me
 unused_FF8D:					rs.b 1 ; $FFFFFF8D ; unused
 
 v_total_bonus_countdown:		rs.w 1 ; $FFFFFF8E
+
+v_level_music:					rs.w 1 ; $FFFFFF90
+v_bonus_count_3:				rs.w 1 ; $FFFFFF92
+
+unused_FF97:					rs.b 4 ; $FFFFFF94-$FFFFFF97 ; unused
+
+v_game_over_2p:					rs.w 1 ; $FFFFFF98
+
+unused_FF9A:					rs.b 6 ; $FFFFFF9A-$FFFFFF9F ; unused			
 		
-;v_console_region:           rs.b    1   ; $FFFFFFF8 ; Mega Drive console type - 0 = JP; $80 = US/EU; +0 = NTSC; +$40 = PAL
-;v_checksum_pass:            rs.l    1   ; $FFFFFFFC ; set to the text string "init" when checksum is passed
+v_ss_2p_ring_buffer:			rs.w 6 ; $FFFFFFA0
+
+unused_FFAC:					rs.b 4 ; $FFFFFFAC-$FFFFFFAF ; unused
+
+f_got_emerald:					rs.b 1 ; $FFFFFFB0 ; flag set on Chaos Emerald get
+v_emeralds:						rs.b 1 ; $FFFFFFB1 ; number of Chaos Emeralds held by player
+v_emerald_list:					rs.l 2 ; $FFFFFFB2 ; which individual Emeralds the player has, 1 byte per emeralrs. Technically only 7 bytes long, but an 8th is also cleared
+		
+unused_FFBA:					rs.b 6 ; $FFFFFFBA-$FFFFFFBF ; filler
+				
+v_score_next_life:				rs.l 1 ; $FFFFFFC0 ; points required for next extra life
+v_score_next_life_p2:			rs.l 1 ; $FFFFFFC4 ; same as above, but for second player in 2P mode
+	
+f_signpost_flag:				rs.w 1 ; $FFFFFFC8 ; flag set if level has a signpost, 0 otherwise (boss, SCZ, WFZ, DEZ)	
+v_signpost_prev_frame:			rs.b 1 ; $FFFFFFCA
+
+unused_FFCB:					rs.b 1 ; $FFFFFFCB ; unused
+
+v_boundary_top_next_debug:			rs.w 1 ; $FFFFFFCC
+v_boundary_bottom_next_debug:		rs.w 1 ; $FFFFFFCE
+
+f_levelselect_cheat:			rs.l 1 ; $FFFFFFD0 ; flag set when level select cheat has been entered
+f_slowmotion_cheat:				equ __rs-3 ; $FFFFFFD1 ; flag set when slow motion & frame advance cheat has been entered
+f_debug_cheat:					equ __rs-2 ; $FFFFFFD2 ; flag set when debug and night mode cheat has been entered
+f_s1_credits_cheat:				equ __rs-1 ; $FFFFFFD3 ; unused Sonic 1 leftover; used by the hidden Japanese credits in that game
+	
+v_correct_cheat_entries:		rs.w 1 ; $FFFFFFD4
+v_correct_cheat_entries_2:		rs.w 1 ; $FFFFFFD6 ; for 14 continues or 7 emeralds codes	
+
+f_two_player_mode:			rs.w 1 ; $FFFFFFD8 ; flag for two-player mode (0 for main game)
+unk_FFDA:			rs.w 1 ; $FFFFFFDA ; written to once at title screen, never read from
+
+; Following four variables seem to have been used for debugging the CNZ bumpers.
+unk_FFDC:			rs.b 1 ; $FFFFFFDC ; written to near loc_175EA, never read from
+unk_FFDD:			rs.b 1 ; $FFFFFFDD ; written to near loc_175EA, never read from
+unk_FFDE:			rs.b 1 ; $FFFFFFDE ; written to near loc_175EA, never read from
+unk_FFDF:			rs.b 1 ; $FFFFFFDF ; written to near loc_175EA, never read from
+
+v_soundqueue:		rs.b 5 ; $FFFFFFE0 ; 68k side sound queue; passed to Z80 during VBlank
+	music_0:		equ 0 ; $FFFFFFE0
+	sfx_0:			equ 1 ; $FFFFFFE1
+	sfx_1:			equ 2 ; $FFFFFFE2
+	sfx_2:			equ 3 ; $FFFFFFE3 ; unused, since nothing ever gets written to it
+	music_1:		equ 4 ; $FFFFFFE4
+
+unused_FFE5:		rs.b $B ; $FFFFFFE5-$FFFFFFEF ; seems unused
 
 
-; Show RAM usage and stop compilation if it overflows.
+f_demo_mode:			rs.w 1 ; $FFFFFFF0 ; 1 if a demo is playing
+v_demo_num:				rs.w 1 ; $FFFFFFF2 ;  which demo will play next
+v_s1_ending_demo_num:		rs.w 1 ; $FFFFFFF4 ; unused Sonic 1 leftover; zone for the ending demos
+
+unused_FFF6:				rs.w 1 ; $FFFFFFF6 ; unused
+
+v_console_region:           rs.b 1 ; $FFFFFFF8 ; Mega Drive console type - 0 = JP; $80 = US/EU; +0 = NTSC; +$40 = PAL
+v_checksum_pass:            rs.l 1 ; $FFFFFFFC ; set to the text string "init" when checksum is passed
+
+; End of RAM
+; Show RAM usage and stop assembly if it overflows.
 
 ram_used:			equ __rs
 ram_final:			equ (ram_used-1)&$FFFF
+
 		if ram_used > 0
 		inform	3,"RAM usage exceeds maximum by $%h bytes.",ram_used
 		else
 		inform	0,"0-$%h bytes of RAM used with $%h bytes to spare.",ram_final,$FFFF-ram_final
 		endc
 
-v_ss_shared_ram:           equ v_ost_level_only ; $FFFFD000	
-;	v_ss_shared_ram_end:   equ v_vdp_dma_buffer
-	sizeof_ss_shared_ram:   equ v_ss_shared_ram_end-v_ss_shared_ram
+; SEGA screen object variables:
+				rsset ost
+	
+						rs.b sizeof_ost ; $FFFFB000 ; unused 
+v_ost_sega_screen:		rs.b sizeof_ost ; $FFFFB040 ; SEGA logo
+v_ost_sega_hide_tm:		rs.b sizeof_ost ; $FFFFB080 ; object that hides TM symbol on JP consoles
+
+		if __rs > offset(ost_end)
+		inform 3, "SEGA screen objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
+		endc
+		
+
+; Title screen variables:
+				rsset ost			
+				rs.b sizeof_ost ; $FFFFB000 ; unused			
+v_title_sonic:	rs.b sizeof_ost ; $FFFFB040
+v_title_tails:	rs.b sizeof_ost ; $FFFFB080
+
+v_title_flashing_star:
+v_title_palette_changer: 	rs.b sizeof_ost ; $FFFFB0C0
+
+v_title_palette_changer_3: 	rs.b sizeof_ost ; $FFFFB100
+v_title_logo_top:			rs.b sizeof_ost ; $FFFFB140
+v_title_masking_sprite: 	rs.b sizeof_ost ; $FFFFB180
+v_title_sonic_hand:			rs.b sizeof_ost ; $FFFFB1C0
+v_title_tails_hand:			rs.b sizeof_ost ; $FFFFB200
+v_title_palette_changer_2:		rs.b sizeof_ost ; $FFFFB240
+
+				rs.b sizeof_ost*6 ; $FFFFB280-$FFFFB3FF ; unused
+
+v_title_menu:			rs.b sizeof_ost ; $FFFFB400
+v_title_falling_star:	rs.b sizeof_ost ; $FFFFB440
+
+		if __rs > offset(ost_end)
+		inform 3,"Title screen objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
+		endc
+
+
+; Special Stage variables:	
+				rsset RAM_Start ; character art, stage layout, and object location data
+v_ss_character_art:		rs.b $353*$20	; $FFFF0000 ; $353 art blocks ;  SSRAM_Nem_SpecialSonicAndTails
+v_ss_perspective_data:	rs.b $1AFC 		; $FFFF6A60 ; SSRAM_Kos_SpecialPerspective
+v_ss_level_layout:		rs.b $180 		; $FFFF855C ; SSRAM_Nem_SpecialLevelLayout:
+						rs.b $9C		; $FFFF86DC-$FFFF8777 ; unused
+v_ss_object_locations:	rs.b $1AE0 		; $FFFF8778 ; SSRAM_Koz_SpecialObjectLocations:
+
+
+				rsset	v_ost_all	; Move back to the object RAM
+				rs.b sizeof_ost ; $FFFFB000
+				rs.b sizeof_ost ; $FFFFB040
+
+v_ss_hud:				rs.b sizeof_ost ; $FFFFB080 ; HUD in the special stage
+v_ss_start_banner: 		rs.b sizeof_ost ; $FFFFB0C0
+v_ss_number_of_rings: 	rs.b sizeof_ost ; $FFFFB100
+v_ss_shadow_sonic:	rs.b sizeof_ost ; $FFFFB140
+v_ss_shadow_tails:	rs.b sizeof_ost ; $FFFFB180
+v_ss_tails_tails:	rs.b sizeof_ost ; $FFFFB1C0
+
+v_ss_dynamic_object_ram:	rs.b sizeof_ost*$18 ; $FFFFB200-$FFFFB7FF
+v_ss_results:		rs.b sizeof_ost				; $FFFFB800
+
+				rs.b sizeof_ost*$C ; $FFFFB840-$FFFFBB3F ; unused
+
+v_ss_results_2:	rs.b sizeof_ost ; $FFFFBB40
+				
+				rs.b sizeof_ost*$51 ; $FFFFBB80-$FFFFCFBF ; unused
+				
+v_ss_dynamic_object_ram_end: equ __rs ; $FFFFCFC0
+
+		if __rs > offset(ost_end)
+		inform 3,"Special stage objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
+		endc
+
+
+				rsset ss_shared_ram	; $FFFFD000
+v_ss_pnt_buffer:				rs.b $700 ; $FFFFD000
+v_ss_pnt_buffer_end:			equ __rs  ; $FFFFD700
+v_ss_hscroll_buffer_2:			rs.b $400 ; $FFFFD700
+
+v_ss_track_mappings_bitflags:		rs.l 1 ; $FFFFDB00 
+v_ss_track_mappings_uncompressed:	rs.l 1 ; $FFFFDB04 
+v_ss_track_anim:					rs.b 1 ; $FFFFDB08
+v_ss_track_last_anim_frame:			rs.b 1 ; $FFFFDB09
+v_ss_current_segment:			rs.b 1 ; $FFFFDB0A
+v_ss_track_anim_frame:			rs.b 1 ; $FFFFDB0B
+v_ss_alternate_pnt:				rs.b 1 ; $FFFFDB0C
+v_ss_track_drawing_index:		rs.b 1 ; $FFFFDB0D
+v_ss_track_orientation:			rs.b 1 ; $FFFFDB0E
+v_ss_alt_hscroll_buffer:		rs.b 1 ; $FFFFDB0F
+v_ss_track_mapping_frame:		rs.b 1 ; $FFFFDB10
+v_ss_last_alt_hscroll_buffer:	rs.b 1 ; $FFFFDB11
+v_ss_new_speed_factor:			rs.l 1 ; $FFFFDB12
+v_ss_cur_speed_factor:			rs.l 1 ; $FFFFDB16
+
+								rs.b 5 ; $FFFFDB1A-$FFFFDB1E ; unused
+
+v_ss_track_duration_timer:		rs.b 1 ; $FFFFDB1F
+
+								rs.b 1 ; $FFFFDB20 ; unused
+
+v_ss_player_anim_frame_timer:	rs.b 1 ; $FFFFDB21
+v_ss_last_segment:				rs.b 1 ; $FFFFDB22 
+f_ss_started:					rs.b 1 ; $FFFFDB23 
+	
+								rs.b 4 ; $FFFFDB24-$FFFFDB27  ; unused
+
+v_ss_track_last_mappings_copy:	rs.l 1 ; $FFFFDB28
+v_ss_track_last_mappings:		rs.l 1 ; $FFFFDB2C
+
+								rs.b 4 ; $FFFFDB30-$FFFFDB33 ; unused
+
+v_ss_track_last_vscroll:		rs.w 1 ; $FFFFDB34
+
+								rs.b 3 ; $FFFFDB36-$FFFFDB38 ; unused
+
+v_ss_track_last_mapping_frame:		rs.b 1
+v_ss_track_mappings_rle:			rs.l 1
+v_ss_draw_reg_buffer:				rs.w 6
+v_ss_draw_reg_buffer_end:			equ __rs
+
+							rs.b 2 ; unused
+
+v_ss_last_segment_2:		rs.b 1
+v_ss_unk_DB4D:				rs.b 1 ; written to once by the SS bomb object, never used again
+
+							rs.b $14 ; unused
+
+v_ss_ctrl_record_buffer: 		rs.w $F
+v_ss_last_ctrl_record:			rs.w 1
+v_ss_ctrl_record_buffer_end:	equ __rs
+
+v_ss_current_perspective:		rs.l 1
+f_ss_chk_rings:					rs.b 1
+f_ss_pause_only:				rs.b 1
+v_ss_current_obj_locations:		rs.l 1
+v_ss_ring_requirement:			rs.w 1
+v_ss_current_layout:			rs.l 1
+
+							rs.b 1 ; unused
+
+v_ss_2p_bcd_score:			rs.b 1
+					
+							rs.b 1 ; unused
+
+f_ss_no_checkpoint:			rs.b 1
+
+							rs.b 2 ; unused
+
+f_ss_checkpoint_rainbow:		rs.b 1
+v_ss_rainbow_palette:			rs.b 1
+v_ss_perfect_rings_left:		rs.w 1
+
+							rs.b 2 ; unused
+
+v_ss_star_color_1:			rs.b 1
+v_ss_star_color_2:			rs.b 1
+f_ss_no_checkpoint_msg:		rs.b 1
+
+							rs.b 1 ; unused
+
+v_ss_no_ringstogo_lifetime:		rs.w 1
+v_ss_ringstogo_bcd:				rs.w 1
+v_ss_hide_ringstogo:			rs.b 1
+v_ss_trigger_ringstogo:			rs.b 1
+								rs.b $58	; unused
+
+		if __rs > offset(ss_shared_ram_end)
+		inform 3,"Special Stage variables exceed size of Special Stage shared RAM by $%h bytes.",(__rs-offset(ss_shared_ram_end))
+		endc
+
+				rsset	v_hscroll_buffer	; Still in SS RAM
+v_ss_hscroll_buffer_1:		rs.b $400
+v_ss_hscroll_buffer_end:	equ __rs
+
+				rsset	boss_variables	; Still in SS RAM
+						rs.b 4 ; unused
+v_ss_x_offset:			rs.w 1
+v_ss_y_offset:			rs.w 1
+f_ss_swap_positions:	rs.b 1
+
+		if __rs > offset(boss_variables_end)
+		inform 3,"Additional Special Stage variables exceed size of boss variables by $%h bytes.",(__rs-offset(boss_variables_end))
+		endc
+
+
+; Continue Screen variables:
+				rsset ost
+				; These two object slots are presumably used by Sonic and Tails
+			rs.b sizeof_ost
+			rs.b sizeof_ost
+v_continue_text:	rs.b sizeof_ost ; "CONTINUE" on the Continue screen
+v_continue_icons:	rs.b sizeof_ost*$D ; The icons in the Continue screen
+		if __rs > offset(ost_end)
+		inform 3,"Continue screen objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
+		endc
+
+    
+; 2P VS results screen variables
+				rsset	ost
+v_vs_results_hud: rs.b	sizeof_ost ; Blinking text at the bottom of the screeN
+		if __rs > offset(ost_end)
+		inform 3,"2P VS results screen objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
+		endc
+
+; Menu screen variables
+;				rsset ost
+				; No objects are loaded in the menu screens
+;		if __rs > Object_RAM_End
+;		inform 3,"Menu screen objects exceed size of object RAM buffer by $%h bytes.",(__rs-offset(ost_end))
+;		endc
+
+
+; Ending sequence variables
+				rsset	ost	; Move back to the object RAM
+				; These two object slots are presumably used by Sonic and Tails
+				rs.b sizeof_ost
+				rs.b sizeof_ost
+
+v_ending_tails_tails: 	rs.b sizeof_ost	; Tails' tails on the cut scene
+v_ending_palchanger:	rs.b sizeof_ost
+v_ending_cutscene:		rs.b sizeof_ost
+
+		if __rs > offset(ost_end)
+		inform 3,"Ending sequence objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
+	    endc
+    
+		popo   

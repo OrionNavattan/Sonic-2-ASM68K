@@ -341,13 +341,56 @@ QueueToPlay:		equ z_soundqueue
 Queue0:				equ z_queue_0
 Queue1:				equ z_queue_1
 Queue2:				equ z_queue_2
-VoiceTblPtr:
-FadeInFlag:
-FadeInDelay:
-FadeInCounter:
-1upPlaying:
-TempoMod:
-TempoTurbo:
-DACEnabled:
-MusicBankNumber:
-IsPalFlag:
+VoiceTblPtr:		equ v_music_voice_table
+FadeInFlag:			equ f_fadein_flag
+FadeInDelay:		equ v_fadein_delay
+FadeInCounter:		equ v_fadein_counter
+1upPlaying:			equ f_has_backup
+TempoMod:			equ v_tempo_main
+TempoTurbo:			equ v_tempo_speed
+SpeedUpFlag:		equ f_speedup
+DACEnabled:			equ f_dac_enabled
+MusicBankNumber:	equ v_bank_number
+IsPalFlag:			equ f_pal_flag
+
+
+
+PlaybackControl:	equ ch_flags
+VoiceControl:		equ ch_type
+TempoDivider:		equ ch_tick
+DataPointerLow:		equ ch_data_ptr_low
+DataPointerHigh:	equ ch_data_ptr_high
+Transpose:			equ ch_transpose
+Volume:				equ ch_volume
+AMSFMSPan:			equ ch_ams_fms_pan
+VoiceIndex:			equ ch_voice
+VolFlutter:			equ ch_flutter
+StackPointer:		equ ch_stackptr
+DurationTimeout:	equ ch_delay
+SavedDuration:		equ ch_saved_delay
+
+SavedDAC:			equ ch_sample
+FreqLow:			equ ch_freq_low
+FreqHigh:			equ ch_freq_high
+NoteFillTimeout:	equ ch_gate
+NoteFillMaster:		equ ch_savedgate
+ModulationPtrLow:	equ ch_vibptr_low
+ModulationPtrHigh:	equ ch_vibptr_high
+ModulationWait:		equ ch_vib_delay
+ModulationSpeed:	equ ch_vib_speed
+ModulationDelta:	equ ch_vib_delta
+ModulationSteps:	equ ch_vib_steps
+ModulationValLow:	equ ch_vib_val_low
+ModulationValHigh:	equ ch_vib_val_high
+Detune:				equ ch_detune
+VolTLMask:			equ ch_vol_TL_mask
+PSGNoise:			equ ch_noisemode
+VoicePtrLow:		equ ch_voice_ptr_low
+VoicePtrHigh:		equ ch_voice_ptr_high
+TLPtrLow:			equ ch_tl_ptr_low
+TLPtrHigh:			equ ch_tl_ptr_high
+LoopCounters:		equ ch_loopcounters
+
+GoSubStack:			equ ch_gosub_stack
+
+zTrack:				equ z_track_vars				

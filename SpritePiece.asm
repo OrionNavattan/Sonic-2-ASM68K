@@ -16,7 +16,7 @@ spriteHeader:	macro ; input is offset(*)
 	current_sprite: = 1
 	endc
 	sprite_start: = \1
-	dc.b (sprite_\#current_sprite\-\1\-2)/8
+	dc.w (sprite_\#current_sprite\-\1\-2)/8
 	endm
 
 
