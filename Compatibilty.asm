@@ -2,36 +2,37 @@
 ; Compatibility with Sonic 2 AS
 ; ---------------------------------------------------------------------------
 
-id:			equ ost_id
-render_flags:		equ ost_render
-art_tile:		equ ost_tile
-mappings:		equ ost_mappings
-x_pos:			equ ost_x_pos
-x_sub:			equ ost_x_sub
-y_pos:			equ ost_y_pos
-y_sub:			equ ost_y_sub
-priority:		equ ost_priority
-width_pixels:		equ ost_displaywidth
-mapping_frame:		equ ost_frame
-x_vel:			equ ost_x_vel
-y_vel:			equ ost_y_vel
-y_radius:		equ ost_height
-x_radius:		equ ost_width
-anim_frame:		equ ost_anim_frame
-anim:			equ ost_anim
-prev_anim:		equ ost_anim_restart
-anim_frame_duration:	equ ost_anim_time
-status:			equ ost_status
-routine:		equ ost_routine
-routine_secondary:	equ ost_routine2
-angle:			equ ost_angle
-collision_flags:	equ ost_col_type
-collision_property:	equ ost_col_property
-respawn_index:		equ ost_respawn
-subtype:		equ ost_subtype
-inertia:		equ ost_inertia
-flip_angle:		equ ost_angle+1
-air_left:		equ ost_subtype
+id: 			equ	ost_id ; 0
+render_flags: 	equ	ost_render ; 1
+art_tile:		equ	ost_tile ; 2-3
+mappings:		equ	ost_mappings ; 4-7
+x_pos:			equ	ost_x_pos ; 8-9
+x_sub:			equ	ost_x_sub ; $A-B
+y_pos:			equ	ost_y_pos ; $C-D
+y_sub:			equ	ost_y_sub ; $E-F
+x_vel:			equ	ost_x_vel ; $10-11
+y_vel:			equ	ost_y_vel ; $12-13
+inertia:		equ	ost_inertia ; $14-15
+y_radius:		equ	ost_height	; $16 
+x_radius:		equ	ost_width	; $17
+priority:		equ	ost_priority ; $18
+width_pixels:	equ	ost_displaywidth ; $19
+mapping_frame:	equ	ost_frame ; $1A
+anim_frame:		equ	ost_anim_frame ; $1B
+anim:			equ	ost_anim	; $1C
+prev_anim:		equ	ost_prev_anim; $1D
+anim_frame_duration:	equ ost_anim_time ; $1E
+collision_flags:		equ ost_col_type ; $20
+collision_property:		equ ost_col_property ; $21
+status:					equ	ost_status ; $22
+respawn_index			equ ost_respawn ; $23
+routine:				equ ost_primary_routine  ; $24
+routine_secondary:		equ	ost_secondary_routine ; $25
+angle:					equ	ost_angle ; $26
+ 
+subtype:		equ ost_subtype ; $28
+flip_angle:		equ ost_flip_angle ; 27
+air_left:		equ ost_air_left ; $28
 flip_turned:		equ $29
 obj_control:		equ $2A
 status_secondary:	equ $2B
@@ -73,6 +74,7 @@ button_A_mask:		equ btnA
 button_start_mask:	equ btnStart
 object_size		equ sizeof_ost
 next_object		equ sizeof_ost
+
 Chunk_Table:		equ v_256x256_tiles
 Level_Layout:		equ v_level_layout
 Block_Table:		equ v_16x16_tiles
@@ -275,6 +277,9 @@ Demo_number:		equ v_demo_num
 Ending_demo_number:	equ v_credits_num
 Debug_mode_flag:	equ f_debug_enable
 Checksum_fourcc:	equ v_checksum_pass
+
+
+
 loc_16F16:		equ CheckOffScreen
 loc_16F3E:		equ CheckOffScreen_Wide
 loc_19DD8:		equ Plat_NoXCheck
@@ -316,6 +321,62 @@ CheckLeftWallDist:	equ Sonic_FindWallLeft_Quick_UsePos
 CheckLeftWallDist_Part2:	equ Sonic_FindWallLeft_Quick
 
 
+id: 			equ	ost_id ; 0
+render_flags: 	equ	ost_render ; 1
+art_tile:		equ	ost_tile ; 2-3
+mappings:		equ	ost_mappings ; 4-7
+x_pos:			equ	ost_x_pos ; 8-9
+x_sub:			equ	ost_x_sub ; $A-B
+y_pos:			equ	ost_y_pos ; $C-D
+y_sub:			equ	ost_y_sub ; $E-F
+x_vel:			equ	ost_x_vel ; $10-11
+y_vel:			equ	ost_y_vel ; $12-13
+inertia:		equ	ost_inertia ; $14-15
+y_radius:		equ	ost_height	; $16 
+x_radius:		equ	ost_width	; $17
+priority:		equ	ost_priority ; $18
+width_pixels:	equ	ost_displaywidth ; $19
+mapping_frame:	equ	ost_frame ; $1A
+anim_frame:		equ	ost_anim_frame ; $1B
+anim:			equ	ost_anim	; $1C
+prev_anim:		equ	ost_prev_anim; $1D
+anim_frame_duration:	equ ost_anim_time ; $1E
+collision_flags:		equ ost_col_type ; $20
+collision_property:		equ ost_col_property ; $21
+status:					equ	ost_status ; $22
+respawn_index			equ ost_respawn ; $23
+routine:				equ ost_primary_routine  ; $24
+routine_secondary:		equ	ost_secondary_routine ; $25
+angle:					equ	ost_angle ; $26
+
+next_subspr:			equ	ost_next_subsprite
+mainspr_mapframe:		equ ost_mainspr_frame
+mainspr_childsprites:	equ	ost_mainspr_childsprites
+sub2_x_pos:				equ	ost_subspr2_x_pos		
+sub2_y_pos:				equ ost_subspr2_y_pos
+mainspr_height:			equ ost_mainspr_height
+sub2_mapframe:			equ ost_subspr2_mapframe
+sub3_x_pos:				equ ost_subspr3_x_pos
+sub3_y_pos:				equ ost_subspr3_y_pos
+sub3_mapframe:			equ ost_subspr3_frame
+sub4_x_pos:				equ ost_subspr4_x_pos
+sub4_y_pos:				equ ost_subspr4_y_pos
+sub4_mapframe:			equ ost_subspr4_frame
+sub5_x_pos:				equ ost_subspr5_x_pos
+sub5_y_pos:				equ ost_subspr5_y_pos
+sub5_mapframe:			equ ost_subspr5_frame
+sub6_x_pos:				equ ost_subspr6_x_pos
+sub6_y_pos:				equ ost_subspr6_y_pos
+sub6_mapframe:			equ ost_subspr6_frame
+sub7_x_pos:				equ ost_subspr7_x_pos
+sub7_y_pos:				equ ost_subspr7_y_pos
+sub7_mapframe:			equ ost_subspr7_frame
+sub8_x_pos:				equ ost_subspr8_x_pos
+sub8_y_pos:				equ ost_subspr8_y_pos
+sub8_mapframe:			equ ost_subspr8_frame
+sub9_x_pos:				equ ost_subspr9_x_pos
+sub9_y_pos:				equ ost_subspr9_y_pos
+sub9_mapframe:			equ ost_subspr9_frame
 ; ---------------------------------------------------------------------------
 ; Sound Driver Compatibility
 ; ---------------------------------------------------------------------------

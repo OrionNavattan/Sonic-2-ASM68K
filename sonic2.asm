@@ -10037,7 +10037,7 @@ word_7822:	dc.w	 4		; 0
 
 loc_7844:				
 					
-		jmp	sub_164F4
+		jmp	DisplaySprite
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -10050,7 +10050,7 @@ sub_784A:
 
 loc_7850:				
 					
-		jmp	loc_164E6
+		jmp	DeleteObject
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -10261,7 +10261,7 @@ loc_7A7E:
 		move.w	#$C0,$A(a0) ; '='
 
 loc_7AAC:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 word_7AB2:	dc.w  $116, $12A, $102,	$13E,  $EE, $152,  $DA,	$166; 0
 					
@@ -10275,7 +10275,7 @@ loc_7AD0:
 		move.b	($FFFFFE18).w,d1
 		subq.b	#2,d1
 		bcc.s	loc_7AE6
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_7AE6:				
@@ -10330,11 +10330,11 @@ loc_7B66:
 		bchg	#0,$1A(a0)
 
 loc_7B76:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_7B7C:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite
@@ -10347,7 +10347,7 @@ Sprite_7B82:
 		move.b	$24(a0),d0
 		move.w	off_7B96(pc,d0.w),d1
 		jsr	off_7B96(pc,d1.w)
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 off_7B96:	dc.w loc_7BA2-off_7B96	; 0 
 					
@@ -10859,7 +10859,7 @@ loc_812C:
 		ori.w	#$2000,2(a0)
 
 loc_8140:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 ; --------------------------------------------------------------------------
 ; Unknown sprite mappings
@@ -15125,12 +15125,12 @@ Nem_BD26:	dc.b $80,$40,$80,  4, $A,$13,  3,$23,  4,$35,$1A,$44, $C,$55,$1B,$67; 
 
 loc_BF68:				
 					
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_BF6E:				
 					
-		jmp	loc_164E6
+		jmp	DeleteObject
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -21431,7 +21431,7 @@ Sprite_F66C:
 
 loc_F684:				
 		move.w	#$180,d0
-		bra.w	loc_16530
+		bra.w	DisplaySprite3
 ; ===========================================================================
 off_F68C:	dc.w loc_F694-off_F68C	; 0 
 					
@@ -21583,18 +21583,18 @@ loc_F7DC:
 
 loc_F7F0:				
 		movea.l	$30(a0),a1
-		bsr.w	sub_164E8
+		bsr.w	DeleteObject2
 		cmpi.b	#8,$28(a0)
 		bls.s	loc_F808
 		movea.l	$34(a0),a1
-		bsr.w	sub_164E8
+		bsr.w	DeleteObject2
 
 loc_F808:				
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 
 loc_F80C:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_F810:				
@@ -22028,7 +22028,7 @@ Sprite_FC9C:
 
 loc_FCB4:				
 		move.w	#$200,d0
-		bra.w	loc_16530
+		bra.w	DisplaySprite3
 ; ===========================================================================
 off_FCBC:	dc.w loc_FCCA-off_FCBC	; 0 
 					
@@ -22327,7 +22327,7 @@ loc_1000C:
 					
 		tst.w	($FFFFFFD8).w
 		beq.s	loc_10016
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_10016:				
@@ -22336,17 +22336,17 @@ loc_10016:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.w	loc_1002E
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_1002E:				
 		movea.l	$30(a0),a1
-		bsr.w	sub_164E8
-		bra.w	loc_164E6
+		bsr.w	DeleteObject2
+		bra.w	DeleteObject
 ; ===========================================================================
 
 loc_1003A:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_1003E:				
@@ -22688,7 +22688,7 @@ loc_103E8:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.w	loc_10404
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_10404:				
@@ -22706,11 +22706,11 @@ loc_10410:
 		lsl.w	#6,d0
 		addi.l	#-$5000,d0
 		movea.l	d0,a1
-		bsr.w	sub_164E8
+		bsr.w	DeleteObject2
 		dbf	d2,loc_10410
 
 loc_10426:				
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -22733,7 +22733,7 @@ locret_10448:
 
 loc_1044A:				
 		bsr.w	sub_1042A
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
@@ -22866,7 +22866,7 @@ loc_105B0:
 					
 		tst.w	($FFFFFFD8).w
 		beq.s	loc_105BA
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_105BA:				
@@ -22875,12 +22875,12 @@ loc_105BA:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.s	loc_105D0
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_105D0:				
 					
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 
 loc_105D4:				
@@ -23312,7 +23312,7 @@ loc_109B4:
 		tst.b	$3A(a0)
 		bne.s	loc_109C8
 		subq.b	#1,$38(a0)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_109C8:				
@@ -23343,8 +23343,8 @@ locret_109F6:
 loc_109F8:				
 		bsr.w	sub_16380
 		tst.b	1(a0)
-		bpl.w	loc_164E6
-		bra.w	sub_164F4
+		bpl.w	DeleteObject
+		bra.w	DisplaySprite
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite
@@ -23440,7 +23440,7 @@ loc_10B0E:
 		tst.b	$3A(a0)
 		bne.s	loc_10B22
 		subq.b	#1,$38(a0)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_10B22:				
@@ -23471,8 +23471,8 @@ locret_10B50:
 loc_10B52:				
 		bsr.w	sub_16380
 		tst.b	1(a0)
-		bpl.w	loc_164E6
-		bra.w	sub_164F4
+		bpl.w	DeleteObject
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_10B62:				
@@ -23518,13 +23518,13 @@ loc_10B9E:
 		move.b	(a4)+,$38(a1)
 		cmpa.l	a0,a1
 		bcc.s	loc_10BE0
-		bsr.w	sub_16512
+		bsr.w	DisplaySprite2
 
 loc_10BE0:				
 		dbf	d1,loc_10B96
 
 loc_10BE4:				
-		bsr.w	sub_164F4
+		bsr.w	DisplaySprite
 		move.w	#$B9,d0	; '='
 		jmp	(PlaySound).l
 ; ===========================================================================
@@ -24539,7 +24539,7 @@ loc_119BE:
 		move.b	#6,$18(a0)
 		move.b	#8,$19(a0)
 		move.b	#7,$1E(a0)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_11A2C:				
@@ -24585,18 +24585,18 @@ loc_11A46:
 		move.b	d0,$1A(a1)
 
 loc_11ACC:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_11AD0:				
 		move.b	#$1C,$24(a0)
 		clr.w	$10(a0)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_11ADE:				
 		tst.b	1(a0)
-		bpl.w	loc_164E6
+		bpl.w	DeleteObject
 		bsr.w	sub_16380
 		tst.w	$12(a0)
 		bmi.s	loc_11B34
@@ -24620,7 +24620,7 @@ loc_11ADE:
 
 loc_11B34:				
 					
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_11B38:				
@@ -24641,8 +24641,8 @@ loc_11B62:
 		tst.b	$28(a0)
 		bne.s	loc_11BD8
 		tst.b	1(a0)
-		bpl.w	loc_164E6
-		bra.w	sub_164F4
+		bpl.w	DeleteObject
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_11B74:				
@@ -24675,8 +24675,8 @@ loc_11BC6:
 		tst.b	$28(a0)
 		bne.s	loc_11BD8
 		tst.b	1(a0)
-		bpl.w	loc_164E6
-		bra.w	sub_164F4
+		bpl.w	DeleteObject
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_11BD8:				
@@ -24687,23 +24687,23 @@ loc_11BD8:
 		subi.w	#$180,d0
 		bpl.s	loc_11BF0
 		tst.b	1(a0)
-		bpl.w	loc_164E6
+		bpl.w	DeleteObject
 
 loc_11BF0:				
 					
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_11BF4:				
 		tst.b	1(a0)
-		bpl.w	loc_164E6
+		bpl.w	DeleteObject
 		subq.w	#1,$36(a0)
 		bne.w	loc_11C10
 		move.b	#2,$24(a0)
 		move.b	#1,$18(a0)
 
 loc_11C10:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_11C14:				
@@ -24914,10 +24914,10 @@ loc_11DD8:
 
 loc_11E06:				
 		tst.w	$12(a0)
-		bpl.w	loc_164E6
+		bpl.w	DeleteObject
 		bsr.w	sub_163AC
 		addi.w	#$18,$12(a0)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
@@ -25069,11 +25069,11 @@ loc_11F9E:
 loc_11FB0:				
 		lea	(byte_1237A).l,a1
 		bsr.w	AnimateSprite
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_11FBE:				
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -25279,7 +25279,7 @@ loc_121B8:
 		addi.w	#$E0,d0	; '='
 		cmp.w	$C(a0),d0
 		bcs.s	loc_121FC
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_121D0:				
@@ -25297,12 +25297,12 @@ loc_121DA:
 loc_121EE:				
 		lea	(byte_1237A).l,a1
 		bsr.w	AnimateSprite
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_121FC:				
 					
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 		moveq	#0,d0
 		move.b	$24(a0),d0
@@ -25345,8 +25345,8 @@ loc_12264:
 		andi.w	#-$80,d0
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_164E6
-		bra.w	sub_164F4
+		bcc.w	DeleteObject
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_12282:				
@@ -25371,7 +25371,7 @@ loc_122B4:
 
 loc_122C0:				
 					
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 		moveq	#0,d0
 		move.b	$24(a0),d0
@@ -25400,8 +25400,8 @@ loc_12306:
 		andi.w	#-$80,d0
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_164E6
-		bra.w	sub_164F4
+		bcc.w	DeleteObject
+		bra.w	DisplaySprite
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -25438,7 +25438,7 @@ loc_12368:
 ; ===========================================================================
 
 loc_12376:				
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 byte_1237A:	dc.b 0			; 0 
 					
@@ -25583,7 +25583,7 @@ loc_125FA:
 		lea	(byte_1265E)(pc),a1
 		bsr.w	AnimateSprite
 		subq.w	#1,$3C(a0)
-		bne.w	sub_164F4
+		bne.w	DisplaySprite
 		movea.l	$2A(a0),a1
 		subq.w	#1,(a1)
 		bsr.w	sub_11FC2
@@ -25592,11 +25592,11 @@ loc_125FA:
 loc_1264E:				
 		lea	(byte_1237A)(pc),a1
 		bsr.w	AnimateSprite
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_1265A:				
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 byte_1265E:	dc.b   0		; 0 
 		dc.b   2		; 1
@@ -25800,7 +25800,7 @@ loc_1283A:
 		move.b	$23(a0),d0
 		bset	#0,2(a2,d0.w)
 		move.b	#$A,$1C(a0)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite
@@ -25865,7 +25865,7 @@ loc_128C6:
 
 loc_128DE:				
 		bsr.s	sub_128E4
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -26217,8 +26217,8 @@ loc_12CBE:
 
 loc_12CC2:				
 		subq.w	#1,$1E(a0)
-		bmi.w	loc_164E6
-		bra.w	sub_164F4
+		bmi.w	DeleteObject
+		bra.w	DisplaySprite
 ; ===========================================================================
 off_12CCE:	dc.w byte_12CE4-off_12CCE; 0 
 					
@@ -26435,14 +26435,14 @@ loc_12F20:
 		move.w	d0,8(a0)
 
 loc_12F4E:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_12F52:				
 					
 		lea	(off_13686).l,a1
 		bsr.w	AnimateSprite
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_12F60:				
@@ -26451,7 +26451,7 @@ loc_12F60:
 		lea	($FFFFB1C0).w,a1
 		move.b	#$E,(a1)
 		move.b	#$A,$28(a1)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_12F7C:				
@@ -26463,7 +26463,7 @@ loc_12F7C:
 		move.b	#4,$28(a1)
 
 loc_12F96:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_12F9A:				
@@ -26485,7 +26485,7 @@ loc_12FB8:
 		move.b	#$F,($FFFFB400).w
 
 loc_12FD2:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_12FD6:				
@@ -26493,13 +26493,13 @@ loc_12FD6:
 		beq.s	loc_12FEA
 		cmpi.w	#$190,$34(a0)
 		beq.s	loc_12FF6
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_12FEA:				
 		cmpi.w	#$1D0,$34(a0)
 		beq.s	loc_12FF6
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_12FF6:				
@@ -26509,8 +26509,8 @@ loc_12FF6:
 		move.b	#$C,$28(a1)
 		addq.b	#2,$25(a0)
 		lea	($FFFFB180).w,a1
-		bsr.w	sub_164E8
-		bra.w	sub_164F4
+		bsr.w	DeleteObject2
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_13014:				
@@ -26528,7 +26528,7 @@ loc_1302C:
 		move.w	word_1303A(pc,d0.w),($FFFFFB4A).w
 
 loc_13036:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 word_1303A:	dc.w  $E64		; 0
 		dc.w  $E86		; 1
@@ -26589,7 +26589,7 @@ loc_130A2:
 		move.b	#$10,$28(a1)
 
 loc_130B4:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 word_130B8:	dc.w   $D7		; 0 
 		dc.w   $C8		; 1
@@ -26633,7 +26633,7 @@ loc_1310A:
 		addq.b	#2,$25(a0)
 
 loc_1310E:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_13112:				
@@ -26656,7 +26656,7 @@ loc_13124:
 		move.w	#$F0,$A(a0) ; '='
 
 loc_13146:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_1314A:				
@@ -26703,7 +26703,7 @@ loc_1319E:
 		move.w	$2C(a0),d0
 		addq.w	#4,d0
 		cmpi.w	#$28,d0	; '('
-		bcc.w	loc_164E6
+		bcc.w	DeleteObject
 		move.w	d0,$2C(a0)
 		move.l	loc_131D8(pc,d0.w),d0
 		move.w	d0,$A(a0)
@@ -26754,7 +26754,7 @@ loc_13214:
 		move.w	#$BF,$A(a0) ; '='
 
 loc_13230:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_13234:				
@@ -26790,7 +26790,7 @@ loc_13260:
 		move.w	#$D5,$A(a0) ; '='
 
 loc_1327C:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_13280:				
@@ -26827,19 +26827,19 @@ loc_132A6:
 		move.w	#$80,$A(a0) ; '='
 		move.b	#3,$1C(a0)
 		move.w	#$8C,$2A(a0) ; '='
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_132D2:				
 		subq.w	#1,$2A(a0)
-		bmi.w	loc_164E6
+		bmi.w	DeleteObject
 		subq.w	#2,8(a0)
 		addq.w	#1,$A(a0)
 
 loc_132E2:
 		lea	(off_13686).l,a1
 		bsr.w	AnimateSprite
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite
@@ -26883,7 +26883,7 @@ loc_1332E:
 		bpl.s	locret_1337A
 		move.b	$31(a0),$30(a0)
 		subq.b	#1,$32(a0)
-		bmi.w	loc_164E6
+		bmi.w	DeleteObject
 		movea.l	$3A(a0),a2
 		movea.l	a0,a3
 		move.w	$36(a0),d0
@@ -27069,7 +27069,7 @@ loc_134E4:
 		bsr.w	sub_12F08
 		move.b	#$F,($FFFFB400).w
 		lea	($FFFFB0C0).w,a1
-		bsr.w	sub_164E8
+		bsr.w	DeleteObject2
 		lea	(word_1342C)(pc),a1
 		lea	($FFFFFB60).w,a2
 		moveq	#7,d6
@@ -27127,7 +27127,7 @@ Sprite_13600:
 		move.b	$24(a0),d0
 		move.w	off_13612(pc,d0.w),d1
 		jsr	off_13612(pc,d1.w)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 off_13612:	dc.w loc_13616-off_13612; 0 
 					
@@ -27677,7 +27677,7 @@ loc_13E2C:
 		bcc.s	locret_13E3C
 
 loc_13E38:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 locret_13E3C:				
@@ -27688,7 +27688,7 @@ locret_13E3C:
 
 loc_13E3E:				
 					
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 
 loc_13E42:				
@@ -27760,7 +27760,7 @@ loc_13ED4:
 		sub.w	d0,8(a0)
 		cmpi.w	#$200,8(a0)
 		bcc.s	locret_13EE4
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 locret_13EE4:				
@@ -27808,7 +27808,7 @@ loc_13F34:
 		bcc.s	loc_13F44
 
 loc_13F40:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_13F44:				
@@ -27823,7 +27823,7 @@ loc_13F44:
 		bsr.w	sub_158F4
 
 loc_13F5E:				
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 byte_13F62:	dc.b $32		; 0 
 		dc.b $32		; 1
@@ -27892,7 +27892,7 @@ loc_13FCC:
 
 loc_13FDA:				
 		add.w	d1,8(a0)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_13FE2:				
@@ -27911,7 +27911,7 @@ loc_13FEE:
 		tst.w	$1E(a0)
 		beq.s	loc_14014
 		subq.w	#1,$1E(a0)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_14014:				
@@ -27956,7 +27956,7 @@ loc_1407E:
 
 loc_14082:				
 					
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite
@@ -28045,7 +28045,7 @@ locret_14138:
 
 loc_1413A:				
 		tst.w	($FFFFFF40).w
-		bne.w	loc_164E6
+		bne.w	DeleteObject
 
 loc_14142:				
 		bra.w	sub_13E1C
@@ -28095,11 +28095,11 @@ loc_1419C:
 		addq.b	#2,$24(a0)
 
 loc_141A6:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_141AA:				
-		bsr.w	sub_164F4
+		bsr.w	DisplaySprite
 		move.b	#1,($FFFFF7D6).w
 		moveq	#0,d0
 		tst.w	($FFFFF7D2).w
@@ -28215,7 +28215,7 @@ loc_142E2:
 		add.b	$1B(a0),d0
 		move.b	d0,$1A(a0)
 		btst	#4,($FFFFFE05).w
-		bne.w	sub_164F4
+		bne.w	DisplaySprite
 		rts	
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
@@ -28396,7 +28396,7 @@ loc_14484:
 
 loc_14490:				
 		tst.b	($FFFFFFB0).w
-		beq.w	loc_164E6
+		beq.w	DeleteObject
 		moveq	#1,d0
 
 loc_1449A:				
@@ -28434,10 +28434,10 @@ loc_144C0:
 loc_144C2:				
 		lea	($FFFFFFB2).w,a1
 		tst.b	(a1,d6.w)
-		beq.w	loc_164E6
+		beq.w	DeleteObject
 		btst	#0,($FFFFFE0F).w
 		beq.s	locret_144DA
-		bsr.w	sub_164F4
+		bsr.w	DisplaySprite
 
 locret_144DA:				
 		rts	
@@ -28445,9 +28445,9 @@ locret_144DA:
 
 loc_144DC:				
 		tst.w	($FFFFFF70).w
-		bne.w	loc_164E6
+		bne.w	DeleteObject
 		cmpi.b	#$26,($FFFFB824).w ; '&'
-		beq.w	loc_164E6
+		beq.w	DeleteObject
 		moveq	#$E,d0
 		btst	#7,(v_console_region).w
 		beq.s	loc_144FA
@@ -28508,7 +28508,7 @@ loc_14564:
 
 loc_14568:				
 		tst.b	($FFFFFFB0).w
-		beq.w	loc_164E6
+		beq.w	DeleteObject
 		bra.s	loc_14564
 ; ===========================================================================
 
@@ -28518,11 +28518,11 @@ loc_14572:
 		addq.b	#2,$24(a0)
 
 loc_1457C:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_14580:				
-		bsr.w	sub_164F4
+		bsr.w	DisplaySprite
 		move.b	#1,($FFFFF7D6).w
 		moveq	#0,d0
 		tst.w	($FFFFF7D2).w
@@ -28581,11 +28581,11 @@ loc_14602:
 
 loc_1461C:				
 		move.w	#1,($FFFFFE02).w
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_14626:				
-		bsr.w	sub_164F4
+		bsr.w	DisplaySprite
 		move.b	#1,($FFFFF7D6).w
 		moveq	#0,d0
 		tst.w	($FFFFF7D2).w
@@ -28631,7 +28631,7 @@ loc_14692:
 
 loc_1469E:				
 		move.b	d0,$1A(a0)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 .sign_bit_not_set6:				
@@ -28655,7 +28655,7 @@ loc_1469E:
 		move.l	#off_14ED0,4(a1)
 		move.b	#$78,$19(a1) ; 'x'
 		move.b	#0,1(a1)
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_14714:				
@@ -28673,7 +28673,7 @@ loc_14724:
 		bcc.s	locret_14734
 
 loc_14730:				
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 locret_14734:				
@@ -28686,7 +28686,7 @@ loc_14736:
 		bne.w	sub_13E1C
 		move.w	#$B4,$1E(a0) ; '='
 		move.b	#$20,$24(a0) ; ' '
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 byte_14752:	dc.b   2,$40,  1,$20,  0,$AA,  2,  0,  0,  0,  1,$20,  0,$98,  4,  1; 0
 					
@@ -29963,8 +29963,8 @@ loc_15D02:
 		andi.w	#-$80,d0
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_164E6
-		bra.w	sub_164F4
+		bcc.w	DeleteObject
+		bra.w	DisplaySprite
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
@@ -30051,8 +30051,8 @@ loc_15E02:
 		bsr.w	sub_163AC
 		addi.w	#$70,$12(a0) ; 'p'
 		tst.b	1(a0)
-		bpl.w	loc_164E6
-		bra.w	sub_164F4
+		bpl.w	DeleteObject
+		bra.w	DisplaySprite
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -30230,7 +30230,7 @@ sub_15FF2:
 		beq.s	loc_16002
 		tst.b	1(a0)
 		bpl.s	loc_16002
-		bsr.w	sub_164F4
+		bsr.w	DisplaySprite
 
 loc_16002:				
 		lea	$40(a0),a0
@@ -30475,7 +30475,7 @@ SprPoint:	dc.l Sprite_19F50	; 0
 
 Sprite_1637C:				
 					
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -30524,7 +30524,7 @@ MarkObjGone:
 					
 		tst.w	($FFFFFFD8).w
 		beq.s	loc_163DC
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_163DC:				
@@ -30533,7 +30533,7 @@ loc_163DC:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.w	loc_163F4
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_163F4:				
@@ -30544,14 +30544,14 @@ loc_163F4:
 		bclr	#7,2(a2,d0.w)
 
 loc_16406:				
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 
 loc_1640A:				
 					
 		tst.w	($FFFFFFD8).w
 		beq.s	loc_16414
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_16414:				
@@ -30559,7 +30559,7 @@ loc_16414:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.w	.loop8
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 .loop8:				
@@ -30570,7 +30570,7 @@ loc_16414:
 		bclr	#7,2(a2,d0.w)
 
 loc_1643A:				
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 
 loc_1643E:				
@@ -30596,7 +30596,7 @@ loc_1645C:
 		bclr	#7,2(a2,d0.w)
 
 loc_1646E:				
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 
 loc_16472:				
@@ -30607,7 +30607,7 @@ loc_16472:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.w	loc_16490
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_16490:				
@@ -30618,7 +30618,7 @@ loc_16490:
 		bclr	#7,2(a2,d0.w)
 
 loc_164A2:				
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 
 loc_164A6:				
@@ -30628,14 +30628,14 @@ loc_164A6:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$300,d0
 		bcc.w	loc_164C0
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_164C0:				
 		sub.w	($FFFFF7DC).w,d1
 		cmpi.w	#$300,d1
 		bcc.w	loc_164D0
-		bra.w	sub_164F4
+		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_164D0:				
@@ -30648,14 +30648,14 @@ loc_164D0:
 loc_164E2:				
 		bra.w	*+4
 
-loc_164E6:				
+DeleteObject:				
 					
 		movea.l	a0,a1
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_164E8:				
+DeleteObject2:				
 					
 		moveq	#0,d1
 		moveq	#$F,d0
@@ -30664,62 +30664,60 @@ loc_164EC:
 		move.l	d1,(a1)+
 		dbf	d0,loc_164EC
 		rts	
-; End of function sub_164E8
+; End of function DeleteObject2
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
-
-sub_164F4:				
-					
+; sub_164F4:
+DisplaySprite:									
 		lea	(v_sprite_queue).w,a1
 		move.w	$18(a0),d0
 		lsr.w	#1,d0
 		andi.w	#$380,d0
 		adda.w	d0,a1
-		cmpi.w	#$7E,(a1) ; '~'
-		bcc.s	locret_16510
+		cmpi.w	#$7E,(a1)
+		bcc.s	.exit
 		addq.w	#2,(a1)
 		adda.w	(a1),a1
 		move.w	a0,(a1)
 
-locret_16510:				
+	.exit:				
 		rts	
-; End of function sub_164F4
+; End of function DisplaySprite
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
-
-sub_16512:				
+; sub_16512:
+DisplaySprite2:				
 		lea	(v_sprite_queue).w,a2
 		move.w	$18(a1),d0
 		lsr.w	#1,d0
 		andi.w	#$380,d0
 		adda.w	d0,a2
 		cmpi.w	#$7E,(a2) ; '~'
-		bcc.s	locret_1652E
+		bcc.s	.exit
 		addq.w	#2,(a2)
 		adda.w	(a2),a2
 		move.w	a1,(a2)
 
-locret_1652E:				
+	.exit:				
 		rts	
-; End of function sub_16512
+; End of function DisplaySprite2
 
 ; ===========================================================================
-
-loc_16530:				
-					
+; loc_16530:
+DisplaySprite3:									
 		lea	(v_sprite_queue).w,a1
 		adda.w	d0,a1
 		cmpi.w	#$7E,(a1) ; '~'
-		bcc.s	locret_16542
+		bcc.s	.exit
 		addq.w	#2,(a1)
 		adda.w	(a1),a1
 		move.w	a0,(a1)
 
-locret_16542:				
+	.exit:				
 		rts	
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -36186,7 +36184,7 @@ loc_1A0C6:
 		bcc.s	loc_1A0DA
 
 loc_1A0D4:				
-		jsr	sub_164F4
+		jsr	DisplaySprite
 
 loc_1A0DA:				
 		btst	#1,$2B(a0)
@@ -37780,7 +37778,7 @@ loc_1B16A:
 		bsr.w	loc_1A15C
 		bsr.w	loc_1B350
 		bsr.w	loc_1B848
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1B184:				
@@ -37811,7 +37809,7 @@ loc_1B1CA:
 		bsr.w	loc_1A15C
 		bsr.w	loc_1B350
 		bsr.w	loc_1B848
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1B1E6:				
@@ -37830,7 +37828,7 @@ loc_1B200:
 		bsr.w	loc_1A15C
 		bsr.w	loc_1B350
 		bsr.w	loc_1B848
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1B21C:				
@@ -37919,7 +37917,7 @@ loc_1B330:
 loc_1B342:				
 		bsr.w	loc_1B350
 		bsr.w	loc_1B848
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1B350:				
@@ -38545,7 +38543,7 @@ loc_1BA56:
 		bcc.s	loc_1BA6A
 
 loc_1BA64:				
-		jsr	sub_164F4
+		jsr	DisplaySprite
 
 loc_1BA6A:				
 		btst	#1,$2B(a0)
@@ -40286,7 +40284,7 @@ loc_1CBEE:
 		bsr.w	loc_1BF38
 		bsr.w	loc_1CDC4
 		bsr.w	loc_1D1AC
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1CC08:				
@@ -40317,7 +40315,7 @@ loc_1CC50:
 		bsr.w	loc_1BF38
 		bsr.w	loc_1CDC4
 		bsr.w	loc_1D1AC
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1CC6C:				
@@ -40422,7 +40420,7 @@ loc_1CDA4:
 loc_1CDB6:				
 		bsr.w	loc_1CDC4
 		bsr.w	loc_1D1AC
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1CDC4:				
@@ -40869,7 +40867,7 @@ loc_1D288:
 		lea	(off_1D2C0).l,a1
 		bsr.w	loc_1CDCA
 		bsr.w	loc_1D184
-		jsr	sub_164F4
+		jsr	DisplaySprite
 		rts	
 ; ===========================================================================
 byte_1D29E:	dc.b   0,  0,  3,  3,  9,  1,  0,  2,  1,  7,  0,  0,  0,  8,  0,  0; 0
@@ -40991,11 +40989,11 @@ loc_1D3D4:
 		jsr	sub_163AC
 		tst.b	1(a0)
 		bpl.s	loc_1D408
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1D408:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_1D40E:				
@@ -41007,12 +41005,12 @@ loc_1D41A:
 		bsr.s	loc_1D474
 		lea	(off_1D860).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1D42E:				
 					
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_1D434:				
@@ -41032,11 +41030,11 @@ loc_1D452:
 		bsr.w	loc_1D5C0
 		tst.b	1(a0)
 		bpl.s	loc_1D46E
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1D46E:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_1D474:				
@@ -41382,7 +41380,7 @@ loc_1D92C:
 loc_1D964:				
 		lea	(byte_1DBD6).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 locret_1D976:				
@@ -41390,7 +41388,7 @@ locret_1D976:
 ; ===========================================================================
 
 loc_1D978:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite
@@ -41444,7 +41442,7 @@ loc_1D9AE:
 loc_1DA0C:				
 		movea.w	$3E(a0),a1
 		btst	#1,$2B(a1)
-		beq.w	loc_164E6
+		beq.w	DeleteObject
 		move.w	8(a1),d0
 		move.w	d0,8(a0)
 		move.w	$C(a1),d1
@@ -41482,13 +41480,13 @@ loc_1DA44:
 loc_1DA74:				
 		add.b	d0,$34(a0)
 		move.w	#$80,d0	; '='
-		bra.w	loc_16530
+		bra.w	DisplaySprite3
 ; ===========================================================================
 
 loc_1DA80:				
 		movea.w	$3E(a0),a1
 		btst	#1,$2B(a1)
-		beq.w	loc_164E6
+		beq.w	DeleteObject
 		cmpi.w	#2,($FFFFFF70).w
 		beq.s	loc_1DAA4
 		lea	(v_sonic_pos_tracker_num).w,a5
@@ -41549,7 +41547,7 @@ loc_1DAE4:
 loc_1DB20:				
 		add.b	d0,$34(a0)
 		move.w	#$80,d0	; '='
-		bra.w	loc_16530
+		bra.w	DisplaySprite3
 ; ===========================================================================
 
 loc_1DB2C:				
@@ -41746,7 +41744,7 @@ loc_1DE28:
 		lea	(off_1DF38).l,a1
 		jsr	AnimateSprite
 		bsr.w	loc_1DEE4
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1DE3E:				
@@ -41755,7 +41753,7 @@ loc_1DE3E:
 ; ===========================================================================
 
 loc_1DE46:				
-		bra.w	loc_164E6
+		bra.w	DeleteObject
 ; ===========================================================================
 
 loc_1DE4A:				
@@ -42033,7 +42031,7 @@ loc_1E176:
 		move.w	($FFFFB00C).w,$C(a0)
 
 loc_1E182:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1E188:				
@@ -42058,7 +42056,7 @@ loc_1E1AA:
 ; ===========================================================================
 
 loc_1E1B8:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
@@ -43697,7 +43695,7 @@ loc_1F240:
 		move.b	#0,$1A(a1)
 
 loc_1F25C:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_1F262:				
@@ -43995,7 +43993,7 @@ loc_1F604:
 ; ===========================================================================
 
 loc_1F608:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 		nop	
 
@@ -44075,7 +44073,7 @@ loc_1F6B8:
 ; ===========================================================================
 
 loc_1F6CC:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 word_1F6D2:	dc.w	 0		; 0
 		dc.w  $3E8		; 1
@@ -44091,11 +44089,11 @@ loc_1F6DA:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.s	loc_1F6F8
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1F6F8:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
 ; Unknown Sprite Mappings
@@ -44343,11 +44341,11 @@ loc_1F988:
 		bsr.w	loc_1FCD6
 		tst.b	1(a0)
 		bpl.s	loc_1F998
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1F998:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_1F99E:				
@@ -44356,11 +44354,11 @@ loc_1F99E:
 		jsr	AnimateSprite
 		tst.b	1(a0)
 		bpl.s	loc_1F9B6
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1F9B6:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_1F9BC:				
@@ -44630,11 +44628,11 @@ word_1FCB8:	dc.w	 1,$F406,$1F31,$1B98; 0
 		nop	
 
 loc_1FCC4:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_1FCCA:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_1FCD0:				
@@ -45221,11 +45219,11 @@ word_20384:	dc.w 2
 		nop	
 
 loc_20398:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2039E:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_203A4:				
@@ -45534,11 +45532,11 @@ word_208A2:	dc.w 4
 ; ===========================================================================
 
 loc_208C4:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_208CA:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_208D0:				
@@ -46492,11 +46490,11 @@ loc_214A2:
 		nop	
 
 loc_214AC:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_214B2:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_214B8:				
@@ -46532,7 +46530,7 @@ loc_214DA:
 ; ===========================================================================
 
 loc_214EE:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 off_214F4:	dc.w loc_214FA-off_214F4; 0 
 		dc.w loc_21512-off_214F4; 1
@@ -47668,11 +47666,11 @@ word_22278:	dc.w 2
 		nop	
 
 loc_2228C:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_22292:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_22298:				
@@ -48762,7 +48760,7 @@ byte_232C6:	dc.b $FF,$F8,  0,  1,  0,  5,  0,$10,  0,  8,$FF,$F8,  0,  1,  0,  5
 ; ===========================================================================
 
 loc_232DC:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_232E2:				
@@ -49263,11 +49261,11 @@ word_23888:	dc.w 4
 		nop	
 
 loc_238AC:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_238B2:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_238B8:				
@@ -49442,7 +49440,7 @@ byte_23A04:	dc.b $30,$30,$30,$30,$30,$30,$30,$30,$2F,$2F,$2E,$2E,$2D,$2D,$2C,$2C
 ; ===========================================================================
 
 loc_23AD0:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_23AD6:				
@@ -49835,14 +49833,14 @@ loc_23F0A:
 		bcc.s	loc_23F36
 
 loc_23F30:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_23F36:				
 		movea.l	$3C(a0),a1
 		cmpa.l	a0,a1
 		beq.s	loc_23F44
-		jsr	sub_164E8
+		jsr	DeleteObject2
 
 loc_23F44:				
 		lea	($FFFFFC00).w,a2
@@ -49852,13 +49850,13 @@ loc_23F44:
 		bclr	#7,2(a2,d0.w)
 
 loc_23F56:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_23F5C:				
 		bsr.s	loc_23F66
 		bsr.s	loc_23FB0
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_23F66:				
@@ -50843,7 +50841,7 @@ word_24CB0:	dc.w 2
 		nop	
 
 loc_24CC4:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_24CCA:				
@@ -51306,11 +51304,11 @@ word_25188:	dc.w $10
 		nop	
 
 loc_2520C:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_25212:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_25218:				
@@ -51661,7 +51659,7 @@ word_2563C:	dc.w 8
 		nop	
 
 loc_25680:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_25686:				
@@ -51835,7 +51833,7 @@ word_25856:	dc.w 2
 ; ===========================================================================
 
 loc_25868:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2586E:				
@@ -52388,11 +52386,11 @@ word_26064:	dc.w $E
 		nop	
 
 loc_260D8:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_260DE:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_260E4:				
@@ -52639,11 +52637,11 @@ word_26344:	dc.w 1
 		nop	
 
 loc_26350:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_26356:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2635C:				
@@ -53112,11 +53110,11 @@ word_268EA:	dc.w 2
 ; ===========================================================================
 
 loc_268FC:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_26902:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_26908:				
@@ -53207,11 +53205,11 @@ loc_269D6:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.s	loc_269EE
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_269EE:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 off_269F4:	dc.w locret_269F8-off_269F4; 0 
 		dc.w loc_269FA-off_269F4; 1
@@ -53418,7 +53416,7 @@ loc_26C1C:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.s	loc_26C66
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_26C66:				
@@ -53429,7 +53427,7 @@ loc_26C66:
 		bclr	#7,2(a2,d0.w)
 
 loc_26C78:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 off_26C7E:	dc.w locret_26C8E-off_26C7E; 0 
 		dc.w loc_26CA4-off_26C7E; 1
@@ -53917,7 +53915,7 @@ word_27136:	dc.w 2
 ; ===========================================================================
 
 loc_27148:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2714E:				
@@ -54266,7 +54264,7 @@ word_2754E:	dc.w 6
 ; ===========================================================================
 
 loc_27580:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_27586:				
@@ -55591,11 +55589,11 @@ word_28374:	dc.w 2
 		nop	
 
 loc_28388:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2838E:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_28394:				
@@ -55700,7 +55698,7 @@ loc_28462:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.s	loc_284A4
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_284A4:				
@@ -55711,7 +55709,7 @@ loc_284A4:
 		bclr	#7,2(a2,d0.w)
 
 loc_284B6:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_284BC:				
@@ -55745,7 +55743,7 @@ loc_284EC:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.s	loc_28514
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_28514:				
@@ -55756,7 +55754,7 @@ loc_28514:
 		bclr	#7,2(a2,d0.w)
 
 loc_28526:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
@@ -55910,11 +55908,11 @@ loc_286CA:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.s	loc_28700
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_28700:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 byte_28706:	dc.b $10,$10		; 0
 		dc.b $10,$10		; 2
@@ -56292,7 +56290,7 @@ word_28B9E:	dc.w 1
 ; ===========================================================================
 
 loc_28BA8:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_28BAE:				
@@ -56300,7 +56298,7 @@ loc_28BAE:
 ; ===========================================================================
 
 loc_28BB4:				
-		jmp	sub_164E8
+		jmp	DeleteObject2
 ; ===========================================================================
 
 loc_28BBA:				
@@ -56489,15 +56487,15 @@ word_28DAC:	dc.w 2
 		nop	
 
 loc_28DC0:				
-		jmp	loc_16530
+		jmp	DisplaySprite3
 ; ===========================================================================
 
 loc_28DC6:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_28DCC:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_28DD2:				
@@ -56505,7 +56503,7 @@ loc_28DD2:
 ; ===========================================================================
 
 loc_28DD8:				
-		jmp	sub_164E8
+		jmp	DeleteObject2
 ; ===========================================================================
 
 loc_28DDE:				
@@ -57166,14 +57164,14 @@ loc_2949A:
 		bcc.s	loc_294C4
 
 loc_294BE:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_294C4:				
 		movea.l	$3C(a0),a1
 		cmpa.l	a0,a1
 		beq.s	loc_294D2
-		jsr	sub_164E8
+		jsr	DeleteObject2
 
 loc_294D2:				
 		lea	($FFFFFC00).w,a2
@@ -57183,13 +57181,13 @@ loc_294D2:
 		bclr	#7,2(a2,d0.w)
 
 loc_294E4:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_294EA:				
 		bsr.s	loc_294F4
 		bsr.s	loc_2953E
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_294F4:				
@@ -57251,7 +57249,7 @@ word_29566:	dc.w 2
 ; ===========================================================================
 
 loc_29578:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2957E:				
@@ -57456,11 +57454,11 @@ word_297B8:	dc.w 1
 		nop	
 
 loc_297C4:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_297CA:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_297D0:				
@@ -58268,19 +58266,19 @@ word_2A254:	dc.w	 1		; 0
 		nop	
 
 loc_2A260:				
-		jmp	loc_16530
+		jmp	DisplaySprite3
 ; ===========================================================================
 
 loc_2A266:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2A26C:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2A272:				
-		jmp	sub_164E8
+		jmp	DeleteObject2
 ; ===========================================================================
 
 loc_2A278:				
@@ -58786,19 +58784,19 @@ loc_2A74E:
 		nop	
 
 loc_2A778:				
-		jmp	loc_16530
+		jmp	DisplaySprite3
 ; ===========================================================================
 
 loc_2A77E:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2A784:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2A78A:				
-		jmp	sub_164E8
+		jmp	DeleteObject2
 ; ===========================================================================
 
 loc_2A790:				
@@ -59587,11 +59585,11 @@ Map_2B0EC:
 ; ===========================================================================
 
 loc_2B128:				
-		jmp	loc_16530
+		jmp	DisplaySprite3
 ; ===========================================================================
 
 loc_2B12E:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2B134:				
@@ -60190,11 +60188,11 @@ word_2B8D6:	dc.w 1
 ; ===========================================================================
 
 loc_2B8E0:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2B8E6:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite
@@ -61482,7 +61480,7 @@ loc_2C5CE:
 		bcc.s	loc_2C5F8
 
 loc_2C5F2:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2C5F8:				
@@ -61493,7 +61491,7 @@ loc_2C5F8:
 		bclr	#7,2(a2,d0.w)
 
 loc_2C60A:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 off_2C610:	dc.w byte_2C616-off_2C610; 0 
 		dc.w byte_2C619-off_2C610; 1
@@ -61527,7 +61525,7 @@ word_2C670:	dc.w 4
 		nop	
 
 loc_2C694:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2C69A:				
@@ -61773,7 +61771,7 @@ word_2C902:	dc.w 1
 ; ===========================================================================
 
 loc_2C90C:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2C912:				
@@ -62105,11 +62103,11 @@ word_2CC98:	dc.w 1
 ; ===========================================================================
 
 loc_2CCA4:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2CCAA:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2CCB0:				
@@ -62410,11 +62408,11 @@ word_2D026:	dc.w 1
 ; ===========================================================================
 
 loc_2D030:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2D036:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2D03C:				
@@ -62693,7 +62691,7 @@ word_2D35C:	dc.w 1
 ; ===========================================================================
 
 loc_2D368:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2D36E:				
@@ -63084,11 +63082,11 @@ locret_2D712:
 ; ===========================================================================
 
 loc_2D714:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2D71A:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2D720:				
@@ -63242,7 +63240,7 @@ loc_2D94E:
 		andi.b	#3,d0
 		andi.b	#-4,1(a0)
 		or.b	d0,1(a0)
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 off_2D984:	dc.w loc_2DA62-off_2D984; 0 
 		dc.w loc_2DB98-off_2D984; 1
@@ -63341,8 +63339,8 @@ loc_2DA48:
 loc_2DA50:				
 		addq.l	#4,sp
 		movea.l	$34(a0),a1
-		jsr	sub_164E8
-		jmp	loc_164E6
+		jsr	DeleteObject2
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2DA62:				
@@ -63568,7 +63566,7 @@ loc_2DCB6:
 		move.b	$22(a1),$22(a0)
 		movea.l	#off_2EA3C,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2DCEC:				
@@ -63756,7 +63754,7 @@ loc_2DF5A:
 		add.w	d0,$C(a0)
 		lea	(off_2EA3C).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2DF76:				
@@ -63845,7 +63843,7 @@ loc_2E028:
 		add.w	d0,$C(a0)
 		lea	(off_2EA3C).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2E04A:				
@@ -63912,7 +63910,7 @@ loc_2E102:
 		move.b	1(a1),1(a0)
 		lea	(off_2EA3C).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2E130:				
@@ -63940,7 +63938,7 @@ loc_2E156:
 loc_2E180:				
 		lea	(off_2EA3C).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2E192:				
@@ -64031,7 +64029,7 @@ loc_2E2CA:
 		add.w	d0,8(a0)
 		lea	(off_2EA3C).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2E2E0:				
@@ -64317,7 +64315,7 @@ loc_2E638:
 		move.b	$22(a1),$22(a0)
 		lea	(off_2EA3C).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2E666:				
@@ -64364,7 +64362,7 @@ loc_2E6CA:
 		bge.s	loc_2E728
 		lea	(off_2EA3C).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2E6F2:				
@@ -64378,7 +64376,7 @@ loc_2E6F2:
 		move.b	#0,$28(a0)
 		move.w	#$E6,d0	; '='
 		bsr.w	loc_2EEE2
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2E728:				
@@ -64408,7 +64406,7 @@ loc_2E77A:
 		bsr.w	loc_2EF12
 		lea	(off_2EA3C).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2E790:				
@@ -64427,7 +64425,7 @@ loc_2E7B6:
 		movea.l	$34(a1),a1
 		move.w	8(a1),8(a0)
 		move.w	$C(a1),$C(a0)
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2E7D0:				
@@ -64547,7 +64545,7 @@ loc_2E932:
 loc_2E938:				
 		lea	(off_2ED5C).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 byte_2E94A:	dc.b   0		; 0
 		dc.b $FF		; 1
@@ -64909,11 +64907,11 @@ word_2EEC6:	dc.w 1
 ; ===========================================================================
 
 loc_2EED0:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_2EED6:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_2EEDC:				
@@ -65173,13 +65171,13 @@ loc_2F27C:
 loc_2F28A:
 		subi.w	#1,8(a0)
 		addi.w	#1,$C(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F29A:				
 		move.w	#$29D0,8(a0)
 		addq.b	#2,$25(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F2A8:				
@@ -65196,24 +65194,24 @@ loc_2F2BA:
 		cmpi.w	#$41E,$C(a0)
 		bge.s	loc_2F2CC
 		addi.w	#1,$C(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F2CC:				
 		addq.b	#2,$2C(a0)
 		bset	#0,$2D(a0)
 		move.w	#$3C,$2A(a0) ; '<'
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F2E0:				
 		subi.w	#1,$2A(a0)
-		bpl.w	loc_2FBF4
+		bpl.w	JmpTo35_DisplaySprite
 		move.w	#-$200,$10(a0)
 		addq.b	#2,$25(a0)
 		move.b	#$F,$20(a0)
 		bset	#1,$2D(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F304:				
@@ -65230,7 +65228,7 @@ loc_2F304:
 		asl.l	#8,d0
 		add.l	d0,d2
 		move.l	d2,8(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F336:				
@@ -65240,10 +65238,10 @@ loc_2F336:
 		bsr.w	loc_2FC48
 		bsr.w	loc_2FC24
 		tst.w	d1
-		bpl.w	loc_2FBF4
+		bpl.w	JmpTo35_DisplaySprite
 		add.w	d1,$C(a0)
 		move.w	#0,$12(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F35C:				
@@ -65251,15 +65249,15 @@ loc_2F35C:
 		addq.b	#2,$25(a0)
 		move.w	#-$26,$3C(a0)
 		move.w	#$C,$2A(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F374:				
 		subq.w	#1,$2A(a0)
-		bpl.w	loc_2FBF4
+		bpl.w	JmpTo35_DisplaySprite
 		addq.b	#2,$25(a0)
 		move.b	#0,$2C(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F38A:				
@@ -65267,7 +65265,7 @@ loc_2F38A:
 		move.b	$2C(a0),d0
 		move.w	off_2F39C(pc,d0.w),d1
 		jsr	off_2F39C(pc,d1.w)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 off_2F39C:	dc.w loc_2F3A2-off_2F39C; 0 
 		dc.w loc_2F424-off_2F39C; 1
@@ -65347,8 +65345,8 @@ loc_2F46E:
 		bmi.s	locret_2F482
 		addq.w	#4,sp
 		movea.l	$34(a0),a1
-		bsr.w	loc_2FC06
-		bra.w	loc_2FBFA
+		bsr.w	JmpTo5_DeleteObject2
+		bra.w	JmpTo52_DeleteObject
 ; ===========================================================================
 
 locret_2F482:				
@@ -65423,11 +65421,11 @@ loc_2F500:
 loc_2F52A:				
 		subi.w	#1,$C(a0)
 		subi.w	#1,$2A(a0)
-		bpl.w	loc_2FBF4
+		bpl.w	JmpTo35_DisplaySprite
 		move.b	#4,$24(a0)
 		lea	(off_2F936).l,a1
 		bsr.w	loc_2FC18
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F54E:				
@@ -65443,7 +65441,7 @@ off_2F55C:	dc.w loc_2F560-off_2F55C; 0
 loc_2F560:				
 		movea.l	$34(a0),a1
 		cmpi.b	#$56,(a1) ; 'V'
-		bne.w	loc_2FBFA
+		bne.w	JmpTo52_DeleteObject
 		btst	#0,$2D(a1)
 		beq.s	loc_2F58E
 		move.b	#1,$1C(a0)
@@ -65468,55 +65466,55 @@ loc_2F5A0:
 		move.b	1(a1),1(a0)
 		lea	(off_2F936).l,a1
 		bsr.w	loc_2FC18
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F5C6:				
 		subi.w	#1,$2A(a0)
 		bpl.s	loc_2F5E8
 		cmpi.w	#-$10,$2A(a0)
-		ble.w	loc_2FBFA
+		ble.w	JmpTo52_DeleteObject
 		move.b	#4,$18(a0)
 		addi.w	#1,$C(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F5E8:				
 		lea	(off_2F936).l,a1
 		bsr.w	loc_2FC18
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F5F6:				
 		tst.b	$25(a0)
 		bne.s	loc_2F626
 		cmpi.w	#$28F0,(v_boundary_left_next).w
-		bcs.w	loc_2FBF4
+		bcs.w	JmpTo35_DisplaySprite
 		cmpi.w	#$29D0,8(a0)
 		ble.s	loc_2F618
 		subi.w	#1,8(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F618:				
 		move.w	#$29D0,8(a0)
 		addq.b	#2,$25(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F626:				
 		movea.l	$34(a0),a1
 		btst	#1,$2D(a1)
-		beq.w	loc_2FBF4
+		beq.w	JmpTo35_DisplaySprite
 		btst	#2,$2D(a1)
-		bne.w	loc_2FBF4
+		bne.w	JmpTo35_DisplaySprite
 		move.w	8(a1),8(a0)
 		move.w	$C(a1),$C(a0)
 		addi.w	#8,$C(a0)
 		move.b	$22(a1),$22(a0)
-		bmi.w	loc_2FBF4
+		bmi.w	JmpTo35_DisplaySprite
 		move.b	1(a1),1(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F664:				
@@ -65534,7 +65532,7 @@ off_2F672:	dc.w loc_2F67C-off_2F672; 0
 
 loc_2F67C:				
 		cmpi.w	#$28F0,(v_boundary_left_next).w
-		bcs.w	loc_2FBF4
+		bcs.w	JmpTo35_DisplaySprite
 		move.w	#$100,$12(a0)
 		cmpi.b	#1,$28(a0)
 		bgt.s	loc_2F6B6
@@ -65592,15 +65590,15 @@ loc_2F700:
 loc_2F706:				
 		lea	(off_2FA44).l,a1
 		bsr.w	loc_2FC18
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F714:				
 		movea.l	$34(a0),a1
 		cmpi.b	#$56,(a1) ; 'V'
-		bne.w	loc_2FBFA
+		bne.w	JmpTo52_DeleteObject
 		btst	#1,$2D(a1)
-		beq.w	loc_2FBF4
+		beq.w	JmpTo35_DisplaySprite
 		addq.b	#2,$25(a0)
 		cmpi.b	#2,$18(a0)
 		bne.s	loc_2F742
@@ -65609,13 +65607,13 @@ loc_2F714:
 		add.w	d0,$2E(a1)
 
 loc_2F742:				
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F746:				
 		movea.l	$34(a0),a1
 		cmpi.b	#$56,(a1) ; 'V'
-		bne.w	loc_2FBFA
+		bne.w	JmpTo52_DeleteObject
 		move.b	$22(a1),$22(a0)
 		move.b	1(a1),1(a0)
 		tst.b	$22(a0)
@@ -65641,24 +65639,24 @@ loc_2F77E:
 loc_2F798:				
 		lea	(off_2FA44).l,a1
 		bsr.w	loc_2FC18
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F7A6:				
 		subi.w	#1,$2A(a0)
-		bpl.w	loc_2FBF4
+		bpl.w	JmpTo35_DisplaySprite
 		addq.b	#2,$25(a0)
 		move.w	#$A,$2A(a0)
 		move.w	#-$300,$12(a0)
 		cmpi.b	#2,$18(a0)
-		beq.w	loc_2FBF4
+		beq.w	JmpTo35_DisplaySprite
 		neg.w	$10(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F7D2:				
 		subq.w	#1,$2A(a0)
-		bpl.w	loc_2FBF4
+		bpl.w	JmpTo35_DisplaySprite
 		bsr.w	loc_2FC48
 		bsr.w	loc_2FC24
 		tst.w	d1
@@ -65667,7 +65665,7 @@ loc_2F7D2:
 		add.w	d1,$C(a0)
 
 loc_2F7F0:				
-		bra.w	loc_2FC00
+		bra.w	JmpTo36_MarkObjGone
 ; ===========================================================================
 
 loc_2F7F4:				
@@ -65676,30 +65674,30 @@ loc_2F7F4:
 		cmpi.w	#$28F0,(v_boundary_left_next).w
 
 loc_2F800:
-		bcs.w	loc_2FBF4
+		bcs.w	JmpTo35_DisplaySprite
 		cmpi.w	#$299A,8(a0)
 		ble.s	loc_2F816
 
 loc_2F80C:
 		subi.w	#1,8(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F816:				
 		move.w	#$299A,8(a0)
 		addq.b	#2,$25(a0)
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F824:				
 		movea.l	$34(a0),a1
 		cmpi.b	#$56,(a1) ; 'V'
-		bne.w	loc_2FBFA
+		bne.w	JmpTo52_DeleteObject
 		btst	#3,$2D(a1)
 		bne.s	loc_2F88A
 		bsr.w	loc_2F8AA
 		btst	#1,$2D(a1)
-		beq.w	loc_2FBF4
+		beq.w	JmpTo35_DisplaySprite
 		move.b	#-$75,$20(a0)
 		move.w	8(a1),8(a0)
 		move.w	$C(a1),$C(a0)
@@ -65715,7 +65713,7 @@ loc_2F878:
 		add.w	d0,8(a0)
 		lea	(off_2FA44).l,a1
 		bsr.w	loc_2FC18
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F88A:				
@@ -65728,7 +65726,7 @@ loc_2F898:
 		add.w	d0,8(a0)
 		lea	(off_2FA44).l,a1
 		bsr.w	loc_2FC18
-		bra.w	loc_2FBF4
+		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F8AA:				
@@ -65784,7 +65782,7 @@ loc_2F916:
 loc_2F924:				
 		lea	(off_2FAC8).l,a1
 		jsr	AnimateSprite
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 off_2F936:	dc.w byte_2F93C-off_2F936; 0 
 		dc.w byte_2F940-off_2F936; 1
@@ -65928,22 +65926,19 @@ word_2FBD2:	dc.w 4
 		dc.w $D805,  $20,  $10,	   2; 12
 ; ===========================================================================
 
-loc_2FBF4:				
-		jmp	sub_164F4
-; ===========================================================================
+	if ~RemoveJmpTos
+JmpTo35_DisplaySprite:				
+		jmp	DisplaySprite
 
-loc_2FBFA:				
-		jmp	loc_164E6
-; ===========================================================================
+JmpTo52_DeleteObject:				
+		jmp	DeleteObject
 
-loc_2FC00:				
+JmpTo36_MarkObjGone:				
 		jmp	MarkObjGone
-; ===========================================================================
 
-loc_2FC06:				
-		jmp	sub_164E8
-; ===========================================================================
-
+JmpTo5_DeleteObject2:				
+		jmp	DeleteObject2
+		
 loc_2FC0C:				
 		jmp	(PlaySound).l
 ; ===========================================================================
@@ -66013,8 +66008,15 @@ loc_2FC68:
 		move.l	#Map_302BC,4(a0)
 		move.w	#$3C1,2(a0)
 		ori.b	#4,1(a0)
-		move.b	#-$70,$E(a0)
-		move.b	#-$70,$14(a0)
+		move.b	#$90,ost_mainspr_width(a0)		
+	if ~FixBugs	
+		; This instruction is pointless, as render_useheight_bit is never
+		; set. Also, the latter clashes with 'boss_invulnerable_time', as they
+		; use the same SST slot. Unlike the Casino Night Zone boss, this does
+		; not result in any bugs, because 'boss_invulnerable_time' is cleared
+		; right after this.
+		move.b	#$90,ost_mainspr_height(a0)
+	endc	
 		move.b	#4,$18(a0)
 		move.w	#$3040,8(a0)
 		move.w	#$580,$C(a0)
@@ -66626,11 +66628,11 @@ word_303F4:	dc.w 7
 ; ===========================================================================
 
 loc_30430:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_30436:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_3043C:				
@@ -67112,7 +67114,7 @@ loc_3097C:
 ; ===========================================================================
 
 loc_309A2:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_309A8:				
@@ -67566,11 +67568,11 @@ word_30F3A:	dc.w 3
 ; ===========================================================================
 
 loc_30F54:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_30F5A:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_30F60:				
@@ -68133,7 +68135,7 @@ loc_315C6:
 ; ===========================================================================
 
 loc_315EC:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_315F2:				
@@ -68287,11 +68289,11 @@ word_318AE:	dc.w 1
 ; ===========================================================================
 
 loc_318B8:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_318BE:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_318C4:				
@@ -68765,7 +68767,7 @@ loc_31E4A:
 ; ===========================================================================
 
 loc_31E70:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_31E76:				
@@ -69045,11 +69047,11 @@ word_32242:	dc.w 1
 ; ===========================================================================
 
 loc_3224C:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_32252:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_32258:				
@@ -69621,7 +69623,7 @@ loc_32894:
 ; ===========================================================================
 
 loc_328BA:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_328C0:				
@@ -70174,11 +70176,11 @@ word_32F28:	dc.w 4
 ; ===========================================================================
 
 loc_32F4C:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_32F52:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_32F58:				
@@ -71002,11 +71004,11 @@ word_33892:	dc.w 1
 ; ===========================================================================
 
 loc_3389C:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_338A2:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_338A8:				
@@ -72399,7 +72401,7 @@ word_347DE:	dc.w $82C0
 ; ===========================================================================
 
 loc_347E0:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_347E6:				
@@ -72880,7 +72882,7 @@ word_34E9A:	dc.w 1
 ; ===========================================================================
 
 loc_34EA4:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_34EAA:				
@@ -75051,11 +75053,11 @@ word_365A2:	dc.w 3
 ; ===========================================================================
 
 loc_365BC:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_365C2:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_365C8:				
@@ -75301,7 +75303,7 @@ loc_36776:
 loc_36788:				
 		tst.w	($FFFFFFD8).w
 		beq.s	loc_36794
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_36794:				
@@ -75309,7 +75311,7 @@ loc_36794:
 		andi.w	#-$80,d0
 		sub.w	($FFFFF7DA).w,d0
 		bmi.w	loc_3691E
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_367AA:				
@@ -75452,7 +75454,7 @@ locret_368F6:
 loc_368F8:				
 		tst.w	($FFFFFFD8).w
 		beq.s	loc_36904
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_36904:				
@@ -75461,11 +75463,11 @@ loc_36904:
 		sub.w	($FFFFF7DA).w,d0
 		cmpi.w	#$280,d0
 		bcc.w	loc_3691E
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_3691E:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite
@@ -87741,15 +87743,15 @@ loc_3EA0A:
 ; ===========================================================================
 
 loc_3EA3C:				
-		jmp	loc_16530
+		jmp	DisplaySprite3
 ; ===========================================================================
 
 loc_3EA42:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 
 loc_3EA48:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_3EA4E:				
@@ -87761,7 +87763,7 @@ loc_3EA54:
 ; ===========================================================================
 
 loc_3EA5A:				
-		jmp	sub_164E8
+		jmp	DeleteObject2
 ; ===========================================================================
 
 loc_3EA60:				
@@ -87876,11 +87878,11 @@ loc_3EB0A:
 		bne.s	loc_3EB48
 		move.w	#$EEE,($FFFFFBC0).w
 		move.w	#$880,($FFFFFBC2).w
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_3EB48:				
-		jmp	sub_164F4
+		jmp	DisplaySprite
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
@@ -88349,7 +88351,7 @@ loc_3F40E:
 		lea	$40(a1),a1
 		dbf	d0,loc_3F40E
 		jsr	loc_19452
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 locret_3F426:				
@@ -88410,7 +88412,7 @@ word_3F53C:	dc.w 1
 		nop	
 
 loc_3F548:				
-		jmp	loc_164E6
+		jmp	DeleteObject
 ; ===========================================================================
 
 loc_3F54E:				
@@ -88587,7 +88589,7 @@ loc_3F708:
 		move.b	$20(a1),d0
 		andi.b	#$3F,d0	; '?'
 		cmpi.b	#6,d0
-		beq.s	loc_3F73C
+		beq.s	React_Monitor
 		move.w	($FFFFB030).w,d0
 		tst.w	($FFFFFFD8).w
 		beq.s	loc_3F728
@@ -88603,35 +88605,38 @@ locret_3F73A:
 		rts	
 ; ===========================================================================
 
-loc_3F73C:				
-		tst.w	$12(a0)
-		bpl.s	loc_3F768
-		move.w	$C(a0),d0
-		subi.w	#$10,d0
-		cmp.w	$C(a1),d0
-		bcs.s	locret_3F78A
-		neg.w	$12(a0)
-		move.w	#-$180,$12(a1)
-		tst.b	$25(a1)
-		bne.s	locret_3F78A
-		move.b	#4,$25(a1)
+React_Monitor:				
+		tst.w	ost_y_vel(a0) 		; is character moving upwards?
+		bpl.s	.chkcharacter		; if not, branch
+		move.w	ost_y_pos(a0),d0
+		subi.w	#$10,d0				; d0 = y pos above character
+		cmp.w	ost_y_pos(a1),d0	; is center of character above the monitor?
+		bcs.s	.donothing			; if not, branch (they will phase through the side instead of breaking it)
+
+	;.knock_down
+		; knock down the monitor if they jumped into the bottom of it
+		neg.w	ost_y_vel(a0)			; reverse the character's y-vel
+		move.w	#-$180,ost_y_vel(a1)	; set monitor's y-vel
+		tst.b	ost_secondary_routine(a1)
+		bne.s	.donothing
+		move.b	#4,ost_secondary_routine(a1)
 		rts	
 ; ===========================================================================
 
-loc_3F768:				
-		cmpa.w	#-$5000,a0
-		beq.s	loc_3F774
+	.chkcharacter:				
+		cmpa.w	#v_ost_maincharacter,a0
+		beq.s	.break_monitor
 		tst.w	($FFFFFFD8).w
-		beq.s	locret_3F78A
+		beq.s	.donothing
 
-loc_3F774:				
-		cmpi.b	#2,$1C(a0)
-		bne.s	locret_3F78A
-		neg.w	$12(a0)
-		move.b	#4,$24(a1)
+	.break_monitor:				
+		cmpi.b	#2,ost_anim(a0)
+		bne.s	.donothing
+		neg.w	ost_y_vel(a0)
+		move.b	#4,ost_primary_routine(a1)
 		move.w	a0,$3E(a1)
 
-locret_3F78A:				
+	.exit:				
 		rts	
 ; ===========================================================================
 
@@ -91532,7 +91537,7 @@ loc_41B1C:
 		adda.w	(a2,d0.w),a2
 		move.w	(a2)+,d6
 		bsr.w	sub_41B34
-		jmp	sub_164F4
+		jmp	DisplaySprite
 
 ; =============== S U B	R O U T	I N E =======================================
 

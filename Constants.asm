@@ -49,7 +49,7 @@ palfade_line4:		equ (sizeof_pal*3)<<8
 palfade_1:		equ countof_color-1
 palfade_2:		equ (countof_color*2)-1
 palfade_3:		equ (countof_color*3)-1
-palfade_all:		equ (countof_color*4)-
+palfade_all:		equ (countof_color*4)
 
 
 ; Colors
@@ -142,11 +142,181 @@ debug_move_speed:		equ 15 				; initial speed object moves in debug mode when d-
 lives_start:			equ 3				; lives at start of game
 rings_for_life:			equ 100				; rings needed for first extra life
 rings_for_life2:		equ 200				; rings needed for second extra life
-rings_for_special_stage:	equ 50				; rings needed for special stage giant ring to appear
-rings_for_continue:		equ 50				; rings needed for continue in special stage
+;rings_for_special_stage:	equ 50				; rings needed for special stage giant ring to appear
+;rings_for_continue:		equ 50				; rings needed for continue in special stage
 rings_from_monitor:		equ 10				; rings given by ring monitor
 combo_max:			equ 16*2			; value at which v_enemy_combo gives the max points
 combo_max_points:		equ 10000/10			; points given after 16 enemies are broken in a row
 bonus_points_per_ring:		equ 100/10			; points given per ring at the end of a level
 points_for_life:		equ 50000/10			; points needed for extra life (awarded every 50000 points without cap)
-countof_emeralds:		equ 6				; number of chaos emeralds
+countof_emeralds:		equ 7				; number of chaos emeralds
+
+; ---------------------------------------------------------------------------
+; Object status table offsets
+; ---------------------------------------------------------------------------
+		pusho						; save options
+		opt	ae+					; enable auto evens
+			rsset 0
+
+; Main OST					
+ost_id:			rs.b 1					; 0 ; universal; object id
+ost_render:		rs.b 1					; 1 ; universal; bitfield for x/y flip, display mode; bits defined below
+	render_xflip_bit:	equ 0
+	render_yflip_bit:	equ 1
+	render_rel_bit:		equ 2
+	render_bg_bit:		equ 3
+	render_useheight_bit:	equ 4
+	render_rawmap_bit:		equ 5
+	render_behind_bit:		equ 6
+	render_onscreen_bit:	equ 7
+	render_xflip:		equ 1<<render_xflip_bit		; xflip
+	render_yflip:		equ 1<<render_yflip_bit		; yflip
+	render_rel:			equ 1<<render_rel_bit		; relative screen position - coordinates are based on the level
+	render_abs:			equ 0<<render_rel_bit		; absolute screen position - coordinates are based on the screen (e.g. the HUD)
+	render_bg:			equ 1<<render_bg_bit		; align to background
+	render_useheight:	equ 1<<render_useheight_bit	; use ost_height to decide if object is on screen, otherwise height is assumed to be $20 (used for large objects)
+	render_rawmap:		equ 1<<render_rawmap_bit	; sprites use raw mappings - i.e. object consists of a single sprite instead of multipart sprite mappings (e.g. broken block fragments)
+	render_behind:		equ 1<<render_behind_bit	; object is behind a loop (Sonic only)
+	render_onscreen:	equ 1<<render_onscreen_bit	; object is on screen
+
+ost_tile:		rs.w 1					; 2 ; universal; palette line & VRAM setting (2 bytes)
+	tile_xflip:	equ $800
+	tile_yflip:	equ $1000
+	tile_pal1:	equ 0
+	tile_pal2:	equ $2000
+	tile_pal3:	equ $4000
+	tile_pal4:	equ $6000
+	tile_hi:	equ $8000
+	tile_xflip_bit:	equ 3
+	tile_yflip_bit:	equ 4
+	tile_pal12_bit:	equ 5
+	tile_pal34_bit:	equ 6
+	tile_hi_bit:	equ 7
+	
+ost_mappings:		rs.l 1					; 4 ; universal; mappings address (4 bytes)
+ost_x_pos:			rs.l 1					; 8 ; universal; x-axis position (2 bytes)
+ost_x_sub:			equ __rs-2				; $A ; universal; x-axis subpixel position (2 bytes)
+ost_y_screen:		equ __rs-2				; $A ; y-axis position for screen-fixed items (2 bytes)
+ost_y_pos:			rs.l 1					; $C ; universal; y-axis position (2 bytes)
+ost_y_sub:			equ __rs-2				; $E ; universal; y-axis subpixel position (2 bytes)
+
+ost_x_vel:			rs.l 1					; $10 ; most objects; x-axis velocity (2 bytes)
+ost_y_vel:			equ __rs-2				; $12 ; most objects; y-axis velocity (2 bytes)
+ost_inertia:		rs.w 1					; $14 ; Sonic/Tails potential speed (2 bytes)
+ost_height:			rs.b 1					; $16 ; most objects; height/2
+ost_width:			rs.b 1					; $17 ; most objects; width/2
+ost_priority:		rs.w 1					; $18 ; universal; sprite stack priority - 0 is highest, 7 is lowest
+ost_displaywidth:	equ __rs-1				; $19 ; universal; display width/2
+ost_frame:			rs.b 1					; $1A ; universal; current frame displayed
+ost_anim_frame:		rs.b 1					; $1B ; most objects; current frame in animation script
+ost_anim:			rs.w 1					; $1C ; most objects; current animation
+ost_anim_restart:	equ __rs-1				; $1D ; most objects; restart animation flag / next animation number (Sonic)
+ost_anim_time:		rs.w 1					; $1E ; most objects; time to next frame (1 byte) / general timer (2 bytes)
+ost_anim_time_low:	equ __rs-1				; $1F ; used by some objects as master copy of timer
+ost_col_type:		rs.b 1					; $20 ; non-player objects; collision response type - 0 = none; 1-$3F = enemy; $41-$7F = items; $81-BF = hurts; $C1-$FF = custom
+ost_col_property:	rs.b 1					; $21 ; non-player objects;  collision extra property
+ost_status:			rs.b 1					; $22 ; most objects; bitfield indicating orientation or mode
+	status_xflip_bit:	equ 0
+	status_yflip_bit:	equ 1
+	status_air_bit:		equ 1
+	status_jump_bit:	equ 2
+	status_platform_bit:	equ 3
+	status_rolljump_bit:	equ 4
+	status_pushing_bit:		equ 5
+	status_underwater_bit:	equ 6
+	status_broken_bit:	equ 7
+	status_xflip:		equ 1<<status_xflip_bit		; xflip
+	status_yflip:		equ 1<<status_yflip_bit		; yflip (objects only)
+	status_air:			equ 1<<status_air_bit		; Sonic/Tails is in the air (Sonic/Tails only)
+	status_jump:		equ 1<<status_jump_bit		; jumping or rolling (Sonic/Tails only)
+	status_platform:	equ 1<<status_platform_bit	; Sonic/Tails is standing on this (objects) / Sonic/Tails is standing on object (Sonic)
+	status_rolljump:	equ 1<<status_rolljump_bit	; Sonic/Tails is jumping after rolling (Sonic only)
+	status_pushing:		equ 1<<status_pushing_bit	; Sonic/Tails is pushing this (objects) / Sonic/Tails is pushing an object (Sonic)
+	status_underwater:	equ 1<<status_underwater_bit	; Sonic/Tails is underwater (Sonic only)
+	status_broken:		equ 1<<status_broken_bit	; object has been broken (enemies/bosses)
+ost_respawn:				rs.b 1					; $23 ; non-player objects; respawn list index number
+ost_primary_routine:		rs.b 1					; $24 ; most objects; primary routine number
+ost_secondary_routine:		rs.b 1					; $25 ; most objects; secondary routine number
+;ost_solid:		equ ost_secondary_routine			; $25 ; solid status flag
+ost_angle:					rs.w 1					; $26 ; most objects; angle of floor or rotation - 0 = flat; $40 = vertical left; $80 = ceiling; $C0 = vertical right
+ost_subtype:				rs.w 1					; $28 ; non-player objects;  object subtype - must go last because some objects use this as a start address for a list (1 byte, but sometimes read as a word)
+ost_used:		equ __rs-1				; bytes used by regular OST, everything after this is scratch RAM
+		popo						; restore options
+		inform	0,"0-$%h bytes of OST per object used, leaving $%h bytes of scratch RAM.",__rs-1,sizeof_ost-__rs
+
+
+
+; ---------------------------------------------------------------------------
+; Multi-sprite object data OST offsets
+; Note that multisprite objects cannot use a number of ordinary OST slots
+; ---------------------------------------------------------------------------
+ost_next_subsprite:	equ ost_mappings+2 ; 6
+			
+			rsset ost_y_pos-1 ; $B
+ost_mainspr_frame:			rs.b 1		; $B ; current frame of parent sprite
+							rs.b 2 		; $C-D; unused in this context
+ost_mainspr_width:			rs.b 1		; $E ; parent sprite width
+ost_mainspr_childsprites:	rs.b 1		; $F ; number of childsprites
+ost_subspr2_x_pos:			rs.b 2		; $10 ; in place of ost_x_vel
+ost_subspr2_y_pos:			rs.b 2		; $12 ; in place of ost_y_vel
+ost_mainspr_height:			rs.b 1		; $14 ; parent sprite width
+ost_subspr2_mapframe:		rs.b 1		; $15
+ost_subspr3_x_pos:			rs.b 2		; $16 ; in place of ost_height
+ost_subspr3_y_pos:			rs.b 2		; $18 ; in place of priority
+							rs.b 1		; $1A ; unused in this context
+ost_subspr3_frame:			rs.b 1		; $1B ; in place of ost_anim_frame
+ost_subspr4_x_pos:			rs.b 2		; $1C ; in place of ost_anim
+ost_subspr4_y_pos:			rs.b 2		; $1E ; in place of ost_anim_time
+
+			rsset ost_col_property 		; $21
+ost_subspr4_frame:			rs.b 1		; $21 ; in place of ost_col_property
+ost_subspr5_x_pos:			rs.b 2		; $22 ; in place of status
+ost_subspr5_y_pos:			rs.b 2		; $24 ; in place of routine
+							rs.b 1		; $26 ; unused in this context
+ost_subspr5_frame:			rs.b 1		; $27
+ost_subspr6_x_pos:			rs.b 2		; $28 ; in place of ost_subtype
+ost_subspr6_y_pos:			rs.b 2		; $2A
+							rs.b 1		; $2C ; unused in this context
+ost_subspr6_frame:			rs.b 1		; $2D
+ost_subspr7_x_pos:			rs.b 2		; $2E
+ost_subspr7_y_pos:			rs.b 2		; $30
+							rs.b 1		; $32 ; unused in this context
+ost_subspr7_frame:			rs.b 1		; $33
+ost_subspr8_x_pos:			rs.b 2		; $34
+ost_subspr8_y_pos:			rs.b 2		; $36
+							rs.b 1		; $38 ; unused in this context
+ost_subspr8_frame:			rs.b 1		; $39
+ost_subspr9_x_pos:			rs.b 2		; $3A
+ost_subspr9_y_pos:			rs.b 2		; $3C
+							rs.b 1		; $3E ; unused in this context
+ost_subspr9_frame:			rs.b 1		; $3F
+
+
+; ---------------------------------------------------------------------------
+; Object variables specific to Sonic & Tails
+; ---------------------------------------------------------------------------
+			rsset $27
+ost_flip_angle:				rs.b 1		; $27 ; angle about the x axis (360 degrees = 256) (twist/tumble)
+ost_air_left:				rs.b 1		; $28 ; air left while underwater
+ost_flip_turned:			rs.b 1		; $29 ; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
+ost_obj_control:			rs.b 1 		; $2A ; 0 for normal, 1 for hanging or for resting on a flipper, $81 for going through CNZ/OOZ/MTZ tubes or stopped in CNZ cages or stoppers or flying if Tails
+ost_status_secondary		rs.b 1		; $2B
+ost_flips_remaining			rs.b 1		; $2C ; number of flip revolutions remaining
+ost_flip_speed:				rs.b 1		; $2D ; number of flip revolutions per frame / 256
+ost_lock_time:				rs.w 1		; $2E ; time left for locked d-pad controls (jumping is allowed), e.g. after hitting a spring
+ost_invulnerable_time:		rs.w 1		; $30 ; time Sonic/Tails flashes for after getting hit
+ost_invincible_time: 		rs.w 1		; $32 ; time left for invincibility
+ost_speedshoe_time:			rs.w 1		; $34 ; time left for speed shoes
+ost_angle_right:			rs.b 1		; $36 ; angle of floor on Sonic/Tails' right side
+ost_angle_left:				rs.b 1		; $37 ; angle of floor on Sonic/Tails' left side
+ost_sticktoconvex:			rs.b 1		; $38 ; 1 if Sonic/Tails is stuck to a convex surface. used in Sonic 1 and 3 for rotating discs, unused here
+ost_pinball_mode:
+ost_spindash_flag:			rs.b 1		; $39 ; 0 for normal, 1 for charging a spindash or forced rolling
+ost_spindash_counter:					; $3A ; 
+ost_restart_time:			rs.w 1		; $3A ; time until level restarts
+ost_jump:					rs.b 1		; $3C ; 1 if Sonic/Tails is jumping
+ost_interact:				rs.b 1		; $3D ; OST index of object Sonic stands on
+ost_top_solid_bit:			rs.b 1		; $3E ; the bit to check for top solidity (either $C or $E)
+ost_lrb_solid_bit:			rs.w 1		; $3F ; ; the bit to check for left/right/bottom solidity (either $D or $F)
+		
+
