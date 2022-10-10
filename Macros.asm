@@ -24,6 +24,17 @@ align:		macro loc,length,value
 		endm
 		
 ; ---------------------------------------------------------------------------
+; Align Z80 ROM bank contents to end of bank (replicates negative cnops).
+; input: current PC, offset, boundary, value to use as padding (default is 0)
+; ---------------------------------------------------------------------------
+
+;align_Z80_bank:	macro loc,offset
+	
+;	negoffset: equ -\offset
+;	alignval: equ ((\offset+$8000-\loc)&($8000-1))
+;	dcb.b alignval,0
+;	endm	
+; ---------------------------------------------------------------------------
 ; Save and restore registers from the stack.
 ; ---------------------------------------------------------------------------
 
@@ -547,10 +558,10 @@ endobj:		macro
 ; input: address of pointer target
 ; ---------------------------------------------------------------------------
 
-;rom_ptr_z80: macro addr
-;		dc.w	((((addr&$7FFF)+$8000)<<8)&$FF00)+(((addr&$7FFF)+$8000)>>8)
-
-
+z80_ptr: macro addr
+		;dc.w ((((\addr&$7FFF)+$8000)<<8)&$FF00)+(((\addr&$7FFF)+$8000)>>8)	
+		dc.w (((\addr)<<8)&$FF00)|(((\addr)>>8)&$FF)|$80	
+	endm
 ; ---------------------------------------------------------------------------
 ; Define and align the start of a sound bank
 ; ---------------------------------------------------------------------------

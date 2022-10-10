@@ -15,11 +15,15 @@
 		opt an+					; allow -h suffix for hexadecimal (used in the Z80 code)			
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
-		opt	m+					; do not expand macros - if enabled, this can break assembling
+;		opt	m+					; do not expand macros - if enabled, this can break assembling
 		
 ; Main section for all 68k code + startup dummy z80 program;
 ; Sound driver and S2 Driver Compress data are seperate sections.
-Main	section org(0)
+Main:	group word,org(0)
+
+		section MainProgram,Main
+
+
 	
 
 	if ~def(Revision) 
@@ -67,6 +71,7 @@ RelativeLea = (0|Revision<>2|AllOptimizations)
 		include "Constants.asm"
 		include "RAM Addresses.asm"
 		include "sound/Sound Equates.asm"
+		include "sound/SMPS2ASM 68K.asm"
 		
 
 
@@ -4246,138 +4251,93 @@ loc_339C:
 
 
 ; =============== S U B	R O U T	I N E =======================================
+; ---------------------------------------------------------------------------
+; Subroutine to convert an angle (0 to $FF) to sine and cosine (-$100 to $100)
 
+; input:
+;	d0 = angle (360 degrees == 256)
 
+; output:
+;	d0 = sine
+;	d1 = cosine
+; ---------------------------------------------------------------------------
+; sub_33B6:
 CalcSine:				
-		andi.w	#$FF,d0
+		andi.w	#$FF,d0						; read low byte of angle only
 		add.w	d0,d0
-		addi.w	#$80,d0	; '='
-		move.w	Sine_Data(pc,d0.w),d1
-		subi.w	#$80,d0	; '='
-		move.w	Sine_Data(pc,d0.w),d0
+		addi.w	#$80,d0						; start 90 degrees later for cosine
+		move.w	Sine_Data(pc,d0.w),d1		; get cosine
+		subi.w	#$80,d0						; start at 0 for sine
+		move.w	Sine_Data(pc,d0.w),d0		; get sine
 		rts	
-; End of function CalcSine
 
-; ===========================================================================
-Sine_Data:	dc.w	 0,    6,   $C,	 $12,  $19,  $1F,  $25,	 $2B; 0
-		dc.w   $31,  $38,  $3E,	 $44,  $4A,  $50,  $56,	 $5C; 8
-		dc.w   $61,  $67,  $6D,	 $73,  $78,  $7E,  $83,	 $88; 16
-		dc.w   $8E,  $93,  $98,	 $9D,  $A2,  $A7,  $AB,	 $B0; 24
-		dc.w   $B5,  $B9,  $BD,	 $C1,  $C5,  $C9,  $CD,	 $D1; 32
-		dc.w   $D4,  $D8,  $DB,	 $DE,  $E1,  $E4,  $E7,	 $EA; 40
-		dc.w   $EC,  $EE,  $F1,	 $F3,  $F4,  $F6,  $F8,	 $F9; 48
-		dc.w   $FB,  $FC,  $FD,	 $FE,  $FE,  $FF,  $FF,	 $FF; 56
-		dc.w  $100,  $FF,  $FF,	 $FF,  $FE,  $FE,  $FD,	 $FC; 64
-		dc.w   $FB,  $F9,  $F8,	 $F6,  $F4,  $F3,  $F1,	 $EE; 72
-		dc.w   $EC,  $EA,  $E7,	 $E4,  $E1,  $DE,  $DB,	 $D8; 80
-		dc.w   $D4,  $D1,  $CD,	 $C9,  $C5,  $C1,  $BD,	 $B9; 88
-		dc.w   $B5,  $B0,  $AB,	 $A7,  $A2,  $9D,  $98,	 $93; 96
-		dc.w   $8E,  $88,  $83,	 $7E,  $78,  $73,  $6D,	 $67; 104
-		dc.w   $61,  $5C,  $56,	 $50,  $4A,  $44,  $3E,	 $38; 112
-		dc.w   $31,  $2B,  $25,	 $1F,  $19,  $12,   $C,	   6; 120
-		dc.w	 0,$FFFA,$FFF4,$FFEE,$FFE7,$FFE1,$FFDB,$FFD5; 128
-		dc.w $FFCF,$FFC8,$FFC2,$FFBC,$FFB6,$FFB0,$FFAA,$FFA4; 136
-		dc.w $FF9F,$FF99,$FF93,$FF8B,$FF88,$FF82,$FF7D,$FF78; 144
-		dc.w $FF72,$FF6D,$FF68,$FF63,$FF5E,$FF59,$FF55,$FF50; 152
-		dc.w $FF4B,$FF47,$FF43,$FF3F,$FF3B,$FF37,$FF33,$FF2F; 160
-		dc.w $FF2C,$FF28,$FF25,$FF22,$FF1F,$FF1C,$FF19,$FF16; 168
-		dc.w $FF14,$FF12,$FF0F,$FF0D,$FF0C,$FF0A,$FF08,$FF07; 176
-		dc.w $FF05,$FF04,$FF03,$FF02,$FF02,$FF01,$FF01,$FF01; 184
-		dc.w $FF00,$FF01,$FF01,$FF01,$FF02,$FF02,$FF03,$FF04; 192
-		dc.w $FF05,$FF07,$FF08,$FF0A,$FF0C,$FF0D,$FF0F,$FF12; 200
-		dc.w $FF14,$FF16,$FF19,$FF1C,$FF1F,$FF22,$FF25,$FF28; 208
-		dc.w $FF2C,$FF2F,$FF33,$FF37,$FF3B,$FF3F,$FF43,$FF47; 216
-		dc.w $FF4B,$FF50,$FF55,$FF59,$FF5E,$FF63,$FF68,$FF6D; 224
-		dc.w $FF72,$FF78,$FF7D,$FF82,$FF88,$FF8B,$FF93,$FF99; 232
-		dc.w $FF9F,$FFA4,$FFAA,$FFB0,$FFB6,$FFBC,$FFC2,$FFC8; 240
-		dc.w $FFCF,$FFD5,$FFDB,$FFE1,$FFE7,$FFEE,$FFF4,$FFFA; 248
-		dc.w	 0,    6,   $C,	 $12,  $19,  $1F,  $25,	 $2B; 256
-		dc.w   $31,  $38,  $3E,	 $44,  $4A,  $50,  $56,	 $5C; 264
-		dc.w   $61,  $67,  $6D,	 $73,  $78,  $7E,  $83,	 $88; 272
-		dc.w   $8E,  $93,  $98,	 $9D,  $A2,  $A7,  $AB,	 $B0; 280
-		dc.w   $B5,  $B9,  $BD,	 $C1,  $C5,  $C9,  $CD,	 $D1; 288
-		dc.w   $D4,  $D8,  $DB,	 $DE,  $E1,  $E4,  $E7,	 $EA; 296
-		dc.w   $EC,  $EE,  $F1,	 $F3,  $F4,  $F6,  $F8,	 $F9; 304
-		dc.w   $FB,  $FC,  $FD,	 $FE,  $FE,  $FF,  $FF,	 $FF; 312
+; ---------------------------------------------------------------------------
+; word_33CE:
+Sine_Data:	incbin "misc/Sine & Cosine Waves.bin"
+			incbin "misc/Sine & Cosine Waves.bin",,$80 ; First $80 bytes are duplicated at the end of the table!
 
-; =============== S U B	R O U T	I N E =======================================
+; ---------------------------------------------------------------------------
 
-
-sub_364E:				
-		movem.l	d3-d4,-(sp)
+; sub_364E:
+CalcAngle:				
+		pushr	d3-d4
 		moveq	#0,d3
 		moveq	#0,d4
-		move.w	d1,d3
-		move.w	d2,d4
+		move.w	d1,d3					; d3 = x distance
+		move.w	d2,d4					; d4 = y distance
 		or.w	d3,d4
-		beq.s	loc_36AA
+		beq.s	CalcAngle_Both0			; branch if both are 0
 		move.w	d2,d4
 		tst.w	d3
-		bpl.w	loc_3668
-		neg.w	d3
+		bpl.w	.x_positive				; branch if x is positive
+		neg.w	d3						; force x positive
 
-loc_3668:				
+	.x_positive:				
 		tst.w	d4
-		bpl.w	loc_3670
-		neg.w	d4
+		bpl.w	.y_positive				; branch if y is positive
+		neg.w	d4						; force y positive
 
-loc_3670:				
+	.y_positive:				
 		cmp.w	d3,d4
-		bcc.w	loc_3682
+		bcc.w	.y_larger				; branch if y is larger or same
 		lsl.l	#8,d4
-		divu.w	d3,d4
+		divu.w	d3,d4					; d4 = (y*$100)/x
 		moveq	#0,d0
 		move.b	Angle_Data(pc,d4.w),d0
-		bra.s	loc_368C
+		bra.s	CalcAngle_ChkRotation
 ; ===========================================================================
 
-loc_3682:				
+	.y_larger:				
 		lsl.l	#8,d3
 		divu.w	d4,d3
-		moveq	#$40,d0	; '@'
+		moveq	#$40,d0					; d3 = (x*$100)/y
 		sub.b	Angle_Data(pc,d3.w),d0
 
-loc_368C:				
+	CalcAngle_ChkRotation:				
 		tst.w	d1
-		bpl.w	loc_3698
+		bpl.w	.x_positive				; branch if x is positive
 		neg.w	d0
-		addi.w	#$80,d0	; '='
+		addi.w	#$80,d0
 
-loc_3698:				
+	.x_positive:				
 		tst.w	d2
-		bpl.w	loc_36A4
+		bpl.w	.y_positive				; branch if x is positive
 		neg.w	d0
 		addi.w	#$100,d0
 
-loc_36A4:				
-		movem.l	(sp)+,d3-d4
+	.y_positive:				
+		popr	d3-d4
 		rts	
 ; ===========================================================================
-
-loc_36AA:				
-		move.w	#$40,d0	; '@'
-		movem.l	(sp)+,d3-d4
+; loc_36AA:
+CalcAngle_Both0:				
+		move.w	#$40,d0
+		popr	d3-d4
 		rts	
-; End of function sub_364E
 
 ; ===========================================================================
-Angle_Data:	dc.b   0,  0,  0,  0,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2; 0
-		dc.b   3,  3,  3,  3,  3,  3,  3,  4,  4,  4,  4,  4,  4,  5,  5,  5; 16
-		dc.b   5,  5,  5,  6,  6,  6,  6,  6,  6,  6,  7,  7,  7,  7,  7,  7; 32
-		dc.b   8,  8,  8,  8,  8,  8,  8,  9,  9,  9,  9,  9,  9, $A, $A, $A; 48
-		dc.b  $A, $A, $A, $A, $B, $B, $B, $B, $B, $B, $B, $C, $C, $C, $C, $C; 64
-		dc.b  $C, $C, $D, $D, $D, $D, $D, $D, $D, $E, $E, $E, $E, $E, $E, $E; 80
-		dc.b  $F, $F, $F, $F, $F, $F, $F,$10,$10,$10,$10,$10,$10,$10,$11,$11; 96
-		dc.b $11,$11,$11,$11,$11,$11,$12,$12,$12,$12,$12,$12,$12,$13,$13,$13; 112
-		dc.b $13,$13,$13,$13,$13,$14,$14,$14,$14,$14,$14,$14,$14,$15,$15,$15; 128
-		dc.b $15,$15,$15,$15,$15,$15,$16,$16,$16,$16,$16,$16,$16,$16,$17,$17; 144
-		dc.b $17,$17,$17,$17,$17,$17,$17,$18,$18,$18,$18,$18,$18,$18,$18,$18; 160
-		dc.b $19,$19,$19,$19,$19,$19,$19,$19,$19,$19,$1A,$1A,$1A,$1A,$1A,$1A; 176
-		dc.b $1A,$1A,$1A,$1B,$1B,$1B,$1B,$1B,$1B,$1B,$1B,$1B,$1B,$1C,$1C,$1C; 192
-		dc.b $1C,$1C,$1C,$1C,$1C,$1C,$1C,$1C,$1D,$1D,$1D,$1D,$1D,$1D,$1D,$1D; 208
-		dc.b $1D,$1D,$1D,$1E,$1E,$1E,$1E,$1E,$1E,$1E,$1E,$1E,$1E,$1E,$1F,$1F; 224
-		dc.b $1F,$1F,$1F,$1F,$1F,$1F,$1F,$1F,$1F,$1F,$20,$20,$20,$20,$20,$20; 240
-		dc.b $20,  0		; 256
+; byte_36B4:
+Angle_Data:	incbin "misc/Angle Table.bin"
 ; ===========================================================================
 	if Revision<2
 		nop	
@@ -8642,13 +8602,13 @@ off_643E:	dc.l MapSpec_Rise1	; 0
 		dc.l MapSpec_Unturn3	; 46
 		dc.l MapSpec_Unturn4	; 47
 		dc.l MapSpec_Unturn5	; 48
-		dc.l MapSpec_DA4CE	; 49
-		dc.l MapSpec_DAB20	; 50
-		dc.l MapSpec_DB086	; 51
-		dc.l MapSpec_DB5AE	; 52
-		dc.l MapSpec_DBB62	; 53
-		dc.l MapSpec_DC154	; 54
-		dc.l MapSpec_DC5E8	; 55
+		dc.l MapSpec_Turn1	; 49
+		dc.l MapSpec_Turn2	; 50
+		dc.l MapSpec_Turn3	; 51
+		dc.l MapSpec_Turn4	; 52
+		dc.l MapSpec_Turn5	; 53
+		dc.l MapSpec_Turn6	; 54
+		dc.l MapSpec_Turn7	; 55
 word_651E:	dc.w $8001,$8007,$802C,$800B,$8024,$8824,$8039,$882B; 0
 					
 		dc.w $805D,$885D,$802B,$804A,$8049,$8037,$8849,$8045; 8
@@ -8870,7 +8830,7 @@ loc_6CC0:
 
 
 sub_6CE6:				
-		lea	(Koz_DCA38).l,a0
+		lea	(Kos_Special).l,a0
 		lea	(v_128x128_tiles).l,a1
 		bsr.w	KozDec_193A
 		move.l	#$40000000,(vdp_control_port).l
@@ -8892,10 +8852,10 @@ loc_6D10:
 		lea	(Kos_SpecialPerspective).l,a0
 		lea	($FFFF6A60).l,a1
 		bsr.w	KozDec_193A
-		lea	(MiscNem_E34EE).l,a0
+		lea	(Nem_SpecialLevelLayouts).l,a0
 		lea	($FFFF855C).w,a4
 		bsr.w	NemDecToRAM
-		lea	(MiscKoz_E35F2).l,a0
+		lea	(Koz_SpecialObjectLocations).l,a0
 		lea	($FFFF8778).w,a1
 		bsr.w	KozDec_193A
 		rts	
@@ -8908,11 +8868,11 @@ loc_6D10:
 sub_6D52:				
 	disable_ints
 		movea.l	#v_128x128_tiles,a1
-		lea	(Eni_DD30C).l,a0
+		lea	(Eni_SpecialBackBottom).l,a0
 		move.w	#$700,d0
 		bsr.w	EniDec_17BC
 		movea.l	#-$FC00,a1
-		lea	(Eni_DD1DE).l,a0
+		lea	(Eni_SpecialBack).l,a0
 		move.w	#$700,d0
 		bsr.w	EniDec_17BC
 		lea	(v_128x128_tiles).l,a1
@@ -9437,7 +9397,7 @@ loc_71E0:
 		addq.w	#1,d3
 		move.w	#$FFD8,d2
 		move.w	8(a2),d1
-		bsr.w	sub_364E
+		bsr.w	CalcAngle
 		move.b	d0,$26(a1)
 		lea	$A(a2),a2
 
@@ -21373,7 +21333,7 @@ loc_F62E:
 
 sub_F64C:				
 					
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; End of function sub_F64C
 
 
@@ -21988,7 +21948,7 @@ word_FC7E:	dc.w 1
 
 
 sub_FC88:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; End of function sub_FC88
 
 
@@ -22584,7 +22544,7 @@ sub_102F8:
 
 sub_102FE:				
 					
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; End of function sub_102FE
 
 
@@ -22646,7 +22606,7 @@ loc_10324:
 		moveq	#0,d6
 
 loc_10372:				
-		bsr.w	loc_17FFA
+		bsr.w	SingleObjLoad2
 		bne.s	loc_103E8
 		addq.b	#1,$28(a0)
 		move.w	a1,d5
@@ -23500,7 +23460,7 @@ loc_10B6C:
 ; ===========================================================================
 
 loc_10B96:				
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.s	loc_10BE4
 		addq.w	#8,a3
 
@@ -24575,7 +24535,7 @@ loc_11A46:
 		move.w	#-$400,$12(a0)
 		tst.b	$38(a0)
 		bne.s	loc_11AD0
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.s	loc_11ACC
 		move.b	#$29,0(a1) ; ')'
 		move.w	8(a0),8(a1)
@@ -25192,7 +25152,7 @@ loc_120AA:
 ; ===========================================================================
 
 loc_120B2:				
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.w	loc_12142
 
 loc_120BA:				
@@ -25352,7 +25312,7 @@ loc_12264:
 loc_12282:				
 		subq.b	#2,$24(a0)
 		move.b	#0,$20(a0)
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.w	loc_122B4
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
@@ -25778,7 +25738,7 @@ loc_127EC:
 		clr.b	$22(a0)
 		addq.b	#2,$24(a0)
 		move.b	#0,$20(a0)
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.s	loc_1281E
 		move.b	#$2E,0(a1) ; '.'
 		move.w	8(a0),8(a1)
@@ -25787,7 +25747,7 @@ loc_127EC:
 		move.w	$3E(a0),$3E(a1)
 
 loc_1281E:				
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.s	loc_1283A
 		move.b	#$27,0(a1) ; '''
 		addq.b	#2,$24(a1)
@@ -30073,7 +30033,7 @@ sub_15E18:
 ; ===========================================================================
 
 loc_15E3E:				
-		bsr.w	loc_17FFA
+		bsr.w	SingleObjLoad2
 		bne.s	loc_15E82
 		addq.w	#8,a3
 
@@ -32906,7 +32866,7 @@ locret_175E8:
 loc_175EA:				
 		move.w	$10(a0),d1
 		move.w	$12(a0),d2
-		jsr	(sub_364E).l
+		jsr	(CalcAngle).l
 		move.b	d0,($FFFFFFDC).w
 		sub.w	d3,d0
 		move.w	d0,d1
@@ -33714,7 +33674,7 @@ loc_17F36:
 ; ===========================================================================
 
 loc_17F4A:				
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.s	locret_17F7E
 		move.w	(a0)+,8(a1)
 		move.w	(a0)+,d0
@@ -33750,13 +33710,13 @@ loc_17F80:
 loc_17F94:				
 		btst	#4,2(a0)
 		beq.s	loc_17FA4
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.s	locret_17FD8
 		bra.s	loc_17FAA
 ; ===========================================================================
 
 loc_17FA4:				
-		bsr.w	loc_18016
+		bsr.w	SingleObjLoad3
 		bne.s	locret_17FD8
 
 loc_17FAA:				
@@ -33780,25 +33740,31 @@ loc_17FB6:
 locret_17FD8:				
 		rts	
 ; ===========================================================================
-
-loc_17FDA:				
-		lea	($FFFFB400).w,a1
-		move.w	#$6F,d0	; 'o'
+; Single object loading subroutine
+; Find an empty object array
+; ---------------------------------------------------------------------------
+; loc_17FDA: ; allocObject:
+SingleObjLoad:				
+		lea	($FFFFB400).w,a1 	; a1=object
+		move.w	#$6F,d0 		; search to end of table
 		tst.w	($FFFFFFD8).w
-		beq.s	loc_17FEC
-		move.w	#$27,d0	; '''
+		beq.s	.loop
+		move.w	#$27,d0 		; search to $BF00 exclusive
 
-loc_17FEC:				
-		tst.b	(a1)
-		beq.s	locret_17FF8
-		lea	$40(a1),a1
-		dbf	d0,loc_17FEC
+	.loop:				
+		tst.b	ost_id(a1)	; is object RAM slot empty?
+		beq.s	.return		; if yes, branch
+		lea	$40(a1),a1 		; load obj address ; goto next object RAM slot
+		dbf	d0,.loop		; repeat until end
 
-locret_17FF8:				
+	.return:				
 		rts	
 ; ===========================================================================
-
-loc_17FFA:				
+; Single object loading subroutine
+; Find an empty object array AFTER the current one in the table
+; ---------------------------------------------------------------------------
+; loc_17FFA: ; allocObjectAfterCurrent:
+SingleObjLoad2:				
 		movea.l	a0,a1
 		move.w	#-$3000,d0
 		sub.w	a0,d0
@@ -33806,29 +33772,38 @@ loc_17FFA:
 		subq.w	#1,d0
 		bcs.s	locret_18014
 
-loc_18008:				
+	loc_18008:				
 		tst.b	(a1)
 		beq.s	locret_18014
 		lea	$40(a1),a1
 		dbf	d0,loc_18008
 
-locret_18014:				
+	locret_18014:				
 		rts	
 ; ===========================================================================
-
-loc_18016:				
+; Single object loading subroutine
+; Find an empty object at or within < 12 slots after a3
+; ---------------------------------------------------------------------------
+; loc_18016:
+SingleObjLoad3:				
 		movea.l	a3,a1
 		move.w	#$B,d0
 
-loc_1801C:				
+	loc_1801C:				
 		tst.b	(a1)
 		beq.s	locret_18028
 		lea	$40(a1),a1
 		dbf	d0,loc_1801C
 
-locret_18028:				
+	locret_18028:				
 		rts	
 ; ===========================================================================
+; Macro for marking the boundaries of an object layout file
+endobj macro
+		dc.w	$FFFF, $0000, $0000
+    	endm
+
+
 byte_1802A:	dc.b   0,$40,$81,$58,$44,  0,  0,$68,$81,$A8,$44,  0,  0,$90,$81,$58; 0
 					
 		dc.b $44,  0,  0,$B8,$81,$A8,$44,  0,  0,$E0,$81,$58,$44,  0,  2,$50; 16
@@ -34876,7 +34851,7 @@ loc_19398:
 		addq.b	#2,$34(a0)
 		andi.b	#$E,$34(a0)
 		lea	byte_19408(pc,d0.w),a2
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.s	locret_19406
 		move.b	#$25,0(a1) ; '%'
 		move.b	#6,$24(a1)
@@ -34940,7 +34915,7 @@ loc_19452:
 		lea	($FFFFB000).w,a1
 		clr.b	$2B(a1)
 		clr.b	($FFFFFE1E).w
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.s	loc_19468
 		move.b	#$3A,(a1) ; ':'
 
@@ -37525,7 +37500,7 @@ loc_1AEC2:
 		move.b	$3F(a0),d5
 		move.w	$10(a0),d1
 		move.w	$12(a0),d2
-		jsr	(sub_364E).l
+		jsr	(CalcAngle).l
 		subi.b	#$20,d0	; ' '
 		andi.b	#-$40,d0
 		cmpi.b	#$40,d0	; '@'
@@ -40045,7 +40020,7 @@ loc_1C972:
 		move.b	$3F(a0),d5
 		move.w	$10(a0),d1
 		move.w	$12(a0),d2
-		jsr	(sub_364E).l
+		jsr	(CalcAngle).l
 		subi.b	#$20,d0	; ' '
 		andi.b	#-$40,d0
 		cmpi.b	#$40,d0	; '@'
@@ -40654,7 +40629,7 @@ loc_1CFC2:
 loc_1CFE4:				
 		move.w	$10(a2),d1
 		move.w	$12(a2),d2
-		jsr	(sub_364E).l
+		jsr	(CalcAngle).l
 		moveq	#0,d1
 		move.b	$22(a0),d2
 		andi.b	#1,d2
@@ -41214,7 +41189,7 @@ loc_1D73C:
 		andi.w	#$F,d0
 		addq.w	#8,d0
 		move.w	d0,$3A(a0)
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.w	locret_1D81C
 		move.b	0(a0),0(a1)
 		move.w	8(a2),8(a1)
@@ -41769,7 +41744,7 @@ loc_1DE64:
 		subq.b	#1,$32(a0)
 		bpl.s	loc_1DEE0
 		move.b	#3,$32(a0)
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.s	loc_1DEE0
 		move.b	0(a0),0(a1)
 		move.w	8(a2),8(a1)
@@ -43631,7 +43606,7 @@ loc_1F154:
 		bcc.w	locret_1F220
 		move.w	#$A1,d0	; '='
 		jsr	(PlaySound).l
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.s	loc_1F206
 		move.b	#$79,0(a1) ; 'y'
 		move.b	#6,$24(a1)
@@ -43868,7 +43843,7 @@ loc_1F4C4:
 		moveq	#0,d2
 
 loc_1F4C8:				
-		bsr.w	loc_17FFA
+		bsr.w	SingleObjLoad2
 		bne.s	locret_1F534
 		move.b	0(a0),0(a1)
 		move.l	#off_1F4A0,4(a1)
@@ -44169,7 +44144,7 @@ loc_1F79C:
 		move.w	$C(a0),d2
 		sub.w	8(a1),d1
 		sub.w	$C(a1),d2
-		jsr	(sub_364E).l
+		jsr	(CalcAngle).l
 		move.b	($FFFFFE04).w,d1
 		andi.w	#3,d1
 		add.w	d1,d0
@@ -44207,7 +44182,7 @@ loc_1F814:
 		moveq	#1,d0
 		movea.w	a1,a3
 		jsr	sub_40D42
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.s	locret_1F83C
 		move.b	#$29,0(a1) ; ')'
 		move.w	8(a0),8(a1)
@@ -44412,7 +44387,7 @@ loc_1FA2A:
 		jsr	(sub_3390).l
 		andi.w	#$1F,d0
 		move.w	d0,$38(a0)
-		bsr.w	loc_17FDA
+		bsr.w	SingleObjLoad
 		bne.s	loc_1FAA6
 		move.b	0(a0),0(a1)
 		move.w	8(a0),8(a1)
@@ -45276,7 +45251,7 @@ loc_20400:
 ; ===========================================================================
 
 loc_20428:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	locret_2046A
 		move.b	#$13,0(a1)
 		addq.b	#4,$24(a1)
@@ -46498,7 +46473,7 @@ loc_214B2:
 ; ===========================================================================
 
 loc_214B8:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_214BE:				
@@ -47200,7 +47175,7 @@ word_21D8A:	dc.w 1
 ; ===========================================================================
 
 loc_21D94:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_21D9A:				
@@ -47388,7 +47363,7 @@ loc_21FF8:
 ; ===========================================================================
 
 loc_21FFE:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_22004:				
@@ -47966,7 +47941,7 @@ loc_22584:
 ; ===========================================================================
 
 loc_2258A:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_22590:				
@@ -48768,7 +48743,7 @@ loc_232E2:
 ; ===========================================================================
 
 loc_232E8:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_232EE:				
@@ -49269,7 +49244,7 @@ loc_238B2:
 ; ===========================================================================
 
 loc_238B8:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_238BE:				
@@ -49726,7 +49701,7 @@ loc_23E2C:
 ; ===========================================================================
 
 loc_23E32:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_23E38:				
@@ -49920,7 +49895,7 @@ word_23FE4:	dc.w $E005,    0,    0,$FFE8; 0
 ; ===========================================================================
 
 loc_24014:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_2401A:				
@@ -50845,7 +50820,7 @@ loc_24CC4:
 ; ===========================================================================
 
 loc_24CCA:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_24CD0:				
@@ -51316,7 +51291,7 @@ loc_25218:
 ; ===========================================================================
 
 loc_2521E:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_25224:				
@@ -51837,7 +51812,7 @@ loc_25868:
 ; ===========================================================================
 
 loc_2586E:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_25874:				
@@ -52398,7 +52373,7 @@ loc_260E4:
 ; ===========================================================================
 
 loc_260EA:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_260F0:				
@@ -52645,7 +52620,7 @@ loc_26356:
 ; ===========================================================================
 
 loc_2635C:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_26362:				
@@ -53118,7 +53093,7 @@ loc_26902:
 ; ===========================================================================
 
 loc_26908:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_2690E:				
@@ -53734,7 +53709,7 @@ loc_26F40:
 ; ===========================================================================
 
 loc_26F46:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_26F4C:				
@@ -54540,7 +54515,7 @@ loc_27864:
 ; ===========================================================================
 
 loc_2786A:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_27870:				
@@ -54985,7 +54960,7 @@ word_27D32:	dc.w 4
 ; ===========================================================================
 
 loc_27D54:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_27D5A:				
@@ -55597,7 +55572,7 @@ loc_2838E:
 ; ===========================================================================
 
 loc_28394:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_2839A:				
@@ -56045,7 +56020,7 @@ word_2891C:	dc.w 1
 		nop	
 
 loc_28928:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_2892E:				
@@ -56294,7 +56269,7 @@ loc_28BA8:
 ; ===========================================================================
 
 loc_28BAE:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_28BB4:				
@@ -56507,7 +56482,7 @@ loc_28DD8:
 ; ===========================================================================
 
 loc_28DDE:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_28DE4:				
@@ -57030,7 +57005,7 @@ locret_29386:
 ; ===========================================================================
 
 loc_29388:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_2938E:				
@@ -57253,7 +57228,7 @@ loc_29578:
 ; ===========================================================================
 
 loc_2957E:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_29584:				
@@ -58282,7 +58257,7 @@ loc_2A272:
 ; ===========================================================================
 
 loc_2A278:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_2A27E:				
@@ -58800,7 +58775,7 @@ loc_2A78A:
 ; ===========================================================================
 
 loc_2A790:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_2A796:				
@@ -61292,7 +61267,7 @@ byte_2C411:	dc.b   3,  0,  1,  4,  2,  5,  4,  1,  0; 0
 		nop	
 
 loc_2C41C:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_2C422:				
@@ -61382,7 +61357,7 @@ loc_2C4D8:
 		move.w	$C(a0),d2
 		sub.w	8(a1),d1
 		sub.w	$C(a1),d2
-		jsr	(sub_364E).l
+		jsr	(CalcAngle).l
 		addi.b	#$20,d0	; ' '
 		andi.w	#$C0,d0	; '='
 		cmpi.w	#$40,d0	; '@'
@@ -61645,7 +61620,7 @@ loc_2C77A:
 loc_2C794:				
 		move.w	$10(a1),d1
 		move.w	$12(a1),d2
-		jsr	(sub_364E).l
+		jsr	(CalcAngle).l
 		sub.w	d3,d0
 		move.w	d0,d1
 		bpl.s	loc_2C7AA
@@ -61775,7 +61750,7 @@ loc_2C90C:
 ; ===========================================================================
 
 loc_2C912:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_2C918:				
@@ -62031,7 +62006,7 @@ loc_2CB5C:
 ; ===========================================================================
 
 loc_2CB70:				
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.s	locret_2CBDA
 		move.b	#$4A,0(a1) ; 'J'
 		move.b	#6,$24(a1)
@@ -62416,7 +62391,7 @@ loc_2D036:
 ; ===========================================================================
 
 loc_2D03C:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_2D042:				
@@ -62621,7 +62596,7 @@ loc_2D248:
 ; ===========================================================================
 
 loc_2D24E:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	loc_2D2C8
 		move.b	#$4B,0(a1) ; 'K'
 		move.b	#6,$24(a1)
@@ -62695,7 +62670,7 @@ loc_2D368:
 ; ===========================================================================
 
 loc_2D36E:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_2D374:				
@@ -63060,7 +63035,7 @@ loc_2D6CC:
 		move.b	($FFFFFE0F).w,d0
 		andi.b	#7,d0
 		bne.s	locret_2D712
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.s	locret_2D712
 		move.b	#$58,0(a1) ; 'X'
 		move.w	8(a0),8(a1)
@@ -63146,7 +63121,7 @@ loc_2D75E:
 		move.w	$C(a0),$38(a0)
 		bclr	#3,$2D(a0)
 		bsr.w	loc_2EEFA
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.w	loc_2D8AC
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
@@ -63164,7 +63139,7 @@ loc_2D75E:
 		bsr.w	loc_2EEE8
 		tst.b	$28(a0)
 		bmi.w	loc_2D8AC
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.w	loc_2D8AC
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
@@ -63179,7 +63154,7 @@ loc_2D75E:
 		move.l	$C(a0),$C(a1)
 		move.b	#$18,$24(a1)
 		move.b	1(a0),1(a1)
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	loc_2D8AC
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
@@ -63193,7 +63168,7 @@ loc_2D75E:
 		move.b	#$12,$24(a1)
 
 loc_2D8AC:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	loc_2D908
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
@@ -63211,7 +63186,7 @@ loc_2D8AC:
 		move.b	#6,$1C(a1)
 
 loc_2D908:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	locret_2D94C
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
@@ -63422,7 +63397,7 @@ loc_2DB34:
 		move.b	($FFFFFE0F).w,d0
 		andi.b	#7,d0
 		bne.s	locret_2DB7A
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.s	locret_2DB7A
 		move.b	#$58,0(a1) ; 'X'
 		move.w	8(a0),8(a1)
@@ -63444,7 +63419,7 @@ locret_2DB7A:
 ; ===========================================================================
 
 loc_2DB7C:				
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.s	locret_2DB96
 		move.b	#$58,0(a1) ; 'X'
 		move.w	8(a0),8(a1)
@@ -63586,7 +63561,7 @@ loc_2DCEC:
 		addq.w	#1,d3
 
 loc_2DD26:				
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.w	loc_2EED6
 		move.b	#$5D,0(a1) ; ']'
 		move.l	#Map_2EADC,4(a1)
@@ -63642,7 +63617,7 @@ loc_2DDC2:
 ; ===========================================================================
 
 loc_2DDE2:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		beq.s	loc_2DDEC
 		rts	
 ; ===========================================================================
@@ -63694,7 +63669,7 @@ off_2DE74:	dc.w loc_2DE7A-off_2DE74; 0
 ; ===========================================================================
 
 loc_2DE7A:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.w	loc_2DFFE
 		move.b	#$E,$24(a0)
 		move.b	#6,$24(a1)
@@ -63714,7 +63689,7 @@ loc_2DE7A:
 		move.b	#2,$1C(a1)
 		move.l	a0,$34(a1)
 		move.b	#$12,$30(a1)
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	loc_2DF04
 		move.b	#$5D,0(a1) ; ']'
 		move.b	#$A,$24(a1)
@@ -63960,7 +63935,7 @@ loc_2E1AC:
 		btst	#7,$2E(a1)
 		bne.s	loc_2E20E
 		bset	#7,$2E(a1)
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	loc_2E20E
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
@@ -63976,7 +63951,7 @@ loc_2E1AC:
 		move.b	#9,$1C(a1)
 
 loc_2E20E:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	loc_2E258
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
@@ -64079,7 +64054,7 @@ loc_2E356:
 		bmi.w	loc_2E3E6
 
 loc_2E35C:				
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.w	loc_2EED6
 		move.b	#$5D,0(a1) ; ']'
 		move.l	#Map_2EADC,4(a1)
@@ -64165,7 +64140,7 @@ loc_2E464:
 		bset	#5,$2E(a1)
 		bclr	#2,$2E(a1)
 		move.w	#$12,$2A(a0)
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	locret_2E4CC
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
@@ -64199,7 +64174,7 @@ loc_2E4DA:
 		bclr	#2,$2E(a1)
 		clr.b	$25(a0)
 		movea.l	a1,a2
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	locret_2E550
 		move.b	#$5D,0(a1) ; ']'
 		move.l	$34(a0),$34(a1)
@@ -64465,7 +64440,7 @@ loc_2E824:
 		moveq	#3,d3
 
 loc_2E834:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.w	loc_2E8C8
 		move.b	#$5D,0(a1) ; ']'
 		move.l	a0,$34(a1)
@@ -64991,7 +64966,7 @@ loc_2EF36:
 		move.w	8(a0),$30(a0)
 		move.w	$C(a0),$38(a0)
 		bsr.w	loc_2FC36
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.w	loc_2EFE4
 		move.b	#$56,0(a1) ; 'V'
 		move.l	a0,$34(a1)
@@ -65008,7 +64983,7 @@ loc_2EF36:
 		move.b	1(a0),1(a1)
 
 loc_2EFE4:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	loc_2F032
 		move.b	#$56,0(a1) ; 'V'
 		move.l	a0,$34(a1)
@@ -65034,7 +65009,7 @@ loc_2F032:
 		subi.w	#8,$38(a0)
 		move.w	#$2AF0,8(a0)
 		move.w	#$2F8,$C(a0)
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	locret_2F096
 		move.b	#$56,0(a1) ; 'V'
 		move.l	a0,$34(a1)
@@ -65054,7 +65029,7 @@ locret_2F096:
 ; ===========================================================================
 
 loc_2F098:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	loc_2F110
 		move.b	#$56,0(a1) ; 'V'
 		move.l	a0,$34(a1)
@@ -65077,7 +65052,7 @@ loc_2F098:
 		move.b	#0,$28(a1)
 
 loc_2F110:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	loc_2F188
 		move.b	#$56,0(a1) ; 'V'
 		move.l	a0,$34(a1)
@@ -65100,7 +65075,7 @@ loc_2F110:
 		move.b	#1,$28(a1)
 
 loc_2F188:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	loc_2F200
 		move.b	#$56,0(a1) ; 'V'
 		move.l	a0,$34(a1)
@@ -65123,7 +65098,7 @@ loc_2F188:
 		move.b	#2,$28(a1)
 
 loc_2F200:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 
 loc_2F206:
 		bne.s	locret_2F260
@@ -65944,7 +65919,7 @@ loc_2FC0C:
 ; ===========================================================================
 
 loc_2FC12:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_2FC18:				
@@ -66014,7 +65989,7 @@ loc_2FC68:
 		; set. Also, the latter clashes with 'boss_invulnerable_time', as they
 		; use the same SST slot. Unlike the Casino Night Zone boss, this does
 		; not result in any bugs, because 'boss_invulnerable_time' is cleared
-		; right after this.
+		; right after this. 
 		move.b	#$90,ost_mainspr_height(a0)
 	endc	
 		move.b	#4,$18(a0)
@@ -66636,7 +66611,7 @@ loc_30436:
 ; ===========================================================================
 
 loc_3043C:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_30442:				
@@ -67576,7 +67551,7 @@ loc_30F5A:
 ; ===========================================================================
 
 loc_30F60:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_30F66:				
@@ -67584,7 +67559,7 @@ loc_30F66:
 ; ===========================================================================
 
 loc_30F6C:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_30F72:				
@@ -68297,7 +68272,7 @@ loc_318BE:
 ; ===========================================================================
 
 loc_318C4:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_318CA:				
@@ -69055,7 +69030,7 @@ loc_32252:
 ; ===========================================================================
 
 loc_32258:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_3225E:				
@@ -69063,7 +69038,7 @@ loc_3225E:
 ; ===========================================================================
 
 loc_32264:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_3226A:				
@@ -70184,7 +70159,7 @@ loc_32F52:
 ; ===========================================================================
 
 loc_32F58:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_32F5E:				
@@ -71012,7 +70987,7 @@ loc_338A2:
 ; ===========================================================================
 
 loc_338A8:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_338AE:				
@@ -71024,7 +70999,7 @@ loc_338B4:
 ; ===========================================================================
 
 loc_338BA:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_338C0:				
@@ -75069,7 +75044,7 @@ loc_365CE:
 ; ===========================================================================
 
 loc_365D4:				
-		jmp	(sub_364E).l
+		jmp	(CalcAngle).l
 ; ===========================================================================
 
 loc_365DA:				
@@ -75329,7 +75304,7 @@ loc_367AA:
 ; ===========================================================================
 
 loc_367D0:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	locret_367F6
 		move.w	(a2)+,d0
 		move.w	a1,(a0,d0.w)
@@ -75358,7 +75333,7 @@ loc_3681A:
 		moveq	#0,d1
 
 loc_3681C:				
-		jsr	loc_17FFA
+		jsr	SingleObjLoad2
 		bne.s	locret_3686E
 		move.b	#-$68,0(a1)
 		move.b	d2,$28(a1)
@@ -85536,7 +85511,7 @@ loc_3D3B8:
 		move.w	$C(a0),d2
 		sub.w	8(a1),d1
 		sub.w	$C(a1),d2
-		jsr	(sub_364E).l
+		jsr	(CalcAngle).l
 		move.b	($FFFFFE04).w,d1
 		andi.w	#3,d1
 		add.w	d1,d0
@@ -86816,7 +86791,7 @@ loc_3DFAA:
 ; ===========================================================================
 
 loc_3DFBA:				
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.s	locret_3DFF6
 		move.b	#$58,0(a1) ; 'X'
 		move.w	8(a0),8(a1)
@@ -87755,7 +87730,7 @@ loc_3EA48:
 ; ===========================================================================
 
 loc_3EA4E:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_3EA54:				
@@ -87771,7 +87746,7 @@ loc_3EA60:
 ; ===========================================================================
 
 loc_3EA66:				
-		jmp	loc_17FFA
+		jmp	SingleObjLoad2
 ; ===========================================================================
 
 loc_3EA6C:				
@@ -88222,7 +88197,7 @@ loc_3F2B4:
 		tst.w	$32(a1)
 		beq.s	locret_3F2FA
 		movea.w	$3A(a0),a2
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.s	loc_3F2E0
 		move.b	#$27,0(a1) ; '''
 		addq.b	#2,$24(a1)
@@ -88253,7 +88228,7 @@ loc_3F30A:
 		moveq	#-$1C,d4
 
 loc_3F310:				
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.s	loc_3F340
 		move.b	#$28,0(a1) ; '('
 		move.w	8(a0),8(a1)
@@ -88311,7 +88286,7 @@ loc_3F3A8:
 		move.b	($FFFFFE0F).w,d0
 		andi.b	#7,d0
 		bne.s	loc_3F3F4
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.s	loc_3F3F4
 		move.b	#$28,0(a1) ; '('
 		move.w	8(a0),8(a1)
@@ -88416,7 +88391,7 @@ loc_3F548:
 ; ===========================================================================
 
 loc_3F54E:				
-		jmp	loc_17FDA
+		jmp	SingleObjLoad
 ; ===========================================================================
 
 loc_3F554:				
@@ -88764,7 +88739,7 @@ loc_3F88C:
 		bne.s	loc_3F8B8
 		tst.w	d0
 		beq.w	loc_3F926
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.s	loc_3F8B8
 		move.b	#$37,0(a1) ; '7'
 		move.w	8(a0),8(a1)
@@ -91645,7 +91620,7 @@ loc_41C12:
 					
 		btst	#5,(v_joypad_press_actual).w
 		beq.s	loc_41C56
-		jsr	loc_17FDA
+		jsr	SingleObjLoad
 		bne.s	loc_41C56
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
@@ -93456,31 +93431,31 @@ PLC_33:		dc.w 1
 ;Special Stage
 ;---------------------------------------------------------------------------------------
 PLC_34:		dc.w $C			
-		dc.l Nem_DE8AC
+		dc.l Nem_SpecialEmerald
 		dc.w $2E80
-		dc.l Nem_DEAF4
+		dc.l Nem_SpecialMessages
 		dc.w $3440
-		dc.l Nem_DD48A
+		dc.l Nem_SpecialHUD
 		dc.w $3F40
-		dc.l Nem_DDFA4
+		dc.l Nem_SpecialHorizShadow
 		dc.w $4780
-		dc.l Nem_DE05A
+		dc.l Nem_SpecialDiagShadow
 		dc.w $4C40
-		dc.l Nem_DE120
+		dc.l Nem_SpecialVertShadow
 		dc.w $5380
-		dc.l Nem_DE188
+		dc.l Nem_SpecialExplosion
 		dc.w $56A0
-		dc.l Nem_DDA7E
+		dc.l Nem_SpecialRings
 		dc.w $6440
-		dc.l Nem_DD790
+		dc.l Nem_SpecialStart
 		dc.w $7140
-		dc.l Nem_DD9C8
+		dc.l Nem_SpecialPlayerVSPlayer
 		dc.w $7BE0
-		dc.l Nem_DCD68
+		dc.l Nem_SpecialBack
 		dc.w $E000
-		dc.l Nem_DD8CE
+		dc.l Nem_SpecialStars
 		dc.w $EFE0
-		dc.l Nem_E247E
+		dc.l Nem_SpecialTailsText
 		dc.w $F480
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93488,7 +93463,7 @@ PLC_34:		dc.w $C
 ;Unknown
 ;---------------------------------------------------------------------------------------
 PLC_35:		dc.w 0			
-		dc.l Nem_DE4BC
+		dc.l Nem_SpecialBomb
 		dc.w $7140
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
@@ -93831,7 +93806,7 @@ Art_Tails:	incbin	"art/uncompressed/Tails.bin"
 ; --------------------------------------------------------------------------------------
 ; Sprite Dynamic Pattern Reloading
 ; Sonic DPLCs   		; MapRUnc_714E0:
-DPLC_Sonic:	include	"mappings/spriteDPLC/Sonic.asm"
+	include	"mappings/spriteDPLC/Sonic.asm"
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Shield			; ArtNem_71D8E:
@@ -93859,7 +93834,7 @@ Nem_SuperSonic_Stars:	incbin "art/nemesis/Super Sonic Stars.bin"
 ; --------------------------------------------------------------------------------------
 ; Sprite Dynamic Pattern Reloading
 ; Tails DPLCs	; MapRUnc_7446C:
-DPLC_Tails:	include	"mappings/spriteDPLC/Tails.asm"
+	include	"mappings/spriteDPLC/Tails.asm"
 		even
 ; -------------------------------------------------------------------------------------
 ; Nemesis compressed art (127 blocks)
@@ -95072,171 +95047,140 @@ MapSpec_Unturn5:		incbin "mappings/special stage/Exit Curve 5.bin"
 ;-----------------------------------------------------------------------------------
 ; Special stage tube mappings - Begin curve right
 ;Frame 1
-MapSpec_DA4CE:		incbin "mappings/special stage/0X0DA4~1.BIN
+MapSpec_Turn1:		incbin "mappings/special stage/Curve Right 1.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 2
-MapSpec_DAB20:		incbin "mappings/special stage/0X0DAB~1.BIN
+MapSpec_Turn2:		incbin "mappings/special stage/Curve Right 2.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 3
-MapSpec_DB086:		incbin "mappings/special stage/0X0DB0~1.BIN
+MapSpec_Turn3:		incbin "mappings/special stage/Curve Right 3.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 4
-MapSpec_DB5AE:		incbin "mappings/special stage/0X0DB5~1.BIN
+MapSpec_Turn4:		incbin "mappings/special stage/Curve Right 4.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 5
-MapSpec_DBB62:		incbin "mappings/special stage/0X0DBB~1.BIN
+MapSpec_Turn5:		incbin "mappings/special stage/Curve Right 5.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 6
-MapSpec_DC154:		incbin "mappings/special stage/0X0DC1~1.BIN
+MapSpec_Turn6:		incbin "mappings/special stage/Curve Right 6.bin"
 ;-----------------------------------------------------------------------------------
 ;Frame 7
-MapSpec_DC5E8:		incbin "mappings/special stage/0X0DC5~1.BIN
+MapSpec_Turn7:		incbin "mappings/special stage/Curve Right 7.bin"
 ; --------------------------------------------------------------------------------------
 
 
-
+; --------------------------------------------------------------------------------------
 ; Kosinski compressed art
-;
 ; Special stage	level patterns
-;  Note:	Only one line of each tile is stored in	this archive. The other	7 lines	are
-;	the same at this one line, so to get the full tiles, each line needs to	be
-;	duplicated 7 times over. A clever optimization documented in Coding Secrets.
+; Note:	Only one line of each tile is stored in	this archive. The other	7 lines	are
+; the same at this one line, so to get the full tiles, each line needs to be
+; duplicated 7 times over. A clever optimization documented in Coding Secrets.
+; Koz_DCA38
+Kos_Special:		incbin	"art/kosinski/SpecialStage.bin"
+		even
 ; --------------------------------------------------------------------------------------
-Koz_DCA38:		incbin	"art/kosinski/0X0DCA~1.BIN
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 127 blocks
-; Background patterns for special stage
-; --------------------------------------------------------------------------------------
-Nem_DCD68:		incbin	"art/nemesis/0X0DCD~1.BIN
+; Nemesis compressed art (127 blocks)
+; Background patterns for special stage ; ArtNem_DCD68:
+Nem_SpecialBack:		incbin	"art/nemesis/Special Stage Background.bin"
+		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed tile mappings
-;
-; Main background mappings for special stage
+; Main background mappings for special stage ; MapEng_SpecialBack: ; MapEng_DD1DE:
+Eni_SpecialBack:		incbin	"mappings/misc/Special Stage Background (Main).eni"
+		even
 ; --------------------------------------------------------------------------------------
-Eni_DD1DE:		incbin	mappings/misc/0X0DD1~1.BIN
+; Enigma compressed tile mappings
+; Lower	background mappings for	special	stage	; MapEng_DD30C:
+Eni_SpecialBackBottom:		incbin	"mappings/misc/Special Stage Background (Lower).eni"
+		even
 ; --------------------------------------------------------------------------------------
-; Enigam compressed tile mappings
-;
-; Lower	background mappings for	special	stage
+; Nemesis compressed art (62 blocks)
+; Sonic/Miles and number text from special stage	; ArtNem_DD48A:
+Nem_SpecialHUD:		incbin	"art/nemesis/Special Stage HUD.bin"
+		even
 ; --------------------------------------------------------------------------------------
-Eni_DD30C:		incbin	mappings/misc/0X0DD3~1.BIN
+; Nemesis compressed art (48 blocks)
+; "Start" and checkered flag patterns in special stage	; ArtNem_DD790:
+Nem_SpecialStart:		incbin	"art/nemesis/Special Stage Checkered Flag & Start Text.bin"
+		even
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 62 blocks
-; Sonic/Miles and number text from special stage
+; Nemesis compressed art (37 blocks)
+; Stars in special stage	; ArtNem_DD8CE:
+Nem_SpecialStars:		incbin	"art/nemesis/Special Stage Stars.bin"
+		even
 ; --------------------------------------------------------------------------------------
-Nem_DD48A:		incbin	"art/nemesis/0X0DD4~1.BIN
+; Nemesis compressed art (13 blocks)
+; Text for most of the "Player VS Player" message in 2P special stage	; ArtNem_DD9C8:
+Nem_SpecialPlayerVSPlayer:		incbin	"art/nemesis/Special Stage Player VS Player Text.bin"
+		even
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 48 blocks
-; "Start" patterns in special stage
+; Nemesis compressed art (104 blocks)
+; Ring patterns in special stage	; ArtNem_DDA7E:
+Nem_SpecialRings:		incbin	"art/nemesis/Special Stage Rings.bin"
+		even
 ; --------------------------------------------------------------------------------------
-Nem_DD790:		incbin	"art/nemesis/0X0DD7~1.BIN
+; Nemesis compressed art (38 blocks)
+; Horizontal shadow patterns in special stage	; ArtNem_DDFA4: ; ArtNem_SpecialFlatShadow
+Nem_SpecialHorizShadow:		incbin	"art/nemesis/Special Stage Horizontal Shadow.bin"
+		even
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 37 blocks
-; Stars	in special stage
+; Nemesis compressed art (58 blocks)
+; Diagonal shadow patterns in special stage	; ArtNem_DE05A:
+Nem_SpecialDiagShadow:		incbin	"art/nemesis/Special Stage Diagonal Shadow.bin"
+		even
 ; --------------------------------------------------------------------------------------
-Nem_DD8CE:		incbin	"art/nemesis/0X0DD8~1.BIN
+; Nemesis compressed art (25 blocks)
+; Vertical shadow patterns in special stage	; ArtNem_DE120: ; ArtNem_SpecialSideShadow
+Nem_SpecialVertShadow:		incbin	"art/nemesis/Special Stage Vertical Shadow.bin"
+		even
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 13 blocks
-; Unknown. Text	in special stage
+; Nemesis compressed art (48 blocks)
+; Explosion patterns in special stage	; ArtNem_DE188:
+Nem_SpecialExplosion:		incbin	"art/nemesis/Special Stage Explosion.bin"
+		even
 ; --------------------------------------------------------------------------------------
-Nem_DD9C8:		incbin	"art/nemesis/0X0DD9~1.BIN
+; Nemesis compressed art (80 blocks)
+; Bomb patterns in special stage	; ArtNem_DE4BC:
+Nem_SpecialBomb:		incbin	"art/nemesis/Special Stage Bomb.bin"
+		even
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 104 blocks
-; Ring patterns	in special stage
+; Nemesis compressed art (46 blocks)
+; Emerald patterns in special stage	; ArtNem_DE8AC:
+Nem_SpecialEmerald:		incbin	"art/nemesis/Special Stage Emerald.bin"
+		even
 ; --------------------------------------------------------------------------------------
-Nem_DDA7E:		incbin	"art/nemesis/0X0DDA~1.BIN
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 38 blocks
-; Horizontal shadow patterns in	special	stage
-; --------------------------------------------------------------------------------------
-Nem_DDFA4:		incbin	"art/nemesis/0X0DDF~1.BIN
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 58 blocks
-; Diagonal shadow patterns in special stage
-; --------------------------------------------------------------------------------------
-Nem_DE05A:		incbin	"art/nemesis/0X0DE0~1.BIN
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 25 blocks
-; Vertical shadow patterns in special stage
-; --------------------------------------------------------------------------------------
-Nem_DE120:		incbin	"art/nemesis/0X0DE1~1.BIN
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 48 blocks
-; Explosion patterns in	special	stage
-; --------------------------------------------------------------------------------------
-Nem_DE188:		incbin	"art/nemesis/0X0DE1~2.BIN
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 80 blocks
-; Bomb patterns	in special stage
-; --------------------------------------------------------------------------------------
-Nem_DE4BC:		incbin	"art/nemesis/0X0DE4~1.BIN
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 46 blocks
-; Emerald patterns in special stage
-; --------------------------------------------------------------------------------------
-Nem_DE8AC:		incbin	"art/nemesis/0X0DE8~1.BIN
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 99 blocks
-; Unknown. Text	in special stage.
-; --------------------------------------------------------------------------------------
-Nem_DEAF4:		incbin	"art/nemesis/0X0DEA~1.BIN
+; Nemesis compressed art (99 blocks)
+; Text for the messages and thumbs up/down icon in special stage	; ArtNem_DEAF4:
+Nem_SpecialMessages:		incbin	"art/nemesis/Special Stage Checkpoint Messages & Icons.bin"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art - 851 blocks
 ; Sonic	and Tails animation frames from	special	stage ; Nem_DEEAE
 ; [FixBugs] In this file, Tails' arms are tan instead of orange.
 ; Art for Obj09 and Obj10 and Obj88
-; --------------------------------------------------------------------------------------
-Nem_SpecialSonicAndTails:		incbin	"art/nemesis/0X0DEE~1.BIN
+Nem_SpecialSonicAndTails:		incbin	"art/nemesis/Special Stage Sonic & Tails.bin"
 		even
 ; --------------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 5 blocks
-; "Tails" patterns from	special	stage
+; Nemesis compressed art (5 blocks)
+; "Tails" patterns from special stage	; ArtNem_E247E:
+Nem_SpecialTailsText:		incbin	"art/nemesis/Special Stage Tails HUD Text.bin"
+		even
 ; --------------------------------------------------------------------------------------
-Nem_E247E:		incbin	"art/nemesis/0X0E24~1.BIN
-; --------------------------------------------------------------------------------------
-; Special stage	object perspective data	(Kosinski compression) ; MiscKoz_E24FE
-; --------------------------------------------------------------------------------------
-Kos_SpecialPerspective:		incbin	misc/0X0E24~1.BIN
+; Special stage	object perspective data	(Kosinski compression) 
+; MiscKoz_E24FE: ; MiscKoz_SpecialPerspective:
+Kos_SpecialPerspective:		incbin	"misc/Special Stage Object Perspective Data.kos"
 		even
 ; --------------------------------------------------------------------------------------
 ; Special stage	level layout (Nemesis compression)
+Nem_SpecialLevelLayouts:		incbin	"misc/Special Stage Level Layouts.nem"
+		even
 ; --------------------------------------------------------------------------------------
-MiscNem_E34EE:		incbin	misc/0X0E34~1.BIN
+; Special stage	object location	list (Kosinski compression) ; MiscKoz_SpecialObjectLocations:
+Koz_SpecialObjectLocations:		incbin	"misc/Special Stage Object Locations.kos"
+		even
+		
 ; --------------------------------------------------------------------------------------
-; Special stage	object location	list (Kosinski compression)
-; --------------------------------------------------------------------------------------
-MiscKoz_E35F2:		incbin	misc/0X0E35~1.BIN
-; --------------------------------------------------------------------------------------
-; Filler (free space)
+; Filler (free space) (unnecessary; could be replaced with "even")
 ; --------------------------------------------------------------------------------------
 		align offset(*),$100
 ; --------------------------------------------------------------------------------------
@@ -95277,40 +95221,41 @@ Off_Rings:	dc.w Rings_EHZ_1-Off_Rings; 0 ;	DATA XREF: h+35Ao
 		dc.w Rings_ARZ_2-Off_Rings; 31
 		dc.w Rings_SCZ_1-Off_Rings; 32
 		dc.w Rings_SCZ_2-Off_Rings; 33
-Rings_EHZ_1:		incbin	level/rings/0X0E43~1.BIN
-Rings_EHZ_2:		incbin	level/rings/0X0E45~1.BIN
-Rings_Lev1_1:		incbin	level/rings/0X0E47~1.BIN
-Rings_Lev1_2:		incbin	level/rings/0X0E47~2.BIN
-Rings_Lev2_1:		incbin	level/rings/0X0E47~3.BIN
-Rings_Lev2_2:		incbin	level/rings/0X0E47~4.BIN
-Rings_Lev3_1:		incbin	level/rings/0XEF89~1.BIN
-Rings_Lev3_2:		incbin	level/rings/0XE79D~1.BIN
-Rings_MTZ_1:		incbin	level/rings/0X2BB3~1.BIN
-Rings_MTZ_2:		incbin	level/rings/0X0E4A~1.BIN
-Rings_MTZ_3:		incbin	level/rings/0X0E4C~1.BIN
-Rings_MTZ_4:		incbin	level/rings/0X0E4D~1.BIN
-Rings_HTZ_1:		incbin	level/rings/0X0E4D~2.BIN
-Rings_HTZ_2:		incbin	level/rings/0X0E4E~1.BIN
-Rings_HPZ_1:		incbin	level/rings/0X0E50~1.BIN
-Rings_HPZ_2:		incbin	level/rings/0X0E52~1.BIN
-Rings_Lev9_1:		incbin	level/rings/0X0E52~2.BIN
-Rings_Lev9_2:		incbin	level/rings/0X0E52~3.BIN
-Rings_OOZ_1:		incbin	level/rings/0X0E52~4.BIN
-Rings_OOZ_2:		incbin	level/rings/0X0E54~1.BIN
-Rings_MCZ_1:		incbin	level/rings/0X0E55~1.BIN
-Rings_MCZ_2:		incbin	level/rings/0X0E57~1.BIN
-Rings_CNZ_1:		incbin	level/rings/0X0E59~1.BIN
-Rings_CNZ_2:		incbin	level/rings/0X0E5B~1.BIN
-Rings_CPZ_1:		incbin	level/rings/0X0E5E~1.BIN
-Rings_CPZ_2:		incbin	level/rings/0X0E5F~1.BIN
-Rings_DEZ_1:		incbin	level/rings/0X0E61~1.BIN
-Rings_DEZ_2:		incbin	level/rings/0X0E61~2.BIN
-Rings_WFZ_1:		incbin	level/rings/0X0E61~3.BIN
-Rings_WFZ_2:		incbin	level/rings/0X0E62~1.BIN
-Rings_ARZ_1:		incbin	level/rings/0X0E62~2.BIN
-Rings_ARZ_2:		incbin	level/rings/0X0E64~1.BIN
-Rings_SCZ_1:		incbin	level/rings/0X0E66~1.BIN
-Rings_SCZ_2:		incbin	level/rings/0X0E66~2.BIN
+		
+Rings_EHZ_1:	incbin	"level/rings/EHZ 1.bin"
+Rings_EHZ_2:	incbin	"level/rings/EHZ 2.bin"
+Rings_Lev1_1:	incbin	"level/rings/01 1.bin"	; null
+Rings_Lev1_2:	incbin	"level/rings/01 2.bin"	; null
+Rings_Lev2_1:	incbin	"level/rings/02 1.bin"	; null
+Rings_Lev2_2:	incbin	"level/rings/02 2.bin"	; null
+Rings_Lev3_1:	incbin	"level/rings/03 1.bin"	; null
+Rings_Lev3_2:	incbin	"level/rings/03 2.bin"	; null
+Rings_MTZ_1:	incbin	"level/rings/MTZ 1.bin"
+Rings_MTZ_2:	incbin	"level/rings/MTZ 2.bin"
+Rings_MTZ_3:	incbin	"level/rings/MTZ 3.bin"
+Rings_MTZ_4:	incbin	"level/rings/MTZ 4.bin"	; null
+Rings_HTZ_1:	incbin	"level/rings/HTZ 1.bin"
+Rings_HTZ_2:	incbin	"level/rings/HTZ 2.bin"
+Rings_HPZ_1:	incbin	"level/rings/HPZ 1.bin"
+Rings_HPZ_2:	incbin	"level/rings/HPZ 2.bin"	; null
+Rings_Lev9_1:	incbin	"level/rings/09 1.bin"	; null
+Rings_Lev9_2:	incbin	"level/rings/09 2.bin"	; null
+Rings_OOZ_1:	incbin	"level/rings/OOZ 1.bin"
+Rings_OOZ_2:	incbin	"level/rings/OOZ 2.bin"
+Rings_MCZ_1:	incbin	"level/rings/MCZ 1.bin"
+Rings_MCZ_2:	incbin	"level/rings/MCZ 2.bin"
+Rings_CNZ_1:	incbin	"level/rings/CNZ 1.bin"
+Rings_CNZ_2:	incbin	"level/rings/CNZ 2.bin"
+Rings_CPZ_1:	incbin	"level/rings/CPZ 1.bin"
+Rings_CPZ_2:	incbin	"level/rings/CPZ 2.bin"
+Rings_DEZ_1:	incbin	"level/rings/DEZ 1.bin"	; null
+Rings_DEZ_2:	incbin	"level/rings/DEZ 2.bin"	; null
+Rings_WFZ_1:	incbin	"level/rings/WFZ 1.bin"
+Rings_WFZ_2:	incbin	"level/rings/WFZ 2.bin"
+Rings_ARZ_1:	incbin	"level/rings/ARZ 1.bin"
+Rings_ARZ_2:	incbin	"level/rings/ARZ 2.bin"
+Rings_SCZ_1:	incbin	"level/rings/SCZ 1.bin"
+Rings_SCZ_2:	incbin	"level/rings/SCZ 2.bin"	; null
 ; --------------------------------------------------------------------------------------
 ; Filler (free space)
 ; --------------------------------------------------------------------------------------
@@ -95318,72 +95263,116 @@ Rings_SCZ_2:		incbin	level/rings/0X0E66~2.BIN
 ; --------------------------------------------------------------------------------------
 ; Offset index of sprite locations
 ; --------------------------------------------------------------------------------------
-Off_Sprites:	dc.w Sprites_EHZ_1-Off_Sprites;	0 
+Off_Sprites:	dc.w ObjPos_EHZ_1-Off_Sprites;	0 
 					
-		dc.w Sprites_EHZ_2-Off_Sprites;	1
-		dc.w Sprites_Null3-Off_Sprites;	2
-		dc.w Sprites_Null3-Off_Sprites;	3
-		dc.w Sprites_Null3-Off_Sprites;	4
-		dc.w Sprites_Null3-Off_Sprites;	5
-		dc.w Sprites_Null3-Off_Sprites;	6
-		dc.w Sprites_Null3-Off_Sprites;	7
-		dc.w Sprites_MTZ_1-Off_Sprites;	8
-		dc.w Sprites_MTZ_2-Off_Sprites;	9
-		dc.w Sprites_MTZ_3-Off_Sprites;	10
-		dc.w Sprites_MTZ_3-Off_Sprites;	11
-		dc.w Sprites_WFZ_1-Off_Sprites;	12
-		dc.w Sprites_WFZ_2-Off_Sprites;	13
-		dc.w Sprites_HTZ_1-Off_Sprites;	14
-		dc.w Sprites_HTZ_2-Off_Sprites;	15
-		dc.w Sprites_HPZ_1-Off_Sprites;	16
-		dc.w Sprites_HPZ_2-Off_Sprites;	17
-		dc.w Sprites_Null3-Off_Sprites;	18
-		dc.w Sprites_Null3-Off_Sprites;	19
-		dc.w Sprites_OOZ_1-Off_Sprites;	20
-		dc.w Sprites_OOZ_2-Off_Sprites;	21
-		dc.w Sprites_MCZ_1-Off_Sprites;	22
-		dc.w Sprites_MCZ_2-Off_Sprites;	23
-		dc.w Sprites_CNZ_1-Off_Sprites;	24
-		dc.w Sprites_CNZ_2-Off_Sprites;	25
-		dc.w Sprites_CPZ_1-Off_Sprites;	26
-		dc.w Sprites_CPZ_2-Off_Sprites;	27
-		dc.w Sprites_DEZ_1-Off_Sprites;	28
-		dc.w Sprites_DEZ_2-Off_Sprites;	29
-		dc.w Sprites_ARZ_1-Off_Sprites;	30
-		dc.w Sprites_ARZ_2-Off_Sprites;	31
-		dc.w Sprites_SCZ_1-Off_Sprites;	32
-		dc.w Sprites_SCZ_2-Off_Sprites;	33
-Sprites_Null1:		incbin	level/sprites/0X0E68~1.BIN
-Sprites_EHZ_1:		incbin	level/sprites/0X0E68~2.BIN
-Sprites_EHZ_2:		incbin	level/sprites/0X0E6B~1.BIN
-Sprites_MTZ_1:		incbin	level/sprites/0X0E6F~1.BIN
-Sprites_MTZ_2:		incbin	level/sprites/0X0E73~1.BIN
-Sprites_MTZ_3:		incbin	level/sprites/0X0E78~1.BIN
-Sprites_WFZ_1:		incbin	level/sprites/0X0E7F~1.BIN
-Sprites_WFZ_2:		incbin	level/sprites/0X0E82~1.BIN
-Sprites_HTZ_1:		incbin	level/sprites/0X0E83~1.BIN
-Sprites_HTZ_2:		incbin	level/sprites/0X0E86~1.BIN
-Sprites_HPZ_1:		incbin	level/sprites/0X0E8C~1.BIN
-Sprites_HPZ_2:		incbin	level/sprites/0X0E8D~1.BIN
-Sprites_Null2:		incbin	level/sprites/0X0E8D~2.BIN
-Sprites_OOZ_1:		incbin	level/sprites/0X0E8D~3.BIN
-Sprites_OOZ_2:		incbin	level/sprites/0X0E92~1.BIN
-Sprites_MCZ_1:		incbin	level/sprites/0X0E96~1.BIN
-Sprites_MCZ_2:		incbin	level/sprites/0X0E99~1.BIN
-Sprites_CNZ_1:		incbin	level/sprites/0X0E9D~1.BIN
-Sprites_CNZ_2:		incbin	level/sprites/0X0EA3~1.BIN
-Sprites_CPZ_1:		incbin	level/sprites/0X0EA9~1.BIN
-Sprites_CPZ_2:		incbin	level/sprites/0X0EAD~1.BIN
-Sprites_DEZ_1:		incbin	level/sprites/0X0EB2~1.BIN
-Sprites_DEZ_2:		incbin	level/sprites/0X0EB2~2.BIN
-Sprites_ARZ_1:		incbin	level/sprites/0X0EB2~3.BIN
-Sprites_ARZ_2:		incbin	level/sprites/0X0EB6~1.BIN
-Sprites_SCZ_1:		incbin	level/sprites/0X0EBB~1.BIN
-Sprites_SCZ_2:		incbin	level/sprites/0X0EBD~1.BIN
-Sprites_Null3:		incbin	level/sprites/0X0EBD~2.BIN
-Sprites_Null4:		incbin	level/sprites/0X0EBD~3.BIN
-Sprites_Null5:		incbin	level/sprites/0X0EBD~4.BIN
-Sprites_Null6:		incbin	level/sprites/0X6009~1.BIN
+		dc.w ObjPos_EHZ_2-Off_Sprites;	1
+		dc.w ObjPos_Null3-Off_Sprites;	2
+		dc.w ObjPos_Null3-Off_Sprites;	3
+		dc.w ObjPos_Null3-Off_Sprites;	4
+		dc.w ObjPos_Null3-Off_Sprites;	5
+		dc.w ObjPos_Null3-Off_Sprites;	6
+		dc.w ObjPos_Null3-Off_Sprites;	7
+		dc.w ObjPos_MTZ_1-Off_Sprites;	8
+		dc.w ObjPos_MTZ_2-Off_Sprites;	9
+		dc.w ObjPos_MTZ_3-Off_Sprites;	10
+		dc.w ObjPos_MTZ_3-Off_Sprites;	11
+		dc.w ObjPos_WFZ_1-Off_Sprites;	12
+		dc.w ObjPos_WFZ_2-Off_Sprites;	13
+		dc.w ObjPos_HTZ_1-Off_Sprites;	14
+		dc.w ObjPos_HTZ_2-Off_Sprites;	15
+		dc.w ObjPos_HPZ_1-Off_Sprites;	16
+		dc.w ObjPos_HPZ_2-Off_Sprites;	17
+		dc.w ObjPos_Null3-Off_Sprites;	18
+		dc.w ObjPos_Null3-Off_Sprites;	19
+		dc.w ObjPos_OOZ_1-Off_Sprites;	20
+		dc.w ObjPos_OOZ_2-Off_Sprites;	21
+		dc.w ObjPos_MCZ_1-Off_Sprites;	22
+		dc.w ObjPos_MCZ_2-Off_Sprites;	23
+		dc.w ObjPos_CNZ_1-Off_Sprites;	24
+		dc.w ObjPos_CNZ_2-Off_Sprites;	25
+		dc.w ObjPos_CPZ_1-Off_Sprites;	26
+		dc.w ObjPos_CPZ_2-Off_Sprites;	27
+		dc.w ObjPos_DEZ_1-Off_Sprites;	28
+		dc.w ObjPos_DEZ_2-Off_Sprites;	29
+		dc.w ObjPos_ARZ_1-Off_Sprites;	30
+		dc.w ObjPos_ARZ_2-Off_Sprites;	31
+		dc.w ObjPos_SCZ_1-Off_Sprites;	32
+		dc.w ObjPos_SCZ_2-Off_Sprites;	33
+		endobj
+ObjPos_EHZ_1:		incbin	"level/objects/EHZ 1.bin"
+		endobj
+	;if Revision=0
+		; a plane switcher was improperly placed
+;ObjPos_EHZ_2:		incbin 	"level/objects/EHZ 2 (REV00).bin"
+	;else
+ObjPos_EHZ_2:		incbin	"level/objects/EHZ 2.bin"
+	;endc
+		endobj
+ObjPos_MTZ_1:		incbin	"level/objects/MTZ 1.bin"
+		endobj
+ObjPos_MTZ_2:		incbin	"level/objects/MTZ 2.bin"
+		endobj
+ObjPos_MTZ_3:		incbin	"level/objects/MTZ 3.bin"
+		endobj
+
+	;if Revision=0
+		; the lampposts were bugged: their 'remember state' flags weren't set
+;ObjPos_WFZ_1:		incbin  "level/objects/WFZ 1 (REV00).bin"
+	;else
+ObjPos_WFZ_1:		incbin	"level/objects/WFZ 1.bin"
+	;endc
+		endobj
+ObjPos_WFZ_2:		;incbin	"level/objects/WFZ 2.bin"
+		endobj
+ObjPos_HTZ_1:		incbin	"level/objects/HTZ 1.bin"
+		endobj
+ObjPos_HTZ_2:		incbin	"level/objects/HTZ 2.bin"
+		endobj
+ObjPos_HPZ_1:		incbin	"level/objects/HPZ 1.bin"
+		endobj
+ObjPos_HPZ_2:		;incbin	"level/objects/HPZ 2.bin"
+		endobj
+ObjPos_OOZ_1:		incbin	"level/objects/OOZ 1.bin"
+		endobj
+ObjPos_OOZ_2:		incbin	"level/objects/OOZ 2.bin"
+		endobj
+ObjPos_MCZ_1:		incbin	"level/objects/MCZ 1.bin"
+		endobj
+ObjPos_MCZ_2:		incbin	"level/objects/MCZ 1.bin"
+		endobj
+
+	;if Revision=0
+	; the signposts are too low, causing them to poke out the bottom of the ground
+;ObjPos_CNZ_1:		incbin	"level/objects/CNZ 1 (REV00).bin"
+		endobj
+;ObjPos_CNZ_2:		incbin	"level/objects/CNZ 2 (REV00).bin"
+		endobj
+	;else
+ObjPos_CNZ_1:		incbin	"level/objects/CNZ 1.bin"
+ObjPos_CNZ_2:		incbin	"level/objects/CNZ 2.bin"
+	;endc
+		endobj	
+ObjPos_CPZ_1:		incbin	"level/objects/CPZ 1.bin"
+		endobj
+ObjPos_CPZ_2:		incbin	"level/objects/CPZ 2.bin"
+		endobj
+ObjPos_DEZ_1:		incbin	"level/objects/DEZ 1.bin"
+		endobj
+ObjPos_DEZ_2:		;incbin	"level/objects/DEZ 2.bin"
+		endobj
+ObjPos_ARZ_1:		incbin	"level/objects/ARZ 1.bin"
+		endobj
+ObjPos_ARZ_2:		incbin	"level/objects/ARZ 2.bin"
+		endobj
+ObjPos_SCZ_1:		incbin	"level/objects/SCZ 1.bin"
+		endobj
+ObjPos_SCZ_2:		;incbin	"level/objects/SCZ 2.bin"
+		endobj
+ObjPos_Null:
+		endobj
+		endobj
+		endobj
+		endobj
 ; --------------------------------------------------------------------------------------
 ; Filler (free space) (unnecessary; could be replaced with "even")
 ; --------------------------------------------------------------------------------------
@@ -95392,9 +95381,10 @@ Sprites_Null6:		incbin	level/sprites/0X6009~1.BIN
 ; ---------------------------------------------------------------------------
 ; Subroutine to load the sound driver
 ; ---------------------------------------------------------------------------
+; sub_EC000:
 SoundDriverLoad:
 		move	sr,-(sp)
-		movem.l	d0-a6,-(sp)
+		pushr	d0-a6
 		disable_ints
 		lea	(z80_bus_request).l,a3
 		lea	(z80_reset).l,a2
@@ -95416,7 +95406,7 @@ SoundDriverLoad:
 	.wait:				
 		dbf	d0,.wait	; wait for 2,314 cycles
 		move.w	d1,(a2)	; release Z80 reset
-		movem.l	(sp)+,d0-a6
+		popr	d0-a6
 		move	(sp)+,sr
 		rts	
 
@@ -95503,8 +95493,6 @@ SaxDec_IsDictionaryReference:
 		
 		bra.w	SaxDec_Loop
 
-; End of function DecompressSoundDriver
-
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -95524,42 +95512,60 @@ SaxDec_GetByte:
 ; --------------------------------------------------------------------------------------
 
 ;		pushs
-;SoundDriver:
-;		section	
-;		org(0), 
-;		file("sound/.z80")	; new section for the sound driver
+;SoundDriver:		
+;		section	org(0),file("sound/Sound Driver.bin")	; new section for the sound driver
 ;		cpu Z80
 
-Snd_Driver:		incbin	sound\0X0EC0~1.BIN
+Snd_Driver:		include "sound/Sound Driver Raw.asm" ; precompressed sound driver in dc.b form, copied from Nemesis text disassembly
 ;		pops ; end sound driver section
 
 ;MergeCode:
 ;		pushs	
-;		section org(0), file("AMPS/.z80.dat")	; data file used by S2 Driver Compress to merge things
+;		section org(0), file("sound/MergeData.dat")	; data file used by S2 Driver Compress to merge things
 ;		dc.l offset(Snd_Driver),Z80_Space,movewZ80CompSize+2	; start location of compressed sound driver, space reserved for sound driver, and location of data to patch in Saxman decompressor
 ;		pops
 ;		ds.b Z80_Space	; reserve space for the compressed sound driver
 ;		even
+End_Snd_Driver:
+;		pushs
+
+
 ; ----------------------------------------------------------------------------------
 ; Filler (free space)
 ; ----------------------------------------------------------------------------------
-Snd_Driver_End:	cnop -$2F00,$8000	
+		; the DAC data has to line up with the end of the bank.
+
+		; actually it only has to fit within one bank, but we'll line it up to the end anyway
+		; because the padding gives the sound driver some room to grow
+		dcb.b ((-sizeof_DAC_samples+$8000-offset(*))&($8000-1)),0 ; replaces cnop -$2F00,$8000
+
 ; --------------------------------------------------------------------------------------
 ; DAC samples
 ; --------------------------------------------------------------------------------------
-SndDAC_Sample1:		incbin	sound\DAC\0X0ED1~1.BIN
-SndDAC_Sample2:		incbin	sound\DAC\0X0ED3~1.BIN
-SndDAC_Sample5:		incbin	sound\DAC\0X0EDA~1.BIN
-SndDAC_Sample6:		incbin	sound\DAC\0X0EE6~1.BIN
-SndDAC_Sample3:		incbin	sound\DAC\0X0EED~1.BIN
-SndDAC_Sample4:		incbin	sound\DAC\0X0EF2~1.BIN
-SndDAC_Sample7:		incbin	sound\DAC\0X0EFA~1.BIN
+SndDAC_Start:
+SndDAC_Sample1:		incbin	"sound/DAC/Sample 1.bin"
+SndDAC_Sample2:		incbin	"sound/DAC/Sample 2.bin"
+SndDAC_Sample5:		incbin	"sound/DAC/Sample 5.bin"
+SndDAC_Sample6:		incbin	"sound/DAC/Sample 6.bin"
+SndDAC_Sample3:		incbin	"sound/DAC/Sample 3.bin"
+SndDAC_Sample4:		incbin	"sound/DAC/Sample 4.bin"
+SndDAC_Sample7:		incbin	"sound/DAC/Sample 7.bin"
+SndDAC_End:
+
+;	if (SndDAC_End-SndDAC_Start)>$8000
+;		inform 3,"DAC samples must fit within $8000 bytes, but you have $%h bytes of DAC samples.",(SndDAC_End-SndDAC_Start)
+;	endc
+
+;	if (SndDAC_End-SndDAC_Start)>Size_of_DAC_samples
+;		inform 3,"Size_of_DAC_samples = $%h, but you have $%h bytes of DAC samples.",Size_of_DAC_samples,(SndDAC_End-SndDAC_Start)
+;	endc
+
 ; ------------------------------------------------------------------------------
 ; Music	pointers
 ; ------------------------------------------------------------------------------
 MusicPoint1:	dc.w (((Mus_Continue-(MusicPoint1-$8000))<<8)&$FF00)+((Mus_Continue-(MusicPoint1-$8000))>>8)
 					
-Mus_Continue:		incbin	sound\music\0X0F00~1.BIN
+Mus_Continue:		incbin	"sound/music/compressed/9C - Continue.sax"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; HTZ boss lava ball / Sol fireball
@@ -95591,7 +95597,7 @@ Nem_HTZSeeSaw:		incbin	"art/nemesis/HTZ See-saw.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Unused Fireball; Nem_F0B06:	
-incbin	"art/nemesis/Unused Fireball.bin"
+		incbin	"art/nemesis/Unused Fireball.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Rock from HTZ
@@ -95639,42 +95645,43 @@ Nem_MTZBoltEnd_Rope:		incbin	"art/nemesis/MTZ Bolt End & Rope.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Small cog from MTZ
-Nem_MTZCog:		incbin	"art/nemesis/Small cog from MTZ.bin
+Nem_MTZCog:		incbin	"art/nemesis/MTZ Small Cog.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Flash inside spin tube from MTZ
-Nem_MTZSpinTubeFlash:		incbin	"art/nemesis/Spin tube flash from MTZ.bin
+Nem_MTZSpinTubeFlash:		incbin	"art/nemesis/MTZ Spin Tube Flash.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Large wooden box from MCZ	; ArtNem_F187C:
-Nem_MCZCrate:		incbin	"art/nemesis/Large wooden box from MCZ.bin
+Nem_MCZCrate:		incbin	"art/nemesis/MCZ Crate.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (26 blocks)
 ; Collapsing platform from MCZ	; ArtNem_F1ABA:
-Nem_MCZCollapsingPlat:		incbin	"art/nemesis/Collapsing platform from MCZ.bin
+Nem_MCZCollapsingPlat:		incbin	"art/nemesis/MCZ Collapsing Platform.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Switch that you pull on from MCZ	; ArtNem_F1C64:
-Nem_MCZVineSwitch:		incbin	"art/nemesis/Pull switch from MCZ.bin
+Nem_MCZVineSwitch:		incbin	"art/nemesis/MCZ Vine Switch.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (10 blocks)
 ; Vine that lowers in MCZ	; ArtNem_F1D5C:
-Nem_MCZVinePulley:		incbin	"art/nemesis/Vine that lowers from MCZ.bin
+Nem_MCZVinePulley:		incbin	"art/nemesis/MCZ Vine Pulley.bin"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Log viewed from the end for folding gates in MCZ (start of MCZ2)	; ArtNem_MCZDrawbridgeLogs:
 	even
-Nem_MCZDrawbridgeLogs:		incbin	"art/nemesis/Drawbridge logs from MCZ.bin
+Nem_MCZDrawbridgeLogs:		incbin	"art/nemesis/MCZ Drawbridge Logs.bin"
 ; ----------------------------------------------------------------------------------
 ; Filler (free space)
 ; ----------------------------------------------------------------------------------
-		cnop -$6174,$8000
+		dcb.b ((-$6174+$8000-offset(*))&($8000-1)),0
+;		cnop -$6174,$8000
 ; -------------------------------------------------------------------------------
 ; Sega Intro Sound
 ;
 ; 8-bit	unsigned raw audio at 16Khz
 ; -------------------------------------------------------------------------------
-Snd_Sega:		incbin	sound\PCM\0X0F1E~1.BIN
+Snd_Sega:		incbin	"sound/PCM/SEGA.pcm"
 ; ------------------------------------------------------------------------------
 ; Music	pointers
 ; ------------------------------------------------------------------------------
@@ -95711,201 +95718,202 @@ MusicPoint2:	dc.w ((((Mus_CNZ_2P&$7FFF)+$8000)<<8)&$FF00)+(((Mus_CNZ_2P&$7FFF)+$
 		dc.w ((((Mus_HPZ&$7FFF)+$8000)<<8)&$FF00)+(((Mus_HPZ&$7FFF)+$8000)>>8)
 		dc.w ((((Mus_Drowning&$7FFF)+$8000)<<8)&$FF00)+(((Mus_Drowning&$7FFF)+$8000)>>8)
 		dc.w ((((Mus_Credits&$7FFF)+$8000)<<8)&$FF00)+(((Mus_Credits&$7FFF)+$8000)>>8)
-Mus_HPZ:		incbin	sound\music\0X0F80~1.BIN
-Mus_Drowning:		incbin	sound\music\0X0F82~1.BIN
-Mus_Invincible:		incbin	sound\music\0X0F83~1.BIN
-Mus_CNZ_2P:		incbin	sound\music\0X0F84~1.BIN
-Mus_EHZ:		incbin	sound\music\0X0F88~1.BIN
-Mus_MTZ:		incbin	sound\music\0X0F8D~1.BIN
-Mus_CNZ:		incbin	sound\music\0X0F91~1.BIN
-Mus_MCZ:		incbin	sound\music\0X0F96~1.BIN
-Mus_MCZ_2P:		incbin	sound\music\0X0F9A~1.BIN
-Mus_ARZ:		incbin	sound\music\0X0F9D~1.BIN
-Mus_DEZ:		incbin	sound\music\0X0FA3~1.BIN
-Mus_SpecStage:		incbin	sound\music\0X0FA6~1.BIN
-Mus_Options:		incbin	sound\music\0X0FAA~1.BIN
-Mus_Ending:		incbin	sound\music\0X0FAC~1.BIN
-Mus_EndBoss:		incbin	sound\music\0X0FB1~1.BIN
-Mus_CPZ:		incbin	sound\music\0X0FB3~1.BIN
-Mus_Boss:		incbin	sound\music\0X0FB8~1.BIN
-Mus_SCZ:		incbin	sound\music\0X0FBA~1.BIN
-Mus_OOZ:		incbin	sound\music\0X0FBD~1.BIN
-Mus_WFZ:		incbin	sound\music\0X0FC1~1.BIN
-Mus_EHZ_2P:		incbin	sound\music\0X0FC4~1.BIN
-Mus_2PResult:		incbin	sound\music\0X0FC8~1.BIN
-Mus_SuperSonic:		incbin	sound\music\0X0FCB~1.BIN
-Mus_HTZ:		incbin	sound\music\0X0FCE~1.BIN
-Mus_Title:		incbin	sound\music\0X0FD1~1.BIN
-Mus_EndLevel:		incbin	sound\music\0X0FD3~1.BIN
-Mus_ExtraLife:		incbin	sound\music\0X0FD4~1.BIN
-Mus_GameOver:		incbin	sound\music\0X0FD5~1.BIN
-Mus_Emerald:		incbin	sound\music\0X0FD6~1.BIN
-Mus_Credits:		incbin	sound\music\0X0FD7~1.BIN
+Mus_HPZ:	incbin	"sound/music/compressed/90 - HPZ.sax"
+Mus_Drowning:	incbin	"sound/music/compressed/9F - Drowning.sax"
+Mus_Invincible:	incbin	"sound/music/compressed/97 - Invincible.sax"
+Mus_CNZ_2P:	incbin	"sound/music/compressed/88 - CNZ 2P.sax"
+Mus_EHZ:	incbin	"sound/music/compressed/82 - EHZ.sax"
+Mus_MTZ:	incbin	"sound/music/compressed/85 - MTZ.sax"
+Mus_CNZ:	incbin	"sound/music/compressed/89 - CNZ.sax"
+Mus_MCZ:	incbin	"sound/music/compressed/8B - MCZ.sax"
+Mus_MCZ_2P:	incbin	"sound/music/compressed/83 - MCZ 2P.sax"
+Mus_ARZ:	incbin	"sound/music/compressed/87 - ARZ.sax"
+Mus_DEZ:	incbin	"sound/music/compressed/8A - DEZ.sax"
+Mus_SpecStage:	incbin	"sound/music/compressed/92 - Special Stage.sax"
+Mus_Options:	incbin	"sound/music/compressed/91 - Options.sax"
+Mus_Ending:	incbin	"sound/music/compressed/95 - Ending.sax"
+Mus_EndBoss:	incbin	"sound/music/compressed/94 - Final Boss.sax"
+Mus_CPZ:	incbin	"sound/music/compressed/8E - CPZ.sax"
+Mus_Boss:	incbin	"sound/music/compressed/93 - Boss.sax"
+Mus_SCZ:	incbin	"sound/music/compressed/8D - SCZ.sax"
+Mus_OOZ:	incbin	"sound/music/compressed/84 - OOZ.sax"
+Mus_WFZ:	incbin	"sound/music/compressed/8F - WFZ.sax"
+Mus_EHZ_2P:	incbin	"sound/music/compressed/8C - EHZ 2P.sax"
+Mus_2PResult:	incbin	"sound/music/compressed/81 - 2 Player Menu.sax"
+Mus_SuperSonic:	incbin	"sound/music/compressed/96 - Super Sonic.sax"
+Mus_HTZ:	incbin	"sound/music/compressed/86 - HTZ.sax"
+Mus_Title:	incbin	"sound/music/compressed/99 - Title Screen.sax"
+Mus_EndLevel:	incbin	"sound/music/compressed/9A - End of Act.sax"
+
+Mus_ExtraLife:		include	"sound/music/98 - Extra Life.asm"
+Mus_GameOver:		include	"sound/music/9B - Game Over.asm"
+Mus_Emerald:		include	"sound/music/9D - Got Emerald.asm"
+Mus_Credits:		include	"sound/music/9E - Credits.asm"
 ; ------------------------------------------------------------------------------------------
 ; Sound	effect pointers
 ; ------------------------------------------------------------------------------------------
-SoundPoint:	dc.w ((((Snd_Sound20&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound20&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound21&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound21&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound22&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound22&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound23&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound23&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound24&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound24&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound25&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound25&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound26&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound26&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound27&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound27&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound28&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound28&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound29&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound29&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound2A&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound2A&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound2B&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound2B&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound2C&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound2C&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound2D&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound2D&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound2E&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound2E&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound2F&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound2F&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound30&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound30&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound31&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound31&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound32&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound32&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound33&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound33&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound34&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound34&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound35&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound35&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound36&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound36&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound37&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound37&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound38&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound38&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound39&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound39&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound3A&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound3A&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound3B&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound3B&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound3C&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound3C&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound3D&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound3D&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound3E&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound3E&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound3F&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound3F&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound40&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound40&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound41&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound41&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound42&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound42&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound43&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound43&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound44&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound44&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound45&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound45&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound46&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound46&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound47&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound47&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound48&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound48&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound49&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound49&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound4A&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound4A&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound4B&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound4B&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound4C&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound4C&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound4D&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound4D&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound4E&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound4E&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound4F&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound4F&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound50&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound50&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound51&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound51&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound52&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound52&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound53&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound53&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound54&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound54&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound55&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound55&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound56&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound56&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound57&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound57&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound58&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound58&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound59&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound59&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound5A&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound5A&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound5B&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound5B&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound5C&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound5C&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound5D&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound5D&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound5E&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound5E&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound5F&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound5F&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound60&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound60&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound61&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound61&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound62&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound62&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound63&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound63&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound64&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound64&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound65&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound65&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound66&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound66&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound67&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound67&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound68&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound68&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound69&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound69&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound6A&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound6A&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound6B&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound6B&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound6C&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound6C&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound6D&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound6D&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound6E&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound6E&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound6F&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound6F&$7FFF)+$8000)>>8)
-		dc.w ((((Snd_Sound70&$7FFF)+$8000)<<8)&$FF00)+(((Snd_Sound70&$7FFF)+$8000)>>8)
-Snd_Sound20:		incbin	sound\soundf~1\0X0FEF~1.BIN
-Snd_Sound21:		incbin	sound\soundf~1\0X0FEF~2.BIN
-Snd_Sound22:		incbin	sound\soundf~1\0X0FEF~3.BIN
-Snd_Sound23:		incbin	sound\soundf~1\0X0FEF~4.BIN
-Snd_Sound24:		incbin	sound\soundf~1\0X36B9~1.BIN
-Snd_Sound25:		incbin	sound\soundf~1\0X969D~1.BIN
-Snd_Sound26:		incbin	sound\soundf~1\0X0FF0~1.BIN
-Snd_Sound27:		incbin	sound\soundf~1\0X0FF0~2.BIN
-Snd_Sound28:		incbin	sound\soundf~1\0X0FF0~3.BIN
-Snd_Sound29:		incbin	sound\soundf~1\0X0FF0~4.BIN
-Snd_Sound2A:		incbin	sound\soundf~1\0X36FB~1.BIN
-Snd_Sound2B:		incbin	sound\soundf~1\0XB657~1.BIN
-Snd_Sound2C:		incbin	sound\soundf~1\0X0FF1~1.BIN
-Snd_Sound2D:		incbin	sound\soundf~1\0X0FF1~2.BIN
-Snd_Sound2E:		incbin	sound\soundf~1\0X0FF1~3.BIN
-Snd_Sound2F:		incbin	sound\soundf~1\0X0FF1~4.BIN
-Snd_Sound30:		incbin	sound\soundf~1\0X6A6F~1.BIN
-Snd_Sound31:		incbin	sound\soundf~1\0X0FF2~1.BIN
-Snd_Sound32:		incbin	sound\soundf~1\0X0FF2~2.BIN
-Snd_Sound33:		incbin	sound\soundf~1\0X0FF2~3.BIN
-Snd_Sound34:		incbin	sound\soundf~1\0X0FF2~4.BIN
-Snd_Sound35:		incbin	sound\soundf~1\0X0FF3~1.BIN
-Snd_Sound36:		incbin	sound\soundf~1\0X0FF3~2.BIN
-Snd_Sound37:		incbin	sound\soundf~1\0X0FF3~3.BIN
-Snd_Sound38:		incbin	sound\soundf~1\0X0FF3~4.BIN
-Snd_Sound39:		incbin	sound\soundf~1\0X1AC8~1.BIN
-Snd_Sound3A:		incbin	sound\soundf~1\0XBAEC~1.BIN
-Snd_Sound3B:		incbin	sound\soundf~1\0X0FF4~1.BIN
-Snd_Sound3C:		incbin	sound\soundf~1\0X0FF4~2.BIN
-Snd_Sound3D:		incbin	sound\soundf~1\0X0FF4~3.BIN
-Snd_Sound3E:		incbin	sound\soundf~1\0X0FF4~4.BIN
-Snd_Sound3F:		incbin	sound\soundf~1\0X0FF5~1.BIN
-Snd_Sound40:		incbin	sound\soundf~1\0X0FF5~2.BIN
-Snd_Sound41:		incbin	sound\soundf~1\0X0FF5~3.BIN
-Snd_Sound42:		incbin	sound\soundf~1\0X0FF5~4.BIN
-Snd_Sound43:		incbin	sound\soundf~1\0X7E03~1.BIN
-Snd_Sound44:		incbin	sound\soundf~1\0X0FF6~1.BIN
-Snd_Sound45:		incbin	sound\soundf~1\0X0FF6~2.BIN
-Snd_Sound46:		incbin	sound\soundf~1\0X0FF6~3.BIN
-Snd_Sound47:		incbin	sound\soundf~1\0X0FF7~1.BIN
-Snd_Sound48:		incbin	sound\soundf~1\0X0FF7~2.BIN
-Snd_Sound49:		incbin	sound\soundf~1\0X0FF7~3.BIN
-Snd_Sound4A:		incbin	sound\soundf~1\0X0FF7~4.BIN
-Snd_Sound4B:		incbin	sound\soundf~1\0X3E40~1.BIN
-Snd_Sound4C:		incbin	sound\soundf~1\0XBEC0~1.BIN
-Snd_Sound4D:		incbin	sound\soundf~1\0X0FF8~1.BIN
-Snd_Sound4E:		incbin	sound\soundf~1\0X0FF8~2.BIN
-Snd_Sound4F:		incbin	sound\soundf~1\0X0FF8~3.BIN
-Snd_Sound50:		incbin	sound\soundf~1\0X0FF8~4.BIN
-Snd_Sound51:		incbin	sound\soundf~1\0XF1A6~1.BIN
-Snd_Sound52:		incbin	sound\soundf~1\0X7287~1.BIN
-Snd_Sound53:		incbin	sound\soundf~1\0X0FF9~1.BIN
-Snd_Sound54:		incbin	sound\soundf~1\0X0FF9~2.BIN
-Snd_Sound55:		incbin	sound\soundf~1\0X0FF9~3.BIN
-Snd_Sound56:		incbin	sound\soundf~1\0X0FF9~4.BIN
-Snd_Sound57:		incbin	sound\soundf~1\0X0FFA~1.BIN
-Snd_Sound58:		incbin	sound\soundf~1\0X0FFA~2.BIN
-Snd_Sound59:		incbin	sound\soundf~1\0X0FFA~3.BIN
-Snd_Sound5A:		incbin	sound\soundf~1\0X0FFA~4.BIN
-Snd_Sound5B:		incbin	sound\soundf~1\0XB2D1~1.BIN
-Snd_Sound5C:		incbin	sound\soundf~1\0X0FFB~1.BIN
-Snd_Sound5D:		incbin	sound\soundf~1\0X0FFB~2.BIN
-Snd_Sound5E:		incbin	sound\soundf~1\0X0FFB~3.BIN
-Snd_Sound5F:		incbin	sound\soundf~1\0X0FFB~4.BIN
-Snd_Sound60:		incbin	sound\soundf~1\0X0FFC~1.BIN
-Snd_Sound61:		incbin	sound\soundf~1\0X0FFC~2.BIN
-Snd_Sound62:		incbin	sound\soundf~1\0X0FFC~3.BIN
-Snd_Sound63:		incbin	sound\soundf~1\0X0FFD~1.BIN
-Snd_Sound64:		incbin	sound\soundf~1\0X0FFD~2.BIN
-Snd_Sound65:		incbin	sound\soundf~1\0X0FFD~3.BIN
-Snd_Sound66:		incbin	sound\soundf~1\0X0FFD~4.BIN
-Snd_Sound67:		incbin	sound\soundf~1\0X6624~1.BIN
-Snd_Sound68:		incbin	sound\soundf~1\0X0FFE~1.BIN
-Snd_Sound69:		incbin	sound\soundf~1\0X0FFE~2.BIN
-Snd_Sound6A:		incbin	sound\soundf~1\0X0FFE~3.BIN
-Snd_Sound6B:		incbin	sound\soundf~1\0X0FFE~4.BIN
-Snd_Sound6C:		incbin	sound\soundf~1\0X56DF~1.BIN
-Snd_Sound6D:		incbin	sound\soundf~1\0X0FFF~1.BIN
-Snd_Sound6E:		incbin	sound\soundf~1\0X0FFF~2.BIN
-Snd_Sound6F:		incbin	sound\soundf~1\0X0FFF~3.BIN
-Snd_Sound70:		incbin	sound\soundf~1\0X0FFF~4.BIN
+SoundPoint:	dc.w ((((Sound20&$7FFF)+$8000)<<8)&$FF00)+(((Sound20&$7FFF)+$8000)>>8)
+		dc.w ((((Sound21&$7FFF)+$8000)<<8)&$FF00)+(((Sound21&$7FFF)+$8000)>>8)
+		dc.w ((((Sound22&$7FFF)+$8000)<<8)&$FF00)+(((Sound22&$7FFF)+$8000)>>8)
+		dc.w ((((Sound23&$7FFF)+$8000)<<8)&$FF00)+(((Sound23&$7FFF)+$8000)>>8)
+		dc.w ((((Sound24&$7FFF)+$8000)<<8)&$FF00)+(((Sound24&$7FFF)+$8000)>>8)
+		dc.w ((((Sound25&$7FFF)+$8000)<<8)&$FF00)+(((Sound25&$7FFF)+$8000)>>8)
+		dc.w ((((Sound26&$7FFF)+$8000)<<8)&$FF00)+(((Sound26&$7FFF)+$8000)>>8)
+		dc.w ((((Sound27&$7FFF)+$8000)<<8)&$FF00)+(((Sound27&$7FFF)+$8000)>>8)
+		dc.w ((((Sound28&$7FFF)+$8000)<<8)&$FF00)+(((Sound28&$7FFF)+$8000)>>8)
+		dc.w ((((Sound29&$7FFF)+$8000)<<8)&$FF00)+(((Sound29&$7FFF)+$8000)>>8)
+		dc.w ((((Sound2A&$7FFF)+$8000)<<8)&$FF00)+(((Sound2A&$7FFF)+$8000)>>8)
+		dc.w ((((Sound2B&$7FFF)+$8000)<<8)&$FF00)+(((Sound2B&$7FFF)+$8000)>>8)
+		dc.w ((((Sound2C&$7FFF)+$8000)<<8)&$FF00)+(((Sound2C&$7FFF)+$8000)>>8)
+		dc.w ((((Sound2D&$7FFF)+$8000)<<8)&$FF00)+(((Sound2D&$7FFF)+$8000)>>8)
+		dc.w ((((Sound2E&$7FFF)+$8000)<<8)&$FF00)+(((Sound2E&$7FFF)+$8000)>>8)
+		dc.w ((((Sound2F&$7FFF)+$8000)<<8)&$FF00)+(((Sound2F&$7FFF)+$8000)>>8)
+		dc.w ((((Sound30&$7FFF)+$8000)<<8)&$FF00)+(((Sound30&$7FFF)+$8000)>>8)
+		dc.w ((((Sound31&$7FFF)+$8000)<<8)&$FF00)+(((Sound31&$7FFF)+$8000)>>8)
+		dc.w ((((Sound32&$7FFF)+$8000)<<8)&$FF00)+(((Sound32&$7FFF)+$8000)>>8)
+		dc.w ((((Sound33&$7FFF)+$8000)<<8)&$FF00)+(((Sound33&$7FFF)+$8000)>>8)
+		dc.w ((((Sound34&$7FFF)+$8000)<<8)&$FF00)+(((Sound34&$7FFF)+$8000)>>8)
+		dc.w ((((Sound35&$7FFF)+$8000)<<8)&$FF00)+(((Sound35&$7FFF)+$8000)>>8)
+		dc.w ((((Sound36&$7FFF)+$8000)<<8)&$FF00)+(((Sound36&$7FFF)+$8000)>>8)
+		dc.w ((((Sound37&$7FFF)+$8000)<<8)&$FF00)+(((Sound37&$7FFF)+$8000)>>8)
+		dc.w ((((Sound38&$7FFF)+$8000)<<8)&$FF00)+(((Sound38&$7FFF)+$8000)>>8)
+		dc.w ((((Sound39&$7FFF)+$8000)<<8)&$FF00)+(((Sound39&$7FFF)+$8000)>>8)
+		dc.w ((((Sound3A&$7FFF)+$8000)<<8)&$FF00)+(((Sound3A&$7FFF)+$8000)>>8)
+		dc.w ((((Sound3B&$7FFF)+$8000)<<8)&$FF00)+(((Sound3B&$7FFF)+$8000)>>8)
+		dc.w ((((Sound3C&$7FFF)+$8000)<<8)&$FF00)+(((Sound3C&$7FFF)+$8000)>>8)
+		dc.w ((((Sound3D&$7FFF)+$8000)<<8)&$FF00)+(((Sound3D&$7FFF)+$8000)>>8)
+		dc.w ((((Sound3E&$7FFF)+$8000)<<8)&$FF00)+(((Sound3E&$7FFF)+$8000)>>8)
+		dc.w ((((Sound3F&$7FFF)+$8000)<<8)&$FF00)+(((Sound3F&$7FFF)+$8000)>>8)
+		dc.w ((((Sound40&$7FFF)+$8000)<<8)&$FF00)+(((Sound40&$7FFF)+$8000)>>8)
+		dc.w ((((Sound41&$7FFF)+$8000)<<8)&$FF00)+(((Sound41&$7FFF)+$8000)>>8)
+		dc.w ((((Sound42&$7FFF)+$8000)<<8)&$FF00)+(((Sound42&$7FFF)+$8000)>>8)
+		dc.w ((((Sound43&$7FFF)+$8000)<<8)&$FF00)+(((Sound43&$7FFF)+$8000)>>8)
+		dc.w ((((Sound44&$7FFF)+$8000)<<8)&$FF00)+(((Sound44&$7FFF)+$8000)>>8)
+		dc.w ((((Sound45&$7FFF)+$8000)<<8)&$FF00)+(((Sound45&$7FFF)+$8000)>>8)
+		dc.w ((((Sound46&$7FFF)+$8000)<<8)&$FF00)+(((Sound46&$7FFF)+$8000)>>8)
+		dc.w ((((Sound47&$7FFF)+$8000)<<8)&$FF00)+(((Sound47&$7FFF)+$8000)>>8)
+		dc.w ((((Sound48&$7FFF)+$8000)<<8)&$FF00)+(((Sound48&$7FFF)+$8000)>>8)
+		dc.w ((((Sound49&$7FFF)+$8000)<<8)&$FF00)+(((Sound49&$7FFF)+$8000)>>8)
+		dc.w ((((Sound4A&$7FFF)+$8000)<<8)&$FF00)+(((Sound4A&$7FFF)+$8000)>>8)
+		dc.w ((((Sound4B&$7FFF)+$8000)<<8)&$FF00)+(((Sound4B&$7FFF)+$8000)>>8)
+		dc.w ((((Sound4C&$7FFF)+$8000)<<8)&$FF00)+(((Sound4C&$7FFF)+$8000)>>8)
+		dc.w ((((Sound4D&$7FFF)+$8000)<<8)&$FF00)+(((Sound4D&$7FFF)+$8000)>>8)
+		dc.w ((((Sound4E&$7FFF)+$8000)<<8)&$FF00)+(((Sound4E&$7FFF)+$8000)>>8)
+		dc.w ((((Sound4F&$7FFF)+$8000)<<8)&$FF00)+(((Sound4F&$7FFF)+$8000)>>8)
+		dc.w ((((Sound50&$7FFF)+$8000)<<8)&$FF00)+(((Sound50&$7FFF)+$8000)>>8)
+		dc.w ((((Sound51&$7FFF)+$8000)<<8)&$FF00)+(((Sound51&$7FFF)+$8000)>>8)
+		dc.w ((((Sound52&$7FFF)+$8000)<<8)&$FF00)+(((Sound52&$7FFF)+$8000)>>8)
+		dc.w ((((Sound53&$7FFF)+$8000)<<8)&$FF00)+(((Sound53&$7FFF)+$8000)>>8)
+		dc.w ((((Sound54&$7FFF)+$8000)<<8)&$FF00)+(((Sound54&$7FFF)+$8000)>>8)
+		dc.w ((((Sound55&$7FFF)+$8000)<<8)&$FF00)+(((Sound55&$7FFF)+$8000)>>8)
+		dc.w ((((Sound56&$7FFF)+$8000)<<8)&$FF00)+(((Sound56&$7FFF)+$8000)>>8)
+		dc.w ((((Sound57&$7FFF)+$8000)<<8)&$FF00)+(((Sound57&$7FFF)+$8000)>>8)
+		dc.w ((((Sound58&$7FFF)+$8000)<<8)&$FF00)+(((Sound58&$7FFF)+$8000)>>8)
+		dc.w ((((Sound59&$7FFF)+$8000)<<8)&$FF00)+(((Sound59&$7FFF)+$8000)>>8)
+		dc.w ((((Sound5A&$7FFF)+$8000)<<8)&$FF00)+(((Sound5A&$7FFF)+$8000)>>8)
+		dc.w ((((Sound5B&$7FFF)+$8000)<<8)&$FF00)+(((Sound5B&$7FFF)+$8000)>>8)
+		dc.w ((((Sound5C&$7FFF)+$8000)<<8)&$FF00)+(((Sound5C&$7FFF)+$8000)>>8)
+		dc.w ((((Sound5D&$7FFF)+$8000)<<8)&$FF00)+(((Sound5D&$7FFF)+$8000)>>8)
+		dc.w ((((Sound5E&$7FFF)+$8000)<<8)&$FF00)+(((Sound5E&$7FFF)+$8000)>>8)
+		dc.w ((((Sound5F&$7FFF)+$8000)<<8)&$FF00)+(((Sound5F&$7FFF)+$8000)>>8)
+		dc.w ((((Sound60&$7FFF)+$8000)<<8)&$FF00)+(((Sound60&$7FFF)+$8000)>>8)
+		dc.w ((((Sound61&$7FFF)+$8000)<<8)&$FF00)+(((Sound61&$7FFF)+$8000)>>8)
+		dc.w ((((Sound62&$7FFF)+$8000)<<8)&$FF00)+(((Sound62&$7FFF)+$8000)>>8)
+		dc.w ((((Sound63&$7FFF)+$8000)<<8)&$FF00)+(((Sound63&$7FFF)+$8000)>>8)
+		dc.w ((((Sound64&$7FFF)+$8000)<<8)&$FF00)+(((Sound64&$7FFF)+$8000)>>8)
+		dc.w ((((Sound65&$7FFF)+$8000)<<8)&$FF00)+(((Sound65&$7FFF)+$8000)>>8)
+		dc.w ((((Sound66&$7FFF)+$8000)<<8)&$FF00)+(((Sound66&$7FFF)+$8000)>>8)
+		dc.w ((((Sound67&$7FFF)+$8000)<<8)&$FF00)+(((Sound67&$7FFF)+$8000)>>8)
+		dc.w ((((Sound68&$7FFF)+$8000)<<8)&$FF00)+(((Sound68&$7FFF)+$8000)>>8)
+		dc.w ((((Sound69&$7FFF)+$8000)<<8)&$FF00)+(((Sound69&$7FFF)+$8000)>>8)
+		dc.w ((((Sound6A&$7FFF)+$8000)<<8)&$FF00)+(((Sound6A&$7FFF)+$8000)>>8)
+		dc.w ((((Sound6B&$7FFF)+$8000)<<8)&$FF00)+(((Sound6B&$7FFF)+$8000)>>8)
+		dc.w ((((Sound6C&$7FFF)+$8000)<<8)&$FF00)+(((Sound6C&$7FFF)+$8000)>>8)
+		dc.w ((((Sound6D&$7FFF)+$8000)<<8)&$FF00)+(((Sound6D&$7FFF)+$8000)>>8)
+		dc.w ((((Sound6E&$7FFF)+$8000)<<8)&$FF00)+(((Sound6E&$7FFF)+$8000)>>8)
+		dc.w ((((Sound6F&$7FFF)+$8000)<<8)&$FF00)+(((Sound6F&$7FFF)+$8000)>>8)
+		dc.w ((((Sound70&$7FFF)+$8000)<<8)&$FF00)+(((Sound70&$7FFF)+$8000)>>8)
+Sound20:	include "sound/sfx/A0 - Jump.asm"
+Sound21:	include "sound/sfx/A1 - Checkpoint.asm"
+Sound22:	include "sound/sfx/A2 - Spike Switch.asm"
+Sound23:	include "sound/sfx/A3 - Hurt.asm"
+Sound24:	include "sound/sfx/A4 - Skidding.asm"
+Sound25:	include "sound/sfx/A5 - Block Push.asm"
+Sound26:	include "sound/sfx/A6 - Hurt by Spikes.asm"
+Sound27:	include "sound/sfx/A7 - Sparkle.asm"
+Sound28:	include "sound/sfx/A8 - Beep.asm"
+Sound29:	include "sound/sfx/A9 - Special Stage Item (Unused).asm"
+Sound2A:	include "sound/sfx/AA - Splash.asm"
+Sound2B:	include "sound/sfx/AB - Swish.asm"
+Sound2C:	include "sound/sfx/AC - Boss Hit.asm"
+Sound2D:	include "sound/sfx/AD - Inhaling Bubble.asm"
+Sound2E:	include "sound/sfx/AE - Lava Ball.asm"
+Sound2F:	include "sound/sfx/AF - Shield.asm"
+Sound30:	include "sound/sfx/B0 - Laser Beam.asm"
+Sound31:	include "sound/sfx/B1 - Electricity (Unused).asm"
+Sound32:	include "sound/sfx/B2 - Drown.asm"
+Sound33:	include "sound/sfx/B3 - Fire Burn.asm"
+Sound34:	include "sound/sfx/B4 - Bumper.asm"
+Sound35:	include "sound/sfx/B5 - Ring.asm"
+Sound36:	include "sound/sfx/B6 - Spikes Move.asm"
+Sound37:	include "sound/sfx/B7 - Rumbling.asm"
+Sound38:	include "sound/sfx/B8 - Unknown (Unused).asm"
+Sound39:	include "sound/sfx/B9 - Smash.asm"
+Sound3A:	include "sound/sfx/BA - Special Stage Glass (Unused).asm"
+Sound3B:	include "sound/sfx/BB - Door Slam.asm"
+Sound3C:	include "sound/sfx/BC - Spin Dash Release.asm"
+Sound3D:	include "sound/sfx/BD - Hammer.asm"
+Sound3E:	include "sound/sfx/BE - Roll.asm"
+Sound3F:	include "sound/sfx/BF - Continue Jingle.asm"
+Sound40:	include "sound/sfx/C0 - Casino Bonus.asm"
+Sound41:	include "sound/sfx/C1 - Explosion.asm"
+Sound42:	include "sound/sfx/C2 - Water Warning.asm"
+Sound43:	include "sound/sfx/C3 - Enter Giant Ring (Unused).asm"
+Sound44:	include "sound/sfx/C4 - Boss Explosion.asm"
+Sound45:	include "sound/sfx/C5 - Tally End.asm"
+Sound46:	include "sound/sfx/C6 - Ring Spill.asm"
+Sound47:	include "sound/sfx/C7 - Chain Rise (Unused).asm"
+Sound48:	include "sound/sfx/C8 - Flamethrower.asm"
+Sound49:	include "sound/sfx/C9 - Hidden Bonus (Unused).asm"
+Sound4A:	include "sound/sfx/CA - Special Stage Entry.asm"
+Sound4B:	include "sound/sfx/CB - Slow Smash.asm"
+Sound4C:	include "sound/sfx/CC - Spring.asm"
+Sound4D:	include "sound/sfx/CD - Switch.asm"
+Sound4E:	include "sound/sfx/CE - Ring Left Speaker.asm"
+Sound4F:	include "sound/sfx/CF - Signpost.asm"
+Sound50:	include "sound/sfx/D0 - CNZ Boss Zap.asm"
+Sound51:	include "sound/sfx/D1 - Unknown (Unused).asm"
+Sound52:	include "sound/sfx/D2 - Unknown (Unused).asm"
+Sound53:	include "sound/sfx/D3 - Signpost 2P.asm"
+Sound54:	include "sound/sfx/D4 - OOZ Lid Pop.asm"
+Sound55:	include "sound/sfx/D5 - Sliding Spike.asm"
+Sound56:	include "sound/sfx/D6 - CNZ Elevator.asm"
+Sound57:	include "sound/sfx/D7 - Platform Knock.asm"
+Sound58:	include "sound/sfx/D8 - Bonus Bumper.asm"
+Sound59:	include "sound/sfx/D9 - Large Bumper.asm"
+Sound5A:	include "sound/sfx/DA - Gloop.asm"
+Sound5B:	include "sound/sfx/DB - Pre-Arrow Firing.asm"
+Sound5C:	include "sound/sfx/DC - Fire.asm"
+Sound5D:	include "sound/sfx/DD - Arrow Stick.asm"
+Sound5E:	include "sound/sfx/DE - Helicopter.asm"
+Sound5F:	include "sound/sfx/DF - Super Transform.asm"
+Sound60:	include "sound/sfx/E0 - Spin Dash Rev.asm"
+Sound61:	include "sound/sfx/E1 - Rumbling 2.asm"
+Sound62:	include "sound/sfx/E2 - CNZ Launch.asm"
+Sound63:	include "sound/sfx/E3 - Flipper.asm"
+Sound64:	include "sound/sfx/E4 - HTZ Lift Click.asm"
+Sound65:	include "sound/sfx/E5 - Leaves.asm"
+Sound66:	include "sound/sfx/E6 - Mega Mack Drop.asm"
+Sound67:	include "sound/sfx/E7 - Drawbridge Move.asm"
+Sound68:	include "sound/sfx/E8 - Quick Door Slam.asm"
+Sound69:	include "sound/sfx/E9 - Drawbridge Down.asm"
+Sound6A:	include "sound/sfx/EA - Laser Burst.asm"
+Sound6B:	include "sound/sfx/EB - Scatter.asm"
+Sound6C:	include "sound/sfx/EC - Teleport.asm"
+Sound6D:	include "sound/sfx/ED - Error.asm"
+Sound6E:	include "sound/sfx/EE - Mecha Sonic Buzz.asm"
+Sound6F:	include "sound/sfx/EF - Large Laser.asm"
+Sound70:	include "sound/sfx/F0 - Oil Slide.asm"
 ; end of 'ROM'
 
 ROM_End:
