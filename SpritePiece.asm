@@ -43,7 +43,7 @@ spritePiece2P macro xpos,ypos,width,height,tile,xflip,yflip,pal,pri,tile2,xflip2
 ; TODO: Fix DPLC macros
 
 dplcHeader macro *
-;\* EQU *
+\* equ *
 ;	if SonicMappingsVer=1
 ;	dc.b ((\*_End-\*-1)/2)
 ;	elseif SonicMappingsVer=2
@@ -57,6 +57,6 @@ dplcEntry macro tiles,offset
 ;	if SonicMappingsVer=3
 ;	dc.w	((offset&$FFF)<<4)|((tiles-1)&$F)
 ;	else
-	dc.w	(((tiles-1)&$F)<<12)|(offset&$FFF)
+	dc.w (((tiles-1)&$F)<<12)|(offset&$FFF)
 ;	endif
 	endm

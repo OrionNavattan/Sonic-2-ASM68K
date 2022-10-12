@@ -1,15 +1,13 @@
 ; ---------------------------------------------------------------------------
-; Standard Mega Drive constants & macros
+; Standard Mega Drive hardware addresses, constants & macros
 ; ---------------------------------------------------------------------------
 
 ; VDP addressses
 vdp_data_port:		equ $C00000
 vdp_control_port:	equ $C00004
 vdp_counter:		equ $C00008
-
-psg_input:		equ $C00011
-
-debug_reg:		equ $C0001C
+psg_input:			equ $C00011
+debug_reg:			equ $C0001C
 
 ; Z80 addresses
 z80_ram:		equ $A00000	; start of Z80 RAM
@@ -49,6 +47,12 @@ bank_reg_6:		equ $A130FD	; Bank register for address $300000-$37FFFF
 bank_reg_7:		equ $A130FF	; Bank register for address $380000-$3FFFFF
 tmss_sega:		equ $A14000	; contains the string "SEGA"
 tmss_reg:		equ $A14101 ; bankswitch between cartridge and TMSS ROM
+
+; Hardware sizes
+sizeof_ram:			equ $10000
+sizeof_vram:		equ $10000
+sizeof_vsram:		equ $50
+sizeof_z80_ram:		equ $2000
 
 ; ---------------------------------------------------------------------------
 ; stop the Z80

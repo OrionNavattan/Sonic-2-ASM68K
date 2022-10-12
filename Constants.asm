@@ -22,21 +22,88 @@ sizeof_priority:	equ $80					; size of one priority section in sprite queue
 ;sizeof_level:       equ sizeof_levelrow*level_max_height
 sizeof_level:       equ $1000
 
-sizeof_ram:			equ $10000
-sizeof_vram:		equ $10000
-sizeof_vsram:		equ $50
-sizeof_vram_hscroll: equ $380
+screen_width:		equ 320
+screen_height:		equ 224
 
+; ---------------------------------------------------------------------------
+; VRAM globals
+; ---------------------------------------------------------------------------
 sizeof_cell:		equ $20					; single 8x8 tile
 sizeof_vram_fg:		equ sizeof_vram_row*32			; fg nametable, assuming 64x32 ($1000 bytes)
 sizeof_vram_bg:		equ sizeof_vram_row*32			; bg nametable, assuming 64x32 ($1000 bytes)
-sizeof_vram_sonic:	equ $17*sizeof_cell			; Sonic's graphics ($2E0 bytes)
-sizeof_sprite:		equ 8					; one sprite in sprite table
-countof_max_sprites:	equ $50					; max number of sprites that can be displayed
+;sizeof_vram_sonic:	equ $17*sizeof_cell			; Sonic's graphics ($2E0 bytes)
+sizeof_sprite:		equ 8						; one sprite in sprite attribute table
+countof_max_sprites:	equ $50					; max number of sprites that can be displayed at once (80)
 sizeof_vram_sprites:	equ sizeof_sprite*countof_max_sprites	; sprite table ($280 bytes)
 sizeof_vram_hscroll:	equ $380
 sizeof_vram_hscroll_padded:	equ $400
 sizeof_vram_row:	equ 64*2				; single row of fg/bg nametable, assuming 64 wide
+;draw_base:		equ vram_fg				; base address for nametables, used by Calc_VRAM_Pos (must be multiple of $4000)
+;draw_fg:		equ $4000+(vram_fg-draw_base)		; VRAM write command + fg nametable address relative to base
+;draw_bg:		equ $4000+(vram_bg-draw_base)		; VRAM write command + bg nametable address relative to base
+
+vram_sprites:			equ $F800				; sprite attribute table ($280 bytes)
+sizeof_vram_sprites:	equ $280				
+vram_hscroll:			equ $FC00				; horizontal scroll table ($380 bytes); extends until $FF7F
+sizeof_vram_hscroll:	equ $380				; 224 lines * 2 bytes per entry * 2 plane nametables
+
+; ---------------------------------------------------------------------------
+; VRAM regions for main game
+; ---------------------------------------------------------------------------
+;vram_window:		equ $A000		; window nametable - unused
+vram_fg:			equ $C000		; foreground nametable ($1000 bytes); extends until $CFFF
+vram_bg:			equ $E000		; background nametable ($1000 bytes); extends until $EFFF
+vram_fg_2p:			equ $A000		; extends until $AFFF
+vram_bg_2p:			equ	$8000		; extends until $8FFF
+sizeof_vram_planetable:	equ $1000			; 64 cells x 32 cells x 2 bytes per cell
+;vram_sonic:			equ $F000				; Sonic graphics ($2E0 bytes)
+;tile_sonic:			equ vram_sonic/sizeof_cell
+
+
+; ---------------------------------------------------------------------------
+; VRAM regions for Sega Screen
+; ---------------------------------------------------------------------------
+vram_sega_fg:			equ $C000 ; extends until $DFFF
+vram_sega_bg:			equ $A000 ; extends until $BFFF
+sizeof_vram_sega_pt:	equ $2000 ; 128 cells x 32 cells x 2 bytes per cell
+
+; ---------------------------------------------------------------------------
+; VRAM regions for Special Stage
+; ---------------------------------------------------------------------------
+vram_ss_fg1:       			equ $C000	; extends until $DFFF
+vram_ss_fg2:			    equ $8000	; extends until $9FFF
+vram_ss_bg:					equ $A000	; extends until $BFFF
+sizeof_vram_ss_pt:			equ $2000	; 128 cells x 32 cells x 2 bytes per cell
+vram_ss_sprites:			equ $F800	; extends until $FA7F
+sizeof_vram_ss_sprites:		equ $0280	; 640 bytes
+vram_ss_hscroll:			equ $FC00	; extends until $FF7F
+sizeof_vram_ss_hscroll:		equ $0380	; 224 lines * 2 bytes per entry * 2 plane nametables
+
+; ---------------------------------------------------------------------------
+; VRAM regions for title screen
+; ---------------------------------------------------------------------------
+vram_title_fg:          	equ $C000	; extends until $CFFF
+vram_title_bg:          	equ $E000	; extends until $EFFF
+sizeof_vram_title_pt:   	equ $1000	; 64 cells x 32 cells x 2 bytes per cell
+
+; ---------------------------------------------------------------------------
+; VRAM regions for ending and credits
+; ---------------------------------------------------------------------------
+vram_ending_fg:     	      equ $C000	; extends until $DFFF
+vram_ending_bg1:    	      equ $E000	; extends until $EFFF (plane size is 64x32)
+vram_ending_bg2:	          equ $4000	; extends until $5FFF
+sizeof_vram_ending_pt:        equ $2000	; 64 cells x 64 cells x 2 bytes per cell
+
+; ---------------------------------------------------------------------------
+; VRAM regions for menu screens
+; ---------------------------------------------------------------------------
+vram_menu_fg:				equ $C000	; Extends until $CFFF
+vram_menu_bg:             	equ $E000	; Extends until $EFFF
+sizeof_vram_menu_pt:        equ $1000	; 64 cells x 32 cells x 2 bytes per cell
+
+; ---------------------------------------------------------------------------
+; Color and CRAM things
+; ---------------------------------------------------------------------------
 
 countof_color:		equ 16					; colors per palette line
 countof_colour:	equ countof_color		; silly Brits. :P
@@ -142,8 +209,6 @@ debug_move_speed:		equ 15 				; initial speed object moves in debug mode when d-
 lives_start:			equ 3				; lives at start of game
 rings_for_life:			equ 100				; rings needed for first extra life
 rings_for_life2:		equ 200				; rings needed for second extra life
-;rings_for_special_stage:	equ 50				; rings needed for special stage giant ring to appear
-;rings_for_continue:		equ 50				; rings needed for continue in special stage
 rings_from_monitor:		equ 10				; rings given by ring monitor
 combo_max:			equ 16*2			; value at which v_enemy_combo gives the max points
 combo_max_points:		equ 10000/10			; points given after 16 enemies are broken in a row
@@ -194,6 +259,7 @@ ost_tile:		rs.w 1					; 2 ; universal; palette line & VRAM setting (2 bytes)
 	tile_hi_bit:	equ 7
 	
 ost_mappings:		rs.l 1					; 4 ; universal; mappings address (4 bytes)
+ost_x_screen:								; 8 ; x-axis position for screen-fixed items (2 bytes)
 ost_x_pos:			rs.l 1					; 8 ; universal; x-axis position (2 bytes)
 ost_x_sub:			equ __rs-2				; $A ; universal; x-axis subpixel position (2 bytes)
 ost_y_screen:		equ __rs-2				; $A ; y-axis position for screen-fixed items (2 bytes)
@@ -213,7 +279,7 @@ ost_anim:			rs.w 1					; $1C ; most objects; current animation
 ost_anim_restart:	equ __rs-1				; $1D ; most objects; restart animation flag / next animation number (Sonic)
 ost_anim_time:		rs.w 1					; $1E ; most objects; time to next frame (1 byte) / general timer (2 bytes)
 ost_anim_time_low:	equ __rs-1				; $1F ; used by some objects as master copy of timer
-ost_col_type:		rs.b 1					; $20 ; non-player objects; collision response type - 0 = none; 1-$3F = enemy; $41-$7F = items; $81-BF = hurts; $C1-$FF = custom
+ost_col_type:		rs.b 1					; $20 ; non-player objects; collision response type - 0 equ none; 1-$3F = enemy; $41-$7F = items; $81-BF = hurts; $C1-$FF = custom
 ost_col_property:	rs.b 1					; $21 ; non-player objects;  collision extra property
 ost_status:			rs.b 1					; $22 ; most objects; bitfield indicating orientation or mode
 	status_xflip_bit:	equ 0
@@ -304,7 +370,7 @@ ost_status_secondary		rs.b 1		; $2B
 ost_flips_remaining			rs.b 1		; $2C ; number of flip revolutions remaining
 ost_flip_speed:				rs.b 1		; $2D ; number of flip revolutions per frame / 256
 ost_lock_time:				rs.w 1		; $2E ; time left for locked d-pad controls (jumping is allowed), e.g. after hitting a spring
-ost_invulnerable_time:		rs.w 1		; $30 ; time Sonic/Tails flashes for after getting hit
+ost_flash_time:				rs.w 1		; $30 ; time Sonic/Tails flashes for after getting hit
 ost_invincible_time: 		rs.w 1		; $32 ; time left for invincibility
 ost_speedshoe_time:			rs.w 1		; $34 ; time left for speed shoes
 ost_angle_right:			rs.b 1		; $36 ; angle of floor on Sonic/Tails' right side
@@ -318,5 +384,42 @@ ost_jump:					rs.b 1		; $3C ; 1 if Sonic/Tails is jumping
 ost_interact:				rs.b 1		; $3D ; OST index of object Sonic stands on
 ost_top_solid_bit:			rs.b 1		; $3E ; the bit to check for top solidity (either $C or $E)
 ost_lrb_solid_bit:			rs.w 1		; $3F ; ; the bit to check for left/right/bottom solidity (either $D or $F)
-		
 
+
+; ---------------------------------------------------------------------------
+; Boss object variables
+; ---------------------------------------------------------------------------
+ost_boss_subtype: 		equ $A
+ost_boss_flash_time: 	equ $14
+ost_boss_sine_count:	equ $1A
+ost_boss_routine		equ $26	;angle
+ost_boss_defeated		equ $2C
+ost_boss_hitcount2		equ $32
+ost_boss_hurt_sonic		equ $38	; flag set by collision response routine when Sonic has just been hurt (by boss?)
+
+
+; ---------------------------------------------------------------------------
+; Special Stage object properties
+; ---------------------------------------------------------------------------
+ost_ss_dplc_timer: 		equ $23
+ost_ss_x_pos: 			equ $2A
+ost_ss_x_sub: 			equ $2C
+ost_ss_y_pos: 			equ $2E
+ost_ss_y_sub:			equ $30
+ost_ss_init_flip_timer: equ $32
+ost_ss_flip_timer: 		equ $33
+ost_ss_z_pos: 			equ $34
+ost_ss_hurt_timer: 		equ $36
+ost_ss_slide_timer: 	equ $37
+ost_ss_parent: 			equ $38
+ost_ss_rings_base:		equ $3C	; word
+ost_ss_rings_hundreds: 	equ $3C
+ost_ss_rings_tens: 		equ $3D
+ost_ss_rings_units: 	equ $3E
+ost_ss_last_angle_index: equ $3F
+
+; ---------------------------------------------------------------------------
+; Additional object variables
+; ---------------------------------------------------------------------------
+;ost_parent1: 	equ $3E ; Address of object that spawned this one
+;ost_parent2:	equ $2C ; Same as above

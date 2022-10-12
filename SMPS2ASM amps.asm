@@ -18,7 +18,7 @@ enum	macro	num, lable
     endm
 
 ; simple macro to create a Z80 pointer (relative to bank)
-Z80PtrROM	macro addr
+z80_ptr	macro addr
 	rept narg
 		dc.w	(((\addr)<<8)&$FF00)|(((\addr)>>8)&$FF)|$80
 		shift
@@ -88,7 +88,7 @@ sPointZero =	offset(*)
 ;		inform 2,"Missing sHeaderInit"
 	endif
 
-	Z80PtrROM \loc
+	z80_ptr \loc
     endm
 
 ; Header macros
@@ -113,7 +113,7 @@ sHeaderTick	macro tmul
 
 ; Header - Set up DAC Channel
 sHeaderDAC	macro loc,pitch,vol
-	Z80PtrROM \loc
+	z80_ptr \loc
 
 	if narg>=2
 		dc.b \pitch
@@ -129,20 +129,20 @@ sHeaderDAC	macro loc,pitch,vol
 
 ; Header - Set up FM Channel
 sHeaderFM	macro loc,pitch,vol
-	Z80PtrROM \loc
+	z80_ptr \loc
 	dc.b \pitch,\vol
     endm
 
 ; Header - Set up PSG Channel
 sHeaderPSG	macro loc,pitch,vol,null,volenv
-	Z80PtrROM \loc
+	z80_ptr \loc
 	dc.b \pitch,\vol,\null,\volenv
     endm
 
 ; Header - Set up SFX Channel
 sHeaderSFX	macro play,patch,loc,pitch,vol
 	dc.b \play,\patch
-	Z80PtrROM \loc
+	z80_ptr \loc
 	dc.b \pitch,\vol
     endm
 ; ---------------------------------------------------------------------------------------------
@@ -273,19 +273,19 @@ sVolEnvPSG	macro val
 ; F6xxxx - Jump to xxxx (GOTO)
 sJump		macro loc
 	dc.b $F6
-	Z80PtrROM \loc
+	z80_ptr \loc
     endm
 
 ; F7xxyyzzzz - Loop back to zzzz yy times, xx being the loop index for loop recursion fixing (LOOP)
 sLoop		macro index,loops,loc
 	dc.b $F7,\index,\loops
-	Z80PtrROM \loc
+	z80_ptr \loc
     endm
 
 ; F8xxxx - Call pattern at xxxx, saving return point (GOSUB)
 sCall		macro loc
 	dc.b $F8
-	Z80PtrROM \loc
+	z80_ptr \loc
     endm
 
 ; F9 - Mutes FM1 (SND_OFF)

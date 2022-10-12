@@ -1,0 +1,208 @@
+TitleScreen_Header:
+	sHeaderInit						; Z80 offset is $1380
+	sHeaderTempo	$01, $33
+	sHeaderCh	$05, $03
+	sHeaderDAC	TitleScreen_DAC1
+	sHeaderDAC	TitleScreen_DAC2
+	sHeaderFM	TitleScreen_FM1, $F4, $0C
+	sHeaderFM	TitleScreen_FM2, $F4, $0C
+	sHeaderFM	TitleScreen_FM3, $F4, $0B
+	sHeaderFM	TitleScreen_FM4, $F4, $0B
+	sHeaderFM	TitleScreen_FM5, $F4, $0E
+	sHeaderPSG	TitleScreen_PSG1, $00+$0C, $00, $00, v03
+	sHeaderPSG	TitleScreen_PSG2, $00+$0C, $10, $00, v03
+	sHeaderPSG	TitleScreen_PSG3, $00, $18, $00, v04
+
+	; Patch $00
+	; $3A
+	; $51, $51, $08, $02,	$1E, $1E, $1E, $10
+	; $1F, $1F, $1F, $0F,	$00, $00, $00, $02
+	; $0F, $0F, $0F, $1F,	$18, $22, $24, $81
+	spAlgorithm	$02
+	spFeedback	$07
+	spDetune	$05, $05, $00, $00
+	spMultiple	$01, $01, $08, $02
+	spRateScale	$00, $00, $00, $00
+	spAttackRt	$1E, $1E, $1E, $10
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$1F, $1F, $1F, $0F
+	spSustainLv	$00, $00, $00, $01
+	spDecayRt	$00, $00, $00, $02
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$18, $22, $24, $01
+
+	; Patch $01
+	; $20
+	; $36, $30, $35, $31,	$DF, $9F, $DF, $9F
+	; $07, $09, $06, $06,	$07, $06, $06, $08
+	; $2F, $1F, $1F, $FF,	$19, $13, $37, $80
+	spAlgorithm	$00
+	spFeedback	$04
+	spDetune	$03, $03, $03, $03
+	spMultiple	$06, $00, $05, $01
+	spRateScale	$03, $02, $03, $02
+	spAttackRt	$1F, $1F, $1F, $1F
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$07, $09, $06, $06
+	spSustainLv	$02, $01, $01, $0F
+	spDecayRt	$07, $06, $06, $08
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$19, $13, $37, $00
+
+	; Patch $02
+	; $3A
+	; $01, $01, $07, $01,	$7D, $7D, $7D, $33
+	; $0E, $0E, $0E, $03,	$00, $00, $00, $00
+	; $1F, $1F, $FF, $1F,	$18, $2F, $20, $80
+	spAlgorithm	$02
+	spFeedback	$07
+	spDetune	$00, $00, $00, $00
+	spMultiple	$01, $01, $07, $01
+	spRateScale	$01, $01, $01, $00
+	spAttackRt	$1D, $1D, $1D, $13
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0E, $0E, $0E, $03
+	spSustainLv	$01, $01, $0F, $01
+	spDecayRt	$00, $00, $00, $00
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$18, $2F, $20, $00
+
+	; Patch $03
+	; $39
+	; $06, $30, $60, $01,	$3F, $5F, $3F, $5F
+	; $11, $13, $0F, $09,	$05, $04, $04, $03
+	; $2F, $2F, $2F, $2F,	$27, $97, $2C, $80
+	spAlgorithm	$01
+	spFeedback	$07
+	spDetune	$00, $03, $06, $00
+	spMultiple	$06, $00, $00, $01
+	spRateScale	$00, $01, $00, $01
+	spAttackRt	$1F, $1F, $1F, $1F
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$11, $13, $0F, $09
+	spSustainLv	$02, $02, $02, $02
+	spDecayRt	$05, $04, $04, $03
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$27, $17, $2C, $00
+
+TitleScreen_FM5:
+	ssDetune	$03
+
+TitleScreen_FM1:
+	dc.b nRst, $3C
+	sVoice		$00
+	dc.b nCs6, $15, nRst, $03, nCs6, $06
+	dc.b nRst, nD6, $0F, nRst, $03, nB5, $18, nRst
+	dc.b $06, nCs6, nRst, nCs6, nRst, nCs6, nRst, nA5
+	dc.b nRst, nG5, $0F, nRst, $03, nB5, $0C, nRst
+	dc.b $12, nA5, $06, nRst, nCs6, nRst, nA6, nRst
+	dc.b nE6, $0C, nRst, $06, nAb6, $12, nA6, $06
+	dc.b nRst, $72
+	sStop
+
+TitleScreen_FM2:
+	dc.b nRst, $30
+	sVoice		$03
+;	sComm		0, $01
+	dc.b nA3, $06, nRst, nA3, nRst, nE3
+	dc.b nRst, nE3, nRst, nG3, $12, nB3, nD4, $0C
+	dc.b nA3, $06, nRst, nA3, nRst, nE3, nRst, nE3
+	dc.b nRst, nD4, $12, nCs4, nB3, $0C, nRst, nA3
+	dc.b nRst, nA3, nRst, $06, nAb3, $12, nA3, $06
+	dc.b nRst
+	sVoice		$01
+	saVol		$02
+	dc.b nA2, $6C
+;	sComm		0, $01
+	sStop
+
+TitleScreen_FM3:
+	dc.b nRst, $30
+	sVoice		$02
+	dc.b nE6, $06, nRst, nE6, nRst, nCs6
+	dc.b nRst, nCs6, nRst, nD6, $0F, nRst, $03, nD6
+	dc.b $18, nRst, $06, nE6, nRst, nE6, nRst, nCs6
+	dc.b nRst, nCs6, nRst, nG6, $0F, nRst, $03, nG6
+	dc.b $18, nRst, $06, nE6, $0C, nRst, nE6, nRst
+	dc.b nRst, $06, nEb6, $12, nE6, $0C
+	saVol		$FC
+	sVoice		$01
+	ssDetune	$03
+	dc.b nA2, $6C
+	sStop
+
+TitleScreen_FM4:
+	sVoice		$02
+	dc.b nRst, $30, nCs6, $06, nRst, nCs6, nRst, nA5
+	dc.b nRst, nA5, nRst, nB5, $0F, nRst, $03, nB5
+	dc.b $18, nRst, $06, nCs6, nRst, nCs6, nRst, nA5
+	dc.b nRst, nA5, nRst, nD6, $0F, nRst, $03, nD6
+	dc.b $18, nRst, $06, nCs6, $0C, nRst, nCs6, nRst
+	dc.b nRst, $06, nC6, $12, nCs6, $0C
+	saVol		$FD
+	sVoice		$01
+	sModAMPS	$01, $01, $06, $04
+	dc.b nA2, $6C
+	sStop
+
+TitleScreen_PSG3:
+	sNoisePSG	snWhitePSG3
+	dc.b nRst, $30
+
+TitleScreen_Loop3:
+	sGate		$03
+	dc.b nHiHat, $0C
+	sGate		$0C
+	dc.b $0C
+	sGate		$03
+	dc.b $0C
+	sGate		$0C
+	dc.b $0C
+	sLoop		$00, $05, TitleScreen_Loop3
+	sGate		$03
+	dc.b $06
+	sGate		$0E
+	dc.b $12
+	sGate		$03
+	dc.b $0C
+	sGate		$0F
+	dc.b $0C
+	sStop
+
+
+TitleScreen_DAC2:
+	dc.b dKick, $0C, dSnare, dSnare, dSnare, $08, dSnare, $04
+	dc.b dKick, $0C, dSnare, dKick, dSnare, dKick, dSnare, dKick
+	dc.b dSnare, dKick, dSnare, dKick, dSnare, dKick, dSnare, dKick
+	dc.b $06, nRst, $02, dSnare, dSnare, dSnare, $09, dSnare
+	dc.b $03, dKick, $0C, dSnare, dSnare, $04, dSnare, dSnare
+	dc.b dSnare, nRst, nRst, dSnare, $06, dSnare, $12, dSnare
+	dc.b $0C, dKick
+
+TitleScreen_DAC1:
+	sStop
+
+TitleScreen_PSG2:
+	dc.b nRst, $03
+
+TitleScreen_PSG1:
+	dc.b nRst, $60
+	sLoop		$00, $03, TitleScreen_PSG1
+	dc.b nRst, $20
+
+TitleScreen_Loop1:
+	dc.b nD5, $03, nE5, nFs5
+	saVol		$08
+	saTranspose	$FF
+	sLoop		$00, $05, TitleScreen_Loop1
+
+TitleScreen_Loop2:
+	dc.b nD5, $03, nE5, nFs5
+	saVol		$08
+	saTranspose	$01
+	sLoop		$00, $07, TitleScreen_Loop2
+	sStop

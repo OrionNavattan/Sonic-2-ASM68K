@@ -1,0 +1,418 @@
+OilOcean_Header:
+	sHeaderInit						; Z80 offset is $1380
+	sHeaderTempo	$02, $30
+	sHeaderCh	$05, $03
+	sHeaderDAC	OilOcean_DAC1
+	sHeaderDAC	OilOcean_DAC2
+	sHeaderFM	OilOcean_FM1, $F4, $0C
+	sHeaderFM	OilOcean_FM2, $F4, $09
+	sHeaderFM	OilOcean_FM3, $C4, $09
+	sHeaderFM	OilOcean_FM4, $F4, $10
+	sHeaderFM	OilOcean_FM5, $F4, $10
+	sHeaderPSG	OilOcean_PSG1, $D0+$0C, $20, $00, vNone
+	sHeaderPSG	OilOcean_PSG2, $D0+$0C, $28, $00, vNone
+	sHeaderPSG	OilOcean_PSG3, $FE+$0C, $38, $00, v01
+
+	; Patch $00
+	; $39
+	; $06, $30, $60, $01,	$3F, $5F, $3F, $5F
+	; $11, $13, $0F, $09,	$05, $04, $04, $03
+	; $2F, $2F, $2F, $2F,	$23, $97, $2C, $80
+	spAlgorithm	$01
+	spFeedback	$07
+	spDetune	$00, $03, $06, $00
+	spMultiple	$06, $00, $00, $01
+	spRateScale	$00, $01, $00, $01
+	spAttackRt	$1F, $1F, $1F, $1F
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$11, $13, $0F, $09
+	spSustainLv	$02, $02, $02, $02
+	spDecayRt	$05, $04, $04, $03
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$23, $17, $2C, $00
+
+	; Patch $01
+	; $3A
+	; $01, $01, $07, $01,	$92, $8F, $91, $56
+	; $0E, $0E, $0E, $03,	$00, $00, $00, $00
+	; $1F, $1F, $FF, $0F,	$17, $27, $28, $80
+	spAlgorithm	$02
+	spFeedback	$07
+	spDetune	$00, $00, $00, $00
+	spMultiple	$01, $01, $07, $01
+	spRateScale	$02, $02, $02, $01
+	spAttackRt	$12, $0F, $11, $16
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0E, $0E, $0E, $03
+	spSustainLv	$01, $01, $0F, $00
+	spDecayRt	$00, $00, $00, $00
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$17, $27, $28, $00
+
+	; Patch $02
+	; $3E
+	; $56, $34, $16, $14,	$4E, $95, $55, $58
+	; $0E, $14, $11, $24,	$23, $06, $22, $05
+	; $3F, $2F, $4F, $0F,	$19, $87, $8E, $87
+	spAlgorithm	$06
+	spFeedback	$07
+	spDetune	$05, $03, $01, $01
+	spMultiple	$06, $04, $06, $04
+	spRateScale	$01, $02, $01, $01
+	spAttackRt	$0E, $15, $15, $18
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0E, $14, $11, $04
+	spSustainLv	$03, $02, $04, $00
+	spDecayRt	$23, $06, $22, $05
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$19, $07, $0E, $07
+
+	; Patch $03
+	; $36
+	; $01, $72, $00, $33,	$9C, $17, $9C, $12
+	; $0F, $12, $14, $12,	$00, $0A, $00, $0A
+	; $FF, $FF, $FF, $FF,	$05, $80, $80, $80
+	spAlgorithm	$06
+	spFeedback	$06
+	spDetune	$00, $07, $00, $03
+	spMultiple	$01, $02, $00, $03
+	spRateScale	$02, $00, $02, $00
+	spAttackRt	$1C, $17, $1C, $12
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0F, $12, $14, $12
+	spSustainLv	$0F, $0F, $0F, $0F
+	spDecayRt	$00, $0A, $00, $0A
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$05, $00, $00, $00
+
+	; Patch $04
+	; $06
+	; $62, $13, $23, $71,	$0D, $6D, $0D, $0E
+	; $09, $06, $06, $06,	$00, $00, $00, $00
+	; $1F, $2F, $2F, $2F,	$10, $97, $94, $80
+	spAlgorithm	$06
+	spFeedback	$00
+	spDetune	$06, $01, $02, $07
+	spMultiple	$02, $03, $03, $01
+	spRateScale	$00, $01, $00, $00
+	spAttackRt	$0D, $0D, $0D, $0E
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$09, $06, $06, $06
+	spSustainLv	$01, $02, $02, $02
+	spDecayRt	$00, $00, $00, $00
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$10, $17, $14, $00
+
+	; Patch $05
+	; $14
+	; $58, $38, $16, $16,	$51, $8E, $5E, $4F
+	; $0E, $04, $0A, $04,	$03, $00, $02, $00
+	; $3F, $2F, $4F, $0F,	$0F, $33, $90, $80
+	spAlgorithm	$04
+	spFeedback	$02
+	spDetune	$05, $03, $01, $01
+	spMultiple	$08, $08, $06, $06
+	spRateScale	$01, $02, $01, $01
+	spAttackRt	$11, $0E, $1E, $0F
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0E, $04, $0A, $04
+	spSustainLv	$03, $02, $04, $00
+	spDecayRt	$03, $00, $02, $00
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$0F, $33, $10, $00
+
+OilOcean_FM1:
+	sVoice		$04
+	sModAMPS	$03, $03, $01, $03
+	sCall		OilOcean_Call1
+
+OilOcean_Jump1:
+	sVoice		$02
+	saVol		$FB
+	saTranspose	$DC
+	sCall		OilOcean_Call2
+	saVol		$05
+	saTranspose	$24
+	sVoice		$04
+	sCall		OilOcean_Call3
+	sVoice		$02
+	saVol		$FC
+	saTranspose	$DC
+	sCall		OilOcean_Call5
+	saVol		$04
+	saTranspose	$24
+	saTranspose	$E8
+	sVoice		$05
+	saVol		$07
+	sCall		OilOcean_Call7
+	saVol		$F9
+	saTranspose	$18
+	sJump		OilOcean_Jump1
+
+OilOcean_Call1:
+	dc.b nG5, $03, $03, $06, nAb5, nB5, nC6, nD6
+	dc.b $12, $03, $03, $06, nEb6, nF6, nEb6, nD6
+	dc.b nEb6, nD6, nC6, nB5, $03, nC6, nB5, nAb5
+	dc.b nG5, $24
+	sRet
+
+OilOcean_Call2:
+	dc.b nRst, $18, nRst, $03, nRst, $01, nC6, $01
+	dc.b nD6, $02, nEb6, $02, nFs6, $25
+	saVol		$02
+	dc.b sHold, $02
+	saVol		$02
+	dc.b sHold, $02
+	saVol		$02
+	dc.b sHold, $02
+	saVol		$02
+	dc.b sHold, $02
+	saVol		$F8
+	dc.b nAb6, $01, nG6, $0B, nEb6, $01, nD6, $30
+	dc.b sHold, $2D
+	saVol		$02
+	dc.b sHold, $02
+	saVol		$02
+	dc.b sHold, $02
+	saVol		$02
+	dc.b sHold, $02
+	saVol		$02
+	dc.b sHold, $02
+	saVol		$F8
+	sRet
+
+OilOcean_Call3:
+	sCall		OilOcean_Call4
+	dc.b nD6, $1E, nEb6, $06, nD6, nC6, nB5, $12
+	dc.b nC6, $06, nB5, $0C, nAb5
+	sCall		OilOcean_Call4
+	dc.b nF6, $0C, nG6, $06, nF6, nEb6, nD6, nEb6
+	dc.b nD6, nC6, nB5, $0C, nAb5, $06, nG5, $18
+
+OilOcean_Loop1:
+	dc.b nG5, $03, nAb5, nB5, $06, nC6, nB5, nAb5
+	dc.b nG5, $0C, $03, nAb5, nB5, $06, nC6, nB5
+	dc.b nAb5, nG5, $18
+	sLoop		$01, $02, OilOcean_Loop1
+	sRet
+
+OilOcean_Call5:
+	sCall		OilOcean_Call6
+	dc.b nG6, $01, nFs6, $0B, nEb6, $01, nD6, $1D
+	sCall		OilOcean_Call6
+	dc.b nFs6, $01, nF6, $0B, nBb6, $01, nA6, $1D
+	sRet
+
+OilOcean_Call6:
+	dc.b nRst, $0C, nCs6, $01, nC6, $05, nEb6, $01
+	dc.b nD6, $05, nE6, $01, nEb6, $05, nCs6, $01
+	dc.b nC6, $05, nAb6, $01, nG6, $0B, nAb6, $01
+	dc.b nG6, $05
+	sRet
+
+OilOcean_Call7:
+	dc.b nA7, $03, nG7, nFs7, nEb7, nFs7, nEb7, nD7
+	dc.b nCs7, nD7, $18
+	sRet
+
+OilOcean_Call4:
+	dc.b nG5, $1E, nAb5, $06, nB5, nC6, nD6, $1E
+	dc.b nEb6, $06, nF6, nEb6
+	sRet
+
+OilOcean_FM2:
+	dc.b nRst, $06, nRst, $30, nRst, nRst, $2A
+	sVoice		$00
+	dc.b nF4, $03, nG4
+
+OilOcean_Loop2:
+	sCall		OilOcean_Call8
+	dc.b nRst, $12
+	sCall		OilOcean_Call8
+	dc.b nRst, $06, nF4, $03, nRst, nF4, nG4
+	sLoop		$00, $04, OilOcean_Loop2
+	dc.b nC4, $02, nRst, $01, nC4, $03, nG3, $06
+	dc.b nBb3, nG3, nC4, $02, nRst, $01, nC4, $03
+	dc.b nG3, $06, nBb3, nC4, nD4, $02, nRst, $01
+	dc.b nD4, $03, nA3, $06, nC4, nA3, nD4, $02
+	dc.b nRst, $01, nD4, $03, nA3, $06, nC4, nD4
+	dc.b nEb4, $02, nRst, $01, nEb4, $03, nBb3, $06
+	dc.b nC4, nBb3, nEb4, $02, nRst, $01, nEb4, $03
+	dc.b nBb3, $06, nC4, nEb4, nF4, $03, nRst, nF4
+	dc.b nRst, nF4, nRst, nF4, nRst, nFs4, nRst, nFs4
+	dc.b nRst, nFs4, nRst, nFs4, nRst, nRst, $0C, nD4
+	dc.b $24
+	sJump		OilOcean_Loop2
+
+OilOcean_Call8:
+	dc.b nG3, $03, nG3, nD3, $06, nF3, nFs3, nG3
+	dc.b nRst, $12, nG3, $03, $03, nBb3, $06, nA3
+	dc.b nAb3, nG3
+	sRet
+
+OilOcean_FM4:
+	sVoice		$02
+	sPan		spRight
+	saTranspose	$DC
+	saVol		$F9
+	sCall		OilOcean_Call9
+	saVol		$07
+	dc.b nG4, $30
+	saTranspose	$24
+	sVoice		$01
+	sPan		spCenter
+
+OilOcean_Loop4:
+	dc.b nRst, $06, nD5, $03, nRst, nD5, nRst, nD5
+	dc.b nRst, nCs5, $09, nD5, $03, nRst, $0C, nRst
+	dc.b $30
+	sLoop		$00, $08, OilOcean_Loop4
+
+OilOcean_Loop5:
+	dc.b nRst, $06, nBb5, $03, nBb5, nRst, nBb5, nRst
+	dc.b $06, nBb5, $09, nBb5, $03, nRst, $0C
+	saTranspose	$02
+	sLoop		$00, $03, OilOcean_Loop5
+	saTranspose	$FA
+
+OilOcean_Loop6:
+	dc.b nA5, $03, nRst
+	sLoop		$00, $08, OilOcean_Loop6
+	dc.b nRst, $30
+	sJump		OilOcean_Loop4
+
+OilOcean_Call9:
+	dc.b nRst, $06, nRst, nD5, nC5, nB4, nC5, nB4
+	dc.b nAb4, nG4, $0C, nD5, $06, nC5, nB4, nG4
+	dc.b $12, nF4, $06
+	sRet
+
+OilOcean_FM5:
+	dc.b nRst, $01
+	sVoice		$02
+	sPan		spLeft
+	saTranspose	$E8
+	saVol		$F9
+	sCall		OilOcean_Call9
+	saVol		$07
+	dc.b nG4, $2F
+	saTranspose	$18
+	sVoice		$01
+	sPan		spCenter
+
+OilOcean_Loop7:
+	dc.b nRst, $06, nBb4, $03, nRst, nBb4, nRst, nBb4
+	dc.b nRst, nA4, $09, nBb4, $03, nRst, $0C, nRst
+	dc.b $30
+	sLoop		$00, $08, OilOcean_Loop7
+
+OilOcean_Loop8:
+	dc.b nRst, $06, nG5, $03, nG5, nRst, nG5, nRst
+	dc.b $06, nG5, $09, nG5, $03, nRst, $0C
+	saTranspose	$02
+	sLoop		$00, $02, OilOcean_Loop8
+	saTranspose	$FC
+	dc.b nRst, $06, nBb5, $03, nBb5, nRst, nBb5, nRst
+	dc.b $06, nBb5, $09, nBb5, $03, nRst, $0C, nF5
+	dc.b $03, nRst, nF5, nRst, nF5, nRst, nF5, nRst
+	dc.b nFs5, nRst, nFs5, nRst, nFs5, nRst, nFs5, nRst
+	dc.b nRst, $30
+	sJump		OilOcean_Loop7
+
+OilOcean_FM3:
+	sVoice		$03
+	dc.b nC7, $03, nC7, nC7, $06, nD7, nD7, nC7
+	dc.b nD7, $03, $03, nC7, $06, $06, nD7, $03
+	dc.b $03, nC7, $06, $06, $06, nD7, $03, $03
+	dc.b $03, $03, nC7, $06, $06, nD7, nC7, $03
+	dc.b nD7, nD7, nD7, nD7, $06, nC7, nC7, nD7
+	dc.b $03, $03, nC7, $0C
+
+OilOcean_Loop3:
+	dc.b nRst, $1E, nD7, $03, $03, nC7, $06, nD7
+	dc.b nRst, $1E, nC7, $03, $03, nD7, $06, nC7
+	sLoop		$00, $09, OilOcean_Loop3
+	dc.b nRst, $1E, nD7, $03, $03, nC7, $06, nD7
+	dc.b nRst, $30, nC7, $03, nD7, nD7, nC7, nD7
+	dc.b nD7, nC7, nD7, nD7, nC7, nD7, nD7, nC7
+	dc.b $06, nD7
+	sJump		OilOcean_Loop3
+
+OilOcean_PSG1:
+	ssDetune	$01
+	dc.b nRst, $02, nRst, $01
+	sCall		OilOcean_Call1
+
+OilOcean_Jump2:
+	saVol		$18
+	dc.b nRst, $60, $60
+	sVolEnv		vNone
+	saVol		-$18
+	sCall		OilOcean_Call3
+	sCall		OilOcean_Call5
+	saTranspose	$F4
+	sCall		OilOcean_Call7
+	saTranspose	$0C
+	sJump		OilOcean_Jump2
+
+OilOcean_PSG2:
+	dc.b nRst, $01
+	sCall		OilOcean_Call1
+
+OilOcean_Jump3:
+	saVol		$18
+	dc.b nRst, $18, nRst, $03, nRst, $01
+	sVolEnv		v0C
+	saVol		-$10
+	dc.b nC6, $01, nD6, $02, nEb6, $02, nFs6, $2D
+	dc.b nAb6, $01, nG6, $0B, nEb6, $01, nD6, $30
+	dc.b sHold, $30, sHold, $05
+	saVol		$10
+	sVolEnv		vNone
+	saVol		-$18
+	sCall		OilOcean_Call3
+	sCall		OilOcean_Call5
+	saTranspose	$F4
+	sCall		OilOcean_Call7
+	saTranspose	$0C
+	sJump		OilOcean_Jump3
+
+OilOcean_PSG3:
+	dc.b nRst, $06, nRst, $30, nE5, $03, nRst, nE5
+	dc.b $03, nRst, $0F, nE5, $03, nRst, $09, nE5
+	dc.b $03, nRst, nRst, $06, nE5, $03, nRst, nE5
+	dc.b $03, nRst, $0F, nE5, $03, nRst, nE5, $03
+	dc.b nRst, nE5, $03, $03, nRst, $06, nE5, $03
+	dc.b nRst, nE5, $03, nRst, $27
+
+OilOcean_Loop9:
+	dc.b nE5, $03, nE5, nE5, nRst, nE5, nRst, nE5
+	dc.b nE5, nE5, nE5, nE5, nRst, nE5, nRst, nE5
+	dc.b nRst, nE5, nE5, nE5, nRst, nE5, nRst, nE5
+	dc.b nE5, nE5, nE5, nE5, nRst, nE5, nRst, nE5
+	dc.b nE5
+	sLoop		$00, $0A, OilOcean_Loop9
+	dc.b nRst, $30
+	sJump		OilOcean_Loop9
+
+OilOcean_DAC1:
+	sStop
+
+OilOcean_DAC2:
+	dc.b nRst, $06, nRst, $30, nRst, nRst, $2A, dSnare
+	dc.b $06
+
+OilOcean_Loop10:
+	dc.b dKick, $03, dKick, dKick, nRst, dSnare, $09, $06
+	dc.b dKick, $03, dKick, nRst, dSnare, $06, dKick, $03
+	dc.b nRst, dKick, dKick, dKick, nRst, dSnare, $09, $06
+	dc.b dKick, $03, dKick, nRst, dSnare, $06, $03, $03
+	sLoop		$00, $0A, OilOcean_Loop10
+	dc.b nRst, $24, dSnare, $03, $03, dKick, $06
+	sJump		OilOcean_Loop10

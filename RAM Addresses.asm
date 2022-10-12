@@ -358,6 +358,7 @@ v_camera_arz_bg_x_pos:		rs.l 1 ; $FFFFF672
 
 					rsblock plc_buffer_and_regs
 v_plc_buffer:				rs.b $60 ; $FFFFF680 ; pattern load cues buffer, maximum $10 PLCs, 6 bytes each, $60 bytes total
+v_plc_buffer_dest:			equ v_plc_buffer+4 ; $FFFFF684 ; VRAM destination for 1st item in PLC buffer (2 bytes)
 v_plc_buffer_end:			equ __rs	   ; required for clearing				
 
 ; variables used to store nemesis decompression state, allowing decompression to occur over multiple frames
@@ -792,7 +793,7 @@ f_demo_mode:			rs.w 1 ; $FFFFFFF0 ; 1 if a demo is playing
 v_demo_num:				rs.w 1 ; $FFFFFFF2 ;  which demo will play next
 v_s1_ending_demo_num:		rs.w 1 ; $FFFFFFF4 ; unused Sonic 1 leftover; zone for the ending demos
 							rs.w 1 ; $FFFFFFF6 ; unused
-v_console_region:           rs.b 1 ; $FFFFFFF8 ; Mega Drive console type - 0 = JP; $80 = US/EU; +0 = NTSC; +$40 = PAL
+v_console_region:           rs.w 1 ; $FFFFFFF8 ; Mega Drive console type - 0 = JP; $80 = US/EU; +0 = NTSC; +$40 = PAL
 v_checksum_pass:            rs.l 1 ; $FFFFFFFC ; set to the text string "init" when checksum is passed
 
 ; End of main RAM

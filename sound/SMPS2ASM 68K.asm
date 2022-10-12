@@ -41,13 +41,19 @@ enum:	macro	num,lable
 
 ; ---------------------------------------------------------------------------
 ; Standard Octave Pitch Equates
-;		enumconf $C
-;		enum $88,						smpsPitch10lo,smpsPitch09lo,smpsPitch08lo,smpsPitch07lo,smpsPitch06lo
-;		enum smpsPitch06lo+$C,	smpsPitch05lo,smpsPitch04lo,smpsPitch03lo,smpsPitch02lo,smpsPitch01lo
-;		enum 0,							smpsPitch00,smpsPitch01hi,smpsPitch02hi,smpsPitch03hi,smpsPitch04hi
-;		enum smpsPitch04hi+$C,			smpsPitch05hi,smpsPitch06hi,smpsPitch07hi,smpsPitch08hi,smpsPitch09hi
-;		enum smpsPitch09hi+$C,			smpsPitch10hi
-	
+fmfq_B:		equ	606					; B
+fmfq_C:		equ	644					; C
+fmfq_Cs:	equ	683					; C#
+fmfq_D:		equ	723					; D
+fmfq_Ds:	equ	766					; D#
+fmfq_E:		equ	813					; E
+fmfq_F:		equ	860					; F
+fmfq_Fs:	equ	911					; F#
+fmfq_G:		equ	965					; G
+fmfq_Gs:	equ	1023					; G#
+fmfq_A:		equ	1084					; A
+fmfq_As:	equ	1148					; A#
+fmfq_B1:	equ	1216					; B1	; <- used in S3K, as opposed to fmfq_B. This one seems to be the correct behavior.
 ; ---------------------------------------------------------------------------
 ; Note Equates
 		;enumconf 1
@@ -179,6 +185,10 @@ cFM5:				equ $05
 ; Header Macros
 smpsHeaderStartSong macro ver
 songStart\@ equ offset(*)
+	; This stripped-down version of SMPS2ASM only supports Sonic 2 source driver, 
+	; so halt assembly if a different source driver is detected.
+	if ver<>2
+		inform 3,"This version of SMPS2ASM only supports building music and sounds for Sonic 2."
 	endm
 
 ; Header - Set up Voice Location

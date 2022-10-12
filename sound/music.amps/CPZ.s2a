@@ -1,0 +1,512 @@
+ChemicalPlant_Header:
+	sHeaderInit						; Z80 offset is $1380
+	sHeaderTempo	$01, $12
+	sHeaderCh	$05, $03
+	sHeaderDAC	ChemicalPlant_DAC1
+	sHeaderDAC	ChemicalPlant_DAC2
+	sHeaderFM	ChemicalPlant_FM1, $00, $08
+	sHeaderFM	ChemicalPlant_FM2, $00, $0C
+	sHeaderFM	ChemicalPlant_FM3, $00, $10
+	sHeaderFM	ChemicalPlant_FM4, $00, $10
+	sHeaderFM	ChemicalPlant_FM5, $00, $10
+	sHeaderPSG	ChemicalPlant_PSG1, $00, $00, $00, vNone
+	sHeaderPSG	ChemicalPlant_PSG2, $00, $00, $00, vNone
+	sHeaderPSG	ChemicalPlant_PSG3, $00, $00, $00, v02
+
+	; Patch $00
+	; $3A
+	; $01, $01, $07, $01,	$8E, $8D, $8E, $53
+	; $0E, $0E, $0E, $03,	$00, $00, $00, $00
+	; $1F, $1F, $FF, $0F,	$17, $27, $28, $80
+	spAlgorithm	$02
+	spFeedback	$07
+	spDetune	$00, $00, $00, $00
+	spMultiple	$01, $01, $07, $01
+	spRateScale	$02, $02, $02, $01
+	spAttackRt	$0E, $0D, $0E, $13
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0E, $0E, $0E, $03
+	spSustainLv	$01, $01, $0F, $00
+	spDecayRt	$00, $00, $00, $00
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$17, $27, $28, $00
+
+	; Patch $01
+	; $3C
+	; $31, $50, $52, $30,	$52, $52, $53, $53
+	; $08, $08, $00, $00,	$04, $04, $00, $00
+	; $1F, $1F, $0F, $0F,	$1A, $16, $88, $88
+	spAlgorithm	$04
+	spFeedback	$07
+	spDetune	$03, $05, $05, $03
+	spMultiple	$01, $00, $02, $00
+	spRateScale	$01, $01, $01, $01
+	spAttackRt	$12, $12, $13, $13
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$08, $08, $00, $00
+	spSustainLv	$01, $01, $00, $00
+	spDecayRt	$04, $04, $00, $00
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$1A, $16, $08, $08
+
+	; Patch $02
+	; $3C
+	; $31, $50, $52, $30,	$52, $52, $53, $53
+	; $08, $08, $00, $00,	$04, $04, $00, $00
+	; $1F, $1F, $0F, $0F,	$1C, $14, $84, $80
+	spAlgorithm	$04
+	spFeedback	$07
+	spDetune	$03, $05, $05, $03
+	spMultiple	$01, $00, $02, $00
+	spRateScale	$01, $01, $01, $01
+	spAttackRt	$12, $12, $13, $13
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$08, $08, $00, $00
+	spSustainLv	$01, $01, $00, $00
+	spDecayRt	$04, $04, $00, $00
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$1C, $14, $04, $00
+
+	; Patch $03
+	; $3B
+	; $0F, $01, $06, $02,	$DF, $1F, $1F, $DF
+	; $0C, $0A, $00, $03,	$0F, $00, $00, $01
+	; $F3, $55, $05, $5C,	$22, $22, $20, $80
+	spAlgorithm	$03
+	spFeedback	$07
+	spDetune	$00, $00, $00, $00
+	spMultiple	$0F, $01, $06, $02
+	spRateScale	$03, $00, $00, $03
+	spAttackRt	$1F, $1F, $1F, $1F
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0C, $0A, $00, $03
+	spSustainLv	$0F, $05, $00, $05
+	spDecayRt	$0F, $00, $00, $01
+	spReleaseRt	$03, $05, $05, $0C
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$22, $22, $20, $00
+
+	; Patch $04
+	; $20
+	; $36, $30, $35, $31,	$DF, $9F, $DF, $9F
+	; $07, $09, $06, $06,	$07, $06, $06, $08
+	; $2F, $1F, $1F, $FF,	$14, $0F, $37, $80
+	spAlgorithm	$00
+	spFeedback	$04
+	spDetune	$03, $03, $03, $03
+	spMultiple	$06, $00, $05, $01
+	spRateScale	$03, $02, $03, $02
+	spAttackRt	$1F, $1F, $1F, $1F
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$07, $09, $06, $06
+	spSustainLv	$02, $01, $01, $0F
+	spDecayRt	$07, $06, $06, $08
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$14, $0F, $37, $00
+
+	; Patch $05
+	; $3A
+	; $00, $00, $07, $00,	$8E, $8D, $8E, $53
+	; $0E, $0E, $0E, $03,	$00, $00, $00, $00
+	; $1F, $1F, $FF, $0F,	$18, $27, $32, $80
+	spAlgorithm	$02
+	spFeedback	$07
+	spDetune	$00, $00, $00, $00
+	spMultiple	$00, $00, $07, $00
+	spRateScale	$02, $02, $02, $01
+	spAttackRt	$0E, $0D, $0E, $13
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0E, $0E, $0E, $03
+	spSustainLv	$01, $01, $0F, $00
+	spDecayRt	$00, $00, $00, $00
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$18, $27, $32, $00
+
+ChemicalPlant_DAC1:
+ChemicalPlant_PSG1:
+ChemicalPlant_PSG2:
+	sStop
+
+ChemicalPlant_Call2:
+	sVoice		$01
+	dc.b nFs4, $06, nCs4, nE4, nFs4
+	sRet
+
+ChemicalPlant_Call3:
+	sVoice		$01
+	dc.b nCs5, $06, nCs5, nA4, $04, nRst, $08, nB4
+	dc.b $06, nCs5
+	sRet
+
+ChemicalPlant_Call1:
+	sVoice		$05
+	dc.b nA5, $05, nRst, $13, nA5, $12, nA5, $05
+	dc.b nRst, $0D
+	sCall		ChemicalPlant_Call2
+	sVoice		$05
+	dc.b nA5, nA5, nRst, $0C, nA5, $06, nA5, $05
+	dc.b nRst, $0D, nA5, $06, nB5, $30, sHold, $06
+	dc.b nA5, $05, nRst, $13, nA5, $12, nA5, $05
+	dc.b nRst, $0D
+	sCall		ChemicalPlant_Call2
+	dc.b nRst, $0C
+	sRet
+
+ChemicalPlant_Call4:
+	dc.b nCs5, $0C, nB4, $06, nA4, nB4, nA4, $04
+	dc.b sHold, $08, nA4, $04, nRst, $0E
+	sCall		ChemicalPlant_Call2
+	sVoice		$00
+	dc.b nFs4, nA4, nCs5, $0C, nB4, $06, nA4, nB4
+	dc.b nA4, $0C, nB4, $04, nRst, $08, nA4, $04
+	dc.b nRst, $08, nB4, $04, nRst, $08, nCs5, $12
+	dc.b nA4, $06, nFs4, nRst, nFs4, nRst, $24
+	sCall		ChemicalPlant_Call2
+	dc.b nRst, $0C, nRst, $30
+	sCall		ChemicalPlant_Call3
+	sRet
+
+ChemicalPlant_Call5:
+	saVol		$04
+	sVoice		$01
+	dc.b nD4, $12, nRst, $06, nD4, $12, nRst, $06
+	dc.b nE4, $0C, nRst, $12
+	saVol		$FC
+	sRet
+
+ChemicalPlant_Call6:
+	sVoice		$00
+	dc.b nCs4, $06, nE4, nFs4, nAb4, $02, sHold, nA4
+	dc.b $0A, nFs4, $06, nCs4, nE4, nFs4, $04, nRst
+	dc.b $08, nAb4, $02, sHold, nA4, $10, nFs4, $06
+	dc.b nCs4, nE4, nFs4, $04, nRst, $0E
+	sRet
+
+ChemicalPlant_Call8:
+	dc.b nFs5, $05, nRst, $13, nFs5, $12, nFs5, $05
+	dc.b nRst, $25, nFs5, $06, nFs5, nRst, $0C, nFs5
+	dc.b $06, nFs5, $05, nRst, $0D, nFs5, $06, nAb5
+	dc.b $30, sHold, $06, nFs5, $05, nRst, $13, nFs5
+	dc.b $12, nFs5, $05, nRst, $30, nRst, $01, nRst
+	dc.b $30, nRst
+	sRet
+
+ChemicalPlant_Call10:
+	dc.b nA5, $05, nRst, $13, nA5, $12, nA5, $05
+	dc.b nRst, $25, nA5, $06, nA5, nRst, $0C, nA5
+	dc.b $06, nA5, $05, nRst, $0D, nA5, $06, nB5
+	dc.b $30, sHold, $06, nA5, $05, nRst, $13, nA5
+	dc.b $12, nA5, $05, nRst, $30, nRst, $01, nRst
+	dc.b $30, nRst
+	sRet
+
+ChemicalPlant_Call9:
+	dc.b nFs2, $0C, nFs3, $06, nRst, nE3, nRst, nFs3
+	dc.b nFs2, nRst, nFs2, nFs3, nRst, nE3, nRst, nFs3
+	dc.b $0C
+	sRet
+
+ChemicalPlant_Call7:
+	ssDetune	$F8
+	dc.b sHold, $03
+	ssDetune	$F0
+	dc.b sHold, $03
+	ssDetune	$E8
+	dc.b sHold, $03
+	ssDetune	$E0
+	dc.b sHold, $03
+	ssDetune	$D8
+	dc.b sHold, $03
+	ssDetune	$D0
+	dc.b sHold, $03
+	ssDetune	$C8
+	dc.b sHold, $03
+	ssDetune	$C0
+	dc.b sHold, $03
+	ssDetune	$C8
+	dc.b sHold, $03
+	ssDetune	$D0
+	dc.b sHold, $03
+	ssDetune	$D8
+	dc.b sHold, $03
+	ssDetune	$E0
+	dc.b sHold, $03
+	ssDetune	$E8
+	dc.b sHold, $03
+	ssDetune	$F0
+	dc.b sHold, $03
+	ssDetune	$F8
+	dc.b sHold, $03
+	ssDetune	$00
+	dc.b sHold, $03
+	sRet
+
+ChemicalPlant_FM1:
+	sModAMPS	$06, $01, $FA, $04
+	sCall		ChemicalPlant_Call1
+	dc.b nRst, $30, nRst
+	sCall		ChemicalPlant_Call1
+	dc.b nRst, $30
+	sCall		ChemicalPlant_Call3
+	sVoice		$00
+	dc.b nFs4, nA4
+
+ChemicalPlant_Jump1:
+	sCall		ChemicalPlant_Call4
+	sVoice		$00
+	dc.b nFs4, $06, nA4
+	sCall		ChemicalPlant_Call4
+	dc.b nRst, $0C
+
+ChemicalPlant_Loop1:
+	dc.b nRst, $0C
+	sVoice		$00
+	dc.b nB4, $04, nRst, $08, nB4, $0C, nA4, $06
+	dc.b nB4, nRst, nB4, nRst, nA4, nB4, $0C, nA4
+	dc.b nCs5, $06, nA4, nRst, nFs4
+	sVoice		$01
+	dc.b nA4, $04, nRst, $08, nA4, $04, nRst, $08
+	dc.b nA4, $04
+	saVol		$FD
+	dc.b nRst, $08, nA4, $04, nRst, $08, nA4, $06
+	dc.b nA4, $12
+	saVol		$FD
+	dc.b nFs4, $04, nRst, $08
+	saVol		$06
+	sVoice		$00
+	dc.b nB4, $04, nRst, $08, nB4, $0C, nA4, $06
+	dc.b nB4, nRst, nB4, nRst, nA4, nB4, $0C, nA4
+	saVol		$FD
+	dc.b nCs5, $06
+	saVol		$04
+	sVoice		$01
+	dc.b nFs4, $03, sHold, nG4, sHold, nAb4, $24, nD4
+	dc.b $03, sHold, nEb4, sHold, nE4, sHold, nF4, sHold
+	dc.b nFs4, $24
+	saVol		$FF
+	sLoop		$00, $02, ChemicalPlant_Loop1
+	sCall		ChemicalPlant_Call5
+	sCall		ChemicalPlant_Call6
+	sCall		ChemicalPlant_Call5
+	sVoice		$00
+	dc.b nCs4, $06, nE4, nFs4, nAb4, $02, sHold, nA4
+	dc.b $0A, nFs4, $06, nCs4, nE4, nFs4, $04, nRst
+	dc.b $08, nB4, $0C, nA4, $06, nB4, nCs5, $04
+	dc.b nRst, $1A
+	sCall		ChemicalPlant_Call5
+	sCall		ChemicalPlant_Call6
+	sCall		ChemicalPlant_Call5
+	sVoice		$00
+	dc.b nCs4, $06, nE4, nFs4, nA4, $04, nRst, $08
+	dc.b nB4, $04, nRst, $08, nCs5, $18, nE5, nFs5
+	dc.b sHold, nFs5, $0C
+	sModAMPS	$18, $01, $05, $04
+	sCall		ChemicalPlant_Call7
+	dc.b sHold, nFs5, $30, sHold, $0C, nRst, $18, nCs5
+	dc.b $06, nCs5, nA4, $04, nRst, $08, nFs4, $06
+	dc.b nA4, nRst, nFs4
+	sCall		ChemicalPlant_Call7
+	dc.b sHold, $30, sHold, $30, sHold, $18, nRst, $0C
+	dc.b nFs4, $06, nA4
+	sModAMPS	$06, $01, $FA, $04
+	sJump		ChemicalPlant_Jump1
+
+ChemicalPlant_FM4:
+	sModAMPS	$0C, $01, $FB, $04
+	sVoice		$02
+
+ChemicalPlant_Loop8:
+	sCall		ChemicalPlant_Call8
+	sLoop		$00, $02, ChemicalPlant_Loop8
+
+ChemicalPlant_Loop9:
+	sCall		ChemicalPlant_Call8
+	sLoop		$00, $04, ChemicalPlant_Loop9
+	sModOff
+
+ChemicalPlant_Loop10:
+	dc.b nAb5, $12, nRst, $06, nAb5, $12, nRst, $06
+	dc.b nA5, $0C, nRst, $24, nRst, $30, nRst
+	sLoop		$00, $04, ChemicalPlant_Loop10
+	sModAMPS	$0C, $01, $05, $04
+	dc.b nRst, $30, nRst
+	sVoice		$05
+	saVol		$F8
+
+ChemicalPlant_Loop11:
+	dc.b nCs5, $04, nRst, $08, nB4, $04, nRst, $08
+	dc.b nCs5, $0C, nB4, $06, nCs5, $04, nRst, $08
+	dc.b nCs5, $06, nB4, $04, nRst, $08, nCs5, $0C
+	dc.b nB4, $04, nRst, $08
+	sLoop		$00, $02, ChemicalPlant_Loop11
+	dc.b nFs5, $04, nRst, $08, nE5, $04, nRst, $08
+	dc.b nFs5, $0C, nE5, $06, nFs5, $04, nRst, $08
+	dc.b nFs5, $06, nE5, $04, nRst, $08, nFs5, $0C
+	dc.b nE5, $04, nRst, $08
+	sVoice		$02
+	saVol		$08
+	sJump		ChemicalPlant_Loop9
+
+ChemicalPlant_FM5:
+	sModAMPS	$0C, $01, $05, $04
+	sPan		spLeft
+	sVoice		$02
+
+ChemicalPlant_Loop12:
+	sCall		ChemicalPlant_Call10
+	sLoop		$00, $02, ChemicalPlant_Loop12
+
+ChemicalPlant_Loop13:
+	sCall		ChemicalPlant_Call10
+	sLoop		$00, $04, ChemicalPlant_Loop13
+	sModOff
+
+ChemicalPlant_Loop14:
+	dc.b nB5, $12, nRst, $06, nB5, $12, nRst, $06
+	dc.b nCs6, $0C, nRst, $24, nRst, $30, nRst
+	sLoop		$00, $04, ChemicalPlant_Loop14
+	sModAMPS	$0C, $01, $05, $04
+
+ChemicalPlant_Loop15:
+	dc.b nRst, $30, nRst
+	sLoop		$00, $02, ChemicalPlant_Loop15
+	sVoice		$05
+	saVol		$F8
+	dc.b nFs5, $04, nRst, $08, nE5, $04, nRst, $08
+	dc.b nFs5, $0C, nE5, $06, nFs5, $04, nRst, $08
+	dc.b nFs5, $06, nE5, $04, nRst, $08, nFs5, $0C
+	dc.b nE5, $04, nRst, $08, nCs6, $04, nRst, $08
+	dc.b nB5, $04, nRst, $08, nCs6, $0C, nB5, $06
+	dc.b nCs6, $04, nRst, $08, nCs6, $06, nB5, $04
+	dc.b nRst, $08, nCs6, $0C, nB5, $04, nRst, $08
+	sVoice		$02
+	saVol		$08
+	sJump		ChemicalPlant_Loop13
+
+ChemicalPlant_FM3:
+	sModAMPS	$06, $01, $05, $04
+	sPan		spRight
+	sVoice		$05
+
+ChemicalPlant_Loop4:
+	sCall		ChemicalPlant_Call8
+	sLoop		$00, $02, ChemicalPlant_Loop4
+
+ChemicalPlant_Jump2:
+	sVoice		$03
+
+ChemicalPlant_Loop5:
+	sCall		ChemicalPlant_Call9
+	sLoop		$00, $03, ChemicalPlant_Loop5
+	dc.b nE2, $0C, nE3, $06, nRst, nEb3, nRst, nE3
+	dc.b nEb2, nRst, nEb2, nEb3, nRst, nCs3, nRst, nEb3
+	dc.b $0C
+	sLoop		$01, $04, ChemicalPlant_Loop5
+	dc.b nRst, $30, nRst
+	sPan		spCenter
+
+ChemicalPlant_Loop6:
+	sCall		ChemicalPlant_Call9
+	dc.b nRst, $30, nRst
+	sLoop		$00, $03, ChemicalPlant_Loop6
+	sPan		spRight
+	dc.b nRst, $30, nRst
+	sVoice		$05
+	saVol		$F8
+
+ChemicalPlant_Loop7:
+	dc.b nA4, $04, nRst, $08, nAb4, $04, nRst, $08
+	dc.b nA4, $0C, nAb4, $06, nA4, $04, nRst, $08
+	dc.b nA4, $06, nAb4, $04, nRst, $08, nA4, $0C
+	dc.b nAb4, $04, nRst, $08
+	sLoop		$00, $04, ChemicalPlant_Loop7
+	saVol		$08
+	sJump		ChemicalPlant_Jump2
+
+ChemicalPlant_FM2:
+	dc.b nRst, $60, $60, $60
+	sVoice		$04
+	dc.b nFs2, $06, nEb2, $24, nRst, $06, nE2, $04
+	dc.b nRst, $08, nE2, $0C, nF2, $04, nRst, $08
+	dc.b nF2, $0C, nFs2, $04, nRst, $08, nFs2, $0C
+	dc.b nFs2, $04, nRst, $08, nFs2, $0C, nFs2, $04
+	dc.b nRst, $08, nFs2, $0C, $06, nFs3, nFs2, $0C
+	dc.b nFs2, $04, nRst, $08, nFs2, $0C, nFs2, $04
+	dc.b nRst, $08, nFs2, $0C, $06, nEb2, $12, nE2
+	dc.b $0C, nF2, nFs2, $04, nRst, $08, nFs2, $0C
+	dc.b nFs2, $04, nRst, $08, nFs2, $0C, nFs2, $04
+	dc.b nRst, $08, nFs2, $0C, $06, nFs3, nFs2, $0C
+	dc.b nE2, $04, nRst, $08, nE2, $0C, nE2, $04
+	dc.b nRst, $08, nE2, $0C, nEb2, $04, nRst, $08
+	dc.b nEb2, $0C, nEb2, $04, nRst, $08, nEb2, $0C
+
+ChemicalPlant_Loop3:
+	dc.b nFs2, $04, nRst, $08, nFs2, $0C, nFs2, $04
+	dc.b nRst, $08, nFs2, $0C, nFs2, $04, nRst, $08
+	dc.b nFs2, $0C, $06, nFs3, nFs2, $0C, nFs2, $04
+	dc.b nRst, $08, nFs2, $0C, nFs2, $04, nRst, $08
+	dc.b nFs2, $0C, $06, nEb2, $12, nE2, $0C, nF2
+	dc.b nFs2, $04, nRst, $08, nFs2, $0C, nFs2, $04
+	dc.b nRst, $08, nFs2, $0C, nFs2, $04, nRst, $08
+	dc.b nFs2, $0C, $06, nFs3, nFs2, $0C, nE2, $04
+	dc.b nRst, $08, nE2, $0C, nE2, $04, nRst, $08
+	dc.b nE2, $0C, nEb2, $04, nRst, $08, nEb2, $0C
+	dc.b nEb2, $04, nRst, $08, nEb2, $0C
+	sLoop		$00, $04, ChemicalPlant_Loop3
+	dc.b nE2, $18, nF2, nFs2, $0C, nRst, $24, nRst
+	dc.b $30, nRst, $24, nE3, $06, nFs3, nE2, $18
+	dc.b nF2, nFs2, $0C, nRst, $24, nRst, $30, nRst
+	dc.b $18, nE3, $06, nE4, nEb3, nEb4, nE2, $18
+	dc.b nF2, nFs2, $0C, nRst, $24, nRst, $30, nRst
+	dc.b $18, nE3, $06, nRst, nE3, nFs3, nE2, $18
+	dc.b nF2, nFs2, $0C, nRst, $24, nFs2, $0C, nEb2
+	dc.b $24, nE2, $18, nF2, nFs2, $30, sHold, $30
+	dc.b nRst, $30, nRst, nRst, nRst, nRst, nA2, $06
+	dc.b nA3, nA2, nA3, nAb2, nAb3, nG2, nG3
+	sJump		ChemicalPlant_Loop3
+
+ChemicalPlant_DAC2:
+	sCall		ChemicalPlant_Call11
+	sLoop		$00, $02, ChemicalPlant_DAC2
+
+ChemicalPlant_Loop16:
+	sCall		ChemicalPlant_Call11
+	sLoop		$00, $03, ChemicalPlant_Loop16
+	sCall		ChemicalPlant_Call12
+
+ChemicalPlant_Loop17:
+	sCall		ChemicalPlant_Call11
+	sLoop		$00, $02, ChemicalPlant_Loop17
+	sCall		ChemicalPlant_Call12
+	sJump		ChemicalPlant_Loop16
+
+ChemicalPlant_Call11:
+	dc.b dKick, $18, dSnare, $0C, dKick, $18, $0C, dSnare
+	dc.b dKick, dKick, $18, dSnare, $0C, dKick, $12, dKick
+	dc.b dSnare, $18, dKick, dSnare, $0C, dKick, $18, $0C
+	dc.b dSnare, dKick, dKick, $18, dSnare, $0C, dKick, $18
+	dc.b dSnare, $0C, dSnare, dSnare, $06, dSnare
+	sRet
+
+ChemicalPlant_Call12:
+	dc.b dKick, $18, dSnare, $0C, dKick, $18, $0C, dSnare
+	dc.b dKick, dKick, $18, dSnare, $0C, dKick, $12, dKick
+	dc.b dSnare, $18, dKick, dSnare, $0C, dKick, $18, $0C
+	dc.b dSnare, dKick, dKick, $18, dSnare, $0C, dKick, dSnare
+	dc.b $06, dSnare, dSnare, dSnare, dSnare, dSnare, dSnare, dSnare
+	sRet
+
+ChemicalPlant_PSG3:
+	sNoisePSG	snWhitePSG3
+
+ChemicalPlant_Jump3:
+	dc.b nHiHat, $0C, $06, $06, $0C, $06, $06, $0C
+	dc.b $06, $06, $0C, $06, $06, $0C, $06, $06
+	dc.b $0C, $06, $06, $0C, $06, $06, $06, $06
+	dc.b $06, $06
+	sJump		ChemicalPlant_Jump3

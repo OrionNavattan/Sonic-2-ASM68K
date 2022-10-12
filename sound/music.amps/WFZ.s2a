@@ -1,0 +1,315 @@
+WingFortress_Header:
+	sHeaderInit						; Z80 offset is $1380
+	sHeaderTempo	$01, $78
+	sHeaderCh	$05, $00
+	sHeaderDAC	WingFortress_DAC1
+	sHeaderDAC	WingFortress_DAC2
+	sHeaderFM	WingFortress_FM1, $00, $08
+	sHeaderFM	WingFortress_FM2, $00, $06
+	sHeaderFM	WingFortress_FM3, $0C, $06
+	sHeaderFM	WingFortress_FM4, $18, $08
+	sHeaderFM	WingFortress_FM5, $00, $06
+
+	; Patch $00
+	; $3A
+	; $01, $01, $02, $02,	$8E, $8D, $8E, $89
+	; $0E, $0E, $0E, $16,	$00, $00, $00, $00
+	; $0F, $0F, $0F, $0F,	$1E, $26, $20, $88
+	spAlgorithm	$02
+	spFeedback	$07
+	spDetune	$00, $00, $00, $00
+	spMultiple	$01, $01, $02, $02
+	spRateScale	$02, $02, $02, $02
+	spAttackRt	$0E, $0D, $0E, $09
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0E, $0E, $0E, $16
+	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$00, $00, $00, $00
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$1E, $26, $20, $08
+
+	; Patch $01
+	; $3D
+	; $01, $02, $01, $01,	$4C, $50, $0F, $12
+	; $0B, $01, $05, $02,	$01, $00, $00, $00
+	; $20, $24, $24, $14,	$1D, $88, $84, $8A
+	spAlgorithm	$05
+	spFeedback	$07
+	spDetune	$00, $00, $00, $00
+	spMultiple	$01, $02, $01, $01
+	spRateScale	$01, $01, $00, $00
+	spAttackRt	$0C, $10, $0F, $12
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0B, $01, $05, $02
+	spSustainLv	$02, $02, $02, $01
+	spDecayRt	$01, $00, $00, $00
+	spReleaseRt	$00, $04, $04, $04
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$1D, $08, $04, $0A
+
+	; Patch $02
+	; $3A
+	; $01, $01, $01, $01,	$8E, $8D, $8E, $50
+	; $0E, $0E, $0E, $00,	$0B, $00, $00, $00
+	; $04, $04, $04, $04,	$17, $27, $28, $8A
+	spAlgorithm	$02
+	spFeedback	$07
+	spDetune	$00, $00, $00, $00
+	spMultiple	$01, $01, $01, $01
+	spRateScale	$02, $02, $02, $01
+	spAttackRt	$0E, $0D, $0E, $10
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0E, $0E, $0E, $00
+	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$0B, $00, $00, $00
+	spReleaseRt	$04, $04, $04, $04
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$17, $27, $28, $0A
+
+	; Patch $03
+	; $3A
+	; $20, $60, $23, $01,	$1E, $1F, $1F, $1F
+	; $0A, $0B, $0A, $0A,	$05, $0A, $07, $08
+	; $AF, $9F, $8F, $7F,	$21, $28, $25, $82
+	spAlgorithm	$02
+	spFeedback	$07
+	spDetune	$02, $06, $02, $00
+	spMultiple	$00, $00, $03, $01
+	spRateScale	$00, $00, $00, $00
+	spAttackRt	$1E, $1F, $1F, $1F
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0A, $0B, $0A, $0A
+	spSustainLv	$0A, $09, $08, $07
+	spDecayRt	$05, $0A, $07, $08
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$21, $28, $25, $02
+
+WingFortress_DAC1:
+	sStop
+
+WingFortress_FM5:
+	sVoice		$00
+	ssDetune	$01
+	dc.b nRst, $12
+
+WingFortress_Jump5:
+	sPan		spLeft
+	saVol		$06
+
+WingFortress_Loop5:
+	dc.b nE5, $03, nE5, nCs5, nCs5, nA4, nA4, nCs5
+	dc.b nCs5, nA4, nA4, nE4, nE4
+	sLoop		$00, $07, WingFortress_Loop5
+	dc.b nE5, nE5, nCs5, nCs5, nA4, nA4
+	sPan		spCenter
+	saVol		$FA
+	saTranspose	$F4
+	dc.b nCs4, $0C, nD4, $06, nE4, $12, nA4, $12
+	dc.b nAb4, $12, nFs4, $12, nE4, $12, nD4, $0C
+	dc.b nCs4, $06, nD4, $12, nD4, $0C, nE4, $06
+	dc.b nFs4, $12, nB4, nA4, nFs4, nFs4, $12, nAb4
+	dc.b $0C, nFs4, $06, nE4, $24
+	saTranspose	$0C
+	sPan		spLeft
+	saVol		$06
+
+WingFortress_Loop6:
+	dc.b nBb4, $03, nA4
+	sLoop		$00, $30, WingFortress_Loop6
+	saTranspose	$F4
+	saVol		$FA
+	sPan		spCenter
+	dc.b nB3, $12, nCs4, nD4, nE4, nFs4, nAb4, nA4
+	dc.b nB4, nCs4, nD4, nE4, nFs4, nAb4, nA4, nB4
+	dc.b nCs5, nD5, $48, nEb5, nFs5, $24, nE5, nA5
+	dc.b nAb5, $24
+	saTranspose	$0C
+	sJump		WingFortress_Jump5
+
+WingFortress_FM1:
+	dc.b nRst, $12
+	sVoice		$00
+	ssDetune	$FF
+
+WingFortress_Jump1:
+	sPan		spRight
+	saVol		$06
+
+WingFortress_Loop1:
+	dc.b nE5, $03, nE5, nCs5, nCs5, nA4, nA4, nCs5
+	dc.b nCs5, nA4, nA4, nE4, nE4
+	sLoop		$00, $07, WingFortress_Loop1
+	dc.b nE5, nE5, nCs5, nCs5, nA4, nA4
+	sPan		spCenter
+	saVol		$FA
+	dc.b nCs4, $0C, nD4, $06, nE4, $0C, nRst, $06
+	dc.b nA4, $0C, nRst, $06, nAb4, $09, nRst, nFs4
+	dc.b $0C, nRst, $06, nE4, $0C, nRst, $06, nD4
+	dc.b $0C, nCs4, $06, nD4, $0C, nRst, $06, nD4
+	dc.b $0C, nE4, $06, nFs4, $09, nRst, nB4, nRst
+	dc.b nA4, nRst, nFs4, nRst, nFs4, $12, nAb4, $0C
+	dc.b nFs4, $06, nE4, $24
+	sPan		spRight
+	saVol		$06
+
+WingFortress_Loop2:
+	dc.b nBb4, $03, nA4
+	sLoop		$00, $30, WingFortress_Loop2
+	sPan		spCenter
+	saVol		$FA
+	dc.b nB3, $12, nCs4, nD4, nE4, nFs4, nAb4, nA4
+	dc.b nB4, nCs4, nD4, nE4, nFs4, nAb4, nA4, nB4
+	dc.b nCs5, nD5, $48, nEb5, nFs5, $24, nE5, nA5
+	dc.b nAb5, $24
+	sJump		WingFortress_Jump1
+
+WingFortress_FM2:
+	dc.b nRst, $12
+	sVoice		$01
+
+WingFortress_Jump2:
+	dc.b nRst, $5A
+	sCall		WingFortress_Call1
+	dc.b nRst, $5A
+	sCall		WingFortress_Call1
+	dc.b nRst, $12, nCs3, $03, nRst, nCs3, nRst, nCs3
+	dc.b nRst, nCs3, $0C, nRst, $06, nCs3, $0F, nRst
+	dc.b $15
+	sCall		WingFortress_Call2
+	dc.b nRst, $12
+	sCall		WingFortress_Call2
+	dc.b nRst, $12
+	sCall		WingFortress_Call2
+
+WingFortress_Loop3:
+	dc.b nB3, $06, nG3, $0C, nBb3, $06, nF3, $0C
+	dc.b nAb3, $06, nE3, $66
+	sLoop		$00, $02, WingFortress_Loop3
+	dc.b nRst, $12, nD3, $03, nRst, nD3, nRst, nD3
+	dc.b nRst, nD3, $24, nRst, $12, nD3, $03, nRst
+	dc.b nB2, nRst, nD3, nRst, nFs3, $24, nRst, $12
+	dc.b nE3, $03, nRst, nE3, nRst, nE3, nRst, nE3
+	dc.b $24, nRst, $12, nE3, $03, nRst, nCs3, nRst
+	dc.b nE3, nRst, nAb3, $24, nRst, $12, nFs3, $03
+	dc.b nRst, nFs3, nRst, nFs3, nRst, nFs3, $24, nRst
+	dc.b $12, nFs3, $03, nRst, nFs3, nRst, nFs3, nRst
+	dc.b nFs3, $24, nRst, $12, nA3, $03, nRst, nA3
+	dc.b nRst, nA3, nRst, nA3, $24, nB3, $0C, nRst
+	dc.b $06, nB3, $0C, nRst, $06, nB3, $0C, nRst
+	dc.b $06, nB3, $12
+	sJump		WingFortress_Jump2
+
+WingFortress_Call1:
+	dc.b nB2, $03, nRst, nCs3, nRst, nD3, nRst, nCs3
+	dc.b $24
+	sRet
+
+WingFortress_Call2:
+	dc.b nD3, $03, nRst, nD3, nRst, nD3, nRst, nD3
+	dc.b $09, nRst, nD3, $12
+	sRet
+
+WingFortress_FM3:
+	dc.b nRst, $12
+	sVoice		$02
+
+WingFortress_Jump3:
+	saVol		$FC
+
+WingFortress_Loop4:
+	dc.b nA3, $06, nRst, $03, nA3, nA3, nRst, nA3
+	dc.b nRst, nE3, nRst, nA3, nRst, nCs4, nRst, nB3
+	dc.b nRst, nA3, nRst, nB3, nRst, nCs4, nRst, nD4
+	dc.b nRst, nCs4, $48
+	sLoop		$00, $02, WingFortress_Loop4
+	saVol		$04
+	dc.b nRst, $12, nE3, $03, nRst, nE3, nRst, nE3
+	dc.b nRst, nE3, $09, nRst, nE3, $0F, nRst, $15
+	dc.b nFs3, $03, nRst, nFs3, nRst, nFs3, nRst, nFs3
+	dc.b $09, nRst, nFs3, $0F, nRst, $15, nFs3, $03
+	dc.b nRst, nFs3, nRst, nFs3, nRst, nFs3, $09, nRst
+	dc.b nFs3, $0F, nRst, $15, nAb3, $03, nRst, nAb3
+	dc.b nRst, nAb3, nRst, nAb3, $09, nRst, nAb3, $0C
+	dc.b nRst, $60, nRst, nRst, nRst, $18, nB3, $03
+	dc.b nRst, nB3, nRst, nB3, nRst, nB3, $24, nRst
+	dc.b $12, nB3, $03, nRst, nFs3, nRst, nB3, nRst
+	dc.b nD4, $24, nRst, $12, nCs4, $03, nRst, nCs4
+	dc.b nRst, nCs4, nRst, nCs4, $24, nRst, $12, nCs4
+	dc.b $03, nRst, nAb3, nRst, nCs4, nRst, nE4, $24
+	dc.b nRst, $12, nD4, $03, nRst, nD4, nD4, nD4
+	dc.b nRst, nD4, nRst, nA3, nRst, nB3, nRst, nD4
+	dc.b $15, nRst, $0F, nEb4, $03, nRst, nEb4, nEb4
+	dc.b nEb4, nRst, nEb4, nRst, nA3, nRst, nB3, nRst
+	dc.b nEb4, $15, nRst, $0F, nE4, $03, nRst, nE4
+	dc.b $09, nRst, $03, nE4, nRst, nE4, nRst, nE4
+	dc.b nRst, nE4, nRst, nE4, nRst, nE4, nRst, nE4
+	dc.b $12, nE4, $0C, nRst, $06, nE4, $0C, nRst
+	dc.b $06, nE4, $12
+	sJump		WingFortress_Jump3
+
+WingFortress_DAC2:
+	dc.b dFloorTimpani, $06, dFloorTimpani, dFloorTimpani
+
+WingFortress_Jump6:
+	sCall		WingFortress_Call4
+	dc.b dMidTimpani, $06
+	sCall		WingFortress_Call4
+	dc.b dFloorTimpani, $06, dFloorTimpani, $36, dMidTimpani, $12, dFloorTimpani, $36
+	dc.b dMidTimpani, $12, dFloorTimpani, $36, dMidTimpani, $06, dMidTimpani, dMidTimpani
+	dc.b dFloorTimpani, $36, dFloorTimpani, $06, dFloorTimpani, dFloorTimpani, $60
+	sCall		WingFortress_Call5
+	dc.b dFloorTimpani, $5A
+	sCall		WingFortress_Call5
+	dc.b dFloorTimpani, $36, dFloorTimpani, $06, dFloorTimpani, dFloorTimpani, dMidTimpani, $36
+	dc.b dMidTimpani, $12, dFloorTimpani, $36, dMidTimpani, $06, dMidTimpani, dMidTimpani
+	dc.b dFloorTimpani, $36, dMidTimpani, $06, dFloorTimpani, dMidTimpani, dFloorTimpani, $36
+	dc.b dFloorTimpani, $06, dFloorTimpani, dFloorTimpani, dMidTimpani, $36, dMidTimpani, $06
+	dc.b dFloorTimpani, $0C, dMidTimpani, $12, dFloorTimpani, dMidTimpani, dFloorTimpani, dMidTimpani
+	dc.b $09, dFloorTimpani, dMidTimpani, dFloorTimpani, dMidTimpani, dFloorTimpani, dMidTimpani, dFloorTimpani
+	dc.b $09
+	sJump		WingFortress_Jump6
+
+WingFortress_Call4:
+	dc.b dMidTimpani, $5A, dMidTimpani, $06, dFloorTimpani, dMidTimpani, dFloorTimpani, dMidTimpani
+	dc.b dFloorTimpani, dMidTimpani, dFloorTimpani
+	sRet
+
+WingFortress_Call5:
+	dc.b dMidTimpani, $06, dFloorTimpani, dMidTimpani, dFloorTimpani, dMidTimpani, dFloorTimpani, dMidTimpani
+	dc.b dFloorTimpani, dMidTimpani
+	sRet
+
+WingFortress_FM4:
+	sVoice		$03
+	sCall		WingFortress_Call3
+
+WingFortress_Jump4:
+	dc.b nA1, $78, nRst, $06
+	sCall		WingFortress_Call3
+	dc.b nA1, $78, nRst, $06
+	sCall		WingFortress_Call3
+	dc.b nA1, $36, nBb1, $12, nB1, $36, nFs1, $12
+	dc.b nB1, $36, nFs1, $12, nE1, $3C, nRst, $0C
+	dc.b nE1, $06, nF1, nG1, nA1, nG1, nF1, nE1
+	dc.b $36, nD1, $06, nE1, nF1, nE1, $1E, nRst
+	dc.b $06, nE1, nF1, nG1, nA1, nG1, nF1, nE1
+	dc.b $36, nB1, $06, nAb1, nF1, nE1, $0C, nRst
+	dc.b $06
+	sCall		WingFortress_Call3
+	dc.b nB1, $36, nFs1, $03, nRst, nFs1, nRst, nFs1
+	dc.b nRst, nB1, $36, nB1, $03, nRst, nFs1, nRst
+	dc.b nB1, nRst, nCs2, $36, nAb1, $03, nRst, nAb1
+	dc.b nRst, nAb1, nRst, nCs2, $36, nCs2, $03, nRst
+	dc.b nAb1, nRst, nCs2, nRst, nD1, $36, nD1, $03
+	dc.b nRst, nD1, nRst, nD1, nRst, nEb1, $36, nEb1
+	dc.b $03, nRst, nD1, nRst, nEb1, nRst, nE1, $36
+	dc.b nB1, $03, nRst, nAb1, nRst, nFs1, nRst, nE1
+	dc.b $36
+	sCall		WingFortress_Call3
+	sJump		WingFortress_Jump4
+
+WingFortress_Call3:
+	dc.b nE1, $06, nE1, nE1
+	sRet

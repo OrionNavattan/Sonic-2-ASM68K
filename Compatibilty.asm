@@ -33,29 +33,29 @@ angle:					equ	ost_angle ; $26
 subtype:		equ ost_subtype ; $28
 flip_angle:		equ ost_flip_angle ; 27
 air_left:		equ ost_air_left ; $28
-flip_turned:		equ $29
-obj_control:		equ $2A
-status_secondary:	equ $2B
-flips_remaining:	equ $2C
-flip_speed:		equ $2D
-move_lock:		equ $2E
-invulnerable_time:	equ ost_sonic_flash_time
-invincibility_time:	equ ost_sonic_invincible_time
-speedshoes_time:	equ ost_sonic_shoe_time
-next_tilt:		equ ost_sonic_angle_right
-tilt:			equ ost_sonic_angle_left
-stick_to_convex:	equ ost_sonic_sbz_disc
-spindash_flag:		equ $39
-pinball_mode:		equ spindash_flag
-spindash_counter:	equ ost_sonic_restart_time
-restart_countdown:	equ ost_sonic_restart_time
-jumping:		equ ost_sonic_jump
-interact:		equ ost_sonic_on_obj
-top_solid_bit:		equ $3E
-lrb_solid_bit:		equ $3F
-y_pixel:		equ ost_y_screen
-x_pixel:		equ ost_x_pos
-parent:			equ $3E
+flip_turned:	equ ost_flop_turned ; $29
+obj_control:		equ ost_obj_control ; $2A
+status_secondary:	equ ost_status_secondary
+flips_remaining:	equ ost_flips_remaining
+flip_speed:			equ ost_flip_speed
+move_lock:			equ ost_lock_time
+invulnerable_time:	equ ost_flash_time
+invincibility_time:	equ ost_invincible_time
+speedshoes_time:	equ ost_speedshoe_time
+next_tilt:			equ ost_angle_right
+tilt:				equ ost_angle_left
+stick_to_convex:	equ ost_sticktoconvex
+spindash_flag:		equ ost_spindash_flag
+pinball_mode:		equ ost_pinball_mode
+spindash_counter:	equ ost_spindash_counter
+restart_countdown:	equ ost_restart_time
+jumping:			equ ost_sonic_jump
+interact:			equ ost_interact
+top_solid_bit:		equ ost_top_solid_bit
+lrb_solid_bit:		equ ost_lrb_solid_bit
+y_pixel:			equ ost_y_screen
+x_pixel:			equ ost_x_screen
+parent:				equ ost_parent1
 button_up:		equ bitUp
 button_down:		equ bitDn
 button_left:		equ bitL
@@ -75,7 +75,7 @@ button_start_mask:	equ btnStart
 object_size		equ sizeof_ost
 next_object		equ sizeof_ost
 
-Chunk_Table:		equ v_256x256_tiles
+Chunk_Table:		equ v_128x128_tiles
 Level_Layout:		equ v_level_layout
 Block_Table:		equ v_16x16_tiles
 Object_RAM:		equ v_ost_all

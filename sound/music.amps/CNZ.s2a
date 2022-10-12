@@ -1,0 +1,432 @@
+CasinoNight_Header:
+	sHeaderInit						; Z80 offset is $1380
+	sHeaderTempo	$01, $B8
+	sHeaderCh	$05, $03
+	sHeaderDAC	CasinoNight_DAC1
+	sHeaderDAC	CasinoNight_DAC2
+	sHeaderFM	CasinoNight_FM1, $0C, $08
+	sHeaderFM	CasinoNight_FM2, $F4, $0A
+	sHeaderFM	CasinoNight_FM3, $F4, $12
+	sHeaderFM	CasinoNight_FM4, $F4, $12
+	sHeaderFM	CasinoNight_FM5, $F4, $0F
+	sHeaderPSG	CasinoNight_PSG1, $DC+$0C, $28, $00, vNone
+	sHeaderPSG	CasinoNight_PSG2, $DC+$0C, $28, $00, vNone
+	sHeaderPSG	CasinoNight_PSG3, $00, $20, $00, vNone
+
+	; Patch $00
+	; $3A
+	; $20, $60, $23, $01,	$1E, $1F, $1F, $1F
+	; $0A, $0B, $0A, $0A,	$05, $0A, $07, $08
+	; $A4, $96, $85, $78,	$21, $28, $25, $00
+	spAlgorithm	$02
+	spFeedback	$07
+	spDetune	$02, $06, $02, $00
+	spMultiple	$00, $00, $03, $01
+	spRateScale	$00, $00, $00, $00
+	spAttackRt	$1E, $1F, $1F, $1F
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$0A, $0B, $0A, $0A
+	spSustainLv	$0A, $09, $08, $07
+	spDecayRt	$05, $0A, $07, $08
+	spReleaseRt	$04, $06, $05, $08
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$21, $28, $25, $00
+
+	; Patch $01
+	; $3A
+	; $32, $32, $56, $42,	$8D, $15, $4F, $52
+	; $06, $07, $08, $04,	$02, $00, $00, $00
+	; $18, $28, $18, $28,	$19, $2A, $20, $00
+	spAlgorithm	$02
+	spFeedback	$07
+	spDetune	$03, $03, $05, $04
+	spMultiple	$02, $02, $06, $02
+	spRateScale	$02, $00, $01, $01
+	spAttackRt	$0D, $15, $0F, $12
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$06, $07, $08, $04
+	spSustainLv	$01, $02, $01, $02
+	spDecayRt	$02, $00, $00, $00
+	spReleaseRt	$08, $08, $08, $08
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$19, $2A, $20, $00
+
+	; Patch $02
+	; $2C
+	; $61, $01, $03, $33,	$5F, $5F, $94, $94
+	; $05, $05, $05, $07,	$02, $02, $02, $02
+	; $1F, $1F, $6F, $AF,	$1E, $1E, $80, $80
+	spAlgorithm	$04
+	spFeedback	$05
+	spDetune	$06, $00, $00, $03
+	spMultiple	$01, $01, $03, $03
+	spRateScale	$01, $01, $02, $02
+	spAttackRt	$1F, $1F, $14, $14
+	spAmpMod	$00, $00, $00, $00
+	spSustainRt	$05, $05, $05, $07
+	spSustainLv	$01, $01, $06, $0A
+	spDecayRt	$02, $02, $02, $02
+	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
+	spTotalLv	$1E, $1E, $00, $00
+
+CasinoNight_FM1:
+	dc.b nRst, $18
+	sVoice		$00
+
+CasinoNight_Jump1:
+	dc.b nC3, $06, nC2, nC3, nC2, nC3, nC2, nC3
+	dc.b nC2, nRst, nG1, $04, nRst, $02, nBb1, $04
+	dc.b nAb1, $06, nG1, $04, nRst, $02, nG2, $02
+	dc.b nG1, $06, nA1, nB1, nC2, $06, nB1, nA1
+	dc.b nG1, nC2, nG1, nC2, nD2, nE2, nD2, nC2
+	dc.b nB1, nE1, nFs1, nAb1, nE1, nA1, nA1, nE2
+	dc.b nE2, nA1, nB1, nC2, nA1, nAb1, nBb1, nC2
+	dc.b nD2, nEb2, $04, $02, nAb1, $06, nC2, nAb1
+	dc.b nC2, nC2, nD2, nEb2, nE2, $04, $02, nE1
+	dc.b $06, nFs1, nAb1, nA1, nA1, nG1, nG1, nF1
+	dc.b nC2, nF1, nA1, nRst, nC2, nRst, nC2, nRst
+	dc.b nF2, nRst, nF2, nAb1, $0C, $06, nRst, $04
+	dc.b nG1, $04, nRst, $02, nG2, nF2, $06, nE2
+	dc.b nD2, nC2, $04, $02, nE1, $06, nF1, nFs1
+	dc.b nG1, nB1, nC2, nD2, nE2, nB1, nAb1, nFs1
+	dc.b nE1, nB1, nE2, nE1, nA1, nB1, nC2, nB1
+	dc.b nA1, nC2, nE2, nA1, nAb1, nBb1, nC2, nBb1
+	dc.b nAb1, nA1, nBb1, nB1, nC2, nB1, nC2, nD2
+	dc.b nE2, $04, $02, nB1, $06, nE1, nAb1, nA1
+	dc.b nB1, nC2, nE2, nF2, $04, nA1, $08, nBb1
+	dc.b $06, nB1, nRst, nC2, nRst, nC2, nRst, nF2
+	dc.b nRst, nF2
+	saVol		$04
+	dc.b nRst, nC2, nRst, nC2, nRst, nF2, nRst, nF2
+	saVol		$FC
+	dc.b nRst, nC2, nRst, nC2, nRst, nF2, nRst, nF2
+	dc.b $04, nC2, $02, nRst, $18, nC2, $02, nRst
+	dc.b nC2, nB1, $06, nA1, nG1
+	sJump		CasinoNight_Jump1
+
+CasinoNight_FM3:
+	dc.b nRst, $18
+	sVoice		$02
+	sPan		spLeft
+
+CasinoNight_Jump3:
+	sVoice		$02
+	dc.b nRst, $06, nG5, nRst, nG5, nRst, nG5, nRst
+	dc.b nG5, nRst, nF5, $02, nRst, $04, nF5, $04
+	dc.b $02, nRst, $04, nF5, $02, nRst, $18
+	sCall		CasinoNight_Call1
+	sVoice		$01
+	saTranspose	$F4
+	saVol		$FC
+	sCall		CasinoNight_Call2
+	dc.b nE6, $18, nD6, $0C, nE6, $06, nD6, nC6
+	dc.b $18, nF6, nRst, $06, nG5, nRst, nG5, nRst
+	dc.b nA5, nRst, nA5
+	saVol		$04
+	dc.b nRst, nG5, nRst, nG5, nRst, nA5, nRst, nA5
+	saVol		$FC
+	dc.b nRst, nG5, nRst, nG5, nRst, nA5, $0C, $04
+	dc.b nG5, $02, nRst, $30
+	saTranspose	$0C
+	saVol		$04
+	sJump		CasinoNight_Jump3
+
+CasinoNight_Call1:
+	dc.b nRst, $06, nG4, $02, nRst, $08, nG4, $02
+	dc.b nRst, $06, nG4, $08, nRst, $02, nG4, $06
+	dc.b nRst, $02, nG4, $04, $02, nRst, $06, nAb4
+	dc.b $02, nRst, $08, nAb4, $02, nRst, $06, nAb4
+	dc.b $08, nRst, $02, nAb4, $06, nRst, $02, nAb4
+	dc.b $04, $02, nRst, $06, nA4, $02, nRst, $08
+	dc.b nA4, $02, nRst, $06, nA4, $08, nRst, $02
+	dc.b nA4, $06, nRst, $02, nA4, $04, $02, nRst
+	dc.b $06, nAb4, $02, nRst, $08, nAb4, $02, nRst
+	dc.b $06, nAb4, $08, nRst, $02, nAb4, $06, nRst
+	dc.b $02, nAb4, $04, $02, nRst, $06, nG4, $02
+	dc.b nRst, $08, nG4, $02, nRst, $06, nAb4, $08
+	dc.b nRst, $02, nAb4, $06, nRst, $02, nAb4, $04
+	dc.b $02, nRst, $06, nA4, $02, nRst, $08, nA4
+	dc.b $02, nRst, $06, nA4, $08, nRst, $02, nA4
+	dc.b $06, nRst, $02, nA4, $04, $02, nRst, $06
+	dc.b nG4, nRst, nG4, nRst, nA4, nRst, nA4, nC5
+	dc.b $0C, $06, $04, nB4, $02, nRst, $18
+	sRet
+
+CasinoNight_Call2:
+	dc.b nRst, $06, nE6, $02, nRst, $08, nE6, $02
+	dc.b nRst, $06, nE6, $06, nF6, $04, nE6, $02
+	dc.b nRst, $0C, nRst, $06, nD6, $02, nRst, $08
+	dc.b nD6, $02, nRst, $06, nD6, $06, nE6, $04
+	dc.b nD6, $02, nRst, $0C, nRst, $06, nC6, $02
+	dc.b nRst, $08, nC6, $02, nRst, $06, nC6, $06
+	dc.b nD6, $04, nC6, $02, nRst, $0C, nRst, $06
+	dc.b nC6, $02, nRst, $08, nC6, $02, nRst, $06
+	dc.b nC6, $06, nD6, $04, nC6, $02, nRst, $0C
+	sRet
+
+CasinoNight_FM4:
+	dc.b nRst, $18
+	sVoice		$02
+	sPan		spRight
+
+CasinoNight_Jump4:
+	sVoice		$02
+	dc.b nRst, $06, nEb5, nRst, nEb5, nRst, nEb5, nRst
+	dc.b nEb5, nRst, nD5, $02, nRst, $04, nD5, $04
+	dc.b $02, nRst, $04, nD5, $02, nRst, $18
+	sCall		CasinoNight_Call3
+	sVoice		$01
+	saTranspose	$F4
+	saVol		$FC
+	sCall		CasinoNight_Call4
+	dc.b nC6, $18, nB5, $0C, nC6, $06, nB5, nA5
+	dc.b $18, nC6, nRst, $06, nE5, nRst, nE5, nRst
+	dc.b nF5, nRst, nF5
+	saVol		$04
+	dc.b nRst, nE5, nRst, nE5, nRst, nF5, nRst, nF5
+	saVol		$FC
+	dc.b nRst, nE5, nRst, nE5, nRst, nF5, $0C, $04
+	dc.b nE5, $02, nRst, $30
+	saTranspose	$0C
+	saVol		$04
+	sJump		CasinoNight_Jump4
+
+CasinoNight_Call3:
+	dc.b nRst, $06, nE4, $02, nRst, $08, nE4, $02
+	dc.b nRst, $06, nE4, $08, nRst, $02, nE4, $06
+	dc.b nRst, $02, nE4, $04, $02
+	sLoop		$00, $03, CasinoNight_Call3
+	dc.b nRst, $06, nEb4, $02, nRst, $08, nEb4, $02
+	dc.b nRst, $06, nEb4, $08, nRst, $02, nEb4, $06
+	dc.b nRst, $02, nEb4, $04, $02, nRst, $06, nE4
+	dc.b $02, nRst, $08, nE4, $02, nRst, $06, nE4
+	dc.b $08, nRst, $02, nE4, $06, nRst, $02, nE4
+	dc.b $04, $02, nRst, $06, nE4, $02, nRst, $08
+	dc.b nE4, $02, nRst, $06, nF4, $08, nRst, $02
+	dc.b nF4, $06, nRst, $02, nF4, $04, $02, nRst
+	dc.b $06, nE4, nRst, nE4, nRst, nF4, nRst, nF4
+	dc.b nAb4, $0C, $06, $04, nG4, $02, nRst, $18
+	sRet
+
+CasinoNight_Call4:
+	dc.b nRst, $06, nC6, $02, nRst, $08, nC6, $02
+	dc.b nRst, $06, nC6, $06, nD6, $04, nC6, $02
+	dc.b nRst, $0C, nRst, $06, nB5, $02, nRst, $08
+	dc.b nB5, $02, nRst, $06, nB5, $06, nC6, $04
+	dc.b nB5, $02, nRst, $0C, nRst, $06, nA5, $02
+	dc.b nRst, $08, nA5, $02, nRst, $06, nA5, $06
+	dc.b nB5, $04, nA5, $02, nRst, $0C, nRst, $06
+	dc.b nAb5, $02, nRst, $08, nAb5, $02, nRst, $06
+	dc.b nAb5, $06, nBb5, $04, nAb5, $02, nRst, $0C
+	sRet
+
+CasinoNight_FM2:
+	dc.b nRst, $18
+	sVoice		$01
+	sModAMPS	$1D, $01, $06, $04
+
+CasinoNight_Jump2:
+	sVoice		$01
+	dc.b nRst, $06, nEb5, $0C, nC5, $02, nRst, $04
+	dc.b nFs5, nF5, $02, nRst, $04, nEb5, $02, nRst
+	dc.b $04, nC5, $08, nRst, $06, nG4, $02, nRst
+	dc.b $04, nBb4, nAb4, $02, nRst, $04, nG4, $02
+	dc.b nRst, $0C, nE4, $04, nRst, $02, nE4, $04
+	dc.b nRst, $02, nE4, $18, nRst, $06, nE4, $04
+	dc.b nRst, $02, nF4, $04, nE4, $08, nAb4, $04
+	dc.b $02, nRst, $04, nE4, $1A, nRst, $06, nE4
+	dc.b nA4, $04, $02, nRst, $04, nE4, $02, nC4
+	dc.b $12, nRst, $06, nC4, $04, nRst, $02, nD4
+	dc.b $04, nC4, $02, nEb4, $06, nD4, $04, nC4
+	dc.b $26, nRst, $06, nE4, $04, nRst, $02, nF4
+	dc.b $04, nRst, $02, nE4, $04, nRst, $02, nAb4
+	dc.b $04, $02, nRst, $04, nE4, $0E, nRst, $06
+	dc.b nA4, $0C, nB4, $04, nA4, $02, nC5, $0C
+	dc.b nRst, $06, nA4, $02, nRst, $04, nG4, $0C
+	dc.b nE4, nC4, nD4, nEb4, nF4, $04, nEb4, $02
+	dc.b nF4, $04, nG4, $02, nRst, $10, nG3, $02
+	dc.b nA3, $04, nC4, $02, nE4, $18, nRst, $06
+	dc.b nE4, $04, nRst, $02, nF4, $04, nE4, $08
+	dc.b nAb4, $04, $02, nRst, $04, nE4, $1A, nRst
+	dc.b $06, nE4, nA4, $04, $02, nRst, $04, nE4
+	dc.b $02, nC4, $12, nRst, $06, nC4, $04, nRst
+	dc.b $02, nD4, $04, nC4, $02, nEb4, $06, nD4
+	dc.b $04, nC4, $26, nRst, $06, nE4, $04, nRst
+	dc.b $02, nF4, $04, nRst, $02, nE4, $04, nRst
+	dc.b $02, nAb4, $04, $02, nRst, $04, nE4, $0E
+	dc.b nRst, $06, nA4, $0C, nB4, $04, nA4, $02
+	dc.b nC5, $0C, nRst, $06, nA4, $02, nRst, $04
+	dc.b nG4, $0C, nE4, nC4, nD4, $06
+	saVol		$04
+	dc.b nA4, $02, nRst, $04, nG4, $0C, nE4, nC4
+	dc.b nD4, $06
+	saVol		$FC
+	dc.b nA4, $02, nRst, $04, nG4, $0C, nE4, nC4
+	dc.b nD4, $0A, nC4, $02, nRst, $30
+	sJump		CasinoNight_Jump2
+
+CasinoNight_FM5:
+	dc.b nRst, $18
+	sModAMPS	$1D, $01, $06, $04
+
+CasinoNight_Jump5:
+	sVoice		$01
+	dc.b nRst, $06, nC5, $0C, nG4, $02, nRst, $04
+	dc.b nEb5, nD5, $02, nRst, $04, nC5, $02, nRst
+	dc.b $04, nG4, $08, nRst, $06, nD4, $02, nRst
+	dc.b $04, nF4, nEb4, $02, nRst, $04, nD4, $02
+	dc.b nRst, $0C, nA3, $04, nRst, $02, nB3, $04
+	dc.b nRst, $02, nC4, $18, nRst, $06, nC4, $04
+	dc.b nRst, $02, nD4, $04, nC4, $08, nE4, $04
+	dc.b nE4, $02, nRst, $04, nB3, $1A, nRst, $06
+	dc.b nB3, nE4, $04, $02, nRst, $04, nC4, $02
+	dc.b nA3, $12, nRst, $06, nA3, $04, nRst, $02
+	dc.b nB3, $04, nA3, $02, nC4, $06, nBb3, $04
+	dc.b nAb3, $26, nRst, $06, nC4, $04, nRst, $02
+	dc.b nD4, $04, nRst, $02, nC4, $04, nRst, $02
+	dc.b nE4, $04, nE4, $02, nRst, $04, nB3, $0E
+	dc.b nRst, $06, nE4, $0C, nG4, $04, nE4, $02
+	dc.b nA4, $0C, nRst, $06, nF4, $02, nRst, $04
+	dc.b nE4, $0C, nC4, nA3, nB3, nC4, nD4, $04
+	dc.b nC4, $02, nD4, $04, nD4, $02, nRst, $10
+	dc.b nD3, $02, nE3, $04, nG3, $02, nC4, $18
+	dc.b nRst, $06, nC4, $04, nRst, $02, nD4, $04
+	dc.b nC4, $08, nE4, $04, nE4, $02, nRst, $04
+	dc.b nB3, $1A, nRst, $06, nB3, nE4, $04, $02
+	dc.b nRst, $04, nC4, $02, nA3, $12, nRst, $06
+	dc.b nA3, $04, nRst, $02, nB3, $04, nA3, $02
+	dc.b nC4, $06, nBb3, $04, nAb3, $26, nRst, $06
+	dc.b nC4, $04, nRst, $02, nD4, $04, nRst, $02
+	dc.b nC4, $04, nRst, $02, nE4, $04, nE4, $02
+	dc.b nRst, $04, nB3, $0E, nRst, $06, nE4, $0C
+	dc.b nG4, $04, nE4, $02, nA4, $0C, nRst, $06
+	dc.b nF4, $02, nRst, $04, nE4, $0C, nC4, nA3
+	dc.b nB3, $06
+	saVol		$04
+	dc.b nF4, $02, nRst, $04, nE4, $0C, nC4, nA3
+	dc.b nB3, $06
+	saVol		$F8
+	dc.b nF4, $02, nRst, $04, nE4, $0C, nC4, nA3
+	dc.b nF3, $0A, nE3, $02, nRst, $30
+	saVol		$04
+	sJump		CasinoNight_Jump5
+
+CasinoNight_PSG1:
+	dc.b nRst, $18
+
+CasinoNight_Jump6:
+	dc.b nRst, $06, nG4, $0C, nEb4, $02, nRst, $04
+	dc.b nA4, nAb4, $02, nRst, $04, nG4, $02, nRst
+	dc.b $04, nEb4, $08, nRst, $06, nB3, $02, nRst
+	dc.b $04, nD4, nC4, $02, nRst, $04, nB3, $02
+	dc.b nRst, $18
+	sVolEnv		v01
+	saVol		-$08
+	sCall		CasinoNight_Call1
+	saVol		$08
+	sVolEnv		vNone
+	saTranspose	$E8
+	sCall		CasinoNight_Call2
+	saTranspose	$18
+	saVol		$10
+	dc.b nE4, $18, nD4, $0C, nE4, $06, nD4, nC4
+	dc.b $18, nF4
+	saVol		-$10
+	dc.b nRst, $06, nG4, nRst, nG4, nRst, nA4, nRst
+	dc.b nA4
+	saVol		$18
+	dc.b nG5, $0C, nE5, nC5, nD5, $06, nRst
+	saVol		-$20
+	dc.b nRst, nG4, nRst, nG4, nRst, nA4, $0C, $04
+	dc.b nG4, $02, nRst, $30
+	saVol		$08
+	sJump		CasinoNight_Jump6
+
+CasinoNight_PSG2:
+	dc.b nRst, $18
+
+CasinoNight_Jump7:
+	dc.b nRst, $06, nEb5, $0C, nC5, $02, nRst, $04
+	dc.b nFs5, nF5, $02, nRst, $04, nEb5, $02, nRst
+	dc.b $04, nC5, $08, nRst, $06, nG4, $02, nRst
+	dc.b $04, nBb4, nAb4, $02, nRst, $04, nG4, $02
+	dc.b nRst, $18
+	sVolEnv		v01
+	saVol		-$08
+	sCall		CasinoNight_Call3
+	saVol		$08
+	sVolEnv		vNone
+	saTranspose	$E8
+	sCall		CasinoNight_Call4
+	saTranspose	$18
+	saVol		$10
+	dc.b nC4, $18, nB3, $0C, nC4, $06, nB3, nA3
+	dc.b $18, nC4
+	saVol		-$10
+	dc.b nRst, $06, nE4, nRst, nE4, nRst, nF4, nRst
+	dc.b nF4
+	saVol		$18
+	dc.b nRst, nC4, nRst, nC4, nRst, nC4, nRst, nC4
+	saVol		-$20
+	dc.b nRst, nC4, nRst, nC4, nRst, nC4, $0C, $04
+	dc.b nC4, $02
+	saVol		$08
+	dc.b nRst, $30
+	sJump		CasinoNight_Jump7
+
+CasinoNight_PSG3:
+	sNoisePSG	snWhitePSG3
+	dc.b nRst, $18
+
+CasinoNight_Loop1:
+	sCall		CasinoNight_Call5
+	sLoop		$00, $07, CasinoNight_Loop1
+	dc.b $04, $02, $04, $02
+
+CasinoNight_Loop2:
+	sCall		CasinoNight_Call5
+	sLoop		$00, $1F, CasinoNight_Loop2
+	dc.b $04, $02, $04, $02
+
+CasinoNight_Loop3:
+	sCall		CasinoNight_Call5
+	sLoop		$00, $24, CasinoNight_Loop3
+	dc.b nRst, $30
+	sJump		CasinoNight_Loop1
+
+CasinoNight_Call5:
+	sVolEnv		v01
+	dc.b nHiHat, $06
+	sVolEnv		v02
+	saVol		-$08
+	dc.b $04
+	sVolEnv		v01
+	saVol		$08
+	dc.b $02
+	sRet
+
+CasinoNight_DAC1:
+	sStop
+
+CasinoNight_DAC2:
+	dc.b dKick, $06, dKick, dKick, $04, dSnare, $02, $06
+
+CasinoNight_Loop4:
+	dc.b dKick, $06, dSnare
+	sLoop		$00, $04, CasinoNight_Loop4
+	dc.b dKick, $06, dSnare, dSnare, $04, $06, $06, dKick
+	dc.b $02, $06, $06, dSnare
+
+CasinoNight_Loop5:
+	dc.b dKick, dSnare
+	sLoop		$00, $1C, CasinoNight_Loop5
+	dc.b dKick, dSnare, dSnare, $04, $06, $06, dKick, $02
+	dc.b $06, $06, dSnare
+
+CasinoNight_Loop6:
+	dc.b dKick, dSnare
+	sLoop		$00, $20, CasinoNight_Loop6
+	dc.b dKick, dSnare, dKick, dSnare, dKick, dSnare, dSnare, $04
+	dc.b $06, $02, nRst, $28, dSnare, $02, $06
+	sJump		CasinoNight_Loop4
