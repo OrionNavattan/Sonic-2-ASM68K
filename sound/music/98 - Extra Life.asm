@@ -1,5 +1,5 @@
 ExtraLife_Header:
-	smpsHeaderStartSong ;2
+	smpsHeaderStartSong 2
 	smpsHeaderVoice     ExtraLife_Voices
 	smpsHeaderChan      $06, $03
 	smpsHeaderTempo     $02, $CD

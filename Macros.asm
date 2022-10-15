@@ -15,11 +15,11 @@ ifnotarg	macros
 ; input: length to align to, value to use as padding (default is 0)
 ; ---------------------------------------------------------------------------
 
-align:		macro loc,length,value
+align:		macro length,value
 		ifarg \value
-		dcb.b (\length-(loc%\length))%\length,\value
+		dcb.b (\length-(offset(*)%\length))%\length,\value
 		else
-		dcb.b (\length-(loc%\length))%\length,0
+		dcb.b (\length-(offset(*)%\length))%\length,0
 		endc
 		endm
 		
@@ -96,7 +96,7 @@ popr:		macro
 ; ---------------------------------------------------------------------------
 	
     if AddSubOptimize
-	; if addsubOptimize, optimize these...
+	; if AddSubOptimize, optimize these...
 addi_:		macro	src,dest
 		addq.\0	\src,\dest
 	endm
@@ -558,10 +558,11 @@ endobj:		macro
 ; input: address of pointer target
 ; ---------------------------------------------------------------------------
 
-z80_ptr: macro addr
-		dc.w ((((\addr&$7FFF)+$8000)<<8)&$FF00)+(((\addr&$7FFF)+$8000)>>8)	
-		;dc.w (((\addr)<<8)&$FF00)|(((\addr)>>8)&$FF)|$80	
-	endm
+;z80_ptr: macro addr
+;		dc.w ((((\addr&$7FFF)+$8000)<<8)&$FF00)+(((\addr&$7FFF)+$8000)>>8)	
+;		dc.w ((\1<<8)&$FF00)|((\1>>8)&$7F)|$80
+
+;	endm
 ; ---------------------------------------------------------------------------
 ; Define and align the start of a sound bank
 ; ---------------------------------------------------------------------------
@@ -577,8 +578,8 @@ sound_bank_name = "\*"
 ; ---------------------------------------------------------------------------
 DebugSoundbanks = 0
 
-finish_bank macro *
-	if * > sound_bank_start+$8000
+finish_bank macro
+	if offset(*) > sound_bank_start+$8000
 		inform 3,"SoundBank %s must fit in $8000 bytes but was $%h. Try moving something to another bank.",sound_bank_name,*-sound_bank_start
 	elseif DebugSoundbanks<>0
 		inform 0,"SoundBank %s has $%h bytes free at end.",sound_bank_name,$8000+sound_bank_start-*

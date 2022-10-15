@@ -1,6 +1,8 @@
 ; ===========================================================================
 ; Created by Flamewing, based on S1SMPS2ASM version 1.1 by Marc Gordon (AKA Cinossu)
-; Converted to ASM68K by OrionNavattan, with bits from Natsumi
+; Ported to ASM68K by OrionNavattan, with bits from Natsumi
+; Only includes the functionality required to assemble SMPS2ASM V2 tracks for
+; Sonic 2's driver.
 ; ===========================================================================
 ; Permission to use, copy, modify, and/or distribute this software for any
 ; purpose with or without fee is hereby granted.
@@ -14,13 +16,13 @@
 ; OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ; ---------------------------------------------------------------------------
-; Macros to emulate a subset of the behavior of the enum commands in AS
+; Macros to emulate a subset of AS' enum functionality
 ; ---------------------------------------------------------------------------
 
 ; Emulate the enum counter increment setting in AS
-;enumconf: macro	
-;incr:	equ \1
-;		endm
+enumconf: macro	
+incr:	set \1
+	endm
 
 ; Emulate the enum and nextenum functions of AS
 enum:	macro	num,lable
@@ -28,35 +30,22 @@ enum:	macro	num,lable
 .num: =	num
 		rept narg-1
 \lable		set .num
-.num: =	.num+1
+.num: =	.num+incr
 		shift
 		endr
-		endm
-    
-    
-;SMPS2ASMVer	= 1
-
-; PSG conversion to S3/S&K/S3D drivers require a tone shift of 12 semi-tones.
-;psgdelta:	equ 12  
+	endm
 
 ; ---------------------------------------------------------------------------
-; Standard Octave Pitch Equates
-fmfq_B:		equ	606					; B
-fmfq_C:		equ	644					; C
-fmfq_Cs:	equ	683					; C#
-fmfq_D:		equ	723					; D
-fmfq_Ds:	equ	766					; D#
-fmfq_E:		equ	813					; E
-fmfq_F:		equ	860					; F
-fmfq_Fs:	equ	911					; F#
-fmfq_G:		equ	965					; G
-fmfq_Gs:	equ	1023					; G#
-fmfq_A:		equ	1084					; A
-fmfq_As:	equ	1148					; A#
-fmfq_B1:	equ	1216					; B1	; <- used in S3K, as opposed to fmfq_B. This one seems to be the correct behavior.
+
+		enumconf $C
+		enum $88,				smpsPitch10lo,smpsPitch09lo,smpsPitch08lo,smpsPitch07lo,smpsPitch06lo
+		enum smpsPitch06lo+$C,	smpsPitch05lo,smpsPitch04lo,smpsPitch03lo,smpsPitch02lo,smpsPitch01lo
+		enum $00,				smpsPitch00,smpsPitch01hi,smpsPitch02hi,smpsPitch03hi,smpsPitch04hi
+		enum smpsPitch04hi+$C,	smpsPitch05hi,smpsPitch06hi,smpsPitch07hi,smpsPitch08hi,smpsPitch09hi
+		enum smpsPitch09hi+$C,	smpsPitch10hi
 ; ---------------------------------------------------------------------------
 ; Note Equates
-		;enumconf 1
+		enumconf 1
 		enum $80,  nRst,nC0,nCs0,nD0,nEb0,nE0,nF0,nFs0,nG0,nAb0,nA0,nBb0,nB0
 		enum nB0+1,	nC1,nCs1,nD1,nEb1,nE1,nF1,nFs1,nG1,nAb1,nA1,nBb1,nB1
 		enum nB1+1,	nC2,nCs2,nD2,nEb2,nE2,nF2,nFs2,nG2,nAb2,nA2,nBb2,nB2
@@ -104,9 +93,6 @@ nMaxPSG				equ nA5
 ;			
 			; For conversions:
 ;			if SonicDriverVer>=5
-				;nextenum	fTone_01,fTone_02,fTone_03,fTone_04,fTone_05,fTone_06
-				;nextenum	fTone_07,fTone_08,fTone_09,fTone_0A,fTone_0B,fTone_0C
-				;nextenum	fTone_0D
 ;				enum sTone_27+1,fTone_01,fTone_02,fTone_03,fTone_04,fTone_05,fTone_06
 ;				enum fTone_06+1,fTone_07,fTone_08,fTone_09,fTone_0A,fTone_0B,fTone_0C
 ;				enum fTone_0C+1,fTone_0D
@@ -138,8 +124,7 @@ nMaxPSG				equ nA5
 ;				enum dQuickLooseSnare+1,dClick,dPowerKick,dQuickGlassCrash
 				
 ;			if (use_s3_samples<>0)|(use_sk_samples<>0)
-			
-				
+
 ;				enum dQuickGlassCrash+1,dGlassCrashSnare,dGlassCrash,dGlassCrashKick,dQuietGlassCrash
 ;				enum dQuietGlassCrash+1,dOddSnareKick,dKickExtraBass,dComeOn,dDanceSnare,dLooseKick
 ;				enum dLooseKick+1,		dModLooseKick,dWoo,dGo,dSnareGo,dPowerTom,dHiWoodBlock,dLowWoodBlock
@@ -180,30 +165,30 @@ cFM3:				equ $02
 cFM4:				equ $04
 cFM5:				equ $05
 
-
 ; ---------------------------------------------------------------------------
 ; Header Macros
 smpsHeaderStartSong macro ver
-songStart\@ equ offset(*)
+songStart set offset(*)
 	; This stripped-down version of SMPS2ASM only supports Sonic 2 source driver, 
 	; so halt assembly if a different source driver is detected.
 	if ver<>2
 		inform 3,"This version of SMPS2ASM only supports building music and sounds for Sonic 2."
+	endc	
 	endm
 
 ; Header - Set up Voice Location
 ; Common to music and SFX
 smpsHeaderVoice macro loc
-;	if offset(songStart)<>offset(*)
-;		inform 3,"smpsHeaderStartSong is missing."
-;	endc
+	if offset(songStart)<>offset(*)
+		inform 3,"smpsHeaderStartSong is missing."
+	endc
 		z80_ptr \loc
 	endm
 
 smpsHeaderVoiceNull macro
-;	if songStart<>*
-;		fatal "Missing smpsHeaderStartSong"
-;	endif
+	if songStart<>offset(*)
+		fatal "Missing smpsHeaderStartSong"
+	endif
 	dc.w	$0000
 	endm
 
@@ -534,5 +519,4 @@ vcTLMask1 = $80
 		dc.b	vcD2R4                 ,vcD2R2                 ,vcD2R3                 ,vcD2R1
 		dc.b	(vcDL4<<4)+vcRR4       ,(vcDL2<<4)+vcRR2       ,(vcDL3<<4)+vcRR3       ,(vcDL1<<4)+vcRR1
 		dc.b	vcTL4|vcTLMask4        ,vcTL2|vcTLMask2        ,vcTL3|vcTLMask3        ,vcTL1|vcTLMask1
-	endm	
-			
+	endm

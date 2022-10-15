@@ -70,13 +70,13 @@ RelativeLea = (0|Revision<>2|AllOptimizations)
 		include "Constants.asm"
 		include "RAM Addresses.asm"
 		include "sound/Sound Equates.asm"
-		include "sound/SMPS2ASM 68K.asm"
+		include "sound/SMPS2ASM.asm"
 		
 
 
 ROM_Start:
    if offset(*) <> 0
-		inform 3,"ROM_Start was $%h but it should be 0.",ROM_Start 
+		inform 3,"ROM_Start was $%h but it should be 0. Make sure you haven't accidentally defined code in the equates and macro files.",ROM_Start 
    endc
 Vectors:						
 		dc.l v_stack_pointer	; Initial stack pointer value
@@ -3952,7 +3952,7 @@ palp:	macro paladdress,altid,ramaddress,colors
 		id_\paladdress:	equ (offset(*)-PalPointers)/8
 	endif	
 		dc.l \paladdress
-		dc.w \ramaddress,(\colours>>1)-1
+		dc.w \ramaddress,(\colors>>1)-1
 	endm	
 		
 		
@@ -3992,7 +3992,7 @@ PalPointers:
 		;dc.w $FB20
 		;dc.w $17
 		
-		palp Pal_EHZ,Pal_EHZ2,v_pal_dry_line2,$30
+		palp Pal_EHZ,Pal_EHZ3,v_pal_dry_line2,$30
 		;dc.l Pal_EHZ
 		;dc.w $FB20
 		;dc.w $17
@@ -18526,7 +18526,7 @@ loc_DC28:
 		beq.s	loc_DC40
 		moveq	#-$10,d4
 		moveq	#0,d5
-		bsr.w	Calc_VRAM_Pos_Absolute_X
+		bsr.w	Calc_VRAM_Pos_AbsoluteX
 		moveq	#-$10,d4
 		moveq	#0,d5
 		moveq	#$1F,d6
@@ -18537,7 +18537,7 @@ loc_DC40:
 		beq.s	loc_DC5C
 		move.w	#$E0,d4	; '='
 		moveq	#0,d5
-		bsr.w	Calc_VRAM_Pos_Absolute_X
+		bsr.w	Calc_VRAM_Pos_AbsoluteX
 		move.w	#$E0,d4	; '='
 		moveq	#0,d5
 		moveq	#$1F,d6
@@ -18666,7 +18666,7 @@ loc_DD0A:
 loc_DD3E:				
 		moveq	#0,d5
 		movem.l	d4-d5,-(sp)
-		bsr.w	Calc_VRAM_Pos_Absolute_X
+		bsr.w	Calc_VRAM_Pos_AbsoluteX
 		movem.l	(sp)+,d4-d5
 		moveq	#$1F,d6
 		bsr.w	loc_DF96
@@ -19455,7 +19455,7 @@ Calc_VRAM_Pos_P2:
 
 ; ===========================================================================
 
-: ;loc_E300: DrawInitialBG:
+;loc_E300: DrawInitialBG:
 DrawTilesAtStart:				
 		lea	(vdp_control_port).l,a5
 		lea	(vdp_data_port).l,a6
@@ -19529,7 +19529,7 @@ DrawTilesAtStart_Dynamic:
 		moveq	#-$10,d4
 		moveq	#$F,d6
 
-	.loop:				
+	.loopp2:				
 		movem.l	d4-d6,-(sp)
 		moveq	#0,d5
 		move.w	d4,d1
@@ -19542,7 +19542,7 @@ DrawTilesAtStart_Dynamic:
 		enable_ints
 		movem.l	(sp)+,d4-d6
 		addi.w	#$10,d4
-		dbf	d6,.loop
+		dbf	d6,.loopp2
 		rts	
 ; ===========================================================================
 
@@ -45168,7 +45168,7 @@ JmpTo3_MarkObjGone:
 JmpTo8_Adjust2PArtPointer:				
 		jmp	Adjust2PArtPointer
 		
-		align offset(*),4
+		align 4
 		
     endc
 		
@@ -92675,7 +92675,7 @@ DbgSCZ_42522:	dc.w $D
 
     if ~RemoveJmpTos
 JmpTo66_Adjust2PArtPointer:				
-		jmp	(Adjust2PArtPointer.l
+		jmp	(Adjust2PArtPointer).l
 		align 4	
 	endc
 
@@ -92706,95 +92706,41 @@ JmpTo66_Adjust2PArtPointer:
 ; although the 128x128 mappings do affect the actual level layout and collision)
 ; ---------------------------------------------------------------------------
 
-lhead:		macro plc1,lvlgfx,plc2,sixteen,twofivesix,music,pal
-		dc.l (plc1<<24)+lvlgfx
-		dc.l (plc2<<24)+sixteen
-		dc.l twofivesix
-		dc.b 0, music, pal, pal
-		endm
-		
+lhead:	macro plc1,plc2,palette,art,map16x16,map128x128
+		dc.l (plc1<<24)+art
+		dc.l (plc2<<24)+map16x16
+		dc.l (palette<<24)|map128x128
+	endm
 		
 ; LevelArtPointers:		
 LevelHeaders:	
- 					plc1,plc2,palette,art,map16x16,map128x128
-	levartptrs PLCID_Ehz1,     PLCID_Ehz2,      PalID_EHZ,  ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   0 ; EHZ  ; EMERALD HILL ZONE
-	levartptrs PLCID_Miles1up, PLCID_MilesLife, PalID_EHZ2, ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   1 ; LEV1 ; LEVEL 1 (UNUSED)
-	levartptrs PLCID_Tails1up, PLCID_TailsLife, PalID_WZ,   ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   2 ; LEV2 ; LEVEL 2 (UNUSED)
-	levartptrs PLCID_Unused1,  PLCID_Unused2,   PalID_EHZ3, ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   3 ; LEV3 ; LEVEL 3 (UNUSED)
-	levartptrs PLCID_Mtz1,     PLCID_Mtz2,      PalID_MTZ,  ArtKos_MTZ, BM16_MTZ, BM128_MTZ ;   4 ; MTZ  ; METROPOLIS ZONE ACTS 1 & 2
-	levartptrs PLCID_Mtz1,     PLCID_Mtz2,      PalID_MTZ,  ArtKos_MTZ, BM16_MTZ, BM128_MTZ ;   5 ; MTZ3 ; METROPOLIS ZONE ACT 3
-	levartptrs PLCID_Wfz1,     PLCID_Wfz2,      PalID_WFZ,  ArtKos_SCZ, BM16_WFZ, BM128_WFZ ;   6 ; WFZ  ; WING FORTRESS ZONE
-	levartptrs PLCID_Htz1,     PLCID_Htz2,      PalID_HTZ,  ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   7 ; HTZ  ; HILL TOP ZONE
-	levartptrs PLCID_Hpz1,     PLCID_Hpz2,      PalID_HPZ,  ArtKos_HPZ, BM16_HPZ, BM128_HPZ ;   8 ; HPZ  ; HIDDEN PALACE ZONE (UNUSED)
-	levartptrs PLCID_Unused3,  PLCID_Unused4,   PalID_EHZ4, ArtKos_EHZ, BM16_EHZ, BM128_EHZ ;   9 ; LEV9 ; LEVEL 9 (UNUSED)
-	levartptrs PLCID_Ooz1,     PLCID_Ooz2,      PalID_OOZ,  ArtKos_OOZ, BM16_OOZ, BM128_OOZ ;  $A ; OOZ  ; OIL OCEAN ZONE
-	levartptrs PLCID_Mcz1,     PLCID_Mcz2,      PalID_MCZ,  ArtKos_MCZ, BM16_MCZ, BM128_MCZ ;  $B ; MCZ  ; MYSTIC CAVE ZONE
-	levartptrs PLCID_Cnz1,     PLCID_Cnz2,      PalID_CNZ,  ArtKos_CNZ, BM16_CNZ, BM128_CNZ ;  $C ; CNZ  ; CASINO NIGHT ZONE
-	levartptrs PLCID_Cpz1,     PLCID_Cpz2,      PalID_CPZ,  ArtKos_CPZ, BM16_CPZ, BM128_CPZ ;  $D ; CPZ  ; CHEMICAL PLANT ZONE
-	levartptrs PLCID_Dez1,     PLCID_Dez2,      PalID_DEZ,  ArtKos_CPZ, BM16_CPZ, BM128_CPZ ;  $E ; DEZ  ; DEATH EGG ZONE
-	levartptrs PLCID_Arz1,     PLCID_Arz2,      PalID_ARZ,  ArtKos_ARZ, BM16_ARZ, BM128_ARZ ;  $F ; ARZ  ; AQUATIC RUIN ZONE
-	levartptrs PLCID_Scz1,     PLCID_Scz2,      PalID_SCZ,  ArtKos_SCZ, BM16_WFZ, BM128_WFZ ; $10 ; SCZ  ; SKY CHASE ZONE
 	
-		lhead id_PLC_EHZ1, id_PLC_EHZ2, id_Pal_EHZ, Kos_EHZ, BM_16_EHZ, BM_128_EHZ ; Emerald Hill
+		lhead id_PLC_EHZ1,		id_PLC_EHZ2,		id_Pal_EHZ,		Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   0 ; Emerald Hill
+		lhead id_PLC_Miles1Up,	id_PLC_MilesLife,	id_Pal_EHZ2,	Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   1 ; Level 1; unused	
+		lhead id_PLC_Tails1Up,	id_PLC_TailsLife,	id_Pal_WZ,		Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   2 ; Level 2; unused
+		lhead id_PLC_Unused1,	id_PLC_Unused2,		id_Pal_EHZ3,	Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   3 ; Level 3; unused
+		lhead id_PLC_MTZ1,		id_PLC_MTZ2,		id_Pal_MTZ,		Kos_MTZ,	BM16_MTZ,	BM128_MTZ ;   4 ; Metropolis Acts 1 & 2
+		lhead id_PLC_MTZ1,		id_PLC_MTZ2,		id_Pal_MTZ,		Kos_MTZ,	BM16_MTZ,	BM128_MTZ ;   5 ; Metropolis Act 3
+		lhead id_PLC_WFZ1,		id_PLC_WFZ2,		id_Pal_WFZ,		Kos_SCZ,	BM16_WFZ,	BM128_WFZ ;   6 ; Wing Fortress
+		lhead id_PLC_HTZ1,		id_PLC_HTZ2,		id_Pal_HTZ,		Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   7 ; Hill Top; art is patched later by LoadZoneTiles
+		lhead id_PLC_HPZ1,		id_PLC_HPZ2,		id_Pal_HPZ,		Kos_HPZ,	BM16_HPZ,	BM128_HPZ ;   8 ; Hidden Palace; unused
+		lhead id_PLC_Unused3,	id_PLC_Unused4,		id_Pal_EHZ4,	Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   9 ; Level 9; unused
+		lhead id_PLC_OOZ1,		id_PLC_OOZ2,		id_Pal_OOZ,		Kos_OOZ,	BM16_OOZ,	BM128_OOZ ;  $A ; Oil Ocean
+		lhead id_PLC_MCZ1,		id_PLC_MCZ2,		id_Pal_MCZ,		Kos_MCZ,	BM16_MCZ,	BM128_MCZ ;  $B ; Mystic Cave
+		lhead id_PLC_CNZ1,		id_PLC_CnZ2,		id_Pal_CNZ,		Kos_CNZ,	BM16_CNZ,	BM128_CNZ ;  $C ; Casino Night
+		lhead id_PLC_CPZ1,		id_PLC_CPZ2,		id_Pal_CPZ,		Kos_CPZ,	BM16_CPZ,	BM128_CPZ ;  $D ; Chemical Plant
+		lhead id_PLC_DEZ1,		id_PLC_DEZ2,		id_Pal_DEZ,		Kos_CPZ,	BM16_CPZ,	BM128_CPZ ;  $E ; Death Egg;  art is patched later by LoadZoneTiles
+		lhead id_PLC_ARZ1,		id_PLC_ARZ2,		id_Pal_ARZ,		Kos_ARZ,	BM16_ARZ,	BM128_ARZ ;  $F ; Aquatic Ruin
+		lhead id_PLC_SCZ1,		id_PLC_SCZ2,		id_Pal_SCZ,		Kos_SCZ,	BM16_WFZ,	BM128_WFZ ; $10 ; Sky Chase
+		
+		
 
-
-
-		dc.l (EHZ_PLC1_MLLB<<24)|EHZ_Art_MLLB
-		dc.l (EHZ_PLC2_MLLB<<24)|EHZ_16x16_MLLB
-		dc.l (EHZ_Palette_MLLB<<24)|EHZ_128x128_MLLB
-		dc.l (Lev1_PLC1_MLLB<<24)|Lev1_Art_MLLB
-		dc.l (Lev1_PLC2_MLLB<<24)|Lev1_16x16_MLLB
-		dc.l (Lev1_Palette_MLLB<<24)|Lev1_128x128_MLLB
-		dc.l (Lev2_PLC1_MLLB<<24)|Lev2_Art_MLLB
-		dc.l (Lev2_PLC2_MLLB<<24)|Lev2_16x16_MLLB
-		dc.l (Lev2_Palette_MLLB<<24)|Lev2_128x128_MLLB
-		dc.l (Lev3_PLC1_MLLB<<24)|Lev3_Art_MLLB
-		dc.l (Lev3_PLC2_MLLB<<24)|Lev3_16x16_MLLB
-		dc.l (Lev3_Palette_MLLB<<24)|Lev3_128x128_MLLB
-		dc.l (MTZ_PLC1_MLLB<<24)|MTZ_Art_MLLB
-		dc.l (MTZ_PLC2_MLLB<<24)|MTZ_16x16_MLLB
-		dc.l (MTZ_Palette_MLLB<<24)|MTZ_128x128_MLLB
-		dc.l (MTZ3_PLC1_MLLB<<24)|MTZ3_Art_MLLB
-		dc.l (MTZ3_PLC2_MLLB<<24)|MTZ3_16x16_MLLB
-		dc.l (MTZ3_Palette_MLLB<<24)|MTZ3_128x128_MLLB
-		dc.l (WFZ_PLC1_MLLB<<24)|WFZ_Art_MLLB
-		dc.l (WFZ_PLC2_MLLB<<24)|WFZ_16x16_MLLB
-		dc.l (WFZ_Palette_MLLB<<24)|WFZ_128x128_MLLB
-		dc.l (HTZ_PLC1_MLLB<<24)|HTZ_Art_MLLB
-		dc.l (HTZ_PLC2_MLLB<<24)|HTZ_16x16_MLLB
-		dc.l (HTZ_Palette_MLLB<<24)|HTZ_128x128_MLLB
-		dc.l (HPZ_PLC1_MLLB<<24)|HPZ_Art_MLLB
-		dc.l (HPZ_PLC2_MLLB<<24)|HPZ_16x16_MLLB
-		dc.l (HPZ_Palette_MLLB<<24)|HPZ_128x128_MLLB
-		dc.l (Lev9_PLC1_MLLB<<24)|Lev9_Art_MLLB
-		dc.l (Lev9_PLC2_MLLB<<24)|Lev9_16x16_MLLB
-		dc.l (Lev9_Palette_MLLB<<24)|Lev9_128x128_MLLB
-		dc.l (OOZ_PLC1_MLLB<<24)|OOZ_Art_MLLB
-		dc.l (OOZ_PLC2_MLLB<<24)|OOZ_16x16_MLLB
-		dc.l (OOZ_Palette_MLLB<<24)|OOZ_128x128_MLLB
-		dc.l (MCZ_PLC1_MLLB<<24)|MCZ_Art_MLLB
-		dc.l (MCZ_PLC2_MLLB<<24)|MCZ_16x16_MLLB
-		dc.l (MCZ_Palette_MLLB<<24)|MCZ_128x128_MLLB
-		dc.l (CNZ_PLC1_MLLB<<24)|CNZ_Art_MLLB
-		dc.l (CNZ_PLC2_MLLB<<24)|CNZ_16x16_MLLB
-		dc.l (CNZ_Palette_MLLB<<24)|CNZ_128x128_MLLB
-		dc.l (CPZ_PLC1_MLLB<<24)|CPZ_Art_MLLB
-		dc.l (CPZ_PLC2_MLLB<<24)|CPZ_16x16_MLLB
-		dc.l (CPZ_Palette_MLLB<<24)|CPZ_128x128_MLLB
-		dc.l (DEZ_PLC1_MLLB<<24)|DEZ_Art_MLLB
-		dc.l (DEZ_PLC2_MLLB<<24)|DEZ_16x16_MLLB
-		dc.l (DEZ_Palette_MLLB<<24)|DEZ_128x128_MLLB
-		dc.l (ARZ_PLC1_MLLB<<24)|ARZ_Art_MLLB
-		dc.l (ARZ_PLC2_MLLB<<24)|ARZ_16x16_MLLB
-		dc.l (ARZ_Palette_MLLB<<24)|ARZ_128x128_MLLB
-		dc.l (SCZ_PLC1_MLLB<<24)|SCZ_Art_MLLB
-		dc.l (SCZ_PLC2_MLLB<<24)|SCZ_16x16_MLLB
-		dc.l (SCZ_Palette_MLLB<<24)|SCZ_128x128_MLLB
 ;---------------------------------------------------------------------------------------
 ;Offset	index of pattern load cue's
 ;---------------------------------------------------------------------------------------
-PatternLoadCues:	dc.w PLC_0-PatternLoadCues	; 0 
-					
+PatternLoadCues:	
+
+		dc.w PLC_0-PatternLoadCues	; 0 					
 		dc.w PLC_1-PatternLoadCues	; 1
 		dc.w PLC_2-PatternLoadCues	; 2
 		dc.w PLC_3-PatternLoadCues	; 3
@@ -93992,7 +93938,7 @@ Art_Waterfall3:	incbin	"art/uncompressed/ARZ Waterfalls - 3.bin"
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
 ; Patterns for Sonic  ; ArtUnc_50000:
-		align offset(*),$20
+		align $20
 Art_Sonic:	incbin	"art/uncompressed/Sonic.bin"
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
@@ -94986,7 +94932,7 @@ BM16_EHZ:		incbin	"mappings/16x16/EHZ.bin"
 ;-----------------------------------------------------------------------------------
 ;EHZ/HTZ main level patterns (Kosinski compression)
 ; ArtKoz_95C24:
-Koz_EHZ:		incbin	"art/kosinski/EHZ_HTZ.bin"
+Kos_EHZ:		incbin	"art/kosinski/EHZ_HTZ.bin"
 ;-----------------------------------------------------------------------------------
 ;HTZ 16x16 block mappings (Kosinski compression)
 BM16_HTZ:		incbin	"mappings/16x16/HTZ.bin"
@@ -95048,7 +94994,7 @@ BM128_CNZ:		incbin	"mappings/128x128/CNZ.bin"
 BM16_CPZ:		incbin	"mappings/16x16/CPZ_DEZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CPZ/DEZ main level patterns (Kosinski compression)
-Kos_CPZ_DEZ:		incbin	"art/kosinski/CPZ_DEZ.bin"
+Kos_CPZ:		incbin	"art/kosinski/CPZ_DEZ.bin"
 ;-----------------------------------------------------------------------------------
 ;CPZ/DEZ 128x128 block mappings	(Kosinski compression)
 BM128_CPZ:		incbin	"mappings/128x128/CPZ_DEZ.bin"
@@ -95382,7 +95328,7 @@ Koz_SpecialObjectLocations:		incbin	"misc/Special Stage Object Locations.kos"
 ; --------------------------------------------------------------------------------------
 ; Filler (free space) (unnecessary; could be replaced with "even")
 ; --------------------------------------------------------------------------------------
-		align offset(*),$100
+		align $100
 ; --------------------------------------------------------------------------------------
 ; Offset index of ring locations
 ; --------------------------------------------------------------------------------------
@@ -95459,7 +95405,7 @@ Rings_SCZ_2:	incbin	"level/rings/SCZ 2.bin"	; null
 ; --------------------------------------------------------------------------------------
 ; Filler (free space)
 ; --------------------------------------------------------------------------------------
-		align offset(*),$200
+		align $200
 ; --------------------------------------------------------------------------------------
 ; Offset index of sprite locations
 ; --------------------------------------------------------------------------------------
@@ -95577,7 +95523,7 @@ ObjPos_End:
 ; --------------------------------------------------------------------------------------
 ; Filler (free space) (unnecessary; could be replaced with "even")
 ; --------------------------------------------------------------------------------------
-		align offset(*),$1000
+		align $1000
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to load the sound driver
@@ -95615,7 +95561,7 @@ SoundDriverLoad:
 
 ;sub_EC04A:
 DecompressSoundDriver:				
-		lea	Snd_Driver(pc),a6
+		lea	SoundDriver(pc),a6
  ; WARNING: SndDriverCompress.exe needs a source code edit if you rename this label
 movewZ80CompSize:		move.w	#$0F64,d7 ; patched after compression by SndDriverCompress.exe, since the compressed size is impossible to know beforehand
 		moveq	#0,d6	; The decompressor knows it's run out of descriptor bits when it starts reading 0's in bit 8
@@ -95712,23 +95658,27 @@ SaxDec_GetByte:
 ; S2 sound driver (Saxman compression)
 ; --------------------------------------------------------------------------------------
 
-;		pushs
-;SoundDriver:		
-;		section	org(0),file("sound/Sound Driver.bin")	; new section for the sound driver
+;SoundDriver:	
+;		pushs	; save current section info	
+
+;Z80_Code:	section	org(0),file("sound/Sound Driver.bin")	; new section for the sound driver
 ;		cpu Z80
 
-Snd_Driver:		include "sound/Sound Driver Raw.asm" ; precompressed sound driver in dc.b form, copied from Nemesis text disassembly
-;		pops ; end sound driver section
-
-;MergeCode:
-;		pushs	
-;		section org(0), file("sound/MergeData.dat")	; data file used by S2 Driver Compress to merge things
-;		dc.l offset(Snd_Driver),Z80_Space,movewZ80CompSize+2	; start location of compressed sound driver, space reserved for sound driver, and location of data to patch in Saxman decompressor
-;		pops
+;		include "sound/Sound Driver.asm" ; include the actual sound driver code
+		
+;		cpu 68000
+;		pops	; return to main section...
+;		pushs	; ...and save section info again	
+		
+;MergeCode: section org(0), file("sound/MergeData.dat")	; make data file for hypothetical S2 Driver Compress
+;		dc.l offset(SoundDriver),Z80_Space,movewZ80CompSize+2 ; start location of compressed sound driver; space reserved for sound driver; location of data to patch in the Saxman decompressor
+;		pops	; return to main section for good
 ;		ds.b Z80_Space	; reserve space for the compressed sound driver
 ;		even
-End_Snd_Driver:
-;		pushs
+
+
+
+SoundDriver:	include "sound/Sound Driver Raw.asm" ; precompressed sound driver in dc.b form, copied from Nemesis text disassembly
 
 
 ; ----------------------------------------------------------------------------------
@@ -95886,7 +95836,7 @@ Snd_Sega:		incbin	"sound/PCM/SEGA.pcm"
 ; ------------------------------------------------------------------------------
 ; Music	pointers
 ; ------------------------------------------------------------------------------
-		align offset(*),$8000
+		align $8000
 
 						
 MusicPoint2:	dc.w ((((Mus_CNZ_2P&$7FFF)+$8000)<<8)&$FF00)+(((Mus_CNZ_2P&$7FFF)+$8000)>>8)
