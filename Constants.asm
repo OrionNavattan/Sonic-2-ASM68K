@@ -283,8 +283,8 @@ ost_col_type:		rs.b 1					; $20 ; non-player objects; collision response type - 
 ost_col_property:	rs.b 1					; $21 ; non-player objects;  collision extra property
 ost_status:			rs.b 1					; $22 ; most objects; bitfield indicating orientation or mode
 	status_xflip_bit:	equ 0
-	status_yflip_bit:	equ 1
-	status_air_bit:		equ 1
+	status_yflip_bit:	equ 1	; only non-player objects
+	status_air_bit:		equ 1	; only Sonic and Tails
 	status_jump_bit:	equ 2
 	status_platform_bit:	equ 3
 	status_rolljump_bit:	equ 4
@@ -392,7 +392,7 @@ ost_lrb_solid_bit:			rs.w 1		; $3F ; ; the bit to check for left/right/bottom so
 ost_boss_subtype: 		equ $A
 ost_boss_flash_time: 	equ $14
 ost_boss_sine_count:	equ $1A
-ost_boss_routine		equ $26	;angle
+ost_boss_routine		equ $26	; angle
 ost_boss_defeated		equ $2C
 ost_boss_hitcount2		equ $32
 ost_boss_hurt_sonic		equ $38	; flag set by collision response routine when Sonic has just been hurt (by boss?)
@@ -412,8 +412,8 @@ ost_ss_z_pos: 			equ $34
 ost_ss_hurt_timer: 		equ $36
 ost_ss_slide_timer: 	equ $37
 ost_ss_parent: 			equ $38
-ost_ss_rings_base:		equ $3C	; word
-ost_ss_rings_hundreds: 	equ $3C
+ost_ss_rings_base:		equ $3C	; read as a word
+ost_ss_rings_hundreds: 	equ $3C ; read as a byte if we only want hundreds
 ost_ss_rings_tens: 		equ $3D
 ost_ss_rings_units: 	equ $3E
 ost_ss_last_angle_index: equ $3F
@@ -421,5 +421,5 @@ ost_ss_last_angle_index: equ $3F
 ; ---------------------------------------------------------------------------
 ; Additional object variables
 ; ---------------------------------------------------------------------------
-;ost_parent1: 	equ $3E ; Address of object that spawned this one
-;ost_parent2:	equ $2C ; Same as above
+ost_parent1: 	equ $3E ; address of object that spawned this one
+ost_parent2:	equ $2C ; same as above

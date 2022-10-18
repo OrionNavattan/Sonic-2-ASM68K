@@ -1087,13 +1087,19 @@ Credits_Loop39:
 	smpsLoop            $00, $0A, Credits_Loop39
 	dc.b	nRst, $60
 	smpsPSGvoice        $00
+	
+	if FixBugs
+	smpsAlterPitch      $0C
+	else
 	; This is wrong: it should convert from EHZ 2P's PSG2 transpose ($D0)
 	; to CNZ's PSG2 transpose ($DC), but instead of adding $C, it subtracts
 	; $C, causing the note to be too low and underflow the sound driver's
 	; frequency table, producing invalid notes.
 	smpsAlterPitch      $F4
+	endc
 	smpsPSGAlterVol     $FF
 	smpsAlterPitch      $E8
+	
 	dc.b	nRst, $60
 	smpsCall            Credits_Call11
 	smpsAlterPitch      $18
@@ -1106,9 +1112,13 @@ Credits_Loop39:
 	smpsPSGAlterVol     $FC
 	dc.b	nRst, nC4, nRst, nC4, nRst, nC4, $18, $08, nC4, $04
 	smpsPSGAlterVol     $01
+	
+	if -FixBugs
 	; If the above bug is fixed, then this line needs removing (the track
 	; will already be two octaves higher).
 	smpsAlterPitch      $18
+	endc
+	
 	smpsPSGvoice        fTone_05
 	smpsAlterNote       $01
 	dc.b	nRst, $60, nRst, nRst, nRst, nRst, nRst, nRst, $0C, nE6, $06, nRst

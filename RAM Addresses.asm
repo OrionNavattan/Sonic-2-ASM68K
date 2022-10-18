@@ -6,7 +6,6 @@
 		opt	ae+	; enable auto evens
 		
 
-; Major data blocks:
 						rsset $FFFF0000
 RAM_Start:				equ __rs
 v_128x128_tiles:		rs.b $8000 ;equ   $FFFF0000 ; 128x128 tile mappings ($8000 bytes)
@@ -55,8 +54,8 @@ v_ost_all:          rs.b sizeof_ost*countof_ost    ; $FFFFB000 ; object variable
 
 v_ost_level_only:          rs.b sizeof_ost*countof_ost_level_only ; $FFFFD000       
 
-    v_ost_lo_tails_tails:      equ v_ost_level_only ; $FFFFD040
-    v_ost_lo_supersonicstars:  equ v_ost_level_only+sizeof_ost
+    v_ost_lo_tails_tails:      equ v_ost_level_only ; $FFFFD000
+    v_ost_lo_supersonicstars:  equ v_ost_level_only+sizeof_ost ; $FFFFD040
     v_ost_lo_sonic_breathingbubbles:	equ v_ost_level_only+(sizeof_ost*2)	; $FFFFD080 ;  Sonic's breathing bubbles 
     v_ost_lo_tails_breathingbubbles:    equ v_ost_level_only+(sizeof_ost*3) ; $FFFFD0C0 ; Tails' breathing bubbles
     v_ost_lo_sonic_dust:    equ v_ost_level_only+(sizeof_ost*4) ; $FFFFD100 ; Sonic's spin dash dust
@@ -211,8 +210,8 @@ f_screen_shake: 			rs.b 1 ; $FFFFEEBD ; flag to activate screen shaking code (if
 f_disable_horiz_scroll:			rs.b 1 ; $FFFFEEBE ; flag to disable horizontal scrolling for entire screen in 1P or top half in 2P
 f_disable_horiz_scroll_p2:		rs.b 1 ; $FFFFEEBF ; flag to disable horizontal scrolling for bottom half of screen in 2P 
 
-				rs.l 1 ; $FFFFEEC0 ; unused other than a single write in LevelSizeLoad
-				rs.w 1 ; $FFFFEEC4 ; same as above. The write being a long also overwrites the address below
+unk_eec0:				rs.l 1 ; $FFFFEEC0 ; unused other than a single write in LevelSizeLoad
+unk_eec4:				rs.w 1 ; $FFFFEEC4 ; same as above. The write being a long also overwrites the address below
 
 v_boundary_bottom_next: 	rs.w 1 ; $FFFFEEC6 ; bottom level boundary, next
 
@@ -229,7 +228,7 @@ v_sonic_pos_tracker_num:		rs.w 1	; $FFFFEED2 ; current location within Sonic's p
 				rsblockend horiz_scroll_delay
 
 				rsblock horiz_scroll_delay_p2 ; required for teleport swap table (Camera_Delay_P2)
-v_hscroll_delay_val_P2:	rs.w 1	; $FFFFEED4 ; same as above, but for Tails in 2P
+v_hscroll_delay_val_p2:	rs.w 1	; $FFFFEED4 ; same as above, but for Tails in 2P
 v_tails_pos_tracker_num:		rs.w 1	; $FFFFEED6 ; current location within Tails' position tracking data
 				rsblockend horiz_scroll_delay_p2
 
@@ -341,15 +340,15 @@ f_credits_trigger:			rs.w 1 ; cleared as a word a couple times
 f_ending_palcycle:			equ __rs-1 ; $FFFFF661
 
 ; Following three variables share an address:
-v_segascr_vblank_subrout:
+v_segascr_vblank_sub:
 v_ending_vint_subrout:
 v_wfz_bg_y_speed:			rs.w 1  ; $FFFFF662
 
-							rs.w 1	; $FFFFF664-$FFFFF665 ; unused
+							rs.w 1 ; $FFFFF664-$FFFFF665 ; unused
 v_palcycle_time2:			rs.w 1 ; $FFFFF666
 v_palcycle_time3:			rs.w 1 ; $FFFFF668
 
-v_joypad2_hold      		rs.w 1 ; $FFFFF66A ; joypad 2 input - held, can be overridden by demos
+v_joypad2_hold:      		rs.w 1 ; $FFFFF66A ; joypad 2 input - held, can be overridden by demos
 v_joypad2_press:		    equ __rs-1  ; $FFFFF66B ; joypad 2 input - pressed, can be overridden by demos
 v_sonic_look_delay_counter:	rs.w 1 ; $FFFFF66C ; timer for delay until Sonic looks up while up is pressed
 v_tails_look_delay_counter:	rs.w 1 ; $FFFFF66E ; timer for delay until Tails looks up while up is pressed
@@ -434,7 +433,7 @@ v_tornado_y_vel:			rs.w 1 ; $FFFFF738 ; y_vel of the Tornado in SCZ
 v_boss_spawn_delay:			rs.b 1 ; $FFFFF73A ; timer for delay until boss spawns	
 							rs.b 4 ; $FFFFF73B-$FFFFF73E; unused
 v_boss_collision_routine:	rs.b 1 ; $FFFFF73F
-v_boss_anin_array:			rs.b $10 ; $FFFFF740 ; up to $10 bytes; 2 bytes per entry
+v_boss_anim_array:			rs.b $10 ; $FFFFF740 ; up to $10 bytes; 2 bytes per entry
 v_ending_routine:				   ; $FFFFF750 ; which version of the ending cutscene to play
 v_boss_x_pos:				rs.l 1 ; $FFFFF750 ; x_pos of current boss							
 								   ; $FFFFF752 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
@@ -499,7 +498,7 @@ v_mtz_platform_cog_x_pos:	rs.w 1 ; $FFFFF7B0 ; x_pos of moving MTZ platform for 
 v_mtz_cylinder_angle_sonic:		rs.b 1 ; $FFFFF7B2 ; angle of Sonic while in MTZ rotating mesh cylinders
 v_mtz_cylinder_angle_tails:		rs.b 1 ; $FFFFF7B3 ; angle of Tails while in MTZ rotating mesh cylinders
 							rs.b $A ; $FFFFF7B4-$FFFFF7BD ; unused
-v_giantring_gfx_offset:		rs.w 1 ; $FFFFF7BC ; unused leftover from Sonic 1 ; pointer to next frame of giant ring animation
+v_giantring_gfx_offset:		rs.w 1 ; $FFFFF7BE ; unused leftover from Sonic 1 ; pointer to next frame of giant ring animation
 							rs.b 7 ; $FFFFF7C0-$FFFFF7C6 ; unused
 
 f_wind_tunnel_now:			rs.b 1 ; $FFFFF7C7 ; flag to indicate Sonic is in a wind tunnel
@@ -507,7 +506,7 @@ f_wind_tunnel_now:			rs.b 1 ; $FFFFF7C7 ; flag to indicate Sonic is in a wind tu
 f_wind_tunnel_disable:		rs.b 1 ; $FFFFF7C9 ; flag indicating Sonic is holding onto something in a wind tunnel
 							rs.b 2 ; $FFFFF7CA-$FFFFF7CB ; unused
 f_lock_controls:			rs.b 1 ; $FFFFF7CC ; flag set to lock player 1 controls
-f_unused_ss_flag:			rs.b 1 ; $FFFFF7CD ; flag set by 2P results screen and star post, but never read
+f_unused_ss_flag:			rs.b 1 ; $FFFFF7CD ; set by 2P results screen and star post, but never read
 							rs.b 1 ; $FFFFF7CE ; unused
 f_lock_controls_p2:			rs.b 1 ; $FFFFF7CF ; flag set to lock player 2 controls
 v_enemy_combo:				rs.w 1 ; $FFFFF7D0 ; number of enemies/blocks broken in a row, times 2
@@ -547,7 +546,7 @@ v_pal_dry_next_line4:		equ v_pal_dry_next+(sizeof_pal*3) ; $FFFFFBE0
 
 ;Object_Respawn_Table:
 v_respawn_list:				rs.b 2 ; $FFFFFC00 ; respawn table indices of the next objects when moving left or right for the first player
-v_respawn_iist_end:			; required by clear_ram
+v_respawn_list_end:			; required by clear_ram
 v_respawn_data:				rs.b $BE ; $FFFFFC02	; For stock S2, $80 is enough
 v_respawn_data_end:			; required by clear_ram
 
@@ -560,7 +559,7 @@ f_restart:					rs.w 1 ; $FFFFFE02 ; flag set to end/restart level(2 bytes)
 v_frame_counter:			rs.w 1 ; $FFFFFE04 ; frame counter, increments every frame
 v_debug_item_index:			rs.b 1 ; $FFFFFE06 ; debug item currently selected (NOT the object id of the item)
 							rs.b 1 ; $FFFFFE07 ; unused
-v_debug_active:				rs.w 1 ; $FFFFFE08 ; high byte is the debug mode routine counter ; low byte is flag: xx01 when debug mode is in use and Sonic is an item; 0 otherwise
+v_debug_active:				rs.w 1 ; $FFFFFE08 ; high byte is the debug mode routine counter ; low byte is placement mode flag: xx01 when Sonic is an item; 0 otherwise
 v_debug_move_delay:			rs.b 1 ; $FFFFFE0A ; debug mode - time delay in frames between holding the d-pad and the object moving
 v_debug_move_speed:			rs.b 1 ; $FFFFFE0B ; debug mode - speed the object moves, increases the longer d-pad is held
 v_vblank_counter:			rs.l 1 ; $FFFFFE0C ; vertical interrupt counter, increments every VBlank
@@ -616,7 +615,7 @@ v_dle_routine_lampcopy:			rs.b 1 ;  $FFFFFE58  ; lamppost copy of v_dle_routine
 v_oscillating_direction:		rs.w 1 ; $FFFFFE5E ; bitfield for the direction values in the table below are moving - 0 = up; 1 = down
 				rsblock	oscillating_variables
 v_oscillating_table:			rs.l $10 ; $FFFFFE60 ; table of 16 oscillating values, for platform movement - 1 word for current value, 1 word for rate
-; This has been expanded compared to Sonic 1, and I am unsure of what the new values are.
+; TODO: This has been expanded compared to Sonic 1, and I am unsure of what the new values are.
 ;v_oscillating_0_to_20:		equ v_oscillating_table
 ;v_oscillating_0_to_30:		equ v_oscillating_table+4
 ;v_oscillating_0_to_40:		equ v_oscillating_table+8
@@ -701,13 +700,13 @@ v_ss_results_2p:			rs.b 6 ; $FFFFFF32
 v_ss_total_won:				rs.w 1 ; $FFFFFF38 ; high byte is player 1, low byte is player 2					
 							rs.b 6 ; $FFFFFF3A-$FFFFFF3F ; unused
 v_perfect_rings_left:		rs.w 1 ; $FFFFFF40 ; remaining number of rings in a level
-f_ss_perfect_flag:	rs.w 1 ; $FFFFFF42 ; flag set if all rings in a special stage are collected
+f_ss_perfect_flag:			rs.w 1 ; $FFFFFF42 ; flag set if all rings in a special stage are collected
 							rs.b 8 ; $FFFFFF44-$FFFFFF4B ; unused
 v_credits_index:				   ; $FFFFFF4C ; current frame of the credits sequence
-f_slot_machine_flag:		rs.w 1 ; $FFFFFF4C ; flag indicating a CNZ slot machine is in use
+f_slot_machine_use:		rs.w 1 ; $FFFFFF4C ; flag indicating a CNZ slot machine is in use
 
 ; CNZ slot machine variables; $12 values
-; v_slot_machine_routine and v_slot_machine_reward are written and read via absolute addressing
+; v_slot_machine_routine and v_slot_machine_reward are respectively written and read via absolute addressing
 ; by the CNZ cage object to trigger the machines and retrieve the reward respectively.
 ; The others are used solely by the slot machine psuedo-object, and are only accessed via 
 ; indirect displacement relative to v_slot_machine_variables. I've only declared the former here, 
@@ -742,7 +741,7 @@ v_level_select_zone:			rs.w 1 ; $FFFFFF82 ;  currently selected zone in level se
 v_sound_test_sound:				rs.w 1 ; $FFFFFF84 ; current sound test selection
 v_title_screen_option:			rs.b 1 ; $FFFFFF86 ; selected option on the title screen
 								rs.b 1 ; $FFFFFF87 ; unused
-v_zone_2p:						rs.w 1 ; $FFFFFF88; high byte is current zone number, low byte is current act number ; read as a byte if we only want the zone
+v_zone_2p:						rs.w 1 ; $FFFFFF88 ; high byte is current zone number, low byte is current act number ; read as a byte if we only want the zone
 v_act_2p:						equ __rs-1 ; $FFFFFF89 ; read if we only want the act number
 f_two_player_mode_copy:			rs.w 1 ; $FFFFFF8A ; second flag set to indicate two player mode; read twice in Special Stage
 v_options_menu_box:				rs.b 1 ; $FFFFFF8C ; currently selected box in options menu
@@ -761,7 +760,7 @@ v_emerald_list:					rs.l 2 ; $FFFFFFB2 ; which individual Emeralds the player ha
 								rs.b 6 ; $FFFFFFBA-$FFFFFFBF ; unused			
 v_score_next_life:				rs.l 1 ; $FFFFFFC0 ; points required for next extra life
 v_score_next_life_p2:			rs.l 1 ; $FFFFFFC4 ; same as above, but for second player in 2P mode
-f_signpost_flag:				rs.w 1 ; $FFFFFFC8 ; flag set if level has a signpost, 0 otherwise (boss, SCZ, WFZ, DEZ)	
+f_has_signpost:					rs.w 1 ; $FFFFFFC8 ; flag set if level has a signpost, 0 otherwise (boss, SCZ, WFZ, DEZ)	
 v_signpost_prev_frame:			rs.b 1 ; $FFFFFFCA
 								rs.b 1 ; $FFFFFFCB ; unused
 v_boundary_top_next_debug:			rs.w 1 ; $FFFFFFCC
@@ -775,13 +774,13 @@ v_correct_cheat_entries:		rs.w 1 ; $FFFFFFD4
 v_correct_cheat_entries_2:		rs.w 1 ; $FFFFFFD6 ; for 14 continues or 7 emeralds codes	
 
 f_two_player_mode:			rs.w 1 ; $FFFFFFD8 ; flag for two-player mode (0 for main game)
-unk_FFDA:			rs.w 1 ; $FFFFFFDA ; written to once on title screen, never used again
+v_unknown_titlescrn:		rs.w 1 ; $FFFFFFDA ; cleared once on title screen, never used again
 
-; Following four variables seem to have been used for debugging the CNZ bumpers.
-unk_FFDC:			rs.b 1 ; $FFFFFFDC ; written to near loc_175EA, never read from
-unk_FFDD:			rs.b 1 ; $FFFFFFDD ; written to near loc_175EA, never read from
-unk_FFDE:			rs.b 1 ; $FFFFFFDE ; written to near loc_175EA, never read from
-unk_FFDF:			rs.b 1 ; $FFFFFFDF ; written to near loc_175EA, never read from
+; These four variables seem to have been used for debugging the CNZ bumper physics.
+v_cnz_bumper_debug1:			rs.b 1 ; $FFFFFFDC ; written to near loc_175EA, never read from
+v_cnz_bumper_debug2:			rs.b 1 ; $FFFFFFDD ; written to near loc_175EA, never read from
+v_cnz_bumper_debug3:			rs.b 1 ; $FFFFFFDE ; written to near loc_175EA, never read from
+v_cnz_bumper_debug4:			rs.b 1 ; $FFFFFFDF ; written to near loc_175EA, never read from
 
 v_soundqueue:		rs.b 5 ; $FFFFFFE0 ; 68k side sound queue; passed to Z80 during VBlank
 	music_0:		equ 0 ; $FFFFFFE0
@@ -796,7 +795,8 @@ f_demo_mode:			rs.w 1 ; $FFFFFFF0 ; 1 if a demo is playing
 v_demo_num:				rs.w 1 ; $FFFFFFF2 ;  which demo will play next
 v_s1_ending_demo_num:		rs.w 1 ; $FFFFFFF4 ; unused Sonic 1 leftover; zone for the ending demos
 							rs.w 1 ; $FFFFFFF6 ; unused
-v_console_region:           rs.l 1 ; $FFFFFFF8 ; Mega Drive console type - 0 = JP; $80 = US/EU; +0 = NTSC; +$40 = PAL
+v_console_region:           rs.w 1 ; $FFFFFFF8 ; Mega Drive console type - 0 = JP; $80 = US/EU; +0 = NTSC; +$40 = PAL
+f_debug_enable:				rs.w 1 ; $FFFFFFFA ; flag set if debug mode is enabled for current level
 v_checksum_pass:            rs.l 1 ; $FFFFFFFC ; set to the text string "init" when checksum is passed
 
 ; End of main RAM
@@ -864,8 +864,8 @@ v_ss_object_locations:	rs.b $1AE0 		; $FFFF8778 ; SSRAM_Koz_SpecialObjectLocatio
 
 
 				rsset	v_ost_all	; Move back to the object RAM
-				rs.b sizeof_ost ; $FFFFB000
-				rs.b sizeof_ost ; $FFFFB040
+				rs.b sizeof_ost ; $FFFFB000 ; Special Stage Sonic
+				rs.b sizeof_ost ; $FFFFB040 ; Special Stage Tails
 
 v_ss_hud:				rs.b sizeof_ost ; $FFFFB080 ; HUD in the special stage
 v_ss_start_banner: 		rs.b sizeof_ost ; $FFFFB0C0
@@ -939,7 +939,7 @@ v_ss_draw_reg_buffer_end:			equ __rs ; $FFFFDB4A
 							rs.b 2 ; unused ; $FFFFDB4A-$FFFFDB4B, unused
 
 v_ss_last_segment_2:		rs.b 1 ; $FFFFDB4C
-v_ss_unk_DB4D:				rs.b 1 ; $FFFFDB4D ; written to once by the SS bomb object, never used again
+f_unknown_ss_bomb:			rs.b 1 ; $FFFFDB4D ; set by the SS bomb object, never used again
 
 							rs.b $14 ; $FFFFDB4E-$FFFFDB61 ; unused
 
@@ -978,8 +978,8 @@ f_ss_no_checkpoint_msg:		rs.b 1 ; $FFFFDBA0
 
 v_ss_no_ringstogo_lifetime:		rs.w 1 ; $FFFFDBA2
 v_ss_ringstogo_bcd:				rs.w 1 ; $FFFFDBA4
-v_ss_hide_ringstogo:			rs.b 1 ; $FFFFDBA6
-v_ss_trigger_ringstogo:			rs.b 1 ; $FFFFDBA7
+f_ss_hide_ringstogo:			rs.b 1 ; $FFFFDBA6
+f_ss_trigger_ringstogo:			rs.b 1 ; $FFFFDBA7
 								rs.b $58 ; $FFFFDBA8-$FFFFDC00 ; unused
 
 		if __rs > offset(ss_shared_ram_end)
@@ -989,7 +989,7 @@ v_ss_trigger_ringstogo:			rs.b 1 ; $FFFFDBA7
 
 				rsset	v_hscroll_buffer ; $FFFFE000 ; jump ahead a little
 v_ss_hscroll_buffer_1:		rs.b $400 ; $FFFFE000
-v_ss_hscroll_buffer_end:	equ __rs ; $FFFFE400
+v_ss_hscroll_buffer_1_end:	equ __rs ; $FFFFE400
 
 
 				rsset	boss_variables	; $FFFFF73A ; a few more variables here for some reason
@@ -1043,5 +1043,5 @@ v_ending_cutscene:		rs.b sizeof_ost ; $FFFFB100 ; the object that manages the cu
 		if __rs > offset(ost_end)
 			inform 3,"Ending sequence objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
 	    endc
-    
+	    
 		popo   

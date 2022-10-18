@@ -220,23 +220,24 @@ clear_ram:		 macro startaddr,endaddr
 		inform 1,"clearRAM is clearing zero bytes. Turning this into a nop instead."
 		mexit
     endc
-    if ((startaddr)&$8000)=0
-		lea	(startaddr).l,a1
+    
+	if ((startaddr)&$8000)=0
+		lea	(\startaddr).l,a1
     else
-		lea	(startaddr).w,a1
+		lea	(\startaddr).w,a1
    	endc
 		moveq	#0,d0
-    if ((startaddr)&1)
+    if ((\startaddr)&1)
 		move.b	d0,(a1)+
     endc
-		move.w	(endaddr-startaddr)/4)-1,d1
+		move.w	(\endaddr-\startaddr)/4-1,d1
 	.loop\@:	
 		move.l	d0,(a1)+
 		dbf	d1,.loop\@
-    if (((endaddr-startaddr)-((startaddr)&1))&2)
+    if (((\endaddr-\startaddr)-((\startaddr)&1))&2)
 		move.w	d0,(a1)+
     endc
-    if (((endaddr-startaddr)-((startaddr)&1))&1)
+    if (((\endaddr-\startaddr)-((\startaddr)&1))&1)
 		move.b	d0,(a1)+
     endc
     	endm		

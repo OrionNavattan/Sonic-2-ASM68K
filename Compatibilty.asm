@@ -652,7 +652,119 @@ Graphics_Flags:		equ	v_console_region
 Debug_mode_flag:	equ f_debug_enable
 Checksum_fourcc:	equ v_checksum_pass
 
+SegaScreenObject:	equ	v_ost_sega_screen
+SegaHideTM:			equ	v_ost_sega_hide_tm
 
+IntroSonic:					equ	v_title_sonic
+IntroTails:					equ	v_title_tails
+IntroFlashingStar:			equ	v_title_flashing_star
+TitleScreenPaletteChanger:	equ	v_title_palette_changer
+TitleScreenPaletteChanger3:	equ	v_title_palette_changer_3
+IntroEmblemTop:				equ	v_title_logo_top
+IntroMaskingSprite:			equ	v_title_masking_sprite
+IntroSonicHand:				equ	v_title_sonic_hand
+IntroTailsHand:				equ	v_title_tails_hand
+TitleScreenPaletteChanger2:	equ	v_title_palette_changer_2
+TitleScreenMenu:			equ	v_title_menu
+IntroFallingStar:			equ	v_title_falling_star
+
+
+SSRAM_ArtNem_SpecialSonicAndTails:		equ	v_ss_character_art
+SSRAM_MiscKoz_SpecialPerspective:		equ	v_ss_perspective_data
+SSRAM_MiscNem_SpecialLevelLayout:		equ	v_ss_level_layout
+SSRAM_MiscKoz_SpecialObjectLocations:	equ	v_ss_object_locations
+
+SpecialStageHUD:			equ	v_ss_hud
+SpecialStageStartBanner:	equ	v_ss_start_banner
+SpecialStageNumberOfRings:	equ	v_ss_number_of_rings
+SpecialStageShadow_Sonic:	equ	v_ss_shadow_sonic
+SpecialStageShadow_Tails:	equ	v_ss_shadow_tails
+SpecialStageTails_Tails:	equ	v_ss_tails_tails
+SS_Dynamic_Object_RAM:		equ	v_ss_dynamic_object_ram
+SpecialStageResults:		equ	v_ss_results
+SpecialStageResults2:		equ	v_ss_results_2
+
+PNT_Buffer:				equ	v_ss_pnt_buffer
+PNT_Buffer_End:			equ	v_ss_pnt_buffer_end
+SS_Horiz_Scroll_Buf_2:	equ	v_ss_hscroll_buffer_2
+
+SSTrack_mappings_bitflags:		equ	v_ss_track_mappings_bitflags
+SSTrack_mappings_uncompressed:	equ	v_ss_track_mappings_uncompressed
+SSTrack_anim:					equ	v_ss_track_anim
+SSTrack_last_anim_frame:		equ	v_ss_track_last_anim_frame
+SpecialStage_CurrentSegment:	equ	v_ss_current_segment
+SSTrack_anim_frame:				equ	v_ss_track_anim_frame
+SS_Alternate_PNT:				equ	v_ss_alternate_pnt
+SSTrack_drawing_index:			equ	v_ss_track_drawing_index
+SSTrack_Orientation:			equ	v_ss_track_orientation
+SS_Alternate_HorizScroll_Buf:	equ	v_ss_alt_hscroll_buffer
+SSTrack_mapping_frame:			equ	v_ss_track_mapping_frame
+SS_Last_Alternate_HorizScroll_Buf:	equ	v_ss_last_alt_hscroll_buffer
+SS_New_Speed_Factor:			equ	v_ss_new_speed_factor
+SS_Cur_Speed_Factor:			equ	v_ss_cur_speed_factor
+
+SSTrack_duration_timer:			equ	v_ss_track_duration_timer
+
+SS_player_anim_frame_timer:		equ	v_ss_player_anim_frame_timer
+SpecialStage_LastSegment:		equ	v_ss_last_segment
+SpecialStage_Started:			equ	f_ss_started
+
+SSTrack_last_mappings_copy:		equ	v_ss_track_last_mappings_copy
+SSTrack_last_mappings:			equ	v_ss_track_last_mappings
+
+SSTrack_LastVScroll:			equ	v_ss_track_last_vscroll
+
+SSTrack_last_mapping_frame:		equ	v_ss_track_last_mapping_frame
+SSTrack_mappings_RLE:			equ	v_ss_track_mappings_rle
+SSDrawRegBuffer:				equ	v_ss_draw_reg_buffer
+SSDrawRegBuffer_End				equ	v_ss_draw_reg_buffer_end
+
+SpecialStage_LastSegment2:		equ	v_ss_last_segment_2
+SS_unk_DB4D:					equ	f_unknown_ss_bomb
+
+SS_Ctrl_Record_Buf:				equ	v_ss_ctrl_record_buffer
+SS_Last_Ctrl_Record:			equ	v_ss_last_ctrl_record
+SS_Ctrl_Record_Buf_End:			equ	v_ss_ctrl_record_buffer_end
+
+SS_CurrentPerspective:			equ	v_ss_current_perspective
+SS_Check_Rings_flag:			equ	v_ss_chk_rings
+SS_Pause_Only_flag:					equ	f_ss_pause_only
+SS_CurrentLevelObjectLocations:		equ	v_ss_current_obj_locations
+SS_Ring_Requirement:			equ	v_ss_ring_requirement
+SS_CurrentLevelLayout:			equ	v_ss_current_layout
+
+SS_2P_BCD_Score:				equ	v_ss_2p_bcd_score
+
+SS_NoCheckpoint_flag:			equ	f_ss_no_checkpoint
+
+SS_Checkpoint_Rainbow_flag:		equ	f_ss_checkpoint_rainbow
+SS_Rainbow_palette:				equ	v_ss_rainbow_palette
+SS_Perfect_rings_left:			equ	v_ss_perfect_rings_left
+
+SS_Star_color_1:			equ	v_ss_star_color_1
+SS_Star_color_2:			equ	v_ss_star_color_2
+SS_NoCheckpointMsg_flag:	equ	f_ss_no_checkpoint_msg
+
+SS_NoRingsTogoLifetime:		equ	v_ss_no_ringstogo_lifetime
+SS_RingsToGoBCD:			equ	v_ss_ringstogo_bcd
+SS_HideRingsToGo:			equ	f_ss_hide_ringstogo
+SS_TriggerRingsToGo:		equ	f_ss_trigger_ringstogo
+
+SS_Horiz_Scroll_Buf_1:		equ	v_ss_hscroll_buffer_1
+SS_Horiz_Scroll_Buf_1_End:	equ	v_ss_hscroll_buffer_1_end
+
+SS_Offset_X:				equ	v_ss_x_offset
+SS_Offset_Y:				equ	v_ss_y_offset
+SS_Swap_Positions_Flag:		equ	f_ss_swap_positions
+
+ContinueText:		equ	v_continue_text
+ContinueIcons:		equ	v_continue_icons
+
+VSResults_HUD:		equ	v_vs_results_hud
+
+Tails_Tails_Cutscene:	equ	v_ending_tails_tails
+EndSeqPaletteChanger:	equ	v_ending_palchanger
+CutScene:				equ	v_ending_cutscene
 
 ; ---------------------------------------------------------------------------
 ; Sound Driver Compatibility
