@@ -190,23 +190,23 @@ rsblockend:	macro ; Adapted to Sonic 2's macro-based RAM clearing
 
 rsobj:		macro name,start
 		rsobj_name: equs "\name"			; remember name of current object
-		ifarg \start
+	ifarg \start
 		rsset \start					; start at specified position
-		else
+	else
 		rsset ost_used					; start at end of regular OST usage
-		endc
-		pusho						; save options
-		opt	ae+					; enable auto evens
-		endm
+	endc
+	pusho						; save options
+	opt	ae+					; enable auto evens
+	endm
 
 rsobjend:	macro
-		if __rs>sizeof_ost
+	if __rs>sizeof_ost
 		inform	3,"OST for \rsobj_name exceeds maximum by $%h bytes.",__rs-sizeof_ost
-		else
+	else
 		;inform	0,"0-$%h bytes of OST for \rsobj_name used, leaving $%h bytes unused.",__rs-1,sizeof_ost-__rs
-		endc
-		popo
-		endm
+	endc
+	popo
+	endm
 		
 ; ---------------------------------------------------------------------------
 ; Clear an area of RAM.
@@ -227,17 +227,17 @@ clear_ram:		 macro startaddr,endaddr
 		lea	(\startaddr).w,a1
    	endc
 		moveq	#0,d0
-    if ((\startaddr)&1)
+    if ((startaddr)&1)
 		move.b	d0,(a1)+
     endc
 		move.w	(\endaddr-\startaddr)/4-1,d1
 	.loop\@:	
 		move.l	d0,(a1)+
 		dbf	d1,.loop\@
-    if (((\endaddr-\startaddr)-((\startaddr)&1))&2)
+    if (((endaddr-startaddr)-((startaddr)&1))&2)
 		move.w	d0,(a1)+
     endc
-    if (((\endaddr-\startaddr)-((\startaddr)&1))&1)
+    if (((endaddr-startaddr)-((startaddr)&1))&1)
 		move.b	d0,(a1)+
     endc
     	endm		
@@ -455,66 +455,6 @@ out_of_range:	macro exit,pos
 		bhi.\0	exit					; branch if d0 is negative or higher than 640
 		endm
 
-; ---------------------------------------------------------------------------
-; Sprite mappings header and footer
-; ---------------------------------------------------------------------------
-
-;spritemap:	macro
-;		if ~def(current_sprite)
-;		current_sprite: = 1
-;		endc
-;		sprite_start: = *+1
-;		dc.b (sprite_\#current_sprite-sprite_start)/5
-;		endm
-
-;endsprite:	macro
-;		sprite_\#current_sprite: equ *
-;		current_sprite: = current_sprite+1
-;		endm
-
-; ---------------------------------------------------------------------------
-; Sprite mappings piece
-; input: xpos, ypos, size, tile index
-; optional: xflip, yflip, pal2|pal3|pal4, hi (any order)
-; ---------------------------------------------------------------------------
-
-;piece:		macro
-;		dc.b \2		; ypos
-;		sprite_width:	substr	1,1,"\3"
-;		sprite_height:	substr	3,3,"\3"
-;		dc.b ((sprite_width-1)<<2)+sprite_height-1
-;		sprite_xpos: = \1
-;		if \4<0						; is tile index negative?
-;			sprite_tile: = $10000+(\4)		; convert signed to unsigned
-;		else
-;			sprite_tile: = \4
-;		endc
-;		
-;		sprite_xflip: = 0
-;		sprite_yflip: = 0
-;		sprite_hi: = 0
-;		sprite_pal: = 0
-;		rept narg-4
-;			if strcmp("\5","xflip")
-;			sprite_xflip: = $800
-;			elseif strcmp("\5","yflip")
-;			sprite_yflip: = $1000
-;			elseif strcmp("\5","hi")
-;			sprite_hi: = $8000
-;			elseif strcmp("\5","pal2")
-;			sprite_pal: = $2000
-;			elseif strcmp("\5","pal3")
-;			sprite_pal: = $4000
-;			elseif strcmp("\5","pal4")
-;			sprite_pal: = $6000
-;			else
-;			endc
-;		shift
-;		endr
-		
-;		dc.w (sprite_tile+sprite_xflip+sprite_yflip+sprite_hi+sprite_pal)&$FFFF
-;		dc.b sprite_xpos
-;		endm
 
 ; ---------------------------------------------------------------------------
 ; Object placement
@@ -580,8 +520,8 @@ sound_bank_name = "\*"
 DebugSoundbanks = 0
 
 finish_bank macro
-	if offset(*) > sound_bank_start+$8000
-		inform 3,"SoundBank %s must fit in $8000 bytes but was $%h. Try moving something to another bank.",sound_bank_name,*-sound_bank_start
+	if offset(*)>sound_bank_start+$8000
+		inform 3,"SoundBank %s must fit in $8000 bytes but was $%h. Try moving something to another bank.",sound_bank_name,offset(*)-sound_bank_start
 	elseif DebugSoundbanks<>0
 		inform 0,"SoundBank %s has $%h bytes free at end.",sound_bank_name,$8000+sound_bank_start-*
 	endif

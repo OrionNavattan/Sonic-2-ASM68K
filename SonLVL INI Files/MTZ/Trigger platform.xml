@@ -10,7 +10,7 @@
       <MapFile type="ASM" filename="../mappings/sprite/obj65_a.asm" frame="1" startpal="3" />
     </ImageFromMappings>
     <ImageFromMappings id="cog">
-      <ArtFile filename="../art/nemesis/MTZ Small Cog.bin" />
+      <ArtFile filename="../art/nemesis/MTZ Small Cog.nem" />
       <MapFile type="ASM" filename="../mappings/sprite/obj65_b.asm" frame="0" startpal="3" />
     </ImageFromMappings>
   </Images>

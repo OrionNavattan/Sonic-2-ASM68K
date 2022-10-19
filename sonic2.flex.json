@@ -355,7 +355,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/ARZ.bin",
+                        "path": "art/kosinski/ARZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -384,7 +384,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/ARZ.bin",
+                        "path": "art/kosinski/ARZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -471,7 +471,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/kosinski/ARZ.bin",
+                        "path": "art/kosinski/ARZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -529,7 +529,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/kosinski/ARZ.bin",
+                        "path": "art/kosinski/ARZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -645,7 +645,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/ARZ.bin",
+                        "path": "art/kosinski/ARZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -674,7 +674,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/ARZ.bin",
+                        "path": "art/kosinski/ARZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -856,7 +856,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/kosinski/MCZ.bin",
+                        "path": "art/kosinski/MCZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -943,7 +943,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/MCZ.bin",
+                        "path": "art/kosinski/MCZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -972,7 +972,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/MCZ.bin",
+                        "path": "art/kosinski/MCZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -1539,7 +1539,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/MTZ.bin",
+                        "path": "art/kosinski/MTZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -1568,7 +1568,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/MTZ.bin",
+                        "path": "art/kosinski/MTZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -1626,7 +1626,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/MTZ.bin",
+                        "path": "art/kosinski/MTZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -1655,7 +1655,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/MTZ.bin",
+                        "path": "art/kosinski/MTZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -1771,7 +1771,7 @@
                     ],
                     "format": "Sonic 2.js",
                     "art": {
-                        "path": "art/kosinski/MTZ.bin",
+                        "path": "art/kosinski/MTZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -1858,7 +1858,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/MTZ.bin",
+                        "path": "art/kosinski/MTZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },
@@ -3116,7 +3116,7 @@
                         }
                     ],
                     "art": {
-                        "path": "art/kosinski/EHZ_HTZ.bin",
+                        "path": "art/kosinski/EHZ_HTZ.kos",
                         "compression": "Kosinski",
                         "offset": 0
                     },

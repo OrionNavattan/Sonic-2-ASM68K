@@ -72,6 +72,7 @@ RelativeLea = (0|Revision<>2|AllOptimizations)
 		include "sound/Sound Equates.asm"
 		include "sound/SMPS2ASM.asm"
 		
+		include "File List.asm"
 
 
 ROM_Start:
@@ -3953,7 +3954,7 @@ palp:	macro paladdress,altid,ramaddress,colors
 		id_\altid:	equ (offset(*)-PalPointers)/8 ; create alternate ID constant for duplicate pointers (used in empty/unused level load table entries)
 	else	
 		id_\paladdress:	equ (offset(*)-PalPointers)/8
-	endif	
+	endc	
 		dc.l \paladdress
 		dc.w \ramaddress,(\colors>>1)-1
 	endm	
@@ -11642,74 +11643,16 @@ off_87DC:	dc.l byte_8804
 		dc.l loc_83B0
 		dc.l byte_8B30
 		dc.l loc_8452
-byte_8804:	dc.b   7, $C,  0,$10,  0,  0,$7D,$F7,$DF,$7D,$DA,$CB,$88,$2B,$EE,$48; 0
-					
-		dc.b   5,$FB,  1,$F6,$ED,$B0,$5F,$7D,$F7,$DF,$7D,$F4,$FA,$8D,$C5,$82; 16
-		dc.b $B1,$10,  0,$34,$97,  0,$D3,$EF,$BE,$FA,$3C,$42,$22,$D5,$F8,$84; 32
-		dc.b $85,$A9,$F3,$1A,  9,$85,$63,  7,$DF,$77,$A0,$C0,$40,$2C,$17,$88; 48
-		dc.b $9B,  1,$8E,  1,  4,$B8,$E4,$75,$AF,$BE,$F7,$31,$88,$98,$54,$22; 64
-		dc.b $5B,$B0,$40,$38,$10,  8,  7,  2,  1,  4,$BB,  4,  3,$81,  0,$80; 80
-		dc.b $70,$20,$10,$4B,$8E,$47,$5A,$FB,$EF,$73,$17,$89,$85,$62,$47,$38; 96
-		dc.b   4,$18,$E0,$10,$4B,$8E,$47,$5A,$FB,$EF,$79,$18,$8B,  6,$21,$E1; 112
-		dc.b $48,  0,$5E,$26,$15,$89,$16,$E0,$10,$63,$80,$41,$2E,$39,$1D,$6B; 128
-		dc.b $EF,$BD,$DC,$4C,$31,$11, $A,$80,  1,$F1,$60,$D5,$8E,  1,  6,$38; 144
-		dc.b   4,$12,$E3,$91,$D6,$BE,$FB,$EF,$BE,$FB,$EE,$78, $D,  0,  6,$22; 160
-		dc.b $C1,$88,$78,$52,  0, $D,$33,$D0,$20,  0, $E,  0,  2, $F,$BE,$FB; 176
-		dc.b $EF,$BE,$FB,$EF,$BE,$FB,$EF,$AB,$FC,  0; 192
-byte_88CE:	dc.b   7, $C,  0,$10,  0,  0,$7D,$F7,$DF,$7D,$DA,$CB,$88,$2B,$EE,$48; 0
-					
-		dc.b   5,$FB,  1,$F6,$ED,$B0,$5F,$7D,$F7,$DF,$7D,$F7,$DF,$6F,$98,$DC; 16
-		dc.b $58,$2B,$11,$3E,$FB,$EF,$BE,$9F,$31,$A0,$98,$56,$30,$7D,$F7,$DB; 32
-		dc.b $E8,$1A,  0,  4,$40,  1,$A4,$80,$43,$90,$70,  0,$10,$4F,$8E,$47; 48
-		dc.b $5A,$FB,$EF,$BE,$FB,$EA,$74, $D,  0,  2,$40,  0,$D2,$5D,  2,  0; 64
-		dc.b   0,$E0,  0,$20,$9F,$1C,$8E,$B5,$F7,$DF,$7D,$F7,$3E, $C,  5,$A2; 80
-		dc.b $21,  0,$98,$3C,$29,  0, $C,  6,$21,$E1,$20,$89,$F7,$DF,$7D,$F4; 96
-		dc.b $BA,  4,  0,  1,$C0,  0,$41,$F7,$DF,$7D,$F7,$DF,$7D,$F7,$DF,$73; 112
-		dc.b $B8,$C4,$4A,$22,  0, $D,$C5,$82,$B1,$13,$EF,$BE,$FB,$EF,$BE,$FA; 128
-		dc.b $FF,$C0		; 144
-byte_8960:	dc.b   7, $C,  0,$10,  0,  0,$7D,$F7,$DF,$7D,$DA,$CB,$88,$2B,$EE,$48; 0
-					
-		dc.b   5,$FB,  1,$F6,$ED,$B0,$5F,$7D,$EE,$63,$41,$30,$AC,$60,$FB,$EF; 16
-		dc.b $7B,$11, $A,$84,$42,$F0,$F0,$A4,$42,  0,$12,$89,$85,$22,$94,$78; 32
-		dc.b $84,$43,$48,$80,$87,$20,$E0,  0,$20,$B7,$1C,$8E,$B5,$F5,$78,$84; 48
-		dc.b $83,$48,$F4,  8,  0,  3,$80,  0,$82,$DC,$72,$3A,$D7,$D4,$E4,$30; 64
-		dc.b  $E,$8C,$11,$E8,$10,  0,  7,  0,  1,  5,$B8,$E4,$75,$AF,$BE,$FA; 80
-		dc.b $1E,$85,$43,$61,$80,$C4,$4C,$20,  0,  8,  3,$C3,$31,$12,$20,$70; 96
-		dc.b  $D,$23,$D0,$20,  0, $E,  0,  2, $B,$71,$C8,$EB,$5F,$54, $E,  1; 112
-		dc.b $A4,$7A,  4,  0,  1,$C0,  0,$41,$6E,$39,$1D,$6B,$EA,$72,$18,  7; 128
-		dc.b $46,  8,$F4,  8,  0,  3,$80,  0,$82,$DC,$72,$3A,$D7,$DF,$7F,$D8; 144
-		dc.b $80,$3C,$30,$13, $A,$C5,$80,  1,$58,$98,$48,$25,$18,$A3,$C4,$22; 160
-		dc.b $1A,$47,$A0,$40,  0,$1C,  0,  4,$1F,$7B,$88,$48,$34,$8F,$40,$80; 176
-		dc.b   0,$38,  0,  8,$2D,$C7,$23,$AD,$7D,$4E,$43,  0,$E8,$C1,$1E,$81; 192
-		dc.b   0,  0,$70,  0,$10,$5B,$8E,$47,$5A,$FB,$EF,$7C,$18, $B,$44,$42; 208
-		dc.b   1,$30,$78,$52,  0,$18, $C,$43,$C2,$41,$12,$3C,$42,$21,$A4,$7A; 224
-		dc.b   4,  0,  1,$C0,  0,$41,$6E,$39,$1D,$6B,$EA,$F1,  9,  6,$91,$E8; 240
-		dc.b $10,  0,  7,  0,  1,  5,$B8,$E4,$75,$AF,$AA,  7,  0,$D2,$3D,  2; 256
-		dc.b   0,  0,$E0,  0,$20,$B7,$1C,$8E,$B5,$F7,$DF,$53,$C0,$68,  0,$31; 272
-		dc.b $16, $C,$43,$C2,$90,  0,$69,$38,$21, $E,$41,$C0,$80,$41,$F7,$DF; 288
-		dc.b $7D,$F7,$DF,$57,$B8,$C4,$4A,$22,  0,  9,  3,$C2,$A1,$13,$EF,$BE; 304
-		dc.b $FB,$EB,$7F,  0	; 320
-byte_8AA4:	dc.b   7,  4,  0,$10,  0,  0,$7D,$F7,$DF,$7D,$DA,$D7,$10,$6F,$B9,$40; 0
-					
-		dc.b $5F,$E0,$3E,$DD,$BC,$17,$DF,$7D,$F7,$DF,$7D,$F7,$D0,$F8,$60,$5A; 16
-		dc.b $44,$40,$4C,$3C,$52,  0,$60,$62,$3C,$48,$44,$97,  1,$A4,$B8, $D; 32
-		dc.b $3E,$FB,$EF,$BE,$FB,$EF,$BE,$8F,$11,$12,$D5,$78,$89,$16,$A7,$CC; 48
-		dc.b $D0,$98,$AC,$C1,$F7,$DF,$F2,$40,$4A,$44,$40,$50,$5A,$58,$4C,$56; 64
-		dc.b $62,$FB,$EF,$BE,$C7,$41,$A0,  1,$10,  1,$A6,  0,$5B,$80,$83,$EF; 80
-		dc.b $BE,$C7,$41,$A0,  1,$20,  1,$A6,$38,  8,$2D,$C0,$41,$F7,$DF,$63; 96
-		dc.b $A0,$D0,  0,$98,  0,$D3,$1C,  4,$16,$E0,$20,$FB,$EF,$BE,$FB,$EF; 112
-		dc.b $BE,$FB,$EF,$BE,$FB,$EF,$BE,$FB,$EF,$BE,$CF,$F0; 128
-byte_8B30:	dc.b   7,  4,  0,$10,  0,  0,$7D,$F7,$DF,$7D,$DA,$D7,$10,$6F,$B9,$40; 0
-					
-		dc.b $5F,$E0,$3E,$DD,$BC,$17,$DF,$7D,$F7,$DF,$7D,$F7,$D2,$EC,$60,$5A; 16
-		dc.b $44,$40,$4C,$3C,$52,$8D,$13, $E,$43,$C4,$84,$4F,$BE,$FB,$EF,$BE; 32
-		dc.b $FB,$EF,$AF,$C4,$44,$B5,$4E,$22,$45,$A9,$F3,$34,$26,$2B,$30,$7D; 48
-		dc.b $F7,$DF,$7D,$F7,$DF,$A2,$61,$C8,$78,$90,$89,$1E,$83,$40,  2,$20; 64
-		dc.b   3,$49,$80,$8F,  1,$C4,$78,  8,$3E,$FB,$EC,$51,$30,$E4,$3C,$48; 80
-		dc.b $44,$8F,$41,$A0,  1,$20,  1,$A4,$F8,  8,$23,$C0,$71,$1E,  2, $F; 96
-		dc.b $BE,$FB,$14,$4C,$39, $F,$12,$11,$23,$D0,$68,  0,$4C,  0,$69,$3E; 112
-		dc.b   2,  8,$F0,$1C,$47,$80,$83,$EF,$BE,$FB,$EF,$BE,$FB,$EF,$BE,$FB; 128
-		dc.b $EF,$BE,$FB,$EF,$BE,$FB,$9F,$C0; 144
+		
+byte_8804:	incbin "mappings/planes/2P Act Results.eni"
+
+byte_88CE:	incbin "mappings/planes/2P Zone Results.eni"
+
+byte_8960:	incbin "mappings/planes/2P Game Results.eni"
+
+byte_8AA4:	incbin "mappings/planes/2P Special Stage Act Results.eni"
+
+byte_8B30:	incbin "mappings/planes/2P Special Stage Zone Results.eni"
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -11721,7 +11664,6 @@ sub_8BC8:
 
 ; =============== S U B	R O U T	I N E =======================================
 
-; Attributes: thunk
 
 j_Dynamic_Normal_0:			
 					
@@ -12862,80 +12804,16 @@ byte_985E:	dc.b $10,$1A,  0,  0,$30,$2C,$32,$2B,$21,  0,$31,$22,$30,$31,  0,  0;
 		dc.b   0,$1A		; 16
 byte_9870:	dc.b  $E,  0,  0,  0,  0,  0,  0,$10,$10,  0,  0,  0,  0,  0,  0,  0; 0
 					
-byte_9880:	dc.b   0,  0,  0,  0,  0,$48,  0,$6A,  0,$8E,  0,$CE, $E,$EE,  0,$E0; 0
-					
-					
-		dc.b   0,$A4,  0,$82,  0,$62,  0,  0, $E,$86,  0,$26, $E,$42, $C,  0; 16
-		dc.b   0,  0,  0,  0, $C,$E2,  0,  0,  4,$80,  2,$40, $E,$EE,  4,$AC; 32
-		dc.b   0,$6A,  0,$26,  8,$42,  6,$20,  4,  0,  0,  0,  0,  0,  0,  0; 48
-		dc.b   0,  0,  0,  0, $A,$26, $C,$48, $E,$8C,  0,$CE,  0,$C4,  0,$80; 64
-		dc.b  $C,  0,  0,  0, $E,$EE, $E,$EA, $E,$C8,  0,$6E,  0,$4A,  0,$28; 80
-		dc.b   0,  0,  0,  0,  0,$48,  0,$6A,  0,$8E,  0,$CE, $E,$EE,  0,$E0; 96
-		dc.b   0,$A4,  0,$82,  0,$62,  8,  8, $A,$4A,  0,$26,  6,$26,  4,  4; 112
-		dc.b   0,  0,  0,  0,  0,$48,  0,$6A,  0,$8E,  0,$CE, $E,$EE,  0,$E0; 128
-		dc.b   0,$A4,  0,$82,  0,$62,  4,  0, $E,$86,  0,$6E, $E,$42, $C,  0; 144
-		dc.b   0,  0,  0,  0, $C,$E2,  8,$C0,  4,$80,  2,$40, $E,$EE,  2,$AC; 160
-		dc.b   0,$6A,  0,$26, $A,$A6,  0,  0,  6, $A,  4,  8,  2,  4,  0,  0; 176
-		dc.b   0,  0,  0,  0, $C,  6, $C, $A, $C,$6E,  0,$68,  0,$8A,  0,  0; 192
-		dc.b   2,$CE,  0,$EC,  0,$AE,  0,$6E, $E,$EE,  0,  0,  0, $E,  0,$C4; 208
-		dc.b   0,  0,  0,  0, $E,$EE, $A,$AA,  0,  0,  6,$66,  4,$44, $E,$40; 224
-		dc.b  $C,  0,  8,  0,  0,$CE,  2,$8E,  0, $E,  0,$84,  0,$62,  0,$20; 240
-		dc.b   0,  0,  0,  0,  6,$CE,  4,$AC,  2,$8A,  0,$68,  0,$46,  0,$E8; 256
-		dc.b   0,$C4,  0,$80,  0,$40, $E,$EE, $C,  0, $E,$C0,  8,$60,  0,  0; 272
-		dc.b   0,  0,  0,  0, $E,$EE, $E,$CA, $E,$86, $E,$64, $E,$42,  6,$AE; 288
-		dc.b   4,$8A,  2,$68,  2,$46,  0,$24,  8,$88,  4,$44,  0, $E,  0,  8; 304
-		dc.b   0,  0,  0,  0, $E,$EE, $E,$CA, $E,$86, $E,$64, $E,$42,  6,$AE; 320
-		dc.b   4,$8A,  2,$68,  2,$46,  0,$24,  8,$88,  4,$44,  0, $E,  0,  8; 336
-		dc.b   0,  0,  0,  0, $E,$64, $E,$86, $E,$A8, $E,$CA, $E,$EE,  0,  0; 352
-		dc.b   0,$AE,  0,$6E, $E,$22,  0,$E0,  0,  0,  0,  0,  0,  0,  0,  0; 368
-		dc.b   0,  0, $E,$20,  0,$4E,  0,$6E,  0,$48,  0,$8C,  0,$CE,  8,$EE; 384
-		dc.b   8,  0,  4,  0,  0,  0, $E,$E8, $E,$80, $E,$60,  0,  0,  0,  0; 400
-		dc.b   0,  0,  0,  0, $A,$22, $C,$42,  0,  0, $E,$66, $E,$EE, $A,$AA; 416
-		dc.b   8,$88,  4,$44,  8,$AE,  4,$6A,  0, $E,  0,  0,  0,$EE,  0,  0; 432
-		dc.b   0,  0,  0,  0, $A,$22, $C,$42,  0,  0, $E,$66, $E,$EE, $A,$AA; 448
-		dc.b   8,$88,  4,$44,  8,$AE,  4,$6A,  0, $E,  0,  0,  0,$EE,  0,  0; 464
-byte_9A60:	dc.b   5,  3,  0,  1,  0,  0,  6,$60,$20,$9D,  7,$80,$57,$68,$86,$E0; 0
-					
-					
-		dc.b $15,$DA,$21,$B8,  5,$76,$88,$6E,  1,$53,  6,$10,$9E, $A,$13,$A2; 16
-		dc.b $1B,$80,$54,$C1,$84,$2C,  4,$E8,$86,$E0,$15,$3A,$22,$A1, $B,$E0; 32
-		dc.b $31,$3A,$21,$B8,  5,$4E,$88,$A8,$42,$F8, $C,$4E,$88,$6E,  1,$53; 48
-		dc.b $81,$20,  8,$43,$40,$4E,$88,$60,$66,$10,  2,  0,$70,$66,$93,  3; 64
-		dc.b $F8,  0		; 80
-byte_9AB2:	dc.b   5,  0,  0,  1,  0,  0,  6,$78,$A0,$88,$27,$D2,  7,$81,$5F,$4A; 0
-					
-					
-		dc.b $89,$B8,$15,$F4,$A8,$9B,$81,$5F,$4A,$89,$B8,$15,$F4,$A8,$9A,$8B; 16
-		dc.b $E7,$C2, $C,$39,$44,$F2,$9F,$38,$73,$81,$4F,$E0; 32
-byte_9ADE:	dc.b   7, $D,  0,$10,$40,  0,$7D,$F7,$DF,$7D,$F7,$DA,$F6,$11,  5,$41; 0
-					
-		dc.b $10,$5E, $F,  5,$21, $C,  0,$12,$84,$C1,$48,$52,$97,  0,$45,$2F; 16
-		dc.b $21,$50,$44,$18,$85,$E1,$60,$5A,$16,  5,$21,$30,$60,$9F,  0,$45; 32
-		dc.b $F5,$38,  2,$4F,$A1,$C0,$12,$7D,$F5,$B8,  2,$6A,$FE,  8,  2,$50; 48
-		dc.b $88,$2A,  9,$82,  0,$78,$29,$80,  2,$D0,$A4,$1E, $A,$C3,$18,  3; 64
-		dc.b $80,$22,$97,$80,$C0,$28, $D,$A0,  0,$80,$25,  7,$83,  0,$89,$F6; 80
-		dc.b $B8,  2,$4F,$BE,$FB,$FE,$C1,$E0,$B8,$32,  7,$83,$10,$98,$20,$80; 96
-		dc.b   2,$F0,$C8,$26, $A,$D2,$E0,  8,$A5,$F0,$34,  9,$82,$B0,$92,  0; 112
-		dc.b   8,$C2,$C0,$BC,$31, $B,$C2,$20,$C0,$30,$7D,$6E,  0,$93,$EF,$BE; 128
-		dc.b $FF,$B0,$80,$1E, $C,  2,$60,$AC,$2C,$80,  2,$B0,$98,$24,  9,$43; 144
-		dc.b $14,$B8,  2,$29,$51,  8,$7B,  3,$C1,$88,$4B,  0,  4,$41,$20,$48; 160
-		dc.b $FB,$5C,  1,$27,$DF,$7D,$FA,$21,$2C,$10,$A5, $E,$41,$88,$58,$16; 176
-		dc.b $AD,$C0,$11,$4B,$E0,$60,$16,$84,$41,  0,$4C, $F,  5,$30,  0,$60; 192
-		dc.b $18,$83,$C1,$20,$44,$FA,$DC,  1,$27,$DF,$7D,$FF,$41,$50,$6C,$18; 208
-		dc.b   6,$21,$30,$41,  0,  4,  0,$F0,$66,$11,$27,$C0,$11,$4B,$D8,$60; 224
-		dc.b $16,  6,$41,$58,$43,  0,  6,$21,$10,$60,$18,$C0,  0,$D0,$1C,$41; 240
-		dc.b   0,$69,$F5,$38,  2,$4F,$BE,$E4,$2C,  2,$8E,$9B,$87,$CE,$85,$80; 256
-		dc.b $31,$E0,$2C,  9,$82,$98,  0,$2C,  8,  2,$20,$78,$2B,$54,  5,$2A; 272
-		dc.b $69,$F9,$3D,$37,$D7,  1,$4A,$7A,$A4,$2D,$5F,$17,$AC,$FB,$B4,$B5; 288
-		dc.b $88,$7A,$BE,$2F,$69,$F7,$69,$6B,$70,$F5,$7C,$5E,$EB,$EE,$F0,$C0; 304
-		dc.b $2B,$6B,$DC,$7D,$EC,  1,$F7,$60,$E0,$14,$B6,$5C,$5F,$3C,$1C,  1; 320
-		dc.b $F7,$DD,$FE,  0	; 336
-byte_9C32:	dc.b   8,  9,  0,$92,$40,$50,$BF,  0,$5F,$84,$2F,$C4,$17,$E3, $B,$F2; 0
-					
-					
-		dc.b   2,$37,$E5,$1B,$F3, $D,$59,$C7,$9C,$D7,$3B,$CD,$B3,$75,$F9,$E2; 16
-		dc.b $AD,$11,$87,$8D,$A3,$47,$61,$E3,$E8,$D2,$18,$79,$12,$ED,$D3,$DF; 32
-		dc.b $C0,  0		; 48
+byte_9880:	incbin "art/palettes/Level Select Icons.bin"
+
+byte_9A60:	incbin "mappings/planes/Level Select 2P.eni"
+
+byte_9AB2:	incbin "mappings/planes/Options Screen.eni"
+
+byte_9ADE:	incbin "mappings/planes/Level Select.eni"
+
+byte_9C32:	incbin "mappings/planes/Level Select Icons.eni"
+
 ; ===========================================================================
 
 loc_9C64:				
@@ -13246,7 +13124,7 @@ loc_A002:
 		move.l	#$40000000,(vdp_control_port).l
 		lea	(Nem_EndingTitle).l,a0
 		bsr.w	j_NemDec
-		lea	(byte_B23A).l,a0
+		lea	(Eni_EndGameLogo).l,a0
 		lea	(v_128x128_tiles).l,a1
 		move.w	#0,d0
 		bsr.w	j_EniDec
@@ -14452,7 +14330,9 @@ byte_AD9E:	dc.b   1,  5,  6,$FF	; 0
 ; -----------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -----------------------------------------------------------------------------
-Map_ADA2:	dc.w word_ADD6-Map_ADA2; 0 ;	DATA XREF: ROM:0000A500o
+Map_ADA2:	;include "mappings/sprite/objCF.asm"
+
+		dc.w word_ADD6-Map_ADA2; 0 ;
 					
 		dc.w word_AE10-Map_ADA2; 1
 		dc.w word_AE32-Map_ADA2; 2
@@ -14639,13 +14519,9 @@ word_B210:	dc.w 5
 		dc.w $F405, $4FC, $27E,$FFF8; 8
 		dc.w  $404, $4B2, $259,$FFF8; 12
 		dc.w $F406, $4B4, $25A,	   8; 16
-; --------------------------------------------------------------------------------------
-; Unknown Enigma compressed data
-; --------------------------------------------------------------------------------------
-byte_B23A:	dc.b   7,  1,  0,  1,  0,  1, $A,  0,$18,$10,  0,$C1,$80,  6, $A,$81; 0
-					
-		dc.b $40, $B,  2,  0,$58,$88,  3,$86,$4C,$A4,  1,$C3,$40,$52,  1,$C0; 16
-		dc.b $14,$21,$13,$C2,$80,$97,$FC,  0; 32
+
+
+Eni_EndGameLogo:	incbin "mappings/planes/Sonic 2 Ending Logo.eni"
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -15225,124 +15101,54 @@ Nem_BD26:	dc.b $80,$40,$80,  4, $A,$13,  3,$23,  4,$35,$1A,$44, $C,$55,$1B,$67; 
 		dc.b $A0,  0		; 576
 ; ===========================================================================
 
-loc_BF68:				
-					
+	if ~RemoveJmpTos
+loc_BF68:						
 		jmp	DisplaySprite
-; ===========================================================================
 
-loc_BF6E:				
-					
+loc_BF6E:			
 		jmp	DeleteObject
-
-; =============== S U B	R O U T	I N E =======================================
-
 
 sub_BF74:				
 		jmp	(PlaySound).l
-; End of function sub_BF74
-
-
-; =============== S U B	R O U T	I N E =======================================
-
 
 sub_BF7A:				
 		jmp	loc_3AF58
-; End of function sub_BF7A
 
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-sub_BF80:				
-					
+sub_BF80:								
 		jmp	AnimateSprite
-; End of function sub_BF80
 
-
-; =============== S U B	R O U T	I N E =======================================
-
-; Attributes: thunk
-
-j_NemDec:				
-					
+j_NemDec:					
 		jmp	(NemDec).l
-; End of function j_NemDec
 
-
-; =============== S U B	R O U T	I N E =======================================
-
-; Attributes: thunk
-
-j_EniDec:				
-					
+j_EniDec:						
 		jmp	(EniDec).l
-; End of function j_EniDec
-
-
-; =============== S U B	R O U T	I N E =======================================
-
 
 sub_BF92:				
 		jmp	(sub_1208).l
-; End of function sub_BF92
-
-
-; =============== S U B	R O U T	I N E =======================================
-
 
 sub_BF98:				
 		jmp	(PlayMusic).l
-; End of function sub_BF98
 
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-sub_BF9E:				
-					
+sub_BF9E:									
 		jmp	loc_367D0
-; End of function sub_BF9E
 
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-sub_BFA4:				
-					
+sub_BFA4:									
 		jmp	(sub_140E).l
-; End of function sub_BFA4
 
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-sub_BFAA:				
-					
+sub_BFAA:						
 		jmp	sub_163AC
-; End of function sub_BFAA
-
-
-; =============== S U B	R O U T	I N E =======================================
-
 
 sub_BFB0:				
 		jmp	(sub_19DC).l
-; End of function sub_BFB0
-
-
-; =============== S U B	R O U T	I N E =======================================
-
-
-sub_BFB6:				
-					
+		
+sub_BFB6:								
 		jmp	loc_36602
-; End of function sub_BFB6
-
+	endc
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_BFBC:				
+sub_BFBC:	; LevelSizeLoad			
 		clr.w	(v_fg_redraw_direction).w
 		clr.w	(v_bg1_redraw_direction).w
 		clr.w	(v_bg2_redraw_direction).w
@@ -16006,7 +15812,7 @@ SwScrl_EHZ:
 		move.w	d3,(a1)+
 		move.w	d4,(a1)+
 		move.w	d3,(a1)+
-    endif
+    endc
 		
 		
 		rts	
@@ -26338,7 +26144,7 @@ loc_12C3C:
 ;sizeB equ addressB_End-addressB
 ;	if (sizeA<>sizeB)
 ;		inform 3,"The space between 'addressA' and 'addressA_End' ($%h bytes), and 'addressB' and 'addressB_End' ($%h bytes) need to be the same size.",sizeA,sizeB
-;	endif
+;	endc
 ;	dc.w	addressA, addressB, (.sizeA/2)-1
 ;	endm
 
@@ -92795,6 +92601,24 @@ LevelHeaders:
 ;---------------------------------------------------------------------------------------
 ;Offset	index of pattern load cue's
 ;---------------------------------------------------------------------------------------
+
+;plcp:	macro plcaddress,altid
+
+;	ifarg \altid
+;		id_altid equ 
+
+
+;palp:	macro paladdress,altid,ramaddress,colors
+	
+;	ifarg \altid
+;		id_\altid:	equ (offset(*)-PalPointers)/8 ; create alternate ID constant for duplicate pointers (used in empty/unused level load table entries)
+;	else	
+;		id_\paladdress:	equ (offset(*)-PalPointers)/8
+;	endc	
+;		dc.l \paladdress
+;		dc.w \ramaddress,(\colors>>1)-1
+;	endm
+
 PatternLoadCues:	
 		index offset(*)
 		;dc.w PLC_Main-PatternLoadCues	; 0
@@ -92884,7 +92708,7 @@ PatternLoadCues:
 ;		endc
 ;		last_vram: = plcm_vram+sizeof_\gfx
 ;		dc.w plcm_vram
-;		if strlen("\suffix")>0
+;		ifarg \suffix
 ;			tile_\gfx\_\suffix: equ plcm_vram/sizeof_cell
 ;			vram_\gfx\_\suffix: equ plcm_vram
 ;		else
@@ -92897,7 +92721,7 @@ PatternLoadCues:
 
 ;plcheader:	macro *
 ;		\*: equ *
-;		plc_count\@: equ (\*_end-*-2)/sizeof_plc
+;		plc_count\@: equ (\*_end-\*-2)/sizeof_plc
 ;		dc.w plc_count\@-1
 ;		endm		
 		
@@ -93971,7 +93795,7 @@ Art_EHZPulseBall:	incbin	"art/uncompressed/EHZ Pulsing Ball.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed graphics (192 blocks)
 ; Dynamically reloaded cliffs in background from HTZ ; ArtNem_49A14: ArtUnc_HTZCliffs:
-Nem_HTZCliffs:	incbin	"art/nemesis/HTZ Background Cliffs.bin"
+Nem_HTZCliffs:	incbin	"art/nemesis/HTZ Background Cliffs.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
@@ -94046,12 +93870,12 @@ Art_Tails:	incbin	"art/uncompressed/Tails.bin"
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Shield			; ArtNem_71D8E:
-Nem_Shield:	incbin	"art/nemesis/Shield.bin"
+Nem_Shield:	incbin	"art/nemesis/Shield.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (34 blocks)
 ; Invincibility stars		; ArtNem_71F14:
-Nem_Invinciblity_Stars:	incbin	"art/nemesis/Invincibility Stars.bin"
+Nem_Invinciblity_Stars:	incbin	"art/nemesis/Invincibility Stars.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Uncompressed art
@@ -94061,7 +93885,7 @@ Art_SplashAndDust:	incbin	"art/uncompressed/Water Splash & Skid Dust.bin"
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (14 blocks)
 ; Super Sonic stars		; ArtNem_7393C:
-Nem_SuperSonic_Stars:	incbin "art/nemesis/Super Sonic Stars.bin"
+Nem_SuperSonic_Stars:	incbin "art/nemesis/Super Sonic Stars.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Sprite Mappings
@@ -94075,106 +93899,106 @@ Nem_SuperSonic_Stars:	incbin "art/nemesis/Super Sonic Stars.bin"
 ; -------------------------------------------------------------------------------------
 ; Nemesis compressed art (127 blocks)
 ; "SEGA" Patterns	; ArtNem_74876:
-Nem_Sega:	incbin	"art/nemesis/SEGA.bin"
+Nem_Sega:	incbin	"art/nemesis/SEGA.nem"
 		even
 ; -------------------------------------------------------------------------------------
 ; Nemesis compressed art (9 blocks)
 ; Shaded blocks from intro	; ArtNem_74CF6:
-Nem_IntroTrails:incbin	"art/nemesis/Sega Screen Trails.bin"
+Nem_IntroTrails:incbin	"art/nemesis/Sega Screen Trails.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Enigma compressed art mappings
 ; SEGA logo mappings		; MapEng_74D0E:
-Eni_SEGA:	incbin	"mappings/misc/SEGA Logo.bin"
+Eni_SEGA:	incbin	"mappings/planes/SEGA Logo.eni"
 		even
 ;---------------------------------------------------------------------------------------
 ; Enigma compressed art mappings
 ; Mappings for title screen background	; ArtNem_74DC6:
-Eni_TitleScreen: incbin	"mappings/misc/Title Screen Background 1.bin"
+Eni_TitleScreen: incbin	"mappings/planes/Title Screen Background 1.eni"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed art mappings
 ; Mappings for title screen background (smaller part, water/horizon)	; MapEng_74E3A:
-Eni_TitleBack:	incbin	"mappings/misc/Title Screen Background 2.bin"
+Eni_TitleBack:	incbin	"mappings/planes/Title Screen Background 2.eni"
 		even
 ;---------------------------------------------------------------------------------------
 ; Enigma compressed art mappings
 ; "Sonic the Hedgehog 2" title screen logo mappings	; MapEng_74E86:
-Eni_TitleLogo:	incbin	"mappings/misc/Title Screen Logo.bin"
+Eni_TitleLogo:	incbin	"mappings/planes/Title Screen Logo.eni"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (336 blocks)
 ; Main patterns from title screen	; ArtNem_74F6C:
-Nem_Title:	incbin	"art/nemesis/Title Screen Patterns.bin"
+Nem_Title:	incbin	"art/nemesis/Title Screen Patterns.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (674 blocks)
 ; Sonic and Tails from title screen	; ArtNem_7667A:
-Nem_TitleSprites:	incbin	"art/nemesis/Title Screen Sonic & Tails.bin"
+Nem_TitleSprites:	incbin	"art/nemesis/Title Screen Sonic & Tails.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (10 blocks)
 ; A few menu patterns	; ArtNem_78CBC:
-Nem_MenuJunk:	incbin	"art/nemesis/Menu Blocks.bin"
+Nem_MenuJunk:	incbin	"art/nemesis/Menu Blocks.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Button			ArtNem_78DAC:
-Nem_Button:	incbin	"art/nemesis/Button.bin"
+Nem_Button:	incbin	"art/nemesis/Button.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Vertical Spring		ArtNem_78E84:
-Nem_VrtclSprng:	incbin	"art/nemesis/Vertical Spring.bin"
+Nem_VrtclSprng:	incbin	"art/nemesis/Vertical Spring.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Horizontal spring		ArtNem_78FA0:
-Nem_HrzntlSprng: incbin	"art/nemesis/Horizontal Spring.bin"
+Nem_HrzntlSprng: incbin	"art/nemesis/Horizontal Spring.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Diagonal spring		ArtNem_7906A:
-Nem_DignlSprng:	incbin	"art/nemesis/Diagonal Spring.bin"
+Nem_DignlSprng:	incbin	"art/nemesis/Diagonal Spring.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Score, Rings, Time patterns	ArtNem_7923E:
-Nem_HUD:	incbin	"art/nemesis/HUD.bin"
+Nem_HUD:	incbin	"art/nemesis/HUD.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Sonic lives counter		ArtNem_79346:
-Nem_Sonic_Life_Counter:	incbin	"art/nemesis/Sonic Lives Counter.bin"
+Nem_Sonic_Life_Counter:	incbin	"art/nemesis/Sonic Lives Counter.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (14 blocks)
 ; Ring				ArtNem_7945C:
-Nem_Ring:	incbin	"art/nemesis/Ring.bin"
+Nem_Ring:	incbin	"art/nemesis/Ring.nem"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (60 blocks)
 ; Monitors and contents		ArtNem_79550:  Nem_Monitors_and_PowerUps:
-Nem_Monitors_and_PowerUps:	incbin	"art/nemesis/Monitors & Monitor Contents.bin"
+Nem_Monitors_and_PowerUps:	incbin	"art/nemesis/Monitors & Monitor Contents.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Spikes			ArtNem_7995C:
-Nem_Spikes:	incbin	"art/nemesis/Spikes.bin"
+Nem_Spikes:	incbin	"art/nemesis/Spikes.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (18 blocks)
 ; Numbers			ArtNem_799AC:
-Nem_Numbers:	incbin	"art/nemesis/Numbers.bin"
+Nem_Numbers:	incbin	"art/nemesis/Numbers.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Star pole			ArtNem_79A86:
-Nem_Checkpoint:	incbin	"art/nemesis/Star Pole.bin"
+Nem_Checkpoint:	incbin	"art/nemesis/Star Pole.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (78 blocks)
 ; Signpost		; ArtNem_79BDE:
-Nem_Signpost:	incbin	"art/nemesis/Signpost.bin"
+Nem_Signpost:	incbin	"art/nemesis/Signpost.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
@@ -94185,22 +94009,22 @@ Art_Signpost:	incbin	"art/uncompressed/Signpost.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
 ; Lever spring		; ArtNem_7AB4A:
-Nem_LeverSpring:	incbin	"art/nemesis/Diving Board Spring.bin"
+Nem_LeverSpring:	incbin	"art/nemesis/Diving Board Spring.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Long horizontal spike		; ArtNem_7AC9A:
-Nem_HorizSpike:	incbin	"art/nemesis/Long Horizontal Spike.bin"
+Nem_HorizSpike:	incbin	"art/nemesis/Long Horizontal Spike.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Bubble thing from underwater	; ArtNem_7AD16: ArtNem_BigBubbles:
-Nem_BubbleGenerator:incbin	"art/nemesis/ARZ Bubble Generator.bin"
+Nem_BubbleGenerator:incbin	"art/nemesis/ARZ Bubble Generator.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (10 blocks)
 ; Bubbles from character	ArtNem_7AEE2:
-Nem_Bubbles: incbin	"art/nemesis/Bubbles.bin"
+Nem_Bubbles: incbin	"art/nemesis/Bubbles.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
@@ -94210,58 +94034,58 @@ Art_Countdown:	incbin	"art/uncompressed/Drowning Countdown Numbers.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (34 blocks)
 ; Game/Time over text		;ArtNem_7B400:
-Nem_Game_Over:	incbin	"art/nemesis/Game Over & Time Over Text.bin"
+Nem_Game_Over:	incbin	"art/nemesis/Game Over & Time Over Text.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (68 blocks)
 ; Explosion			; ArtNem_7B592:
-Nem_Explosion:		incbin	"art/nemesis/Explosion.bin"
+Nem_Explosion:		incbin	"art/nemesis/Explosion.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Miles life counter	; ArtNem_7B946:
-Nem_MilesLife:		incbin	"art/nemesis/Miles Life Counter.bin"
+Nem_MilesLife:		incbin	"art/nemesis/Miles Life Counter.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (49 blocks)
 ; Egg prison		; ArtNem_7BA32:
-Nem_Capsule:		incbin	"art/nemesis/Egg Prison.bin"
+Nem_Capsule:		incbin	"art/nemesis/Egg Prison.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (36 blocks)
 ; Tails on the continue screen (nagging Sonic)	; ArtNem_7BDBE:
-Nem_ContinueTails:		incbin	"art/nemesis/Continue Screen Tails.bin"
+Nem_ContinueTails:		incbin	"art/nemesis/Continue Screen Tails.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Sonic extra continue icon	; ArtNem_7C0AA:
-Nem_MiniSonic:		incbin	"art/nemesis/Sonic Continue Icon.bin"
+Nem_MiniSonic:		incbin	"art/nemesis/Sonic Continue Icon.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Tails life counter		; ArtNem_7C20C:
-Nem_TailsLife:		incbin	"art/nemesis/Tails Life Counter.bin"
+Nem_TailsLife:		incbin	"art/nemesis/Tails Life Counter.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Tails extra continue icon	; ArtNem_7C2F2:
-Nem_MiniTails:		incbin	"art/nemesis/Tails Continue Icon.bin"
+Nem_MiniTails:		incbin	"art/nemesis/Tails Continue Icon.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (88 blocks)
 ; Standard font		; ArtNem_7C43A:
-Nem_FontStuff:		incbin	"art/nemesis/Standard Font.bin"
+Nem_FontStuff:		incbin	"art/nemesis/Standard Font.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (38 blocks)
 ; 1P/2P wins text from 2P mode		; ArtNem_7C9AE:
-Nem_1P2PWins:		incbin	"art/nemesis/1P & 2P Wins Text.bin"
+Nem_1P2PWins:		incbin	"art/nemesis/1P & 2P Wins Text.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Enigma compressed art mappings
 ; Sonic/Miles animated background mappings	; MapEng_7CB80:
 ;---------------------------------------------------------------------------------------
-Eni_MenuBack:		incbin	"mappings/misc/Sonic & Miles Animated Background.bin"
+Eni_MenuBack:		incbin	"mappings/planes/Sonic & Miles Animated Background.eni"
 		even
 ;---------------------------------------------------------------------------------------
 ; Uncompressed art
@@ -94271,387 +94095,387 @@ Art_MenuBack:		incbin	"art/uncompressed/Sonic & Miles Animated Background.bin"
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (94 blocks)
 ; Title card patterns		; ArtNem_7D22C:
-Nem_TitleCard:		incbin	"art/nemesis/Title Card.bin"
+Nem_TitleCard:		incbin	"art/nemesis/Title Card.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (92 blocks)
 ; Alphabet for font using large broken letters	; ArtNem_7D58A:
-ArtNem_TitleCard2:		incbin	"art/nemesis/Title Card Font.bin"
+ArtNem_TitleCard2:		incbin	"art/nemesis/Title Card Font.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (21 blocks)
 ; Menu box with drop shadow	; ArtNem_7D990:
-Nem_MenuBox:		incbin	"art/nemesis/Menu Box & Shadow.bin"
+Nem_MenuBox:		incbin	"art/nemesis/Menu Box & Shadow.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (170 blocks)
 ; Pictures in level preview box in level select		; ArtNem_7DA10:
-Nem_LevelSelectPics:		incbin	"art/nemesis/Level Select Thumbnails.bin"
+Nem_LevelSelectPics:		incbin	"art/nemesis/Level Select Thumbnails.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (68 blocks)
 ; Text for Sonic or Tails Got Through Act and Bonus/Perfect	; ArtNem_7E86A:
-Nem_ResultsText:		incbin	"art/nemesis/End of Level Results Text.bin"
+Nem_ResultsText:		incbin	"art/nemesis/End of Level Results Text.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (72 blocks)
 ; Text for end of special stage, along with patterns for 3 emeralds.	; ArtNem_7EB58:
-Nem_SpecialStageResults:		incbin	"art/nemesis/Special Stage Results Screen & Emeralds.bin"
+Nem_SpecialStageResults:		incbin	"art/nemesis/Special Stage Results Screen & Emeralds.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (14 blocks)
 ; "Perfect" text	; ArtNem_7EEBE:
-Nem_Perfect:		incbin	"art/nemesis/Perfect Text.bin"
+Nem_Perfect:		incbin	"art/nemesis/Perfect Text.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Flicky		; ArtNem_7EF60: ; ArtNem_Bird:
-Nem_Flicky:		incbin	"art/nemesis/Flicky.bin"
+Nem_Flicky:		incbin	"art/nemesis/Flicky.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Squirrel		; ArtNem_7F0A2:
-Nem_Squirrel:		incbin	"art/nemesis/Squirrel.bin"
+Nem_Squirrel:		incbin	"art/nemesis/Squirrel.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Mouse			; ArtNem_7F206:
-Nem_Mouse:		incbin	"art/nemesis/Mouse.bin"
+Nem_Mouse:		incbin	"art/nemesis/Mouse.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Chicken		; ArtNem_7F340:
-Nem_Chicken:		incbin	"art/nemesis/Chicken.bin"
+Nem_Chicken:		incbin	"art/nemesis/Chicken.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Beaver		; ArtNem_7F4A2:
-Nem_Beaver:		incbin	"art/nemesis/Beaver.bin"
+Nem_Beaver:		incbin	"art/nemesis/Beaver.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Eagle		; ArtNem_7F5E2:
-Nem_Eagle:		incbin	"art/nemesis/Eagle.bin"
+Nem_Eagle:		incbin	"art/nemesis/Eagle.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (10 blocks)
 ; Pig			; ArtNem_7F710:
-Nem_Pig:		incbin	"art/nemesis/Pig.bin"
+Nem_Pig:		incbin	"art/nemesis/Pig.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (14 blocks)
 ; Seal			; ArtNem_7F846:
-Nem_Seal:		incbin	"art/nemesis/Seal.bin"
+Nem_Seal:		incbin	"art/nemesis/Seal.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (18 blocks)
 ; Penguin		; ArtNem_7F962:
-Nem_Penguin:		incbin	"art/nemesis/Penguin.bin"
+Nem_Penguin:		incbin	"art/nemesis/Penguin.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Turtle		; ArtNem_7FADE:
-Nem_Turtle:		incbin	"art/nemesis/Turtle.bin"
+Nem_Turtle:		incbin	"art/nemesis/Turtle.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Bear			; ArtNem_7FC90:
-Nem_Bear:		incbin	"art/nemesis/Bear.bin"
+Nem_Bear:		incbin	"art/nemesis/Bear.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (18 blocks)
 ; Rabbit		; ArtNem_7FDD2:
-Nem_Rabbit:		incbin	"art/nemesis/Rabbit.bin"
+Nem_Rabbit:		incbin	"art/nemesis/Rabbit.nem"
 		even
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Rivet thing that you bust to get inside ship at the end of WFZ	; ArtNem_7FF2A:
-Nem_WFZSwitch:		incbin	"art/nemesis/WFZ Boss Chamber Switch.bin"
+Nem_WFZSwitch:		incbin	"art/nemesis/WFZ Boss Chamber Switch.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (15 blocks)
 ; Breakaway panels in WFZ	; ArtNem_7FF98:
-Nem_BreakPanels:		incbin	"art/nemesis/WFZ Breakaway Panels.bin"
+Nem_BreakPanels:		incbin	"art/nemesis/WFZ Breakaway Panels.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Spiked ball from OOZ		; ArtNem_8007C:
-Nem_SpikyThing:		incbin	"art/nemesis/OOZ Spiked Ball.bin"
+Nem_SpikyThing:		incbin	"art/nemesis/OOZ Spiked Ball.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (6 blocks)
 ; Green platform over the burners in OOZ	; ArtNem_80274:
-Nem_BurnerLid:		incbin	"art/nemesis/OOZ Green Popping Platform.bin"
+Nem_BurnerLid:		incbin	"art/nemesis/OOZ Green Popping Platform.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Striped blocks from OOZ	; ArtNem_8030A:
-Nem_StripedBlocksVert:		incbin	"art/nemesis/CPZ Striped Blocks 1.bin"
+Nem_StripedBlocksVert:		incbin	"art/nemesis/CPZ Striped Blocks 1.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Oil splashing into oil in OOZ	; ArtNem_80376:
-Nem_Oilfall:		incbin	"art/nemesis/OOZ Oil Falling Into Oil.bin"
+Nem_Oilfall:		incbin	"art/nemesis/OOZ Oil Falling Into Oil.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (13 blocks)
 ; Cascading oil from OOZ	; ArtNem_804F2:
-Nem_Oilfall2:		incbin	"art/nemesis/OOZ Oil Cascades.bin"
+Nem_Oilfall2:		incbin	"art/nemesis/OOZ Oil Cascades.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Ball thing (unused) from OOZ	; ArtNem_805C0:
-Nem_BallThing:		incbin	"art/nemesis/OOZ Ball on Spring (Beta Leftover).bin"
+Nem_BallThing:		incbin	"art/nemesis/OOZ Ball on Spring (Beta Leftover).nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (53 blocks)
 ; Spinball from OOZ	; ArtNem_806E0:
-Nem_LaunchBall:		incbin	"art/nemesis/OOZ Transporter Ball.bin"
+Nem_LaunchBall:		incbin	"art/nemesis/OOZ Transporter Ball.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (40 blocks)
 ; Collapsing platform from OOZ	; ArtNem_809D0:
-Nem_OOZPlatform:		incbin	"art/nemesis/OOZ Collapsing Platform.bin"
+Nem_OOZPlatform:		incbin	"art/nemesis/OOZ Collapsing Platform.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (30 blocks)
 ; Diagonal and vertical weird spring from OOZ	; ArtNem_80C64:
-Nem_PushSpring:		incbin	"art/nemesis/OOZ Pressure Spring.bin"
+Nem_PushSpring:		incbin	"art/nemesis/OOZ Pressure Spring.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
 ; Swinging platform from OOZ	; ArtNem_80E26:
-Nem_OOZSwingPlat:		incbin	"art/nemesis/OOZ Swinging Platform.bin"
+Nem_OOZSwingPlat:		incbin	"art/nemesis/OOZ Swinging Platform.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; 4 stripy blocks from OOZ	; ArtNem_81048:
-Nem_StripedBlocksHoriz:		incbin	"art/nemesis/OOZ Striped Blocks.bin"
+Nem_StripedBlocksHoriz:		incbin	"art/nemesis/OOZ Striped Blocks.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Raising platform from OOZ	; ArtNem_810B8:
-Nem_OOZElevator:		incbin	"art/nemesis/OOZ Elevator.bin"
+Nem_OOZElevator:		incbin	"art/nemesis/OOZ Elevator.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (30 blocks)
 ; Fan in OOZ		; ArtNem_81254:
-Nem_OOZFan:		incbin	"art/nemesis/OOZ Fan.bin"
+Nem_OOZFan:		incbin	"art/nemesis/OOZ Fan.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (18 blocks)
 ; Green flame thing that shoots platform up in OOZ	; ArtNem_81514:
-Nem_OOZBurn:		incbin	"art/nemesis/OOZ Burner Flame.bin"
+Nem_OOZBurn:		incbin	"art/nemesis/OOZ Burner Flame.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Patterns for appearing and disappearing string of platforms in CNZ	; ArtNem_81600: ; ArtNem_CNZSnake: 
-Nem_CNZCaterpillarPlats:		incbin	"art/nemesis/CNZ Caterpillar Platforms.bin"
+Nem_CNZCaterpillarPlats:		incbin	"art/nemesis/CNZ Caterpillar Platforms.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Spikey ball from pokie in CNZ		; ArtNem_81668:
-Nem_CNZBonusSpike:		incbin	"art/nemesis/CNZ Slot Spikeballs.bin"
+Nem_CNZBonusSpike:		incbin	"art/nemesis/CNZ Slot Spikeballs.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Moving cube from either CNZ or CPZ	; ArtNem_816C8:
-Nem_CNZBigMovingBlock:		incbin	"art/nemesis/CNZ Big Moving Block.bin"
+Nem_CNZBigMovingBlock:		incbin	"art/nemesis/CNZ Big Moving Block.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Elevator in CNZ		; ArtNem_817B4:
-Nem_CNZElevator:		incbin	"art/nemesis/CNZ Elevator.bin"
+Nem_CNZElevator:		incbin	"art/nemesis/CNZ Elevator.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Bars from pokies in CNZ	; ArtNem_81826:
-Nem_CNZCage:		incbin	"art/nemesis/CNZ Cages.bin"
+Nem_CNZCage:		incbin	"art/nemesis/CNZ Cages.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (6 blocks)
 ; Hexagonal bumper in CNZ	; ArtNem_81894:
-Nem_CNZHexBumper:		incbin	"art/nemesis/CNZ Hexagonal Bumper.bin"
+Nem_CNZHexBumper:		incbin	"art/nemesis/CNZ Hexagonal Bumper.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Normal round bumper from CNZ	; ArtNem_8191E:
-Nem_CNZRoundBumper:		incbin	"art/nemesis/CNZ Round Bumper.bin"
+Nem_CNZRoundBumper:		incbin	"art/nemesis/CNZ Round Bumper.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Diagonal spring from CNZ that you charge up	; ArtNem_81AB0:
-Nem_CNZDiagPlunger:		incbin	"art/nemesis/CNZ Diagonal Pinball Launcher.bin"
+Nem_CNZDiagPlunger:		incbin	"art/nemesis/CNZ Diagonal Pinball Launcher.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (18 blocks)
 ; Vertical spring from CNZ that you charge up		; ArtNem_81C96:
-Nem_CNZVertPlunger:		incbin	"art/nemesis/CNZ Vertical Pinball Launcher.bin"
+Nem_CNZVertPlunger:		incbin	"art/nemesis/CNZ Vertical Pinball Launcher.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
 ; Weird blocks from CNZ that you hit 3 times to get rid of	; ArtNem_81DCC: ; ArtNem_CNZMiniBumper
-Nem_CNZSaucerBumper:		incbin	"art/nemesis/CNZ Saucer Bumper.bin"
+Nem_CNZSaucerBumper:		incbin	"art/nemesis/CNZ Saucer Bumper.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (52 blocks)
 ; Flippers from CNZ	; ArtNem_81EF2:
-Nem_CNZFlipper:		incbin	"art/nemesis/CNZ Flipper.bin"
+Nem_CNZFlipper:		incbin	"art/nemesis/CNZ Flipper.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Large moving platform from CPZ	; ArtNem_82216:
-Nem_CPZElevator:		incbin	"art/nemesis/CPZ Elevator.bin"
+Nem_CPZElevator:		incbin	"art/nemesis/CPZ Elevator.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Top of water in HPZ and CPZ	; ArtNem_82364:
-Nem_WaterSurface1:		incbin	"art/nemesis/CPZ & HPZ Water Surface.bin"
+Nem_WaterSurface1:		incbin	"art/nemesis/CPZ & HPZ Water Surface.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Booster things in CPZ		; ArtNem_824D4:
-Nem_CPZBooster:		incbin	"art/nemesis/CPZ Speed Booster.bin"
+Nem_CPZBooster:		incbin	"art/nemesis/CPZ Speed Booster.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; CPZ droplet chain enemy	; ArtNem_8253C:
-Nem_CPZDroplet:		incbin	"art/nemesis/CPZ Blue Balls.bin"
+Nem_CPZDroplet:		incbin	"art/nemesis/CPZ Blue Balls.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (33 blocks)
 ; CPZ metal things (girder, cylinders)	; ArtNem_825AE:
-Nem_CPZPylons:		incbin	"art/nemesis/CPZ Pylons.bin"
+Nem_CPZPylons:		incbin	"art/nemesis/CPZ Pylons.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; CPZ metal block		; ArtNem_827B8:
-Nem_CPZMetalBlock:		incbin	"art/nemesis/CPZ Breakable Metal Block.bin"
+Nem_CPZMetalBlock:		incbin	"art/nemesis/CPZ Breakable Metal Block.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Yellow and black stripy tiles from CPZ & DEZ	; ArtNem_827F8:
-Nem_ConstructionStripes:		incbin	"art/nemesis/CPZ & DEZ Yellow & Black Striped Blocks.bin"
+Nem_ConstructionStripes:		incbin	"art/nemesis/CPZ & DEZ Yellow & Black Striped Blocks.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (48 blocks)
 ; Yellow flipping platforms and stuff CPZ	; ArtNem_82864: ; ArtNem_CPZAnimatedBits
-Nem_CPZDumpingPipePlat:		incbin	"art/nemesis/CPZ Dumping Pipe Platform.bin"
+Nem_CPZDumpingPipePlat:		incbin	"art/nemesis/CPZ Dumping Pipe Platform.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Moving block from CPZ		; ArtNem_82A46:
-Nem_CPZStairBlock:		incbin	"art/nemesis/CPZ Stair Block.bin"
+Nem_CPZStairBlock:		incbin	"art/nemesis/CPZ Stair Block.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Spring that covers tube in CPZ	; ArtNem_82C06:
-Nem_CPZTubeSpring:		incbin	"art/nemesis/CPZ Spintube Exit Cover & Spring.bin"
+Nem_CPZTubeSpring:		incbin	"art/nemesis/CPZ Spintube Exit Cover & Spring.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Top of water in ARZ		; ArtNem_82E02:
-Nem_WaterSurface2:		incbin	"art/nemesis/ARZ Water Surface.bin"
+Nem_WaterSurface2:		incbin	"art/nemesis/ARZ Water Surface.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (7 blocks)
 ; Leaves from ARZ	; ArtNem_82EE8:
-Nem_Leaves:		incbin	"art/nemesis/ARZ Leaves.bin"
+Nem_Leaves:		incbin	"art/nemesis/ARZ Leaves.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (17 blocks)
 ; Arrow shooter and arrow from ARZ	; ArtNem_82F74:
-Nem_ArrowAndShooter:		incbin	"art/nemesis/ARZ Arrow Shooter & Arrow.bin"
+Nem_ArrowAndShooter:		incbin	"art/nemesis/ARZ Arrow Shooter & Arrow.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; One way barrier from ARZ (unused?)	; ArtNem_830D2: ; ArtNem_ARZBarrierThing
-Nem_ARZBarrier:		incbin	"art/nemesis/ARZ One-Way Barrier.bin"
+Nem_ARZBarrier:		incbin	"art/nemesis/ARZ One-Way Barrier.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
 ; Buzz bomber			; ArtNem_8316A:
-Nem_Buzzer:		incbin	"art/nemesis/Buzzer.bin"
+Nem_Buzzer:		incbin	"art/nemesis/Buzzer.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (58 blocks)
 ; Octus (OOZ octopus badnik)	; ArtNem_8336A:
-Nem_Octus:		incbin	"art/nemesis/Octus.bin"
+Nem_Octus:		incbin	"art/nemesis/Octus.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (56 blocks)
 ; Aquis (OOZ seahorse badnik)	; ArtNem_8368A:
-Nem_Aquis:		incbin	"art/nemesis/Aquis.bin"
+Nem_Aquis:		incbin	"art/nemesis/Aquis.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (22 blocks)
 ; Fish badnik from EHZ		; ArtNem_839EA:	ArtNem_Pirahna:
-Nem_Masher:		incbin	"art/nemesis/Masher.bin"
+Nem_Masher:		incbin	"art/nemesis/Masher.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (96 blocks)
 ; Robotnik's main ship		; ArtNem_83BF6:
-Nem_Eggpod:		incbin	"art/nemesis/Eggpod.bin"
+Nem_Eggpod:		incbin	"art/nemesis/Eggpod.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (111 blocks)
 ; CPZ Boss			; ArtNem_84332:
-Nem_CPZBoss:		incbin	"art/nemesis/CPZ Boss.bin"
+Nem_CPZBoss:		incbin	"art/nemesis/CPZ Boss.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (100 blocks)
 ; Large explosion		; ArtNem_84890:
-Nem_FieryExplosion:		incbin	"art/nemesis/Large Explosion.bin"
+Nem_FieryExplosion:		incbin	"art/nemesis/Large Explosion.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Horizontal jet		; ArtNem_84F18:
-Nem_EggpodJets:		incbin	"art/nemesis/Eggpod Jets.bin"
+Nem_EggpodJets:		incbin	"art/nemesis/Eggpod Jets.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Smoke trail from CPZ and HTZ bosses	; ArtNem_84F96:
-Nem_BossSmoke:		incbin	"art/nemesis/CPZ & HTZ Boss Smoke Trail.bin"
+Nem_BossSmoke:		incbin	"art/nemesis/CPZ & HTZ Boss Smoke Trail.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (128 blocks)
 ; EHZ Boss	; ArtNem_8507C:
-Nem_EHZBoss:		incbin	"art/nemesis/EHZ Boss.bin"
+Nem_EHZBoss:		incbin	"art/nemesis/EHZ Boss.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Helicopter blades for EHZ boss	; ArtNem_85868:  ; ArtNem_EggChoppers:
-Nem_EggChopperBlades:		incbin	"art/nemesis/EHZ Boss Helicopter Blades.bin"
+Nem_EggChopperBlades:		incbin	"art/nemesis/EHZ Boss Helicopter Blades.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (107 blocks)
 ; HTZ boss			; ArtNem_8595C:
-Nem_HTZBoss:		incbin	"art/nemesis/HTZ Boss.bin"
+Nem_HTZBoss:		incbin	"art/nemesis/HTZ Boss.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (166 blocks)
 ; ARZ boss			; ArtNem_86128:
-Nem_ARZBoss:		incbin	"art/nemesis/ARZ Boss.bin"
+Nem_ARZBoss:		incbin	"art/nemesis/ARZ Boss.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (204 blocks)
 ; MCZ boss			; ArtNem_86B6E:
-Nem_MCZBoss:		incbin	"art/nemesis/MCZ Boss.bin"
+Nem_MCZBoss:		incbin	"art/nemesis/MCZ Boss.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (133 blocks)
 ; CNZ boss			; ArtNem_87AAC:
-Nem_CNZBoss:		incbin	"art/nemesis/CNZ Boss.bin"
+Nem_CNZBoss:		incbin	"art/nemesis/CNZ Boss.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (181 blocks)
 ; OOZ boss			; ArtNem_882D6:
-Nem_OOZBoss:		incbin	"art/nemesis/OOZ Boss.bin"
+Nem_OOZBoss:		incbin	"art/nemesis/OOZ Boss.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (124 blocks)
 ; MTZ boss			; ArtNem_88DA6:
-Nem_MTZBoss:		incbin	"art/nemesis/MTZ Boss.bin"
+Nem_MTZBoss:		incbin	"art/nemesis/MTZ Boss.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Uncompressed art (8 blocks)
@@ -94661,310 +94485,310 @@ Art_FallingRocks:		incbin	"art/uncompressed/MCZ Boss Falling Rocks & Stalactites
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (9 blocks)
 ; Blowfly from ARZ	; ArtNem_895E4:
-Nem_Whisp:		incbin	"art/nemesis/Whisp.bin"
+Nem_Whisp:		incbin	"art/nemesis/Whisp.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (50 blocks)
 ; Grounder from ARZ	; ArtNem_8970E:
-Nem_Grounder:		incbin	"art/nemesis/Grounder.bin"
+Nem_Grounder:		incbin	"art/nemesis/Grounder.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Fish from ARZ		; ArtNem_89B9A:
-Nem_ChopChop:		incbin	"art/nemesis/Chop Chop.bin"
+Nem_ChopChop:		incbin	"art/nemesis/Chop Chop.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (19 blocks)
 ; Lava snake from HTZ		89DEC: ArtNem_HtzRexxon:
-Nem_Rexon:		incbin	"art/nemesis/Rexon.bin"
+Nem_Rexon:		incbin	"art/nemesis/Rexon.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Enemy with spike cone on top from HTZ		89FAA:	ArtNem_HtzDriller:
-Nem_Spiker:		incbin	"art/nemesis/Spiker.bin"
+Nem_Spiker:		incbin	"art/nemesis/Spiker.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
 ; Bomber badnik from SCZ	; ArtNem_8A142:
-Nem_Nebula:		incbin	"art/nemesis/Nebula.bin"
+Nem_Nebula:		incbin	"art/nemesis/Nebula.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (57 blocks)
 ; Turtle badnik from SCZ	; ArtNem_8A362:
-Nem_Turtloid:		incbin	"art/nemesis/Turtloid.bin"
+Nem_Turtloid:		incbin	"art/nemesis/Turtloid.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (38 blocks)
 ; Coconuts (EHZ monkey badnik)
-Nem_Coconuts:		incbin	"art/nemesis/Coconuts.bin"
+Nem_Coconuts:		incbin	"art/nemesis/Coconuts.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (10 blocks)
 ; Snake badnik from MCZ		; ArtNem_8AB36:
-Nem_Crawlton:		incbin	"art/nemesis/Crawlton.bin"
+Nem_Crawlton:		incbin	"art/nemesis/Crawlton.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Firefly from MCZ		; ArtNem_8AC5E:
-Nem_Flasher:		incbin	"art/nemesis/Flasher.bin"
+Nem_Flasher:		incbin	"art/nemesis/Flasher.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Praying mantis badnik from MTZ	8AD80: ; ArtNem_MtzMantis
-Nem_Slicer:		incbin	"art/nemesis/Slicer.bin"
+Nem_Slicer:		incbin	"art/nemesis/Slicer.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (36 blocks)
 ; Crab badnik from MTZ			8B058: ; 
-Nem_Shellcracker:		incbin	"art/nemesis/Shellcracker.bin"
+Nem_Shellcracker:		incbin	"art/nemesis/Shellcracker.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (15 blocks)
 ; Exploding star badnik from MTZ	8B300: ArtNem_MtzSupernova
-Nem_Asteron:		incbin	"art/nemesis/Asteron.bin"
+Nem_Asteron:		incbin	"art/nemesis/Asteron.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Weird crawling badnik from CPZ	; ArtNem_8B430:
-Nem_Spiny:		incbin	"art/nemesis/Spiny.bin"
+Nem_Spiny:		incbin	"art/nemesis/Spiny.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (45 blocks)
 ; Spider badnik from CPZ 	ArtNem_8B6B4:
-Nem_Grabber:	incbin	"art/nemesis/Grabber.bin"
+Nem_Grabber:	incbin	"art/nemesis/Grabber.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (26 blocks)
 ; Chicken badnik from WFZ		8B9DC:
-Nem_Clucker:		incbin	"art/nemesis/Clucker.bin"
+Nem_Clucker:		incbin	"art/nemesis/Clucker.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (25 blocks)
 ; Jet like badnik from SCZ		8BC16:
-Nem_Balkiry:		incbin	"art/nemesis/Balkiry.bin"
+Nem_Balkiry:		incbin	"art/nemesis/Balkiry.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (217 blocks)
 ; Silver Sonic			; ArtNem_8BE12:
-Nem_MechaSonic:		incbin	"art/nemesis/Mecha Sonic.bin"
+Nem_MechaSonic:		incbin	"art/nemesis/Mecha Sonic.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (79 blocks)
 ; The Tornado			8CC44:
-Nem_Tornado:		incbin	"art/nemesis/The Tornado.bin"
+Nem_Tornado:		incbin	"art/nemesis/The Tornado.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Wall turret from WFZ		8D1A0:
-Nem_WFZWallTurret:		incbin	"art/nemesis/WFZ Wall Turret.bin"
+Nem_WFZWallTurret:		incbin	"art/nemesis/WFZ Wall Turret.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Hook on chain in WFZ		8D388:
-Nem_WFZHook:		incbin	"art/nemesis/WFZ Hook & Chain.bin"
+Nem_WFZHook:		incbin	"art/nemesis/WFZ Hook & Chain.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (54 blocks)
 ; Retracting platform from WFZ		8D540:
-Nem_WFZGunPlatform:		incbin	"art/nemesis/WFZ Gun Platform.bin"
+Nem_WFZGunPlatform:		incbin	"art/nemesis/WFZ Gun Platform.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Wheel for belt in WFZ		8D7D8:
-Nem_WFZConveyorBeltWheel:		incbin	"art/nemesis/WFZ Conveyer Belt Wheel.bin"
+Nem_WFZConveyorBeltWheel:		incbin	"art/nemesis/WFZ Conveyer Belt Wheel.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Moving platform in WFZ	8D96E:
 ; --------------------------------------------------------------------------------------
-Nem_WFZFloatingPlatform:		incbin	"art/nemesis/WFZ Floating Platform.bin"
+Nem_WFZFloatingPlatform:		incbin	"art/nemesis/WFZ Floating Platform.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Giant unused vertical red laser in WFZ	8DA6E:
-Nem_WFZVrtclLazer:		incbin	"art/nemesis/WFZ Vertical Laser.bin"
+Nem_WFZVrtclLazer:		incbin	"art/nemesis/WFZ Vertical Laser.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (18 blocks)
 ; Clouds			8DAFC:
-Nem_Clouds:		incbin	"art/nemesis/SCZ, WFZ, and Ending Clouds.bin"
+Nem_Clouds:		incbin	"art/nemesis/SCZ, WFZ, and Ending Clouds.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (10 blocks)
 ; Red horizontal laser in WFZ		8DC42:
-Nem_WFZHrzntlLazer:		incbin	"art/nemesis/WFZ Horizontal Laser.bin"
+Nem_WFZHrzntlLazer:		incbin	"art/nemesis/WFZ Horizontal Laser.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (5 blocks)
 ; Catapult that shoots Sonic across quickly in WFZ	8DCA2:
-Nem_WFZLaunchCatapult:		incbin	"art/nemesis/WFZ Catapult.bin"
+Nem_WFZLaunchCatapult:		incbin	"art/nemesis/WFZ Catapult.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Rising platforms on belt from WFZ	8DD0C:
-Nem_WFZBeltPlatform:		incbin	"art/nemesis/WFZ Belt Platform.bin"
+Nem_WFZBeltPlatform:		incbin	"art/nemesis/WFZ Belt Platform.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Unused badnik in WFZ		8DDF6:
-Nem_WFZUnusedBadnik:		incbin	"art/nemesis/WFZ Unused Badnik.bin"
+Nem_WFZUnusedBadnik:		incbin	"art/nemesis/WFZ Unused Badnik.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Vertical spinning blades from WFZ	8DEB8:
-Nem_WFZVrtclPrpllr:		incbin	"art/nemesis/WFZ Vertical Propeller.bin"
+Nem_WFZVrtclPrpllr:		incbin	"art/nemesis/WFZ Vertical Propeller.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (29 blocks)
 ; Horizontal spinning blades from WFZ		8DEE8:
-Nem_WFZHrzntlPrpllr:		incbin	"art/nemesis/WFZ Horizontal Propeller.bin"
+Nem_WFZHrzntlPrpllr:		incbin	"art/nemesis/WFZ Horizontal Propeller.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Platforms that tilt in WFZ		8E010:
-Nem_WFZTiltPlatforms:		incbin	"art/nemesis/WFZ Tilting Platforms.bin"
+Nem_WFZTiltPlatforms:		incbin	"art/nemesis/WFZ Tilting Platforms.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Thrust from Robotnik's getaway ship in WFZ		8E0C4:
-Nem_WFZThrust:		incbin	"art/nemesis/WFZ Getaway Ship Thrust.bin"
+Nem_WFZThrust:		incbin	"art/nemesis/WFZ Getaway Ship Thrust.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (117 blocks)
 ; Laser boss from WFZ	; ArtNem_WFZBoss:
-Nem_WFZBoss:		incbin	"art/nemesis/WFZ Boss.bin"
+Nem_WFZBoss:		incbin	"art/nemesis/WFZ Boss.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Robotnik's head	; ArtNem_RobotnikUpper:
-Nem_RobotnikUpper:		incbin	"art/nemesis/Eggman's Head.bin"
+Nem_RobotnikUpper:		incbin	"art/nemesis/Eggman's Head.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (76 blocks)
 ; Robotnik		; ArtNem_RobotnikRunning:
-Nem_RobotnikRunning:		incbin	"art/nemesis/Eggman.bin"
+Nem_RobotnikRunning:		incbin	"art/nemesis/Eggman.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
 ; Robotnik's lower half	; Nem_RobotnikLower:
 ; --------------------------------------------------------------------------------------
-Nem_RobotnikLower:		incbin	"art/nemesis/Eggman's Lower Half.bin"
+Nem_RobotnikLower:		incbin	"art/nemesis/Eggman's Lower Half.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Window in back that Robotnik looks through in DEZ	; Nem_DEZWindow:
 ; --------------------------------------------------------------------------------------
-Nem_DEZWindow:		incbin	"art/nemesis/Eggman's Window in Mecha Sonic Boss Arena.bin"
+Nem_DEZWindow:		incbin	"art/nemesis/Eggman's Window in Mecha Sonic Boss Arena.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (327 blocks)
 ; Eggrobo		; ArtNem_DEZBoss:
-Nem_DEZBoss:		incbin	"art/nemesis/Eggrobo.bin"
+Nem_DEZBoss:		incbin	"art/nemesis/Eggrobo.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (42 blocks)
 ; Bouncer badnik from CNZ	; ArtNem_Crawl:
-Nem_Crawl:		incbin	"art/nemesis/Crawl.bin"
+Nem_Crawl:		incbin	"art/nemesis/Crawl.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (26 blocks)
 ; Rocket thruster for Tornado	; ArtNem_TornadoThruster:
-Nem_TornadoThruster:		incbin	"art/nemesis/The Tornado's Rocket Booster.bin"
+Nem_TornadoThruster:		incbin	"art/nemesis/The Tornado's Rocket Booster.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Frame 1 of end of game sequence	; MapEng_906E0:
-Eni_Ending1:		incbin	"mappings/misc/Ending Still 1.bin"
+Eni_Ending1:		incbin	"mappings/planes/Ending Still 1.eni"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Frame 2 of end of game sequence	; MapEng_906F8:
-Eni_Ending2:		incbin	"mappings/misc/Ending Still 2.bin"
+Eni_Ending2:		incbin	"mappings/planes/Ending Still 2.eni"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Frame 3 of end of game sequence	; MapEng_90722:
-Eni_Ending3:		incbin	"mappings/misc/Ending Still 3.bin"
+Eni_Ending3:		incbin	"mappings/planes/Ending Still 3.eni"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Frame 4 of end of game sequence	; MapEng_9073C:
-Eni_Ending4:		incbin	"mappings/misc/Ending Still 4.bin"
+Eni_Ending4:		incbin	"mappings/planes/Ending Still 4.eni"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Closeup of Tails flying plane in ending sequence	; MapEng_9076E:
-Eni_EndingTailsPlane:		incbin	"mappings/misc/Tails Piloting Tornado in Ending Cutscene.bin"
+Eni_EndingTailsPlane:		incbin	"mappings/planes/Tails Piloting Tornado in Ending Cutscene.eni"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Closeup of Sonic flying plane in ending sequence	; MapEng_907C0:
-Eni_EndingSonicPlane:		incbin	"mappings/misc/Sonic Piloting Tornado in Ending Cutscene.bin"
+Eni_EndingSonicPlane:		incbin	"mappings/planes/Sonic Piloting Tornado in Ending Cutscene.eni"
 		even
 ; --------------------------------------------------------------------------------------
-; Enigma compressed sprite mappings
-; Unused duplicates of MapEng_EndGameLogo
+
+; Unused duplicates of Eni_EndGameLogo
 ;Eni_9082A:		
-		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
+		incbin	"mappings/planes/Sonic 2 Ending Logo.eni"
 		even
 ;Eni_90852:		
-		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
+		incbin	"mappings/planes/Sonic 2 Ending Logo.eni"
 		even
 ;Eni_9087A:		
-		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
+		incbin	"mappings/planes/Sonic 2 Ending Logo.eni"
 		even
 ;Eni_908A2:		
-		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
+		incbin	"mappings/planes/Sonic 2 Ending Logo.eni"
 		even
 ;Eni_908CA:		
-		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
+		incbin	"mappings/planes/Sonic 2 Ending Logo.eni"
 		even
 ;Eni_908F2:	
-		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
+		incbin	"mappings/planes/Sonic 2 Ending Logo.eni"
 		even
 ;Eni_9091A:		
-		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
+		incbin	"mappings/planes/Sonic 2 Ending Logo.eni"
 		even
 ;Eni_90942:		
-		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
+		incbin	"mappings/planes/Sonic 2 Ending Logo.eni"
 		even
 ;Eni_9096A:		
-		incbin	"mappings/misc/Sonic 2 end of game logo.bin"
+		incbin	"mappings/planes/Sonic 2 Ending Logo.eni"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (363 blocks)
 ; Movie sequence at end of game		; ArtNem_EndingPics:
-Nem_EndingPics:		incbin	"art/nemesis/Ending Stills.bin"
+Nem_EndingPics:		incbin	"art/nemesis/Ending Stills.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (127 blocks)
 ; Final image of Tornado with it and Sonic facing screen	; ArtNem_EndingFinalTornado:
-Nem_EndingFinalTornado:		incbin	"art/nemesis/Tornado Facing Camera at End of Ending Sequence.bin"
+Nem_EndingFinalTornado:		incbin	"art/nemesis/Tornado Facing Camera at End of Ending Sequence.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (109 blocks)
 ; Mini pictures of Tornado in final ending sequence	; ArtNem_EndingMiniTornado:
-Nem_EndingMiniTornado:		incbin	"art/nemesis/Tornado Distant Shots in Ending Sequence.bin"
+Nem_EndingMiniTornado:		incbin	"art/nemesis/Tornado Distant Shots in Ending Sequence.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (135 blocks)
 ; Mini pictures of Sonic and final image of Sonic
-Nem_EndingSonic:		incbin	"art/nemesis/Ending Sequence Sonic.bin"
+Nem_EndingSonic:		incbin	"art/nemesis/Ending Sequence Sonic.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (117 blocks)
 ; Mini pictures of Sonic and final image of Sonic in Super Sonic mode	; ArtNem_EndingSuperSonic:
-Nem_EndingSuperSonic:		incbin	"art/nemesis/Ending Sequence Super Sonic.bin"
+Nem_EndingSuperSonic:		incbin	"art/nemesis/Ending Sequence Super Sonic.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (181 blocks)
 ; Final image of Tails		; ArtNem_93F3C:
-Nem_EndingTails:		incbin	"art/nemesis/Ending Sequence Tails.bin"
+Nem_EndingTails:		incbin	"art/nemesis/Ending Sequence Tails.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (72 blocks)
 ; Sonic the Hedgehog 2 image at end of credits	; ArtNem_94B28:
-Nem_EndingTitle:		incbin	"art/nemesis/Sonic the Hedgehog 2 Credits Logo.bin"
+Nem_EndingTitle:		incbin	"art/nemesis/Sonic the Hedgehog 2 Credits Logo.nem"
 
 
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -95018,99 +94842,99 @@ Nem_EndingTitle:		incbin	"art/nemesis/Sonic the Hedgehog 2 Credits Logo.bin"
 ; ----------------------------------------------------------------------------------
 ; EHZ 16x16 block mappings (Kosinski compression)
 ; ----------------------------------------------------------------------------------
-BM16_EHZ:		incbin	"mappings/16x16/EHZ.bin"
+BM16_EHZ:		incbin	"mappings/16x16/EHZ.kos"
 ;-----------------------------------------------------------------------------------
 ;EHZ/HTZ main level patterns (Kosinski compression)
 ; ArtKoz_95C24:
-Kos_EHZ:		incbin	"art/kosinski/EHZ_HTZ.bin"
+Kos_EHZ:		incbin	"art/kosinski/EHZ_HTZ.kos"
 ;-----------------------------------------------------------------------------------
 ;HTZ 16x16 block mappings (Kosinski compression)
-BM16_HTZ:		incbin	"mappings/16x16/HTZ.bin"
+BM16_HTZ:		incbin	"mappings/16x16/HTZ.kos"
 ;-----------------------------------------------------------------------------------
 ;HTZ pattern suppliment	to EHZ level patterns (Kosinski	compression)
 ; ArtKoz_98AB4:
-Kos_HTZ:		incbin	"art/kosinski/HTZ_Supp.bin"
+Kos_HTZ:		incbin	"art/kosinski/HTZ_Supp.kos"
 ;-----------------------------------------------------------------------------------
 ;EHZ/HTZ 128x128 block mappings	(Kosinski compression)
-BM128_EHZ:		incbin	"mappings/128x128/EHZ_HTZ.bin"
+BM128_EHZ:		incbin	"mappings/128x128/EHZ_HTZ.kos"
 ;-----------------------------------------------------------------------------------
 ; MTZ 16x16 block mappings (Kosinski compression)
-BM16_MTZ:		incbin	"mappings/16x16/MTZ.bin"
+BM16_MTZ:		incbin	"mappings/16x16/MTZ.kos"
 ;-----------------------------------------------------------------------------------
 ; MTZ main level patterns (Kosinski compression)
 ; ArtKoz_9DB64:
-Kos_MTZ:		incbin	"art/kosinski/MTZ.bin"
+Kos_MTZ:		incbin	"art/kosinski/MTZ.kos"
 ;-----------------------------------------------------------------------------------
 ; MTZ 128x128 block mappings (Kosinski compression)
-BM128_MTZ:		incbin	"mappings/128x128/MTZ.bin"
+BM128_MTZ:		incbin	"mappings/128x128/MTZ.kos"
 ;-----------------------------------------------------------------------------------
 ; HPZ 16x16 block mappings (Kosinski compression)
-BM16_HPZ:		;incbin	"mappings/16x16/HPZ.bin"
+BM16_HPZ:		;incbin	"mappings/16x16/HPZ.kos"
 ;-----------------------------------------------------------------------------------
 ; HPZ main level patterns (Kosinski compression)
-Kos_HPZ:		;incbin	"art/kosinski/HPZ.bin"
+Kos_HPZ:		;incbin	"art/kosinski/HPZ.kos"
 ;-----------------------------------------------------------------------------------
 ; HPZ 128x128 block mappings (Kosinski compression)
-BM128_HPZ:		;incbin	"mappings/128x128/HPZ.bin"
+BM128_HPZ:		;incbin	"mappings/128x128/HPZ.kos"
 ;-----------------------------------------------------------------------------------
 ;OOZ 16x16 block mappings (Kosinski compression)
-BM16_OOZ:		incbin	"mappings/16x16/OOZ.bin"
+BM16_OOZ:		incbin	"mappings/16x16/OOZ.kos"
 ;-----------------------------------------------------------------------------------
 ;OOZ main level	patterns (Kosinski compression)
-Kos_OOZ:		incbin	"art/kosinski/OOZ.bin"
+Kos_OOZ:		incbin	"art/kosinski/OOZ.kos"
 ;-----------------------------------------------------------------------------------
 ;OOZ 128x128 block mappings (Kosinski compression)
-BM128_OOZ:		incbin	"mappings/128x128/OOZ.bin"
+BM128_OOZ:		incbin	"mappings/128x128/OOZ.kos"
 ;-----------------------------------------------------------------------------------
 ;MCZ 16x16 block mappings (Kosinski compression)
-BM16_MCZ:		incbin	"mappings/16x16/MCZ.bin"
+BM16_MCZ:		incbin	"mappings/16x16/MCZ.kos"
 ;-----------------------------------------------------------------------------------
 ;MCZ main level	patterns (Kosinski compression)
-Kos_MCZ:		incbin	"art/kosinski/MCZ.bin"
+Kos_MCZ:		incbin	"art/kosinski/MCZ.kos"
 ;-----------------------------------------------------------------------------------
 ;MCZ 128x128 block mappings (Kosinski compression)
-BM128_MCZ:		incbin	"mappings/128x128/MCZ.bin"
+BM128_MCZ:		incbin	"mappings/128x128/MCZ.kos"
 ;-----------------------------------------------------------------------------------
 ;CNZ 16x16 block mappings (Kosinski compression)
-BM16_CNZ:		incbin	"mappings/16x16/CNZ.bin"
+BM16_CNZ:		incbin	"mappings/16x16/CNZ.kos"
 ;-----------------------------------------------------------------------------------
 ;CNZ main level	patterns (Kosinski compression)
-Kos_CNZ:		incbin	"art/kosinski/CNZ.bin"
+Kos_CNZ:		incbin	"art/kosinski/CNZ.kos"
 ;-----------------------------------------------------------------------------------
 ;CNZ 128x128 block mappings (Kosinski compression)
-BM128_CNZ:		incbin	"mappings/128x128/CNZ.bin"
+BM128_CNZ:		incbin	"mappings/128x128/CNZ.kos"
 ;-----------------------------------------------------------------------------------
 ;CPZ/DEZ 16x16 block mappings (Kosinski	compression)
-BM16_CPZ:		incbin	"mappings/16x16/CPZ_DEZ.bin"
+BM16_CPZ:		incbin	"mappings/16x16/CPZ_DEZ.kos"
 ;-----------------------------------------------------------------------------------
 ;CPZ/DEZ main level patterns (Kosinski compression)
-Kos_CPZ:		incbin	"art/kosinski/CPZ_DEZ.bin"
+Kos_CPZ:		incbin	"art/kosinski/CPZ_DEZ.kos"
 ;-----------------------------------------------------------------------------------
 ;CPZ/DEZ 128x128 block mappings	(Kosinski compression)
-BM128_CPZ:		incbin	"mappings/128x128/CPZ_DEZ.bin"
+BM128_CPZ:		incbin	"mappings/128x128/CPZ_DEZ.kos"
 ;-----------------------------------------------------------------------------------
 ;ARZ 16x16 block mappings (Kosinski compression)
 ; This file contains $320 blocks, overflowing the 'Block_table' buffer. This causes
 ; 'TempArray_LayerDef' to be overwritten with (empty) block data.
-BM16_ARZ:		incbin	"mappings/16x16/ARZ.bin"
+BM16_ARZ:		incbin	"mappings/16x16/ARZ.kos"
 ;-----------------------------------------------------------------------------------
 ;ARZ main level	patterns (Kosinski compression)
-Kos_ARZ:		incbin	"art/kosinski/ARZ.bin"
+Kos_ARZ:		incbin	"art/kosinski/ARZ.kos"
 ;-----------------------------------------------------------------------------------
 ;ARZ 128x128 block mappings (Kosinski compression)
-BM128_ARZ:		incbin		"mappings/128x128/ARZ.bin"
+BM128_ARZ:		incbin		"mappings/128x128/ARZ.kos"
 ;-----------------------------------------------------------------------------------
 ;WFZ/SCZ 16x16 block mappings (Kosinski	compression)
-BM16_WFZ:		incbin	"mappings/16x16/WFZ_SCZ.bin"
+BM16_WFZ:		incbin	"mappings/16x16/WFZ_SCZ.kos"
 ;-----------------------------------------------------------------------------------
 ;WFZ/SCZ main level patterns (Kosinski compression)
-Kos_SCZ:		incbin	"art/kosinski/WFZ_SCZ.bin"
+Kos_SCZ:		incbin	"art/kosinski/WFZ_SCZ.kos"
 ;-----------------------------------------------------------------------------------
 ;WFZ pattern suppliment	to SCZ tiles (Kosinski compression)
-Kos_WFZ:		incbin	"art/kosinski/WFZ_Supp.bin"
+Kos_WFZ:		incbin	"art/kosinski/WFZ_Supp.kos"
 ;-----------------------------------------------------------------------------------
 ;WFZ/SCZ 128x128 block mappings	(Kosinski compression)
-BM128_WFZ:		incbin	"mappings/128x128/WFZ_SCZ.bin"
+BM128_WFZ:		incbin	"mappings/128x128/WFZ_SCZ.kos"
 ;-----------------------------------------------------------------------------------
 
 
@@ -95312,94 +95136,94 @@ MapSpec_Turn7:		incbin "mappings/special stage/Curve Right 7.bin"
 ; the same at this one line, so to get the full tiles, each line needs to be
 ; duplicated 7 times over. A clever optimization documented in Coding Secrets.
 ; Koz_DCA38
-Kos_Special:		incbin	"art/kosinski/SpecialStage.bin"
+Kos_Special:		incbin	"art/kosinski/SpecialStage.kos"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (127 blocks)
 ; Background patterns for special stage ; ArtNem_DCD68:
-Nem_SpecialBack:		incbin	"art/nemesis/Special Stage Background.bin"
+Nem_SpecialBack:		incbin	"art/nemesis/Special Stage Background.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed tile mappings
 ; Main background mappings for special stage ; MapEng_SpecialBack: ; MapEng_DD1DE:
-Eni_SpecialBack:		incbin	"mappings/misc/Special Stage Background (Main).eni"
+Eni_SpecialBack:		incbin	"mappings/planes/Special Stage Background (Main).eni"
 		even
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed tile mappings
 ; Lower	background mappings for	special	stage	; MapEng_DD30C:
-Eni_SpecialBackBottom:		incbin	"mappings/misc/Special Stage Background (Lower).eni"
+Eni_SpecialBackBottom:		incbin	"mappings/planes/Special Stage Background (Lower).eni"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (62 blocks)
 ; Sonic/Miles and number text from special stage	; ArtNem_DD48A:
-Nem_SpecialHUD:		incbin	"art/nemesis/Special Stage HUD.bin"
+Nem_SpecialHUD:		incbin	"art/nemesis/Special Stage HUD.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (48 blocks)
 ; "Start" and checkered flag patterns in special stage	; ArtNem_DD790:
-Nem_SpecialStart:		incbin	"art/nemesis/Special Stage Checkered Flag & Start Text.bin"
+Nem_SpecialStart:		incbin	"art/nemesis/Special Stage Checkered Flag & Start Text.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (37 blocks)
 ; Stars in special stage	; ArtNem_DD8CE:
-Nem_SpecialStars:		incbin	"art/nemesis/Special Stage Stars.bin"
+Nem_SpecialStars:		incbin	"art/nemesis/Special Stage Stars.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (13 blocks)
 ; Text for most of the "Player VS Player" message in 2P special stage	; ArtNem_DD9C8:
-Nem_SpecialPlayerVSPlayer:		incbin	"art/nemesis/Special Stage Player VS Player Text.bin"
+Nem_SpecialPlayerVSPlayer:		incbin	"art/nemesis/Special Stage Player VS Player Text.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (104 blocks)
 ; Ring patterns in special stage	; ArtNem_DDA7E:
-Nem_SpecialRings:		incbin	"art/nemesis/Special Stage Rings.bin"
+Nem_SpecialRings:		incbin	"art/nemesis/Special Stage Rings.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (38 blocks)
 ; Horizontal shadow patterns in special stage	; ArtNem_DDFA4: ; ArtNem_SpecialFlatShadow
-Nem_SpecialHorizShadow:		incbin	"art/nemesis/Special Stage Horizontal Shadow.bin"
+Nem_SpecialHorizShadow:		incbin	"art/nemesis/Special Stage Horizontal Shadow.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (58 blocks)
 ; Diagonal shadow patterns in special stage	; ArtNem_DE05A:
-Nem_SpecialDiagShadow:		incbin	"art/nemesis/Special Stage Diagonal Shadow.bin"
+Nem_SpecialDiagShadow:		incbin	"art/nemesis/Special Stage Diagonal Shadow.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (25 blocks)
 ; Vertical shadow patterns in special stage	; ArtNem_DE120: ; ArtNem_SpecialSideShadow
-Nem_SpecialVertShadow:		incbin	"art/nemesis/Special Stage Vertical Shadow.bin"
+Nem_SpecialVertShadow:		incbin	"art/nemesis/Special Stage Vertical Shadow.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (48 blocks)
 ; Explosion patterns in special stage	; ArtNem_DE188:
-Nem_SpecialExplosion:		incbin	"art/nemesis/Special Stage Explosion.bin"
+Nem_SpecialExplosion:		incbin	"art/nemesis/Special Stage Explosion.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (80 blocks)
 ; Bomb patterns in special stage	; ArtNem_DE4BC:
-Nem_SpecialBomb:		incbin	"art/nemesis/Special Stage Bomb.bin"
+Nem_SpecialBomb:		incbin	"art/nemesis/Special Stage Bomb.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (46 blocks)
 ; Emerald patterns in special stage	; ArtNem_DE8AC:
-Nem_SpecialEmerald:		incbin	"art/nemesis/Special Stage Emerald.bin"
+Nem_SpecialEmerald:		incbin	"art/nemesis/Special Stage Emerald.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (99 blocks)
 ; Text for the messages and thumbs up/down icon in special stage	; ArtNem_DEAF4:
-Nem_SpecialMessages:		incbin	"art/nemesis/Special Stage Checkpoint Messages & Icons.bin"
+Nem_SpecialMessages:		incbin	"art/nemesis/Special Stage Checkpoint Messages & Icons.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art - 851 blocks
 ; Sonic	and Tails animation frames from	special	stage ; Nem_DEEAE
 ; [FixBugs] In this file, Tails' arms are tan instead of orange.
 ; Art for Obj09 and Obj10 and Obj88
-Nem_SpecialSonicAndTails:		incbin	"art/nemesis/Special Stage Sonic & Tails.bin"
+Nem_SpecialSonicAndTails:		incbin	"art/nemesis/Special Stage Sonic & Tails.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (5 blocks)
 ; "Tails" patterns from special stage	; ArtNem_E247E:
-Nem_SpecialTailsText:		incbin	"art/nemesis/Special Stage Tails HUD Text.bin"
+Nem_SpecialTailsText:		incbin	"art/nemesis/Special Stage Tails HUD Text.nem"
 		even
 ; --------------------------------------------------------------------------------------
 ; Special stage	object perspective data	(Kosinski compression) 
@@ -95810,108 +95634,108 @@ Mus_Continue:		incbin	"sound/music/compressed/9C - Continue.sax"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; HTZ boss lava ball / Sol fireball
-Nem_HTZFireball1:		incbin	"art/nemesis/HTZ Fireball 1.bin"
+Nem_HTZFireball1:		incbin	"art/nemesis/HTZ Fireball 1.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Waterfall tiles
-Nem_Waterfall:		incbin	"art/nemesis/Waterfall.bin"
+Nem_Waterfall:		incbin	"art/nemesis/Waterfall.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Another fireball
-Nem_HTZFireball2:		incbin	"art/nemesis/HTZ Fireball 2.bin"
+Nem_HTZFireball2:		incbin	"art/nemesis/HTZ Fireball 2.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Bridge in EHZ
-Nem_EHZBridge:		incbin	"art/nemesis//EHZ Bridge.bin"
+Nem_EHZBridge:		incbin	"art/nemesis//EHZ Bridge.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (48 blocks)
 ; Diagonally moving lift in HTZ
-Nem_HTZZipline:		incbin	"art/nemesis/HTZ Zipline Platform.bin"
+Nem_HTZZipline:		incbin	"art/nemesis/HTZ Zipline Platform.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; One way barrier from HTZ ;ArtNem_HtzValveBarrier
-Nem_HTZOneWayBarrier:		incbin	"art/nemesis/HTZ One-Way Barrier.bin"
+Nem_HTZOneWayBarrier:		incbin	"art/nemesis/HTZ One-Way Barrier.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; See-saw in HTZ
-Nem_HTZSeeSaw:		incbin	"art/nemesis/HTZ See-saw.bin"
+Nem_HTZSeeSaw:		incbin	"art/nemesis/HTZ See-saw.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Unused Fireball; Nem_F0B06:	
-		incbin	"art/nemesis/Unused Fireball.bin"
+		incbin	"art/nemesis/Unused Fireball.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Rock from HTZ
-Nem_HTZRock:		incbin	"art/nemesis/HTZ Rock.bin"
+Nem_HTZRock:		incbin	"art/nemesis/HTZ Rock.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Orbit badnik from HTZ		; ArtNem_HtzSol:
-Nem_Sol:		incbin	"art/nemesis/Sol.bin"
+Nem_Sol:		incbin	"art/nemesis/Sol.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (120 blocks)
 ; Large spinning wheel from MTZ
-Nem_MTZWheel:		incbin	"art/nemesis/MTZ Large Spinning Wheel.bin"
+Nem_MTZWheel:		incbin	"art/nemesis/MTZ Large Spinning Wheel.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (9 blocks)
 ; Indent in large spinning wheel from MTZ
-Nem_MTZWheelIndent:		incbin	"art/nemesis/MTZ Large Spinning Wheel Indent.bin"
+Nem_MTZWheelIndent:		incbin	"art/nemesis/MTZ Large Spinning Wheel Indent.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Spike block from MTZ
-Nem_MTZSpikeBlock:		incbin	"art/nemesis/MTZ Spike Block.bin"
+Nem_MTZSpikeBlock:		incbin	"art/nemesis/MTZ Spike Block.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (15 blocks)
 ; Steam from MTZ
-Nem_MTZSteam:		incbin	"art/nemesis/MTZ Steam.bin"
+Nem_MTZSteam:		incbin	"art/nemesis/MTZ Steam.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Spike from MTZ
-Nem_MTZSpike:		incbin	"art/nemesis/MTZ Spike.bin"
+Nem_MTZSpike:		incbin	"art/nemesis/MTZ Spike.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (54 blocks)
 ; Similarly shaded blocks from MTZ
-Nem_MTZAsstBlocks:		incbin	"art/nemesis/MTZ Misc Blocks.bin"
+Nem_MTZAsstBlocks:		incbin	"art/nemesis/MTZ Misc Blocks.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (9 blocks)
 ; Lava bubble from MTZ
-Nem_MTZLavaBubble:		incbin	"art/nemesis/MTZ Lava Bubble.bin"
+Nem_MTZLavaBubble:		incbin	"art/nemesis/MTZ Lava Bubble.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Lava cup
-Nem_MTZLavaCup:		incbin	"art/nemesis/MTZ Lava Cup.bin"
+Nem_MTZLavaCup:		incbin	"art/nemesis/MTZ Lava Cup.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; End of a bolt and rope from MTZ
-Nem_MTZBoltEnd_Rope:		incbin	"art/nemesis/MTZ Bolt End & Rope.bin"
+Nem_MTZBoltEnd_Rope:		incbin	"art/nemesis/MTZ Bolt End & Rope.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Small cog from MTZ
-Nem_MTZCog:		incbin	"art/nemesis/MTZ Small Cog.bin"
+Nem_MTZCog:		incbin	"art/nemesis/MTZ Small Cog.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Flash inside spin tube from MTZ
-Nem_MTZSpinTubeFlash:		incbin	"art/nemesis/MTZ Spin Tube Flash.bin"
+Nem_MTZSpinTubeFlash:		incbin	"art/nemesis/MTZ Spin Tube Flash.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Large wooden box from MCZ	; ArtNem_F187C:
-Nem_MCZCrate:		incbin	"art/nemesis/MCZ Crate.bin"
+Nem_MCZCrate:		incbin	"art/nemesis/MCZ Crate.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (26 blocks)
 ; Collapsing platform from MCZ	; ArtNem_F1ABA:
-Nem_MCZCollapsingPlat:		incbin	"art/nemesis/MCZ Collapsing Platform.bin"
+Nem_MCZCollapsingPlat:		incbin	"art/nemesis/MCZ Collapsing Platform.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Switch that you pull on from MCZ	; ArtNem_F1C64:
-Nem_MCZVineSwitch:		incbin	"art/nemesis/MCZ Vine Switch.bin"
+Nem_MCZVineSwitch:		incbin	"art/nemesis/MCZ Vine Switch.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (10 blocks)
 ; Vine that lowers in MCZ	; ArtNem_F1D5C:
-Nem_MCZVinePulley:		incbin	"art/nemesis/MCZ Vine Pulley.bin"
+Nem_MCZVinePulley:		incbin	"art/nemesis/MCZ Vine Pulley.nem"
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
-; Log viewed from the end for folding gates in MCZ (start of MCZ2)	; ArtNem_MCZDrawbridgeLogs:
+; Log viewed from the end for folding gates in MCZ 	; ArtNem_MCZDrawbridgeLogs:
 	even
-Nem_MCZDrawbridgeLogs:		incbin	"art/nemesis/MCZ Drawbridge Logs.bin"
+Nem_MCZDrawbridgeLogs:		incbin	"art/nemesis/MCZ Drawbridge Logs.nem"
 ; ----------------------------------------------------------------------------------
 ; Filler (free space)
 ; ----------------------------------------------------------------------------------
