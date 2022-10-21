@@ -417,7 +417,8 @@ ChecksumError:
 		move.l	d1,-(sp)     ; back up incorrect checksum to stack
 		bsr.w	VDPSetupGame
 		move.l	(sp)+,d1 	; restore incorrect checksum from stack (possibly used when determining what it should be)
-		move.l	#$C0000000,(vdp_control_port).l ; set VDP to CRAM write
+		;move.l	#$C0000000,(vdp_control_port).l ; set VDP to CRAM write
+		vdp_comm.l move,$0000,cram,write,,(vdp_control_port).l
 		moveq	#(sizeof_pal_all/2)-1,d7
 
 	.fillred:
@@ -3194,181 +3195,273 @@ locret_1E58:
 		rts	
 ; ===========================================================================
 ; word_1E5A:
-		incbin "art/palettes/S1 Title Screen Water.bin"; S1 Title Screen Water palette (unused)
+;Pal_S1TitleCyc:
+;		incbin "art/palettes/Cycle - S1 Title Screen Water.bin"; S1 Title Screen Water palette (unused)
+
+		incfile Pal_S1TitleCyc
+
 ; word_1E7A:
 ; CyclingPal_EHZ_ARZ_Water:		
-Pal_EHZ_ARZWaterCyc:		
-		incbin "art/palettes/EHZ & ARZ Water.bin"; Emerald Hill/Aquatic Ruin Rotating Water palette
+;Pal_EHZ_ARZWaterCyc:		
+;		incbin "art/palettes/Cycle - EHZ & ARZ Water.bin" ; Emerald Hill/Aquatic Ruin Rotating Water palette
+
+		incfile Pal_EHZ_ARZWaterCyc
+
 ; word_1E9A:
 ; CyclingPal_Lava:
-Pal_HTZLavaCyc:		
-		incbin "art/palettes/Hill Top Lava.bin"; Hill Top Lava palette
+;Pal_HTZLavaCyc:		
+;		incbin "art/palettes/Cycle - HTZ Lava.bin"; Hill Top Lava palette
+
+		incfile Pal_HTZLavaCyc
+
 ; word_1F1A:
 ; CyclingPal_WoodConveyor:		
-Pal_WoodConveyerCyc:	
-		incbin "art/palettes/Wood Conveyor.bin"; Wood Conveyor Belts palette (unused)
+;Pal_WoodConveyerCyc:	
+;		incbin "art/palettes/Cycle - Wood Conveyor.bin"; Wood Conveyor Belts palette (unused)
+
+		incfile	Pal_WoodConveyerCyc
+
 ; byte_1F2A:
 ; CyclingPal_MTZ1:		
-Pal_MTZCyc1:	
-		incbin "art/palettes/MTZ Cycle 1.bin"; Metropolis Cycle #1 palette
+;Pal_MTZCyc1:	
+;		incbin "art/palettes/Cycle - MTZ 1.bin"; Metropolis Cycle #1 palette
+		
+		incfile	Pal_MTZCyc1
+
 ; word_1F36:
 ; CyclingPal_MTZ2:
-Pal_MTZCyc2:	
-		incbin "art/palettes/MTZ Cycle 2.bin"; Metropolis Cycle #2 palette
+;Pal_MTZCyc2:	
+;		incbin "art/palettes/Cycle - MTZ 2.bin"; Metropolis Cycle #2 palette
+
+		incfile Pal_MTZCyc2
+
 ; word_1F42:
 ; CyclingPal_MTZ3:
-Pal_MTZCyc3:	
-		incbin "art/palettes/MTZ Cycle 3.bin"; Metropolis Cycle #3 palette
+;Pal_MTZCyc3:	
+;		incbin "art/palettes/Cycle - MTZ 3.bin"; Metropolis Cycle #3 palette
+		
+		incfile	Pal_MTZCyc3
+
 ; word_1F56:
 ; CyclingPal_HPZWater:
-Pal_HPZWaterCyc:	
-		incbin "art/palettes/HPZ Water Cycle.bin"; Hidden Palace Water Cycle (unused)
+;Pal_HPZWaterCyc:	
+;		incbin "art/palettes/Cycle - HPZ Water.bin"; Hidden Palace Water Cycle (unused)
+
+		incfile Pal_HPZWaterCyc
+
 ; word_1F66:
 ; CyclingPal_HPZUnderwater:
-Pal_HPZUnderwaterCyc:	
-		incbin "art/palettes/HPZ Underwater Cycle.bin"; Hidden Palace Underwater Cycle (unused)
+;Pal_HPZUnderwaterCyc:	
+;		incbin "art/palettes/Cycle - HPZ Underwater.bin"; Hidden Palace Underwater Cycle (unused)
+
+		incfile Pal_HPZUnderwaterCyc
+
 ; word_1F76:
 ; CyclingPal_Oil:
-Pal_OOZOilCyc:	
-		incbin "art/palettes/OOZ Oil.bin"; Oil Ocean Oil palette
+;Pal_OOZOilCyc:	
+;		incbin "art/palettes/Cycle - OOZ Oil.bin"; Oil Ocean Oil palette
+
+		incfile	Pal_OOZOilCyc
+
 ; word_1F86:
 ; CyclingPal_Lantern:
-Pal_MCZLanternCyc:	
-		incbin "art/palettes/MCZ Lantern.bin"; Mystic Cave Lanterns
+;Pal_MCZLanternCyc:	
+;		incbin "art/palettes/Cycle - MCZ Lantern.bin"; Mystic Cave Lanterns
+		
+		incfile	Pal_MCZLanternCyc
+
 ; word_1F8E:
 ; CyclingPal_CNZ1:
-Pal_CNZCyc1_2:	
-		incbin "art/palettes/CNZ Cycle 1.bin"; Casino Night Cycles 1 & 2
+;Pal_CNZCyc1_2:	
+;		incbin "art/palettes/Cycle - CNZ 1 & 2.bin"; Casino Night Cycles 1 & 2
+
+		incfile	Pal_CNZCyc1_2
+
 ; word_1FB2:
 ;CyclingPal_CNZ3:
-Pal_CNZCyc3:	
-		incbin "art/palettes/CNZ Cycle 3.bin"; Casino Night Cycle 3
+;Pal_CNZCyc3:	
+;		incbin "art/palettes/Cycle - CNZ 3.bin"; Casino Night Cycle 3
+
+		incfile	Pal_CNZCyc3
+
 ; word_1FC4:
 ; CyclingPal_CNZ4:
-Pal_CNZCyc4:	
-		incbin "art/palettes/CNZ Cycle 4.bin"; Casino Night Cycle 4
+;Pal_CNZCyc4:	
+;		incbin "art/palettes/Cycle - CNZ 4.bin"; Casino Night Cycle 4
+
+		incfile	Pal_CNZCyc4
+
 ; word_1FEC:
 ; CyclingPal_CNZ1_B:
-Pal_CNZBossCyc1:	
-		incbin "art/palettes/CNZ Boss Cycle 1.bin"; Casino Night Boss Cycle 1
+;Pal_CNZBossCyc1:	
+;		incbin "art/palettes/Cycle - CNZ Boss 1.bin"; Casino Night Boss Cycle 1
+
+		incfile	Pal_CNZBossCyc1
+
 ; word_1FFE:
 ; CyclingPal_CNZ2_B:
-Pal_CNZBossCyc2:	
-		incbin "art/palettes/CNZ Boss Cycle 2.bin"; Casino Night Boss Cycle 2
+;Pal_CNZBossCyc2:	
+;		incbin "art/palettes/Cycle - CNZ Boss 2.bin"; Casino Night Boss Cycle 2
+
+		incfile	Pal_CNZBossCyc2
+
 ; word_2012:
 ; CyclingPal_CNZ3_B:
-Pal_CNZBossCyc3:	
-		incbin "art/palettes/CNZ Boss Cycle 3.bin"; Casino Night Boss Cycle 3
+;Pal_CNZBossCyc3:	
+;		incbin "art/palettes/Cycle - CNZ Boss 3.bin"; Casino Night Boss Cycle 3
+
+		incfile	Pal_CNZBossCyc3
+
 ; word_2022:
 ; CyclingPal_CPZ1:
-Pal_CPZCyc1:	
-		incbin "art/palettes/CPZ Cycle 1.bin"; Chemical Plant Cycle 1
+;Pal_CPZCyc1:	
+;		incbin "art/palettes/Cycle - CPZ 1.bin"; Chemical Plant Cycle 1
+
+		incfile	Pal_CPZCyc1
+
 ; word_2058:
 ; CyclingPal_CPZ2:
-Pal_CPZCyc2:	
-		incbin "art/palettes/CPZ Cycle 2.bin"; Chemical Plant Cycle 2
+;Pal_CPZCyc2:	
+;		incbin "art/palettes/Cycle - CPZ 2.bin"; Chemical Plant Cycle 2
+
+		incfile	Pal_CPZCyc2
+
 ; word_2082:
 ; CyclingPal_CPZ3:
-Pal_CPZCyc3:	
-		incbin "art/palettes/CPZ Cycle 3.bin"; Chemical Plant Cycle 3
+;Pal_CPZCyc3:	
+;		incbin "art/palettes/Cycle - CPZ 3.bin"; Chemical Plant Cycle 3
+
+		incfile	Pal_CPZCyc3
+
 ; word_20A2:
 ; CyclingPal_WFZFire:
-Pal_WFZFireCyc:	
-		incbin "art/palettes/WFZ Fire Cycle.bin"; Wing Fortress Fire Cycle palette
+;Pal_WFZFireCyc:	
+;		incbin "art/palettes/Cycle - WFZ Fire.bin"; Wing Fortress Fire Cycle palette
+
+		incfile	Pal_WFZFireCyc
+
 ; word_20C2:
 ; CyclingPal_WFZBelt:
-Pal_WFZConveyerCyc:	
-		incbin "art/palettes/WFZ Conveyor Cycle.bin"; Wing Fortress Conveyor Belt Cycle palette
+;Pal_WFZConveyerCyc:	
+;		incbin "art/palettes/Cycle - WFZ Conveyor.bin"; Wing Fortress Conveyor Belt Cycle palette
+
+		incfile	Pal_WFZConveyerCyc
+
 ; word_20E2: CyclingPal_CPZ4:
 ; CyclingPal_WFZ1:
-Pal_WFZCyc1:	
-		incbin "art/palettes/WFZ Cycle 1.bin"; Wing Fortress Flashing Light Cycle 1 (also used in CPZ)
+;Pal_WFZCyc1:	
+;		incbin "art/palettes/Cycle - WFZ 1.bin"; Wing Fortress Flashing Light Cycle 1 (also used in CPZ)
+
+		incfile	Pal_WFZCyc1
+
 ; word_2126:
 ; CyclingPal_WFZ2:
-Pal_WFZCyc2:	
-		incbin "art/palettes/WFZ Cycle 2.bin"; Wing Fortress Flashing Light Cycle 2
+;Pal_WFZCyc1:	
+;		incbin "art/palettes/Cycle - WFZ 2.bin"; Wing Fortress Flashing Light Cycle 2
+
+		incfile	Pal_WFZCyc2
 
 ; =============== S U B	R O U T	I N E =======================================
 
-
+; sub_213E:
 PalCycle_SuperSonic:				
 		move.b	(v_super_sonic_palette).w,d0
-		beq.s	locret_2186
-		bmi.w	loc_21E6
+		beq.s	.return 		; if Sonic isn't super, exit
+		bmi.w	.normal			; if fade-in id done, branch
 		subq.b	#1,d0
-		bne.s	loc_2188
+		bne.s	.revert			; branch for values greater than 1
+		
+		; fade from Sonic's to Super Sonic's palette
+		; run frame timer
 		subq.b	#1,(v_palette_timer).w
-		bpl.s	locret_2186
+		bpl.s	.return
 		move.b	#3,(v_palette_timer).w
+		
+		; increment palette frame and update Sonic's palette		
 		lea	(Pal_SS_TransformationCyc).l,a0
 		move.w	(v_palette_frame).w,d0
-		addq.w	#8,(v_palette_frame).w
-		cmpi.w	#$30,(v_palette_frame).w ; '0'
-		bcs.s	loc_217A
-		move.b	#-1,(v_super_sonic_palette).w
-		move.b	#0,($FFFFB02A).w
+		addq.w	#8,(v_palette_frame).w			; 1 palette entry = 1 word, Sonic uses 4 shades of blue
+		cmpi.w	#$30,(v_palette_frame).w		; has palette cycle reached the 6th frame?
+		bcs.s	.notsixth						; if not, branch
+		move.b	#-1,(v_super_sonic_palette).w	; mark fade-in as done
+		move.b	#0,(v_ost_maincharacter+ost_obj_control).w	; restore Sonic's movement
 
-loc_217A:				; CODE XREF: PalCycle_SuperSonic+2Ej
-		lea	($FFFFFB04).w,a1
+	.notsixth:
+		lea	(v_pal_dry+4).w,a1
 		move.l	(a0,d0.w),(a1)+
 		move.l	4(a0,d0.w),(a1)
-
-locret_2186:				; CODE XREF: PalCycle_SuperSonic+4j PalCycle_SuperSonic+12j	...
+;	if FixBugs	
+;		lea	(Pal_SS_CPZUWTransformationCyc).l,a0
+;		cmpi.b	#chemical_plant_zone,(Current_Zone).w	; is it CPZ?
+;		beq.s	+										; if so, branch
+;		cmpi.b	#aquatic_ruin_zone,(Current_Zone).w		; is it ARZ?
+;		bne.s	.return									; if so, branch
+;		lea	(Pal_SS_ARZUWTransformationCyc).l,a0
+;+		
+;		lea	(v_pal_water+4).w,a1
+;		move.l	(a0,d0.w),(a1)+
+;		move.l	4(a0,d0.w),(a1)
+;	else
+	; The fade in for Sonic's underwater palette is missing.
+	; Because of this, Super Sonic's transformation is incorrect
+	; when underwater.
+;	endc
+	.return:
 		rts	
 ; ===========================================================================
 
-loc_2188:				; CODE XREF: PalCycle_SuperSonic+Cj
+	.revert:
 		subq.b	#1,(v_palette_timer).w
-		bpl.s	locret_2186
+		bpl.s	.return
 		move.b	#3,(v_palette_timer).w
 		lea	(Pal_SS_TransformationCyc).l,a0
 		move.w	(v_palette_frame).w,d0
 		subq.w	#8,(v_palette_frame).w
-		bcc.s	loc_21B0
+		bcc.s	.loc_21B0
 		move.b	#0,(v_palette_frame).w
 		move.b	#0,(v_super_sonic_palette).w
 
-loc_21B0:				; CODE XREF: PalCycle_SuperSonic+64j
+.loc_21B0:
 		lea	($FFFFFB04).w,a1
 		move.l	(a0,d0.w),(a1)+
 		move.l	4(a0,d0.w),(a1)
 		lea	(Pal_SS_CPZUWTransformationCyc).l,a0
 		cmpi.b	#$D,(v_zone).w
-		beq.s	loc_21D8
+		beq.s	.loc_21D8
 		cmpi.b	#$F,(v_zone).w
-		bne.s	locret_2186
+		bne.s	.return
 		lea	(Pal_SS_ARZUWTransformationCyc).l,a0
 
-loc_21D8:				; CODE XREF: PalCycle_SuperSonic+8Aj
+.loc_21D8:
 		lea	($FFFFF084).w,a1
 		move.l	(a0,d0.w),(a1)+
 		move.l	4(a0,d0.w),(a1)
 		rts	
 ; ===========================================================================
 
-loc_21E6:				; CODE XREF: PalCycle_SuperSonic+6j
+.normal:				; CODE XREF: PalCycle_SuperSonic+6j
 		subq.b	#1,(v_palette_timer).w
-		bpl.s	locret_2186
+		bpl.s	.return
 		move.b	#7,(v_palette_timer).w
 		lea	(Pal_SS_TransformationCyc).l,a0
 		move.w	(v_palette_frame).w,d0
 		addq.w	#8,(v_palette_frame).w
 		cmpi.w	#$78,(v_palette_frame).w ; 'x'
-		bcs.s	loc_220E
+		bcs.s	.loc_220E
 		move.w	#$30,(v_palette_frame).w ; '0'
 
-loc_220E:				; CODE XREF: PalCycle_SuperSonic+C8j
+.loc_220E:				; CODE XREF: PalCycle_SuperSonic+C8j
 		lea	($FFFFFB04).w,a1
 		move.l	(a0,d0.w),(a1)+
 		move.l	4(a0,d0.w),(a1)
 		lea	(Pal_SS_CPZUWTransformationCyc).l,a0
 		cmpi.b	#$D,(v_zone).w
-		beq.s	loc_2238
+		beq.s	.loc_2238
 		cmpi.b	#$F,(v_zone).w
-		bne.w	locret_2186
+		bne.w	.return
 		lea	(Pal_SS_ARZUWTransformationCyc).l,a0
 
-loc_2238:				; CODE XREF: PalCycle_SuperSonic+E8j
+.loc_2238:				; CODE XREF: PalCycle_SuperSonic+E8j
 		lea	($FFFFF084).w,a1
 		move.l	(a0,d0.w),(a1)+
 		move.l	4(a0,d0.w),(a1)
@@ -3376,27 +3469,21 @@ loc_2238:				; CODE XREF: PalCycle_SuperSonic+E8j
 ; End of function PalCycle_SuperSonic
 
 ; ===========================================================================
-;----------------------------------------------------------------------------
-;Unknown Palette
-;----------------------------------------------------------------------------
+
 ; Pal_2246:
 ; CyclingPal_SSTransformation:
 Pal_SS_TransformationCyc:
-		incbin	"art/palettes/Super Sonic Transformation.bin"	
-;----------------------------------------------------------------------------
-;Unknown Palette
-;----------------------------------------------------------------------------
+		incbin	"art/palettes/Cycle - Super Sonic Transformation.bin"	
+
 ; Pal_22C6:
 ; CyclingPal_CPZUWTransformation:
 Pal_SS_CPZUWTransformationCyc:	
-		incbin	"art/palettes/CPZWater SS transformation.bin"
-;----------------------------------------------------------------------------
-;Unknown Palette
-;----------------------------------------------------------------------------
+		incbin	"art/palettes/Cycle - Super Sonic Transformation CPZ Water.bin"
+
 ; Pal_2346:
 ; CyclingPal_ARZUWTransformation:
 Pal_SS_ARZUWTransformationCyc:		
-		incbin	"art/palettes/ARZWater SS transformation.bin"
+		incbin	"art/palettes/Cycle - Super Sonic Transformation ARZ Water.bin"
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -3765,7 +3852,7 @@ loc_261C:
 		tst.b	($FFFFF635).w
 		bne.s	loc_2680
 		lea	(v_pal_dry_line2).w,a1
-		lea	(Pal_Sega1).l,a0
+		lea	(Pal_S1_Sega1).l,a0
 		moveq	#5,d1
 		move.w	(v_palcycle_num).w,d0
 
@@ -3825,7 +3912,7 @@ loc_2680:
 
 loc_269E:				
 		move.w	d0,(v_palcycle_num).w
-		lea	(Pal_Sega2).l,a0
+		lea	(Pal_S1_Sega2).l,a0
 		lea	(a0,d0.w),a0
 		lea	($FFFFFB04).w,a1
 		move.l	(a0)+,(a1)+
@@ -3850,14 +3937,10 @@ loc_26D2:
 		moveq	#1,d0
 		rts	
 ; ===========================================================================
-;----------------------------------------------------------------------------
-; Unused palette for the Sega logo
-;----------------------------------------------------------------------------
-Pal_Sega1:	incbin 	"art/palettes/Unused Sega Logo 1.bin"
-;----------------------------------------------------------------------------
-; Unused palette for the Sega logo (fading?)
-;----------------------------------------------------------------------------
-Pal_Sega2:	incbin  "art/palettes/Unused Sega Logo 2.bin"
+
+Pal_S1_Sega1:	incbin 	"art/palettes/S1 Sega Logo Stripe.bin"
+
+Pal_S1_Sega2:	incbin  "art/palettes/S1 Sega Logo.bin"
 
 ; end of dead code/data
 
@@ -3948,7 +4031,11 @@ loc_277A:
 ;0x06 -	0x08: Size of palette in (bytes	/ 4)
 ;----------------------------------------------------------------------------
 
-palp:	macro paladdress,altid,ramaddress,colors
+	; TODO: rework this so that the filesize from filedef is used instead of hard-coded numbers
+	; to generate the palette size 
+	; (sizeof_\pallabel\/4)-1
+
+palp:	macro paladdress,altid,ramaddress
 	
 	ifarg \altid
 		id_\altid:	equ (offset(*)-PalPointers)/8 ; create alternate ID constant for duplicate pointers (used in empty/unused level load table entries)
@@ -3956,7 +4043,7 @@ palp:	macro paladdress,altid,ramaddress,colors
 		id_\paladdress:	equ (offset(*)-PalPointers)/8
 	endc	
 		dc.l \paladdress
-		dc.w \ramaddress,(\colors>>1)-1
+		dc.w \ramaddress,sizeof_\paladdress\/4-1
 	endm	
 		
 		
@@ -3976,8 +4063,8 @@ PalPointers:
 		;dc.w $FB00
 		;dc.w $1F
 		
-		palp Pal_BGND,,v_pal_dry_line1,$20
-		;dc.l Pal_BGND
+		palp Pal_Sonic_Miles_BG1,,v_pal_dry_line1,$20
+		;dc.l Pal_Sonic_Miles_BG1
 		;dc.w $FB00
 		;dc.w $F
 		
@@ -4164,20 +4251,18 @@ PalPointers:
 		
 
 
-;palette macro *,path,path2
-;\* equ *
-;		incbin "art/palettes/\path"
-;    ifarg \path2
-;		incbin "art/palettes/\path2"
+;incpal: macro label,label2
+;		incfile \label
+;   ifarg path2
+;		incbin "\filename"
 ;    endc
-;\*_End: equ offset(*) 
 ;	endm
 	
 
 ;----------------------------------------------------------------------------
 ;SEGA screen Palette
 ;----------------------------------------------------------------------------
-Pal_SEGA:		incbin	"art/palettes/Sega Screen.bin"
+Pal_Sega:		incbin	"art/palettes/Sega Screen.bin"
 ;----------------------------------------------------------------------------
 ;Title screen Palette
 ;----------------------------------------------------------------------------
@@ -4189,7 +4274,9 @@ Pal_MenuB:		incbin	"art/palettes/S2B Level Select.bin"
 ;----------------------------------------------------------------------------
 ;"Sonic	and Miles" Background Palette
 ;----------------------------------------------------------------------------
-Pal_BGND:		incbin	"art/palettes/Sonic & Tails 1.bin"
+Pal_Sonic_Miles_BG1:		
+				incbin	"art/palettes/Sonic & Tails 1.bin"
+Pal_Sonic_Miles_BG2:				
 				incbin  "art/palettes/Sonic & Tails 2.bin"
 ;----------------------------------------------------------------------------
 ;EHZ Palette
@@ -4234,7 +4321,7 @@ Pal_CNZ:		incbin	"art/palettes/CNZ.bin"
 ;----------------------------------------------------------------------------
 ;CPZ Palette
 ;----------------------------------------------------------------------------
-Pal_CPZ:		incbin	"art/palettes/CNZ.bin"
+Pal_CPZ:		incbin	"art/palettes/CPZ.bin"
 ;----------------------------------------------------------------------------
 ;CPZ Underwater	Palette
 ;----------------------------------------------------------------------------
@@ -4477,13 +4564,13 @@ GM_Sega:
 
 ;		lea	($FFFFF700).w,a1
 ;		moveq	#0,d0
-;		move.w	(misc_variables_end-misc_variables)/4-1,d1
+;		move.w	#$3F,d1
 
-;	loc_37D2:				
+;	loc_37D2:
 ;		move.l	d0,(a1)+
 ;		dbf	d1,loc_37D2
 		
-		clear_ram ost,ost_end		
+		clear_ram ost,ost_end	
 		
 ;		lea	($FFFFB000).w,a1
 ;		moveq	#0,d0
@@ -4685,7 +4772,7 @@ loc_3A14:
 		move.l	d0,(a1)+
 		dbf	d1,loc_3A14
 		move.l	#$60000002,(vdp_control_port).l
-		lea	(Nem_BD26).l,a0
+		lea	(Nem_CreditsFont).l,a0
 		bsr.w	NemDec
 		lea	(off_B2B0).l,a1
 		jsr	loc_B272
@@ -4710,7 +4797,7 @@ loc_3A44:
 		lea	(Nem_MenuJunk).l,a0
 		bsr.w	NemDec
 		move.l	#$40400002,(vdp_control_port).l
-		lea	(Nem_3DF4).l,a0
+		lea	(Nem_Player1VS2).l,a0
 		bsr.w	NemDec
 		move.l	#$50000003,(vdp_control_port).l
 		lea	(Nem_FontStuff).l,a0
@@ -4970,16 +5057,9 @@ byte_3DEE:	dc.b	 1		; 0
 ; 10 blocks
 ; Unknown
 ; ---------------------------------------------------------------------------------
-Nem_3DF4:	dc.b   0, $A,$80,  4,  9,$14, $A,$26,$3B,$34,  8,$74, $B,$81,  2,  0; 0
-					
-		dc.b $25,$1B,$35,$1C,$47,$7C,$58,$FA,$78,$FB,$86,  6,$3D,$15,$18,$22; 16
-		dc.b   1,$46,$3A,$55,$19,$66,$3C,$87,  5,$1A,$FF,$B9,$FD,$B1,  9,  9; 32
-		dc.b   9,  9,$DF,$45,$7D,$5C,$E4,$94,$44,$4C,$92,$EE,$92,$39,$70,$90; 48
-		dc.b $90,$90,$90,$91,$E7,$D9,$75,$8D,$10,$9D,$FA,$63,$45,$74,$4F,$BB; 64
-		dc.b $C6,$8F,$4A,$77,$5C,$B4,$44,$49,$C1,$83,$B4,$84,$84,$8E,$5D,$78; 80
-		dc.b $3F,$3A,$29,$DD,$24,$79,$F6,$5E,$49,$44,$44,$C9,$28,$88,$F2,$79; 96
-		dc.b $79,$D7,$C4,$D7,$5A,$1F,$89,$1E,$7D,$96,$88,$88,$88,$89,$38,$30; 112
-		dc.b $76,$91,$BB,$8C,$8F,$D7,$45,$6D,$21,$32,$4F,$D5,  0,  0; 128
+; ArtNem_3DF4:
+Nem_Player1VS2:	incbin "art/nemesis/Player 1 VS 2 Text.nem"
+
 word_3E82:	dc.w  $68B		; 0 
 		dc.w	 0		; 1
 		dc.w  $681		; 2
@@ -5710,7 +5790,7 @@ locret_4608:
 
 ; sub_460A: WindTunnel:
 ; displacements for Wind Tunnel data relative to 
-wt_min_x_pos	equ	0
+;wt_min_x_pos	equ	0
 wt_min_y_pos	equ	2
 wt_max_x_pos	equ	4
 wt_max_y_pos	equ	6
@@ -5724,7 +5804,7 @@ WindTunnels:
 
 	.tunnel_loop:				
 		move.w	ost_x_pos(a1),d0
-		cmp.w	wt_min_x_pos(a2),d0
+		cmp.w	(a2),d0
 		bcs.w	.chknext
 		cmp.w	wt_max_x_pos(a2),d0
 		bcc.w	.chknext
@@ -6623,13 +6703,18 @@ loc_508A:
 		clr.l	(v_fg_y_pos_vsram).w
 		clr.l	($FFFFF61A).w
 		clr.b	(f_ss_started).w
-		lea	(v_sprite_buffer).w,a1
-		moveq	#0,d0
-		move.w	#$A0,d1	
 
-loc_50AC:				
-		move.l	d0,(a1)+
-		dbf	d1,loc_50AC
+		clear_ram v_sprite_buffer,v_sprite_buffer_end+4
+
+;		lea	(v_sprite_buffer).w,a1
+;		moveq	#0,d0
+;		move.w	#$A0,d1	
+;loc_50AC:				
+;		move.l	d0,(a1)+
+;		dbf	d1,loc_50AC
+		
+		
+		
 		lea	(v_hscroll_buffer).w,a1
 		moveq	#0,d0
 		move.w	#$100,d1
@@ -6905,9 +6990,9 @@ loc_541A:
 		bra.w	WaitForVBlank
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Unknown Palette 8
+; Animated color of the twinkling stars in the special stage background
 ; ---------------------------------------------------------------------------
-Pal_UNK8:	dc.w  $EEE, $CCC, $AAA,	$888, $888, $AAA, $CCC,	$EEE; 0
+Pal_SpecialStageStars:	incbin "art/palettes/Special Stage Stars.bin"
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -6920,12 +7005,12 @@ sub_543A:
 		addi.b	#1,(v_ss_star_color_1).w
 		andi.w	#7,d0
 		add.w	d0,d0
-		move.w	Pal_UNK8(pc,d0.w),($FFFFFB1C).w
+		move.w	Pal_SpecialStageStars(pc,d0.w),($FFFFFB1C).w
 		move.b	(v_ss_star_color_2).w,d0
 		addi.b	#1,(v_ss_star_color_2).w
 		andi.w	#7,d0
 		add.w	d0,d0
-		move.w	Pal_UNK8(pc,d0.w),($FFFFFB1E).w
+		move.w	Pal_SpecialStageStars(pc,d0.w),($FFFFFB1E).w
 
 loc_5470:				
 		cmpi.b	#6,(v_special_stage).w
@@ -7016,7 +7101,7 @@ sub_5534:
 		move.b	d0,(v_ss_last_segment_2).w
 		movea.l	(v_ss_current_layout).w,a1
 		move.b	(a1,d0.w),d3
-		andi.w	#$7F,d3	; ''
+		andi.w	#$7F,d3
 		lea	(byte_55FE).l,a0
 		move.b	(a0,d3.w),d3
 		add.w	d3,d3
@@ -7030,7 +7115,7 @@ loc_556E:
 		move.b	(a0)+,d0
 		bmi.s	loc_55B2
 		move.b	d0,d1
-		andi.b	#$40,d1	; '@'
+		andi.b	#$40,d1
 		bne.s	loc_559A
 		addq.w	#1,(v_ss_perfect_rings_left).w
 		move.b	#$60,(a1) ; '`'
@@ -7043,8 +7128,8 @@ loc_556E:
 ; ===========================================================================
 
 loc_559A:				
-		andi.w	#$3F,d0	; '?'
-		move.b	#$61,(a1) ; 'a'
+		andi.w	#$3F,d0
+		move.b	#$61,(a1)
 		add.w	d0,d0
 		add.w	d0,d0
 		add.w	d3,d0
@@ -7069,12 +7154,12 @@ loc_55B2:
 loc_55CC:				
 		tst.b	(f_ss_2p_flag).w
 		bne.s	loc_55D8
-		move.b	#$59,(a1) ; 'Y'
+		move.b	#$59,(a1)
 		rts	
 ; ===========================================================================
 
 loc_55D8:				
-		move.b	#$5A,(a1) ; 'Z'
+		move.b	#$5A,(a1)
 
 locret_55DC:				
 		rts	
@@ -11633,26 +11718,31 @@ word_87C6:	dc.w   0		; 0
 		dc.b $1E,$C7		; 6
 		dc.b $14,  5		; 8
 		dc.b  $A,  5		; 10
-off_87DC:	dc.l byte_8804		
+off_87DC:	dc.l Eni_2PActResults		
 		dc.l loc_819A
-		dc.l byte_88CE
+		dc.l Eni_2PZoneResults
 		dc.l loc_82FA
-		dc.l byte_8960
+		dc.l Eni_2PGameResults
 		dc.l loc_8328
-		dc.l byte_8AA4
+		dc.l Eni_2PSpecialStageActResults
 		dc.l loc_83B0
-		dc.l byte_8B30
+		dc.l Eni_2PSpecialStageZoneResults
 		dc.l loc_8452
-		
-byte_8804:	incbin "mappings/planes/2P Act Results.eni"
 
-byte_88CE:	incbin "mappings/planes/2P Zone Results.eni"
+; byte_8804: Map_2PActResults:		
+Eni_2PActResults:	incbin "mappings/planes/2P Act Results.eni"
 
-byte_8960:	incbin "mappings/planes/2P Game Results.eni"
+; byte_88CE: Map_2PZoneResults:
+Eni_2PZoneResults:	incbin "mappings/planes/2P Zone Results.eni"
 
-byte_8AA4:	incbin "mappings/planes/2P Special Stage Act Results.eni"
+; byte_8960: Map_2PGameResults:
+Eni_2PGameResults:	incbin "mappings/planes/2P Game Results.eni"
 
-byte_8B30:	incbin "mappings/planes/2P Special Stage Zone Results.eni"
+; byte_8AA4: Map_2PSpecialStageActResults:
+Eni_2PSpecialStageActResults:	incbin "mappings/planes/2P Special Stage Act Results.eni"
+
+; byte_8B30: Map_2PSpecialStageZoneResults:
+Eni_2PSpecialStageZoneResults:	incbin "mappings/planes/2P Special Stage Zone Results.eni"
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -11727,15 +11817,15 @@ loc_8C2A:
 		cmpi.b	#$28,(v_gamemode).w ; '('
 		beq.w	loc_92F6
 		lea	(v_128x128_tiles).l,a1
-		lea	(byte_9A60).l,a0
+		lea	(Eni_LevelSelect2P).l,a0
 		move.w	#$70,d0	; 'p'
 		bsr.w	EniDec
 		lea	($FFFF0198).l,a1
-		lea	(byte_9A60).l,a0
+		lea	(Eni_LevelSelect2P).l,a0
 		move.w	#$2070,d0
 		bsr.w	EniDec
 		lea	($FFFF0330).l,a1
-		lea	(byte_9C32).l,a0
+		lea	(Eni_LevelSelectIcons).l,a0
 		move.w	#$90,d0	
 		bsr.w	EniDec
 		lea	($FFFF0498).l,a2
@@ -11902,7 +11992,7 @@ loc_8EC4:
 		moveq	#$10,d1
 		moveq	#$B,d2
 		bsr.w	loc_9C70
-		lea	(byte_9880).l,a1
+		lea	(Pal_LevelSelectIcons).l,a1
 		moveq	#0,d0
 		move.b	(a3),d0
 		lsl.w	#5,d0
@@ -12018,11 +12108,11 @@ loc_8FC2:
 
 loc_8FCC:				
 		lea	(v_128x128_tiles).l,a1
-		lea	(byte_9AB2).l,a0
+		lea	(Eni_Options).l,a0
 		move.w	#$70,d0	; 'p'
 		bsr.w	EniDec
 		lea	($FFFF0160).l,a1
-		lea	(byte_9AB2).l,a0
+		lea	(Eni_Options).l,a0
 		move.w	#$2070,d0
 		bsr.w	EniDec
 		clr.b	(v_options_menu_box).w
@@ -12316,7 +12406,7 @@ off_92F2:	dc.l byte_9870
 
 loc_92F6:				
 		lea	(v_128x128_tiles).l,a1
-		lea	(byte_9ADE).l,a0
+		lea	(Eni_LevelSelect).l,a0
 		move.w	#0,d0
 		bsr.w	EniDec
 		lea	(v_128x128_tiles).l,a1
@@ -12327,7 +12417,7 @@ loc_92F6:
 		moveq	#0,d3
 		bsr.w	loc_965A
 		lea	($FFFF08C0).l,a1
-		lea	(byte_9C32).l,a0
+		lea	(Eni_LevelSelectIcons).l,a0
 		move.w	#$90,d0	
 		bsr.w	EniDec
 		bsr.w	loc_9688
@@ -12684,7 +12774,7 @@ loc_9688:
 		moveq	#3,d1
 		moveq	#2,d2
 		bsr.w	loc_9C70
-		lea	(byte_9880).l,a1
+		lea	(Pal_LevelSelectIcons).l,a1
 		moveq	#0,d0
 		move.b	(a3),d0
 		lsl.w	#5,d0
@@ -12803,46 +12893,41 @@ byte_985E:	dc.b $10,$1A,  0,  0,$30,$2C,$32,$2B,$21,  0,$31,$22,$30,$31,  0,  0;
 					
 		dc.b   0,$1A		; 16
 byte_9870:	dc.b  $E,  0,  0,  0,  0,  0,  0,$10,$10,  0,  0,  0,  0,  0,  0,  0; 0
-					
-byte_9880:	incbin "art/palettes/Level Select Icons.bin"
+	
+; byte_9880:  Pal_LevelIcons:					
+Pal_LevelSelectIcons:	incbin "art/palettes/Level Select Icons.bin"
 
-byte_9A60:	incbin "mappings/planes/Level Select 2P.eni"
+; byte_9A60: MapEng_LevSel2P:
+Eni_LevelSelect2P:	incbin "mappings/planes/Level Select 2P.eni"
 
-byte_9AB2:	incbin "mappings/planes/Options Screen.eni"
+; byte_9AB2: MapEng_Options:
+Eni_Options:	incbin "mappings/planes/Options Screen.eni"
 
-byte_9ADE:	incbin "mappings/planes/Level Select.eni"
+; byte_9ADE: MapEng_LevSel:
+Eni_LevelSelect:	incbin "mappings/planes/Level Select.eni"
 
-byte_9C32:	incbin "mappings/planes/Level Select Icons.eni"
+; byte_9C32: MapEng_LevSelIcon:
+Eni_LevelSelectIcons:	incbin "mappings/planes/Level Select Icons.eni"
 
 ; ===========================================================================
 
-loc_9C64:				
-					
+	if ~RemoveJmpTos
+loc_9C64:							
 		jmp	(PlaySound).l
-; ===========================================================================
-
+		
 loc_9C6A:				
-					
 		jmp	(PlayMusic).l
-; ===========================================================================
-
+		
 loc_9C70:				
-					
 		jmp	(sub_140E).l
-; End of function sub_9186
 
-
-; =============== S U B	R O U T	I N E =======================================
-
-; Attributes: thunk
-
-j_Dynamic_Normal:			
-					
+j_Dynamic_Normal:								
 		jmp	Dynamic_Normal
-; End of function j_Dynamic_Normal
+
+	endc
 
 ; ===========================================================================
-
+; loc_9C7C:
 EndingSequence:				
 		lea	($FFFFB000).w,a1
 		moveq	#0,d0
@@ -12955,7 +13040,7 @@ loc_9D7C:
 loc_9E08:				
 		move.l	d1,(a1)+
 		dbf	d0,loc_9E08
-		lea	(word_AC7E).l,a1
+		lea	(Pal_EndingSonic).l,a1
 		lea	(v_pal_dry_next).w,a2
 		moveq	#$1F,d0
 
@@ -13094,7 +13179,7 @@ loc_9FB2:
 		move.w	#$EEE,($FFFFFB8C).w
 		move.w	#$EE,($FFFFFBAC).w
 		move.l	#$40200000,(vdp_control_port).l
-		lea	(Nem_BD26).l,a0
+		lea	(Nem_CreditsFont).l,a0
 		bsr.w	j_NemDec
 		clr.w	($FFFFFF4C).w
 
@@ -13179,7 +13264,7 @@ sub_A0C0:
 		lsr.w	#1,d0
 		move.b	byte_A0EC(pc,d0.w),d0
 		mulu.w	#$18,d0
-		lea	word_A0FE(pc,d0.w),a1
+		lea	Pal_EndingLogoCyc(pc,d0.w),a1
 		moveq	#5,d0
 
 loc_A0E4:				
@@ -13207,13 +13292,9 @@ byte_A0EC:	dc.b   0		; 0
 		dc.b   5		; 15
 		dc.b   0		; 16
 		dc.b   0		; 17
-word_A0FE:	dc.w	 0,  $26,  $4E,	   0,	 0, $EEE,    0,	$EC8, $EA6, $E40,    0,	   0,	 0,  $26,  $4E,	   0; 0
-		dc.w	 0, $EEE,    0,	$EC8, $EA6, $E60, $600,	   0,	 0,  $26,  $4E,	   0,	 0, $EEE,    0,	$EC8; 16
-		dc.w  $EA6, $E80, $A00,	$400,	 0,  $26,  $4E,	   0,	 0, $EEE,    0,	$EC8, $EA6, $EA0, $E00,	$800; 32
-		dc.w	 0,  $26,  $4E,	   0,	 0, $EEE,    0,	$EC8, $EA6, $EC0, $E60,	$E00,	 0,  $26,  $6E,	   0; 48
-		dc.w	 0, $EEE,    0,	$EC8, $EA6, $E40,    0,	   0,	 0,  $26,  $8E,	   0,	 0, $EEE,    0,	$EC8; 64
-		dc.w  $EA6, $E40,    0,	   0,	 0,  $46,  $CE,	   0,	 0, $EEE,    0,	$EC8, $EA6, $E40,    0,	   0; 80
-		dc.w	 0,  $8E, $6EE,	   0,	 0, $EEE,    0,	$EC8, $EA6, $E40,    0,	   0; 96
+
+; pal_A0FE:
+Pal_EndingLogoCyc:		incbin "art/palettes/Cycle - Ending Logo.bin"
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite
@@ -14290,19 +14371,20 @@ loc_AC6A:
 		lea	(Nem_Chicken).l,a0
 		bra.w	j_NemDec
 ; ===========================================================================
-word_AC7E:	dc.w  $EEE,    0, $A22,	$C42, $E44, $E66, $EEE,	$AAA, $888, $444, $8AE,	$46A,	$E,    8,  $AE,	 $8E; 0
-					
-					
-word_AC9E:	dc.w  $EEE,    0, $A22,	$C42, $E44, $E66, $EEE,	$AAA, $888, $444, $8AE,	$46A,	$E,    8,  $AE,	 $8E; 0
-					
-		dc.w  $AEE,    0,  $6C,	 $8E,  $AE, $8CE, $EEE,	$ECA, $EA8, $A66, $46A,	$EEC,	$E,    6,    0,	   0; 16
-word_ACDE:	dc.w	 0,    0,    2,	 $24,  $46,  $68,  $8A,	 $CE, $ECA, $EA6, $E80,	$E64, $E40, $C00, $EEE,	  $E; 0
-					
-		dc.w  $E44,    0, $E64,	$E86, $EA8, $ECA, $EEE,	$4EE, $2AE,  $6E,  $2C,	$444, $888, $AAA,  $E0,	$EC0; 16
-word_AD1E:	dc.w  $EEE,    0, $222,	$444, $666, $888, $AAA,	$CCC, $EEE,    0,    0,	   0,	 0,    0,    0,	   0; 0
-					
-					
-word_AD3E:	dc.w  $EEE,    0, $4CC,	$AEC, $EEE, $EEE, $EEE,	$AAA, $888, $444, $8AE,	$46A,	$E,    8,  $AE,	 $8E; 0
+; Pal_AC7E:
+Pal_EndingSonic:	incbin	"art/palettes/Ending Sonic.bin"
+
+; Pal_AC9E:									
+Pal_EndingSonicFar:	incbin	"art/palettes/Ending Sonic Far.bin"
+
+; Pal_ACDE:
+Pal_EndingBG:	incbin	"art/palettes/Ending Background.bin"
+
+; Pal_AD1E:
+Pal_EndingStills:	incbin	"art/palettes/Ending Stills.bin"
+
+; Pal_AD3E										
+Pal_EndingSuperSonic:	incbin	"art/palettes/Ending Super Sonic.bin"
 					
 dword_AD5E:	dc.l $3ECB00		
 dword_AD62:	dc.l $3ECC00		
@@ -15060,45 +15142,8 @@ byte_BD1A:	dc.b   5,$24,$25,$1C,$1D,$1A,$1B,$11,  5,  6,$FF,  0; 0
 ; 64 blocks
 ; Standard font	used in	credits
 ; -------------------------------------------------------------------------------
-Nem_BD26:	dc.b $80,$40,$80,  4, $A,$13,  3,$23,  4,$35,$1A,$44, $C,$55,$1B,$67; 0
-					
-					
-		dc.b $7C,$73,  1,$86,  3,  0,$13,  2,$27,$7D,$34, $B,$45,$1C,$55,$1D; 16
-		dc.b $65,$1E,$FF,$24,$92,$49,$D5,$E7,$D8,$8B, $D,$18,$29,$44,$EE,$94; 32
-		dc.b $FB,$5F,$4A,$80,$C4,$C7,$C5,$15, $A,$B3,$41,$F7,$6B,$6B,$6B,$68; 48
-		dc.b $BF,$6B,$D4,$18,$82,  8,$98,$89,$83,  4,$BA, $D,$4F,$B4,$2B,$8C; 64
-		dc.b $44,$49,$62,$2A,$15,$E9,$EA, $C,$41,$AB,$3A,$B8,$20,$97,$41,$8D; 80
-		dc.b $7D,$7D,$DA,$24,$ED,$3F,$6B,$D4,$18,$80,$93,  4,$12,$E8,$31,$AF; 96
-		dc.b $AF,$BB,$5B,$5B,$5B,$45,$FB,$3D,$39,$3E,$D2,$7F,$69,$3E,$19,$C8; 112
-		dc.b $31,$3E,$ED,$6D,$6D,$7C,  5,$DB,$18,$2B,$93,$93,$ED,$27,$F7,$2C; 128
-		dc.b $9D,$F6,$85,$71,$88,$8F,$C1,$F0,$31,$15, $A,$F4,$F5,  6,$20,$D5; 144
-		dc.b $CE,$41,$F1,$6C,$57,$D8,$30,$4B,$34,$36,$B6,$BE,  2,$ED,$8C, $E; 160
-		dc.b $CC,$1F,  1,$26,$E0,$35,$F4,$92,$4E,$7D,$34,$9F,$6B,$AC,$1B,$3A; 176
-		dc.b $10,$31,$5E,$D7,$B6,$BE,$22,$74,$31,$50,$D0,$77,$2E,$87,$C1,$B0; 192
-		dc.b $7E,  2,$1D,$D2,$C1,$5C,$F8,$B5,$F7,  1,$5F,$13,$E4,$18,$25,$92; 208
-		dc.b $4D, $D,$A7,$DA,$F1,$24,$F5,$F2,$72, $C,$12,$E8,$6C,$10,$70,$1D; 224
-		dc.b $7B,$5F,$6A,$E0,$24,$83,$BE,$45,$A4,$F8,$41,$3B,  4,$3E,$1E,$98; 240
-		dc.b   9,$3F,$39,$16,$95, $A,$E3,$11,$12,$58,$8A,$85,$7A,$7A,$83,$10; 256
-		dc.b $12,$60,$82,$5D,  6,$35,$F5,$F7,$68,$ED,$6D,$7C, $E,$D8,$D2,$AB; 272
-		dc.b $A0,$C4,  6,  8,$25,$D0,$7C,$39,$DA,$15,$C6,$22,$3B,$5B,$4C,$45; 288
-		dc.b $42,$BD,$3D,$41,$88, $C,$1F,  4,$14,$28,$3F,$AF,$AC,$31,  3,$EE; 304
-		dc.b $D1,$DA,$DA,$2E,$D8,$D7,$A8,$31,  1,$81,$FD,$CF,$AC,$1B,$8B,$4A; 320
-		dc.b $85,$71,$88,$98,$8A,$BD,$4B,$E7,$6B,$FE,$C2,$7F,$D8,$3E,$BB,$A0; 336
-		dc.b $C4,  6,  8,$25,$D0,$63,$5F,$5F,$5D,$CB,$24,$9A,$F5,$7B,$57,$96; 352
-		dc.b $49,$63,$E0,$AE,$4B,$24,$9A, $C,$45,$42,$BD,$A5,$56,$49,$30,$41; 368
-		dc.b $2E,$83,$1A,$52,$E2,$31,$34,$60,$88,$F9,$AA,$BF,$89,$82,$D1,$C5; 384
-		dc.b $A5,$B0,$D5,$27,$D2,$69,$30,$68,$19,$DC,$15,$C2,$74,$1A,$25,$DE; 400
-		dc.b $86,$93,$15,$C6,$BE,$26, $C,$4C,$35,$82,$BB,$82,$AE,$86,$2C,$47; 416
-		dc.b $6B,$E2,$97,$41,$8C, $C,$57,$1A,$F8,$98,$D2,$24,$FA,$BB,$43,$16; 432
-		dc.b $2C,$44,$E0,$F8,$2B,$AF,$AF,$8E,$E8,$62,$C5,$8B,  5,$77,$3B,$43; 448
-		dc.b $16,$2C,$58,$2A,$DF,$27,$22,$D2,$A1,$5C,$62,$27,$79,$C6,$34,$3E; 464
-		dc.b   7,$ED,$7A,$86,$C1,$F8,$25,$D0,$7D,$7C,$8B,$41,$DD, $A,$4D,$62; 480
-		dc.b $3B,$51,$35,$2E,$83,$1A, $C,$55,$C4,$D4,$47,$6B,$13,$54,$2A,$E8; 496
-		dc.b $30,$C3,$10,$18,$20,$7F,$6B,$E9,$24,$92,$65,$E2,$3B,$47,$5D,$A5; 512
-		dc.b $5C,$76,$75,$6D,$57,$2B,$B2,$CA,$F8,$3E, $D,$A2,$4F,$5F, $C,  4; 528
-		dc.b $93,$71,$69,$50,$AE,$31,$13,$11,$50,$AE,$57,$34,$22,$A1,$5E,$9E; 544
-		dc.b $A0,$C4,$10,$7C,  7,$E0,$82,$5D,  6,$A0,$C5,$B5,$96,$75,$78,$B6; 560
-		dc.b $A0,  0		; 576
+Nem_CreditsFont:	incbin "art/nemesis/Credit Text.nem"
+
 ; ===========================================================================
 
 	if ~RemoveJmpTos
@@ -19308,7 +19353,7 @@ DrawTilesAtStart:
 		lea	(v_level_layout+$80).w,a4
 		move.w	#$6000,d2
 		
-	if FixBugs
+;	if FixBugs
 	; The purpose of this function is to dynamically load a portion of
 	; the background, based on where the BG camera is pointing. This
 	; makes plenty of sense for levels that dynamically load their
@@ -19341,7 +19386,7 @@ DrawTilesAtStart:
 		moveq	#0,d4
 		cmpi.b	#$C,(v_zone).w 	; is it CNZ?
 		beq.w	DrawTilesAtStart_Dynamic		; if it is, branch 
-	endc	
+;	endc	
 		tst.w	(f_two_player_mode).w 		; is it two-player mode?
 		beq.w	loc_E336			; if not, branch
 		cmpi.b	#$B,(v_zone).w	; is it MCZ 2P?
@@ -26341,7 +26386,7 @@ loc_12EE8:
 
 loc_12EF2:				
 		addq.b	#2,$25(a0)
-		lea	(word_133EC).l,a1
+		lea	(Pal_TitleSonic).l,a1
 		lea	($FFFFFB00).w,a2
 		moveq	#$F,d6
 
@@ -26473,17 +26518,15 @@ loc_13014:
 
 loc_1302C:				
 		move.w	d0,$2C(a0)
-		move.w	word_1303A(pc,d0.w),($FFFFFB4A).w
+		move.w	Pal_TitleStarCyc(pc,d0.w),($FFFFFB4A).w
 
 loc_13036:				
 		bra.w	DisplaySprite
 ; ===========================================================================
-word_1303A:	dc.w  $E64		; 0
-		dc.w  $E86		; 1
-		dc.w  $E64		; 2
-		dc.w  $EA8		; 3
-		dc.w  $E64		; 4
-		dc.w  $ECA		; 5
+		
+		incfile	Pal_TitleStarCyc
+		
+		
 word_13046:	dc.w  $108		; 0 
 		dc.w   $D0		; 1
 		dc.w  $100		; 2
@@ -26859,45 +26902,44 @@ off_1337C:	dc.w off_1338C-off_1337C; 0
 		dc.w off_133D4-off_1337C; 6
 		dc.w off_133E0-off_1337C; 7
 off_1338C:	dc.l sub_243E		; 0 
-		dc.l word_1342C
+		dc.l Pal_TitleLogo
 		dc.w $600F
 		dc.w $215
 off_13398:	dc.l loc_1344C		
-		dc.l word_1340C
+		dc.l Pal_TitleBackground
 		dc.w $400F
 		dc.w $407
 off_133A4:	dc.l loc_1344C		
-		dc.l word_AD1E
+		dc.l Pal_EndingStills
 		dc.w $F
 		dc.w $807
 off_133B0:	dc.l loc_1348A		
-		dc.l word_AD1E
+		dc.l Pal_EndingStills
 		dc.w $F
 		dc.w $807
 off_133BC:	dc.l loc_1344C		
-		dc.l word_AC7E
+		dc.l Pal_EndingSonic
 		dc.w $1F
 		dc.w $407
 off_133C8:	dc.l loc_1344C		
-		dc.l word_ACDE
+		dc.l Pal_EndingBG
 		dc.w $401F
 		dc.w $407
 off_133D4:	dc.l loc_1344C		
-		dc.l word_AD3E
+		dc.l Pal_EndingSuperSonic
 		dc.w $F
 		dc.w $407
 off_133E0:	dc.l loc_1344C		
-		dc.l word_AC9E
+		dc.l Pal_EndingSonicFar
 		dc.w $1F
 		dc.w $407
-word_133EC:	dc.w  $E20, $C00, $E22,	$E44, $E66, $E88, $EEE,	$AAA, $888, $666,  $24,	$248, $8AE, $68C,    0,	   0; 0
-					
-					
-word_1340C:	dc.w  $E20, $E42, $E64,	$EA6, $ECA, $E64, $EEE,	 $EA,  $C6,  $A2, $280,	$8CE, $6AE,  $8C, $468,	   0; 0
-					
-					
-word_1342C:	dc.w  $C00,    0, $C00,	$E44, $E66, $E88,  $EE,	 $AE,  $6A,  $26, $EEE,	$EAA,	$C,    6,    2,	 $E8; 0
-					
+
+
+	incfile	Pal_TitleSonic
+									
+	incfile	Pal_TitleBackground
+								
+	incfile	Pal_TitleLogo
 					
 ; ===========================================================================
 
@@ -27018,21 +27060,21 @@ loc_134E4:
 		move.b	#$F,($FFFFB400).w
 		lea	($FFFFB0C0).w,a1
 		bsr.w	DeleteObject2
-		lea	(word_1342C)(pc),a1
+		lea	(Pal_TitleLogo)(pc),a1
 		lea	(v_pal_dry_line4).w,a2
 		moveq	#7,d6
 
 loc_135B6:				
 		move.l	(a1)+,(a2)+
 		dbf	d6,loc_135B6
-		lea	(word_1340C)(pc),a1
+		lea	(Pal_TitleBackground)(pc),a1
 		lea	(v_pal_dry_line3).w,a2
 		moveq	#7,d6
 
 loc_135C6:				
 		move.l	(a1)+,(a2)+
 		dbf	d6,loc_135C6
-		lea	(word_133EC)(pc),a1
+		lea	(Pal_TitleSonic)(pc),a1
 		lea	($FFFFFB00).w,a2
 		moveq	#7,d6
 
@@ -33130,10 +33172,10 @@ OPL_Init:
 		beq.s	loc_17AF0
 		cmpi.b	#$C,(v_zone).w
 		bne.s	loc_17AF0
-		lea	(byte_1802A).l,a0
+		lea	(Objects_CNZ1_2P).l,a0
 		tst.b	(v_act).w
 		beq.s	loc_17AF0
-		lea	(byte_18492).l,a0
+		lea	(Objects_CNZ2_2P).l,a0
 
 loc_17AF0:				
 		move.l	a0,(v_opl_ptr_right).w
@@ -33801,145 +33843,28 @@ endobj macro
 		dc.w	$FFFF, $0000, $0000
     	endm
 
+    if FixBugs
+	; Sonic Team forgot to put a boundary marker here, meaning the game
+	; could potentially read past the start of the file and load random
+	; objects.
+		endobj
+    endif
+    
+	if Revision=0
+Objects_CNZ1_2P:	incbin	"level/objects/CNZ 1 2P (REV00).bin"
+	else
+	; a Crawl badnik was moved slightly further away from a ledge
+    ; 2 flippers were moved closer to a wall
+Objects_CNZ1_2P:	incbin	"level/objects/CNZ 1 2P.bin"
+	endc
 
-byte_1802A:	dc.b   0,$40,$81,$58,$44,  0,  0,$68,$81,$A8,$44,  0,  0,$90,$81,$58; 0
-					
-		dc.b $44,  0,  0,$B8,$81,$A8,$44,  0,  0,$E0,$81,$58,$44,  0,  2,$50; 16
-		dc.b $22,$F0,$86,  0,  2,$80,$82,$F0,$D7,  0,  2,$80,  3,$68,$86,  1; 32
-		dc.b   2,$B0,  2,$F0,$86,  0,  3,$40,$82,$F1,$26,  5,  3,$C0,$82,$D4; 48
-		dc.b $44,  0,  3,$C0,$83,  0,$44,  0,  4,$50,$86,$10,$44,  0,  4,$80; 64
-		dc.b $23,$10,$72,  9,  4,$80,  6,$68,$86,  1,  4,$A8,$85,$48,$D7,  1; 80
-		dc.b   4,$B0,$86,$10,$44,  0,  4,$C0,  4,$60,$D6,  1,  5,$28,$25,$B8; 96
-		dc.b $86,  0,  5,$78,$82,$E8,$44,  0,  5,$A8,$81,$9C,$44,  0,  5,$B0; 112
-		dc.b $24,$10,$86,  0,  5,$B8,$82,$E8,$44,  0,  6,$2C,$86,$A8,$44,  0; 128
-		dc.b   6,$38,  3, $C,$86,  0,  6,$64,$86,$A8,$44,  0,  6,$C0,  1,$E0; 144
-		dc.b $D6,  1,  6,$C0,$82,$90,$D7,  0,  7,$60,  6,$80,$D4,  2,  7,$68; 160
-		dc.b $82,$BC,$44,  0,  7,$E0,$46,$80,$D4,  2,  7,$F8,  3,$30,$84,  1; 176
-		dc.b   8,$10,  6,  0,$74,$17,  8,$10,  6,$C0,$74,$17,  8,$70,  6,$D0; 192
-		dc.b $74,$17,  8,$80,$83,$98,$44,  0,  8,$80,  4,$94,$D6,  0,  8,$80; 208
-		dc.b $25,  0,$84,  6,  8,$80,$85,$10,$D7,  1,  8,$E8,$24,$E0,$86,  0; 224
-		dc.b   9,  0,$26,$E0,$D4,  0,  9,  8,$23,$30,$84,  1,  9,$40,  7,$70; 240
-		dc.b $36,$20,  9,$90,$83,$71,$26,  4,  9,$98,  5,$C8,$86,  0,  9,$C8; 256
-		dc.b $84,$E0,$44,  0, $A,$10,$87,$71,$26,  4, $A,$18,  2,  8,$86,  0; 272
-		dc.b  $A,$20,  3,$40,$D4,  2, $A,$30,  7,$78,$41,  0, $A,$70,  2,$B8; 288
-		dc.b $41,  0, $A,$70,$85,$78,$41,  2, $A,$92,$83,$D1,$26,  7, $A,$F0; 304
-		dc.b   6,  0,$74,$17, $B,$20,  6,$40,$D4,  2, $B,$40,  4,$B0,$D2,  1; 320
-		dc.b  $B,$60,  5,$E0,$74,$33, $B,$A0,  6,$30,$36,$10, $C,$10,$82,$31; 336
-		dc.b $26,  4, $C,$18,  1,$48,$86,  0, $C,$70,$85,$51,$26,  5, $C,$B0; 352
-		dc.b $23,$68,$D5,$48, $C,$E0,  4,$60,$74,$33, $D,$10,$86,$71,$26,  4; 368
-		dc.b  $D,$30,  5,$E8,$D5,$28, $D,$60,$81,$10,$44,  0, $D,$60,  5,$20; 384
-		dc.b $74,$33, $D,$90,$80,$C8,$44,  0, $D,$C0,$81,$10,$44,  0, $D,$E0; 400
-		dc.b $80,$A8,$44,  0, $E,  0,$81,$10,$44,  0, $E,  0,  6,$A0,$84,  0; 416
-		dc.b  $E,$18,  3,$F8,$86,  0, $E,$25,  7,$44,$85,$81, $E,$30,$80,$C8; 432
-		dc.b $44,  0, $E,$60,$81,$10,$44,  0, $E,$80,$82,$70,$C8,$AC, $F,  0; 448
-		dc.b $23,$A0,$D4,  0, $F,  0,  5,$C0,  3,$D0, $F,$80,$22,$90,$72,  8; 464
-		dc.b  $F,$80,  5,$F0,  3,$52, $F,$90,$81,$91,$26,  6,$10,$40,  4,$E8; 480
-		dc.b $84,  5,$10,$60,  1,$D0,$D2,  1,$10,$70,  6,$F0,$85,  0,$10,$C0; 496
-		dc.b   1,$E0,$D2,  1,$11,  0,  3,$20,$D4,  0,$11,$20,  1,$F0,$D2,  1; 512
-		dc.b $11,$B0,$84,$50,$44,  0,$12,  0,$83,$90,$D7,  1,$12,  0,  4,$88; 528
-		dc.b $D6,  0,$12,$50,$84,$50,$44,  0,$13,$70,$84,$E1,$26,  1,$13,$B8; 544
-		dc.b   3,$B4,$86,  0,$13,$E0,  0,$E0,$74,$33,$13,$E0,  1,$80,$D4,  2; 560
-		dc.b $13,$E0,$84,$D0,$44,  0,$14,$20,$84,$D0,$44,  0,$14,$98,$84,$B8; 576
-		dc.b $D8, $A,$14,$C0,$84,$B8,$D8, $A,$14,$E8,$84,$B8,$D8, $A,$15,$30; 592
-		dc.b $22,$28,$D5,$28,$15,$60,  2,$A0,$74,$33,$15,$60,$C4,$50,$36,$10; 608
-		dc.b $15,$80,$83,$80,$44,  0,$15,$98,  4,$EA,$86,  0,$16,  0,  5,$8C; 624
-		dc.b $D6,  0,$16,  0,  6,$60,$D6,  0,$16,$68,$21,$6C,$86,  0,$16,$80; 640
-		dc.b   2,$68,$86,  1,$16,$C0,$23,$90,$72,  4,$16,$E0,  3,$20,$74,$33; 656
-		dc.b $17,$38,$81,$28,$79,  1,$17,$40,$84,$88,$79,  2,$17,$60,  3,$60; 672
-		dc.b $D4,  0,$17,$70,  7,$10,$84,  0,$17,$90,$81,$51,$26,  4,$17,$A0; 688
-		dc.b   3,$20,$74,$33,$17,$A5,  7,$C4,$85,$81,$18,$20,  1,$68,$D8,  7; 704
-		dc.b $18,$70,$82,$D1,$26,  4,$18,$80,  1,$68,$D8,  7,$18,$80,$24,$90; 720
-		dc.b $72,  8,$18,$80,  6,$40,  3,$D0,$18,$E0,  1,$68,$D8,  8,$18,$E0; 736
-		dc.b   4,$20,$74,$33,$19,$40,  1,$78,$D8,  6,$19,$40,  4,$60,$D4,  0; 752
-		dc.b $19,$70,  6,$70,  3,$52,$19,$80,$82,$D0,$D7,  1,$19,$A0,  4,$20; 768
-		dc.b $74,$33,$19,$F8,  4,$98,$84,  0,$1A,  0,$27,$10,$84,  0,$1A,$20; 784
-		dc.b $82,$F0,$36,$10,$1A,$25,  5,$43,$85,$81,$1A,$B8,$81,$E0,$44,  0; 800
-		dc.b $1B,  0,  3,$C0,  3,$D0,$1B,$70,  3,$F0,  3,$52,$1B,$C0,  2,$58; 816
-		dc.b $D6,  1,$1C,  0,$82,$20,$44,  0,$1C,$18,  3,$6C,$86,  0,$1C,$60; 832
-		dc.b   4,$38,$84,  5,$1C,$70,  5,$E8,$85,  0,$1C,$88,$25,$60,$84,  0; 848
-		dc.b $1C,$C0,$82,$88,$44,  0,$1D,  0,$82,$88,$44,  0,$1D,$B0,$26,$68; 864
-		dc.b $D5,$38,$1D,$C0,  1,$58,$D6,  1,$1D,$C0,$81,$FC,$44,  0,$1D,$E0; 880
-		dc.b   7,$20,$74,$35,$1E,$10,$82,$91,$26,  7,$1E,$30,$82,$91,$26,  4; 896
-		dc.b $1E,$30,$24,$A8,$D5,$38,$1E,$60,  5,$60,$74,$35,$1E,$88,  3,$B4; 912
-		dc.b $84,  0,$1F,$1C,  4,$10,$86,  0,$1F,$98,  6,$48,$86,  0,$1F,$E0; 928
-		dc.b $85,$50,$44,  0,$1F,$E8,  6,$98,$84,  4,$20,  0,$82,$F8,$D7,  1; 944
-		dc.b $20,$10,  2,$F8,$84,  6,$20,$25,  7,$44,$85,$81,$20,$28,$26,$48; 960
-		dc.b $86,  0,$20,$C8,  5,$18,$84,  0,$20,$D0,  4,$78,$41,  0,$20,$F0; 976
-		dc.b   4,$78,$41,  0,$21,$50,$82,$30,$C8,$AC,$21,$E4,$82,$92,$44,  0; 992
-		dc.b $21,$F0,  5,$E8,$85,  0,$21,$FC,  1,$E0,$84,  0,$21,$FC,  2,$20; 1008
-		dc.b $84,  1,$22,$18,  2,$68,$86,  0,$22,$58,  4,$88,$86,  0,$22,$B0; 1024
-		dc.b $22,$68,$86,  0,$22,$C0,  3,$CE,$D6,  1,$22,$E0,$84,$60,$44,  0; 1040
-		dc.b $23,  8,$83,$58,$44,  0,$23,$18,  5,$28,$86,  0,$23,$40,$83,$58; 1056
-		dc.b $44,  0,$23,$60,$85,$28,$44,  0,$23,$A8,$25,$28,$86,  0,$24,  8; 1072
-		dc.b $26,$B0,$84,  0,$24,$78,$25,$B0,$84,  1,$24,$98,  5,$EA,$86,  0; 1088
-		dc.b $25,$38,  7,$14,$86,  0,$25,$C0,  7,$67,$86,  1,$28,$40,  6,$88; 1104
-		dc.b  $D,  0,$FF,$FF,  0,  0,  0,  0; 1120
-
-byte_18492:	dc.b   2,  8,  5,$F0,$41,$10,  2,$50,$85,$B0,$D8,  9,  2,$80,$85,$A0; 0
-					
-		dc.b $D8,  9,  2,$B0,$85,$90,$D8,  9,  3,$60,$85,$70,$C8,$AC,  4,  0; 16
-		dc.b   5,$A0,$84,  0,  4,$25,  6,$44,$85,$81,  4,$50,$87,$31,$26,  4; 32
-		dc.b   4,$90,$84,$71,$26,  5,  5,  0,  4,$C0,$84,  0,  5,  0,  4,$C0; 48
-		dc.b   3,$50,  5,$98,  3,$F0,  3,$52,  5,$98,  4,$F0,  3,$52,  6,  8; 64
-		dc.b   5,$70,$41,$10,  7,$60,$84,$70,$C8,$AC,  7,$E0,  2,$60,$D6,  0; 80
-		dc.b   7,$E0,  2,$90,$D6,  0,  7,$E0,  2,$C0,$D6,  0,  8,$34,$84,$88; 96
-		dc.b $D8,  1,  8,$80,  5,$68,$86,  1,  8,$84,$84,$88,$D8,  1,  8,$D4; 112
-		dc.b $84,$88,$D8,  1,  9,$18,  3,$70,$86,  0, $A,$10,  5,$60,$74,$13; 128
-		dc.b  $A,$10,$87,$31,$26,  4, $A,$30,  6,$68,$D5,$38, $A,$40,  3,$60; 144
-		dc.b $D6,  1, $A,$7C,  7,$30,$84,  0, $A,$80,$22,$10,$72,  9, $A,$E8; 160
-		dc.b $24,$38,$86,  0, $B,$60,$82,$70,$C8,$AC, $B,$A0,  4,$C0,$D4,  2; 176
-		dc.b  $B,$C0,  4,$30,$74,$81, $B,$E0,$44,$C0,$D4,  2, $C,  0,$27,$A0; 192
-		dc.b $84,  0, $C,$38,  2,$DC,$86,  0, $C,$98,$85,  8,$D8,  1, $C,$C0; 208
-		dc.b   2,$C0,$D6,  0, $C,$C0,$85,  8,$D8,  1, $C,$E8,$85,  8,$D8,  1; 224
-		dc.b  $D,$80,  6,  0,$84,  1, $D,$C0,  2,$F0,$84,  0, $E,$18,  7, $C; 240
-		dc.b $86,  0, $E,$40,  5,$E8,$D6,  1, $E,$40,$27,$40,$84,  5, $E,$68; 256
-		dc.b $27, $C,$86,  0, $E,$70,  2,$10,$84,  0, $E,$A5,  2,$C4,$85,$81; 272
-		dc.b  $F,  4,$26,  0,$84,  1, $F,$40,$21,$80,$84,  4, $F,$80,  1,$40; 288
-		dc.b   3,$D0, $F,$88,$23,$B8,$84,  0, $F,$B0,  5,$F8,$41,  0, $F,$F0; 304
-		dc.b $85,$F1,$26,  7,$10,$18,  1,$70,  3,$52,$10,$90,  5,$A0,$74,$13; 320
-		dc.b $10,$B0,  2,$E8,$D5,$48,$10,$B0,$24,$E8,$D5,$38,$10,$B0,$26,$A8; 336
-		dc.b $D5,$38,$10,$E0,  7,$60,$74,$33,$11,$30,$83,$F1,$26,  5,$11,$B0; 352
-		dc.b $86,$F1,$26,  4,$12,$10,$84,$71,$26,  4,$12,$30,$24,$EC,$D5,$19; 368
-		dc.b $12,$30,  6,$68,$D5,$18,$12,$30,  6,$F8,$41,  0,$12,$70,$85,$F1; 384
-		dc.b $26,  6,$13,  0,$81,$88,$44,  0,$13,$20,  6,$60,$74,$33,$13,$40; 400
-		dc.b   6,$A0,$D4,  0,$13,$80,$81,$78,$44,  0,$13,$80,  4,$10,$D2,  1; 416
-		dc.b $13,$A0,  6,$70,$74,$31,$13,$B0,  4,$F8,$41,  0,$14,$30,$86,$F1; 432
-		dc.b $26,  1,$14,$58,  4, $C,$86,  0,$14,$B0,  5,$F8,$41,  0,$14,$F0; 448
-		dc.b $85,$B1,$26,  6,$15,$40,$81,$60,$D8, $C,$15,$80,$81,$40,$D8, $C; 464
-		dc.b $15,$88,  4,$70,$41,$12,$15,$C0,$81,$20,$D8, $C,$15,$C0,  3,$5C; 480
-		dc.b $D6,  1,$16,$10,  5,$A0,$74,$13,$16,$30,  6,$C8,$D5,$40,$16,$80; 496
-		dc.b $21,$10,$72,  9,$16,$E0,  3,  0,$74,$33,$16,$E0,$87,$D0; 512
-		dc.b $C8,$AC,$17,$10,  4,$60,$74,$13,$17,$30,  5,$28,$D5,$28,$17,$70; 0
-		dc.b $85,$B1,$26,  4,$17,$80,$23,$10,$72,  8,$17,$E0,  1,$20,$D2,  1; 16
-		dc.b $18,$40,$82,$E8,$79,  1,$18,$60,  1,$10,$D2,  1,$18,$AC,$84,$78; 32
-		dc.b $44,  0,$18,$D0,$25,$91,$86,  0,$18,$E0,  1,  0,$D2,  1,$18,$E4; 48
-		dc.b $84,$58,$44,  0,$19,  0,$85,$90,$D7,  0,$19,$1C,$84,$58,$44,  0; 64
-		dc.b $19,$30,  5,$91,$86,  0,$19,$54,$84,$78,$44,  0,$1A,$30,  4,$28; 80
-		dc.b $85,  0,$1A,$38,  2,$A8,$74,$13,$1A,$80,  2,$E0,$D4,  0,$1A,$80; 96
-		dc.b   5,$20,$84,  0,$1A,$90,$81,$F1,$26,  4,$1A,$A5,  5,$C4,$85,$81; 112
-		dc.b $1B,$80,$22,$10,$72,  8,$1B,$80,  4,$40,  3,$D0,$1C,  0,  2,$70; 128
-		dc.b $84,  0,$1C,$18,  4,$70,  3,$52,$1C,$30,$26,$A8,$D5,$38,$1C,$60; 144
-		dc.b   7,$60,$74,$33,$1C,$9C,  2,$CC,$86,  0,$1C,$E4,$81,$90,$44,  0; 160
-		dc.b $1C,$F0,  5,$74,$85,  0,$1D,$98,  4,$8C,$86,  0,$1D,$C0,  3,$68; 176
-		dc.b $D6,  1,$1D,$C0,$84,$A0,$D8,  4,$1D,$E0,$84,$A0,$D8,  4,$1D,$E0; 192
-		dc.b $24,$F8,$84,  6,$1D,$F8,$83,$D4,$44,  0,$1E,  0,$84,$A0,$D8,  4; 208
-		dc.b $1E,$28,$24,$8C,$86,  0,$1E,$50,$85,$60,$44,  0,$1E,$50,$85,$8C; 224
-		dc.b $44,  0,$1E,$50,$85,$B8,$44,  0,$1F,$18,$A2,$68,$D8,$4E,$1F,$38; 240
-		dc.b $A2,$48,$D8,$4E,$1F,$58,$A2,$28,$D8,$4E,$1F,$58,$86,$28,$44,  0; 256
-		dc.b $1F,$71,  3,$E8,$85,  0,$1F,$A8,$86,$28,$44,  0,$20,$90,$81,$71; 272
-		dc.b $26,  7,$20,$90,  3,$60,$74,$13,$20,$B0,$22,$88,$D5,$40,$20,$B0; 288
-		dc.b $24,$C8,$D5,$50,$20,$E0,  5,$E0,$74,$33,$21,$20,$81,$70,$C8,$AC; 304
-		dc.b $21,$70,  3,$90,$84,  0,$21,$A5,  4,$44,$85,$81,$22,$80,  2,$C0; 320
-		dc.b   3,$D0,$22,$F8,  2,$F0,  3,$52,$23,$48,  3,$70,$86,  0,$23,$50; 336
-		dc.b   2,$8C,$D6,  0,$23,$90,  4,  8,$86,  0,$24,  0,$82,$46,$44,  0; 352
-		dc.b $24,$18,  5,$A8,$86,  0,$24,$40,  2,$E8,$D6,  1,$24,$60,$25,$D8; 368
-		dc.b $84,  6,$24,$80,$86,$68,$79,  2,$24,$E8,$25,$A8,$86,  0,$25,$34; 384
-		dc.b $84,$1C,$D8,$89,$25,$34,$84,$40,$D8,$89,$25,$34,$84,$64,$D8,$89; 400
-		dc.b $27,$40,  6,$68, $D,  0,$28,$C8,  6,$A8,$86,  0,$29,  0,$85,$A0; 416
-		dc.b $44,  0,$29,$10,$26,$A8,$86,  0,$29,$40,$85,$10,$44,  0,$29,$40; 432
-		dc.b $85,$C0,$44,  0,$29,$40,  6,$A8,$D7,  0,$29,$70,  6,$A8,$86,  0; 448
-		dc.b $29,$80,$85,$A0,$44,  0,$29,$B8,$26,$A8,$86,  0,$2B,$B8,$86,$60; 464
-		dc.b $3E,  0,$FF,$FF,  0,  0,  0,  0; 480
+	if Revision=0
+Objects_CNZ2_2P:	incbin	"level/objects/CNZ22P (REV00).bin"
+	else	
+	; 4 Crawl badniks were slightly moved, placing them closer/farther away from ledges
+    ; 2 flippers were moved away from a wall to keep players from getting stuck behind them
+Objects_CNZ2_2P:	incbin	"level/objects/CNZ 2 2P.bin"
+	endc
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 41 - Spring
@@ -74523,13 +74448,12 @@ loc_35F76:
 		move.w	d0,d1
 		add.w	d0,d0
 		add.w	d1,d0
-		move.w	word_35F92(pc,d0.w),($FFFFFB76).w
-		move.w	word_35F92+2(pc,d0.w),($FFFFFB78).w
-		move.w	word_35F92+4(pc,d0.w),($FFFFFB7A).w
+		move.w	Pal_SSEmeralds(pc,d0.w),($FFFFFB76).w
+		move.w	Pal_SSEmeralds+2(pc,d0.w),($FFFFFB78).w
+		move.w	Pal_SSEmeralds+4(pc,d0.w),($FFFFFB7A).w
 		rts	
 ; ===========================================================================
-word_35F92:	
-		incbin	"art/palettes/Special Stage Emerald.bin"
+		incfile Pal_SSEmeralds
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite

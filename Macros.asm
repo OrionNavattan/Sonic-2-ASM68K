@@ -2,13 +2,11 @@
 ; Test if argument is used
 ; ---------------------------------------------------------------------------
 
-ifarg		macros
+ifarg:		macros
 		if strlen("\1")>0
 
-ifnotarg	macros
+ifnotarg:	macros
 		if strlen("\1")=0
-
-; ---------------------------------------------------------------------------
 
 ; ---------------------------------------------------------------------------
 ; Align and pad.
@@ -182,7 +180,9 @@ rsblock:	macro
 		endm
 
 rsblockend:	macro ; Adapted to Sonic 2's macro-based RAM clearing
-		\1\_end:	equ __rs
+		\1\_end:	equ __rs ; used by a couple of RAM overflow checks
+		;loops_to_clear_\1: equ ((__rs-\1)/4)-1	; number of loops needed to clear block with longword writes
+
 		endm
 ; ---------------------------------------------------------------------------
 ; Organise object RAM usage.
@@ -210,13 +210,14 @@ rsobjend:	macro
 		
 ; ---------------------------------------------------------------------------
 ; Clear an area of RAM.
-; input: start address, end address
+; input: start location (must be defined with rsblock)
 ; ---------------------------------------------------------------------------		
+
+clear_ram:		macro startaddr,endaddr
 		
-clear_ram:		 macro startaddr,endaddr
 	if startaddr>endaddr
 		inform 3,"Starting address of clearRAM $%h is after ending address $%h.",startaddr,endaddr
-    elseif startaddr=endaddr
+	elseif startaddr=endaddr
 		inform 1,"clearRAM is clearing zero bytes. Turning this into a nop instead."
 		mexit
     endc
@@ -227,10 +228,11 @@ clear_ram:		 macro startaddr,endaddr
 		lea	(\startaddr).w,a1
    	endc
 		moveq	#0,d0
-    if ((startaddr)&1)
+    if (\startaddr&1)
 		move.b	d0,(a1)+
     endc
-		move.w	(\endaddr-\startaddr)/4-1,d1
+		move.w	#((\endaddr-\startaddr)-(\startaddr&1))/4-1,d1
+			
 	.loop\@:	
 		move.l	d0,(a1)+
 		dbf	d1,.loop\@
@@ -314,7 +316,43 @@ ptr:		macro
 		popo
 		list
 		endm
+		
+; ---------------------------------------------------------------------------
+; Make a VDP command as an immediate value and construct a 68K instruction with it
+; (more or less replicating the vdpComm function in Sonic 2 Git AS)
+; input: 68k instruction, VRAM/VSRAM/CRAM offset, destination RAM
+; (vram/vsram/cram), operation (read/write/dma), additional adjustment (shifts, ANDs),
+; destination of 68K instruction
+; ---------------------------------------------------------------------------
+vdp_comm:	macro inst,addr,type,rwd,adjustment,dest
 
+	; Values for type argument
+vram: equ	$21	; %100001
+cram: equ	$2B	; %101011
+vsram: equ	$25	; %100101
+
+	; Values for rwd argument
+read: 	equ $C	; %001100
+write: 	equ 7	; %000111
+dma: 	equ $27	; %100111
+
+
+		\inst\.\0	#(((\type&\rwd)&3)<<30)|((\addr&$3FFF)<<16)|(((\type&\rwd)&$FC)<<2)|((\addr&$C000)>>14)\adjustment\,\dest
+	endm	
+	
+;	vdp_comm.l move,$0000,cram,write,,(vdp_control_port).l
+
+; ---------------------------------------------------------------------------
+; Make a VDP command for use with the dc directive
+; (more or less replicating the vdpComm function in Sonic 2 Git AS)
+; input: VRAM/VSRAM/CRAM offset, destination RAM, (vram/vsram/cram), 
+; operation (read/write/dma),
+; ---------------------------------------------------------------------------
+vdp_comm_dc:	macro addr,type,rwd
+
+		dc.l	(((\type&\rwd)&3)<<30)|((\addr&$3FFF)<<16)|(((\type&\rwd)&$FC)<<2)|((\addr&$C000)>>14)
+		
+	endm
 ; ---------------------------------------------------------------------------
 ; Set a VRAM address via the VDP control port.
 ; input: 16-bit VRAM address, control port (default is ($C00004).l)
@@ -334,7 +372,7 @@ locVRAM:	macro loc,controlport
 ; cram/vsram destination (0 by default)
 ; ---------------------------------------------------------------------------
 
-dma:		macro
+dma_:		macro
 		dma_type: = $4000
 		dma_type2: = $80
 		
@@ -548,6 +586,18 @@ incfile:	macro lbl
 	\lbl:	incbin	"\filename"				; write file to ROM
 		even
 		endm
+		
+; ---------------------------------------------------------------------------
+; Incbin a palette (required due to the main Sonic/Tails palette spanning two lines)
+; input: label, label of second line (both must be declared by filedef)
+; ---------------------------------------------------------------------------
+		
+incpal: macro label,label2
+		incfile \label
+    ifarg label2
+		incbin "\filename"
+    endc
+	endm		
 
 ; ---------------------------------------------------------------------------
 ; Declares a blank object
