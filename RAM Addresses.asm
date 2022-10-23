@@ -332,16 +332,16 @@ v_palette_timer:			rs.b 1 ; $FFFFF65E ; was "Palette_frame_count"
 v_super_sonic_palette:		rs.b 1 ; $FFFFF65F
 
 ; Following five variables share a single address ($FFFFF660), and are used at different times.
-v_dez_eggman:					; Word
-v_dez_shake_timer:				; Word
-v_wfz_dle_subrout:			; Word
-f_segascr_paldone:			; Byte (cleared once as a word)
+v_dez_eggman:				equ __rs	; Word
+v_dez_shake_timer:			equ __rs	; Word
+v_wfz_dle_subrout:			equ __rs	; Word
+f_segascr_paldone:			equ __rs	; Byte (cleared once as a word)
 f_credits_trigger:			rs.w 1 ; cleared as a word a couple times
 f_ending_palcycle:			equ __rs-1 ; $FFFFF661
 
 ; Following three variables share an address:
-v_segascr_vblank_sub:
-v_ending_vint_subrout:
+v_segascr_vblank_sub:		equ __rs
+v_ending_vint_subrout:		equ __rs
 v_wfz_bg_y_speed:			rs.w 1  ; $FFFFF662
 
 							rs.w 1 ; $FFFFF664-$FFFFF665 ; unused
@@ -551,7 +551,7 @@ v_respawn_data:				rs.b $BE ; $FFFFFC02	; For stock S2, $80 is enough
 v_respawn_data_end:			; required by clear_ram
 
 v_stack:					rs.b $140 ; $FFFFFCC0 ; system stack; the first $BE bytes are cleared by ObjectsManager_Init due to a bug, with possibly disastrous consequences. At least $A0 bytes are needed.
-v_stack_pointer:					 ; $FFFFFE00 ; initial stack pointer - items are added to the stack backwards from this address
+v_stack_pointer:			equ	__rs ; $FFFFFE00 ; initial stack pointer - items are added to the stack backwards from this address
 v_keep_after_reset:         equ __rs ; $FFFFFE00 ; everything after this address is kept in RAM after a soft reset
 
 f_ss_2p_flag:				rs.w 1 ; $FFFFFE00-$FFFFFE01 ; flag indicating Special Stage 2P mode
@@ -714,12 +714,12 @@ f_slot_machine_use:		rs.w 1 ; $FFFFFF4C ; flag indicating a CNZ slot machine is 
 
 v_slot_machine_variables:		rs.b $12 ; $FFFFFF4E
 v_slot_machine_routine:			equ v_slot_machine_variables ; $FFFFFF4E ; current routine of the slot machine psuedoobject
-;v_slot_machine_timer:			equ __rs-$10 ; v_slot_machine_variables+1 ; $FFFFFF4F 
+;v_slot_machine_timer:			equ __rs-$11 ; v_slot_machine_variables+1 ; $FFFFFF4F 
 
-;unused_FF50:					equ __rs-$F ; v_slot_machine_variables+2	1 ; $FFFFFF50 ; seems unused except for 1 write
+;unused_FF50:					equ __rs-$10 ; v_slot_machine_variables+2	1 ; $FFFFFF50 ; seems unused except for 1 write
 
-;v_slot_machine_index:			equ __rs-$E ; v_slot_machine_variables+3 ; $FFFFFF51
-v_slot_machine_reward:			equ __rs-$D ; v_slot_machine_variables+4 ; $FFFFFF52
+;v_slot_machine_index:			equ __rs-$F ; v_slot_machine_variables+3 ; $FFFFFF51
+v_slot_machine_reward:			equ __rs-$E ; v_slot_machine_variables+4 ; $FFFFFF52
 
 ;v_slot_machine_slot1_pos:		equ __rs-$C ; v_slot_machine_variables+5 ; $FFFFFF54
 ;v_slot_machine_slot1_speed:	equ __rs-$A ; v_slot_machine_variables+7 ; $FFFFFF56

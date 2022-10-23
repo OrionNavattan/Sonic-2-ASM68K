@@ -1,0 +1,35 @@
+Changes in Revision 1:
+
+Adds an additional check to allow the startup VRAM clear to finish before doing the checksum test
+Fixes a typo in Thomas Kalinske's name in the credits (Tohmas)
+Removes four unused LPL_InitBG subroutines (the first null one, ones for HPZ and WZ, and one for Sonic 1's SYZ)
+Removes one filler nop near RunDynamicLevelEvents and adds another near RingsManager
+Reworks part of CollectRing_1P to skip checking the extra life flags if the player has 999 or more rings
+Adds checks to Super Ring monitor to prevent ring count going above 999
+Fixes rings obtained from Super Ring monitors not contributing to the 2P-mode collected rings total
+Teleport swap now clears the players' ost_frame slots
+Removes a debug check designed to crash the game if BuildSprites attempts to display an invalid object
+Adjusts the position of a Crawl and two flippers in CNZ1 2P
+Adjusts the position of 4 Crawls and two flippers in CNZ2 2P
+Changes the behavior of Tails' level reset routine in 2P mode
+Invisible solid blocks and MTZ springs walls are no longer visible in debug mode, with one jmpto consequently removed
+Fixes MTZ spring walls not checking if the player was hurt or dead
+Fixes CNZ pinball launchers not checking if AI Tails is flying
+Removes a partial duplicate of PLC_ResultsTails
+Fixes an incorrectly-placed plane switcher in EHZ2
+Fixes misconfigured checkpoints in WFZ (they did not have their remember state flag set)
+Fixes incorrectly placed signposts in CNZ1 & CNZ2 (they were positioned too low)
+
+Changes in Revision 2:
+
+Remove hundreds of proxied jumps and branches
+Remove all filler nops
+Almost all possible addq and subq optimizations made
+Many PC-relative leas been deoptimized to absolute long
+LevelSizeLoad clears some additional variables (v_wfz_dle_subrout, v_wfz_bg_y_speed, 
+v_camera_x_pos_offset, and v_camera_y_pos_offset)
+Removes an unused duplicate of SwScrl_Minimal
+Fixes bug that can cause the game to softlock if the player attempts to transform into Super Sonic at the end of a level
+Fixes issue that can cause a crash when defeating a Rexon
+Changes palette lines of some unused HPZ tiles
+Adds numerous duplicate PLC entries

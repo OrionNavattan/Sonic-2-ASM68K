@@ -25,9 +25,8 @@ sizeof_level:       equ $1000
 screen_width:		equ 320
 screen_height:		equ 224
 
-; ---------------------------------------------------------------------------
-; VRAM globals
-; ---------------------------------------------------------------------------
+
+; VRAM Data - globals
 sizeof_cell:		equ $20					; single 8x8 tile
 sizeof_vram_fg:		equ sizeof_vram_row*32			; fg nametable, assuming 64x32 ($1000 bytes)
 sizeof_vram_bg:		equ sizeof_vram_row*32			; bg nametable, assuming 64x32 ($1000 bytes)
@@ -47,9 +46,8 @@ sizeof_vram_sprites:	equ $280
 vram_hscroll:			equ $FC00				; horizontal scroll table ($380 bytes); extends until $FF7F
 sizeof_vram_hscroll:	equ $380				; 224 lines * 2 bytes per entry * 2 plane nametables
 
-; ---------------------------------------------------------------------------
+
 ; VRAM regions for main game
-; ---------------------------------------------------------------------------
 ;vram_window:		equ $A000		; window nametable - unused
 vram_fg:			equ $C000		; foreground nametable ($1000 bytes); extends until $CFFF
 vram_bg:			equ $E000		; background nametable ($1000 bytes); extends until $EFFF
@@ -60,16 +58,14 @@ sizeof_vram_planetable:	equ $1000			; 64 cells x 32 cells x 2 bytes per cell
 ;tile_sonic:			equ vram_sonic/sizeof_cell
 
 
-; ---------------------------------------------------------------------------
+
 ; VRAM regions for Sega Screen
-; ---------------------------------------------------------------------------
 vram_sega_fg:			equ $C000 ; extends until $DFFF
 vram_sega_bg:			equ $A000 ; extends until $BFFF
 sizeof_vram_sega_pt:	equ $2000 ; 128 cells x 32 cells x 2 bytes per cell
 
-; ---------------------------------------------------------------------------
+
 ; VRAM regions for Special Stage
-; ---------------------------------------------------------------------------
 vram_ss_fg1:       			equ $C000	; extends until $DFFF
 vram_ss_fg2:			    equ $8000	; extends until $9FFF
 vram_ss_bg:					equ $A000	; extends until $BFFF
@@ -79,32 +75,26 @@ sizeof_vram_ss_sprites:		equ $0280	; 640 bytes
 vram_ss_hscroll:			equ $FC00	; extends until $FF7F
 sizeof_vram_ss_hscroll:		equ $0380	; 224 lines * 2 bytes per entry * 2 plane nametables
 
-; ---------------------------------------------------------------------------
+
 ; VRAM regions for title screen
-; ---------------------------------------------------------------------------
 vram_title_fg:          	equ $C000	; extends until $CFFF
 vram_title_bg:          	equ $E000	; extends until $EFFF
 sizeof_vram_title_pt:   	equ $1000	; 64 cells x 32 cells x 2 bytes per cell
 
-; ---------------------------------------------------------------------------
+
 ; VRAM regions for ending and credits
-; ---------------------------------------------------------------------------
 vram_ending_fg:     	      equ $C000	; extends until $DFFF
 vram_ending_bg1:    	      equ $E000	; extends until $EFFF (plane size is 64x32)
 vram_ending_bg2:	          equ $4000	; extends until $5FFF
 sizeof_vram_ending_pt:        equ $2000	; 64 cells x 64 cells x 2 bytes per cell
 
-; ---------------------------------------------------------------------------
+
 ; VRAM regions for menu screens
-; ---------------------------------------------------------------------------
 vram_menu_fg:				equ $C000	; Extends until $CFFF
 vram_menu_bg:             	equ $E000	; Extends until $EFFF
 sizeof_vram_menu_pt:        equ $1000	; 64 cells x 32 cells x 2 bytes per cell
 
-; ---------------------------------------------------------------------------
-; Color and CRAM things
-; ---------------------------------------------------------------------------
-
+; Color and CRAM 
 countof_color:		equ 16					; colors per palette line
 countof_colour:	equ countof_color		; silly Brits. :P
 countof_pal:		equ 4					; total palette lines
@@ -118,6 +108,60 @@ palfade_2:		equ (countof_color*2)-1
 palfade_3:		equ (countof_color*3)-1
 palfade_all:		equ (countof_color*4)
 
+; Levels
+; Zone IDs. Do NOT alter the order here, or zone tables will screw up.
+	rsset 0
+id_EHZ:		rs.b 1 ; 0
+id_Level1:	rs.b 1 ; 1
+id_WZ:		rs.b 1 ; 2
+id_Level3:	rs.b 1 ; 3
+id_MTZ:		rs.b 1 ; 4 - Metropolis Zone Acts 1 & 2
+id_MTZ_2:	rs.b 1 ; 5 - Metropolis Zone Act 3
+id_WFZ:		rs.b 1 ; 6
+id_HTZ:		rs.b 1 ; 7
+id_HPZ:		rs.b 1 ; 8
+id_Level9:	rs.b 1 ; 9
+id_OOZ:		rs.b 1 ; $A
+id_MCZ:		rs.b 1 ; $B
+id_CNZ:		rs.b 1 ; $C
+id_CPZ:		rs.b 1 ; $D
+id_DEZ:		rs.b 1 ; $E
+id_ARZ:		rs.b 1 ; $F
+id_SCZ:		rs.b 1 ; $10
+
+ZoneCount:	equ __rs ; Total number of zone slots, not necessarily playable zones
+
+titlecard_flag: equ	7 ; flag bit set in v_gamemode to indicate the level hasn't yet started
+id_TitleCard:	equ	1<<titlecard_flag	; flag mask
+
+
+
+; Act IDs
+id_EHZ_act1:	equ (id_EHZ<<8)
+id_EHZ_act2:	equ (id_EHZ<<8)+1
+id_CPZ_act1:	equ (id_CPZ<<8)
+id_CPZ_act2:	equ (id_CPZ<<8)+1
+id_ARZ_act1:	equ (id_ARZ<<8)
+id_ARZ_act2:	equ (id_ARZ<<8)+1
+id_CNZ_act1:	equ (id_CNZ<<8)
+id_CNZ_act2:	equ (id_CNZ<<8)+1
+id_HTZ_act1:	equ (id_HTZ<<8)
+id_HTZ_act2:	equ (id_HTZ<<8)+1
+id_MCZ_act1:	equ (id_MCZ<<8)
+id_MCZ_act2:	equ (id_MCZ<<8)+1
+id_OOZ_act1:	equ (id_OOZ<<8)
+id_OOZ_act2:	equ (id_OOZ<<8)+1
+id_MTZ_act1:	equ (id_MTZ<<8)
+id_MTZ_act2:	equ (id_MTZ<<8)+1
+id_MTZ_act3:	equ (id_MTZ_2<<8)
+id_SCZ_act1:	equ (id_SCZ<<8)
+id_WFZ_act1:	equ (id_WFZ<<8)
+id_DEZ_act1:	equ (id_DEZ<<8)
+
+id_WZ_act1:		equ (id_WZ<<8)
+id_WZ_act2:		equ (id_WZ<<8)+1
+id_HPZ_act1:	equ	(id_HPZ<<8)
+id_HPZ_act2:	equ	(id_HPZ<<8)+1
 
 ; Colors
 cBlack:		equ $000					; colour black
@@ -128,6 +172,7 @@ cRed:		equ $00E					; colour red
 cYellow:	equ cGreen+cRed					; colour yellow
 cAqua:		equ cGreen+cBlue				; colour aqua
 cMagenta:	equ cBlue+cRed					; colour magenta
+
 
 ; Joypad input
 bitStart:	equ 7
@@ -150,7 +195,7 @@ btnDir:		equ btnL+btnR+btnDn+btnUp			; Any direction	($0F)
 btnABC:		equ btnA+btnB+btnC				; A, B or C	($70)
 
 
-; Sonic physics
+; Player physics
 sonic_max_speed:		equ $600
 sonic_max_speed_roll:		equ $1000			; rolling
 sonic_acceleration:		equ $C
@@ -206,6 +251,8 @@ spring_power_red:		equ $1000
 spring_power_yellow:		equ $A00
 debug_move_speed:		equ 15 				; initial speed object moves in debug mode when d-pad is held (1px per frame)
 
+
+; Gameplay values
 lives_start:			equ 3				; lives at start of game
 rings_for_life:			equ 100				; rings needed for first extra life
 rings_for_life2:		equ 200				; rings needed for second extra life
@@ -217,8 +264,8 @@ points_for_life:		equ 50000/10			; points needed for extra life (awarded every 5
 countof_emeralds:		equ 7				; number of chaos emeralds
 
 ; ---------------------------------------------------------------------------
-; Object status table offsets
-; ---------------------------------------------------------------------------
+
+; Object variable offsets
 		pusho						; save options
 		opt	ae+					; enable auto evens
 			rsset 0
@@ -312,10 +359,9 @@ ost_used:		equ __rs-1				; bytes used by regular OST, everything after this is s
 
 
 
-; ---------------------------------------------------------------------------
+
 ; Multi-sprite object data OST offsets
 ; Note that multisprite objects cannot use a number of ordinary OST slots
-; ---------------------------------------------------------------------------
 ost_next_subsprite:	equ ost_mappings+2 ; 6
 			
 			rsset ost_y_pos-1 ; $B
@@ -358,9 +404,7 @@ ost_subspr9_y_pos:			rs.b 2		; $3C
 ost_subspr9_frame:			rs.b 1		; $3F
 
 
-; ---------------------------------------------------------------------------
 ; Object variables specific to Sonic & Tails
-; ---------------------------------------------------------------------------
 			rsset $27
 ost_flip_angle:				rs.b 1		; $27 ; angle about the x axis (360 degrees = 256) (twist/tumble)
 ost_air_left:				rs.b 1		; $28 ; air left while underwater
@@ -386,9 +430,7 @@ ost_top_solid_bit:			rs.b 1		; $3E ; the bit to check for top solidity (either $
 ost_lrb_solid_bit:			rs.w 1		; $3F ; ; the bit to check for left/right/bottom solidity (either $D or $F)
 
 
-; ---------------------------------------------------------------------------
 ; Boss object variables
-; ---------------------------------------------------------------------------
 ost_boss_subtype: 		equ $A
 ost_boss_flash_time: 	equ $14
 ost_boss_sine_count:	equ $1A
@@ -398,9 +440,7 @@ ost_boss_hitcount2		equ $32
 ost_boss_hurt_sonic		equ $38	; flag set by collision response routine when Sonic has just been hurt (by boss?)
 
 
-; ---------------------------------------------------------------------------
 ; Special Stage object properties
-; ---------------------------------------------------------------------------
 ost_ss_dplc_timer: 		equ $23
 ost_ss_x_pos: 			equ $2A
 ost_ss_x_sub: 			equ $2C
@@ -418,8 +458,46 @@ ost_ss_rings_tens: 		equ $3D
 ost_ss_rings_units: 	equ $3E
 ost_ss_last_angle_index: equ $3F
 
-; ---------------------------------------------------------------------------
+
 ; Additional object variables
-; ---------------------------------------------------------------------------
 ost_parent1: 	equ $3E ; address of object that spawned this one
 ost_parent2:	equ $2C ; same as above
+
+; ---------------------------------------------------------------------------
+
+; Animation script flags
+afEnd:		equ $FF						; return to beginning of animation
+afBack:		equ $FE						; go back (specified number) bytes
+afChange:	equ $FD						; run specified animation
+afRoutine:	equ $FC						; increment routine counter
+afReset:	equ $FB						; reset animation and 2nd object routine counter
+af2ndRoutine:	equ $FA						; increment 2nd routine counter
+afxflip:	equ $20
+afyflip:	equ $40
+
+; 16x16 row/column redraw flags (v_fg_redraw_direction)
+redraw_top_bit:		equ 0
+redraw_bottom_bit:	equ 1
+redraw_left_bit:	equ 2
+redraw_right_bit:	equ 3
+redraw_topall_bit:	equ 4
+redraw_bottomall_bit:	equ 5
+redraw_bg2_left_bit:	equ 0					; REV01 only
+redraw_bg2_right_bit:	equ 1					; REV01 only
+redraw_top:		equ 1<<redraw_top_bit			; 1
+redraw_bottom:		equ 1<<redraw_bottom_bit		; 2
+redraw_left:		equ 1<<redraw_left_bit			; 4
+redraw_right:		equ 1<<redraw_right_bit			; 8
+redraw_topall:		equ 1<<redraw_topall_bit		; $10
+redraw_bottomall:	equ 1<<redraw_bottomall_bit		; $20
+
+; 16x16 and 128x128 mappings
+tilemap_xflip_bit:	equ $B
+tilemap_yflip_bit:	equ $C
+tilemap_solid_top_bit:	equ $D
+tilemap_solid_lrb_bit:	equ $E
+tilemap_xflip:		equ 1<<tilemap_xflip_bit		; $800
+tilemap_yflip:		equ 1<<tilemap_yflip_bit		; $1000
+tilemap_solid_top:	equ 1<<tilemap_solid_top_bit		; $2000
+tilemap_solid_lrb:	equ 1<<tilemap_solid_lrb_bit		; $4000
+tilemap_solid_all:	equ tilemap_solid_top+tilemap_solid_lrb	; $6000

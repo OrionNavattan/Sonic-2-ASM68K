@@ -21,15 +21,14 @@
 Main:	group word,org(0)
 
 		section MainProgram,Main
-
-
-	
+		
 
 	if ~def(Revision) 
 Revision = 1
-;	| If 0, a REV00 ROM is built
-;	| If 1, a REV01 ROM is built, which contains some fixes
-;	| If 2, a (probable) REV02 ROM is built, which contains even more fixes
+; if 0, builds a REV00 ROM
+; if 1, builds a REV01 ROM, which contains some fixes
+; if 2, builds a hypothetical standalone REV02 ROM (based on the changes found in all 
+; known appearances, without any of the implementation-specific bugs) which contains even more fixes
 	endc
 	
 FixBugs = 0 ; If 1, enables a number of engine and gameplay bug-fixes, including some in the sound driver.
@@ -41,11 +40,11 @@ AllOptimizations = 0 ; If 1, enables all REV02 assembler optimizations, plus opt
 ; The zero-offset optimization setting (which changes instances of address register indirect 
 ; displacement addressing with displacement value of zero to simple address register indirect,
 ; e.g., 0(a1) becomes (a1)) in Sonic 2 Github is a workaround for AS'
-; lack of a built-in ability to disable it. If you would like this optimization, add "opt oz+" 
+; lack of a built-in ability to disable it. If you would like this optimization here, add "opt oz+" 
 ; to the options list at the start of the file.
 
 RemoveJmpTos = (0|Revision=2|AllOptimizations)
-;	| If 1, many unnecessary JmpTos are removed, improving performance
+;	| If 1, many unnecessary JmpTos are removed, improving performance. See the jsrto amd jmpto macro definitions for more information.
 
 AddSubOptimize = (0|Revision=2|AllOptimizations)
 ;	| If 1, some add/sub instructions are optimized to addq/subq
@@ -121,8 +120,7 @@ Header:		dc.b 'SEGA GENESIS    ' ; Console name
 Checksum:	dc.w $D951			; Checksum
 		dc.b 'J               ' ; I/O Support
 ROMStartLoc:	dc.l Rom_Start			; ROM Start
-ROMEndLoc:	dc.l $FFFFF		
-					; ROM End
+ROMEndLoc:	dc.l Rom_End-1			; ROM End
 RAMStartLoc:	dc.l $FF0000		; RAM Start
 RAMEndLoc:	dc.l $FFFFFF		; RAM End
 		dc.b '                                                          ' ; Notes
@@ -322,7 +320,7 @@ CheckSumCheck:
 
 ChecksumTest:				
 		movea.l	#EndOfHeader,a0	; start checking bytes after the header ($200)
-		movea.l	#ROM_End,a1		; stop at end of ROM
+		movea.l	#ROMEndLoc,a1		; stop at end of ROM
 		move.l	(a1),d0
 		moveq	#0,d1
 
@@ -359,7 +357,7 @@ GameInit:
 		bsr.w	VDPSetupGame
 		bsr.w	JmpTo_SoundDriverLoad
 		bsr.w	JoypadInit
-		move.b	#0,(v_gamemode).w		; set initial game mode (Sega screen)
+		move.b	#id_Sega,(v_gamemode).w		; set initial game mode (Sega screen)
 
 MainGameLoop:				
 		move.b	(v_gamemode).w,d0		; load game mode
@@ -378,40 +376,18 @@ gmptr:		macro
 
 GameModeArray:
 
-		gmptr	Sega
-		gmptr	Title
-		gmptr	Demo, Level
-		gmptr	Level
-		gmptr	SpecialStage
-		gmptr	Continue
-		gmptr	TwoPlayerResults
-		gmptr	LevelSelectMenu2P
-		gmptr	JmpTo_EndingSequence
-		gmptr	OptionsMenu
-		gmptr	LevelSelectMenu
+		gmptr	Sega			; 0
+		gmptr	Title			; 4
+		gmptr	Demo, Level		; 8
+		gmptr	Level			; $C
+		gmptr	SpecialStage	; $10
+		gmptr	Continue			; $14
+		gmptr	TwoPlayerResults	; $18
+		gmptr	LevelSelectMenu2P	; $1C
+		gmptr	JmpTo_EndingSequence	; $20
+		gmptr	OptionsMenu			; $24
+		gmptr	LevelSelectMenu		; $28
 
-;		bra.w	SegaScreen		; SEGA Screen
-; ===========================================================================
-;		bra.w	TitleScreen		; Title Screen
-; ===========================================================================
-;		bra.w	Level		; Demo
-; ===========================================================================
-;		bra.w	Level		; Zone play
-; ===========================================================================
-;		bra.w	SpecialStage
-; ===========================================================================
-;		bra.w	ContinueScreen
-; ===========================================================================
-;		bra.w	TwoPlayerResults
-; ===========================================================================
-;		bra.w	LevelSelectMenu2P
-; ===========================================================================
-;		bra.w	JmpTo_EndingSequence
-; ===========================================================================
-;		bra.w	OptionsMenu
-; ===========================================================================
-;		bra.w	LevelSelectMenu
-; ===========================================================================
 
 ChecksumError:
 		move.l	d1,-(sp)     ; back up incorrect checksum to stack
@@ -431,18 +407,16 @@ ChecksumError:
 
 GM_LevelSelectMenu2P:				
 		jmp	(MenuScreen).l
-; ===========================================================================
 
 GM_JmpTo_EndingSequence:				
 		jmp	(EndingSequence).l
-; ===========================================================================
 
 GM_OptionsMenu:				
 		jmp	(MenuScreen).l
-; ===========================================================================
 
 GM_LevelSelectMenu:				
 		jmp	(MenuScreen).l
+		
 ; ===========================================================================
 
 VBlank:
@@ -493,20 +467,6 @@ VBlank_Index:	index offset(*),,2
 		ptr  VBlank_Menu			; $16
 		ptr  VBlank_Ending			; $18
 		ptr  VBlank_CtrlDMA			; $1A
-;		dc.w VBlank_Lag-VBlank_Index	; 0 
-;		dc.w VBlank_Sega-VBlank_Index	; 2
-;		dc.w VBlank_Title-VBlank_Index	; 4
-;		dc.w VBlank_Unused6-VBlank_Index	; 6
-;		dc.w VBlank_Level-VBlank_Index	; 8
-;		dc.w VBlank_SpecialStage-VBlank_Index	; $A
-;		dc.w VBlank_TitleCard-VBlank_Index	; $C
-;		dc.w VBlank_UnusedE-VBlank_Index	; $E
-;		dc.w VBlank_Pause-VBlank_Index	; $10
-;		dc.w VBlank_Fade-VBlank_Index	; $12
-;		dc.w VBlank_PCM-VBlank_Index	; $14
-;		dc.w VBlank_Menu-VBlank_Index	; $16
-;		dc.w VBlank_Ending-VBlank_Index	; $18
-;		dc.w VBlank_CtrlDMA-VBlank_Index	; $1A
 ; ===========================================================================
 
 VBlank_Lag:				
@@ -526,7 +486,7 @@ VBlank_Lag:
 		bra.s	loc_45E
 ; ===========================================================================
 
-loc_4C4:				
+	loc_4C4:				
 					
 		tst.b	(f_water_flag).w
 		beq.w	loc_566
@@ -535,10 +495,10 @@ loc_4C4:
 		beq.s	loc_4E2
 		move.w	#$700,d0
 
-loc_4DE:				
+	loc_4DE:				
 		dbf	d0,loc_4DE
 
-loc_4E2:				
+	loc_4E2:				
 		move.w	#1,(f_hblank).w
 		stopZ80
 		waitz80
@@ -2248,7 +2208,7 @@ NewPLC:
 ClearPLC:				
 					
 		lea	(v_plc_buffer).w,a2 		; PLC buffer space in RAM
-		moveq	#(((v_plc_buffer_end-v_plc_buffer)/4)-1),d0
+		moveq	#(((plc_buffer_and_regs_end-plc_buffer_and_regs)/4)-1),d0
 
 	.loop:				
 		clr.l	(a2)+
@@ -2268,7 +2228,8 @@ RunPLC:
 		tst.w	(v_nem_tile_count).w
 		bne.s	.exit
 		movea.l	(v_plc_buffer).w,a0			; get pointer for Nemesis compressed graphics
-		lea	(NemPCD_WriteRowToVDP).l,a3
+		lea_	NemPCD_WriteRowToVDP,a3
+		nop
 		lea	(v_nem_gfx_buffer).w,a1
 		move.w	(a0)+,d2				; get 1st word of Nemesis graphics header
 		bpl.s	.normal_mode				; branch if 0-$7FFF
@@ -2312,7 +2273,7 @@ RunPLC:
 ; Subroutine to	decompress graphics listed in the PLC buffer
 ; ---------------------------------------------------------------------------
 
-nem_tile_count:	= 9
+nem_tile_count:	set 6
 
 ProcessPLC:
 		tst.w	(v_nem_tile_count).w			; has PLC execution begun?
@@ -2323,7 +2284,7 @@ ProcessPLC:
 		addi.w	#nem_tile_count*sizeof_cell,(v_plc_buffer_dest).w ; update for next frame
 		bra.s	ProcessPLC_Decompress
 
-nem_tile_count:	= 3
+nem_tile_count:	set 3
 
 ProcessPLC2:
 		tst.w	(v_nem_tile_count).w			; has PLC execution begun?
@@ -3194,172 +3155,33 @@ loc_1E52:
 locret_1E58:				
 		rts	
 ; ===========================================================================
-; word_1E5A:
-;Pal_S1TitleCyc:
-;		incbin "art/palettes/Cycle - S1 Title Screen Water.bin"; S1 Title Screen Water palette (unused)
-
-		incfile Pal_S1TitleCyc
-
-; word_1E7A:
-; CyclingPal_EHZ_ARZ_Water:		
-;Pal_EHZ_ARZWaterCyc:		
-;		incbin "art/palettes/Cycle - EHZ & ARZ Water.bin" ; Emerald Hill/Aquatic Ruin Rotating Water palette
-
-		incfile Pal_EHZ_ARZWaterCyc
-
-; word_1E9A:
-; CyclingPal_Lava:
-;Pal_HTZLavaCyc:		
-;		incbin "art/palettes/Cycle - HTZ Lava.bin"; Hill Top Lava palette
-
-		incfile Pal_HTZLavaCyc
-
-; word_1F1A:
-; CyclingPal_WoodConveyor:		
-;Pal_WoodConveyerCyc:	
-;		incbin "art/palettes/Cycle - Wood Conveyor.bin"; Wood Conveyor Belts palette (unused)
-
-		incfile	Pal_WoodConveyerCyc
-
-; byte_1F2A:
-; CyclingPal_MTZ1:		
-;Pal_MTZCyc1:	
-;		incbin "art/palettes/Cycle - MTZ 1.bin"; Metropolis Cycle #1 palette
-		
-		incfile	Pal_MTZCyc1
-
-; word_1F36:
-; CyclingPal_MTZ2:
-;Pal_MTZCyc2:	
-;		incbin "art/palettes/Cycle - MTZ 2.bin"; Metropolis Cycle #2 palette
-
-		incfile Pal_MTZCyc2
-
-; word_1F42:
-; CyclingPal_MTZ3:
-;Pal_MTZCyc3:	
-;		incbin "art/palettes/Cycle - MTZ 3.bin"; Metropolis Cycle #3 palette
-		
-		incfile	Pal_MTZCyc3
-
-; word_1F56:
-; CyclingPal_HPZWater:
-;Pal_HPZWaterCyc:	
-;		incbin "art/palettes/Cycle - HPZ Water.bin"; Hidden Palace Water Cycle (unused)
-
-		incfile Pal_HPZWaterCyc
-
-; word_1F66:
-; CyclingPal_HPZUnderwater:
-;Pal_HPZUnderwaterCyc:	
-;		incbin "art/palettes/Cycle - HPZ Underwater.bin"; Hidden Palace Underwater Cycle (unused)
-
-		incfile Pal_HPZUnderwaterCyc
-
-; word_1F76:
-; CyclingPal_Oil:
-;Pal_OOZOilCyc:	
-;		incbin "art/palettes/Cycle - OOZ Oil.bin"; Oil Ocean Oil palette
-
-		incfile	Pal_OOZOilCyc
-
-; word_1F86:
-; CyclingPal_Lantern:
-;Pal_MCZLanternCyc:	
-;		incbin "art/palettes/Cycle - MCZ Lantern.bin"; Mystic Cave Lanterns
-		
-		incfile	Pal_MCZLanternCyc
-
-; word_1F8E:
-; CyclingPal_CNZ1:
-;Pal_CNZCyc1_2:	
-;		incbin "art/palettes/Cycle - CNZ 1 & 2.bin"; Casino Night Cycles 1 & 2
-
-		incfile	Pal_CNZCyc1_2
-
-; word_1FB2:
-;CyclingPal_CNZ3:
-;Pal_CNZCyc3:	
-;		incbin "art/palettes/Cycle - CNZ 3.bin"; Casino Night Cycle 3
-
-		incfile	Pal_CNZCyc3
-
-; word_1FC4:
-; CyclingPal_CNZ4:
-;Pal_CNZCyc4:	
-;		incbin "art/palettes/Cycle - CNZ 4.bin"; Casino Night Cycle 4
-
-		incfile	Pal_CNZCyc4
-
-; word_1FEC:
-; CyclingPal_CNZ1_B:
-;Pal_CNZBossCyc1:	
-;		incbin "art/palettes/Cycle - CNZ Boss 1.bin"; Casino Night Boss Cycle 1
-
-		incfile	Pal_CNZBossCyc1
-
-; word_1FFE:
-; CyclingPal_CNZ2_B:
-;Pal_CNZBossCyc2:	
-;		incbin "art/palettes/Cycle - CNZ Boss 2.bin"; Casino Night Boss Cycle 2
-
-		incfile	Pal_CNZBossCyc2
-
-; word_2012:
-; CyclingPal_CNZ3_B:
-;Pal_CNZBossCyc3:	
-;		incbin "art/palettes/Cycle - CNZ Boss 3.bin"; Casino Night Boss Cycle 3
-
-		incfile	Pal_CNZBossCyc3
-
-; word_2022:
-; CyclingPal_CPZ1:
-;Pal_CPZCyc1:	
-;		incbin "art/palettes/Cycle - CPZ 1.bin"; Chemical Plant Cycle 1
-
-		incfile	Pal_CPZCyc1
-
-; word_2058:
-; CyclingPal_CPZ2:
-;Pal_CPZCyc2:	
-;		incbin "art/palettes/Cycle - CPZ 2.bin"; Chemical Plant Cycle 2
-
-		incfile	Pal_CPZCyc2
-
-; word_2082:
-; CyclingPal_CPZ3:
-;Pal_CPZCyc3:	
-;		incbin "art/palettes/Cycle - CPZ 3.bin"; Chemical Plant Cycle 3
-
-		incfile	Pal_CPZCyc3
-
-; word_20A2:
-; CyclingPal_WFZFire:
-;Pal_WFZFireCyc:	
-;		incbin "art/palettes/Cycle - WFZ Fire.bin"; Wing Fortress Fire Cycle palette
-
-		incfile	Pal_WFZFireCyc
-
-; word_20C2:
-; CyclingPal_WFZBelt:
-;Pal_WFZConveyerCyc:	
-;		incbin "art/palettes/Cycle - WFZ Conveyor.bin"; Wing Fortress Conveyor Belt Cycle palette
-
-		incfile	Pal_WFZConveyerCyc
-
-; word_20E2: CyclingPal_CPZ4:
-; CyclingPal_WFZ1:
-;Pal_WFZCyc1:	
-;		incbin "art/palettes/Cycle - WFZ 1.bin"; Wing Fortress Flashing Light Cycle 1 (also used in CPZ)
-
-		incfile	Pal_WFZCyc1
-
-; word_2126:
-; CyclingPal_WFZ2:
-;Pal_WFZCyc1:	
-;		incbin "art/palettes/Cycle - WFZ 2.bin"; Wing Fortress Flashing Light Cycle 2
-
-		incfile	Pal_WFZCyc2
+; ---------------------------------------------------------------------------
+; Palette data & routines
+; ---------------------------------------------------------------------------
+		incfile Pal_S1TitleCyc	; word_1E5A: Pal_S1TitleCyc:
+		incfile Pal_EHZ_ARZWaterCyc	; word_1E7A: CyclingPal_EHZ_ARZ_Water:
+		incfile Pal_HTZLavaCyc	; word_1E9A: CyclingPal_Lava:
+		incfile	Pal_WoodConveyerCyc	; word_1F1A: CyclingPal_WoodConveyor:
+		incfile	Pal_MTZCyc1	; byte_1F2A: CyclingPal_MTZ1:
+		incfile Pal_MTZCyc2	; word_1F36: CyclingPal_MTZ2:
+		incfile	Pal_MTZCyc3	; word_1F42: CyclingPal_MTZ3:
+		incfile Pal_HPZWaterCyc	; word_1F56: CyclingPal_HPZWater:
+		incfile Pal_HPZUnderwaterCyc	; word_1F66: CyclingPal_HPZUnderwater:
+		incfile	Pal_OOZOilCyc	; word_1F76: CyclingPal_Oil:
+		incfile	Pal_MCZLanternCyc	; word_1F86: CyclingPal_Lantern:
+		incfile	Pal_CNZCyc1_2	; word_1F8E: CyclingPal_CNZ1:Cycle 3
+		incfile	Pal_CNZCyc3	; word_1FB2: CyclingPal_CNZ3:
+		incfile	Pal_CNZCyc4	; word_1FC4: CyclingPal_CNZ4:
+		incfile	Pal_CNZBossCyc1	; word_1FEC: CyclingPal_CNZ1_B:
+		incfile	Pal_CNZBossCyc2	; word_1FFE: CyclingPal_CNZ2_B:
+		incfile	Pal_CNZBossCyc3	; word_2012: CyclingPal_CNZ3_B:
+		incfile	Pal_CPZCyc1	; word_2022: CyclingPal_CPZ1:
+		incfile	Pal_CPZCyc2	; word_2058: CyclingPal_CPZ2:
+		incfile	Pal_CPZCyc3	; word_2082: CyclingPal_CPZ3:
+		incfile	Pal_WFZFireCyc	; word_20A2: CyclingPal_WFZFire:
+		incfile	Pal_WFZConveyerCyc	; word_20C2: CyclingPal_WFZBelt:
+		incfile	Pal_WFZCyc1	; word_20E2: CyclingPal_CPZ4:
+		incfile	Pal_WFZCyc2	; word_2126: CyclingPal_WFZ2:
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -3426,7 +3248,7 @@ PalCycle_SuperSonic:
 		move.l	(a0,d0.w),(a1)+
 		move.l	4(a0,d0.w),(a1)
 		lea	(Pal_SS_CPZUWTransformationCyc).l,a0
-		cmpi.b	#$D,(v_zone).w
+		cmpi.b	#id_CPZ,(v_zone).w
 		beq.s	.loc_21D8
 		cmpi.b	#$F,(v_zone).w
 		bne.s	.return
@@ -3455,7 +3277,7 @@ PalCycle_SuperSonic:
 		move.l	(a0,d0.w),(a1)+
 		move.l	4(a0,d0.w),(a1)
 		lea	(Pal_SS_CPZUWTransformationCyc).l,a0
-		cmpi.b	#$D,(v_zone).w
+		cmpi.b	#id_CPZ,(v_zone).w
 		beq.s	.loc_2238
 		cmpi.b	#$F,(v_zone).w
 		bne.w	.return
@@ -3470,20 +3292,9 @@ PalCycle_SuperSonic:
 
 ; ===========================================================================
 
-; Pal_2246:
-; CyclingPal_SSTransformation:
-Pal_SS_TransformationCyc:
-		incbin	"art/palettes/Cycle - Super Sonic Transformation.bin"	
-
-; Pal_22C6:
-; CyclingPal_CPZUWTransformation:
-Pal_SS_CPZUWTransformationCyc:	
-		incbin	"art/palettes/Cycle - Super Sonic Transformation CPZ Water.bin"
-
-; Pal_2346:
-; CyclingPal_ARZUWTransformation:
-Pal_SS_ARZUWTransformationCyc:		
-		incbin	"art/palettes/Cycle - Super Sonic Transformation ARZ Water.bin"
+		incfile	Pal_SS_TransformationCyc	; Pal_2246: CyclingPal_SSTransformation:
+		incfile	Pal_SS_CPZUWTransformationCyc	; Pal_22C6: CyclingPal_CPZUWTransformation:
+		incfile	Pal_SS_ARZUWTransformationCyc	; Pal_2346: CyclingPal_ARZUWTransformation:
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -3559,7 +3370,7 @@ sub_243E:
 		move.w	d3,d1
 		addi.w	#$200,d1
 		cmp.w	d2,d1
-		bcc.s	loc_2454
+		bhi.s	loc_2454
 		move.w	d1,(a0)+
 		rts	
 ; ===========================================================================
@@ -3568,7 +3379,7 @@ loc_2454:
 		move.w	d3,d1
 		addi.w	#$20,d1	; ' '
 		cmp.w	d2,d1
-		bcc.s	loc_2462
+		bhi.s	loc_2462
 		move.w	d1,(a0)+
 		rts	
 ; ===========================================================================
@@ -3938,89 +3749,107 @@ loc_26D2:
 		rts	
 ; ===========================================================================
 
-Pal_S1_Sega1:	incbin 	"art/palettes/S1 Sega Logo Stripe.bin"
-
-Pal_S1_Sega2:	incbin  "art/palettes/S1 Sega Logo.bin"
-
+		incfile	Pal_S1_Sega1
+		incfile	Pal_S1_Sega2
+		
 ; end of dead code/data
 
-; =============== S U B	R O U T	I N E =======================================
+; ---------------------------------------------------------------------------
+; Subroutine to load palette that will be used after fading in
 
+; input:
+;	d0 = index number for palette
 
-sub_2712:				
-					
+;	uses d0, d7, a1, a2, a3
+; ---------------------------------------------------------------------------
+
+; sub_2712: PalLoad1: PalLoad_ForFade:
+PalLoad_Next:						
 		lea	(PalPointers).l,a1
 		lsl.w	#3,d0
 		adda.w	d0,a1
-		movea.l	(a1)+,a2
-		movea.w	(a1)+,a3
-		adda.w	#$80,a3	
-		move.w	(a1)+,d7
+		movea.l	(a1)+,a2				; get palette data address
+		movea.w	(a1)+,a3				; get target RAM address
+		adda.w	#v_pal_dry_next-v_pal_dry,a3		; jump to next palette RAM address
+		move.w	(a1)+,d7				; get length of palette
 
-loc_2726:				
-		move.l	(a2)+,(a3)+
-		dbf	d7,loc_2726
+	.loop:				
+		move.l	(a2)+,(a3)+				; move data to RAM
+		dbf	d7,.loop
 		rts	
-; End of function sub_2712
 
 
-; =============== S U B	R O U T	I N E =======================================
+; ---------------------------------------------------------------------------
+; Subroutine to load palette immediately
 
+; input:
+;	d0 = index number for palette
 
-sub_272E:				
-					
+;	uses d0, d7, a1, a2, a3
+; ---------------------------------------------------------------------------
+
+; sub_272E: PalLoad2:
+PalLoad_Now:				
 		lea	(PalPointers).l,a1
 		lsl.w	#3,d0
 		adda.w	d0,a1
-		movea.l	(a1)+,a2
-		movea.w	(a1)+,a3
-		move.w	(a1)+,d7
+		movea.l	(a1)+,a2				; get palette data address
+		movea.w	(a1)+,a3				; get target RAM address
+		move.w	(a1)+,d7				; get length of palette
 
-loc_273E:				
-		move.l	(a2)+,(a3)+
-		dbf	d7,loc_273E
+	.loop:				
+		move.l	(a2)+,(a3)+				; move data to RAM
+		dbf	d7,.loop
 		rts	
-; End of function sub_272E
 
+; ---------------------------------------------------------------------------
+; Subroutines to load underwater palette immediately
 
-; =============== S U B	R O U T	I N E =======================================
+; input:
+;	d0 = index number for palette
 
+;	uses d0, d7, a1, a2, a3
+; ---------------------------------------------------------------------------
 
-sub_2746:				
+; sub_2746: PalLoad3_Water: PalLoad_Water_Now:
+PalLoad_Water:				
 		lea	(PalPointers).l,a1
 		lsl.w	#3,d0
 		adda.w	d0,a1
-		movea.l	(a1)+,a2
-		movea.w	(a1)+,a3
-		suba.l	#$A80,a3
-		move.w	(a1)+,d7
+		movea.l	(a1)+,a2				; get palette data address
+		movea.w	(a1)+,a3				; get target RAM address
+		suba.l	#v_pal_dry-v_pal_water,a3			; jump to underwater palette RAM address
+		move.w	(a1)+,d7				; get length of palette
 
-loc_275C:				
-		move.l	(a2)+,(a3)+
-		dbf	d7,loc_275C
+	.loop:				
+		move.l	(a2)+,(a3)+				; move data to RAM
+		dbf	d7,.loop
 		rts	
-; End of function sub_2746
 
+; ---------------------------------------------------------------------------
+; Subroutines to load underwater palette that will be used after fading in
 
-; =============== S U B	R O U T	I N E =======================================
+; input:
+;	d0 = index number for palette
 
+;	uses d0, d7, a1, a2, a3
+; ---------------------------------------------------------------------------
 
-sub_2764:				
+; sub_2764: PalLoad4_Water: PalLoad_Water_ForFade:
+PalLoad_Water_Next:				
 		lea	(PalPointers).l,a1
 		lsl.w	#3,d0
 		adda.w	d0,a1
-		movea.l	(a1)+,a2
-		movea.w	(a1)+,a3
-		suba.l	#$B00,a3
-		move.w	(a1)+,d7
+		movea.l	(a1)+,a2				; get palette data address
+		movea.w	(a1)+,a3				; get target RAM address
+		suba.l	#v_pal_dry-v_pal_water_next,a3		; jump to next underwater palette RAM address
+		move.w	(a1)+,d7				; get length of palette
 
-loc_277A:				
-		move.l	(a2)+,(a3)+
-		dbf	d7,loc_277A
+	.loop:				
+		move.l	(a2)+,(a3)+				; move data to RAM
+		dbf	d7,.loop
 		rts	
-; End of function sub_2764
 
-; ===========================================================================
 ;----------------------------------------------------------------------------
 ;Palette Pointers
 ;
@@ -4031,381 +3860,110 @@ loc_277A:
 ;0x06 -	0x08: Size of palette in (bytes	/ 4)
 ;----------------------------------------------------------------------------
 
-	; TODO: rework this so that the filesize from filedef is used instead of hard-coded numbers
-	; to generate the palette size 
-	; (sizeof_\pallabel\/4)-1
-
-palp:	macro paladdress,altid,ramaddress
+palp:	macro paladdress,secondpaladdress,alias,ramaddress
 	
-	ifarg \altid
-		id_\altid:	equ (offset(*)-PalPointers)/8 ; create alternate ID constant for duplicate pointers (used in empty/unused level load table entries)
+	ifarg \alias
+		id_\alias:	equ (offset(*)-PalPointers)/8 ; create alternate ID constant for duplicate pointers (used in empty/unused level load table entries)
 	else	
 		id_\paladdress:	equ (offset(*)-PalPointers)/8
 	endc	
 		dc.l \paladdress
+		
+	ifarg \secondpaladdress
+		dc.w \ramaddress,(sizeof_\paladdress\+sizeof_\secondpaladdress\)/4-1	
+	else
 		dc.w \ramaddress,sizeof_\paladdress\/4-1
+	endc	
 	endm	
 		
 		
 PalPointers:	
-		palp Pal_Sega,,v_pal_dry_line1,$40
-		;dc.l Pal_SEGA		
-		;dc.w $FB00
-		;dc.w $1F
+		palp Pal_Sega,,,v_pal_dry_line1
+		palp Pal_Title,,,v_pal_dry_line2
+		palp Pal_MenuB,,,v_pal_dry_line1
+		palp Pal_Sonic_Miles_BG1,Pal_Sonic_Miles_BG2,,v_pal_dry_line1
 		
-		palp Pal_Title,,v_pal_dry_line2,$10
-		;dc.l Pal_Title
-		;dc.w $FB20
-		;dc.w 7
+		palp Pal_EHZ,,,v_pal_dry_line2
+		palp Pal_EHZ,,Pal_EHZ2,v_pal_dry_line2
+		palp Pal_WZ,,,v_pal_dry_line2
+		palp Pal_EHZ,,Pal_EHZ3,v_pal_dry_line2
+		palp Pal_MTZ,,,v_pal_dry_line2
+		palp Pal_MTZ,,Pal_MTZ2,v_pal_dry_line2
+		palp Pal_WFZ,,,v_pal_dry_line2	
+		palp Pal_HTZ,,,v_pal_dry_line2
+		palp Pal_HPZ,,,v_pal_dry_line2
+		palp Pal_EHZ,,Pal_EHZ4,v_pal_dry_line2
+		palp Pal_OOZ,,,v_pal_dry_line2
+		palp Pal_MCZ,,,v_pal_dry_line2
+		palp Pal_CNZ,,,v_pal_dry_line2
+		palp Pal_CPZ,,,v_pal_dry_line2		
+		palp Pal_DEZ,,,v_pal_dry_line2
+		palp Pal_ARZ,,,v_pal_dry_line2
+		palp Pal_SCZ,,,v_pal_dry_line2
 		
-		palp Pal_MenuB,,v_pal_dry_line1,$40
-		;dc.l Pal_MenuB
-		;dc.w $FB00
-		;dc.w $1F
-		
-		palp Pal_Sonic_Miles_BG1,,v_pal_dry_line1,$20
-		;dc.l Pal_Sonic_Miles_BG1
-		;dc.w $FB00
-		;dc.w $F
-		
-		palp Pal_EHZ,,v_pal_dry_line2,$30
-		;dc.l Pal_EHZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_EHZ,Pal_EHZ2,v_pal_dry_line2,$30
-		;dc.l Pal_EHZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_WZ,,v_pal_dry_line2,$30
-		;dc.l Pal_WZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_EHZ,Pal_EHZ3,v_pal_dry_line2,$30
-		;dc.l Pal_EHZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_MTZ,,v_pal_dry_line2,$30
-		;dc.l Pal_MTZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_MTZ,Pal_MTZ2,v_pal_dry_line2,$30
-		;dc.l Pal_MTZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_WFZ,,v_pal_dry_line2,$30
-		;dc.l Pal_WFZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_HTZ,,v_pal_dry_line2,$30
-		;dc.l Pal_HTZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_HPZ,,v_pal_dry_line2,$30
-		;dc.l Pal_HPZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_EHZ,Pal_EHZ4,v_pal_dry_line2,$30
-		;dc.l Pal_EHZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_OOZ,,v_pal_dry_line2,$30
-		;dc.l Pal_OOZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_MCZ,,v_pal_dry_line2,$30
-		;dc.l Pal_MCZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_CNZ,,v_pal_dry_line2,$30
-		;dc.l Pal_CNZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_CPZ,,v_pal_dry_line2,$30
-		;dc.l Pal_CPZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_DEZ,,v_pal_dry_line2,$30
-		;dc.l Pal_DEZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_ARZ,,v_pal_dry_line2,$30
-		;dc.l Pal_ARZ
-		;dc.w $FB20
-		;dc.w $17
-		
-		palp Pal_SCZ,,v_pal_dry_line2,$30
-		;dc.l Pal_SCZ
-		;dc.w $FB20
-		;dc.w $17
-
-		palp Pal_HPZ_U,,v_pal_dry_line1,$40
-		;dc.l Pal_HPZ_U
-		;dc.w $FB00
-		;dc.w $1F
-
-		palp Pal_CPZ_U,,v_pal_dry_line1,$40
-		;dc.l Pal_CPZ_U
-		;dc.w $FB00
-		;dc.w $1F
-
-		palp Pal_ARZ_U,,v_pal_dry_line1,$40
-		;dc.l Pal_ARZ_U
-		;dc.w $FB00
-		;dc.w $1F
-		
-		palp Pal_SS,,v_pal_dry_line1,$30
-		;dc.l Pal_SS
-		;dc.w $FB00
-		;dc.w $17
-
-		palp Pal_MCZ_B,,v_pal_dry_line2,$10
-		;dc.l Pal_MCZ_B
-		;dc.w $FB20
-		;dc.w 7
-
-		palp Pal_CNZ_B,,v_pal_dry_line2,$10
-		;dc.l Pal_CNZ_B
-		;dc.w $FB20
-		;dc.w 7
-
-		palp Pal_SS1,,v_pal_dry_line4,$10
-		;dc.l Pal_SS1
-		;dc.w $FB60
-		;dc.w 7
-
-		palp Pal_SS2,,v_pal_dry_line4,$10
-		;dc.l Pal_SS2
-		;dc.w $FB60
-		;dc.w 7
-
-		palp Pal_SS3,,v_pal_dry_line4,$10
-		;dc.l Pal_SS3
-		;dc.w $FB60
-		;dc.w 7
-
-		palp Pal_SS4,,v_pal_dry_line4,$10
-		;dc.l Pal_SS4
-		;dc.w $FB60
-		;dc.w 7
-
-		palp Pal_SS5,,v_pal_dry_line4,$10
-		;dc.l Pal_SS5
-		;dc.w $FB60
-		;dc.w 7
-
-		palp Pal_SS6,,v_pal_dry_line4,$10
-		;dc.l Pal_SS6
-		;dc.w $FB60
-		;dc.w 7
-
-		palp Pal_SS7,,v_pal_dry_line4,$10
-		;dc.l Pal_SS7
-		;dc.w $FB60
-		;dc.w 7
-
-		palp Pal_SS1_2p,,v_pal_dry_line4,$10
-		;dc.l Pal_SS1_2p
-		;dc.w $FB60
-		;dc.w 7
-
-		palp Pal_SS2_2p,,v_pal_dry_line4,$10
-		;dc.l Pal_SS2_2p
-		;dc.w $FB60
-		;dc.w 7
-
-		palp Pal_SS3_2p,,v_pal_dry_line4,$10
-		;dc.l Pal_SS3_2p
-		;dc.w $FB60
-		;dc.w 7
-
-		palp Pal_OOZ_B,,v_pal_dry_line2,$10
-		;dc.l Pal_OOZ_B
-		;dc.w $FB20
-		;dc.w 7
-
-		palp Pal_Menu,,v_pal_dry_line1,$40
-		;dc.l Pal_Menu
-		;dc.w $FB00
-		;dc.w $1F
-
-		palp Pal_Result,,v_pal_dry_line1,$40
-		;dc.l Pal_Result
-		;dc.w $FB00
-		;dc.w $1F
-		
-		
-
-
-;incpal: macro label,label2
-;		incfile \label
-;   ifarg path2
-;		incbin "\filename"
-;    endc
-;	endm
+		palp Pal_HPZ_U,,,v_pal_dry_line1
+		palp Pal_CPZ_U,,,v_pal_dry_line1
+		palp Pal_ARZ_U,,,v_pal_dry_line1
 	
+		palp Pal_SS,,,v_pal_dry_line1
+		palp Pal_MCZ_B,,,v_pal_dry_line2
+		palp Pal_CNZ_B,,,v_pal_dry_line2
+		palp Pal_SS1,,,v_pal_dry_line4
+		palp Pal_SS2,,,v_pal_dry_line4
+		palp Pal_SS3,,,v_pal_dry_line4
+		palp Pal_SS4,,,v_pal_dry_line4
+		palp Pal_SS5,,,v_pal_dry_line4
+		palp Pal_SS6,,,v_pal_dry_line4
+		palp Pal_SS7,,,v_pal_dry_line4
+		
+		palp Pal_SS1_2p,,,v_pal_dry_line4
+		palp Pal_SS2_2p,,,v_pal_dry_line4
+		palp Pal_SS3_2p,,,v_pal_dry_line4
+		
+		palp Pal_OOZ_B,,,v_pal_dry_line2
+		palp Pal_Menu,,,v_pal_dry_line1
+		palp Pal_Result,,,v_pal_dry_line1
+		
 
-;----------------------------------------------------------------------------
-;SEGA screen Palette
-;----------------------------------------------------------------------------
-Pal_Sega:		incbin	"art/palettes/Sega Screen.bin"
-;----------------------------------------------------------------------------
-;Title screen Palette
-;----------------------------------------------------------------------------
-Pal_Title:		incbin	"art/palettes/Title Screen.bin"
-;----------------------------------------------------------------------------
-;Leftover S2B level select palette
-;----------------------------------------------------------------------------
-Pal_MenuB:		incbin	"art/palettes/S2B Level Select.bin"
-;----------------------------------------------------------------------------
-;"Sonic	and Miles" Background Palette
-;----------------------------------------------------------------------------
-Pal_Sonic_Miles_BG1:		
-				incbin	"art/palettes/Sonic & Tails 1.bin"
-Pal_Sonic_Miles_BG2:				
-				incbin  "art/palettes/Sonic & Tails 2.bin"
-;----------------------------------------------------------------------------
-;EHZ Palette
-;----------------------------------------------------------------------------
-Pal_EHZ:		incbin	"art/palettes/EHZ.bin"
-;----------------------------------------------------------------------------
-;WZ Palette
-;----------------------------------------------------------------------------
-Pal_WZ:			incbin	"art/palettes/Wood Zone.bin"
-;----------------------------------------------------------------------------
-;MTZ Palette
-;----------------------------------------------------------------------------
-Pal_MTZ:		incbin	"art/palettes/MTZ.bin"
-;----------------------------------------------------------------------------
-;WFZ Palette
-;----------------------------------------------------------------------------
-Pal_WFZ:		incbin	"art/palettes/WFZ.bin"
-;----------------------------------------------------------------------------
-;HTZ Palette
-;----------------------------------------------------------------------------
-Pal_HTZ:		incbin	"art/palettes/HTZ.bin"
-;----------------------------------------------------------------------------
-;HPZ Palette
-;----------------------------------------------------------------------------
-Pal_HPZ:		incbin	"art/palettes/HPZ.bin"
-;----------------------------------------------------------------------------
-;HPZ Underwater	Palette
-;----------------------------------------------------------------------------
-Pal_HPZ_U:		incbin	"art/palettes/HPZ Underwater.bin"
-;----------------------------------------------------------------------------
-;OOZ Palette
-;----------------------------------------------------------------------------
-Pal_OOZ:		incbin	"art/palettes/OOZ.bin"
-;----------------------------------------------------------------------------
-;MCZ Palette
-;----------------------------------------------------------------------------
-Pal_MCZ:		incbin	"art/palettes/MCZ.bin"
-;----------------------------------------------------------------------------
-;CNZ Palette
-;----------------------------------------------------------------------------
-Pal_CNZ:		incbin	"art/palettes/CNZ.bin"
-;----------------------------------------------------------------------------
-;CPZ Palette
-;----------------------------------------------------------------------------
-Pal_CPZ:		incbin	"art/palettes/CPZ.bin"
-;----------------------------------------------------------------------------
-;CPZ Underwater	Palette
-;----------------------------------------------------------------------------
-Pal_CPZ_U:		incbin	"art/palettes/CPZ Underwater.bin"
-;----------------------------------------------------------------------------
-;DEZ Palette
-;----------------------------------------------------------------------------
-Pal_DEZ:		incbin	"art/palettes/DEZ.bin"
-;----------------------------------------------------------------------------
-;ARZ Palette
-;----------------------------------------------------------------------------
-Pal_ARZ:		incbin	"art/palettes/ARZ.bin"
-;----------------------------------------------------------------------------
-;ARZ Underwater	Palette
-;----------------------------------------------------------------------------
-Pal_ARZ_U:		incbin	"art/palettes/ARZ underwater.bin"
-;----------------------------------------------------------------------------
-;SCZ Palette
-;----------------------------------------------------------------------------
-Pal_SCZ:		incbin	"art/palettes/SCZ.bin"
-;----------------------------------------------------------------------------
-;Unknown Palette 2
-;----------------------------------------------------------------------------
-Pal_MCZ_B:		incbin	"art/palettes/MCZ Boss.bin"
-;----------------------------------------------------------------------------
-;Unknown Palette 3
-;----------------------------------------------------------------------------
-Pal_CNZ_B:		incbin	"art/palettes/CNZ Boss.bin"
-;----------------------------------------------------------------------------
-;OOZ Boss Palette
-;----------------------------------------------------------------------------
-Pal_OOZ_B:		incbin	"art/palettes/OOZ Boss.bin"
-;----------------------------------------------------------------------------
-;Menu Palette
-;----------------------------------------------------------------------------
-Pal_Menu:		incbin	"art/palettes/Menu.bin"
-;----------------------------------------------------------------------------
-;Special Stage Palette
-;----------------------------------------------------------------------------
-Pal_SS:			incbin	"art/palettes/Special Stage Main.bin"
-;----------------------------------------------------------------------------
-;Special Stage 1 Palette
-;----------------------------------------------------------------------------
-Pal_SS1:		incbin	"art/palettes/Special Stage 1.bin"
-;----------------------------------------------------------------------------
-;Special Stage 2 Palette
-;----------------------------------------------------------------------------
-Pal_SS2:		incbin	"art/palettes/Special Stage 2.bin"
-;----------------------------------------------------------------------------
-;Special Stage 3 Palette
-;----------------------------------------------------------------------------
-Pal_SS3:		incbin	"art/palettes/Special Stage 3.bin"
-;----------------------------------------------------------------------------
-;Special Stage 4 Palette
-;----------------------------------------------------------------------------
-Pal_SS4:		incbin	"art/palettes/Special Stage 4.bin"
-;----------------------------------------------------------------------------
-;Special Stage 5 Palette
-;----------------------------------------------------------------------------
-Pal_SS5:		incbin	"art/palettes/Special Stage 5.bin"
-;----------------------------------------------------------------------------
-;Special Stage 6 Palette
-;----------------------------------------------------------------------------
-Pal_SS6:		incbin	"art/palettes/Special Stage 6.bin"
-;----------------------------------------------------------------------------
-;Special Stage 7 Palette
-;----------------------------------------------------------------------------
-Pal_SS7:		incbin	"art/palettes/Special Stage 7.bin"
-;----------------------------------------------------------------------------
-;Unknown Palette 4
-;----------------------------------------------------------------------------
-Pal_SS1_2p:		incbin	"art/palettes/Special Stage 1 2P.bin"
-;----------------------------------------------------------------------------
-;Unknown Palette 5
-;----------------------------------------------------------------------------
-Pal_SS2_2p:		incbin	"art/palettes/Special Stage 2 2P.bin"
-;----------------------------------------------------------------------------
-;Unknown Palette 6
-;----------------------------------------------------------------------------
-Pal_SS3_2p:		incbin	"art/palettes/Special Stage 3 2P.bin"
-;----------------------------------------------------------------------------
-;Unknown Palette 7
-;----------------------------------------------------------------------------
-Pal_Result:		incbin	"art/palettes/Special Stage Results Screen.bin"
+
+		incfile	Pal_Sega
+		incfile	Pal_Title
+		incfile	Pal_MenuB
+		incfile	Pal_Sonic_Miles_BG1
+		incfile	Pal_Sonic_Miles_BG2
+		incfile	Pal_EHZ
+		incfile	Pal_WZ
+		incfile	Pal_MTZ
+		incfile	Pal_WFZ
+		incfile	Pal_HTZ
+		incfile	Pal_HPZ
+		incfile	Pal_HPZ_U
+		incfile	Pal_OOZ
+		incfile	Pal_MCZ
+		incfile	Pal_CNZ
+		incfile	Pal_CPZ
+		incfile	Pal_CPZ_U
+		incfile	Pal_DEZ
+		incfile	Pal_ARZ
+		incfile	Pal_ARZ_U
+		incfile	Pal_SCZ
+		incfile	Pal_MCZ_B
+		incfile	Pal_CNZ_B
+		incfile	Pal_OOZ_B
+		incfile	Pal_Menu
+		incfile	Pal_SS
+		incfile	Pal_SS1
+		incfile	Pal_SS2
+		incfile	Pal_SS3
+		incfile	Pal_SS4
+		incfile	Pal_SS5
+		incfile	Pal_SS6
+		incfile	Pal_SS7
+		incfile	Pal_SS1_2p
+		incfile	Pal_SS2_2p
+		incfile	Pal_SS3_2p
+		incfile	Pal_Result
+		
 ; ===========================================================================
 	if Revision<2
 		nop	
@@ -4584,7 +4142,7 @@ GM_Sega:
 		lea	(vdp_control_port).l,a6
 		move.w	#$8004,(a6)
 		move.w	#$8200+(vram_sega_fg/$400),(a6) ; $8230 ; set fg nametable at $C000
-		move.w	#$8400+(vram_sega_bg/$200),(a6) ; $8405 ; set bg nametable at $A000
+		move.w	#$8400+(vram_sega_bg/$2000),(a6) ; $8405 ; set bg nametable at $A000
 		move.w	#$8700,(a6)
 		move.w	#$8B03,(a6)
 		move.w	#$8C81,(a6)
@@ -4610,7 +4168,7 @@ loc_384A:
 		move.w	#$8F02,(a5)
 		
 		move.l	#$40200000,(vdp_control_port).l
-		lea	(Nem_Sega).l,a0
+		lea	(Nem_SEGA).l,a0
 		bsr.w	NemDec
 		
 		move.l	#$50000000,(vdp_control_port).l
@@ -4643,7 +4201,7 @@ loc_384A:
 
 loc_38CE:				
 		moveq	#0,d0
-		bsr.w	sub_272E
+		bsr.w	PalLoad_Now
 		move.w	#$FFF6,(v_palcycle_num).w
 		move.w	#0,(v_palcycle_time).w
 		move.w	#0,(v_segascr_vblank_sub).w
@@ -4784,7 +4342,7 @@ loc_3A44:
 		move.l	d0,(a1)+
 		dbf	d1,loc_3A44
 		moveq	#3,d0
-		bsr.w	sub_2712
+		bsr.w	PalLoad_Next
 		bsr.w	sub_23C6
 	disable_ints
 		move.l	#$40000000,(vdp_control_port).l
@@ -4800,7 +4358,7 @@ loc_3A44:
 		lea	(Nem_Player1VS2).l,a0
 		bsr.w	NemDec
 		move.l	#$50000003,(vdp_control_port).l
-		lea	(Nem_FontStuff).l,a0
+		lea	(Nem_StandardFont).l,a0
 		bsr.w	NemDec
 		move.b	#0,(v_last_lamppost).w
 		move.b	#0,(v_last_lamppost_p2).w
@@ -4835,7 +4393,7 @@ loc_3A44:
 		move.w	#-$2000,d0
 		bsr.w	EniDec
 		lea	($FFFF0858).l,a1
-		lea	(word_3E82).l,a2
+		lea	(CopyrightText).l,a2
 		moveq	#$A,d6
 
 loc_3B66:				
@@ -4854,7 +4412,7 @@ loc_3B8A:
 		move.l	d0,(a1)+
 		dbf	d1,loc_3B8A
 		moveq	#1,d0
-		bsr.w	sub_2712
+		bsr.w	PalLoad_Next
 		move.b	#0,(f_debug_enable).w
 		move.w	#0,(f_two_player_mode).w
 		move.w	#$280,(v_countdown).w
@@ -4908,7 +4466,7 @@ loc_3C42:
 		addq.w	#8,a1
 		dbf	d6,loc_3C36
 		bsr.w	RunPLC
-		bsr.w	sub_3DB4
+		bsr.w	TailsNameCheat
 		tst.w	(v_countdown).w
 		beq.w	loc_3D2E
 		tst.b	($FFFFB06F).w
@@ -4995,7 +4553,7 @@ loc_3D2E:
 loc_3D5A:				
 		move.w	#1,(f_demo_mode).w
 		move.b	#8,(v_gamemode).w
-		cmpi.w	#0,(v_zone).w
+		cmpi.w	#id_EHZ,(v_zone).w
 		bne.s	loc_3D74
 		move.w	#1,(f_two_player_mode).w
 
@@ -5013,54 +4571,55 @@ loc_3D74:
 		move.l	#$1388,(v_score_next_life_p2).w
 		rts	
 ; ===========================================================================
-word_3DAC:	dc.w	 0		; 0
-		dc.w  $D00		; 1
-		dc.w  $F00		; 2
-		dc.w  $C00		; 3
+word_3DAC:
+		dc.w	 0
+		dc.w  $D00
+		dc.w  $F00
+		dc.w  $C00
 
-; =============== S U B	R O U T	I N E =======================================
 
-
-sub_3DB4:				
-		lea	(byte_3DEE).l,a0
+; sub_3DB4:
+TailsNameCheat:				
+		lea	(TailsNameCheatCode).l,a0
 		move.w	(v_correct_cheat_entries).w,d0
 		adda.w	d0,a0
 		move.b	(v_joypad_press_actual).w,d0
-		andi.b	#$F,d0
-		beq.s	locret_3DEC
+		andi.b	#btnUp|btnDn|btnL|btnR,d0
+		beq.s	.exit
 		cmp.b	(a0),d0
-		bne.s	loc_3DE6
+		bne.s	.clearcheatentries	
 		addq.w	#1,(v_correct_cheat_entries).w
 		tst.b	1(a0)
-		bne.s	locret_3DEC
+		bne.s	.exit
+		
+		; Switch the detected console's region between Japanese and
+		; international. This affects the presence of trademark symbols, and
+		; causes Tails' name to swap between 'Tails' and 'Miles'.
 		bchg	#7,(v_console_region).w
 		move.b	#-$4B,d0
 		bsr.w	PlaySound
 
-loc_3DE6:				
+	.clearcheatentries:				
 		move.w	#0,(v_correct_cheat_entries).w
 
-locret_3DEC:				
+	.exit:				
 		rts	
-; End of function sub_3DB4
 
 ; ===========================================================================
-byte_3DEE:	dc.b	 1		; 0 
-		dc.b	 2		; 1
-		dc.b	 2		; 2
-		dc.b	 2		; 3
-		dc.b	 1		; 4
-		dc.b	 0		; 5
-; ---------------------------------------------------------------------------------
-; Nemesis compressed art
-;
-; 10 blocks
-; Unknown
-; ---------------------------------------------------------------------------------
-; ArtNem_3DF4:
-Nem_Player1VS2:	incbin "art/nemesis/Player 1 VS 2 Text.nem"
+; byte_3DEE:
+TailsNameCheatCode:	
+		dc.b	btnUp
+		dc.b	btnDn
+		dc.b	btnDn
+		dc.b	btnDn
+		dc.b	btnUp
+		dc.b	0	; end
+		even
 
-word_3E82:	dc.w  $68B		; 0 
+		incfile	Nem_Player1VS2	; ArtNem_3DF4:
+		
+; word_3E82:
+CopyrightText:	dc.w  $68B		; 0 
 		dc.w	 0		; 1
 		dc.w  $681		; 2
 		dc.w  $689		; 3
@@ -5125,9 +4684,8 @@ byte_3EB2:	dc.b $8C		; 0
 		dc.b   0		; 17
 ; ===========================================================================
 
-GM_Level:				
-					
-		bset	#7,(v_gamemode).w
+GM_Level:						
+		bset	#titlecard_flag,(v_gamemode).w	; add $80 to gamemode (for pre level sequence)
 		tst.w	(f_demo_mode).w
 		bmi.s	loc_3ED8
 		move.b	#-7,d0
@@ -5286,20 +4844,20 @@ loc_402C:
 
 loc_407C:				
 		moveq	#3,d0
-		bsr.w	sub_272E
+		bsr.w	PalLoad_Now
 		tst.b	(f_water_flag).w
 		beq.s	loc_40AE
 		moveq	#$15,d0
 		cmpi.b	#8,(v_zone).w
 		beq.s	loc_409E
 		moveq	#$16,d0
-		cmpi.b	#$D,(v_zone).w
+		cmpi.b	#id_CPZ,(v_zone).w
 		beq.s	loc_409E
 		moveq	#$17,d0
 
 loc_409E:				
 					
-		bsr.w	sub_2746
+		bsr.w	PalLoad_Water
 		tst.b	(v_last_lamppost).w
 		beq.s	loc_40AE
 		move.b	(f_water_pal_full_lampcopy).w,(f_water_pal_full).w
@@ -5339,7 +4897,7 @@ loc_40DA:
 
 loc_4114:				
 		moveq	#3,d0
-		bsr.w	sub_2712
+		bsr.w	PalLoad_Next
 		bsr.w	sub_BFBC
 		jsrto	DeformLayers,JmpTo_DeformLayers
 		clr.w	(v_fg_y_pos_vsram).w
@@ -5376,7 +4934,7 @@ loc_4136:	; clear_ram
 		move.w	#$120,($FFFFB3C8).w
 
 loc_41A8:				
-		cmpi.b	#$D,(v_zone).w
+		cmpi.b	#id_CPZ,(v_zone).w
 		bne.s	loc_41B6
 		move.b	#$7C,(v_ost_cpzpylon).w ; '|'
 
@@ -5419,11 +4977,11 @@ loc_41F8:
 		move.b	#1,(f_hud_time_update_p2).w
 		jsr	ObjPosLoad
 		jsr	loc_16F88
-		jsr	loc_173BC
+		jsr	SpecialCNZBumpers
 		jsr	sub_15F9C
 		jsr	sub_16604
 		bsr.w	sub_4F58
-		bsr.w	sub_4BD2
+		bsr.w	SetLevelEndType
 		move.w	#0,($FFFFF790).w
 		move.w	#0,(v_demo_input_counter_P2).w
 		lea	(off_4948).l,a1
@@ -5463,13 +5021,13 @@ loc_42C8:
 		cmpi.b	#8,(v_zone).w
 		beq.s	loc_42E4
 		moveq	#$16,d0
-		cmpi.b	#$D,(v_zone).w
+		cmpi.b	#id_CPZ,(v_zone).w
 		beq.s	loc_42E4
 		moveq	#$17,d0
 
 loc_42E4:				
 					
-		bsr.w	sub_2764
+		bsr.w	PalLoad_Water_Next
 
 loc_42E8:				
 		move.w	#-1,($FFFFB0BE).w
@@ -5498,10 +5056,9 @@ loc_4348:
 		move.b	#0,(f_lock_controls).w
 		move.b	#0,(f_lock_controls_p2).w
 		move.b	#1,(f_level_started).w
-		bclr	#7,(v_gamemode).w
+		bclr	#titlecard_flag,(v_gamemode).w
 
-loc_4360:				
-					
+loc_4360:						
 		bsr.w	PauseGame
 		move.b	#8,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
@@ -5514,11 +5071,11 @@ loc_4360:
 		jsrto	DeformLayers,JmpTo_DeformLayers
 		bsr.w	sub_44E4
 		jsr	loc_16F88
-		cmpi.b	#$C,(v_zone).w
-		bne.s	loc_43A4
-		jsr	loc_173BC
+		cmpi.b	#id_CNZ,(v_zone).w
+		bne.s	.notCNZ
+		jsr	(SpecialCNZBumpers).l
 
-loc_43A4:				
+	.notCNZ:				
 		bsr.w	sub_4F58
 		bsr.w	sub_19DC
 		bsr.w	RunPLC
@@ -5967,7 +5524,7 @@ loc_47AA:
 		beq.s	loc_47D2
 		bmi.s	loc_47C4
 		sub.w	d1,d0
-		bcc.s	loc_47C2
+		bhi.s	loc_47C2
 		move.w	#0,d0
 		move.b	#5,$1C(a1)
 
@@ -5977,7 +5534,7 @@ loc_47C2:
 
 loc_47C4:				
 		add.w	d1,d0
-		bcc.s	loc_47D2
+		bhi.s	loc_47D2
 		move.w	#0,d0
 		move.b	#5,$1C(a1)
 
@@ -6028,7 +5585,7 @@ loc_4856:
 		andi.w	#$3FF,($FFFFF790).w
 
 loc_486A:				
-		cmpi.b	#0,(v_zone).w
+		cmpi.b	#id_EHZ,(v_zone).w
 		bne.s	locret_48A8
 		lea	($FEC000).l,a1
 		move.w	(v_demo_input_counter_P2).w,d0
@@ -6088,7 +5645,7 @@ loc_48DA:
 		addq.w	#2,($FFFFF790).w
 
 loc_4908:				
-		cmpi.b	#0,(v_zone).w
+		cmpi.b	#id_EHZ,(v_zone).w
 		bne.s	loc_4940
 		lea	(byte_4D08).l,a1
 		move.w	(v_demo_input_counter_P2).w,d0
@@ -6295,7 +5852,7 @@ loc_4AE2:
 		move.w	d0,2(a1)
 		add.w	d0,0(a1)
 		cmp.b	0(a1),d4
-		bcc.s	loc_4B18
+		bhi.s	loc_4B18
 		bset	d1,d3
 		bra.s	loc_4B18
 ; ===========================================================================
@@ -6398,41 +5955,39 @@ locret_4BD0:
 
 ; =============== S U B	R O U T	I N E =======================================
 
+; sub_4BD2:
+SetLevelEndType:				
+		move.w	#0,(f_has_signpost).w		; set level type to non-signpost
+		tst.w	(f_two_player_mode).w		; is it two-player mode?
+		bne.s	.setsignpost				; if it is, branch
+		cmpi.w	#id_EHZ_act2,(v_zone).w
+		beq.w	.exit
+		cmpi.w	#id_MTZ_act3,(v_zone).w
+		beq.w	.exit
+		cmpi.w	#id_WFZ_act1,(v_zone).w
+		beq.w	.exit
+		cmpi.w	#id_HTZ_act2,(v_zone).w
+		beq.w	.exit
+		cmpi.w	#id_OOZ_act2,(v_zone).w
+		beq.w	.exit
+		cmpi.w	#id_MCZ_act2,(v_zone).w
+		beq.s	.exit
+		cmpi.w	#id_CNZ_act2,(v_zone).w
+		beq.s	.exit
+		cmpi.w	#id_CPZ_act2,(v_zone).w
+		beq.s	.exit
+		cmpi.w	#id_DEZ_act1,(v_zone).w
+		beq.s	.exit
+		cmpi.w	#id_ARZ_act2,(v_zone).w
+		beq.s	.exit
+		cmpi.w	#id_SCZ_act1,(v_zone).w
+		beq.s	.exit
 
-sub_4BD2:				
-		move.w	#0,(f_has_signpost).w
-		tst.w	(f_two_player_mode).w
-		bne.s	loc_4C40
-		cmpi.w	#1,(v_zone).w
-		beq.w	locret_4C46
-		cmpi.w	#$500,(v_zone).w
-		beq.w	locret_4C46
-		cmpi.w	#$600,(v_zone).w
-		beq.w	locret_4C46
-		cmpi.w	#$701,(v_zone).w
-		beq.w	locret_4C46
-		cmpi.w	#$A01,(v_zone).w
-		beq.w	locret_4C46
-		cmpi.w	#$B01,(v_zone).w
-		beq.s	locret_4C46
-		cmpi.w	#$C01,(v_zone).w
-		beq.s	locret_4C46
-		cmpi.w	#$D01,(v_zone).w
-		beq.s	locret_4C46
-		cmpi.w	#$E00,(v_zone).w
-		beq.s	locret_4C46
-		cmpi.w	#$F01,(v_zone).w
-		beq.s	locret_4C46
-		cmpi.w	#$1000,(v_zone).w
-		beq.s	locret_4C46
+	.setsignpost:				
+		move.w	#1,(f_has_signpost).w ; set level type to signpost
 
-loc_4C40:				
-		move.w	#1,(f_has_signpost).w
-
-locret_4C46:				
+	.exit:				
 		rts	
-; End of function sub_4BD2
-
 
 ; =============== S U B	R O U T	I N E =======================================
 
@@ -6906,7 +6461,7 @@ loc_52F4:
 		move.l	#v_vdp_command_buffer,(v_vdp_command_buffer_slot).w
 		move	#$2300,sr
 		moveq	#$27,d0	; '''
-		bsr.w	sub_272E
+		bsr.w	PalLoad_Now
 		moveq	#0,d0
 		bsr.w	NewPLC
 		move.l	#$40400000,d0
@@ -10175,7 +9730,7 @@ sub_77A2:
 		move.w	d0,(a2)+
 		move.w	d0,(a2)+
 		moveq	#$18,d0
-		bsr.w	sub_2712
+		bsr.w	PalLoad_Next
 		lea	(word_778E)(pc),a1
 		moveq	#0,d0
 		move.b	(v_special_stage).w,d0
@@ -10189,7 +9744,7 @@ sub_77A2:
 
 loc_7800:				
 		move.w	(a1,d0.w),d0
-		bsr.w	sub_2712
+		bsr.w	PalLoad_Next
 
 loc_7808:
 		lea	($FFFF8778).w,a0
@@ -10309,7 +9864,7 @@ loc_78DE:
 		moveq	#$A,d1
 		jsr	sub_411A4
 		moveq	#$1B,d0
-		bsr.w	sub_2712
+		bsr.w	PalLoad_Next
 		move.w	#0,(v_pal_dry_next).w
 		move.b	#-$64,d0
 		bsr.w	PlayMusic
@@ -10384,7 +9939,7 @@ sub_7A04:
 		lea	(Nem_TitleCard).l,a0
 		bsr.w	NemDec
 		lea	(v_level_layout).w,a4
-		lea	(ArtNem_TitleCard2).l,a0
+		lea	(Nem_TitleCardFont).l,a0
 		bsr.w	NemDecToRAM
 		lea	(word_7A5E).l,a0
 		move.l	#$72000002,(vdp_control_port).l
@@ -10708,7 +10263,7 @@ loc_7DA6:
 		move.l	d0,(a1)+
 		dbf	d1,loc_7DA6
 		move.l	#$42000000,(vdp_control_port).l
-		lea	(Nem_FontStuff).l,a0
+		lea	(Nem_StandardFont).l,a0
 		bsr.w	NemDec
 		move.l	#$4E000000,(vdp_control_port).l
 		lea	(Nem_1P2PWins).l,a0
@@ -10747,7 +10302,7 @@ loc_7DA6:
 		moveq	#0,d0
 		bsr.w	NewPLC
 		moveq	#$26,d0	; '&'
-		bsr.w	sub_2712
+		bsr.w	PalLoad_Next
 		moveq	#0,d0
 		move.b	#-$7F,d0
 		cmp.w	(v_level_music).w,d0
@@ -11795,7 +11350,7 @@ loc_8C2A:
 		clr.w	(v_vdp_command_buffer).w
 		move.l	#-$2400,(v_vdp_command_buffer_slot).w
 		move.l	#$42000000,(vdp_control_port).l
-		lea	(Nem_FontStuff).l,a0
+		lea	(Nem_StandardFont).l,a0
 		bsr.w	NemDec
 		move.l	#$4E000000,(vdp_control_port).l
 		lea	(Nem_MenuBox).l,a0
@@ -11855,7 +11410,7 @@ loc_8CF8:
 		lea	(word_87C6).l,a2
 		bsr.w	j_Dynamic_Normal
 		moveq	#$26,d0	; '&'
-		bsr.w	sub_2712
+		bsr.w	PalLoad_Next
 		lea	(v_pal_dry_line3).w,a1
 		lea	($FFFFFBC0).w,a2
 		moveq	#7,d1
@@ -12127,7 +11682,7 @@ loc_8FCC:
 		lea	(word_87C6).l,a2
 		bsr.w	j_Dynamic_Normal
 		moveq	#$26,d0	; '&'
-		bsr.w	sub_2712
+		bsr.w	PalLoad_Next
 		move.b	#-$6F,d0
 		bsr.w	loc_9C6A
 		clr.w	(f_two_player_mode).w
@@ -12428,7 +11983,7 @@ loc_92F6:
 		lea	(word_87C6).l,a2
 		bsr.w	j_Dynamic_Normal
 		moveq	#$26,d0	; '&'
-		bsr.w	sub_2712
+		bsr.w	PalLoad_Next
 		lea	(v_pal_dry_line3).w,a1
 		lea	($FFFFFBC0).w,a2
 		moveq	#7,d1
@@ -15217,6 +14772,12 @@ sub_BFBC:	; LevelSizeLoad
 		clr.b	(f_disable_horiz_scroll_p2).w
 		moveq	#0,d0
 		move.b	d0,(v_dle_routine).w
+	if Revision=2
+		move.w	d0,(v_wfz_dle_subrout).w
+		move.w	d0,(v_wfz_bg_y_speed).w
+		move.w	d0,(v_camera_x_pos_offset).w
+		move.w	d0,(v_camera_7_pos_offset).w
+    endc
 		move.w	(v_zone).w,d0
 		ror.b	#1,d0
 		lsr.w	#4,d0
@@ -18104,7 +17665,8 @@ locret_D96A:
 
 ; =============== S U B	R O U T	I N E =======================================
 
-
+;sub_D96C: ;ARZ_Bg_Deformation:
+;SetHorizScrollFlagsBG_ARZ:	; only used by ARZ
 sub_D96C:				
 		move.l	(v_camera_arz_bg_x_pos).w,d0
 		add.l	d4,d0
@@ -18114,7 +17676,7 @@ sub_D96C:
 		move.w	(v_camera_arz_bg_x_pos).w,d0
 		sub.w	d2,d0
 		bcs.s	loc_D988
-		bcc.s	loc_D994
+		bhi.s	loc_D994
 		rts	
 ; ===========================================================================
 
@@ -18592,7 +18154,7 @@ loc_DD6C:
 sub_DD82:				
 		tst.b	(a2)
 		beq.w	locret_DDCE
-		cmpi.b	#$D,(v_zone).w
+		cmpi.b	#id_CPZ,(v_zone).w
 		beq.w	loc_DE12
 		bclr	#0,(a2)
 		beq.s	loc_DDAE
@@ -19685,7 +19247,7 @@ loc_E59E:
 
 
 sub_E5BC:				
-		jmp	(sub_272E).l
+		jmp	(PalLoad_Now).l
 ; End of function sub_E5BC
 
 
@@ -21150,7 +20712,7 @@ off_F454:	dc.w loc_F45E-off_F454	; 0
 loc_F45E:				
 		move.w	#$140,d0
 		cmp.w	(v_camera_x_pos).w,d0
-		bcc.s	locret_F48E
+		bhi.s	locret_F48E
 		addq.b	#2,(v_dle_routine).w
 		bsr.w	sub_F64C
 		bne.s	locret_F48E
@@ -21188,7 +20750,7 @@ loc_F4AC:
 		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
 		move.w	#$680,d0
 		cmp.w	(v_camera_x_pos).w,d0
-		bcc.s	locret_F4CC
+		bhi.s	locret_F4CC
 		addq.b	#2,(v_dle_routine).w
 		move.w	d0,(v_boundary_left_next).w
 		addi.w	#$C0,d0	
@@ -21383,7 +20945,7 @@ sub_F652:
 
 sub_F658:				
 					
-		jmp	(sub_272E).l
+		jmp	(PalLoad_Now).l
 ; End of function sub_F658
 
 
@@ -21570,7 +21132,7 @@ loc_F7DC:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_F7F0
+		bhi.s	loc_F7F0
 		rts	
 ; ===========================================================================
 
@@ -22328,7 +21890,7 @@ loc_10016:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_1002E
+		bhi.w	loc_1002E
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -22457,7 +22019,7 @@ loc_10166:
 		addi.w	#$18,$12(a0)
 		move.w	(v_water_height_normal).w,d0
 		cmp.w	$C(a0),d0
-		bcc.s	loc_101D0
+		bhi.s	loc_101D0
 		move.w	d0,$C(a0)
 		move.w	d0,$38(a0)
 		bclr	#1,$22(a0)
@@ -22680,7 +22242,7 @@ loc_103E8:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_10404
+		bhi.w	loc_10404
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -22867,7 +22429,7 @@ loc_105BA:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_105D0
+		bhi.s	loc_105D0
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -24132,7 +23694,7 @@ loc_11610:
 
 loc_1162A:				
 		subq.w	#8,$30(a0)
-		bcc.s	loc_1163C
+		bhi.s	loc_1163C
 		move.w	#0,$30(a0)
 		move.b	#0,$25(a0)
 
@@ -24196,7 +23758,7 @@ loc_116D4:
 		move.b	#$C,$19(a0)
 
 loc_116E0:				
-		cmpi.b	#$D,(v_zone).w
+		cmpi.b	#id_CPZ,(v_zone).w
 		bne.s	loc_116F4
 		move.w	#$2394,2(a0)
 		move.b	#8,$19(a0)
@@ -25332,13 +24894,12 @@ loc_1224E:
 
 loc_12264:				
 					
-					; DATA XREF: ...
 		move.b	(v_syncani_1_frame).w,$1A(a0)
 		move.w	8(a0),d0
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	DeleteObject
+		bhi.w	DeleteObject
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -25393,7 +24954,7 @@ loc_12306:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	DeleteObject
+		bhi.w	DeleteObject
 		bra.w	DisplaySprite
 
 ; =============== S U B	R O U T	I N E =======================================
@@ -27658,13 +27219,13 @@ sub_13E1C:
 		move.w	8(a0),d1
 		cmp.w	$30(a0),d1
 		beq.s	loc_13E38
-		bcc.s	loc_13E2C
+		bhi.s	loc_13E2C
 		neg.w	d0
 
 loc_13E2C:				
 		sub.w	d0,8(a0)
 		cmpi.w	#$200,8(a0)
-		bcc.s	locret_13E3C
+		bhi.s	locret_13E3C
 
 loc_13E38:				
 		bra.w	DisplaySprite
@@ -27743,13 +27304,13 @@ loc_13EC4:
 		move.w	8(a0),d1
 		cmp.w	$32(a0),d1
 		beq.s	locret_13EE4
-		bcc.s	loc_13ED4
+		bhi.s	loc_13ED4
 		neg.w	d0
 
 loc_13ED4:				
 		sub.w	d0,8(a0)
 		cmpi.w	#$200,8(a0)
-		bcc.s	locret_13EE4
+		bhi.s	locret_13EE4
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -27789,13 +27350,13 @@ loc_13F24:
 		move.w	8(a0),d1
 		cmp.w	$32(a0),d1
 		beq.s	loc_13F44
-		bcc.s	loc_13F34
+		bhi.s	loc_13F34
 		neg.w	d0
 
 loc_13F34:				
 		sub.w	d0,8(a0)
 		cmpi.w	#$200,8(a0)
-		bcc.s	loc_13F44
+		bhi.s	loc_13F44
 
 loc_13F40:				
 		bra.w	DisplaySprite
@@ -27832,6 +27393,7 @@ byte_13F62:	dc.b $32		; 0
 		dc.b $35		; 14
 		dc.b $3B		; 15
 		dc.b $38		; 16
+		
 		dc.b $38		; 17
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -28654,13 +28216,13 @@ loc_14714:
 		move.w	8(a0),d1
 		cmp.w	$32(a0),d1
 		beq.s	loc_14730
-		bcc.s	loc_14724
+		bhi.s	loc_14724
 		neg.w	d0
 
 loc_14724:				
 		sub.w	d0,8(a0)
 		cmpi.w	#$200,8(a0)
-		bcc.s	locret_14734
+		bhi.s	locret_14734
 
 loc_14730:				
 		bra.w	DisplaySprite
@@ -29499,7 +29061,7 @@ sub_157B0:
 		lea	(Nem_TitleCard).l,a0
 		bsr.w	loc_158E8
 		lea	(v_level_layout).w,a4
-		lea	(ArtNem_TitleCard2).l,a0
+		lea	(Nem_TitleCardFont).l,a0
 		bra.w	loc_158EE
 ; ===========================================================================
 
@@ -29953,7 +29515,7 @@ loc_15D02:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	DeleteObject
+		bhi.w	DeleteObject
 		bra.w	DisplaySprite
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
@@ -30522,7 +30084,7 @@ loc_163DC:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_163F4
+		bhi.w	loc_163F4
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -30548,7 +30110,7 @@ loc_16414:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	.loop8
+		bhi.w	.loop8
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -30574,7 +30136,7 @@ loc_16446:
 		andi.w	#$FF80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_1645C
+		bhi.w	loc_1645C ; could be optimized to .s
 		rts	
 ; ===========================================================================
 
@@ -30596,7 +30158,7 @@ loc_16472:
 		andi.w	#$FF80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_16490
+		bhi.w	loc_16490
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -30617,14 +30179,14 @@ loc_164A6:
 		move.w	d0,d1
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$300,d0
-		bcc.w	loc_164C0
+		bhi.w	loc_164C0
 		bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_164C0:				
 		sub.w	(v_camera_x_pos_coarse_p2).w,d1
 		cmpi.w	#$300,d1
-		bcc.w	loc_164D0
+		bhi.w	loc_164D0
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -32048,7 +31610,7 @@ loc_16F9A:
 		lea	(v_ring_positions).w,a1
 		move.w	(v_camera_x_pos).w,d4
 		subq.w	#8,d4
-		bcc.s	loc_16FB6
+		bhi.s	loc_16FB6
 		moveq	#1,d4
 		bra.s	loc_16FB6
 ; ===========================================================================
@@ -32058,7 +31620,7 @@ loc_16FB2:
 
 loc_16FB6:				
 		cmp.w	2(a1),d4
-		bcc.s	loc_16FB2
+		bhi.s	loc_16FB2
 		move.w	a1,(v_ring_start).w
 		move.w	a1,(v_ring_start_p2).w
 		addi.w	#$150,d4
@@ -32070,7 +31632,7 @@ loc_16FCA:
 
 loc_16FCE:				
 		cmp.w	2(a1),d4
-		bcc.s	loc_16FCA
+		bhi.s	loc_16FCA
 		move.w	a1,(v_ring_end).w
 		move.w	a1,(v_ring_end_p2).w
 		rts	
@@ -32103,7 +31665,7 @@ loc_17014:
 		movea.w	(v_ring_start).w,a1
 		move.w	(v_camera_x_pos).w,d4
 		subq.w	#8,d4
-		bcc.s	loc_17028
+		bhi.s	loc_17028
 		moveq	#1,d4
 		bra.s	loc_17028
 ; ===========================================================================
@@ -32113,7 +31675,7 @@ loc_17024:
 
 loc_17028:				
 		cmp.w	2(a1),d4
-		bcc.s	loc_17024
+		bhi.s	loc_17024
 		bra.s	loc_17032
 ; ===========================================================================
 
@@ -32134,7 +31696,7 @@ loc_17046:
 
 loc_1704A:				
 		cmp.w	2(a2),d4
-		bcc.s	loc_17046
+		bhi.s	loc_17046
 		bra.s	loc_17054
 ; ===========================================================================
 
@@ -32158,7 +31720,7 @@ loc_1706E:
 		movea.w	(v_ring_start_p2).w,a1
 		move.w	(v_camera_x_pos_p2).w,d4
 		subq.w	#8,d4
-		bcc.s	loc_17082
+		bhi.s	loc_17082
 		moveq	#1,d4
 		bra.s	loc_17082
 ; ===========================================================================
@@ -32168,7 +31730,7 @@ loc_1707E:
 
 loc_17082:				
 		cmp.w	2(a1),d4
-		bcc.s	loc_1707E
+		bhi.s	loc_1707E
 		bra.s	loc_1708C
 ; ===========================================================================
 
@@ -32189,7 +31751,7 @@ loc_170A0:
 
 loc_170A4:				
 		cmp.w	2(a2),d4
-		bcc.s	loc_170A0
+		bhi.s	loc_170A0
 		bra.s	loc_170AE
 ; ===========================================================================
 
@@ -32248,7 +31810,7 @@ loc_17112:
 
 loc_1712A:				
 		cmp.w	d4,d0
-		bcc.w	loc_1715C
+		bhi.w	loc_1715C
 
 loc_17130:				
 		move.w	4(a1),d0
@@ -32262,12 +31824,12 @@ loc_17130:
 
 loc_17142:				
 		cmp.w	d5,d0
-		bcc.w	loc_1715C
+		bhi.w	loc_1715C
 
 loc_17148:				
 		move.w	#$604,(a1)
 		bsr.s	loc_17168
-		lea	($FFFFEF82).w,a3
+		lea	(v_ring_consumption_table+2).w,a3
 
 loc_17152:				
 		tst.w	(a3)+
@@ -32597,7 +32159,8 @@ byte_173B2:	dc.b $F8		; 0
 		dc.b   0		; 9
 ; ===========================================================================
 
-loc_173BC:				
+; loc_173BC:
+SpecialCNZBumpers:				
 					
 		moveq	#0,d0
 		move.b	(v_cnz_bumper_routine).w,d0
@@ -32618,7 +32181,7 @@ loc_173CE:
 loc_173E4:				
 		move.w	(v_camera_x_pos).w,d4
 		subq.w	#8,d4
-		bcc.s	loc_173F4
+		bhi.s	loc_173F4
 		moveq	#1,d4
 		bra.s	loc_173F4
 ; ===========================================================================
@@ -32628,7 +32191,7 @@ loc_173F0:
 
 loc_173F4:				
 		cmp.w	2(a1),d4
-		bcc.s	loc_173F0
+		bhi.s	loc_173F0
 		move.l	a1,(v_cnz_visible_bumpers_start).w
 		move.l	a1,(v_cnz_visible_bumpers_start_P2).w
 		addi.w	#$150,d4
@@ -32640,7 +32203,7 @@ loc_17408:
 
 loc_1740C:				
 		cmp.w	2(a1),d4
-		bcc.s	loc_17408
+		bhi.s	loc_17408
 		move.l	a1,(v_cnz_visible_bumpers_end).w
 		move.l	a1,(v_cnz_visible_bumpers_end_P2).w
 		move.b	#1,(f_unused_cnz_bumper_flag).w
@@ -32651,7 +32214,7 @@ loc_17422:
 		movea.l	(v_cnz_visible_bumpers_start).w,a1
 		move.w	(v_camera_x_pos).w,d4
 		subq.w	#8,d4
-		bcc.s	loc_17436
+		bhi.s	loc_17436
 		moveq	#1,d4
 		bra.s	loc_17436
 ; ===========================================================================
@@ -32661,7 +32224,7 @@ loc_17432:
 
 loc_17436:				
 		cmp.w	2(a1),d4
-		bcc.s	loc_17432
+		bhi.s	loc_17432
 		bra.s	loc_17440
 ; ===========================================================================
 
@@ -32682,7 +32245,7 @@ loc_17454:
 
 loc_17458:				
 		cmp.w	2(a2),d4
-		bcc.s	loc_17454
+		bhi.s	loc_17454
 		bra.s	loc_17462
 ; ===========================================================================
 
@@ -32704,7 +32267,7 @@ loc_1747C:
 		movea.l	(v_cnz_visible_bumpers_start_P2).w,a1
 		move.w	(v_camera_x_pos_p2).w,d4
 		subq.w	#8,d4
-		bcc.s	loc_17490
+		bhi.s	loc_17490
 		moveq	#1,d4
 		bra.s	loc_17490
 ; ===========================================================================
@@ -32714,7 +32277,7 @@ loc_1748C:
 
 loc_17490:				
 		cmp.w	2(a1),d4
-		bcc.s	loc_1748C
+		bhi.s	loc_1748C
 		bra.s	loc_1749A
 ; ===========================================================================
 
@@ -32735,7 +32298,7 @@ loc_174AE:
 
 loc_174B2:				
 		cmp.w	2(a2),d4
-		bcc.s	loc_174AE
+		bhi.s	loc_174AE
 		bra.s	loc_174BC
 ; ===========================================================================
 
@@ -32794,7 +32357,7 @@ loc_1750E:
 
 loc_17530:				
 		cmp.w	d4,d0
-		bcc.w	loc_1756E
+		bhi.w	loc_1756E
 
 loc_17536:				
 		moveq	#0,d1
@@ -32811,7 +32374,7 @@ loc_17536:
 
 loc_17550:				
 		cmp.w	d5,d0
-		bcc.w	loc_1756E
+		bhi.w	loc_1756E
 		bra.s	loc_17564
 ; ===========================================================================
 byte_17558:	dc.b $20		; 0
@@ -33792,7 +33355,7 @@ SingleObjLoad:
 		move.w	#$27,d0 		; search to $BF00 exclusive
 
 	.loop:				
-		tst.b	ost_id(a1)	; is object RAM slot empty?
+		tst.b	(a1)	; is object RAM slot empty?
 		beq.s	.return		; if yes, branch
 		lea	$40(a1),a1 		; load obj address ; goto next object RAM slot
 		dbf	d0,.loop		; repeat until end
@@ -33857,7 +33420,9 @@ Objects_CNZ1_2P:	incbin	"level/objects/CNZ 1 2P (REV00).bin"
     ; 2 flippers were moved closer to a wall
 Objects_CNZ1_2P:	incbin	"level/objects/CNZ 1 2P.bin"
 	endc
-
+	
+		endobj
+	
 	if Revision=0
 Objects_CNZ2_2P:	incbin	"level/objects/CNZ22P (REV00).bin"
 	else	
@@ -33865,6 +33430,8 @@ Objects_CNZ2_2P:	incbin	"level/objects/CNZ22P (REV00).bin"
     ; 2 flippers were moved away from a wall to keep players from getting stuck behind them
 Objects_CNZ2_2P:	incbin	"level/objects/CNZ 2 2P.bin"
 	endc
+	
+		endobj
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 41 - Spring
@@ -34680,7 +34247,7 @@ loc_1924C:
 		move.w	(v_boundary_right_next).w,(v_boundary_left_next).w
 		move.b	#2,$25(a0)
 		cmpi.b	#$C,(v_loser_time_left).w
-		bcc.s	loc_192A0
+		bhi.s	loc_192A0
 
 loc_19296:
 		move.w	(v_level_music).w,d0
@@ -34722,7 +34289,7 @@ loc_192D6:
 		move.w	(v_boundary_right_next_p2).w,(v_boundary_left_next_p2).w
 		move.b	#2,$25(a0)
 		cmpi.b	#$C,(v_loser_time_left).w
-		bcc.s	loc_1932E
+		bhi.s	loc_1932E
 		move.w	(v_level_music).w,d0
 		jsr	(PlayMusic).l
 
@@ -35267,7 +34834,7 @@ loc_198EC:
 		move.w	d1,d4
 		add.w	d4,d4
 		cmp.w	d4,d0
-		bcc.w	loc_19AC4
+		bhi.w	loc_19AC4
 		move.w	$C(a0),d5
 		add.w	d3,d5
 		move.b	$16(a1),d3
@@ -35293,7 +34860,7 @@ loc_1992E:
 		move.w	d1,d3
 		add.w	d3,d3
 		cmp.w	d3,d0
-		bcc.w	loc_19AC4
+		bhi.w	loc_19AC4
 		move.w	d0,d5
 		btst	#0,1(a0)
 		beq.s	loc_19954
@@ -35330,7 +34897,7 @@ loc_19988:
 		move.w	d1,d3
 		add.w	d3,d3
 		cmp.w	d3,d0
-		bcc.w	loc_19AC4
+		bhi.w	loc_19AC4
 		move.w	d0,d5
 		btst	#0,1(a0)
 		beq.s	loc_199AE
@@ -35372,7 +34939,7 @@ loc_199F0:
 		move.w	d1,d3
 		add.w	d3,d3
 		cmp.w	d3,d0
-		bcc.w	loc_19AC4
+		bhi.w	loc_19AC4
 		move.b	$16(a1),d3
 		ext.w	d3
 		add.w	d3,d2
@@ -35413,7 +34980,7 @@ loc_19A56:
 
 loc_19A64:				
 		cmp.w	d1,d5
-		bcc.w	loc_19AEE
+		bhi.w	loc_19AEE
 
 loc_19A6A:				
 		cmpi.w	#4,d1
@@ -35820,7 +35387,7 @@ loc_19DDE:
 		add.w	d2,d1
 		addq.w	#4,d1
 		sub.w	d1,d0
-		bcc.w	locret_19E8E
+		bhi.w	locret_19E8E
 		cmpi.w	#-$10,d0
 		bcs.w	locret_19E8E
 		tst.b	$2A(a1)
@@ -35960,7 +35527,7 @@ loc_19F4C:
 Sprite_19F50:				
 		tst.w	(v_debug_active).w
 		beq.s	loc_19F5C
-		jmp	loc_41A78
+		jmp	DebugMode
 ; ===========================================================================
 
 loc_19F5C:				
@@ -36913,7 +36480,7 @@ loc_1A974:
 		move.w	(v_boundary_left_next).w,d0
 		addi.w	#$10,d0
 		cmp.w	d1,d0
-		bcc.s	loc_1A9BA
+		bhi.s	loc_1A9BA
 		move.w	(v_boundary_right_next).w,d0
 		addi.w	#$128,d0
 		tst.b	(v_current_boss).w
@@ -38293,7 +37860,7 @@ locret_1B89A:
 JmpTo_KillCharacter:				
 		jmp	(KillCharacter).l
 ; ===========================================================================
-	if RemoveJmpTos
+	if ~RemoveJmpTos
 		align 4
 	endc	 
 
@@ -39526,7 +39093,7 @@ loc_1C55A:
 		move.w	(v_boundary_left_next_p2).w,d0
 		addi.w	#$10,d0
 		cmp.w	d1,d0
-		bcc.s	loc_1C5A0
+		bhi.s	loc_1C5A0
 		move.w	(v_boundary_right_next_p2).w,d0
 		addi.w	#$128,d0
 		tst.b	(v_current_boss).w
@@ -40897,7 +40464,7 @@ loc_1D408:
 loc_1D40E:				
 		movea.l	$3C(a0),a2
 		cmpi.b	#$C,$28(a2)
-		bcc.s	loc_1D42E
+		bhi.s	loc_1D42E
 
 loc_1D41A:				
 		bsr.s	loc_1D474
@@ -40914,7 +40481,7 @@ loc_1D42E:
 loc_1D434:				
 		movea.l	$3C(a0),a2
 		cmpi.b	#$C,$28(a2)
-		bcc.s	loc_1D46E
+		bhi.s	loc_1D46E
 		subq.w	#1,$38(a0)
 		bne.s	loc_1D452
 		move.b	#$E,$24(a0)
@@ -41031,7 +40598,7 @@ loc_1D606:
 		cmpi.w	#$F,d0
 		beq.s	loc_1D68C
 		cmpi.w	#$C,d0
-		bcc.s	loc_1D69C
+		bhi.s	loc_1D69C
 		bne.s	loc_1D678
 		tst.b	$3F(a0)
 		bne.s	loc_1D678
@@ -41180,7 +40747,7 @@ locret_1D81C:
 
 loc_1D81E:				
 		cmpi.b	#$C,$28(a1)
-		bcc.s	loc_1D858
+		bhi.s	loc_1D858
 		cmpa.w	#-$5000,a1
 		bne.s	loc_1D858
 		move.w	(v_level_music).w,d0
@@ -42545,7 +42112,7 @@ loc_1E816:
 loc_1E826:				
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(CollArray1).l,a2
+		lea	(ColArray1).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
@@ -42622,7 +42189,7 @@ loc_1E8BE:
 loc_1E8CE:				
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(CollArray1).l,a2
+		lea	(ColArray1).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
@@ -42689,7 +42256,7 @@ loc_1E94E:
 loc_1E95E:				
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(CollArray1).l,a2
+		lea	(ColArray1).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
@@ -42766,7 +42333,7 @@ loc_1E9FE:
 loc_1EA06:				
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(CollArray2).l,a2
+		lea	(ColArray2).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
@@ -42843,7 +42410,7 @@ loc_1EAA6:
 loc_1EAAE:				
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(CollArray2).l,a2
+		lea	(ColArray2).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
@@ -42875,8 +42442,8 @@ loc_1EAE0:
 locret_1EAF0:				
 		rts	
 ; ===========================================================================
-		lea	(CollArray1).l,a1
-		lea	(CollArray1).l,a2
+		lea	(ColArray1).l,a1
+		lea	(ColArray1).l,a2
 		move.w	#$FF,d3
 
 loc_1EB02:				
@@ -42898,11 +42465,11 @@ loc_1EB0E:
 		dbf	d2,loc_1EB08
 		adda.w	#$20,a1	; ' '
 		dbf	d3,loc_1EB02
-		lea	(CollArray1).l,a1
-		lea	(CollArray2).l,a2
+		lea	(ColArray1).l,a1
+		lea	(ColArray2).l,a2
 		bsr.s	loc_1EB46
-		lea	(CollArray1).l,a1
-		lea	(CollArray1).l,a2
+		lea	(ColArray1).l,a1
+		lea	(ColArray1).l,a2
 
 loc_1EB46:				
 		move.w	#$FFF,d3
@@ -43966,7 +43533,7 @@ loc_1F6B8:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_1F6CC
+		bhi.s	loc_1F6CC
 		rts	
 ; ===========================================================================
 
@@ -43986,7 +43553,7 @@ loc_1F6DA:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_1F6F8
+		bhi.s	loc_1F6F8
 		jmp	DisplaySprite
 ; ===========================================================================
 
@@ -44357,7 +43924,7 @@ loc_1FACE:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_1FCCA
+		bhi.w	loc_1FCCA
 		move.w	(v_water_height_actual).w,d0
 		cmp.w	$C(a0),d0
 		bcs.w	loc_1FCC4
@@ -44629,7 +44196,7 @@ loc_1FDBE:
 		tst.b	(a2)+
 		bne.s	loc_1FE38
 		cmp.w	8(a1),d1
-		bcc.w	locret_1FEAC
+		bhi.w	locret_1FEAC
 		move.b	#1,-1(a2)
 		move.w	$C(a0),d2
 		move.w	d2,d3
@@ -44717,7 +44284,7 @@ loc_1FEC8:
 		tst.b	(a2)+
 		bne.s	loc_1FF42
 		cmp.w	$C(a1),d1
-		bcc.w	locret_1FFB6
+		bhi.w	locret_1FFB6
 		move.b	#1,-1(a2)
 		move.w	8(a0),d2
 		move.w	d2,d3
@@ -45102,7 +44669,7 @@ loc_20356:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_2039E
+		bhi.w	loc_2039E
 		bra.w	loc_20398
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
@@ -45239,7 +44806,7 @@ loc_204D8:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_208CA
+		bhi.w	loc_208CA
 		bra.w	loc_208C4
 ; ===========================================================================
 
@@ -45255,7 +44822,7 @@ loc_204FE:
 loc_20502:
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_208CA
+		bhi.w	loc_208CA
 		rts	
 ; ===========================================================================
 
@@ -45264,7 +44831,7 @@ loc_20510:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_208CA
+		bhi.w	loc_208CA
 		bra.w	loc_208C4
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
@@ -45653,7 +45220,7 @@ loc_20BEA:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_214B2
+		bhi.w	loc_214B2
 
 loc_20C04:				
 		move.w	8(a0),d1
@@ -45797,7 +45364,7 @@ loc_20E50:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_214B2
+		bhi.w	loc_214B2
 
 loc_20E60:				
 		tst.w	(v_debug_active).w
@@ -45882,7 +45449,7 @@ loc_20F2E:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_214B2
+		bhi.w	loc_214B2
 
 locret_20F64:				
 		rts	
@@ -46144,7 +45711,7 @@ loc_21244:
 		tst.b	(a2)+
 		bne.s	loc_21286
 		cmp.w	8(a1),d1
-		bcc.s	locret_21284
+		bhi.s	locret_21284
 		move.b	#1,-1(a2)
 		move.w	$C(a0),d2
 		move.w	d2,d3
@@ -46225,7 +45792,7 @@ loc_2130E:
 		tst.b	(a2)+
 		bne.s	loc_21352
 		cmp.w	$C(a1),d1
-		bcc.s	locret_21350
+		bhi.s	locret_21350
 		move.b	#1,-1(a2)
 		move.w	8(a0),d2
 		move.w	d2,d3
@@ -46336,7 +45903,7 @@ loc_2142A:
 		tst.b	(a2)+
 		bne.s	loc_2146C
 		cmp.w	8(a1),d1
-		bcc.s	locret_2146A
+		bhi.s	locret_2146A
 		move.b	#1,-1(a2)
 		move.w	$C(a0),d2
 		move.w	d2,d3
@@ -46423,7 +45990,7 @@ loc_214DA:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_214EE
+		bhi.s	loc_214EE
 		rts	
 ; ===========================================================================
 
@@ -46628,7 +46195,7 @@ loc_2181E:
 		add.w	d2,d1
 		addq.w	#4,d1
 		sub.w	d1,d0
-		bcc.s	locret_2188A
+		bhi.s	locret_2188A
 		cmpi.w	#-$10,d0
 		bcs.s	locret_2188A
 		cmpi.b	#6,$24(a1)
@@ -47375,7 +46942,7 @@ loc_220B8:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_22292
+		bhi.w	loc_22292
 		bra.w	loc_2228C
 ; ===========================================================================
 
@@ -47814,7 +47381,7 @@ loc_22500:
 loc_2250C:				
 		move.w	$30(a0),d0
 		cmp.w	$C(a0),d0
-		bcc.s	loc_22524
+		bhi.s	loc_22524
 		move.w	$34(a0),$12(a0)
 		clr.w	$10(a0)
 		subq.b	#2,$24(a0)
@@ -47840,7 +47407,7 @@ loc_22540:
 loc_22552:				
 		move.w	$30(a0),d0
 		cmp.w	$C(a0),d0
-		bcc.s	loc_22572
+		bhi.s	loc_22572
 		move.w	$34(a0),$12(a0)
 		move.w	$38(a0),8(a0)
 		move.w	#$DA,d0	
@@ -48935,7 +48502,7 @@ loc_2352E:
 		move.w	#$43B2,2(a0)
 		move.b	#$18,$19(a0)
 		move.l	#byte_23680,$3C(a0)
-		cmpi.b	#$D,(v_zone).w
+		cmpi.b	#id_CPZ,(v_zone).w
 		bne.s	loc_23572
 		move.l	#Map_23886,4(a0)
 		move.w	#$6430,2(a0)
@@ -49728,7 +49295,7 @@ loc_23F0A:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_23F36
+		bhi.s	loc_23F36
 
 loc_23F30:				
 		jmp	DisplaySprite
@@ -52351,7 +51918,7 @@ loc_26152:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_26356
+		bhi.w	loc_26356
 		move.b	$21(a0),d0
 		beq.s	loc_261C2
 		move.w	$2E(a0),d0
@@ -53102,7 +52669,7 @@ loc_269D6:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_269EE
+		bhi.s	loc_269EE
 		jmp	DisplaySprite
 ; ===========================================================================
 
@@ -53313,7 +52880,7 @@ loc_26C1C:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_26C66
+		bhi.s	loc_26C66
 		jmp	DisplaySprite
 ; ===========================================================================
 
@@ -53726,7 +53293,7 @@ loc_2702C:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_27148
+		bhi.w	loc_27148
 		rts	
 ; ===========================================================================
 
@@ -54925,7 +54492,7 @@ loc_27D86:
 		addq.b	#2,$24(a0)
 		move.l	#Map_26EC8,4(a0)
 		move.w	#$6000,2(a0)
-		cmpi.b	#$D,(v_zone).w
+		cmpi.b	#id_CPZ,(v_zone).w
 		bne.s	loc_27DAE
 		move.l	#Map_2800E,4(a0)
 		move.w	#$6418,2(a0)
@@ -55241,7 +54808,7 @@ Sprite_28034:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_28058
+		bhi.s	loc_28058
 		bra.w	loc_28388
 ; ===========================================================================
 
@@ -55595,7 +55162,7 @@ loc_28462:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_284A4
+		bhi.s	loc_284A4
 		jmp	DisplaySprite
 ; ===========================================================================
 
@@ -55640,7 +55207,7 @@ loc_284EC:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_28514
+		bhi.s	loc_28514
 		jmp	DisplaySprite
 ; ===========================================================================
 
@@ -55805,7 +55372,7 @@ loc_286CA:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_28700
+		bhi.s	loc_28700
 		jmp	DisplaySprite
 ; ===========================================================================
 
@@ -56148,7 +55715,7 @@ loc_28B46:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_28B5E
+		bhi.w	loc_28B5E
 		bra.w	loc_28BA8
 ; ===========================================================================
 
@@ -56346,7 +55913,7 @@ loc_28D48:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_28D60
+		bhi.w	loc_28D60
 		bra.w	loc_28DC6
 ; ===========================================================================
 
@@ -57059,7 +56626,7 @@ loc_2949A:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_294C4
+		bhi.s	loc_294C4
 
 loc_294BE:				
 		jmp	DisplaySprite
@@ -57182,7 +56749,7 @@ loc_295A8:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_297CA
+		bhi.w	loc_297CA
 		bra.w	loc_297C4
 ; ===========================================================================
 off_295C0:	dc.w loc_295C8-off_295C0; 0 
@@ -58100,7 +57667,7 @@ loc_2A1C6:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_2A1DE
+		bhi.w	loc_2A1DE
 		bra.w	loc_2A266
 ; ===========================================================================
 
@@ -58641,7 +58208,7 @@ loc_2A70A:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_2A722
+		bhi.w	loc_2A722
 		bra.w	loc_2A77E
 ; ===========================================================================
 
@@ -59039,7 +58606,7 @@ loc_2ABA0:
 		andi.w	#-$80,d1
 		sub.w	(v_camera_x_pos_coarse).w,d1
 		cmpi.w	#$280,d1
-		bcc.w	loc_2ABB8
+		bhi.w	loc_2ABB8 ; could be optimized to .s
 		bra.w	loc_2B128
 ; ===========================================================================
 
@@ -60158,7 +59725,7 @@ loc_2B9A2:
 		moveq	#4,d1
 		move.w	$30(a0),d0
 		cmp.w	8(a0),d0
-		bcc.s	loc_2B9B0
+		bhi.s	loc_2B9B0
 		neg.w	d1
 
 loc_2B9B0:				
@@ -60170,7 +59737,7 @@ loc_2B9B6:
 		moveq	#4,d1
 		move.w	$32(a0),d0
 		cmp.w	$C(a0),d0
-		bcc.s	loc_2B9C4
+		bhi.s	loc_2B9C4
 		neg.w	d1
 
 loc_2B9C4:				
@@ -61375,7 +60942,7 @@ loc_2C5CE:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.s	loc_2C5F8
+		bhi.s	loc_2C5F8
 
 loc_2C5F2:				
 		jmp	DisplaySprite
@@ -71121,7 +70688,7 @@ loc_33AB2:
 ; ===========================================================================
 
 loc_33AC6:				
-		bsr.w	loc_347E0
+		bsr.w	JmpTo42_DisplaySprite
 		lea	(dword_33AA2)(pc),a3
 		lea	(v_sonic_last_frame_id).w,a4
 		move.w	#$5CA0,d4
@@ -71148,7 +70715,7 @@ loc_33AFE:
 		move.l	(a3,d6.w),d6
 		add.w	d1,d0
 		add.w	d0,d0
-		lea	(off_345FA).l,a2
+		lea	(SS_Sonic_Tails_DPLC).l,a2
 		adda.w	(a2,d0.w),a2
 		move.w	(a2)+,d5
 		subq.w	#1,d5
@@ -71741,14 +71308,14 @@ Sprite_340A4:
 		bne.s	loc_340BC
 		movea.l	#-$5000,a1
 		bsr.s	loc_340CC
-		bra.w	loc_347E0
+		bra.w	JmpTo42_DisplaySprite
 ; ===========================================================================
 
 loc_340BC:				
 		movea.l	#-$4FC0,a1
 		bsr.s	loc_340CC
 		bsr.w	loc_341BA
-		bra.w	loc_347E0
+		bra.w	JmpTo42_DisplaySprite
 ; ===========================================================================
 
 loc_340CC:				
@@ -72053,63 +71620,76 @@ word_345E6:	dc.w 1
 		dc.w $F003,$8011,$8008,$FFFC; 0
 word_345F0:	dc.w 1			
 		dc.w $F003,$8015,$800A,$FFFC; 0
-off_345FA:	dc.w word_3466C-off_345FA; 0 
-		dc.w word_34674-off_345FA; 1
-		dc.w word_3467C-off_345FA; 2
-		dc.w word_34684-off_345FA; 3
-		dc.w word_3468C-off_345FA; 4
-		dc.w word_34696-off_345FA; 5
-		dc.w word_346A2-off_345FA; 6
-		dc.w word_346AE-off_345FA; 7
-		dc.w word_346BA-off_345FA; 8
-		dc.w word_346C4-off_345FA; 9
-		dc.w word_346D0-off_345FA; 10
-		dc.w word_346DC-off_345FA; 11
-		dc.w word_346EA-off_345FA; 12
-		dc.w word_346F2-off_345FA; 13
-		dc.w word_346FA-off_345FA; 14
-		dc.w word_34702-off_345FA; 15
-		dc.w word_3470A-off_345FA; 16
-		dc.w word_34710-off_345FA; 17
-		dc.w word_34716-off_345FA; 18
-		dc.w word_3471E-off_345FA; 19
-		dc.w word_34728-off_345FA; 20
-		dc.w word_34732-off_345FA; 21
-		dc.w word_3473E-off_345FA; 22
-		dc.w word_34746-off_345FA; 23
-		dc.w word_34750-off_345FA; 24
-		dc.w word_3475C-off_345FA; 25
-		dc.w word_34766-off_345FA; 26
-		dc.w word_34770-off_345FA; 27
-		dc.w word_3477C-off_345FA; 28
-		dc.w word_34788-off_345FA; 29
-		dc.w word_34792-off_345FA; 30
-		dc.w word_34798-off_345FA; 31
-		dc.w word_347A0-off_345FA; 32
-		dc.w word_347A6-off_345FA; 33
-		dc.w word_347AE-off_345FA; 34
-		dc.w word_347B2-off_345FA; 35
-		dc.w word_347B6-off_345FA; 36
-		dc.w word_347B8-off_345FA; 37
-		dc.w word_347BA-off_345FA; 38
-		dc.w word_347BC-off_345FA; 39
-		dc.w word_347BE-off_345FA; 40
-		dc.w word_347C0-off_345FA; 41
-		dc.w word_347C2-off_345FA; 42
-		dc.w word_347C4-off_345FA; 43
-		dc.w word_347C6-off_345FA; 44
-		dc.w word_347C8-off_345FA; 45
-		dc.w word_347CA-off_345FA; 46
-		dc.w word_347CC-off_345FA; 47
-		dc.w word_347CE-off_345FA; 48
-		dc.w word_347D0-off_345FA; 49
-		dc.w word_347D2-off_345FA; 50
-		dc.w word_347D4-off_345FA; 51
-		dc.w word_347D6-off_345FA; 52
-		dc.w word_347D8-off_345FA; 53
-		dc.w word_347DA-off_345FA; 54
-		dc.w word_347DC-off_345FA; 55
-		dc.w word_347DE-off_345FA; 56
+		
+		
+; custom dynamic pattern loading cues for special stage Sonic, Tails and
+; Tails' tails
+; The first $12 frames are for Sonic, and the next $12 frames are for Tails.
+; The last $15 frames are for Tails' tails.
+; The first $24 frames are almost normal dplcs -- the only difference being
+; that the art tile to load is pre-shifted left by 4 bits.
+; The same applies to the last $15 frames, but they have yet another difference:
+; a small space optimization. These frames only have one dplc per frame ever,
+; hence the two-byte dplc count is removed from each frame.		
+SS_Sonic_Tails_DPLC:	
+
+		dc.w word_3466C-SS_Sonic_Tails_DPLC; 0 
+		dc.w word_34674-SS_Sonic_Tails_DPLC; 1
+		dc.w word_3467C-SS_Sonic_Tails_DPLC; 2
+		dc.w word_34684-SS_Sonic_Tails_DPLC; 3
+		dc.w word_3468C-SS_Sonic_Tails_DPLC; 4
+		dc.w word_34696-SS_Sonic_Tails_DPLC; 5
+		dc.w word_346A2-SS_Sonic_Tails_DPLC; 6
+		dc.w word_346AE-SS_Sonic_Tails_DPLC; 7
+		dc.w word_346BA-SS_Sonic_Tails_DPLC; 8
+		dc.w word_346C4-SS_Sonic_Tails_DPLC; 9
+		dc.w word_346D0-SS_Sonic_Tails_DPLC; 10
+		dc.w word_346DC-SS_Sonic_Tails_DPLC; 11
+		dc.w word_346EA-SS_Sonic_Tails_DPLC; 12
+		dc.w word_346F2-SS_Sonic_Tails_DPLC; 13
+		dc.w word_346FA-SS_Sonic_Tails_DPLC; 14
+		dc.w word_34702-SS_Sonic_Tails_DPLC; 15
+		dc.w word_3470A-SS_Sonic_Tails_DPLC; 16
+		dc.w word_34710-SS_Sonic_Tails_DPLC; 17
+		dc.w word_34716-SS_Sonic_Tails_DPLC; 18
+		dc.w word_3471E-SS_Sonic_Tails_DPLC; 19
+		dc.w word_34728-SS_Sonic_Tails_DPLC; 20
+		dc.w word_34732-SS_Sonic_Tails_DPLC; 21
+		dc.w word_3473E-SS_Sonic_Tails_DPLC; 22
+		dc.w word_34746-SS_Sonic_Tails_DPLC; 23
+		dc.w word_34750-SS_Sonic_Tails_DPLC; 24
+		dc.w word_3475C-SS_Sonic_Tails_DPLC; 25
+		dc.w word_34766-SS_Sonic_Tails_DPLC; 26
+		dc.w word_34770-SS_Sonic_Tails_DPLC; 27
+		dc.w word_3477C-SS_Sonic_Tails_DPLC; 28
+		dc.w word_34788-SS_Sonic_Tails_DPLC; 29
+		dc.w word_34792-SS_Sonic_Tails_DPLC; 30
+		dc.w word_34798-SS_Sonic_Tails_DPLC; 31
+		dc.w word_347A0-SS_Sonic_Tails_DPLC; 32
+		dc.w word_347A6-SS_Sonic_Tails_DPLC; 33
+		dc.w word_347AE-SS_Sonic_Tails_DPLC; 34
+		dc.w word_347B2-SS_Sonic_Tails_DPLC; 35
+		dc.w word_347B6-SS_Sonic_Tails_DPLC; 36
+		dc.w word_347B8-SS_Sonic_Tails_DPLC; 37
+		dc.w word_347BA-SS_Sonic_Tails_DPLC; 38
+		dc.w word_347BC-SS_Sonic_Tails_DPLC; 39
+		dc.w word_347BE-SS_Sonic_Tails_DPLC; 40
+		dc.w word_347C0-SS_Sonic_Tails_DPLC; 41
+		dc.w word_347C2-SS_Sonic_Tails_DPLC; 42
+		dc.w word_347C4-SS_Sonic_Tails_DPLC; 43
+		dc.w word_347C6-SS_Sonic_Tails_DPLC; 44
+		dc.w word_347C8-SS_Sonic_Tails_DPLC; 45
+		dc.w word_347CA-SS_Sonic_Tails_DPLC; 46
+		dc.w word_347CC-SS_Sonic_Tails_DPLC; 47
+		dc.w word_347CE-SS_Sonic_Tails_DPLC; 48
+		dc.w word_347D0-SS_Sonic_Tails_DPLC; 49
+		dc.w word_347D2-SS_Sonic_Tails_DPLC; 50
+		dc.w word_347D4-SS_Sonic_Tails_DPLC; 51
+		dc.w word_347D6-SS_Sonic_Tails_DPLC; 52
+		dc.w word_347D8-SS_Sonic_Tails_DPLC; 53
+		dc.w word_347DA-SS_Sonic_Tails_DPLC; 54
+		dc.w word_347DC-SS_Sonic_Tails_DPLC; 55
+		dc.w word_347DE-SS_Sonic_Tails_DPLC; 56
 word_3466C:	dc.w 3			
 		dc.w $F000		; 0
 		dc.w $8100		; 1
@@ -72296,19 +71876,21 @@ word_347D8:	dc.w $5150
 word_347DA:	dc.w $71B0		
 word_347DC:	dc.w $8230		
 word_347DE:	dc.w $82C0		
+
 ; ===========================================================================
 
-loc_347E0:				
-		jmp	DisplaySprite
-; ===========================================================================
-
+	if ~RemoveJmpTos
+JmpTo42_DisplaySprite:				
+		jmp	(DisplaySprite).l
 loc_347E6:				
 		jmp	(sub_6F8E).l
+		
+		align 4
+	endc	
 ; ===========================================================================
+
 ; ----------------------------------------------------------------------------
-; Sprite
-;
-; Unknown
+; Object 10 - Tails in Special Stage
 ; ----------------------------------------------------------------------------
 
 Sprite_347EC:				
@@ -72576,7 +72158,7 @@ loc_34AE4:
 		move.l	dword_34AA0(pc,d6.w),d6
 		addi.w	#$24,d0	; '$'
 		add.w	d0,d0
-		lea	(off_345FA).l,a2
+		lea	(SS_Sonic_Tails_DPLC).l,a2
 		adda.w	(a2,d0.w),a2
 		move.w	#$62C0,d2
 		moveq	#0,d1
@@ -75362,7 +74944,7 @@ loc_36904:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_3691E
+		bhi.w	loc_3691E
 		jmp	DisplaySprite
 ; ===========================================================================
 
@@ -79017,7 +78599,7 @@ loc_38E52:
 		cmpi.w	#$80,d2	
 		bcc.s	loc_38E66
 		cmpi.w	#-$80,d3
-		bcc.s	loc_38E84
+		bhi.s	loc_38E84
 
 loc_38E66:				
 		subq.w	#1,$2A(a0)
@@ -79383,7 +78965,7 @@ loc_3918C:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
-		bcc.w	loc_391A4
+		bhi.w	loc_391A4
 		bra.w	loc_3EA42
 ; ===========================================================================
 
@@ -80999,124 +80581,27 @@ loc_3A49A:
 		moveq	#1,d0
 		rts	
 ; ===========================================================================
-word_3A49E:	dc.w  $407		; 0 
-		dc.w $10FF		; 1
-		dc.w $FB10		; 2
-		dc.w  $E60		; 3
-		dc.w  $E60		; 4
-		dc.w  $E60		; 5
-		dc.w  $E60		; 6
-		dc.w  $E60		; 7
-		dc.w  $E60		; 8
-		dc.w  $E60		; 9
-		dc.w  $EEE		; 10
-		dc.w  $E62		; 11
-		dc.w  $EEE		; 12
-		dc.w  $EEE		; 13
-		dc.w  $EEE		; 14
-		dc.w  $EEE		; 15
-		dc.w  $EEE		; 16
-		dc.w  $EEE		; 17
-		dc.w  $EEE		; 18
-		dc.w  $E84		; 19
-		dc.w  $E62		; 20
-		dc.w  $E60		; 21
-		dc.w  $E60		; 22
-		dc.w  $E60		; 23
-		dc.w  $E60		; 24
-		dc.w  $E60		; 25
-		dc.w  $EEE		; 26
-		dc.w  $EA6		; 27
-		dc.w  $E84		; 28
-		dc.w  $E62		; 29
-		dc.w  $E60		; 30
-		dc.w  $E60		; 31
-		dc.w  $E60		; 32
-		dc.w  $E60		; 33
-		dc.w  $EEE		; 34
-		dc.w  $EC8		; 35
-		dc.w  $EA6		; 36
-		dc.w  $E84		; 37
-		dc.w  $E62		; 38
-		dc.w  $E60		; 39
-		dc.w  $E60		; 40
-		dc.w  $E60		; 41
-		dc.w  $EEE		; 42
-		dc.w  $EEC		; 43
-		dc.w  $EC8		; 44
-		dc.w  $EA6		; 45
-		dc.w  $E84		; 46
-		dc.w  $E62		; 47
-		dc.w  $E60		; 48
-		dc.w  $E60		; 49
-		dc.w  $EEE		; 50
-		dc.w  $EEE		; 51
-		dc.w  $EEC		; 52
-		dc.w  $EC8		; 53
-		dc.w  $EA6		; 54
-		dc.w  $E84		; 55
-		dc.w  $E62		; 56
-		dc.w  $E60		; 57
-		dc.w  $EEE		; 58
-word_3A514:	dc.w  $407		; 0 
-		dc.w $10FF		; 1
-		dc.w $FB00		; 2
-		dc.w  $EEE		; 3
-		dc.w  $E60		; 4
-		dc.w  $E60		; 5
-		dc.w  $E60		; 6
-		dc.w  $E60		; 7
-		dc.w  $E60		; 8
-		dc.w  $E60		; 9
-		dc.w  $E60		; 10
-		dc.w  $EEE		; 11
-		dc.w  $E62		; 12
-		dc.w  $E60		; 13
-		dc.w  $E60		; 14
-		dc.w  $E60		; 15
-		dc.w  $E60		; 16
-		dc.w  $E60		; 17
-		dc.w  $E60		; 18
-		dc.w  $EEE		; 19
-		dc.w  $E84		; 20
-		dc.w  $E62		; 21
-		dc.w  $E60		; 22
-		dc.w  $E60		; 23
-		dc.w  $E60		; 24
-		dc.w  $E60		; 25
-		dc.w  $E60		; 26
-		dc.w  $EEE		; 27
-		dc.w  $EA6		; 28
-		dc.w  $E84		; 29
-		dc.w  $E62		; 30
-		dc.w  $E60		; 31
-		dc.w  $E60		; 32
-		dc.w  $E60		; 33
-		dc.w  $E60		; 34
-		dc.w  $EEE		; 35
-		dc.w  $EC8		; 36
-		dc.w  $EA6		; 37
-		dc.w  $E84		; 38
-		dc.w  $E62		; 39
-		dc.w  $E60		; 40
-		dc.w  $E60		; 41
-		dc.w  $E60		; 42
-		dc.w  $EEE		; 43
-		dc.w  $EEC		; 44
-		dc.w  $EC8		; 45
-		dc.w  $EA6		; 46
-		dc.w  $E84		; 47
-		dc.w  $E62		; 48
-		dc.w  $E60		; 49
-		dc.w  $E60		; 50
-		dc.w  $EEE		; 51
-		dc.w  $EEE		; 52
-		dc.w  $EEC		; 53
-		dc.w  $EC8		; 54
-		dc.w  $EA6		; 55
-		dc.w  $E84		; 56
-		dc.w  $E62		; 57
-		dc.w  $E60		; 58
+word_3A49E:	
+		; some data describing how to use the following palette
+		dc.b   4	; 0	; How many frames before each iteration
+		dc.b   7	; 1	; How many iterations
+		dc.b $10	; 2	; Number of colors * 2 to skip each iteration
+		dc.b $FF	; 3	; Some sort of flag
+		dc.w v_pal_dry+$10	; 4	; First target palette entry
+
+		incbin "art/palettes/Sega Screen 2.bin"
+
+word_3A514:
+		
+		dc.b   4	; 0	; How many frames before each iteration
+		dc.b   7	; 1	; How many iterations
+		dc.b $10	; 2	; Number of colors * 2 to skip each iteration
+		dc.b $FF	; 3	; Some sort of flag
+		dc.w v_pal_dry	; 4	; First target palette entry
+		
+		incbin	"art/palettes/Sega Screen 3.bin"
+		
+		
 off_3A58A:	dc.l Art_3A5A6	
 		dc.w $C088
 		dc.w 1
@@ -81370,7 +80855,7 @@ loc_3A7DE:
 		move.w	d0,d2
 		addi.w	#$11,d2
 		cmp.w	d2,d1
-		bcc.s	loc_3A85E
+		bhi.s	loc_3A85E
 		addq.w	#1,d1
 		move.w	d1,8(a1)
 
@@ -88376,7 +87861,7 @@ loc_3F5B4:
 
 loc_3F5D6:				
 		cmp.w	d4,d0
-		bcc.w	loc_3F5A8
+		bhi.w	loc_3F5A8
 
 loc_3F5DC:				
 		moveq	#0,d1
@@ -88393,7 +87878,7 @@ loc_3F5DC:
 
 loc_3F5F6:				
 		cmp.w	d5,d0
-		bcc.w	loc_3F5A8
+		bhi.w	loc_3F5A8
 		bra.w	loc_3F6F2
 ; ===========================================================================
 byte_3F600:	dc.b   4,  4,$14,$14, $C,$14,$14, $C,  4,$10, $C,$12,$10,$10,  6,  6; 0
@@ -88457,7 +87942,7 @@ loc_3F6AE:
 
 loc_3F6D4:				
 		cmp.w	d4,d0
-		bcc.s	loc_3F6A2
+		bhi.s	loc_3F6A2
 
 loc_3F6D8:				
 		moveq	#0,d1
@@ -88474,7 +87959,7 @@ loc_3F6D8:
 
 loc_3F6EE:				
 		cmp.w	d5,d0
-		bcc.s	loc_3F6A2
+		bhi.s	loc_3F6A2
 
 loc_3F6F2:				
 		move.b	$20(a1),d1
@@ -88786,7 +88271,7 @@ loc_3F9E8:
 
 loc_3F9F4:				
 		cmp.w	d4,d0
-		bcc.s	loc_3F9FC
+		bhi.s	loc_3F9FC
 
 loc_3F9F8:				
 		bra.w	loc_3F862
@@ -89090,7 +88575,7 @@ locret_3FC58:
 
 loc_3FC5A:				
 		cmp.w	d4,d0
-		bcc.s	locret_3FC58
+		bhi.s	locret_3FC58
 
 loc_3FC5E:				
 		swap	d1
@@ -89105,7 +88590,7 @@ loc_3FC5E:
 
 loc_3FC70:				
 		cmp.w	d5,d7
-		bcc.w	locret_3FC58
+		bhi.w	locret_3FC58
 		bra.w	loc_3F862
 ; ===========================================================================
 
@@ -89123,7 +88608,7 @@ locret_3FC86:
 
 loc_3FC88:				
 		cmp.w	d4,d0
-		bcc.s	locret_3FC86
+		bhi.s	locret_3FC86
 
 loc_3FC8C:				
 		swap	d1
@@ -89138,7 +88623,7 @@ loc_3FC8C:
 
 loc_3FC9E:				
 		cmp.w	d5,d7
-		bcc.w	locret_3FC86
+		bhi.w	locret_3FC86
 
 loc_3FCA4:				
 		neg.w	$10(a0)
@@ -89907,7 +89392,7 @@ Animated_ARZ:
 ; ===========================================================================
 
 Animated_Null:				
-		cmpi.b	#$D,(v_zone).w
+		cmpi.b	#id_CPZ,(v_zone).w
 		beq.s	loc_4020A
 
 locret_40208:				
@@ -89981,7 +89466,7 @@ loc_402D4:
 		move.w	#-1,($FFFFA820).w
 
 loc_402EC:				
-		cmpi.b	#$D,(v_zone).w
+		cmpi.b	#id_CPZ,(v_zone).w
 		bne.s	loc_402FA
 		move.b	#-1,($FFFFF7F1).w
 
@@ -90562,7 +90047,7 @@ sub_40D06:
 		add.l	d0,(a3)
 		move.l	#999999,d1
 		cmp.l	(a3),d1
-		bcc.s	loc_40D1E
+		bhi.s	loc_40D1E
 		move.l	d1,(a3)
 
 loc_40D1E:				
@@ -90594,7 +90079,7 @@ sub_40D42:
 		add.l	d0,(a3)
 		move.l	#999999,d1
 		cmp.l	(a3),d1
-		bcc.s	loc_40D66
+		bhi.s	loc_40D66
 		move.l	d1,(a3)
 
 loc_40D66:				
@@ -90841,7 +90326,7 @@ loc_40FE4:
 		tst.w	(a1)+
 		beq.s	locret_4101A
 		subq.b	#1,-(a1)
-		bcc.s	locret_4101A
+		bhi.s	locret_4101A
 		move.b	#$3C,(a1) ; '<'
 
 loc_40FFE:
@@ -90919,7 +90404,7 @@ loc_4106E:
 		move.w	#$E,d2
 
 loc_41090:				
-		lea	(Art_4134C)(pc),a1
+		lea	(Art_HUD)(pc),a1
 
 loc_41094:				
 		move.w	#$F,d1
@@ -90949,7 +90434,7 @@ loc_410B0:
 
 loc_410BC:				
 		bsr.w	sub_412D4
-		move.l	#Art_4134C,d1
+		move.l	#Art_HUD,d1
 		move.w	#$DC40,d2
 		move.w	#$160,d3
 		jmp	(QueueDMATransfer).l
@@ -90986,7 +90471,7 @@ sub_410E4:
 
 loc_41104:				
 		moveq	#7,d6
-		lea	(Art_4178C).l,a1
+		lea	(Art_HUDText).l,a1
 
 loc_4110C:				
 		rol.w	#4,d1
@@ -91033,7 +90518,7 @@ sub_41146:
 
 loc_4114E:				
 		moveq	#0,d4
-		lea	(Art_4134C)(pc),a1
+		lea	(Art_HUD)(pc),a1
 
 loc_41154:				
 		moveq	#0,d2
@@ -91092,7 +90577,7 @@ sub_411A4:
 		lea	(byte_4120C).l,a2
 		moveq	#1,d6
 		moveq	#0,d4
-		lea	(Art_4134C)(pc),a1
+		lea	(Art_HUD)(pc),a1
 
 loc_411C2:				
 		moveq	#0,d2
@@ -91172,7 +90657,7 @@ loc_4121C:
 
 loc_41222:				
 		moveq	#0,d4
-		lea	(Art_4134C)(pc),a1
+		lea	(Art_HUD)(pc),a1
 
 loc_41228:				
 		moveq	#0,d2
@@ -91223,7 +90708,7 @@ loc_41274:
 		lea	(byte_41204)(pc),a2
 		moveq	#3,d6
 		moveq	#0,d4
-		lea	(Art_4134C)(pc),a1
+		lea	(Art_HUD)(pc),a1
 
 loc_41280:				
 		moveq	#0,d2
@@ -91302,7 +90787,7 @@ loc_412EE:
 		lea	(byte_4120C)(pc),a2
 		moveq	#1,d6
 		moveq	#0,d4
-		lea	(Art_4164C)(pc),a1
+		lea	(Art_LivesNums)(pc),a1
 
 loc_412FA:				
 		move.l	d0,4(a6)
@@ -91356,37 +90841,37 @@ loc_41340:
 ; End of function sub_412E2
 
 ; ===========================================================================
-Art_4134C:		incbin	"art/uncompressed/HUD.bin"
-Art_4164C:		incbin	"art/uncompressed/Lives Numbers.bin"
-Art_4178C:		incbin	"art/uncompressed/HUD Text.bin"
 
-; =============== S U B	R O U T	I N E =======================================
+Art_HUD:			incbin	"art/uncompressed/HUD.bin"
+Art_LivesNums:		incbin	"art/uncompressed/Lives Numbers.bin"
+Art_HUDText:		incbin	"art/uncompressed/HUD Text.bin"
 
 
-sub_41A6C:				
-					
+; ===========================================================================
+
+	if ~RemoveJmpTos
+sub_41A6C:							
 		jmp	loc_16DC6
-; End of function sub_41A6C
-
-
-; =============== S U B	R O U T	I N E =======================================
-
-
 sub_41A72:				
 		jmp	loc_1682A
-; End of function sub_41A72
-
+		align 4
+	endc
+	
 ; ===========================================================================
-
-loc_41A78:				
+; ---------------------------------------------------------------------------
+; When debug mode is currently in use
+; ---------------------------------------------------------------------------
+; loc_41A78:
+DebugMode:				
 		moveq	#0,d0
 		move.b	(v_debug_active).w,d0
-		move.w	off_41A86(pc,d0.w),d1
-		jmp	off_41A86(pc,d1.w)
+		move.w	Debug_Index(pc,d0.w),d1
+		jmp	Debug_Index(pc,d1.w)
 ; ===========================================================================
-off_41A86:	dc.w loc_41A8A-off_41A86; 0 
-					
-		dc.w loc_41B0C-off_41A86; 1
+; off_41A86:
+Debug_Index:
+		dc.w loc_41A8A-Debug_Index; 0 		
+		dc.w loc_41B0C-Debug_Index; 2
 ; ===========================================================================
 
 loc_41A8A:				
@@ -91398,13 +90883,13 @@ loc_41A8A:
 		move.w	#0,(v_boundary_left_next).w
 		move.w	#$3FFF,(v_boundary_right_next).w
 
-loc_41AAE:				
-		andi.w	#$7FF,($FFFFB00C).w
+	loc_41AAE:				
+		andi.w	#$7FF,(v_ost_maincharacter+ost_y_pos).w
 		andi.w	#$7FF,(v_camera_y_pos).w
 		andi.w	#$7FF,(v_bg1_y_pos).w
 		clr.b	(f_disable_horiz_scroll).w
-		move.b	#0,$1A(a0)
-		move.b	#0,$1C(a0)
+		move.b	#0,ost_frame(a0)
+		move.b	#0,ost_anim(a0)
 		cmpi.b	#$10,(v_gamemode).w
 		bne.s	loc_41ADC
 		moveq	#6,d0
@@ -91421,7 +90906,7 @@ loc_41AE2:
 		adda.w	(a2,d0.w),a2
 		move.w	(a2)+,d6
 		cmp.b	(v_debug_item_index).w,d6
-		bcc.s	loc_41AFC
+		bhi.s	loc_41AFC
 		move.b	#0,(v_debug_item_index).w
 
 loc_41AFC:				
@@ -91538,7 +91023,7 @@ loc_41BF6:
 		beq.s	loc_41C12
 		addq.b	#1,(v_debug_item_index).w
 		cmp.b	(v_debug_item_index).w,d6
-		bcc.s	loc_41C0E
+		bhi.s	loc_41C0E
 		move.b	#0,(v_debug_item_index).w
 
 loc_41C0E:				
@@ -92511,10 +91996,10 @@ LevelHeaders:
 		lhead id_PLC_WFZ1,		id_PLC_WFZ2,		id_Pal_WFZ,		Kos_SCZ,	BM16_WFZ,	BM128_WFZ ;   6 ; Wing Fortress
 		lhead id_PLC_HTZ1,		id_PLC_HTZ2,		id_Pal_HTZ,		Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   7 ; Hill Top; art is patched later by LoadZoneTiles
 		lhead id_PLC_HPZ1,		id_PLC_HPZ2,		id_Pal_HPZ,		Kos_HPZ,	BM16_HPZ,	BM128_HPZ ;   8 ; Hidden Palace; unused
-		lhead id_PLC_Unused3,	id_PLC_Unused4,		id_Pal_EHZ4,	Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   9 ; Level 9; unused
+		lhead id_PLC_Unused5,	id_PLC_Unused6,		id_Pal_EHZ4,	Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   9 ; Level 9; unused
 		lhead id_PLC_OOZ1,		id_PLC_OOZ2,		id_Pal_OOZ,		Kos_OOZ,	BM16_OOZ,	BM128_OOZ ;  $A ; Oil Ocean
 		lhead id_PLC_MCZ1,		id_PLC_MCZ2,		id_Pal_MCZ,		Kos_MCZ,	BM16_MCZ,	BM128_MCZ ;  $B ; Mystic Cave
-		lhead id_PLC_CNZ1,		id_PLC_CnZ2,		id_Pal_CNZ,		Kos_CNZ,	BM16_CNZ,	BM128_CNZ ;  $C ; Casino Night
+		lhead id_PLC_CNZ1,		id_PLC_CNZ2,		id_Pal_CNZ,		Kos_CNZ,	BM16_CNZ,	BM128_CNZ ;  $C ; Casino Night
 		lhead id_PLC_CPZ1,		id_PLC_CPZ2,		id_Pal_CPZ,		Kos_CPZ,	BM16_CPZ,	BM128_CPZ ;  $D ; Chemical Plant
 		lhead id_PLC_DEZ1,		id_PLC_DEZ2,		id_Pal_DEZ,		Kos_CPZ,	BM16_CPZ,	BM128_CPZ ;  $E ; Death Egg;  art is patched later by LoadZoneTiles
 		lhead id_PLC_ARZ1,		id_PLC_ARZ2,		id_Pal_ARZ,		Kos_ARZ,	BM16_ARZ,	BM128_ARZ ;  $F ; Aquatic Ruin
@@ -92523,104 +92008,105 @@ LevelHeaders:
 		
 
 ;---------------------------------------------------------------------------------------
-;Offset	index of pattern load cue's
+; Macro to make PLC pointers and generate symbolic constants
+; (modification of standard ptr macro)
 ;---------------------------------------------------------------------------------------
 
-;plcp:	macro plcaddress,altid
+plcp:	macro plcaddress,altid,alias1,alias2
 
-;	ifarg \altid
-;		id_altid equ 
-
-
-;palp:	macro paladdress,altid,ramaddress,colors
+	nolist
+	pusho
+	opt	m-
 	
-;	ifarg \altid
-;		id_\altid:	equ (offset(*)-PalPointers)/8 ; create alternate ID constant for duplicate pointers (used in empty/unused level load table entries)
-;	else	
-;		id_\paladdress:	equ (offset(*)-PalPointers)/8
-;	endc	
-;		dc.l \paladdress
-;		dc.w \ramaddress,(\colors>>1)-1
-;	endm
-
+		dc.\index_width \plcaddress-index_start ; make pointer
+	ifarg \altid
+		\prefix_id\\altid: equ ptr_id ; generate an alternate ID constant for duplicate pointers
+	else
+		\prefix_id\\plcaddress:	equ ptr_id ; generate ID constant
+	endc	
+	ifarg \alias1
+		\prefix_id\\alias1:	equ ptr_id ; make aliased ID constant
+	endc
+	ifarg \alias1
+		\prefix_id\\alias2:	equ ptr_id	; make aliased ID constant
+	endc			
+		ptr_id: = ptr_id+ptr_id_inc	; increment ptr_id
+		
+	popo
+	list
+	endm
+	
 PatternLoadCues:	
 		index offset(*)
-		;dc.w PLC_Main-PatternLoadCues	; 0
-		ptr PLC_Main					
-		;dc.w PLC_Main2-PatternLoadCues	; 1
-		ptr PLC_Main2
-		;dc.w PLC_Water-PatternLoadCues	; 2
-		ptr PLC_Water
-		;dc.w PLC_GameOver-PatternLoadCues	; 3
-		ptr PLC_GameOver
-		;dc.w PLC_EHZ1-PatternLoadCues	; 4
-		ptr PLC_EHZ1
-		dc.w PLC_EHZ2-PatternLoadCues	; 5
-		ptr PLC_EHZ2
-		dc.w PLC_6-PatternLoadCues	; 6
-		ptr PLC_6
-		dc.w PLC_7-PatternLoadCues	; 7
-		ptr PLC_7
-		dc.w PLC_8-PatternLoadCues	; 8
-		ptr PLC_8
-		dc.w PLC_9-PatternLoadCues	; 9
-		dc.w PLC_A-PatternLoadCues	; 10
-		dc.w PLC_A-PatternLoadCues	; 11
-		dc.w PLC_A-PatternLoadCues	; 12
-		dc.w PLC_B-PatternLoadCues	; 13
-		dc.w PLC_C-PatternLoadCues	; 14
-		dc.w PLC_C-PatternLoadCues	; 15
-		dc.w PLC_C-PatternLoadCues	; 16
-		dc.w PLC_D-PatternLoadCues	; 17
-		dc.w PLC_E-PatternLoadCues	; 18
-		dc.w PLC_F-PatternLoadCues	; 19
-		dc.w PLC_10-PatternLoadCues	; 20
-		dc.w PLC_10-PatternLoadCues	; 21
-		dc.w PLC_10-PatternLoadCues	; 22
-		dc.w PLC_10-PatternLoadCues	; 23
-		dc.w PLC_10-PatternLoadCues	; 24
-		dc.w PLC_11-PatternLoadCues	; 25
-		dc.w PLC_12-PatternLoadCues	; 26
-		dc.w PLC_13-PatternLoadCues	; 27
-		dc.w PLC_14-PatternLoadCues	; 28
-		dc.w PLC_15-PatternLoadCues	; 29
-		dc.w PLC_16-PatternLoadCues	; 30
-		dc.w PLC_17-PatternLoadCues	; 31
-		dc.w PLC_18-PatternLoadCues	; 32
-		dc.w PLC_19-PatternLoadCues	; 33
-		dc.w PLC_1A-PatternLoadCues	; 34
-		dc.w PLC_1B-PatternLoadCues	; 35
-		dc.w PLC_1C-PatternLoadCues	; 36
-		dc.w PLC_1D-PatternLoadCues	; 37
-		dc.w PLC_1E-PatternLoadCues	; 38
-		dc.w PLC_1F-PatternLoadCues	; 39
-		dc.w PLC_20-PatternLoadCues	; 40
-		dc.w PLC_21-PatternLoadCues	; 41
-		dc.w PLC_22-PatternLoadCues	; 42
-		dc.w PLC_23-PatternLoadCues	; 43
-		dc.w PLC_24-PatternLoadCues	; 44
-		dc.w PLC_25-PatternLoadCues	; 45
-		dc.w PLC_26-PatternLoadCues	; 46
-		dc.w PLC_27-PatternLoadCues	; 47
-		dc.w PLC_28-PatternLoadCues	; 48
-		dc.w PLC_29-PatternLoadCues	; 49
-		dc.w PLC_2A-PatternLoadCues	; 50
-		dc.w PLC_2B-PatternLoadCues	; 51
-		dc.w PLC_2C-PatternLoadCues	; 52
-		dc.w PLC_2D-PatternLoadCues	; 53
-		dc.w PLC_2E-PatternLoadCues	; 54
-		dc.w PLC_2F-PatternLoadCues	; 55
-		dc.w PLC_30-PatternLoadCues	; 56
-		dc.w PLC_31-PatternLoadCues	; 57
-		dc.w PLC_32-PatternLoadCues	; 58
-		dc.w PLC_33-PatternLoadCues	; 59
-		dc.w PLC_34-PatternLoadCues	; 60
-		dc.w PLC_35-PatternLoadCues	; 61
-		dc.w PLC_36-PatternLoadCues	; 62
-		dc.w PLC_37-PatternLoadCues	; 63
-		dc.w PLC_38-PatternLoadCues	; 64
-		dc.w PLC_39-PatternLoadCues	; 65
-		dc.w PLC_3A-PatternLoadCues	; 66
+
+		plcp 	PLC_Main		; 0
+		plcp 	PLC_Main2		; 1
+		plcp	PLC_Water 		; 2
+		plcp 	PLC_GameOver	; 3
+		plcp 	PLC_EHZ1		; 4
+		plcp 	PLC_EHZ2		; 5
+		plcp 	PLC_Miles1Up	; 6
+		plcp 	PLC_MilesLife	; 7
+		plcp 	PLC_Tails1Up	; 8
+		plcp	PLC_TailsLife	; 9
+		plcp	PLC_MTZ1,PLC_Unused1	; 10 - unused, but referenced in LevelHeaders array
+		plcp	PLC_MTZ1,PLC_Unused2	; 11 - unused, but referenced in LevelHeaders array
+		plcp	PLC_MTZ1		; 12
+		plcp	PLC_MTZ2		; 13
+		plcp	PLC_WFZ1,PLC_Unused3	; 14 - unused, never referenced
+		plcp	PLC_WFZ1,PLC_Unused4	; 15 - unused, never referenced
+		plcp	PLC_WFZ1		; 16
+		plcp	PLC_WFZ2		; 17
+		plcp	PLC_HTZ1		; 18
+		plcp	PLC_HTZ2		; 19
+		plcp	PLC_HPZ1		; 20
+		plcp	PLC_HPZ2		; 21
+		plcp	PLC_OOZ1,PLC_Unused5	; 22 - unused, but referenced in LevelHeaders array
+		plcp	PLC_OOZ1,PLC_Unused6	; 23 - unused, but referenced in LevelHeaders array
+		plcp	PLC_OOZ1		; 24
+		plcp	PLC_OOZ2		; 25
+		plcp	PLC_MCZ1		; 26
+		plcp	PLC_MCZ2		; 27
+		plcp	PLC_CNZ1		; 28
+		plcp	PLC_CNZ2		; 29
+		plcp	PLC_CPZ1		; 30
+		plcp	PLC_CPZ2		; 31
+		plcp	PLC_DEZ1		; 32
+		plcp	PLC_DEZ2		; 33
+		plcp	PLC_ARZ1		; 34
+		plcp	PLC_ARZ2		; 35
+		plcp	PLC_SCZ1		; 36
+		plcp	PLC_SCZ2		; 37
+		plcp	PLC_ResultsSonic		; 38
+		plcp	PLC_Signpost	; 39
+		plcp	PLC_CPZBoss		; 40
+		plcp	PLC_EHZBoss		; 41
+		plcp	PLC_HTZBoss		; 42
+		plcp	PLC_ARZBoss		; 43
+		plcp	PLC_MCZBoss		; 44
+		plcp	PLC_CNZBoss		; 45
+		plcp	PLC_MTZBoss		; 46
+		plcp	PLC_OOZBoss		; 47
+		plcp	PLC_FieryExplosion	; 48
+		plcp	PLC_DEZBoss		; 49
+		plcp	PLC_EHZAnimals	; 50
+		plcp	PLC_MCZAnimals	; 51
+		plcp	PLC_WFZAnimals,,PLC_HTZAnimals,PLC_MTZAnimals	; 52, these zones share the same list
+		plcp	PLC_DEZAnimals	; 53
+		plcp	PLC_HPZAnimals	; 54
+		plcp	PLC_OOZAnimals	; 55
+		plcp	PLC_SCZAnimals	; 56
+		plcp	PLC_CNZAnimals	; 57
+		plcp	PLC_CPZAnimals	; 58
+		plcp	PLC_ARZAnimals	; 59
+		plcp	PLC_SpecialStage	; 60
+		plcp	PLC_SpecialStageBombs	; 61
+		plcp	PLC_WFZBoss	; 62
+		plcp	PLC_Tornado	; 63
+		plcp	PLC_Capsule	; 64
+		plcp	PLC_Explosion	; 65
+		plcp	PLC_ResultsTails	; 66
+
 		
 		
 ;plcm:		macro gfx,vram,suffix
@@ -92730,7 +92216,7 @@ PLC_EHZ2:		dc.w 3
 ;
 ;Miles 1up patch
 ;---------------------------------------------------------------------------------------
-PLC_6:		dc.w 0			
+PLC_Miles1Up:		dc.w 0			
 		dc.l Nem_MilesLife
 		dc.w $DE80
 ;---------------------------------------------------------------------------------------
@@ -92738,7 +92224,7 @@ PLC_6:		dc.w 0
 ;
 ;Miles life counter
 ;---------------------------------------------------------------------------------------
-PLC_7:		dc.w 0			
+PLC_MilesLife:		dc.w 0			
 		dc.l Nem_MilesLife
 		dc.w $FA80
 ;---------------------------------------------------------------------------------------
@@ -92746,7 +92232,7 @@ PLC_7:		dc.w 0
 ;
 ;Tails 1up patch
 ;---------------------------------------------------------------------------------------
-PLC_8:		dc.w 0			
+PLC_Tails1Up:		dc.w 0			
 		dc.l Nem_TailsLife
 		dc.w $DE80
 ;---------------------------------------------------------------------------------------
@@ -92754,7 +92240,7 @@ PLC_8:		dc.w 0
 ;
 ;Tails life counter
 ;---------------------------------------------------------------------------------------
-PLC_9:		dc.w 0			
+PLC_TailsLife:		dc.w 0			
 		dc.l Nem_TailsLife
 		dc.w $FA80
 ;---------------------------------------------------------------------------------------
@@ -92762,7 +92248,7 @@ PLC_9:		dc.w 0
 ;
 ;MTZ primary
 ;---------------------------------------------------------------------------------------
-PLC_A:		dc.w 8			
+PLC_MTZ1:		dc.w 8			
 		dc.l Nem_MTZWheel
 		dc.w $6F00
 		dc.l Nem_MTZWheelIndent
@@ -92786,7 +92272,7 @@ PLC_A:		dc.w 8
 ;
 ;MTZ Secondary
 ;---------------------------------------------------------------------------------------
-PLC_B:		dc.w 8			
+PLC_MTZ2:		dc.w 8			
 		dc.l Nem_Button
 		dc.w $8480
 		dc.l Nem_Spikes
@@ -92810,7 +92296,7 @@ PLC_B:		dc.w 8
 ;
 ;WFZ Primary
 ;---------------------------------------------------------------------------------------
-PLC_C:		dc.w 9			
+PLC_WFZ1:		dc.w 9			
 		dc.l Nem_Tornado
 		dc.w $A000
 		dc.l Nem_Clouds
@@ -92836,7 +92322,7 @@ PLC_C:		dc.w 9
 ;
 ;WFZ Secondary
 ;---------------------------------------------------------------------------------------
-PLC_D:		dc.w $D			
+PLC_WFZ2:		dc.w $D			
 		dc.l Nem_WFZVrtclPrpllr
 		dc.w $AC20
 		dc.l Nem_WFZHrzntlPrpllr
@@ -92870,7 +92356,7 @@ PLC_D:		dc.w $D
 ;
 ;HTZ Primary
 ;---------------------------------------------------------------------------------------
-PLC_E:		dc.w 9			
+PLC_HTZ1:		dc.w 9			
 		dc.l Nem_HTZFireball1
 		dc.w $73C0
 		dc.l Nem_HTZRock
@@ -92896,24 +92382,32 @@ PLC_E:		dc.w 9
 ;
 ;HTZ Secondary
 ;---------------------------------------------------------------------------------------
-PLC_F:		dc.w 2			
+PLC_HTZ2:		dc.w 2			
 		dc.l Nem_HTZZipline
 		dc.w $7CC0
 		dc.l Nem_HTZFireball2
 		dc.w $82C0
 		dc.l Nem_HTZOneWayBarrier
 		dc.w $84C0
+		
+		
+		
+		
+		
+PLC_HPZ1:		
+PLC_HPZ2:		
+		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
 ;
 ;OOZ Primary
 ;---------------------------------------------------------------------------------------
-PLC_10:		dc.w 8			
+PLC_OOZ1:		dc.w 8			
 		dc.l Nem_OOZBurn
 		dc.w $5C40
 		dc.l Nem_OOZElevator
 		dc.w $5E80
-		dc.l Nem_SpikyThing
+		dc.l Nem_OOZSpikedBall
 		dc.w $6180
 		dc.l Nem_BurnerLid
 		dc.w $6580
@@ -92923,7 +92417,7 @@ PLC_10:		dc.w 8
 		dc.w $66C0
 		dc.l Nem_Oilfall2
 		dc.w $68C0
-		dc.l Nem_BallThing
+		dc.l Nem_OOZSpringBall
 		dc.w $6A80
 		dc.l Nem_LaunchBall
 		dc.w $6D00
@@ -92932,7 +92426,7 @@ PLC_10:		dc.w 8
 ;
 ;OOZ Secondary
 ;---------------------------------------------------------------------------------------
-PLC_11:		dc.w $B			
+PLC_OOZ2:		dc.w $B			
 		dc.l Nem_OOZPlatform
 		dc.w $73A0
 		dc.l Nem_PushSpring
@@ -92962,7 +92456,7 @@ PLC_11:		dc.w $B
 ;
 ;MCZ Primary
 ;---------------------------------------------------------------------------------------
-PLC_12:		dc.w 5			
+PLC_MCZ1:		dc.w 5			
 		dc.l Nem_MCZCrate
 		dc.w $7A80
 		dc.l Nem_MCZCollapsingPlat
@@ -92980,7 +92474,7 @@ PLC_12:		dc.w 5
 ;
 ;MCZ Secondary
 ;---------------------------------------------------------------------------------------
-PLC_13:		dc.w 5			
+PLC_MCZ2:		dc.w 5			
 		dc.l Nem_HorizSpike
 		dc.w $8580
 		dc.l Nem_Spikes
@@ -92998,7 +92492,7 @@ PLC_13:		dc.w 5
 ;
 ;CNZ Primary
 ;---------------------------------------------------------------------------------------
-PLC_14:		dc.w 9			
+PLC_CNZ1:		dc.w 9			
 		dc.l Nem_Crawl
 		dc.w $6800
 		dc.l Nem_CNZBigMovingBlock
@@ -93024,7 +92518,7 @@ PLC_14:		dc.w 9
 ;
 ;CNZ Secondary
 ;---------------------------------------------------------------------------------------
-PLC_15:		dc.w 5			
+PLC_CNZ2:		dc.w 5			
 		dc.l Nem_CNZDiagPlunger
 		dc.w $8040
 		dc.l Nem_CNZVertPlunger
@@ -93042,7 +92536,7 @@ PLC_15:		dc.w 5
 ;
 ;CPZ Primary
 ;---------------------------------------------------------------------------------------
-PLC_16:		dc.w 8			
+PLC_CPZ1:		dc.w 8			
 		dc.l Nem_CPZPylons
 		dc.w $6E60
 		dc.l Nem_ConstructionStripes
@@ -93066,7 +92560,7 @@ PLC_16:		dc.w 8
 ;
 ;CPZ Secondary
 ;---------------------------------------------------------------------------------------
-PLC_17:		dc.w 6			
+PLC_CPZ2:		dc.w 6			
 		dc.l Nem_Grabber
 		dc.w $A000
 		dc.l Nem_Spiny
@@ -93086,7 +92580,7 @@ PLC_17:		dc.w 6
 ;
 ;DEZ Primary
 ;---------------------------------------------------------------------------------------
-PLC_18:		dc.w 0			
+PLC_DEZ1:		dc.w 0			
 		dc.l Nem_ConstructionStripes
 		dc.w $6500
 ;---------------------------------------------------------------------------------------
@@ -93094,7 +92588,7 @@ PLC_18:		dc.w 0
 ;
 ;DEZ Secondary
 ;---------------------------------------------------------------------------------------
-PLC_19:		dc.w 4			
+PLC_DEZ2:		dc.w 4			
 		dc.l Nem_MechaSonic
 		dc.w $7000
 		dc.l Nem_DEZWindow
@@ -93110,7 +92604,7 @@ PLC_19:		dc.w 4
 ;
 ;ARZ Primary
 ;---------------------------------------------------------------------------------------
-PLC_1A:		dc.w 3			
+PLC_ARZ1:		dc.w 3			
 		dc.l Nem_ARZBarrier
 		dc.w $7F00
 		dc.l Nem_WaterSurface2
@@ -93124,7 +92618,7 @@ PLC_1A:		dc.w 3
 ;
 ;ARZ Secondary
 ;---------------------------------------------------------------------------------------
-PLC_1B:		dc.w 7			
+PLC_ARZ2:		dc.w 7			
 		dc.l Nem_ChopChop
 		dc.w $A760
 		dc.l Nem_Whisp
@@ -93146,7 +92640,7 @@ PLC_1B:		dc.w 7
 ;
 ;SCZ Primary
 ;---------------------------------------------------------------------------------------
-PLC_1C:		dc.w 0			
+PLC_SCZ1:		dc.w 0			
 		dc.l Nem_Tornado
 		dc.w $A000
 ;---------------------------------------------------------------------------------------
@@ -93154,7 +92648,7 @@ PLC_1C:		dc.w 0
 ;
 ;SCZ Secondary
 ;---------------------------------------------------------------------------------------
-PLC_1D:		dc.w 5			
+PLC_SCZ2:		dc.w 5			
 		dc.l Nem_Clouds
 		dc.w $A9E0
 		dc.l Nem_WFZVrtclPrpllr
@@ -93172,7 +92666,7 @@ PLC_1D:		dc.w 5
 ;
 ;Sonic end of level results screen
 ;---------------------------------------------------------------------------------------
-PLC_1E:		dc.w 3			
+PLC_ResultsSonic:		dc.w 3			
 		dc.l Nem_TitleCard
 		dc.w $B000
 		dc.l Nem_ResultsText
@@ -93186,7 +92680,7 @@ PLC_1E:		dc.w 3
 ;
 ;End of	level signpost
 ;---------------------------------------------------------------------------------------
-PLC_1F:		dc.w 0			
+PLC_Signpost:		dc.w 0			
 		dc.l Nem_Signpost
 		dc.w $8680
 ;---------------------------------------------------------------------------------------
@@ -93194,7 +92688,7 @@ PLC_1F:		dc.w 0
 ;
 ;CPZ Boss
 ;---------------------------------------------------------------------------------------
-PLC_20:		dc.w 4			
+PLC_CPZBoss:		dc.w 4			
 		dc.l Nem_Eggpod
 		dc.w $8400
 		dc.l Nem_CPZBoss
@@ -93210,7 +92704,7 @@ PLC_20:		dc.w 4
 ;
 ;EHZ Boss
 ;---------------------------------------------------------------------------------------
-PLC_21:		dc.w 3			
+PLC_EHZBoss:		dc.w 3			
 		dc.l Nem_Eggpod
 		dc.w $7400
 		dc.l Nem_EHZBoss
@@ -93224,7 +92718,7 @@ PLC_21:		dc.w 3
 ;
 ;HTZ Boss
 ;---------------------------------------------------------------------------------------
-PLC_22:		dc.w 3			
+PLC_HTZBoss:		dc.w 3			
 		dc.l Nem_Eggpod
 		dc.w $7820
 		dc.l Nem_HTZBoss
@@ -93238,7 +92732,7 @@ PLC_22:		dc.w 3
 ;
 ;ARZ Boss
 ;---------------------------------------------------------------------------------------
-PLC_23:		dc.w 2			
+PLC_ARZBoss:		dc.w 2			
 		dc.l Nem_Eggpod
 		dc.w $A000
 		dc.l Nem_ARZBoss
@@ -93250,7 +92744,7 @@ PLC_23:		dc.w 2
 ;
 ;MCZ Boss
 ;---------------------------------------------------------------------------------------
-PLC_24:		dc.w 2			
+PLC_MCZBoss:		dc.w 2			
 		dc.l Nem_Eggpod
 		dc.w $A000
 		dc.l Nem_MCZBoss
@@ -93262,7 +92756,7 @@ PLC_24:		dc.w 2
 ;
 ;CNZ Boss
 ;---------------------------------------------------------------------------------------
-PLC_25:		dc.w 2			
+PLC_CNZBoss:		dc.w 2			
 		dc.l Nem_Eggpod
 		dc.w $A000
 		dc.l Nem_CNZBoss
@@ -93274,7 +92768,7 @@ PLC_25:		dc.w 2
 ;
 ;MTZ Boss
 ;---------------------------------------------------------------------------------------
-PLC_26:		dc.w 3			
+PLC_MTZBoss:		dc.w 3			
 		dc.l Nem_Eggpod
 		dc.w $A000
 		dc.l Nem_MTZBoss
@@ -93288,7 +92782,7 @@ PLC_26:		dc.w 3
 ;
 ;OOZ Boss
 ;---------------------------------------------------------------------------------------
-PLC_27:		dc.w 1			
+PLC_OOZBoss:		dc.w 1			
 		dc.l Nem_OOZBoss
 		dc.w $7180
 		dc.l Nem_FieryExplosion
@@ -93298,7 +92792,7 @@ PLC_27:		dc.w 1
 ;
 ;Unknown
 ;---------------------------------------------------------------------------------------
-PLC_28:		dc.w 0			
+PLC_FieryExplosion:		dc.w 0			
 		dc.l Nem_FieryExplosion
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
@@ -93306,7 +92800,7 @@ PLC_28:		dc.w 0
 ;
 ;Death Egg
 ;---------------------------------------------------------------------------------------
-PLC_29:		dc.w 0			
+PLC_DEZBoss:		dc.w 0			
 		dc.l Nem_DEZBoss
 		dc.w $6600
 ;---------------------------------------------------------------------------------------
@@ -93314,7 +92808,7 @@ PLC_29:		dc.w 0
 ;
 ;EHZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_2A:		dc.w 1			
+PLC_EHZAnimals:		dc.w 1			
 		dc.l Nem_Squirrel
 		dc.w $B000
 		dc.l Nem_Flicky
@@ -93324,7 +92818,7 @@ PLC_2A:		dc.w 1
 ;
 ;MCZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_2B:		dc.w 1			
+PLC_MCZAnimals:		dc.w 1			
 		dc.l Nem_Mouse
 		dc.w $B000
 		dc.l Nem_Chicken
@@ -93334,7 +92828,7 @@ PLC_2B:		dc.w 1
 ;
 ;HTZ/MTZ/WFZ animals
 ;---------------------------------------------------------------------------------------
-PLC_2C:		dc.w 1			
+PLC_WFZAnimals:		dc.w 1			
 		dc.l Nem_Beaver
 		dc.w $B000
 		dc.l Nem_Eagle
@@ -93344,7 +92838,7 @@ PLC_2C:		dc.w 1
 ;
 ;DEZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_2D:		dc.w 1			
+PLC_DEZAnimals:		dc.w 1			
 		dc.l Nem_Pig
 		dc.w $B000
 		dc.l Nem_Chicken
@@ -93354,7 +92848,7 @@ PLC_2D:		dc.w 1
 ;
 ;HPZ animals
 ;---------------------------------------------------------------------------------------
-PLC_2E:		dc.w 1			
+PLC_HPZAnimals:		dc.w 1			
 		dc.l Nem_Mouse
 		dc.w $B000
 		dc.l Nem_Seal
@@ -93364,7 +92858,7 @@ PLC_2E:		dc.w 1
 ;
 ;OOZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_2F:		dc.w 1			
+PLC_OOZAnimals:		dc.w 1			
 		dc.l Nem_Penguin
 		dc.w $B000
 		dc.l Nem_Seal
@@ -93374,7 +92868,7 @@ PLC_2F:		dc.w 1
 ;
 ;SCZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_30:		dc.w 1			
+PLC_SCZAnimals:		dc.w 1			
 		dc.l Nem_Turtle
 		dc.w $B000
 		dc.l Nem_Chicken
@@ -93384,7 +92878,7 @@ PLC_30:		dc.w 1
 ;
 ;CNZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_31:		dc.w 1			
+PLC_CNZAnimals:		dc.w 1			
 		dc.l Nem_Bear
 		dc.w $B000
 		dc.l Nem_Flicky
@@ -93394,7 +92888,7 @@ PLC_31:		dc.w 1
 ;
 ;CPZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_32:		dc.w 1			
+PLC_CPZAnimals:		dc.w 1			
 		dc.l Nem_Rabbit
 		dc.w $B000
 		dc.l Nem_Eagle
@@ -93404,7 +92898,7 @@ PLC_32:		dc.w 1
 ;
 ;ARZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_33:		dc.w 1			
+PLC_ARZAnimals:		dc.w 1			
 		dc.l Nem_Penguin
 		dc.w $B000
 		dc.l Nem_Flicky
@@ -93414,7 +92908,7 @@ PLC_33:		dc.w 1
 ;
 ;Special Stage
 ;---------------------------------------------------------------------------------------
-PLC_34:		dc.w $C			
+PLC_SpecialStage:		dc.w $C			
 		dc.l Nem_SpecialEmerald
 		dc.w $2E80
 		dc.l Nem_SpecialMessages
@@ -93446,7 +92940,7 @@ PLC_34:		dc.w $C
 ;
 ;Unknown
 ;---------------------------------------------------------------------------------------
-PLC_35:		dc.w 0			
+PLC_SpecialStageBombs:		dc.w 0			
 		dc.l Nem_SpecialBomb
 		dc.w $7140
 ;---------------------------------------------------------------------------------------
@@ -93454,7 +92948,7 @@ PLC_35:		dc.w 0
 ;
 ;WFZ Boss
 ;---------------------------------------------------------------------------------------
-PLC_36:		dc.w 4			
+PLC_WFZBoss:		dc.w 4			
 		dc.l Nem_WFZBoss
 		dc.w $6F20
 		dc.l Nem_RobotnikRunning
@@ -93470,7 +92964,7 @@ PLC_36:		dc.w 4
 ;
 ;Tornado
 ;---------------------------------------------------------------------------------------
-PLC_37:		dc.w 2			
+PLC_Tornado:		dc.w 2			
 		dc.l Nem_Tornado
 		dc.w $A000
 		dc.l Nem_TornadoThruster
@@ -93482,7 +92976,7 @@ PLC_37:		dc.w 2
 ;
 ;Egg Prison
 ;---------------------------------------------------------------------------------------
-PLC_38:		dc.w 0			
+PLC_Capsule:		dc.w 0			
 		dc.l Nem_Capsule
 		dc.w $D000
 ;---------------------------------------------------------------------------------------
@@ -93490,7 +92984,7 @@ PLC_38:		dc.w 0
 ;
 ;Normal	explosion
 ;---------------------------------------------------------------------------------------
-PLC_39:		dc.w 0			
+PLC_Explosion:		dc.w 0			
 		dc.l Nem_Explosion
 		dc.w $B480
 ;---------------------------------------------------------------------------------------
@@ -93498,7 +92992,7 @@ PLC_39:		dc.w 0
 ;
 ;Tails end of level results screen
 ;---------------------------------------------------------------------------------------
-PLC_3A:		dc.w 3			
+PLC_ResultsTails:		dc.w 3			
 		dc.l Nem_TitleCard
 		dc.w $B000
 		dc.l Nem_ResultsText
@@ -93507,82 +93001,52 @@ PLC_3A:		dc.w 3
 		dc.w $BE80
 		dc.l Nem_Perfect
 		dc.w $A800
+		
+		
 ;---------------------------------------------------------------------------------------
-;Curve and resistance mapping
+; Collision Data
 ;---------------------------------------------------------------------------------------
 ColCurveMap:	incbin	"collision/Curve & Resistance Mapping.bin"
 		even
-; --------------------------------------------------------------------------------------
-; Collision arrays
-; --------------------------------------------------------------------------------------
-CollArray1:		incbin	"collision/Collision Array (Normal).bin"
-CollArray2:		incbin	"collision/Collision Array (Rotated).bin"
+ColArray1:		incbin	"collision/Collision Array (Normal).bin"
+		;even
+ColArray2:		incbin	"collision/Collision Array (Rotated).bin"
 		even
 ;---------------------------------------------------------------------------------------
-;EHZ and HTZ primary 16x16 collision index (Kosinski compression)
+; 16x16 collision indicies (Kosinski compression)
 ;---------------------------------------------------------------------------------------
-ColP_EHZHTZ:	incbin	"collision/EHZ & HTZ Primary Collision.bin"
+ColP_EHZHTZ:	incbin	"collision/EHZ & HTZ Primary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;EHZ and HTZ secondary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColS_EHZHTZ:		incbin	"collision/EHZ & HTZ Secondary Collision.bin"
+ColS_EHZHTZ:	incbin	"collision/EHZ & HTZ Secondary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;MTZ primary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColP_MTZ:		incbin "collision/MTZ Primary Collision.bin"
+ColP_MTZ:		incbin "collision/MTZ Primary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;OOZ primary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColP_OOZ:		incbin	"collision/OOZ Primary Collision.bin"
+ColP_HPZ:		;incbin	"collision/HPZ primary 16x16 collision index.bin"
+		;even
+ColS_HPZ:		;incbin	"collision/HPZ secondary 16x16 collision index.bin"
+		;even		
+ColP_OOZ:		incbin	"collision/OOZ Primary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;MCZ primary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColP_MCZ:		incbin	"collision/MCZ Primary Collision.bin"
+ColP_MCZ:		incbin	"collision/MCZ Primary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;CNZ primary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColP_CNZ:		incbin	"collision/CNZ Primary Collision.bin"
+ColP_CNZ:		incbin	"collision/CNZ Primary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;CNZ secondary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColS_CNZ:		incbin	"collision/CNZ Secondary Collision.bin"
+ColS_CNZ:		incbin	"collision/CNZ Secondary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;CPZ and DEZ primary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColP_CPZDEZ:		incbin	"collision/CPZ & DEZ Primary Collision.bin"
+ColP_CPZDEZ:	incbin	"collision/CPZ & DEZ Primary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;CPZ and DEZ secondary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColS_CPZDEZ:		incbin	"collision/CPZ & DEZ Secondary Collision.bin"
+ColS_CPZDEZ:	incbin	"collision/CPZ & DEZ Secondary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;ARZ primary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColP_ARZ:		incbin	"collision/ARZ Primary Collision.bin"
+ColP_ARZ:		incbin	"collision/ARZ Primary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;ARZ secondary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColS_ARZ:		incbin	"collision/ARZ Secondary Collision.bin"
+ColS_ARZ:		incbin	"collision/ARZ Secondary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;WFZ/SCZ primary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColP_WFZSCZ:		incbin	"collision/WFZ & SCZ Primary Collision.bin"
+ColP_WFZSCZ:	incbin	"collision/WFZ & SCZ Primary.kos"
 		even
-;---------------------------------------------------------------------------------------
-;WFZ/SCZ secondary 16x16 collision index (Kosinski compression)
-;---------------------------------------------------------------------------------------
-ColS_WFZSCZ:		incbin	"collision/WFZ & SCZ Secondary Collision.bin"
+ColS_WFZSCZ:	incbin	"collision/WFZ & SCZ Secondary.kos"
 		even
+		
+		
 ;---------------------------------------------------------------------------------------
 ;Offset	index of level layouts
 ;
@@ -93626,83 +93090,83 @@ Off_Level:	dc.w Level_EHZ1-Off_Level; 0
 		dc.w Level_SCZ-Off_Level; 33
 ;---------------------------------------------------------------------------------------
 ; EHZ act 1 level layout (Kosinski compression)
-Level_EHZ1:		incbin	"level/layout/EHZ 1.bin"
+Level_EHZ1:		incbin	"level/layout/EHZ 1.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ; EHZ act 2 level layout (Kosinski compression)
-Level_EHZ2:		incbin	"level/layout/EHZ 2.bin"
+Level_EHZ2:		incbin	"level/layout/EHZ 2.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ; MTZ act 1 level layout (Kosinski compression)
-Level_MTZ1:		incbin  "level/layout/MTZ 1.bin"
+Level_MTZ1:		incbin  "level/layout/MTZ 1.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;MTZ act 2 level layout	(Kosinski compression)
-Level_MTZ2:		incbin  "level/layout/MTZ 2.bin"
+Level_MTZ2:		incbin  "level/layout/MTZ 2.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;MTZ act 3 level layout	(Kosinski compression)
-Level_MTZ3:		incbin	"level/layout/MTZ 3.bin"
+Level_MTZ3:		incbin	"level/layout/MTZ 3.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;WFZ level layout (Kosinski compression)
-Level_WFZ:		incbin	"level/layout/WFZ.bin"
+Level_WFZ:		incbin	"level/layout/WFZ.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;HTZ act 1 level layout	(Kosinski compression)
-Level_HTZ1:		incbin	"level/layout/HTZ 1.bin"
+Level_HTZ1:		incbin	"level/layout/HTZ 1.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;HTZ act 2 level layout	(Kosinski compression)
-Level_HTZ2:		incbin	"level/layout/HTZ 2.bin"
+Level_HTZ2:		incbin	"level/layout/HTZ 2.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;OOZ act 1 level layout	(Kosinski compression)
-Level_OOZ1:		incbin	"level/layout/OOZ 1.bin"
+Level_OOZ1:		incbin	"level/layout/OOZ 1.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;OOZ act 2 level layout	(Kosinski compression)
-Level_OOZ2:		incbin	"level/layout/OOZ 2.bin"
+Level_OOZ2:		incbin	"level/layout/OOZ 2.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;MCZ act 1 level layout	(Kosinski compression)
-Level_MCZ1:		incbin	"level/layout/MCZ 1.bin"
+Level_MCZ1:		incbin	"level/layout/MCZ 1.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;MCZ act 2 level layout	(Kosinski compression)
-Level_MCZ2:		incbin	"level/layout/MCZ 2.bin"
+Level_MCZ2:		incbin	"level/layout/MCZ 2.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;CNZ act 1 level layout	(Kosinski compression)
-Level_CNZ1:		incbin	"level/layout/CNZ 1.bin"
+Level_CNZ1:		incbin	"level/layout/CNZ 1.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;CNZ act 2 level layout	(Kosinski compression)
-Level_CNZ2:		incbin	"level/layout/CNZ 2.bin"
+Level_CNZ2:		incbin	"level/layout/CNZ 2.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;CPZ act 1 level layout	(Kosinski compression)
-Level_CPZ1:		incbin  "level/layout/CPZ 1.bin"
+Level_CPZ1:		incbin  "level/layout/CPZ 1.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;CPZ act 2 level layout	(Kosinski compression)
-Level_CPZ2:		incbin	"level/layout/CPZ 2.bin"
+Level_CPZ2:		incbin	"level/layout/CPZ 2.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;DEZ level layout (Kosinski compression)
-Level_DEZ:		incbin	"level/layout/DEZ.bin"
+Level_DEZ:		incbin	"level/layout/DEZ.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;ARZ act 1 level layout	(Kosinski compression)
-Level_ARZ1:		incbin	"level/layout/ARZ 1.bin"
+Level_ARZ1:		incbin	"level/layout/ARZ 1.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;ARZ act 2 level layout	(Kosinski compression)
-Level_ARZ2:		incbin	"level/layout/ARZ 2.bin"
+Level_ARZ2:		incbin	"level/layout/ARZ 2.kos"
 		even
 ;---------------------------------------------------------------------------------------
 ;SCZ level layout (Kosinski compression)
-Level_SCZ:		incbin	"level/layout/SCZ.bin"
+Level_SCZ:		incbin	"level/layout/SCZ.kos"
 		even
 
 
@@ -93783,729 +93247,527 @@ Art_Sonic:	incbin	"art/uncompressed/Sonic.bin"
 ; Patterns for Tails  ; ArtUnc_64320:
 		align offset(*),$20
 Art_Tails:	incbin	"art/uncompressed/Tails.bin"
-; --------------------------------------------------------------------------------------
-; Sprite Mappings
-; Sonic			; MapUnc_6FBE0: SprTbl_Sonic: Map_Sonic:
-	include	"mappings/sprite/Sonic.asm"
-; --------------------------------------------------------------------------------------
-; Sprite Dynamic Pattern Reloading
-; Sonic DPLCs   		; MapRUnc_714E0:
-	include	"mappings/spriteDPLC/Sonic.asm"
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (32 blocks)
-; Shield			; ArtNem_71D8E:
-Nem_Shield:	incbin	"art/nemesis/Shield.nem"
-		even
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (34 blocks)
-; Invincibility stars		; ArtNem_71F14:
-Nem_Invinciblity_Stars:	incbin	"art/nemesis/Invincibility Stars.nem"
-		even
-; --------------------------------------------------------------------------------------
-; Uncompressed art
-; Splash in water and dust from skidding	; ArtUnc_71FFC:
+
+		
+		include	"mappings/sprite/Sonic.asm"	; MapUnc_6FBE0: SprTbl_Sonic: Map_Sonic:
+		include	"mappings/spriteDPLC/Sonic.asm"	; Sonic DPLCs  ; MapRUnc_714E0:
+		incfile	Nem_Shield	; ArtNem_71D8E:
+		incfile	Nem_Invinciblity_Stars	; ArtNem_71F14:
+
+; ArtUnc_71FFC:
 Art_SplashAndDust:	incbin	"art/uncompressed/Water Splash & Skid Dust.bin"
 		even
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (14 blocks)
-; Super Sonic stars		; ArtNem_7393C:
-Nem_SuperSonic_Stars:	incbin "art/nemesis/Super Sonic Stars.nem"
+
+		incfile Nem_SuperSonic_Stars	; ArtNem_7393C:	
+		include	"mappings/sprite/Tails.asm"	; MapUnc_739E2: ; Map_Tails
+		include	"mappings/spriteDPLC/Tails.asm"	 Tails DPLCs	; MapRUnc_7446C:
 		even
-; --------------------------------------------------------------------------------------
-; Sprite Mappings
-; Tails			; MapUnc_739E2: ; Map_Tails
-	include	"mappings/sprite/Tails.asm"
-; --------------------------------------------------------------------------------------
-; Sprite Dynamic Pattern Reloading
-; Tails DPLCs	; MapRUnc_7446C:
-	include	"mappings/spriteDPLC/Tails.asm"
+
+
+		incfile	Nem_SEGA	; ArtNem_74876:	
+		incfile Nem_IntroTrails	; ArtNem_74CF6:
+		incfile Eni_SEGA	; MapEng_74D0E:
+		incfile Eni_TitleScreen		; ArtNem_74DC6:
+		incfile Eni_TitleBack	; MapEng_74E86:
+		incfile	Eni_TitleLogo
+		incfile Nem_Title	; ArtNem_74F6C:
+		incfile	Nem_TitleSprites	; ArtNem_7667A:
+		incfile	Nem_MenuJunk	; ArtNem_78CBC:
+		incfile	Nem_Button	; ArtNem_78DAC:
+		incfile	Nem_VrtclSprng	; ArtNem_78E84:
+		incfile	Nem_HrzntlSprng	; ArtNem_78FA0:
+		incfile Nem_DignlSprng	; ArtNem_7906A:
+		incfile	Nem_HUD	; ArtNem_7923E:
+		incfile	Nem_Sonic_Life_Counter	; ArtNem_79346:
+		incfile	Nem_Ring	; ArtNem_7945C:
+		incfile	Nem_Monitors_and_PowerUps	; ArtNem_79550:
+		incfile Nem_Spikes	; ArtNem_7995C:
+		incfile	Nem_Numbers	; ArtNem_799AC:
+		incfile	Nem_Checkpoint	; ArtNem_79A86:
+		incfile Nem_Signpost	; ArtNem_79BDE:
+		
+; ArtUnc_7A18A:
+Art_Signpost:	incbin	"art/uncompressed/Signpost.bin" ; Yep, it's in the ROM twice: once compressed and once uncompressed
 		even
-; -------------------------------------------------------------------------------------
-; Nemesis compressed art (127 blocks)
-; "SEGA" Patterns	; ArtNem_74876:
-Nem_Sega:	incbin	"art/nemesis/SEGA.nem"
-		even
-; -------------------------------------------------------------------------------------
-; Nemesis compressed art (9 blocks)
-; Shaded blocks from intro	; ArtNem_74CF6:
-Nem_IntroTrails:incbin	"art/nemesis/Sega Screen Trails.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Enigma compressed art mappings
-; SEGA logo mappings		; MapEng_74D0E:
-Eni_SEGA:	incbin	"mappings/planes/SEGA Logo.eni"
-		even
-;---------------------------------------------------------------------------------------
-; Enigma compressed art mappings
-; Mappings for title screen background	; ArtNem_74DC6:
-Eni_TitleScreen: incbin	"mappings/planes/Title Screen Background 1.eni"
-		even
-; --------------------------------------------------------------------------------------
-; Enigma compressed art mappings
-; Mappings for title screen background (smaller part, water/horizon)	; MapEng_74E3A:
-Eni_TitleBack:	incbin	"mappings/planes/Title Screen Background 2.eni"
-		even
-;---------------------------------------------------------------------------------------
-; Enigma compressed art mappings
-; "Sonic the Hedgehog 2" title screen logo mappings	; MapEng_74E86:
-Eni_TitleLogo:	incbin	"mappings/planes/Title Screen Logo.eni"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (336 blocks)
-; Main patterns from title screen	; ArtNem_74F6C:
-Nem_Title:	incbin	"art/nemesis/Title Screen Patterns.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (674 blocks)
-; Sonic and Tails from title screen	; ArtNem_7667A:
-Nem_TitleSprites:	incbin	"art/nemesis/Title Screen Sonic & Tails.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (10 blocks)
-; A few menu patterns	; ArtNem_78CBC:
-Nem_MenuJunk:	incbin	"art/nemesis/Menu Blocks.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (16 blocks)
-; Button			ArtNem_78DAC:
-Nem_Button:	incbin	"art/nemesis/Button.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (20 blocks)
-; Vertical Spring		ArtNem_78E84:
-Nem_VrtclSprng:	incbin	"art/nemesis/Vertical Spring.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Horizontal spring		ArtNem_78FA0:
-Nem_HrzntlSprng: incbin	"art/nemesis/Horizontal Spring.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (32 blocks)
-; Diagonal spring		ArtNem_7906A:
-Nem_DignlSprng:	incbin	"art/nemesis/Diagonal Spring.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (24 blocks)
-; Score, Rings, Time patterns	ArtNem_7923E:
-Nem_HUD:	incbin	"art/nemesis/HUD.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Sonic lives counter		ArtNem_79346:
-Nem_Sonic_Life_Counter:	incbin	"art/nemesis/Sonic Lives Counter.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (14 blocks)
-; Ring				ArtNem_7945C:
-Nem_Ring:	incbin	"art/nemesis/Ring.nem"
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (60 blocks)
-; Monitors and contents		ArtNem_79550:  Nem_Monitors_and_PowerUps:
-Nem_Monitors_and_PowerUps:	incbin	"art/nemesis/Monitors & Monitor Contents.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (8 blocks)
-; Spikes			ArtNem_7995C:
-Nem_Spikes:	incbin	"art/nemesis/Spikes.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (18 blocks)
-; Numbers			ArtNem_799AC:
-Nem_Numbers:	incbin	"art/nemesis/Numbers.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (16 blocks)
-; Star pole			ArtNem_79A86:
-Nem_Checkpoint:	incbin	"art/nemesis/Star Pole.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (78 blocks)
-; Signpost		; ArtNem_79BDE:
-Nem_Signpost:	incbin	"art/nemesis/Signpost.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Uncompressed art
-; Signpost		; ArtUnc_7A18A:
-; Yep, it's in the ROM twice: once compressed and once uncompressed
-Art_Signpost:	incbin	"art/uncompressed/Signpost.bin"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (28 blocks)
-; Lever spring		; ArtNem_7AB4A:
-Nem_LeverSpring:	incbin	"art/nemesis/Diving Board Spring.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (8 blocks)
-; Long horizontal spike		; ArtNem_7AC9A:
-Nem_HorizSpike:	incbin	"art/nemesis/Long Horizontal Spike.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (24 blocks)
-; Bubble thing from underwater	; ArtNem_7AD16: ArtNem_BigBubbles:
-Nem_BubbleGenerator:incbin	"art/nemesis/ARZ Bubble Generator.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (10 blocks)
-; Bubbles from character	ArtNem_7AEE2:
-Nem_Bubbles: incbin	"art/nemesis/Bubbles.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Uncompressed art
-; Countdown text for drowning	; ArtUnc_7AF80:
+
+		incfile	Nem_LeverSpring	; ArtNem_7AB4A:
+		incfile	Nem_HorizSpike	; ArtNem_7AC9A:
+		incfile	Nem_BubbleGenerator	; ArtNem_7AD16: ArtNem_BigBubbles:
+		incfile	Nem_Bubbles	; ArtNem_7AEE2:
+		
+; ArtUnc_7AF80:
 Art_Countdown:	incbin	"art/uncompressed/Drowning Countdown Numbers.bin"
 		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (34 blocks)
-; Game/Time over text		;ArtNem_7B400:
-Nem_Game_Over:	incbin	"art/nemesis/Game Over & Time Over Text.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (68 blocks)
-; Explosion			; ArtNem_7B592:
-Nem_Explosion:		incbin	"art/nemesis/Explosion.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Miles life counter	; ArtNem_7B946:
-Nem_MilesLife:		incbin	"art/nemesis/Miles Life Counter.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (49 blocks)
-; Egg prison		; ArtNem_7BA32:
-Nem_Capsule:		incbin	"art/nemesis/Egg Prison.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (36 blocks)
-; Tails on the continue screen (nagging Sonic)	; ArtNem_7BDBE:
-Nem_ContinueTails:		incbin	"art/nemesis/Continue Screen Tails.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Sonic extra continue icon	; ArtNem_7C0AA:
-Nem_MiniSonic:		incbin	"art/nemesis/Sonic Continue Icon.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Tails life counter		; ArtNem_7C20C:
-Nem_TailsLife:		incbin	"art/nemesis/Tails Life Counter.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (12 blocks)
-; Tails extra continue icon	; ArtNem_7C2F2:
-Nem_MiniTails:		incbin	"art/nemesis/Tails Continue Icon.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (88 blocks)
-; Standard font		; ArtNem_7C43A:
-Nem_FontStuff:		incbin	"art/nemesis/Standard Font.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (38 blocks)
-; 1P/2P wins text from 2P mode		; ArtNem_7C9AE:
-Nem_1P2PWins:		incbin	"art/nemesis/1P & 2P Wins Text.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Enigma compressed art mappings
-; Sonic/Miles animated background mappings	; MapEng_7CB80:
-;---------------------------------------------------------------------------------------
+
+		incfile	Nem_Game_Over	; ArtNem_7B400:
+		incfile	Nem_Explosion	; ArtNem_7B592:
+		incfile	Nem_MilesLife	; ArtNem_7B946:
+		incfile	Nem_Capsule	; ArtNem_7BA32:
+		incfile	Nem_ContinueTails	; ArtNem_7BDBE:
+		incfile	Nem_MiniSonic	; ArtNem_7C0AA:
+		incfile	Nem_TailsLife	; ArtNem_7C20C:
+		incfile	Nem_MiniTails	; ArtNem_7C2F2:
+		incfile	Nem_StandardFont	; ArtNem_7C43A:
+		incfile	Nem_1P2PWins	; ArtNem_7C9AE:
+		
+
+; MapEng_7CB80:
 Eni_MenuBack:		incbin	"mappings/planes/Sonic & Miles Animated Background.eni"
 		even
-;---------------------------------------------------------------------------------------
-; Uncompressed art
-; Sonic/Miles animated background patterns	; ArtUnc_7CD2C:
+
+; ArtUnc_7CD2C:
 Art_MenuBack:		incbin	"art/uncompressed/Sonic & Miles Animated Background.bin"
 		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (94 blocks)
-; Title card patterns		; ArtNem_7D22C:
-Nem_TitleCard:		incbin	"art/nemesis/Title Card.nem"
-		even
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (92 blocks)
-; Alphabet for font using large broken letters	; ArtNem_7D58A:
-ArtNem_TitleCard2:		incbin	"art/nemesis/Title Card Font.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (21 blocks)
-; Menu box with drop shadow	; ArtNem_7D990:
-Nem_MenuBox:		incbin	"art/nemesis/Menu Box & Shadow.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (170 blocks)
-; Pictures in level preview box in level select		; ArtNem_7DA10:
-Nem_LevelSelectPics:		incbin	"art/nemesis/Level Select Thumbnails.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (68 blocks)
-; Text for Sonic or Tails Got Through Act and Bonus/Perfect	; ArtNem_7E86A:
-Nem_ResultsText:		incbin	"art/nemesis/End of Level Results Text.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (72 blocks)
-; Text for end of special stage, along with patterns for 3 emeralds.	; ArtNem_7EB58:
-Nem_SpecialStageResults:		incbin	"art/nemesis/Special Stage Results Screen & Emeralds.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (14 blocks)
-; "Perfect" text	; ArtNem_7EEBE:
-Nem_Perfect:		incbin	"art/nemesis/Perfect Text.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (16 blocks)
-; Flicky		; ArtNem_7EF60: ; ArtNem_Bird:
-Nem_Flicky:		incbin	"art/nemesis/Flicky.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (20 blocks)
-; Squirrel		; ArtNem_7F0A2:
-Nem_Squirrel:		incbin	"art/nemesis/Squirrel.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (16 blocks)
-; Mouse			; ArtNem_7F206:
-Nem_Mouse:		incbin	"art/nemesis/Mouse.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (16 blocks)
-; Chicken		; ArtNem_7F340:
-Nem_Chicken:		incbin	"art/nemesis/Chicken.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (20 blocks)
-; Beaver		; ArtNem_7F4A2:
-Nem_Beaver:		incbin	"art/nemesis/Beaver.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (16 blocks)
-; Eagle		; ArtNem_7F5E2:
-Nem_Eagle:		incbin	"art/nemesis/Eagle.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (10 blocks)
-; Pig			; ArtNem_7F710:
-Nem_Pig:		incbin	"art/nemesis/Pig.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (14 blocks)
-; Seal			; ArtNem_7F846:
-Nem_Seal:		incbin	"art/nemesis/Seal.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (18 blocks)
-; Penguin		; ArtNem_7F962:
-Nem_Penguin:		incbin	"art/nemesis/Penguin.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (20 blocks)
-; Turtle		; ArtNem_7FADE:
-Nem_Turtle:		incbin	"art/nemesis/Turtle.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (20 blocks)
-; Bear			; ArtNem_7FC90:
-Nem_Bear:		incbin	"art/nemesis/Bear.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (18 blocks)
-; Rabbit		; ArtNem_7FDD2:
-Nem_Rabbit:		incbin	"art/nemesis/Rabbit.nem"
-		even
-;---------------------------------------------------------------------------------------
-; Nemesis compressed art (4 blocks)
-; Rivet thing that you bust to get inside ship at the end of WFZ	; ArtNem_7FF2A:
-Nem_WFZSwitch:		incbin	"art/nemesis/WFZ Boss Chamber Switch.nem"
-		even
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (15 blocks)
-; Breakaway panels in WFZ	; ArtNem_7FF98:
-Nem_BreakPanels:		incbin	"art/nemesis/WFZ Breakaway Panels.nem"
-		even
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (32 blocks)
-; Spiked ball from OOZ		; ArtNem_8007C:
-Nem_SpikyThing:		incbin	"art/nemesis/OOZ Spiked Ball.nem"
-		even
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (6 blocks)
-; Green platform over the burners in OOZ	; ArtNem_80274:
-Nem_BurnerLid:		incbin	"art/nemesis/OOZ Green Popping Platform.nem"
-		even
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (4 blocks)
-; Striped blocks from OOZ	; ArtNem_8030A:
-Nem_StripedBlocksVert:		incbin	"art/nemesis/CPZ Striped Blocks 1.nem"
-		even
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (16 blocks)
-; Oil splashing into oil in OOZ	; ArtNem_80376:
-Nem_Oilfall:		incbin	"art/nemesis/OOZ Oil Falling Into Oil.nem"
-		even
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (13 blocks)
-; Cascading oil from OOZ	; ArtNem_804F2:
-Nem_Oilfall2:		incbin	"art/nemesis/OOZ Oil Cascades.nem"
-		even
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (20 blocks)
-; Ball thing (unused) from OOZ	; ArtNem_805C0:
-Nem_BallThing:		incbin	"art/nemesis/OOZ Ball on Spring (Beta Leftover).nem"
-		even
-; --------------------------------------------------------------------------------------
-; Nemesis compressed art (53 blocks)
-; Spinball from OOZ	; ArtNem_806E0:
-Nem_LaunchBall:		incbin	"art/nemesis/OOZ Transporter Ball.nem"
-		even
+
+		incfile	Nem_TitleCard	; ArtNem_7D22C:
+		incfile	Nem_TitleCardFont	; ArtNem_7D58A:
+		incfile	Nem_MenuBox	; ArtNem_7D990:
+		incfile	Nem_LevelSelectPics	; ArtNem_7DA10:
+		incfile	Nem_ResultsText	; ArtNem_7E86A:
+		incfile	Nem_SpecialStageResults	; ArtNem_7EB58:
+		incfile	Nem_Perfect	; ArtNem_7EEBE:
+		incfile	Nem_Flicky	; ArtNem_7EF60: ; ArtNem_Bird:
+		incfile	Nem_Squirrel	; ArtNem_7F0A2:
+		incfile	Nem_Mouse	; ArtNem_7F206
+		incfile	Nem_Chicken	; ArtNem_7F340:
+		incfile	Nem_Beaver	; ArtNem_7F4A2:
+		incfile	Nem_Eagle	; ArtNem_7F5E2:
+		incfile	Nem_Pig	; ArtNem_7F710:
+		incfile	Nem_Seal	; ArtNem_7F846:
+		incfile	Nem_Penguin	; ArtNem_7F962:
+		incfile	Nem_Turtle	; ArtNem_7FADE:
+		incfile	Nem_Bear	; ArtNem_7FC90:
+		incfile	Nem_Rabbit	; ArtNem_7FDD2:
+		incfile	Nem_WFZSwitch	; ArtNem_7FF2A:
+		incfile	Nem_BreakPanels	; ArtNem_7FF98:
+		incfile	Nem_OOZSpikedBall	; ArtNem_8007C:
+		incfile	Nem_BurnerLid	; ArtNem_80274:
+		incfile	Nem_StripedBlocksVert	; ArtNem_8030A:
+		incfile	Nem_Oilfall		; ArtNem_80376:
+		incfile	Nem_Oilfall2	; ArtNem_804F2:
+		incfile	Nem_OOZSpringBall	; ArtNem_805C0:
+		incfile	Nem_LaunchBall	; ArtNem_806E0:
+		
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (40 blocks)
-; Collapsing platform from OOZ	; ArtNem_809D0:
+; Collapsing platform from OOZ	; ArtNem_806E0:
 Nem_OOZPlatform:		incbin	"art/nemesis/OOZ Collapsing Platform.nem"
 		even
+		;incfile	
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (30 blocks)
 ; Diagonal and vertical weird spring from OOZ	; ArtNem_80C64:
 Nem_PushSpring:		incbin	"art/nemesis/OOZ Pressure Spring.nem"
 		even
+		;incfile	
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
 ; Swinging platform from OOZ	; ArtNem_80E26:
 Nem_OOZSwingPlat:		incbin	"art/nemesis/OOZ Swinging Platform.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; 4 stripy blocks from OOZ	; ArtNem_81048:
 Nem_StripedBlocksHoriz:		incbin	"art/nemesis/OOZ Striped Blocks.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Raising platform from OOZ	; ArtNem_810B8:
 Nem_OOZElevator:		incbin	"art/nemesis/OOZ Elevator.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (30 blocks)
 ; Fan in OOZ		; ArtNem_81254:
 Nem_OOZFan:		incbin	"art/nemesis/OOZ Fan.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (18 blocks)
 ; Green flame thing that shoots platform up in OOZ	; ArtNem_81514:
 Nem_OOZBurn:		incbin	"art/nemesis/OOZ Burner Flame.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Patterns for appearing and disappearing string of platforms in CNZ	; ArtNem_81600: ; ArtNem_CNZSnake: 
 Nem_CNZCaterpillarPlats:		incbin	"art/nemesis/CNZ Caterpillar Platforms.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Spikey ball from pokie in CNZ		; ArtNem_81668:
 Nem_CNZBonusSpike:		incbin	"art/nemesis/CNZ Slot Spikeballs.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Moving cube from either CNZ or CPZ	; ArtNem_816C8:
 Nem_CNZBigMovingBlock:		incbin	"art/nemesis/CNZ Big Moving Block.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Elevator in CNZ		; ArtNem_817B4:
 Nem_CNZElevator:		incbin	"art/nemesis/CNZ Elevator.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (12 blocks)
 ; Bars from pokies in CNZ	; ArtNem_81826:
 Nem_CNZCage:		incbin	"art/nemesis/CNZ Cages.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (6 blocks)
 ; Hexagonal bumper in CNZ	; ArtNem_81894:
 Nem_CNZHexBumper:		incbin	"art/nemesis/CNZ Hexagonal Bumper.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Normal round bumper from CNZ	; ArtNem_8191E:
 Nem_CNZRoundBumper:		incbin	"art/nemesis/CNZ Round Bumper.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Diagonal spring from CNZ that you charge up	; ArtNem_81AB0:
 Nem_CNZDiagPlunger:		incbin	"art/nemesis/CNZ Diagonal Pinball Launcher.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (18 blocks)
 ; Vertical spring from CNZ that you charge up		; ArtNem_81C96:
 Nem_CNZVertPlunger:		incbin	"art/nemesis/CNZ Vertical Pinball Launcher.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
 ; Weird blocks from CNZ that you hit 3 times to get rid of	; ArtNem_81DCC: ; ArtNem_CNZMiniBumper
 Nem_CNZSaucerBumper:		incbin	"art/nemesis/CNZ Saucer Bumper.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (52 blocks)
 ; Flippers from CNZ	; ArtNem_81EF2:
 Nem_CNZFlipper:		incbin	"art/nemesis/CNZ Flipper.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Large moving platform from CPZ	; ArtNem_82216:
 Nem_CPZElevator:		incbin	"art/nemesis/CPZ Elevator.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Top of water in HPZ and CPZ	; ArtNem_82364:
 Nem_WaterSurface1:		incbin	"art/nemesis/CPZ & HPZ Water Surface.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Booster things in CPZ		; ArtNem_824D4:
 Nem_CPZBooster:		incbin	"art/nemesis/CPZ Speed Booster.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; CPZ droplet chain enemy	; ArtNem_8253C:
 Nem_CPZDroplet:		incbin	"art/nemesis/CPZ Blue Balls.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (33 blocks)
 ; CPZ metal things (girder, cylinders)	; ArtNem_825AE:
 Nem_CPZPylons:		incbin	"art/nemesis/CPZ Pylons.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; CPZ metal block		; ArtNem_827B8:
 Nem_CPZMetalBlock:		incbin	"art/nemesis/CPZ Breakable Metal Block.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Yellow and black stripy tiles from CPZ & DEZ	; ArtNem_827F8:
 Nem_ConstructionStripes:		incbin	"art/nemesis/CPZ & DEZ Yellow & Black Striped Blocks.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (48 blocks)
 ; Yellow flipping platforms and stuff CPZ	; ArtNem_82864: ; ArtNem_CPZAnimatedBits
 Nem_CPZDumpingPipePlat:		incbin	"art/nemesis/CPZ Dumping Pipe Platform.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Moving block from CPZ		; ArtNem_82A46:
 Nem_CPZStairBlock:		incbin	"art/nemesis/CPZ Stair Block.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Spring that covers tube in CPZ	; ArtNem_82C06:
 Nem_CPZTubeSpring:		incbin	"art/nemesis/CPZ Spintube Exit Cover & Spring.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Top of water in ARZ		; ArtNem_82E02:
 Nem_WaterSurface2:		incbin	"art/nemesis/ARZ Water Surface.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (7 blocks)
 ; Leaves from ARZ	; ArtNem_82EE8:
 Nem_Leaves:		incbin	"art/nemesis/ARZ Leaves.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (17 blocks)
 ; Arrow shooter and arrow from ARZ	; ArtNem_82F74:
 Nem_ArrowAndShooter:		incbin	"art/nemesis/ARZ Arrow Shooter & Arrow.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; One way barrier from ARZ (unused?)	; ArtNem_830D2: ; ArtNem_ARZBarrierThing
 Nem_ARZBarrier:		incbin	"art/nemesis/ARZ One-Way Barrier.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
 ; Buzz bomber			; ArtNem_8316A:
 Nem_Buzzer:		incbin	"art/nemesis/Buzzer.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (58 blocks)
 ; Octus (OOZ octopus badnik)	; ArtNem_8336A:
 Nem_Octus:		incbin	"art/nemesis/Octus.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (56 blocks)
 ; Aquis (OOZ seahorse badnik)	; ArtNem_8368A:
 Nem_Aquis:		incbin	"art/nemesis/Aquis.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (22 blocks)
 ; Fish badnik from EHZ		; ArtNem_839EA:	ArtNem_Pirahna:
 Nem_Masher:		incbin	"art/nemesis/Masher.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (96 blocks)
 ; Robotnik's main ship		; ArtNem_83BF6:
 Nem_Eggpod:		incbin	"art/nemesis/Eggpod.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (111 blocks)
 ; CPZ Boss			; ArtNem_84332:
 Nem_CPZBoss:		incbin	"art/nemesis/CPZ Boss.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (100 blocks)
 ; Large explosion		; ArtNem_84890:
 Nem_FieryExplosion:		incbin	"art/nemesis/Large Explosion.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Horizontal jet		; ArtNem_84F18:
 Nem_EggpodJets:		incbin	"art/nemesis/Eggpod Jets.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Smoke trail from CPZ and HTZ bosses	; ArtNem_84F96:
 Nem_BossSmoke:		incbin	"art/nemesis/CPZ & HTZ Boss Smoke Trail.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (128 blocks)
 ; EHZ Boss	; ArtNem_8507C:
 Nem_EHZBoss:		incbin	"art/nemesis/EHZ Boss.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Helicopter blades for EHZ boss	; ArtNem_85868:  ; ArtNem_EggChoppers:
 Nem_EggChopperBlades:		incbin	"art/nemesis/EHZ Boss Helicopter Blades.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (107 blocks)
 ; HTZ boss			; ArtNem_8595C:
 Nem_HTZBoss:		incbin	"art/nemesis/HTZ Boss.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (166 blocks)
 ; ARZ boss			; ArtNem_86128:
 Nem_ARZBoss:		incbin	"art/nemesis/ARZ Boss.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (204 blocks)
 ; MCZ boss			; ArtNem_86B6E:
 Nem_MCZBoss:		incbin	"art/nemesis/MCZ Boss.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (133 blocks)
 ; CNZ boss			; ArtNem_87AAC:
 Nem_CNZBoss:		incbin	"art/nemesis/CNZ Boss.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (181 blocks)
 ; OOZ boss			; ArtNem_882D6:
 Nem_OOZBoss:		incbin	"art/nemesis/OOZ Boss.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (124 blocks)
 ; MTZ boss			; ArtNem_88DA6:
 Nem_MTZBoss:		incbin	"art/nemesis/MTZ Boss.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Uncompressed art (8 blocks)
 ; Falling rocks and stalactites from MCZ	; Art_FallingRocks:
 Art_FallingRocks:		incbin	"art/uncompressed/MCZ Boss Falling Rocks & Stalactites.bin"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (9 blocks)
 ; Blowfly from ARZ	; ArtNem_895E4:
 Nem_Whisp:		incbin	"art/nemesis/Whisp.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (50 blocks)
 ; Grounder from ARZ	; ArtNem_8970E:
 Nem_Grounder:		incbin	"art/nemesis/Grounder.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Fish from ARZ		; ArtNem_89B9A:
 Nem_ChopChop:		incbin	"art/nemesis/Chop Chop.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (19 blocks)
 ; Lava snake from HTZ		89DEC: ArtNem_HtzRexxon:
 Nem_Rexon:		incbin	"art/nemesis/Rexon.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Enemy with spike cone on top from HTZ		89FAA:	ArtNem_HtzDriller:
 Nem_Spiker:		incbin	"art/nemesis/Spiker.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (28 blocks)
 ; Bomber badnik from SCZ	; ArtNem_8A142:
 Nem_Nebula:		incbin	"art/nemesis/Nebula.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (57 blocks)
 ; Turtle badnik from SCZ	; ArtNem_8A362:
 Nem_Turtloid:		incbin	"art/nemesis/Turtloid.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (38 blocks)
 ; Coconuts (EHZ monkey badnik)
 Nem_Coconuts:		incbin	"art/nemesis/Coconuts.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (10 blocks)
 ; Snake badnik from MCZ		; ArtNem_8AB36:
 Nem_Crawlton:		incbin	"art/nemesis/Crawlton.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Firefly from MCZ		; ArtNem_8AC5E:
 Nem_Flasher:		incbin	"art/nemesis/Flasher.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Praying mantis badnik from MTZ	8AD80: ; ArtNem_MtzMantis
 Nem_Slicer:		incbin	"art/nemesis/Slicer.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (36 blocks)
 ; Crab badnik from MTZ			8B058: ; 
 Nem_Shellcracker:		incbin	"art/nemesis/Shellcracker.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (15 blocks)
 ; Exploding star badnik from MTZ	8B300: ArtNem_MtzSupernova
 Nem_Asteron:		incbin	"art/nemesis/Asteron.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (32 blocks)
 ; Weird crawling badnik from CPZ	; ArtNem_8B430:
 Nem_Spiny:		incbin	"art/nemesis/Spiny.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (45 blocks)
 ; Spider badnik from CPZ 	ArtNem_8B6B4:
 Nem_Grabber:	incbin	"art/nemesis/Grabber.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (26 blocks)
 ; Chicken badnik from WFZ		8B9DC:
 Nem_Clucker:		incbin	"art/nemesis/Clucker.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (25 blocks)
 ; Jet like badnik from SCZ		8BC16:
 Nem_Balkiry:		incbin	"art/nemesis/Balkiry.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (217 blocks)
 ; Silver Sonic			; ArtNem_8BE12:
 Nem_MechaSonic:		incbin	"art/nemesis/Mecha Sonic.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (79 blocks)
 ; The Tornado			8CC44:
 Nem_Tornado:		incbin	"art/nemesis/The Tornado.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Wall turret from WFZ		8D1A0:
 Nem_WFZWallTurret:		incbin	"art/nemesis/WFZ Wall Turret.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Hook on chain in WFZ		8D388:
@@ -94614,11 +93876,13 @@ Nem_DEZBoss:		incbin	"art/nemesis/Eggrobo.nem"
 ; Bouncer badnik from CNZ	; ArtNem_Crawl:
 Nem_Crawl:		incbin	"art/nemesis/Crawl.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Nemesis compressed art (26 blocks)
 ; Rocket thruster for Tornado	; ArtNem_TornadoThruster:
 Nem_TornadoThruster:		incbin	"art/nemesis/The Tornado's Rocket Booster.nem"
 		even
+		;incfile
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed sprite mappings
 ; Frame 1 of end of game sequence	; MapEng_906E0:
@@ -95316,23 +94580,24 @@ ObjPos_HPZ_1:		incbin	"level/objects/HPZ 1.bin"
 		endobj
 ObjPos_HPZ_2:		;incbin	"level/objects/HPZ 2.bin"
 		endobj
+		endobj
 ObjPos_OOZ_1:		incbin	"level/objects/OOZ 1.bin"
 		endobj
 ObjPos_OOZ_2:		incbin	"level/objects/OOZ 2.bin"
 		endobj
 ObjPos_MCZ_1:		incbin	"level/objects/MCZ 1.bin"
 		endobj
-ObjPos_MCZ_2:		incbin	"level/objects/MCZ 1.bin"
+ObjPos_MCZ_2:		incbin	"level/objects/MCZ 2.bin"
 		endobj
 
 	;if Revision=0
 	; the signposts are too low, causing them to poke out the bottom of the ground
 ;ObjPos_CNZ_1:		incbin	"level/objects/CNZ 1 (REV00).bin"
-		endobj
+;		endobj
 ;ObjPos_CNZ_2:		incbin	"level/objects/CNZ 2 (REV00).bin"
-		endobj
 	;else
 ObjPos_CNZ_1:		incbin	"level/objects/CNZ 1.bin"
+		endobj
 ObjPos_CNZ_2:		incbin	"level/objects/CNZ 2.bin"
 	;endc
 		endobj	
@@ -95555,42 +94820,53 @@ SndDAC_End:
 MusicPoint1:	dc.w (((Mus_Continue-(MusicPoint1-$8000))<<8)&$FF00)+((Mus_Continue-(MusicPoint1-$8000))>>8)
 					
 Mus_Continue:		incbin	"sound/music/compressed/9C - Continue.sax"
+
+		align $20
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; HTZ boss lava ball / Sol fireball
 Nem_HTZFireball1:		incbin	"art/nemesis/HTZ Fireball 1.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Waterfall tiles
 Nem_Waterfall:		incbin	"art/nemesis/Waterfall.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (16 blocks)
 ; Another fireball
 Nem_HTZFireball2:		incbin	"art/nemesis/HTZ Fireball 2.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (8 blocks)
 ; Bridge in EHZ
 Nem_EHZBridge:		incbin	"art/nemesis//EHZ Bridge.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (48 blocks)
 ; Diagonally moving lift in HTZ
 Nem_HTZZipline:		incbin	"art/nemesis/HTZ Zipline Platform.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; One way barrier from HTZ ;ArtNem_HtzValveBarrier
 Nem_HTZOneWayBarrier:		incbin	"art/nemesis/HTZ One-Way Barrier.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; See-saw in HTZ
 Nem_HTZSeeSaw:		incbin	"art/nemesis/HTZ See-saw.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (24 blocks)
 ; Unused Fireball; Nem_F0B06:	
 		incbin	"art/nemesis/Unused Fireball.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (20 blocks)
 ; Rock from HTZ
 Nem_HTZRock:		incbin	"art/nemesis/HTZ Rock.nem"
+		even
 ; --------------------------------------------------------------------
 ; Nemesis compressed art (4 blocks)
 ; Orbit badnik from HTZ		; ArtNem_HtzSol:
@@ -95904,5 +95180,8 @@ Sound6E:	include "sound/sfx/EE - Mecha Sonic Buzz.asm"
 Sound6F:	include "sound/sfx/EF - Large Laser.asm"
 Sound70:	include "sound/sfx/F0 - Oil Slide.asm"
 
+;		dc.w $0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000,$0000
+		align $FFFFF
 ROM_End:
+
 		end

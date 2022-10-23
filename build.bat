@@ -6,6 +6,6 @@ axm68k /m /k /p sonic2.asm, s2built.bin >errors.txt, , sonic2.lst
 type errors.txt
 
 rem check for success and fix header
-rem IF NOT EXIST s1built.bin PAUSE & EXIT 2
-rem fixheadr.exe s1built.bin
+IF NOT EXIST s2built.bin PAUSE & EXIT 2
+fixheadr.exe s2built.bin
 pause
