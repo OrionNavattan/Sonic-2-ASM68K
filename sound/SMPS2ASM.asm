@@ -413,10 +413,10 @@ little_endian macros
 		dc.w	((\1<<8)&$FF00)|((\1>>8)&$FF)
 	endc
 
-	if ~def(z80_ptr)
-z80_ptr macros
-		dc.w	((\1<<8)&$FF00)|((\1>>8)&$7F)|$80
-	endc
+;	if ~def(z80_ptr)
+;z80_ptr macros
+;		dc.w	((\1<<8)&$FF00)|((\1>>8)&$7F)|$80
+;	endc
 
 ;conv0To256  function n,((n==0)<<8)|n
 ;s2TempotoS1 function n,(((768-n)>>1)/(256-n))&$FF

@@ -822,7 +822,7 @@ v_ost_sega_screen:		rs.b sizeof_ost ; $FFFFB040 ; SEGA logo
 v_ost_sega_hide_tm:		rs.b sizeof_ost ; $FFFFB080 ; object that hides TM symbol on JP consoles
 
 		if __rs > offset(ost_end)
-		inform 3, "SEGA screen objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
+			inform 3, "SEGA screen objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
 		endc
 
 ; ---------------------------------------------------------------------------		

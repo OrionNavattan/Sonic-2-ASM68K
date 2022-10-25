@@ -135,7 +135,6 @@ titlecard_flag: equ	7 ; flag bit set in v_gamemode to indicate the level hasn't 
 id_TitleCard:	equ	1<<titlecard_flag	; flag mask
 
 
-
 ; Act IDs
 id_EHZ_act1:	equ (id_EHZ<<8)
 id_EHZ_act2:	equ (id_EHZ<<8)+1
@@ -164,14 +163,14 @@ id_HPZ_act1:	equ	(id_HPZ<<8)
 id_HPZ_act2:	equ	(id_HPZ<<8)+1
 
 ; Colors
-cBlack:		equ $000					; colour black
-cWhite:		equ $EEE					; colour white
-cBlue:		equ $E00					; colour blue
-cGreen:		equ $0E0					; colour green
-cRed:		equ $00E					; colour red
-cYellow:	equ cGreen+cRed					; colour yellow
-cAqua:		equ cGreen+cBlue				; colour aqua
-cMagenta:	equ cBlue+cRed					; colour magenta
+cBlack:		equ $000					; color black
+cWhite:		equ $EEE					; color white
+cBlue:		equ $E00					; color blue
+cGreen:		equ $0E0					; colur green
+cRed:		equ $00E					; color red
+cYellow:	equ cGreen+cRed					; color yellow
+cAqua:		equ cGreen+cBlue				; color aqua
+cMagenta:	equ cBlue+cRed					; color magenta
 
 
 ; Joypad input

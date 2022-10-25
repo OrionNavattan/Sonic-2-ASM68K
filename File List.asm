@@ -98,7 +98,7 @@
 		filedef Nem_OOZSpringBall,"art/nemesis/OOZ Ball on Spring (Beta Leftover)",nem,unc	; Unused beta leftover - 20 blocks
 		filedef Nem_LaunchBall,"art/nemesis/OOZ Transporter Ball",nem,unc	; 53 blocks
 		
-		filedef ,"art/nemesis/",nem,unc	; 
+		;filedef ,"art/nemesis/",nem,unc	; 
 ; ---------------------------------------------------------------------------
 ; File definitions - Kosinski graphics
 ; ---------------------------------------------------------------------------	
@@ -107,7 +107,9 @@
 ; ---------------------------------------------------------------------------
 ; File definitions - uncompressed graphics
 ; ---------------------------------------------------------------------------
-
+		filedef	Art_HUD,"art/uncompressed/HUD",bin,bin
+		filedef	Art_LivesNums,"art/uncompressed/Lives Numbers",bin,bin
+		filedef	Art_HUDText,"art/uncompressed/HUD Text",bin,bin
 ; ---------------------------------------------------------------------------
 ; File definitions - palettes
 ; ---------------------------------------------------------------------------
@@ -166,7 +168,7 @@
 		filedef	Pal_CNZ_B,"art/palettes/CNZ Boss",bin,bin
 		filedef	Pal_OOZ_B,"art/palettes/OOZ Boss",bin,bin
 		filedef	Pal_Menu,"art/palettes/Menu",bin,bin
-		filedef	Pal_SS,"art/palettes/Special Stage Main",bin,bin	;main palette used in all Special Stages
+		filedef	Pal_SS,"art/palettes/Special Stage Main",bin,bin	; main palette used in all Special Stages
 		filedef	Pal_SS1,"art/palettes/Special Stage 1",bin,bin
 		filedef	Pal_SS2,"art/palettes/Special Stage 2",bin,bin
 		filedef	Pal_SS3,"art/palettes/Special Stage 3",bin,bin

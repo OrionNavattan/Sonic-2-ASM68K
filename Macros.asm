@@ -347,11 +347,10 @@ dma: 	equ $27	; %100111
 ; input: VRAM/VSRAM/CRAM offset, destination RAM, (vram/vsram/cram), 
 ; operation (read/write/dma),
 ; ---------------------------------------------------------------------------
-vdp_comm_dc:	macro addr,type,rwd
+vdp_comm_dc:	macros addr,type,rwd
 
 		dc.l	(((\type&\rwd)&3)<<30)|((\addr&$3FFF)<<16)|(((\type&\rwd)&$FC)<<2)|((\addr&$C000)>>14)	
 	
-	endm
 ; ---------------------------------------------------------------------------
 ; Set a VRAM address via the VDP control port.
 ; input: 16-bit VRAM address, control port (default is ($C00004).l)
@@ -527,27 +526,37 @@ objpos:		macro
 		dc.b obj_id+obj_rem, obj_sub\@
 		endm
 
-endobj:		macro
+endobj:		macros
 		objpos $FFFF,0,0,0
-		endm
-
+		
 ; ---------------------------------------------------------------------------
-; Define a little-endian 16-bit pointer for the z80 sound driver
+; Turn a string of characters into binary data using a custom character set
+; ---------------------------------------------------------------------------		
+make_char:		macro text
+	iteration: set 1
+		rept	strlen(\text)
+		char set substr	iteration,iteration,"\text"
+		; do things to make data here
+		iteration: set iteration+1 ; advance to next character in string
+		endr
+	endm	
+; ---------------------------------------------------------------------------
+; Define a little-endian 16-bit pointer for the z80 sound driver relative
+; to the start address of the Z80 ROM window
 ; input: address of pointer target
 ; ---------------------------------------------------------------------------
 
-;z80_ptr: macro addr
-;		dc.w ((((\addr&$7FFF)+$8000)<<8)&$FF00)+(((\addr&$7FFF)+$8000)>>8)	
-;		dc.w ((\1<<8)&$FF00)|((\1>>8)&$7F)|$80
+z80_ptr: macros	
+		dc.w ((\1<<8)&$FF00)|((\1>>8)&$7F)|$80
 
 ;	endm
 ; ---------------------------------------------------------------------------
 ; Define and align the start of a sound bank
 ; ---------------------------------------------------------------------------
-start_bank macro *
+start_bank: macro *
 	align	$8000
-sound_bank_start = \*
-sound_bank_name = "\*"
+sound_bank_start set \*
+sound_bank_name set "\*"
     endm
 
 ; ---------------------------------------------------------------------------
@@ -556,7 +565,7 @@ sound_bank_name = "\*"
 ; ---------------------------------------------------------------------------
 DebugSoundbanks = 0
 
-finish_bank macro
+finish_bank: macro
 	if offset(*)>sound_bank_start+$8000
 		inform 3,"SoundBank %s must fit in $8000 bytes but was $%h. Try moving something to another bank.",sound_bank_name,offset(*)-sound_bank_start
 	elseif DebugSoundbanks<>0

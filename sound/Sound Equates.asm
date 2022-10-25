@@ -133,8 +133,8 @@ zPaused:				db 0 ; zbyte_1307 ; 0 = normal, -1 = pause all sound and music
 ; RAM addresses for the sound driver
 ; ---------------------------------------------------------------------------
 			rsset 1380h 	; don't change this unless you change all the pointers in the ASM music too...
-z_music_data: 	rs.b 800h	; $1380 ; decompressed or copied music data
-z_stack: 		equ	__rs	; $1B80 ; head of Z80 stack
+z_music_data: 	rs.b 800h	; 1380h ; decompressed or copied music data
+z_stack: 		equ	__rs	; 1B80h ; head of Z80 stack
 
 ; z_vars: used for indirect addressing with a register
 ; z_abs_vars: used for absolute addressing
