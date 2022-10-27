@@ -16,7 +16,7 @@ countof_ost_level_only:  equ $10            ; additional reserved object ram for
 sizeof_plc:			equ 6						; size of one pattern load cue
 sizeof_priority:	equ $80					; size of one priority section in sprite queue
 
-;level_max_width:	equ $40
+;level_max_width:	equ $80
 ;level_max_height:	equ 8
 ;sizeof_levelrow:	equ level_max_width*2			; level row, followed by background row
 ;sizeof_level:       equ sizeof_levelrow*level_max_height

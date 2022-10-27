@@ -43,3 +43,8 @@ sonic2.lst
 errors.txt
 art/.DS_Store
 .DS_Store
+sound/errors 3.txt
+sound/errors 2.txt
+sound/errors 1.txt
+s2built.bin
+s2built.prev.bin

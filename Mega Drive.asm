@@ -32,7 +32,7 @@ port_2_control:		equ $A1000B
 port_e_control_hi:	equ $A1000C
 port_e_control:		equ $A1000D
 
-; Z80 addresses
+
 z80_bus_request:	equ $A11100
 z80_reset:		equ $A11200
 
@@ -48,11 +48,11 @@ bank_reg_7:		equ $A130FF	; Bank register for address $380000-$3FFFFF
 tmss_sega:		equ $A14000	; contains the string "SEGA"
 tmss_reg:		equ $A14101 ; bankswitch between cartridge and TMSS ROM
 
-; Hardware sizes
+; Memory sizes
 sizeof_ram:			equ $10000
 sizeof_vram:		equ $10000
 sizeof_vsram:		equ $50
-sizeof_z80_ram:		equ $2000
+sizeof_z80_ram:		equ z80_ram_end-z80_ram ; $2000
 
 ; ---------------------------------------------------------------------------
 ; stop the Z80

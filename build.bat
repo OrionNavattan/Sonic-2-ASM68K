@@ -11,11 +11,11 @@ axm68k /m /k /p "sound\Compressed Music 3.asm", "sound\Compressed Music.bin" >"s
 type "sound\errors 3.txt"
 
 
-rem sompress Saxman files. for more efficient compression, remove "-a" from the below command.
+rem compress Saxman files. for more efficient compression, remove "-a" from the below command.
 for %%f in ("sound\music\compressed\*.unc") do "build tools\saxman.exe" "-a" "%%f" "sound\music\compressed\%%~nf.sax"
 
 rem compress Kosinski files. for more efficient compression, change the below command from "kosinski-accurate" to "kosinski."
-rem verify that level layouts are in fact kosinski compressed
+
 
 rem optionally compress Nemesis files. for more efficient compression, uncomment the below line. (WARNING: THIS CANNOT BE UNDONE.)
 

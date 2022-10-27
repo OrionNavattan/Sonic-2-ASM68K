@@ -25,7 +25,7 @@ anim_frame_duration:	equ ost_anim_time
 collision_flags:		equ ost_col_type 
 collision_property:		equ ost_col_property
 status:					equ	ost_status
-respawn_index			equ ost_respawn
+respawn_index:			equ ost_respawn
 routine:				equ ost_primary_routine
 routine_secondary:		equ	ost_secondary_routine
 angle:					equ	ost_angle
@@ -129,7 +129,7 @@ TitleCard_Bottom:		equ	v_ost_titlecard_bottom
 TitleCard_Left:			equ	v_ost_titlecard_left
 CPZPylon:				equ	v_ost_cpzpylon
 WaterSurface1:			equ	v_ost_watersurface1
-Oil:					equ	v_ost_oil
+v_ost_oil:					equ	v_ost_oil
 WaterSurface2:			equ	v_ost_watersurface2
 Dynamic_Object_RAM:		equ	v_ost_dynamic
 
@@ -140,7 +140,7 @@ Tails_Tails:				equ v_ost_lo_tails_tails
 SuperSonicStars:			equ	v_ost_lo_supersonicstars
 Sonic_BreathingBubbles:		equ	v_ost_lo_sonic_breathingbubbles
 Tails_BreathingBubbles:		equ	v_ost_lo_tails_breathingbubbles
-Sonic_Dust					equ	v_ost_lo_sonic_dust
+Sonic_Dust:					equ	v_ost_lo_sonic_dust
 Tails_Dust:					equ	v_ost_lo_tails_dust
 Sonic_Shield:				equ	v_ost_lo_sonic_shield
 Tails_Shield:				equ	v_ost_lo_tails_shield
@@ -188,22 +188,22 @@ Scroll_flags_BG_P2:		equ	v_bg1_redraw_direction_p2
 Scroll_flags_BG2_P2:	equ	v_bg2_redraw_direction_p2
 Scroll_flags_BG3_P2:	equ	v_bg3_redraw_direction_p2
 
-Camera_RAM_copy:		equ	v_vblank_camera_pos
-Camera_BG_copy:			equ	v_vblank_camera_pos_bg
-Camera_BG2_copy:		equ	v_vblank_camera_pos_bg2
-Camera_BG3_copy:		equ	v_vblank_camera_pos_bg3
+Camera_RAM_copy:		equ	v_camera_pos_copy
+Camera_BG_copy:			equ	v_camera_pos_bg_copy
+Camera_BG2_copy:		equ	v_camera_pos_bg2_copy
+Camera_BG3_copy:		equ	v_camera_pos_bg3_copy
 
-Camera_P2_copy:			equ	v_vblank_camera_pos_p2
+Camera_P2_copy:			equ	v_camera_pos_p2_copy
 
-Scroll_flags_copy:			equ	v_vblank_fg_redraw_direction
-Scroll_flags_BG_copy:		equ	v_vblank_bg1_redraw_direction
-Scroll_flags_BG2_copy:		equ	v_vblank_bg2_redraw_direction
-Scroll_flags_BG3_copy:		equ	v_vblank_bg3_redraw_direction
+Scroll_flags_copy:			equ	v_fg_redraw_direction_copy
+Scroll_flags_BG_copy:		equ	v_bg1_redraw_direction_copy
+Scroll_flags_BG2_copy:		equ	v_bg2_redraw_direction_copy
+Scroll_flags_BG3_copy:		equ	v_bg3_redraw_direction_copy
 
-Scroll_flags_copy_P2:			equ	v_vblank_fg_redraw_direction_p2
-Scroll_flags_BG_copy_P2:		equ	v_vblank_bg1_redraw_direction_p2
-Scroll_flags_BG2_copy_P2:		equ	v_vblank_bg2_redraw_direction_p2
-Scroll_flags_BG3_copy_P2:		equ	v_vblank_bg3_redraw_direction_p2
+Scroll_flags_copy_P2:			equ	v_fg_redraw_direction_p2_copy
+Scroll_flags_BG_copy_P2:		equ	v_bg1_redraw_direction_p2_copy
+Scroll_flags_BG2_copy_P2:		equ	v_bg2_redraw_direction_p2_copy
+Scroll_flags_BG3_copy_P2:		equ	v_bg3_redraw_direction_p2_copy
 
 Camera_X_pos_diff:		equ v_camera_x_diff
 Camera_Y_pos_diff:		equ v_camera_y_diff
@@ -228,11 +228,11 @@ Camera_Max_Y_pos_now:	equ v_boundary_bottom
 Horiz_scroll_delay_val:	equ	v_hscroll_delay_val
 Sonic_Pos_Record_Index:	equ	v_sonic_pos_tracker_num
 
-Horiz_scroll_delay_val_P2:	equ	v_hscroll_delay_val_P2
+Horiz_scroll_delay_val_P2:	equ	v_hscroll_delay_val_p2
 Tails_Pos_Record_Index:		equ	v_tails_pos_tracker_num
 
 Camera_Y_pos_bias:			equ v_camera_y_shift
-Camera_Y_pos_bias_P2		equ	v_camera_y_shift_p2
+Camera_Y_pos_bias_P2:		equ	v_camera_y_shift_p2
 Deform_lock:				equ f_disable_scrolling
 Camera_Max_Y_Pos_Changing:	equ f_boundary_bottom_change
 Dynamic_Resize_Routine:		equ v_dle_routine
@@ -278,7 +278,7 @@ Ctrl_2_Press:		equ v_joypad2_press_actual
 
 VDP_Reg1_val:		equ v_vdp_mode_buffer
 Demo_Time_left:		equ v_countdown
-Vscroll_Factor:		equ v_fg_y_pos_vsram
+Vscroll_Factor:		equ v_y_pos_vsram
 Vscroll_Factor_FG:	equ v_fg_y_pos_vsram
 Vscroll_Factor_BG:	equ v_bg_y_pos_vsram
 
@@ -331,7 +331,7 @@ Ending_VInt_Subrout:	equ	v_ending_vint_subrout
 WFZ_BG_Y_Speed:			equ	v_wfz_bg_y_speed
 
 PalCycle_Timer2:	equ	v_palcycle_time2
-PalCycle_Timer3:	equ	v_palcycle_time3
+v_palcycle_time3:	equ	v_palcycle_time3
 
 Ctrl_2_Logical:				equ	v_joypad2_hold
 Ctrl_2_Held_Logical:		equ	v_joypad2_hold
@@ -366,8 +366,8 @@ Level_started_flag:		equ	f_level_started
 Ring_start_addr:		equ	v_ring_start
 Ring_end_addr:			equ	v_ring_end
 
-Ring_start_addr_P2:		equ	v_ring_start_P2
-Ring_end_addr_P2:		equ	v_ring_end_P2
+Ring_start_addr_P2:		equ	v_ring_start_p2
+Ring_end_addr_P2:		equ	v_ring_end_p2
 
 CNZ_Bumper_routine:		equ	v_cnz_bumper_routine
 CNZ_Bumper_UnkFlag:		equ f_unused_cnz_bumper_flag
@@ -375,15 +375,15 @@ CNZ_Bumper_UnkFlag:		equ f_unused_cnz_bumper_flag
 CNZ_Visible_bumpers_start:	equ	v_cnz_visible_bumpers_start
 CNZ_Visible_bumpers_end:	equ	v_cnz_visible_bumpers_end
 
-CNZ_Visible_bumpers_start_P2:	equ	v_cnz_visible_bumpers_start_P2
-CNZ_Visible_bumpers_end_P2:		equ	v_cnz_visible_bumpers_end_P2
+CNZ_Visible_bumpers_start_P2:	equ	v_cnz_visible_bumpers_start_p2
+CNZ_Visible_bumpers_end_P2:		equ	v_cnz_visible_bumpers_end_p2
 
 Screen_redraw_flag:			equ	f_screen_redraw
 CPZ_UnkScroll_Timer:		equ	v_unused_cpz_scroll_timer
 WFZ_SCZ_Fire_Toggle:		equ	f_wfz_scz_fire_toggle
 Water_flag:					equ	f_water
-Demo_button_index_2P:		equ	v_demo_input_counter_P2
-Demo_press_counter_2P:		equ	v_demo_input_time_P2
+Demo_button_index_2P:		equ	v_demo_input_counter_p2
+Demo_press_counter_2P:		equ	v_demo_input_time_p2
 Tornado_Velocity_X:			equ	v_tornado_x_vel
 Tornado_Velocity_Y:			equ	v_tornado_y_vel
 
@@ -436,8 +436,8 @@ MTZCylinder_Angle_Tails:	equ	v_mtz_cylinder_angle_tails
 
 BigRingGraphics:	equ v_giantring_gfx_offset
 
-WindTunnel_flag:			equ f_water_tunnel_now
-WindTunnel_holding_flag:	equ f_water_tunnel_disable
+WindTunnel_flag:			equ f_wind_tunnel_now
+WindTunnel_holding_flag:	equ f_wind_tunnel_disable
 Control_Locked:				equ f_lock_controls
 SpecialStage_flag_2P:		equ	f_unused_ss_flag
 Control_Locked_P2:			equ	f_lock_controls_p2
@@ -468,7 +468,7 @@ Obj_respawn_index:	equ v_respawn_list
 Obj_respawn_data:	equ	v_respawn_data
 System_Stack:		equ v_stack
 
-SS_2p_Flag:			equ	f_ss_2p_flag
+SS_2p_Flag:			equ	f_ss_2p
 Level_Inactive_flag:	equ f_restart
 Timer_frames:		equ v_frame_counter
 Debug_object:		equ v_debug_item_index
@@ -481,7 +481,7 @@ Current_Zone:		equ v_zone
 Current_Act:		equ v_act
 Life_count:			equ v_lives
 Continue_count:		equ v_continues
-Super_Sonic_flag:	equ f_super_flag
+Super_Sonic_flag:	equ f_super
 Time_Over_flag:		equ f_time_over
 Extra_life_flags:	equ v_ring_reward
 Update_HUD_lives:	equ f_hud_lives_update
@@ -559,7 +559,7 @@ Timer_frame_2P:			equ	v_time_frames_p2
 Score_2P:				equ	v_score_p2
 
 Last_star_pole_hit_2P:			equ	v_last_lamppost_p2
-Saved_Last_star_pole_hit_2P:	equ	v_last_lamppost_hit_p2_lampcopy
+Saved_Last_star_pole_hit_2P:	equ	v_last_lamppost_p2_lampcopy
 Saved_x_pos_2P:				equ	v_x_pos_p2_lampcopy
 Saved_y_pos_2P:				equ	v_y_pos_p2_lampcopy
 Saved_Ring_count_2P:		equ	v_rings_p2_lampcopy
@@ -570,7 +570,7 @@ Saved_Solid_bits_2P:		equ	v_ost_top_solid_bit_p2_lampcopy
 Rings_Collected:		equ	v_rings_collected_p1
 Rings_Collected_2P:		equ	v_rings_collected_p2
 Monitors_Broken:		equ	v_monitors_broken_p1
-Monitors_Broken_2P:		equ	v_monitors_broken_2
+Monitors_Broken_2P:		equ	v_monitors_broken_p2
 Loser_Time_Left:		equ	v_loser_time_left
 Results_Screen_2P:		equ	v_results_screen_2p
 
@@ -582,7 +582,7 @@ SS_Results_2P:		equ	v_ss_results_2p
 SS_Total_Won:		equ	v_ss_total_won
 
 Perfect_rings_left:	equ	v_perfect_rings_left
-Perfect_rings_flag:	equ	f_ss_perfect_flag
+Perfect_rings_flag:	equ	f_ss_perfect
 
 CreditsScreenIndex:		equ	v_credits_index
 SlotMachineInUse:		equ	f_slot_machine_use
@@ -629,7 +629,7 @@ S1_hidden_credits_flag:		equ f_s1_credits_cheat
 Correct_cheat_entries:		equ v_correct_cheat_entries
 Correct_cheat_entries_2:	equ v_correct_cheat_entries_2
 
-Two_player_mode:	equ	f_two_player_mode
+Two_player_mode:	equ	f_two_player
 
 unk_FFDA:	equ v_unknown_titlescrn
 
@@ -658,7 +658,7 @@ SegaHideTM:			equ	v_ost_sega_hide_tm
 IntroSonic:					equ	v_title_sonic
 IntroTails:					equ	v_title_tails
 IntroFlashingStar:			equ	v_title_flashing_star
-TitleScreenPaletteChanger:	equ	v_title_palette_changer
+TitleScreenPaletteChanger:	equ	v_title_palette_changer_1
 TitleScreenPaletteChanger3:	equ	v_title_palette_changer_3
 IntroEmblemTop:				equ	v_title_logo_top
 IntroMaskingSprite:			equ	v_title_masking_sprite
@@ -681,7 +681,7 @@ SpecialStageShadow_Sonic:	equ	v_ss_shadow_sonic
 SpecialStageShadow_Tails:	equ	v_ss_shadow_tails
 SpecialStageTails_Tails:	equ	v_ss_tails_tails
 SS_Dynamic_Object_RAM:		equ	v_ss_dynamic_object_ram
-SpecialStageResults:		equ	v_ss_results
+SpecialStageResults:		equ	v_ss_results_1
 SpecialStageResults2:		equ	v_ss_results_2
 
 PNT_Buffer:				equ	v_ss_pnt_buffer
@@ -717,7 +717,7 @@ SSTrack_LastVScroll:			equ	v_ss_track_last_vscroll
 SSTrack_last_mapping_frame:		equ	v_ss_track_last_mapping_frame
 SSTrack_mappings_RLE:			equ	v_ss_track_mappings_rle
 SSDrawRegBuffer:				equ	v_ss_draw_reg_buffer
-SSDrawRegBuffer_End				equ	v_ss_draw_reg_buffer_end
+SSDrawRegBuffer_End:				equ	v_ss_draw_reg_buffer_end
 
 SpecialStage_LastSegment2:		equ	v_ss_last_segment_2
 SS_unk_DB4D:					equ	f_unknown_ss_bomb

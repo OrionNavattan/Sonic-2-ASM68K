@@ -168,27 +168,27 @@ v_bg3_redraw_direction_p2:		rs.w 1	; $FFFFEE5E ; bitfield ; for CPZ; bits 0-3 as
 
 				rsblock vblank_camera_copies ; required for teleport swap table
 ; Copies of the camera position RAM and scroll redraw flags that are copied during VBlank and used copied during VBlank and used by DrawTilesWhenMoving:
-v_vblank_camera_pos:			rs.l 2	; $FFFFEE60
-v_vblank_camera_pos_bg:			rs.l 2	; $FFFFEE68
-v_vblank_camera_pos_bg2:		rs.l 2	; $FFFFEE70
-v_vblank_camera_pos_bg3:		rs.l 2	; $FFFFEE78
+v_camera_pos_copy:			rs.l 2	; $FFFFEE60
+v_camera_pos_bg_copy:			rs.l 2	; $FFFFEE68
+v_camera_pos_bg2_copy:		rs.l 2	; $FFFFEE70
+v_camera_pos_bg3_copy:		rs.l 2	; $FFFFEE78
 				rsblockend vblank_camera_copies
 
-v_vblank_camera_pos_p2:			rs.l 8	; $FFFFEE80
-v_vblank_camera_pos_p2_end:		equ __rs ; required for teleport swap table
+v_camera_pos_p2_copy:			rs.l 8	; $FFFFEE80
+v_camera_pos_p2_copy_end:		equ __rs ; required for teleport swap table
 
 				rsblock	vblank_scroll_redraw_flags ; required for teleport swap table
-v_vblank_fg_redraw_direction: 		rs.w 1	; $FFFFEEA0 
-v_vblank_bg1_redraw_direction:		rs.w 1	; $FFFFEEA2
-v_vblank_bg2_redraw_direction:		rs.w 1	; $FFFFEEA4
-v_vblank_bg3_redraw_direction:		rs.w 1	; $FFFFEEA6
+v_fg_redraw_direction_copy: 		rs.w 1	; $FFFFEEA0 
+v_bg1_redraw_direction_copy:		rs.w 1	; $FFFFEEA2
+v_bg2_redraw_direction_copy:		rs.w 1	; $FFFFEEA4
+v_bg3_redraw_direction_copy:		rs.w 1	; $FFFFEEA6
 				rsblockend	vblank_scroll_redraw_flags
 
 				rsblock	vblank_scroll_redraw_flags_p2 ; required for teleport swap table
-v_vblank_fg_redraw_direction_p2:		rs.w 1	; $FFFFEEA8
-v_vblank_bg1_redraw_direction_p2:		rs.w 1	; $FFFFEEAA
-v_vblank_bg2_redraw_direction_p2:		rs.w 1	; $FFFFEEAC
-v_vblank_bg3_redraw_direction_p2:		rs.w 1	; $FFFFEEAE
+v_fg_redraw_direction_p2_copy:		rs.w 1	; $FFFFEEA8
+v_bg1_redraw_direction_p2_copy:		rs.w 1	; $FFFFEEAA
+v_bg2_redraw_direction_p2_copy:		rs.w 1	; $FFFFEEAC
+v_bg3_redraw_direction_p2_copy:		rs.w 1	; $FFFFEEAE
 				rsblockend	vblank_scroll_redraw_flags_p2
 
 				rsblock camera_diffs ; required for teleport swap table
@@ -233,7 +233,7 @@ v_tails_pos_tracker_num:		rs.w 1	; $FFFFEED6 ; current location within Tails' po
 				rsblockend horiz_scroll_delay_p2
 
 v_camera_y_shift:				rs.w 1	; $FFFFEED8 ; camera y position shift when Sonic looks up/down - $60 = default; $C8 = look up; 8 = look down
-v_camera_y_shift_end:			equ _rs	; required for teleport swap table (Camera_Y_pos_bias)
+v_camera_y_shift_end:			equ __rs	; required for teleport swap table (Camera_Y_pos_bias)
 v_camera_y_shift_p2:			rs.w 1	; $FFFFEEDA ; same as above, but for Tails in 2P
 v_camera_y_shift_p2_end:		equ __rs ; required for teleport swap table (Camera_Y_pos_bias_P2)
 
@@ -287,7 +287,9 @@ v_joypad2_press_actual:		equ __rs-1	; $FFFFF607 ; joypad 2 input - pressed, actu
 v_vdp_mode_buffer:			rs.w 1 ; $FFFFF60C ; VDP register $81 buffer - contains $8134 which is sent to vdp_control_port
 							rs.b 6 ; $FFFFF60E-$FFFFF613 ; unused
 v_countdown:				rs.w 1 ; $FFFFF614 ; decrements every time VBlank runs, used as a general purpose timer
-v_fg_y_pos_vsram:			rs.w 1 ; $FFFFF616 ; foreground y position, sent to VSRAM during VBlank
+
+v_y_pos_vsram:				rs.w 1 ; $FFFFF616
+v_fg_y_pos_vsram:			equ v_y_pos_vsram  ; $FFFFF616 ; foreground y position, sent to VSRAM during VBlank
 v_bg_y_pos_vsram:			rs.w 1 ; $FFFFF618 ; background y position, sent to VSRAM during VBlank
 							rs.l 1 ; $FFFFF61A ; only ever cleared, never used
 v_fg_y_pos_vsram_p2:		rs.w 1 ; $FFFFF61E ; foreground y position for player 2
@@ -337,6 +339,7 @@ v_dez_shake_timer:			equ __rs	; Word
 v_wfz_dle_subrout:			equ __rs	; Word
 f_segascr_paldone:			equ __rs	; Byte (cleared once as a word)
 f_credits_trigger:			rs.w 1 ; cleared as a word a couple times
+
 f_ending_palcycle:			equ __rs-1 ; $FFFFF661
 
 ; Following three variables share an address:
@@ -400,8 +403,8 @@ v_ring_end:				rs.w 1 ; $FFFFF714
 				rsblockend ring_manager_pointers
 
 				rsblock ring_manager_pointers_p2
-v_ring_start_P2:		rs.w 1 ; $FFFFF716
-v_ring_end_P2:			rs.w 1 ; $FFFFF718
+v_ring_start_p2:		rs.w 1 ; $FFFFF716
+v_ring_end_p2:			rs.w 1 ; $FFFFF718
 				rsblockend ring_manager_pointers_p2
 
 v_cnz_bumper_routine:		rs.b 1 ; $FFFFF71A ; routine counter for the CNZ bumper manager psuedo-object
@@ -413,8 +416,8 @@ v_cnz_visible_bumpers_end:			rs.l 1 ; $FFFFF720
 				rsblockend bumper_manager_pointers
 
 				rsblock bumper_manager_pointers_p2
-v_cnz_visible_bumpers_start_P2:		rs.l 1 ; $FFFFF724
-v_cnz_visible_bumpers_end_P2:		rs.l 1 ; $FFFFF728
+v_cnz_visible_bumpers_start_p2:		rs.l 1 ; $FFFFF724
+v_cnz_visible_bumpers_end_p2:		rs.l 1 ; $FFFFF728
 				rsblockend bumper_manager_pointers_p2
 
 f_screen_redraw:		rs.b 1 ; $FFFFF72C ; flag indicating whole screen needs to redraw, such as when you destroy the piston before the boss in WFZ
@@ -423,8 +426,8 @@ f_wfz_scz_fire_toggle:		rs.b 1 ; $FFFFF72E ; flag used by the WFZ palette cycle 
 							rs.b 1 ; $FFFFF72F ; unused
 f_water_flag:				rs.b 1 ; $FFFFF730 ; flag indicating if the level has water or oil		
 							rs.b 1 ; $FFFFF731 ; unused
-v_demo_input_counter_P2:	rs.w 1 ; $FFFFF732 ; tracks progress in the demo input data for player 2, increases by 2 when input changes
-v_demo_input_time_P2:		rs.w 1 ; $FFFFF734 ; time remaining for current demo "button press" for player 2
+v_demo_input_counter_p2:	rs.w 1 ; $FFFFF732 ; tracks progress in the demo input data for player 2, increases by 2 when input changes
+v_demo_input_time_p2:		rs.w 1 ; $FFFFF734 ; time remaining for current demo "button press" for player 2
 v_tornado_x_vel:			rs.w 1 ; $FFFFF736 ; x_vel of the Tornado in SCZ
 v_tornado_y_vel:			rs.w 1 ; $FFFFF738 ; y_vel of the Tornado in SCZ
 
@@ -546,15 +549,15 @@ v_pal_dry_next_line4:		equ v_pal_dry_next+(sizeof_pal*3) ; $FFFFFBE0
 
 ;Object_Respawn_Table:
 v_respawn_list:				rs.b 2 ; $FFFFFC00 ; respawn table indices of the next objects when moving left or right for the first player
-v_respawn_list_end:			; required by clear_ram
+v_respawn_list_end:			equ	__rs ; required by clear_ram
 v_respawn_data:				rs.b $BE ; $FFFFFC02	; For stock S2, $80 is enough
-v_respawn_data_end:			; required by clear_ram
+v_respawn_data_end:			equ	__rs ; required by clear_ram
 
 v_stack:					rs.b $140 ; $FFFFFCC0 ; system stack; the first $BE bytes are cleared by ObjectsManager_Init due to a bug, with possibly disastrous consequences. At least $A0 bytes are needed.
 v_stack_pointer:			equ	__rs ; $FFFFFE00 ; initial stack pointer - items are added to the stack backwards from this address
 v_keep_after_reset:         equ __rs ; $FFFFFE00 ; everything after this address is kept in RAM after a soft reset
 
-f_ss_2p_flag:				rs.w 1 ; $FFFFFE00-$FFFFFE01 ; flag indicating Special Stage 2P mode
+f_ss_2p:					rs.w 1 ; $FFFFFE00-$FFFFFE01 ; flag indicating Special Stage 2P mode
 f_restart:					rs.w 1 ; $FFFFFE02 ; flag set to end/restart level(2 bytes)
 v_frame_counter:			rs.w 1 ; $FFFFFE04 ; frame counter, increments every frame
 v_debug_item_index:			rs.b 1 ; $FFFFFE06 ; debug item currently selected (NOT the object id of the item)
@@ -570,7 +573,7 @@ v_lives:					rs.b 1 ; $FFFFFE12 ; number of lives
 v_special_stage:			rs.w 1 ; $FFFFFE16 ; high byte is ID of current special stage, low byte is current act of current special stage (increments at each checkpoint)
 v_special_act:				equ __rs-1 ; $FFFFFE17 ; read if we only want the act number
 v_continues:				rs.b 1 ; $FFFFFE18 ; number of continues
-f_super_flag:				rs.b 1 ; $FFFFFE19 ; flag set when Sonic is super
+f_super:					rs.b 1 ; $FFFFFE19 ; flag set when Sonic is super
 f_time_over:				rs.b 1 ; $FFFFFE1A ; time over flag
 v_ring_reward:				rs.b 1 ; $FFFFFE1B ; tracks which rewards have been given for rings 
 
@@ -672,7 +675,7 @@ v_score_p2:					rs.l 1 ; $FFFFFED6
 
 ; Lamppost store for player 2 in 2P mode				
 v_last_lamppost_p2:				rs.b 1 ; $FFFFFEE0
-v_last_lamppost_hit_p2_lampcopy:	rs.b 1 ; $FFFFFEE1
+v_last_lamppost_p2_lampcopy:	rs.b 1 ; $FFFFFEE1
 v_x_pos_p2_lampcopy:			rs.w 1 ; $FFFFFEE2
 v_y_pos_p2_lampcopy:			rs.w 1 ; $FFFFFEE4
 v_rings_p2_lampcopy:			rs.w 1 ; $FFFFFEE6
@@ -700,10 +703,10 @@ v_ss_results_2p:			rs.b 6 ; $FFFFFF32
 v_ss_total_won:				rs.w 1 ; $FFFFFF38 ; high byte is player 1, low byte is player 2					
 							rs.b 6 ; $FFFFFF3A-$FFFFFF3F ; unused
 v_perfect_rings_left:		rs.w 1 ; $FFFFFF40 ; remaining number of rings in a level
-f_ss_perfect_flag:			rs.w 1 ; $FFFFFF42 ; flag set if all rings in a special stage are collected
+f_ss_perfect:				rs.w 1 ; $FFFFFF42 ; flag set if all rings in a special stage are collected
 							rs.b 8 ; $FFFFFF44-$FFFFFF4B ; unused
-v_credits_index:				   ; $FFFFFF4C ; current frame of the credits sequence
-f_slot_machine_use:		rs.w 1 ; $FFFFFF4C ; flag indicating a CNZ slot machine is in use
+v_credits_index:			rs.w 1 ; $FFFFFF4C ; current frame of the credits sequence
+f_slot_machine_use:			equ v_credits_index ; $FFFFFF4C ; flag indicating a CNZ slot machine is in use
 
 ; CNZ slot machine variables; $12 values
 ; v_slot_machine_routine and v_slot_machine_reward are respectively written and read via absolute addressing
@@ -756,7 +759,7 @@ v_ss_2p_ring_buffer:			rs.w 6 ; $FFFFFFA0
 								rs.b 4 ; $FFFFFFAC-$FFFFFFAF ; unused
 f_got_emerald:					rs.b 1 ; $FFFFFFB0 ; flag set on Chaos Emerald get
 v_emeralds:						rs.b 1 ; $FFFFFFB1 ; number of Chaos Emeralds held by player
-v_emerald_list:					rs.l 2 ; $FFFFFFB2 ; which individual Emeralds the player has, 1 byte per emeralrs. Technically only 7 bytes long, but an 8th is also cleared		
+v_emerald_list:					rs.l 2 ; $FFFFFFB2 ; which individual Emeralds the player has, 1 byte per emerald. Technically only 7 bytes long, but an 8th is also cleared		
 								rs.b 6 ; $FFFFFFBA-$FFFFFFBF ; unused			
 v_score_next_life:				rs.l 1 ; $FFFFFFC0 ; points required for next extra life
 v_score_next_life_p2:			rs.l 1 ; $FFFFFFC4 ; same as above, but for second player in 2P mode
@@ -773,7 +776,7 @@ f_s1_credits_cheat:				equ __rs-1 ; $FFFFFFD3 ; unused Sonic 1 leftover; used by
 v_correct_cheat_entries:		rs.w 1 ; $FFFFFFD4
 v_correct_cheat_entries_2:		rs.w 1 ; $FFFFFFD6 ; for 14 continues or 7 emeralds codes	
 
-f_two_player_mode:			rs.w 1 ; $FFFFFFD8 ; flag for two-player mode (0 for main game)
+f_two_player:			rs.w 1 ; $FFFFFFD8 ; flag for two-player mode (0 for main game)
 v_unknown_titlescrn:		rs.w 1 ; $FFFFFFDA ; cleared once on title screen, never used again
 
 ; These four variables seem to have been used for debugging the CNZ bumper physics.
@@ -834,7 +837,7 @@ v_title_sonic:	rs.b sizeof_ost ; $FFFFB040
 v_title_tails:	rs.b sizeof_ost ; $FFFFB080
 
 v_title_flashing_star:
-v_title_palette_changer: 	rs.b sizeof_ost ; $FFFFB0C0
+v_title_palette_changer_1: 	rs.b sizeof_ost ; $FFFFB0C0
 
 v_title_palette_changer_3: 	rs.b sizeof_ost ; $FFFFB100
 v_title_logo_top:			rs.b sizeof_ost ; $FFFFB140
@@ -875,7 +878,7 @@ v_ss_shadow_tails:	rs.b sizeof_ost ; $FFFFB180
 v_ss_tails_tails:	rs.b sizeof_ost ; $FFFFB1C0
 
 v_ss_dynamic_object_ram:	rs.b sizeof_ost*$18 ; $FFFFB200-$FFFFB7FF
-v_ss_results:		rs.b sizeof_ost				; $FFFFB800
+v_ss_results_1:		rs.b sizeof_ost				; $FFFFB800
 
 				rs.b sizeof_ost*$C ; $FFFFB840-$FFFFBB3F ; unused
 

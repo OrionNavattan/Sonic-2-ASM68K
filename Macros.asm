@@ -88,6 +88,106 @@ popr:		macro
 			endc
 		endc
 		endm
+
+; ---------------------------------------------------------------------------		
+; Sonic 2 is inconsistent with its handling of address register indirect 
+; displacement instructions where the displacement is zero [e.g,. 0(a0)]. 
+; Unlike in Sonic 1, where these were never optimized, Sonic 2 optimizes some,
+; but not all, of them to address register indirect. Unfortunately, this means
+; that we cannot have a bit-perfect disassembly with uniform use of symbolic
+; constants for displacement value equal to zero without the use of a macro-based
+; workaround. 
+
+; To keep things simple, we are simply going to do more or less the same 
+; thing the SonicRetro AS disasm does: the affected unoptimized instructions
+; are macro calls that behave differently depending on if a switch is enabled 
+; or disabled. While AS requires a brute-force hack to work around its lack 
+; of an option to disable the zero-offset optimization, things are much simpler here:
+; we just enable the optimization by default in the build options, and use the
+; below macros to disable it for the affected instructions.
+; ---------------------------------------------------------------------------	
+
+	if ~ZeroOffsetOptimization
+
+	; Temporarily disable zero-offset optimization to assemble these instructions for a
+	; bit-perfect build.
+	
+_move:	macro
+		pusho
+		opt	oz-
+		move.\0	\_
+		popo
+	endm
+	
+_add:	macro
+		pusho
+		opt	oz-
+		axd.\0	\_
+		popo
+	endm
+	
+_addq:	macro
+		pusho
+		opt	oz-
+		addq.\0	\_
+		popo
+	endm
+	
+_cmp:	macro
+		pusho
+		opt	oz-
+		cmp.\0 \_
+		popo
+	endm
+	
+_cmpi:	macro
+		pusho
+		opt	oz-
+		cmpi.\0	\_
+		popo
+	endm
+	
+_clr:	macro
+		pusho
+		opt	oz-
+		clr.\0	\_
+		popo
+	endm
+	
+_tst:	macro
+		pusho
+		opt	oz-
+		tst.\0	\_
+		popo	
+	endm
+	
+	else
+	
+	; Optimize these instructions, making them faster, and freeing up nearly 512 bytes!
+	
+_move:	macros
+		move.\0 \_
+
+_add:	macros
+		axd.\0 \_
+
+_addq:	macros
+		addq.\0 \_
+
+_cmp:	macros
+		cmp.\0 \_
+
+_cmpi:	macros
+		cmpi.\0 \_
+
+_clr:	macros
+		clr.\0 \_
+
+_tst:	macros
+		tst.\0 \_
+		
+	endc
+	
 ; ---------------------------------------------------------------------------
 ; Add/sub optimizations.
 ; Almost all possible add/sub optimizations were made in Revision 2.
@@ -116,7 +216,6 @@ subi_:		macros
 adda_:		macros
 		adda.\0	\src,\dest
     endc
-    
     
 ; ------------------------------------------------------------------------------
 ; Relative lea.
@@ -172,18 +271,18 @@ jmpto:		 macro directaddr,indirectaddr
 ; and organize ram into blocks for clear_ram macro
 ; ---------------------------------------------------------------------------
 
-rsalign:	macro
+rsalign:	macros
 		rs.b (\1-(__rs%\1))%\1
-	endm
+	;endm
 
 rsblock:	macro
 		rsalign 2					; align to even address
 		\1\: equ __rs
 	endm
 
-rsblockend:	macro ; Adapted to Sonic 2's macro-based RAM clearing
+rsblockend:	macros ; Adapted to Sonic 2's macro-based RAM clearing
 		\1\_end:	equ __rs ; used by a couple of RAM overflow checks
-	endm
+	;endm
 ; ---------------------------------------------------------------------------
 ; Organise object RAM usage.
 ; ---------------------------------------------------------------------------

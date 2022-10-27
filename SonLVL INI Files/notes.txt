@@ -1,0 +1,6 @@
+Incompatible formats that must be placed in this folder:
+
+Level layouts
+Sprite mappings
+object positions
+start positions
