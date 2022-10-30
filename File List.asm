@@ -110,6 +110,7 @@
 		filedef	Art_HUD,"art/uncompressed/HUD",bin,bin
 		filedef	Art_LivesNums,"art/uncompressed/Lives Numbers",bin,bin
 		filedef	Art_HUDText,"art/uncompressed/HUD Text",bin,bin
+		
 ; ---------------------------------------------------------------------------
 ; File definitions - palettes
 ; ---------------------------------------------------------------------------
@@ -195,6 +196,28 @@
 		filedef	Pal_SSEmeralds,"art/palettes/Special Stage Emeralds",bin,bin
 		filedef	Pal_SegaScreen2,"art/palettes/Sega Screen 2",bin,bin ; SEGA screen (background and pre-wipe foreground; 7 frames)
 	 	filedef Pal_SegaScreen3,"art/palettes/Sega Screen 3",bin,bin ; SEGA screen (wiping and post-wipe foreground) (7 frames
+
+; ---------------------------------------------------------------------------
+; File definitions - collision
+; ---------------------------------------------------------------------------
+		filedef	ColCurveMap,"collision/Curve & Resistance Mapping",bin,bin
+		filedef	CollArray1,"collision/Collision Array (Normal)",bin,bin
+		filedef	CollArray2,"collision/Collision Array (Rotated)",bin,bin
+		filedef	ColP_EHZHTZ,"collision/EHZ & HTZ Primary",kos,unc
+		filedef	ColS_EHZHTZ,"collision/EHZ & HTZ Secondary",kos,unc
+;		filedef	ColP_HPZ,"collision/HPZ Primary",kos,unc
+;		filedef	ColS_HPZ,"collision/HPZ Secondary",kos,unc
+		filedef	ColP_MTZ,"collision/MTZ Primary",kos,unc
+		filedef	ColP_OOZ,"collision/OOZ Primary",kos,unc
+		filedef	ColP_MCZ,"collision/MCZ Primary",kos,unc
+		filedef	ColP_CNZ,"collision/CNZ Primary",kos,unc
+		filedef	ColS_CNZ,"collision/CNZ Secondary",kos,unc
+		filedef	ColP_CPZDEZ,"collision/CPZ & DEZ Primary",kos,unc
+		filedef	ColS_CPZDEZ,"collision/CPZ & DEZ Secondary",kos,unc
+		filedef	ColP_ARZ,"collision/ARZ Primary",kos,unc
+		filedef	ColS_ARZ,"collision/ARZ Secondary",kos,unc
+		filedef	ColP_WFZSCZ,"collision/WFZ & SCZ Primary",kos,unc
+		filedef	ColS_WFZSCZ,"collision/WFZ & SCZ Secondary",kos,unc
 ; ---------------------------------------------------------------------------
 ; File definitions - sound
 ; ---------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 ; Compatibility with Sonic 2 AS
 ; ---------------------------------------------------------------------------
 
+; Constants
 id: 			equ	ost_id
 render_flags: 	equ	ost_render
 art_tile:		equ	ost_tile
@@ -105,6 +106,9 @@ sub9_y_pos:				equ ost_subspr9_y_pos
 sub9_mapframe:			equ ost_subspr9_frame
 
 
+; ---------------------------------------------------------------------------
+
+; Variables/RAM Addresses
 Chunk_Table:			equ v_128x128_tiles
 Level_Layout:			equ v_level_layout
 Block_Table:			equ v_16x16_tiles
@@ -767,8 +771,18 @@ EndSeqPaletteChanger:	equ	v_ending_palchanger
 CutScene:				equ	v_ending_cutscene
 
 ; ---------------------------------------------------------------------------
-; Sound Driver Compatibility
+
+; Major subroutines
+
+DelayProgram	equ	WaitForVBlank
+WindTunnel		equ	WindTunnels
+
+DrawInitialBG	equ	DrawTilesAtStart
+
 ; ---------------------------------------------------------------------------
+
+; Sound Driver Compatibility
+
 
 zYM2612_A0: 		equ ym_reg_a0
 zYM2612_D0:			equ ym_reg_d0
@@ -792,7 +806,7 @@ Queue0:				equ z_queue_0
 Queue1:				equ z_queue_1
 Queue2:				equ z_queue_2
 VoiceTblPtr:		equ v_music_voice_table
-FadeInFlag:			equ f_fadein_flag
+FadeInFlag:			equ f_fadein
 FadeInDelay:		equ v_fadein_delay
 FadeInCounter:		equ v_fadein_counter
 1upPlaying:			equ f_has_backup
@@ -801,7 +815,7 @@ TempoTurbo:			equ v_tempo_speed
 SpeedUpFlag:		equ f_speedup
 DACEnabled:			equ f_dac_enabled
 MusicBankNumber:	equ v_bank_number
-IsPalFlag:			equ f_pal_flag
+IsPalFlag:			equ f_pal
 
 
 
@@ -843,4 +857,15 @@ LoopCounters:		equ ch_loopcounters
 
 GoSubStack:			equ ch_gosub_stack
 
-zTrack:				equ z_track_vars				
+zTrack:				equ z_track_vars
+
+zPalUpdTick			equ	v_pal_update_counter
+zCurDAC:			equ	v_current_dac	
+zCurSong			equ	v_current_song	
+zDoSFXFlag:			equ	f_dosfx	
+zRingSpeaker:			equ	f_stereo_alt
+zGloopFlag:				equ	f_gloop
+zSpindashPlayingCounter:		equ	v_spindash_counter
+zSpindashExtraFrequencyIndex:	equ v_spindash_freq_index
+zSpindashActiveFlag:			equ	f_spindash
+zPaused:						equ	f_pause_sound

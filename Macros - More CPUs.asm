@@ -232,7 +232,7 @@ daa:		macros
 
 dec:		macro
 		local num
-		if instr("a b c d e h l ","\1\ ")
+		if instr("a b c d e h l (hl) ","\1\ ")
 		getzreg	\1
 		dc.b $5+(zreg*8)
 		elseif strcmp("\1","ixh")
@@ -339,7 +339,7 @@ in:		macro
 
 inc:		macro
 		local num
-		if instr("a b c d e h l ","\1\ ")
+		if instr("a b c d e h l (hl) ","\1\ ")
 		getzreg	\1
 		dc.b $4+(zreg*8)
 		elseif strcmp("\1","ixh")

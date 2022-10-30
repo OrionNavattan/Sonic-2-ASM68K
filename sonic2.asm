@@ -21,7 +21,6 @@
 ; sound driver and S2 Driver Compress data are seperate sections.
 
 Main:	group word,org(0) ; we have to use the long form of group declaration to avoid triggering an overlay warning during assembly
-
 		section MainProgram,Main
 		
 
@@ -155,8 +154,8 @@ EntryPoint:
 		movem.l	(a5)+,a0-a4				; a0 = z80_ram ; a1 = z80_bus_request; a2 = z80_reset; a3 = vdp_data_port; a4 = vdp_control_port
 		move.b	-$10FF(a1),d0			; get hardware version (from $A10001)
 		andi.b	#$F,d0
-		beq.s	.no_tmss				; if this is a Model 1 VA5 or older (no TMSS), branch
-		move.l	#'SEGA',$2F00(a1)		; if this is a Model 1 VA6 or later, satisfy the TMSS
+		beq.s	.no_tmss				; if Model 1 VA5 or older (no TMSS), branch
+		move.l	#'SEGA',$2F00(a1)		; if Model 1 VA6 or later, satisfy the TMSS
 		
 	; Initialize the VDP and clear the RAM, VRAM, VSRAM, and CRAM.	
 
@@ -494,7 +493,7 @@ VBlank_Lag:
 ; ===========================================================================
 
 	loc_4C4:				
-					
+	
 		tst.b	(f_water_flag).w
 		beq.w	loc_566
 		move.w	(vdp_control_port).l,d0
@@ -3976,8 +3975,6 @@ PalPointers:
 		nop	
 	endc
 ; =============== S U B	R O U T	I N E =======================================
-
-; sub_3384: DelayProgram:
 WaitForVBlank:				
 		move	#$2300,sr
 
@@ -5355,9 +5352,8 @@ locret_4608:
 
 ; =============== S U B	R O U T	I N E =======================================
 
-; sub_460A: WindTunnel:
 ; displacements for Wind Tunnel data relative to 
-;wt_min_x_pos	equ	0
+wt_min_x_pos	equ	0
 wt_min_y_pos	equ	2
 wt_max_x_pos	equ	4
 wt_max_y_pos	equ	6
@@ -6271,14 +6267,6 @@ loc_508A:
 
 		clear_ram v_sprite_buffer,v_sprite_buffer_end+4
 
-;		lea	(v_sprite_buffer).w,a1
-;		moveq	#0,d0
-;		move.w	#$A0,d1	
-;loc_50AC:				
-;		move.l	d0,(a1)+
-;		dbf	d1,loc_50AC
-		
-		
 		
 		lea	(v_hscroll_buffer).w,a1
 		moveq	#0,d0
@@ -17809,7 +17797,7 @@ DrawTilesWhenMoving:
 		lea	(vdp_data_port).l,a6
 		lea	(v_bg1_redraw_direction_copy).w,a2
 		lea	(v_camera_pos_bg_copy).w,a3
-		lea	(v_level_layout+$80).w,a4
+		lea	(v_level_layout+level_max_width).w,a4
 		move.w	#$6000,d2
 		bsr.w	sub_DBC2
 		lea	(v_bg2_redraw_direction_copy).w,a2
@@ -18933,7 +18921,7 @@ DrawTilesAtStart:
 		lea	(vdp_control_port).l,a5
 		lea	(vdp_data_port).l,a6
 		lea	(v_bg1_x_pos).w,a3
-		lea	(v_level_layout+$80).w,a4
+		lea	(v_level_layout+level_max_width).w,a4
 		move.w	#$6000,d2
 		
 ;	if FixBugs
@@ -19113,7 +19101,6 @@ sub_E462:
 		lea	(a0,d0.l),a0
 		lea	(v_level_layout).w,a1
 		bra.w	j_KosDec
-; End of function sub_E462
 
 ; ===========================================================================
 		lea	(v_level_layout).w,a3
@@ -42129,7 +42116,7 @@ loc_1E816:
 loc_1E826:				
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(ColArray1).l,a2
+		lea	(CollArray1).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
@@ -42206,7 +42193,7 @@ loc_1E8BE:
 loc_1E8CE:				
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(ColArray1).l,a2
+		lea	(CollArray1).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
@@ -42273,7 +42260,7 @@ loc_1E94E:
 loc_1E95E:				
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(ColArray1).l,a2
+		lea	(CollArray1).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
@@ -42350,7 +42337,7 @@ loc_1E9FE:
 loc_1EA06:				
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(ColArray2).l,a2
+		lea	(CollArray2).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
@@ -42427,7 +42414,7 @@ loc_1EAA6:
 loc_1EAAE:				
 		andi.w	#$F,d1
 		add.w	d0,d1
-		lea	(ColArray2).l,a2
+		lea	(CollArray2).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
@@ -42459,8 +42446,8 @@ loc_1EAE0:
 locret_1EAF0:				
 		rts	
 ; ===========================================================================
-		lea	(ColArray1).l,a1
-		lea	(ColArray1).l,a2
+		lea	(CollArray1).l,a1
+		lea	(CollArray1).l,a2
 		move.w	#$FF,d3
 
 loc_1EB02:				
@@ -42482,11 +42469,11 @@ loc_1EB0E:
 		dbf	d2,loc_1EB08
 		adda.w	#$20,a1	; ' '
 		dbf	d3,loc_1EB02
-		lea	(ColArray1).l,a1
-		lea	(ColArray2).l,a2
+		lea	(CollArray1).l,a1
+		lea	(CollArray2).l,a2
 		bsr.s	loc_1EB46
-		lea	(ColArray1).l,a1
-		lea	(ColArray1).l,a2
+		lea	(CollArray1).l,a1
+		lea	(CollArray1).l,a2
 
 loc_1EB46:				
 		move.w	#$FFF,d3
@@ -93023,46 +93010,30 @@ PLC_ResultsTails:		dc.w 3
 ;---------------------------------------------------------------------------------------
 ; Collision Data
 ;---------------------------------------------------------------------------------------
-ColCurveMap:	incbin	"collision/Curve & Resistance Mapping.bin"
-		even
-ColArray1:		incbin	"collision/Collision Array (Normal).bin"
-		;even
-ColArray2:		incbin	"collision/Collision Array (Rotated).bin"
-		even
+
+		incfile ColCurveMap
+		incfile CollArray1
+		incfile CollArray2
+
 ;---------------------------------------------------------------------------------------
 ; 16x16 collision indicies (Kosinski compression)
 ;---------------------------------------------------------------------------------------
-ColP_EHZHTZ:	incbin	"collision/EHZ & HTZ Primary.kos"
-		even
-ColS_EHZHTZ:	incbin	"collision/EHZ & HTZ Secondary.kos"
-		even
-ColP_MTZ:		incbin "collision/MTZ Primary.kos"
-		even
-ColP_HPZ:		;incbin	"collision/HPZ Primary.kos"
-		;even
-ColS_HPZ:		;incbin	"collision/HPZ Secondary.kos"
-		;even		
-ColP_OOZ:		incbin	"collision/OOZ Primary.kos"
-		even
-ColP_MCZ:		incbin	"collision/MCZ Primary.kos"
-		even
-ColP_CNZ:		incbin	"collision/CNZ Primary.kos"
-		even
-ColS_CNZ:		incbin	"collision/CNZ Secondary.kos"
-		even
-ColP_CPZDEZ:	incbin	"collision/CPZ & DEZ Primary.kos"
-		even
-ColS_CPZDEZ:	incbin	"collision/CPZ & DEZ Secondary.kos"
-		even
-ColP_ARZ:		incbin	"collision/ARZ Primary.kos"
-		even
-ColS_ARZ:		incbin	"collision/ARZ Secondary.kos"
-		even
-ColP_WFZSCZ:	incbin	"collision/WFZ & SCZ Primary.kos"
-		even
-ColS_WFZSCZ:	incbin	"collision/WFZ & SCZ Secondary.kos"
-		even
-		
+
+		incfile	ColP_EHZHTZ
+		incfile	ColS_EHZHTZ
+		incfile	ColP_MTZ
+;		incfile	ColP_HPZ
+;		incfile	ColS_HPZ		
+		incfile	ColP_OOZ
+		incfile	ColP_MCZ
+		incfile	ColP_CNZ
+		incfile	ColS_CNZ
+		incfile	ColP_CPZDEZ
+		incfile	ColS_CPZDEZ
+		incfile	ColP_ARZ
+		incfile	ColS_ARZ
+		incfile	ColP_WFZSCZ
+		incfile	ColS_WFZSCZ
 		
 ;---------------------------------------------------------------------------------------
 ;Offset	index of level layouts
@@ -93279,7 +93250,6 @@ Art_SplashAndDust:	incbin	"art/uncompressed/Water Splash & Skid Dust.bin"
 		include	"mappings/sprite/Tails.asm"	; MapUnc_739E2: ; Map_Tails
 		include	"mappings/spriteDPLC/Tails.asm"	 Tails DPLCs	; MapRUnc_7446C:
 		even
-
 
 		incfile	Nem_SEGA	; ArtNem_74876:	
 		incfile Nem_IntroTrails	; ArtNem_74CF6:
@@ -94778,27 +94748,27 @@ SaxDec_GetByte:
 ; S2 sound driver (Saxman compression)
 ; --------------------------------------------------------------------------------------
 
-;SoundDriver:	
-;		pushs	; save current section info	
+SoundDriver:	
+		pushs	; save current section info	
 
-;Z80_Code:	section	org(0),file("sound/Sound Driver.bin")	; new section for the sound driver
-;		cpu Z80
+Z80_Code:	section	org(0),file("sound/Sound Driver.bin"),over(Main)	; new section for the sound driver
+		cpu Z80
 
-;		include "sound/Sound Driver.asm" ; include the actual sound driver code
+		include "sound/Sound Driver.asm" ; include the actual sound driver code
 		
-;		cpu 68000
-;		pops	; return to main section...
-;		pushs	; ...and save section info again	
+		cpu 68000
+		pops	; return to main section...
+		pushs	; ...and save section info again	
 		
-;MergeCode: section org(0), file("sound/MergeData.dat")	; make data file for hypothetical S2 Driver Compress
-;		dc.l offset(SoundDriver),Z80_Space,movewZ80CompSize+2 ; start location of compressed sound driver; space reserved for sound driver; location of data to patch in the Saxman decompressor
-;		pops	; return to main section for good
-;		ds.b Z80_Space	; reserve space for the compressed sound driver
-;		even
+MergeCode: section org(0), file("sound/MergeData.dat"),over(Main)	; make data file for hypothetical S2 Driver Compress
+		dc.l offset(SoundDriver),Z80_Space,movewZ80CompSize+2 ; start location of compressed sound driver; space reserved for sound driver; location of data to patch in the Saxman decompressor
+		pops	; return to main section for good
+		ds.b Z80_Space	; reserve space for the compressed sound driver
+		even
 
 
 
-SoundDriver:	include "sound/Sound Driver Raw.asm" ; precompressed sound driver in dc.b form, copied from Nemesis text disassembly
+;SoundDriver:	include "sound/Sound Driver Raw.asm" ; precompressed sound driver in dc.b form, copied from Nemesis text disassembly
 
 
 ; ----------------------------------------------------------------------------------
@@ -95034,7 +95004,7 @@ Mus_Credits:		include	"sound/music/Credits.asm"
 ; ------------------------------------------------------------------------------------------
 ; Sound	effect pointers
 ; ------------------------------------------------------------------------------------------
-SoundPoint:	dc.w ((((Sound20&$7FFF)+$8000)<<8)&$FF00)+(((Sound20&$7FFF)+$8000)>>8)
+SoundIndex:	dc.w ((((Sound20&$7FFF)+$8000)<<8)&$FF00)+(((Sound20&$7FFF)+$8000)>>8)
 		dc.w ((((Sound21&$7FFF)+$8000)<<8)&$FF00)+(((Sound21&$7FFF)+$8000)>>8)
 		dc.w ((((Sound22&$7FFF)+$8000)<<8)&$FF00)+(((Sound22&$7FFF)+$8000)>>8)
 		dc.w ((((Sound23&$7FFF)+$8000)<<8)&$FF00)+(((Sound23&$7FFF)+$8000)>>8)
