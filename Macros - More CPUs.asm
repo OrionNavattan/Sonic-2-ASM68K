@@ -43,6 +43,8 @@ binclude:	macros
 ; Z80 instruction set
 ; ---------------------------------------------------------------------------
 
+Assemble8080Ins equ 1		; if 1, makes some instructions assemble in the 8080 form instead of Z80 extended
+
 getzreg:	macro						; convert register to numerical value
 		if strcmp("\1","a")
 		zreg: = 7
@@ -680,7 +682,11 @@ ld:		macro
 			tmp_fc:	substr	1,1,"\2"
 			tmp_lc:	substr	tmp_len,tmp_len,"\2"
 			if strcmp("\tmp_fc","(") & strcmp("\tmp_lc",")") ; ld hl,(n)
-			dc.b $ed, $6b, num&$ff, num>>8
+			if Assemble8080Ins
+			dc.b $2a, num&$ff, num>>8 ; assemble the shorted 8080 version of this instruction
+			else
+			dc.b $ed, $6b, num&$ff, num>>8 ; otherwise, assemble the extended Z80 version
+			endc
 			else					; ld hl,n
 			dc.b $21, num&$ff, num>>8
 			endc
@@ -1072,7 +1078,9 @@ scf:		macros
 set:		macro
 		local num, num2
 		num: equ \1
-		if instr("a b c d e h l (hl) ","\2\ ")
+		if narg=1
+		inform 3,"Use = instead of SET for redefinable symbols."
+		elseif instr("a b c d e h l (hl) ","\2\ ")
 		getzreg	\2
 		dc.b $cb, $c0+(num*8)+zreg
 		elseif instr("\2","(i")				; set n,(ix+n)

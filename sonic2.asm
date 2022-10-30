@@ -11,7 +11,6 @@
 
 		opt	l.					; . is the local label symbol
 		opt	ae-					; automatic evens disabled by default
-		opt an+					; allow -h suffix for hexadecimal (used in the Z80 code)
 		opt oz+					; enable zero-displacement optimization	by default (but see the ZeroOffsetOptimization conditional below)	
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
@@ -25,41 +24,41 @@ Main:	group word,org(0) ; we have to use the long form of group declaration to a
 		
 
 	if ~def(Revision) 
-Revision = 1
+Revision equ 1
 ; if 0, builds a REV00 ROM
 ; if 1, builds a REV01 ROM, which contains some fixes
 ; if 2, builds a hypothetical standalone REV02 ROM (based on the changes found in all 
 ; known appearances, without any of the implementation-specific bugs) which contains even more fixes
 	endc
 	
-FixBugs = 0 
+FixBugs equ 0 
 ; If 1, enables a number of engine and gameplay bug-fixes, including some in the sound driver.
 
-OptimizeSoundDriver = 0	
+OptimizeSoundDriver equ 0	
 ; If 1, enables a number of optimizations in the sound driver.
 
-AllOptimizations = 0 
+AllOptimizations equ 0 
 ; If 1, enables all REV02 assembler optimizations as well as optimized leas from REV00 & REV01
 ; and the zero-displacement optimization.
 
-ZeroOffsetOptimization = 1|AllOptimizations
+ZeroOffsetOptimization equ 1|AllOptimizations
 ; If 1, enables the zero-displacement optimization for 156 instances of address register 
 ; indirect displacement instructions that were unoptimized in the original game.
 ; See the macro definitions file for a full explanation.
 
-RemoveJmpTos = (0|Revision=2|AllOptimizations) 
+RemoveJmpTos equ (0|Revision=2|AllOptimizations) 
 ; If 1, many unnecessary JmpTos are removed, improving performance. See the jsrto amd jmpto macro definitions for more information.
 
-AddSubOptimize = (0|Revision=2|AllOptimizations)
+AddSubOptimize equ (0|Revision=2|AllOptimizations)
 ; If 1, many add/sub instructions are optimized to addq/subq.
 
-RelativeLea = (0|Revision<>2|AllOptimizations)
+RelativeLea equ (0|Revision<>2|AllOptimizations)
 ; If 1, makes some lea instructions use pc-relative addressing, instead of absolute long.
 
-;SkipChecksumCheck = 0
+;SkipChecksumCheck equ 0
 ; If 1, disables the slow bootup checksum calculation
 
-;UseFullWaterTables = 0
+;UseFullWaterTables equ 0
 ; If 1, zone offset tables for water levels cover all level slots instead of only slots 8-$F
 ; If you've shifted level IDs around or you want water in levels with a level slot below 8	
 		
@@ -74,7 +73,7 @@ RelativeLea = (0|Revision<>2|AllOptimizations)
 		include "RAM Addresses.asm"
 		include "sound/Sound Equates.asm"
 		include "sound/SMPS2ASM.asm"
-		
+		include "Compatibility.asm"
 		include "File List.asm"
 
 
@@ -2279,7 +2278,7 @@ RunPLC:
 ; Subroutine to	decompress graphics listed in the PLC buffer
 ; ---------------------------------------------------------------------------
 
-nem_tile_count:	set 6
+nem_tile_count:	= 6
 
 ProcessPLC:
 		tst.w	(v_nem_tile_count).w			; has PLC execution begun?
@@ -2290,7 +2289,7 @@ ProcessPLC:
 		addi.w	#nem_tile_count*sizeof_cell,(v_plc_buffer_dest).w ; update for next frame
 		bra.s	ProcessPLC_Decompress
 
-nem_tile_count:	set 3
+nem_tile_count:	= 3
 
 ProcessPLC2:
 		tst.w	(v_nem_tile_count).w			; has PLC execution begun?

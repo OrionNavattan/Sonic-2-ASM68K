@@ -342,13 +342,13 @@
 00000000                            ; ---------------------------------------------------------------------------
 00000000                            ; Header Macros
 00000000                            smpsHeaderStartSong macro ver,sourcesmps2asmver
-00000000                            SourceDriver set ver
+00000000                            SourceDriver = ver
 00000000                            	if (narg=2)
-00000000                            SourceSMPS2ASM set sourcesmps2asmver
+00000000                            SourceSMPS2ASM = sourcesmps2asmver
 00000000                            	else
-00000000                            SourceSMPS2ASM set 0
+00000000                            SourceSMPS2ASM = 0
 00000000                            	endc
-00000000                            songStart set offset(*)
+00000000                            songStart = offset(*)
 00000000                            	if SMPS2ASMVer<SourceSMPS2ASM
 00000000                            		inform 1,"Song at 0x%h was made for a newer version of SMPS2ASM (this is version %d, but song wants at least version %d).",songStart,SMPS2ASMVer,SourceSMPS2ASM
 00000000                            	endc
@@ -770,59 +770,59 @@
 00000000                            ; Macros for FM instruments
 00000000                            ; Voices - Feedback
 00000000                            smpsVcFeedback macro val
-00000000                            vcFeedback set val
+00000000                            vcFeedback = val
 00000000                            	endm
 00000000                            
 00000000                            ; Voices - Algorithm
 00000000                            smpsVcAlgorithm macro val
-00000000                            vcAlgorithm set val
+00000000                            vcAlgorithm = val
 00000000                            	endm
 00000000                            
 00000000                            smpsVcUnusedBits macro val,d1r1,d1r2,d1r3,d1r4
-00000000                            vcUnusedBits set val
+00000000                            vcUnusedBits = val
 00000000                            	if (strlen("\d1r1")>0)&(strlen("\d1r2")>0)&(strlen("\d1r3")>0)&(strlen("\d1r4")>0)
-00000000                            vcD1R1Unk set d1r1<<5
-00000000                            vcD1R2Unk set d1r2<<5
-00000000                            vcD1R3Unk set d1r3<<5
-00000000                            vcD1R4Unk set d1r4<<5
+00000000                            vcD1R1Unk = d1r1<<5
+00000000                            vcD1R2Unk = d1r2<<5
+00000000                            vcD1R3Unk = d1r3<<5
+00000000                            vcD1R4Unk = d1r4<<5
 00000000                            	else
-00000000                            vcD1R1Unk set 0
-00000000                            vcD1R2Unk set 0
-00000000                            vcD1R3Unk set 0
-00000000                            vcD1R4Unk set 0
+00000000                            vcD1R1Unk = 0
+00000000                            vcD1R2Unk = 0
+00000000                            vcD1R3Unk = 0
+00000000                            vcD1R4Unk = 0
 00000000                            	endc
 00000000                            	endm
 00000000                            
 00000000                            ; Voices - Detune
 00000000                            smpsVcDetune macro op1,op2,op3,op4
-00000000                            vcDT1 set op1
-00000000                            vcDT2 set op2
-00000000                            vcDT3 set op3
-00000000                            vcDT4 set op4
+00000000                            vcDT1 = op1
+00000000                            vcDT2 = op2
+00000000                            vcDT3 = op3
+00000000                            vcDT4 = op4
 00000000                            	endm
 00000000                            
 00000000                            ; Voices - Coarse-Frequency
 00000000                            smpsVcCoarseFreq macro op1,op2,op3,op4
-00000000                            vcCF1 set op1
-00000000                            vcCF2 set op2
-00000000                            vcCF3 set op3
-00000000                            vcCF4 set op4
+00000000                            vcCF1 = op1
+00000000                            vcCF2 = op2
+00000000                            vcCF3 = op3
+00000000                            vcCF4 = op4
 00000000                            	endm
 00000000                            
 00000000                            ; Voices - Rate Scale
 00000000                            smpsVcRateScale macro op1,op2,op3,op4
-00000000                            vcRS1 set op1
-00000000                            vcRS2 set op2
-00000000                            vcRS3 set op3
-00000000                            vcRS4 set op4
+00000000                            vcRS1 = op1
+00000000                            vcRS2 = op2
+00000000                            vcRS3 = op3
+00000000                            vcRS4 = op4
 00000000                            	endm
 00000000                            
 00000000                            ; Voices - Attack Rate
 00000000                            smpsVcAttackRate macro op1,op2,op3,op4
-00000000                            vcAR1 set op1
-00000000                            vcAR2 set op2
-00000000                            vcAR3 set op3
-00000000                            vcAR4 set op4
+00000000                            vcAR1 = op1
+00000000                            vcAR2 = op2
+00000000                            vcAR3 = op3
+00000000                            vcAR4 = op4
 00000000                            	endm
 00000000                            
 00000000                            ; Voices - Amplitude Modulation
@@ -831,48 +831,48 @@
 00000000                            ; According to several docs, however, it's actually the high bit.
 00000000                            smpsVcAmpMod macro op1,op2,op3,op4
 00000000                            	if SourceSMPS2ASM=0
-00000000                            vcAM1 set op1<<5
-00000000                            vcAM2 set op2<<5
-00000000                            vcAM3 set op3<<5
-00000000                            vcAM4 set op4<<5
+00000000                            vcAM1 = op1<<5
+00000000                            vcAM2 = op2<<5
+00000000                            vcAM3 = op3<<5
+00000000                            vcAM4 = op4<<5
 00000000                            	else
-00000000                            vcAM1 set op1<<7
-00000000                            vcAM2 set op2<<7
-00000000                            vcAM3 set op3<<7
-00000000                            vcAM4 set op4<<7
+00000000                            vcAM1 = op1<<7
+00000000                            vcAM2 = op2<<7
+00000000                            vcAM3 = op3<<7
+00000000                            vcAM4 = op4<<7
 00000000                            	endc
 00000000                            	endm
 00000000                            
 00000000                            ; Voices - First Decay Rate
 00000000                            smpsVcDecayRate1 macro op1,op2,op3,op4
-00000000                            vcD1R1 set op1
-00000000                            vcD1R2 set op2
-00000000                            vcD1R3 set op3
-00000000                            vcD1R4 set op4
+00000000                            vcD1R1 = op1
+00000000                            vcD1R2 = op2
+00000000                            vcD1R3 = op3
+00000000                            vcD1R4 = op4
 00000000                            	endm
 00000000                            
 00000000                            ; Voices - Second Decay Rate
 00000000                            smpsVcDecayRate2 macro op1,op2,op3,op4
-00000000                            vcD2R1 set op1
-00000000                            vcD2R2 set op2
-00000000                            vcD2R3 set op3
-00000000                            vcD2R4 set op4
+00000000                            vcD2R1 = op1
+00000000                            vcD2R2 = op2
+00000000                            vcD2R3 = op3
+00000000                            vcD2R4 = op4
 00000000                            	endm
 00000000                            
 00000000                            ; Voices - Decay Level
 00000000                            smpsVcDecayLevel macro op1,op2,op3,op4
-00000000                            vcDL1 set op1
-00000000                            vcDL2 set op2
-00000000                            vcDL3 set op3
-00000000                            vcDL4 set op4
+00000000                            vcDL1 = op1
+00000000                            vcDL2 = op2
+00000000                            vcDL3 = op3
+00000000                            vcDL4 = op4
 00000000                            	endm
 00000000                            
 00000000                            ; Voices - Release Rate
 00000000                            smpsVcReleaseRate macro op1,op2,op3,op4
-00000000                            vcRR1 set op1
-00000000                            vcRR2 set op2
-00000000                            vcRR3 set op3
-00000000                            vcRR4 set op4
+00000000                            vcRR1 = op1
+00000000                            vcRR2 = op2
+00000000                            vcRR3 = op3
+00000000                            vcRR4 = op4
 00000000                            	endm
 00000000                            
 00000000                            ; Voices - Total Level
@@ -886,33 +886,33 @@
 00000000                            ; an SMPS Z80 song to SMPS 68k. It will ignore the bits no matter
 00000000                            ; what we do, so we just print a warning.
 00000000                            smpsVcTotalLevel macro op1,op2,op3,op4
-00000000                            vcTL1 set op1
-00000000                            vcTL2 set op2
-00000000                            vcTL3 set op3
-00000000                            vcTL4 set op4
+00000000                            vcTL1 = op1
+00000000                            vcTL2 = op2
+00000000                            vcTL3 = op3
+00000000                            vcTL4 = op4
 00000000                            	dc.b	(vcUnusedBits<<6)+(vcFeedback<<3)+vcAlgorithm
 00000000                            ;   0     1     2     3     4     5     6     7
 00000000                            ;%1000,%1000,%1000,%1000,%1010,%1110,%1110,%1111
 00000000                            	if SourceSMPS2ASM=0
-00000000                            vcTLMask4 set ((vcAlgorithm=7)<<7)
-00000000                            vcTLMask3 set ((vcAlgorithm>=4)<<7)
-00000000                            vcTLMask2 set ((vcAlgorithm>=5)<<7)
-00000000                            vcTLMask1 set $80
+00000000                            vcTLMask4 = ((vcAlgorithm=7)<<7)
+00000000                            vcTLMask3 = ((vcAlgorithm>=4)<<7)
+00000000                            vcTLMask2 = ((vcAlgorithm>=5)<<7)
+00000000                            vcTLMask1 = $80
 00000000                            	else
-00000000                            vcTLMask4 set 0
-00000000                            vcTLMask3 set 0
-00000000                            vcTLMask2 set 0
-00000000                            vcTLMask1 set 0
+00000000                            vcTLMask4 = 0
+00000000                            vcTLMask3 = 0
+00000000                            vcTLMask2 = 0
+00000000                            vcTLMask1 = 0
 00000000                            	endc
 00000000                            	if (SonicDriverVer>=3)&(SourceDriver<3)
-00000000                            vcTLMask4 set ((vcAlgorithm=7)<<7)
-00000000                            vcTLMask3 set ((vcAlgorithm>=4)<<7)
-00000000                            vcTLMask2 set ((vcAlgorithm>=5)<<7)
-00000000                            vcTLMask1 set $80
-00000000                            vcTL1 set vcTL1&$7F
-00000000                            vcTL2 set vcTL2&$7F
-00000000                            vcTL3 set vcTL3&$7F
-00000000                            vcTL4 set vcTL4&$7F
+00000000                            vcTLMask4 = ((vcAlgorithm=7)<<7)
+00000000                            vcTLMask3 = ((vcAlgorithm>=4)<<7)
+00000000                            vcTLMask2 = ((vcAlgorithm>=5)<<7)
+00000000                            vcTLMask1 = $80
+00000000                            vcTL1 = vcTL1&$7F
+00000000                            vcTL2 = vcTL2&$7F
+00000000                            vcTL3 = vcTL3&$7F
+00000000                            vcTL4 = vcTL4&$7F
 00000000                            	elseif (SonicDriverVer<3)&(SourceDriver>=3)&((((vcTL1|vcTLMask1)&$80)<>$80)|(((vcTL2|vcTLMask2)&$80)<>((vcAlgorithm>=5)<<7))|(((vcTL3|vcTLMask3)&$80)<>((vcAlgorithm>=4)<<7))|(((vcTL4|vcTLMask4)&$80)<>((vcAlgorithm=7)<<7)))
 00000000                            		inform 1,"Voice at 0x%h has TL bits that do not match its algorithm setting. This voice will not work in S1/S2 drivers.",offset(*)
 00000000                            	endc
@@ -952,9 +952,9 @@
 00000000                          M 	include	"sound/music/endofact.asm"
 00000000                            End_of_level_Header:
 00000000                            	smpsHeaderStartSong 2
-00000000 =00000002                M sourcedriver	set	ver
-00000000 =00000000                M sourcesmps2asm	set	0
-00000000 =00000000                M songstart	set	offset(*)
+00000000 =00000002                M sourcedriver	=	ver
+00000000 =00000000                M sourcesmps2asm	=	0
+00000000 =00000000                M songstart	=	offset(*)
 00000000                            	smpsHeaderVoice     End_of_level_Voices
 00000000 0000                     M 	dc.w	((end_of_level_voices&$7fff)<<8)&$ff00+(end_of_level_voices&$7fff)>>8
 00000002                            	smpsHeaderChan      $06, $03
@@ -1116,70 +1116,70 @@
 000000D8                            ;	$01, $02, $00, $01, 	$1F, $0E, $0E, $0E, 	$07, $1F, $1F, $1F
 000000D8                            ;	$00, $00, $00, $00, 	$1F, $0F, $0F, $0F, 	$17, $8D, $8C, $8C
 000000D8                            	smpsVcAlgorithm     $05
-000000D8 =00000005                M vcalgorithm	set	val
+000000D8 =00000005                M vcalgorithm	=	val
 000000D8                            	smpsVcFeedback      $07
-000000D8 =00000007                M vcfeedback	set	val
+000000D8 =00000007                M vcfeedback	=	val
 000000D8                            	smpsVcUnusedBits    $00
-000000D8 =00000000                M vcunusedbits	set	val
-000000D8 =00000000                M vcd1r1unk	set	0
-000000D8 =00000000                M vcd1r2unk	set	0
-000000D8 =00000000                M vcd1r3unk	set	0
-000000D8 =00000000                M vcd1r4unk	set	0
+000000D8 =00000000                M vcunusedbits	=	val
+000000D8 =00000000                M vcd1r1unk	=	0
+000000D8 =00000000                M vcd1r2unk	=	0
+000000D8 =00000000                M vcd1r3unk	=	0
+000000D8 =00000000                M vcd1r4unk	=	0
 000000D8                            	smpsVcDetune        $00, $00, $00, $00
-000000D8 =00000000                M vcdt1	set	op1
-000000D8 =00000000                M vcdt2	set	op2
-000000D8 =00000000                M vcdt3	set	op3
-000000D8 =00000000                M vcdt4	set	op4
+000000D8 =00000000                M vcdt1	=	op1
+000000D8 =00000000                M vcdt2	=	op2
+000000D8 =00000000                M vcdt3	=	op3
+000000D8 =00000000                M vcdt4	=	op4
 000000D8                            	smpsVcCoarseFreq    $01, $00, $02, $01
-000000D8 =00000001                M vccf1	set	op1
-000000D8 =00000000                M vccf2	set	op2
-000000D8 =00000002                M vccf3	set	op3
-000000D8 =00000001                M vccf4	set	op4
+000000D8 =00000001                M vccf1	=	op1
+000000D8 =00000000                M vccf2	=	op2
+000000D8 =00000002                M vccf3	=	op3
+000000D8 =00000001                M vccf4	=	op4
 000000D8                            	smpsVcRateScale     $00, $00, $00, $00
-000000D8 =00000000                M vcrs1	set	op1
-000000D8 =00000000                M vcrs2	set	op2
-000000D8 =00000000                M vcrs3	set	op3
-000000D8 =00000000                M vcrs4	set	op4
+000000D8 =00000000                M vcrs1	=	op1
+000000D8 =00000000                M vcrs2	=	op2
+000000D8 =00000000                M vcrs3	=	op3
+000000D8 =00000000                M vcrs4	=	op4
 000000D8                            	smpsVcAttackRate    $0E, $0E, $0E, $1F
-000000D8 =0000000E                M vcar1	set	op1
-000000D8 =0000000E                M vcar2	set	op2
-000000D8 =0000000E                M vcar3	set	op3
-000000D8 =0000001F                M vcar4	set	op4
+000000D8 =0000000E                M vcar1	=	op1
+000000D8 =0000000E                M vcar2	=	op2
+000000D8 =0000000E                M vcar3	=	op3
+000000D8 =0000001F                M vcar4	=	op4
 000000D8                            	smpsVcAmpMod        $00, $00, $00, $00
-000000D8 =00000000                M vcam1	set	op1<<5
-000000D8 =00000000                M vcam2	set	op2<<5
-000000D8 =00000000                M vcam3	set	op3<<5
-000000D8 =00000000                M vcam4	set	op4<<5
+000000D8 =00000000                M vcam1	=	op1<<5
+000000D8 =00000000                M vcam2	=	op2<<5
+000000D8 =00000000                M vcam3	=	op3<<5
+000000D8 =00000000                M vcam4	=	op4<<5
 000000D8                            	smpsVcDecayRate1    $1F, $1F, $1F, $07
-000000D8 =0000001F                M vcd1r1	set	op1
-000000D8 =0000001F                M vcd1r2	set	op2
-000000D8 =0000001F                M vcd1r3	set	op3
-000000D8 =00000007                M vcd1r4	set	op4
+000000D8 =0000001F                M vcd1r1	=	op1
+000000D8 =0000001F                M vcd1r2	=	op2
+000000D8 =0000001F                M vcd1r3	=	op3
+000000D8 =00000007                M vcd1r4	=	op4
 000000D8                            	smpsVcDecayRate2    $00, $00, $00, $00
-000000D8 =00000000                M vcd2r1	set	op1
-000000D8 =00000000                M vcd2r2	set	op2
-000000D8 =00000000                M vcd2r3	set	op3
-000000D8 =00000000                M vcd2r4	set	op4
+000000D8 =00000000                M vcd2r1	=	op1
+000000D8 =00000000                M vcd2r2	=	op2
+000000D8 =00000000                M vcd2r3	=	op3
+000000D8 =00000000                M vcd2r4	=	op4
 000000D8                            	smpsVcDecayLevel    $00, $00, $00, $01
-000000D8 =00000000                M vcdl1	set	op1
-000000D8 =00000000                M vcdl2	set	op2
-000000D8 =00000000                M vcdl3	set	op3
-000000D8 =00000001                M vcdl4	set	op4
+000000D8 =00000000                M vcdl1	=	op1
+000000D8 =00000000                M vcdl2	=	op2
+000000D8 =00000000                M vcdl3	=	op3
+000000D8 =00000001                M vcdl4	=	op4
 000000D8                            	smpsVcReleaseRate   $0F, $0F, $0F, $0F
-000000D8 =0000000F                M vcrr1	set	op1
-000000D8 =0000000F                M vcrr2	set	op2
-000000D8 =0000000F                M vcrr3	set	op3
-000000D8 =0000000F                M vcrr4	set	op4
+000000D8 =0000000F                M vcrr1	=	op1
+000000D8 =0000000F                M vcrr2	=	op2
+000000D8 =0000000F                M vcrr3	=	op3
+000000D8 =0000000F                M vcrr4	=	op4
 000000D8                            	smpsVcTotalLevel    $0C, $0C, $0D, $17
-000000D8 =0000000C                M vctl1	set	op1
-000000D8 =0000000C                M vctl2	set	op2
-000000D8 =0000000D                M vctl3	set	op3
-000000D8 =00000017                M vctl4	set	op4
+000000D8 =0000000C                M vctl1	=	op1
+000000D8 =0000000C                M vctl2	=	op2
+000000D8 =0000000D                M vctl3	=	op3
+000000D8 =00000017                M vctl4	=	op4
 000000D8 3D                       M 	dc.b	(vcunusedbits<<6)+(vcfeedback<<3)+vcalgorithm
-000000D9 =00000000                M vctlmask4	set	((vcalgorithm=7)<<7)
-000000D9 =FFFFFF80                M vctlmask3	set	((vcalgorithm>=4)<<7)
-000000D9 =FFFFFF80                M vctlmask2	set	((vcalgorithm>=5)<<7)
-000000D9 =00000080                M vctlmask1	set	$80
+000000D9 =00000000                M vctlmask4	=	((vcalgorithm=7)<<7)
+000000D9 =FFFFFF80                M vctlmask3	=	((vcalgorithm>=4)<<7)
+000000D9 =FFFFFF80                M vctlmask2	=	((vcalgorithm>=5)<<7)
+000000D9 =00000080                M vctlmask1	=	$80
 000000D9 0100 0201                M 	dc.b	(vcdt4<<4)+vccf4,(vcdt2<<4)+vccf2,(vcdt3<<4)+vccf3,(vcdt1<<4)+vccf1
 000000DD 1F0E 0E0E                M 	dc.b	(vcrs4<<6)+vcar4,(vcrs2<<6)+vcar2,(vcrs3<<6)+vcar3,(vcrs1<<6)+vcar1
 000000E1 071F 1F1F                M 	dc.b	vcam4|vcd1r4|vcd1r4unk,vcam2|vcd1r2|vcd1r2unk,vcam3|vcd1r3|vcd1r3unk,vcam1|vcd1r1|vcd1r1unk
@@ -1192,70 +1192,70 @@
 000000F1                            ;	$61, $3C, $14, $31, 	$9C, $DB, $9C, $DA, 	$04, $09, $04, $03
 000000F1                            ;	$03, $01, $03, $00, 	$1F, $0F, $0F, $0F, 	$21, $47, $31, $80
 000000F1                            	smpsVcAlgorithm     $02
-000000F1 =00000002                M vcalgorithm	set	val
+000000F1 =00000002                M vcalgorithm	=	val
 000000F1                            	smpsVcFeedback      $07
-000000F1 =00000007                M vcfeedback	set	val
+000000F1 =00000007                M vcfeedback	=	val
 000000F1                            	smpsVcUnusedBits    $00
-000000F1 =00000000                M vcunusedbits	set	val
-000000F1 =00000000                M vcd1r1unk	set	0
-000000F1 =00000000                M vcd1r2unk	set	0
-000000F1 =00000000                M vcd1r3unk	set	0
-000000F1 =00000000                M vcd1r4unk	set	0
+000000F1 =00000000                M vcunusedbits	=	val
+000000F1 =00000000                M vcd1r1unk	=	0
+000000F1 =00000000                M vcd1r2unk	=	0
+000000F1 =00000000                M vcd1r3unk	=	0
+000000F1 =00000000                M vcd1r4unk	=	0
 000000F1                            	smpsVcDetune        $03, $01, $03, $06
-000000F1 =00000003                M vcdt1	set	op1
-000000F1 =00000001                M vcdt2	set	op2
-000000F1 =00000003                M vcdt3	set	op3
-000000F1 =00000006                M vcdt4	set	op4
+000000F1 =00000003                M vcdt1	=	op1
+000000F1 =00000001                M vcdt2	=	op2
+000000F1 =00000003                M vcdt3	=	op3
+000000F1 =00000006                M vcdt4	=	op4
 000000F1                            	smpsVcCoarseFreq    $01, $04, $0C, $01
-000000F1 =00000001                M vccf1	set	op1
-000000F1 =00000004                M vccf2	set	op2
-000000F1 =0000000C                M vccf3	set	op3
-000000F1 =00000001                M vccf4	set	op4
+000000F1 =00000001                M vccf1	=	op1
+000000F1 =00000004                M vccf2	=	op2
+000000F1 =0000000C                M vccf3	=	op3
+000000F1 =00000001                M vccf4	=	op4
 000000F1                            	smpsVcRateScale     $03, $02, $03, $02
-000000F1 =00000003                M vcrs1	set	op1
-000000F1 =00000002                M vcrs2	set	op2
-000000F1 =00000003                M vcrs3	set	op3
-000000F1 =00000002                M vcrs4	set	op4
+000000F1 =00000003                M vcrs1	=	op1
+000000F1 =00000002                M vcrs2	=	op2
+000000F1 =00000003                M vcrs3	=	op3
+000000F1 =00000002                M vcrs4	=	op4
 000000F1                            	smpsVcAttackRate    $1A, $1C, $1B, $1C
-000000F1 =0000001A                M vcar1	set	op1
-000000F1 =0000001C                M vcar2	set	op2
-000000F1 =0000001B                M vcar3	set	op3
-000000F1 =0000001C                M vcar4	set	op4
+000000F1 =0000001A                M vcar1	=	op1
+000000F1 =0000001C                M vcar2	=	op2
+000000F1 =0000001B                M vcar3	=	op3
+000000F1 =0000001C                M vcar4	=	op4
 000000F1                            	smpsVcAmpMod        $00, $00, $00, $00
-000000F1 =00000000                M vcam1	set	op1<<5
-000000F1 =00000000                M vcam2	set	op2<<5
-000000F1 =00000000                M vcam3	set	op3<<5
-000000F1 =00000000                M vcam4	set	op4<<5
+000000F1 =00000000                M vcam1	=	op1<<5
+000000F1 =00000000                M vcam2	=	op2<<5
+000000F1 =00000000                M vcam3	=	op3<<5
+000000F1 =00000000                M vcam4	=	op4<<5
 000000F1                            	smpsVcDecayRate1    $03, $04, $09, $04
-000000F1 =00000003                M vcd1r1	set	op1
-000000F1 =00000004                M vcd1r2	set	op2
-000000F1 =00000009                M vcd1r3	set	op3
-000000F1 =00000004                M vcd1r4	set	op4
+000000F1 =00000003                M vcd1r1	=	op1
+000000F1 =00000004                M vcd1r2	=	op2
+000000F1 =00000009                M vcd1r3	=	op3
+000000F1 =00000004                M vcd1r4	=	op4
 000000F1                            	smpsVcDecayRate2    $00, $03, $01, $03
-000000F1 =00000000                M vcd2r1	set	op1
-000000F1 =00000003                M vcd2r2	set	op2
-000000F1 =00000001                M vcd2r3	set	op3
-000000F1 =00000003                M vcd2r4	set	op4
+000000F1 =00000000                M vcd2r1	=	op1
+000000F1 =00000003                M vcd2r2	=	op2
+000000F1 =00000001                M vcd2r3	=	op3
+000000F1 =00000003                M vcd2r4	=	op4
 000000F1                            	smpsVcDecayLevel    $00, $00, $00, $01
-000000F1 =00000000                M vcdl1	set	op1
-000000F1 =00000000                M vcdl2	set	op2
-000000F1 =00000000                M vcdl3	set	op3
-000000F1 =00000001                M vcdl4	set	op4
+000000F1 =00000000                M vcdl1	=	op1
+000000F1 =00000000                M vcdl2	=	op2
+000000F1 =00000000                M vcdl3	=	op3
+000000F1 =00000001                M vcdl4	=	op4
 000000F1                            	smpsVcReleaseRate   $0F, $0F, $0F, $0F
-000000F1 =0000000F                M vcrr1	set	op1
-000000F1 =0000000F                M vcrr2	set	op2
-000000F1 =0000000F                M vcrr3	set	op3
-000000F1 =0000000F                M vcrr4	set	op4
+000000F1 =0000000F                M vcrr1	=	op1
+000000F1 =0000000F                M vcrr2	=	op2
+000000F1 =0000000F                M vcrr3	=	op3
+000000F1 =0000000F                M vcrr4	=	op4
 000000F1                            	smpsVcTotalLevel    $00, $31, $47, $21
-000000F1 =00000000                M vctl1	set	op1
-000000F1 =00000031                M vctl2	set	op2
-000000F1 =00000047                M vctl3	set	op3
-000000F1 =00000021                M vctl4	set	op4
+000000F1 =00000000                M vctl1	=	op1
+000000F1 =00000031                M vctl2	=	op2
+000000F1 =00000047                M vctl3	=	op3
+000000F1 =00000021                M vctl4	=	op4
 000000F1 3A                       M 	dc.b	(vcunusedbits<<6)+(vcfeedback<<3)+vcalgorithm
-000000F2 =00000000                M vctlmask4	set	((vcalgorithm=7)<<7)
-000000F2 =00000000                M vctlmask3	set	((vcalgorithm>=4)<<7)
-000000F2 =00000000                M vctlmask2	set	((vcalgorithm>=5)<<7)
-000000F2 =00000080                M vctlmask1	set	$80
+000000F2 =00000000                M vctlmask4	=	((vcalgorithm=7)<<7)
+000000F2 =00000000                M vctlmask3	=	((vcalgorithm>=4)<<7)
+000000F2 =00000000                M vctlmask2	=	((vcalgorithm>=5)<<7)
+000000F2 =00000080                M vctlmask1	=	$80
 000000F2 6114 3C31                M 	dc.b	(vcdt4<<4)+vccf4,(vcdt2<<4)+vccf2,(vcdt3<<4)+vccf3,(vcdt1<<4)+vccf1
 000000F6 9C9C DBDA                M 	dc.b	(vcrs4<<6)+vcar4,(vcrs2<<6)+vcar2,(vcrs3<<6)+vcar3,(vcrs1<<6)+vcar1
 000000FA 0404 0903                M 	dc.b	vcam4|vcd1r4|vcd1r4unk,vcam2|vcd1r2|vcd1r2unk,vcam3|vcd1r3|vcd1r3unk,vcam1|vcd1r1|vcd1r1unk
@@ -1268,70 +1268,70 @@
 0000010A                            ;	$01, $01, $01, $01, 	$8E, $52, $14, $4C, 	$08, $08, $0E, $03
 0000010A                            ;	$00, $00, $00, $00, 	$1F, $1F, $1F, $1F, 	$1B, $80, $80, $9B
 0000010A                            	smpsVcAlgorithm     $05
-0000010A =00000005                M vcalgorithm	set	val
+0000010A =00000005                M vcalgorithm	=	val
 0000010A                            	smpsVcFeedback      $07
-0000010A =00000007                M vcfeedback	set	val
+0000010A =00000007                M vcfeedback	=	val
 0000010A                            	smpsVcUnusedBits    $00
-0000010A =00000000                M vcunusedbits	set	val
-0000010A =00000000                M vcd1r1unk	set	0
-0000010A =00000000                M vcd1r2unk	set	0
-0000010A =00000000                M vcd1r3unk	set	0
-0000010A =00000000                M vcd1r4unk	set	0
+0000010A =00000000                M vcunusedbits	=	val
+0000010A =00000000                M vcd1r1unk	=	0
+0000010A =00000000                M vcd1r2unk	=	0
+0000010A =00000000                M vcd1r3unk	=	0
+0000010A =00000000                M vcd1r4unk	=	0
 0000010A                            	smpsVcDetune        $00, $00, $00, $00
-0000010A =00000000                M vcdt1	set	op1
-0000010A =00000000                M vcdt2	set	op2
-0000010A =00000000                M vcdt3	set	op3
-0000010A =00000000                M vcdt4	set	op4
+0000010A =00000000                M vcdt1	=	op1
+0000010A =00000000                M vcdt2	=	op2
+0000010A =00000000                M vcdt3	=	op3
+0000010A =00000000                M vcdt4	=	op4
 0000010A                            	smpsVcCoarseFreq    $01, $01, $01, $01
-0000010A =00000001                M vccf1	set	op1
-0000010A =00000001                M vccf2	set	op2
-0000010A =00000001                M vccf3	set	op3
-0000010A =00000001                M vccf4	set	op4
+0000010A =00000001                M vccf1	=	op1
+0000010A =00000001                M vccf2	=	op2
+0000010A =00000001                M vccf3	=	op3
+0000010A =00000001                M vccf4	=	op4
 0000010A                            	smpsVcRateScale     $01, $00, $01, $02
-0000010A =00000001                M vcrs1	set	op1
-0000010A =00000000                M vcrs2	set	op2
-0000010A =00000001                M vcrs3	set	op3
-0000010A =00000002                M vcrs4	set	op4
+0000010A =00000001                M vcrs1	=	op1
+0000010A =00000000                M vcrs2	=	op2
+0000010A =00000001                M vcrs3	=	op3
+0000010A =00000002                M vcrs4	=	op4
 0000010A                            	smpsVcAttackRate    $0C, $14, $12, $0E
-0000010A =0000000C                M vcar1	set	op1
-0000010A =00000014                M vcar2	set	op2
-0000010A =00000012                M vcar3	set	op3
-0000010A =0000000E                M vcar4	set	op4
+0000010A =0000000C                M vcar1	=	op1
+0000010A =00000014                M vcar2	=	op2
+0000010A =00000012                M vcar3	=	op3
+0000010A =0000000E                M vcar4	=	op4
 0000010A                            	smpsVcAmpMod        $00, $00, $00, $00
-0000010A =00000000                M vcam1	set	op1<<5
-0000010A =00000000                M vcam2	set	op2<<5
-0000010A =00000000                M vcam3	set	op3<<5
-0000010A =00000000                M vcam4	set	op4<<5
+0000010A =00000000                M vcam1	=	op1<<5
+0000010A =00000000                M vcam2	=	op2<<5
+0000010A =00000000                M vcam3	=	op3<<5
+0000010A =00000000                M vcam4	=	op4<<5
 0000010A                            	smpsVcDecayRate1    $03, $0E, $08, $08
-0000010A =00000003                M vcd1r1	set	op1
-0000010A =0000000E                M vcd1r2	set	op2
-0000010A =00000008                M vcd1r3	set	op3
-0000010A =00000008                M vcd1r4	set	op4
+0000010A =00000003                M vcd1r1	=	op1
+0000010A =0000000E                M vcd1r2	=	op2
+0000010A =00000008                M vcd1r3	=	op3
+0000010A =00000008                M vcd1r4	=	op4
 0000010A                            	smpsVcDecayRate2    $00, $00, $00, $00
-0000010A =00000000                M vcd2r1	set	op1
-0000010A =00000000                M vcd2r2	set	op2
-0000010A =00000000                M vcd2r3	set	op3
-0000010A =00000000                M vcd2r4	set	op4
+0000010A =00000000                M vcd2r1	=	op1
+0000010A =00000000                M vcd2r2	=	op2
+0000010A =00000000                M vcd2r3	=	op3
+0000010A =00000000                M vcd2r4	=	op4
 0000010A                            	smpsVcDecayLevel    $01, $01, $01, $01
-0000010A =00000001                M vcdl1	set	op1
-0000010A =00000001                M vcdl2	set	op2
-0000010A =00000001                M vcdl3	set	op3
-0000010A =00000001                M vcdl4	set	op4
+0000010A =00000001                M vcdl1	=	op1
+0000010A =00000001                M vcdl2	=	op2
+0000010A =00000001                M vcdl3	=	op3
+0000010A =00000001                M vcdl4	=	op4
 0000010A                            	smpsVcReleaseRate   $0F, $0F, $0F, $0F
-0000010A =0000000F                M vcrr1	set	op1
-0000010A =0000000F                M vcrr2	set	op2
-0000010A =0000000F                M vcrr3	set	op3
-0000010A =0000000F                M vcrr4	set	op4
+0000010A =0000000F                M vcrr1	=	op1
+0000010A =0000000F                M vcrr2	=	op2
+0000010A =0000000F                M vcrr3	=	op3
+0000010A =0000000F                M vcrr4	=	op4
 0000010A                            	smpsVcTotalLevel    $1B, $00, $00, $1B
-0000010A =0000001B                M vctl1	set	op1
-0000010A =00000000                M vctl2	set	op2
-0000010A =00000000                M vctl3	set	op3
-0000010A =0000001B                M vctl4	set	op4
+0000010A =0000001B                M vctl1	=	op1
+0000010A =00000000                M vctl2	=	op2
+0000010A =00000000                M vctl3	=	op3
+0000010A =0000001B                M vctl4	=	op4
 0000010A 3D                       M 	dc.b	(vcunusedbits<<6)+(vcfeedback<<3)+vcalgorithm
-0000010B =00000000                M vctlmask4	set	((vcalgorithm=7)<<7)
-0000010B =FFFFFF80                M vctlmask3	set	((vcalgorithm>=4)<<7)
-0000010B =FFFFFF80                M vctlmask2	set	((vcalgorithm>=5)<<7)
-0000010B =00000080                M vctlmask1	set	$80
+0000010B =00000000                M vctlmask4	=	((vcalgorithm=7)<<7)
+0000010B =FFFFFF80                M vctlmask3	=	((vcalgorithm>=4)<<7)
+0000010B =FFFFFF80                M vctlmask2	=	((vcalgorithm>=5)<<7)
+0000010B =00000080                M vctlmask1	=	$80
 0000010B 0101 0101                M 	dc.b	(vcdt4<<4)+vccf4,(vcdt2<<4)+vccf2,(vcdt3<<4)+vccf3,(vcdt1<<4)+vccf1
 0000010F 8E14 524C                M 	dc.b	(vcrs4<<6)+vcar4,(vcrs2<<6)+vcar2,(vcrs3<<6)+vcar3,(vcrs1<<6)+vcar1
 00000113 080E 0803                M 	dc.b	vcam4|vcd1r4|vcd1r4unk,vcam2|vcd1r2|vcd1r2unk,vcam3|vcd1r3|vcd1r3unk,vcam1|vcd1r1|vcd1r1unk
@@ -1344,70 +1344,70 @@
 00000123                            ;	$01, $01, $01, $01, 	$8E, $52, $14, $4C, 	$08, $08, $0E, $03
 00000123                            ;	$00, $00, $00, $00, 	$1F, $1F, $1F, $1F, 	$1B, $80, $80, $9B
 00000123                            	smpsVcAlgorithm     $05
-00000123 =00000005                M vcalgorithm	set	val
+00000123 =00000005                M vcalgorithm	=	val
 00000123                            	smpsVcFeedback      $07
-00000123 =00000007                M vcfeedback	set	val
+00000123 =00000007                M vcfeedback	=	val
 00000123                            	smpsVcUnusedBits    $00
-00000123 =00000000                M vcunusedbits	set	val
-00000123 =00000000                M vcd1r1unk	set	0
-00000123 =00000000                M vcd1r2unk	set	0
-00000123 =00000000                M vcd1r3unk	set	0
-00000123 =00000000                M vcd1r4unk	set	0
+00000123 =00000000                M vcunusedbits	=	val
+00000123 =00000000                M vcd1r1unk	=	0
+00000123 =00000000                M vcd1r2unk	=	0
+00000123 =00000000                M vcd1r3unk	=	0
+00000123 =00000000                M vcd1r4unk	=	0
 00000123                            	smpsVcDetune        $00, $00, $00, $00
-00000123 =00000000                M vcdt1	set	op1
-00000123 =00000000                M vcdt2	set	op2
-00000123 =00000000                M vcdt3	set	op3
-00000123 =00000000                M vcdt4	set	op4
+00000123 =00000000                M vcdt1	=	op1
+00000123 =00000000                M vcdt2	=	op2
+00000123 =00000000                M vcdt3	=	op3
+00000123 =00000000                M vcdt4	=	op4
 00000123                            	smpsVcCoarseFreq    $01, $01, $01, $01
-00000123 =00000001                M vccf1	set	op1
-00000123 =00000001                M vccf2	set	op2
-00000123 =00000001                M vccf3	set	op3
-00000123 =00000001                M vccf4	set	op4
+00000123 =00000001                M vccf1	=	op1
+00000123 =00000001                M vccf2	=	op2
+00000123 =00000001                M vccf3	=	op3
+00000123 =00000001                M vccf4	=	op4
 00000123                            	smpsVcRateScale     $01, $00, $01, $02
-00000123 =00000001                M vcrs1	set	op1
-00000123 =00000000                M vcrs2	set	op2
-00000123 =00000001                M vcrs3	set	op3
-00000123 =00000002                M vcrs4	set	op4
+00000123 =00000001                M vcrs1	=	op1
+00000123 =00000000                M vcrs2	=	op2
+00000123 =00000001                M vcrs3	=	op3
+00000123 =00000002                M vcrs4	=	op4
 00000123                            	smpsVcAttackRate    $0C, $14, $12, $0E
-00000123 =0000000C                M vcar1	set	op1
-00000123 =00000014                M vcar2	set	op2
-00000123 =00000012                M vcar3	set	op3
-00000123 =0000000E                M vcar4	set	op4
+00000123 =0000000C                M vcar1	=	op1
+00000123 =00000014                M vcar2	=	op2
+00000123 =00000012                M vcar3	=	op3
+00000123 =0000000E                M vcar4	=	op4
 00000123                            	smpsVcAmpMod        $00, $00, $00, $00
-00000123 =00000000                M vcam1	set	op1<<5
-00000123 =00000000                M vcam2	set	op2<<5
-00000123 =00000000                M vcam3	set	op3<<5
-00000123 =00000000                M vcam4	set	op4<<5
+00000123 =00000000                M vcam1	=	op1<<5
+00000123 =00000000                M vcam2	=	op2<<5
+00000123 =00000000                M vcam3	=	op3<<5
+00000123 =00000000                M vcam4	=	op4<<5
 00000123                            	smpsVcDecayRate1    $03, $0E, $08, $08
-00000123 =00000003                M vcd1r1	set	op1
-00000123 =0000000E                M vcd1r2	set	op2
-00000123 =00000008                M vcd1r3	set	op3
-00000123 =00000008                M vcd1r4	set	op4
+00000123 =00000003                M vcd1r1	=	op1
+00000123 =0000000E                M vcd1r2	=	op2
+00000123 =00000008                M vcd1r3	=	op3
+00000123 =00000008                M vcd1r4	=	op4
 00000123                            	smpsVcDecayRate2    $00, $00, $00, $00
-00000123 =00000000                M vcd2r1	set	op1
-00000123 =00000000                M vcd2r2	set	op2
-00000123 =00000000                M vcd2r3	set	op3
-00000123 =00000000                M vcd2r4	set	op4
+00000123 =00000000                M vcd2r1	=	op1
+00000123 =00000000                M vcd2r2	=	op2
+00000123 =00000000                M vcd2r3	=	op3
+00000123 =00000000                M vcd2r4	=	op4
 00000123                            	smpsVcDecayLevel    $01, $01, $01, $01
-00000123 =00000001                M vcdl1	set	op1
-00000123 =00000001                M vcdl2	set	op2
-00000123 =00000001                M vcdl3	set	op3
-00000123 =00000001                M vcdl4	set	op4
+00000123 =00000001                M vcdl1	=	op1
+00000123 =00000001                M vcdl2	=	op2
+00000123 =00000001                M vcdl3	=	op3
+00000123 =00000001                M vcdl4	=	op4
 00000123                            	smpsVcReleaseRate   $0F, $0F, $0F, $0F
-00000123 =0000000F                M vcrr1	set	op1
-00000123 =0000000F                M vcrr2	set	op2
-00000123 =0000000F                M vcrr3	set	op3
-00000123 =0000000F                M vcrr4	set	op4
+00000123 =0000000F                M vcrr1	=	op1
+00000123 =0000000F                M vcrr2	=	op2
+00000123 =0000000F                M vcrr3	=	op3
+00000123 =0000000F                M vcrr4	=	op4
 00000123                            	smpsVcTotalLevel    $1B, $00, $00, $1B
-00000123 =0000001B                M vctl1	set	op1
-00000123 =00000000                M vctl2	set	op2
-00000123 =00000000                M vctl3	set	op3
-00000123 =0000001B                M vctl4	set	op4
+00000123 =0000001B                M vctl1	=	op1
+00000123 =00000000                M vctl2	=	op2
+00000123 =00000000                M vctl3	=	op3
+00000123 =0000001B                M vctl4	=	op4
 00000123 3D                       M 	dc.b	(vcunusedbits<<6)+(vcfeedback<<3)+vcalgorithm
-00000124 =00000000                M vctlmask4	set	((vcalgorithm=7)<<7)
-00000124 =FFFFFF80                M vctlmask3	set	((vcalgorithm>=4)<<7)
-00000124 =FFFFFF80                M vctlmask2	set	((vcalgorithm>=5)<<7)
-00000124 =00000080                M vctlmask1	set	$80
+00000124 =00000000                M vctlmask4	=	((vcalgorithm=7)<<7)
+00000124 =FFFFFF80                M vctlmask3	=	((vcalgorithm>=4)<<7)
+00000124 =FFFFFF80                M vctlmask2	=	((vcalgorithm>=5)<<7)
+00000124 =00000080                M vctlmask1	=	$80
 00000124 0101 0101                M 	dc.b	(vcdt4<<4)+vccf4,(vcdt2<<4)+vccf2,(vcdt3<<4)+vccf3,(vcdt1<<4)+vccf1
 00000128 8E14 524C                M 	dc.b	(vcrs4<<6)+vcar4,(vcrs2<<6)+vcar2,(vcrs3<<6)+vcar3,(vcrs1<<6)+vcar1
 0000012C 080E 0803                M 	dc.b	vcam4|vcd1r4|vcd1r4unk,vcam2|vcd1r2|vcd1r2unk,vcam3|vcd1r3|vcd1r3unk,vcam1|vcd1r1|vcd1r1unk
@@ -1421,70 +1421,70 @@
 0000013C                            ;	$01, $02, $02, $02, 	$10, $50, $50, $50, 	$07, $08, $08, $08
 0000013C                            ;	$01, $00, $00, $00, 	$2F, $1F, $1F, $1F, 	$1C, $82, $82, $82
 0000013C                            	smpsVcAlgorithm     $05
-0000013C =00000005                M vcalgorithm	set	val
+0000013C =00000005                M vcalgorithm	=	val
 0000013C                            	smpsVcFeedback      $07
-0000013C =00000007                M vcfeedback	set	val
+0000013C =00000007                M vcfeedback	=	val
 0000013C                            	smpsVcUnusedBits    $00
-0000013C =00000000                M vcunusedbits	set	val
-0000013C =00000000                M vcd1r1unk	set	0
-0000013C =00000000                M vcd1r2unk	set	0
-0000013C =00000000                M vcd1r3unk	set	0
-0000013C =00000000                M vcd1r4unk	set	0
+0000013C =00000000                M vcunusedbits	=	val
+0000013C =00000000                M vcd1r1unk	=	0
+0000013C =00000000                M vcd1r2unk	=	0
+0000013C =00000000                M vcd1r3unk	=	0
+0000013C =00000000                M vcd1r4unk	=	0
 0000013C                            	smpsVcDetune        $00, $00, $00, $00
-0000013C =00000000                M vcdt1	set	op1
-0000013C =00000000                M vcdt2	set	op2
-0000013C =00000000                M vcdt3	set	op3
-0000013C =00000000                M vcdt4	set	op4
+0000013C =00000000                M vcdt1	=	op1
+0000013C =00000000                M vcdt2	=	op2
+0000013C =00000000                M vcdt3	=	op3
+0000013C =00000000                M vcdt4	=	op4
 0000013C                            	smpsVcCoarseFreq    $02, $02, $02, $01
-0000013C =00000002                M vccf1	set	op1
-0000013C =00000002                M vccf2	set	op2
-0000013C =00000002                M vccf3	set	op3
-0000013C =00000001                M vccf4	set	op4
+0000013C =00000002                M vccf1	=	op1
+0000013C =00000002                M vccf2	=	op2
+0000013C =00000002                M vccf3	=	op3
+0000013C =00000001                M vccf4	=	op4
 0000013C                            	smpsVcRateScale     $01, $01, $01, $00
-0000013C =00000001                M vcrs1	set	op1
-0000013C =00000001                M vcrs2	set	op2
-0000013C =00000001                M vcrs3	set	op3
-0000013C =00000000                M vcrs4	set	op4
+0000013C =00000001                M vcrs1	=	op1
+0000013C =00000001                M vcrs2	=	op2
+0000013C =00000001                M vcrs3	=	op3
+0000013C =00000000                M vcrs4	=	op4
 0000013C                            	smpsVcAttackRate    $10, $10, $10, $10
-0000013C =00000010                M vcar1	set	op1
-0000013C =00000010                M vcar2	set	op2
-0000013C =00000010                M vcar3	set	op3
-0000013C =00000010                M vcar4	set	op4
+0000013C =00000010                M vcar1	=	op1
+0000013C =00000010                M vcar2	=	op2
+0000013C =00000010                M vcar3	=	op3
+0000013C =00000010                M vcar4	=	op4
 0000013C                            	smpsVcAmpMod        $00, $00, $00, $00
-0000013C =00000000                M vcam1	set	op1<<5
-0000013C =00000000                M vcam2	set	op2<<5
-0000013C =00000000                M vcam3	set	op3<<5
-0000013C =00000000                M vcam4	set	op4<<5
+0000013C =00000000                M vcam1	=	op1<<5
+0000013C =00000000                M vcam2	=	op2<<5
+0000013C =00000000                M vcam3	=	op3<<5
+0000013C =00000000                M vcam4	=	op4<<5
 0000013C                            	smpsVcDecayRate1    $08, $08, $08, $07
-0000013C =00000008                M vcd1r1	set	op1
-0000013C =00000008                M vcd1r2	set	op2
-0000013C =00000008                M vcd1r3	set	op3
-0000013C =00000007                M vcd1r4	set	op4
+0000013C =00000008                M vcd1r1	=	op1
+0000013C =00000008                M vcd1r2	=	op2
+0000013C =00000008                M vcd1r3	=	op3
+0000013C =00000007                M vcd1r4	=	op4
 0000013C                            	smpsVcDecayRate2    $00, $00, $00, $01
-0000013C =00000000                M vcd2r1	set	op1
-0000013C =00000000                M vcd2r2	set	op2
-0000013C =00000000                M vcd2r3	set	op3
-0000013C =00000001                M vcd2r4	set	op4
+0000013C =00000000                M vcd2r1	=	op1
+0000013C =00000000                M vcd2r2	=	op2
+0000013C =00000000                M vcd2r3	=	op3
+0000013C =00000001                M vcd2r4	=	op4
 0000013C                            	smpsVcDecayLevel    $01, $01, $01, $02
-0000013C =00000001                M vcdl1	set	op1
-0000013C =00000001                M vcdl2	set	op2
-0000013C =00000001                M vcdl3	set	op3
-0000013C =00000002                M vcdl4	set	op4
+0000013C =00000001                M vcdl1	=	op1
+0000013C =00000001                M vcdl2	=	op2
+0000013C =00000001                M vcdl3	=	op3
+0000013C =00000002                M vcdl4	=	op4
 0000013C                            	smpsVcReleaseRate   $0F, $0F, $0F, $0F
-0000013C =0000000F                M vcrr1	set	op1
-0000013C =0000000F                M vcrr2	set	op2
-0000013C =0000000F                M vcrr3	set	op3
-0000013C =0000000F                M vcrr4	set	op4
+0000013C =0000000F                M vcrr1	=	op1
+0000013C =0000000F                M vcrr2	=	op2
+0000013C =0000000F                M vcrr3	=	op3
+0000013C =0000000F                M vcrr4	=	op4
 0000013C                            	smpsVcTotalLevel    $82, $82, $82, $1C
-0000013C =00000082                M vctl1	set	op1
-0000013C =00000082                M vctl2	set	op2
-0000013C =00000082                M vctl3	set	op3
-0000013C =0000001C                M vctl4	set	op4
+0000013C =00000082                M vctl1	=	op1
+0000013C =00000082                M vctl2	=	op2
+0000013C =00000082                M vctl3	=	op3
+0000013C =0000001C                M vctl4	=	op4
 0000013C 3D                       M 	dc.b	(vcunusedbits<<6)+(vcfeedback<<3)+vcalgorithm
-0000013D =00000000                M vctlmask4	set	((vcalgorithm=7)<<7)
-0000013D =FFFFFF80                M vctlmask3	set	((vcalgorithm>=4)<<7)
-0000013D =FFFFFF80                M vctlmask2	set	((vcalgorithm>=5)<<7)
-0000013D =00000080                M vctlmask1	set	$80
+0000013D =00000000                M vctlmask4	=	((vcalgorithm=7)<<7)
+0000013D =FFFFFF80                M vctlmask3	=	((vcalgorithm>=4)<<7)
+0000013D =FFFFFF80                M vctlmask2	=	((vcalgorithm>=5)<<7)
+0000013D =00000080                M vctlmask1	=	$80
 0000013D 0102 0202                M 	dc.b	(vcdt4<<4)+vccf4,(vcdt2<<4)+vccf2,(vcdt3<<4)+vccf3,(vcdt1<<4)+vccf1
 00000141 1050 5050                M 	dc.b	(vcrs4<<6)+vcar4,(vcrs2<<6)+vcar2,(vcrs3<<6)+vcar3,(vcrs1<<6)+vcar1
 00000145 0708 0808                M 	dc.b	vcam4|vcd1r4|vcd1r4unk,vcam2|vcd1r2|vcd1r2unk,vcam3|vcd1r3|vcd1r3unk,vcam1|vcd1r1|vcd1r1unk

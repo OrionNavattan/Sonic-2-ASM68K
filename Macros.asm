@@ -632,11 +632,11 @@ endobj:		macros
 ; Turn a string of characters into binary data using a custom character set
 ; ---------------------------------------------------------------------------		
 make_char:		macro text
-	iteration: set 1
+	iteration: = 1
 		rept	strlen(\text)
-		char set substr	iteration,iteration,"\text"
+		char = substr	iteration,iteration,"\text"
 		; do things to make data here
-		iteration: set iteration+1 ; advance to next character in string
+		iteration: = iteration+1 ; advance to next character in string
 		endr
 	endm	
 ; ---------------------------------------------------------------------------
@@ -654,8 +654,8 @@ z80_ptr: macros
 ; ---------------------------------------------------------------------------
 start_bank: macro *
 	align	$8000
-sound_bank_start set \*
-sound_bank_name set "\*"
+sound_bank_start = \*
+sound_bank_name = "\*"
     endm
 
 ; ---------------------------------------------------------------------------

@@ -403,8 +403,8 @@ Boss_Y_vel:				equ	v_boss_y_vel
 Boss_Countdown:			equ	v_boss_timer
 
 Sonic_top_speed:	equ v_sonic_max_speed
-Sonic_acceleration:	equ v_sonic_acceleration
-Sonic_deceleration:	equ v_sonic_deceleration
+;Sonic_acceleration:	equ v_sonic_acceleration
+;Sonic_deceleration:	equ v_sonic_deceleration
 
 Sonic_LastLoadedDPLC:	equ v_sonic_last_frame_id
 Primary_Angle:			equ v_angle_right
@@ -541,8 +541,8 @@ Ring_spill_anim_accum:		equ v_syncani_3_accumulator
 
 
 Tails_top_speed:		equ	v_tails_max_speed
-Tails_acceleration:		equ	v_tails_acceleration
-Tails_deceleration:		equ	v_tails_deceleration
+;Tails_acceleration:		equ	v_tails_acceleration
+;Tails_deceleration:		equ	v_tails_deceleration
 
 Life_count_2P:			equ	v_lives_p2
 Extra_life_flags_2P:	equ	v_ring_reward_p2
@@ -797,7 +797,7 @@ SFXPriorityVal:		equ v_priority
 TempoTimeout: 		equ f_tempo_counter
 CurrentTempo: 		equ f_current_tempo
 StopMusic:			equ f_pause_sound
-FadeOutCounter:		equ v_fadeout_delay
+FadeOutCounter:		equ v_fadeout_counter
 FadeOutDelay:		equ v_fadeout_delay
 Communication:		equ v_timing
 DACUpdating:		equ f_updating_dac
@@ -809,7 +809,7 @@ VoiceTblPtr:		equ v_music_voice_table
 FadeInFlag:			equ f_fadein
 FadeInDelay:		equ v_fadein_delay
 FadeInCounter:		equ v_fadein_counter
-1upPlaying:			equ f_has_backup
+;1upPlaying:			equ f_has_backup
 TempoMod:			equ v_tempo_main
 TempoTurbo:			equ v_tempo_speed
 SpeedUpFlag:		equ f_speedup
@@ -847,7 +847,7 @@ ModulationSteps:	equ ch_vib_steps
 ModulationValLow:	equ ch_vib_val_low
 ModulationValHigh:	equ ch_vib_val_high
 Detune:				equ ch_detune
-VolTLMask:			equ ch_vol_TL_mask
+VolTLMask:			equ ch_vol_tl_mask
 PSGNoise:			equ ch_noisemode
 VoicePtrLow:		equ ch_voice_ptr_low
 VoicePtrHigh:		equ ch_voice_ptr_high

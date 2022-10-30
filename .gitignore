@@ -55,3 +55,6 @@ s2built.prev.bin
 art/.DS_Store
 .DS_Store
 sound/.DS_Store
+sound/errors 1.txt
+sound/errors 2.txt
+sound/errors 3.txt
