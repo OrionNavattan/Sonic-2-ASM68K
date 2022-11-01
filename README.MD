@@ -1,11 +1,13 @@
 A WIP disassembly of Sonic the Hedgehog 2, targeting Hivebrain's AXM68K (ASM68K with Z80 macros),
-and in the future, Clownasmembler.
+and in the future, Clownasmembler. Currently assembles Revision 1 bit-perfect,
+with Revisions 0 and 2 planned.
 
 This disassembly aims for an emphasis on readability, with styling based on Hivebrain's
 2022 disassembly of Sonic 1. When completed, code will be structured into many files in a systematic
 and meaningful manner. Compared to SonicRetro's AS-based disassembly, many routines and 
 virtually all variables have been changed to match their counterparts in S1 HB 2022 where applicable,
-and nearly all of the binary files have been renamed. The compatibility file includes 
+and nearly all of the binary files have been renamed. However, for the sake of my own sanity,
+the folder structure of Sonic 2 AS has been retained. The compatibility file includes 
 equivalencies for most labels and variables to make porting from Sonic 2 AS easier.
 
 Sprite mappings and DPLCS are in the form of SpriteMap macros taken from the old
