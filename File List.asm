@@ -98,7 +98,20 @@
 		filedef Nem_OOZSpringBall,"art/nemesis/OOZ Ball on Spring (Beta Leftover)",nem,unc	; Unused beta leftover - 20 blocks
 		filedef Nem_LaunchBall,"art/nemesis/OOZ Transporter Ball",nem,unc	; 53 blocks
 		
-		;filedef ,"art/nemesis/",nem,unc	; 
+		filedef Nem_HTZCliffs,"art/nemesis/HTZ Background Cliffs",nem,unc	; 192 blocks
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
+		filedef ,"art/nemesis/",nem,unc	; 
 ; ---------------------------------------------------------------------------
 ; File definitions - Kosinski graphics
 ; ---------------------------------------------------------------------------	
@@ -110,7 +123,21 @@
 		filedef	Art_HUD,"art/uncompressed/HUD",bin,bin
 		filedef	Art_LivesNums,"art/uncompressed/Lives Numbers",bin,bin
 		filedef	Art_HUDText,"art/uncompressed/HUD Text",bin,bin
-		
+		filedef	Art_Flowers1,"art/uncompressed/EHZ & HTZ Flowers - 1",bin,bin
+		filedef	Art_Flowers2,"art/uncompressed/EHZ & HTZ Flowers - 2",bin,bin
+		filedef	Art_Flowers3,"art/uncompressed/EHZ & HTZ Flowers - 3",bin,bin
+		filedef	Art_Flowers4,"art/uncompressed/EHZ & HTZ Flowers - 4",bin,bin
+		filedef	Art_EHZPulseBall,"art/uncompressed/EHZ Pulsing Ball",bin,bin
+		filedef	Art_HTZClouds,"art/uncompressed/HTZ Background Clouds",bin,bin
+		filedef	Art_MTZCylinder,"art/uncompressed/MTZ Spinning Metal Cylinder",bin,bin
+		filedef	Art_Lava,"art/uncompressed/HTZ & MTZ Lava",bin,bin
+		filedef	Art_MTZAnimBack,"art/uncompressed/MTZ Animated Background",bin,bin
+;		filedef	Art_HPZPulseOrb,"art/uncompressed/HPZ Pulsing Orb",bin,bin
+		filedef	Art_OOZPulseBall,"art/uncompressed/OOZ Pulsing Ball",bin,bin
+		filedef	Art_OOZSquareBall1,"art/uncompressed/OOZ Spinning Square & Ball - 1",bin,bin
+		filedef	Art_OOZSquareBall2,"art/uncompressed/OOZ Spinning Square & Ball - 2",bin,bin
+		filedef	Art_Oil1,"art/uncompressed/OOZ Oil - 1",bin,bin
+		filedef	Art_Oil2,"art/uncompressed/OOZ Oil - 2",bin,bin
 ; ---------------------------------------------------------------------------
 ; File definitions - palettes
 ; ---------------------------------------------------------------------------
@@ -218,6 +245,30 @@
 		filedef	ColS_ARZ,"collision/ARZ Secondary",kos,unc
 		filedef	ColP_WFZSCZ,"collision/WFZ & SCZ Primary",kos,unc
 		filedef	ColS_WFZSCZ,"collision/WFZ & SCZ Secondary",kos,unc
+		
+; ---------------------------------------------------------------------------
+; File definitions - level layouts
+; ---------------------------------------------------------------------------
+		filedef	Level_EHZ1,"level/layout/EHZ 1",kos,unc
+		filedef	Level_EHZ2,"level/layout/EHZ 2",kos,unc
+		filedef	Level_MTZ1,"level/layout/MTZ 1",kos,unc
+		filedef	Level_MTZ2,"level/layout//MTZ 2",kos,unc
+		filedef	Level_MTZ3,"level/layout//MTZ 3",kos,unc
+		filedef	Level_WFZ,"level/layout/WFZ",kos,unc
+		filedef	Level_HTZ1,"level/layout/HTZ 1",kos,unc
+		filedef	Level_HTZ2,"level/layout/HTZ 2",kos,unc
+		filedef	Level_OOZ1,"level/layout/OOZ 1",kos,unc
+		filedef	Level_OOZ2,"level/layout/OOZ 2",kos,unc
+		filedef	Level_MCZ1,"level/layout/MCZ 1",kos,unc
+		filedef	Level_MCZ2,"level/layout/MCZ 2",kos,unc
+		filedef	Level_CNZ1,"level/layout/CNZ 1",kos,unc
+		filedef	Level_CNZ2,"level/layout/CNZ 2",kos,unc
+		filedef	Level_CPZ1,"level/layout/CPZ 1",kos,unc
+		filedef	Level_CPZ2,"level/layout/CPZ 2",kos,unc
+		filedef	Level_DEZ,"level/layout/DEZ",kos,unc
+		filedef	Level_ARZ1,"level/layout/ARZ 1",kos,unc
+		filedef	Level_ARZ2,"level/layout/ARZ 2",kos,unc
+		filedef	Level_SCZ,"level/layout/SCZ",kos,unc
 ; ---------------------------------------------------------------------------
 ; File definitions - sound
 ; ---------------------------------------------------------------------------

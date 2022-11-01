@@ -1,9 +1,9 @@
-Map_obj31_a:	mappingsTable offset(*)
-	mappingsTableEntry.w	Map_obj31_a_0006
-	mappingsTableEntry.w	Map_obj31_a_0006
-	mappingsTableEntry.w	Map_obj31_a_0006
+Map_obj31_a:	index offset(*)
+	ptr	Map_obj31_a_0006
+	ptr	Map_obj31_a_0006
+	ptr	Map_obj31_a_0006
 
-Map_obj31_a_0006:	spriteHeader offset(*)
-	spriteFooter offset(*)
+Map_obj31_a_0006:	spriteHeader
+	spriteFooter
 
 	even

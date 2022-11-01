@@ -1,12 +1,12 @@
-Map_Rings:	mappingsTable offset(*)
-	mappingsTableEntry.w	MapUnc_Rings_1
-	mappingsTableEntry.w	MapUnc_Rings_2
-	mappingsTableEntry.w	MapUnc_Rings_3
-	mappingsTableEntry.w	MapUnc_Rings_4
-	mappingsTableEntry.w	MapUnc_Rings_5
-	mappingsTableEntry.w	MapUnc_Rings_6
-	mappingsTableEntry.w	MapUnc_Rings_7
-	mappingsTableEntry.w	MapUnc_Rings_8
+Map_Rings:	index offset(*)
+	ptr	MapUnc_Rings_1
+	ptr	MapUnc_Rings_2
+	ptr	MapUnc_Rings_3
+	ptr	MapUnc_Rings_4
+	ptr	MapUnc_Rings_5
+	ptr	MapUnc_Rings_6
+	ptr	MapUnc_Rings_7
+	ptr	MapUnc_Rings_8
 
 MapUnc_Rings_1:
 	spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0

@@ -58,17 +58,16 @@ ch_flags:		rs.b 1 ; 0 ; all tracks
 	track_playing_bit:	equ	7 ; 7 (80h): track is playing
 ch_type:		rs.b 1 ; 1 ; all tracks
 	; 	"voice control"; bits:
-	; 	2 (04h): If set, bound for part II, otherwise 0 (see zWriteFMIorII)
-	; 		-- bit 2 has to do with sending key on/off, which uses this differentiation bit directly
-	; 	7 (80h): PSG track
+	fmii_bit:	equ 2	; 2 (04h): If set, bound for part II, otherwise 0 (see zWriteFMIorII)
+	psg_flag_bit:	equ 7	; 	7 (80h): PSG track
 ch_tick:				rs.b 1 ; 2; all tracks; tempo divisor; 1 = Normal, 2 = Half, 3 = Third...
 ch_data_pointer_low:	rs.b 1 ; 3; all tracks; track position low byte
 ch_data_pointer_high:	rs.b 1 ; 4; all tracks; track position high byte
 ch_transpose:			rs.b 1 ; 5; FM/PSG; transpose (from coord flag E9)
 ch_volume:			rs.b 1 ; 6; FM/PSG; channel volume (only applied at voice changes)
 ch_ams_fms_pan:		rs.b 1 ; 7; FM/DAC; panning / AMS / FMS settings
-ch_voice:				   ; 8; FM only; current voice in use
-ch_vol_env_id:		rs.b 1 ; 8; PSG only; current PSG tone
+ch_voice:			rs.b 1 ; 8; FM only; current voice in use
+ch_vol_env_id:		equ ch_voice ; 8; PSG only; current PSG tone
 ch_flutter:			rs.b 1 ; 9; PSG only; flutter (dynamically affects PSG volume for decay effects)
 ch_stack_ptr:		rs.b 1 ; $A; all tracks; "gosub" stack position offset (starts at 2Ah, i.e. end of track, and each jump decrements by 2)
 ch_delay:			rs.b 1 ; $B; all tracks;  current duration timeout; counting down to zero
@@ -168,6 +167,7 @@ z_tracks_save_end:		equ __rs
 ; ---------------------------------------------------------------------------
 ; These addresses are reserved and included at the end of driver binary. 
 ; They are defined here and included via macro.
+
 include_global_vars:	macro
 
 v_pal_update_counter:	db 0 ; 12FEh ; counts from 0 to 5 to periodically "double update" for PAL systems (basically every 6 frames you need to update twice to keep up)

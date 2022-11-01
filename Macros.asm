@@ -98,11 +98,11 @@ popr:		macro
 ; constants for displacement value equal to zero without the use of a macro-based
 ; workaround. 
 
-; To keep things simple, we are simply going to do more or less the same 
+; To avoid complexity, we are simply going to do more or less the same 
 ; thing the SonicRetro AS disasm does: the affected unoptimized instructions
 ; are macro calls that behave differently depending on if a switch is enabled 
-; or disabled. While AS requires a brute-force hack to work around its lack 
-; of an option to disable the zero-offset optimization, things are much simpler here:
+; or disabled. While AS requires a hack to work around its lack of an option 
+; to disable the zero-offset optimization, things are much simpler here:
 ; we just enable the optimization by default in the build options, and use the
 ; below macros to disable it for the affected instructions.
 ; ---------------------------------------------------------------------------	
@@ -267,13 +267,13 @@ jmpto:		 macro directaddr,indirectaddr
     endm
 
 ; ---------------------------------------------------------------------------
-; Align and pad RAM sections so that they are divisible by a longword,
-; and organize ram into blocks for clear_ram macro
+; Align the start of RAM sections, and mark the ends for the clear_ram macro.
+; As the clear_ram macro can handle sections divisible by bytes and words,
+; we do not need to align sections to longwords.
 ; ---------------------------------------------------------------------------
 
 rsalign:	macros
 		rs.b (\1-(__rs%\1))%\1
-	;endm
 
 rsblock:	macro
 		rsalign 2					; align to even address
@@ -281,12 +281,11 @@ rsblock:	macro
 	endm
 
 rsblockend:	macros ; Adapted to Sonic 2's macro-based RAM clearing
-		\1\_end:	equ __rs ; used by a couple of RAM overflow checks
-	;endm
+		\1\_end:	equ __rs ; generate symbol for end
+		
 ; ---------------------------------------------------------------------------
 ; Organise object RAM usage.
 ; ---------------------------------------------------------------------------
-
 rsobj:		macro name,start
 		rsobj_name: equs "\name"			; remember name of current object
 	ifarg \start
@@ -309,7 +308,7 @@ rsobjend:	macro
 		
 ; ---------------------------------------------------------------------------
 ; Clear an area of RAM.
-; input: start location (must be defined with rsblock)
+; input: start location, end location (defined with rsblock)
 ; ---------------------------------------------------------------------------		
 
 clear_ram:		macro startaddr,endaddr
@@ -417,7 +416,7 @@ ptr:		macro
 	endm
 		
 ; ---------------------------------------------------------------------------
-; Make a VDP command as an immediate value and construct a 68K instruction with it
+; Make an immediate value VDP command longword and use it in a 68K instruction
 ; (more or less replicating the vdpComm function in Sonic 2 Git AS)
 ; input: 68k instruction, VRAM/VSRAM/CRAM offset, destination RAM
 ; (vram/vsram/cram), operation (read/write/dma), additional adjustment (shifts, ANDs),
@@ -469,7 +468,7 @@ locVRAM:	macro loc,controlport
 ; cram/vsram destination (0 by default)
 ; ---------------------------------------------------------------------------
 
-dma_:		macro
+make_dma:		macro
 		dma_type: = $4000
 		dma_type2: = $80
 		
@@ -630,15 +629,16 @@ endobj:		macros
 		
 ; ---------------------------------------------------------------------------
 ; Turn a string of characters into binary data using a custom character set
+; WIP
 ; ---------------------------------------------------------------------------		
-make_char:		macro text
-	iteration: = 1
-		rept	strlen(\text)
-		char = substr	iteration,iteration,"\text"
-		; do things to make data here
-		iteration: = iteration+1 ; advance to next character in string
-		endr
-	endm	
+; make_char:		macro text
+;	iteration: = 1
+;		rept	strlen(\text)
+;		char = substr	iteration,iteration,"\text"
+;		; do things to make data here
+;		iteration: = iteration+1 ; advance to next character in string
+;		endr
+;	endm	
 ; ---------------------------------------------------------------------------
 ; Define a little-endian 16-bit pointer for the z80 sound driver relative
 ; to the start address of the Z80 ROM window
@@ -648,7 +648,6 @@ make_char:		macro text
 z80_ptr: macros	
 		dc.w ((\1<<8)&$FF00)|((\1>>8)&$7F)|$80
 
-;	endm
 ; ---------------------------------------------------------------------------
 ; Define and align the start of a sound bank
 ; ---------------------------------------------------------------------------

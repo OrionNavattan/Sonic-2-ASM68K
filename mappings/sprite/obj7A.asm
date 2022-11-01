@@ -1,9 +1,9 @@
-Map_obj7A:	mappingsTable offset(*)
-	mappingsTableEntry.w	Map_obj7A_0002
+Map_obj7A:	index offset(*)
+	ptr	Map_obj7A_0002
 
-Map_obj7A_0002:	spriteHeader offset(*)
+Map_obj7A_0002:	spriteHeader
 	spritePiece	-$18, -8, 3, 2, $10, 0, 0, 0, 0
 	spritePiece	0, -8, 3, 2, $10, 1, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
 	even

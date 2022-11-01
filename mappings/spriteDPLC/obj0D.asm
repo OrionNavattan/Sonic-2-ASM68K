@@ -1,10 +1,10 @@
-DPLC_obj0D:	mappingsTable offset(*)
-	mappingsTableEntry.w	DPLC_obj0D_000C
-	mappingsTableEntry.w	DPLC_obj0D_0012
-	mappingsTableEntry.w	DPLC_obj0D_001A
-	mappingsTableEntry.w	DPLC_obj0D_0020
-	mappingsTableEntry.w	DPLC_obj0D_0024
-	mappingsTableEntry.w	DPLC_obj0D_0020
+DPLC_obj0D:	index offset(*)
+	ptr	DPLC_obj0D_000C
+	ptr	DPLC_obj0D_0012
+	ptr	DPLC_obj0D_001A
+	ptr	DPLC_obj0D_0020
+	ptr	DPLC_obj0D_0024
+	ptr	DPLC_obj0D_0020
 
 DPLC_obj0D_000C:	dplcHeader
 	dplcEntry	$C, $22

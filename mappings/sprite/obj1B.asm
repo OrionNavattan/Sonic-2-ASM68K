@@ -1,14 +1,14 @@
-Map_obj1B:	mappingsTable offset(*)
-	mappingsTableEntry.w	Map_obj1B_0006
-	mappingsTableEntry.w	Map_obj1B_0006
-	mappingsTableEntry.w	Map_obj1B_0018
+Map_obj1B:	index offset(*)
+	ptr	Map_obj1B_0006
+	ptr	Map_obj1B_0006
+	ptr	Map_obj1B_0018
 
-Map_obj1B_0006:	spriteHeader offset(*)
+Map_obj1B_0006:	spriteHeader
 	spritePiece	-$18, -8, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	8, -8, 2, 2, 0, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
-Map_obj1B_0018:	spriteHeader offset(*)
-	spriteFooter offset(*)
+Map_obj1B_0018:	spriteHeader
+	spriteFooter
 
 	even

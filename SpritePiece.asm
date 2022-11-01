@@ -1,27 +1,18 @@
 ; ASM68K version of SpritePiece, pruned down to just the Sonic 2 code,
-; and modified for compatibility with the section directive.
+; and modified for compatibility with the ASM68K section directive.
+; The mappingsTable and mappingsTableEntry macros have been removed, as their functions 
+; are being handled by the index and ptr macros.
 
-; macro to declare a mappings table (taken from Sonic 2 Hg disassembly)
-mappingsTable macro
-current_mappings_table: = \1 ; current location, input is offset(*)
-    endm
-
-; macro to declare an entry in a mappings table (taken from Sonic 2 Hg disassembly)
-mappingsTableEntry macro ptr
-	dc.\0 ptr-current_mappings_table
-    endm
-
-spriteHeader:	macro ; input is offset(*)
+spriteHeader:	macro
 	if ~def(current_sprite)
 	current_sprite: = 1
 	endc
-	sprite_start: = \1
-	dc.w (sprite_\#current_sprite\-\1\-2)/8
+	sprite_start: = offset(*)
+	dc.w (sprite_\#current_sprite\-offset(*)-2)/8
 	endm
 
-
-spriteFooter:	macro ; input is offset(*)
-	sprite_\#current_sprite: equ \1
+spriteFooter:	macro
+	sprite_\#current_sprite: equ offset(*)
 	current_sprite: = current_sprite+1
 	endm
 
@@ -38,8 +29,6 @@ spritePiece2P macro xpos,ypos,width,height,tile,xflip,yflip,pal,pri,tile2,xflip2
 	dc.w	((pri2&1)<<15)|((pal2&3)<<13)|((yflip2&1)<<12)|((xflip2&1)<<11)|(tile2&$7FF)
 	dc.w	xpos
 	endm
-
-
 
 dplcHeader macro *
 \* equ *

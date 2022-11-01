@@ -3,7 +3,7 @@
   <Images>
     <ImageFromMappings id="grounder">
       <ArtFile filename="../art/nemesis/Grounder.nem" />
-      <MapFile type="ASM" filename="../s2.asm" label="word_36D02" startpal="1" />
+      <MapFile type="ASM" filename="../sonic2.asm" label="word_36D02" startpal="1" />
     </ImageFromMappings>
   </Images>
   <Display>

@@ -1,0 +1,465 @@
+; ===========================================================================
+; Frequency, Note, Envelope, and Sample Definitions
+; Definitions generated here are used by both SMPS2ASM and the sound driver.
+
+; ---------------------------------------------------------------------------
+; Standard SMPS settings
+; ---------------------------------------------------------------------------
+
+SonicDriverVer:		equ 2
+SMPS2ASMVer:			equ 1
+; Set the following to non-zero to use all S2 DAC samples, or to zero otherwise.
+; The S1 samples are a subset of this.
+use_s2_samples:			equ 1
+; Set the following to non-zero to use all S3D DAC samples, or to zero
+; otherwise. Most of the S3D samples are also present in S3/S&K, but
+; there are two samples specific to S3D.
+use_s3d_samples:			equ 1
+; Set the following to non-zero to use all S3 DAC samples,
+; or to zero otherwise.
+use_s3_samples:			equ 1
+; Set the following to non-zero to use all S&K DAC samples,
+; or to zero otherwise.
+use_sk_samples:			equ 1
+
+; ---------------------------------------------------------------------------
+; Define FM frequency equates for a single octave
+; ---------------------------------------------------------------------------
+
+fmfq_B:		equ	606					; B
+fmfq_C:		equ	644					; C
+fmfq_Cs:	equ	683					; C#
+fmfq_D:		equ	723					; D
+fmfq_Ds:	equ	766					; D#
+fmfq_E:		equ	813					; E
+fmfq_F:		equ	860					; F
+fmfq_Fs:	equ	911					; F#
+fmfq_G:		equ	965					; G
+fmfq_Gs:	equ	1023					; G#
+fmfq_A:		equ	1084					; A
+fmfq_As:	equ	1148					; A#
+fmfq_B1:	equ	1216					; B1	; <- used in S3K, as opposed to fmfq_B. This one seems to be the correct behavior.
+
+; ---------------------------------------------------------------------------
+; Define note information
+;
+; Notes are tuned to where A4 = 440hz. Note that values are slightly off.
+; By default, range from $80 to $DF. The first entries have lower ID.
+;
+; line format: \func	constant, psg frequency, fm frequency
+; ---------------------------------------------------------------------------
+
+DefineNotes:	macro	func
+		\func	   ,	   , $0000|fmfq_B		; B-1 note (the fact that this entry exists seems like a bug)
+
+		\func	nC0,	854, $0000|fmfq_C		; C0 note
+		\func	nCs0,	806, $0000|fmfq_Cs		; C#0 note
+		\func	nD0,	761, $0000|fmfq_D		; D0 note
+		\func	nEb0,	718, $0000|fmfq_Ds		; D#0 note
+		\func	nE0,	677, $0000|fmfq_E		; E0 note
+		\func	nF0,	640, $0000|fmfq_F		; F0 note
+		\func	nFs0,	604, $0000|fmfq_Fs		; F#0 note
+		\func	nG0,	570, $0000|fmfq_G		; G0 note
+		\func	nAb0,	538, $0000|fmfq_Gs		; G#0 note
+		\func	nA0,	507, $0000|fmfq_A		; A0 note
+		\func	nBb0,	479, $0000|fmfq_As		; A#0 note
+		\func	nB0,	452, $0800|fmfq_B		; B0 note
+
+		\func	nC1,	427, $0800|fmfq_C		; C1 note
+		\func	nCs1,	403, $0800|fmfq_Cs		; C#1 note
+		\func	nD1,	381, $0800|fmfq_D		; D1 note
+		\func	nEb1,	359, $0800|fmfq_Ds		; D#1 note
+		\func	nE1,	339, $0800|fmfq_E		; E1 note
+		\func	nF1,	320, $0800|fmfq_F		; F1 note
+		\func	nFs1,	302, $0800|fmfq_Fs		; F#1 note
+		\func	nG1,	285, $0800|fmfq_G		; G1 note
+		\func	nAb1,	269, $0800|fmfq_Gs		; G#1 note
+		\func	nA1,	254, $0800|fmfq_A		; A1 note
+		\func	nBb1,	239, $0800|fmfq_As		; A#1 note
+		\func	nB1,	226, $1000|fmfq_B		; B1 note
+
+		\func	nC2,	214, $1000|fmfq_C		; C2 note
+		\func	nCs2,	201, $1000|fmfq_Cs		; C#2 note
+		\func	nD2,	190, $1000|fmfq_D		; D2 note
+		\func	nEb2,	180, $1000|fmfq_Ds		; D#2 note
+		\func	nE2,	169, $1000|fmfq_E		; E2 note
+		\func	nF2,	160, $1000|fmfq_F		; F2 note
+		\func	nFs2,	151, $1000|fmfq_Fs		; F#2 note
+		\func	nG2,	143, $1000|fmfq_G		; G2 note
+		\func	nAb2,	135, $1000|fmfq_Gs		; G#2 note
+		\func	nA2,	127, $1000|fmfq_A		; A2 note
+		\func	nBb2,	120, $1000|fmfq_As		; A#2 note
+		\func	nB2,	113, $1800|fmfq_B		; B2 note
+
+		\func	nC3,	107, $1800|fmfq_C		; C3 note
+		\func	nCs3,	101, $1800|fmfq_Cs		; C#3 note
+		\func	nD3,	095, $1800|fmfq_D		; D3 note
+		\func	nEb3,	090, $1800|fmfq_Ds		; D#3 note
+		\func	nE3,	085, $1800|fmfq_E		; E3 note
+		\func	nF3,	080, $1800|fmfq_F		; F3 note
+		\func	nFs3,	075, $1800|fmfq_Fs		; F#3 note
+		\func	nG3,	071, $1800|fmfq_G		; G3 note
+		\func	nAb3,	067, $1800|fmfq_Gs		; G#3 note
+		\func	nA3,	064, $1800|fmfq_A		; A3 note
+		\func	nBb3,	060, $1800|fmfq_As		; A#3 note
+		\func	nB3,	057, $2000|fmfq_B		; B3 note
+
+		\func	nC4,	054, $2000|fmfq_C		; C4 note
+		\func	nCs4,	051, $2000|fmfq_Cs		; C#4 note
+		\func	nD4,	048, $2000|fmfq_D		; D4 note
+		\func	nEb4,	045, $2000|fmfq_Ds		; D#4 note
+		\func	nE4,	043, $2000|fmfq_E		; E4 note
+		\func	nF4,	040, $2000|fmfq_F		; F4 note
+		\func	nFs4,	038, $2000|fmfq_Fs		; F#4 note
+		\func	nG4,	036, $2000|fmfq_G		; G4 note
+		\func	nAb4,	034, $2000|fmfq_Gs		; G#4 note
+		\func	nA4,	032, $2000|fmfq_A		; A4 note
+		\func	nBb4,	031, $2000|fmfq_As		; A#4 note
+		\func	nB4,	029, $2800|fmfq_B		; B4 note
+
+		\func	nC5,	027, $2800|fmfq_C		; C5 note
+		\func	nCs5,	026, $2800|fmfq_Cs		; C#5 note
+		\func	nD5,	024, $2800|fmfq_D		; D5 note
+		\func	nEb5,	023, $2800|fmfq_Ds		; D#5 note
+		\func	nE5,	022, $2800|fmfq_E		; E5 note
+		\func	nF5,	021, $2800|fmfq_F		; F5 note
+		\func	nFs5,	019, $2800|fmfq_Fs		; F#5 note
+		\func	nG5,	018, $2800|fmfq_G		; G5 note
+		\func	nAb5,	017, $2800|fmfq_Gs		; G#5 note
+		\func	nA5,	000, $2800|fmfq_A		; A5 note
+		\func	nBb5,	   , $2800|fmfq_As		; A#5 note
+		\func	nB5,	   , $3000|fmfq_B		; B5 note
+
+		\func	nC6,	   , $3000|fmfq_C		; C6 note
+		\func	nCs6,	   , $3000|fmfq_Cs		; C#6 note
+		\func	nD6,	   , $3000|fmfq_D		; D6 note
+		\func	nEb6,	   , $3000|fmfq_Ds		; D#6 note
+		\func	nE6,	   , $3000|fmfq_E		; E6 note
+		\func	nF6,	   , $3000|fmfq_F		; F6 note
+		\func	nFs6,	   , $3000|fmfq_Fs		; F#6 note
+		\func	nG6,	   , $3000|fmfq_G		; G6 note
+		\func	nAb6,	   , $3000|fmfq_Gs		; G#6 note
+		\func	nA6,	   , $3000|fmfq_A		; A6 note
+		\func	nBb6,	   , $3000|fmfq_As		; A#6 note
+		\func	nB6,	   , $3800|fmfq_B		; B6 note
+
+		\func	nC7,	   , $3800|fmfq_C		; C7 note
+		\func	nCs7,	   , $3800|fmfq_Cs		; C#7 note
+		\func	nD7,	   , $3800|fmfq_D		; D7 note
+		\func	nEb7,	   , $3800|fmfq_Ds		; D#7 note
+		\func	nE7,	   , $3800|fmfq_E		; E7 note
+		\func	nF7,	   , $3800|fmfq_F		; F7 note
+		\func	nFs7,	   , $3800|fmfq_Fs		; F#7 note
+		\func	nG7,	   , $3800|fmfq_G		; G7 note
+		\func	nAb7,	   , $3800|fmfq_Gs		; G#7 note
+		\func	nA7,	   , $3800|fmfq_A		; A7 note
+		\func	nBb7,	   , $3800|fmfq_As		; A#7 note
+		endm
+
+; ---------------------------------------------------------------------------
+; Constants for notes
+; ---------------------------------------------------------------------------
+
+GenNoteConst:	macro	const, psgfq, fmfq
+		if strlen("\const")>0
+		if strlen("\fmfq")>0
+\const:		rs.b 1						; normal equate
+		else
+\const:		rs.b 0						; alt name for a note
+		endc
+		endc
+		endm
+; ---------------------------------------------------------------------------
+
+		rsset $80
+nRst:		rs.b 1						; rest note - stop sounds for current channel
+_firstNote:	rs.b 0						; the first actual note
+		DefineNotes	GenNoteConst			; generate note constants
+_lastNote:	equ __rs-1					; the last note
+
+
+; ---------------------------------------------------------------------------
+; Define envelopes
+; line format: \func	name, alt1, alt2 [...]
+; ---------------------------------------------------------------------------
+
+VolumeEnv:	macro	func
+	if SonicDriverVer=1
+		\func	01
+		\func	02
+		\func	03
+		\func	04
+		\func	05
+		\func	06
+		\func	07
+		\func	08
+		\func	09
+	elseif SonicDriverVer=2	
+		\func	$01
+		\func	$02
+		\func	$03
+		\func	$04
+		\func	$05
+		\func	$06
+		\func	$07
+		\func	$08
+		\func	$09
+		\func	$0A
+		\func	$0B
+		\func	$0C
+		\func	$0D
+	else;if SonicDriverVer>=3	
+		\func	$01
+		\func	$02
+		\func	$03
+		\func	$04
+		\func	$05
+		\func	$06
+		\func	$07
+		\func	$08
+		\func	$09
+		\func	$0A
+		\func	$0B
+		\func	$0C
+		\func	$0D
+		\func	$0E
+		\func	$0F
+		\func	$10
+		\func	$11
+		\func	$12	
+		\func	$13
+		\func	$14
+		\func	$15
+		\func	$16
+		\func	$17
+		\func	$18
+		\func	$19
+		\func	$1A
+		\func	$1B
+		\func	$1C
+		\func	$1D
+		\func	$1E
+		\func	$1F
+		\func	$20
+		\func	$21
+		\func	$22	
+		\func	$23
+		\func	$24
+		\func	$25
+		\func	$26
+		\func	$27
+	endc	
+	endm
+
+; ---------------------------------------------------------------------------
+; Constants for envelopes
+; ---------------------------------------------------------------------------
+
+GenEnvConst:	macro	const
+		num: = \const
+		numstr: substr 2,3,"\const" ; get digits for constant	
+	if SonicDriverVer>=5
+		if num<=$0D 
+fTone_\numstr\:	rs.b 0			; if Flamewing's clone driver, generate fTone constants for envelopes $0D and lower for conversions
+		endc
+sTone_\numstr\:	rs.b 1			; generate main constant for Flamewing's clone driver		
+	elseif  SonicDriverVer>=3	
+sTone_\numstr\:	rs.b 1			; generate constant for S3, S3K, S3D
+	else;if SonicDriverVer<=2	
+fTone_\numstr\:	rs.b 1			; generate constans for S1 & 2	
+	endc
+	endm			
+		
+; ---------------------------------------------------------------------------
+
+		rsset	0					; envelopes start at 1
+env_None:	rs.b 1						; null envelope
+_firstVolEnv:	rs.b 0						; the first valid envelope
+		VolumeEnv	GenEnvConst			; generate constants for envelopes
+_lastVolEnv:	equ __rs-1					; the last valid envelope
+
+
+; ---------------------------------------------------------------------------
+; Define samples for the sound driver and SMPS2ASM
+;
+; Constants for IDs are: d(name)
+; This special macro is used to generate constants and jump tables
+;
+; line format: \func	name, alt1, alt2 [...]
+; ---------------------------------------------------------------------------
+
+DefineSamples:	macro	func
+
+	if SonicDriverVer=1
+		\func	Kick					; Kick sample
+		\func	Snare					; Snare sample
+		\func	Timpani					; Timpani sample (DO NOT USE)
+		\func	Null84					; this sample is not defined
+		\func	Null85					; this sample is not defined
+		\func	Null86					; this sample is not defined
+		\func	Null87					; this sample is not defined
+		\func	TimpaniHi				; Timpani high pitch
+		\func	TimpaniMid				; Timpani middle pitch
+		\func	TimpaniLow				; Timpani low pitch
+		\func	TimpaniFloor				; Timpani very low pitch
+		
+	elseif SonicDriverVer=2
+	
+		\func Kick					; Kick Sample
+		\func Snare					; Snare sample
+		\func Clap					; Clap sample
+		\func Scratch				; Record scratch sample	
+		\func Timpani				; Timpani sample (DO NOT USE)	
+		\func HiTom					; High tom sample
+		\func VLowClap				; Very low clap sample, apparently unused?
+		\func HiTimpani				; Timpani high pitch
+		\func MidTimpani			; Timpani middle pitch
+		\func LowTimpani			; Timpani low pitch
+		\func VLowTimpani			; Timpani very low pitch	
+		\func MidTom				; Middle tom sample
+		\func LowTom				; Low tom sample
+		\func FloorTom				; Very low tom sample
+		\func HiClap				; High clap
+		\func MidClap				; Mid clap
+		\func LowClap				; Low clap
+		
+	else;if SonicDriverVer>=3
+		if use_s3_samples|use_sk_samples|use_s3d_samples
+			\func SnareS3 ; $81
+			\func HighTom
+			\func MidTomS3
+			\func LowTomS3
+			\func FloorTomS3
+			\func KickS3
+			\func MuffledSnare
+			\func CrashCymbal
+			\func RideCymbal
+			\func LowMetalHit
+			\func MetalHit
+			\func HighMetalHit
+			\func HigherMetalHit
+			\func MidMetalHit
+			\func ClapS3 
+			\func ElectricHighTom ; $90
+			\func ElectricMidTom
+			\func ElectricLowTom
+			\func ElectricFloorTom
+			\func TightSnare
+			\func MidpitchSnare
+			\func LooseSnare
+			\func LooserSnare
+			\func HiTimpaniS3
+			\func LowTimpaniS3
+			\func MidTimpaniS3
+			\func QuickLooseSnare
+			\func Click
+			\func PowerKick
+			\func QuickGlassCrash ; $9E
+		endc
+		
+		if use_s3_samples|use_sk_samples
+			\func GlassCrashSnare ; $9F
+			\func GlassCrash
+			\func GlassCrashKick
+			\func QuietGlassCrash
+			\func OddSnareKick
+			\func KickExtraBass
+			\func ComeOn
+			\func DanceSnare
+			\func LooseKick	
+			\func ModLooseKick
+			\func Woo
+			\func Go
+			\func SnareGo
+			\func PowerTom
+			\func HiWoodBlock
+			\func LowWoodBlock
+			\func HiHitDrum1 ; $AF
+		
+			\func LowHitDrum
+			\func MetalCrashHit
+			\func EchoedClapHit
+			\func LowerEchoedClapHit
+			\func HipHopHitKick
+			\func HipHopHitPowerKick
+			\func BassHey
+			\func DanceStyleKick
+			\func HipHopHitKick2
+			\func HipHopHitKick3
+			\func ReverseFadingWind
+			\func ScratchS3
+			\func LooseSnareNoise
+			\func PowerKick2
+			\func CrashingNoiseWoo
+			\func QuickHit	; $BF
+			\func KickHey
+			\func PowerKickHit
+			\func LowPowerKickHit
+			\func LowerPowerKickHit
+			\func LowestPowerKickHit ; $C4
+		endc
+		
+		; For conversions:
+		if use_s2_samples
+			\func Kick ; if using s2 samples AND any combo of s3, s3k, s3d samples, we need to reset the rs counter here
+			\func Snare
+			\func Clap
+			\func Scratch
+			\func Timpani
+			\func HiTom
+			\func VLowClap
+			\func HiTimpani
+			\func MidTimpani
+			\func LowTimpani
+			\func VLowTimpani
+			\func MidTom
+			\func LowTom
+			\func FloorTom
+			\func HiClap
+			\func MidClap
+			\func LowClap
+		endc
+		
+		if use_s3d_samples
+			\func FinalFightMetalCrash
+			\func IntroKick
+		endc
+		
+		if use_s3_samples
+			\func EchoedClapHit_S3
+			\func LowerEchoedClapHit_S3
+		endc
+	endc					
+	endm
+
+; ---------------------------------------------------------------------------
+; Constants for samples
+; ---------------------------------------------------------------------------
+
+GenSampleConst:	macro	const
+	; for SMPS conversions, if we are using the Sonic 3 driver or greater, Sonic 2 samples,
+	; AND any combination of S3, S3K, or S3D samples, then reset the rs counter to 81  
+	; starting with the S2 kick sample
+	if SonicDriverVer>=3
+		if use_s2_samples&(use_s3_samples|use_sk_samples|use_s3d_samples)
+			if stricmp("\const","Kick")
+				rsset $81
+			endc	
+		endc	
+	endc		
+		rept narg-1
+d\const:	rs.b 0						; generate alt constants
+		shift
+		endr
+
+d\const:	rs.b 1						; generate the main constant
+
+	endm
+; ---------------------------------------------------------------------------
+
+		rsset	nRst+1					; samples start at $81
+_firstSample:	rs.b 0						; the first valid sample
+		DefineSamples	GenSampleConst			; generate constants for samples
+		
+		
+_lastSample:	equ __rs-1					; the last valid sample

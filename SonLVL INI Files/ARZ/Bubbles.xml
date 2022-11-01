@@ -3,7 +3,7 @@
   <Images>
     <ImageFromMappings id="bubblegenerator">
       <ArtFile filename="../art/nemesis/ARZ Bubble Generator.nem"/>
-      <MapFile type="ASM" filename="../s2.asm" label="word_1FCA2" startpal="0" />
+      <MapFile type="ASM" filename="../sonic2.asm" label="word_1FCA2" startpal="0" />
     </ImageFromMappings>
   </Images>
   <Properties>

@@ -1,17 +1,17 @@
-Map_obj8A:	mappingsTable offset(*)
-	mappingsTableEntry.w	Map_obj8A_0016
-	mappingsTableEntry.w	Map_obj8A_0088
-	mappingsTableEntry.w	Map_obj8A_010A
-	mappingsTableEntry.w	Map_obj8A_015C
-	mappingsTableEntry.w	Map_obj8A_021E
-	mappingsTableEntry.w	Map_obj8A_02C0
-	mappingsTableEntry.w	Map_obj8A_0392
-	mappingsTableEntry.w	Map_obj8A_044C
-	mappingsTableEntry.w	Map_obj8A_0546
-	mappingsTableEntry.w	Map_obj8A_05C0
-	mappingsTableEntry.w	Map_obj8A_0602
+Map_obj8A:	index offset(*)
+	ptr	Map_obj8A_0016
+	ptr	Map_obj8A_0088
+	ptr	Map_obj8A_010A
+	ptr	Map_obj8A_015C
+	ptr	Map_obj8A_021E
+	ptr	Map_obj8A_02C0
+	ptr	Map_obj8A_0392
+	ptr	Map_obj8A_044C
+	ptr	Map_obj8A_0546
+	ptr	Map_obj8A_05C0
+	ptr	Map_obj8A_0602
 
-Map_obj8A_0016:	spriteHeader offset(*)
+Map_obj8A_0016:	spriteHeader
 	spritePiece	-$78, -8, 2, 2, $2E, 0, 0, 0, 0
 	spritePiece	-$68, -8, 2, 2, $26, 0, 0, 0, 0
 	spritePiece	-$58, -8, 2, 2, $1A, 0, 0, 0, 0
@@ -26,9 +26,9 @@ Map_obj8A_0016:	spriteHeader offset(*)
 	spritePiece	$48, -8, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	$58, -8, 2, 2, $5C, 0, 0, 0, 0
 	spritePiece	$68, -8, 2, 2, $5C, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
-Map_obj8A_0088:	spriteHeader offset(*)
+Map_obj8A_0088:	spriteHeader
 	spritePiece	-$80, -$28, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$70, -$28, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	-$60, -$28, 3, 2, 8, 0, 0, 0, 0
@@ -45,9 +45,9 @@ Map_obj8A_0088:	spriteHeader offset(*)
 	spritePiece	$20, 8, 2, 2, $2A, 0, 0, 0, 0
 	spritePiece	$30, 8, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	$44, 8, 2, 2, $2E, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
-Map_obj8A_010A:	spriteHeader offset(*)
+Map_obj8A_010A:	spriteHeader
 	spritePiece	-$80, -$28, 2, 2, $12, 0, 0, 0, 0
 	spritePiece	-$70, -$28, 2, 2, $22, 0, 0, 0, 0
 	spritePiece	-$60, -$28, 2, 2, $26, 0, 0, 0, 0
@@ -58,9 +58,9 @@ Map_obj8A_010A:	spriteHeader offset(*)
 	spritePiece	-$18, 8, 2, 2, $2A, 0, 0, 0, 0
 	spritePiece	-8, 8, 2, 2, $32, 0, 0, 0, 0
 	spritePiece	8, 8, 2, 2, $36, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
-Map_obj8A_015C:	spriteHeader offset(*)
+Map_obj8A_015C:	spriteHeader
 	spritePiece	-$78, -$28, 2, 2, $1E, 0, 0, 0, 0
 	spritePiece	-$68, -$28, 2, 2, $3A, 0, 0, 0, 0
 	spritePiece	-$58, -$28, 2, 2, 4, 0, 0, 0, 0
@@ -85,9 +85,9 @@ Map_obj8A_015C:	spriteHeader offset(*)
 	spritePiece	$10, 8, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	$20, 8, 2, 2, $1A, 0, 0, 0, 0
 	spritePiece	$30, 8, 2, 2, $42, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
-Map_obj8A_021E:	spriteHeader offset(*)
+Map_obj8A_021E:	spriteHeader
 	spritePiece	-$60, -$30, 2, 2, $42, 0, 0, 0, 0
 	spritePiece	-$50, -$30, 2, 2, $E, 0, 0, 0, 0
 	spritePiece	-$40, -$30, 2, 2, $2E, 0, 0, 0, 0
@@ -108,9 +108,9 @@ Map_obj8A_021E:	spriteHeader offset(*)
 	spritePiece	$30, $20, 2, 2, $22, 0, 0, 0, 0
 	spritePiece	$40, $20, 1, 2, $46, 0, 0, 0, 0
 	spritePiece	$48, $20, 2, 2, $E, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
-Map_obj8A_02C0:	spriteHeader offset(*)
+Map_obj8A_02C0:	spriteHeader
 	spritePiece	-$68, -$28, 2, 2, $2E, 0, 0, 0, 0
 	spritePiece	-$58, -$28, 2, 2, $26, 0, 0, 0, 0
 	spritePiece	-$48, -$28, 2, 2, $32, 0, 0, 0, 0
@@ -137,9 +137,9 @@ Map_obj8A_02C0:	spriteHeader offset(*)
 	spritePiece	$4C, 8, 2, 2, $32, 0, 0, 0, 0
 	spritePiece	$5C, 8, 2, 2, $22, 0, 0, 0, 0
 	spritePiece	$6C, 8, 2, 2, 4, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
-Map_obj8A_0392:	spriteHeader offset(*)
+Map_obj8A_0392:	spriteHeader
 	spritePiece	-$68, -$30, 2, 2, $2E, 0, 0, 0, 0
 	spritePiece	-$58, -$30, 2, 2, $26, 0, 0, 0, 0
 	spritePiece	-$48, -$30, 2, 2, $32, 0, 0, 0, 0
@@ -163,9 +163,9 @@ Map_obj8A_0392:	spriteHeader offset(*)
 	spritePiece	-$C, $20, 2, 2, $1E, 0, 0, 0, 0
 	spritePiece	4, $20, 2, 2, $58, 0, 0, 0, 0
 	spritePiece	$14, $20, 2, 2, $2A, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
-Map_obj8A_044C:	spriteHeader offset(*)
+Map_obj8A_044C:	spriteHeader
 	spritePiece	-$80, -$28, 2, 2, $2E, 0, 0, 0, 0
 	spritePiece	-$70, -$28, 2, 2, $12, 0, 0, 0, 0
 	spritePiece	-$60, -$28, 2, 2, $E, 0, 0, 0, 0
@@ -197,9 +197,9 @@ Map_obj8A_044C:	spriteHeader offset(*)
 	spritePiece	8, $20, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	$18, $20, 2, 2, $12, 0, 0, 0, 0
 	spritePiece	$28, $20, 2, 2, 4, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
-Map_obj8A_0546:	spriteHeader offset(*)
+Map_obj8A_0546:	spriteHeader
 	spritePiece	-$80, -8, 2, 2, $12, 0, 0, 0, 0
 	spritePiece	-$70, -8, 2, 2, $22, 0, 0, 0, 0
 	spritePiece	-$60, -8, 2, 2, $E, 0, 0, 0, 0
@@ -215,9 +215,9 @@ Map_obj8A_0546:	spriteHeader offset(*)
 	spritePiece	$50, -8, 2, 2, $E, 0, 0, 0, 0
 	spritePiece	$60, -8, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	$70, -8, 2, 2, 4, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
-Map_obj8A_05C0:	spriteHeader offset(*)
+Map_obj8A_05C0:	spriteHeader
 	spritePiece	-$40, $30, 2, 2, $3E, 0, 0, 0, 0
 	spritePiece	-$30, $30, 2, 2, $22, 0, 0, 0, 0
 	spritePiece	-$20, $30, 2, 2, $2A, 0, 0, 0, 0
@@ -226,9 +226,9 @@ Map_obj8A_05C0:	spriteHeader offset(*)
 	spritePiece	$18, $30, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	$28, $30, 1, 2, $46, 0, 0, 0, 0
 	spritePiece	$30, $30, 2, 2, $1A, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
-Map_obj8A_0602:	spriteHeader offset(*)
+Map_obj8A_0602:	spriteHeader
 	spritePiece	-$4C, -$18, 2, 2, $2E, 0, 0, 0, 0
 	spritePiece	-$3C, -$18, 2, 2, $26, 0, 0, 0, 0
 	spritePiece	-$2C, -$18, 2, 2, $1A, 0, 0, 0, 0
@@ -246,6 +246,6 @@ Map_obj8A_0602:	spriteHeader offset(*)
 	spritePiece	$10, 0, 2, 2, $1A, 0, 0, 0, 0
 	spritePiece	$20, 0, 2, 2, $3E, 0, 0, 0, 0
 	spritePiece	$30, 0, 2, 2, $2E, 0, 0, 0, 0
-	spriteFooter offset(*)
+	spriteFooter
 
 	even

@@ -1,6 +1,6 @@
 		opt	l.					; . is the local label symbol
 		opt	ae-					; automatic evens disabled by default
-		opt an+					; allow -h suffix for hexadecimal (used in the Z80 code)		
+		opt an+					; allow -h suffix for hexadecimal (used in the Z80 code)	
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
 ;		opt	m+					; do not expand macros - if enabled, this can break assembling
@@ -14,7 +14,8 @@ ifarg:		macros
 z80_ptr: macros	; make a z80 pointer for use with compressed music (that is, NOT relative to $8000, the starting address of a ROM bank)
 		dc.w ((\1&$7FFF)<<8)&$FF00+(\1&$7FFF)>>8		
 
-		include "sound/SMPS2ASM.asm"
+		include "sound/Frequency, Note, Envelope, & Sample Definitions.asm"
+		include "sound/Sound Language.asm"
 
 		
 ; Generate an include for a music file and output the assembled bytecode to its own file.		

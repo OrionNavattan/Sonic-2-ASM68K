@@ -3,7 +3,7 @@
 ; Disassembled by Xenowhirl for AS
 ; Additional disassembly work by RAS Oct 2008
 ; RAS' work merged into SVN by Flamewing
-; Ported to ASM68K with Z80 Macros by OrionNavattan 2022
+; Ported to AXM68K by OrionNavattan 2022
 
 ; This code is compressed in the ROM, but you can edit it here as uncompressed
 ; and it will automatically be assembled and compressed into the correct place
@@ -126,7 +126,7 @@ zFMBusyWait:    rsttarget
 		align	8
 ; zsub_10
 zWriteFMIorII:    rsttarget
-		bit	2,(ix+ch_type)
+		bit sfx_override_bit,(ix+ch_type)
 		jr	z,zWriteFMI
 		jr	zWriteFMII
 ; End of function zWriteFMIorII
@@ -176,7 +176,7 @@ zWriteFMII:    rsttarget
 
 ;		org	38h
 ;		dcb.b ((-$6174+$8000-offset(*))&($8000-1)),0
-		cnop 0,38h
+		align 38h
 zVInt:    rsttarget
 		; This is called every VBLANK (38h is the interrupt entry point,
 		; and VBLANK is the only one Z80 is hooked up to.)
@@ -444,7 +444,6 @@ zWaitLoop:
 
 
 		; As for the actual encoding of the data, it is described by jman2050:
-
 		; "As for how the data is compressed, lemme explain that real quick:
 		; First, it is a lossy compression. So if you recompress a PCM sample this way,
 		; you will lose precision in data. Anyway, what happens is that each compressed data
@@ -580,7 +579,7 @@ zDACUpdateTrack:
 zDACAfterDur:
 		ld	(ix+ch_data_ptr_low),l	; Stores "hl" to the DAC track pointer memory
 		ld	(ix+ch_data_ptr_high),h
-		bit	2,(ix+ch_flags)	; Is SFX overriding this track?
+		bit sfx_override_bit,(ix+ch_flags)	; Is SFX overriding this track?
 		ret	nz				; If so, we're done
 		ld	a,(ix+ch_sample)		; Check next note to play
 		cp	80h				; Is it a rest?
@@ -701,7 +700,7 @@ zFMSetFreq:
 
 ; zloc_29D
 zFMDoRest:
-		set	1,(ix+ch_flags)	; Set bit 1 (track is at rest)
+		set	track_rest_bit,(ix+ch_flags)	; Set bit 1 (track is at rest)
 		xor	a				; Clear 'a'
 		ld	(ix+ch_freq_low),a		; Zero out FM Frequency
 		ld	(ix+ch_freq_high),a		; Zero out FM Frequency
@@ -756,7 +755,7 @@ zNoteFillUpdate:
 		ret	z				; If zero, return!
 		dec	(ix+ch_gate)	; Decrement note fill
 		ret	nz				; If not zero, return
-		set	1,(ix+ch_flags)	; Set bit 1 (track is at rest)
+		set	track_rest_bit,(ix+ch_flags)	; Set bit 1 (track is at rest)
 		pop	de				; return address -> 'de' (will not return to zUpdateTrack function!!)
 		bit	7,(ix+ch_type)	; Is this a PSG track?
 		jp	nz,zPSGNoteOff			; If so, jump to zPSGNoteOff
@@ -860,7 +859,7 @@ zFMPrepareNote:
 
 ; zloc_3F5
 zFMUpdateFreq:
-		bit	2,(ix+ch_flags)	; Is SFX overriding this track?
+		bit sfx_override_bit,(ix+ch_flags)	; Is SFX overriding this track?
 		ret	nz				; If so, quit!
 		; This is a 16-bit sign extension of (ix+19h)
     if OptimizeSoundDriver
@@ -962,7 +961,7 @@ zPSGSetFreq:
 
 .restpsg:
 		; If you get here, we're doing a PSG rest
-		set	1,(ix+ch_flags)	; Set "track in rest" bit
+		set	track_rest_bit,(ix+ch_flags)	; Set "track in rest" bit
 		ld	a,0FFh
 		ld	(ix+ch_freq_low),a		; Frequency low byte = FFh
 		ld	(ix+ch_freq_high),a		; Frequency hight byte = FFh
@@ -1026,11 +1025,8 @@ zPSGUpdateFreq:
 
 ; zloc_4C5
 zSetRest:
-		set	1,(ix+ch_flags)	; Set "track at rest" bit
+		set	track_rest_bit,(ix+ch_flags)	; Set "track at rest" bit
 		ret
-; End of function zPSGDoNoteOn
-
-
 
 
 
@@ -1040,9 +1036,6 @@ zPSGUpdateVolFX:
 		or	a				; Test if it's zero
 		ret	z				; If it is, return!
 		; Otherwise, fall into zPSGDoVolFX...
-
-
-
 
 
 ; zsub_4CF
@@ -1120,15 +1113,11 @@ zVolEnvHold:
 		dec	(ix+ch_flutter)	; Put index back (before flag 80h)
 		ret				; Return and don't update ch_volume on this frame (!!!)
     endc
-; End of function zPSGDoVolFX
-
-
-
 
 
 ; zsub_526
 zPSGNoteOff:
-		bit	2,(ix+ch_flags)	; Is "SFX override" bit set?
+		bit sfx_override_bit,(ix+ch_flags)	; Is "SFX override" bit set?
 		ret	nz				; If so, quit!
 		ld	a,(ix+ch_type)	; Get "voice control" byte (loads upper bits which specify attenuation setting)
 
@@ -1164,6 +1153,8 @@ zPSGNoteOff:
 zFrequencies:
 		dw 025Eh,0284h,02ABh,02D3h,02FEh,032Dh,035Ch,038Fh,03C5h,03FFh,043Ch,047Ch
     if OptimizeSoundDriver=0	; We will calculate these, instead, which will save space
+    
+    
 		dw 0A5Eh,0A84h,0AABh,0AD3h,0AFEh,0B2Dh,0B5Ch,0B8Fh,0BC5h,0BFFh,0C3Ch,0C7Ch
 		dw 125Eh,1284h,12ABh,12D3h,12FEh,132Dh,135Ch,138Fh,13C5h,13FFh,143Ch,147Ch
 		dw 1A5Eh,1A84h,1AABh,1AD3h,1AFEh,1B2Dh,1B5Ch,1B8Fh,1BC5h,1BFFh,1C3Ch,1C7Ch
@@ -1230,7 +1221,7 @@ zPauseMusic:
 zResumeTrack:
 		bit	7,(ix+ch_flags)	; Is track playing?
 		jr	z,.nexttrack			; If not, jump
-		bit	2,(ix+ch_flags)	; Is SFX overriding track?
+		bit sfx_override_bit,(ix+ch_flags)	; Is SFX overriding track?
 		jr	nz,.nexttrack			; If not, jump
     if OptimizeSoundDriver=0
 		; cfSetVoiceCont already does this
@@ -1429,7 +1420,7 @@ zPlayMusic:
 		ld	b,countof_music_tracks	; All 10 (DAC, 6FM, 3PSG) tracks
 
 .clearsfxloop:
-		res	2,(ix+ch_flags)	; Clear "SFX is overriding" bit (no SFX are allowed!)
+		res sfx_override_bit,(ix+ch_flags)	; Clear "SFX is overriding" bit (no SFX are allowed!)
 		add	ix,de				; Next track
 		djnz	.clearsfxloop
 
@@ -1764,9 +1755,9 @@ zInitSFXLoop:
 .trackstore:
 		ld	hl,(zMusicTrackOffs)	; This loads address of corresponding MUSIC track (the track that this SFX track would normally play over)
     if FixBugs
-		set	2,(hl)			; Set the "SFX override" bit
+		set sfx_override_bit,(hl)			; Set the "SFX override" bit
     else
-		res	2,(hl)			; Clear the "SFX override" bit (Why??? According to S1's driver, this should be a 'set')
+		res sfx_override_bit,(hl)			; Clear the "SFX override" bit (Why??? According to S1's driver, this should be a 'set')
     endc
 
 ; zloc_8FB
@@ -1783,7 +1774,7 @@ zSFXFinishSetup:
 		; zFMNoteOff isn't enough to silence the entire channel:
 		; For added measure, we set Total Level and Release Rate, too.
 		push	bc
-		bit	2,(ix+ch_flags)	; Is bit 2 (SFX overriding) set?
+		bit sfx_override_bit,(ix+ch_flags)	; Is bit 2 (SFX overriding) set?
 		call	z,zFMSilenceChannel		; If not, jump
 		add	ix,de				; Next track
 		pop	bc
@@ -1859,7 +1850,7 @@ zPlaySound_CheckRing:
 .ringchange:
 		cpl					; If it was 0, it's now FFh, or vice versa
 		ld	(f_stereo_alt),a		; Store new ring speaker value (other side)
-		jp	zPlaySound			; now play the play the ring sound
+		jp	zPlaySound			; now play the ring sound
 ; ---------------------------------------------------------------------------
 ; zloc_942:
 zPlaySound_CheckGloop:
@@ -1969,7 +1960,7 @@ zPlaySound:
 ; zloc_9CF
 .bgm_to_override:
 		ld	hl,(zMusicTrackOffs)		; Self-modified code: 'hl' is now start of corresponding music track
-		set	2,(hl)				; Set "SFX is overriding this track!" bit
+		set sfx_override_bit,(hl)				; Set "SFX is overriding this track!" bit
 		add	a,zSFXTrackOffs-zMusicTrackOffs	; Jump to corresponding SFX track
 		ld	(.bgm_to_sfx+2),a		; Store into the instruction after .bgm_to_sfx (self-modifying code)
 
@@ -2062,10 +2053,6 @@ zKillSFXPrio:
 		xor	a
 		ld	(z_abs_vars+v_priority),a	; Reset SFX priority
 		ret
-; End of function zPlaySoundByIndex
-
-
-
 
 ; zsub_A3C
 zStopSoundEffects:
@@ -2096,10 +2083,10 @@ zStopSoundEffects:
 ; zloc_A6C
 .fmpointer:
 		ld	ix,(zMusicTrackOffs)		; Self-modified code: will load appropriate corresponding music track address
-		bit	2,(ix+ch_flags)	; Was this music track is overridden by an SFX track?
+		bit sfx_override_bit,(ix+ch_flags)	; Was this music track is overridden by an SFX track?
 		jr	z,.notoverridden		; If not, do nothing
-		res	2,(ix+ch_flags)	; Otherwise, tell it is is no longer!
-		set	1,(ix+ch_flags)	; Set track to rest
+		res sfx_override_bit,(ix+ch_flags)	; Otherwise, tell it is is no longer!
+		set	track_rest_bit,(ix+ch_flags)	; Set track to rest
 		ld	a,(ix+ch_voice)	; Get current voice
 		call	zSetVoiceMusic			; Reset FM voice
 
@@ -2125,8 +2112,8 @@ zStopSoundEffects:
 ; zloc_A9B
 .psgpointer:
 		ld	ix,(zMusicTrackOffs)		; Self-modified code from just above: 'ix' points to corresponding Music PSG track
-		res	2,(ix+ch_flags)	; Tell this track it is is no longer overridden by SFX!
-		set	1,(ix+ch_flags)	; Set track to rest
+		res sfx_override_bit,(ix+ch_flags)	; Tell this track it is is no longer overridden by SFX!
+		set	track_rest_bit,(ix+ch_flags)	; Set track to rest
 		ld	a,(ix+ch_type)	; Get voice control
 		cp	0E0h				; Is this a PSG 3 noise (not tone) track?
 		jr	nz,.nexttrackpop		; If it isn't, don't do next part (non-PSG Noise doesn't restore)
@@ -2245,7 +2232,7 @@ zFMSilenceAll:
 		ld	c,b		; Current key off -> 'c
 		dec	c		; c--
 		rst	zWriteFMI	; Write key off for part I
-		set	2,c		; Set part II select
+		set sfx_override_bit,c		; Set part II select
 		rst	zWriteFMI	; Write key off for part II
 		djnz	.noteoffloop
 
@@ -2478,11 +2465,6 @@ zUpdateFadeIn:
 
 		pop	ix
 		ret
-; End of function zUpdateFadeIn
-
-
-
-
 
 ; zsub_C46
 zFMNoteOn:
@@ -2495,11 +2477,6 @@ zFMNoteOn:
 		ld	a,28h				; Write to KEY ON/OFF port (key ON in this case)
 		rst	zWriteFMI			; Do it!
 		ret
-; End of function zFMNoteOn
-
-
-
-
 
 ; zsub_C56
 zFMNoteOff:
@@ -2516,10 +2493,6 @@ zFMNoteOff:
 
 		rst	zWriteFMI	; Write to part I (note this particular register is ALWAYS sent to part I)
 		ret
-; End of function zFMNoteOff
-
-
-
 
 ; Performs a bank switch to where the music for the current track is at
 ; (there are two possible bank locations for music)
@@ -2713,7 +2686,7 @@ cfPanningAMSFMS:
 		; If this flag is triggered by a music track while it's being overridden
 		; by an SFX, it will use the old panning when the SFX ends.
 		; This is because ch_ams_fms_pan doesn't get updated.
-		bit	2,(ix+ch_flags)	; If "SFX overriding" bit set...
+		bit sfx_override_bit,(ix+ch_flags)	; If "SFX overriding" bit set...
 		ret	nz				; return
     endc
 		ld	c,a				; input val 'a' -> c
@@ -2723,7 +2696,7 @@ cfPanningAMSFMS:
 		ld	(ix+ch_ams_fms_pan),a		; new PAF value
     if FixBugs
 		; The check should only stop hardware access, like this.
-		bit	2,(ix+ch_flags)	; If "SFX overriding" bit set...
+		bit sfx_override_bit,(ix+ch_flags)	; If "SFX overriding" bit set...
 		ret	nz				; return
     endc
 		ld	c,a				; a -> c (YM2612 data write)
@@ -2793,13 +2766,13 @@ cfFadeInToPrevious:
 .fmloop:
 		bit	7,(ix+ch_flags)	; Is this track playing?
 		jr	z,.nextfm			; If not, do nothing
-		set	1,(ix+ch_flags)	; Mark track at rest
+		set	track_rest_bit,(ix+ch_flags)	; Mark track at rest
 		ld	a,(ix+ch_volume)		; Get channel ch_volume
 		add	a,c				; Apply current fade value
 		ld	(ix+ch_volume),a		; Store it back
     if OptimizeSoundDriver=0
 		; This bit is always cleared (see zPlayMusic)
-		bit	2,(ix+ch_flags)	; Is track being overridden by SFX?
+		bit sfx_override_bit,(ix+ch_flags)	; Is track being overridden by SFX?
 		jr	nz,.nextfm			; If so, skip next part
     endc
 		push	bc
@@ -2817,7 +2790,7 @@ cfFadeInToPrevious:
 .psgloop:
 		bit	7,(ix+ch_flags)	; Is this track playing?
 		jr	z,.nextpsg			; If not, do nothing
-		set	1,(ix+ch_flags)	; Set track at rest
+		set	track_rest_bit,(ix+ch_flags)	; Set track at rest
 		call	zPSGNoteOff			; Shut off PSG
 		ld	a,(ix+ch_volume)		; Get channel ch_volume
 		add	a,c				; Apply current fade value
@@ -2960,7 +2933,7 @@ cfStopSpecialFM4:
 cfSetVoice:
 		ld	(ix+ch_voice),a	; Set current voice
 		ld	c,a				; a -> c (saving for later, if we go to cfSetVoiceCont)
-		bit	2,(ix+ch_flags)	; If "SFX is overriding this track" bit set...
+		bit sfx_override_bit,(ix+ch_flags)	; If "SFX is overriding this track" bit set...
 		ret	nz				; ...return!
 		push	hl				; Save 'hl'
 		call	cfSetVoiceCont			; Set the new voice!
@@ -3126,7 +3099,7 @@ zSetFMTLs:
 zSetChanVol:
 		bit	7,(ix+ch_type)	; Is this a PSG track?
 		ret	nz				; If so, quit!
-		bit	2,(ix+ch_flags)	; If playback control byte "SFX is overriding this track" bit set...
+		bit sfx_override_bit,(ix+ch_flags)	; If playback control byte "SFX is overriding this track" bit set...
 		ret	nz				; ...then quit!
 		ld	e,(ix+ch_vol_tl_mask)		; zVolTLMaskTbl value from last voice setting (marks which specific TL operators need updating)
 		ld	a,(ix+ch_type)	; Load current voice control byte
@@ -3232,11 +3205,11 @@ zStoppedChannel:	; General stop track continues here...
 ; zloc_F1D:
 .fmtrackoffs:
 		ld	ix,(zMusicTrackOffs)		; Self-modified code from just above: 'ix' points to corresponding Music FM track
-		bit	2,(ix+ch_flags)	; If "SFX is overriding this track" is not set...
+		bit sfx_override_bit,(ix+ch_flags)	; If "SFX is overriding this track" is not set...
 		jp	z,zNoVoiceUpdate		; Skip this part (i.e. if SFX was not overriding this track, then nothing to restore)
 		call	zBankSwitchToMusic		; Bank switch back to music track
-		res	2,(ix+ch_flags)	; Clear SFX is overriding this track from playback control
-		set	1,(ix+ch_flags)	; Set track as resting bit
+		res sfx_override_bit,(ix+ch_flags)	; Clear SFX is overriding this track from playback control
+		set	track_rest_bit,(ix+ch_flags)	; Set track as resting bit
 		ld	a,(ix+ch_voice)	; Get voice this track was using
 		call	zSetVoiceMusic			; And set it! (takes care of ch_volume too)
 
@@ -3265,8 +3238,8 @@ zStopPSGSFXTrack:
 ; zloc_F5A
 .psgtrackoffs:
 		ld	ix,(zMusicTrackOffs)		; Self-modified code from just above: 'ix' points to corresponding Music PSG track
-		res	2,(ix+ch_flags)	; Clear SFX is overriding this track from playback control
-		set	1,(ix+ch_flags)	; Set track as resting bit
+		res sfx_override_bit,(ix+ch_flags)	; Clear SFX is overriding this track from playback control
+		set	track_rest_bit,(ix+ch_flags)	; Set track as resting bit
 		ld	a,(ix+ch_type)	; Get voice control byte
 		cp	0E0h				; Is this a PSG 3 noise (not tone) track?
 		jr	nz,.exit			; If it isn't, don't do next part (non-PSG Noise doesn't restore)
@@ -3291,7 +3264,7 @@ zDACStopTrack:
 cfSetPSGNoise:
 		ld	(ix+ch_type),0E0h	; This is a PSG noise track now!
 		ld	(ix+ch_noisemode),a		; Save PSG noise setting for restoration if SFX overrides it
-		bit	2,(ix+ch_flags)	; If SFX is currently overriding it, don't actually set it!
+		bit sfx_override_bit,(ix+ch_flags)	; If SFX is currently overriding it, don't actually set it!
 		ret	nz
 		ld	(zPSG),a	; Otherwise, please do
 		ret
@@ -3401,6 +3374,11 @@ cfOpF9:
 ; ---------------------------------------------------------------------------
 ; zbyte_FD8h
 zSFXPriority:
+; SfxFiles	GenPriority
+
+;GenPriority:	macro	name, priority
+;		db \priority
+;		endm
 		db	80h,70h,70h,70h,70h,70h,70h,70h,70h,70h,68h,70h,70h,70h,60h,70h
 		db	70h,60h,70h,60h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,7Fh
 		db	6Fh,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,70h,6Fh,70h,70h

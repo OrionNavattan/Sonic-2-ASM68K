@@ -1,410 +1,58 @@
 ; ===========================================================================
-; Created by Flamewing, based on S1SMPS2ASM version 1.1 by Marc Gordon (AKA Cinossu)
-; Ported to ASM68K by Brainulator with additional modifications by OrionNavattan
-; ===========================================================================
 ; Permission to use, copy, modify, and/or distribute this software for any
 ; purpose with or without fee is hereby granted.
 ;
 ; THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 ; WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 ; MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-; ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+; ANY SPECIAL, DIRECT, INDIRECT, OR CONSequENTIAL DAMAGES OR ANY DAMAGES
 ; WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ; ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
 ; OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-; ===========================================================================
 
-SonicDriverVer			= 2
-SMPS2ASMVer			= 1
-; Set the following to non-zero to use all S2 DAC samples, or to zero otherwise.
-; The S1 samples are a subset of this.
-use_s2_samples			= 1
-; Set the following to non-zero to use all S3D DAC samples, or to zero
-; otherwise. Most of the S3D samples are also present in S3/S&K, but
-; there are two samples specific to S3D.
-use_s3d_samples			= 1
-; Set the following to non-zero to use all S3 DAC samples,
-; or to zero otherwise.
-use_s3_samples			= 1
-; Set the following to non-zero to use all S&K DAC samples,
-; or to zero otherwise.
-use_sk_samples			= 1
+; ===========================================================================
+; Orginally created for AS by Flamewing, based on S1SMPS2ASM version 1.1 
+; by Marc Gordon (AKA Cinossu)
+
+; Initial ASM68K port by Brainulator; this modification by OrionNavattan
+; with some influence from Natsumi's AMPS.
+
+; The conditionals for driver version, SMPS2ASM version, and sample settings, 
+; as well as all note and sample definitions, are in "Frequency, Note, Envelope,
+; & Sample Definitions.asm", as are all definitions shared with the sound driver.
+; Everything in this file is specific to SMPS2ASM. 
+
+; ---------------------------------------------------------------------------
 
 ; PSG conversion to S3/S&K/S3D drivers require a tone shift of 12 semi-tones.
-psgdelta	EQU 12
-; ---------------------------------------------------------------------------
-; Standard Octave Pitch Equates
-		rsset	$88
-smpsPitch10lo		rs.b	$C
-smpsPitch09lo		rs.b	$C
-smpsPitch08lo		rs.b	$C
-smpsPitch07lo		rs.b	$C
-smpsPitch06lo		rs.b	$C
-smpsPitch05lo		rs.b	$C
-smpsPitch04lo		rs.b	$C
-smpsPitch03lo		rs.b	$C
-smpsPitch02lo		rs.b	$C
-smpsPitch01lo		rs.b	$C
-	rsreset
-smpsPitch00		rs.b	$C
-smpsPitch01hi		rs.b	$C
-smpsPitch02hi		rs.b	$C
-smpsPitch03hi		rs.b	$C
-smpsPitch04hi		rs.b	$C
-smpsPitch05hi		rs.b	$C
-smpsPitch06hi		rs.b	$C
-smpsPitch07hi		rs.b	$C
-smpsPitch08hi		rs.b	$C
-smpsPitch09hi		rs.b	$C
-smpsPitch10hi		rs.b	$C
-; ---------------------------------------------------------------------------
-; Note Equates
-		rsset	$80
-nRst		rs.b	1
-nC0		rs.b	1
-nCs0		rs.b	1
-nD0		rs.b	1
-nEb0		rs.b	1
-nE0		rs.b	1
-nF0		rs.b	1
-nFs0		rs.b	1
-nG0		rs.b	1
-nAb0		rs.b	1
-nA0		rs.b	1
-nBb0		rs.b	1
-nB0		rs.b	1
-nC1		rs.b	1
-nCs1		rs.b	1
-nD1		rs.b	1
-nEb1		rs.b	1
-nE1		rs.b	1
-nF1		rs.b	1
-nFs1		rs.b	1
-nG1		rs.b	1
-nAb1		rs.b	1
-nA1		rs.b	1
-nBb1		rs.b	1
-nB1		rs.b	1
-nC2		rs.b	1
-nCs2		rs.b	1
-nD2		rs.b	1
-nEb2		rs.b	1
-nE2		rs.b	1
-nF2		rs.b	1
-nFs2		rs.b	1
-nG2		rs.b	1
-nAb2		rs.b	1
-nA2		rs.b	1
-nBb2		rs.b	1
-nB2		rs.b	1
-nC3		rs.b	1
-nCs3		rs.b	1
-nD3		rs.b	1
-nEb3		rs.b	1
-nE3		rs.b	1
-nF3		rs.b	1
-nFs3		rs.b	1
-nG3		rs.b	1
-nAb3		rs.b	1
-nA3		rs.b	1
-nBb3		rs.b	1
-nB3		rs.b	1
-nC4		rs.b	1
-nCs4		rs.b	1
-nD4		rs.b	1
-nEb4		rs.b	1
-nE4		rs.b	1
-nF4		rs.b	1
-nFs4		rs.b	1
-nG4		rs.b	1
-nAb4		rs.b	1
-nA4		rs.b	1
-nBb4		rs.b	1
-nB4		rs.b	1
-nC5		rs.b	1
-nCs5		rs.b	1
-nD5		rs.b	1
-nEb5		rs.b	1
-nE5		rs.b	1
-nF5		rs.b	1
-nFs5		rs.b	1
-nG5		rs.b	1
-nAb5		rs.b	1
-nA5		rs.b	1
-nBb5		rs.b	1
-nB5		rs.b	1
-nC6		rs.b	1
-nCs6		rs.b	1
-nD6		rs.b	1
-nEb6		rs.b	1
-nE6		rs.b	1
-nF6		rs.b	1
-nFs6		rs.b	1
-nG6		rs.b	1
-nAb6		rs.b	1
-nA6		rs.b	1
-nBb6		rs.b	1
-nB6		rs.b	1
-nC7		rs.b	1
-nCs7		rs.b	1
-nD7		rs.b	1
-nEb7		rs.b	1
-nE7		rs.b	1
-nF7		rs.b	1
-nFs7		rs.b	1
-nG7		rs.b	1
-nAb7		rs.b	1
-nA7		rs.b	1
-nBb7		rs.b	1
+psgdelta	equ 12
+
+
 ; SMPS2ASM uses nMaxPSG for songs from S1/S2 drivers.
 ; nMaxPSG1 and nMaxPSG2 are used only for songs from S3/S&K/S3D drivers.
 ; The use of psgdelta is intended to undo the effects of PSGPitchConvert
 ; and ensure that the ending note is indeed the maximum PSG frequency.
 	if SonicDriverVer<=2
-nMaxPSG				EQU nA5
-nMaxPSG1			EQU nA5+psgdelta
-nMaxPSG2			EQU nA5+psgdelta
+nMaxPSG				equ nA5
+nMaxPSG1			equ nA5+psgdelta
+nMaxPSG2			equ nA5+psgdelta
 	else
-nMaxPSG				EQU nBb6-psgdelta
-nMaxPSG1			EQU nBb6
-nMaxPSG2			EQU nB6
+nMaxPSG				equ nBb6-psgdelta
+nMaxPSG1			equ nBb6
+nMaxPSG2			equ nB6
 	endc
-; ---------------------------------------------------------------------------
-; PSG volume envelope equates
-	if SonicDriverVer=1
-		rsset	1
-fTone_01	rs.b	1
-fTone_02	rs.b	1
-fTone_03	rs.b	1
-fTone_04	rs.b	1
-fTone_05	rs.b	1
-fTone_06	rs.b	1
-fTone_07	rs.b	1
-fTone_08	rs.b	1
-fTone_09	rs.b	1
-	elseif SonicDriverVer=2
-		rsset	1
-fTone_01	rs.b	1
-fTone_02	rs.b	1
-fTone_03	rs.b	1
-fTone_04	rs.b	1
-fTone_05	rs.b	1
-fTone_06	rs.b	1
-fTone_07	rs.b	1
-fTone_08	rs.b	1
-fTone_09	rs.b	1
-fTone_0A	rs.b	1
-fTone_0B	rs.b	1
-fTone_0C	rs.b	1
-fTone_0D	rs.b	1
-	else;if SonicDriverVer>=3
-		rsset	1
-sTone_01	rs.b	1
-sTone_02	rs.b	1
-sTone_03	rs.b	1
-sTone_04	rs.b	1
-sTone_05	rs.b	1
-sTone_06	rs.b	1
-sTone_07	rs.b	1
-sTone_08	rs.b	1
-sTone_09	rs.b	1
-sTone_0A	rs.b	1
-sTone_0B	rs.b	1
-sTone_0C	rs.b	1
-sTone_0D	rs.b	1
-sTone_0E	rs.b	1
-sTone_0F	rs.b	1
-sTone_10	rs.b	1
-sTone_11	rs.b	1
-sTone_12	rs.b	1
-sTone_13	rs.b	1
-sTone_14	rs.b	1
-sTone_15	rs.b	1
-sTone_16	rs.b	1
-sTone_17	rs.b	1
-sTone_18	rs.b	1
-sTone_19	rs.b	1
-sTone_1A	rs.b	1
-sTone_1B	rs.b	1
-sTone_1C	rs.b	1
-sTone_1D	rs.b	1
-sTone_1E	rs.b	1
-sTone_1F	rs.b	1
-sTone_20	rs.b	1
-sTone_21	rs.b	1
-sTone_22	rs.b	1
-sTone_23	rs.b	1
-sTone_24	rs.b	1
-sTone_25	rs.b	1
-sTone_26	rs.b	1
-sTone_27	rs.b	1
 
-		; For conversions:
-		if SonicDriverVer>=5
-fTone_01		rs.b	1
-fTone_02		rs.b	1
-fTone_03		rs.b	1
-fTone_04		rs.b	1
-fTone_05		rs.b	1
-fTone_06		rs.b	1
-fTone_07		rs.b	1
-fTone_08		rs.b	1
-fTone_09		rs.b	1
-fTone_0A		rs.b	1
-fTone_0B		rs.b	1
-fTone_0C		rs.b	1
-fTone_0D		rs.b	1
-		endc
-	endc
-; ---------------------------------------------------------------------------
-; DAC Equates
-	if SonicDriverVer=1
-		rsset	$81
-dKick		rs.b	1
-dSnare		rs.b	1
-dTimpani	rs.b	1
-		rsset	$88
-dHiTimpani	rs.b	1
-dMidTimpani	rs.b	1
-dLowTimpani	rs.b	1
-dVLowTimpani	rs.b	1
-	elseif SonicDriverVer=2
-		rsset	$81
-dKick		rs.b	1
-dSnare		rs.b	1
-dClap		rs.b	1
-dScratch	rs.b	1
-dTimpani	rs.b	1
-dHiTom		rs.b	1
-dVLowClap	rs.b	1
-dHiTimpani	rs.b	1
-dMidTimpani	rs.b	1
-dLowTimpani	rs.b	1
-dVLowTimpani	rs.b	1
-dMidTom		rs.b	1
-dLowTom		rs.b	1
-dFloorTom	rs.b	1
-dHiClap		rs.b	1
-dMidClap	rs.b	1
-dLowClap	rs.b	1
-	else;if SonicDriverVer>=3
-		if (use_s3_samples<>0)|(use_sk_samples<>0)|(use_s3d_samples<>0)
-			rsset	$81
-dSnareS3		rs.b	1
-dHighTom		rs.b	1
-dMidTomS3		rs.b	1
-dLowTomS3		rs.b	1
-dFloorTomS3		rs.b	1
-dKickS3			rs.b	1
-dMuffledSnare		rs.b	1
-dCrashCymbal		rs.b	1
-dRideCymbal		rs.b	1
-dLowMetalHit		rs.b	1
-dMetalHit		rs.b	1
-dHighMetalHit		rs.b	1
-dHigherMetalHit		rs.b	1
-dMidMetalHit		rs.b	1
-dClapS3			rs.b	1
-dElectricHighTom	rs.b	1
-dElectricMidTom		rs.b	1
-dElectricLowTom		rs.b	1
-dElectricFloorTom	rs.b	1
-dTightSnare		rs.b	1
-dMidpitchSnare		rs.b	1
-dLooseSnare		rs.b	1
-dLooserSnare		rs.b	1
-dHiTimpaniS3		rs.b	1
-dLowTimpaniS3		rs.b	1
-dMidTimpaniS3		rs.b	1
-dQuickLooseSnare	rs.b	1
-dClick			rs.b	1
-dPowerKick		rs.b	1
-dQuickGlassCrash	rs.b	1
-		endc
-		if (use_s3_samples<>0)|(use_sk_samples<>0)
-dGlassCrashSnare	rs.b	1
-dGlassCrash		rs.b	1
-dGlassCrashKick		rs.b	1
-dQuietGlassCrash	rs.b	1
-dOddSnareKick		rs.b	1
-dKickExtraBass		rs.b	1
-dComeOn			rs.b	1
-dDanceSnare		rs.b	1
-dLooseKick		rs.b	1
-dModLooseKick		rs.b	1
-dWoo			rs.b	1
-dGo			rs.b	1
-dSnareGo		rs.b	1
-dPowerTom		rs.b	1
-dHiWoodBlock		rs.b	1
-dLowWoodBlock		rs.b	1
-dHiHitDrum		rs.b	1
-dLowHitDrum		rs.b	1
-dMetalCrashHit		rs.b	1
-dEchoedClapHit		rs.b	1
-dLowerEchoedClapHit	rs.b	1
-dHipHopHitKick		rs.b	1
-dHipHopHitPowerKick	rs.b	1
-dBassHey		rs.b	1
-dDanceStyleKick		rs.b	1
-dHipHopHitKick2		rs.b	1
-dHipHopHitKick3		rs.b	1
-dReverseFadingWind	rs.b	1
-dScratchS3		rs.b	1
-dLooseSnareNoise	rs.b	1
-dPowerKick2		rs.b	1
-dCrashingNoiseWoo	rs.b	1
-dQuickHit		rs.b	1
-dKickHey		rs.b	1
-dPowerKickHit		rs.b	1
-dLowPowerKickHit	rs.b	1
-dLowerPowerKickHit	rs.b	1
-dLowestPowerKickHit	rs.b	1
-		endc
-		; For conversions:
-		if (use_s2_samples<>0)
-			if (use_s3_samples<>0)|(use_sk_samples<>0)|(use_s3d_samples<>0)
-dKick				rs.b	1
-			else
-				rsset	$81
-dKick				rs.b	1
-			endc
-dSnare			rs.b	1
-dClap			rs.b	1
-dScratch		rs.b	1
-dTimpani		rs.b	1
-dHiTom			rs.b	1
-dVLowClap		rs.b	1
-dHiTimpani		rs.b	1
-dMidTimpani		rs.b	1
-dLowTimpani		rs.b	1
-dVLowTimpani		rs.b	1
-dMidTom			rs.b	1
-dLowTom			rs.b	1
-dFloorTom		rs.b	1
-dHiClap			rs.b	1
-dMidClap		rs.b	1
-dLowClap		rs.b	1
-		endc
-		if (use_s3d_samples<>0)
-dFinalFightMetalCrash	rs.b	1
-dIntroKick		rs.b	1
-		endc
-		if (use_s3_samples<>0)
-dEchoedClapHit_S3	rs.b	1
-dLowerEchoedClapHit_S3	rs.b	1
-		endc
-	endc
 ; ---------------------------------------------------------------------------
 ; Channel IDs for SFX
-cPSG1				EQU $80
-cPSG2				EQU $A0
-cPSG3				EQU $C0
-cNoise				EQU $E0	; Not for use in S3/S&K/S3D
-cFM3				EQU $02
-cFM4				EQU $04
-cFM5				EQU $05
-cFM6				EQU $06	; Only in S3/S&K/S3D, overrides DAC
+cPSG1				equ $80
+cPSG2				equ $A0
+cPSG3				equ $C0
+cNoise				equ $E0	; Not for use in S3/S&K/S3D
+cFM3				equ $02
+cFM4				equ $04
+cFM5				equ $05
+cFM6				equ $06	; Only in S3/S&K/S3D, overrides DAC
+
 ; ---------------------------------------------------------------------------
 ; Conversion macros and functions
 
@@ -412,19 +60,6 @@ cFM6				EQU $06	; Only in S3/S&K/S3D, overrides DAC
 little_endian macros
 		dc.w	((\1<<8)&$FF00)|((\1>>8)&$FF)
 	endc
-
-;	if ~def(z80_ptr)
-;z80_ptr macros
-;		dc.w	((\1<<8)&$FF00)|((\1>>8)&$7F)|$80
-;	endc
-
-;conv0To256  function n,((n==0)<<8)|n
-;s2TempotoS1 function n,(((768-n)>>1)/(256-n))&$FF
-;s2TempotoS3 function n,($100-((n==0)|n))&$FF
-;s1TempotoS2 function n,((((conv0To256(n)-1)<<8)+(conv0To256(n)>>1))/conv0To256(n))&$FF
-;s1TempotoS3 function n,s2TempotoS3(s1TempotoS2(n))
-;s3TempotoS1 function n,s2TempotoS1(s2TempotoS3(n))
-;s3TempotoS2 function n,s2TempotoS3(n)
 
 s2TempotoS1 macro n
 	s21convval:	= (((768-n)>>1)/(256-n))&$FF
@@ -517,6 +152,7 @@ CheckedChannelPointer macro location
 		endc
 	endc
 	endm
+	
 ; ---------------------------------------------------------------------------
 ; Header Macros
 smpsHeaderStartSong macro ver,sourcesmps2asmver
@@ -657,6 +293,7 @@ smpsHeaderSFXChannel macro chanid,location,pitch,vol
 	endc
 	dc.b	vol
 	endm
+	
 ; ---------------------------------------------------------------------------
 ; Co-ord Flag Macros and Equates
 ; E0xx - Panning, AMS, FMS
@@ -728,7 +365,7 @@ smpsAlterVol macro val
 	endm
 
 ; E7 - Prevent attack of next note
-smpsNoAttack	EQU $E7
+smpsNoAttack	equ $E7
 
 ; E8xx - Set note fill to xx
 smpsNoteFill macro val
@@ -898,6 +535,7 @@ smpsCall macro loc
 		dc.w \loc-offset(*)-1
 	endc
 	endm
+	
 ; ---------------------------------------------------------------------------
 ; Alter Volume
 smpsFMAlterVol macro val1,val2
@@ -1013,6 +651,7 @@ smpsPlayMusic macro index
 	endc
 
 	endc
+	
 ; ---------------------------------------------------------------------------
 ; S1/S2 only coordination flag
 ; Sets D1L to maximum volume (minimum attenuation) and RR to maximum for operators 3 and 4 of FM1
@@ -1046,6 +685,7 @@ smpsWeirdD1LRR macro
 smpsSetvoice macro
 	smpsFMvoice \_
 	endm
+	
 ; ---------------------------------------------------------------------------
 ; Macros for FM instruments
 ; Voices - Feedback

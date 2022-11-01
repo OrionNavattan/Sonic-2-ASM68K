@@ -1,0 +1,157 @@
+Operating system: Microsoft Windows NT 6.2.9200.0
+Opening INI file "\\Mac\Home\Documents\installers\game disassemblies\Sonic 2\Sonic-2-ASM68K\SonLVL INI Files\SonLVL.ini"...
+Game type is S2.
+Loading Emerald Hill Zone Act 1...
+Loading palette file "../art/palettes/Sonic & Tails 1.bin"...
+Source: 0 Destination: 0 Length: 16
+Loading 16x16 blocks from file "../mappings/16x16/EHZ.kos", using compression Kosinski...
+Loading 128x128 chunks from file "../mappings/128x128/EHZ_HTZ.kos", using compression Kosinski...
+Loading 8x8 tiles from file "../art/kosinski/EHZ_HTZ.kos", using compression Kosinski...
+Loading palette file "../art/palettes/EHZ.bin"...
+Source: 0 Destination: 16 Length: 48
+Loading layout from file "../level/layout/EHZ 1.kos", using compression Kosinski...
+Loading layout from file "../level/layout/EHZ 2.kos", using compression Kosinski...
+Loading layout from file "../level/layout/HTZ 1.kos", using compression Kosinski...
+Loading layout from file "../level/layout/HTZ 2.kos", using compression Kosinski...
+Loading object definition file "obj.ini".
+Loading object definition file "objEHZ.ini".
+Loading ObjectDefinition type S2ObjectDefinitions.Common.PathSwapper from "Common\PathSwapper.cs"...
+Loading type from cached assembly "dllcache\S2ObjectDefinitions.Common.PathSwapper.dll"...
+Error loading object definition Signpost:
+System.ArgumentException: Source array was not long enough. Check srcIndex and length, and the array's lower bounds.
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
+   at SonicRetro.SonLVL.API.ByteConverter.ToInt16(Byte[] value, Int32 startIndex) in D:\Programs\SonLVL\SonLVLAPI\ByteConverter.cs:line 61
+   at SonicRetro.SonLVL.API.LevelData.GetOffsetList(Byte[] file) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1761
+   at SonicRetro.SonLVL.API.MappingsFrame.Load(Byte[] file, EngineVersion version, Dictionary`2 labels) in D:\Programs\SonLVL\SonLVLAPI\DataTypes.cs:line 1396
+   at SonicRetro.SonLVL.API.ObjectHelper.MapToBmp(Byte[] artfile, Byte[] mapfile, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 21
+   at SonicRetro.SonLVL.API.ObjectHelper.MapASMToBmp(Byte[] artfile, String mapfileloc, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 29
+   at SonicRetro.SonLVL.API.DefaultObjectDefinition.Init(ObjectData data) in D:\Programs\SonLVL\SonLVLAPI\ObjectDefinition.cs:line 532
+System.AggregateException: One or more errors occurred. ---> System.ArgumentException: Source array was not long enough. Check srcIndex and length, and the array's lower bounds.
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
+   at SonicRetro.SonLVL.API.ByteConverter.ToInt16(Byte[] value, Int32 startIndex) in D:\Programs\SonLVL\SonLVLAPI\ByteConverter.cs:line 61
+   at SonicRetro.SonLVL.API.LevelData.GetOffsetList(Byte[] file) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1761
+   at SonicRetro.SonLVL.API.MappingsFrame.Load(Byte[] file, EngineVersion version, Dictionary`2 labels) in D:\Programs\SonLVL\SonLVLAPI\DataTypes.cs:line 1396
+   at SonicRetro.SonLVL.API.ObjectHelper.MapToBmp(Byte[] artfile, Byte[] mapfile, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 21
+   at SonicRetro.SonLVL.API.ObjectHelper.MapASMToBmp(Byte[] artfile, String mapfileloc, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 29
+   at SonicRetro.SonLVL.API.S2.Ring.Init(ObjectData data) in D:\Programs\SonLVL\SonLVLAPI\S2\Ring.cs:line 49
+   at SonicRetro.SonLVL.API.LevelData.<>c__DisplayClass102_0.<InitObjectDefinitions>b__0(KeyValuePair`2 group) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1513
+   at System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   at System.Threading.Tasks.Task.InnerInvoke()
+   at System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   at System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.ThrowIfExceptional(Boolean includeTaskCanceledExceptions)
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at System.Threading.Tasks.Task.Wait()
+   at System.Threading.Tasks.Parallel.PartitionerForEachWorker[TSource,TLocal](Partitioner`1 source, ParallelOptions parallelOptions, Action`1 simpleBody, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   at System.Threading.Tasks.Parallel.ForEachWorker[TSource,TLocal](IEnumerable`1 source, ParallelOptions parallelOptions, Action`1 body, Action`2 bodyWithState, Action`3 bodyWithStateAndIndex, Func`4 bodyWithStateAndLocal, Func`5 bodyWithEverything, Func`1 localInit, Action`1 localFinally)
+   at System.Threading.Tasks.Parallel.ForEach[TSource](IEnumerable`1 source, Action`1 body)
+   at SonicRetro.SonLVL.API.LevelData.InitObjectDefinitions() in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1505
+   at SonicRetro.SonLVL.API.LevelData.LoadLevel(String levelname, Boolean loadGraphics) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 319
+   at SonicRetro.SonLVL.GUI.MainForm.backgroundLevelLoader_DoWork(Object sender, DoWorkEventArgs e) in D:\Programs\SonLVL\SonLVL\MainForm.cs:line 574
+---> (Inner Exception #0) System.ArgumentException: Source array was not long enough. Check srcIndex and length, and the array's lower bounds.
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
+   at SonicRetro.SonLVL.API.ByteConverter.ToInt16(Byte[] value, Int32 startIndex) in D:\Programs\SonLVL\SonLVLAPI\ByteConverter.cs:line 61
+   at SonicRetro.SonLVL.API.LevelData.GetOffsetList(Byte[] file) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1761
+   at SonicRetro.SonLVL.API.MappingsFrame.Load(Byte[] file, EngineVersion version, Dictionary`2 labels) in D:\Programs\SonLVL\SonLVLAPI\DataTypes.cs:line 1396
+   at SonicRetro.SonLVL.API.ObjectHelper.MapToBmp(Byte[] artfile, Byte[] mapfile, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 21
+   at SonicRetro.SonLVL.API.ObjectHelper.MapASMToBmp(Byte[] artfile, String mapfileloc, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 29
+   at SonicRetro.SonLVL.API.S2.Ring.Init(ObjectData data) in D:\Programs\SonLVL\SonLVLAPI\S2\Ring.cs:line 49
+   at SonicRetro.SonLVL.API.LevelData.<>c__DisplayClass102_0.<InitObjectDefinitions>b__0(KeyValuePair`2 group) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1513
+   at System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   at System.Threading.Tasks.Task.InnerInvoke()
+   at System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   at System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
+---> (Inner Exception #1) System.ArgumentException: Source array was not long enough. Check srcIndex and length, and the array's lower bounds.
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
+   at SonicRetro.SonLVL.API.ByteConverter.ToInt16(Byte[] value, Int32 startIndex) in D:\Programs\SonLVL\SonLVLAPI\ByteConverter.cs:line 61
+   at SonicRetro.SonLVL.API.LevelData.GetOffsetList(Byte[] file) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1761
+   at SonicRetro.SonLVL.API.MappingsFrame.Load(Byte[] file, EngineVersion version, Dictionary`2 labels) in D:\Programs\SonLVL\SonLVLAPI\DataTypes.cs:line 1396
+   at SonicRetro.SonLVL.API.ObjectHelper.MapToBmp(Byte[] artfile, Byte[] mapfile, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 21
+   at SonicRetro.SonLVL.API.ObjectHelper.MapASMToBmp(Byte[] artfile, String mapfileloc, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 29
+   at S2ObjectDefinitions.Common.PathSwapper.Init(ObjectData data) in \\mac\home\Documents\installers\game disassemblies\Sonic 2\Sonic 2 MapMacros Updated\SonLVL INI Files\Common\PathSwapper.cs:line 21
+   at SonicRetro.SonLVL.API.LevelData.<>c__DisplayClass102_0.<InitObjectDefinitions>b__0(KeyValuePair`2 group) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1578
+   at System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   at System.Threading.Tasks.Task.InnerInvoke()
+   at System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   at System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
+---> (Inner Exception #2) System.InvalidOperationException: There is an error in XML document (5, 51). ---> System.Xml.XmlException: An error occurred while parsing EntityName. Line 5, position 51.
+   at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+   at System.Xml.XmlTextReaderImpl.Throw(String res, String arg)
+   at System.Xml.XmlTextReaderImpl.ParseEntityName()
+   at System.Xml.XmlTextReaderImpl.ParseAttributeValueSlow(Int32 curPos, Char quoteChar, NodeData attr)
+   at System.Xml.XmlTextReaderImpl.ParseAttributes()
+   at System.Xml.XmlTextReaderImpl.ParseElement()
+   at System.Xml.XmlTextReaderImpl.ParseElementContent()
+   at System.Xml.XmlTextReaderImpl.Read()
+   at System.Xml.XmlTextReader.Read()
+   at System.Xml.XmlReader.MoveToContent()
+   at Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationReaderObjDef.Read9_ImageFromMappings(Boolean isNullable, Boolean checkType)
+   at Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationReaderObjDef.Read12_ImageList(Boolean isNullable, Boolean checkType)
+   at Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationReaderObjDef.Read32_ObjDef(Boolean isNullable, Boolean checkType)
+   at Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationReaderObjDef.Read33_ObjDef()
+   --- End of inner exception stack trace ---
+   at System.Xml.Serialization.XmlSerializer.Deserialize(XmlReader xmlReader, String encodingStyle, XmlDeserializationEvents events)
+   at SonicRetro.SonLVL.API.XMLDef.ObjDef.Load(String filename) in D:\Programs\SonLVL\SonLVLAPI\XMLDef.cs:line 51
+   at SonicRetro.SonLVL.API.XMLObjectDefinition.Init(ObjectData data) in D:\Programs\SonLVL\SonLVLAPI\ObjectDefinition.cs:line 692
+   at SonicRetro.SonLVL.API.LevelData.<>c__DisplayClass102_0.<InitObjectDefinitions>b__0(KeyValuePair`2 group) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1578
+   at System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   at System.Threading.Tasks.Task.InnerInvoke()
+   at System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   at System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
+---> (Inner Exception #3) System.InvalidOperationException: There is an error in XML document (5, 51). ---> System.Xml.XmlException: An error occurred while parsing EntityName. Line 5, position 51.
+   at System.Xml.XmlTextReaderImpl.Throw(Exception e)
+   at System.Xml.XmlTextReaderImpl.Throw(String res, String arg)
+   at System.Xml.XmlTextReaderImpl.ParseEntityName()
+   at System.Xml.XmlTextReaderImpl.ParseAttributeValueSlow(Int32 curPos, Char quoteChar, NodeData attr)
+   at System.Xml.XmlTextReaderImpl.ParseAttributes()
+   at System.Xml.XmlTextReaderImpl.ParseElement()
+   at System.Xml.XmlTextReaderImpl.ParseElementContent()
+   at System.Xml.XmlTextReaderImpl.Read()
+   at System.Xml.XmlTextReader.Read()
+   at System.Xml.XmlReader.MoveToContent()
+   at Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationReaderObjDef.Read9_ImageFromMappings(Boolean isNullable, Boolean checkType)
+   at Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationReaderObjDef.Read12_ImageList(Boolean isNullable, Boolean checkType)
+   at Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationReaderObjDef.Read32_ObjDef(Boolean isNullable, Boolean checkType)
+   at Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationReaderObjDef.Read33_ObjDef()
+   --- End of inner exception stack trace ---
+   at System.Xml.Serialization.XmlSerializer.Deserialize(XmlReader xmlReader, String encodingStyle, XmlDeserializationEvents events)
+   at SonicRetro.SonLVL.API.XMLDef.ObjDef.Load(String filename) in D:\Programs\SonLVL\SonLVLAPI\XMLDef.cs:line 51
+   at SonicRetro.SonLVL.API.XMLObjectDefinition.Init(ObjectData data) in D:\Programs\SonLVL\SonLVLAPI\ObjectDefinition.cs:line 692
+   at SonicRetro.SonLVL.API.LevelData.<>c__DisplayClass102_0.<InitObjectDefinitions>b__0(KeyValuePair`2 group) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1578
+   at System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   at System.Threading.Tasks.Task.InnerInvoke()
+   at System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   at System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
+---> (Inner Exception #4) System.ArgumentException: Source array was not long enough. Check srcIndex and length, and the array's lower bounds.
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
+   at SonicRetro.SonLVL.API.ByteConverter.ToInt16(Byte[] value, Int32 startIndex) in D:\Programs\SonLVL\SonLVLAPI\ByteConverter.cs:line 61
+   at SonicRetro.SonLVL.API.LevelData.GetOffsetList(Byte[] file) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1761
+   at SonicRetro.SonLVL.API.MappingsFrame.Load(Byte[] file, EngineVersion version, Dictionary`2 labels) in D:\Programs\SonLVL\SonLVLAPI\DataTypes.cs:line 1396
+   at SonicRetro.SonLVL.API.ObjectHelper.MapToBmp(Byte[] artfile, Byte[] mapfile, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 21
+   at SonicRetro.SonLVL.API.ObjectHelper.MapASMToBmp(Byte[] artfile, String mapfileloc, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 29
+   at SonicRetro.SonLVL.API.XMLObjectDefinition.Init(ObjectData data) in D:\Programs\SonLVL\SonLVLAPI\ObjectDefinition.cs:line 710
+   at SonicRetro.SonLVL.API.LevelData.<>c__DisplayClass102_0.<InitObjectDefinitions>b__0(KeyValuePair`2 group) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1578
+   at System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   at System.Threading.Tasks.Task.InnerInvoke()
+   at System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   at System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
+---> (Inner Exception #5) System.ArgumentException: Source array was not long enough. Check srcIndex and length, and the array's lower bounds.
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
+   at SonicRetro.SonLVL.API.ByteConverter.ToInt16(Byte[] value, Int32 startIndex) in D:\Programs\SonLVL\SonLVLAPI\ByteConverter.cs:line 61
+   at SonicRetro.SonLVL.API.LevelData.GetOffsetList(Byte[] file) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1761
+   at SonicRetro.SonLVL.API.MappingsFrame.Load(Byte[] file, EngineVersion version, Dictionary`2 labels) in D:\Programs\SonLVL\SonLVLAPI\DataTypes.cs:line 1396
+   at SonicRetro.SonLVL.API.ObjectHelper.MapToBmp(Byte[] artfile, Byte[] mapfile, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 21
+   at SonicRetro.SonLVL.API.ObjectHelper.MapASMToBmp(Byte[] artfile, String mapfileloc, Int32 frame, Int32 startpal, Boolean priority, EngineVersion version) in D:\Programs\SonLVL\SonLVLAPI\ObjectHelper.cs:line 29
+   at SonicRetro.SonLVL.API.XMLObjectDefinition.Init(ObjectData data) in D:\Programs\SonLVL\SonLVLAPI\ObjectDefinition.cs:line 710
+   at SonicRetro.SonLVL.API.LevelData.<>c__DisplayClass102_0.<InitObjectDefinitions>b__0(KeyValuePair`2 group) in D:\Programs\SonLVL\SonLVLAPI\LevelData.cs:line 1578
+   at System.Threading.Tasks.Parallel.<>c__DisplayClass42_0`2.<PartitionerForEachWorker>b__1()
+   at System.Threading.Tasks.Task.InnerInvoke()
+   at System.Threading.Tasks.Task.InnerInvokeWithArg(Task childTask)
+   at System.Threading.Tasks.Task.<>c__DisplayClass176_0.<ExecuteSelfReplicating>b__0(Object <p0>)<---
+
