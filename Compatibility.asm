@@ -120,7 +120,7 @@ Object_RAM:				equ v_ost_all
 Reserved_Object_RAM:	equ v_ost_reserved
 MainCharacter:			equ v_ost_player
 Sidekick:				equ v_ost_sidekick
-TitleCard:				equ	v_ost_titlecard
+;TitleCard:				equ	v_ost_titlecard
 TitleCard_ZoneName:		equ v_ost_titlecard_zonename
 GameOver_GameText:		equ	v_ost_gameover_gametext
 TimeOver_TimeText:		equ	v_ost_timeover_timetext

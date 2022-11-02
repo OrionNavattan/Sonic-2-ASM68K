@@ -59,7 +59,6 @@ Like Sonic 2 AS, a large collection of bugfixes will be included that can be tog
 a conditional in the main sonic2.asm file. I am also considering a conditional that will
 allow removing various bits of unused or dead code from the rom.
 
-
 What has been done so far has been a massive undertaking. If you would like to help out, 
 I welcome feedback, suggestions, and pull requests that help towards improving this disassembly
 and eventually bringing it to feature parity with Sonic 2 AS. 

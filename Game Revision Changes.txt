@@ -1,4 +1,4 @@
-Changes in Revision 1:
+Changes in Revision 1 (built four days after Revision 0):
 
 Adds an additional check to allow the startup VRAM clear to finish before doing the checksum test
 Fixes a typo in Thomas Kalinske's name in the credits (Tohmas)

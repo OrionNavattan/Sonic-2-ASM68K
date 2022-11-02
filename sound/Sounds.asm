@@ -19,7 +19,7 @@ play:		macro	queue, command, song
 ; Constants for IDs are: mus_(name)
 ; This special macro is used to generate pointers, includes and constants
 ;
-; line format: \func	sound file, sound priority, speed shoes tempo
+; line format: \func	sound file, speed shoes tempo
 ;
 ; NOTE: speed shoes tempo is missing in a few lines; In the original game, for
 ; some reason these were not filled in. This is a bug. Do not intentionally
@@ -48,6 +48,86 @@ play:		macro	queue, command, song
 ;		\func	Emerald, $90,				; $00	; Emerald music
 ;		endm
 
+
+MusicFiles:
+
+		\func	2PResult,	68h
+		\func	EHZ,		BEh	
+		\func	MCZ_2P,		FFh
+		\func	OOZ,		F0h
+		\func	MTZ,		DEh
+		\func	HTZ,		FFh
+		\func	ARZ,		DDh
+		\func	CNZ_2P,		68h
+		\func	
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		\func
+		
+		
+		
+zMusIDPtr_2PResult:	db	id(MusPtr_2PResult)	; 92
+zMusIDPtr_EHZ:		db	id(MusPtr_EHZ)		; 81
+zMusIDPtr_MCZ_2P:	db	id(MusPtr_MCZ_2P)	; 85
+zMusIDPtr_OOZ:		db	id(MusPtr_OOZ)		; 8F
+zMusIDPtr_MTZ:		db	id(MusPtr_MTZ)		; 82
+zMusIDPtr_HTZ:		db	id(MusPtr_HTZ)		; 94
+zMusIDPtr_ARZ:		db	id(MusPtr_ARZ)		; 86
+zMusIDPtr_CNZ_2P:	db	id(MusPtr_CNZ_2P)	; 80
+zMusIDPtr_CNZ:		db	id(MusPtr_CNZ)		; 83
+zMusIDPtr_DEZ:		db	id(MusPtr_DEZ)		; 87
+zMusIDPtr_MCZ:		db	id(MusPtr_MCZ)		; 84
+zMusIDPtr_EHZ_2P:	db	id(MusPtr_EHZ_2P)	; 91
+zMusIDPtr_SCZ:		db	id(MusPtr_SCZ)		; 8E
+zMusIDPtr_CPZ:		db	id(MusPtr_CPZ)		; 8C
+zMusIDPtr_WFZ:		db	id(MusPtr_WFZ)		; 90
+zMusIDPtr_HPZ:		db	id(MusPtr_HPZ)		; 9B
+zMusIDPtr_Options:	db	id(MusPtr_Options)	; 89
+zMusIDPtr_SpecStage:	db	id(MusPtr_SpecStage)	; 88
+zMusIDPtr_Boss:		db	id(MusPtr_Boss)		; 8D
+zMusIDPtr_EndBoss:	db	id(MusPtr_EndBoss)	; 8B
+zMusIDPtr_Ending:	db	id(MusPtr_Ending)	; 8A
+zMusIDPtr_SuperSonic:	db	id(MusPtr_SuperSonic)	; 93
+zMusIDPtr_Invincible:	db	id(MusPtr_Invincible)	; 99
+zMusIDPtr_ExtraLife:	db	id(MusPtr_ExtraLife)+20h; B5
+zMusIDPtr_Title:	db	id(MusPtr_Title)	; 96
+zMusIDPtr_EndLevel:	db	id(MusPtr_EndLevel)	; 97
+zMusIDPtr_GameOver:	db	id(MusPtr_GameOver)+20h	; B8
+zMusIDPtr_Continue:	db	(MusPtr_Continue-MusicPoint1)/ptrsize	; 0
+zMusIDPtr_Emerald:	db	id(MusPtr_Emerald)+20h	; BA
+zMusIDPtr_Credits:	db	id(MusPtr_Credits)+20h	; BD
+zMusIDPtr_Countdown:	db	id(MusPtr_Drowning)+40h	; DC
+zMusIDPtr__End:
+
+
+
+
+zSpedUpTempoTable
+
+
+; speed shoes tempos
+		db	 68h,0BEh,0FFh,0F0h
+		db	0FFh,0DEh,0FFh,0DDh
+		db	 68h, 80h,0D6h, 7Bh
+		db	 7Bh,0FFh,0A8h,0FFh
+		db	 87h,0FFh,0FFh,0C9h
+		db	 97h,0FFh,0FFh,0CDh
+		db	0CDh,0AAh,0F2h,0DBh
+		db	0D5h,0F0h, 80h
 
 
 ; ---------------------------------------------------------------------------

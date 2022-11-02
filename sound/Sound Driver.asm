@@ -17,6 +17,11 @@
 ; try putting your code as far down as possible, after the function zDecEnd.
 ; That will make you less likely to run into space shortages from dislocated data alignment.
 
+; Note that the Z80 syntax used here is slightly non-standard as of result of the implementation:
+; you must use * rather than $ for invoking the current program counter, and shadow registers are
+; not indicated with an apostrophe; e.g., ex af.af' is simply rendered as ex af,af.
+
+
 
 
 ; Macro to perform a bank switch... after using this,
@@ -2279,7 +2284,6 @@ zClearTrackPlaybackMem:
 		ld	(z_abs_vars+z_soundqueue),a		; Nothing is queued
 		call	zFMSilenceAll			; Silence FM
 		jp	zPSGSilenceAll			; Silence PSG
-; End of function zClearTrackPlaybackMem
 
 
 
@@ -3476,11 +3480,13 @@ PSG_EV13:
 zMasterPlaylist:
 
 ; Music IDs
-offset :=	MusicPoint2
-ptrsize :=	2
-idstart :=	80h
+;offset :=	MusicPoint2
+;ptrsize :=	2
+;idstart :=	80h
 ; note: +20h means uncompressed, here
 ; +40h is a flag that forces PAL mode off when set
+
+; db'd values are the order of the tracks in the music bank, starting from $80
 
 zMusIDPtr_2PResult:	db	id(MusPtr_2PResult)	; 92
 zMusIDPtr_EHZ:		db	id(MusPtr_EHZ)		; 81
@@ -3517,6 +3523,16 @@ zMusIDPtr__End:
 
 ; Tempo with speed shoe tempo for each song
 ; zbyte_1214
+
+
+;GenSpeedup:	macro	name, priority, tempo
+;		if strlen("\tempo")>0				; checks if \tempo was given a value
+;		dc.b \tempo
+;		endc
+;		endm
+
+;SpeedUpIndex:
+;		MusicFiles	GenSpeedup			; generate the speed shoes tempo list
 zSpedUpTempoTable:
 		db	 68h,0BEh,0FFh,0F0h
 		db	0FFh,0DEh,0FFh,0DDh

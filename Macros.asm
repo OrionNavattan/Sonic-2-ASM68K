@@ -422,22 +422,41 @@ ptr:		macro
 ; (vram/vsram/cram), operation (read/write/dma), additional adjustment (shifts, ANDs),
 ; destination of 68K instruction
 ; ---------------------------------------------------------------------------
-vdp_comm:	macro inst,addr,type,rwd,adjustment,dest
+vdp_comm:	macro inst,addr,cmdtarget,cmd,adjustment,dest
 
-	; Values for type argument
-vram: equ	$21	; %100001
-cram: equ	$2B	; %101011
-vsram: equ	$25	; %100101
+		local type
+		local rwd
+	
+	if strcmp ("\cmdtarget","vram")
+	type: =	$21	; %10 0001
+	elseif strcmp ("\cmdtarget","cram")
+	type: = $2B	; %10 1011
+	elseif strcmp ("\cmdtarget","vsram")
+	type: = $25	; %10 0101
+	else inform 2,"Invalid VDP command destination (must be vram, cram, or vsram)."
+	endc
+	
+	if strcmp ("\cmd","read")
+	rwd: =	$C	; %00 1100
+	elseif strcmp ("\cmd","write")
+	rwd: = 7	; %00 0111
+	elseif strcmp ("\cmd","dma")
+	rwd: = $27	; %10 0111
+	else inform 2,"Invalid VDP command type (must be read, write, or dma)."
+	endc
 
-	; Values for rwd argument
-read: 	equ $C	; %001100
-write: 	equ 7	; %000111
-dma: 	equ $27	; %100111
-
-		\inst\.\0	#(((\type&\rwd)&3)<<30)|((\addr&$3FFF)<<16)|(((\type&\rwd)&$FC)<<2)|((\addr&$C000)>>14)\adjustment\,\dest
+	ifnotarg \dest
+		\inst\.\0	(((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)\adjustment\	
+	else			
+		\inst\.\0	#(((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)\adjustment\,\dest
+	endc
 	endm	
 	
-;	vdp_comm.l move,$0000,cram,write,,(vdp_control_port).l
+;	vdp_comm.l	move,$0000,cram,write,,(vdp_control_port).l
+;	vdp_comm.l	dc,$0000,vsram,write
+;	vdp_comm.w	ori,$0000,vram,write,>>16,d0	
+
+;	ori.w	#vdpComm($0000,VRAM,WRITE)>>16,d0
 
 ; ---------------------------------------------------------------------------
 ; Make a VDP command for use with the dc directive
@@ -445,9 +464,8 @@ dma: 	equ $27	; %100111
 ; input: VRAM/VSRAM/CRAM offset, destination RAM, (vram/vsram/cram), 
 ; operation (read/write/dma),
 ; ---------------------------------------------------------------------------
-vdp_comm_dc:	macros addr,type,rwd
-
-		dc.l	(((\type&\rwd)&3)<<30)|((\addr&$3FFF)<<16)|(((\type&\rwd)&$FC)<<2)|((\addr&$C000)>>14)	
+;
+;		dc.l	(((\type&\rwd)&3)<<30)|((\addr&$3FFF)<<16)|(((\type&\rwd)&$FC)<<2)|((\addr&$C000)>>14)	
 	
 ; ---------------------------------------------------------------------------
 ; Set a VRAM address via the VDP control port.
@@ -468,7 +486,7 @@ locVRAM:	macro loc,controlport
 ; cram/vsram destination (0 by default)
 ; ---------------------------------------------------------------------------
 
-make_dma:		macro
+dma:		macro
 		dma_type: = $4000
 		dma_type2: = $80
 		
@@ -651,23 +669,40 @@ z80_ptr: macros
 ; ---------------------------------------------------------------------------
 ; Define and align the start of a sound bank
 ; ---------------------------------------------------------------------------
-start_bank: macro *
-	align	$8000
-sound_bank_start = \*
-sound_bank_name = "\*"
-    endm
 
+start_bank: macro *
+		if ~def(snkbnk_id)
+			sndbnk_id: = 1
+		else
+			sndbnk_id: = sndbnk_id+1
+		endc		
+		align	$8000
+		sound_bank_start: = offset(*)
+		ptr_id: = 80h ; initial pointer id constant
+    endm
+    
+
+; ---------------------------------------------------------------------------
+; Pointer to an item in a sound bank
+; ---------------------------------------------------------------------------    
+
+sndbank_ptr:	macro music,mod
+		z80_ptr	\music ; generate little endian pointer relative to the start of the bank
+		ptr_\music: equ ptr_id ; generate constant for the sound driver playlist
+		ptr_id: = ptr_id+1	; increment pointer   
+	endm
 ; ---------------------------------------------------------------------------
 ; End a sound bank and halt assembly if it is too large
 ; Can also print the amount of free space in a bank with DebugSoundbanks set
 ; ---------------------------------------------------------------------------
-DebugSoundbanks = 0
+
+debug_soundbanks: equ 0
 
 finish_bank: macro
 	if offset(*)>sound_bank_start+$8000
-		inform 3,"SoundBank %s must fit in $8000 bytes but was $%h. Try moving something to another bank.",sound_bank_name,offset(*)-sound_bank_start
-	elseif DebugSoundbanks<>0
-		inform 0,"SoundBank %s has $%h bytes free at end.",sound_bank_name,$8000+sound_bank_start-*
+		inform 3,"SoundBank %s must fit in $8000 bytes, but it was $%h. Try moving something to another bank.",snkbnk_id,offset(*)-sound_bank_start
+	elseif debug_soundbanks
+		inform 0,"SoundBank %s has $%h bytes free at end.",snkbnk_id,$8000+sound_bank_start-offset(*)
 	endif
     endm    
     
@@ -681,7 +716,7 @@ filedef:	macro lbl,file,ex1,ex2
 		filename: equs \file				; get file name without quotes
 		file_\lbl: equs "\filename\.\ex1"		; record file name
 		sizeof_\lbl: equ filesize("\filename\.\ex2")	; record file size of associated uncompressed file
-		endm
+	endm
 
 ; ---------------------------------------------------------------------------
 ; Incbins a file

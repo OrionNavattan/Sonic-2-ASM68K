@@ -16,7 +16,7 @@ z_rom_window: 		equ	8000h
 ; z_soundqueue is additionally accessed by the 68K relative to the start of the Z80 RAM.
 ; ---------------------------------------------------------------------------
 				rsset 0
-v_priority:				rs.b 1 ; 0 ; sound priority (priority of new music/SFX must be higher or equal to this value or it won't play; bit 7 of priority being set prevents this value from changing)
+v_priority:				rs.b 1 ; 0 ; sound priority (priority of new SFX must be higher or equal to this value or it won't play; bit 7 of priority being set prevents this value from changing)
 f_tempo_counter:		rs.b 1 ; 1 ; counts down to zero; when zero, resets to next value and delays song by 1 frame
 f_current_tempo:		rs.b 1 ; 2 ; current music tempo
 f_pause_sound:			rs.b 1 ; 3 ; Set to 7Fh to pause music, set to 80h to unpause
