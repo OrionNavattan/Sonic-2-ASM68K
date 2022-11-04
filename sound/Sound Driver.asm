@@ -101,6 +101,7 @@ endpad:	set offset(*)
 			
 ; Function to turn a 68k address into a word the Z80 can use to access it,
 ; assuming the correct bank has been switched to first
+
 ;zmake68kPtr function addr,zROMWindow+(addr&7FFFh)
 
 
@@ -306,7 +307,7 @@ zUpdateDAC:
 		add	a,a			; a *= 4 (each DAC entry is a pointer and length, 2+2)
 		add	a,zDACPtrTbl&0FFh	; Get low byte into table -> 'a'
 		ld	(zDACStartAddress+1),a	; Store into the instruction after zDACStartAddress (self-modifying code)
-		add	a,zDACLenTbl-zDACPtrTbl	; How to offset to length versus pointer
+		add	a,2	; How to offset to length versus pointer
 		ld	(zDACStoreLength+2),a	; Store into the instruction after zDACStoreLength (self-modifying code)
 		pop	af
 		ld	hl,zWriteToDAC
@@ -318,7 +319,7 @@ zDACStartAddress:
 
 ; zloc_107
 zDACStoreLength:
-		ld	de,(zDACLenTbl)		; Self-modified code: sets length of DAC sample for zWriteToDAC
+		ld	de,(zDACPtrTbl+2)		; Self-modified code: sets length of DAC sample for zWriteToDAC
 
 ;zloc_10B
 zDACStoreDelay:
@@ -1265,7 +1266,7 @@ zInputLoop:
 		ld	e,a				; 'a' -> 'e'
 		ld	(hl),0				; Clear it back to zero (we got it)
 		inc	hl				; hl = pointer to next queue item
-		cp	MusID__First			; Is it before first music?
+		cp	_firstMusic			; Is it before first music?
 		jr	c,zQueueNext			; If so, jump
 		cp	CmdID__First			; Is it a special command?
 		jr	nc,zQueueItem			; If so, jump
@@ -1305,10 +1306,10 @@ zQueueItem:
 zPlaySoundByIndex:
 		or	a				; is it sound 00?
 		jp	z,zClearTrackPlaybackMem	; if yes, jump to RESET EVERYTHING!!
-    if MusID__First-1 = 80h
+    if _firstMusic-1 = 80h
 		ret	p				; return if it was (invalidates 00h-7Fh; maybe we don't want that someday?)
     else
-		cp	MusID__First
+		cp	_firstMusic
 		ret	c				; return if id is less than the first music id
     endc
 
@@ -1362,10 +1363,10 @@ zPlaySegaSound:
 		ld	c,80h		; Command to enable DAC
 		rst	zWriteFMI
 
-		bankswitch Snd_Sega	; We want the Sega sound
+		bankswitch SegaPCM	; We want the Sega sound
 
-		ld	hl,zmake68kPtr(Snd_Sega) ; was: 9E8Ch
-		ld	de,(Snd_Sega_End - Snd_Sega)/2	; was: 30BAh
+		ld	hl,zmake68kPtr(SegaPCM) ; was: 9E8Ch
+		ld	de,sizeof_SEGA_PCM/2	; was: 30BAh
 		ld	a,2Ah			; DAC data register
 		ld	(ym_reg_a0),a		; Select it
 		ld	c,80h			; If z_soundqueue is not this, stops Sega PCM
@@ -1461,7 +1462,7 @@ zPlayMusic:
 zBGMLoad:
 		call	zInitMusicPlayback
 		ld	a,(v_current_song)			; So, let's take your desired song, put it into 'a'
-		sub	MusID__First			; Make it a zero-based entry ...
+		sub	_firstMusic			; Make it a zero-based entry ...
 		ld	e,a				; Transform 'a' into 16-bit de
 		ld	d,0
 		ld	hl,zSpedUpTempoTable		; Load 'hl' of "sped up" tempos [I think]
@@ -3395,7 +3396,7 @@ zPSG_EnvTbl:
 		; Basically, for any tone 0-11, dynamic ch_volume adjustments are applied to produce a pseudo-decay,
 		; or sometimes a ramp up for "soft" sounds, or really any other ch_volume effect you might want!
 
-		; Remember on PSG that the higher the value, the quieter it gets (it's attenuation, not ch_volume);
+		; Remember on PSG that the higher the value, the quieter it gets (its attenuation, not ch_volume);
 		; 0 is thus loudest, and increasing values decay, until level $F (silent)
 
 		dw	PSG_EV1, PSG_EV2, PSG_EV3, PSG_EV4
@@ -3476,134 +3477,176 @@ PSG_EV13:
 
 ;	END of zPSG_EnvTbl -------------------------------
 
-; zbyte_11F5h
-zMasterPlaylist:
 
-; Music IDs
-;offset :=	MusicPoint2
-;ptrsize :=	2
-;idstart :=	80h
-; note: +20h means uncompressed, here
+
 ; +40h is a flag that forces PAL mode off when set
 
 ; db'd values are the order of the tracks in the music bank, starting from $80
 
-zMusIDPtr_2PResult:	db	id(MusPtr_2PResult)	; 92
-zMusIDPtr_EHZ:		db	id(MusPtr_EHZ)		; 81
-zMusIDPtr_MCZ_2P:	db	id(MusPtr_MCZ_2P)	; 85
-zMusIDPtr_OOZ:		db	id(MusPtr_OOZ)		; 8F
-zMusIDPtr_MTZ:		db	id(MusPtr_MTZ)		; 82
-zMusIDPtr_HTZ:		db	id(MusPtr_HTZ)		; 94
-zMusIDPtr_ARZ:		db	id(MusPtr_ARZ)		; 86
-zMusIDPtr_CNZ_2P:	db	id(MusPtr_CNZ_2P)	; 80
-zMusIDPtr_CNZ:		db	id(MusPtr_CNZ)		; 83
-zMusIDPtr_DEZ:		db	id(MusPtr_DEZ)		; 87
-zMusIDPtr_MCZ:		db	id(MusPtr_MCZ)		; 84
-zMusIDPtr_EHZ_2P:	db	id(MusPtr_EHZ_2P)	; 91
-zMusIDPtr_SCZ:		db	id(MusPtr_SCZ)		; 8E
-zMusIDPtr_CPZ:		db	id(MusPtr_CPZ)		; 8C
-zMusIDPtr_WFZ:		db	id(MusPtr_WFZ)		; 90
-zMusIDPtr_HPZ:		db	id(MusPtr_HPZ)		; 9B
-zMusIDPtr_Options:	db	id(MusPtr_Options)	; 89
-zMusIDPtr_SpecStage:	db	id(MusPtr_SpecStage)	; 88
-zMusIDPtr_Boss:		db	id(MusPtr_Boss)		; 8D
-zMusIDPtr_EndBoss:	db	id(MusPtr_EndBoss)	; 8B
-zMusIDPtr_Ending:	db	id(MusPtr_Ending)	; 8A
-zMusIDPtr_SuperSonic:	db	id(MusPtr_SuperSonic)	; 93
-zMusIDPtr_Invincible:	db	id(MusPtr_Invincible)	; 99
-zMusIDPtr_ExtraLife:	db	id(MusPtr_ExtraLife)+20h; B5
-zMusIDPtr_Title:	db	id(MusPtr_Title)	; 96
-zMusIDPtr_EndLevel:	db	id(MusPtr_EndLevel)	; 97
-zMusIDPtr_GameOver:	db	id(MusPtr_GameOver)+20h	; B8
-zMusIDPtr_Continue:	db	(MusPtr_Continue-MusicPoint1)/ptrsize	; 0
-zMusIDPtr_Emerald:	db	id(MusPtr_Emerald)+20h	; BA
-zMusIDPtr_Credits:	db	id(MusPtr_Credits)+20h	; BD
-zMusIDPtr_Countdown:	db	id(MusPtr_Drowning)+40h	; DC
-zMusIDPtr__End:
+MasterPlaylist: 	macro  name, tempo, flag
+		
+		if ~def(zptr_id)
+			zptr_id: = 80h
+		endc
+		
+		db	ptr_musfile_\1\+\flag		; generate playlist entry with value generated by sndbnk_ptr macro plus flag value if applicable
+		zptr_mus_\1\: equ zptr_id	; generate signed byte constant for use in sound driver
+		
+		zptr_id: = zptr_id+1	; increment each pointer value
+	endm	
+		
 
+	
+; zbyte_11F5h
+zMasterPlaylist:		
+		MusicFiles	MasterPlaylist ; generate playlist entries and Z80 constants
+
+;zMusIDPtr_2PResult:	db	id(MusPtr_2PResult)	; 92
+;zMusIDPtr_EHZ:		db	id(MusPtr_EHZ)		; 81
+;zMusIDPtr_MCZ_2P:	db	id(MusPtr_MCZ_2P)	; 85
+;zMusIDPtr_OOZ:		db	id(MusPtr_OOZ)		; 8F
+;zMusIDPtr_MTZ:		db	id(MusPtr_MTZ)		; 82
+;zMusIDPtr_HTZ:		db	id(MusPtr_HTZ)		; 94
+;zMusIDPtr_ARZ:		db	id(MusPtr_ARZ)		; 86
+;zMusIDPtr_CNZ_2P:	db	id(MusPtr_CNZ_2P)	; 80
+;zMusIDPtr_CNZ:		db	id(MusPtr_CNZ)		; 83
+;zMusIDPtr_DEZ:		db	id(MusPtr_DEZ)		; 87
+;zMusIDPtr_MCZ:		db	id(MusPtr_MCZ)		; 84
+;zMusIDPtr_EHZ_2P:	db	id(MusPtr_EHZ_2P)	; 91
+;zMusIDPtr_SCZ:		db	id(MusPtr_SCZ)		; 8E
+;zMusIDPtr_CPZ:		db	id(MusPtr_CPZ)		; 8C
+;zMusIDPtr_WFZ:		db	id(MusPtr_WFZ)		; 90
+;zMusIDPtr_HPZ:		db	id(MusPtr_HPZ)		; 9B
+;zMusIDPtr_Options:	db	id(MusPtr_Options)	; 89
+;zMusIDPtr_SpecStage:	db	id(MusPtr_SpecStage)	; 88
+;zMusIDPtr_Boss:		db	id(MusPtr_Boss)		; 8D
+;zMusIDPtr_EndBoss:	db	id(MusPtr_EndBoss)	; 8B
+;zMusIDPtr_Ending:	db	id(MusPtr_Ending)	; 8A
+;zMusIDPtr_SuperSonic:	db	id(MusPtr_SuperSonic)	; 93
+;zMusIDPtr_Invincible:	db	id(MusPtr_Invincible)	; 99
+;zMusIDPtr_ExtraLife:	db	id(MusPtr_ExtraLife)+20h; B5
+;zMusIDPtr_Title:	db	id(MusPtr_Title)	; 96
+;zMusIDPtr_EndLevel:	db	id(MusPtr_EndLevel)	; 97
+;zMusIDPtr_GameOver:	db	id(MusPtr_GameOver)+20h	; B8
+;zMusIDPtr_Continue:	db	(MusPtr_Continue-MusicPoint1)/ptrsize	; 0
+;zMusIDPtr_Emerald:	db	id(MusPtr_Emerald)+20h	; BA
+;zMusIDPtr_Credits:	db	id(MusPtr_Credits)+20h	; BD
+;zMusIDPtr_Countdown:	db	id(MusPtr_Drowning)+40h	; DC
+;zMusIDPtr__End:
+
+
+
+GenSpeedup:	macro	name, tempo, flag
+		db \tempo
+		endm
+		
 ; Tempo with speed shoe tempo for each song
-; zbyte_1214
-
-
-;GenSpeedup:	macro	name, priority, tempo
-;		if strlen("\tempo")>0				; checks if \tempo was given a value
-;		dc.b \tempo
-;		endc
-;		endm
-
-;SpeedUpIndex:
-;		MusicFiles	GenSpeedup			; generate the speed shoes tempo list
-zSpedUpTempoTable:
-		db	 68h,0BEh,0FFh,0F0h
-		db	0FFh,0DEh,0FFh,0DDh
-		db	 68h, 80h,0D6h, 7Bh
-		db	 7Bh,0FFh,0A8h,0FFh
-		db	 87h,0FFh,0FFh,0C9h
-		db	 97h,0FFh,0FFh,0CDh
-		db	0CDh,0AAh,0F2h,0DBh
-		db	0D5h,0F0h, 80h
+; zbyte_1214	
+SpeedUpIndex:
+		MusicFiles	GenSpeedup			; generate the speed shoes tempo list
+		
+;zSpedUpTempoTable:
+;		db	 68h,0BEh,0FFh,0F0h
+;		db	0FFh,0DEh,0FFh,0DDh
+;		db	 68h, 80h,0D6h, 7Bh
+;		db	 7Bh,0FFh,0A8h,0FFh
+;		db	 87h,0FFh,0FFh,0C9h
+;		db	 97h,0FFh,0FFh,0CDh
+;		db	0CDh,0AAh,0F2h,0DBh
+;		db	0D5h,0F0h, 80h
 
 		; DAC sample pointers and lengths
 		ensure1byteoffset 1Ch
 
 ; zDACPtr_Index zbyte_1233
+
+
+
+;zsample:	macro	name, pitch
+;		dw \name
+;		dw \name\_End-\name
+;		dw \pitch
+;		dw 0000h
+;		endm
+;zROMWindow+(addr&7FFFh)
+
+zsample:	macro	sample
+
+		dw	zbankptr_\sample
+		dw	sizeof_\sample
+		endm
+
+
 zDACPtrTbl:
-zDACPtr_Sample1:	dw	zmake68kPtr(SndDAC_Sample1)
-; zbyte_1235
-zDACLenTbl:
-				dw	SndDAC_Sample1_End-SndDAC_Sample1
+;zDACPtr_Sample1:	dw	z_rom_window+(DAC_Kick&7FFFh)
 
-zDACPtr_Sample2:	dw	zmake68kPtr(SndDAC_Sample2)
-				dw	SndDAC_Sample2_End-SndDAC_Sample2
+		zsample	DAC_Kick	
+;					dw	sizeof_DAC_Kick ; sizeof
 
-zDACPtr_Sample3:	dw	zmake68kPtr(SndDAC_Sample3)
-				dw	SndDAC_Sample3_End-SndDAC_Sample3
+;zDACPtr_Sample2:	dw	zmake68kPtr(DAC_Snare)
+;					dw	sizeof_DAC_Snare
+		zsample	DAC_Snare			
 
-zDACPtr_Sample4:	dw	zmake68kPtr(SndDAC_Sample4)
-				dw	SndDAC_Sample4_End-SndDAC_Sample4
+;zDACPtr_Sample3:	dw	zmake68kPtr(DAC_Clap)
+;					dw	sizeof_DAC_Clap
+		zsample	DAC_Clap			
+					
+;zDACPtr_Sample4:	dw	zmake68kPtr(DAC_RecordScratch)
+;					dw	sizeof_DAC_RecordScratch
+		zsample	DAC_RecordScratch			
 
-zDACPtr_Sample5:	dw	zmake68kPtr(SndDAC_Sample5)
-				dw	SndDAC_Sample5_End-SndDAC_Sample5
+;zDACPtr_Sample5:	dw	zmake68kPtr(DAC_Timpani)
+;					dw	sizeof_DAC_Timpani
+		zsample	DAC_Timpani			
 
-zDACPtr_Sample6:	dw	zmake68kPtr(SndDAC_Sample6)
-				dw	SndDAC_Sample6_End-SndDAC_Sample6
+;zDACPtr_Sample6:	dw	zmake68kPtr(SndDAC_Tom)
+;					dw	sizeof_DAC_Tom
+		zsample DAC_Tom			
 
-zDACPtr_Sample7:	dw	zmake68kPtr(SndDAC_Sample7)
-				dw	SndDAC_Sample7_End-SndDAC_Sample7
+;zDACPtr_Sample7:	dw	zmake68kPtr(SndDAC_VLowClap)
+;					dw	sizeof_DAC_VLowClap
+		zsample	DAC_VLowClap			
+
+
+		ensure1byteoffset 22h
+; zbyte_124F
+zDACMasterPlaylist:
+
 
 		; something else for DAC sounds
 		; First byte selects one of the DAC samples. The number that
 		; follows it is a wait time between each nibble written to the DAC
 		; (thus higher = slower)
-		ensure1byteoffset 22h
-; zbyte_124F
-zDACMasterPlaylist:
 
-; DAC samples IDs
-offset :=	zDACPtrTbl
-ptrsize :=	2+2
-idstart :=	81h
-
-		db	id(zDACPtr_Sample1),17h		; 81h
-		db	id(zDACPtr_Sample2),1		; 82h
-		db	id(zDACPtr_Sample3),6		; 83h
-		db	id(zDACPtr_Sample4),8		; 84h
-		db	id(zDACPtr_Sample5),1Bh		; 85h
-		db	id(zDACPtr_Sample6),0Ah		; 86h
-		db	id(zDACPtr_Sample7),1Bh		; 87h
-		db	id(zDACPtr_Sample5),12h		; 88h
-		db	id(zDACPtr_Sample5),15h		; 89h
-		db	id(zDACPtr_Sample5),1Ch		; 8Ah
-		db	id(zDACPtr_Sample5),1Dh		; 8Bh
-		db	id(zDACPtr_Sample6),2		; 8Ch
-		db	id(zDACPtr_Sample6),5		; 8Dh
-		db	id(zDACPtr_Sample6),8		; 8Eh
-		db	id(zDACPtr_Sample7),8		; 8Fh
-		db	id(zDACPtr_Sample7),0Bh		; 90h
-		db	id(zDACPtr_Sample7),12h		; 91h
+		db	dKick,17h		; 81h ; kick
+		db	dSnare,1		; 82h ; snare
+		db	dClap,6		; 83h ; clap
+		db	dScratch,8		; 84h ; scratch
+		db	dTimpani,1Bh		; 85h ; timpani
+		db	dHiTom,0Ah		; 86h ; hitom
+		db	dVLowClap,1Bh		; 87h ; vlowclap
+		db	dTimpani,12h		; 88h ; hitimpani
+		db	dTimpani,15h		; 89h ; midtimpani
+		db	dTimpani,1Ch		; 8Ah ; lowtimpani
+		db	dTimpani,1Dh		; 8Bh ; vlowtimpani
+		db	dHiTom,2		; 8Ch ; midtom
+		db	dHiTom,5		; 8Dh ; lowtom
+		db	dHiTom,8		; 8Eh ; floortom
+		db	dVLowClap,8		; 8Fh ; hiclap
+		db	dVLowClap,0Bh		; 90h ; midclap
+		db	dVLowClap,12h		; 91h ; lowclap
 
 
-
+	ensure1byteoffset 7
+zDACBanks:
+		db	zmake68kBank(DAC_Kick)
+		db	zmake68kBank(DAC_Snare)
+		db	zmake68kBank(SndDAC_Clap)
+		db	zmake68kBank(SndDAC_RecordScratch)
+		db	zmake68kBank(DAC_Timpani)
+		db	zmake68kBank(SndDAC_Tom)
+		db	zmake68kBank(SndDAC_VLowClap)
+	
 ; zsub_1271
 zSaxmanDec:
     if OptimizeSoundDriver

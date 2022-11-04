@@ -224,12 +224,12 @@ adda_:		macros
 ; ------------------------------------------------------------------------------
 
 lea_: 		macro address,reg
-	if RelativeLea
-		lea \address(pc),\reg
-	else
-		lea (\address).l,\reg
-	endc
-    endm
+		if RelativeLea
+			lea \address(pc),\reg
+		else
+			lea (\address).l,\reg
+		endc
+   		endm
 
 ; ---------------------------------------------------------------------------
 ; Revision 2 even. Unnecessary even commands, most likely 
@@ -237,10 +237,10 @@ lea_: 		macro address,reg
 ; ---------------------------------------------------------------------------
 
 rev02even:	 macro
-	if Revision=2
-		even
-	endc
-    endm
+		if Revision=2
+			even
+		endc
+  	  endm
 
 ; ---------------------------------------------------------------------------
 ; The assembler/linker used for Revisions 0 and 1 handled branches and jumps 
@@ -251,20 +251,20 @@ rev02even:	 macro
 ; ---------------------------------------------------------------------------
 
 jsrto:		 macro directaddr,indirectaddr
-	if RemoveJmpTos
-		jsr (\directaddr).l	; jump directly to address
-	else
-		bsr.w \indirectaddr	; otherwise, branch to an indirect JmpTo
-	endc
-    endm
+		if RemoveJmpTos
+			jsr (\directaddr).l	; jump directly to address
+		else
+			bsr.w \indirectaddr	; otherwise, branch to an indirect JmpTo
+		endc
+		endm
 
 jmpto:		 macro directaddr,indirectaddr
-	if RemoveJmpTos
-		jmp (\directaddr).l	; jump directly to address
-	else
-		bra.w \indirectaddr	; otherwise, branch to an indirect JmpTo
-	endc
-    endm
+		if RemoveJmpTos
+			jmp (\directaddr).l	; jump directly to address
+		else
+			bra.w \indirectaddr	; otherwise, branch to an indirect JmpTo
+		endc
+  		endm
 
 ; ---------------------------------------------------------------------------
 ; Align the start of RAM sections, and mark the ends for the clear_ram macro.
@@ -278,7 +278,7 @@ rsalign:	macros
 rsblock:	macro
 		rsalign 2					; align to even address
 		\1\: equ __rs
-	endm
+		endm
 
 rsblockend:	macros ; Adapted to Sonic 2's macro-based RAM clearing
 		\1\_end:	equ __rs ; generate symbol for end
@@ -287,24 +287,24 @@ rsblockend:	macros ; Adapted to Sonic 2's macro-based RAM clearing
 ; Organise object RAM usage.
 ; ---------------------------------------------------------------------------
 rsobj:		macro name,start
-		rsobj_name: equs "\name"			; remember name of current object
-	ifarg \start
-		rsset \start					; start at specified position
-	else
-		rsset ost_used					; start at end of regular OST usage
-	endc
-	pusho						; save options
-	opt	ae+					; enable auto evens
-	endm
+			rsobj_name: equs "\name"			; remember name of current object
+		ifarg \start
+			rsset \start					; start at specified position
+		else
+			rsset ost_used					; start at end of regular OST usage
+		endc
+		pusho						; save options
+		opt	ae+					; enable auto evens
+		endm
 
 rsobjend:	macro
-	if __rs>sizeof_ost
-		inform	3,"OST for \rsobj_name exceeds maximum by $%h bytes.",__rs-sizeof_ost
-	else
-		;inform	0,"0-$%h bytes of OST for \rsobj_name used, leaving $%h bytes unused.",__rs-1,sizeof_ost-__rs
-	endc
-	popo
-	endm
+		if __rs>sizeof_ost
+			inform	3,"OST for \rsobj_name exceeds maximum by $%h bytes.",__rs-sizeof_ost
+		else
+			;inform	0,"0-$%h bytes of OST for \rsobj_name used, leaving $%h bytes unused.",__rs-1,sizeof_ost-__rs
+		endc
+		popo
+		endm
 		
 ; ---------------------------------------------------------------------------
 ; Clear an area of RAM.
@@ -313,33 +313,33 @@ rsobjend:	macro
 
 clear_ram:		macro startaddr,endaddr
 		
-	if startaddr>endaddr
-		inform 3,"Starting address of clearRAM $%h is after ending address $%h.",startaddr,endaddr
-	elseif startaddr=endaddr
-		inform 1,"clearRAM is clearing zero bytes. Turning this into a nop instead."
-	mexit
-  	endc
+		if startaddr>endaddr
+			inform 3,"Starting address of clearRAM $%h is after ending address $%h.",startaddr,endaddr
+		elseif startaddr=endaddr
+			inform 1,"clearRAM is clearing zero bytes. Turning this into a nop instead."
+		mexit
+  		endc
     
-	if ((startaddr)&$8000)=0
-		lea	(\startaddr).l,a1
-    else
-		lea	(\startaddr).w,a1
-   	endc
-		moveq	#0,d0
-    if (\startaddr&1)
-		move.b	d0,(a1)+
-    endc
+		if ((startaddr)&$8000)=0
+			lea	(\startaddr).l,a1
+   		else
+			lea	(\startaddr).w,a1
+	   	endc
+			moveq	#0,d0
+    	if (\startaddr&1)
+			move.b	d0,(a1)+
+	    endc
 		move.w	#((\endaddr-\startaddr)-(\startaddr&1))/4-1,d1
 			
 	.loop\@:	
 		move.l	d0,(a1)+
 		dbf	d1,.loop\@
-    if (((endaddr-startaddr)-((startaddr)&1))&2)
-		move.w	d0,(a1)+
-    endc
-    if (((endaddr-startaddr)-((startaddr)&1))&1)
-		move.b	d0,(a1)+
-    endc
+	    if (((endaddr-startaddr)-((startaddr)&1))&2)
+			move.w	d0,(a1)+
+    	endc
+    	if (((endaddr-startaddr)-((startaddr)&1))&1)
+			move.b	d0,(a1)+
+    	endc
     	endm		
 
 ; ---------------------------------------------------------------------------
@@ -349,37 +349,37 @@ clear_ram:		macro startaddr,endaddr
 ; ---------------------------------------------------------------------------
 
 index:		macro start,idstart,idinc
-	nolist
-	pusho
-	opt	m-
+		nolist
+		pusho
+		opt	m-
 
-	ifarg \start					; check if start is defined
-		index_start: = \start
-	else
-		index_start: = -1
-	endc
+		ifarg \start					; check if start is defined
+			index_start: = \start
+		else
+			index_start: = -1
+		endc
 
-	ifarg \0					; check if width is defined (b, w, l)
+		ifarg \0					; check if width is defined (b, w, l)
 		index_width: equs "\0"
-	else
+		else
 		index_width: equs "w"				; use w by default
-	endc
-		
-	ifarg \idstart					; check if first pointer id is defined
-		ptr_id: = \idstart
-	else
-		ptr_id: = 0					; use 0 by default
-	endc
+		endc
+			
+		ifarg \idstart					; check if first pointer id is defined
+			ptr_id: = \idstart
+		else
+			ptr_id: = 0					; use 0 by default
+		endc
 
-	ifarg \idinc					; check if pointer id increment is defined
-		ptr_id_inc: = \idinc
-	else
-		ptr_id_inc: = 1					; use 1 by default
-	endc
+		ifarg \idinc					; check if pointer id increment is defined
+			ptr_id_inc: = \idinc
+		else
+			ptr_id_inc: = 1					; use 1 by default
+		endc
 		
-	popo
-	list
-	endm
+		popo
+		list
+		endm
 ; ---------------------------------------------------------------------------
 ; Item in a pointer index.
 ; input: pointer target, pointer label array (optional)
@@ -390,30 +390,30 @@ ptr:		macro
 		pusho
 		opt	m-
 
-	if index_start=-1
-		dc.\index_width \1-offset(*)
-	else
-		dc.\index_width \1-index_start
-	endc
-		
-	if ~def(prefix_id)
-		prefix_id: equs "id_"
-	endc
-		
-	if instr("\1",".")=1				; check if pointer is local
-	else
-		if ~def(\prefix_id\\1)
-			\prefix_id\\1: equ ptr_id		; create id for pointer
+		if index_start=-1
+			dc.\index_width \1-offset(*)
 		else
-			\prefix_id\\1_\$ptr_id: equ ptr_id	; if id already exists, append number
+			dc.\index_width \1-index_start
 		endc
-	endc
+		
+		if ~def(prefix_id)
+			prefix_id: equs "id_"
+		endc
+		
+		if instr("\1",".")=1				; check if pointer is local
+		else
+			if ~def(\prefix_id\\1)
+				\prefix_id\\1: equ ptr_id		; create id for pointer
+			else
+				\prefix_id\\1_\$ptr_id: equ ptr_id	; if id already exists, append number
+			endc
+		endc
 		
 		ptr_id: = ptr_id+ptr_id_inc			; increment id
 
-	popo
-	list
-	endm
+		popo
+		list
+		endm
 		
 ; ---------------------------------------------------------------------------
 ; Make an immediate value VDP command longword and use it in a 68K instruction
@@ -427,30 +427,30 @@ vdp_comm:	macro inst,addr,cmdtarget,cmd,adjustment,dest
 		local type
 		local rwd
 	
-	if strcmp ("\cmdtarget","vram")
-	type: =	$21	; %10 0001
-	elseif strcmp ("\cmdtarget","cram")
-	type: = $2B	; %10 1011
-	elseif strcmp ("\cmdtarget","vsram")
-	type: = $25	; %10 0101
-	else inform 2,"Invalid VDP command destination (must be vram, cram, or vsram)."
-	endc
+		if strcmp ("\cmdtarget","vram")
+		type: =	$21	; %10 0001
+		elseif strcmp ("\cmdtarget","cram")
+		type: = $2B	; %10 1011
+		elseif strcmp ("\cmdtarget","vsram")
+		type: = $25	; %10 0101
+		else inform 2,"Invalid VDP command destination (must be vram, cram, or vsram)."
+		endc
 	
-	if strcmp ("\cmd","read")
-	rwd: =	$C	; %00 1100
-	elseif strcmp ("\cmd","write")
-	rwd: = 7	; %00 0111
-	elseif strcmp ("\cmd","dma")
-	rwd: = $27	; %10 0111
-	else inform 2,"Invalid VDP command type (must be read, write, or dma)."
-	endc
+		if strcmp ("\cmd","read")
+		rwd: =	$C	; %00 1100
+		elseif strcmp ("\cmd","write")
+		rwd: = 7	; %00 0111
+		elseif strcmp ("\cmd","dma")
+		rwd: = $27	; %10 0111
+		else inform 2,"Invalid VDP command type (must be read, write, or dma)."
+		endc
 
-	ifnotarg \dest
-		\inst\.\0	(((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)\adjustment\	
-	else			
-		\inst\.\0	#(((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)\adjustment\,\dest
-	endc
-	endm	
+		ifnotarg \dest
+			\inst\.\0	(((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)\adjustment\	
+		else			
+			\inst\.\0	#(((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)\adjustment\,\dest
+		endc
+		endm	
 	
 ;	vdp_comm.l	move,$0000,cram,write,,(vdp_control_port).l
 ;	vdp_comm.l	dc,$0000,vsram,write
@@ -628,11 +628,11 @@ objpos:		macro
 		obj_rem: = 0
 		rept narg-4
 			if strcmp("\5","xflip")
-			obj_xflip: = $4000
+				obj_xflip: = $4000
 			elseif strcmp("\5","yflip")
-			obj_yflip: = $8000
+				obj_yflip: = $8000
 			elseif strcmp("\5","rem")
-			obj_rem: = $80
+				obj_rem: = $80
 			else
 			endc
 		shift
@@ -670,8 +670,8 @@ z80_ptr: macros
 ; Define and align the start of a sound bank
 ; ---------------------------------------------------------------------------
 
-start_bank: macro *
-		if ~def(snkbnk_id)
+startbank: macro *
+		if ~def(sndbnk_id)
 			sndbnk_id: = 1
 		else
 			sndbnk_id: = sndbnk_id+1
@@ -679,18 +679,18 @@ start_bank: macro *
 		align	$8000
 		sound_bank_start: = offset(*)
 		ptr_id: = 80h ; initial pointer id constant
-    endm
+   		endm
     
 
 ; ---------------------------------------------------------------------------
 ; Pointer to an item in a sound bank
 ; ---------------------------------------------------------------------------    
 
-sndbank_ptr:	macro music,mod
-		z80_ptr	\music ; generate little endian pointer relative to the start of the bank
-		ptr_\music: equ ptr_id ; generate constant for the sound driver playlist
+sndbank_ptr:	macro sound
+		z80_ptr	\sound ; generate little endian pointer relative to the start of the bank
+		ptr_\sound: equ ptr_id ; generate constant for the sound driver's playlist (
 		ptr_id: = ptr_id+1	; increment pointer   
-	endm
+		endm
 ; ---------------------------------------------------------------------------
 ; End a sound bank and halt assembly if it is too large
 ; Can also print the amount of free space in a bank with DebugSoundbanks set
@@ -698,13 +698,13 @@ sndbank_ptr:	macro music,mod
 
 debug_soundbanks: equ 0
 
-finish_bank: macro
-	if offset(*)>sound_bank_start+$8000
-		inform 3,"SoundBank %s must fit in $8000 bytes, but it was $%h. Try moving something to another bank.",snkbnk_id,offset(*)-sound_bank_start
-	elseif debug_soundbanks
-		inform 0,"SoundBank %s has $%h bytes free at end.",snkbnk_id,$8000+sound_bank_start-offset(*)
-	endif
-    endm    
+finishbank: macro
+		if offset(*)>sound_bank_start+z_rom_window
+			inform 3,"SoundBank %s must fit in $8000 bytes, but it was $%h. Try moving something to another bank.",snkbnk_id,offset(*)-sound_bank_start
+		elseif debug_soundbanks
+			inform 0,"SoundBank %s has $%h bytes free at end.",snkbnk_id,z_rom_window+sound_bank_start-offset(*)
+		endif
+    	endm    
     
 ; ---------------------------------------------------------------------------
 ; Define an external file
@@ -716,10 +716,10 @@ filedef:	macro lbl,file,ex1,ex2
 		filename: equs \file				; get file name without quotes
 		file_\lbl: equs "\filename\.\ex1"		; record file name
 		sizeof_\lbl: equ filesize("\filename\.\ex2")	; record file size of associated uncompressed file
-	endm
+		endm
 
 ; ---------------------------------------------------------------------------
-; Incbins a file
+; Incbin a file
 ; input: label (must have been declared by filedef)
 ; ---------------------------------------------------------------------------
 
@@ -728,7 +728,6 @@ incfile:	macro lbl
 	\lbl:	incbin	"\filename"				; write file to ROM
 		even
 		endm
-		
 ; ---------------------------------------------------------------------------
 ; Incbin a palette (required due to the main Sonic/Tails palette spanning two lines)
 ; input: label, label of second line (both must be declared by filedef)
@@ -736,10 +735,10 @@ incfile:	macro lbl
 		
 incpal: macro label,label2
 		incfile \label
-    ifarg label2
-		incbin "\filename"
-    endc
-	endm		
+    	ifarg label2
+			incbin "\filename"
+	    endc
+		endm		
 
 ; ---------------------------------------------------------------------------
 ; Declares a blank object

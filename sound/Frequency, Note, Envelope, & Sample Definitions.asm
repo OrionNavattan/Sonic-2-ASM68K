@@ -8,17 +8,17 @@
 
 SonicDriverVer:		equ 2
 SMPS2ASMVer:			equ 1
-; Set the following to non-zero to use all S2 DAC samples, or to zero otherwise.
+; Set the following to one to use all S2 DAC samples, or to zero otherwise.
 ; The S1 samples are a subset of this.
 use_s2_samples:			equ 1
-; Set the following to non-zero to use all S3D DAC samples, or to zero
+; Set the following to one to use all S3D DAC samples, or to zero
 ; otherwise. Most of the S3D samples are also present in S3/S&K, but
 ; there are two samples specific to S3D.
 use_s3d_samples:			equ 1
-; Set the following to non-zero to use all S3 DAC samples,
+; Set the following to one to use all S3 DAC samples,
 ; or to zero otherwise.
 use_s3_samples:			equ 1
-; Set the following to non-zero to use all S&K DAC samples,
+; Set the following to one to use all S&K DAC samples,
 ; or to zero otherwise.
 use_sk_samples:			equ 1
 
@@ -438,7 +438,7 @@ DefineSamples:	macro	func
 
 GenSampleConst:	macro	const
 	; for SMPS conversions, if we are using the Sonic 3 driver or greater, Sonic 2 samples,
-	; AND any combination of S3, S3K, or S3D samples, then reset the rs counter to 81  
+	; AND any combination of S3, S3K, or S3D samples, then reset the rs counter to $81  
 	; starting with the S2 kick sample
 	if SonicDriverVer>=3
 		if use_s2_samples&(use_s3_samples|use_sk_samples|use_s3d_samples)
@@ -459,6 +459,7 @@ d\const:	rs.b 1						; generate the main constant
 
 		rsset	nRst+1					; samples start at $81
 _firstSample:	rs.b 0						; the first valid sample
+
 		DefineSamples	GenSampleConst			; generate constants for samples
 		
 		
