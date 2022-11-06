@@ -755,7 +755,7 @@ ld:		macro
 			elseif strcmp("\2","de")
 			dc.w $ed53
 			elseif strcmp("\2","hl")
-			dc.w $22
+			dc.b $22
 			elseif strcmp("\2","sp")
 			dc.w $ed73
 			elseif strcmp("\2","ix")

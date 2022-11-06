@@ -19,7 +19,7 @@ z_rom_window: 		equ	8000h
 v_priority:				rs.b 1 ; 0 ; sound priority (priority of new SFX must be higher or equal to this value or it won't play; bit 7 of priority being set prevents this value from changing)
 f_tempo_counter:		rs.b 1 ; 1 ; counts down to zero; when zero, resets to next value and delays song by 1 frame
 f_current_tempo:		rs.b 1 ; 2 ; current music tempo
-f_pause_sound:			rs.b 1 ; 3 ; Set to 7Fh to pause music, set to 80h to unpause
+f_pause_sound:			rs.b 1 ; 3 ; set to 7Fh by the 68k to pause music, set to 80h to unpause
 v_fadeout_counter:		rs.b 1 ; 4 ; total volume levels to continue decreasing volume before fade out considered complete (starts at 28h, works downward)
 v_fadeout_delay:		rs.b 1 ; 5 ; delay ticker before next volume decrease
 v_timing:				rs.b 1 ; 6 ; unused; byte for synchronizing gameplay events with music (e.g., used in Ristar to sync with a boss' attacks)
@@ -51,25 +51,20 @@ z_vars:		equ __rs ; $18 bytes
 ; ---------------------------------------------------------------------------
 				rsset 0
 ch_flags:		rs.b 1 ; 0 ; all tracks
-	track_rest_bit:		equ 1 ; 1 (02h): track is at rest
-	sfx_override_bit:	equ 2 ; 2 (04h): SFX is overriding this track
-	modulation_on_bit:	equ 3 ;	3 (08h): modulation on
-	no_attack_bit:		equ 4 ;	4 (10h): do not attack next note
-	track_playing_bit:	equ	7 ; 7 (80h): track is playing
 ch_type:		rs.b 1 ; 1 ; all tracks
-	; 	"voice control"; bits:
+	; 	"voice control" bits:
 	fmii_bit:	equ 2	; 2 (04h): If set, bound for part II, otherwise 0 (see zWriteFMIorII)
-	psg_flag_bit:	equ 7	; 	7 (80h): PSG track
+	f_psg:	equ 7	; 	7 (80h): PSG track
 ch_tick:				rs.b 1 ; 2; all tracks; tempo divisor; 1 = Normal, 2 = Half, 3 = Third...
-ch_data_pointer_low:	rs.b 1 ; 3; all tracks; track position low byte
-ch_data_pointer_high:	rs.b 1 ; 4; all tracks; track position high byte
+ch_data_ptr_low:	rs.b 1 ; 3; all tracks; track position low byte
+ch_data_ptr_high:	rs.b 1 ; 4; all tracks; track position high byte
 ch_transpose:			rs.b 1 ; 5; FM/PSG; transpose (from coord flag E9)
 ch_volume:			rs.b 1 ; 6; FM/PSG; channel volume (only applied at voice changes)
 ch_ams_fms_pan:		rs.b 1 ; 7; FM/DAC; panning / AMS / FMS settings
 ch_voice:			rs.b 1 ; 8; FM only; current voice in use
 ch_vol_env_id:		equ ch_voice ; 8; PSG only; current PSG tone
 ch_flutter:			rs.b 1 ; 9; PSG only; flutter (dynamically affects PSG volume for decay effects)
-ch_stack_ptr:		rs.b 1 ; $A; all tracks; "gosub" stack position offset (starts at 2Ah, i.e. end of track, and each jump decrements by 2)
+ch_stackptr:		rs.b 1 ; $A; all tracks; "gosub" stack position offset (starts at 2Ah, i.e. end of track, and each jump decrements by 2)
 ch_delay:			rs.b 1 ; $B; all tracks;  current duration timeout; counting down to zero
 ch_saved_delay:		rs.b 1 ; $C; all tracks; last set duration (if a note follows a note, this is reapplied to 0Bh)
 
@@ -104,6 +99,35 @@ ch_loopcounters:	rs.b $A	; $20; loop counter index 0
 ch_gosub_stack:		equ __rs ; 2Ah; start of next track, the two bytes below this is the coord flag "gosub" (F8h) return stack
 z_track_vars:  		equ __rs ; 2Ah;	length of each set of track variables
 
+; ---------------------------------------------------------------------------
+; Constants for channel flag bits
+; ---------------------------------------------------------------------------
+		rsset 1
+chf_rest:	rs.b 1 ; 1 (02h): track is at rest
+chf_mask:	rs.b 1 ; 2 (04h): SFX is overriding this track
+chf_vib:	rs.b 1 ; 3 (08h): set if vibrato is enabled
+chf_tie:	rs.b 1 ; 4 (10h): do not attack next note
+		rs.b 2 ; 5-6 unused
+chf_enable:	rs.b 1 ; 7 (80h): track is playing	
+
+; ---------------------------------------------------------------------------
+; Constants for channel types (ch_Type)
+; ---------------------------------------------------------------------------
+
+tFM1:			equ 0					; FM1 channel type
+tFM2:			equ 1					; FM2 channel type
+tFM3:			equ 2					; FM3 channel type
+tFM4:			equ 4					; FM4 channel type
+tFM5:			equ 5					; FM5 channel type
+tFM6:			equ 6					; FM6 channel type
+
+tDAC:			equ 6					; DAC channel type
+
+tPSG1:			equ $80					; PSG1 channel type
+tPSG2:			equ $A0					; PSG2 channel type
+tPSG3:			equ $C0					; PSG3 channel type
+tPSG4:			equ $E0					; PSG4 channel type
+	
 		
 ; ---------------------------------------------------------------------------
 ; RAM addresses for the sound driver
@@ -179,17 +203,17 @@ f_gloop:				db 0 ; 1303h ; flag indicating if gloop sound should play this frame
 v_spindash_counter:		db 0 ; 1304h 
 v_spindash_freq_index:	db 0 ; 1305h
 f_spindash:				db 0 ; 1306h ; FFh if spindash charge was the last sound that played
-f_pause_sound:			db 0 ; 1307h ; 0 = normal, FFh = pause all sound and music	
+f_paused:				db 0 ; 1307h ; pause flag used by the driver program; 0 = normal, FFh = pause all sound and music	
 		endm
 
 ; ---------------------------------------------------------------------------
 ; Additional constants
 ; ---------------------------------------------------------------------------
-;sizeof_DAC_samples:			equ $2F00 ; replaced with an expression calculated with constants generated by filedef
+Z80_space:						equ $F64	; size of compressed sound driver
 countof_music_tracks:			equ	(z_tracks_end-z_tracks_start)/z_track_vars
 countof_music_dac_fm_tracks:	equ (z_song_dac_fm_end-z_song_dac_fm_start)/z_track_vars
 countof_music_fm_tracks:		equ	(z_song_fm_end-z_song_fm_start)/z_track_vars
-countof_music_psg_tracks:		equ	(z_song_psg_end-z_song_psg_start)/z_tracks_vars
-countof_sfx_tracks:				equ	(z_tracks_sfx_end-z_tracks_sfx_start)/z_tracks_vars
-countof_sfx_fm_tracks:			equ	(z_sfx_fm_end-z_sfx_fm_start)/z_tracks_vars
-countof_sfx_psg_tracks:			equ	(z_sfx_psg_end-z_sfx_psg_start)/z_tracks_vars
+countof_music_psg_tracks:		equ	(z_song_psg_end-z_song_psg_start)/z_track_vars
+countof_sfx_tracks:				equ	(z_tracks_sfx_end-z_tracks_sfx_start)/z_track_vars
+countof_sfx_fm_tracks:			equ	(z_sfx_fm_end-z_sfx_fm_start)/z_track_vars
+countof_sfx_psg_tracks:			equ	(z_sfx_psg_end-z_sfx_psg_start)/z_track_vars

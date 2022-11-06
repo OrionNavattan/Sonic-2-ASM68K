@@ -9,7 +9,7 @@
 		inc_music	OOZ
 		inc_music	WFZ
 		inc_music	EHZ2P
-		inc_music	TwoPlayerMenu
+		inc_music	2PResult
 		inc_music	SuperSonic
 		inc_music	HTZ
 		inc_music	TitleScreen

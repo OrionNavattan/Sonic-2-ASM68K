@@ -468,7 +468,7 @@
 ; File definitions - sound
 ; ---------------------------------------------------------------------------
 
-		filedef Sega_PCM,"sound/PCM/SEGA.pcm",pcm,pcm
+		filedef SegaPCM,"sound/PCM/SEGA",pcm,pcm
 		
 		
 defdac:	macro	lbl,file

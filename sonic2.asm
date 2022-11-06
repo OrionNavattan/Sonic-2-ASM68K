@@ -2147,7 +2147,7 @@ NemBCT_ShortCode:
 		add.w	d0,d0					; shift so that high bit is in bit position 7
 		moveq	#1,d5
 		lsl.w	d1,d5
-		subq.w	#1,d5					; d5 = 2^d1 - 1
+		subq.w	#1,d5					; d5 = 2^1
 
 NemBCT_ShortCode_Loop:
 		move.w	d7,(a1,d0.w)				; store entry
@@ -2361,35 +2361,42 @@ ProcessPLC_Exit:
 ; Subroutine to	shift the PLC buffer contents after an entry is processed
 ; ---------------------------------------------------------------------------
 ProcessPLC_Finish:
-		lea	(v_plc_buffer).w,a0  ; load PLC buffer address
+		lea	(v_plc_buffer).w,a0
 		
 	if FixBugs
-		lea sizeof_plc(a0),a1 	 ; load location of second slot in the queue
+		; Shift the PLC buffer by the exact number of bytes in each cue (6)
+		; using pairs of longword and word moves, and clear the last slot 
+		; when finished, avoiding the bug described below. Also uses only 506
+		; processor cycles instead of around 740.
+		lea sizeof_plc(a0),a1 	 ; start of second slot in the queue
    		moveq   #(v_plc_buffer_end-v_plc_buffer-6)/6-1,d0 ; $E, number of loops needed to shift everything
 
 	.loop:
-		move.l  (a1)+,(a0)+		; shift the first longword...
-		move.w  (a1)+,(a0)+		; ...then the final word of the cue to the next slot
-		dbf d0,.loop			; repeat until entire buffer has been shifted
+		move.l  (a1)+,(a0)+		; shift the first 4 bytes...
+		move.w  (a1)+,(a0)+		; ...then the final 2 bytes of the cue to the next slot
+		dbf d0,.loop			; loop until entire buffer has been shifted
  
     	moveq   #0,d0
     	move.l  d0,(a0)+    ; clear the first longword... 
-    	move.w  d0,(a0)+    ; ...and the final word of the last cue to avoid overcopying it
+    	move.w  d0,(a0)+    ; ...and the final word of the last cue to prevent overcopying it
     	
 	else
-	
-		; This does not shift the PLC buffer correctly; it only shifts $58 bytes 
-		; instead of $5A, skipping the VRAM offset of the 16th and final cue, 
-		; and it does not clear that 16th cue, resulting in overcopying 
-		; and ultimately causing the PLC processor to get stuck in an infinite loop processing 
-		; the same cue forever.	
+		; This shifts the PLC buffer using longword moves alone. However,
+		; the total amount of data that needs to be shifted ($5A, the number 
+		; of PLC slots minus one) is not divisible by a longword. 
+		; Consequently, only $58 bytes are shifted; the final two bytes
+		; (the VRAM offset of the $16th and final cue, are skipped.
+		; Additionally, that $16th cue is not cleared, with the result that
+		; if it is used, the part that isn't broken will get copied over 
+		; until it fills the entire buffer, causing the PLC processor to get stuck 
+		; in an infinite loop.
+		
 		moveq	#(v_plc_buffer_end-v_plc_buffer-6)/4-1,d0 ; $15
 
 	.loop:
 		move.l	sizeof_plc(a0),(a0)+	; shift contents of PLC buffer up 6 bytes
 		dbf	d0,.loop					; repeat until everything has been shifted (but see the bug above)	
 	endc
-		
 		rts
 
 
@@ -3685,7 +3692,7 @@ loc_261C:
 ; End of function sub_25E0
 
 
-; Sonic 1 leftover - dead code/data for old SEGA screen:
+; Sonic 1 leftovdead code/data for old SEGA screen:
 
 ; ===========================================================================
 		tst.b	($FFFFF635).w
@@ -29794,7 +29801,7 @@ Obj_Index:	index.l 0,1	; longword, absolute (relative to 0), start ids at 1
 		ptr GiantEmerald	; unused beta leftover
 		ptr HPZWaterfall	; unused beta leftover
 		ptr Seesaw			; $14
-		ptr SwingingPlatform
+		ptr SwingingPlatform	; ARZ, MCZ
 		ptr Tram			; HTZ ziplines/lifts/trams
 		ptr Helix			; unused S1 leftover: GHZ spiked log
 		ptr Platform1		; $18; ARZ & EHZ
@@ -92120,7 +92127,7 @@ PatternLoadCues:
 ;		endm		
 		
 ;---------------------------------------------------------------------------------------
-;Pattern load cues - standard block	1
+;Pattern load custandard block	1
 ;---------------------------------------------------------------------------------------
 PLC_Main: ;plcheader
 		dc.w 3			
@@ -92134,7 +92141,7 @@ PLC_Main: ;plcheader
 		dc.l Nem_Numbers
 		dc.w $9580
 ;---------------------------------------------------------------------------------------
-;Pattern load cues - standard block	2
+;Pattern load custandard block	2
 ;---------------------------------------------------------------------------------------
 PLC_Main2:		dc.w 3			
 		dc.l Nem_Checkpoint
@@ -92146,7 +92153,7 @@ PLC_Main2:		dc.w 3
 		dc.l Nem_Invinciblity_Stars
 		dc.w $9BC0
 ;---------------------------------------------------------------------------------------
-;Pattern load cues - water level standard block
+;Pattern load cuwater level standard block
 ;---------------------------------------------------------------------------------------
 PLC_Water:		dc.w 2			
 		dc.l Nem_Explosion
@@ -93151,7 +93158,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_MenuJunk	; ArtNem_78CBC:
 		
 ;---------------------------------------------------------------------------------------
-; Graphics - various
+; Graphivarious
 ;---------------------------------------------------------------------------------------			
 		
 		incfile	Nem_Button	; ArtNem_78DAC:
@@ -93195,7 +93202,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_Perfect	; ArtNem_7EEBE:
 		
 ;---------------------------------------------------------------------------------------
-; Graphics - Animals
+; GraphiAnimals
 ;---------------------------------------------------------------------------------------		
 		
 		incfile	Nem_Flicky	; ArtNem_7EF60: ; ArtNem_Bird:
@@ -93212,7 +93219,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_Rabbit	; ArtNem_7FDD2:
 		
 ;---------------------------------------------------------------------------------------
-; Graphics - level objects
+; Graphilevel objects
 ;---------------------------------------------------------------------------------------
 		
 		incfile	Nem_WFZSwitch	; ArtNem_7FF2A:
@@ -93783,7 +93790,7 @@ loc_EC086:
 		addi.w	#$12,d4
 		andi.w	#$FFF,d4	; d4 is the offset into the current $1000-byte window
 		; This part is a little tricky. You see, d4 currently contains the low three nibbles of an offset into the decompressed data,
-		; where the dictionary match lies. The way the high nibble is decided is first by taking it from d5 - the offset of the end
+		; where the dictionary match lies. The way the high nibble is decided is first by taking it from the offset of the end
 		; of the decompressed data so far. Then, we see if the resulting offset in d4 is somehow higher than d5.
 		; If it is, then it's invalid... *unless* you subtract $1000 from it, in which case it refers to data in the previous $1000 block of bytes.
 		; This is all just a really gimmicky way of having an offset with a range of $1000 bytes from the end of the decompressed data.
@@ -93836,27 +93843,27 @@ SaxDec_GetByte:
 ; ===========================================================================
 
 
-;SoundDriver:	
-;		pushs	; save current section info	
+SoundDriver:	
+		pushs	; save current section info	
 
-;Z80_Code:	section	org(0),file("sound/Sound Driver.unc"),over(Main)	; new section for the sound driver
-;		cpu Z80
+Z80_Code:	section	org(0),file("sound/Sound Driver.unc"),over(Main)	; new section for the sound driver
+		cpu Z80
 
-;		include "sound/Sound Driver.asm" ; include the actual sound driver program
+		include "sound/Sound Driver.asm" ; include the actual Z80 sound driver code
 		
-;		cpu 68000
-;		pops	; return to main section...
-;		pushs	; ...and save section info again	
+		cpu 68000
+		pops	; return to main section...
+		pushs	; ...and save section info again	
 		
-;MergeCode: section org(0), file("sound/MergeData.dat"),over(Main)	; make data file for hypothetical S2 Driver Compress
-;		dc.l offset(SoundDriver),Z80_Space,movewZ80CompSize+2 ; start location of compressed sound driver; space reserved for sound driver; location of data to patch in the Saxman decompressor
-;		pops	; return to main section for good
-;		ds.b Z80_Space	; reserve space for the compressed sound driver
-;		even
+MergeCode: section org(0), file("sound/MergeData.dat"),over(Main)	; make data file for hypothetical S2 Driver Compress
+		dc.l offset(SoundDriver),Z80_Space,offset(movewZ80CompSize)+2 ; start location of compressed sound driver; space reserved for sound driver; location of data to patch in the Saxman decompressor
+		pops	; return to main section for good
+		ds.b Z80_Space	; reserve space for the compressed sound driver
+		even
 
 
 
-SoundDriver:	include "sound/Sound Driver Raw.asm" ; precompressed sound driver in dc.b form, copied from Nemesis text disassembly
+;SoundDriver:	include "sound/Sound Driver Raw.asm" ; precompressed sound driver in dc.b form, copied from Nemesis text disassembly; retained as an option for checking bit-perfectness
 
 
 
@@ -93879,7 +93886,7 @@ incdac:	macro lbl
 	
 		endm
 		
-;SndDAC_Start:
+DAC_Start: bnkswtch_vals
 		incdac	DAC_Kick
 		incdac	DAC_Snare
 		incdac	DAC_Timpani
@@ -93891,12 +93898,14 @@ incdac:	macro lbl
 
 
 ; ------------------------------------------------------------------------------
-; Music	pointers
+; One music track
 ; ------------------------------------------------------------------------------
-MusicPoint1:	dc.w (((MusFile_Continue-(MusicPoint1-z_rom_window))<<8)&$FF00)+((MusFile_Continue-(MusicPoint1-$8000))>>8)
+
+MusicPoint1:		startbank
+		sndbank_ptr	MusFile_Continue
 					
 MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
-
+		finishbank
 		align $20
 
 ; This bank is pretty empty, so let's fill the rest of it with some of our Nemesis graphics.		
@@ -93932,19 +93941,25 @@ MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		incfile	Nem_MCZVinePulley	; ArtNem_F1D5C:
 		incfile	Nem_MCZDrawbridgeLogs
 
-		dcb.b ((-$6174+$8000-offset(*))&($8000-1)),0
+		dcb.b ((-sizeof_SegaPCM+$8000-offset(*))&($8000-1)),0	; replaces cnop -$6714,$8000
 
 ; -------------------------------------------------------------------------------
 ; Sega Intro Sound
 ; 8-bit	unsigned PCM at 16Khz
 ; -------------------------------------------------------------------------------
-SegaPCM:		incbin	"sound/PCM/SEGA.pcm"
+
+SegaPCM:	bnkswtch_vals	
+		incbin	"sound/PCM/SEGA.pcm"
+
+	if sizeof_SegaPCM>$8000
+		inform 3,"Sega sound must fit within $8000 bytes, but you have a $%h byte Sega sound.",sizeof_SegaPCM
+	endif
 
 ; ------------------------------------------------------------------------------
-; Music	pointers
+; Music	
 ; ------------------------------------------------------------------------------		
-					
-MusicPoint2:	startbank	
+		
+MusicPoint2:		startbank
 		sndbank_ptr	MusFile_CNZ_2P
 		sndbank_ptr	MusFile_EHZ
 		sndbank_ptr	MusFile_MTZ
@@ -93963,7 +93978,7 @@ MusicPoint2:	startbank
 		sndbank_ptr	MusFile_OOZ
 		sndbank_ptr	MusFile_WFZ
 		sndbank_ptr	MusFile_EHZ_2P
-		sndbank_ptr	MusFile_2PResult
+		sndbank_ptr	MusFile_2PResults
 		sndbank_ptr	MusFile_SuperSonic
 		sndbank_ptr	MusFile_HTZ
 		sndbank_ptr	MusFile_ExtraLife
@@ -93997,11 +94012,11 @@ MusFile_SCZ:	incbin	"sound/music/compressed/SCZ.sax"
 MusFile_OOZ:	incbin	"sound/music/compressed/OOZ.sax"
 MusFile_WFZ:	incbin	"sound/music/compressed/WFZ.sax"
 MusFile_EHZ_2P:	incbin	"sound/music/compressed/EHZ2P.sax"
-MusFile_2PResult:	incbin	"sound/music/compressed/TwoPlayerMenu.sax"
+MusFile_2PResults:	incbin	"sound/music/compressed/2PResult.sax"
 MusFile_SuperSonic:	incbin	"sound/music/compressed/SuperSonic.sax"
 MusFile_HTZ:	incbin	"sound/music/compressed/HTZ.sax"
 MusFile_Title:	incbin	"sound/music/compressed/TitleScreen.sax"
-MusFile_EndLevel:	incbin	"sound/music/compressed/EndOfAct.sax"
+MusFile_EndLevel:	incbin	"sound/music/compressed/EndLevel.sax"
 
 MusFile_ExtraLife:		include	"sound/music/ExtraLife.asm"
 MusFile_GameOver:		include	"sound/music/GameOver.asm"
@@ -94010,172 +94025,22 @@ MusFile_Credits:		include	"sound/music/Credits.asm"
 
 
 ; ------------------------------------------------------------------------------------------
-; Sound	effect pointers
+; Sound	effects
 ; ------------------------------------------------------------------------------------------
-SoundIndex:
-		dc.w ((((Sound20&$7FFF)+$8000)<<8)&$FF00)+(((Sound20&$7FFF)+$8000)>>8)
-		dc.w ((((Sound21&$7FFF)+$8000)<<8)&$FF00)+(((Sound21&$7FFF)+$8000)>>8)
-		dc.w ((((Sound22&$7FFF)+$8000)<<8)&$FF00)+(((Sound22&$7FFF)+$8000)>>8)
-		dc.w ((((Sound23&$7FFF)+$8000)<<8)&$FF00)+(((Sound23&$7FFF)+$8000)>>8)
-		dc.w ((((Sound24&$7FFF)+$8000)<<8)&$FF00)+(((Sound24&$7FFF)+$8000)>>8)
-		dc.w ((((Sound25&$7FFF)+$8000)<<8)&$FF00)+(((Sound25&$7FFF)+$8000)>>8)
-		dc.w ((((Sound26&$7FFF)+$8000)<<8)&$FF00)+(((Sound26&$7FFF)+$8000)>>8)
-		dc.w ((((Sound27&$7FFF)+$8000)<<8)&$FF00)+(((Sound27&$7FFF)+$8000)>>8)
-		dc.w ((((Sound28&$7FFF)+$8000)<<8)&$FF00)+(((Sound28&$7FFF)+$8000)>>8)
-		dc.w ((((Sound29&$7FFF)+$8000)<<8)&$FF00)+(((Sound29&$7FFF)+$8000)>>8)
-		dc.w ((((Sound2A&$7FFF)+$8000)<<8)&$FF00)+(((Sound2A&$7FFF)+$8000)>>8)
-		dc.w ((((Sound2B&$7FFF)+$8000)<<8)&$FF00)+(((Sound2B&$7FFF)+$8000)>>8)
-		dc.w ((((Sound2C&$7FFF)+$8000)<<8)&$FF00)+(((Sound2C&$7FFF)+$8000)>>8)
-		dc.w ((((Sound2D&$7FFF)+$8000)<<8)&$FF00)+(((Sound2D&$7FFF)+$8000)>>8)
-		dc.w ((((Sound2E&$7FFF)+$8000)<<8)&$FF00)+(((Sound2E&$7FFF)+$8000)>>8)
-		dc.w ((((Sound2F&$7FFF)+$8000)<<8)&$FF00)+(((Sound2F&$7FFF)+$8000)>>8)
-		dc.w ((((Sound30&$7FFF)+$8000)<<8)&$FF00)+(((Sound30&$7FFF)+$8000)>>8)
-		dc.w ((((Sound31&$7FFF)+$8000)<<8)&$FF00)+(((Sound31&$7FFF)+$8000)>>8)
-		dc.w ((((Sound32&$7FFF)+$8000)<<8)&$FF00)+(((Sound32&$7FFF)+$8000)>>8)
-		dc.w ((((Sound33&$7FFF)+$8000)<<8)&$FF00)+(((Sound33&$7FFF)+$8000)>>8)
-		dc.w ((((Sound34&$7FFF)+$8000)<<8)&$FF00)+(((Sound34&$7FFF)+$8000)>>8)
-		dc.w ((((Sound35&$7FFF)+$8000)<<8)&$FF00)+(((Sound35&$7FFF)+$8000)>>8)
-		dc.w ((((Sound36&$7FFF)+$8000)<<8)&$FF00)+(((Sound36&$7FFF)+$8000)>>8)
-		dc.w ((((Sound37&$7FFF)+$8000)<<8)&$FF00)+(((Sound37&$7FFF)+$8000)>>8)
-		dc.w ((((Sound38&$7FFF)+$8000)<<8)&$FF00)+(((Sound38&$7FFF)+$8000)>>8)
-		dc.w ((((Sound39&$7FFF)+$8000)<<8)&$FF00)+(((Sound39&$7FFF)+$8000)>>8)
-		dc.w ((((Sound3A&$7FFF)+$8000)<<8)&$FF00)+(((Sound3A&$7FFF)+$8000)>>8)
-		dc.w ((((Sound3B&$7FFF)+$8000)<<8)&$FF00)+(((Sound3B&$7FFF)+$8000)>>8)
-		dc.w ((((Sound3C&$7FFF)+$8000)<<8)&$FF00)+(((Sound3C&$7FFF)+$8000)>>8)
-		dc.w ((((Sound3D&$7FFF)+$8000)<<8)&$FF00)+(((Sound3D&$7FFF)+$8000)>>8)
-		dc.w ((((Sound3E&$7FFF)+$8000)<<8)&$FF00)+(((Sound3E&$7FFF)+$8000)>>8)
-		dc.w ((((Sound3F&$7FFF)+$8000)<<8)&$FF00)+(((Sound3F&$7FFF)+$8000)>>8)
-		dc.w ((((Sound40&$7FFF)+$8000)<<8)&$FF00)+(((Sound40&$7FFF)+$8000)>>8)
-		dc.w ((((Sound41&$7FFF)+$8000)<<8)&$FF00)+(((Sound41&$7FFF)+$8000)>>8)
-		dc.w ((((Sound42&$7FFF)+$8000)<<8)&$FF00)+(((Sound42&$7FFF)+$8000)>>8)
-		dc.w ((((Sound43&$7FFF)+$8000)<<8)&$FF00)+(((Sound43&$7FFF)+$8000)>>8)
-		dc.w ((((Sound44&$7FFF)+$8000)<<8)&$FF00)+(((Sound44&$7FFF)+$8000)>>8)
-		dc.w ((((Sound45&$7FFF)+$8000)<<8)&$FF00)+(((Sound45&$7FFF)+$8000)>>8)
-		dc.w ((((Sound46&$7FFF)+$8000)<<8)&$FF00)+(((Sound46&$7FFF)+$8000)>>8)
-		dc.w ((((Sound47&$7FFF)+$8000)<<8)&$FF00)+(((Sound47&$7FFF)+$8000)>>8)
-		dc.w ((((Sound48&$7FFF)+$8000)<<8)&$FF00)+(((Sound48&$7FFF)+$8000)>>8)
-		dc.w ((((Sound49&$7FFF)+$8000)<<8)&$FF00)+(((Sound49&$7FFF)+$8000)>>8)
-		dc.w ((((Sound4A&$7FFF)+$8000)<<8)&$FF00)+(((Sound4A&$7FFF)+$8000)>>8)
-		dc.w ((((Sound4B&$7FFF)+$8000)<<8)&$FF00)+(((Sound4B&$7FFF)+$8000)>>8)
-		dc.w ((((Sound4C&$7FFF)+$8000)<<8)&$FF00)+(((Sound4C&$7FFF)+$8000)>>8)
-		dc.w ((((Sound4D&$7FFF)+$8000)<<8)&$FF00)+(((Sound4D&$7FFF)+$8000)>>8)
-		dc.w ((((Sound4E&$7FFF)+$8000)<<8)&$FF00)+(((Sound4E&$7FFF)+$8000)>>8)
-		dc.w ((((Sound4F&$7FFF)+$8000)<<8)&$FF00)+(((Sound4F&$7FFF)+$8000)>>8)
-		dc.w ((((Sound50&$7FFF)+$8000)<<8)&$FF00)+(((Sound50&$7FFF)+$8000)>>8)
-		dc.w ((((Sound51&$7FFF)+$8000)<<8)&$FF00)+(((Sound51&$7FFF)+$8000)>>8)
-		dc.w ((((Sound52&$7FFF)+$8000)<<8)&$FF00)+(((Sound52&$7FFF)+$8000)>>8)
-		dc.w ((((Sound53&$7FFF)+$8000)<<8)&$FF00)+(((Sound53&$7FFF)+$8000)>>8)
-		dc.w ((((Sound54&$7FFF)+$8000)<<8)&$FF00)+(((Sound54&$7FFF)+$8000)>>8)
-		dc.w ((((Sound55&$7FFF)+$8000)<<8)&$FF00)+(((Sound55&$7FFF)+$8000)>>8)
-		dc.w ((((Sound56&$7FFF)+$8000)<<8)&$FF00)+(((Sound56&$7FFF)+$8000)>>8)
-		dc.w ((((Sound57&$7FFF)+$8000)<<8)&$FF00)+(((Sound57&$7FFF)+$8000)>>8)
-		dc.w ((((Sound58&$7FFF)+$8000)<<8)&$FF00)+(((Sound58&$7FFF)+$8000)>>8)
-		dc.w ((((Sound59&$7FFF)+$8000)<<8)&$FF00)+(((Sound59&$7FFF)+$8000)>>8)
-		dc.w ((((Sound5A&$7FFF)+$8000)<<8)&$FF00)+(((Sound5A&$7FFF)+$8000)>>8)
-		dc.w ((((Sound5B&$7FFF)+$8000)<<8)&$FF00)+(((Sound5B&$7FFF)+$8000)>>8)
-		dc.w ((((Sound5C&$7FFF)+$8000)<<8)&$FF00)+(((Sound5C&$7FFF)+$8000)>>8)
-		dc.w ((((Sound5D&$7FFF)+$8000)<<8)&$FF00)+(((Sound5D&$7FFF)+$8000)>>8)
-		dc.w ((((Sound5E&$7FFF)+$8000)<<8)&$FF00)+(((Sound5E&$7FFF)+$8000)>>8)
-		dc.w ((((Sound5F&$7FFF)+$8000)<<8)&$FF00)+(((Sound5F&$7FFF)+$8000)>>8)
-		dc.w ((((Sound60&$7FFF)+$8000)<<8)&$FF00)+(((Sound60&$7FFF)+$8000)>>8)
-		dc.w ((((Sound61&$7FFF)+$8000)<<8)&$FF00)+(((Sound61&$7FFF)+$8000)>>8)
-		dc.w ((((Sound62&$7FFF)+$8000)<<8)&$FF00)+(((Sound62&$7FFF)+$8000)>>8)
-		dc.w ((((Sound63&$7FFF)+$8000)<<8)&$FF00)+(((Sound63&$7FFF)+$8000)>>8)
-		dc.w ((((Sound64&$7FFF)+$8000)<<8)&$FF00)+(((Sound64&$7FFF)+$8000)>>8)
-		dc.w ((((Sound65&$7FFF)+$8000)<<8)&$FF00)+(((Sound65&$7FFF)+$8000)>>8)
-		dc.w ((((Sound66&$7FFF)+$8000)<<8)&$FF00)+(((Sound66&$7FFF)+$8000)>>8)
-		dc.w ((((Sound67&$7FFF)+$8000)<<8)&$FF00)+(((Sound67&$7FFF)+$8000)>>8)
-		dc.w ((((Sound68&$7FFF)+$8000)<<8)&$FF00)+(((Sound68&$7FFF)+$8000)>>8)
-		dc.w ((((Sound69&$7FFF)+$8000)<<8)&$FF00)+(((Sound69&$7FFF)+$8000)>>8)
-		dc.w ((((Sound6A&$7FFF)+$8000)<<8)&$FF00)+(((Sound6A&$7FFF)+$8000)>>8)
-		dc.w ((((Sound6B&$7FFF)+$8000)<<8)&$FF00)+(((Sound6B&$7FFF)+$8000)>>8)
-		dc.w ((((Sound6C&$7FFF)+$8000)<<8)&$FF00)+(((Sound6C&$7FFF)+$8000)>>8)
-		dc.w ((((Sound6D&$7FFF)+$8000)<<8)&$FF00)+(((Sound6D&$7FFF)+$8000)>>8)
-		dc.w ((((Sound6E&$7FFF)+$8000)<<8)&$FF00)+(((Sound6E&$7FFF)+$8000)>>8)
-		dc.w ((((Sound6F&$7FFF)+$8000)<<8)&$FF00)+(((Sound6F&$7FFF)+$8000)>>8)
-		dc.w ((((Sound70&$7FFF)+$8000)<<8)&$FF00)+(((Sound70&$7FFF)+$8000)>>8)
+
+SFXPointers:	macro	name
+		sndbank_ptr	SFXFile_\name
+		endm
 		
-Sound20:	include "sound/sfx/A0 - Jump.asm"
-Sound21:	include "sound/sfx/A1 - Checkpoint.asm"
-Sound22:	include "sound/sfx/A2 - Spike Switch.asm"
-Sound23:	include "sound/sfx/A3 - Hurt.asm"
-Sound24:	include "sound/sfx/A4 - Skidding.asm"
-Sound25:	include "sound/sfx/A5 - Block Push.asm"
-Sound26:	include "sound/sfx/A6 - Hurt by Spikes.asm"
-Sound27:	include "sound/sfx/A7 - Sparkle.asm"
-Sound28:	include "sound/sfx/A8 - Beep.asm"
-Sound29:	include "sound/sfx/A9 - Special Stage Item (Unused).asm" ; Sonic 1 leftover 
-Sound2A:	include "sound/sfx/AA - Splash.asm"
-Sound2B:	include "sound/sfx/AB - Swish.asm"
-Sound2C:	include "sound/sfx/AC - Boss Hit.asm"
-Sound2D:	include "sound/sfx/AD - Inhaling Bubble.asm"
-Sound2E:	include "sound/sfx/AE - Lava Ball.asm"
-Sound2F:	include "sound/sfx/AF - Shield.asm"
-Sound30:	include "sound/sfx/B0 - Laser Beam.asm"
-Sound31:	include "sound/sfx/B1 - Electricity (Unused).asm" ; Sonic 1 leftover
-Sound32:	include "sound/sfx/B2 - Drown.asm"
-Sound33:	include "sound/sfx/B3 - Fire Burn.asm"
-Sound34:	include "sound/sfx/B4 - Bumper.asm"
-Sound35:	include "sound/sfx/B5 - Ring.asm"
-Sound36:	include "sound/sfx/B6 - Spikes Move.asm"
-Sound37:	include "sound/sfx/B7 - Rumbling.asm"
-Sound38:	include "sound/sfx/B8 - Unknown (Unused).asm"
-Sound39:	include "sound/sfx/B9 - Smash.asm"
-Sound3A:	include "sound/sfx/BA - Special Stage Glass (Unused).asm" ; Sonic 1 leftover
-Sound3B:	include "sound/sfx/BB - Door Slam.asm"
-Sound3C:	include "sound/sfx/BC - Spin Dash Release.asm"
-Sound3D:	include "sound/sfx/BD - Hammer.asm"
-Sound3E:	include "sound/sfx/BE - Roll.asm"
-Sound3F:	include "sound/sfx/BF - Continue Jingle.asm"
-Sound40:	include "sound/sfx/C0 - Casino Bonus.asm"
-Sound41:	include "sound/sfx/C1 - Explosion.asm"
-Sound42:	include "sound/sfx/C2 - Water Warning.asm"
-Sound43:	include "sound/sfx/C3 - Enter Giant Ring (Unused).asm" ; Sonic 1 leftover
-Sound44:	include "sound/sfx/C4 - Boss Explosion.asm"
-Sound45:	include "sound/sfx/C5 - Tally End.asm"
-Sound46:	include "sound/sfx/C6 - Ring Spill.asm"
-Sound47:	include "sound/sfx/C7 - Chain Rise (Unused).asm" ; Sonic 1 leftover
-Sound48:	include "sound/sfx/C8 - Flamethrower.asm"
-Sound49:	include "sound/sfx/C9 - Hidden Bonus (Unused).asm" ; Sonic 1 leftover
-Sound4A:	include "sound/sfx/CA - Special Stage Entry.asm"
-Sound4B:	include "sound/sfx/CB - Slow Smash.asm"
-Sound4C:	include "sound/sfx/CC - Spring.asm"
-Sound4D:	include "sound/sfx/CD - Switch.asm"
-Sound4E:	include "sound/sfx/CE - Ring Left Speaker.asm"
-Sound4F:	include "sound/sfx/CF - Signpost.asm"
-Sound50:	include "sound/sfx/D0 - CNZ Boss Zap.asm"
-Sound51:	include "sound/sfx/D1 - Unknown (Unused).asm"
-Sound52:	include "sound/sfx/D2 - Unknown (Unused).asm"
-Sound53:	include "sound/sfx/D3 - Signpost 2P.asm"
-Sound54:	include "sound/sfx/D4 - OOZ Lid Pop.asm"
-Sound55:	include "sound/sfx/D5 - Sliding Spike.asm"
-Sound56:	include "sound/sfx/D6 - CNZ Elevator.asm"
-Sound57:	include "sound/sfx/D7 - Platform Knock.asm"
-Sound58:	include "sound/sfx/D8 - Bonus Bumper.asm"
-Sound59:	include "sound/sfx/D9 - Large Bumper.asm"
-Sound5A:	include "sound/sfx/DA - Gloop.asm"
-Sound5B:	include "sound/sfx/DB - Pre-Arrow Firing.asm"
-Sound5C:	include "sound/sfx/DC - Fire.asm"
-Sound5D:	include "sound/sfx/DD - Arrow Stick.asm"
-Sound5E:	include "sound/sfx/DE - Helicopter.asm"
-Sound5F:	include "sound/sfx/DF - Super Transform.asm"
-Sound60:	include "sound/sfx/E0 - Spin Dash Rev.asm"
-Sound61:	include "sound/sfx/E1 - Rumbling 2.asm"
-Sound62:	include "sound/sfx/E2 - CNZ Launch.asm"
-Sound63:	include "sound/sfx/E3 - Flipper.asm"
-Sound64:	include "sound/sfx/E4 - HTZ Lift Click.asm"
-Sound65:	include "sound/sfx/E5 - Leaves.asm"
-Sound66:	include "sound/sfx/E6 - Mega Mack Drop.asm"
-Sound67:	include "sound/sfx/E7 - Drawbridge Move.asm"
-Sound68:	include "sound/sfx/E8 - Quick Door Slam.asm"
-Sound69:	include "sound/sfx/E9 - Drawbridge Down.asm"
-Sound6A:	include "sound/sfx/EA - Laser Burst.asm"
-Sound6B:	include "sound/sfx/EB - Scatter.asm"
-Sound6C:	include "sound/sfx/EC - Teleport.asm"
-Sound6D:	include "sound/sfx/ED - Error.asm"
-Sound6E:	include "sound/sfx/EE - Mecha Sonic Buzz.asm"
-Sound6F:	include "sound/sfx/EF - Large Laser.asm"
-Sound70:	include "sound/sfx/F0 - Oil Slide.asm"
+SoundIndex:		bnkswtch_vals
+		SFXFiles	SFXPointers	; generate little endian pointers and constants for SFX
+
+IncludeSFX:	macro	name
+SFXFile_\name:	include	"sound/sfx/\name\.asm"
+		endm
+
+		SFXFiles	IncludeSFX	; include the actual SFX
+
 
 		finishbank
 		align $FFFFF

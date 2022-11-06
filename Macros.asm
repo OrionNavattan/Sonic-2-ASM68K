@@ -657,6 +657,7 @@ endobj:		macros
 ;		iteration: = iteration+1 ; advance to next character in string
 ;		endr
 ;	endm	
+
 ; ---------------------------------------------------------------------------
 ; Define a little-endian 16-bit pointer for the z80 sound driver relative
 ; to the start address of the Z80 ROM window
@@ -664,33 +665,76 @@ endobj:		macros
 ; ---------------------------------------------------------------------------
 
 z80_ptr: macros	
-		dc.w ((\1<<8)&$FF00)|((\1>>8)&$7F)|$80
+		dc.w (\1<<8&$FF00)|(\1>>8&$7F)|$80
+		
+; ---------------------------------------------------------------------------		
+; Generate the constants used by the sound driver's bankswitch macro.	
+; ---------------------------------------------------------------------------	
+bnkswtch_vals: macro *
+
+\* equ *
+
+		cnt: = 0
+		ptr_num: = 1
+		rept 9
+
+		if (offset(*))&(1<<(15+cnt))=0 						
+			bnkswtch_\*_\$ptr_num:	equ 77h		; ld (hl),a
+		else
+			bnkswtch_\*_\$ptr_num:	equ 73h		; ld (hl),e
+		endc
+		cnt: = cnt+1
+		ptr_num: = ptr_num+1
+		endr
+		endm
 
 ; ---------------------------------------------------------------------------
-; Define and align the start of a sound bank
+; Define and align the start of a sound bank, initialize the sndbank_ptr
+; constant, and Generate the constants used by the sound driver's bankswitch macro.	
 ; ---------------------------------------------------------------------------
 
 startbank: macro *
-		if ~def(sndbnk_id)
-			sndbnk_id: = 1
+
+\* equ *
+
+		if ~def(sndbnk_id)	; generate id of soundbank, used later to check for overflow
+			sndbnk_id: = 1			
 		else
 			sndbnk_id: = sndbnk_id+1
 		endc		
-		align	$8000
-		sound_bank_start: = offset(*)
-		ptr_id: = 80h ; initial pointer id constant
+		align	$8000						; align to $8000 boundary
+		sound_bank_start: = offset(*)		; start address of sound bank
+		ptr_id: = 80h						; initial pointer id constant
+		
+		cnt: = 0
+		ptr_num: = 1
+		rept 9
+		
+		; Unfortunately, because the bnkswtch_vals macro requires a label
+		; on the same line, we cannot invoke it here; we have 
+		; to include the entire macro a second time.
+		
+		if (offset(*))&(1<<(15+cnt))=0 						
+			bnkswtch_\*_\$ptr_num:	equ 77h		; ld (hl),a
+		else
+			bnkswtch_\*_\$ptr_num:	equ 73h		; ld (hl),e
+		endc
+		cnt: = cnt+1
+		ptr_num: = ptr_num+1
+		endr
+		
    		endm
     
-
 ; ---------------------------------------------------------------------------
 ; Pointer to an item in a sound bank
 ; ---------------------------------------------------------------------------    
 
 sndbank_ptr:	macro sound
 		z80_ptr	\sound ; generate little endian pointer relative to the start of the bank
-		ptr_\sound: equ ptr_id ; generate constant for the sound driver's playlist (
+		ptr_\sound: equ ptr_id ; generate constant for the sound driver's playlist 
 		ptr_id: = ptr_id+1	; increment pointer   
 		endm
+		
 ; ---------------------------------------------------------------------------
 ; End a sound bank and halt assembly if it is too large
 ; Can also print the amount of free space in a bank with DebugSoundbanks set

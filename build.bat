@@ -50,6 +50,7 @@ IF NOT EXIST s2built.bin PAUSE & EXIT 2
 
 rem compress the sound driver and insert in rom
 rem S2_SoundDriver_Compress "sound\Sound Driver.unc" "sound\MergeData.dat" s2built.bin build tools\saxman.exe -a
+"S2 SoundDriver Compress.exe" "sound\Sound Driver.unc" "sound\MergeData.dat" s2built.bin "build tools\saxcmp.exe" "-S"
 
 rem if using an error handler such as Vladikomper's, handle processing and adding the symbol table here
 
