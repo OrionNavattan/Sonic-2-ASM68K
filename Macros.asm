@@ -668,7 +668,8 @@ z80_ptr: macros
 		dc.w (\1<<8&$FF00)|(\1>>8&$7F)|$80
 		
 ; ---------------------------------------------------------------------------		
-; Generate the constants used by the sound driver's bankswitch macro.	
+; Generate the constants used by the sound driver's bankswitch macro.
+; This replaces part of the bankswitch macro in Sonic 2 AS.
 ; ---------------------------------------------------------------------------	
 bnkswtch_vals: macro *
 
@@ -678,11 +679,20 @@ bnkswtch_vals: macro *
 		ptr_num: = 1
 		rept 9
 
-		if (offset(*))&(1<<(15+cnt))=0 						
-			bnkswtch_\*_\$ptr_num:	equ 77h		; ld (hl),a
+		if OptimizeSoundDriver
+		; Because why use a and e when you can use h and l?
+			if (offset(*))&(1<<(15+cnt))<>0
+				bnkswtch_\*_\$ptr_num:	equ 75h		; ld (hl),l
+			else
+				bnkswtch_\*_\$ptr_num:	equ 74h		; ld (hl),h
+			endc	
 		else
-			bnkswtch_\*_\$ptr_num:	equ 73h		; ld (hl),e
-		endc
+			if (offset(*))&(1<<(15+cnt))=0 						
+				bnkswtch_\*_\$ptr_num:	equ 77h		; ld (hl),a
+			else
+				bnkswtch_\*_\$ptr_num:	equ 73h		; ld (hl),e
+			endc
+		endc	
 		cnt: = cnt+1
 		ptr_num: = ptr_num+1
 		endr
@@ -690,7 +700,7 @@ bnkswtch_vals: macro *
 
 ; ---------------------------------------------------------------------------
 ; Define and align the start of a sound bank, initialize the sndbank_ptr
-; constant, and Generate the constants used by the sound driver's bankswitch macro.	
+; constant, and generate the constants used by the sound driver's bankswitch macro.	
 ; ---------------------------------------------------------------------------
 
 startbank: macro *
@@ -702,23 +712,33 @@ startbank: macro *
 		else
 			sndbnk_id: = sndbnk_id+1
 		endc		
-		align	$8000						; align to $8000 boundary
+		align	sizeof_z80_bank				; align to $8000 boundary
 		sound_bank_start: = offset(*)		; start address of sound bank
 		ptr_id: = 80h						; initial pointer id constant
 		
+		
+		; Unfortunately, because the bnkswtch_vals macro requires a label
+		; on the same line, we can't invoke it here; we have no choice but
+		; to include the entire macro a second time.
+
 		cnt: = 0
 		ptr_num: = 1
 		rept 9
-		
-		; Unfortunately, because the bnkswtch_vals macro requires a label
-		; on the same line, we cannot invoke it here; we have 
-		; to include the entire macro a second time.
-		
-		if (offset(*))&(1<<(15+cnt))=0 						
-			bnkswtch_\*_\$ptr_num:	equ 77h		; ld (hl),a
+
+		if OptimizeSoundDriver
+		; Because why use a and e when you can use h and l?
+			if (offset(*))&(1<<(15+cnt))<>0
+				bnkswtch_\*_\$ptr_num:	equ 75h		; ld (hl),l
+			else
+				bnkswtch_\*_\$ptr_num:	equ 74h		; ld (hl),h
+			endc	
 		else
-			bnkswtch_\*_\$ptr_num:	equ 73h		; ld (hl),e
-		endc
+			if (offset(*))&(1<<(15+cnt))=0 						
+				bnkswtch_\*_\$ptr_num:	equ 77h		; ld (hl),a
+			else
+				bnkswtch_\*_\$ptr_num:	equ 73h		; ld (hl),e
+			endc
+		endc	
 		cnt: = cnt+1
 		ptr_num: = ptr_num+1
 		endr
@@ -743,12 +763,20 @@ sndbank_ptr:	macro sound
 debug_soundbanks: equ 0
 
 finishbank: macro
-		if offset(*)>sound_bank_start+z_rom_window
+		if offset(*)>sound_bank_start+sizeof_z80_bank
 			inform 3,"SoundBank %s must fit in $8000 bytes, but it was $%h. Try moving something to another bank.",snkbnk_id,offset(*)-sound_bank_start
 		elseif debug_soundbanks
-			inform 0,"SoundBank %s has $%h bytes free at end.",snkbnk_id,z_rom_window+sound_bank_start-offset(*)
+			inform 0,"SoundBank %s has $%h bytes free at end.",snkbnk_id,sizeof_z80_bank+sound_bank_start-offset(*)
 		endif
-    	endm    
+    	endm 
+    	
+; ---------------------------------------------------------------------------
+; Align and reserve space at the end of a soundbank (replaces the negative 
+; cnops in Sonic 2 AS)
+; ---------------------------------------------------------------------------    
+
+	align_to_end:	macros 
+		dcb.b ((-\1\+sizeof_z80_bank-offset(*))&(sizeof_z80_bank-1)),0
     
 ; ---------------------------------------------------------------------------
 ; Define an external file

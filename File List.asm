@@ -469,8 +469,11 @@
 ; ---------------------------------------------------------------------------
 
 		filedef SegaPCM,"sound/PCM/SEGA",pcm,pcm
-		
-		
+	
+	if sizeof_SegaPCM>sizeof_z80_bank
+		inform 3,"Sega sound must fit within $8000 bytes, but you have a $%h byte Sega sound.",sizeof_SegaPCM
+	endif
+
 defdac:	macro	lbl,file
 		; Essentially the same as filedef, except we are adding the filesizes to
 		; a running total to get the total size of all DAC samples.
@@ -483,7 +486,6 @@ defdac:	macro	lbl,file
 		sizeof_dac_samples: = sizeof_dac_samples+sizeof_\lbl
 		endm
 
-		
 		defdac	DAC_Kick,"sound/DAC/Kick.bin"
 		defdac	DAC_Snare,"sound/DAC/Snare.bin"
 		defdac	DAC_Timpani,"sound/DAC/Timpani.bin"
@@ -492,6 +494,6 @@ defdac:	macro	lbl,file
 		defdac	DAC_RecordScratch,"sound/DAC/Record Scratch.bin"
 		defdac	DAC_VLowClap,"sound/DAC/Low Clap.bin"
 		
-	if sizeof_dac_samples>$8000
+	if sizeof_dac_samples>sizeof_z80_bank
 		inform 3,"DAC samples must fit within $8000 bytes, but you have $%h bytes of DAC samples.",sizeof_dac_samples
 	endc

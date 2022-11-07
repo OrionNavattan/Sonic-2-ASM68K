@@ -1,5 +1,6 @@
 ; ---------------------------------------------------------------------------
 ; Compatibility with Sonic 2 AS
+; A few are commented out due to conflicts
 ; ---------------------------------------------------------------------------
 
 ; Constants
@@ -141,7 +142,7 @@ SS_Shared_RAM:			equ ss_shared_ram
 
 LevelOnly_Object_RAM:		equ	v_ost_level_only
 Tails_Tails:				equ v_ost_lo_tails_tails
-SuperSonicStars:			equ	v_ost_lo_supersonicstars
+;SuperSonicStars:			equ	v_ost_lo_supersonicstars
 Sonic_BreathingBubbles:		equ	v_ost_lo_sonic_breathingbubbles
 Tails_BreathingBubbles:		equ	v_ost_lo_tails_breathingbubbles
 Sonic_Dust:					equ	v_ost_lo_sonic_dust
@@ -657,7 +658,7 @@ Debug_mode_flag:	equ f_debug_enable
 Checksum_fourcc:	equ v_checksum_pass
 
 SegaScreenObject:	equ	v_ost_sega_screen
-SegaHideTM:			equ	v_ost_sega_hide_tm
+;SegaHideTM:			equ	v_ost_sega_hide_tm
 
 IntroSonic:					equ	v_title_sonic
 IntroTails:					equ	v_title_tails
@@ -761,14 +762,14 @@ SS_Offset_X:				equ	v_ss_x_offset
 SS_Offset_Y:				equ	v_ss_y_offset
 SS_Swap_Positions_Flag:		equ	f_ss_swap_positions
 
-ContinueText:		equ	v_continue_text
+;ContinueText:		equ	v_continue_text
 ContinueIcons:		equ	v_continue_icons
 
 VSResults_HUD:		equ	v_vs_results_hud
 
 Tails_Tails_Cutscene:	equ	v_ending_tails_tails
 EndSeqPaletteChanger:	equ	v_ending_palchanger
-CutScene:				equ	v_ending_cutscene
+;CutScene:				equ	v_ending_cutscene
 
 ; ---------------------------------------------------------------------------
 

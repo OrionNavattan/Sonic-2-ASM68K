@@ -1,4 +1,4 @@
-; ===========================================================================
+; ---------------------------------------------------------------------------
 ; Frequency, Note, Envelope, and Sample Definitions
 ; Definitions generated here are used by both SMPS2ASM and the sound driver.
 
@@ -461,6 +461,5 @@ d\const:	rs.b 1						; generate the main constant
 _firstSample:	rs.b 0						; the first valid sample
 
 		DefineSamples	GenSampleConst			; generate constants for samples
-		
-		
+			
 _lastSample:	equ __rs-1					; the last valid sample

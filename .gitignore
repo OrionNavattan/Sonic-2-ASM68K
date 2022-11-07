@@ -1,9 +1,9 @@
-sonic2.lst
 s2built.bin
 s2built.prev.bin
 sound/errors 1.txt
 sound/errors 2.txt
 sound/errors 3.txt
+errors.txt
 *.lst
 sound/music/compressed/ARZ.sax
 sound/music/compressed/arz.unc
@@ -59,4 +59,3 @@ sound/music/compressed/TwoPlayerMenu.sax
 sound/music/compressed/twoplayermenu.unc
 sound/music/compressed/WFZ.sax
 sound/music/compressed/wfz.unc
-s2built.prev.bin

@@ -1,6 +1,7 @@
 A WIP disassembly of Sonic the Hedgehog 2, targeting Hivebrain's AXM68K (ASM68K with Z80 macros),
-and in the future, Clownasmembler. Currently assembles Revision 1 bit-perfect,
-with Revisions 0 and 2 planned.
+and in the future, Clownasmembler. Currently assembles Revision 1 bit-perfect with pre-compressed
+sound driver. While there is support for assembling the sound driver, it is not bit-perfect
+due to lack of an appropriate compressor.
 
 This disassembly aims for an emphasis on readability, with styling based on Hivebrain's
 2022 disassembly of Sonic 1. When completed, code will be structured into many files in a systematic
@@ -65,12 +66,8 @@ and eventually bringing it to feature parity with Sonic 2 AS.
 
 TODO/WIP:
 
-* Finish file definitions and conversion of incbins to incfiles
-* Create music and sfx definitions
 * Convert all index tables to use index and ptr macros
-* Convert sound driver to use AXM68K
 * Finish object and subroutine labels
 * Finish symbolic constants for ost offsets and anything else that can use them
-* Make solution for patching Saxman compressor at build time
 * Port VRAM constants and implement plcm macros
 * Clean up SonLVL INIs (some work has been done to keep them synced with filename changes, but they are currently broken and do not load)

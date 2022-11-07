@@ -1,5 +1,5 @@
 ; ---------------------------------------------------------------------------
-; Standard Mega Drive hardware addresses, constants & macros
+; Standard Mega Drive 68K hardware addresses, constants & function macros
 ; ---------------------------------------------------------------------------
 
 ; VDP addressses
@@ -25,10 +25,10 @@ debug_reg:			equ $C0001C
 ; Z80 address space
 z80_ram:		equ $A00000	; start of Z80 RAM
 z80_ram_end:	equ $A02000	; end of non-reserved Z80 RAM
-;ym2612_a0:		equ $A04000
-;ym2612_d0:		equ $A04001
-;ym2612_a1:		equ $A04002
-;ym2612_d1:		equ $A04003
+ym2612_a0:		equ $A04000
+ym2612_d0:		equ $A04001
+ym2612_a1:		equ $A04002
+ym2612_d1:		equ $A04003
 
 ; I/O addresses
 console_version:	equ $A10001
@@ -65,6 +65,7 @@ sizeof_ram:			equ $10000
 sizeof_vram:		equ $10000
 sizeof_vsram:		equ $50
 sizeof_z80_ram:		equ z80_ram_end-z80_ram ; $2000
+sizeof_z80_bank:	equ $8000	; size of switchable Z80 rom window
 
 ; ---------------------------------------------------------------------------
 ; stop the Z80

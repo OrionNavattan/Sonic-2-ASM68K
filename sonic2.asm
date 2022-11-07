@@ -25,6 +25,10 @@ Main:	group word,org(0) ; we have to use the long form of group declaration to a
 		section MainProgram,Main
 		
 
+AssembledSoundDriver equ 1 ; switch between assembled sound driver and precompressed sound driver 
+; for bit-perfect checking (you must enable or disable the invocation of S2 SndDriver Compress in the build script
+; as well)
+
 	if ~def(Revision) 
 Revision equ 1
 ; if 0, builds a REV00 ROM
@@ -34,7 +38,7 @@ Revision equ 1
 	endc
 	
 FixBugs equ 0 
-; If 1, enables a number of engine and gameplay bug-fixes, including some in the sound driver.
+; If 1, enables a number of engine and gameplay bug-fixes, including some in the music and sound driver.
 
 OptimizeSoundDriver equ 0	
 ; If 1, enables a number of optimizations in the sound driver.
@@ -46,10 +50,11 @@ AllOptimizations equ 0
 ZeroOffsetOptimization equ 1|AllOptimizations
 ; If 1, enables the zero-displacement optimization for 156 instances of address register 
 ; indirect displacement instructions that were unoptimized in the original game.
-; See the macro definitions file for a full explanation.
+; See the macro definitions file for a more complete explanation.
 
 RemoveJmpTos equ (0|Revision=2|AllOptimizations) 
-; If 1, many unnecessary JmpTos are removed, improving performance. See the jsrto amd jmpto macro definitions for more information.
+; If 1, many unnecessary JmpTos are removed, improving performance. 
+; See the jsrto amd jmpto macro definitions for more information.
 
 AddSubOptimize equ (0|Revision=2|AllOptimizations)
 ; If 1, many add/sub instructions are optimized to addq/subq.
@@ -9289,7 +9294,7 @@ word_734C:	dc.w 1
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_7356:				
+RingCountSpecial:				
 		moveq	#0,d0
 		move.b	$A(a0),d0
 		move.w	off_7364(pc,d0.w),d1
@@ -9943,7 +9948,7 @@ word_7A5E:	dc.w  $804		; 0
 ; Continue text
 ; ----------------------------------------------------------------------------
 
-Sprite_7A68:				
+ContinueText:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_7A76(pc,d0.w),d1
@@ -10048,7 +10053,7 @@ loc_7B7C:
 ; Sonic	lying down from	continue screen
 ; ----------------------------------------------------------------------------
 
-Sprite_7B82:				
+ContinueCharacters:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_7B96(pc,d0.w),d1
@@ -12798,7 +12803,7 @@ byte_A0EC:	dc.b   0		; 0
 ; Cut scene at end of game
 ; ----------------------------------------------------------------------------
 
-Sprite_A1D6:				
+Cutscene:				
 		addq.w	#1,$32(a0)
 		cmpi.w	#4,($FFFFF750).w
 		beq.s	loc_A1FA
@@ -13015,7 +13020,7 @@ loc_A3BE:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_A3C8:				
+EndingTrigger:				
 		bsr.w	sub_BF7A
 		moveq	#0,d0
 		move.b	$24(a0),d0
@@ -13443,7 +13448,7 @@ word_A874:	dc.w   $60		; 0
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_A894:				
+EndingSonic:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_A8A2(pc,d0.w),d1
@@ -13547,7 +13552,7 @@ byte_A984:	dc.b $F8		; 0
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_A988:				
+EndingTails:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_A996(pc,d0.w),d1
@@ -13587,7 +13592,7 @@ loc_A9E4:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_A9F2:				
+EndingClouds:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_AA00(pc,d0.w),d1
@@ -13667,7 +13672,7 @@ loc_AAA2:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_AAAE:				
+EndingFlickies:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_AABC(pc,d0.w),d1
@@ -21579,7 +21584,7 @@ sub_FC94:
 ; Swinging platform from ARZ
 ; ----------------------------------------------------------------------------
 
-SwingingPlatform:				
+SwingingPlatform1:				
 		btst	#6,1(a0)
 		bne.w	loc_FCB4
 		moveq	#0,d0
@@ -25112,7 +25117,7 @@ byte_125C4:	dc.b   0,  4,$E0, $F,  0,$44,  0,$22,$FF,$E0,$E0, $F,  8,$44,  8,$22
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_125E6:				
+RingPrize:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_125F4(pc,d0.w),d1
@@ -26406,7 +26411,7 @@ loc_132E2:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_132F0:				
+PalChanger:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	loc_132FE(pc,d0.w),d1
@@ -29799,11 +29804,11 @@ Obj_Index:	index.l 0,1	; longword, absolute (relative to 0), start ids at 1
 		ptr TailsSpecial	; $10
 		ptr Bridge			
 		ptr GiantEmerald	; unused beta leftover
-		ptr HPZWaterfall	; unused beta leftover
+		ptr WaterfallHiddenPalace	; unused beta leftover
 		ptr Seesaw			; $14
-		ptr SwingingPlatform	; ARZ, MCZ
+		ptr SwingingPlatform1	; ARZ, MCZ
 		ptr Tram			; HTZ ziplines/lifts/trams
-		ptr Helix			; unused S1 leftover: GHZ spiked log
+		ptr Helix			; unused Sonic 1 leftover: GHZ spiked log
 		ptr Platform1		; $18; ARZ & EHZ
 		ptr Platform2		; CPZ, OOZ, & WFZ
 		ptr CollapseLedge	; unused beta leftover, used by HPZ collapsing platform, same object as S1 GHZ collapsing ledges
@@ -29839,8 +29844,8 @@ Obj_Index:	index.l 0,1	; longword, absolute (relative to 0), start ids at 1
 		ptr ShieldItem		; $38
 		ptr GameOverCard
 		ptr GotThroughCard
-		ptr PurpleRock		; unused S1 leftover
-		ptr SmashWall		; $3C; S1 leftover; fragment subroutine is used, but object itself is not
+		ptr PurpleRock		; unused Sonic 1 leftover
+		ptr SmashWall		; $3C; mostly unused Sonic 1 leftover; fragment subroutine is used, but object itself is not
 		ptr LauncherBlock	; smashable block lanucher in OOZ
 		ptr Prison
 		ptr Fan
@@ -29853,7 +29858,7 @@ Obj_Index:	index.l 0,1	; longword, absolute (relative to 0), start ids at 1
 		ptr GiantBall		; unused beta leftover
 		ptr Button
 		ptr LauncherBall	; $48
-		ptr EmeraldHillWaterfall
+		ptr WaterfallEmeraldHill
 		ptr Octus
 		ptr Buzzer
 		ptr NullObject		; $4C
@@ -29899,108 +29904,109 @@ Obj_Index:	index.l 0,1	; longword, absolute (relative to 0), start ids at 1
 		ptr Invisibarrier	; $74
 		ptr BrickAndSpikeChain
 		ptr SlidingSpikes
-		ptr Drawbridge
+		ptr BridgeMysticCave
 		ptr Staircase		; $78
 		ptr Starpost
 		ptr TrackPlatform
 		ptr SpinTubeLid
 		ptr Pylon			; $7C
-		ptr HiddenBonus		; unused S1 leftover
-		ptr Sprite_1E0F0	; 125
-		ptr Sprite_297E4	; 126
-		ptr Sprite_2997C	; 127
-		ptr Sprite_2A000	; 128
-		ptr Sprite_2A290	; 129
-		ptr Sprite_2A4FC	; 130
-		ptr Sprite_2115C	; 131
-		ptr Sprite_2AB84	; 132
-		ptr Sprite_2B140	; 133
-		ptr Sprite_7356	; 134
-		ptr Sprite_34A5C	; 135
-		ptr Sprite_30480	; 136
-		ptr Sprite_3EAC8	; 137
-		ptr Sprite_21392	; 138
-		ptr Sprite_36924	; 139
-		ptr Sprite_36A76	; 140
-		ptr Sprite_36A76	; 141
-		ptr Sprite_36B88	; 142
-		ptr Sprite_36BD4	; 143
-		ptr Sprite_36DAC	; 144
-		ptr Sprite_36F0E	; 145
-		ptr Sprite_36FE6	; 146
-		ptr Sprite_37322	; 147
-		ptr Sprite_370FE	; 148
-		ptr Sprite_37322	; 149
-		ptr Sprite_373D0	; 150
-		ptr Sprite_376E8	; 151
-		ptr Sprite_377C8	; 152
-		ptr Sprite_37936	; 153
-		ptr Sprite_37A06	; 154
-		ptr Sprite_37A82	; 155
-		ptr Sprite_37BFA	; 156
-		ptr Sprite_37E16	; 157
-		ptr Sprite_3800C	; 158
-		ptr Sprite_3815C	; 159
-		ptr Sprite_383B4	; 160
-		ptr Sprite_384A2	; 161
-		ptr Sprite_3873E	; 162
-		ptr Sprite_3899C	; 163
-		ptr Sprite_38AEA	; 164
-		ptr Sprite_38B86	; 165
-		ptr Sprite_38DBA	; 166
-		ptr Sprite_38F66	; 167
-		ptr Sprite_39032	; 168
-		ptr Sprite_39066	; 169
-		ptr Sprite_390A2	; 170
-		ptr Sprite_3937A	; 171
-		ptr Sprite_3941C	; 172
-		ptr Sprite_39452	; 173
-		ptr Sprite_3972C	; 174
-		ptr Sprite_3A1DC	; 175
-		ptr Sprite_3A3F8	; 176
-		ptr Sprite_3A790	; 177
-		ptr Sprite_3B2DE	; 178
-		ptr Sprite_3B36A	; 179
-		ptr Sprite_3B3FA	; 180
-		ptr Sprite_3B5D0	; 181
-		ptr Sprite_3B8A6	; 182
-		ptr Sprite_3B968	; 183
-		ptr Sprite_3BABA	; 184
-		ptr Sprite_3BB4C	; 185
-		ptr Sprite_3BB7C	; 186
-		ptr Sprite_3BBBC	; 187
-		ptr Sprite_3BC1C	; 188
-		ptr Sprite_3BD7A	; 189
-		ptr Sprite_3BEAA	; 190
-		ptr Sprite_3BF04	; 191
-		ptr Sprite_3C0AC	; 192
-		ptr Sprite_3C328	; 193
-		ptr Sprite_3C3D6	; 194
-		ptr Sprite_3C3D6	; 195
-		ptr Sprite_3C442	; 196
-		ptr Sprite_3CED0	; 197
-		ptr Sprite_3D4C8	; 198
-		ptr Sprite_3D23E	; 199
-		ptr Sprite_132F0	; 200
-		ptr Sprite_A1D6	; 201
-		ptr Sprite_A9F2	; 202
-		ptr Sprite_A3C8	; 203
-		ptr Sprite_AAAE	; 204
-		ptr Sprite_A894	; 205
-		ptr Sprite_A988	; 206
-		ptr NullObject	; 207
-		ptr NullObject	; 208
-		ptr Sprite_2B528	; 209
-		ptr Sprite_2B84C	; 210
-		ptr Sprite_2B8EC	; 211
-		ptr Sprite_2BA08	; 212
-		ptr Sprite_2BB6C	; 213
-		ptr Sprite_2C448	; 214
-		ptr Sprite_2C6AC	; 215
-		ptr Sprite_2C92C	; 216
-		ptr Sprite_7A68	; 217
-		ptr Sprite_7B82	; 218
-		ptr Sprite_125E6	; 219
+		ptr HiddenBonus		; unused Sonic 1 leftover
+		ptr SuperSonicStars
+		ptr VineSwitch
+		ptr MovingVine		; $80
+		ptr Drawbridge
+		ptr SwingingPlatform2
+		ptr CirclingPlatform
+		ptr PinballMode		; $84
+		ptr PinballLauncher
+		ptr Flipper
+		ptr RingCountSpecial		
+		ptr TailsTailsSpecial	; $88
+		ptr BossAquaticRuin
+		ptr S1_STP_Credits	; unused Sonic 1 leftover
+		ptr PalSwitcherWingFortress
+		ptr Whisp			; $8C
+		ptr GrounderInWall
+		ptr GrounderInWall
+		ptr GrounderWall
+		ptr GrounderRocks	; $90
+		ptr ChopChop
+		ptr Spiker
+		ptr SpikerDrill
+		ptr Rexon			; $94
+		ptr Sol
+		ptr Rexon
+		ptr RexonHead
+		ptr Projectile		; $98 ; Coconuts' coconuts, Nebulas' bombs, Turtloid, Clucker, Spiny, and Wall Turret shots
+		ptr Nebula
+		ptr Turtloid
+		ptr TurtloidRider
+		ptr BalkiryJet		; $9C
+		ptr Coconuts
+		ptr Crawlton
+		ptr Shellcracker
+		ptr ShellcrackerClaw	; $A0
+		ptr Slicer
+		ptr SlicerPincers
+		ptr Flasher
+		ptr Asteron			; $A4
+		ptr Spiny
+		ptr SpinyWall
+		ptr Grabber
+		ptr GrabberLegs		; $A8
+		ptr GrabberBox
+		ptr GrabberString		
+		ptr Unknown1		; unused, vestigial remnants of some object embedded in the Grabber objects
+		ptr Balkiry			; $AC
+		ptr CluckerBase
+		ptr Clucker
+		ptr MechaSonic
+		ptr SonicSegaScreen	; $B0
+		ptr SegaHideTM		; hides the TM symbol on Japanese and Korean consoles
+		ptr Tornado
+		ptr Cloud
+		ptr VerticalPropeller	; $B4
+		ptr HorizontalPropeller
+		ptr TiltingPlatform	
+		ptr VerticalLaser	; unused
+		ptr WallTurret		; $B8
+		ptr HorizontalLaser	; laser that shoots down the Tornado at the start of WFZ
+		ptr WheelWingFortress	; WFZ conveyer wheel
+		ptr Unknown2		; unused, unknown
+		ptr ShipExhaust		; $BC ; exhaust from Eggman's getaway ship in the WFZ/DEZ transition
+		ptr ConveyerPlatforms	; WFZ conveyer platforms
+		ptr LateralCannon
+		ptr Stick
+		ptr Catapult		; $C0
+		ptr BreakablePlating
+		ptr Rivet
+		ptr TornadoSmoke
+		ptr TornadoSmoke	; $C4
+		ptr BossWingFortress
+		ptr Eggman
+		ptr EggRobo
+		ptr Crawl			; $C8
+		ptr PalChanger		; title screen palette changing handler
+		ptr Cutscene		; ending cutscene manager
+		ptr EndingClouds
+		ptr EndingTrigger	; $CC ; trigger for birds and Tornado rescue in ending cutscene
+		ptr EndingFlickies
+		ptr EndingSonic	
+		ptr EndingTails
+		ptr NullObject		; $D0
+		ptr NullObject
+		ptr SnakePlatform	; CNZ snake platform
+		ptr BombPenalty		; penalty spikeballs from CNZ slot machines
+		ptr LargeMovingBlock	 ; $D4
+		ptr Elevator
+		ptr Cage			; CNZ cages
+		ptr HexagonalBumper	; CNZ moving hexagonal bumper
+		ptr SaucerBumper	; $D8
+		ptr InvisibleGrabBlock
+		ptr ContinueText
+		ptr ContinueCharacters
+		ptr RingPrize		; $DC
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 4C, 4D, 4E, 4F, 62, D0, and D1
@@ -30188,7 +30194,6 @@ DeleteObject2:
 
 ; ===========================================================================
 
-; sub_164F4:
 DisplaySprite:									
 		lea	(v_sprite_queue).w,a1
 		move.w	$18(a0),d0
@@ -30207,7 +30212,6 @@ DisplaySprite:
 
 ; ===========================================================================
 
-; sub_16512:
 DisplaySprite2:				
 		lea	(v_sprite_queue).w,a2
 		move.w	$18(a1),d0
@@ -30225,7 +30229,7 @@ DisplaySprite2:
 ; End of function DisplaySprite2
 
 ; ===========================================================================
-; loc_16530:
+
 DisplaySprite3:									
 		lea	(v_sprite_queue).w,a1
 		adda.w	d0,a1
@@ -30240,538 +30244,605 @@ DisplaySprite3:
 
 ; ===========================================================================
 
+; ---------------------------------------------------------------------------
+; Subroutine to	animate	a sprite using an animation script
+;
+; input:
+;	a1 = animation script index (e.g. Ani_Crab)
 
-AnimateSprite:				
+; output:
+;	a1 = animation script (e.g. ani_crab_stand)
+
+;	uses d0.l, d1.l
+
+; usage:
+;		lea	(Ani_Sonic).l,a1
+;		bsr.w	AnimateSprite
+; ---------------------------------------------------------------------------
+
+
+AnimateSprite:
 		moveq	#0,d0
-		move.b	$1C(a0),d0
-		cmp.b	$1D(a0),d0
-		beq.s	loc_16560
-		move.b	d0,$1D(a0)
-		move.b	#0,$1B(a0)
-		move.b	#0,$1E(a0)
+		move.b	ost_anim(a0),d0		; move animation number to d0
+		cmp.b	ost_anim_restart(a0),d0	; is animation set to change?
+		beq.s	Anim_Run		; if not, branch
+		
+		move.b	d0,ost_anim_restart(a0)	; set prev ost_anim to current current
+		move.b	#0,ost_anim_frame(a0)	; reset animation
+		move.b	#0,ost_anim_time(a0)	; reset frame duration
 
-loc_16560:				
-		subq.b	#1,$1E(a0)
-		bpl.s	locret_1659A
+Anim_Run:
+		subq.b	#1,ost_anim_time(a0)	; subtract 1 from frame duration
+		bpl.s	Anim_Wait	; if time remains, branch
 		add.w	d0,d0
-		adda.w	(a1,d0.w),a1
-		move.b	(a1),$1E(a0)
+		adda.w	(a1,d0.w),a1	; calculate address of appropriate animation script
+		move.b	(a1),ost_anim_time(a0)	; load frame duration
 		moveq	#0,d1
-		move.b	$1B(a0),d1
-		move.b	1(a1,d1.w),d0
-		bmi.s	loc_1659C
+		move.b	ost_anim_frame(a0),d1	; load current frame number
+		move.b	1(a1,d1.w),d0		; read sprite number from script
+		bmi.s	Anim_End_FF		; if animation is complete, branch
 
-loc_1657C:				
-					
-		andi.b	#$7F,d0
-		move.b	d0,$1A(a0)
-		move.b	$22(a0),d1
-		andi.b	#3,d1
-		andi.b	#-4,1(a0)
-		or.b	d1,1(a0)
-		addq.b	#1,$1B(a0)
+Anim_Next:
+		andi.b	#$7F,d0			; clear sign bit
+		move.b	d0,ost_frame(a0)	; load sprite number
+		move.b	ost_status(a0),d1		;* match the orientaion dictated by the object
+		andi.b	#status_xflip+status_yflip,d1			;* with the orientation used by the object engine
+		andi.b	#$FF-render_xflip-render_yflip,ost_render(a0)	;*
+		or.b	d1,ost_render(a0)	;*
+		addq.b	#1,ost_anim_frame(a0)	; next frame number
 
-locret_1659A:				
-		rts	
+Anim_Wait:
+		rts
 ; ===========================================================================
 
-loc_1659C:				
-		addq.b	#1,d0
-		bne.s	loc_165AC
-		move.b	#0,$1B(a0)
-		move.b	1(a1),d0
-		bra.s	loc_1657C
+Anim_End_FF:
+		addq.b	#1,d0		; is the end flag = $FF?
+		bne.s	Anim_End_FE	; if not, branch
+		move.b	#0,ost_anim_frame(a0)	; restart the animation
+		move.b	1(a1),d0	; read sprite number
+		bra.s	Anim_Next
 ; ===========================================================================
 
-loc_165AC:				
-		addq.b	#1,d0
-		bne.s	loc_165C0
-		move.b	2(a1,d1.w),d0
-		sub.b	d0,$1B(a0)
+Anim_End_FE:
+		addq.b	#1,d0	; is the end flag = $FE?
+		bne.s	Anim_End_FD	; if not, branch
+		move.b	2(a1,d1.w),d0	; read the next byte in the script
+		sub.b	d0,ost_anim_frame(a0)	; jump back d0 bytes in the script
 		sub.b	d0,d1
-		move.b	1(a1,d1.w),d0
-		bra.s	loc_1657C
+		move.b	1(a1,d1.w),d0	; read sprite number
+		bra.s	Anim_Next
 ; ===========================================================================
 
-loc_165C0:				
-		addq.b	#1,d0
-		bne.s	loc_165CC
-		move.b	2(a1,d1.w),$1C(a0)
-		rts	
+Anim_End_FD:
+		addq.b	#1,d0		; is the end flag = $FD?
+		bne.s	Anim_End_FC	; if not, branch
+		move.b	2(a1,d1.w),ost_anim(a0)	; read next byte, run that animation
+		rts
 ; ===========================================================================
 
-loc_165CC:				
-		addq.b	#1,d0
-		bne.s	loc_165E0
-		addq.b	#2,$24(a0)
-		move.b	#0,$1E(a0)
-		addq.b	#1,$1B(a0)
-		rts	
+Anim_End_FC:
+		addq.b	#1,d0	; is the end flag = $FC?
+		bne.s	Anim_End_FB	; if not, branch
+		addq.b	#2,routine(a0)	; jump to next routine
+		move.b	#0,ost_anim_time(a0)
+		addq.b	#1,ost_anim_frame(a0)
+		rts
 ; ===========================================================================
 
-loc_165E0:				
-		addq.b	#1,d0
-		bne.s	loc_165F0
-		move.b	#0,$1B(a0)
-		clr.b	$25(a0)
-		rts	
+Anim_End_FB:
+		addq.b	#1,d0	; is the end flag = $FB?
+		bne.s	Anim_End_FA	; if not, branch
+		move.b	#0,ost_anim_frame(a0)	; reset animation
+		clr.b	ost_secondary_routine(a0)	; reset 2nd routine counter
+		rts
 ; ===========================================================================
 
-loc_165F0:				
-		addq.b	#1,d0
-		bne.s	loc_165FA
-		addq.b	#2,$25(a0)
-		rts	
+Anim_End_FA:
+		addq.b	#1,d0	; is the end flag = $FA?
+		bne.s	Anim_End_F9	; if not, branch
+		addq.b	#2,ost_secondary_routine(a0)	; jump to next routine
+		rts
 ; ===========================================================================
 
-loc_165FA:				
-		addq.b	#1,d0
-		bne.s	locret_16602
-		addq.b	#2,$2A(a0)
+Anim_End_F9:
+		addq.b	#1,d0	; is the end flag = $F9?
+		bne.s	Anim_End	; if not, branch
+		addq.b	#2,$2A(a0)	; Actually obj89_arrow_routine
 
-locret_16602:				
-		rts	
-; End of function AnimateSprite
+Anim_End:
+		rts
 
 
 ; ===========================================================================
 
 
-BuildSprites:								
-		tst.w	(f_two_player).w
-		bne.w	loc_1694E
-		lea	(v_sprite_buffer).w,a2
+; ---------------------------------------------------------------------------
+; Subroutine to convert mappings (etc) to proper Megadrive sprites
+; ---------------------------------------------------------------------------
+
+; sub_16604:
+BuildSprites:
+		tst.w	(f_two_player).w		; is it 2P mode?
+		bne.w	BuildSprites_2P			; if so, use the 2P version of this function
+		lea	(v_sprite_buffer).w,a2		; ; set address for sprite table - $280 bytes, copied to VRAM at VBlank
 		moveq	#0,d5
 		moveq	#0,d4
-		tst.b	(f_level_started).w
-		beq.s	loc_16622
-		jsrto	BuildHUD, JmpTo_BuildHUD
-		bsr.w	BuildRings
+		tst.b	(f_level_started).w		; has the level started?
+		beq.s	.notstarted					; if not, branch	
+		jsrto	BuildHUD, JmpTo_BuildHUD	; render the HUD
+		bsr.w	BuildRings					; render rings
 
-loc_16622:				
-		lea	(v_sprite_queue).w,a4
-		moveq	#7,d7
+	.notstarted:	
+		lea	(v_sprite_queue).w,a4	; address of sprite queue - $400 bytes, 8 sections of $80 bytes (1 word for count, $3F words for OST addresses)
+		moveq	#8-1,d7	; 8 priority levels
 
-loc_16628:				
-		tst.w	(a4)
-		beq.w	loc_166FA
-		moveq	#2,d6
 
-loc_16630:				
-		movea.w	(a4,d6.w),a0
-		tst.b	(a0)
-		beq.w	loc_166F2
-		andi.b	#$7F,1(a0)
-		move.b	1(a0),d0
+	BuildSprites_PriorityLoop:
+		tst.w	(a4)	; are there objects left in current section?
+		beq.w	BuildSprites_NextPriority		; if not, branch
+		moveq	#2,d6	; start address within current section (1st word is object count)
+
+	BuildSprites_ObjectLoop:
+		movea.w	(a4,d6.w),a0 ; a0=object
+
+    if Revision=0
+		; These are sanity checks, to detect invalid objects which should not
+		; have been queued for display. S3K gets rids of them compeletely,
+		; since they should not be needed and they just slow this code down.
+		; In REV00, it appears that these checks were used for debugging, as
+		; they deliberately crash the console if they detect an invalid object.
+		tst.b	ost_id(a0)			; is this object slot occupied?
+		beq.w	.crash	; if not, branch
+		tst.l	ost_mappings(a0)		; does this object have any mappings?
+		beq.w	.crash	; if not, branch
+    else
+		tst.b	ost_id(a0)			; is this object slot occupied?
+		beq.w	BuildSprites_NextObject	; if not, check next one
+    endc
+
+		andi.b	#$7F,ost_render(a0)	; %0111 1111; clear on-screen flag
+		move.b	ost_render(a0),d0
 		move.b	d0,d4
-		btst	#6,d0
-		bne.w	loc_1671C
-		andi.w	#$C,d0
-		beq.s	loc_166A6
-		lea	(v_camera_x_pos_copy).w,a1
+		btst	#render_subobjects_bit,d0	; is the multi-draw flag set?
+		bne.w	BuildSprites_MultiDraw					; if so, branch
+		andi.w	#render_rel+render_bg,d0	; is this to be positioned by screen coordinates?
+		beq.s	.abs_screen_coords	; if so, branch
+		lea	(v_camera_x_pos_copy).w,a1	; get address for camera x position (or background x position if render_bg is used)
+		
+		; check if object is visible
 		moveq	#0,d0
-		move.b	$19(a0),d0
-		move.w	8(a0),d3
+		move.b	ost_displaywidth(a0),d0
+		move.w	ost_x_pos(a0),d3
 		sub.w	(a1),d3
 		move.w	d3,d1
-		add.w	d0,d1
-		bmi.w	loc_166F2
+		add.w	d0,d1			; d1 = x pos of object's right edge on screen
+		bmi.w	BuildSprites_NextObject	; branch if object is outside left side of screen
 		move.w	d3,d1
-		sub.w	d0,d1
-		cmpi.w	#$140,d1
-		bge.w	loc_166F2
-		addi.w	#$80,d3	
-		btst	#4,d4
-		beq.s	loc_166B0
+		sub.w	d0,d1			; d1 = x pos of object's left edge on screen
+		cmpi.w	#screen_width,d1		
+		bge.w	BuildSprites_NextObject	; branch if object is outside right side of screen
+		addi.w	#128,d3			; d3 = x pos of object on screen, +128px for VDP sprite coordinate
+		
+		btst	#render_useheight_bit,d4		; is use height flag set?
+		beq.s	.assume_height	; if not, branch
 		moveq	#0,d0
-		move.b	$16(a0),d0
-		move.w	$C(a0),d2
+		move.b	ost_height(a0),d0
+		move.w	ost_y_pos(a0),d2
 		sub.w	4(a1),d2
 		move.w	d2,d1
 		add.w	d0,d1
-		bmi.s	loc_166F2
+		bmi.s	BuildSprites_NextObject	; if the object is above the screen
 		move.w	d2,d1
 		sub.w	d0,d1
-		cmpi.w	#$E0,d1	
-		bge.s	loc_166F2
-		addi.w	#$80,d2	
-		bra.s	loc_166CC
+		cmpi.w	#screen_height,d1
+		bge.s	BuildSprites_NextObject	; if the object is below the screen
+		addi.w	#128,d2
+		bra.s	.draw_object
 ; ===========================================================================
 
-loc_166A6:				
-		move.w	$A(a0),d2
-		move.w	8(a0),d3
-		bra.s	loc_166CC
+	.abs_screen_coords:
+		move.w	ost_y_screen(a0),d2
+		move.w	ost_x_screen(a0),d3
+		bra.s	.draw_object
 ; ===========================================================================
 
-loc_166B0:				
-		move.w	$C(a0),d2
-		sub.w	4(a1),d2
-		addi.w	#$80,d2	
+	.assume_height:
+		move.w	ost_y_pos(a0),d2
+		sub.w	4(a1),d2				; d2 = y pos of object on screen
+		addi.w	#128,d2
 		andi.w	#$7FF,d2
-		cmpi.w	#$60,d2
-		bcs.s	loc_166F2
-		cmpi.w	#$180,d2
-		bcc.s	loc_166F2
+		cmpi.w	#128-32,d2				; assume Y radius to be 32 pixels
+		blo.s	BuildSprites_NextObject				; branch if > 32px outside top side of screen
+		cmpi.w	#screen_height+32+128,d2
+		bhs.s	BuildSprites_NextObject				; branch if > 32px outside bottom side of screen
 
-loc_166CC:				
-					
-		movea.l	4(a0),a1
+	.draw_object:
+		movea.l	ost_mappings(a0),a1		; get address of mappings
 		moveq	#0,d1
-		btst	#5,d4
-		bne.s	loc_166E8
-		move.b	$1A(a0),d1
+		btst	#render_rawmap_bit,d4	; is raw mappings flag on?
+		bne.s	.draw_now			; if it is, branch
+
+		move.b	ost_frame(a0),d1
 		add.w	d1,d1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		bmi.s	loc_166EC
+		adda.w	(a1,d1.w),a1				; jump to frame within mappings
+		move.w	(a1)+,d1				; number of sprite pieces
+		subq.w	#1,d1					; subtract 1 for loops
+		bmi.s	.skip_draw				; if there are 0 pieces, branch
 
-loc_166E8:				
-		bsr.w	BuildSpr_Draw
+	.draw_now:
+		bsr.w	BuildSpr_Draw	; draw the sprite
 
-loc_166EC:				
-		ori.b	#-$80,1(a0)
+	.skip_draw:
+		ori.b	#$80,ost_render(a0)	; set object as visible
+		
 
-loc_166F2:				
-					
-		addq.w	#2,d6
-		subq.w	#2,(a4)
-		bne.w	loc_16630
+	BuildSprites_NextObject:
+		addq.w	#2,d6	; load next object
+		subq.w	#2,(a4)	; decrement object count
+		bne.w	BuildSprites_ObjectLoop	; if there are objects left, repeat
 
-loc_166FA:				
-		lea	$80(a4),a4
-		dbf	d7,loc_16628
-		move.b	d5,(v_spritecount).w
-		cmpi.b	#$50,d5
-		beq.s	loc_16714
-		move.l	#0,(a2)
-		rts	
+
+	BuildSprites_NextPriority:
+		lea	sizeof_priority(a4),a4		; next priority section ($80)l
+		dbf	d7,BuildSprites_PriorityLoop			; repeat for all sections
+		move.b	d5,(v_spritecount).w				; set sprite count
+		
+		; Terminate the sprite list.
+		; If the sprite list is full, then set the link field of the last
+		; entry to 0. Otherwise, push the next sprite offscreen and set its
+		; link field to 0. You might be thinking why this doesn't just do the
+		; first one no matter what. Well, think about what if the sprite list
+		; was empty: then it would access data before the start of the list.
+		
+		cmpi.b	#countof_max_sprites,d5	; was the sprite limit reached?
+		beq.s	.max_sprites						; if it was, branch
+		move.l	#0,(a2)					; set link field to 0
+		rts
 ; ===========================================================================
 
-loc_16714:				
-		move.b	#0,-5(a2)
-		rts	
+	.max_sprites:
+		move.b	#0,-5(a2)	; set link field to 0
+		rts
+		
+; ===========================================================================
+    if Revision=0
+	BuildSprites_Crash:
+		; In the Simon Wai prototype, these two lines weren't here.
+		; This may have possibly been a debugging feature, for helping the
+		; devs detect when an object tried to display with a blank ID or
+		; mappings pointer. The latter was actually an issue that plagued
+		; Sonic 1, but is (almost) completely absent in this game.
+		move.w	(1).w,d0	; causes a crash because of the word operation at an odd address
+		bra.s	BuildSprites_NextPriority
+    endc
+
 ; ===========================================================================
 
-loc_1671C:				
+BuildSprites_MultiDraw:
 		move.l	a4,-(sp)
 		lea	(v_camera_x_pos).w,a4
-		movea.w	2(a0),a3
-		movea.l	4(a0),a5
+		movea.w	ost_tile(a0),a3
+		movea.l	ost_mappings(a0),a5
 		moveq	#0,d0
-		move.b	$E(a0),d0
-		move.w	8(a0),d3
+
+		; check if object is within X bounds
+		move.b	ost_mainspr_width(a0),d0	; load pixel width
+		move.w	ost_x_pos(a0),d3
 		sub.w	(a4),d3
 		move.w	d3,d1
-		add.w	d0,d1
-		bmi.w	loc_16804
+		add.w	d0,d1						; d1 = x pos of object's right edge on screen
+		bmi.w	.next_object			; branch if object is outside left side of screen
 		move.w	d3,d1
 		sub.w	d0,d1
-		cmpi.w	#$140,d1
-		bge.w	loc_16804
-		addi.w	#$80,d3	
-		btst	#4,d4
-		beq.s	loc_1677C
+		cmpi.w	#320,d1						; d1 = x pos of object's left edge on screen
+		bge.w	.next_object				; branch if object is outside right side of screen
+		addi.w	#128,d3								; d3 = x pos of object on screen, +128px for VDP sprite coordinate
+
+		; check if object is within Y bounds
+		btst	#render_useheight_bit,d4		; is use height flag on?
+		beq.s	.assume_height
 		moveq	#0,d0
-		move.b	$14(a0),d0
-		move.w	$C(a0),d2
+		move.b	ost_mainspr_height(a0),d0	; load pixel height
+		move.w	ost_y_pos(a0),d2
 		sub.w	4(a4),d2
 		move.w	d2,d1
-		add.w	d0,d1
-		bmi.w	loc_16804
+		add.w	d0,d1					; d1 = y pos of object's bottom edge on screen
+		bmi.w	.next_object				; branch if object is outside top side of screen
 		move.w	d2,d1
-		sub.w	d0,d1
-		cmpi.w	#$E0,d1	
-		bge.w	loc_16804
-		addi.w	#$80,d2	
-		bra.s	loc_16798
-; ===========================================================================
-
-loc_1677C:				
-		move.w	$C(a0),d2
+		sub.w	d0,d1					; d1 = y pos of object's top edge on screen
+		cmpi.w	#224,d1
+		bge.w	.next_object				; branch if object is outside bottom side of screen
+		addi.w	#128,d2					; d2 = y pos of object on screen, +128px for VDP sprite coordinate
+		bra.s	.draw_parent_object
+		
+	.assume_height:
+		move.w	ost_y_pos(a0),d2
 		sub.w	4(a4),d2
-		addi.w	#$80,d2	
+		addi.w	#128,d2
 		andi.w	#$7FF,d2
-		cmpi.w	#$60,d2
-		bcs.s	loc_16804
-		cmpi.w	#$180,d2
-		bcc.s	loc_16804
+		cmpi.w	#128-32,d2
+		blo.s	.next_object
+		cmpi.w	#32+128+224,d2
+		bhs.s	.next_object
 
-loc_16798:				
+	.draw_parent_object:
 		moveq	#0,d1
-		move.b	$B(a0),d1
-		beq.s	loc_167B6
+		move.b	ost_mainspr_frame(a0),d1	; get current frame
+		beq.s	.skip_draw_parent	; if it was zero, skip drawing the parent
 		add.w	d1,d1
 		movea.l	a5,a1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		bmi.s	loc_167B6
+		adda.w	(a1,d1.w),a1				; jump to frame within mappings
+		move.w	(a1)+,d1				; number of sprite pieces
+		subq.w	#1,d1					; subtract 1 for loops
+		bmi.s	.skip_draw_parent				; branch if frame contained 0 sprite pieces
 		move.w	d4,-(sp)
-		bsr.w	sub_1680A
+		bsr.w	BuildSpr_DrawCheck	; draw the sprite
 		move.w	(sp)+,d4
 
-loc_167B6:				
-					
-		ori.b	#-$80,1(a0)
-		lea	$10(a0),a6
+	.skip_draw_parent:
+		ori.b	#$80,ost_render(a0)	; set onscreen flag
+		lea	ost_subspr2_x_pos(a0),a6
 		moveq	#0,d0
-		move.b	$F(a0),d0
-		subq.w	#1,d0
-		bcs.s	loc_16804
+		move.b	mainspr_childsprites(a0),d0	; get child sprite count
+		subq.w	#1,d0		; if there are 0, go to next object
+		bcs.s	.next_object
 
-loc_167CA:				
+	.childsprite_loop:		
 		swap	d0
-		move.w	(a6)+,d3
+		move.w	(a6)+,d3	; get X pos
 		sub.w	(a4),d3
-		addi.w	#$80,d3	
-		move.w	(a6)+,d2
+		addi.w	#128,d3
+		move.w	(a6)+,d2	; get Y pos
 		sub.w	4(a4),d2
-		addi.w	#$80,d2	
+		addi.w	#128,d2
 		andi.w	#$7FF,d2
 		addq.w	#1,a6
 		moveq	#0,d1
-		move.b	(a6)+,d1
+		move.b	(a6)+,d1	; get mapping frame
 		add.w	d1,d1
 		movea.l	a5,a1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		bmi.s	loc_167FE
+		adda.w	(a1,d1.w),a1		; jump to frame within mappings
+		move.w	(a1)+,d1			; number of sprite pieces
+		subq.w	#1,d1				; subtract 1 for loops
+		bmi.s	.skip_draw_child
 		move.w	d4,-(sp)
-		bsr.w	sub_1680A
+		bsr.w	BuildSpr_DrawCheck
 		move.w	(sp)+,d4
 
-loc_167FE:				
+	.skip_draw_child:
 		swap	d0
-		dbf	d0,loc_167CA
+		dbf	d0,.childsprite_loop	; repeat for number of child sprites
 
-loc_16804:				
-					
+	.next_object:
 		movea.l	(sp)+,a4
-		bra.w	loc_166F2
+		bra.w	BuildSprites_NextObject
 ; End of function BuildSprites
 
 
-; ===========================================================================
+
+    if ~FixBugs
+		; This check has been moved, so it is redundant.
+		; See the bugfix under 'BuildSpr_DrawLoop'.
+; sub_1680A:
+BuildSpr_DrawCheck:
+		cmpi.b	#countof_max_sprites,d5		; has the sprite limit been reached?
+		blo.s	BuildSpr_Cont	; if it hasn't, branch
+		rts	; otherwise, return
+
+    endc
 
 
-sub_1680A:				
-					
-		cmpi.b	#$50,d5
-		bcs.s	loc_1681C
-		rts	
-; End of function sub_1680A
+; sub_16812: ; DrawSprite
+BuildSpr_Draw:
+		movea.w	ost_tile(a0),a3
+    if ~FixBugs
+		; This check has been moved, so it is redundant.
+		; See the bugfix under 'BuildSpr_DrawLoop'.
+		cmpi.b	#countof_max_sprites,d5
+		bhs.s	BuildSpr_Done
+    endc
 
-
-; ===========================================================================
-
-
-BuildSpr_Draw:				
-		movea.w	2(a0),a3
-		cmpi.b	#$50,d5
-		bcc.s	locret_16852
-
-loc_1681C:				
-		btst	#0,d4
-		bne.s	loc_16854
-		btst	#1,d4
-		bne.w	loc_168B4
-
-loc_1682A:				
-		move.b	(a1)+,d0
+    if FixBugs
+; sub_1680A:
+BuildSpr_DrawCheck:
+    else
+; loc_1681C:
+BuildSpr_Cont:
+    endc
+		btst	#render_xflip_bit,d4	; is the sprite to be X-flipped?
+		bne.s	BuildSpr_FlipX	; if it is, branch
+		btst	#render_yflip_bit,d4	; is the sprite to be Y-flipped?
+		bne.w	BuildSpr_FlipY	; if it is, branch
+; loc_1682A:
+BuildSpr_DrawLoop:
+    if FixBugs
+		; In a rather overzealous optimisation, this game doesn't check if
+		; the sprite limit has been reached every time it processes a sprite
+		; piece. Naturally, this leads to the 'v_sprite_buffer' buffer being
+		; overflowed if too many sprites are processed. To mitigate this, the
+		; developers placed an $80 byte large spill buffer after
+		; 'v_sprite_buffer', to 'catch' the overflow. Unfortunately, this spill
+		; buffer is not big enough to catch all overflow: this oversight is
+		; responsible for the famous 'Ashua' bug. To fix this, we'll just
+		; undo this optimistaion. Sonic 3 & Knuckles undid this optimistaion
+		; too, but heavily optimised the rest of 'BuildSprites' to make up
+		; for it.
+		cmpi.b	#countof_max_sprites,d5		; has the sprite limit been reached?
+		bhs.s	BuildSpr_Done	; if it has, branch
+    endc
+		move.b	(a1)+,d0				; get relative y pos from mappings
 		ext.w	d0
-		add.w	d2,d0
-		move.w	d0,(a2)+
-		move.b	(a1)+,(a2)+
-		addq.b	#1,d5
-		move.b	d5,(a2)+
-		move.w	(a1)+,d0
-		add.w	a3,d0
-		move.w	d0,(a2)+
+		add.w	d2,d0					; add VDP y pos
+		move.w	d0,(a2)+				; write y pos to sprite buffer
+		move.b	(a1)+,(a2)+				; write sprite size to buffer
+		addq.b	#1,d5					; increment sprite counter
+		move.b	d5,(a2)+				; write link to next sprite in buffer
+		move.w	(a1)+,d0				; get high byte of tile number from mappings
+		add.w	a3,d0					; add VRAM setting
+		move.w	d0,(a2)+				; write to buffer
 		addq.w	#2,a1
-		move.w	(a1)+,d0
-		add.w	d3,d0
-		andi.w	#$1FF,d0
-		bne.s	loc_1684C
-		addq.w	#1,d0
+		move.w	(a1)+,d0				; get relative x pos from mappings
+		add.w	d3,d0					; add VDP x pos
+		andi.w	#$1FF,d0				; keep within 512px
+		bne.s	.x_not_0				; branch if x pos isn't 0
+		addq.w	#1,d0					; add 1 to prevent sprite masking (sprites at x pos 0 act as masks)
 
-loc_1684C:				
-		move.w	d0,(a2)+
-		dbf	d1,loc_1682A
+	.x_not_0:
+		move.w	d0,(a2)+	; set X pos
+		dbf	d1,BuildSpr_DrawLoop	; repeat for next sprite
 
-locret_16852:				
-		rts	
+	BuildSpr_Done:
+		rts
 ; ===========================================================================
+; loc_16854:
+BuildSpr_FlipX:
+		btst	#render_yflip_bit,d4	; is it to be Y-flipped as well?
+		bne.w	BuildSpr_FlipXY	; if it is, branch
 
-loc_16854:				
-		btst	#1,d4
-		bne.w	loc_168FC
-
-loc_1685C:				
-		move.b	(a1)+,d0
+	.loop:
+    if FixBugs
+		; See the bugfix under 'BuildSpr_DrawLoop'.
+		cmpi.b	#countof_max_sprites,d5		; has the sprite limit been reached?
+		bhs.s	.return		; if it has, branch
+    endc
+		move.b	(a1)+,d0				; y position
 		ext.w	d0
 		add.w	d2,d0
 		move.w	d0,(a2)+
-		move.b	(a1)+,d4
+		move.b	(a1)+,d4				; size
 		move.b	d4,(a2)+
-		addq.b	#1,d5
+		addq.b	#1,d5					; link
 		move.b	d5,(a2)+
-		move.w	(a1)+,d0
+		move.w	(a1)+,d0				; art tile
 		add.w	a3,d0
-		eori.w	#$800,d0
+		eori.w	#$800,d0				; toggle xflip in VDP
+		move.w	d0,(a2)+				; write to buffer
+		addq.w	#2,a1
+		move.w	(a1)+,d0
+		neg.w	d0						; negate x-offset
+		move.b	CellOffsets_XFlip(pc,d4.w),d4
+		sub.w	d4,d0					; subtract sprite size
+		add.w	d3,d0
+		andi.w	#$1FF,d0				; keep within 512px
+		bne.s	.x_not_0
+		addq.w	#1,d0
+	
+	.x_not_0:
+		move.w	d0,(a2)+
+		dbf	d1,.loop
+		
+	.return:
+		rts
+; ===========================================================================
+; offsets for horizontally mirrored sprite pieces
+; in Sonic 1, these were calculated
+CellOffsets_XFlip:
+		dc.b   8,  8,  8,  8	; 4
+		dc.b $10,$10,$10,$10	; 8
+		dc.b $18,$18,$18,$18	; 12
+		dc.b $20,$20,$20,$20	; 16
+; offsets for vertically mirrored sprite pieces
+; in Sonic 1, these were calculated
+CellOffsets_YFlip:
+		dc.b   8,$10,$18,$20	; 4
+		dc.b   8,$10,$18,$20	; 8
+		dc.b   8,$10,$18,$20	; 12
+		dc.b   8,$10,$18,$20	; 16
+; ===========================================================================
+; loc_168B4:
+BuildSpr_FlipY:
+    if FixBugs
+		; See the bugfix under 'BuildSpr_DrawLoop'.
+		cmpi.b	#countof_max_sprites,d5		; has the sprite limit been reached?
+		bhs.s	.return		; if it has, branch
+    endc
+		move.b	(a1)+,d0				; get y-offset
+		move.b	(a1),d4					; get size
+		ext.w	d0
+		neg.w	d0					; negate y-offset
+		move.b	CellOffsets_YFlip(pc,d4.w),d4
+		sub.w	d4,d0
+		add.w	d2,d0					; add y-position
+		move.w	d0,(a2)+				; write to buffer
+		move.b	(a1)+,(a2)+				; size
+		addq.b	#1,d5
+		move.b	d5,(a2)+				; link
+		move.w	(a1)+,d0				; art tile
+		add.w	a3,d0
+		eori.w	#$1000,d0				; toggle yflip in VDP
 		move.w	d0,(a2)+
 		addq.w	#2,a1
 		move.w	(a1)+,d0
-		neg.w	d0
-		move.b	byte_16894(pc,d4.w),d4
-		sub.w	d4,d0
 		add.w	d3,d0
-		andi.w	#$1FF,d0
-		bne.s	loc_1688C
+		andi.w	#$1FF,d0				; keep within 512px
+		bne.s	.x_not_0
 		addq.w	#1,d0
 
-loc_1688C:				
-		move.w	d0,(a2)+
-		dbf	d1,loc_1685C
-		rts	
-; ===========================================================================
-byte_16894:	dc.b   8		; 0
-		dc.b   8		; 1
-		dc.b   8		; 2
-		dc.b   8		; 3
-		dc.b $10		; 4
-		dc.b $10		; 5
-		dc.b $10		; 6
-		dc.b $10		; 7
-		dc.b $18		; 8
-		dc.b $18		; 9
-		dc.b $18		; 10
-		dc.b $18		; 11
-		dc.b $20		; 12
-		dc.b $20		; 13
-		dc.b $20		; 14
-		dc.b $20		; 15
-byte_168A4:	dc.b   8		; 0
-		dc.b $10		; 1
-		dc.b $18		; 2
-		dc.b $20		; 3
-		dc.b   8		; 4
-		dc.b $10		; 5
-		dc.b $18		; 6
-		dc.b $20		; 7
-		dc.b   8		; 8
-		dc.b $10		; 9
-		dc.b $18		; 10
-		dc.b $20		; 11
-		dc.b   8		; 12
-		dc.b $10		; 13
-		dc.b $18		; 14
-		dc.b $20		; 15
-; ===========================================================================
+	.x_not_0:
+		move.w	d0,(a2)+	; set X pos
+		dbf	d1,BuildSpr_FlipY
 
-loc_168B4:				
-					
+	.return:
+		rts
+; ===========================================================================
+; offsets for vertically mirrored sprite pieces
+CellOffsets_YFlip2:
+		dc.b   8,$10,$18,$20	; 4
+		dc.b   8,$10,$18,$20	; 8
+		dc.b   8,$10,$18,$20	; 12
+		dc.b   8,$10,$18,$20	; 16
+; ===========================================================================
+; loc_168FC:
+BuildSpr_FlipXY:
+
+    if FixBugs
+		; See the bugfix under 'BuildSpr_DrawLoop'.
+		cmpi.b	#80,d5		; has the sprite limit been reached?
+		bhs.s	.return		; if it has, branch
+    endc
 		move.b	(a1)+,d0
 		move.b	(a1),d4
 		ext.w	d0
 		neg.w	d0
-		move.b	byte_168A4(pc,d4.w),d4
+		move.b	CellOffsets_YFlip2(pc,d4.w),d4
 		sub.w	d4,d0
 		add.w	d2,d0
 		move.w	d0,(a2)+
-		move.b	(a1)+,(a2)+
+		move.b	(a1)+,d4				; size
+		move.b	d4,(a2)+				; link
 		addq.b	#1,d5
 		move.b	d5,(a2)+
 		move.w	(a1)+,d0
 		add.w	a3,d0
-		eori.w	#$1000,d0
-		move.w	d0,(a2)+
-		addq.w	#2,a1
-		move.w	(a1)+,d0
-		add.w	d3,d0
-		andi.w	#$1FF,d0
-		bne.s	loc_168E4
-		addq.w	#1,d0
-
-loc_168E4:				
-		move.w	d0,(a2)+
-		dbf	d1,loc_168B4
-		rts	
-; ===========================================================================
-byte_168EC:	dc.b   8		; 0
-		dc.b $10		; 1
-		dc.b $18		; 2
-		dc.b $20		; 3
-		dc.b   8		; 4
-		dc.b $10		; 5
-		dc.b $18		; 6
-		dc.b $20		; 7
-		dc.b   8		; 8
-		dc.b $10		; 9
-		dc.b $18		; 10
-		dc.b $20		; 11
-		dc.b   8		; 12
-		dc.b $10		; 13
-		dc.b $18		; 14
-		dc.b $20		; 15
-; ===========================================================================
-
-loc_168FC:				
-					
-		move.b	(a1)+,d0
-		move.b	(a1),d4
-		ext.w	d0
-		neg.w	d0
-		move.b	byte_168EC(pc,d4.w),d4
-		sub.w	d4,d0
-		add.w	d2,d0
-		move.w	d0,(a2)+
-		move.b	(a1)+,d4
-		move.b	d4,(a2)+
-		addq.b	#1,d5
-		move.b	d5,(a2)+
-		move.w	(a1)+,d0
-		add.w	a3,d0
-		eori.w	#$1800,d0
+		eori.w	#$1800,d0				; toggle x/yflip in VDP
 		move.w	d0,(a2)+
 		addq.w	#2,a1
 		move.w	(a1)+,d0
 		neg.w	d0
-		move.b	byte_1693E(pc,d4.w),d4
+		move.b	CellOffsets_XFlip2(pc,d4.w),d4
 		sub.w	d4,d0
 		add.w	d3,d0
-		andi.w	#$1FF,d0
-		bne.s	loc_16936
+		andi.w	#$1FF,d0				; keep within 512px
+		bne.s	.x_not_0
 		addq.w	#1,d0
 
-loc_16936:				
+	.x_not_0:
 		move.w	d0,(a2)+
-		dbf	d1,loc_168FC
-		rts	
-; End of function BuildSpr_Draw
+		dbf	d1,BuildSpr_FlipXY
+	
+	.return:
+		rts
 
 ; ===========================================================================
-byte_1693E:	dc.b   8		; 0
-		dc.b   8		; 1
-		dc.b   8		; 2
-		dc.b   8		; 3
-		dc.b $10		; 4
-		dc.b $10		; 5
-		dc.b $10		; 6
-		dc.b $10		; 7
-		dc.b $18		; 8
-		dc.b $18		; 9
-		dc.b $18		; 10
-		dc.b $18		; 11
-		dc.b $20		; 12
-		dc.b $20		; 13
-		dc.b $20		; 14
-		dc.b $20		; 15
+; offsets for horizontally mirrored sprite pieces
+CellOffsets_XFlip2:
+		dc.b   8,  8,  8,  8	; 4
+		dc.b $10,$10,$10,$10	; 8
+		dc.b $18,$18,$18,$18	; 12
+		dc.b $20,$20,$20,$20	; 16
 ; ===========================================================================
 
-loc_1694E:				
+BuildSprites_2P:				
 		lea	(v_sprite_buffer).w,a2
 		moveq	#2,d5
 		moveq	#0,d4
@@ -41439,7 +41510,7 @@ word_1E0EC:	dc.w	 1		; 0
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_1E0F0:				
+SuperSonicStars:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_1E0FE(pc,d0.w),d1
@@ -44694,7 +44765,7 @@ loc_203A4:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-HPZWaterfall:				
+WaterfallHiddenPalace:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_203BA(pc,d0.w),d1
@@ -45182,7 +45253,7 @@ word_20B6C:	dc.w 6
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-EmeraldHillWaterfall:				
+WaterfallEmeraldHill:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_20BAC(pc,d0.w),d1
@@ -45615,7 +45686,7 @@ word_21152:	dc.w 1
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_2115C:				
+PinballMode:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_21170(pc,d0.w),d1
@@ -45838,7 +45909,7 @@ loc_2138A:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_21392:				
+PalSwitcherWingFortress:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_213A6(pc,d0.w),d1
@@ -56142,7 +56213,7 @@ loc_28F82:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Drawbridge:				
+BridgeMysticCave:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_28F96(pc,d0.w),d1
@@ -56937,7 +57008,7 @@ loc_297DC:
 ; Vine switch that you hang off	in MCZ
 ; ----------------------------------------------------------------------------
 
-Sprite_297E4:				
+VineSwitch:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_297F2(pc,d0.w),d1
@@ -57073,7 +57144,7 @@ loc_29976:
 ; Vine that you	hang off and it	moves down from	MCZ
 ; ----------------------------------------------------------------------------
 
-Sprite_2997C:				
+MovingVine:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_2998A(pc,d0.w),d1
@@ -57510,7 +57581,7 @@ loc_29FFA:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_2A000:				
+Drawbridge:				
 		btst	#6,1(a0)
 		bne.w	loc_2A018
 		moveq	#0,d0
@@ -57758,7 +57829,7 @@ loc_2A28A:
 ; Platform that	is usually swinging from ARZ
 ; ----------------------------------------------------------------------------
 
-Sprite_2A290:				
+SwingingPlatform2:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_2A29E(pc,d0.w),d1
@@ -58021,7 +58092,7 @@ loc_2A4F6:
 ; 3 adjoined platforms from ARZ	that rotate in a circle
 ; ----------------------------------------------------------------------------
 
-Sprite_2A4FC:				
+CirclingPlatform:				
 		btst	#6,1(a0)
 		bne.w	loc_2A514
 		moveq	#0,d0
@@ -58581,7 +58652,7 @@ loc_2AB7E:
 ; Spring from CNZ that you hold	down jump on to	pull back further
 ; ----------------------------------------------------------------------------
 
-Sprite_2AB84:				
+PinballLauncher:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_2ABCE(pc,d0.w),d1
@@ -59061,7 +59132,7 @@ loc_2B13A:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_2B140:				
+Flipper:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_2B152(pc,d0.w),d1
@@ -59373,7 +59444,7 @@ loc_2B522:
 ; you can walk across
 ; ----------------------------------------------------------------------------
 
-Sprite_2B528:				
+SnakePlatform:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_2B536(pc,d0.w),d1
@@ -59586,7 +59657,7 @@ loc_2B846:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_2B84C:				
+BombPenalty:				
 		moveq	#0,d1
 		move.w	$38(a0),d1
 		swap	d1
@@ -59656,7 +59727,7 @@ loc_2B8E6:
 ; Big block from CNZ that moves	back and fourth
 ; ----------------------------------------------------------------------------
 
-Sprite_2B8EC:				
+LargeMovingBlock:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_2B8FA(pc,d0.w),d1
@@ -59769,7 +59840,7 @@ loc_2BA02:
 ; Elevator from	CNZ
 ; ----------------------------------------------------------------------------
 
-Sprite_2BA08:				
+Elevator:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_2BA16(pc,d0.w),d1
@@ -59921,10 +59992,10 @@ loc_2BB66:
 ; ----------------------------------------------------------------------------
 ; Sprite
 ;
-; Pokey	that gives out points from CNZ
+; whose idea was it to call these "PointPokeys" in Sonic 2 AS?
 ; ----------------------------------------------------------------------------
 
-Sprite_2BB6C:				
+Cage:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_2BB7A(pc,d0.w),d1
@@ -60783,7 +60854,7 @@ loc_2C440:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_2C448:				
+HexagonalBumper:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_2C456(pc,d0.w),d1
@@ -61001,7 +61072,7 @@ loc_2C6A6:
 ; Block	thingy from CNZ	that disappears	after 3	hits
 ; ----------------------------------------------------------------------------
 
-Sprite_2C6AC:				
+SaucerBumper:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_2C6BA(pc,d0.w),d1
@@ -61254,7 +61325,7 @@ loc_2C924:
 ; A sprite that	you can	hold on	to, like the rails in WFZ
 ; ----------------------------------------------------------------------------
 
-Sprite_2C92C:				
+InvisibleGrabBlock:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_2C93A(pc,d0.w),d1
@@ -66143,7 +66214,7 @@ loc_30478:
 ; ARZ boss
 ; ----------------------------------------------------------------------------
 
-Sprite_30480:				
+BossAquaticRuin:				
 		moveq	#0,d0
 		move.b	$A(a0),d0
 		move.w	off_3048E(pc,d0.w),d1
@@ -72096,7 +72167,7 @@ loc_34A32:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_34A5C:				
+TailsTailsSpecial:				
 		movea.l	$38(a0),a1
 		move.w	8(a1),8(a0)
 		move.w	$C(a1),$C(a0)
@@ -74590,7 +74661,7 @@ off_36628:	dc.w off_36A3E-off_36628; 0
 		dc.w off_36CD8-off_36628; 3
 		dc.w off_36EE6-off_36628; 4
 		dc.w off_3707C-off_36628; 5
-		dc.w Sprite_37322-off_36628; 6
+		dc.w Rexon-off_36628; 6
 		dc.w off_3766E-off_36628; 7
 		dc.w off_37764-off_36628; 8
 		dc.w off_37888-off_36628; 9
@@ -74654,7 +74725,7 @@ off_36628:	dc.w off_36A3E-off_36628; 0
 		dc.w off_3C08E-off_36628; 67
 		dc.w off_3C276-off_36628; 68
 		dc.w off_3C3B8-off_36628; 69
-		dc.w Sprite_3C3D6-off_36628; 70
+		dc.w TornadoSmoke-off_36628; 70
 		dc.w off_377BE-off_36628; 71
 		dc.w off_3C438-off_36628; 72
 		dc.w off_3CC80-off_36628; 73
@@ -74948,7 +75019,7 @@ loc_3691E:
 ; Blowfly badnick from ARZ
 ; ----------------------------------------------------------------------------
 
-Sprite_36924:				
+Whisp:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_36932(pc,d0.w),d1
@@ -75070,7 +75141,7 @@ byte_36A64:	dc.b   0,  2,$F8,  8,  0,  6,  0,  3,$FF,$F4,  0,  8,  0,  3,  0,  1
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_36A76:				
+GrounderInWall:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_36A84(pc,d0.w),d1
@@ -75186,7 +75257,7 @@ loc_36B74:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_36B88:				
+GrounderWall:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_36B96(pc,d0.w),d1
@@ -75228,7 +75299,7 @@ byte_36BCC:	dc.b   1,$FE		; 0
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_36BD4:				
+GrounderRocks:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_36BE2(pc,d0.w),d1
@@ -75406,7 +75477,7 @@ word_36D9A:	dc.w 2
 ; Shark	from ARZ
 ; ----------------------------------------------------------------------------
 
-Sprite_36DAC:				
+ChopChop:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_36DBA(pc,d0.w),d1
@@ -75572,7 +75643,7 @@ word_36F04:	dc.w 1
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_36F0E:				
+Spiker:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_36F1C(pc,d0.w),d1
@@ -75661,7 +75732,7 @@ loc_36FDC:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_36FE6:				
+SpikerDrill:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_36FF4(pc,d0.w),d1
@@ -75762,7 +75833,7 @@ word_370F4:	dc.w 1
 ; Orbit	badnick	from HTZ
 ; ----------------------------------------------------------------------------
 
-Sprite_370FE:				
+Sol:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3710C(pc,d0.w),d1
@@ -75955,7 +76026,7 @@ word_37318:	dc.w 1
 ; Lava snake from HTZ
 ; ----------------------------------------------------------------------------
 
-Sprite_37322:				
+Rexon:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_37330(pc,d0.w),d1
@@ -76035,7 +76106,7 @@ loc_373CA:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_373D0:				
+RexonHead:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_373DE(pc,d0.w),d1
@@ -76370,7 +76441,7 @@ word_376A8:	dc.w  $F00		; 0
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_376E8:				
+Projectile:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_376F6(pc,d0.w),d1
@@ -76474,7 +76545,7 @@ off_377BE:	dc.l Map_3BA46
 ; Bomber badnick from SCZ
 ; ----------------------------------------------------------------------------
 
-Sprite_377C8:				
+Nebula:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_377D6(pc,d0.w),d1
@@ -76591,7 +76662,7 @@ word_3792C:	dc.w 1
 ; Small	turtle on back of larger flying	turtle from SCZ
 ; ----------------------------------------------------------------------------
 
-Sprite_37936:				
+Turtloid:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_37944(pc,d0.w),d1
@@ -76679,7 +76750,7 @@ locret_37A04:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_37A06:				
+TurtloidRider:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_37A14(pc,d0.w),d1
@@ -76737,7 +76808,7 @@ locret_37A80:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_37A82:				
+BalkiryJet:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_37A90(pc,d0.w),d1
@@ -76858,7 +76929,7 @@ word_37BF0:	dc.w 1
 ; Coconuts badnick from	EHZ
 ; ----------------------------------------------------------------------------
 
-Sprite_37BFA:				
+Coconuts:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_37C08(pc,d0.w),d1
@@ -77056,7 +77127,7 @@ byte_37E04:	dc.b   0,  2,$F8,  1,$40,$24,$40,$12,$FF,$F8,$F8,  1,$48,$24,$48,$12
 ; Snake	badnick	from MCZ
 ; ----------------------------------------------------------------------------
 
-Sprite_37E16:				
+Crawlton:				
 		moveq	#0,d0
 		move.b	$3B(a0),d0
 		move.w	off_37E24(pc,d0.w),d1
@@ -77250,7 +77321,7 @@ byte_38002:	dc.b   0,  1,$F8,  5,  0,  6,  0,  3,$FF,$F8; 0
 ; Crab badnick from MTZ
 ; ----------------------------------------------------------------------------
 
-Sprite_3800C:				
+Shellcracker:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3801A(pc,d0.w),d1
@@ -77401,7 +77472,7 @@ loc_38146:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3815C:				
+ShellcrackerClaw:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3816A(pc,d0.w),d1
@@ -77639,7 +77710,7 @@ word_383AA:	dc.w 1
 ; Praying mantis dude from MTZ
 ; ----------------------------------------------------------------------------
 
-Sprite_383B4:				
+Slicer:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_383C2(pc,d0.w),d1
@@ -77745,7 +77816,7 @@ loc_3849E:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_384A2:				
+SlicerPincers:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_384B0(pc,d0.w),d1
@@ -77936,7 +78007,7 @@ word_3872C:	dc.w 2
 ; Glowbug from MCZ
 ; ----------------------------------------------------------------------------
 
-Sprite_3873E:				
+Flasher:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3874C(pc,d0.w),d1
@@ -78146,7 +78217,7 @@ word_3896A:	dc.w 6
 ; Exploding star from MTZ
 ; ----------------------------------------------------------------------------
 
-Sprite_3899C:				
+Asteron:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_389AA(pc,d0.w),d1
@@ -78292,7 +78363,7 @@ word_38AE0:	dc.w 1
 ; Guy with shield that crawls along floor from CNZ
 ; ----------------------------------------------------------------------------
 
-Sprite_38AEA:				
+Spiny:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_38AF8(pc,d0.w),d1
@@ -78365,7 +78436,7 @@ loc_38B78:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_38B86:				
+SpinyWall:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_38B94(pc,d0.w),d1
@@ -78530,7 +78601,7 @@ byte_38D80:	dc.b $10, $A,  0,  4,  0,  4,$E8,  6,  0, $F,  0,  7,$FF,$F4,$F0,  1
 ; Spider badnick from CPZ
 ; ----------------------------------------------------------------------------
 
-Sprite_38DBA:				
+Grabber:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_38DC8(pc,d0.w),d1
@@ -78701,7 +78772,7 @@ loc_38F62:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_38F66:				
+GrabberLegs:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_38F74(pc,d0.w),d1
@@ -78788,7 +78859,7 @@ loc_39022:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_39032:				
+GrabberBox:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_39040(pc,d0.w),d1
@@ -78817,7 +78888,7 @@ loc_39056:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_39066:				
+GrabberString:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_39074(pc,d0.w),d1
@@ -78852,7 +78923,7 @@ loc_3909E:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_390A2:				
+Unknown1:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_390B0(pc,d0.w),d1
@@ -79097,7 +79168,7 @@ word_3932E:	dc.w 4
 ; Jet badnick from SCZ
 ; ----------------------------------------------------------------------------
 
-Sprite_3937A:				
+Balkiry:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_39388(pc,d0.w),d1
@@ -79154,7 +79225,7 @@ word_393F2:	dc.w 5
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3941C:				
+CluckerBase:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3942A(pc,d0.w),d1
@@ -79184,7 +79255,7 @@ loc_3943A:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_39452:				
+Clucker:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_39460(pc,d0.w),d1
@@ -79408,7 +79479,7 @@ word_39722:	dc.w 1
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3972C:				
+MechaSonic:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3973A(pc,d0.w),d1
@@ -80286,7 +80357,7 @@ word_3A1C2:	dc.w 3
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3A1DC:				
+SonicSegaScreen:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3A1EA(pc,d0.w),d1
@@ -80480,7 +80551,7 @@ locret_3A3F6:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3A3F8:				
+SegaHideTM:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3A406(pc,d0.w),d1
@@ -80780,7 +80851,7 @@ byte_3A76C:	dc.b $12		; 0
 ; The Tornado
 ; ----------------------------------------------------------------------------
 
-Sprite_3A790:				
+Tornado:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3A79E(pc,d0.w),d1
@@ -81721,7 +81792,7 @@ word_3B2C4:	dc.w 3
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3B2DE:				
+Cloud:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3B2EC(pc,d0.w),d1
@@ -81778,7 +81849,7 @@ byte_3B360:	dc.b   0,  1,$FC,  4,  0,$10,  0,  8,$FF,$F8; 0
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3B36A:				
+VerticalPropeller:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3B378(pc,d0.w),d1
@@ -81839,7 +81910,7 @@ word_3B3E8:	dc.w 2
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3B3FA:				
+HorizontalPropeller:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3B408(pc,d0.w),d1
@@ -81986,7 +82057,7 @@ word_3B5BE:	dc.w 2
 ; Tilting platform from	WFZ
 ; ----------------------------------------------------------------------------
 
-Sprite_3B5D0:				
+TiltingPlatform:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3B5DE(pc,d0.w),d1
@@ -82301,7 +82372,7 @@ word_3B894:	dc.w 2
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3B8A6:				
+VerticalLaser:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3B8B4(pc,d0.w),d1
@@ -82348,7 +82419,7 @@ byte_3B8E6:	dc.b   0,$10,$90, $B,  0,  0,  0,  0,$FF,$E8,$90, $B,  8,  0,  8,  0
 ; Wall turret from WFZ
 ; ----------------------------------------------------------------------------
 
-Sprite_3B968:				
+WallTurret:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3B976(pc,d0.w),d1
@@ -82481,7 +82552,7 @@ word_3BAB0:	dc.w 1
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3BABA:				
+HorizontalLaser:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3BAC8(pc,d0.w),d1
@@ -82545,7 +82616,7 @@ word_3BB1A:	dc.w 6
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3BB4C:				
+WheelWingFortress:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3BB5A(pc,d0.w),d1
@@ -82580,7 +82651,7 @@ word_3BB72:	dc.w 1
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3BB7C:				
+Unknown2:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3BB8A(pc,d0.w),d1
@@ -82617,7 +82688,7 @@ word_3BBA2:	dc.w 3
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3BBBC:				
+ShipExhaust:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3BBCA(pc,d0.w),d1
@@ -82663,7 +82734,7 @@ word_3BC0A:	dc.w 2
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3BC1C:				
+ConveyerPlatforms:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3BC2A(pc,d0.w),d1
@@ -82807,7 +82878,7 @@ word_3BD68:	dc.w 2
 ; Platform that	pops in	and out	from WFZ
 ; ----------------------------------------------------------------------------
 
-Sprite_3BD7A:				
+LateralCannon:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3BD88(pc,d0.w),d1
@@ -82923,7 +82994,7 @@ word_3BE98:	dc.w 2
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3BEAA:				
+Stick:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3BEB8(pc,d0.w),d1
@@ -82965,7 +83036,7 @@ word_3BEFA:	dc.w 1
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3BF04:				
+Catapult:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3BF12(pc,d0.w),d1
@@ -83154,7 +83225,7 @@ word_3C09A:	dc.w 2
 ; Sprite that sonic hangs onto on the back of Robotnic's getaway ship from WFZ
 ; ----------------------------------------------------------------------------
 
-Sprite_3C0AC:				
+BreakablePlating:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3C0BA(pc,d0.w),d1
@@ -83364,7 +83435,7 @@ word_3C316:	dc.w 2
 ; Rivet	thing you bust to get into ship	at the end of WFZ
 ; ----------------------------------------------------------------------------
 
-Sprite_3C328:				
+Rivet:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3C336(pc,d0.w),d1
@@ -83430,7 +83501,7 @@ word_3C3C4:	dc.w 2
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3C3D6:				
+TornadoSmoke:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3C3E4(pc,d0.w),d1
@@ -83476,7 +83547,7 @@ off_3C438:	dc.l Map_21120
 ; WFZ boss
 ; ----------------------------------------------------------------------------
 
-Sprite_3C442:				
+BossWingFortress:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3C450(pc,d0.w),d1
@@ -84468,7 +84539,7 @@ word_3CEBE:	dc.w 2
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3CED0:				
+Eggman:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3CEDE(pc,d0.w),d1
@@ -84759,7 +84830,7 @@ word_3D234:	dc.w 1
 ; Guy with shield that crawls along floor from CNZ
 ; ----------------------------------------------------------------------------
 
-Sprite_3D23E:				
+Crawl:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3D24C(pc,d0.w),d1
@@ -84989,7 +85060,7 @@ word_3D4A6:	dc.w 4
 ; Death	Egg
 ; ----------------------------------------------------------------------------
 
-Sprite_3D4C8:				
+EggRobo:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3D4D6(pc,d0.w),d1
@@ -87218,7 +87289,7 @@ loc_3EAC0:
 ; Unknown
 ; ----------------------------------------------------------------------------
 
-Sprite_3EAC8:				
+S1_STP_Credits:				
 		moveq	#0,d0
 		move.b	$24(a0),d0
 		move.w	off_3EAD6(pc,d0.w),d1
@@ -90843,7 +90914,7 @@ loc_41340:
 sub_41A6C:							
 		jmp	loc_16DC6
 sub_41A72:				
-		jmp	loc_1682A
+		jmp	BuildSpr_DrawLoop
 		
 		align 4
 	endc
@@ -93158,7 +93229,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_MenuJunk	; ArtNem_78CBC:
 		
 ;---------------------------------------------------------------------------------------
-; Graphivarious
+; Graphics - various
 ;---------------------------------------------------------------------------------------			
 		
 		incfile	Nem_Button	; ArtNem_78DAC:
@@ -93202,7 +93273,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_Perfect	; ArtNem_7EEBE:
 		
 ;---------------------------------------------------------------------------------------
-; GraphiAnimals
+; Graphics - Animals
 ;---------------------------------------------------------------------------------------		
 		
 		incfile	Nem_Flicky	; ArtNem_7EF60: ; ArtNem_Bird:
@@ -93219,7 +93290,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_Rabbit	; ArtNem_7FDD2:
 		
 ;---------------------------------------------------------------------------------------
-; Graphilevel objects
+; Graphics - level objects
 ;---------------------------------------------------------------------------------------
 		
 		incfile	Nem_WFZSwitch	; ArtNem_7FF2A:
@@ -93592,7 +93663,7 @@ Rings_ARZ_2:	incbin	"level/rings/ARZ 2.bin"
 Rings_SCZ_1:	incbin	"level/rings/SCZ 1.bin"
 Rings_SCZ_2:	incbin	"level/rings/SCZ 2.bin"	; null
 
-		align $200 ; Filler (free space)
+		align $200 ; (unnecessary; could be replaced with "even")
 
 ; --------------------------------------------------------------------------------------
 ; Objpos pointers
@@ -93842,6 +93913,7 @@ SaxDec_GetByte:
 
 ; ===========================================================================
 
+	if AssembledSoundDriver
 
 SoundDriver:	
 		pushs	; save current section info	
@@ -93861,21 +93933,22 @@ MergeCode: section org(0), file("sound/MergeData.dat"),over(Main)	; make data fi
 		ds.b Z80_Space	; reserve space for the compressed sound driver
 		even
 
+	else
+
+SoundDriver:	include "sound/Sound Driver Raw.asm" ; precompressed sound driver in dc.b form, copied from Nemesis text disassembly; retained as an option for checking bit-perfectness
+
+	endc
 
 
-;SoundDriver:	include "sound/Sound Driver Raw.asm" ; precompressed sound driver in dc.b form, copied from Nemesis text disassembly; retained as an option for checking bit-perfectness
-
-
+; --------------------------------------------------------------------------------------
+; DAC samples
+; --------------------------------------------------------------------------------------
 
 		; the DAC data has to line up with the end of the bank.
 
 		; actually it only has to fit within one bank, but we'll line it up to the end anyway
 		; because the padding gives the sound driver some room to grow
-		dcb.b ((-sizeof_DAC_samples+$8000-offset(*))&($8000-1)),0 ; replaces cnop -$2F00,$8000
-
-; --------------------------------------------------------------------------------------
-; DAC samples
-; --------------------------------------------------------------------------------------
+		align_to_end	sizeof_DAC_samples	; replaces cnop -$2F00,$8000
 
 ; Macro to include DAC samples, and generate bank pointer constants
 ; for them.
@@ -93894,24 +93967,20 @@ DAC_Start: bnkswtch_vals
 		incdac	DAC_Clap
 		incdac	DAC_RecordScratch
 		incdac	DAC_VLowClap
-;SndDAC_End:
-
 
 ; ------------------------------------------------------------------------------
 ; One music track
 ; ------------------------------------------------------------------------------
 
 MusicPoint1:		startbank
-		sndbank_ptr	MusFile_Continue
+		sndbank_ptr	MusFile_Continue ; this value is corrected later with a hack
 					
 MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		finishbank
 		align $20
-
-; This bank is pretty empty, so let's fill the rest of it with some of our Nemesis graphics.		
-			
+				
 ;---------------------------------------------------------------------------------------
-; Graphics - more level objects
+; Graphics - more level objects (making use of the rest of an otherwise empty bank)
 ;---------------------------------------------------------------------------------------		
 		
 		incfile	Nem_HTZFireball1
@@ -93941,19 +94010,13 @@ MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		incfile	Nem_MCZVinePulley	; ArtNem_F1D5C:
 		incfile	Nem_MCZDrawbridgeLogs
 
-		dcb.b ((-sizeof_SegaPCM+$8000-offset(*))&($8000-1)),0	; replaces cnop -$6714,$8000
-
 ; -------------------------------------------------------------------------------
 ; Sega Intro Sound
 ; 8-bit	unsigned PCM at 16Khz
 ; -------------------------------------------------------------------------------
-
+		align_to_end	sizeof_SegaPCM	; replaces cnop -$6714,$8000
 SegaPCM:	bnkswtch_vals	
 		incbin	"sound/PCM/SEGA.pcm"
-
-	if sizeof_SegaPCM>$8000
-		inform 3,"Sega sound must fit within $8000 bytes, but you have a $%h byte Sega sound.",sizeof_SegaPCM
-	endif
 
 ; ------------------------------------------------------------------------------
 ; Music	
@@ -94039,9 +94102,7 @@ IncludeSFX:	macro	name
 SFXFile_\name:	include	"sound/sfx/\name\.asm"
 		endm
 
-		SFXFiles	IncludeSFX	; include the actual SFX
-
-
+		SFXFiles	IncludeSFX	; include the actual SFX files
 		finishbank
 		align $FFFFF
 		

@@ -2,15 +2,15 @@
 ; Macro for playing a sound or a command
 ; ---------------------------------------------------------------------------
 
-play:		macro	queue, command, song
-		move.\0	#\song,d0				; load the song to d0
+;play:		macro	queue, command, song
+;		move.\0	#\song,d0				; load the song to d0
 
-		if (\queue < 0) | (\queue > v_soundqueue_size)
-		inform 2,"Invalid or undefined sound queue slot. Must be between 0 and \#v_soundqueue_size"
-		endc
+;		if (\queue < 0) | (\queue > v_soundqueue_size)
+;			inform 2,"Invalid or undefined sound queue slot. Must be between 0 and \#v_soundqueue_size"
+;		endc
 
-		\command	PlaySound\queue			; call playsound based on the slot ID
-		endm
+;		\command	PlaySound\queue			; call playsound based on the slot ID
+;		endm
 
 ; ---------------------------------------------------------------------------
 ; Define background music
@@ -54,17 +54,17 @@ MusicFiles:	macro func
 		\func	Title,			$CD, 0
 		\func	EndLevel,		$AA, 0
 		\func	GameOver,		$F2, 20h
-		\func	Continue,		$DB, -128 ; this is a hack to force the continue pointer to the correct value
+		\func	Continue,		$DB, -128	; force the continue music's pointer to the correct value
 		\func	Emerald,		$D5, 20h
 		\func	Credits,		$F0, 20h
-		\func	Drowning,		$80, 40h	
+		\func	Drowning,		$80, 40h	; don't adjust the drowning music for PAL, keep it synchronized with the gameplay
 	endm	
 
 ; ---------------------------------------------------------------------------
 ; Define sound effects
 ; This special macro is used to generate pointers and constants.
 ; Unlike with music, we can also use it to generate includes as well,
-; since they are in the rom in the same order as their IDs
+; since they are in the ROM in the same order as their IDs
 ; Constants for IDs are: sfx_(name)
 ; line format: \func	sound file, sound priority
 ; ---------------------------------------------------------------------------
@@ -158,7 +158,7 @@ SFXFiles:	macro	func
 		\func	Teleport,		70h
 		\func	Error,			71h
 		\func	MechaSonicBuzz,	70h
-		\func	LargeLaser,		70h	; large laser that shoots down Tornado
+		\func	LargeLaser,		70h	; large laser that shoots down Tornado in WFZ
 		
 		\func	OilSlide,		6Fh	
 		endm

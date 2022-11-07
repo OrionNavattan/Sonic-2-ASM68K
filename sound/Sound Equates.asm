@@ -1,5 +1,5 @@
 ; ---------------------------------------------------------------------------
-; Z80 Mega Drive hardware addresses
+; Standard Z80 Mega Drive hardware addresses
 ; ---------------------------------------------------------------------------
 ym_reg_a0: 			equ	4000h
 ym_reg_d0:			equ	4001h
@@ -29,7 +29,7 @@ z_queue_0:				rs.b 1 ; 9 ; queue slot 0
 z_queue_1:				rs.b 1 ; Ah ; queue slot 1
 z_queue_2:				rs.b 1 ; Bh ; queue slot 2 (unused). This slot was totally broken in Sonic 1's driver. It's mostly fixed here, but it's still a little broken (see 'zInitMusicPlayback').
 v_music_voice_table:	rs.b 2 ; Ch ; voice data pointer (2 bytes)
-f_fadein:			rs.b 1 ; Eh ; flag for fade in; Set to 80h while fading in (disabling SFX)
+f_fadein:				rs.b 1 ; Eh ; flag for fade in; Set to 80h while fading in (disabling SFX)
 v_fadein_delay:			rs.b 1 ; Fh ; similar to v_fadeout_delay, but for fading in
 v_fadein_counter:		rs.b 1 ; 10h ; similar to v_fadeout_counter, but for fading in 
 f_has_backup:			rs.b 1 ; 11h ; flag indicating 1-up fanfare is playing
@@ -133,8 +133,9 @@ tPSG4:			equ $E0					; PSG4 channel type
 ; RAM addresses for the sound driver
 ; ---------------------------------------------------------------------------
 			rsset 1380h 	; WARNING: if you change this, you MUST change the start location of the Music section in Compressed Music Header.asm to match
-z_music_data: 	rs.b 800h	; 1380h ; decompressed or copied music data
-z_stack: 		equ	__rs	; 1B80h ; head of Z80 stack
+z_music_data: 	rs.b 800h	; 1380h ; Z80 decompression buffer, (only 7C0h in size, remaining 40h is the Z80 stack)
+z_music_data_end:	equ __rs-40h	; 1B40h ; boundary between decompression buffer and Z80 stack
+z_stack_pointer: 		equ	__rs	; 1B80h ; Z80 initial stack pointer value
 
 ; z_vars: used for indirect addressing with a register
 ; z_abs_vars: used for absolute addressing
@@ -189,8 +190,10 @@ z_savesong_psg3:		rs.b z_track_vars ; 1FCAh
 z_tracks_save_end:		equ __rs
 
 ; ---------------------------------------------------------------------------
-; These addresses are reserved and included at the end of driver binary. 
-; They are defined here and included via macro.
+; Additional global variables
+; These addresses are, for some reason, reserved and included at the end of 
+; the driver binary. They are defined here and included via macro.
+; ---------------------------------------------------------------------------
 
 include_global_vars:	macro
 
@@ -209,7 +212,7 @@ f_paused:				db 0 ; 1307h ; pause flag used by the driver program; 0 = normal, F
 ; ---------------------------------------------------------------------------
 ; Additional constants
 ; ---------------------------------------------------------------------------
-Z80_space:						equ $F64	; size of compressed sound driver
+Z80_space:						equ $F64	; size of compressed sound driver (patched by S2 SndDriver Compress if necessary)
 countof_music_tracks:			equ	(z_tracks_end-z_tracks_start)/z_track_vars
 countof_music_dac_fm_tracks:	equ (z_song_dac_fm_end-z_song_dac_fm_start)/z_track_vars
 countof_music_fm_tracks:		equ	(z_song_fm_end-z_song_fm_start)/z_track_vars
