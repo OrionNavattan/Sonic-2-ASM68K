@@ -509,12 +509,12 @@ dma:		macro
 		endc
 		
 		lea	(vdp_control_port).l,a5
-		move.l	#$94000000+(((\2>>1)&$FF00)<<8)+$9300+((\2>>1)&$FF),(a5)
-		move.l	#$96000000+(((\1>>1)&$FF00)<<8)+$9500+((\1>>1)&$FF),(a5)
-		move.w	#$9700+((((\1>>1)&$FF0000)>>16)&$7F),(a5)
-		move.w	#dma_type+(dma_dest&$3FFF),(a5)
-		move.w	#dma_type2+((dma_dest&$C000)>>14),(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
+		move.l	#(vdp_dma_length_hi<<16)+(((\2>>1)&$FF00)<<8)+vdp_dma_length_low+((\2>>1)&$FF),(a5) 	; DMA length
+		move.l	#(vdp_dma_source_mid<<16)+(((\1>>1)&$FF00)<<8)+vdp_dma_source_low+((\1>>1)&$FF),(a5)	; DMA source high and mid bytes
+		move.w	#vdp_dma_source_hi+((((\1>>1)&$FF0000)>>16)&$7F),(a5)									; DMA source low byte
+		move.w	#dma_type+(dma_dest&$3FFF),(a5)								; DMA destination high byte
+		move.w	#dma_type2+((dma_dest&$C000)>>14),(v_vdp_dma_buffer).w		; DMA destination low byte; split into two words to work around a bug in the DMA controller on Model 1 VA0 and VA1 systems
+		move.w	(v_vdp_dma_buffer).w,(a5)	; set DMA destination; 68K will be halted immediately until the DMA is finished
 		endm
 
 ; ---------------------------------------------------------------------------
@@ -525,17 +525,46 @@ dma:		macro
 
 dma_fill:	macro value,length,dest
 		lea	(vdp_control_port).l,a5
-		move.w	#$8F01,(a5)				; set VDP increment to 1 byte
-		move.l	#$94000000+(((length)&$FF00)<<8)+$9300+((length)&$FF),(a5) ; set length of DMA
-		move.w	#$9780,(a5)				; set DMA mode to fill
+		move.w	#vdp_auto_inc+1,(a5)				; set VDP increment to 1 byte
+		move.l	#(vdp_dma_length_hi<<16)+(((length-1)&$FF00)<<8)+vdp_dma_length_low+((length-1)&$FF),(a5) ; set length of DMA
+		move.w	#vdp_dma_vram_fill,(a5)				; set DMA mode to fill
 		move.l	#$40000080+(((dest)&$3FFF)<<16)+(((dest)&$C000)>>14),(a5) ; set target of DMA
 		move.w	#value<<8,(vdp_data_port).l		; set byte to fill with
 	.wait_for_dma\@:
 		move.w	(a5),d1					; get status register
-		btst	#1,d1					; is DMA in progress?
+		btst	#dma_status_bit,d1					; is DMA in progress?
 		bne.s	.wait_for_dma\@				; if yes, branch
-		move.w	#$8F02,(a5)				; set VDP increment 2 bytes
+		move.w	#vdp_auto_inc+2,(a5)				; set VDP increment back to 2 bytes
 		endm
+
+; ---------------------------------------------------------------------------
+; Optimized DMA fill for when multiple DMA fills are done in sequence: 
+; skip loading the VDP control port and setting increment length to 1 if not 
+; the first, and skip resetting the increment if not the last.
+; input: value, length, destination, first/last (leave blank if neither)
+; ---------------------------------------------------------------------------
+
+dma_fill_sequential:	macro value,length,dest,firstlast
+	
+	if strcmp("\firstlast","first")		; if this is the first DMA fill,
+		lea	(vdp_control_port).l,a5		; load the VDP control port,
+		move.w	#vdp_auto_inc+1,(a5)	; and set VDP increment to 1 byte
+	endc	
+					
+		move.l	#$94000000+(((length-1)&$FF00)<<8)+$9300+((length-1)&$FF),(a5) ; set length of DMA
+		move.w	#vdp_dma_vram_fill,(a5)				; set DMA mode to fill
+		move.l	#$40000080+(((dest)&$3FFF)<<16)+(((dest)&$C000)>>14),(a5) ; set target of DMA
+		move.w	#value<<8,(vdp_data_port).l		; set byte to fill with
+	.wait_for_dma\@:
+		move.w	(a5),d1					; get status register
+		btst	#dma_status_bit,d1					; is DMA in progress?
+		bne.s	.wait_for_dma\@				; if yes, branch
+		
+	if strcmp("\firstlast","last")		; if this is the last DMA fill in the sequence,
+		move.w	#vdp_auto_inc+2,(a5)	; set VDP increment back to 2 bytes
+	endc	
+		endm
+		
 
 ; ---------------------------------------------------------------------------
 ; Disable display

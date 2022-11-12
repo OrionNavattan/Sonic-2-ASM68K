@@ -412,6 +412,7 @@
 ; ---------------------------------------------------------------------------
 ; File definitions - collision
 ; ---------------------------------------------------------------------------
+
 		filedef	ColCurveMap,"collision/Curve & Resistance Mapping",bin,bin
 		filedef	CollArray1,"collision/Collision Array (Normal)",bin,bin
 		filedef	CollArray2,"collision/Collision Array (Rotated)",bin,bin
@@ -434,6 +435,7 @@
 ; ---------------------------------------------------------------------------
 ; File definitions - level layouts
 ; ---------------------------------------------------------------------------
+
 		filedef	Level_EHZ1,"level/layout/EHZ 1",kos,unc
 		filedef	Level_EHZ2,"level/layout/EHZ 2",kos,unc
 		filedef	Level_MTZ1,"level/layout/MTZ 1",kos,unc

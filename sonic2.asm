@@ -25,7 +25,7 @@ Main:	group word,org(0) ; we have to use the long form of group declaration to a
 		section MainProgram,Main
 		
 
-AssembledSoundDriver equ 1 ; switch between assembled sound driver and precompressed sound driver 
+AssembledSoundDriver equ 0 ; switch between assembled sound driver and precompressed sound driver 
 ; for bit-perfect checking (you must enable or disable the invocation of S2 SndDriver Compress in the build script
 ; as well)
 
@@ -459,13 +459,12 @@ VBlank:
 		move.w	#1,(f_hblank).w		; set flag to let HBlank know a frame has finished
 		andi.w	#$3E,d0
 		move.w	VBlank_Index(pc,d0.w),d0
-		jsr	VBlank_Index(pc,d0.w)
+		jsr	VBlank_Index(pc,d0.w)			; jsr to relevant VBlank routine
 
-loc_45E:				
-					
-		addq.l	#1,(v_vblank_counter).w
-		movem.l	(sp)+,d0-a6
-		rte	
+VBlank_Exit:						
+		addq.l	#1,(v_vblank_counter).w			; jsr to relevant VBlank routine
+		popr	d0-a6					; restore all registers from stack
+		rte						; end of VBlank
 ; ===========================================================================
 VBlank_Index:	index offset(*),,2
 
@@ -484,101 +483,114 @@ VBlank_Index:	index offset(*),,2
 		ptr  VBlank_Ending			; $18
 		ptr  VBlank_CtrlDMA			; $1A
 ; ===========================================================================
-
+; 0 - runs when a frame ends before WaitForVBlank triggers (i.e. the game is lagging)
+; only update sound, and if in a level, palettes
 VBlank_Lag:				
 					
-		cmpi.b	#-$78,(v_gamemode).w
-		beq.s	loc_4C4
-		cmpi.b	#-$74,(v_gamemode).w
-		beq.s	loc_4C4
-		cmpi.b	#8,(v_gamemode).w
-		beq.s	loc_4C4
-		cmpi.b	#$C,(v_gamemode).w
-		beq.s	loc_4C4
+		cmpi.b	#id_TitleCard|id_Demo,(v_gamemode).w		; is game on level init sequence in demo mode?
+		beq.s	.islevel									; if yes, branch
+		cmpi.b	#-$74,(v_gamemode).w						; is game on level init in normal play mode?
+		beq.s	.islevel									; if yes, branch
+		cmpi.b	#8,(v_gamemode).w					; is game on a level proper in demo mode?
+		beq.s	.islevel							; if yes, branch			
+		cmpi.b	#$C,(v_gamemode).w					; is game on a level proper?
+		beq.s	.islevel							; if yes, branch
+		
 		stopZ80
 		waitz80
-		bsr.w	sub_1084
+		bsr.w	SoundDriverInput		; give input to the sound driver
 		startZ80
-		bra.s	loc_45E
+		
+		bra.s	VBlank_Exit	
 ; ===========================================================================
 
-	loc_4C4:				
-	
-		tst.b	(f_water_flag).w
-		beq.w	loc_566
+	.islevel:				
+		tst.b	(f_water_flag).w		; does level have water?
+		beq.w	.nowater					; if it does, branch
 		move.w	(vdp_control_port).l,d0
-		btst	#6,(v_console_region).w
-		beq.s	loc_4E2
+		btst	#6,(v_console_region).w	; is console PAL?
+		beq.s	.notPAL1					; if not, branch
+		
 		move.w	#$700,d0
+	.waitPAL1:				
+		dbf	d0,.waitPAL1
 
-	loc_4DE:				
-		dbf	d0,loc_4DE
-
-	loc_4E2:				
-		move.w	#1,(f_hblank).w
+	.notPAL1:				
+		move.w	#1,(f_hblank).w				; set flag to let HBlank know a frame has finished
 		stopZ80
 		waitz80
-		tst.b	(f_water_pal_full).w
-		bne.s	loc_526
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFF6CC0,(a5)
-		move.l	#-$69026A80,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#-$4000,(a5)
-		move.w	#$80,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		bra.s	loc_54A
+		tst.b	(f_water_pal_full).w			; is water covering the whole screen?
+		bne.s	.allwater						; if so, branch
+		
+;		lea	(vdp_control_port).l,a5
+;		move.l	#-$6BFF6CC0,(a5)
+;		move.l	#-$69026A80,(a5)
+;		move.w	#-$6881,(a5)
+;		move.w	#-$4000,(a5)
+;		move.w	#$80,(v_vdp_dma_buffer).w
+;		move.w	(v_vdp_dma_buffer).w,(a5)
+		dma v_pal_dry,sizeof_pal_all,cram	; DMA normal palette to CRAM (water palette will be copied by HBlank later)
+		
+
+
+		bra.s	.waterbelow
 ; ===========================================================================
 
-loc_526:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFF6CC0,(a5)
-		move.l	#-$69076AC0,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#-$4000,(a5)
-		move.w	#$80,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
+	.allwater:				
+;		lea	(vdp_control_port).l,a5
+;		move.l	#-$6BFF6CC0,(a5)
+;		move.l	#-$69076AC0,(a5)
+;		move.w	#-$6881,(a5)
+;		move.w	#-$4000,(a5)
+;		move.w	#$80,(v_vdp_dma_buffer).w
+;		move.w	(v_vdp_dma_buffer).w,(a5)
+		dma	v_pal_water,sizeof_pal_all,cram		; DMA water palette to CRAM
 
-loc_54A:				
-		move.w	(v_vdp_hint_counter).w,(a5)
-		move.w	#-$7DD0,(vdp_control_port).l
-		bsr.w	sub_1084
+	.waterbelow:				
+		move.w	(v_vdp_hint_counter).w,(a5)	; set water palette position by sending VDP register $8Axx to control port (vdp_control_port)
+		move.w	#vdp_fg_nametable+(vram_fg/$400),(vdp_control_port).l ; set fg scroll base to $C000
+		bsr.w	SoundDriverInput
 		startZ80
-		bra.w	loc_45E
+		bra.w	VBlank_Exit
 ; ===========================================================================
 
-loc_566:				
+	.nowater:				
 		move.w	(vdp_control_port).l,d0
-		move.l	#$40000010,(vdp_control_port).l
+		;move.l	#$40000010,(vdp_control_port).l
+		vdp_comm.l	move,$0000,vsram,write,,(VDP_control_port).l	; set VDP to VSRAM write
 		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l
 		btst	#6,(v_console_region).w
-		beq.s	loc_58E
+		beq.s	.notPAL2
+	
 		move.w	#$700,d0
+	.waitPAL2:				
+		dbf	d0,.waitPAL2
 
-loc_58A:				
-		dbf	d0,loc_58A
-
-loc_58E:				
-		move.w	#1,(f_hblank).w
+	.notPAL2:				
+		move.w	#1,(f_hblank).w				; set flag to let HBlank know a frame has finished
 		move.w	(v_vdp_hint_counter).w,(vdp_control_port).l
-		move.w	#-$7DD0,(vdp_control_port).l
+		move.w	#vdp_fg_nametable+(vram_fg/$400),(vdp_control_port).l ; set fg scroll base base to $C000
 		move.l	(v_fg_y_pos_vsram_p2).w,(v_hblank_fg_y_pos_vsram_p2).w
 		stopZ80
 		waitz80
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6CC0,(a5)
-		move.l	#-$69036B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7800,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		bsr.w	sub_1084
+		
+		;lea	(vdp_control_port).l,a5
+		;move.l	#-$6BFE6CC0,(a5)
+		;move.l	#-$69036B00,(a5)
+		;move.w	#-$6881,(a5)
+		;move.w	#$7800,(a5)
+		;move.w	#$83,(v_vdp_dma_buffer).w
+		;move.w	(v_vdp_dma_buffer).w,(a5)
+		dma	v_sprite_buffer,sizeof_vram_sprites,vram_sprites
+		
+		bsr.w	SoundDriverInput
 		startZ80
-		bra.w	loc_45E
+		bra.w	VBlank_Exit
 ; ===========================================================================
 
 VBlank_Sega:				
 		bsr.w	sub_E98
+		
 		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFE6C40,(a5)
 		move.l	#-$690F6B00,(a5)
@@ -586,6 +598,8 @@ VBlank_Sega:
 		move.w	#$7C00,(a5)
 		move.w	#$83,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
+		
+		
 		bsr.w	sub_10E6
 		tst.w	(v_countdown).w
 		beq.w	locret_628
@@ -715,7 +729,7 @@ loc_748:
 		move.w	#$83,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
 		bsr.w	ProcessDMAQueue
-		bsr.w	sub_1084
+		bsr.w	SoundDriverInput
 		startZ80
 		movem.l	(v_camera_x_pos).w,d0-d7
 		movem.l	d0-d7,(v_camera_pos_copy).w
@@ -726,7 +740,7 @@ loc_7C4:
 		movem.l	(v_fg_redraw_direction).w,d0-d3
 		movem.l	d0-d3,(v_fg_redraw_direction_copy).w
 		move.l	(v_fg_y_pos_vsram_p2).w,(v_hblank_fg_y_pos_vsram_p2).w
-		cmpi.b	#$5C,($FFFFF625).w ; '\'
+		cmpi.b	#$5C,($FFFFF625).w
 		bcc.s	sub_7E6
 		move.b	#1,(f_hblank_run_snd).w
 		rts	
@@ -752,7 +766,7 @@ loc_802:
 		stopZ80
 		waitz80
 		bsr.w	ReadJoypads
-		jsr	(sub_1084).l
+		jsr	(SoundDriverInput).l
 		tst.b	(v_ss_last_alt_hscroll_buffer).w
 		beq.s	loc_84A
 		lea	(vdp_control_port).l,a5
@@ -872,7 +886,7 @@ loc_98E:
 
 loc_994:				
 		bsr.w	ProcessDMAQueue
-		jsr	(sub_1084).l
+		jsr	(SoundDriverInput).l
 		startZ80
 		bsr.w	ProcessPLC2
 		tst.w	(v_countdown).w
@@ -1077,7 +1091,7 @@ loc_C04:
 		move.w	(v_vdp_dma_buffer).w,(a5)
 		bsr.w	ProcessDMAQueue
 		jsr	loc_15584
-		jsr	(sub_1084).l
+		jsr	(SoundDriverInput).l
 		startZ80
 		movem.l	(v_camera_x_pos).w,d0-d7
 		movem.l	d0-d7,(v_camera_pos_copy).w
@@ -1129,7 +1143,7 @@ loc_C9C:
 		move.w	#$83,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
 		bsr.w	ProcessDMAQueue
-		bsr.w	sub_1084
+		bsr.w	SoundDriverInput
 		movem.l	(v_camera_x_pos).w,d0-d7
 		movem.l	d0-d7,(v_camera_pos_copy).w
 		movem.l	(v_fg_redraw_direction).w,d0-d3
@@ -1233,7 +1247,7 @@ VBlank_Menu:
 		move.w	#$83,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
 		bsr.w	ProcessDMAQueue
-		bsr.w	sub_1084
+		bsr.w	SoundDriverInput
 		startZ80
 		bsr.w	ProcessPLC
 		tst.w	(v_countdown).w
@@ -1286,7 +1300,7 @@ loc_EFE:
 		move.w	#$7C00,(a5)
 		move.w	#$83,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
-		bsr.w	sub_1084
+		bsr.w	SoundDriverInput
 		startZ80
 		rts	
 ; End of function sub_E98
@@ -1395,7 +1409,7 @@ loc_1072:
 ; ===========================================================================
 
 
-sub_1084:				
+SoundDriverInput:				
 					
 		lea	($FFFFE0).l,a0
 		lea	($A01B80).l,a1
@@ -1438,7 +1452,7 @@ loc_10C6:
 loc_10DA:				
 		dbf	d1,loc_10C6
 		rts	
-; End of function sub_1084
+; End of function SoundDriverInput
 
 
 ; ===========================================================================
@@ -1765,7 +1779,7 @@ PauseGame:
 
 ; loc_13B2:
 Pause_Loop:				
-		move.b	#$10,(v_vblank_routine).w
+		move.b	#id_VBlank_Pause,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
 		tst.b	(f_slowmotion_cheat).w
 		beq.s	Pause_ChkStart
@@ -2408,26 +2422,25 @@ ProcessPLC_Finish:
 ; ===========================================================================
 
 
-sub_178A:				
-		lea	(PatternLoadCues).l,a1
+QuickPLC:				
+		lea	(PatternLoadCues).l,a1			; load the PLC index
 		add.w	d0,d0
 		move.w	(a1,d0.w),d0
 		lea	(a1,d0.w),a1
-		move.w	(a1)+,d1
+		move.w	(a1)+,d1				; get length of PLC
 
-loc_179C:				
-		movea.l	(a1)+,a0
+	.loop:
+		movea.l	(a1)+,a0				; get compressed graphics pointer
 		moveq	#0,d0
-		move.w	(a1)+,d0
+		move.w	(a1)+,d0				; get VRAM address
 		lsl.l	#2,d0
 		lsr.w	#2,d0
 		ori.w	#$4000,d0
 		swap	d0
-		move.l	d0,(vdp_control_port).l
-		bsr.w	NemDec
-		dbf	d1,loc_179C
-		rts	
-; End of function sub_178A
+		move.l	d0,(vdp_control_port).l			; converted VRAM address to VDP format
+		bsr.w	NemDec					; decompress
+		dbf	d1,.loop				; repeat for length of PLC
+		rts
 
 ; --------------------------------------------------------------------------------------
 ; Enigma Decompression Algorithm
@@ -3098,7 +3111,7 @@ loc_1D16:
 		lea	(Pal_CPZCyc1).l,a0
 		move.w	(v_palcycle_num).w,d0
 		addq.w	#6,(v_palcycle_num).w
-		cmpi.w	#$36,(v_palcycle_num).w ; '6'
+		cmpi.w	#$36,(v_palcycle_num).w
 		bcs.s	loc_1D3E
 		move.w	#0,(v_palcycle_num).w
 
@@ -3109,7 +3122,7 @@ loc_1D3E:
 		lea	(Pal_CPZCyc2).l,a0
 		move.w	(v_palcycle_num2).w,d0
 		addq.w	#2,(v_palcycle_num2).w
-		cmpi.w	#$2A,(v_palcycle_num2).w ; '*'
+		cmpi.w	#$2A,(v_palcycle_num2).w
 		bcs.s	loc_1D66
 		move.w	#0,(v_palcycle_num2).w
 
@@ -3341,7 +3354,7 @@ PalCycle_SuperSonic:
 
 sub_23C6:				
 					
-		move.w	#$3F,(v_palfade_start).w ; '?'
+		move.w	#$3F,(v_palfade_start).w
 		moveq	#0,d0
 		lea	($FFFFFB00).w,a0
 		move.b	(v_palfade_start).w,d0
@@ -3440,7 +3453,7 @@ loc_2466:
 
 PaletteFadeOut:				
 					
-		move.w	#$3F,(v_palfade_start).w ; '?'
+		move.w	#$3F,(v_palfade_start).w
 		move.w	#$15,d4
 
 loc_2474:				
@@ -3518,8 +3531,8 @@ loc_24E4:
 ; ===========================================================================
 
 
-sub_24E8:				
-		move.w	#$3F,(v_palfade_start).w ; '?'
+PaletteWhiteIn:				
+		move.w	#$3F,(v_palfade_start).w
 		moveq	#0,d0
 		lea	($FFFFFB00).w,a0
 		move.b	(v_palfade_start).w,d0
@@ -3539,7 +3552,7 @@ loc_250C:
 		bsr.w	RunPLC
 		dbf	d4,loc_250C
 		rts	
-; End of function sub_24E8
+; End of function PaletteWhiteIn
 
 
 ; ===========================================================================
@@ -3617,9 +3630,9 @@ loc_258E:
 ; ===========================================================================
 
 
-sub_2592:				
+PaletteWhiteOut:				
 					
-		move.w	#$3F,(v_palfade_start).w ; '?'
+		move.w	#$3F,(v_palfade_start).w
 		move.w	#$15,d4
 
 loc_259C:				
@@ -3629,7 +3642,7 @@ loc_259C:
 		bsr.w	RunPLC
 		dbf	d4,loc_259C
 		rts	
-; End of function sub_2592
+; End of function PaletteWhiteOut
 
 
 ; ===========================================================================
@@ -3738,7 +3751,7 @@ loc_2654:
 		addq.w	#2,d0
 
 loc_266A:				
-		cmpi.w	#$64,d0	; 'd'
+		cmpi.w	#$64,d0
 		blt.s	loc_2678
 		move.w	#$401,(v_palcycle_time).w
 		moveq	#-$C,d0
@@ -3755,7 +3768,7 @@ loc_2680:
 		move.b	#4,(v_palcycle_time).w
 		move.w	(v_palcycle_num).w,d0
 		addi.w	#$C,d0
-		cmpi.w	#$30,d0	; '0'
+		cmpi.w	#$30,d0
 		bcs.s	loc_269E
 		moveq	#0,d0
 		rts	
@@ -3771,7 +3784,7 @@ loc_269E:
 		move.w	(a0)+,(a1)
 		lea	(v_pal_dry_line2).w,a1
 		moveq	#0,d0
-		moveq	#$2C,d1	; ','
+		moveq	#$2C,d1
 
 loc_26BE:				
 		move.w	d0,d2
@@ -3903,9 +3916,9 @@ PalLoad_Water_Next:
 palp:	macro paladdress,secondpaladdress,alias,ramaddress
 	
 	ifarg \alias
-		id_\alias:	equ (offset(*)-PalPointers)/8 ; create alternate ID constant for duplicate pointers (used in empty/unused level load table entries)
+		id_\alias:	equ (*-PalPointers)/8 ; create alternate ID constant for duplicate pointers (used in empty/unused level load table entries)
 	else	
-		id_\paladdress:	equ (offset(*)-PalPointers)/8
+		id_\paladdress:	equ (*-PalPointers)/8
 	endc	
 		dc.l \paladdress
 		
@@ -4010,7 +4023,7 @@ PalPointers:
 	endc
 ; ===========================================================================
 WaitForVBlank:				
-		move	#$2300,sr
+		enable_ints
 
 	.wait:				
 		tst.b	(v_vblank_routine).w ; has VBlank routine finished?
@@ -4155,28 +4168,8 @@ GM_Sega:
 		bsr.w	PlayMusic
 		bsr.w	ClearPLC
 		bsr.w	PaletteFadeOut
-
 		clear_ram misc_variables,misc_variables_end
-
-;		lea	($FFFFF700).w,a1
-;		moveq	#0,d0
-;		move.w	#$3F,d1
-
-;	loc_37D2:
-;		move.l	d0,(a1)+
-;		dbf	d1,loc_37D2
-		
-		clear_ram ost,ost_end	
-		
-;		lea	($FFFFB000).w,a1
-;		moveq	#0,d0
-;		move.w	#$7FF,d1
-
-;	loc_37E2:				
-;		move.l	d0,(a1)+
-;		dbf	d1,loc_37E2
-		
-		
+		clear_ram ost,ost_end
 		lea	(vdp_control_port).l,a6
 		move.w	#$8004,(a6)
 		move.w	#$8200+(vram_sega_fg/$400),(a6) ; $8230 ; set fg nametable at $C000
@@ -4227,7 +4220,7 @@ loc_384A:
 		
 		lea	(v_128x128_tiles).l,a1
 		move.l	#$60000002,d0
-		moveq	#$27,d1	; '''
+		moveq	#$27,d1
 		moveq	#$1B,d2
 		bsr.w	sub_396E
 		
@@ -4235,7 +4228,7 @@ loc_384A:
 		bmi.s	loc_38CE
 		lea	($FFFFB080).w,a1
 		move.b	#$B1,(a1)
-		move.b	#$4E,$28(a1) ; 'N'
+		move.b	#$4E,$28(a1)
 
 loc_38CE:				
 		moveq	#0,d0
@@ -4246,7 +4239,7 @@ loc_38CE:
 		move.w	#0,(f_segascr_paldone).w
 		lea	(v_ost_sega_screen).w,a1
 		move.b	#$B0,(a1)
-		move.b	#$4C,$28(a1) ; 'L'
+		move.b	#$4C,$28(a1)
 		move.w	#$F0,(v_countdown).w
 		move.w	(v_vdp_mode_buffer).w,d0
 		ori.b	#$40,d0
@@ -4255,7 +4248,7 @@ loc_38CE:
 loc_390E:				
 		move.b	#2,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
-		bsr.w	sub_3990
+		bsr.w	JmpTo_ExecuteObjects
 		jsr	BuildSprites
 		tst.b	(f_segascr_paldone).w
 		beq.s	loc_390E
@@ -4309,17 +4302,16 @@ loc_3980:
 ; End of function sub_396E
 
 ; ===========================================================================
+
+	if Revision<2
 		nop	
+	endc
 
-; ===========================================================================
-
-
-sub_3990:				
+	if ~RemoveJmpTos
+JmpTo_ExecuteObjects:				
 		jmp	ExecuteObjects
-; End of function sub_3990
-
-; ===========================================================================
-		dc.w 0
+		align 4	
+	endc
 ; ===========================================================================
 
 GM_Title:				
@@ -4414,7 +4406,7 @@ loc_3A44:
 		bsr.w	EniDec
 		lea	(v_128x128_tiles).l,a1
 		move.l	#$60000003,d0
-		moveq	#$27,d1	; '''
+		moveq	#$27,d1
 		moveq	#$1B,d2
 		bsr.w	TilemapToVRAM
 		lea	(v_128x128_tiles).l,a1
@@ -4439,7 +4431,7 @@ loc_3B66:
 		dbf	d6,loc_3B66
 		lea	(v_128x128_tiles).l,a1
 		move.l	#$40000003,d0
-		moveq	#$27,d1	; '''
+		moveq	#$27,d1
 		moveq	#$1B,d2
 		bsr.w	TilemapToVRAM
 		lea	($FFFFFB00).w,a1
@@ -4492,7 +4484,7 @@ loc_3C14:
 		jsr	BuildSprites
 		lea	($FFFFF804).w,a1
 		moveq	#0,d0
-		moveq	#$4F,d6	; 'O'
+		moveq	#$4F,d6
 
 loc_3C36:				
 		tst.w	(a1)
@@ -4740,7 +4732,7 @@ loc_3ED8:
 	disable_ints
 		bsr.w	sub_1208
 		jsr	loc_157D2
-		move	#$2300,sr
+		enable_ints
 		moveq	#0,d0
 		move.w	d0,(v_frame_counter).w
 		move.b	(v_zone).w,d0
@@ -4977,7 +4969,7 @@ loc_4136:	; clear_ram
 loc_41A8:				
 		cmpi.b	#id_CPZ,(v_zone).w
 		bne.s	loc_41B6
-		move.b	#$7C,(v_ost_cpzpylon).w ; '|'
+		move.b	#$7C,(v_ost_cpzpylon).w
 
 loc_41B6:				
 		cmpi.b	#$A,(v_zone).w
@@ -5021,7 +5013,7 @@ loc_41F8:
 		jsr	SpecialCNZBumpers
 		jsr	ExecuteObjects
 		jsr	BuildSprites
-		bsr.w	sub_4F58
+		bsr.w	JmpTo_AnimateLevelGFX
 		bsr.w	SetLevelEndType
 		move.w	#0,($FFFFF790).w
 		move.w	#0,(v_demo_input_counter_p2).w
@@ -5085,13 +5077,13 @@ loc_42FA:
 		bne.s	loc_42FA
 		lea	($FFFFB080).w,a1
 		move.b	#$16,$24(a1)
-		move.w	#$2D,$1E(a1) ; '-'
+		move.w	#$2D,$1E(a1)
 		move.b	#$16,$64(a1)
-		move.w	#$2D,$5E(a1) ; '-'
+		move.w	#$2D,$5E(a1)
 		tst.b	$80(a1)
 		beq.s	loc_4348
 		move.b	#$16,$A4(a1)
-		move.w	#$2D,$9E(a1) ; '-'
+		move.w	#$2D,$9E(a1)
 
 loc_4348:				
 		move.b	#0,(f_lock_controls).w
@@ -5117,7 +5109,7 @@ loc_4360:
 		jsr	(SpecialCNZBumpers).l
 
 	.notCNZ:				
-		bsr.w	sub_4F58
+		bsr.w	JmpTo_AnimateLevelGFX
 		bsr.w	sub_19DC
 		bsr.w	RunPLC
 		bsr.w	sub_4AC6
@@ -5151,7 +5143,7 @@ loc_43FA:
 
 loc_4408:				
 		move.w	#$3C,(v_countdown).w
-		move.w	#$3F,(v_palfade_start).w ; '?'
+		move.w	#$3F,(v_palfade_start).w
 		clr.w	(v_palfade_time).w
 
 loc_4418:				
@@ -6050,7 +6042,7 @@ sub_4C48:
 		move.w	d1,(v_boundary_left_next).w
 		tst.w	(f_two_player).w
 		bne.s	locret_4CA6
-		moveq	#$27,d0	; '''
+		moveq	#$27,d0
 		bra.w	NewPLC
 ; ===========================================================================
 
@@ -6198,13 +6190,10 @@ loc_4F1A:
 	if ~RemoveJmpTos
 JmpTo_LevelBlockMapsLoad:				
 		jmp	LevelBlockMapsLoad
-
 JmpTo_DeformLayers:						
 		jmp	DeformLayers
-
-sub_4F58:						
+JmpTo_AnimateLevelGFX:						
 		jmp	AnimateLevelGFX
-
 JmpTo_DrawTilesAtStart:				
 		jmp	DrawTilesAtStart
 	endc
@@ -6213,223 +6202,195 @@ JmpTo_DrawTilesAtStart:
 
 GM_SpecialStage:				
 		cmpi.b	#7,(v_special_stage).w
-		bcs.s	loc_4F72
+		bcs.s	.not7
 		move.b	#0,(v_special_stage).w
 
-loc_4F72:				
-		move.w	#$CA,d0	
+	.not7:				
+		move.w	#sfx_EnterSS,d0	; play warp SFX
 		bsr.w	PlaySound
-		move.b	#-7,d0
+		move.b	#cmd_Fade,d0	; fade out current music
 		bsr.w	PlayMusic
-		bsr.w	sub_2592
-		tst.w	(f_two_player).w
-		beq.s	loc_4F98
-		move.w	#0,(f_two_player).w
-		st.b	(f_ss_2p).w
-		bra.s	loc_4F9C
+		bsr.w	PaletteWhiteOut
+		tst.w	(f_two_player).w		; is it 2P mode?
+		beq.s	.not2P					; if not, branch
+		move.w	#0,(f_two_player).w		; clear 2P mode flag
+		st.b	(f_ss_2p).w				; set SS 2P flag
+		bra.s	.ss_vdp_setup
 ; ===========================================================================
 
-loc_4F98:				
-		sf.b	(f_ss_2p).w
+	.not2P:				
+		sf.b	(f_ss_2p).w				; clear 2P SS flag
 
-loc_4F9C:				
-	disable_ints
+.ss_vdp_setup:
+		; Configure the VDP for Special Stage mode.			
+		disable_ints														; disable interrupts
 		lea	(vdp_control_port).l,a6
-		move.w	#-$74FD,(a6)
-		move.w	#-$7FFC,(a6)
-		move.w	#-$7521,(v_vdp_hint_counter).w
-		move.w	#-$7DD0,(a6)
-		move.w	#-$7BFB,(a6)
-		move.w	#-$73F8,(a6)
-		move.w	#-$6FFD,(a6)
-		move.w	#-$7900,(a6)
-		move.w	#-$72C1,(a6)
-		move.w	#-$7A84,(a6)
+		move.w	#vdp_full_vscroll|vdp_1px_hscroll,(a6)						; v-scroll by screen, h-scroll by line
+		move.w	#vdp_md_color,(a6)											; md color mode, H-int disabled
+		move.w	#vdp_hint_counter+(screen_height-1),(v_vdp_hint_counter).w	; H-int every 224 scanlines
+		move.w	#vdp_fg_nametable+(vram_ss_fg1/$400),(a6)					; primary FG plane table starts at $C000
+		move.w	#vdp_bg_nametable+(vram_ss_bg/$2000),(a6)					; BG plane table starts at $A000
+		move.w	#vdp_256px_screen_width|vdp_shadow_highlight,(a6)			; H32 mode, no interlace, shadow/highlight mode
+		move.w	#vdp_plane_height_32|vdp_plane_width_128,(a6)				; 128x32 plane size
+		move.w	#vdp_bg_color+0,(a6)										; BG color = line 0 entry 0
+		move.w	#vdp_hscroll_table+(vram_ss_hscroll/$400),(a6)				; H-scroll table starts at $FC00
+		move.w	#vdp_sprite_table+(vram_ss_sprites/$200),(a6)				; sprite attribute table starts at $F800 
 		move.w	(v_vdp_mode_buffer).w,d0
-		andi.b	#-$41,d0
-		move.w	d0,(vdp_control_port).l
-		lea	(vdp_control_port).l,a5
-		move.w	#-$70FF,(a5)
-		move.l	#-$6BE06C01,(a5)
-		move.w	#-$6880,(a5)
-		move.l	#$40000082,(a5)
-		move.w	#0,(vdp_data_port).l
+		andi.b	#$BF,d0														; %1011 1111
+		move.w	d0,(vdp_control_port).l 									; could be sent to a6 instead
+		
+		; Clear the VRAM regions we just configured. As this was done via macro, a lot of 
+		; cycles are wasted setting the control port to a5 and setting and resetting
+		; the VDP increment every single time. This could be optimized with a 
+		; modified macro that only does those tasks if actually required.
+		dma_fill	0,sizeof_vram_ss_pt,vram_ss_fg2	
+		dma_fill	0,sizeof_vram_ss_pt,vram_ss_fg1
+		dma_fill	0,sizeof_vram_ss_pt,vram_ss_bg
+		dma_fill	0,sizeof_vram_ss_hscroll,vram_ss_hscroll
 
-loc_5000:				
-		move.w	(a5),d1
-		btst	#1,d1
-		bne.s	loc_5000
-		move.w	#-$70FE,(a5)
-		lea	(vdp_control_port).l,a5
-		move.w	#-$70FF,(a5)
-		move.l	#-$6BE06C01,(a5)
-		move.w	#-$6880,(a5)
-		move.l	#$40000083,(a5)
-		move.w	#0,(vdp_data_port).l
-
-loc_502E:				
-		move.w	(a5),d1
-		btst	#1,d1
-		bne.s	loc_502E
-		move.w	#-$70FE,(a5)
-		lea	(vdp_control_port).l,a5
-		move.w	#-$70FF,(a5)
-		move.l	#-$6BE06C01,(a5)
-		move.w	#-$6880,(a5)
-		move.l	#$60000082,(a5)
-		move.w	#0,(vdp_data_port).l
-
-loc_505C:				
-		move.w	(a5),d1
-		btst	#1,d1
-		bne.s	loc_505C
-		move.w	#-$70FE,(a5)
-		lea	(vdp_control_port).l,a5
-		move.w	#-$70FF,(a5)
-		move.l	#-$6BFC6C81,(a5)
-		move.w	#-$6880,(a5)
-		move.l	#$7C000083,(a5)
-		move.w	#0,(vdp_data_port).l
-
-loc_508A:				
-		move.w	(a5),d1
-		btst	#1,d1
-		bne.s	loc_508A
-		move.w	#-$70FE,(a5)
+		; Clear several variables and RAM regions.
 		clr.l	(v_fg_y_pos_vsram).w
-		clr.l	($FFFFF61A).w
+		clr.l	(v_unused_ss).w
 		clr.b	(f_ss_started).w
 
-		clear_ram v_sprite_buffer,v_sprite_buffer_end+4
-
+	if FixBugs
+		clear_ram 	v_sprite_buffer,v_sprite_buffer_end
+		clear_ram	v_ss_hscroll_buffer_1,v_ss_hscroll_buffer_1_end
+		clear_ram	ss_shared_ram,ss_shared_ram_end
+	else
+		; These '+4's shouldn't be here; 'clear_ram' accidentally clears an additional 4 bytes.
+		clear_ram 	v_sprite_buffer,v_sprite_buffer_end+4
+		clear_ram	v_ss_hscroll_buffer_1,v_ss_hscroll_buffer_1_end+4
+		clear_ram	ss_shared_ram,ss_shared_ram_end+4
+	endc
 		
-		lea	(v_hscroll_buffer).w,a1
-		moveq	#0,d0
-		move.w	#$100,d1
-
-loc_50BC:				
-		move.l	d0,(a1)+
-		dbf	d1,loc_50BC
-		lea	($FFFFD000).w,a1
-		moveq	#0,d0
-		move.w	#$300,d1
-
-loc_50CC:				
-		move.l	d0,(a1)+
-		dbf	d1,loc_50CC
-		lea	(v_sprite_queue).w,a1
-		moveq	#0,d0
-		move.w	#$FF,d1
-
-loc_50DC:				
-		move.l	d0,(a1)+
-		dbf	d1,loc_50DC
-		lea	($FFFFB000).w,a1
-		moveq	#0,d0
-		move.w	#$7FF,d1
-
-loc_50EC:				
-		move.l	d0,(a1)+
-		dbf	d1,loc_50EC
-		move	#$2300,sr
+		clear_ram	v_sprite_queue,v_sprite_queue_end
+		clear_ram	ost,ost_end
+		
+    if FixBugs
+		; However, the '+4' after 'ss_shared_ram_end' is very useful, as it resets the
+		; DMA queue, avoiding graphical glitches in the Special Stage.
+		; In fact, without resetting the DMA queue, Tails sprite DPLCs and other
+		; level DPLCs that are still in the queue erase the Special Stage graphics the next
+		; time 'ProcessDMAQueue' is called.
+		; This '+4' doesn't seem to be intentional, because of the other useless '+4' above,
+		; and because a '+2' is enough to reset the DMA queue and fix this bug.
+		; This is a fortunate accident!
+		; Note that this is not a clean way to reset the DMA queue because
+		; v_vdp_command_buffer_slot should be updated as well. They tried to do that in a
+		; cleaner way after branching to 'ClearScreen' (see below), but they messed up by doing it
+		; after several 'WaitForVint' calls.
+		clr.w	(v_vdp_command_buffer).w
+		move.l	#v_vdp_command_buffer,(v_vdp_command_buffer_slot).w
+    endc
+		
+		enable_ints
 		lea	(vdp_control_port).l,a6
-		move.w	#-$70FE,(a6)
-		bsr.w	sub_6C9C
-		bsr.w	sub_6CE6
+		move.w	#vdp_auto_inc+2,(a6) ; redundant, this was already done by the last dma_fill
+		bsr.w	SS_InitHScroll
+		bsr.w	SS_LoadCompressedData
 		move.w	#0,(v_ss_current_segment).w
 		moveq	#$3C,d0
-		bsr.w	sub_178A
+		bsr.w	QuickPLC
 		clr.b	(f_level_started).w
 		move.l	#0,(v_camera_x_pos).w
 		move.l	#0,(v_camera_y_pos).w
 		move.l	#0,(v_camera_x_pos_copy).w
 		move.l	#0,(v_camera_y_pos_copy).w
-		cmpi.w	#1,(v_player_mode).w
-		bgt.s	loc_514C
-		move.b	#9,($FFFFB000).w
-		tst.w	(v_player_mode).w
-		bne.s	loc_5152
+		cmpi.w	#1,(v_player_mode).w			; is this a Tails alone game?
+		bgt.s	.dont_load_sonic				; if it is, branch
+		move.b	#id_SonicSpecial,(v_ost_maincharacter+ost_id).w ; load Special Stage Sonic
+		tst.w	(v_player_mode).w				; is it a Sonic and Tails game?
+		bne.s	.dont_load_tails				; if not, branch
 
-loc_514C:				
-		move.b	#$10,(v_ost_sidekick).w ; load Special Stage Tails
+	.dont_load_sonic:				
+		move.b	#id_TailsSpecial,(v_ost_sidekick+ost_id).w ; load Special Stage Tails
 
-loc_5152:				
-		move.b	#$5E,(v_ss_hud).w				; load Special Stage HUD
-		move.b	#$5F,(v_ss_start_banner).w 		; load "START" banner
-		move.b	#-$79,(v_ss_number_of_rings).w	; load "GET X RINGS" prompt  
+	.dont_load_tails:			
+		move.b	#id_HUDSpecial,(v_ss_hud).w				; load Special Stage HUD
+		move.b	#id_StartBannerSpecial,(v_ss_start_banner).w 		; load "START" banner
+		move.b	#id_RingCountSpecial,(v_ss_number_of_rings).w	; load "GET X RINGS" prompt  
 		move.w	#$80,(v_ss_x_offset).w
 		move.w	#$36,(v_ss_y_offset).w 
-		bsr.w	sub_6D52
-		bsr.w	sub_6DD4
-		bsr.w	sub_77A2
+		bsr.w	SS_LoadBackground
+		bsr.w	SS_LoadPlayerArt
+		bsr.w	SS_LoadPalAndData
 		move.l	#$C0000,(v_ss_new_speed_factor).w
 		clr.w	(v_joypad_hold).w
 		clr.w	(v_joypad2_hold).w
 
-loc_518C:				
-		move.b	#$A,(v_vblank_routine).w
+	.draw_initial_1:		
+		move.b	#id_VBlank_SpecialStage,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
 		move.b	(v_ss_track_drawing_index).w,d0
-		bne.s	loc_518C
-		bsr.w	sub_5604
+		bne.s	.draw_initial_1
+		
+		bsr.w	SS_DrawTrack
 
-loc_51A0:				
-		move.b	#$A,(v_vblank_routine).w
+	.draw_initial_2:			
+		move.b	#id_VBlank_SpecialStage,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
-		bsr.w	sub_5604
-		bsr.w	sub_5514
-		bsr.w	sub_5534
+		bsr.w	SS_DrawTrack
+		bsr.w	SS_LoadCurrentPerspective
+		bsr.w	SS_ObjectsManager
 		move.b	(v_ss_track_duration_timer).w,d0
 		subq.w	#1,d0
-		bne.s	loc_51A0
-		jsr	loc_3561E
-		bsr.w	sub_6DE4
+		bne.s	.draw_initial_2
+		
+		jsr	loc_3561E ; Obj5A_CreateRingsToGoText
+		bsr.w	SS_ScrollBG
 		jsr	ExecuteObjects
-
-loc_51CE:
 		jsr	BuildSprites
 		bsr.w	RunPLC
-		move.b	#$1A,(v_vblank_routine).w
+		move.b	#id_VBlank_CtrlDMA,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
-		move.w	#$92,d0	
+		move.w	#mus_SpecialStage,d0	
 		bsr.w	PlayMusic
 		move.w	(v_vdp_mode_buffer).w,d0
-		ori.b	#$40,d0
+		ori.b	#$40,d0				; %0100
 		move.w	d0,(vdp_control_port).l
-		bsr.w	sub_24E8
+		bsr.w	PaletteWhiteIn
 
-loc_51FC:				
+; ---------------------------------------------------------------------------
+; Initial Special Stage loop (while START banner is displayed)
+; ---------------------------------------------------------------------------
+SpecialStage_StartLoop:				
 		bsr.w	PauseGame
-		move.w	(v_joypad_hold_actual).w,(v_joypad_hold).w
+		move.w	(v_joypad_hold_actual).w,(v_joypad_hold).w			
 		move.w	(v_joypad2_hold_actual).w,(v_joypad2_hold).w
 		cmpi.b	#$10,(v_gamemode).w
 		bne.w	loc_541A
-		move.b	#$A,(v_vblank_routine).w
+		move.b	#id_VBlank_SpecialStage,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
-		bsr.w	sub_5604
-		bsr.w	sub_7650
-		bsr.w	sub_5514
-		bsr.w	sub_5534
-		bsr.w	sub_6DE4
+		bsr.w	SS_DrawTrack
+		bsr.w	SS_SetGeoOffsets
+		bsr.w	SS_LoadCurrentPerspective
+		bsr.w	SS_ObjectsManager
+		bsr.w	SS_ScrollBG
 		jsr	ExecuteObjects
 		jsr	BuildSprites
 		bsr.w	RunPLC
-		tst.b	(f_ss_started).w
-		beq.s	loc_51FC
-		moveq	#$3D,d0	
+		tst.b	(f_ss_started).w			; is start banner still displayed?
+		beq.s	SpecialStage_StartLoop		; if so, branch
+		
+		moveq	#$3D,d0						; load SS bomb graphics
 		bsr.w	AddPLC
 
-loc_5250:				
+; ---------------------------------------------------------------------------
+; Main Special Stage loop (once START banner has unloaded)
+; ---------------------------------------------------------------------------
+
+SpecialStage_MainLoop:				
 		bsr.w	PauseGame
 		cmpi.b	#$10,(v_gamemode).w
 		bne.w	loc_541A
-		move.b	#$A,(v_vblank_routine).w
+		move.b	#id_VBlank_SpecialStage,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
-		bsr.w	sub_5604
-		bsr.w	sub_7650
-		bsr.w	sub_5514
-		bsr.w	sub_5534
-		bsr.w	sub_6DE4
+		bsr.w	SS_DrawTrack
+		bsr.w	SS_SetGeoOffsets
+		bsr.w	SS_LoadCurrentPerspective
+		bsr.w	SS_ObjectsManager
+		bsr.w	SS_ScrollBG
 		bsr.w	sub_543A
 		tst.b	(f_ss_pause_only).w
 		beq.s	loc_52A0
@@ -6452,7 +6413,7 @@ loc_52AC:
 		bne.s	loc_52C4
 		jsr	BuildSprites
 		bsr.w	RunPLC
-		bra.s	loc_5250
+		bra.s	SpecialStage_MainLoop
 ; ===========================================================================
 
 loc_52C4:				
@@ -6479,7 +6440,7 @@ loc_52EA:
 		st.b	(f_ss_perfect).w
 
 loc_52F4:				
-		bsr.w	sub_2592
+		bsr.w	PaletteWhiteOut
 		tst.w	(f_two_player_mode_copy).w
 		bne.w	loc_540C
 	disable_ints
@@ -6490,16 +6451,20 @@ loc_52F4:
 		move.w	#-$737F,(a6)
 		bsr.w	sub_1208
 		bsr.w	sub_7868
+	if ~FixBugs
+		; By fixing the clear_ram macros at .ss_vdp_setup, these two instructions are made redundant.
 		clr.w	(v_vdp_command_buffer).w
 		move.l	#v_vdp_command_buffer,(v_vdp_command_buffer_slot).w
-		move	#$2300,sr
-		moveq	#$27,d0	; '''
+	endc
+	
+		enable_ints
+		moveq	#$27,d0
 		bsr.w	PalLoad_Now
 		moveq	#0,d0
 		bsr.w	NewPLC
 		move.l	#$40400000,d0
 		lea	(word_7822)(pc),a0
-		bsr.w	sub_784A
+		bsr.w	JmpTo_LoadTitleCardSS
 		move.l	#$72000002,(vdp_control_port).l
 		lea	(Nem_SpecialStageResults).l,a0
 		bsr.w	NemDec
@@ -6542,7 +6507,7 @@ loc_53B0:
 loc_53C0:				
 		move.l	d0,(a1)+
 		dbf	d1,loc_53C0
-		move.b	#$6F,($FFFFB800).w ; 'o'
+		move.b	#$6F,($FFFFB800).w
 
 loc_53CC:				
 					
@@ -6557,7 +6522,7 @@ loc_53CC:
 		bne.s	loc_53CC
 		move.w	#$CA,d0	
 		bsr.w	PlaySound
-		bsr.w	sub_2592
+		bsr.w	PaletteWhiteOut
 		tst.w	(f_two_player_mode_copy).w
 		bne.s	loc_540C
 		move.b	#$C,(v_gamemode).w
@@ -6657,7 +6622,7 @@ loc_550A:
 ; ===========================================================================
 
 
-sub_5514:				
+SS_LoadCurrentPerspective:				
 					
 		cmpi.b	#4,(v_ss_track_drawing_index).w
 		bne.s	locret_5532
@@ -6670,13 +6635,13 @@ sub_5514:
 
 locret_5532:				
 		rts	
-; End of function sub_5514
+; End of function SS_LoadCurrentPerspective
 
 
 ; ===========================================================================
 
 
-sub_5534:				
+SS_ObjectsManager:				
 					
 		cmpi.b	#4,(v_ss_track_drawing_index).w
 		bne.w	locret_55DC
@@ -6749,7 +6714,7 @@ loc_55D8:
 
 locret_55DC:				
 		rts	
-; End of function sub_5534
+; End of function SS_ObjectsManager
 
 ; ===========================================================================
 dword_55DE:	dc.l $40000002		; 0 
@@ -6771,7 +6736,7 @@ byte_55FE:	dc.b $18		; 0
 ; ===========================================================================
 
 
-sub_5604:				
+SS_DrawTrack:				
 					
 		moveq	#0,d0
 		move.b	(v_ss_track_drawing_index).w,d0
@@ -7155,7 +7120,7 @@ loc_5944:
 loc_596A:				
 		move.b	d4,d0
 		lsr.b	#2,d0
-		andi.w	#$30,d0	; '0'
+		andi.w	#$30,d0
 		move.b	(a1)+,d4
 		ror.b	#4,d4
 		move.b	d4,d1
@@ -7172,7 +7137,7 @@ loc_596A:
 loc_5990:				
 		move.b	d4,d0
 		lsr.b	#2,d0
-		andi.w	#$38,d0	; '8'
+		andi.w	#$38,d0
 		move.b	(a1)+,d4
 		rol.b	#3,d4
 		move.b	d4,d1
@@ -7206,7 +7171,7 @@ loc_59B6:
 loc_59DC:				
 		move.b	d4,d0
 		lsr.b	#2,d0
-		andi.w	#$3E,d0	; '>'
+		andi.w	#$3E,d0
 		move.b	(a1)+,d4
 		rol.b	#1,d4
 		move.b	d4,d1
@@ -7367,7 +7332,7 @@ loc_5B4C:
 loc_5B56:				
 		move.b	d2,d1
 		lsr.b	#1,d1
-		andi.b	#$7C,d1	; '|'
+		andi.b	#$7C,d1
 		move.b	(a2)+,d2
 		rol.b	#2,d2
 		move.b	d2,d0
@@ -7392,7 +7357,7 @@ loc_5B88:
 loc_5B92:				
 		move.b	d2,d1
 		lsr.b	#1,d1
-		andi.b	#$7E,d1	; '~'
+		andi.b	#$7E,d1
 		move.b	(a2)+,d2
 		rol.b	#1,d2
 		move.b	d2,d0
@@ -7476,7 +7441,7 @@ loc_5C48:
 loc_5C52:				
 		move.b	d2,d0
 		lsr.b	#2,d0
-		andi.w	#$30,d0	; '0'
+		andi.w	#$30,d0
 		move.b	(a2)+,d2
 		ror.b	#4,d2
 		move.b	d2,d1
@@ -7498,7 +7463,7 @@ loc_5C78:
 loc_5C82:				
 		move.b	d2,d0
 		lsr.b	#2,d0
-		andi.w	#$38,d0	; '8'
+		andi.w	#$38,d0
 		move.b	(a2)+,d2
 		rol.b	#3,d2
 		move.b	d2,d1
@@ -7542,7 +7507,7 @@ loc_5CD8:
 loc_5CE2:				
 		move.b	d2,d0
 		lsr.b	#2,d0
-		andi.w	#$3E,d0	; '>'
+		andi.w	#$3E,d0
 		move.b	(a2)+,d2
 		rol.b	#1,d2
 		move.b	d2,d1
@@ -7914,7 +7879,7 @@ loc_5FC8:
 loc_5FEE:				
 		move.b	d4,d0
 		lsr.b	#2,d0
-		andi.w	#$30,d0	; '0'
+		andi.w	#$30,d0
 		move.b	(a1)+,d4
 		ror.b	#4,d4
 		move.b	d4,d1
@@ -7931,7 +7896,7 @@ loc_5FEE:
 loc_6014:				
 		move.b	d4,d0
 		lsr.b	#2,d0
-		andi.w	#$38,d0	; '8'
+		andi.w	#$38,d0
 		move.b	(a1)+,d4
 		rol.b	#3,d4
 		move.b	d4,d1
@@ -7965,7 +7930,7 @@ loc_603A:
 loc_6060:				
 		move.b	d4,d0
 		lsr.b	#2,d0
-		andi.w	#$3E,d0	; '>'
+		andi.w	#$3E,d0
 		move.b	(a1)+,d4
 		rol.b	#1,d4
 		move.b	d4,d1
@@ -8126,7 +8091,7 @@ loc_61D0:
 loc_61DA:				
 		move.b	d2,d1
 		lsr.b	#1,d1
-		andi.b	#$7C,d1	; '|'
+		andi.b	#$7C,d1
 		move.b	(a2)+,d2
 		rol.b	#2,d2
 		move.b	d2,d0
@@ -8151,7 +8116,7 @@ loc_620C:
 loc_6216:				
 		move.b	d2,d1
 		lsr.b	#1,d1
-		andi.b	#$7E,d1	; '~'
+		andi.b	#$7E,d1
 		move.b	(a2)+,d2
 		rol.b	#1,d2
 		move.b	d2,d0
@@ -8235,7 +8200,7 @@ loc_62CC:
 loc_62D6:				
 		move.b	d2,d0
 		lsr.b	#2,d0
-		andi.w	#$30,d0	; '0'
+		andi.w	#$30,d0
 		move.b	(a2)+,d2
 		ror.b	#4,d2
 		move.b	d2,d1
@@ -8257,7 +8222,7 @@ loc_62FC:
 loc_6306:				
 		move.b	d2,d0
 		lsr.b	#2,d0
-		andi.w	#$38,d0	; '8'
+		andi.w	#$38,d0
 		move.b	(a2)+,d2
 		rol.b	#3,d2
 		move.b	d2,d1
@@ -8301,7 +8266,7 @@ loc_635C:
 loc_6366:				
 		move.b	d2,d0
 		lsr.b	#2,d0
-		andi.w	#$3E,d0	; '>'
+		andi.w	#$3E,d0
 		move.b	(a2)+,d2
 		rol.b	#1,d2
 		move.b	d2,d1
@@ -8438,8 +8403,9 @@ off_643E:
 		dc.l MapSpec_Turn5	; 53
 		dc.l MapSpec_Turn6	; 54
 		dc.l MapSpec_Turn7	; 55
-word_651E:	dc.w $8001,$8007,$802C,$800B,$8024,$8824,$8039,$882B; 0
-					
+word_651E:	
+
+		dc.w $8001,$8007,$802C,$800B,$8024,$8824,$8039,$882B; 0				
 		dc.w $805D,$885D,$802B,$804A,$8049,$8037,$8849,$8045; 8
 		dc.w $8845,$883A,$8048,$8850,$8036,$8837,$803A,$8050; 16
 		dc.w $8842,$8042,$8815,$801D,$804B,$8817,$8848,$8836; 24
@@ -8516,8 +8482,8 @@ word_651E:	dc.w $8001,$8007,$802C,$800B,$8024,$8824,$8039,$882B; 0
 		dc.w $892D,$8911,$893C,$8920,$8946,$88A9,$889C,$8916; 424
 		dc.w $894F,$894C,$886F,$8958,$8956,$8959,$895A,$8961; 432
 		dc.w $887B,$8966,$891C,$8918,$88A0,$88A3,$8967,$88A1; 440
-byte_69E6:	dc.b   0,  7,  0,  1,  0,  1,  0,  1,  0,$4A,  0,  1,  0,$39,  0,  3; 0
-					
+byte_69E6:	
+		dc.b   0,  7,  0,  1,  0,  1,  0,  1,  0,$4A,  0,  1,  0,$39,  0,  3; 0				
 		dc.b   0,  1,  0,  5,  0,$28,  0,  7,  0,$2C,  0,  1,  0,  1,  0,  2; 16
 		dc.b   0,$28,  0,  5,  0,$39,  0,  1,  0,$28,  0,  9,  0,  1,  0,  4; 32
 		dc.b   0,$28,  0,  6,  0,$28,  0,  3,  0,$4A,  0,  2,  0,  1,  0,  3; 48
@@ -8612,28 +8578,28 @@ loc_6C88:
 locret_6C9A:				
 					
 		rts	
-; End of function sub_5604
+; End of function SS_DrawTrack
 
 
 ; ===========================================================================
 
 
-sub_6C9C:				
+SS_InitHScroll:				
 		lea	(v_hscroll_buffer).w,a1
 		lea	(v_ss_hscroll_buffer_2).w,a2
-		moveq	#0,d0
-		moveq	#0,d1
-		moveq	#0,d2
-		moveq	#0,d3
-		move.w	#-$100,d1
-		move.w	#-$200,d2
-		move.w	#-$300,d3
+		moveq	#0,d0								; scroll of 0 for fg & bg on lines 0 & 1 (normal) or lines 6 & 7 (flipped)
+		moveq	#0,d1								; scroll of 0 for bg on lines 2 & 3 (normal) or lines 4 & 5 (flipped)
+		moveq	#0,d2								; scroll of 0 for bg on lines 4 & 5 (normal) or lines 2 & 3 (flipped)
+		moveq	#0,d3								; scroll of 0 for bg on lines 6 & 7 (normal) or lines 0 & 1 (flipped)
+		move.w	#-$100,d1							; scroll of 3 screens for fg on lines 2 & 3 (normal) or lines 4 & 5 (flipped)
+		move.w	#-$200,d2							; scroll of 2 screens for fg on lines 4 & 5 (normal) or lines 2 & 3 (flipped)
+		move.w	#-$300,d3							; scroll of 1 screen for fg on lines 6 & 7 (normal) or lines 0 & 1 (flipped)
 		swap	d1
 		swap	d2
 		swap	d3
-		moveq	#$1F,d4
+		moveq	#(((v_ss_hscroll_buffer_1_end-v_ss_hscroll_buffer_1)/4)/8)-1,d4 ; 8 longwords per table per loop, $100 longwords total per table, $1F loops
 
-loc_6CC0:				
+	.loop:				
 		move.l	d0,(a1)+
 		move.l	d0,(a1)+
 		move.l	d1,(a1)+
@@ -8642,6 +8608,7 @@ loc_6CC0:
 		move.l	d2,(a1)+
 		move.l	d3,(a1)+
 		move.l	d3,(a1)+
+		
 		move.l	d3,(a2)+
 		move.l	d3,(a2)+
 		move.l	d2,(a2)+
@@ -8650,57 +8617,52 @@ loc_6CC0:
 		move.l	d1,(a2)+
 		move.l	d0,(a2)+
 		move.l	d0,(a2)+
-		dbf	d4,loc_6CC0
+		dbf	d4,.loop
 		rts	
-; End of function sub_6C9C
+; End of function SS_InitHScroll
 
 
 ; ===========================================================================
 
-
-sub_6CE6:				
+SS_LoadCompressedData:				
 		lea	(Kos_Special).l,a0
 		lea	(v_128x128_tiles).l,a1
 		bsr.w	KosDec
-		move.l	#$40000000,(vdp_control_port).l
+		vdp_comm.l	move,$0000,vram,write,,(VDP_control_port).l
 		lea	(vdp_data_port).l,a1
-		movea.l	#-$10000,a0
+		movea.l	#v_128x128_tiles,a0
 		move.w	(a0)+,d0
 		subq.w	#1,d0
 
-loc_6D10:				
+	.loop:	
+		rept 7			
 		move.l	(a0),(a1)
-		move.l	(a0),(a1)
-		move.l	(a0),(a1)
-		move.l	(a0),(a1)
-		move.l	(a0),(a1)
-		move.l	(a0),(a1)
-		move.l	(a0),(a1)
+		endr
 		move.l	(a0)+,(a1)
-		dbf	d0,loc_6D10
+		dbf	d0,.loop
+		
 		lea	(Kos_SpecialPerspective).l,a0
-		lea	($FFFF6A60).l,a1
+		lea	(v_ss_perspective_data).l,a1
 		bsr.w	KosDec
 		lea	(Nem_SpecialLevelLayouts).l,a0
-		lea	($FFFF855C).w,a4
+		lea	(v_ss_level_layout).w,a4
 		bsr.w	NemDecToRAM
 		lea	(Koz_SpecialObjectLocations).l,a0
-		lea	($FFFF8778).w,a1
+		lea	(v_ss_object_locations).w,a1
 		bsr.w	KosDec
 		rts	
-; End of function sub_6CE6
 
 
 ; ===========================================================================
 
 
-sub_6D52:				
-	disable_ints
+SS_LoadBackground:				
+		disable_ints
 		movea.l	#v_128x128_tiles,a1
 		lea	(Eni_SpecialBackBottom).l,a0
 		move.w	#$700,d0
 		bsr.w	EniDec
-		movea.l	#-$FC00,a1
+		movea.l	#v_128x128_tiles+$400,a1
 		lea	(Eni_SpecialBack).l,a0
 		move.w	#$700,d0
 		bsr.w	EniDec
@@ -8724,30 +8686,30 @@ sub_6D52:
 		moveq	#$1F,d1
 		moveq	#$1F,d2
 		bsr.w	TilemapToVRAM_H80_SS
-		move	#$2300,sr
+		enable_ints
 		rts	
-; End of function sub_6D52
+
 
 
 ; ===========================================================================
 
 
-sub_6DD4:				
+SS_LoadPlayerArt:				
 		lea	(Nem_SpecialSonicAndTails).l,a0
-		lea	($FF0000).l,a4
+		lea	(v_ss_character_art&$FFFFFF).l,a4
 		bra.w	NemDecToRAM
-; End of function sub_6DD4
+
 
 
 ; ===========================================================================
 
 
-sub_6DE4:				
+SS_ScrollBG:				
 					
 		bsr.w	sub_6E3C
 		bsr.w	sub_6EE0
 		rts	
-; End of function sub_6DE4
+; End of function SS_ScrollBG
 
 ; ===========================================================================
 ; special stage background vertical and horizontal scroll offsets
@@ -9010,7 +8972,7 @@ loc_6F88:
 sub_6F8E:				
 					
 		lea	($FFFFB200).w,a1
-		move.w	#$76,d5	; 'v'
+		move.w	#$76,d5
 
 loc_6F96:				
 		tst.b	(a1)
@@ -9050,7 +9012,7 @@ locret_6FBE:
 
 HUDSpecial:				
 		move.b	$24(a0),d0
-		bne.w	loc_7844
+		bne.w	JmpTo_DisplaySprite
 		move.l	#Obj5E_MapUnc_7070,ost_mappings(a0)
 		move.w	#$1FA,2(a0)
 		move.b	#4,1(a0)
@@ -9146,12 +9108,12 @@ loc_710A:
 		add.w	d1,8(a0)
 		add.w	d0,$C(a0)
 		cmpi.w	#0,8(a0)
-		blt.w	loc_7850
+		blt.w	JmpTo_DeleteObject
 		cmpi.w	#$100,8(a0)
-		bgt.w	loc_7850
+		bgt.w	JmpTo_DeleteObject
 		cmpi.w	#0,$C(a0)
-		blt.w	loc_7850
-		bra.w	loc_7844
+		blt.w	JmpTo_DeleteObject
+		bra.w	JmpTo_DisplaySprite
 ; ===========================================================================
 
 loc_714A:				
@@ -9171,19 +9133,19 @@ loc_7158:
 		move.b	#2,$24(a0)
 
 loc_718A:				
-		bsr.w	sub_7862
-		cmpi.w	#$48,$C(a0) ; 'H'
-		blt.w	loc_7844
+		bsr.w	JmpTo_SpeedToPos
+		cmpi.w	#$48,$C(a0)
+		blt.w	JmpTo_DisplaySprite
 		move.w	#0,$12(a0)
-		move.w	#$48,$C(a0) ; 'H'
+		move.w	#$48,$C(a0)
 		move.b	#4,$24(a0)
 		move.b	#$F,$2A(a0)
-		bra.w	loc_7844
+		bra.w	JmpTo_DisplaySprite
 ; ===========================================================================
 
 loc_71B4:				
 		subi.b	#1,$2A(a0)
-		bne.w	loc_7844
+		bne.w	JmpTo_DisplaySprite
 		moveq	#6,d6
 		lea	(Map_obj5F_a_004C).l,a2
 		moveq	#2,d3
@@ -9230,17 +9192,17 @@ loc_7230:
 
 loc_7234:				
 		st.b	(f_ss_started).w
-		bra.w	loc_7850
+		bra.w	JmpTo_DeleteObject
 ; ===========================================================================
 
 locret_723C:				
 		rts	
 		
 		
-;   if removeJmpTos
-;JmpTo_DeleteObject ; JmpTo
-;		jmp	(DeleteObject).l
-;    endc
+   	if RemoveJmpTos
+JmpTo_DeleteObject ; JmpTo
+		jmp	(DeleteObject).l
+    endc
 ; ===========================================================================
 
 locret_723E:				
@@ -9317,7 +9279,7 @@ loc_736C:
 		move.w	#$20,d0
 		moveq	#0,d1
 		lea	$10(a0),a1
-		move.w	#$48,(a1) ; 'H'
+		move.w	#$48,(a1)
 		move.w	d0,2(a1)
 		move.w	d1,4(a1)
 		move.w	#$E0,6(a1)
@@ -9369,7 +9331,7 @@ loc_742A:
 		bset	#6,1(a1)
 		move.b	#0,$F(a1)
 		lea	$10(a1),a2
-		move.w	#$2C,d0	; ','
+		move.w	#$2C,d0
 		move.w	#$A,d1
 		move.w	d0,2(a2)
 		move.w	d1,4(a2)
@@ -9413,10 +9375,10 @@ loc_74B8:
 		lea	6(a2),a2
 		move.w	d3,d4
 		subq.w	#1,d4
-		move.w	#$48,d1	; 'H'
+		move.w	#$48,d1
 		tst.w	(v_player_mode).w
 		beq.s	loc_74D4
-		addi.w	#$54,d1	; 'T'
+		addi.w	#$54,d1
 
 loc_74D4:				
 					
@@ -9456,7 +9418,7 @@ loc_7510:
 		move.w	#$E0,d1	
 		tst.w	(v_player_mode).w
 		beq.s	loc_7528
-		subi.w	#$44,d1	; 'D'
+		subi.w	#$44,d1
 
 loc_7528:				
 					
@@ -9467,7 +9429,7 @@ loc_7528:
 
 loc_7536:				
 		move.b	d3,$F(a0)
-		bra.w	loc_7844
+		bra.w	JmpTo_DisplaySprite
 ; ===========================================================================
 
 loc_753E:				
@@ -9520,21 +9482,21 @@ loc_758C:
 		move.b	d1,$B(a1)
 		move.w	#$88,$C(a1)
 		move.b	d0,$11(a1)
-		bra.w	loc_7844
+		bra.w	JmpTo_DisplaySprite
 ; ===========================================================================
 
 loc_75BC:				
 		move.w	#$80,(a1)
 		move.b	d0,5(a1)
-		bra.w	loc_7844
+		bra.w	JmpTo_DisplaySprite
 ; ===========================================================================
 
 loc_75C8:				
-		move.w	#$7C,(a1) ; '|'
+		move.w	#$7C,(a1)
 		move.b	d1,5(a1)
 		move.w	#$84,6(a1)
 		move.b	d0,$B(a1)
-		bra.w	loc_7844
+		bra.w	JmpTo_DisplaySprite
 ; ===========================================================================
 
 loc_75DE:				
@@ -9584,12 +9546,12 @@ loc_761C:
 loc_7648:				
 					
 		move.b	d2,$F(a0)
-		bra.w	loc_7844
+		bra.w	JmpTo_DisplaySprite
 
 ; ===========================================================================
 
 
-sub_7650:				
+SS_SetGeoOffsets:				
 					
 		move.b	(v_ss_track_drawing_index).w,d0
 		cmp.b	(v_ss_player_anim_frame_timer).w,d0
@@ -9613,10 +9575,10 @@ loc_7672:
 		move.w	d0,($FFFFF73E).w
 		move.b	(a2),d0
 		ext.w	d0
-		addi.w	#$36,d0	; '6'
+		addi.w	#$36,d0
 		move.w	d0,($FFFFF740).w
 		rts	
-; End of function sub_7650
+; End of function SS_SetGeoOffsets
 
 ; ===========================================================================
 word_768A:	dc.w $1300,$1300,$1300,$1300,$9F6,$E4,$E4,$E0,$DC,$D6,$F0,  6, $E,$10,$12,$12; 0
@@ -9646,14 +9608,14 @@ loc_7718:
 loc_771C:				
 		move.w	d1,(v_ss_ring_requirement).w
 		moveq	#0,d0
-		cmpi.w	#$64,d1	; 'd'
+		cmpi.w	#$64,d1
 		blt.s	loc_7740
 		addq.w	#1,d2
-		subi.w	#$64,d1	; 'd'
+		subi.w	#$64,d1
 		move.w	#$100,d0
-		cmpi.w	#$64,d1	; 'd'
+		cmpi.w	#$64,d1
 		blt.s	loc_7740
-		subi.w	#$64,d1	; 'd'
+		subi.w	#$64,d1
 		addi.w	#$100,d0
 
 loc_7740:				
@@ -9697,21 +9659,23 @@ Misc_7772:	dc.b $1E,$46,$82,$6E	; 0
 		dc.b $32,$5A,$A0,$A0	; 16
 		dc.b $50,$8C,$D2,$D2	; 20
 		dc.b $64,$96,$BE,$BE	; 24
-word_778E:	dc.w   $1B		; 0 
-		dc.w   $1C		; 1
-		dc.w   $1D		; 2
-		dc.w   $1E		; 3
-		dc.w   $1F		; 4
-		dc.w   $20		; 5
-		dc.w   $21		; 6
-		dc.w   $22		; 7
-		dc.w   $23		; 8
-		dc.w   $24		; 9
+
+SS_PaletteTable:	
+		dc.w   id_Pal_SS1
+		dc.w   id_Pal_SS2
+		dc.w   id_Pal_SS3
+		dc.w   id_Pal_SS4
+		dc.w   id_Pal_SS5
+		dc.w   id_Pal_SS6		
+		dc.w   id_Pal_SS7
+		dc.w   id_Pal_SS1_2p
+		dc.w   id_Pal_SS2_2p
+		dc.w   id_Pal_SS3_2p
 
 ; ===========================================================================
 
 
-sub_77A2:				
+SS_LoadPalAndData:				
 		clr.b	(v_special_act).w
 		move.b	#-1,(v_ss_last_segment_2).w
 		move.w	#0,(v_rings).w
@@ -9729,32 +9693,27 @@ sub_77A2:
 		move.w	d0,(a2)+
 		moveq	#$18,d0
 		bsr.w	PalLoad_Next
-		lea	(word_778E)(pc),a1
+		lea	SS_PaletteTable(pc),a1
 		moveq	#0,d0
-		move.b	(v_special_stage).w,d0
-		add.w	d0,d0
+		move.b	(v_special_stage).w,d0	; get current Special Stage
+		add.w	d0,d0	
 		move.w	d0,d1
-		tst.b	(f_ss_2p).w
-		beq.s	loc_7800
-		cmpi.b	#4,d0
-		bcs.s	loc_7800
-		addi.w	#6,d0
+		tst.b	(f_ss_2p).w		; is it 2P mode?
+		beq.s	.not2P		; if not, branch
+		cmpi.b	#4,d0 			; is it stage 1-3?
+		bcs.s	.not2P		; if not, branch
+		addi.w	#6,d0			; add 6 to get pointer to 2P SS palette
 
-loc_7800:				
+	.not2P:				
 		move.w	(a1,d0.w),d0
-		bsr.w	PalLoad_Next
-
-loc_7808:
-		lea	($FFFF8778).w,a0
+		bsr.w	PalLoad_Next			; load the appropriate palette
+		lea	(v_ss_object_locations).w,a0
 		adda.w	(a0,d1.w),a0
-		move.l	a0,(v_ss_current_obj_locations).w
-		lea	($FFFF855C).w,a0
+		move.l	a0,(v_ss_current_obj_locations).w	; set pointer to object locations for current stage
+		lea	(v_ss_level_layout).w,a0
 		adda.w	(a0,d1.w),a0
-
-loc_781C:
-		move.l	a0,(v_ss_current_layout).w
+		move.l	a0,(v_ss_current_layout).w			; set pointer to layout data for current stage
 		rts	
-; End of function sub_77A2
 
 ; ===========================================================================
 word_7822:	
@@ -9775,22 +9734,23 @@ word_7822:
 		dc.w $5A02		; 14
 		dc.w $FFFF		; 15
 ; ===========================================================================
+
 	if Revision<2
 		nop	
 	endc
 	
 	if ~RemoveJmpTos
-loc_7844:			
+JmpTo_DisplaySprite:			
 		jmp	DisplaySprite
-sub_784A:				
-		jmp	loc_157A4
-loc_7850:						
+JmpTo_LoadTitleCardSS:				
+		jmp	LoadTitleCardSS
+JmpTo_DeleteObject:						
 		jmp	DeleteObject
 sub_7856:				
 		jmp	loc_35CE2
 sub_785C:						
 		jmp	loc_35DAA
-sub_7862:				
+JmpTo_SpeedToPos:				
 		jmp	SpeedToPos
 sub_7868:				
 		jmp	loc_4106E
@@ -9817,6 +9777,21 @@ GM_Continue:
 loc_78A2:				
 		move.l	d0,(a1)+
 		dbf	d1,loc_78A2
+
+   	if FixBugs
+		; Clear the DMA queue. This fixes the bug where, if you get a
+		; Game Over in Hill Top Zone, then Tails' graphics will be corrupted
+		; on the Continue screen.
+		; This is caused by HTZ's transforming cloud art being loaded over
+		; Tails' Continue art: 'Dynamic_HTZ' is responsible for queueing the
+		; art to be transferred with 'QueueDMATransfer', which takes effect
+		; around the next frame. The problem here is, the art is queued, you
+		; die, get a Game Over, advance to the Continue screen, and then
+		; finally the art is loaded.
+		clr.w	(v_vdp_command_buffer).w
+		move.l	#v_vdp_command_buffer,(v_vdp_command_buffer_slot).w
+    endc		
+		
 		bsr.w	sub_7A04
 		move.l	#$60000002,(vdp_control_port).l
 		lea	(Nem_ContinueTails).l,a0
@@ -9866,7 +9841,7 @@ loc_7960:
 		divu.w	#$3C,d1
 		andi.l	#$F,d1
 		jsr	sub_411A4
-		move	#$2300,sr
+		enable_ints
 
 loc_798E:				
 		jsr	ExecuteObjects
@@ -10088,7 +10063,7 @@ loc_7BD2:
 
 loc_7BE4:				
 		addq.b	#2,$24(a0)
-		move.b	#$21,$1C(a0) ; '!'
+		move.b	#$21,$1C(a0)
 		clr.w	$14(a0)
 		move.b	#-$20,d0
 		bsr.w	PlaySound
@@ -10242,7 +10217,7 @@ loc_7DA6:
 		bsr.w	EniDec
 		lea	(v_128x128_tiles).l,a1
 		move.l	#$60000003,d0
-		moveq	#$27,d1	; '''
+		moveq	#$27,d1
 		moveq	#$1B,d2
 		bsr.w	TilemapToVRAM
 		move.w	(v_results_screen_2p).w,d0
@@ -10258,7 +10233,7 @@ loc_7DA6:
 		jsr	(a2)
 		lea	(v_128x128_tiles).l,a1
 		move.l	#$40000003,d0
-		moveq	#$27,d1	; '''
+		moveq	#$27,d1
 		moveq	#$1B,d2
 		bsr.w	TilemapToVRAM
 		clr.w	(v_vdp_command_buffer).w
@@ -10286,7 +10261,7 @@ loc_7E74:
 		clr.l	(v_fg_y_pos_vsram).w
 		clr.l	(v_fg_y_pos_vsram_p2).w
 		clr.l	(v_hblank_fg_y_pos_vsram_p2).w
-		move.b	#$21,($FFFFB000).w ; '!'
+		move.b	#$21,($FFFFB000).w
 		move.b	#$16,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
 		move.w	(v_vdp_mode_buffer).w,d0
@@ -11274,7 +11249,7 @@ j_Dynamic_Normal_0:
 MenuScreen:				
 					
 		bsr.w	PaletteFadeOut
-	disable_ints
+		disable_ints
 		move.w	(v_vdp_mode_buffer).w,d0
 		andi.b	#-$41,d0
 		move.w	d0,(vdp_control_port).l
@@ -11318,7 +11293,7 @@ loc_8C2A:
 		bsr.w	EniDec
 		lea	(v_128x128_tiles).l,a1
 		move.l	#$60000003,d0
-		moveq	#$27,d1	; '''
+		moveq	#$27,d1
 		moveq	#$1B,d2
 		bsr.w	loc_9C70
 		cmpi.b	#$24,(v_gamemode).w
@@ -11394,7 +11369,7 @@ loc_8DA8:
 		bsr.w	sub_8F1C
 		bsr.w	sub_8E5A
 		bsr.w	sub_8E7E
-		move	#$2300,sr
+		enable_ints
 		lea	(word_87C6).l,a2
 		bsr.w	j_Dynamic_Normal
 		move.b	(v_joypad_press_actual).w,d0
@@ -11658,7 +11633,7 @@ loc_9060:
 		bsr.w	loc_91F8
 		bsr.w	sub_90E0
 		bsr.w	sub_9186
-		move	#$2300,sr
+		enable_ints
 		lea	(word_87C6).l,a2
 		bsr.w	j_Dynamic_Normal
 		move.b	(v_joypad_press_actual).w,d0
@@ -11749,7 +11724,7 @@ loc_9146:
 		move.w	d2,(a1)
 		cmpi.b	#2,(v_options_menu_box).w
 		bne.s	locret_9178
-		andi.w	#$30,d0	; '0'
+		andi.w	#$30,d0
 		beq.s	locret_9178
 		move.w	($FFFFFF84).w,d0
 		addi.w	#$80,d0	
@@ -11922,7 +11897,7 @@ loc_92F6:
 		bsr.w	EniDec
 		lea	(v_128x128_tiles).l,a1
 		move.l	#$40000003,d0
-		moveq	#$27,d1	; '''
+		moveq	#$27,d1
 		moveq	#$1B,d2
 		bsr.w	loc_9C70
 		moveq	#0,d3
@@ -11973,7 +11948,7 @@ loc_93AC:
 		move.w	#$6000,d3
 		bsr.w	loc_95B8
 		bsr.w	loc_9688
-		move	#$2300,sr
+		enable_ints
 		lea	(word_87C6).l,a2
 		bsr.w	j_Dynamic_Normal
 		move.b	(v_joypad_press_actual).w,d0
@@ -12131,7 +12106,7 @@ loc_954E:
 
 loc_955C:				
 		move.w	d0,($FFFFFF84).w
-		andi.w	#$30,d1	; '0'
+		andi.w	#$30,d1
 		beq.s	locret_9588
 		move.w	($FFFFFF84).w,d0
 		addi.w	#$80,d0	
@@ -12531,7 +12506,7 @@ loc_9D7C:
 		lea	(Nem_Clouds).l,a0
 		bsr.w	j_NemDec
 		move.w	#$E00,(v_zone).w
-		move	#$2300,sr
+		enable_ints
 		moveq	#-$6B,d0
 		bsr.w	sub_BF98
 		move.l	#$EEE0EEE,d1
@@ -12721,7 +12696,7 @@ loc_A002:
 		bsr.w	sub_BFA4
 		clr.w	($FFFFFF4C).w
 		bsr.w	sub_A0C0
-		move.w	#$3B,d0	; ';'
+		move.w	#$3B,d0
 
 loc_A07A:				
 		move.b	#$18,(v_vblank_routine).w
@@ -12735,7 +12710,7 @@ loc_A08C:
 		bsr.w	WaitForVBlank
 		addq.w	#1,($FFFFFF4C).w
 		bsr.w	sub_A0C0
-		cmpi.w	#$5E,($FFFFFF4C).w ; '^'
+		cmpi.w	#$5E,($FFFFFF4C).w
 		bcs.s	loc_A08C
 		move.b	(v_joypad_press_actual).w,d1
 		andi.b	#-$10,d1
@@ -12758,7 +12733,7 @@ sub_A0C0:
 					
 		lea	($FFFFFB02).w,a2
 		move.w	($FFFFFF4C).w,d0
-		cmpi.w	#$24,d0	; '$'
+		cmpi.w	#$24,d0
 		bcc.s	locret_A0BE
 		btst	#0,d0
 		bne.s	locret_A0BE
@@ -12887,7 +12862,7 @@ loc_A256:
 		moveq	#$B,d1
 		moveq	#8,d2
 		bsr.w	sub_BFA4
-		move	#$2300,sr
+		enable_ints
 		movea.l	(sp)+,a0
 		rts	
 ; ===========================================================================
@@ -13029,7 +13004,7 @@ EndingTrigger:
 ; ===========================================================================
 
 loc_A3DA:
-		ori.b	#$7C,d4	; '|'
+		ori.b	#$7C,d4
 		lea	(off_3AFC8).l,a1
 		bsr.w	sub_BFB6
 		cmpi.w	#2,(v_player_mode).w
@@ -14134,7 +14109,7 @@ loc_B296:
 ; ===========================================================================
 
 loc_B298:				
-		move	#$2300,sr
+		enable_ints
 		rts	
 ; End of function sub_B262
 
@@ -15307,7 +15282,7 @@ SwScrl_EHZ:
 		asr.w	#6,d0
 		
 		; Do 58 lines.
-		move.w	#58-1,d1	; '9'
+		move.w	#58-1,d1
 	.loop58:				
 		move.l	d0,(a1)+
 		dbf	d1,.loop58
@@ -15917,7 +15892,7 @@ loc_CB10:
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
 		andi.l	#-$10002,(v_fg_y_pos_vsram).w
 		lea	(v_hscroll_buffer).w,a1
-		move.w	#$6F,d1	; 'o'
+		move.w	#$6F,d1
 		move.w	(v_camera_x_pos).w,d0
 		neg.w	d0
 		swap	d0
@@ -15938,7 +15913,7 @@ loc_CB50:
 		subi.w	#$E0,(v_fg_y_pos_vsram_p2).w
 		andi.l	#-$10002,(v_fg_y_pos_vsram_p2).w
 		lea	($FFFFE1B0).w,a1
-		move.w	#$73,d1	; 's'
+		move.w	#$73,d1
 		move.w	(v_camera_x_pos_p2).w,d0
 		neg.w	d0
 		swap	d0
@@ -16102,7 +16077,7 @@ loc_CCEA:
 		bsr.s	sub_CD16
 		bsr.s	sub_CD10
 		move.w	d7,d0
-		moveq	#$47,d1	; 'G'
+		moveq	#$47,d1
 		bsr.s	sub_CD1C
 
 locret_CD08:				
@@ -16407,7 +16382,7 @@ loc_CF62:
 		bcc.s	loc_CF62
 		neg.w	d1
 		subq.w	#2,a2
-		move.w	#$6F,d2	; 'o'
+		move.w	#$6F,d2
 		move.w	(v_camera_x_pos).w,d0
 		neg.w	d0
 		swap	d0
@@ -16550,7 +16525,7 @@ loc_D09A:
 		bcc.s	loc_D098
 		neg.w	d1
 		subq.w	#2,a2
-		move.w	#$73,d2	; 's'
+		move.w	#$73,d2
 		move.w	(v_camera_x_pos_p2).w,d0
 		neg.w	d0
 		swap	d0
@@ -16690,7 +16665,7 @@ loc_D194:
 		move.w	(v_bg1_y_pos).w,d1
 		moveq	#0,d0
 		move.w	(v_camera_x_pos).w,d0
-		move.w	#$6F,d2	; 'o'
+		move.w	#$6F,d2
 		lea	(byte_D270+2).l,a3
 		bsr.s	sub_D216
 		move.w	(v_camera_y_pos_p2).w,d0
@@ -16707,7 +16682,7 @@ loc_D194:
 		move.w	(v_bg1_y_pos_p2).w,d1
 		moveq	#0,d0
 		move.w	(v_camera_x_pos_p2).w,d0
-		move.w	#$73,d2	; 's'
+		move.w	#$73,d2
 		lea	(byte_D270+1).l,a3
 
 ; ===========================================================================
@@ -19025,7 +19000,7 @@ loc_E39A:
 		moveq	#$1F,d6
 	disable_ints
 		bsr.w	loc_DF9A
-		move	#$2300,sr
+		enable_ints
 		movem.l	(sp)+,d4-d6
 		addi.w	#$10,d4
 		dbf	d6,loc_E39A
@@ -19401,7 +19376,7 @@ loc_E6B0:
 		bsr.w	sub_F664
 		clr.b	(v_boss_spawn_delay).w
 		move.b	#2,(v_current_boss).w
-		moveq	#$29,d0	; ')'
+		moveq	#$29,d0
 		bsr.w	sub_F65E
 
 locret_E6EC:				
@@ -19420,7 +19395,7 @@ loc_E702:
 		bcs.s	locret_E736
 		bsr.w	sub_F64C
 		bne.s	loc_E72A
-		move.b	#$56,(a1) ; 'V'
+		move.b	#$56,(a1)
 		move.b	#-$7F,$28(a1)
 		move.w	#$29D0,8(a1)
 		move.w	#$426,$C(a1)
@@ -19512,7 +19487,7 @@ loc_E7B8:
 		bsr.w	sub_F664
 		clr.b	(v_boss_spawn_delay).w
 		move.b	#7,(v_current_boss).w
-		moveq	#$2E,d0	; '.'
+		moveq	#$2E,d0
 		bsr.w	sub_F65E
 
 locret_E7F4:				
@@ -19531,7 +19506,7 @@ loc_E80A:
 		bcs.s	locret_E82C
 		bsr.w	sub_F64C
 		bne.s	loc_E820
-		move.b	#$54,(a1) ; 'T'
+		move.b	#$54,(a1)
 
 loc_E820:				
 		addq.b	#2,(v_dle_routine).w
@@ -19658,7 +19633,7 @@ loc_E94A:
 		cmpi.w	#$400,(v_camera_y_pos).w
 		bcs.s	locret_E96A
 		addq.w	#2,($FFFFF660).w
-		moveq	#$3E,d0	; '>'
+		moveq	#$3E,d0
 		bsr.w	sub_F65E
 		move.w	#$2880,(v_boundary_left_next).w
 
@@ -20258,7 +20233,7 @@ loc_EFAA:
 		bsr.w	sub_F664
 		clr.b	(v_boss_spawn_delay).w
 		move.b	#3,(v_current_boss).w
-		moveq	#$2A,d0	; '*'
+		moveq	#$2A,d0
 		bra.w	sub_F65E
 ; ===========================================================================
 
@@ -20280,7 +20255,7 @@ loc_F006:
 		bcs.s	locret_F01E
 		bsr.w	sub_F64C
 		bne.s	loc_F012
-		move.b	#$52,(a1) ; 'R'
+		move.b	#$52,(a1)
 
 loc_F012:				
 		addq.b	#2,(v_dle_routine).w
@@ -20366,9 +20341,9 @@ loc_F0A8:
 		bsr.w	sub_F664
 		clr.b	(v_boss_spawn_delay).w
 		move.b	#8,(v_current_boss).w
-		moveq	#$2F,d0	; '/'
+		moveq	#$2F,d0
 		bsr.w	sub_F65E
-		moveq	#$25,d0	; '%'
+		moveq	#$25,d0
 		bsr.w	sub_F658
 
 locret_F0EA:				
@@ -20387,7 +20362,7 @@ loc_F100:
 		bcs.s	locret_F122
 		bsr.w	sub_F64C
 		bne.s	loc_F116
-		move.b	#$55,(a1) ; 'U'
+		move.b	#$55,(a1)
 
 loc_F116:				
 		addq.b	#2,(v_dle_routine).w
@@ -20476,7 +20451,7 @@ loc_F1DE:
 		move.l	(a2)+,(a6)
 		dbf	d0,loc_F1DE
 		move.b	#5,(v_current_boss).w
-		moveq	#$2C,d0	; ','
+		moveq	#$2C,d0
 		bsr.w	sub_F65E
 		moveq	#$19,d0
 		bsr.w	sub_F658
@@ -20497,7 +20472,7 @@ loc_F21A:
 		bcs.s	locret_F23C
 		bsr.w	sub_F64C
 		bne.s	loc_F230
-		move.b	#$57,(a1) ; 'W'
+		move.b	#$57,(a1)
 
 loc_F230:				
 		addq.b	#2,(v_dle_routine).w
@@ -20580,7 +20555,7 @@ loc_F2CE:
 		bsr.w	sub_F664
 		clr.b	(v_boss_spawn_delay).w
 		move.b	#6,(v_current_boss).w
-		moveq	#$2D,d0	; '-'
+		moveq	#$2D,d0
 		bsr.w	sub_F65E
 		moveq	#$1A,d0
 		bsr.w	sub_F658
@@ -20601,7 +20576,7 @@ loc_F32C:
 		bcs.s	locret_F34E
 		bsr.w	sub_F64C
 		bne.s	loc_F342
-		move.b	#$51,(a1) ; 'Q'
+		move.b	#$51,(a1)
 
 loc_F342:				
 		addq.b	#2,(v_dle_routine).w
@@ -20689,7 +20664,7 @@ loc_F40E:
 		bcs.s	locret_F430
 		bsr.w	sub_F64C
 		bne.s	loc_F424
-		move.b	#$5D,(a1) ; ']'
+		move.b	#$5D,(a1)
 
 loc_F424:				
 		addq.b	#2,(v_dle_routine).w
@@ -20729,10 +20704,10 @@ loc_F45E:
 		bsr.w	sub_F64C
 		bne.s	locret_F48E
 		move.b	#-$51,(a1)
-		move.b	#$48,$28(a1) ; 'H'
+		move.b	#$48,$28(a1)
 		move.w	#$348,8(a1)
 		move.w	#$A0,$C(a1)
-		moveq	#$30,d0	; '0'
+		moveq	#$30,d0
 		bra.w	sub_F65E
 ; ===========================================================================
 
@@ -20750,7 +20725,7 @@ loc_F492:
 		cmpi.w	#$300,(v_camera_x_pos).w
 		bcs.s	locret_F4AA
 		addq.b	#2,(v_dle_routine).w
-		moveq	#$31,d0	; '1'
+		moveq	#$31,d0
 		bra.w	sub_F65E
 ; ===========================================================================
 
@@ -20804,7 +20779,7 @@ loc_F4EE:
 		move.w	#$400,(v_boundary_bottom_next_p2).w
 		addq.b	#2,(v_dle_routine).w
 		move.b	#4,(v_current_boss).w
-		moveq	#$2B,d0	; '+'
+		moveq	#$2B,d0
 		bsr.w	sub_F65E
 
 locret_F51E:				
@@ -20929,7 +20904,7 @@ loc_F62E:
 		lea	(byte_13F62).l,a2
 		move.b	(a2,d0.w),d0
 		bsr.w	sub_F65E
-		moveq	#$41,d0	; 'A'
+		moveq	#$41,d0
 		bsr.w	sub_F65E
 		rts	
 ; ===========================================================================
@@ -21218,7 +21193,7 @@ sub_F872:
 					
 		lea	($FFFFB040).w,a1
 		moveq	#4,d6
-		moveq	#$3B,d5	; ';'
+		moveq	#$3B,d5
 		movem.l	d1-d4,-(sp)
 		bsr.s	sub_F88C
 		movem.l	(sp)+,d1-d4
@@ -21662,14 +21637,14 @@ loc_FD54:
 		move.w	d2,8(a1)
 		addi.w	#$40,d3
 		move.w	d3,$C(a1)
-		addi.w	#$48,d3	; 'H'
+		addi.w	#$48,d3
 		move.w	d3,$C(a0)
 		bra.s	loc_FE20
 ; ===========================================================================
 
 loc_FDC6:				
 		bset	#6,1(a1)
-		move.b	#$48,$E(a1) ; 'H'
+		move.b	#$48,$E(a1)
 		move.b	d1,$F(a1)
 		subq.b	#1,d1
 		lea	$10(a1),a2
@@ -21747,9 +21722,9 @@ loc_FE90:
 loc_FE9E:				
 		cmpi.b	#$20,d1
 		beq.w	locret_FF6C
-		cmpi.b	#$30,d1	; '0'
+		cmpi.b	#$30,d1
 		bne.s	loc_FEB8
-		cmpi.b	#$41,d0	; 'A'
+		cmpi.b	#$41,d0
 		beq.s	loc_FE90
 		bcs.s	loc_FEC2
 		moveq	#$40,d0
@@ -22559,14 +22534,14 @@ loc_10692:
 		move.w	$34(a0),d0
 		move.b	($FFFFFE6C).w,d1
 		neg.b	d1
-		addi.b	#$30,d1	; '0'
+		addi.b	#$30,d1
 		bra.s	loc_106CC
 ; ===========================================================================
 
 loc_106A2:				
 		move.w	$34(a0),d0
 		move.b	($FFFFFE6C).w,d1
-		subi.b	#$30,d1	; '0'
+		subi.b	#$30,d1
 		bra.s	loc_106CC
 ; ===========================================================================
 
@@ -24618,7 +24593,7 @@ loc_11F5C:
 		bsr.w	Adjust2PArtPointer
 		move.b	#4,1(a0)
 		move.b	#2,$18(a0)
-		move.b	#$47,$20(a0) ; 'G'
+		move.b	#$47,$20(a0)
 		move.b	#8,$19(a0)
 
 loc_11F90:				
@@ -24763,7 +24738,7 @@ loc_120B2:
 		bne.w	loc_12142
 
 loc_120BA:				
-		_move.b	#$37,0(a1) ; '7'
+		_move.b	#$37,0(a1)
 		addq.b	#2,$24(a1)
 		move.b	#8,$16(a1)
 		move.b	#8,$17(a1)
@@ -24774,7 +24749,7 @@ loc_120BA:
 		bsr.w	sub_16D8A
 		move.b	#-$7C,1(a1)
 		move.b	#3,$18(a1)
-		move.b	#$47,$20(a1) ; 'G'
+		move.b	#$47,$20(a1)
 		move.b	#8,$19(a1)
 		move.b	#-1,(v_syncani_3_time).w
 		tst.w	d4
@@ -24901,7 +24876,7 @@ loc_12216:
 loc_1224E:				
 		addq.b	#2,$24(a0)
 		move.b	#2,$18(a0)
-		move.b	#$52,$20(a0) ; 'R'
+		move.b	#$52,$20(a0)
 		move.w	#$C40,(v_giantring_gfx_offset).w
 
 loc_12264:				
@@ -25227,7 +25202,7 @@ loc_12688:
 ; ===========================================================================
 
 loc_126E2:				
-		move.b	#$46,$20(a0) ; 'F'
+		move.b	#$46,$20(a0)
 		move.b	$28(a0),$1C(a0)
 		tst.w	(f_two_player).w
 		beq.s	loc_126FA
@@ -25346,7 +25321,7 @@ loc_127EC:
 		move.b	#0,$20(a0)
 		bsr.w	SingleObjLoad
 		bne.s	loc_1281E
-		_move.b	#$2E,0(a1) ; '.'
+		_move.b	#$2E,0(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
 		move.b	$1C(a0),$1C(a1)
@@ -25355,7 +25330,7 @@ loc_127EC:
 loc_1281E:				
 		bsr.w	SingleObjLoad
 		bne.s	loc_1283A
-		_move.b	#$27,0(a1) ; '''
+		_move.b	#$27,0(a1)
 		addq.b	#2,$24(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
@@ -25606,13 +25581,13 @@ Invincible_Monitor:
 	.nomusic:								
 		tst.b	$3F(a0)
 		bne.s	loc_12A9A
-		move.b	#$35,($FFFFD200).w ; '5'
+		move.b	#$35,($FFFFD200).w
 		move.w	a1,($FFFFD23E).w
 		rts	
 ; ===========================================================================
 
 	loc_12A9A:				
-		move.b	#$35,($FFFFD300).w ; '5'
+		move.b	#$35,($FFFFD300).w
 		move.w	a1,($FFFFD33E).w
 
 	locret_12AA4:				
@@ -25678,7 +25653,7 @@ loc_12B36:
 loc_12B46:				
 		move.b	#1,(f_boundary_bottom_change).w
 		lea	($FFFFB400).w,a1
-		moveq	#$6F,d1	; 'o'
+		moveq	#$6F,d1
 
 loc_12B52:				
 		cmpi.b	#-$7C,(a1)
@@ -25711,7 +25686,7 @@ loc_12B94:
 		lea	($FFFFB000).w,a1
 		move.b	#$38,($FFFFD180).w
 		move.w	a1,($FFFFD1BE).w
-		move.b	#$35,($FFFFD200).w ; '5'
+		move.b	#$35,($FFFFD200).w
 		move.w	a1,($FFFFD23E).w
 		btst	#2,$22(a1)
 		bne.s	loc_12BC8
@@ -25733,7 +25708,7 @@ loc_12BEC:
 		lea	($FFFFB040).w,a1
 		move.b	#$38,($FFFFD1C0).w
 		move.w	a1,($FFFFD1FE).w
-		move.b	#$35,($FFFFD300).w ; '5'
+		move.b	#$35,($FFFFD300).w
 		move.w	a1,($FFFFD33E).w
 		btst	#2,$22(a1)
 		bne.s	loc_12C18
@@ -25980,7 +25955,7 @@ sub_12F08:
 ; ===========================================================================
 
 loc_12F18:				
-		moveq	#$24,d2	; '$'
+		moveq	#$24,d2
 		lea	(word_13046).l,a1
 
 loc_12F20:				
@@ -26419,7 +26394,7 @@ PalChanger:
 ; ===========================================================================
 
 loc_132FE:
-		ori.b	#$46,d4	; 'F'
+		ori.b	#$46,d4
 		addq.b	#2,$24(a0)
 		moveq	#0,d0
 		move.b	$28(a0),d0
@@ -27562,7 +27537,7 @@ loc_140BC:
 					
 		_move.b	0(a1),d0
 		beq.s	loc_140CE
-		cmpi.b	#$3A,d0	; ':'
+		cmpi.b	#$3A,d0
 		beq.s	loc_140CE
 		lea	$40(a1),a1
 		bra.s	loc_140BC
@@ -28024,7 +27999,7 @@ loc_14500:
 		cmpi.b	#$26,($FFFFB824).w
 		bne.s	loc_14532
 		move.w	#$1388,(v_bonus_count_1).w
-		move.b	#$2A,$24(a0) ; '*'
+		move.b	#$2A,$24(a0)
 		move.w	#$120,$A(a0)
 		st.b	(f_pass_bonus_update).w
 		move.w	#$CF,d0	
@@ -29056,7 +29031,7 @@ sub_15792:
 
 ; ===========================================================================
 
-loc_157A4:				
+LoadTitleCardSS:				
 		movem.l	d0/a0,-(sp)
 		bsr.s	sub_157B0
 		movem.l	(sp)+,d0/a0
@@ -31821,7 +31796,7 @@ loc_170D0:
 		move.b	$16(a0),d5
 		subq.b	#3,d5
 		sub.w	d5,d3
-		cmpi.b	#$4D,$1A(a0) ; 'M'
+		cmpi.b	#$4D,$1A(a0)
 		bne.s	loc_17104
 		addi.w	#$C,d3
 		moveq	#$A,d5
@@ -32365,7 +32340,7 @@ loc_174DE:
 		move.b	$16(a0),d5
 		subq.b	#3,d5
 		sub.w	d5,d3
-		cmpi.b	#$4D,$1A(a0) ; 'M'
+		cmpi.b	#$4D,$1A(a0)
 		bne.s	loc_17508
 		addi.w	#$C,d3
 		moveq	#$A,d5
@@ -32506,7 +32481,7 @@ loc_17604:
 		add.w	d3,d0
 		move.b	d0,(v_cnz_bumper_debug2).w
 		move.b	d1,(v_cnz_bumper_debug4).w
-		cmpi.b	#$38,d1	; '8'
+		cmpi.b	#$38,d1
 		bcs.s	loc_17618
 		move.w	d3,d0
 
@@ -32593,10 +32568,10 @@ loc_176D0:
 ; ===========================================================================
 
 loc_176E2:				
-		move.w	#$38,d3	; '8'
+		move.w	#$38,d3
 		tst.w	d0
 		bmi.s	loc_176EE
-		move.w	#$48,d3	; 'H'
+		move.w	#$48,d3
 
 loc_176EE:				
 		bsr.w	loc_175EA
@@ -32797,7 +32772,7 @@ loc_17AF0:
 		move.l	a0,(v_opl_ptr_left_p2).w
 		lea	(v_respawn_list).w,a2
 		move.w	#$101,(a2)+
-		move.w	#$5E,d0	; '^'
+		move.w	#$5E,d0
 
 loc_17B0C:				
 		clr.l	(a2)+
@@ -37372,8 +37347,8 @@ loc_1B21C:
 		subq.b	#1,(v_lives).w
 		bne.s	loc_1B28E
 		move.w	#0,$3A(a0)
-		move.b	#$39,($FFFFB080).w ; '9'
-		move.b	#$39,($FFFFB0C0).w ; '9'
+		move.b	#$39,($FFFFB080).w
+		move.b	#$39,($FFFFB0C0).w
 		move.b	#1,($FFFFB0DA).w
 		move.w	a0,($FFFFB0BE).w
 		clr.b	(f_time_over).w
@@ -37392,8 +37367,8 @@ loc_1B28E:
 		tst.b	(f_time_over).w
 		beq.s	loc_1B2B8
 		move.w	#0,$3A(a0)
-		move.b	#$39,($FFFFB080).w ; '9'
-		move.b	#$39,($FFFFB0C0).w ; '9'
+		move.b	#$39,($FFFFB080).w
+		move.b	#$39,($FFFFB0C0).w
 		move.b	#2,($FFFFB09A).w
 		move.b	#3,($FFFFB0DA).w
 		move.w	a0,($FFFFB0BE).w
@@ -39866,8 +39841,8 @@ loc_1CCA2:
 		subq.b	#1,(v_lives_p2).w
 		bne.s	loc_1CCEC
 		move.w	#0,$3A(a0)
-		move.b	#$39,($FFFFB080).w ; '9'
-		move.b	#$39,($FFFFB0C0).w ; '9'
+		move.b	#$39,($FFFFB080).w
+		move.b	#$39,($FFFFB0C0).w
 		move.b	#1,($FFFFB0DA).w
 		move.w	a0,($FFFFB0BE).w
 		clr.b	(f_time_over_p2).w
@@ -39898,8 +39873,8 @@ loc_1CD0E:
 		tst.b	(f_time_over_p2).w
 		beq.s	loc_1CD38
 		move.w	#0,$3A(a0)
-		move.b	#$39,($FFFFB080).w ; '9'
-		move.b	#$39,($FFFFB0C0).w ; '9'
+		move.b	#$39,($FFFFB080).w
+		move.b	#$39,($FFFFB0C0).w
 		move.b	#2,($FFFFB09A).w
 		move.b	#3,($FFFFB0DA).w
 		move.w	a0,($FFFFB0BE).w
@@ -40101,7 +40076,7 @@ loc_1CF08:
 		andi.b	#-4,1(a0)
 		addi.b	#$B,d0
 		divu.w	#$16,d0
-		addi.b	#$75,d0	; 'u'
+		addi.b	#$75,d0
 		move.b	d0,$1A(a0)
 		move.b	#0,$1E(a0)
 		rts	
@@ -40123,7 +40098,7 @@ loc_1CF4E:
 
 loc_1CF5A:				
 		divu.w	#$16,d0
-		addi.b	#$75,d0	; 'u'
+		addi.b	#$75,d0
 		move.b	d0,$1A(a0)
 		move.b	#0,$1E(a0)
 		rts	
@@ -40647,7 +40622,7 @@ loc_1D606:
 		beq.w	locret_1D81C
 		subq.w	#1,$38(a0)
 		bpl.w	loc_1D72C
-		move.w	#$3B,$38(a0) ; ';'
+		move.w	#$3B,$38(a0)
 		move.w	#1,$36(a0)
 		jsr	(RandomNumber).l
 		andi.w	#1,d0
@@ -41079,7 +41054,7 @@ loc_1DB20:
 ; ===========================================================================
 
 loc_1DB2C:				
-		andi.w	#$3E,d6	; '>'
+		andi.w	#$3E,d6
 		move.b	(a6,d6.w),d2
 		move.b	1(a6,d6.w),d3
 		ext.w	d2
@@ -42628,7 +42603,7 @@ loc_1EBE6:
 		beq.w	loc_1ECE6
 		cmpi.b	#-$80,d0
 		beq.w	loc_1EF9E
-		andi.b	#$38,d1	; '8'
+		andi.b	#$38,d1
 		bne.s	loc_1EBFE
 		addq.w	#8,d2
 
@@ -43155,13 +43130,13 @@ loc_1F154:
 		move.w	$C(a3),d0
 		sub.w	$C(a0),d0
 		addi.w	#$40,d0
-		cmpi.w	#$68,d0	; 'h'
+		cmpi.w	#$68,d0
 		bcc.w	locret_1F220
 		move.w	#$A1,d0	
 		jsr	(PlaySound).l
 		jsr	SingleObjLoad
 		bne.s	loc_1F206
-		_move.b	#$79,0(a1) ; 'y'
+		_move.b	#$79,0(a1)
 		move.b	#6,$24(a1)
 		move.w	8(a0),$30(a1)
 		move.w	$C(a0),$32(a1)
@@ -43217,7 +43192,7 @@ loc_1F240:
 		subq.w	#1,$36(a0)
 		bpl.s	loc_1F262
 		movea.w	$3E(a0),a1
-		cmpi.b	#$79,(a1) ; 'y'
+		cmpi.b	#$79,(a1)
 		bne.s	loc_1F25C
 		move.b	#2,$1C(a1)
 		move.b	#0,$1A(a1)
@@ -43296,7 +43271,7 @@ loc_1F35E:
 		clr.w	(v_rings).w
 		clr.b	(v_ring_reward).w
 		move.l	(v_time_lampcopy).w,(v_time).w
-		move.b	#$3B,(v_time_frames).w ; ';'
+		move.b	#$3B,(v_time_frames).w
 		subq.b	#1,(v_time_sec).w
 		move.w	(v_ost_tile_lampcopy).w,(v_ost_maincharacter+ost_tile).w
 		move.w	(v_ost_top_solid_bit_lampcopy).w,(v_ost_maincharacter+ost_top_solid_bit).w
@@ -43407,7 +43382,7 @@ loc_1F4C8:
 		move.w	d0,8(a1)
 		move.w	d0,$30(a1)
 		move.w	$C(a0),d0
-		subi.w	#$30,d0	; '0'
+		subi.w	#$30,d0
 
 loc_1F502:
 		move.w	d0,$C(a1)
@@ -43582,7 +43557,7 @@ loc_1F636:
 		move.b	#0,$18(a0)
 		move.b	#$10,$19(a0)
 		move.b	$28(a0),$1A(a0)
-		move.w	#$77,$30(a0) ; 'w'
+		move.w	#$77,$30(a0)
 		move.w	#$C9,d0	
 		jsr	(PlaySound).l
 		moveq	#0,d0
@@ -43737,7 +43712,7 @@ loc_1F814:
 		jsr	sub_40D42
 		bsr.w	SingleObjLoad
 		bne.s	locret_1F83C
-		_move.b	#$29,0(a1) ; ')'
+		_move.b	#$29,0(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
 		move.b	#4,$1A(a1)
@@ -44043,7 +44018,7 @@ loc_1FB0C:
 		clr.w	$12(a1)
 		clr.w	$14(a1)
 		move.b	#$15,$1C(a1)
-		move.w	#$23,$2E(a1) ; '#'
+		move.w	#$23,$2E(a1)
 		move.b	#0,$3C(a1)
 		bclr	#5,$22(a1)
 		bclr	#4,$22(a1)
@@ -45134,7 +45109,7 @@ loc_20962:
 		move.b	$1B(a0),d1
 		move.b	(a1,d1.w),$1A(a0)
 		addq.b	#1,$1B(a0)
-		andi.b	#$3F,$1B(a0) ; '?'
+		andi.b	#$3F,$1B(a0)
 		bra.w	loc_214AC
 ; ===========================================================================
 byte_20982:	dc.b   0,  1,  0,  1,  0,  1,  0,  1,  0,  1,  0,  1,  0,  1,  0,  1; 0
@@ -46109,7 +46084,7 @@ loc_21562:
 		move.w	$C(a1),d1
 		sub.w	$C(a0),d1
 		subi.w	#$10,d1
-		cmpi.w	#$30,d1	; '0'
+		cmpi.w	#$30,d1
 		bcc.s	locret_215BE
 		tst.b	$2A(a1)
 		bne.s	locret_215BE
@@ -46139,7 +46114,7 @@ loc_215A8:
 		move.w	$C(a1),d1
 		sub.w	$C(a0),d1
 		subi.w	#$10,d1
-		cmpi.w	#$30,d1	; '0'
+		cmpi.w	#$30,d1
 		bcc.s	locret_215BE
 		bsr.w	loc_19E14
 
@@ -46587,7 +46562,7 @@ loc_21B94:
 		bpl.s	loc_21BB6
 		bsr.w	loc_21DA0
 		move.w	$34(a0),d0
-		subi.w	#$2F,d0	; '/'
+		subi.w	#$2F,d0
 		cmp.w	$C(a0),d0
 		bgt.s	locret_21BB4
 		bsr.w	loc_21DA0
@@ -47190,6 +47165,7 @@ word_22278:	dc.w 2
 		dc.w $F00E,    0,    0,$FFE0; 0
 		dc.w $F00E, $800, $800,	   0; 4
 ; ===========================================================================
+
 		nop	
 
 loc_2228C:				
@@ -47211,8 +47187,7 @@ loc_2229E:
 loc_222A4:				
 		jmp	SpeedToPos
 ; ===========================================================================
-		dc.b   0 ;  
-		dc.b   0 ;  
+		align 4
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Sprite
@@ -47422,7 +47397,7 @@ loc_224D6:
 		subq.w	#1,$32(a0)
 		bpl.s	loc_224F0
 		addq.b	#2,$24(a0)
-		move.w	#$3B,$32(a0) ; ';'
+		move.w	#$3B,$32(a0)
 		move.w	#$DA,d0	
 		jsr	(PlaySoundLocal).l
 
@@ -48674,7 +48649,7 @@ byte_23698:	dc.b $FF,  0,$FE,  0,  1,  0,$FE,  0,$FF,$40,$FE,$40,  0,$C0,$FE,$40
 loc_236A8:				
 		bsr.w	loc_238B8
 		bne.s	locret_236F0
-		_move.b	#$29,0(a1) ; ')'
+		_move.b	#$29,0(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
 		move.w	(v_enemy_combo).w,d2
@@ -48905,7 +48880,7 @@ loc_23972:
 loc_2398A:				
 		move.w	#$CB,d1	
 		move.w	#$78,d2
-		move.w	#$79,d3	; 'y'
+		move.w	#$79,d3
 		move.w	8(a0),d4
 		bsr.w	loc_23AE8
 		bsr.w	loc_23AE2
@@ -48935,7 +48910,7 @@ locret_239CE:
 loc_239D0:				
 		move.w	#$EB,d1	
 		move.w	#$78,d2
-		move.w	#$79,d3	; 'y'
+		move.w	#$79,d3
 		move.w	8(a0),d4
 		bsr.w	loc_23AE8
 		bsr.w	loc_23AE2
@@ -48944,7 +48919,7 @@ loc_239D0:
 
 loc_239EA:				
 		move.w	#$CB,d1	
-		move.w	#$2E,d2	; '.'
+		move.w	#$2E,d2
 		move.w	8(a0),d4
 		lea	(byte_23A04).l,a2
 		bsr.w	loc_23AEE
@@ -49175,7 +49150,7 @@ loc_23D20:
 		addi.l	#$3800,$32(a0)
 		swap	d1
 		move.w	$30(a0),d0
-		subi.w	#$7D,d0	; '}'
+		subi.w	#$7D,d0
 		cmp.w	d0,d1
 		bne.s	locret_23D96
 		addq.b	#2,$25(a0)
@@ -50168,7 +50143,7 @@ loc_24A48:
 		move.b	#1,$1F(a0)
 		bsr.w	loc_24CCA
 		bne.s	loc_24AE6
-		_move.b	#$46,0(a1) ; 'F'
+		_move.b	#$46,0(a1)
 		addq.b	#6,$24(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
@@ -50924,11 +50899,11 @@ loc_252C6:
 
 loc_252CA:
 		lea	$2C(a0),a4
-		moveq	#$2C,d2	; ','
+		moveq	#$2C,d2
 		bsr.s	loc_252DC
 		lea	($FFFFB040).w,a1
 		lea	$36(a0),a4
-		moveq	#$36,d2	; '6'
+		moveq	#$36,d2
 
 loc_252DC:				
 		moveq	#0,d0
@@ -52045,7 +52020,7 @@ loc_261E4:
 loc_261EC:				
 		bsr.w	loc_2635C
 		bne.w	loc_26278
-		_move.b	#$2C,0(a1) ; ','
+		_move.b	#$2C,0(a1)
 		move.b	#4,$24(a1)
 		move.w	8(a2),8(a1)
 		move.w	$C(a2),$C(a1)
@@ -52221,7 +52196,7 @@ loc_2638C:
 loc_263C8:				
 		lea	(off_265E8).l,a1
 		bsr.w	loc_26622
-		move.w	#$27,d1	; '''
+		move.w	#$27,d1
 		move.w	#8,d2
 		move.w	8(a0),d4
 		lea	(byte_26598)(pc),a2
@@ -52290,7 +52265,7 @@ loc_2645E:
 		btst	#0,$22(a0)
 		beq.s	loc_2647A
 		not.w	d0
-		addi.w	#$27,d0	; '''
+		addi.w	#$27,d0
 
 loc_2647A:				
 		tst.w	d0
@@ -52463,7 +52438,7 @@ loc_266CC:
 		bne.s	loc_266E4
 		subq.w	#1,$32(a0)
 		bpl.s	loc_26748
-		move.w	#$3B,$32(a0) ; ';'
+		move.w	#$3B,$32(a0)
 		addq.b	#2,$25(a0)
 		bra.s	loc_26748
 ; ===========================================================================
@@ -52492,7 +52467,7 @@ loc_26716:
 		bne.s	loc_2672C
 		subq.w	#1,$32(a0)
 		bpl.s	loc_26748
-		move.w	#$3B,$32(a0) ; ';'
+		move.w	#$3B,$32(a0)
 		addq.b	#2,$25(a0)
 		bra.s	loc_26748
 ; ===========================================================================
@@ -52691,7 +52666,7 @@ loc_2693A:
 		lsr.w	#2,d0
 		move.b	d0,$1A(a0)
 		bne.s	loc_2696A
-		move.b	#$6C,$16(a0) ; 'l'
+		move.b	#$6C,$16(a0)
 		bset	#4,1(a0)
 
 loc_2696A:				
@@ -54130,7 +54105,7 @@ loc_278DC:
 loc_278F4:				
 					
 		andi.w	#$7FF,$C(a0)
-		move.w	#$2B,d1	; '+'
+		move.w	#$2B,d1
 		move.w	#$C,d2
 		move.w	#$D,d3
 		move.w	8(a0),d4
@@ -54747,7 +54722,7 @@ loc_27F4E:
 ; ===========================================================================
 
 loc_27F60:				
-		move.w	#$30,d1	; '0'
+		move.w	#$30,d1
 		moveq	#0,d0
 		move.b	($FFFFFE8C).w,d0
 		move.w	($FFFFFE8E).w,d3
@@ -54951,7 +54926,7 @@ loc_28130:
 		bne.s	loc_28160
 
 loc_28136:				
-		_move.b	#$6C,0(a1) ; 'l'
+		_move.b	#$6C,0(a1)
 		move.w	(a2)+,d0
 		add.w	d2,d0
 		move.w	d0,8(a1)
@@ -55113,31 +55088,25 @@ word_28374:	dc.w 2
 		dc.w $F805,    0,    0,$FFF0; 0
 		dc.w $F805, $800, $800,	   0; 4
 ; ===========================================================================
-		nop	
-
+	if Revision<2
+		nop
+	endc
+	
+	if ~RemoveJmpTos
 loc_28388:				
 		jmp	DisplaySprite
-; ===========================================================================
-
 loc_2838E:				
 		jmp	DeleteObject
-; ===========================================================================
-
 loc_28394:				
 		jmp	SingleObjLoad
-; ===========================================================================
-
 loc_2839A:				
 		jmp	Adjust2PArtPointer
-; ===========================================================================
-
 loc_283A0:				
 		jmp	DetectPlatform
-; ===========================================================================
-
 loc_283A6:				
 		jmp	SpeedToPos
-; ===========================================================================
+	endc
+
 ; ----------------------------------------------------------------------------
 ; Sprite
 ;
@@ -55190,10 +55159,10 @@ loc_28432:
 					
 		move.w	8(a0),-(sp)
 		move.b	($FFFFFE80).w,d1
-		subi.b	#$38,d1	; '8'
+		subi.b	#$38,d1
 		ext.w	d1
 		move.b	($FFFFFE84).w,d2
-		subi.b	#$38,d2	; '8'
+		subi.b	#$38,d2
 		ext.w	d2
 		btst	#0,$28(a0)
 		beq.s	loc_28456
@@ -55388,7 +55357,7 @@ loc_28652:
 		beq.s	loc_28684
 		subi.w	#$18,d1
 		bcc.s	loc_286A2
-		moveq	#$48,d1	; 'H'
+		moveq	#$48,d1
 		subq.w	#3,$34(a0)
 		bcc.s	loc_286A2
 		move.w	#$15,$34(a0)
@@ -56251,7 +56220,7 @@ loc_28FF0:
 		jsr	AnimateSprite
 		tst.b	$1A(a0)
 		bne.s	loc_2901A
-		move.w	#$4B,d1	; 'K'
+		move.w	#$4B,d1
 		move.w	#8,d2
 		move.w	d2,d3
 		addq.w	#1,d3
@@ -56380,11 +56349,11 @@ off_291E2:	dc.w loc_291E8-off_291E2; 0
 
 loc_291E8:				
 		addq.b	#2,$24(a0)
-		moveq	#$34,d3	; '4'
+		moveq	#$34,d3
 		moveq	#2,d4
 		btst	#0,$22(a0)
 		beq.s	loc_291FC
-		moveq	#$3A,d3	; ':'
+		moveq	#$3A,d3
 		moveq	#-2,d4
 
 loc_291FC:				
@@ -56459,7 +56428,7 @@ loc_292C8:
 		tst.w	$2C(a0)
 		bne.s	loc_292E0
 		move.b	$2E(a0),d0
-		andi.b	#$30,d0	; '0'
+		andi.b	#$30,d0
 		beq.s	locret_292DE
 		move.w	#$1E,$2C(a0)
 
@@ -56865,7 +56834,7 @@ loc_29648:
 		addi.w	#$10,d5
 		move.w	$C(a0),d2
 		move.w	d2,d3
-		addi.w	#$30,d3	; '0'
+		addi.w	#$30,d3
 		move.w	($FFFFB008).w,d0
 		cmp.w	d4,d0
 		bcs.s	loc_29686
@@ -57610,7 +57579,7 @@ loc_2A026:
 		ori.b	#-$80,$22(a0)
 		move.w	8(a0),$30(a0)
 		move.w	$C(a0),$32(a0)
-		subi.w	#$48,$C(a0) ; 'H'
+		subi.w	#$48,$C(a0)
 		move.b	#-$40,$26(a0)
 		moveq	#-$10,d4
 		btst	#1,$22(a0)
@@ -57669,12 +57638,12 @@ loc_2A0FE:
 		cmpi.b	#-$7F,$22(a0)
 		bne.s	loc_2A13A
 		move.w	$30(a0),8(a0)
-		subi.w	#$48,8(a0) ; 'H'
+		subi.w	#$48,8(a0)
 
 loc_2A13A:				
 		tst.b	$36(a0)
 		beq.s	loc_2A188
-		move.w	#$48,d1	; 'H'
+		move.w	#$48,d1
 		tst.b	$26(a0)
 		beq.s	loc_2A154
 		cmpi.b	#-$80,$26(a0)
@@ -57703,7 +57672,7 @@ loc_2A188:
 loc_2A18A:				
 		move.w	#$13,d1
 		move.w	#$40,d2
-		move.w	#$41,d3	; 'A'
+		move.w	#$41,d3
 		move.b	$26(a0),d0
 		beq.s	loc_2A1A8
 		cmpi.b	#$40,d0
@@ -57712,7 +57681,7 @@ loc_2A18A:
 		bcc.s	loc_2A1B4
 
 loc_2A1A8:				
-		move.w	#$4B,d1	; 'K'
+		move.w	#$4B,d1
 		move.w	#8,d2
 		move.w	#9,d3
 
@@ -58218,7 +58187,7 @@ loc_2A620:
 		move.w	d5,8(a0)
 		move.w	d4,$C(a0)
 		move.b	$26(a0),d0
-		addi.b	#$55,d0	; 'U'
+		addi.b	#$55,d0
 		bsr.w	loc_2A79C
 		swap	d0
 		swap	d1
@@ -58236,7 +58205,7 @@ loc_2A620:
 		move.w	d5,8(a1)
 		move.w	d4,$C(a1)
 		move.b	$26(a0),d0
-		subi.b	#$55,d0	; 'U'
+		subi.b	#$55,d0
 		bsr.w	loc_2A79C
 		swap	d0
 		swap	d1
@@ -58399,7 +58368,7 @@ loc_2A82A:
 		bpl.s	loc_2A890
 		cmpi.w	#$400,$34(a0)
 		bcc.s	loc_2A890
-		addi.w	#$2A,$34(a0) ; '*'
+		addi.w	#$2A,$34(a0)
 		move.b	$34(a0),$1E(a0)
 		bra.s	loc_2A86A
 ; ===========================================================================
@@ -58498,7 +58467,7 @@ loc_2A926:
 		bpl.s	loc_2A98C
 		cmpi.w	#$400,$34(a0)
 		bcc.s	loc_2A98C
-		addi.w	#$2A,$34(a0) ; '*'
+		addi.w	#$2A,$34(a0)
 		move.b	$34(a0),$1E(a0)
 		bra.s	loc_2A966
 ; ===========================================================================
@@ -58743,7 +58712,7 @@ loc_2AC84:
 		move.b	#3,$15(a0)
 
 loc_2ACAA:				
-		move.w	#$23,d1	; '#'
+		move.w	#$23,d1
 		move.w	#$20,d2
 		move.w	#$1D,d3
 		move.w	8(a0),d4
@@ -58863,7 +58832,7 @@ loc_2ADF8:
 
 loc_2ADFE:				
 		move.w	$C(a0),d0
-		subi.w	#$2E,d0	; '.'
+		subi.w	#$2E,d0
 		move.w	d0,$C(a1)
 		rts	
 ; ===========================================================================
@@ -58904,7 +58873,7 @@ loc_2AE56:
 		move.b	#3,$15(a0)
 
 loc_2AE8A:				
-		move.w	#$23,d1	; '#'
+		move.w	#$23,d1
 		move.w	#8,d2
 		move.w	#5,d3
 		move.w	8(a0),d4
@@ -59172,7 +59141,7 @@ loc_2B194:
 		lea	(byte_2B40E).l,a2
 
 loc_2B1B6:				
-		move.w	#$23,d1	; '#'
+		move.w	#$23,d1
 		move.w	#6,d2
 		move.w	8(a0),d4
 		bsr.w	loc_2B522
@@ -59266,7 +59235,7 @@ loc_2B290:
 		neg.w	d0
 
 loc_2B2AA:				
-		addi.w	#$23,d0	; '#'
+		addi.w	#$23,d0
 		move.w	d0,d2
 		cmpi.w	#$40,d2
 		bcs.s	loc_2B2BA
@@ -59771,9 +59740,9 @@ loc_2B96E:
 		move.w	off_2B99E(pc,d0.w),d1
 		jsr	off_2B99E(pc,d1.w)
 		bsr.w	loc_2BA02
-		move.w	#$2B,d1	; '+'
+		move.w	#$2B,d1
 		move.w	#$20,d2
-		move.w	#$21,d3	; '!'
+		move.w	#$21,d3
 		move.w	(sp)+,d4
 		bsr.w	loc_2B9F6
 		move.w	$30(a0),d0
@@ -60015,7 +59984,7 @@ loc_2BB7E:
 		move.b	#1,$18(a0)
 
 loc_2BBA6:				
-		move.w	#$23,d1	; '#'
+		move.w	#$23,d1
 		move.w	#$10,d2
 		move.w	#$11,d3
 		move.w	8(a0),d4
@@ -60226,7 +60195,7 @@ loc_2BE5E:
 		jsr	sub_40D42
 		bsr.w	loc_2C41C
 		bne.s	locret_2BE9A
-		_move.b	#$29,0(a1) ; ')'
+		_move.b	#$29,0(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
 		move.b	#0,$1A(a1)
@@ -60334,18 +60303,18 @@ loc_2BFBA:
 		move.b	($FFFFFE0F).w,d0
 		andi.b	#7,d0
 		subq.b	#4,d0
-		addi.b	#$30,d0	; '0'
+		addi.b	#$30,d0
 		move.b	d0,8(a4)
 		move.b	($FFFFFE0F).w,d0
 		rol.b	#4,d0
 		andi.b	#7,d0
 		subq.b	#4,d0
-		addi.b	#$30,d0	; '0'
+		addi.b	#$30,d0
 		move.b	d0,$C(a4)
 		move.b	($FFFFFE0E).w,d0
 		andi.b	#7,d0
 		subq.b	#4,d0
-		addi.b	#$30,d0	; '0'
+		addi.b	#$30,d0
 		move.b	d0,$10(a4)
 		move.b	#2,1(a4)
 		clr.b	3(a4)
@@ -61183,7 +61152,7 @@ loc_2C7AA:
 		add.w	d3,d0
 		cmpi.b	#$40,d1
 		bcc.s	loc_2C7BE
-		cmpi.b	#$38,d1	; '8'
+		cmpi.b	#$38,d1
 		bcs.s	loc_2C7D0
 		move.w	d3,d0
 		bra.s	loc_2C7D0
@@ -61192,7 +61161,7 @@ loc_2C7AA:
 loc_2C7BE:				
 		subi.w	#$80,d1	
 		neg.w	d1
-		cmpi.b	#$38,d1	; '8'
+		cmpi.b	#$38,d1
 		bcs.s	loc_2C7D0
 		move.w	d3,d0
 		addi.w	#$80,d0	
@@ -61238,13 +61207,13 @@ loc_2C806:
 		cmpi.b	#3,(a1)
 		bcs.s	loc_2C85C
 		moveq	#2,d3
-		moveq	#$32,d0	; '2'
+		moveq	#$32,d0
 
 loc_2C85C:				
 		jsr	sub_40D42
 		bsr.w	loc_2C912
 		bne.s	loc_2C87E
-		_move.b	#$29,0(a1) ; ')'
+		_move.b	#$29,0(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
 		move.b	d3,$1A(a1)
@@ -61380,7 +61349,7 @@ loc_2C9AE:
 		move.w	8(a1),d0
 		sub.w	8(a0),d0
 		addi.w	#$18,d0
-		cmpi.w	#$30,d0	; '0'
+		cmpi.w	#$30,d0
 		bcc.w	locret_2CA08
 		move.w	$C(a1),d1
 		sub.w	$C(a0),d1
@@ -61560,7 +61529,7 @@ loc_2CB5C:
 loc_2CB70:				
 		jsr	SingleObjLoad
 		bne.s	locret_2CBDA
-		_move.b	#$4A,0(a1) ; 'J'
+		_move.b	#$4A,0(a1)
 		move.b	#6,$24(a1)
 		move.l	#Map_2CBFE,4(a1)
 		move.w	#$2538,2(a1)
@@ -62030,7 +61999,7 @@ loc_2D0C8:
 		addq.b	#2,$24(a0)
 		bsr.w	loc_2D36E
 		bne.s	locret_2D172
-		_move.b	#$4B,0(a1) ; 'K'
+		_move.b	#$4B,0(a1)
 		move.b	#4,$24(a1)
 		move.l	#Map_2D2EA,4(a1)
 		move.w	#$3D2,2(a1)
@@ -62109,7 +62078,7 @@ loc_2D1F2:
 loc_2D1FC:				
 		cmpi.w	#$28,d0
 		blt.s	locret_2D232
-		cmpi.w	#$30,d0	; '0'
+		cmpi.w	#$30,d0
 		bgt.s	locret_2D232
 		tst.w	d1
 		bpl.s	loc_2D216
@@ -62150,7 +62119,7 @@ loc_2D248:
 loc_2D24E:				
 		jsr	SingleObjLoad2
 		bne.s	loc_2D2C8
-		_move.b	#$4B,0(a1) ; 'K'
+		_move.b	#$4B,0(a1)
 		move.b	#6,$24(a1)
 		move.l	#Map_2D2EA,4(a1)
 		move.w	#$3D2,2(a1)
@@ -62447,7 +62416,7 @@ locret_2D5C2:
 ; ===========================================================================
 
 loc_2D5C4:				
-		moveq	#$64,d0	; 'd'
+		moveq	#$64,d0
 		bsr.w	loc_2D726
 		move.w	#$B3,(v_boss_timer).w
 		move.b	#8,$26(a0)
@@ -62675,7 +62644,7 @@ loc_2D75E:
 		bsr.w	loc_2EEFA
 		jsr	SingleObjLoad2
 		bne.w	loc_2D8AC
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	a0,$34(a1)
 		move.l	a1,$34(a0)
 		move.l	#Map_2ED8C,4(a1)
@@ -62693,7 +62662,7 @@ loc_2D75E:
 		bmi.w	loc_2D8AC
 		jsr	SingleObjLoad2
 		bne.w	loc_2D8AC
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#Map_2EE88,4(a1)
 		move.w	#$418,2(a1)
@@ -62708,7 +62677,7 @@ loc_2D75E:
 		move.b	1(a0),1(a1)
 		jsr	SingleObjLoad2
 		bne.s	loc_2D8AC
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
@@ -62722,7 +62691,7 @@ loc_2D75E:
 loc_2D8AC:				
 		jsr	SingleObjLoad2
 		bne.s	loc_2D908
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
@@ -62740,7 +62709,7 @@ loc_2D8AC:
 loc_2D908:				
 		jsr	SingleObjLoad2
 		bne.s	locret_2D94C
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
@@ -62917,7 +62886,7 @@ locret_2DAE8:
 ; ===========================================================================
 
 loc_2DAEA:				
-		moveq	#$64,d0	; 'd'
+		moveq	#$64,d0
 		bsr.w	loc_2EEF4
 		move.b	#8,$25(a0)
 		move.w	#$B3,$3C(a0)
@@ -63038,7 +63007,7 @@ loc_2DC0C:
 
 loc_2DC14:				
 		move.w	($FFFFB008).w,d0
-		addi.w	#$4C,d0	; 'L'
+		addi.w	#$4C,d0
 		cmp.w	$30(a0),d0
 		bgt.s	loc_2DC42
 		beq.w	loc_2DA7E
@@ -63097,7 +63066,7 @@ loc_2DCB6:
 ; ===========================================================================
 
 loc_2DCEC:				
-		moveq	#$22,d3	; '"'
+		moveq	#$22,d3
 		move.b	#$78,$30(a0)
 		movea.l	$34(a0),a1
 		move.w	8(a1),8(a0)
@@ -63115,7 +63084,7 @@ loc_2DCEC:
 loc_2DD26:				
 		jsr	SingleObjLoad
 		bne.w	loc_2EED6
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	#Map_2EADC,4(a1)
 		move.b	d3,$1A(a1)
 		move.b	#$14,$24(a1)
@@ -63180,7 +63149,7 @@ loc_2DDEC:
 loc_2DDF0:				
 		subq.w	#1,$2C(a0)
 		blt.s	loc_2DE56
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	#Map_2EADC,4(a1)
 
 loc_2DE04:
@@ -63226,7 +63195,7 @@ loc_2DE7A:
 		move.b	#$E,$24(a0)
 		move.b	#6,$24(a1)
 		move.b	#2,$25(a1)
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
 		move.b	#4,1(a1)
@@ -63243,7 +63212,7 @@ loc_2DE7A:
 		move.b	#$12,$30(a1)
 		jsr	SingleObjLoad2
 		bne.s	loc_2DF04
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.b	#$A,$24(a1)
 		move.l	$34(a0),$34(a1)
 
@@ -63329,7 +63298,7 @@ loc_2DFD8:
 
 loc_2DFDE:				
 		moveq	#0,d7
-		move.b	#$5D,d7	; ']'
+		move.b	#$5D,d7
 		cmp.b	(a1),d7
 		beq.s	loc_2DFF0
 		dbf	d1,loc_2DFC8
@@ -63406,7 +63375,7 @@ off_2E092:	dc.w loc_2E098-off_2E092; 0
 
 loc_2E098:				
 		addq.b	#2,$25(a0)
-		_move.b	#$5D,0(a0) ; ']'
+		_move.b	#$5D,0(a0)
 		move.l	#Map_2EADC,4(a0)
 		move.w	#$6500,2(a0)
 		move.b	#4,1(a0)
@@ -63489,7 +63458,7 @@ loc_2E1AC:
 		bset	#7,$2E(a1)
 		jsr	SingleObjLoad2
 		bne.s	loc_2E20E
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
@@ -63505,7 +63474,7 @@ loc_2E1AC:
 loc_2E20E:				
 		jsr	SingleObjLoad2
 		bne.s	loc_2E258
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#Map_2EADC,4(a1)
 		move.w	#$6500,2(a1)
@@ -63608,9 +63577,9 @@ loc_2E356:
 loc_2E35C:				
 		jsr	SingleObjLoad
 		bne.w	loc_2EED6
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	#Map_2EADC,4(a1)
-		move.b	#$21,$1A(a1) ; '!'
+		move.b	#$21,$1A(a1)
 		move.b	#$14,$24(a1)
 		move.w	#$2500,2(a1)
 		move.b	1(a0),1(a1)
@@ -63694,7 +63663,7 @@ loc_2E464:
 		move.w	#$12,$2A(a0)
 		jsr	SingleObjLoad2
 		bne.s	locret_2E4CC
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	a0,$34(a1)
 		move.b	#$10,$24(a1)
 		move.b	#8,$25(a1)
@@ -63728,7 +63697,7 @@ loc_2E4DA:
 		movea.l	a1,a2
 		jsr	SingleObjLoad2
 		bne.s	locret_2E550
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	$34(a0),$34(a1)
 		move.l	#Map_2EADC,4(a1)
 		move.w	#$2500,2(a1)
@@ -63942,7 +63911,7 @@ loc_2E790:
 		bpl.s	loc_2E7B6
 		addi.b	#1,$1A(a0)
 		move.b	#8,$1E(a0)
-		cmpi.b	#$27,$1A(a0) ; '''
+		cmpi.b	#$27,$1A(a0)
 		bgt.w	loc_2E728
 		blt.s	loc_2E7B6
 		addi.b	#$C,$1E(a0)
@@ -63994,7 +63963,7 @@ loc_2E824:
 loc_2E834:				
 		jsr	SingleObjLoad2
 		bne.w	loc_2E8C8
-		_move.b	#$5D,0(a1) ; ']'
+		_move.b	#$5D,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#Map_2EADC,4(a1)
 		move.w	#$6500,2(a1)
@@ -64520,7 +64489,7 @@ loc_2EF36:
 		bsr.w	loc_2FC36
 		jsr	SingleObjLoad2
 		bne.w	loc_2EFE4
-		_move.b	#$56,0(a1) ; 'V'
+		_move.b	#$56,0(a1)
 		move.l	a0,$34(a1)
 		move.l	a1,$34(a0)
 		move.l	#Map_2FAF8,4(a1)
@@ -64537,7 +64506,7 @@ loc_2EF36:
 loc_2EFE4:				
 		jsr	SingleObjLoad2
 		bne.s	loc_2F032
-		_move.b	#$56,0(a1) ; 'V'
+		_move.b	#$56,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#off_2FA58,4(a1)
 
@@ -64563,7 +64532,7 @@ loc_2F032:
 		move.w	#$2F8,$C(a0)
 		jsr	SingleObjLoad2
 		bne.s	locret_2F096
-		_move.b	#$56,0(a1) ; 'V'
+		_move.b	#$56,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#off_2F970,4(a1)
 		move.w	#$256C,2(a1)
@@ -64583,7 +64552,7 @@ locret_2F096:
 loc_2F098:				
 		jsr	SingleObjLoad2
 		bne.s	loc_2F110
-		_move.b	#$56,0(a1) ; 'V'
+		_move.b	#$56,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#off_2FA58,4(a1)
 		move.w	#$2400,2(a1)
@@ -64606,7 +64575,7 @@ loc_2F098:
 loc_2F110:				
 		jsr	SingleObjLoad2
 		bne.s	loc_2F188
-		_move.b	#$56,0(a1) ; 'V'
+		_move.b	#$56,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#off_2FA58,4(a1)
 		move.w	#$2400,2(a1)
@@ -64629,7 +64598,7 @@ loc_2F110:
 loc_2F188:				
 		jsr	SingleObjLoad2
 		bne.s	loc_2F200
-		_move.b	#$56,0(a1) ; 'V'
+		_move.b	#$56,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#off_2FA58,4(a1)
 		move.w	#$2400,2(a1)
@@ -64656,7 +64625,7 @@ loc_2F206:
 		bne.s	locret_2F260
 
 loc_2F208:
-		_move.b	#$56,0(a1) ; 'V'
+		_move.b	#$56,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#off_2FA58,4(a1)
 		move.w	#$2400,2(a1)
@@ -64803,7 +64772,7 @@ loc_2F3A2:
 		bclr	#0,$2D(a0)
 		bsr.w	loc_2FC12
 		bne.w	locret_2F422
-		_move.b	#$56,0(a1) ; 'V'
+		_move.b	#$56,0(a1)
 		move.l	a0,$34(a1)
 		move.l	#off_2F970,4(a1)
 		move.w	#$256C,2(a1)
@@ -64927,7 +64896,7 @@ locret_2F4EC:
 ; ===========================================================================
 
 loc_2F4EE:				
-		moveq	#$64,d0	; 'd'
+		moveq	#$64,d0
 		bsr.w	loc_2FC30
 		move.b	#6,$25(a0)
 		move.w	#0,$10(a0)
@@ -64967,7 +64936,7 @@ off_2F55C:	dc.w loc_2F560-off_2F55C; 0
 
 loc_2F560:				
 		movea.l	$34(a0),a1
-		cmpi.b	#$56,(a1) ; 'V'
+		cmpi.b	#$56,(a1)
 		bne.w	JmpTo52_DeleteObject
 		btst	#0,$2D(a1)
 		beq.s	loc_2F58E
@@ -65122,7 +65091,7 @@ loc_2F706:
 
 loc_2F714:				
 		movea.l	$34(a0),a1
-		cmpi.b	#$56,(a1) ; 'V'
+		cmpi.b	#$56,(a1)
 		bne.w	JmpTo52_DeleteObject
 		btst	#1,$2D(a1)
 		beq.w	JmpTo35_DisplaySprite
@@ -65139,7 +65108,7 @@ loc_2F742:
 
 loc_2F746:				
 		movea.l	$34(a0),a1
-		cmpi.b	#$56,(a1) ; 'V'
+		cmpi.b	#$56,(a1)
 		bne.w	JmpTo52_DeleteObject
 		move.b	$22(a1),$22(a0)
 		move.b	1(a1),1(a0)
@@ -65218,7 +65187,7 @@ loc_2F816:
 
 loc_2F824:				
 		movea.l	$34(a0),a1
-		cmpi.b	#$56,(a1) ; 'V'
+		cmpi.b	#$56,(a1)
 		bne.w	JmpTo52_DeleteObject
 		btst	#3,$2D(a1)
 		bne.s	loc_2F88A
@@ -65621,13 +65590,13 @@ loc_2FD5E:
 		bne.s	loc_2FDC0
 		bsr.w	loc_3043C
 		bne.s	loc_2FDAA
-		_move.b	#$52,0(a1) ; 'R'
+		_move.b	#$52,0(a1)
 		move.b	#4,$A(a1)
 		move.b	1(a0),1(a1)
 		andi.b	#1,1(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
-		move.b	#$2F,$3E(a0) ; '/'
+		move.b	#$2F,$3E(a0)
 
 loc_2FDAA:				
 		bsr.w	loc_300A4
@@ -65679,7 +65648,7 @@ loc_2FE2A:
 		st.b	$38(a0)
 		bsr.w	loc_3043C
 		bne.s	loc_2FE58
-		move.b	#$52,(a1) ; 'R'
+		move.b	#$52,(a1)
 		move.b	#6,$A(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
@@ -65807,7 +65776,7 @@ loc_2FF80:
 		move.w	$C(a0),$C(a1)
 
 loc_2FF94:				
-		move.b	#$52,(a1) ; 'R'
+		move.b	#$52,(a1)
 		move.b	#6,$A(a1)
 		move.l	#Map_302BC,4(a1)
 		move.w	#$421,2(a1)
@@ -65923,7 +65892,7 @@ locret_300EA:
 ; ===========================================================================
 
 loc_300EC:				
-		moveq	#$64,d0	; 'd'
+		moveq	#$64,d0
 		bsr.w	loc_30466
 		move.w	#$B3,(v_boss_timer).w
 		move.b	#8,$26(a0)
@@ -66001,7 +65970,7 @@ loc_301AA:
 loc_301B4:				
 		bsr.w	loc_3043C
 		bne.s	locret_3020E
-		move.b	#$52,(a1) ; 'R'
+		move.b	#$52,(a1)
 		move.b	#8,$A(a1)
 		move.l	#off_30258,4(a1)
 		move.w	#$5E4,2(a1)
@@ -66442,10 +66411,10 @@ loc_3075C:
 
 loc_30770:				
 		lea	($FFFFF740).w,a1
-		move.b	#$31,3(a1) ; '1'
+		move.b	#$31,3(a1)
 
 loc_3077A:				
-		cmpi.b	#$3F,$14(a0) ; '?'
+		cmpi.b	#$3F,$14(a0)
 		bne.s	locret_3078C
 		lea	($FFFFF740).w,a1
 		move.b	#-$40,3(a1)
@@ -66492,7 +66461,7 @@ locret_307F2:
 ; ===========================================================================
 
 loc_307F4:				
-		moveq	#$64,d0	; 'd'
+		moveq	#$64,d0
 		bsr.w	loc_30F84
 		move.w	#$B3,(v_boss_timer).w
 		move.b	#8,$26(a0)
@@ -66820,9 +66789,9 @@ loc_30B6C:
 ; ===========================================================================
 
 loc_30B7A:				
-		move.w	#$23,d1	; '#'
-		move.w	#$44,d2	; 'D'
-		move.w	#$45,d3	; 'E'
+		move.w	#$23,d1
+		move.w	#$44,d2
+		move.w	#$45,d3
 		move.w	8(a0),d4
 		move.w	$C(a0),-(sp)
 		addi.w	#4,$C(a0)
@@ -67482,7 +67451,7 @@ loc_313DA:
 		bgt.s	loc_313DA
 		bsr.w	loc_318C4
 		bne.s	locret_31438
-		move.b	#$57,(a1) ; 'W'
+		move.b	#$57,(a1)
 		move.b	#4,$A(a1)
 		move.w	d1,8(a1)
 		move.w	#$5F0,$C(a1)
@@ -67551,7 +67520,7 @@ locret_314B6:
 ; ===========================================================================
 
 loc_314B8:				
-		moveq	#$64,d0	; 'd'
+		moveq	#$64,d0
 		bsr.w	loc_318D6
 		move.w	#$B3,(v_boss_timer).w
 		move.b	#8,$26(a0)
@@ -68073,7 +68042,7 @@ loc_31BC6:
 loc_31BF2:				
 		bsr.w	loc_32258
 		bne.s	locret_31C06
-		move.b	#$51,(a1) ; 'Q'
+		move.b	#$51,(a1)
 		move.b	#4,$A(a1)
 		move.l	a0,$34(a1)
 
@@ -68122,7 +68091,7 @@ loc_31C8E:
 ; ===========================================================================
 
 loc_31C92:				
-		cmpi.b	#$2F,$14(a0) ; '/'
+		cmpi.b	#$2F,$14(a0)
 		bne.s	loc_31CAC
 		lea	($FFFFF740).w,a1
 		andi.b	#-$10,6(a1)
@@ -68187,7 +68156,7 @@ locret_31D40:
 ; ===========================================================================
 
 loc_31D42:				
-		moveq	#$64,d0	; 'd'
+		moveq	#$64,d0
 		bsr.w	loc_32276
 		move.w	#$B3,(v_boss_timer).w
 		move.b	#6,$26(a0)
@@ -68390,9 +68359,9 @@ loc_31F96:
 		move.w	$28(a0),d0
 		add.w	d0,$C(a0)
 		addi.w	#1,d0
-		cmpi.w	#$2E,d0	; '.'
+		cmpi.w	#$2E,d0
 		blt.s	loc_31FBC
-		move.w	#$2E,d0	; '.'
+		move.w	#$2E,d0
 
 loc_31FBC:				
 		move.w	d0,$28(a0)
@@ -68654,8 +68623,8 @@ loc_322CE:
 		clr.b	$2B(a0)
 		clr.b	$2C(a0)
 		move.b	#$40,$1A(a0)
-		move.b	#$27,$33(a0) ; '''
-		move.b	#$27,$39(a0) ; '''
+		move.b	#$27,$33(a0)
+		move.b	#$27,$39(a0)
 		move.w	8(a0),$10(a0)
 		move.w	$C(a0),$12(a0)
 		move.b	#$C,$15(a0)
@@ -68666,7 +68635,7 @@ loc_3233C:
 		move.b	#0,$1B(a0)
 		bsr.w	loc_32F58
 		bne.s	loc_3239C
-		move.b	#$54,(a1) ; 'T'
+		move.b	#$54,(a1)
 		move.b	#6,$A(a1)
 		move.b	#$13,$1A(a1)
 		move.l	#Map_32DC6,4(a1)
@@ -68679,7 +68648,7 @@ loc_3233C:
 		move.b	#$20,$19(a1)
 		bsr.w	loc_32F58
 		bne.s	loc_3239C
-		move.b	#$53,(a1) ; 'S'
+		move.b	#$53,(a1)
 		move.l	a0,$34(a1)
 
 loc_3239C:				
@@ -68816,7 +68785,7 @@ loc_32522:
 ; ===========================================================================
 
 loc_32524:				
-		cmpi.b	#$68,$33(a0) ; 'h'
+		cmpi.b	#$68,$33(a0)
 		bcc.s	loc_32536
 		addq.b	#1,$33(a0)
 		addq.b	#1,$39(a0)
@@ -68833,7 +68802,7 @@ loc_32540:
 ; ===========================================================================
 
 loc_32544:				
-		cmpi.b	#$27,$33(a0) ; '''
+		cmpi.b	#$27,$33(a0)
 		bcs.s	loc_32552
 		subq.b	#1,$33(a0)
 		bra.s	loc_32570
@@ -68841,7 +68810,7 @@ loc_32544:
 
 loc_32552:				
 		addq.b	#1,$39(a0)
-		cmpi.b	#$27,$39(a0) ; '''
+		cmpi.b	#$27,$39(a0)
 		bcs.s	loc_32570
 		move.w	#$100,(v_boss_y_vel).w
 		move.b	#0,$26(a0)
@@ -68862,7 +68831,7 @@ loc_32580:
 		move.b	#-1,$3A(a0)
 
 loc_32586:				
-		cmpi.b	#$27,$33(a0) ; '''
+		cmpi.b	#$27,$33(a0)
 		bcs.s	loc_32592
 		subq.b	#1,$33(a0)
 
@@ -68891,7 +68860,7 @@ loc_325BE:
 		beq.s	loc_325EC
 		tst.b	$3A(a0)
 		bne.s	loc_3262A
-		cmpi.b	#$27,$39(a0) ; '''
+		cmpi.b	#$27,$39(a0)
 		bcc.s	loc_325D8
 		addq.b	#1,$39(a0)
 		bra.s	loc_3262A
@@ -69030,7 +68999,7 @@ loc_32740:
 		subq.b	#1,$2D(a0)
 		bsr.w	loc_32F58
 		bne.s	locret_32772
-		move.b	#$54,(a1) ; 'T'
+		move.b	#$54,(a1)
 		move.b	#4,$A(a1)
 		move.l	a0,$34(a1)
 		move.w	#$1E,(v_boss_timer).w
@@ -69052,7 +69021,7 @@ loc_32774:
 
 loc_3278E:				
 		bsr.w	loc_328DE
-		cmpi.b	#$3F,$14(a0) ; '?'
+		cmpi.b	#$3F,$14(a0)
 		bne.s	loc_327D2
 		st.b	$38(a0)
 		lea	($FFFFF740).w,a1
@@ -69193,7 +69162,7 @@ locret_32924:
 ; ===========================================================================
 
 loc_32926:				
-		moveq	#$64,d0	; 'd'
+		moveq	#$64,d0
 		bsr.w	loc_32F70
 		move.w	#$EF,(v_boss_timer).w
 		move.b	#$10,$26(a0)
@@ -69234,7 +69203,7 @@ loc_32960:
 loc_32966:				
 		move.b	#$20,$19(a1)
 		move.l	$34(a0),$34(a1)
-		move.b	#$53,(a1) ; 'S'
+		move.b	#$53,(a1)
 		move.l	#Map_32DC6,4(a1)
 		move.w	#$37C,2(a1)
 		ori.b	#4,1(a1)
@@ -69586,7 +69555,7 @@ loc_32D2C:
 
 loc_32D48:				
 		movea.l	$34(a0),a1
-		cmpi.b	#$54,(a1) ; 'T'
+		cmpi.b	#$54,(a1)
 		bne.w	loc_32F52
 		move.w	8(a1),8(a0)
 		move.w	$C(a1),$C(a0)
@@ -70082,7 +70051,7 @@ loc_33342:
 		move.b	#6,$B(a0)
 		bsr.w	loc_338A8
 		bne.w	loc_333BA
-		move.b	#$55,(a1) ; 'U'
+		move.b	#$55,(a1)
 		move.b	#8,$A(a1)
 		move.l	a0,$34(a1)
 		move.b	#-$16,d0
@@ -70258,7 +70227,7 @@ loc_3350E:
 loc_33526:				
 		move.b	d3,d0
 		bsr.w	loc_338D2
-		muls.w	#$68,d1	; 'h'
+		muls.w	#$68,d1
 		asr.l	#8,d1
 		btst	#0,1(a0)
 		bne.s	loc_3353C
@@ -70266,7 +70235,7 @@ loc_33526:
 
 loc_3353C:				
 		add.w	($FFFFF750).w,d1
-		muls.w	#$68,d0	; 'h'
+		muls.w	#$68,d0
 		asr.l	#8,d0
 
 loc_33546:
@@ -70277,10 +70246,10 @@ loc_33546:
 loc_3354C:				
 		move.b	$1A(a0),d0
 		moveq	#$15,d1
-		cmpi.b	#$52,d0	; 'R'
+		cmpi.b	#$52,d0
 		bcs.s	loc_3356A
 		moveq	#3,d1
-		cmpi.b	#$6B,d0	; 'k'
+		cmpi.b	#$6B,d0
 		bcs.s	loc_3356A
 		moveq	#2,d1
 		cmpi.b	#-$6E,d0
@@ -70374,7 +70343,7 @@ locret_3363E:
 loc_33640:				
 		bsr.w	loc_338A8
 		bne.s	locret_336B0
-		move.b	#$55,(a1) ; 'U'
+		move.b	#$55,(a1)
 		move.b	#8,$A(a1)
 		move.b	#4,$25(a1)
 		move.b	#-$75,$20(a1)
@@ -70632,7 +70601,7 @@ loc_3391C:
 		move.w	#$22E5,2(a0)
 		move.b	#4,1(a0)
 		move.b	#3,$18(a0)
-		move.w	#$6E,$34(a0) ; 'n'
+		move.w	#$6E,$34(a0)
 		clr.b	($FFFFF742).w
 		move.w	#$400,$32(a0)
 		move.b	#$40,$26(a0)
@@ -70642,7 +70611,7 @@ loc_3391C:
 		clr.b	$21(a0)
 		clr.b	$23(a0)
 		movea.l	#-$4EC0,a1
-		move.b	#$63,(a1) ; 'c'
+		move.b	#$63,(a1)
 		move.w	8(a0),8(a1)
 
 loc_339A8:
@@ -70720,7 +70689,7 @@ loc_33A82:
 		bsr.w	loc_347E6
 		bne.s	locret_33A90
 		move.l	a0,$38(a1)
-		move.b	#$5B,(a1) ; '['
+		move.b	#$5B,(a1)
 
 locret_33A90:				
 		rts	
@@ -71119,13 +71088,13 @@ loc_33E64:
 ; ===========================================================================
 
 loc_33E6E:				
-		cmpi.w	#$6E,d0	; 'n'
+		cmpi.w	#$6E,d0
 		beq.s	locret_33E8E
 		subq.w	#1,d0
 
 loc_33E76:				
 		move.w	d0,$34(a0)
-		cmpi.w	#$77,d0	; 'w'
+		cmpi.w	#$77,d0
 		bcc.s	loc_33E88
 		move.b	#3,$18(a0)
 		rts	
@@ -71246,7 +71215,7 @@ loc_33F8A:
 loc_33FAC:				
 		move.b	$26(a0),d0
 		bmi.s	loc_33FC4
-		subi.b	#$38,d0	; '8'
+		subi.b	#$38,d0
 		cmpi.b	#$10,d0
 		bcc.s	loc_33FC4
 		move.w	d2,d1
@@ -71943,7 +71912,7 @@ word_347DE:	dc.w $82C0
 
 	if ~RemoveJmpTos
 JmpTo42_DisplaySprite:				
-		jmp	(DisplaySprite).l
+		jmp	DisplaySprite
 loc_347E6:				
 		jmp	(sub_6F8E).l
 		
@@ -71988,7 +71957,7 @@ loc_34804:
 		tst.w	(v_player_mode).w
 		beq.s	loc_34864
 		move.b	#3,$18(a0)
-		move.w	#$6E,$34(a0) ; 'n'
+		move.w	#$6E,$34(a0)
 
 loc_34864:				
 		move.w	#$400,$32(a0)
@@ -71998,7 +71967,7 @@ loc_34864:
 		clr.b	$23(a0)
 		bsr.w	loc_349C8
 		movea.l	#-$4E80,a1
-		move.b	#$63,(a1) ; 'c'
+		move.b	#$63,(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
 		addi.w	#$18,$C(a1)
@@ -72218,7 +72187,7 @@ loc_34ABE:
 
 loc_34AE4:				
 		move.l	dword_34AA0(pc,d6.w),d6
-		addi.w	#$24,d0	; '$'
+		addi.w	#$24,d0
 		add.w	d0,d0
 		lea	(SS_Sonic_Tails_DPLC).l,a2
 		adda.w	(a2,d0.w),a2
@@ -72769,7 +72738,7 @@ loc_351E8:
 
 loc_351F8:				
 		bpl.s	loc_35202
-		cmpi.b	#$48,d3	; 'H'
+		cmpi.b	#$48,d3
 		bcs.s	loc_35202
 		ext.w	d3
 
@@ -72862,7 +72831,7 @@ loc_3529C:
 ; ===========================================================================
 
 loc_352E6:				
-		cmpi.b	#$30,d0	; '0'
+		cmpi.b	#$30,d0
 		bgt.s	loc_352FE
 		bset	#0,1(a1)
 
@@ -73082,7 +73051,7 @@ loc_35478:
 		bne.s	loc_354DE
 
 loc_3547E:				
-		move.b	#$5B,(a1) ; '['
+		move.b	#$5B,(a1)
 		move.b	#2,$24(a1)
 		move.l	#Map_3632A,4(a1)
 		move.w	#$6322,2(a1)
@@ -73253,8 +73222,8 @@ loc_35648:
 		move.b	#0,$F(a1)
 		move.b	#$E,$24(a1)
 		lea	$10(a1),a2
-		move.w	#$5A,d1	; 'Z'
-		move.w	#$38,d2	; '8'
+		move.w	#$5A,d1
+		move.w	#$38,d2
 		moveq	#0,d0
 		moveq	#2,d3
 
@@ -73265,8 +73234,8 @@ loc_3566A:
 		subq.w	#8,d1
 		dbf	d3,loc_3566A
 		lea	(byte_35604)(pc),a3
-		move.w	#$68,d1	; 'h'
-		move.w	#$38,d2	; '8'
+		move.w	#$68,d1
+		move.w	#$38,d2
 
 loc_35682:				
 		move.b	(a3)+,d0
@@ -73361,12 +73330,12 @@ loc_3574E:
 		moveq	#0,d1
 		move.w	d0,d1
 		moveq	#0,d0
-		cmpi.w	#$64,d1	; 'd'
+		cmpi.w	#$64,d1
 		blt.s	loc_35764
 
 loc_3575A:				
 		addi.w	#$100,d0
-		subi.w	#$64,d1	; 'd'
+		subi.w	#$64,d1
 		bgt.s	loc_3575A
 
 loc_35764:				
@@ -73577,14 +73546,14 @@ loc_35942:
 		bsr.w	loc_35DAA
 		cmpi.b	#3,(v_special_act).w
 		beq.s	loc_35966
-		move.w	#$46,$2A(a0) ; 'F'
+		move.w	#$46,$2A(a0)
 		move.b	#$A,$24(a0)
 		rts	
 ; ===========================================================================
 
 loc_35966:				
 		bsr.w	loc_35A7A
-		move.w	#$46,$2A(a0) ; 'F'
+		move.w	#$46,$2A(a0)
 		move.b	#$C,$24(a0)
 		rts	
 ; ===========================================================================
@@ -73708,7 +73677,7 @@ loc_35A7A:
 ; ===========================================================================
 
 loc_35AB6:				
-		move.w	#$48,d4	; 'H'
+		move.w	#$48,d4
 		tst.b	(f_ss_2p).w
 		beq.s	loc_35AC4
 		move.w	#$1C,d4
@@ -73724,7 +73693,7 @@ loc_35AC4:
 		move.b	#1,$18(a1)
 		move.w	d3,8(a1)
 		move.w	d4,$C(a1)
-		move.w	#$46,$2A(a1) ; 'F'
+		move.w	#$46,$2A(a1)
 		move.b	#$14,$1A(a1)
 		movea.l	a1,a2
 		bsr.w	loc_365EC
@@ -73738,7 +73707,7 @@ loc_35AC4:
 		move.w	d3,8(a1)
 		move.w	d4,$C(a1)
 		move.w	d4,$30(a1)
-		move.w	#$46,$2A(a1) ; 'F'
+		move.w	#$46,$2A(a1)
 		move.b	#$15,$1A(a1)
 		cmpi.w	#6,d0
 		bne.s	locret_35B58
@@ -73796,7 +73765,7 @@ loc_35BD6:
 		move.b	#1,$18(a1)
 		move.w	d1,8(a1)
 		move.w	d2,$C(a1)
-		move.w	#$46,$2A(a1) ; 'F'
+		move.w	#$46,$2A(a1)
 
 locret_35C12:				
 		rts	
@@ -73820,7 +73789,7 @@ loc_35C1C:
 		move.b	#1,$18(a1)
 		move.w	d1,8(a1)
 		move.w	d2,$C(a1)
-		move.w	#$46,$2A(a1) ; 'F'
+		move.w	#$46,$2A(a1)
 		addq.w	#8,d1
 		bra.s	loc_35C1C
 ; ===========================================================================
@@ -73869,8 +73838,8 @@ byte_35CDB:	dc.b   2, $D,  4,  9,  6,$FF; 0
 
 loc_35CE2:				
 		moveq	#0,d0
-		move.w	#$54,d1	; 'T'
-		move.w	#$6C,d2	; 'l'
+		move.w	#$54,d1
+		move.w	#$6C,d2
 		bsr.w	loc_35C14
 		bsr.w	loc_365CE
 		move.w	d1,d4
@@ -73882,7 +73851,7 @@ loc_35CE2:
 		subi.w	#8,d1
 
 loc_35D08:				
-		move.w	#$6C,d2	; 'l'
+		move.w	#$6C,d2
 
 loc_35D0C:				
 		move.w	d4,d6
@@ -73897,7 +73866,7 @@ loc_35D0C:
 		moveq	#2,d0
 		lea	(off_35DDE).l,a2
 		adda.w	(a2,d0.w),a2
-		move.w	#$6C,d2	; 'l'
+		move.w	#$6C,d2
 		move.w	#$84,d1	
 		cmpa.w	#2,a3
 		bne.s	loc_35D44
@@ -73924,13 +73893,13 @@ loc_35D52:
 		addi.w	#$2000,2(a2)
 
 loc_35D6E:				
-		move.w	#$74,d1	; 't'
-		move.w	#$68,d2	; 'h'
+		move.w	#$74,d1
+		move.w	#$68,d2
 		lea	(off_35DDE).l,a2
 		adda.w	(a2,d0.w),a2
 		cmpi.b	#4,d0
 		beq.s	loc_35D8A
-		move.w	#$5E,d1	; '^'
+		move.w	#$5E,d1
 
 loc_35D8A:				
 		moveq	#0,d0
@@ -73938,8 +73907,8 @@ loc_35D8A:
 		bmi.s	locret_35DA8
 		cmpi.b	#2,d0
 		bne.s	loc_35D9E
-		move.w	#$5E,d1	; '^'
-		move.w	#$7E,d2	; '~'
+		move.w	#$5E,d1
+		move.w	#$7E,d2
 
 loc_35D9E:				
 		bsr.w	loc_35C14
@@ -73957,7 +73926,7 @@ loc_35DAA:
 		lsr.w	#1,d3
 		moveq	#0,d1
 		move.b	byte_35DD6(pc,d3.w),d1
-		move.w	#$48,d2	; 'H'
+		move.w	#$48,d2
 		lea	(off_35DDE).l,a2
 		adda.w	(a2,d0.w),a2
 
@@ -74136,7 +74105,7 @@ loc_35FEC:
 		move.w	#$6174,2(a0)
 		move.b	#4,1(a0)
 		move.b	#4,$18(a0)
-		move.w	#$36,$30(a0) ; '6'
+		move.w	#$36,$30(a0)
 		move.b	#$40,$26(a0)
 		bsr.w	loc_3529C
 
@@ -74176,7 +74145,7 @@ loc_3603C:
 		swap	d4
 		move.w	d6,d4
 		bpl.s	loc_36088
-		cmpi.b	#$48,d3	; 'H'
+		cmpi.b	#$48,d3
 		bcs.s	loc_36088
 		ext.w	d3
 
@@ -74242,7 +74211,7 @@ loc_3610C:
 		blt.s	loc_36142
 		cmpi.b	#9,$1C(a0)
 		bcs.s	locret_36140
-		move.w	#$63,$2A(a0) ; 'c'
+		move.w	#$63,$2A(a0)
 		move.b	#8,$24(a0)
 		move.w	#$9D,d0	
 		jsr	(PlayMusic).l
@@ -74254,7 +74223,7 @@ locret_36140:
 loc_36142:				
 		move.l	#0,(v_ss_new_speed_factor).w
 		move.b	#6,$24(a0)
-		move.w	#$4F,$2A(a0) ; 'O'
+		move.w	#$4F,$2A(a0)
 		move.w	#6,d0
 		bsr.w	loc_35D6E
 		rts	
@@ -75235,7 +75204,7 @@ loc_36B34:
 
 loc_36B5C:				
 		addq.b	#2,$24(a0)
-		move.b	#$3B,$2A(a0) ; ';'
+		move.b	#$3B,$2A(a0)
 		bra.w	loc_3EA54
 ; ===========================================================================
 
@@ -77380,7 +77349,7 @@ loc_38096:
 loc_3809A:				
 		addq.b	#2,$24(a0)
 		move.b	#0,$1A(a0)
-		move.w	#$3B,$2A(a0) ; ';'
+		move.w	#$3B,$2A(a0)
 		bra.w	loc_3EA54
 ; ===========================================================================
 
@@ -77770,7 +77739,7 @@ loc_3841C:
 
 loc_38444:				
 		addq.b	#2,$24(a0)
-		move.b	#$3B,$2A(a0) ; ';'
+		move.b	#$3B,$2A(a0)
 		bra.w	loc_3EA54
 ; ===========================================================================
 
@@ -77888,7 +77857,7 @@ loc_38546:
 		bsr.w	loc_3EA66
 		bne.s	locret_385BA
 		_move.b	#-$5E,0(a1)
-		move.b	#$2A,$28(a1) ; '*'
+		move.b	#$2A,$28(a1)
 		move.b	1(a0),1(a1)
 		move.b	#5,$1A(a1)
 		move.b	#4,$18(a1)
@@ -78301,14 +78270,14 @@ loc_38A2C:
 ; ===========================================================================
 
 loc_38A44:				
-		_move.b	#$27,0(a0) ; '''
+		_move.b	#$27,0(a0)
 		move.b	#2,$24(a0)
 		bsr.w	loc_38A58
 		bra.w	loc_3EA54
 ; ===========================================================================
 
 loc_38A58:				
-		move.b	#$30,d2	; '0'
+		move.b	#$30,d2
 		moveq	#4,d6
 		lea	(word_38A68).l,a2
 		bra.w	loc_3681A
@@ -79002,7 +78971,7 @@ locret_39152:
 ; ===========================================================================
 
 loc_39154:				
-		_move.b	#$27,0(a0) ; '''
+		_move.b	#$27,0(a0)
 		move.b	#2,$24(a0)
 		bset	#5,2(a0)
 		move.w	$32(a0),d0
@@ -79352,7 +79321,7 @@ loc_39526:
 		bne.s	locret_39574
 		_move.b	#-$68,0(a1)
 		move.b	#$D,$1A(a1)
-		move.b	#$46,$28(a1) ; 'F'
+		move.b	#$46,$28(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
 		addi.w	#$B,$C(a1)
@@ -80056,7 +80025,7 @@ locret_39CEE:
 ; ===========================================================================
 
 loc_39CF0:				
-		moveq	#$64,d0	; 'd'
+		moveq	#$64,d0
 		bsr.w	sub_40D06
 		move.w	#$FF,$32(a0)
 		move.b	#$C,$24(a0)
@@ -80124,7 +80093,7 @@ loc_39D7C:
 ; ===========================================================================
 
 loc_39D82:				
-		move.b	#$4A,d2	; 'J'
+		move.b	#$4A,d2
 		moveq	#7,d6
 		lea	(byte_39D92).l,a2
 		bra.w	loc_3681A
@@ -80382,7 +80351,7 @@ loc_3A1F6:
 		lea	($FFFFE138).w,a1
 		lea	(byte_3A76C)(pc),a2
 		moveq	#0,d0
-		moveq	#$22,d6	; '"'
+		moveq	#$22,d6
 
 loc_3A22A:				
 		move.b	(a2)+,d0
@@ -80495,7 +80464,7 @@ loc_3A378:
 		lea	($FFFFE13C).w,a1
 		lea	(byte_3A76C)(pc),a2
 		moveq	#0,d0
-		moveq	#$22,d6	; '"'
+		moveq	#$22,d6
 
 loc_3A38A:				
 		move.b	(a2)+,d0
@@ -80575,7 +80544,7 @@ loc_3A422:
 
 loc_3A426:				
 		lea	($FFFFE138).w,a1
-		move.w	#$22,d6	; '"'
+		move.w	#$22,d6
 
 loc_3A42E:				
 		subi.w	#$20,(a1)
@@ -80586,7 +80555,7 @@ loc_3A42E:
 
 loc_3A43A:				
 		lea	($FFFFE13C).w,a1
-		move.w	#$22,d6	; '"'
+		move.w	#$22,d6
 
 loc_3A442:				
 		addi.w	#$20,(a1)
@@ -80871,7 +80840,7 @@ loc_3A7AE:
 		bsr.w	loc_365F4
 		moveq	#0,d0
 		move.b	$28(a0),d0
-		subi.b	#$4E,d0	; 'N'
+		subi.b	#$4E,d0
 		move.b	d0,$24(a0)
 		cmpi.w	#2,(v_player_mode).w
 		bne.s	loc_3A7DA
@@ -81538,7 +81507,7 @@ loc_3AEA0:
 		st.b	$30(a0)
 		clr.b	$2F(a0)
 		move.w	#$200,$12(a0)
-		move.b	#$2B,$31(a0) ; '+'
+		move.b	#$2B,$31(a0)
 
 loc_3AEC0:				
 		subq.b	#1,$31(a0)
@@ -81586,7 +81555,7 @@ loc_3AF0C:
 		move.w	$12(a0),d2
 		beq.s	locret_3AF32
 		bpl.s	loc_3AF26
-		addi.w	#$34,d0	; '4'
+		addi.w	#$34,d0
 		cmp.w	d0,d1
 		bcs.s	loc_3AF2E
 		rts	
@@ -81806,7 +81775,7 @@ loc_3B2F0:
 		bsr.w	loc_365F4
 		moveq	#0,d0
 		move.b	$28(a0),d0
-		subi.b	#$5E,d0	; '^'
+		subi.b	#$5E,d0
 
 loc_3B2FE:
 		move.w	word_3B30C(pc,d0.w),$10(a0)
@@ -81925,7 +81894,7 @@ loc_3B40E:
 		bsr.w	loc_365F4
 		move.b	#4,$1C(a0)
 		move.b	$28(a0),d0
-		subi.b	#$64,d0	; 'd'
+		subi.b	#$64,d0
 		move.b	d0,$24(a0)
 		rts	
 ; ===========================================================================
@@ -82072,7 +82041,7 @@ off_3B5DE:	dc.w loc_3B5E8-off_3B5DE; 0
 
 loc_3B5E8:				
 		moveq	#0,d0
-		move.b	#$6A,d0	; 'j'
+		move.b	#$6A,d0
 		bsr.w	loc_365FA
 		move.b	$28(a0),d0
 		andi.b	#6,d0
@@ -82277,7 +82246,7 @@ loc_3B77E:
 
 loc_3B790:				
 		move.w	8(a0),-(sp)
-		move.w	#$23,d1	; '#'
+		move.w	#$23,d1
 		move.w	#4,d2
 		move.w	#4,d3
 		move.w	(sp)+,d4
@@ -82318,7 +82287,7 @@ loc_3B7F8:
 		bsr.w	loc_3EA66
 		bne.s	locret_3B816
 		_move.b	#-$49,0(a1)
-		move.b	#$72,$28(a1) ; 'r'
+		move.b	#$72,$28(a1)
 
 loc_3B80A:
 		move.w	8(a0),8(a1)
@@ -82788,7 +82757,7 @@ loc_3BC6C:
 loc_3BC92:				
 		moveq	#0,d0
 		move.b	$28(a0),d0
-		subi.b	#$7E,d0	; '~'
+		subi.b	#$7E,d0
 		move.b	d0,$28(a0)
 		move.w	word_3BCA8(pc,d0.w),$12(a0)
 		rts	
@@ -82827,7 +82796,7 @@ loc_3BCD6:
 loc_3BCDE:				
 		move.w	8(a0),-(sp)
 		bsr.w	loc_3EAC0
-		move.w	#$23,d1	; '#'
+		move.w	#$23,d1
 		move.w	#4,d2
 		move.w	#5,d3
 		move.w	(sp)+,d4
@@ -82949,7 +82918,7 @@ loc_3BE04:
 
 loc_3BE16:				
 		move.w	8(a0),-(sp)
-		move.w	#$23,d1	; '#'
+		move.w	#$23,d1
 		move.w	#$18,d2
 		move.w	#$19,d3
 		move.w	(sp)+,d4
@@ -83264,7 +83233,7 @@ loc_3C0E8:
 		move.w	d0,$C(a1)
 
 loc_3C10A:				
-		addi.w	#$30,d0	; '0'
+		addi.w	#$30,d0
 		btst	#1,(v_joypad_hold_actual).w
 		beq.s	loc_3C124
 		addq.w	#1,$C(a1)
@@ -83467,7 +83436,7 @@ loc_3C366:
 		bne.s	loc_3C3B4
 		move.w	#$2880,(v_boundary_left_next).w
 		bclr	#3,$22(a0)
-		_move.b	#$27,0(a0) ; '''
+		_move.b	#$27,0(a0)
 		move.b	#2,$24(a0)
 		bset	#1,($FFFFB022).w
 		bclr	#3,($FFFFB022).w
@@ -84362,7 +84331,7 @@ locret_3CC3A:
 ; ===========================================================================
 
 loc_3CC3C:				
-		moveq	#$64,d0	; 'd'
+		moveq	#$64,d0
 		bsr.w	sub_40D06
 		clr.b	$20(a0)
 		move.w	#$EF,$30(a0)
@@ -84584,7 +84553,7 @@ loc_3CF10:
 
 loc_3CF32:				
 		bsr.w	loc_366D6
-		addi.w	#$5C,d2	; '\'
+		addi.w	#$5C,d2
 		cmpi.w	#$B8,d2	
 		bcs.s	loc_3CF44
 		bra.w	loc_3EA42
@@ -84869,7 +84838,7 @@ loc_3D27C:
 
 loc_3D298:				
 		addq.b	#2,$24(a0)
-		move.w	#$3B,$2A(a0) ; ';'
+		move.w	#$3B,$2A(a0)
 		bra.w	loc_3EA54
 ; ===========================================================================
 
@@ -85158,7 +85127,7 @@ loc_3D5C2:
 
 loc_3D5CA:				
 		addq.b	#2,$25(a0)
-		move.b	#$79,$1E(a0) ; 'y'
+		move.b	#$79,$1E(a0)
 		move.w	#-$100,$12(a0)
 		movea.w	$38(a0),a1
 		move.b	#4,$25(a1)
@@ -85603,7 +85572,7 @@ loc_3D9B0:
 
 loc_3D9BE:				
 		addq.b	#2,$25(a0)
-		move.w	#$3F,(v_palfade_start).w ; '?'
+		move.w	#$3F,(v_palfade_start).w
 		move.b	#$16,$1E(a0)
 		move.w	#$7FFF,(v_palcycle_time).w
 		rts	
@@ -86273,11 +86242,11 @@ loc_3DFBA:
 		moveq	#0,d1
 		move.b	d0,d1
 		lsr.b	#2,d1
-		subi.w	#$30,d1	; '0'
+		subi.w	#$30,d1
 		add.w	d1,8(a1)
 		lsr.w	#8,d0
 		lsr.b	#2,d0
-		subi.w	#$30,d0	; '0'
+		subi.w	#$30,d0
 		add.w	d0,$C(a1)
 
 locret_3DFF6:				
@@ -86321,14 +86290,14 @@ loc_3E03C:
 		clr.w	($FFFFFB22).w
 		move.b	#$16,$20(a0)
 		movea.w	$36(a0),a1
-		move.b	#$2A,$20(a1) ; '*'
+		move.b	#$2A,$20(a1)
 
 locret_3E058:				
 		rts	
 ; ===========================================================================
 
 loc_3E05A:				
-		moveq	#$64,d0	; 'd'
+		moveq	#$64,d0
 		bsr.w	sub_40D06
 		clr.b	$1E(a0)
 		move.b	#$E,$25(a0)
@@ -86431,7 +86400,7 @@ loc_3E126:
 ; ===========================================================================
 
 loc_3E136:				
-		lea	(word_3E160)(pc),a3
+		lea	EggmanBomb_InitSpeeds(pc),a3
 		moveq	#1,d6
 
 loc_3E13C:				
@@ -86448,12 +86417,13 @@ loc_3E152:
 		dbf	d6,loc_3E13C
 		rts	
 ; ===========================================================================
-word_3E160:	dc.w   $60,$F800	; 0 
-		dc.w   $C0,$F600	; 2
+EggmanBomb_InitSpeeds:	
+		dc.w   $60,-$800
+		dc.w   $C0,-$A00
 ; ===========================================================================
 
 loc_3E168:				
-		move.b	1(a0),d0
+		move.b	ost_render(a0),d0
 		andi.b	#1,d0
 		moveq	#0,d1
 		lea	(byte_3E19E)(pc),a1
@@ -87321,7 +87291,7 @@ loc_3EB0A:
 		move.b	#$A,$1A(a0)
 		tst.b	(f_s1_credits_cheat).w
 		beq.s	loc_3EB48
-		cmpi.b	#$72,(v_joypad_hold_actual).w ; 'r'
+		cmpi.b	#$72,(v_joypad_hold_actual).w
 		bne.s	loc_3EB48
 		move.w	#$EEE,($FFFFFBC0).w
 		move.w	#$880,($FFFFFBC2).w
@@ -87650,7 +87620,7 @@ loc_3F278:
 		move.b	$25(a0),d0
 		move.w	off_3F2AE(pc,d0.w),d1
 		jsr	off_3F2AE(pc,d1.w)
-		move.w	#$2B,d1	; '+'
+		move.w	#$2B,d1
 		move.w	#$18,d2
 		move.w	#$18,d3
 		move.w	8(a0),d4
@@ -87671,7 +87641,7 @@ loc_3F2B4:
 		movea.w	$3A(a0),a2
 		jsr	SingleObjLoad
 		bne.s	loc_3F2E0
-		_move.b	#$27,0(a1) ; '''
+		_move.b	#$27,0(a1)
 		addq.b	#2,$24(a1)
 		move.w	8(a2),8(a1)
 		move.w	$C(a2),$C(a1)
@@ -87788,7 +87758,7 @@ locret_3F404:
 ; ===========================================================================
 
 loc_3F406:				
-		moveq	#$6F,d0	; 'o'
+		moveq	#$6F,d0
 		moveq	#$28,d1
 		lea	($FFFFB400).w,a1
 
@@ -87883,7 +87853,7 @@ loc_3F566:
 		move.b	$16(a0),d5
 		subq.b	#3,d5
 		sub.w	d5,d3
-		cmpi.b	#$4D,$1A(a0) ; 'M'
+		cmpi.b	#$4D,$1A(a0)
 		bne.s	loc_3F592
 		addi.w	#$C,d3
 		moveq	#$A,d5
@@ -87892,7 +87862,7 @@ loc_3F592:
 		move.w	#$10,d4
 		add.w	d5,d5
 		lea	($FFFFB400).w,a1
-		move.w	#$6F,d6	; 'o'
+		move.w	#$6F,d6
 
 loc_3F5A0:				
 		move.b	$20(a1),d0
@@ -87962,7 +87932,7 @@ loc_3F666:
 		move.b	$16(a0),d5
 		subq.b	#3,d5
 		sub.w	d5,d3
-		cmpi.b	#$4D,$1A(a0) ; 'M'
+		cmpi.b	#$4D,$1A(a0)
 		bne.s	loc_3F68E
 		addi.w	#$C,d3
 		moveq	#$A,d5
@@ -87971,7 +87941,7 @@ loc_3F68E:
 		move.w	#$10,d4
 		add.w	d5,d5
 		lea	($FFFFB400).w,a1
-		move.w	#$6F,d6	; 'o'
+		move.w	#$6F,d6
 
 loc_3F69C:				
 		move.b	$20(a1),d0
@@ -88043,7 +88013,7 @@ loc_3F708:
 		move.w	$30(a0),d0
 
 loc_3F728:				
-		cmpi.w	#$5A,d0	; 'Z'
+		cmpi.w	#$5A,d0
 		bcc.w	locret_3F73A
 		move.b	#4,$24(a1)
 		move.w	a0,$3E(a1)
@@ -88149,7 +88119,7 @@ loc_3F80A:
 loc_3F81C:				
 		movea.w	a0,a3
 		bsr.w	sub_40D42
-		_move.b	#$27,0(a1) ; '''
+		_move.b	#$27,0(a1)
 		move.b	#0,$24(a1)
 		tst.w	$12(a0)
 		bmi.s	loc_3F844
@@ -88213,7 +88183,7 @@ loc_3F88C:
 		beq.w	KillCharacter
 		jsr	SingleObjLoad
 		bne.s	loc_3F8B8
-		_move.b	#$37,0(a1) ; '7'
+		_move.b	#$37,0(a1)
 		move.w	8(a0),8(a1)
 		move.w	$C(a0),$C(a1)
 		move.w	a0,$3E(a1)
@@ -88244,7 +88214,7 @@ loc_3F8FC:
 		move.b	#$1A,$1C(a0)
 		move.w	#$78,$30(a0)
 		move.w	#$A3,d0	
-		cmpi.b	#$36,(a2) ; '6'
+		cmpi.b	#$36,(a2)
 		bne.s	loc_3F91C
 		move.w	#$A6,d0	
 
@@ -88267,7 +88237,7 @@ KillCharacter:
 		move.b	#$18,$1C(a0)
 		bset	#7,2(a0)
 		move.w	#$A3,d0	
-		cmpi.b	#$36,(a2) ; '6'
+		cmpi.b	#$36,(a2)
 		bne.s	loc_3F96C
 		move.w	#$A6,d0	
 
@@ -88304,7 +88274,7 @@ loc_3F976:
 		beq.s	loc_3FA00
 		cmpi.b	#$1A,d1
 		beq.s	loc_3FA22
-		cmpi.b	#$21,d1	; '!'
+		cmpi.b	#$21,d1
 		beq.s	loc_3FA12
 		rts	
 ; ===========================================================================
@@ -88489,7 +88459,7 @@ loc_3FAFE:
 		move.w	8(a1),d0
 		move.w	$C(a1),d7
 		addi.w	#4,d7
-		subi.w	#$30,d0	; '0'
+		subi.w	#$30,d0
 		btst	#0,1(a1)
 		beq.s	loc_3FB28
 		addi.w	#$60,d0
@@ -88785,7 +88755,7 @@ Dynamic_HTZ:
 		lsr.w	#4,d0
 		add.w	d1,d0
 		subi.w	#$10,d0
-		divu.w	#$30,d0	; '0'
+		divu.w	#$30,d0
 		swap	d0
 		cmp.b	1(a3),d0
 		beq.s	loc_3FD98
@@ -88798,7 +88768,7 @@ Dynamic_HTZ:
 		move.w	d0,d1
 		add.w	d0,d0
 		add.w	d1,d0
-		andi.w	#$38,d2	; '8'
+		andi.w	#$38,d2
 		lsr.w	#2,d2
 		add.w	d2,d0
 		lea	word_3FD9C(pc,d0.w),a4
@@ -89680,7 +89650,7 @@ byte_407BE:	dc.b   0,  0		; 0
 loc_407C0:				
 		lea	(Nem_HTZCliffs).l,a0
 		lea	($FFFFB800).w,a4
-		bsr.w	loc_407FC
+		bsr.w	JmpTo2_NemDecToRAM
 		lea	($FFFFB800).w,a1
 		lea	(word_3FD9C)(pc),a4
 		moveq	#0,d2
@@ -89704,14 +89674,16 @@ loc_407E4:
 		dbf	d4,loc_407DA
 		rts	
 ; ===========================================================================
-		nop	
 
-loc_407FC:				
+	if Revision<2
+		nop	
+	endc
+	
+	if ~RemoveJmpTos
+JmpTo2_NemDecToRAM:				
 		jmp	(NemDecToRAM).l
-; ===========================================================================
-		dc.b   0 ;  
-		dc.b   0 ;  
-; ===========================================================================
+		align 4
+	endc
 
 BuildHUD:				
 		tst.w	(v_rings).w
@@ -89750,7 +89722,6 @@ loc_40836:
 
 locret_40858:				
 		rts	
-; End of function h
 
 ; ===========================================================================
 
@@ -89783,7 +89754,8 @@ loc_4088C:
 		move.w	#$90,d3	
 		move.w	#$188,d2
 		lea	(off_40BEA).l,a1
-		movea.w	#-$7C9B,a3
+		movea.w	#$8365,a3 ; 	#make_art_tile_2p($06E2,0,1)
+								;addr,pal,pri,((pri&1)<<15)|((pal&3)<<13)|((addr&tile_mask)>>1)
 		add.w	d1,d1
 		adda.w	(a1,d1.w),a1
 		move.w	(a1)+,d1
@@ -92191,6 +92163,22 @@ PatternLoadCues:
 ;		endc
 ;		endm
 
+plcm:		macro gfx,arttile,suffix
+		dc.l gfx
+		ifarg \arttile
+			plcm_vram: = \arttile*sizeof_cell
+		else
+			plcm_vram: = last_vram
+		endc
+		last_vram: = plcm_vram+sizeof_\gfx
+		dc.w plcm_vram
+		ifarg \suffix
+			vram_\gfx\_\suffix: equ plcm_vram
+		else
+			vram_\gfx: equ plcm_vram
+		endc
+		endm
+
 ;plcheader:	macro *
 ;		\*: equ *
 ;		plc_count\@: equ (\*_end-\*-2)/sizeof_plc
@@ -92612,7 +92600,8 @@ PLC_CPZ1:		dc.w 8
 		dc.l Nem_CPZTubeSpring
 		dc.w $7C00
 		dc.l Nem_WaterSurface1
-		dc.w $8000
+		dc.w vram_WaterSurface
+		;dc.w	Nem_WaterSurface1, vram_WaterSurface
 		dc.l Nem_CPZStairBlock
 		dc.w $8300
 		dc.l Nem_CPZMetalBlock
@@ -93560,7 +93549,7 @@ MapSpec_Turn6:		incbin "mappings/special stage/Curve Right 6.bin"
 MapSpec_Turn7:		incbin "mappings/special stage/Curve Right 7.bin"
 
 ; ----------------------------------------------------------------------------------
-; Special Stage graphics, mappings, and misc data
+; Special Stage graphics, plane mappings, and misc data
 ; ----------------------------------------------------------------------------------
 
 		incfile	Kos_Special	; Koz_DCA38

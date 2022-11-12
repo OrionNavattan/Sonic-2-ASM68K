@@ -14,6 +14,7 @@ v_16x16_tiles:          rs.w sizeof_16x16_all ; $FFFF9000 ; 16x16 tile mappings 
 v_bgscroll_buffer:      rs.b $200 ; $FFFFA800 ; used by some layer deformation routines
 v_nem_gfx_buffer:       rs.b $200 ; $FFFFAA00 ; ; Nemesis graphics decompression buffer
 v_sprite_queue:         rs.b sizeof_priority*8 ; $FFFFAC00 ; sprite display queue, first section is highest priority ($400 bytes; 8 sections of $80 bytes)
+v_sprite_queue_end:		equ __rs
 
                 rsblock ost ; $B000-$D400 
 v_ost_all:          rs.b sizeof_ost*countof_ost    ; $FFFFB000 ; object variable space ($40 bytes per object; $90 objects) ($2400 bytes) 
@@ -291,7 +292,7 @@ v_countdown:				rs.w 1 ; $FFFFF614 ; decrements every time VBlank runs, used as 
 v_y_pos_vsram:				rs.w 1 ; $FFFFF616
 v_fg_y_pos_vsram:			equ v_y_pos_vsram  ; $FFFFF616 ; foreground y position, sent to VSRAM during VBlank
 v_bg_y_pos_vsram:			rs.w 1 ; $FFFFF618 ; background y position, sent to VSRAM during VBlank
-							rs.l 1 ; $FFFFF61A ; only ever cleared, never used
+v_unused_ss:				rs.l 1 ; $FFFFF61A ; cleared during special stage init, never used
 v_fg_y_pos_vsram_p2:		rs.w 1 ; $FFFFF61E ; foreground y position for player 2
 v_bg_y_pos_vsram_p2:		rs.w 1 ; $FFFFF620 ; background y position for player 2
 v_teleport_timer:			rs.b 1 ; $FFFFF622 ; timer for teleport effect

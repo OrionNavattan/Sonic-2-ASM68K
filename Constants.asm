@@ -36,15 +36,14 @@ sizeof_vram_sprites:	equ sizeof_sprite*countof_max_sprites	; sprite table ($280 
 sizeof_vram_hscroll:	equ $380
 sizeof_vram_hscroll_padded:	equ $400
 sizeof_vram_row:	equ 64*2				; single row of fg/bg nametable, assuming 64 wide
-;draw_base:		equ vram_fg				; base address for nametables, used by Calc_VRAM_Pos (must be multiple of $4000)
-;draw_fg:		equ $4000+(vram_fg-draw_base)		; VRAM write command + fg nametable address relative to base
-;draw_bg:		equ $4000+(vram_bg-draw_base)		; VRAM write command + bg nametable address relative to base
+draw_base:		equ vram_fg				; base address for nametables, used by Calc_VRAM_Pos (must be multiple of $4000)
+draw_fg:		equ $4000+(vram_fg-draw_base)		; VRAM write command + fg nametable address relative to base
+draw_bg:		equ $4000+(vram_bg-draw_base)		; VRAM write command + bg nametable address relative to base
 
 vram_sprites:			equ $F800				; sprite attribute table ($280 bytes)
 sizeof_vram_sprites:	equ $280				
 vram_hscroll:			equ $FC00				; horizontal scroll table ($380 bytes); extends until $FF7F
 sizeof_vram_hscroll:	equ $380				; 224 lines * 2 bytes per entry * 2 plane nametables
-
 
 ; VRAM regions for main game
 ;vram_window:		equ $A000		; window nametable - unused
@@ -56,13 +55,10 @@ sizeof_vram_planetable:	equ $1000			; 64 cells x 32 cells x 2 bytes per cell
 ;vram_sonic:			equ $F000				; Sonic graphics ($2E0 bytes)
 ;tile_sonic:			equ vram_sonic/sizeof_cell
 
-
-
 ; VRAM regions for Sega Screen
 vram_sega_fg:			equ $C000 ; extends until $DFFF
 vram_sega_bg:			equ $A000 ; extends until $BFFF
 sizeof_vram_sega_pt:	equ $2000 ; 128 cells x 32 cells x 2 bytes per cell
-
 
 ; VRAM regions for Special Stage
 vram_ss_fg1:       			equ $C000	; extends until $DFFF
@@ -74,12 +70,10 @@ sizeof_vram_ss_sprites:		equ $0280	; 640 bytes
 vram_ss_hscroll:			equ $FC00	; extends until $FF7F
 sizeof_vram_ss_hscroll:		equ $0380	; 224 lines * 2 bytes per entry * 2 plane nametables
 
-
 ; VRAM regions for title screen
 vram_title_fg:          	equ $C000	; extends until $CFFF
 vram_title_bg:          	equ $E000	; extends until $EFFF
 sizeof_vram_title_pt:   	equ $1000	; 64 cells x 32 cells x 2 bytes per cell
-
 
 ; VRAM regions for ending and credits
 vram_ending_fg:     	      equ $C000	; extends until $DFFF
@@ -87,11 +81,188 @@ vram_ending_bg1:    	      equ $E000	; extends until $EFFF (plane size is 64x32)
 vram_ending_bg2:	          equ $4000	; extends until $5FFF
 sizeof_vram_ending_pt:        equ $2000	; 64 cells x 64 cells x 2 bytes per cell
 
-
 ; VRAM regions for menu screens
 vram_menu_fg:				equ $C000	; Extends until $CFFF
 vram_menu_bg:             	equ $E000	; Extends until $EFFF
 sizeof_vram_menu_pt:        equ $1000	; 64 cells x 32 cells x 2 bytes per cell
+
+
+; VRAM addresses or tile counts for individual items; tile counts are derived by dividing by $20
+
+vram_start:                    equ $0000
+
+; Common to 1p and 2p menus.
+vram_StandardFont:             equ $0200
+
+; Sega Screen
+vram_SEGA:           		equ $0020
+vram_Trails:                equ $1000
+vram_Giant_Sonic:          		equ $1100
+
+; Title Screen
+vram_Title:                 equ $0000
+vram_TitleSprites:          equ $2A00
+vram_MenuJunk:              equ $7E40
+vram_Player1VS2:            equ $8040
+vram_CreditsFont:           equ $A000
+vram_StandardFont_TtlScr:	equ $D000
+
+; Credits
+vram_CreditText_CredScr:	equ $0020
+
+; Menus
+vram_MenuBox:               equ $0E00
+vram_LevelSelectPics:       equ $1200
+
+; 2P Results Screen
+vram_1P2PWins:              equ $0E00
+vram_SpecialPlayerVSPlayer: equ $7BE0
+tile_2p_Signpost:           	equ $05E8
+;vram_TwoPlayerResults:          equ $C000 ?
+
+; Special Stage
+vram_SpecialEmerald:         equ $2E80
+vram_SpecialMessages:        equ $3440
+vram_SpecialHUD:             equ $3F40
+vram_SpecialHorizShadow:     equ $4780
+vram_SpecialDiagShadow:      equ $4C40
+vram_SpecialVertShadow:      equ $5380
+vram_SpecialExplosion:       equ $56A0
+vram_SpecialSonic:           equ $5CA0
+vram_SpecialTails:           equ $6000
+vram_SpecialTails_Tails:     equ $62C0
+vram_SpecialRings:           equ $6440
+vram_SpecialStart:           equ $7140
+vram_SpecialBomb:            equ $7140
+vram_SpecialStageResults:    equ $B200
+vram_SpecialBack:            equ $E000
+vram_SpecialStars:           equ $EFE0
+vram_SpecialTailsText:       equ $F480
+
+
+; Ending
+vram_EndingCharacter:            equ $0320
+vram_EndingFinalTornado:     equ $2AC0
+vram_EndingPics:             equ $6500
+vram_EndingMiniTornado:      equ $9260
+
+; Unused S1 leftovers: Ending animals
+vram_S1EndFlicky:            equ $B4A0
+vram_S1EndRabbit:            equ $AA60
+vram_S1EndPenguin:           equ $AE60
+vram_S1EndSeal:              equ $B0A0
+vram_S1EndPig:               equ $B260
+vram_S1EndChicken:           equ $ACA0
+vram_S1EndSquirrel:          equ $B660
+
+; Continue Screen
+vram_ContinueTails:          equ $6000
+vram_ContinueText:           equ $A000
+vram_ContinueText_2:         equ vram_ContinueText+$24 ; $A024
+vram_MiniContinue:           equ $A480
+vram_ContinueScreen_Additional:     equ $B200
+vram_ContinueCountdown:             equ $DF80
+
+; Shared badniks and objects.
+
+; Objects that use the same art tiles on all levels in which
+; they are loaded, even if not all levels load them.
+vram_WaterSurface:           equ $8000
+vram_Button:                 equ $8480
+vram_HorizSpike:             equ $8580
+vram_Spikes:                 equ $8680
+vram_DignlSprng:             equ $8780
+vram_LeverSpring:            equ $8800
+vram_VrtclSprng:             equ $8B80
+vram_HrzntlSprng:            equ $8E80
+
+; EHZ, HTZ
+;ArtTile_ArtKos_Checkers:               = ArtTile_ArtKos_LevelArt+$0158
+;ArtTile_ArtUnc_Flowers1:               = $0394
+;ArtTile_ArtUnc_Flowers2:               = $0396
+;ArtTile_ArtUnc_Flowers3:               = $0398
+;ArtTile_ArtUnc_Flowers4:               = $039A
+vram_Buzzer:                 	equ $7A40
+
+; WFZ, SCZ
+vram_WFZHrzntlPrpllr:        	equ $79A0
+vram_Clouds:                	equ $A9E0
+vram_WfzVrtclPrpllr:         	equ $AC20
+vram_Balkrie:					equ $ACA0
+
+
+; Level-specific objects and badniks.
+; EHZ
+ArtTile_ArtUnc_EHZPulseBall:           = $039C
+vram_Waterfall:              equ $73C0
+vram_EHZBridge:             equ $76C0
+vram_Buzzer_Fireball:        equ $77C0	; Actually unused
+vram_Coconuts:               equ $7DC0
+vram_Masher:                 equ $8280
+ArtTile_ArtUnc_EHZMountains:           = $0500
+
+; MTZ
+vram_Shellcracker:          equ $6380
+ArtTile_ArtUnc_Lava                   = $0340
+ArtTile_ArtUnc_MTZCylinder            = $034C
+ArtTile_ArtUnc_MTZAnimBack_1          = $035C
+ArtTile_ArtUnc_MTZAnimBack_2          = $0362
+vram_Asteron:           	equ $6D00
+vram_MtzWheel               = $0378
+vram_MtzWheelIndent         = $03F0
+vram_LavaCup                = $03F9
+vram_BoltEnd_Rope           = $03FD
+vram_MtzSteam               = $0405
+vram_MtzSpikeBlock          = $0414
+vram_MtzSpike               = $041C
+vram_MtzMantis              = $043C
+vram_MtzAsstBlocks          = $0500
+vram_MtzLavaBubble          = $0536
+vram_MtzCog                 = $055F
+vram_MtzSpinTubeFlash       = $056B
+
+; WFZ
+vram_WfzScratch             = $0379
+vram_WfzTiltPlatforms       = $0393
+vram_WfzVrtclLazer          = $039F
+vram_WfzWallTurret          = $03AB
+vram_WfzHrzntlLazer         = $03C3
+vram_WfzConveyorBeltWheel   = $03EA
+vram_WfzHook                = $03FA
+vram_WfzHook_Fudge          = vram_WfzHook + 4 ; Bad mappings...
+vram_WfzBeltPlatform        = $040E
+vram_WfzGunPlatform         = $041A
+vram_WfzUnusedBadnik        = $0450
+vram_WfzLaunchCatapult      = $045C
+vram_WfzSwitch              = $0461
+vram_WfzThrust              = $0465
+vram_WfzFloatingPlatform    = $046D
+vram_BreakPanels            = $048C
+
+; SCZ
+vram_Turtloid               = $038A
+vram_Nebula                 = $036E
+
+
+; Tile counts for several levels, used to patch tiles
+
+ArtTile_ArtKos_LevelArt               = $0000
+ArtTile_ArtKos_NumTiles_EHZ           = $0393
+ArtTile_ArtKos_NumTiles_CPZ           = $0364
+ArtTile_ArtKos_NumTiles_ARZ           = $03F6
+ArtTile_ArtKos_NumTiles_CNZ           = $0331
+ArtTile_ArtKos_NumTiles_HTZ_Main      = $01FC ; Until this tile, equal to EHZ tiles.
+ArtTile_ArtKos_NumTiles_HTZ_Sup       = $0183 ; Overwrites several EHZ tiles.
+ArtTile_ArtKos_NumTiles_HTZ           = ArtTile_ArtKos_NumTiles_HTZ_Main + ArtTile_ArtKos_NumTiles_HTZ_Sup - 1
+ArtTile_ArtKos_NumTiles_MCZ           = $03A9
+ArtTile_ArtKos_NumTiles_OOZ           = $02AA
+ArtTile_ArtKos_NumTiles_MTZ           = $0319
+ArtTile_ArtKos_NumTiles_SCZ           = $036E
+ArtTile_ArtKos_NumTiles_WFZ_Main      = $0307 ; Until this tile, equal to SCZ tiles.
+ArtTile_ArtKos_NumTiles_WFZ_Sup       = $0073 ; Overwrites several SCZ tiles.
+ArtTile_ArtKos_NumTiles_WFZ           = ArtTile_ArtKos_NumTiles_WFZ_Main + ArtTile_ArtKos_NumTiles_WFZ_Sup - 1
+ArtTile_ArtKos_NumTiles_DEZ           = $0326 ; Skips several CPZ tiles.
+
 
 ; Color and CRAM 
 countof_color:		equ 16					; colors per palette line

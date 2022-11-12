@@ -50,7 +50,7 @@ type errors.txt
 IF NOT EXIST s2built.bin PAUSE & EXIT 2
 
 rem compress the sound driver and insert in rom. For more efficient compression, change the final two arguments to "build tools\saxcmp.exe" "-S"
-"S2 SoundDriver Compress.exe" "sound\Sound Driver.unc" "sound\MergeData.dat" s2built.bin "build tools\saxmandrv.exe" "e"
+rem "S2 SoundDriver Compress.exe" "sound\Sound Driver.unc" "sound\MergeData.dat" s2built.bin "build tools\saxmandrv.exe" "e"
 
 rem if using an error handler such as Vladikomper's, handle processing and adding the symbol table here
 

@@ -829,12 +829,7 @@ GenNotePSG:	macro	const, psgfq, fmfq
 		
 PSGFrequencies:
 		DefineNotes		GenNotePSG ; generate PSG note array
-;		dw	356h, 326h, 2F9h, 2CEh, 2A5h, 280h, 25Ch, 23Ah, 21Ah, 1FBh, 1DFh, 1C4h
-;		dw	1ABh, 193h, 17Dh, 167h, 153h, 140h, 12Eh, 11Dh, 10Dh, 0FEh, 0EFh, 0E2h
-;		dw	0D6h, 0C9h, 0BEh, 0B4h, 0A9h, 0A0h,  97h,  8Fh,  87h,  7Fh,  78h,  71h
-;		dw	 6Bh,  65h,  5Fh,  5Ah,  55h,  50h,  4Bh,  47h,  43h,  40h,  3Ch,  39h
-;		dw	 36h,  33h,  30h,  2Dh,  2Bh,  28h,  26h,  24h,  22h,  20h,  1Fh,  1Dh
-;		dw	 1Bh,  1Ah,  18h,  17h,  16h,  15h,  13h,  12h,  11h,    0
+
 ; ---------------------------------------------------------------------------
 
 ; zloc_3E5
@@ -878,9 +873,6 @@ zFMUpdateFreq:
 		rst	zWriteFMIorII			; Write it!
 		ret
 
-
-
-
 ; zsub_414
 zPSGUpdateTrack:
 		dec	(ix+ch_delay)	; decrement current duration timeout..
@@ -898,10 +890,6 @@ zPSGUpdateTrack:
 		call	zDoModulation			; Update modulation (if modulation doesn't change, we do not return here)
 		jp	zPSGUpdateFreq
 ; End of function zPSGUpdateTrack
-
-
-
-
 
 ; zsub_438
 zPSGDoNext:
@@ -1018,15 +1006,12 @@ zSetRest:
 		set	chf_rest,(ix+ch_flags)	; Set "track at rest" bit
 		ret
 
-
-
 ; zsub_4CA
 zPSGUpdateVolFX:
 		ld	a,(ix+ch_voice)	; Get current PSG tone
 		or	a				; Test if it's zero
 		ret	z				; If it is, return!
 		; Otherwise, fall into zPSGDoVolFX...
-
 
 ; zsub_4CF
 zPSGDoVolFX:
