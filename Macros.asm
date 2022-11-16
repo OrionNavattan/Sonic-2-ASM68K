@@ -422,25 +422,25 @@ ptr:		macro
 ; (vram/vsram/cram), operation (read/write/dma), additional adjustment (shifts, ANDs),
 ; destination of 68K instruction
 ; ---------------------------------------------------------------------------
-vdp_comm:	macro inst,addr,cmdtarget,cmd,adjustment,dest
+vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 
 		local type
 		local rwd
 	
-		if strcmp ("\cmdtarget","vram")
+		if stricmp ("\cmdtarget","vram")
 		type: =	$21	; %10 0001
-		elseif strcmp ("\cmdtarget","cram")
+		elseif stricmp ("\cmdtarget","cram")
 		type: = $2B	; %10 1011
-		elseif strcmp ("\cmdtarget","vsram")
+		elseif stricmp ("\cmdtarget","vsram")
 		type: = $25	; %10 0101
 		else inform 2,"Invalid VDP command destination (must be vram, cram, or vsram)."
 		endc
 	
-		if strcmp ("\cmd","read")
+		if stricmp ("\cmd","read")
 		rwd: =	$C	; %00 1100
-		elseif strcmp ("\cmd","write")
+		elseif stricmp ("\cmd","write")
 		rwd: = 7	; %00 0111
-		elseif strcmp ("\cmd","dma")
+		elseif stricmp ("\cmd","dma")
 		rwd: = $27	; %10 0111
 		else inform 2,"Invalid VDP command type (must be read, write, or dma)."
 		endc

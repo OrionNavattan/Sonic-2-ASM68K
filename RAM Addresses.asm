@@ -297,7 +297,8 @@ v_fg_y_pos_vsram_p2:		rs.w 1 ; $FFFFF61E ; foreground y position for player 2
 v_bg_y_pos_vsram_p2:		rs.w 1 ; $FFFFF620 ; background y position for player 2
 v_teleport_timer:			rs.b 1 ; $FFFFF622 ; timer for teleport effect
 f_teleport_flag:			rs.b 1 ; $FFFFF623 ; flag indicating a teleport is in progress
-v_vdp_hint_counter:			rs.w 1 ; $FFFFF624 ; ; VDP register $8A buffer - horizontal interrupt counter ($8Axx)
+v_vdp_hint_counter:			rs.w 1 ; $FFFFF624 ; VDP register $8A buffer 
+v_vdp_hint_line:			equ __rs-1 ; $FFFFF625 ; scanline where HBlank will trigger
 v_palfade_start:			rs.b 1 ; $FFFFF626 ; palette fading - start position in bytes
 v_palfade_size:				rs.b 1 ; $FFFFF627 ; palette fading - number of colors
 
@@ -895,8 +896,9 @@ v_ss_dynamic_object_ram_end: equ __rs ; $FFFFCFC0
 
 
 				rsset ss_shared_ram	; $FFFFD000 ; most SS-specific variables are in this block
-v_ss_pnt_buffer:				rs.b $700 ; $FFFFD000
-v_ss_pnt_buffer_end:			equ __rs  ; $FFFFD700
+v_ss_fg_buffer:				rs.b $700 ; $FFFFD000
+v_ss_fg_buffer_end:			equ __rs  ; $FFFFD700
+	sizeof_v_ss_fg_buffer:		equ v_ss_fg_buffer_end-v_ss_fg_buffer ; this constant has to be defined here to allow it to be used in macros
 v_ss_hscroll_buffer_2:			rs.b $400 ; $FFFFD700
 
 v_ss_track_mappings_bitflags:		rs.l 1 ; $FFFFDB00 
@@ -905,7 +907,7 @@ v_ss_track_anim:					rs.b 1 ; $FFFFDB08
 v_ss_track_last_anim_frame:			rs.b 1 ; $FFFFDB09
 v_ss_current_segment:			rs.b 1 ; $FFFFDB0A
 v_ss_track_anim_frame:			rs.b 1 ; $FFFFDB0B
-v_ss_alternate_pnt:				rs.b 1 ; $FFFFDB0C
+f_ss_alternate_fg_table:		rs.b 1 ; $FFFFDB0C
 v_ss_track_drawing_index:		rs.b 1 ; $FFFFDB0D
 v_ss_track_orientation:			rs.b 1 ; $FFFFDB0E
 v_ss_alt_hscroll_buffer:		rs.b 1 ; $FFFFDB0F

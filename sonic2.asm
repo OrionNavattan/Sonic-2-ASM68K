@@ -409,8 +409,7 @@ ChecksumError:
 		move.l	d1,-(sp)     ; back up incorrect checksum to stack
 		bsr.w	VDPSetupGame
 		move.l	(sp)+,d1 	; restore incorrect checksum from stack (possibly used when determining what it should be)
-		;move.l	#$C0000000,(vdp_control_port).l ; set VDP to CRAM write
-		vdp_comm.l move,$0000,cram,write,,(vdp_control_port).l
+		vdp_comm.l move,$0000,cram,write,(vdp_control_port).l	; set VDP to CRAM write
 		moveq	#(sizeof_pal_all/2)-1,d7
 
 	.fillred:
@@ -418,7 +417,7 @@ ChecksumError:
 		dbf	d7,.fillred					; repeat $3F more time
 
 	.endlessloop:				
-		bra.s	.endlessloop
+		bra.s	.endlessloop	; loop forever
 ; ===========================================================================
 
 GM_LevelSelectMenu2P:				
@@ -521,34 +520,17 @@ VBlank_Lag:
 		waitz80
 		tst.b	(f_water_pal_full).w			; is water covering the whole screen?
 		bne.s	.allwater						; if so, branch
-		
-;		lea	(vdp_control_port).l,a5
-;		move.l	#-$6BFF6CC0,(a5)
-;		move.l	#-$69026A80,(a5)
-;		move.w	#-$6881,(a5)
-;		move.w	#-$4000,(a5)
-;		move.w	#$80,(v_vdp_dma_buffer).w
-;		move.w	(v_vdp_dma_buffer).w,(a5)
 		dma v_pal_dry,sizeof_pal_all,cram	; DMA normal palette to CRAM (water palette will be copied by HBlank later)
 		
-
-
 		bra.s	.waterbelow
 ; ===========================================================================
 
 	.allwater:				
-;		lea	(vdp_control_port).l,a5
-;		move.l	#-$6BFF6CC0,(a5)
-;		move.l	#-$69076AC0,(a5)
-;		move.w	#-$6881,(a5)
-;		move.w	#-$4000,(a5)
-;		move.w	#$80,(v_vdp_dma_buffer).w
-;		move.w	(v_vdp_dma_buffer).w,(a5)
 		dma	v_pal_water,sizeof_pal_all,cram		; DMA water palette to CRAM
 
 	.waterbelow:				
 		move.w	(v_vdp_hint_counter).w,(a5)	; set water palette position by sending VDP register $8Axx to control port (vdp_control_port)
-		move.w	#vdp_fg_nametable+(vram_fg/$400),(vdp_control_port).l ; set fg scroll base to $C000
+		move.w	#vdp_fg_nametable|(vram_fg/$400),(vdp_control_port).l ; set fg scroll base to $C000
 		bsr.w	SoundDriverInput
 		startZ80
 		bra.w	VBlank_Exit
@@ -556,8 +538,7 @@ VBlank_Lag:
 
 	.nowater:				
 		move.w	(vdp_control_port).l,d0
-		;move.l	#$40000010,(vdp_control_port).l
-		vdp_comm.l	move,$0000,vsram,write,,(VDP_control_port).l	; set VDP to VSRAM write
+		vdp_comm.l	move,$0000,vsram,write,(VDP_control_port).l	; set VDP to VSRAM write
 		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l
 		btst	#6,(v_console_region).w
 		beq.s	.notPAL2
@@ -569,18 +550,11 @@ VBlank_Lag:
 	.notPAL2:				
 		move.w	#1,(f_hblank).w				; set flag to let HBlank know a frame has finished
 		move.w	(v_vdp_hint_counter).w,(vdp_control_port).l
-		move.w	#vdp_fg_nametable+(vram_fg/$400),(vdp_control_port).l ; set fg scroll base base to $C000
+		move.w	#vdp_fg_nametable|(vram_fg/$400),(vdp_control_port).l ; set fg scroll base base to $C000
 		move.l	(v_fg_y_pos_vsram_p2).w,(v_hblank_fg_y_pos_vsram_p2).w
 		stopZ80
 		waitz80
-		
-		;lea	(vdp_control_port).l,a5
-		;move.l	#-$6BFE6CC0,(a5)
-		;move.l	#-$69036B00,(a5)
-		;move.w	#-$6881,(a5)
-		;move.w	#$7800,(a5)
-		;move.w	#$83,(v_vdp_dma_buffer).w
-		;move.w	(v_vdp_dma_buffer).w,(a5)
+
 		dma	v_sprite_buffer,sizeof_vram_sprites,vram_sprites
 		
 		bsr.w	SoundDriverInput
@@ -589,206 +563,169 @@ VBlank_Lag:
 ; ===========================================================================
 
 VBlank_Sega:				
-		bsr.w	sub_E98
-		
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6C40,(a5)
-		move.l	#-$690F6B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7C00,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		
-		
-		bsr.w	sub_10E6
-		tst.w	(v_countdown).w
-		beq.w	locret_628
-		subq.w	#1,(v_countdown).w
+		bsr.w	ReadPad_Palette_Sprites_HScroll
+		dma v_hscroll_buffer,sizeof_vram_hscroll,vram_hscroll	; update H-scroll values
+		jsrto	SegaScreen_VBlank,JmpTo_SegaScreen_VBlank
+		tst.w	(v_countdown).w	; is there time left on the demo?
+		beq.w	.end	; if not, return
+		subq.w	#1,(v_countdown).w	; subtract 1 from time left in demo
 
-locret_628:				
+	.end:				
 		rts	
 ; ===========================================================================
 
 VBlank_PCM:				
-		move.b	($FFFFFE0F).w,d0
+		move.b	(v_vblank_counter+3).w,d0
 		andi.w	#$F,d0
-		bne.s	loc_652
-		move.w	#$100,(z80_bus_request).l
-
-loc_63C:				
-		btst	#0,(z80_bus_request).l
-		bne.s	loc_63C
+		bne.s	.skip
+		
+		stopZ80
+		waitZ80
 		bsr.w	ReadJoypads
 		startZ80
 
-loc_652:				
-		tst.w	(v_countdown).w
-		beq.w	locret_65E
-		subq.w	#1,(v_countdown).w
+	.skip:				
+		tst.w	(v_countdown).w	; is there time left on the demo?
+		beq.w	.end	; if not, return
+		subq.w	#1,(v_countdown).w	; subtract 1 from time left in demo
 
-locret_65E:				
+	.end:				
 		rts	
 ; ===========================================================================
 
 VBlank_Title:				
-		bsr.w	sub_E98
+		bsr.w	ReadPad_Palette_Sprites_HScroll	; update palettes, SAT, and H-scroll
+		bsr.w	ProcessPLC						; process pending PLCs				
+		tst.w	(v_countdown).w	; is there time left on the demo?
+		beq.w	.end	; if not, return
+		subq.w	#1,(v_countdown).w	; subtract 1 from time left in demo
 
-loc_664:
-		bsr.w	ProcessPLC
-		tst.w	(v_countdown).w
-		beq.w	locret_674
-		subq.w	#1,(v_countdown).w
-
-locret_674:				
+	.end:				
 		rts	
 ; ===========================================================================
 
 VBlank_Unused6:				
-		bsr.w	sub_E98
+		bsr.w	ReadPad_Palette_Sprites_HScroll
 		rts	
 ; ===========================================================================
 
 VBlank_Pause:				
-		cmpi.b	#$10,(v_gamemode).w
-		beq.w	loc_802
+		cmpi.b	#id_SpecialStage,(v_gamemode).w
+		beq.w	VBlank_Pause_SpecialStage
 
 VBlank_Level:				
 		stopZ80
 		waitz80
 		bsr.w	ReadJoypads
-		tst.b	(v_teleport_timer).w
-		beq.s	loc_6F8
-		lea	(vdp_control_port).l,a5
-		tst.w	(f_pause).w
-		bne.w	loc_748
-		subq.b	#1,(v_teleport_timer).w
-		bne.s	loc_6BC
-		move.b	#0,(f_teleport_flag).w
+		tst.b	(v_teleport_timer).w	; is a teleport in progress?
+		beq.s	.chkpalettes			; if not, branch
+		lea	(vdp_control_port).l,a5	
+		tst.w	(f_pause).w				; is the game paused?
+		bne.w	.finish					; if so, branch
+		subq.b	#1,(v_teleport_timer).w	; subtract one from teleport timer
+		bne.s	.notdone				; if time remains, branch
+		move.b	#0,(f_teleport_flag).w	; clear teleport flag
 
-loc_6BC:				
-		cmpi.b	#$10,(v_teleport_timer).w
-		bcs.s	loc_6F8
+	.notdone:				
+		cmpi.b	#$10,(v_teleport_timer).w	; 15 frames or fewer left in teleport?
+		bcs.s	.chkpalettes				; if so, branch				
+
+		; fill CRAM with white for teleport effect
 		lea	(vdp_data_port).l,a6
-		move.l	#-$40000000,(vdp_control_port).l
-		move.w	#$EEE,d0
-		move.w	#$1F,d1
+		vdp_comm.l move,$0000,cram,write,(VDP_control_port).l	; set VDP to CRAM write
+		move.w	#cWhite,d0
 
-loc_6DC:				
-		move.w	d0,(a6)
-		dbf	d1,loc_6DC
-		move.l	#-$3FBE0000,(vdp_control_port).l
-		move.w	#$1F,d1
+		move.w	#(countof_color*2)-1,d1 ; two palette lines
+	.whiteloop1:				
+		move.w	d0,(a6) ; fill first two palette lines with white
+		dbf	d1,.whiteloop1 ; repeat 31 times
 
-loc_6F0:				
+		vdp_comm.l	move,$0042,cram,write,(VDP_control_port).l ; skip one color
+
+	if FixBugs
+		move.w	#((countof_color*2)-1)-1,d1 ; two palette lines	minus 1
+	else
+	; This does one more color than necessary: it isn't accounting for
+	; the color that was skipped earlier!
+		move.w	#(countof_color*2)-1,d1 ; two palette lines
+	endc
+
+	.whiteloop2:				
 		move.w	d0,(a6)
-		dbf	d1,loc_6F0
-		bra.s	loc_748
+		dbf	d1,.whiteloop2
+		bra.s	.finish
 ; ===========================================================================
 
-loc_6F8:				
-					
+	.chkpalettes:						
 		tst.b	(f_water_pal_full).w
-		bne.s	loc_724
-		lea	(vdp_control_port).l,a5
-
-loc_704:
-		move.l	#-$6BFF6CC0,(a5)
-		move.l	#-$69026A80,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#-$4000,(a5)
-		move.w	#$80,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		bra.s	loc_748
+		bne.s	.allwater
+		dma v_pal_dry,sizeof_pal_all,cram	; DMA normal palette to CRAM (water palette will be copied by HBlank later)
+		bra.s	.finish
 ; ===========================================================================
 
-loc_724:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFF6CC0,(a5)
-		move.l	#-$69076AC0,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#-$4000,(a5)
-		move.w	#$80,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
+	.allwater:				
+		dma	v_pal_water,sizeof_pal_all,cram		; DMA water palette to CRAM
 
-loc_748:				
-					
+	.finish:					
 		move.w	(v_vdp_hint_counter).w,(a5)
-		move.w	#-$7DD0,(vdp_control_port).l
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6C40,(a5)
-		move.l	#-$690F6B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7C00,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6CC0,(a5)
-		move.l	#-$69036B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7800,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		bsr.w	ProcessDMAQueue
-		bsr.w	SoundDriverInput
+		move.w	#vdp_fg_nametable|(vram_fg/$400),(vdp_control_port).l
+		dma v_hscroll_buffer,sizeof_vram_hscroll,vram_hscroll	; update HScroll values
+		dma	v_sprite_buffer,sizeof_vram_sprites,vram_sprites ; update sprite attribute table
+		
+		bsr.w	ProcessDMAQueue			; process pending DMAs
+		bsr.w	SoundDriverInput		; update sound
+
 		startZ80
+		
+		; copy camera position variables to their duplicates used by DrawTilesWhenMoving
 		movem.l	(v_camera_x_pos).w,d0-d7
 		movem.l	d0-d7,(v_camera_pos_copy).w
 		movem.l	(v_camera_x_pos_p2).w,d0-d7
 		movem.l	d0-d7,(v_camera_pos_p2_copy).w
-
-loc_7C4:
 		movem.l	(v_fg_redraw_direction).w,d0-d3
 		movem.l	d0-d3,(v_fg_redraw_direction_copy).w
 		move.l	(v_fg_y_pos_vsram_p2).w,(v_hblank_fg_y_pos_vsram_p2).w
-		cmpi.b	#$5C,($FFFFF625).w
-		bcc.s	sub_7E6
-		move.b	#1,(f_hblank_run_snd).w
+
+		cmpi.b	#92,(v_vdp_hint_line).w	; is HBlank set to run on scanline 92 or lower?
+		bcc.s	DrawTiles_LevelGfx_HUD_PLC	; if so, branch
+		move.b	#1,(f_hblank_run_snd).w	; set flag to run sound driver on HBlank
 		rts	
 
-; ===========================================================================
-
-
-sub_7E6:				
-					
-		bsr.w	sub_10E0
-		jsr	sub_40D8A
+; ---------------------------------------------------------------------------
+; Subroutine to	update fg/bg, run tile animations, HUD and and decompress up
+; to 3 cells of Nemesis graphics
+; ---------------------------------------------------------------------------
+; Do_Updates:
+DrawTiles_LevelGfx_HUD_PLC:						
+		jsrto	DrawTilesWhenMoving,JmpTo_DrawTilesWhenMoving
+		jsr	HUD_Update
 		bsr.w	ProcessPLC2
 		tst.w	(v_countdown).w
-		beq.w	locret_800
+		beq.w	.end
 		subq.w	#1,(v_countdown).w
 
-locret_800:				
+	.end:				
 		rts	
-; End of function sub_7E6
 
 ; ===========================================================================
-loc_802:				
+VBlank_Pause_SpecialStage:				
 		stopZ80
 		waitz80
+
 		bsr.w	ReadJoypads
 		jsr	(SoundDriverInput).l
-		tst.b	(v_ss_last_alt_hscroll_buffer).w
-		beq.s	loc_84A
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6C40,(a5)
-		move.l	#-$69146A80,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7C00,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		bra.s	loc_86E
+		tst.b	(v_ss_last_alt_hscroll_buffer).w ; which HScroll buffer was used on the last frame?
+		beq.s	.primarybuffer					; if it was the primary one, branch
+		
+		;.secondarybuffer:
+		dma v_ss_hscroll_buffer_2,sizeof_vram_ss_hscroll,vram_ss_hscroll
+		bra.s	.end
 ; ===========================================================================
 
-loc_84A:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6C40,(a5)
-		move.l	#-$690F6B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7C00,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
+	.primarybuffer:
+		dma v_ss_hscroll_buffer_1,sizeof_vram_ss_hscroll,vram_ss_hscroll
 
-loc_86E:				
+	.end:				
 		startZ80
 		rts	
 ; ===========================================================================
@@ -797,237 +734,161 @@ VBlank_SpecialStage:
 		stopZ80
 		waitz80
 		bsr.w	ReadJoypads
-		bsr.w	sub_AE8
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFF6CC0,(a5)
-		move.l	#-$69026A80,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#-$4000,(a5)
-		move.w	#$80,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		lea	(vdp_control_port).l,a5
+		bsr.w	SS_Set_VScroll	; update VScroll values
+		dma v_pal_dry,sizeof_pal_all,cram	; DMA normal palette to CRAM
+		dma	v_sprite_buffer,sizeof_vram_sprites,vram_sprites ; update sprite attribute table
+	
+		tst.b	(v_ss_alt_hscroll_buffer).w ; which HScroll buffer was used on the last frame?
+		beq.s	.primarybuffer					; if it was the primary one, branch
 
-loc_8BC:
-		move.l	#-$6BFE6CC0,(a5)
-		move.l	#-$69036B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7800,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		tst.b	(v_ss_alt_hscroll_buffer).w
-		beq.s	loc_906
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6C40,(a5)
-		move.l	#-$69146A80,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7C00,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		bra.s	loc_92A
+		dma v_ss_hscroll_buffer_2,sizeof_vram_ss_hscroll,vram_ss_hscroll
+		bra.s	.continue
 ; ===========================================================================
 
-loc_906:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6C40,(a5)
-		move.l	#-$690F6B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7C00,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
+	.primarybuffer:				
+;		lea	(vdp_control_port).l,a5
+;		move.l	#-$6BFE6C40,(a5)
+;		move.l	#-$690F6B00,(a5)
+;		move.w	#-$6881,(a5)
+;		move.w	#$7C00,(a5)
+;		move.w	#$83,(v_vdp_dma_buffer).w
+;		move.w	(v_vdp_dma_buffer).w,(a5)
+		dma v_ss_hscroll_buffer_1,sizeof_vram_ss_hscroll,vram_ss_hscroll
 
-loc_92A:				
-		tst.b	(v_ss_track_orientation).w
-		beq.s	loc_950
+
+	.continue:				
+		tst.b	(v_ss_track_orientation).w		; is the current track frame flipped?
+		beq.s	.not_flipped					; if not, branch
 		moveq	#0,d0
-		move.b	(v_ss_track_drawing_index).w,d0
-		cmpi.b	#4,d0
-		bge.s	loc_950
-		add.b	d0,d0
-		tst.b	(v_ss_alternate_pnt).w
-		beq.s	loc_948
-		addi.w	#8,d0
+		move.b	(v_ss_track_drawing_index).w,d0	; get drawing position
+		cmpi.b	#4,d0							; have we finished drawing and streaming track frame?
+		bge.s	.not_flipped					; if so, branch (nothing to draw)
+		add.b	d0,d0							; convert to index
+		tst.b	(f_ss_alternate_fg_table).w			; are we using the primary FG table? [(v_ss_track_drawing_index) * 2] = subroutine
+		beq.s	.transfer_table							; if not, branch
+		addi.w	#8,d0							; we're using the secondary FG table ; ([(v_ss_track_drawing_index) * 2] + 8) = subroutine
 
-loc_948:				
-		move.w	SS_Foreground_Transfer_Table(pc,d0.w),d0
-		jsr	SS_Foreground_Transfer_Table(pc,d0.w)
+	.transfer_table:				
+		move.w	.SS_Foreground_Transfer_Table(pc,d0.w),d0
+		jsr	.SS_Foreground_Transfer_Table(pc,d0.w)	; jsr to relevant transfer DMA sub
 
-loc_950:				
-					
-		bsr.w	sub_B02
-		addi.b	#1,(v_ss_track_drawing_index).w
-		move.b	(v_ss_track_drawing_index).w,d0
-		cmp.b	d1,d0
-		blt.s	loc_994
-		move.b	#0,(v_ss_track_drawing_index).w
-		lea	(vdp_control_port).l,a6
-		tst.b	(v_ss_alternate_pnt).w
-		beq.s	loc_98A
-		move.w	#-$7DD0,(a6)
-		bra.s	loc_98E
+	.not_flipped:						
+		bsr.w	SS_Run_Animation_Timers
+		addi.b	#1,(v_ss_track_drawing_index).w ; run track timer
+		move.b	(v_ss_track_drawing_index).w,d0	; get new timer value
+		cmp.b	d1,d0							; is it less than the player animation timer?
+		blt.s	.tracktrans_done							; if so, branch
+		move.b	#0,(v_ss_track_drawing_index).w	; start drawing new frame
+		lea	(vdp_control_port).l,a6	
+		tst.b	(f_ss_alternate_fg_table).w			; are we using the primary FG table?
+		beq.s	.secondarybuffer							; if not, branch
+		move.w 	#vdp_fg_nametable|(vram_ss_fg1/$400),(a6) ; primary FG plane table starts at $C000
+		bra.s	.switchtables
 ; ===========================================================================
-SS_Foreground_Transfer_Table: ; SS_PNTA_Transfer_Table: off_97A
+.SS_Foreground_Transfer_Table: ; SS_PNTA_Transfer_Table: off_97A
 		index offset(*)
 
-		ptr loc_A50	; 0 			
-		ptr loc_A76	; 1
-		ptr loc_A9C	; 2
-		ptr loc_AC2	; 3
-		ptr loc_9B8	; 4
-		ptr loc_9DE	; 5
-		ptr loc_A04	; 6
-		ptr loc_A2A	; 7
+		ptr SS_FGTblTrans_2_0		
+		ptr SS_FGTblTrans_2_1
+		ptr SS_FGTblTrans_2_2
+		ptr SS_FGTblTrans_2_3
+		ptr SS_FGTblTrans_1_0
+		ptr SS_FGTblTrans_1_1
+		ptr SS_FGTblTrans_1_2
+		ptr SS_FGTblTrans_1_3
 ; ===========================================================================
+	.secondarybuffer:
+		move.w 	#vdp_fg_nametable|(vram_ss_fg2/$400),(a6) ; secondary FG plane table starts at $C000
 
-loc_98A:				
-		move.w	#-$7DE0,(a6)
+	.switchtables:				
+		eori.b	#1,(f_ss_alternate_fg_table).w	; toggle the FG table flag
 
-loc_98E:				
-		eori.b	#1,(v_ss_alternate_pnt).w
-
-loc_994:				
+	.tracktrans_done:				
 		bsr.w	ProcessDMAQueue
 		jsr	(SoundDriverInput).l
 		startZ80
 		bsr.w	ProcessPLC2
 		tst.w	(v_countdown).w
-		beq.w	locret_9B6
+		beq.w	.end
 		subq.w	#1,(v_countdown).w
 
-locret_9B6:				
+	.end:				
+		rts	
+; ===========================================================================
+; Each of these functions copies one fourth of the FG plane table into VRAM
+; from a buffer in main RAM. $700 bytes are copied each frame, with the target
+; are in VRAM depending on the current drawing position.
+SS_FGTblTrans_1_0:				
+		dma v_ss_fg_buffer,sizeof_v_ss_fg_buffer,vram_ss_fg1
+		rts	
+; ===========================================================================
+SS_FGTblTrans_1_1:
+		dma v_ss_fg_buffer,sizeof_v_ss_fg_buffer,vram_ss_fg1+sizeof_v_ss_fg_buffer
+		rts	
+; ===========================================================================
+SS_FGTblTrans_1_2:
+		dma v_ss_fg_buffer,sizeof_v_ss_fg_buffer,vram_ss_fg1+(sizeof_v_ss_fg_buffer*2)
+		rts	
+; ===========================================================================
+SS_FGTblTrans_1_3:
+		dma v_ss_fg_buffer,sizeof_v_ss_fg_buffer,vram_ss_fg1+(sizeof_v_ss_fg_buffer*3)
+		rts	
+; ===========================================================================
+SS_FGTblTrans_2_0:
+		dma v_ss_fg_buffer,sizeof_v_ss_fg_buffer,vram_ss_fg2
+		rts	
+; ===========================================================================
+SS_FGTblTrans_2_1:
+		dma v_ss_fg_buffer,sizeof_v_ss_fg_buffer,vram_ss_fg2+sizeof_v_ss_fg_buffer		
+		rts	
+; ===========================================================================
+SS_FGTblTrans_2_2:
+		dma v_ss_fg_buffer,sizeof_v_ss_fg_buffer,vram_ss_fg2+(sizeof_v_ss_fg_buffer*2)
 		rts	
 ; ===========================================================================
 
-loc_9B8:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFC6C80,(a5)
-		move.l	#-$69176B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$4000,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
+SS_FGTblTrans_2_3:				
+		dma v_ss_fg_buffer,sizeof_v_ss_fg_buffer,vram_ss_fg2+(sizeof_v_ss_fg_buffer*3)
 		rts	
 ; ===========================================================================
 
-loc_9DE:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFC6C80,(a5)
-		move.l	#-$69176B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$4700,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		rts	
-; ===========================================================================
-
-loc_A04:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFC6C80,(a5)
-		move.l	#-$69176B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$4E00,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		rts	
-; ===========================================================================
-
-loc_A2A:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFC6C80,(a5)
-		move.l	#-$69176B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$5500,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		rts	
-; ===========================================================================
-
-loc_A50:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFC6C80,(a5)
-		move.l	#-$69176B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$4000,(a5)
-		move.w	#$82,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		rts	
-; ===========================================================================
-
-loc_A76:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFC6C80,(a5)
-		move.l	#-$69176B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$4700,(a5)
-		move.w	#$82,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		rts	
-; ===========================================================================
-
-loc_A9C:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFC6C80,(a5)
-		move.l	#-$69176B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$4E00,(a5)
-		move.w	#$82,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		rts	
-; ===========================================================================
-
-loc_AC2:				
-		lea	(vdp_control_port).l,a5
-
-loc_AC8:
-		move.l	#-$6BFC6C80,(a5)
-		move.l	#-$69176B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$5500,(a5)
-		move.w	#$82,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		rts	
-
-; ===========================================================================
-
-
-sub_AE8:				
+SS_Set_VScroll:				
 		move.w	(vdp_control_port).l,d0
-		move.l	#$40000010,(vdp_control_port).l
+		vdp_comm.l	move,$0000,vsram,write,(vdp_control_port).l	; set VDP to VSRAM write
 		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l
 		rts	
-; End of function sub_AE8
 
 
 ; ===========================================================================
 
+SS_Run_Animation_Timers:				
+		move.w	(v_ss_cur_speed_factor).w,d0		; get current speed factor
+		cmp.w	(v_ss_new_speed_factor).w,d0		; has the speed factor changed?
+		beq.s	.factorchange						; if it has, branch
+		move.l	(v_ss_new_speed_factor).w,(v_ss_cur_speed_factor).w	; save new speed factor
+		move.b	#0,(v_ss_track_duration_timer).w	; reset timer
 
-sub_B02:				
-		move.w	(v_ss_cur_speed_factor).w,d0
-		cmp.w	(v_ss_new_speed_factor).w,d0
-		beq.s	loc_B18
-		move.l	(v_ss_new_speed_factor).w,(v_ss_cur_speed_factor).w
-		move.b	#0,(v_ss_track_duration_timer).w
-
-loc_B18:				
-		subi.b	#1,(v_ss_track_duration_timer).w
-		bgt.s	loc_B3E
-		lea	(byte_B46).l,a0
-		move.w	(v_ss_cur_speed_factor).w,d0
+	.factorchange:				
+		subi.b	#1,(v_ss_track_duration_timer).w	; run track timer
+		bgt.s	.not_expired						; if it has not expired, branch
+		lea	(SS_Anim_Base_Duration).l,a0			; load duration array
+		move.w	(v_ss_cur_speed_factor).w,d0		; current speed factor is the index
 		lsr.w	#1,d0
-		move.b	(a0,d0.w),d1
-		move.b	d1,(v_ss_player_anim_frame_timer).w
-		move.b	d1,(v_ss_track_duration_timer).w
-		subq.b	#1,(v_ss_player_anim_frame_timer).w
+		move.b	(a0,d0.w),d1						; get new duration value
+		move.b	d1,(v_ss_player_anim_frame_timer).w	; new player animation length (later halved)
+		move.b	d1,(v_ss_track_duration_timer).w	; new track timer
+		subq.b	#1,(v_ss_player_anim_frame_timer).w	; subtract 1
 		rts	
 ; ===========================================================================
 
-loc_B3E:				
+	.not_expired:				
 		move.b	(v_ss_player_anim_frame_timer).w,d1
 		addq.b	#1,d1
 		rts	
-; End of function sub_B02
+; End of function SS_Run_Animation_Timers
 
 ; ===========================================================================
-byte_B46:	
+SS_Anim_Base_Duration:	
 		dc.b $3C		; 0 
 		dc.b $1E		; 1
 		dc.b  $F		; 2
@@ -1049,9 +910,11 @@ VBlank_CtrlDMA:
 VBlank_TitleCard:				
 		stopZ80
 		waitz80
+
 		bsr.w	ReadJoypads
 		tst.b	(f_water_pal_full).w
 		bne.s	loc_BB2
+
 		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFF6CC0,(a5)
 		move.l	#-$69026A80,(a5)
@@ -1059,6 +922,7 @@ VBlank_TitleCard:
 		move.w	#-$4000,(a5)
 		move.w	#$80,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
+
 		bra.s	loc_BD6
 ; ===========================================================================
 
@@ -1071,8 +935,9 @@ loc_BB2:
 		move.w	#$80,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
 
-loc_BD6:				
+loc_BD6:			
 		move.w	(v_vdp_hint_counter).w,(a5)
+
 		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFE6C40,(a5)
 		move.l	#-$690F6B00,(a5)
@@ -1080,15 +945,15 @@ loc_BD6:
 		move.w	#$7C00,(a5)
 		move.w	#$83,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
-		lea	(vdp_control_port).l,a5
 
-loc_C04:
+		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFE6CC0,(a5)
 		move.l	#-$69036B00,(a5)
 		move.w	#-$6881,(a5)
 		move.w	#$7800,(a5)
 		move.w	#$83,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
+
 		bsr.w	ProcessDMAQueue
 		jsr	loc_15584
 		jsr	(SoundDriverInput).l
@@ -1103,14 +968,14 @@ loc_C04:
 ; ===========================================================================
 
 VBlank_UnusedE:				
-		bsr.w	sub_E98
+		bsr.w	ReadPad_Palette_Sprites_HScroll
 		addq.b	#1,(v_vblank_0e_counter).w
-		move.b	#$E,(v_vblank_routine).w
+		move.b	#id_VBlank_UnusedE,(v_vblank_routine).w
 		rts	
 ; ===========================================================================
 
 VBlank_Fade:				
-		bsr.w	sub_E98
+		bsr.w	ReadPad_Palette_Sprites_HScroll
 		move.w	(v_vdp_hint_counter).w,(a5)
 		bra.w	ProcessPLC
 ; ===========================================================================
@@ -1119,15 +984,15 @@ VBlank_Ending:
 		stopZ80
 		waitz80
 		bsr.w	ReadJoypads
+
 		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFF6CC0,(a5)
-
-loc_C9C:
 		move.l	#-$69026A80,(a5)
 		move.w	#-$6881,(a5)
 		move.w	#-$4000,(a5)
 		move.w	#$80,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
+
 		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFE6CC0,(a5)
 		move.l	#-$69036B00,(a5)
@@ -1135,6 +1000,7 @@ loc_C9C:
 		move.w	#$7800,(a5)
 		move.w	#$83,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
+
 		lea	(vdp_control_port).l,a5
 		move.l	#-$6BFE6C40,(a5)
 		move.l	#-$690F6B00,(a5)
@@ -1142,21 +1008,24 @@ loc_C9C:
 		move.w	#$7C00,(a5)
 		move.w	#$83,(v_vdp_dma_buffer).w
 		move.w	(v_vdp_dma_buffer).w,(a5)
+
 		bsr.w	ProcessDMAQueue
 		bsr.w	SoundDriverInput
 		movem.l	(v_camera_x_pos).w,d0-d7
 		movem.l	d0-d7,(v_camera_pos_copy).w
 		movem.l	(v_fg_redraw_direction).w,d0-d3
 		movem.l	d0-d3,(v_fg_redraw_direction_copy).w
-		bsr.w	sub_10E0
+		jsrto	DrawTilesWhenMoving,JmpTo_DrawTilesWhenMoving
+
 		startZ80
+
 		move.w	(v_ending_vint_subrout).w,d0
 		beq.s	.end
 		clr.w	(v_ending_vint_subrout).w
 		move.w	VBlank_Ending_DMA_Index-2(pc,d0.w),d0 ; if index is zero, return
 		jsr	VBlank_Ending_DMA_Index(pc,d0.w)
 
-.end:				
+	.end:				
 		rts	
 ; ===========================================================================
 VBlank_Ending_DMA_Index:	index offset(*)
@@ -1172,10 +1041,10 @@ VBlank_Ending_ClearForegound:
 		move.l	#$40000083,(a5)
 		move.w	#0,(vdp_data_port).l
 
-	loc_D62:				
+	.waitDMA:				
 		move.w	(a5),d1
 		btst	#1,d1
-		bne.s	loc_D62
+		bne.s	.waitDMA
 		move.w	#-$70FE,(a5)
 		rts	
 ; ===========================================================================
@@ -1188,10 +1057,10 @@ VBlank_Ending_Setup:
 		move.l	#$40000081,(a5)
 		move.w	#0,(vdp_data_port).l
 
-	loc_D92:				
+	.waitDMA1:				
 		move.w	(a5),d1
 		btst	#1,d1
-		bne.s	loc_D92
+		bne.s	.waitDMA1
 		move.w	#-$70FE,(a5)
 		
 		lea	(vdp_control_port).l,a5
@@ -1201,10 +1070,10 @@ VBlank_Ending_Setup:
 		move.l	#$40000083,(a5)
 		move.w	#0,(vdp_data_port).l
 
-	loc_DC0:				
+	.waitDMA2:				
 		move.w	(a5),d1
 		btst	#1,d1
-		bne.s	loc_DC0
+		bne.s	.waitDMA2
 		move.w	#-$70FE,(a5)
 		
 		lea	(vdp_control_port).l,a6
@@ -1213,9 +1082,10 @@ VBlank_Ending_Setup:
 		move.w	#-$6FEF,(a6)
 		lea	(v_128x128_tiles).l,a1
 		move.l	#$50AC0003,d0
+
 		moveq	#$16,d1
 		moveq	#$E,d2
-		bsr.w	TilemapToVRAM
+		jsrto	TilemapToVRAM, TilemapToVRAM ; changed from bsr.w to jsr in REV02
 		rts	
 ; ===========================================================================
 
@@ -1225,85 +1095,47 @@ VBlank_Menu:
 
 		bsr.w	ReadJoypads
 
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFF6CC0,(a5)
-		move.l	#-$69026A80,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#-$4000,(a5)
-		move.w	#$80,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6CC0,(a5)
-		move.l	#-$69036B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7800,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6C40,(a5)
-		move.l	#-$690F6B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7C00,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		bsr.w	ProcessDMAQueue
-		bsr.w	SoundDriverInput
+		dma	v_pal_dry,sizeof_pal_all,cram ; update main palette
+		dma	v_sprite_buffer,sizeof_vram_sprites,vram_sprites ; update sprite attribute table
+		dma v_hscroll_buffer,sizeof_vram_hscroll,vram_hscroll	; update H-scroll values
+
+		bsr.w	ProcessDMAQueue		; perform any queued DMAs
+		bsr.w	SoundDriverInput	; update sound
 		startZ80
-		bsr.w	ProcessPLC
+		bsr.w	ProcessPLC			; process any pending PLCs
 		tst.w	(v_countdown).w
-		beq.w	locret_E96
+		beq.w	.end
 		subq.w	#1,(v_countdown).w
 
-	locret_E96:
+	.end:
 		rts	
 
 ; ===========================================================================
-
-
-sub_E98:
+; ---------------------------------------------------------------------------
+; Subroutine to read joypad and DMA palettes, sprite table and hscroll table
+; ---------------------------------------------------------------------------
+ReadPad_Palette_Sprites_HScroll:
 		stopZ80
 		waitz80
 		bsr.w	ReadJoypads
 		tst.b	(f_water_pal_full).w
-		bne.s	loc_EDA
-		lea	(vdp_control_port).l,a5
-		move.l	#$94009340,(a5)
-		move.l	#$96FD9580,(a5)
-		move.w	#$977F,(a5)
-		move.w	#$C000,(a5)
-		move.w	#$80,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		bra.s	loc_EFE
+		bne.s	.allwater
+
+		dma	v_pal_dry,sizeof_pal_all,cram ; update main palette
+
+		bra.s	.waterbelow
 ; ===========================================================================
 
-loc_EDA:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFF6CC0,(a5)
-		move.l	#-$69076AC0,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#-$4000,(a5)
-		move.w	#$80,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
+	.allwater:				
+		dma	v_pal_water,sizeof_pal_all,cram		; update water palette
 
-loc_EFE:				
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6CC0,(a5)
-		move.l	#-$69036B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7800,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
-		lea	(vdp_control_port).l,a5
-		move.l	#-$6BFE6C40,(a5)
-		move.l	#-$690F6B00,(a5)
-		move.w	#-$6881,(a5)
-		move.w	#$7C00,(a5)
-		move.w	#$83,(v_vdp_dma_buffer).w
-		move.w	(v_vdp_dma_buffer).w,(a5)
+	.waterbelow:				
+		dma	v_sprite_buffer,sizeof_vram_sprites,vram_sprites ; update sprite attribute table
+		dma v_hscroll_buffer,sizeof_vram_hscroll,vram_hscroll	; update H-scroll values
+
 		bsr.w	SoundDriverInput
 		startZ80
 		rts	
-; End of function sub_E98
 
 ; ===========================================================================
 
@@ -1311,7 +1143,7 @@ HBlank:
 		tst.w	(f_hblank).w
 		beq.w	locret_FFE
 		tst.w	(f_two_player).w
-		beq.w	loc_1000
+		beq.w	HBlank_PalToCRAM
 		move.w	#0,(f_hblank).w
 		move.l	a5,-(sp)
 		move.l	d0,-(sp)
@@ -1351,49 +1183,18 @@ locret_FFE:
 		rte	
 ; ===========================================================================
 
-loc_1000:				
-	disable_ints
-
-loc_1004:
+HBlank_PalToCRAM:				
+		disable_ints
 		move.w	#0,(f_hblank).w
-		movem.l	a0-a1,-(sp)
+		pushr	a0-a1
 		lea	(vdp_data_port).l,a1
 		lea	(v_pal_water).w,a0
-		move.l	#-$40000000,4(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.l	(a0)+,(a1)
-		move.w	#-$7521,4(a1)
-		movem.l	(sp)+,a0-a1
+		vdp_comm.l	move,$0000,cram,write,4(a1) ; set VDP to CRAM write
+		rept 32
+		move.l	(a0)+,(a1)	; move palette to CRAM (all 64 colors at once)
+		endr
+		move.w	#$8ADF,4(a1)
+		popr	a0-a1
 		tst.b	(f_hblank_run_snd).w
 		bne.s	loc_1072
 		rte	
@@ -1401,9 +1202,9 @@ loc_1004:
 
 loc_1072:				
 		clr.b	(f_hblank_run_snd).w
-		movem.l	d0-a6,-(sp)
-		bsr.w	sub_7E6
-		movem.l	(sp)+,d0-a6
+		pushr	d0-a6
+		bsr.w	DrawTiles_LevelGfx_HUD_PLC
+		popr	d0-a6
 		rte	
 
 ; ===========================================================================
@@ -1452,25 +1253,16 @@ loc_10C6:
 loc_10DA:				
 		dbf	d1,loc_10C6
 		rts	
-; End of function SoundDriverInput
 
 
-; ===========================================================================
-
-
-sub_10E0:				
+	if ~RemoveJmpTos
+JmpTo_DrawTilesWhenMoving:				
 		jmp	DrawTilesWhenMoving
-; End of function sub_10E0
+JmpTo_SegaScreen_VBlank:				
+		jmp	SegaScreen_VBlank
 
-
-; ===========================================================================
-
-
-sub_10E6:				
-		jmp	loc_3A68A
-; End of function sub_10E6
-
-
+	align 4
+	endc
 ; ---------------------------------------------------------------------------
 ; Subroutine to initialize joypads
 ;	uses d0
@@ -1536,7 +1328,7 @@ VDPSetupGame:
 		lea	(word_11E2).l,a2
 		moveq	#$12,d7
 
-loc_116C:				; CODE XREF: VDPSetupGame+16j
+loc_116C:
 		move.w	(a2)+,(a0)
 		dbf	d7,loc_116C
 		move.w	(word_11E2+2).l,d0
@@ -1549,7 +1341,7 @@ loc_116C:				; CODE XREF: VDPSetupGame+16j
 		move.l	#-$40000000,(vdp_control_port).l
 		move.w	#$3F,d7
 
-loc_11A0:				; CODE XREF: VDPSetupGame+4Aj
+loc_11A0:
 		move.w	d0,(a1)
 		dbf	d7,loc_11A0
 		clr.l	(v_fg_y_pos_vsram).w
@@ -1562,7 +1354,7 @@ loc_11A0:				; CODE XREF: VDPSetupGame+4Aj
 		move.l	#$40000080,(a5)
 		move.w	#0,(vdp_data_port).l
 
-loc_11D2:				; CODE XREF: VDPSetupGame+80j
+loc_11D2:
 		move.w	(a5),d1
 		btst	#1,d1
 		bne.s	loc_11D2
@@ -1572,8 +1364,8 @@ loc_11D2:				; CODE XREF: VDPSetupGame+80j
 ; End of function VDPSetupGame
 
 ; ===========================================================================
-word_11E2:	dc.w $8004		; 0 ; DATA XREF: VDPSetupGame+Co
-					; VDPSetupGame+1Ar
+word_11E2:	
+		dc.w $8004
 		dc.w $8134		; 1
 		dc.w $8230		; 2
 		dc.w $8328		; 3
@@ -4152,8 +3944,7 @@ CalcAngle_Both0:
 		popr	d3-d4
 		rts	
 
-; ===========================================================================
-; byte_36B4:
+
 Angle_Data:	incbin "misc/Angle Table.bin"
 ; ===========================================================================
 
@@ -5274,7 +5065,7 @@ loc_453A:
 		bcc.s	loc_455C
 		tst.w	d0
 		bpl.s	loc_455C
-		move.b	#-$21,($FFFFF625).w
+		move.b	#-$21,(v_vdp_hint_line).w
 		move.b	#1,(f_water_pal_full).w
 
 loc_455C:				
@@ -5283,7 +5074,7 @@ loc_455C:
 		move.w	#$DF,d0	
 
 loc_4566:				
-		move.b	d0,($FFFFF625).w
+		move.b	d0,(v_vdp_hint_line).w
 
 loc_456A:				
 		cmpi.b	#$A,(v_zone).w
@@ -6210,7 +6001,7 @@ GM_SpecialStage:
 		bsr.w	PlaySound
 		move.b	#cmd_Fade,d0	; fade out current music
 		bsr.w	PlayMusic
-		bsr.w	PaletteWhiteOut
+		bsr.w	PaletteWhiteOut			; fade to white
 		tst.w	(f_two_player).w		; is it 2P mode?
 		beq.s	.not2P					; if not, branch
 		move.w	#0,(f_two_player).w		; clear 2P mode flag
@@ -6371,7 +6162,7 @@ SpecialStage_StartLoop:
 		jsr	BuildSprites
 		bsr.w	RunPLC
 		tst.b	(f_ss_started).w			; is start banner still displayed?
-		beq.s	SpecialStage_StartLoop		; if so, branch
+		beq.s	SpecialStage_StartLoop		; if so, loop
 		
 		moveq	#$3D,d0						; load SS bomb graphics
 		bsr.w	AddPLC
@@ -6805,7 +6596,7 @@ SS_DrawTrack:
 		addi.b	#1,(v_ss_current_segment).w
 
 loc_56D2:				
-		tst.b	(v_ss_alternate_pnt).w
+		tst.b	(f_ss_alternate_fg_table).w
 		beq.s	loc_56DC
 		addi.w	#$10,d0
 
@@ -8628,7 +8419,7 @@ SS_LoadCompressedData:
 		lea	(Kos_Special).l,a0
 		lea	(v_128x128_tiles).l,a1
 		bsr.w	KosDec
-		vdp_comm.l	move,$0000,vram,write,,(VDP_control_port).l
+		vdp_comm.l	move,$0000,vram,write,(VDP_control_port).l
 		lea	(vdp_data_port).l,a1
 		movea.l	#v_128x128_tiles,a0
 		move.w	(a0)+,d0
@@ -80685,7 +80476,7 @@ word_3A678:	dc.w 2
 		dc.w $FC00,    0,    0,	   0; 4
 ; ===========================================================================
 
-loc_3A68A:				
+SegaScreen_VBlank:				
 		move.w	($FFFFF662).w,d0
 		beq.w	locret_37A48
 		clr.w	($FFFFF662).w
@@ -90135,7 +89926,7 @@ locret_40D88:
 ; ===========================================================================
 
 
-sub_40D8A:				
+HUD_Update:				
 		nop	
 		lea	(vdp_data_port).l,a6
 		tst.w	(f_two_player).w
@@ -90380,7 +90171,7 @@ loc_41010:
 locret_4101A:				
 					
 		rts	
-; End of function sub_40D8A
+; End of function HUD_Update
 
 
 ; ===========================================================================

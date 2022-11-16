@@ -63,7 +63,7 @@ bankswitch:	macro addr68k
 	endc	
 	endm
 		
-; Macro to check that rst instructions are aligned correctly   
+; Ensure that rst-targeted functions are aligned correctly  
 rsttarget: macro * 
 \* equ *
 		if (offset(*)&7)|(offset(*)>38h)   
