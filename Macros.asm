@@ -58,14 +58,14 @@ chkifreg:	macro
 pushr:		macro
 	chkifreg "\1"
 	if (isreg=1)&(isregm=1)
-		ifarg \0				; check if size is specified
-		movem.\0	\1,-(sp)		; save multiple registers (b/w)
+		ifarg \0					; check if size is specified
+		movem.\0	\1,-(sp)			; save multiple registers (b/w)
 		else
-		movem.l	\1,-(sp)			; save multiple registers
+		movem.l	\1,-(sp)				; save multiple registers
 		endc
 	else
-		ifarg \0				; check if size is specified
-		move.\0	\1,-(sp)			; save one register (b/w)
+		ifarg \0					; check if size is specified
+		move.\0	\1,-(sp)				; save one register (b/w)
 		else
 			move.l	\1,-(sp)			; save one whole register
 		endc
@@ -109,8 +109,8 @@ popr:		macro
 
 	if ~ZeroOffsetOptimization
 
-	; Temporarily disable zero-offset optimization to assemble these instructions for a
-	; bit-perfect build.
+; Temporarily disable zero-offset optimization to assemble these instructions for a
+; bit-perfect build.
 	
 _move:	macro
 		pusho
@@ -163,7 +163,7 @@ _tst:	macro
 	
 	else
 	
-	; Optimize these instructions, making them faster, and freeing up nearly 512 bytes!
+; Optimize these instructions, making them faster, and freeing up nearly 512 bytes!
 	
 _move:	macros
 		move.\0 \_
@@ -194,7 +194,7 @@ _tst:	macros
 ; ---------------------------------------------------------------------------
 	
     if AddSubOptimize
-	; if AddSubOptimize, optimize these...
+; if AddSubOptimize, optimize these...
 addi_:		macros	src,dest
 		addq.\0	\src,\dest
 		
@@ -206,7 +206,7 @@ adda_:		macros
 
     else
 
-	; ...otherwise, leave them unoptimized.
+; ...otherwise, leave them unoptimized.
 addi_:		macros	src,dest
 		addi.\0	\src,\dest
 		
@@ -252,17 +252,17 @@ rev02even:	 macro
 
 jsrto:		 macro directaddr,indirectaddr
 		if RemoveJmpTos
-			jsr (\directaddr).l	; jump directly to address
+			jsr (\directaddr).l			; jump directly to address
 		else
-			bsr.w \indirectaddr	; otherwise, branch to an indirect JmpTo
+			bsr.w \indirectaddr			; otherwise, branch to an indirect JmpTo
 		endc
 		endm
 
 jmpto:		 macro directaddr,indirectaddr
 		if RemoveJmpTos
-			jmp (\directaddr).l	; jump directly to address
+			jmp (\directaddr).l			; jump directly to address
 		else
-			bra.w \indirectaddr	; otherwise, branch to an indirect JmpTo
+			bra.w \indirectaddr			; otherwise, branch to an indirect JmpTo
 		endc
   		endm
 
@@ -280,18 +280,18 @@ rsblock:	macro
 		\1\: equ __rs
 		endm
 
-rsblockend:	macros ; Adapted to Sonic 2's macro-based RAM clearing
-		\1\_end:	equ __rs ; generate symbol for end
+rsblockend:	macros						; Adapted to Sonic 2's macro-based RAM clearing
+		\1\_end:	equ __rs			; generate symbol for end
 		
 ; ---------------------------------------------------------------------------
 ; Organise object RAM usage.
 ; ---------------------------------------------------------------------------
 rsobj:		macro name,start
-			rsobj_name: equs "\name"			; remember name of current object
+			rsobj_name: equs "\name"		; remember name of current object
 		ifarg \start
-			rsset \start					; start at specified position
+			rsset \start				; start at specified position
 		else
-			rsset ost_used					; start at end of regular OST usage
+			rsset ost_used				; start at end of regular OST usage
 		endc
 		pusho						; save options
 		opt	ae+					; enable auto evens
@@ -301,7 +301,7 @@ rsobjend:	macro
 		if __rs>sizeof_ost
 			inform	3,"OST for \rsobj_name exceeds maximum by $%h bytes.",__rs-sizeof_ost
 		else
-			;inform	0,"0-$%h bytes of OST for \rsobj_name used, leaving $%h bytes unused.",__rs-1,sizeof_ost-__rs
+;inform	0,"0-$%h bytes of OST for \rsobj_name used, leaving $%h bytes unused.",__rs-1,sizeof_ost-__rs
 		endc
 		popo
 		endm
@@ -368,13 +368,13 @@ index:		macro start,idstart,idinc
 		ifarg \idstart					; check if first pointer id is defined
 			ptr_id: = \idstart
 		else
-			ptr_id: = 0					; use 0 by default
+			ptr_id: = 0				; use 0 by default
 		endc
 
 		ifarg \idinc					; check if pointer id increment is defined
 			ptr_id_inc: = \idinc
 		else
-			ptr_id_inc: = 1					; use 1 by default
+			ptr_id_inc: = 1				; use 1 by default
 		endc
 		
 		popo
@@ -403,9 +403,9 @@ ptr:		macro
 		if instr("\1",".")=1				; check if pointer is local
 		else
 			if ~def(\prefix_id\\1)
-				\prefix_id\\1: equ ptr_id		; create id for pointer
+				\prefix_id\\1: equ ptr_id	; create id for pointer
 			else
-				\prefix_id\\1_\$ptr_id: equ ptr_id	; if id already exists, append number
+				\prefix_id\\1_\$ptr_id: equ ptr_id ; if id already exists, append number
 			endc
 		endc
 		
@@ -416,11 +416,11 @@ ptr:		macro
 		endm
 		
 ; ---------------------------------------------------------------------------
-; Make an immediate value VDP command longword and use it in a 68K instruction
-; (more or less replicating the vdpComm function in Sonic 2 Git AS)
-; input: 68k instruction, VRAM/VSRAM/CRAM offset, destination RAM
-; (vram/vsram/cram), operation (read/write/dma), additional adjustment (shifts, ANDs),
-; destination of 68K instruction
+; Make a 68K instruction with a VDP command longword or word as the source 
+; (more or less replicating the vdpComm function in Sonic 2 AS)
+; input: 68k instruction mnemonic, VRAM/VSRAM/CRAM offset, destination RAM
+; (vram/vsram/cram), operation (read/write/dma), destination of 68K instruction,
+; additional adjustment to command longword (shifts, ANDs)
 ; ---------------------------------------------------------------------------
 vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 
@@ -428,20 +428,20 @@ vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 		local rwd
 	
 		if stricmp ("\cmdtarget","vram")
-		type: =	$21	; %10 0001
+		type: =	$21					; %10 0001
 		elseif stricmp ("\cmdtarget","cram")
-		type: = $2B	; %10 1011
+		type: = $2B					; %10 1011
 		elseif stricmp ("\cmdtarget","vsram")
-		type: = $25	; %10 0101
+		type: = $25					; %10 0101
 		else inform 2,"Invalid VDP command destination (must be vram, cram, or vsram)."
 		endc
 	
 		if stricmp ("\cmd","read")
-		rwd: =	$C	; %00 1100
+		rwd: =	$C					; %00 1100
 		elseif stricmp ("\cmd","write")
-		rwd: = 7	; %00 0111
+		rwd: = 7					; %00 0111
 		elseif stricmp ("\cmd","dma")
-		rwd: = $27	; %10 0111
+		rwd: = $27					; %10 0111
 		else inform 2,"Invalid VDP command type (must be read, write, or dma)."
 		endc
 
@@ -452,34 +452,18 @@ vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 		endc
 		endm	
 	
-;	vdp_comm.l	move,$0000,cram,write,,(vdp_control_port).l
-;	vdp_comm.l	dc,$0000,vsram,write
-;	vdp_comm.w	ori,$0000,vram,write,>>16,d0	
-
-;	ori.w	#vdpComm($0000,VRAM,WRITE)>>16,d0
-
-; ---------------------------------------------------------------------------
-; Make a VDP command for use with the dc directive
-; (more or less replicating the vdpComm function in Sonic 2 Git AS)
-; input: VRAM/VSRAM/CRAM offset, destination RAM, (vram/vsram/cram), 
-; operation (read/write/dma),
-; ---------------------------------------------------------------------------
-;
-;		dc.l	(((\type&\rwd)&3)<<30)|((\addr&$3FFF)<<16)|(((\type&\rwd)&$FC)<<2)|((\addr&$C000)>>14)	
-	
 ; ---------------------------------------------------------------------------
 ; Set a VRAM address via the VDP control port.
 ; input: 16-bit VRAM address, control port (default is ($C00004).l)
 ; ---------------------------------------------------------------------------
 
-locVRAM:	macro loc,controlport
-	ifarg \controlport
-		move.l	#($40000000+(((loc)&$3FFF)<<16)+(((loc)&$C000)>>14)),(vdp_control_port).l
-	else
+loc_vram:	macro loc,controlport
+		ifarg \controlport
 		move.l	#($40000000+(((loc)&$3FFF)<<16)+(((loc)&$C000)>>14)),\controlport
-	endc
-	endm
-
+		else
+		move.l	#($40000000+(((loc)&$3FFF)<<16)+(((loc)&$C000)>>14)),(vdp_control_port).l
+		endc
+		endm
 ; ---------------------------------------------------------------------------
 ; DMA copy data from 68K (ROM/RAM) to VRAM/CRAM/VSRAM.
 ; input: source, length, destination ([vram address]|cram|vsram),
@@ -509,12 +493,12 @@ dma:		macro
 		endc
 		
 		lea	(vdp_control_port).l,a5
-		move.l	#(vdp_dma_length_hi<<16)+(((\2>>1)&$FF00)<<8)+vdp_dma_length_low+((\2>>1)&$FF),(a5) 	; DMA length
-		move.l	#(vdp_dma_source_mid<<16)+(((\1>>1)&$FF00)<<8)+vdp_dma_source_low+((\1>>1)&$FF),(a5)	; DMA source high and mid bytes
-		move.w	#vdp_dma_source_hi+((((\1>>1)&$FF0000)>>16)&$7F),(a5)									; DMA source low byte
-		move.w	#dma_type+(dma_dest&$3FFF),(a5)								; DMA destination high byte
-		move.w	#dma_type2+((dma_dest&$C000)>>14),(v_vdp_dma_buffer).w		; DMA destination low byte; split into two words to work around a bug in the DMA controller on Model 1 VA0 and VA1 systems
-		move.w	(v_vdp_dma_buffer).w,(a5)	; set DMA destination; 68K will be halted immediately until the DMA is finished
+		move.l	#(vdp_dma_length_hi<<16)+(((\2>>1)&$FF00)<<8)+vdp_dma_length_low+((\2>>1)&$FF),(a5) ; DMA length
+		move.l	#(vdp_dma_source_mid<<16)+(((\1>>1)&$FF00)<<8)+vdp_dma_source_low+((\1>>1)&$FF),(a5) ; DMA source high and mid bytes
+		move.w	#vdp_dma_source_hi+((((\1>>1)&$FF0000)>>16)&$7F),(a5) ; DMA source low byte
+		move.w	#dma_type+(dma_dest&$3FFF),(a5)		; DMA destination high byte
+		move.w	#dma_type2+((dma_dest&$C000)>>14),(v_vdp_dma_buffer).w ; DMA destination low byte; split into two words to work around a bug in the DMA controller on Model 1 VA0 and VA1 systems
+		move.w	(v_vdp_dma_buffer).w,(a5)		; set DMA destination; 68K will be halted immediately until the DMA is finished
 		endm
 
 ; ---------------------------------------------------------------------------
@@ -525,16 +509,16 @@ dma:		macro
 
 dma_fill:	macro value,length,dest
 		lea	(vdp_control_port).l,a5
-		move.w	#vdp_auto_inc+1,(a5)				; set VDP increment to 1 byte
+		move.w	#vdp_auto_inc|1,(a5)			; set VDP increment to 1 byte
 		move.l	#(vdp_dma_length_hi<<16)+(((length-1)&$FF00)<<8)+vdp_dma_length_low+((length-1)&$FF),(a5) ; set length of DMA
-		move.w	#vdp_dma_vram_fill,(a5)				; set DMA mode to fill
+		move.w	#vdp_dma_vram_fill,(a5)			; set DMA mode to fill
 		move.l	#$40000080+(((dest)&$3FFF)<<16)+(((dest)&$C000)>>14),(a5) ; set target of DMA
 		move.w	#value<<8,(vdp_data_port).l		; set byte to fill with
 	.wait_for_dma\@:
 		move.w	(a5),d1					; get status register
-		btst	#dma_status_bit,d1					; is DMA in progress?
+		btst	#dma_status_bit,d1			; is DMA in progress?
 		bne.s	.wait_for_dma\@				; if yes, branch
-		move.w	#vdp_auto_inc+2,(a5)				; set VDP increment back to 2 bytes
+		move.w	#vdp_auto_inc|2,(a5)			; set VDP increment back to 2 bytes
 		endm
 
 ; ---------------------------------------------------------------------------
@@ -546,22 +530,22 @@ dma_fill:	macro value,length,dest
 
 dma_fill_sequential:	macro value,length,dest,firstlast
 	
-	if strcmp("\firstlast","first")		; if this is the first DMA fill,
-		lea	(vdp_control_port).l,a5		; load the VDP control port,
-		move.w	#vdp_auto_inc+1,(a5)	; and set VDP increment to 1 byte
+	if strcmp("\firstlast","first")				; if this is the first DMA fill,
+		lea	(vdp_control_port).l,a5			; load the VDP control port,
+		move.w	#vdp_auto_inc+1,(a5)			; and set VDP increment to 1 byte
 	endc	
 					
 		move.l	#$94000000+(((length-1)&$FF00)<<8)+$9300+((length-1)&$FF),(a5) ; set length of DMA
-		move.w	#vdp_dma_vram_fill,(a5)				; set DMA mode to fill
+		move.w	#vdp_dma_vram_fill,(a5)			; set DMA mode to fill
 		move.l	#$40000080+(((dest)&$3FFF)<<16)+(((dest)&$C000)>>14),(a5) ; set target of DMA
 		move.w	#value<<8,(vdp_data_port).l		; set byte to fill with
 	.wait_for_dma\@:
 		move.w	(a5),d1					; get status register
-		btst	#dma_status_bit,d1					; is DMA in progress?
+		btst	#dma_status_bit,d1			; is DMA in progress?
 		bne.s	.wait_for_dma\@				; if yes, branch
 		
-	if strcmp("\firstlast","last")		; if this is the last DMA fill in the sequence,
-		move.w	#vdp_auto_inc+2,(a5)	; set VDP increment back to 2 bytes
+	if strcmp("\firstlast","last")				; if this is the last DMA fill in the sequence,
+		move.w	#vdp_auto_inc+2,(a5)			; set VDP increment back to 2 bytes
 	endc	
 		endm
 		
@@ -644,7 +628,7 @@ out_of_range:	macro exit,pos
 ; ---------------------------------------------------------------------------
 
 objpos:		macro
-		dc.w \1		; xpos
+		dc.w \1						; xpos
 		obj_ypos: = \2
 		if strcmp("\3","0")
 		obj_id: = 0
@@ -709,17 +693,17 @@ bnkswtch_vals: macro *
 		rept 9
 
 		if OptimizeSoundDriver
-		; Because why use a and e when you can use h and l?
+; Because why use a and e when you can use h and l?
 			if (offset(*))&(1<<(15+cnt))<>0
-				bnkswtch_\*_\$ptr_num:	equ 75h		; ld (hl),l
+				bnkswtch_\*_\$ptr_num:	equ 75h	; ld (hl),l
 			else
-				bnkswtch_\*_\$ptr_num:	equ 74h		; ld (hl),h
+				bnkswtch_\*_\$ptr_num:	equ 74h	; ld (hl),h
 			endc	
 		else
 			if (offset(*))&(1<<(15+cnt))=0 						
-				bnkswtch_\*_\$ptr_num:	equ 77h		; ld (hl),a
+				bnkswtch_\*_\$ptr_num:	equ 77h	; ld (hl),a
 			else
-				bnkswtch_\*_\$ptr_num:	equ 73h		; ld (hl),e
+				bnkswtch_\*_\$ptr_num:	equ 73h	; ld (hl),e
 			endc
 		endc	
 		cnt: = cnt+1
@@ -736,36 +720,36 @@ startbank: macro *
 
 \* equ *
 
-		if ~def(sndbnk_id)	; generate id of soundbank, used later to check for overflow
+		if ~def(sndbnk_id)				; generate id of soundbank, used later to check for overflow
 			sndbnk_id: = 1			
 		else
 			sndbnk_id: = sndbnk_id+1
 		endc		
 		align	sizeof_z80_bank				; align to $8000 boundary
-		sound_bank_start: = offset(*)		; start address of sound bank
-		ptr_id: = 80h						; initial pointer id constant
+		sound_bank_start: = offset(*)			; start address of sound bank
+		ptr_id: = 80h					; initial pointer id constant
 		
 		
-		; Unfortunately, because the bnkswtch_vals macro requires a label
-		; on the same line, we can't invoke it here; we have no choice but
-		; to include the entire macro a second time.
+; Unfortunately, because the bnkswtch_vals macro requires a label
+; on the same line, we can't invoke it here; we have no choice but
+; to include the entire macro a second time.
 
 		cnt: = 0
 		ptr_num: = 1
 		rept 9
 
 		if OptimizeSoundDriver
-		; Because why use a and e when you can use h and l?
+; Because why use a and e when you can use h and l?
 			if (offset(*))&(1<<(15+cnt))<>0
-				bnkswtch_\*_\$ptr_num:	equ 75h		; ld (hl),l
+				bnkswtch_\*_\$ptr_num:	equ 75h	; ld (hl),l
 			else
-				bnkswtch_\*_\$ptr_num:	equ 74h		; ld (hl),h
+				bnkswtch_\*_\$ptr_num:	equ 74h	; ld (hl),h
 			endc	
 		else
 			if (offset(*))&(1<<(15+cnt))=0 						
-				bnkswtch_\*_\$ptr_num:	equ 77h		; ld (hl),a
+				bnkswtch_\*_\$ptr_num:	equ 77h	; ld (hl),a
 			else
-				bnkswtch_\*_\$ptr_num:	equ 73h		; ld (hl),e
+				bnkswtch_\*_\$ptr_num:	equ 73h	; ld (hl),e
 			endc
 		endc	
 		cnt: = cnt+1
@@ -779,9 +763,9 @@ startbank: macro *
 ; ---------------------------------------------------------------------------    
 
 sndbank_ptr:	macro sound
-		z80_ptr	\sound ; generate little endian pointer relative to the start of the bank
-		ptr_\sound: equ ptr_id ; generate constant for the sound driver's playlist 
-		ptr_id: = ptr_id+1	; increment pointer   
+		z80_ptr	\sound					; generate little endian pointer relative to the start of the bank
+		ptr_\sound: equ ptr_id				; generate constant for the sound driver's playlist 
+		ptr_id: = ptr_id+1				; increment pointer   
 		endm
 		
 ; ---------------------------------------------------------------------------

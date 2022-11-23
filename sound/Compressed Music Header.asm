@@ -1,6 +1,6 @@
 		opt	l.					; . is the local label symbol
 		opt	ae-					; automatic evens disabled by default
-		opt an+					; allow -h suffix for hexadecimal (used in the Z80 code)	
+		opt an+						; allow -h suffix for hexadecimal (used in the Z80 code)	
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
 ;		opt	m+					; do not expand macros - if enabled, this can break assembling
@@ -22,10 +22,10 @@ z80_ptr: macros	; make a z80 pointer for use with compressed music (that is, NOT
 inc_music:	macro songname
 		pushs
 
-Music\@:	section	org($1380),file("sound/music/compressed/\songname\.unc"),over(Header)	; output each music track to its own file
-		include "sound/music/\songname\.asm"	; include the actual music file for assembly
+Music\@:	section	org($1380),file("sound/music/compressed/\songname\.unc"),over(Header) ; output each music track to its own file
+		include "sound/music/\songname\.asm"		; include the actual music file for assembly
 		
-		if offset(*)>7C0h ; size of Z80 decompression buffer
+		if offset(*)>7C0h				; size of Z80 decompression buffer
 			inform 2,"\songname is too large for the Z80 decompression buffer! It should be uncompressed instead."
 		endc	
 		pops					

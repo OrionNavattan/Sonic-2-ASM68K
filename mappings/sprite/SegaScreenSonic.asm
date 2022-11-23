@@ -1,4 +1,8 @@
-Map_objB1:	index offset(*)
+; ------------------------------------------------------------------------------
+; Sprite mappings - Sonic on Sega Screen and sprite that hides TM on Japanese 
+; and Korean consoles
+; ------------------------------------------------------------------------------
+Map_SegaScreenSonic:	index offset(*)
 	ptr	Map_objB1_000A
 	ptr	Map_objB1_003C
 	ptr	Map_objB1_006E

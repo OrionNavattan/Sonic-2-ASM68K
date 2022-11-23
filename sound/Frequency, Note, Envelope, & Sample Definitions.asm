@@ -208,7 +208,7 @@ VolumeEnv:	macro	func
 		\func	$0B
 		\func	$0C
 		\func	$0D
-	else;if SonicDriverVer>=3	
+	else							;if SonicDriverVer>=3	
 		\func	$01
 		\func	$02
 		\func	$03
@@ -257,16 +257,16 @@ VolumeEnv:	macro	func
 
 GenEnvConst:	macro	const
 		num: = \const
-		numstr: substr 2,3,"\const" ; get digits for constant	
+		numstr: substr 2,3,"\const"			; get digits for constant	
 	if SonicDriverVer>=5
 		if num<=$0D 
-fTone_\numstr\:	rs.b 0			; if Flamewing's clone driver, generate fTone constants for envelopes $0D and lower for conversions
+fTone_\numstr\:	rs.b 0						; if Flamewing's clone driver, generate fTone constants for envelopes $0D and lower for conversions
 		endc
-sTone_\numstr\:	rs.b 1			; generate main constant for Flamewing's clone driver		
+sTone_\numstr\:	rs.b 1						; generate main constant for Flamewing's clone driver		
 	elseif  SonicDriverVer>=3	
-sTone_\numstr\:	rs.b 1			; generate constant for S3, S3K, S3D
-	else;if SonicDriverVer<=2	
-fTone_\numstr\:	rs.b 1			; generate constans for S1 & 2	
+sTone_\numstr\:	rs.b 1						; generate constant for S3, S3K, S3D
+	else							;if SonicDriverVer<=2	
+fTone_\numstr\:	rs.b 1						; generate constans for S1 & 2	
 	endc
 	endm			
 		
@@ -308,24 +308,24 @@ DefineSamples:	macro	func
 		\func Kick					; Kick Sample
 		\func Snare					; Snare sample
 		\func Clap					; Clap sample
-		\func Scratch				; Record scratch sample	
-		\func Timpani				; Timpani sample (DO NOT USE)	
+		\func Scratch					; Record scratch sample	
+		\func Timpani					; Timpani sample (DO NOT USE)	
 		\func HiTom					; High tom sample
-		\func VLowClap				; Very low clap sample, apparently unused?
-		\func HiTimpani				; Timpani high pitch
-		\func MidTimpani			; Timpani middle pitch
-		\func LowTimpani			; Timpani low pitch
-		\func VLowTimpani			; Timpani very low pitch	
-		\func MidTom				; Middle tom sample
-		\func LowTom				; Low tom sample
-		\func FloorTom				; Very low tom sample
-		\func HiClap				; High clap
-		\func MidClap				; Mid clap
-		\func LowClap				; Low clap
+		\func VLowClap					; Very low clap sample, apparently unused?
+		\func HiTimpani					; Timpani high pitch
+		\func MidTimpani				; Timpani middle pitch
+		\func LowTimpani				; Timpani low pitch
+		\func VLowTimpani				; Timpani very low pitch	
+		\func MidTom					; Middle tom sample
+		\func LowTom					; Low tom sample
+		\func FloorTom					; Very low tom sample
+		\func HiClap					; High clap
+		\func MidClap					; Mid clap
+		\func LowClap					; Low clap
 		
 	else;if SonicDriverVer>=3
 		if use_s3_samples|use_sk_samples|use_s3d_samples
-			\func SnareS3 ; $81
+			\func SnareS3				; $81
 			\func HighTom
 			\func MidTomS3
 			\func LowTomS3
@@ -340,7 +340,7 @@ DefineSamples:	macro	func
 			\func HigherMetalHit
 			\func MidMetalHit
 			\func ClapS3 
-			\func ElectricHighTom ; $90
+			\func ElectricHighTom			; $90
 			\func ElectricMidTom
 			\func ElectricLowTom
 			\func ElectricFloorTom
@@ -354,11 +354,11 @@ DefineSamples:	macro	func
 			\func QuickLooseSnare
 			\func Click
 			\func PowerKick
-			\func QuickGlassCrash ; $9E
+			\func QuickGlassCrash			; $9E
 		endc
 		
 		if use_s3_samples|use_sk_samples
-			\func GlassCrashSnare ; $9F
+			\func GlassCrashSnare			; $9F
 			\func GlassCrash
 			\func GlassCrashKick
 			\func QuietGlassCrash
@@ -374,7 +374,7 @@ DefineSamples:	macro	func
 			\func PowerTom
 			\func HiWoodBlock
 			\func LowWoodBlock
-			\func HiHitDrum1 ; $AF
+			\func HiHitDrum1			; $AF
 		
 			\func LowHitDrum
 			\func MetalCrashHit
@@ -391,17 +391,17 @@ DefineSamples:	macro	func
 			\func LooseSnareNoise
 			\func PowerKick2
 			\func CrashingNoiseWoo
-			\func QuickHit	; $BF
+			\func QuickHit				; $BF
 			\func KickHey
 			\func PowerKickHit
 			\func LowPowerKickHit
 			\func LowerPowerKickHit
-			\func LowestPowerKickHit ; $C4
+			\func LowestPowerKickHit		; $C4
 		endc
 		
-		; For conversions:
+; For conversions:
 		if use_s2_samples
-			\func Kick ; if using s2 samples AND any combo of s3, s3k, s3d samples, we need to reset the rs counter here
+			\func Kick				; if using s2 samples AND any combo of s3, s3k, s3d samples, we need to reset the rs counter here
 			\func Snare
 			\func Clap
 			\func Scratch
@@ -437,9 +437,9 @@ DefineSamples:	macro	func
 ; ---------------------------------------------------------------------------
 
 GenSampleConst:	macro	const
-	; for SMPS conversions, if we are using the Sonic 3 driver or greater, Sonic 2 samples,
-	; AND any combination of S3, S3K, or S3D samples, then reset the rs counter to $81  
-	; starting with the S2 kick sample
+; for SMPS conversions, if we are using the Sonic 3 driver or greater, Sonic 2 samples,
+; AND any combination of S3, S3K, or S3D samples, then reset the rs counter to $81  
+; starting with the S2 kick sample
 	if SonicDriverVer>=3
 		if use_s2_samples&(use_s3_samples|use_sk_samples|use_s3d_samples)
 			if stricmp("\const","Kick")

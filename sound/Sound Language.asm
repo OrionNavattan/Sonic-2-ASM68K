@@ -47,11 +47,11 @@ nMaxPSG2			equ nB6
 cPSG1				equ $80
 cPSG2				equ $A0
 cPSG3				equ $C0
-cNoise				equ $E0	; Not for use in S3/S&K/S3D
+cNoise				equ $E0				; Not for use in S3/S&K/S3D
 cFM3				equ $02
 cFM4				equ $04
 cFM5				equ $05
-cFM6				equ $06	; Only in S3/S&K/S3D, overrides DAC
+cFM6				equ $06				; Only in S3/S&K/S3D, overrides DAC
 
 ; ---------------------------------------------------------------------------
 ; Conversion macros and functions
@@ -101,7 +101,7 @@ convertMainTempoMod macro val
 		if SonicDriverVer=2
 			s1TempotoS2	\val
 			dc.b s12convval
-		else;if SonicDriverVer>=3
+		else						;if SonicDriverVer>=3
 			s1TempotoS3	\val
 			dc.b s13convval
 		endc
@@ -250,11 +250,11 @@ smpsHeaderPSG macro location,pitch,vol,mod,voice
 	CheckedChannelPointer \location
 	PSGPitchConvert \pitch
 	dc.b \vol
-	; Frequency envelope
+; Frequency envelope
 	if (SonicDriverVer>=3)&(SourceDriver<3)
-		; In SMPS 68k Type 1, this byte is skipped and can contain garbage.
-		; Sonic 2's Oil Ocean Zone and Ending themes set this byte to a non-zero value which
-		; other drivers may try to process as valid data, so manually force it to 0 here.
+; In SMPS 68k Type 1, this byte is skipped and can contain garbage.
+; Sonic 2's Oil Ocean Zone and Ending themes set this byte to a non-zero value which
+; other drivers may try to process as valid data, so manually force it to 0 here.
 		dc.b	0
 	else
 		if (SonicDriverVer<3)&(SourceDriver>=3)&(\mod<>0)
@@ -262,7 +262,7 @@ smpsHeaderPSG macro location,pitch,vol,mod,voice
 		endc
 		dc.b \mod
 	endc
-	; Volume envelope
+; Volume envelope
 	dc.b \voice
 	endm
 
@@ -304,7 +304,7 @@ smpsPan macro direction,amsfms
 panNone equ $00
 panRight equ $40
 panLeft equ $80
-panCentre equ $C0 ; silly Brits :U
+panCentre equ $C0						; silly Brits :U
 panCenter equ $C0
 
 ; E1xx - Set channel detune to val
@@ -341,7 +341,7 @@ smpsFade macro val
 			smpsStop
 		endc
 	elseif (SourceDriver>=3)&(strlen("\val"))&(strcmp("\val","$FF"))
-		; This is one of those weird S3+ "fades" that we don't need
+; This is one of those weird S3+ "fades" that we don't need
 	else
 		dc.b $E4
 	endc
@@ -350,7 +350,7 @@ smpsFade macro val
 ; E5xx - Set channel tempo divider to xx
 smpsChanTempoDiv macro val
 	if SonicDriverVer>=5
-		; New flag unique to Flamewing's modified S&K driver
+; New flag unique to Flamewing's modified S&K driver
 		dc.b $FF,$08,\val
 	elseif SonicDriverVer=3
 		inform 3,"Coord. Flag to set tempo divider of a single channel does not exist in S3 driver. Use Flamewing's modified S&K sound driver instead."
@@ -370,7 +370,7 @@ smpsNoAttack	equ $E7
 ; E8xx - Set note fill to xx
 smpsNoteFill macro val
 	if (SonicDriverVer>=5)&(SourceDriver<3)
-		; Unique to Flamewing's modified driver
+; Unique to Flamewing's modified driver
 		dc.b $FF,$0A,\val
 	else
 		if (SonicDriverVer>=3)&(SourceDriver<3)
@@ -465,7 +465,7 @@ smpsModSet macro wait,speed,change,step
 	else
 		dc.b \wait,\speed,\change,\step
 	endc
-	;dc.b	speed,change,step
+;dc.b	speed,change,step
 	endm
 
 ; Turn on Modulation
@@ -603,7 +603,7 @@ smpsFM3SpecialMode macro ind1,ind2,ind3,ind4
 
 smpsPlaySound macro index
 	if SonicDriverVer>=5
-		inform 1,"smpsPlaySound only plays SFX in Flamedriver; use smpsPlayMusic to play music or fade effects."
+		inform 1,"smpsPlaySound only plays SFX in Flamedriver ; use smpsPlayMusic to play music or fade effects."
 	endc
 	dc.b $FF,$01,\index
 	endm
@@ -631,7 +631,7 @@ smpsResetSpindashRev macro val
 	dc.b $FF,$07
 	endm
 
-	; Flags ported from other drivers.
+; Flags ported from other drivers.
 	if SonicDriverVer>=5
 smpsChanFMCommand macro reg,val
 	dc.b $FF,$09,\reg,\val
@@ -657,7 +657,7 @@ smpsPlayMusic macro index
 ; Sets D1L to maximum volume (minimum attenuation) and RR to maximum for operators 3 and 4 of FM1
 smpsMaxRelRate macro
 	if SonicDriverVer>=3
-		; Emulate it in S3/S&K/S3D driver
+; Emulate it in S3/S&K/S3D driver
 		smpsFMICommand $88,$0F
 		smpsFMICommand $8C,$0F
 	else

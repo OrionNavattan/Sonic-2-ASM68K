@@ -71,54 +71,54 @@ MusicFiles:	macro func
 
 SFXFiles:	macro	func
 
-		; WARNING: Ring, RingLeft, Gloop, and SpinDashCharge are referenced directly by
-		; the sound driver via ID. If you change their names here, you will need to change
-		; their constants in the driver accordingly.
+; WARNING: Ring, RingLeft, Gloop, and SpinDashCharge are referenced directly by
+; the sound driver via ID. If you change their names here, you will need to change
+; their constants in the driver accordingly.
 
 		\func	Jump,			80h	
 		\func	Checkpoint,		70h
-		\func	SpikeSwitch,	70h	; used by Mecha Sonic
+		\func	SpikeSwitch,	70h			; used by Mecha Sonic
 		\func	Death,			70h
 		\func	Skid,			70h
 		\func	BlockPush,		70h
-		\func	SpikeHit,		70h	; spike impalement
+		\func	SpikeHit,		70h		; spike impalement
 		\func	Sparkle,		70h
 		\func	Beep,			70h
-		\func	ActionBlock,	70h	; unused Sonic 1 leftover, sound made when touching R block in Special Stage 
+		\func	ActionBlock,	70h			; unused Sonic 1 leftover, sound made when touching R block in Special Stage 
 		\func	Splash,			68h
-		\func	Swish,			70h	; apparently unused
+		\func	Swish,			70h		; apparently unused
 		\func	BossHit,		70h
 		\func	Bubble,			70h
-		\func	FireBall,		60h	; lava ball, arrow firing
+		\func	FireBall,		60h		; lava ball, arrow firing
 		\func	Shield,			70h
 		
-		\func	LaserBeam,		70h	; same sound was used for the saws in Sonic 1's SBZ
-		\func	Electricity,	60h	; unused Sonic 1 leftover, sound made by SBZ electric traps
+		\func	LaserBeam,		70h		; same sound was used for the saws in Sonic 1's SBZ
+		\func	Electricity,	60h			; unused Sonic 1 leftover, sound made by SBZ electric traps
 		\func	Drown,			70h
 		\func	Flame,			60h
-		\func	Bumper,			70h	; round bumpers, Crawl's shield
+		\func	Bumper,			70h		; round bumpers, Crawl's shield
 		\func	Ring,			70h
 		\func	SpikeMove,		70h
-		\func	Rumbling,		70h	; holdover from Sonic 1, used only by Eggrobo rising from floor
-		\func	Unknown1,		70h	; also in Sonic 1, and unused in that game as well
+		\func	Rumbling,		70h		; holdover from Sonic 1, used only by Eggrobo rising from floor
+		\func	Unknown1,		70h		; also in Sonic 1, and unused in that game as well
 		\func	Collapse,		70h
-		\func	Diamonds,		70h	; unused Sonic 1 leftover, sound made by glass blocks in Special Stage
+		\func	Diamonds,		70h		; unused Sonic 1 leftover, sound made by glass blocks in Special Stage
 		\func	Door,			70h
-		\func	Dash,			70h	; spindash release, spin tubes, teleporters, and Mecha Sonic dash
+		\func	Dash,			70h		; spindash release, spin tubes, teleporters, and Mecha Sonic dash
 		\func	Hammer,			70h
 		\func	Roll,			70h
 		\func	ContinueJingle,	7Fh
 				
-		\func	SlotMachine,	6Fh	; slot machine ding
+		\func	SlotMachine,	6Fh			; slot machine ding
 		\func	Break,			70h
-		\func	Ding,			70h	; air warning ding
-		\func	GiantRing,		70h	; unused Sonic 1 leftover, sound made by giant rings
+		\func	Ding,			70h		; air warning ding
+		\func	GiantRing,		70h		; unused Sonic 1 leftover, sound made by giant rings
 		\func	Bomb,			70h
 		\func	Register,		70h
 		\func	RingLoss,		70h
-		\func	ChainRise,		70h	; unused Sonic 1 leftover, clicking of rising MZ stompers
+		\func	ChainRise,		70h		; unused Sonic 1 leftover, clicking of rising MZ stompers
 		\func	Burning,		70h
-		\func	Bonus,			70h	; unused Sonic 1 leftover, sound made by hidden bonus points
+		\func	Bonus,			70h		; unused Sonic 1 leftover, sound made by hidden bonus points
 		\func	EnterSS,		70h
 		\func	Smash,			70h
 		\func	Spring,			70h
@@ -126,39 +126,39 @@ SFXFiles:	macro	func
 		\func	RingLeft,		70h
 		\func	Signpost,		70h
 		
-		\func	Zapper,			70h	; CNZ boss zapper
-		\func	Unknown2,		60h	; unknown, never used
-		\func	Unknown3,		60h	; unknown, never used
+		\func	Zapper,			70h		; CNZ boss zapper
+		\func	Unknown2,		60h		; unknown, never used
+		\func	Unknown3,		60h		; unknown, never used
 		\func	Signpost2P,		70h
-		\func	LidPop,			70h	; popping of OOZ burner platforms
+		\func	LidPop,			70h		; popping of OOZ burner platforms
 		\func	SlidingSpike,	70h
-		\func	Elevator,		70h	; CNZ elevators
-		\func	PlatformKnock,	70h	; knocking of swinging platforms in ARZ and MCZ
-		\func	SaucerBumper,	70h	; CNZ saucer bumpers
-		\func	LargeBumper,	70h	; CNZ special bumpers
-		\func	Gloop,			60h	; CPZ blue balls obstacle
-		\func	PreArrowFiring,	62h	; ARZ arrow shooters
+		\func	Elevator,		70h		; CNZ elevators
+		\func	PlatformKnock,	70h			; knocking of swinging platforms in ARZ and MCZ
+		\func	SaucerBumper,	70h			; CNZ saucer bumpers
+		\func	LargeBumper,	70h			; CNZ special bumpers
+		\func	Gloop,			60h		; CPZ blue balls obstacle
+		\func	PreArrowFiring,	62h			; ARZ arrow shooters
 		\func	Fire,			60h
 		\func	ArrowStick,		60h
-		\func	Helicopter,		60h	; Eggman's autogyro in EHZ, propellers in WFZ
-		\func	Transform,		70h	; Super Sonic transformation
+		\func	Helicopter,		60h		; Eggman's autogyro in EHZ, propellers in WFZ
+		\func	Transform,		70h		; Super Sonic transformation
 		
-		\func	SpinDashCharge,	70h	; charging a spindash
-		\func	Rumbling2,		70h	; HTZ earthquakes, ARZ boss pillars, Death Egg rumbling as it explodes
-		\func	PinballLauncher,70h	; CNZ pinball launchers
-		\func	Flipper,		70h	; CNZ pinball flippers
-		\func	ZiplineClick,	60h	; HTZ zipline click
-		\func	Leaves,			60h	; ARZ leaves
+		\func	SpinDashCharge,	70h			; charging a spindash
+		\func	Rumbling2,		70h		; HTZ earthquakes, ARZ boss pillars, Death Egg rumbling as it explodes
+		\func	PinballLauncher,70h			; CNZ pinball launchers
+		\func	Flipper,		70h		; CNZ pinball flippers
+		\func	ZiplineClick,	60h			; HTZ zipline click
+		\func	Leaves,			60h		; ARZ leaves
 		\func	MegaMackDrop,	60h
-		\func	DrawbridgeMove,	6Fh	; MCZ drawbridges lowering
-		\func	QuickDoorSlam,	70h	; unused
+		\func	DrawbridgeMove,	6Fh			; MCZ drawbridges lowering
+		\func	QuickDoorSlam,	70h			; unused
 		\func	DrawbridgeDown,	70h
-		\func	LaserBurst,		6Fh	; OOZ & MTZ boss lasers
-		\func	Scatter,		6Fh	; OOZ boss laser on platform floor, Tornado shot down in WFZ
+		\func	LaserBurst,		6Fh		; OOZ & MTZ boss lasers
+		\func	Scatter,		6Fh		; OOZ boss laser on platform floor, Tornado shot down in WFZ
 		\func	Teleport,		70h
 		\func	Error,			71h
 		\func	MechaSonicBuzz,	70h
-		\func	LargeLaser,		70h	; large laser that shoots down Tornado in WFZ
+		\func	LargeLaser,		70h		; large laser that shoots down Tornado in WFZ
 		
 		\func	OilSlide,		6Fh	
 		endm
@@ -180,7 +180,7 @@ DriverCmds:	macro	func
 		\func	Sega	
 		\func	Speedup	
 		\func	Slowdown	
-		\func	Stop 	; last real command
+		\func	Stop					; last real command
 		\func	Pause
 		\func	Unpause
 		endm		
@@ -198,7 +198,7 @@ GenMusicConstMain:	macro	name
 mus_\name:	rs.b 1						; use the next ID for music
 		endm
 
-		MusicFiles	GenMusicConstMain			; generate constants for each music file
+		MusicFiles	GenMusicConstMain		; generate constants for each music file
 _lastMusic:	equ __rs					; constant for empty slot after last music
 ; ---------------------------------------------------------------------------
 

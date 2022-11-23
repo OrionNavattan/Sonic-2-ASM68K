@@ -1,17 +1,17 @@
 off_273F2:	offsetTable
-	offsetTableEntry.w word_2740C	;  0
-	offsetTableEntry.w word_27426	;  1
-	offsetTableEntry.w word_27430	;  2
-	offsetTableEntry.w word_2744A	;  3
-	offsetTableEntry.w word_27454	;  4
-	offsetTableEntry.w word_2745E	;  5
-	offsetTableEntry.w word_27478	;  6
-	offsetTableEntry.w word_27492	;  7
-	offsetTableEntry.w word_274AC	;  8
-	offsetTableEntry.w word_274C6	;  9
-	offsetTableEntry.w word_274E0	; $A
-	offsetTableEntry.w word_274FA	; $B
-	offsetTableEntry.w word_27514	; $C
+	offsetTableEntry.w word_2740C				;  0
+	offsetTableEntry.w word_27426				;  1
+	offsetTableEntry.w word_27430				;  2
+	offsetTableEntry.w word_2744A				;  3
+	offsetTableEntry.w word_27454				;  4
+	offsetTableEntry.w word_2745E				;  5
+	offsetTableEntry.w word_27478				;  6
+	offsetTableEntry.w word_27492				;  7
+	offsetTableEntry.w word_274AC				;  8
+	offsetTableEntry.w word_274C6				;  9
+	offsetTableEntry.w word_274E0				; $A
+	offsetTableEntry.w word_274FA				; $B
+	offsetTableEntry.w word_27514				; $C
 
 word_2740C:	obj1E67Size
 	dc.w	$7A8, $270
