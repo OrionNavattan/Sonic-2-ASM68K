@@ -459,9 +459,9 @@ vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 
 loc_vram:	macro loc,controlport
 		ifarg \controlport
-		move.l	#($40000000+(((loc)&$3FFF)<<16)+(((loc)&$C000)>>14)),\controlport
+		vdp_comm.l	move,\loc,vram,write,\controlport
 		else
-		move.l	#($40000000+(((loc)&$3FFF)<<16)+(((loc)&$C000)>>14)),(vdp_control_port).l
+		vdp_comm.l	move,\loc,vram,write,(vdp_control_port).l
 		endc
 		endm
 ; ---------------------------------------------------------------------------

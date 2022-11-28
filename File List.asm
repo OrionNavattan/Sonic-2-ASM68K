@@ -164,7 +164,7 @@
 		filedef Nem_CNZFlipper,"art/nemesis/CNZ Flipper",nem,unc ; 52 tiles
 		filedef Nem_CPZElevator,"art/nemesis/CPZ Elevator",nem,unc ; 16 tiles
 		filedef Nem_WaterSurface1,"art/nemesis/CPZ & HPZ Water Surface",nem,unc ; 24 tiles
-		filedef Nem_CPZBooster,"art/nemesis/CPZ Speed Booster",nem,unc ; 4 tiles
+		filedef Nem_Booster,"art/nemesis/CPZ Speed Booster",nem,unc ; 4 tiles
 		filedef Nem_CPZDroplet,"art/nemesis/CPZ Blue Balls",nem,unc ; 4 tiles
 		filedef Nem_CPZPylons,"art/nemesis/CPZ Pylons",nem,unc ; 33 tiles
 		filedef Nem_CPZMetalBlock,"art/nemesis/CPZ Breakable Metal Block",nem,unc ; 4 tiles
@@ -217,9 +217,9 @@
 		filedef Nem_WFZGunPlatform,"art/nemesis/WFZ Gun Platform",nem,unc ; 54 tiles
 		filedef Nem_WFZConveyorBeltWheel,"art/nemesis/WFZ Conveyer Belt Wheel",nem,unc ; 16 tiles
 		filedef Nem_WFZFloatingPlatform,"art/nemesis/WFZ Floating Platform",nem,unc ; 12 tiles
-		filedef Nem_WFZVrtclLazer,"art/nemesis/WFZ Vertical Laser",nem,unc ; 12 tiles
+		filedef Nem_WFZVrtclLaser,"art/nemesis/WFZ Vertical Laser",nem,unc ; 12 tiles
 		filedef Nem_Clouds,"art/nemesis/SCZ, WFZ, and Ending Clouds",nem,unc ; 18 tiles
-		filedef Nem_WFZHrzntlLazer,"art/nemesis/WFZ Horizontal Laser",nem,unc ; 10 tiles
+		filedef Nem_WFZHrzntlLaser,"art/nemesis/WFZ Horizontal Laser",nem,unc ; 10 tiles
 		filedef Nem_WFZLaunchCatapult,"art/nemesis/WFZ Catapult",nem,unc ; 5 tiles
 		filedef Nem_WFZBeltPlatform,"art/nemesis/WFZ Belt Platform",nem,unc ; 12 tiles
 		filedef Nem_WFZUnusedBadnik,"art/nemesis/WFZ Unused Badnik",nem,unc ; 12 tiles
@@ -259,28 +259,28 @@
 		filedef Nem_SpecialSonicAndTails,"art/nemesis/Special Stage Sonic & Tails",nem,unc ; 851 tiles
 		filedef Nem_SpecialTailsText,"art/nemesis/Special Stage Tails HUD Text",nem,unc ; 5 tiles
 		
-		filedef Nem_HTZFireball1,"art/nemesis/HTZ Fireball 1",nem,unc ; 20 tiles
+		filedef Nem_Fireball1,"art/nemesis/HTZ Fireball 1",nem,unc ; 20 tiles
 		filedef Nem_Waterfall,"art/nemesis/Waterfall",nem,unc ; 24 tiles
 		filedef Nem_HTZFireball2,"art/nemesis/HTZ Fireball 2",nem,unc ; 16 tiles
-		filedef Nem_EHZBridge,"art/nemesis/EHZ Bridge",nem,unc ; 8 tiles
+		filedef Nem_Bridge,"art/nemesis/EHZ Bridge",nem,unc ; 8 tiles
 		filedef Nem_HTZZipline,"art/nemesis/HTZ Zipline Platform",nem,unc ; 48 tiles
 		filedef Nem_HTZOneWayBarrier,"art/nemesis/HTZ One-Way Barrier",nem,unc ; 4 tiles
-		filedef Nem_HTZSeeSaw,"art/nemesis/HTZ See-saw",nem,unc ; 24 tiles 
+		filedef Nem_SeeSaw,"art/nemesis/HTZ See-saw",nem,unc ; 24 tiles 
 		filedef Nem_UnusedFireball,"art/nemesis/Unused Fireball",nem,unc ; 24 tiles
 		filedef Nem_HTZRock,"art/nemesis/HTZ Rock",nem,unc ; 20 tiles
 		filedef Nem_Sol,"art/nemesis/Sol",nem,unc	; 4 tiles
 		filedef Nem_MTZWheel,"art/nemesis/MTZ Large Spinning Wheel",nem,unc ; 120 tiles
 		filedef Nem_MTZWheelIndent,"art/nemesis/MTZ Large Spinning Wheel Indent",nem,unc ; 9 tiles
-		filedef Nem_MTZSpikeBlock,"art/nemesis/MTZ Spike Block",nem,unc ; 8 tiles
-		filedef Nem_MTZSteam,"art/nemesis/MTZ Steam",nem,unc ; 15 tiles
+		filedef Nem_SpikeBlock,"art/nemesis/MTZ Spike Block",nem,unc ; 8 tiles
+		filedef Nem_SteamSpring,"art/nemesis/MTZ Steam",nem,unc ; 15 tiles
 		filedef Nem_MTZSpike,"art/nemesis/MTZ Spike",nem,unc ; 8 tiles
 		filedef Nem_MTZAsstBlocks,"art/nemesis/MTZ Misc Blocks",nem,unc ; 54 tiles
-		filedef	Nem_MTZLavaBubble,"art/nemesis/MTZ Lava Bubble",nem,unc ; 9 tiles
-		filedef Nem_MTZLavaCup,"art/nemesis/MTZ Lava Cup",nem,unc ; 4 tiles
-		filedef Nem_MTZBoltEnd_Rope,"art/nemesis/MTZ Bolt End & Rope",nem,unc ; 8 tiles
-		filedef Nem_MTZCog,"art/nemesis/MTZ Small Cog",nem,unc ; 12 tiles
+		filedef	Nem_LavaBubble,"art/nemesis/MTZ Lava Bubble",nem,unc ; 9 tiles
+		filedef Nem_LavaCup,"art/nemesis/MTZ Lava Cup",nem,unc ; 4 tiles
+		filedef Nem_BoltEnd_Rope,"art/nemesis/MTZ Bolt End & Rope",nem,unc ; 8 tiles
+		filedef Nem_Cog,"art/nemesis/MTZ Small Cog",nem,unc ; 12 tiles
 		filedef Nem_MTZSpinTubeFlash,"art/nemesis/MTZ Spin Tube Flash",nem,unc ; 4 tiles
-		filedef Nem_MCZCrate,"art/nemesis/MCZ Crate",nem,unc ; 32 tiles
+		filedef Nem_Crate,"art/nemesis/MCZ Crate",nem,unc ; 32 tiles
 		filedef Nem_MCZCollapsingPlat,"art/nemesis/MCZ Collapsing Platform",nem,unc ; 26 tiles
 		filedef Nem_MCZVineSwitch,"art/nemesis/MCZ Vine Switch",nem,unc ; 16 tiles
 		filedef Nem_MCZVinePulley,"art/nemesis/MCZ Vine Pulley",nem,unc ; 10 tiles

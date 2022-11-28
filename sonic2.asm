@@ -1071,7 +1071,7 @@ HBlank:
 		andi.w	#hblank_bit<<1,d0			; %00000100; is hblank_bit set?
 		beq.s	.wait_hblank1				; if not, loop until it is
 
-; Switch to drawing Player 2's half of the screen.
+		; Switch to drawing Player 2's half of the screen.
 		disable_display
 		move.w	#vdp_fg_nametable|(vram_fg_2p/$400),(VDP_control_port).l ; FG plane table starts at $A000
 		vdp_comm.l	move,$0000,vsram,write,(VDP_control_port).l ; set VDP to VSRAM write
@@ -1941,13 +1941,13 @@ RunPLC:
 	.normal_mode:
 		andi.w	#$7FFF,d2				; clear highest bit
     if FixBugs=0
-; This is done too early; this variable is also used to determine when
-; there are PLCs to process, which means that as soon as this
-; variable is set, PLC processing will occur during VBlank. If an
-; interrupt occurs between here and the end of this function, then
-; the PLC processor will begin despite it not being fully
-; initialized, causing a crash (as can happen in Sonic 1 at the end of LZ1 & 2). 
-; S3K fixes this bug by moving this instruction to the end of the function.		
+	; This is done too early; this variable is also used to determine when
+	; there are PLCs to process, which means that as soon as this
+	; variable is set, PLC processing will occur during VBlank. If an
+	; interrupt occurs between here and the end of this function, then
+	; the PLC processor will begin despite it not being fully
+	; initialized, causing a crash (as can happen in Sonic 1 at the end of LZ1 & 2). 
+	; S3K fixes this bug by moving this instruction to the end of the function.		
 		move.w	d2,(v_nem_tile_count).w			; load tile count
 	endc	
 		bsr.w	NemDec_BuildCodeTable
@@ -2040,10 +2040,10 @@ ProcessPLC_Finish:
 		lea	(v_plc_buffer).w,a0
 		
 	if FixBugs
-; Shift the PLC buffer by the exact number of bytes in each cue (6)
-; using pairs of longword and word moves, and clear the last slot 
-; when finished, avoiding the bug described below. Also uses only 506
-; processor cycles instead of around 740.
+		; Shift the PLC buffer by the exact number of bytes in each cue (6)
+		; using pairs of longword and word moves, and clear the last slot 
+		; when finished, avoiding the bug described below. Also uses only 506
+		; processor cycles instead of around 740.
 		lea sizeof_plc(a0),a1				; start of second slot in the queue
    		moveq   #(v_plc_buffer_end-v_plc_buffer-6)/6-1,d0 ; $E, number of loops needed to shift everything
 
@@ -2057,15 +2057,15 @@ ProcessPLC_Finish:
     	move.w  d0,(a0)+					; ...and the final word of the last cue to prevent overcopying it
     	
 	else
-; This shifts the PLC buffer using longword moves alone. However,
-; the total amount of data that needs to be shifted ($5A, the number 
-; of PLC slots minus one) is not divisible by a longword. 
-; Consequently, only $58 bytes are shifted; the final two bytes
-; (the VRAM offset of the $16th and final cue, are skipped.
-; Additionally, that $16th cue is not cleared, with the result that
-; if it is used, the part that isn't broken will get copied over 
-; until it fills the entire buffer, causing the PLC processor to get stuck 
-; in an infinite loop.
+		; This shifts the PLC buffer using longword moves alone. However,
+		; the total amount of data that needs to be shifted ($5A, the number 
+		; of PLC slots minus one) is not divisible by a longword. 
+		; Consequently, only $58 bytes are shifted; the final two bytes
+		; (the VRAM offset of the $16th and final cue) are skipped.
+		; Additionally, that $16th cue is not cleared, with the result that
+		; if it is used, the part that isn't broken will get copied over 
+		; until it fills the entire buffer, causing the PLC processor to get stuck 
+		; in an infinite loop.
 		
 		moveq	#(v_plc_buffer_end-v_plc_buffer-6)/4-1,d0 ; $15
 
@@ -2907,10 +2907,10 @@ PCycle_SuperSonic:
 		move.b	#0,(v_ost_maincharacter+ost_obj_control).w ; restore Sonic's movement
 
 	if FixBugs
-; While palettes for transforming underwater are in the ROM, they are only used when reverting to normal;
-; there is no code to use them when transforming into Super Sonic. We can fix this by adding code
-; to make this section that matches the normal cycle and revert cycles, but we can take it a bit farther
-; and eliminate some duplicate code as well.
+		; While palettes for transforming underwater are in the ROM, they are only used when reverting to normal;
+		; there is no code to use them when transforming into Super Sonic. We can fix this by adding code
+		; to make this section that matches the normal cycle and revert cycles, but we can take it a bit farther
+		; and eliminate some duplicate code as well.
 		bra.s	.dopalettes
 	else
 	.fadein_not_done:
@@ -2933,20 +2933,20 @@ PCycle_SuperSonic:
 		subq.w	#8,(v_palette_frame).w			; deincrement palette frame
 
 	if FixBugs
-; Branch to common palette cycle routine and fix the bug described below.
+		; Branch to common palette cycle routine and fix the bug described below.
 		bcc.s	.dopalettes				; if we haven't reached the first frame, branch
 		move.w	#0,(v_palette_frame).w			; clear v_palette_frame
 	else	
 		bcc.s	.fadeout_not_done			; if we haven't reached the first frame, branch
-; v_palette_frame is a word, not a byte. This does not clear the full variable, 
-; causing this palette cycle to behave incorrectly if it is activated again
-; in the same level.
+		; v_palette_frame is a word, not a byte. This does not clear the full variable, 
+		; causing this palette cycle to behave incorrectly if it is activated again
+		; in the same level.
 		move.b	#0,(v_palette_frame).w			; clear only half of v_palette_frame
 	endc	
 		move.b	#0,(v_super_sonic_palette).w		; mark Super Sonic's palette as inactive
 
 	if FixBugs
-; Common palette cycle routine.
+	; Common palette cycle routine.
 	.dopalettes:
 	else
 	.fadeout_not_done:
@@ -2979,17 +2979,17 @@ PCycle_SuperSonic:
 		cmpi.w	#$78,(v_palette_frame).w		; is it the 120th frame?
 
 	if FixBugs
-; Branch to common palette cycle routine and fix bug described below.
+		; Branch to common palette cycle routine and fix bug described below.
 		bls.s	.dopalettes				; if so, branch
 	else
-; This is the wrong branch condition to use here; it causes the last frame of the cycle
-; to be skipped.
+		; This is the wrong branch condition to use here; it causes the last frame of the cycle
+		; to be skipped.
 		bcs.s	.no_reset				; if so, branch
 	endc	
 		move.w	#$30,(v_palette_frame).w		; reset frame counter
 
 	if FixBugs
-; Branch to common palette cycle routine.
+		; Branch to common palette cycle routine.
 		bra.s	.dopalettes
 	else	
 	.no_reset:
@@ -3117,7 +3117,7 @@ FadeIn_AddColor:
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to fade out to black
-
+;
 ;	uses d0.l, d1.w, d2.w, d4.w, d5.l, d6.l, d7.w, a0, a1, a3
 ; ---------------------------------------------------------------------------
 
@@ -3146,8 +3146,8 @@ FadeOut_ToBlack:
 		dbf	d0,.decolor				; repeat for size of palette
 
 	if FixBugs
-; Just for the sake of consistency: no need to do this if
-; if not a water level.	
+		; Just for the sake of consistency: no need to do this if
+		; if not a water level.	
 		tst.b	(f_water).w				; does level have water?
 		beq.s	.exit					; if not, exit
 	endc
@@ -3326,8 +3326,8 @@ WhiteOut_ToWhite:
 		dbf	d0,.addcolor				; repeat for size of palette
 
 	if FixBugs
-; Just for the sake of consistency: no need to do this if
-; if not a water level.	
+		; Just for the sake of consistency: no need to do this if
+		; if not a water level.	
 		tst.b	(f_water).w				; does level have water?
 		beq.s	.exit					; if not, exit
 	endc
@@ -3857,14 +3857,14 @@ sega_bg_height:	equ $1C
 		move.w	#vdp_fg_nametable+(vram_sega_fg/$400),(a6) ; $8230 ; set fg nametable at $C000
 		move.w	#vdp_bg_nametable+(vram_sega_bg/$2000),(a6) ; $8405 ; set bg nametable at $A000
 		move.w	#vdp_bg_color+0,(a6)
-		move.w	#vdp_1px_hscroll,(a6)
-		move.w	#vdp_320px_screen_width,(a6)
-		move.w	#vdp_plane_width_128,(a6)
+		move.w	#vdp_full_vscroll|vdp_1px_hscroll,(a6)	; vscroll by screen. hscroll by line
+		move.w	#vdp_320px_screen_width,(a6)			; H40 mode
+		move.w	#vdp_plane_width_128|vdp_plane_height_32,(a6)	; 128x32 plane size
 		clr.b	(f_water_pal_full).w
 		clr.w	(f_two_player).w
 		disable_ints
 		disable_display
-		bsr.w	ClearScreen
+		bsr.w	ClearScreen ; clear VRAM nametables and sprite, vscroll, and hscroll buffers
 
 		dma_fill	0,sizeof_vram_sega_pt,vram_sega_fg ; clear the FG table we just configured
 		
@@ -3876,11 +3876,11 @@ sega_bg_height:	equ $1C
 		lea	(Nem_IntroTrails).l,a0			; load blue streaks
 		bsr.w	NemDec
 		
-; This gets overwritten by the upscaled Sonic sprite. This may have
-; been used to test the Sega screen before the sprite upscaling logic
-; was added.
+		; This gets overwritten by the upscaled Sonic sprite. This may have
+		; been used to test the Sega screen before the sprite upscaling logic
+		; was added.
 		loc_vram	vram_Giant_Sonic
-		lea	(Nem_MechaSonic).l,a0
+		lea	(Nem_MechaSonic).l,a0			; load Mecha Sonic
 		bsr.w	NemDec
 		
 		lea	(v_128x128_tiles).l,a1
@@ -3889,7 +3889,7 @@ sega_bg_height:	equ $1C
 		bsr.w	EniDec
 		
 		lea	(v_128x128_tiles).l,a1
-		vdp_comm.l	move,vram_sega_bg,vram,write,d0
+		loc_vram	vram_sega_bg,d0
 		moveq	#sega_bg_width-1,d1
 		moveq	#sega_bg_height-1,d2
 		bsr.w	TilemapToVRAM_H80_Sega			; copy Sega logo mappings to VRAM
@@ -3922,12 +3922,12 @@ sega_bg_height:	equ $1C
 		tst.b	(f_segascr_paldone).w
 		beq.s	.waitpal
 	if FixBugs=0
-; This is a leftover from Sonic 1: ObjB0 plays the Sega sound now.
-; Normally, you'll only hear one Sega sound, but the actually tries
-; to play it twice. The only reason it doesn't is because the sound
-; queue only has room for one sound per frame. Some custom sound
-; drivers don't have this limitation, however, and the sound will
-; indeed play twice in those.	
+		; This is a leftover from Sonic 1: ObjB0 plays the Sega sound now.
+		; Normally, you'll only hear one Sega sound, but the actually tries
+		; to play it twice. The only reason it doesn't is because the sound
+		; queue only has room for one sound per frame. Some custom sound
+		; drivers don't have this limitation, however, and the sound will
+		; indeed play twice in those.	
 		move.b	#cmd_Sega,d0
 		bsr.w	PlaySound
 	endc	
@@ -3989,79 +3989,66 @@ GM_Title:
 		bsr.w	PaletteFadeOut				; fade screen to black
 		disable_ints
 
+		; Configure the VDP for the Title Screen.
 		lea	(vdp_control_port).l,a6
-		move.w	#-$7FFC,(a6)
-		move.w	#-$7DD0,(a6)
-		move.w	#-$7BF9,(a6)
-		move.w	#-$6FFF,(a6)
-		move.w	#-$6E00,(a6)
-		move.w	#-$74FD,(a6)
-		move.w	#-$78E0,(a6)
+		move.w	#vdp_md_color,(a6)	; disable horizontal interrupts
+		move.w	#vdp_fg_nametable+(vram_title_fg/$400),(a6) ; set FG nametable at $C000
+		move.w	#vdp_bg_nametable+(vram_title_bg/$2000),(a6) ; set BG nametable at $E000
+		move.w	#vdp_plane_width_64|vdp_plane_height_32,(a6)	; 64x32 plane size
+		move.w	#vdp_window_y_pos,(a6)				; disable window plane
+		move.w	#vdp_full_vscroll|vdp_1px_hscroll,(a6)	; vscroll by screen. hscroll by line
+		move.w	#vdp_bg_color+32,(a6) ; BG color is Line 2, Color 1	
 		clr.b	(f_water_pal_full).w
-		move.w	#-$737F,(a6)
-		bsr.w	ClearScreen
-		lea	(v_sprite_queue).w,a1
-		moveq	#0,d0
-		move.w	#$FF,d1
+		move.w	#vdp_320px_screen_width,(a6) ; H40 mode
+		
+		bsr.w	ClearScreen		 ; clear VRAM nametables and sprite, vscroll, and hscroll buffers
 
-loc_39E4:				
-		move.l	d0,(a1)+
-		dbf	d1,loc_39E4
-		lea	($FFFFB000).w,a1
-		moveq	#0,d0
-		move.w	#$7FF,d1
+		clear_ram	v_sprite_queue,v_sprite_queue_end
+		clear_ram	ost,ost_end
+		clear_ram	misc_variables,misc_variables_end
+		clear_ram	camera_ram,camera_ram_end
 
-loc_39F4:				
-		move.l	d0,(a1)+
-		dbf	d1,loc_39F4
-		lea	($FFFFF700).w,a1
-		moveq	#0,d0
-		move.w	#$3F,d1
-
-loc_3A04:				
-		move.l	d0,(a1)+
-		dbf	d1,loc_3A04
-		lea	(v_camera_x_pos).w,a1
-		moveq	#0,d0
-		move.w	#$3F,d1
-
-loc_3A14:				
-		move.l	d0,(a1)+
-		dbf	d1,loc_3A14
-		move.l	#$60000002,(vdp_control_port).l
-		lea	(Nem_CreditsFont).l,a0
+		;move.l	#$60000002,(vdp_control_port).l
+		loc_vram	vram_CreditsFont	
+		lea	(Nem_CreditsFont).l,a0	; load the credits font
 		bsr.w	NemDec
-		lea	(off_B2B0).l,a1
-		jsr	loc_B272
-		lea	(v_pal_dry_next).w,a1
-		moveq	#0,d0
-		move.w	#$1F,d1
 
-loc_3A44:				
-		move.l	d0,(a1)+
-		dbf	d1,loc_3A44
-		moveq	#3,d0
+		lea	(CreditTextPointers).l,a1 ; load the "SONIC AND MILES 'TAILS' PROWER IN" text
+		jsr	DisplayText		
+
+;		lea	(v_pal_dry_next).w,a1
+;		moveq	#0,d0
+;		move.w	#$1F,d1
+
+;loc_3A44:				
+;		move.l	d0,(a1)+
+;		dbf	d1,loc_3A44
+
+		clear_ram	palette_fade_buffer,palette_fade_buffer_end	; clear the palette fade buffer (filling it with black)
+		moveq	#id_Pal_Sonic_Miles_BG1,d0	; load Sonic and Tails' palette
 		bsr.w	PalLoad_Next
-		bsr.w	PaletteFadeIn
+		bsr.w	PaletteFadeIn	; fade in, displaying the text that was just loaded
 
-		disable_ints
+		disable_ints	; disable interrupts again, as PaletteFadeIn enabled then
 
-		move.l	#$40000000,(vdp_control_port).l
+		; load title screen assets while above text is displayed
+		loc_vram	vram_Title
 		lea	(Nem_Title).l,a0
 		bsr.w	NemDec
-		move.l	#$6A000000,(vdp_control_port).l
+		loc_vram	vram_TitleSprites
 		lea	(Nem_TitleSprites).l,a0
 		bsr.w	NemDec
-		move.l	#$7E400001,(vdp_control_port).l
+		loc_vram	vram_MenuJunk
 		lea	(Nem_MenuJunk).l,a0
 		bsr.w	NemDec
-		move.l	#$40400002,(vdp_control_port).l
+		loc_vram	vram_Player1VS2
 		lea	(Nem_Player1VS2).l,a0
 		bsr.w	NemDec
-		move.l	#$50000003,(vdp_control_port).l
+		loc_vram	vram_StandardFont_TtlScr
 		lea	(Nem_StandardFont).l,a0
 		bsr.w	NemDec
 
+		; clear some variables
 		move.b	#0,(v_last_lamppost).w
 		move.b	#0,(v_last_lamppost_p2).w
 		move.w	#0,(v_debug_active).w
@@ -4070,26 +4057,34 @@ loc_3A44:
 		move.w	#0,(v_palcycle_time).w
 		move.w	#0,(f_two_player).w
 		move.b	#0,(f_level_started).w
+
+		; fade out
 		bsr.w	PaletteFadeOut
-		disable_ints
+		
+		disable_ints ; disable interrupts again, as PaletteFadeOut enabled them
+
 		lea	(v_128x128_tiles).l,a1
 		lea	(Eni_TitleScreen).l,a0
-		move.w	#$4000,d0
+		move.w	#$4000,d0 ; #tile_Nem_Title
 		bsr.w	EniDec
+		
 		lea	(v_128x128_tiles).l,a1
 		move.l	#$60000003,d0
 		moveq	#$27,d1
 		moveq	#$1B,d2
 		bsr.w	TilemapToVRAM
+
 		lea	(v_128x128_tiles).l,a1
 		lea	(Eni_TitleBack).l,a0
 		move.w	#$4000,d0
 		bsr.w	EniDec
+
 		lea	(v_128x128_tiles).l,a1
 		move.l	#$60500003,d0
 		moveq	#$17,d1
 		moveq	#$1B,d2
 		bsr.w	TilemapToVRAM
+
 		lea	(v_128x128_tiles).l,a1
 		lea	(Eni_TitleLogo).l,a0
 		move.w	#-$2000,d0
@@ -13755,7 +13750,7 @@ sub_B262:
 		move.l	(a1,d0.w),d0
 		movea.l	d0,a1
 
-loc_B272:				
+DisplayText:				
 	disable_ints
 		lea	(vdp_data_port).l,a6
 
@@ -13799,7 +13794,7 @@ sub_B29E:
 ; End of function sub_B29E
 
 ; ===========================================================================
-off_B2B0:	dc.l byte_BD1A		
+CreditTextPointers:	dc.l byte_BD1A		
 		dc.w $C49E
 		dc.l byte_BCEE
 		dc.w $C622
@@ -28825,7 +28820,7 @@ byte_15916:	dc.b $10					; 0
 loc_15926:				
 		addq.b	#2,$24(a0)
 		move.l	#Map_15B68,4(a0)
-		move.w	#$2434,2(a0)
+		move.w	#tile_Nem_Spikes+tile_pal2,ost_tile(a0)
 		ori.b	#4,1(a0)
 		move.b	#4,$18(a0)
 		move.b	$28(a0),d0
@@ -46873,7 +46868,8 @@ SpeedBooster:
 		move.w	off_222BA(pc,d0.w),d1
 		jmp	off_222BA(pc,d1.w)
 ; ===========================================================================
-off_222BA:	dc.w loc_222C2-off_222BA			; 0 
+off_222BA:	
+		dc.w loc_222C2-off_222BA			; 0 
 		dc.w loc_222F8-off_222BA			; 1
 word_222BE:	dc.w $1000					; 0
 		dc.w  $A00					; 1
@@ -46882,7 +46878,7 @@ word_222BE:	dc.w $1000					; 0
 loc_222C2:				
 		addq.b	#2,$24(a0)
 		move.l	#Map_223E2,4(a0)
-		move.w	#-$1C64,2(a0)
+		move.w	#tile_Nem_Booster+tile_pal4+tile_hi,ost_tile(a0)
 		bsr.w	loc_22402
 		ori.b	#4,1(a0)
 		move.b	#$20,$19(a0)
@@ -91765,7 +91761,7 @@ PatternLoadCues:
 		plcp	PLC_DEZBoss				; 49
 		plcp	PLC_EHZAnimals				; 50
 		plcp	PLC_MCZAnimals				; 51
-		plcp	PLC_WFZAnimals,,PLC_HTZAnimals,PLC_MTZAnimals ; 52, these zones share the same list
+		plcp	PLC_HTZ_MTZ_WFZAnimals,,PLC_HTZAnimals,PLC_MTZAnimals ; 52, these zones share the same list
 		plcp	PLC_DEZAnimals				; 53
 		plcp	PLC_HPZAnimals				; 54
 		plcp	PLC_OOZAnimals				; 55
@@ -91783,371 +91779,251 @@ PatternLoadCues:
 
 		
 		
-;plcm:		macro gfx,vram,suffix
-;		dc.l gfx
-;		if strlen("\vram")>0
-;			plcm_vram: = \vram
-;		else
-;			plcm_vram: = last_vram
-;		endc
-;		last_vram: = plcm_vram+sizeof_\gfx
-;		dc.w plcm_vram
-;		ifarg \suffix
-;			tile_\gfx\_\suffix: equ plcm_vram/sizeof_cell
-;			vram_\gfx\_\suffix: equ plcm_vram
-;		else
-;			if ~def(tile_\gfx)
-;			tile_\gfx: equ plcm_vram/sizeof_cell
-;			vram_\gfx: equ plcm_vram
-;			endc
-;		endc
-;		endm
-
-plcm:		macro gfx,arttile,suffix
+    plcm:		macro gfx,vram,suffix
 		dc.l gfx
-		ifarg \arttile
-			plcm_vram: = \arttile*sizeof_cell
+		ifarg \vram
+			plcm_vram: = \vram
 		else
 			plcm_vram: = last_vram
 		endc
 		last_vram: = plcm_vram+sizeof_\gfx
 		dc.w plcm_vram
 		ifarg \suffix
-			vram_\gfx\_\suffix: equ plcm_vram
+			tile_\gfx\_\suffix: equ plcm_vram/sizeof_cell ; Hivebrain stores the vram address, and calculates the tile count from it
+	;		vram_\gfx\_\suffix: equ plcm_vram
 		else
-			vram_\gfx: equ plcm_vram
+			if ~def(tile_\gfx)
+			tile_\gfx: equ plcm_vram/sizeof_cell
+	;		vram_\gfx: equ plcm_vram
+			endc
 		endc
 		endm
 
-;plcheader:	macro *
-;		\*: equ *
-;		plc_count\@: equ (\*_end-\*-2)/sizeof_plc
-;		dc.w plc_count\@-1
-;		endm		
+;plcm:		macro gfx,arttile,suffix
+;		dc.l gfx
+;		ifarg \arttile
+;			plcm_vram: = \arttile*sizeof_cell
+;		else
+;			plcm_vram: = last_vram
+;		endc
+;		last_vram: = plcm_vram+sizeof_\gfx
+;		dc.w plcm_vram
+;		ifarg \suffix
+;			vram_\gfx\_\suffix: equ plcm_vram
+;		else
+;			vram_\gfx: equ plcm_vram
+;		endc
+;		endm
+
+plcheader:	macro *
+		\*: equ *
+		plc_count\@: equ (\*_end-\*-2)/sizeof_plc
+		dc.w plc_count\@-1
+		endm		
 		
 ;---------------------------------------------------------------------------------------
-;Pattern load custandard block	1
+; Pattern load cues - standard block 1
 ;---------------------------------------------------------------------------------------
-PLC_Main:							;plcheader
-		dc.w 3			
-		dc.l Nem_HUD
-		dc.w $D940
-;plcm Nem_HUD,$06BC+$4A
-		dc.l Nem_Sonic_Life_Counter
-		dc.w $FA80
-		dc.l Nem_Ring
-		dc.w $D780
-		dc.l Nem_Numbers
-		dc.w $9580
+PLC_Main:	plcheader
+		plcm 	Nem_HUD,vram_HUD
+		plcm 	Nem_Sonic_Life_Counter,vram_lifecounter
+		plcm	Nem_Ring,vram_Ring
+		plcm	Nem_Numbers,vram_Numbers
+	PLC_Main_end:
 ;---------------------------------------------------------------------------------------
-;Pattern load custandard block	2
+; Pattern load cues - standard block 2
 ;---------------------------------------------------------------------------------------
-PLC_Main2:		dc.w 3			
-		dc.l Nem_Checkpoint
-		dc.w $8F80
-		dc.l Nem_Monitors_and_PowerUps
-		dc.w $D000
-		dc.l Nem_Shield
-		dc.w $97C0
-		dc.l Nem_Invinciblity_Stars
-		dc.w $9BC0
+PLC_Main2:	plcheader		
+		plcm	Nem_Checkpoint,vram_Checkpoint
+		plcm	Nem_Monitors_and_PowerUps,vram_Powerups
+		plcm 	Nem_Shield, vram_Shield
+		plcm	Nem_Invinciblity_Stars,vram_Invinciblity_Stars
+	PLC_Main2_end:
 ;---------------------------------------------------------------------------------------
-;Pattern load cuwater level standard block
+; Pattern load cues - water level standard block
 ;---------------------------------------------------------------------------------------
-PLC_Water:		dc.w 2			
-		dc.l Nem_Explosion
-		dc.w $B480
-		dc.l Nem_SuperSonic_Stars
-		dc.w $BE40
-		dc.l Nem_Bubbles
-		dc.w $BD00
+PLC_Water:		plcheader			
+		plcm	Nem_Explosion,vram_Explosion
+		plcm	Nem_SuperSonic_Stars,vram_SuperSonic_stars
+		plcm	Nem_Bubbles,vram_Bubbles
+	PLC_Water_end:
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;Game/Time over
+; Pattern load cue - Game/Time over
 ;---------------------------------------------------------------------------------------
-PLC_GameOver:		dc.w 0			
-		dc.l Nem_Game_Over
-		dc.w $9BC0
+PLC_GameOver:	plcheader		
+		plcm Nem_Game_Over,vram_Game_Over
+	PLC_GameOver_end:
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;EHZ Primary
+; Pattern load cues - Emerald Hill Primary
 ;---------------------------------------------------------------------------------------
-PLC_EHZ1:		dc.w 5			
-		dc.l Nem_Waterfall
-		dc.w $73C0
-		dc.l Nem_EHZBridge
-		dc.w $76C0
-		dc.l Nem_HTZFireball1
-		dc.w $77C0
-		dc.l Nem_Buzzer
-		dc.w $7A40
-		dc.l Nem_Coconuts
-		dc.w $7DC0
-		dc.l Nem_Masher
-		dc.w $8280
+PLC_EHZ1:		plcheader	
+		plcm	Nem_Waterfall,vram_Waterfall
+		plcm	Nem_Bridge,vram_Bridge
+		plcm	Nem_Fireball1,vram_Buzzer_Fireball ; loaded but never used
+		plcm	Nem_Buzzer,vram_Buzzer
+		plcm	Nem_Coconuts,vram_Coconuts
+		plcm	Nem_Masher,vram_Masher
+	PLC_EHZ1_end:	
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;EHZ Secondary
+; Pattern load cues - Emerald Hill Secondary
 ;---------------------------------------------------------------------------------------
-PLC_EHZ2:		dc.w 3			
-		dc.l Nem_Spikes
-		dc.w $8680
-		dc.l Nem_DignlSprng
-		dc.w $8780
-		dc.l Nem_VrtclSprng
-		dc.w $8B80
-		dc.l Nem_HrzntlSprng
-		dc.w $8E00
+PLC_EHZ2:		plcheader
+		plcm	Nem_Spikes,vram_Spikes
+		plcm	Nem_DignlSprng,vram_DignlSprng
+		plcm	Nem_VrtclSprng,vram_VrtclSprng
+		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
+	PLC_EHZ2_end:
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;Miles 1up patch
+; Pattern load cue - Miles 1-UP patch
 ;---------------------------------------------------------------------------------------
-PLC_Miles1Up:		dc.w 0			
-		dc.l Nem_MilesLife
-		dc.w $DE80
+PLC_Miles1Up:		plcheader			
+		plcm	Nem_MilesLife,vram_Miles_Tails_1UP
+	PLC_Miles1Up_end:
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;Miles life counter
+; Pattern load cue - Miles life counter
 ;---------------------------------------------------------------------------------------
-PLC_MilesLife:		dc.w 0			
-		dc.l Nem_MilesLife
-		dc.w $FA80
+PLC_MilesLife:	plcheader			
+		plcm	Nem_MilesLife,vram_lifecounter
+	PLC_MilesLife_end:	
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;Tails 1up patch
+; Pattern load cue - Tails 1-UP patch
 ;---------------------------------------------------------------------------------------
-PLC_Tails1Up:		dc.w 0			
-		dc.l Nem_TailsLife
-		dc.w $DE80
+PLC_Tails1Up:		plcheader			
+		plcm	Nem_TailsLife,vram_Miles_Tails_1UP
+	PLC_Tails1Up_end:
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;Tails life counter
+; Pattern load cue - Tails life counter
 ;---------------------------------------------------------------------------------------
-PLC_TailsLife:		dc.w 0			
-		dc.l Nem_TailsLife
-		dc.w $FA80
+PLC_TailsLife:	plcheader			
+		plcm	Nem_TailsLife,vram_lifecounter
+	PLC_TailsLife_end:		
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;MTZ primary
+; Pattern load cues - Metropolis Primary
 ;---------------------------------------------------------------------------------------
-PLC_MTZ1:		dc.w 8			
-		dc.l Nem_MTZWheel
-		dc.w $6F00
-		dc.l Nem_MTZWheelIndent
-		dc.w $7E00
-		dc.l Nem_MTZLavaCup
-		dc.w $7F20
-		dc.l Nem_MTZBoltEnd_Rope
-		dc.w $7FA0
-		dc.l Nem_MTZSteam
-		dc.w $80A0
-		dc.l Nem_MTZSpikeBlock
-		dc.w $8280
-		dc.l Nem_MTZSpike
-		dc.w $8380
-		dc.l Nem_Shellcracker
-		dc.w $6380
-		dc.l Nem_Asteron
-		dc.w $6D00
+PLC_MTZ1:		plcheader	
+		plcm	Nem_MTZWheel,vram_MTZWheel
+		plcm	Nem_MTZWheelIndent,vram_MTZWheelIndent	
+		plcm	Nem_LavaCup,vram_LavaCup	
+		plcm	Nem_BoltEnd_Rope,vram_BoltEnd_Rope		
+		plcm	Nem_SteamSpring,vram_SteamSpring	
+		plcm	Nem_SpikeBlock,vram_SpikeBlock
+		plcm	Nem_MTZSpike,vram_MTZSpike
+		plcm	Nem_Shellcracker,vram_Shellcracker		
+		plcm	Nem_Asteron,vram_Asteron
+	PLC_MTZ1_end:	
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;MTZ Secondary
+; Pattern load cues - Metropolis Secondary
 ;---------------------------------------------------------------------------------------
-PLC_MTZ2:		dc.w 8			
-		dc.l Nem_Button
-		dc.w $8480
-		dc.l Nem_Spikes
-		dc.w $8680
-		dc.l Nem_Slicer
-		dc.w $8780
-		dc.l Nem_VrtclSprng
-		dc.w $8B80
-		dc.l Nem_HrzntlSprng
-		dc.w $8E00
-		dc.l Nem_MTZAsstBlocks
-		dc.w $A000
-		dc.l Nem_MTZLavaBubble
-		dc.w $A6C0
-		dc.l Nem_MTZCog
-		dc.w $ABE0
-		dc.l Nem_MTZSpinTubeFlash
-		dc.w $AD60
+PLC_MTZ2:		plcheader			
+		plcm	Nem_Button,vram_Button
+		plcm	Nem_Spikes,vram_Spikes
+		plcm	Nem_Slicer,vram_Slicer
+		plcm	 Nem_VrtclSprng,vram_VrtclSprng
+		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
+		plcm	Nem_MTZAsstBlocks,vram_MTZAsstBlocks
+		plcm	Nem_LavaBubble,vram_LavaBubble
+		plcm	Nem_Cog,vram_Cog
+		plcm	Nem_MTZSpinTubeFlash,vram_MTZSpinTubeFlash
+	PLC_MTZ2_end:	
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;WFZ Primary
+; Pattern load cues - Wing Fortress Primary
 ;---------------------------------------------------------------------------------------
-PLC_WFZ1:		dc.w 9			
-		dc.l Nem_Tornado
-		dc.w $A000
-		dc.l Nem_Clouds
-		dc.w $A9E0
-		dc.l Nem_WFZVrtclPrpllr
-		dc.w $AC20
-		dc.l Nem_WFZHrzntlPrpllr
-		dc.w $79A0
-		dc.l Nem_Balkiry
-		dc.w $ACA0
-		dc.l Nem_BreakPanels
-		dc.w $9180
-		dc.l Nem_Clucker
-		dc.w $6F20
-		dc.l Nem_WFZTiltPlatforms
-		dc.w $7260
-		dc.l Nem_Tornado
-		dc.w $A000
-		dc.l Nem_Clouds
-		dc.w $A9E0
+PLC_WFZ1:		plcheader			
+		plcm	Nem_Tornado,vram_Tornado
+		plcm	Nem_Clouds,vram_Clouds
+		plcm	Nem_WFZVrtclPrpllr,vram_WFZVrtclPrpllr
+		plcm	Nem_WFZHrzntlPrpllr,vram_WFZHrzntlPrpllr
+		plcm	Nem_Balkiry,vram_Balkriy
+		plcm	Nem_BreakPanels,vram_BreakPanels
+		plcm	Nem_Clucker,vram_Clucker
+		plcm	Nem_WFZTiltPlatforms,vram_WFZTiltPlatforms
+		; Redundant entries.
+		plcm	Nem_Tornado,vram_Tornado
+		plcm	Nem_Clouds,vram_Clouds
+	PLC_WFZ1_end:	
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;WFZ Secondary
+; Pattern load cues - Wing Fortress Secondary
 ;---------------------------------------------------------------------------------------
-PLC_WFZ2:		dc.w $D			
-		dc.l Nem_WFZVrtclPrpllr
-		dc.w $AC20
-		dc.l Nem_WFZHrzntlPrpllr
-		dc.w $79A0
-		dc.l Nem_WFZVrtclLazer
-		dc.w $73E0
-		dc.l Nem_WFZWallTurret
-		dc.w $7560
-		dc.l Nem_WFZHrzntlLazer
-		dc.w $7860
-		dc.l Nem_WFZConveyorBeltWheel
-		dc.w $7D40
-		dc.l Nem_WFZHook
-		dc.w $7F40
-		dc.l Nem_WFZThrust
-		dc.w $8CA0
-		dc.l Nem_WFZBeltPlatform
-		dc.w $81C0
-		dc.l Nem_WFZGunPlatform
-		dc.w $8340
-		dc.l Nem_WFZUnusedBadnik
-		dc.w $8A00
-		dc.l Nem_WFZLaunchCatapult
-		dc.w $8B80
-		dc.l Nem_WFZSwitch
-		dc.w $8C20
-		dc.l Nem_WFZFloatingPlatform
-		dc.w $8DA0
+PLC_WFZ2:	plcheader	
+		; Redundant: these first two are also loaded by the first cue.	
+		plcm	Nem_WFZVrtclPrpllr,vram_WFZVrtclPrpllr
+		plcm	Nem_WFZHrzntlPrpllr,vram_WFZHrzntlPrpllr
+		plcm	Nem_WFZVrtclLaser,vram_WFZVrtclLaser
+		plcm	Nem_WFZWallTurret,vram_WFZWallTurret
+		plcm	Nem_WFZHrzntlLaser,vram_WFZHrzntlLaser
+		plcm	Nem_WFZConveyorBeltWheel,vram_WFZConveyorBeltWheel
+		plcm	Nem_WFZHook,vram_WFZHook
+		plcm	Nem_WFZThrust,vram_WFZThrust
+		plcm	Nem_WFZBeltPlatform,vram_WFZBeltPlatform
+		plcm	Nem_WFZGunPlatform,vram_WFZGunPlatform
+		plcm	Nem_WFZUnusedBadnik,vram_WfzUnusedBadnik
+		plcm	Nem_WFZLaunchCatapult,vram_WFZLaunchCatapult
+		plcm	Nem_WFZSwitch,vram_WFZSwitch
+		plcm	Nem_WFZFloatingPlatform,vram_WFZFloatingPlatform
+	PLC_WFZ2_end:		
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;HTZ Primary
+; Pattern load cues - Hill Top Primary
 ;---------------------------------------------------------------------------------------
-PLC_HTZ1:		dc.w 9			
-		dc.l Nem_HTZFireball1
-		dc.w $73C0
-		dc.l Nem_HTZRock
-		dc.w $7640
-		dc.l Nem_HTZSeeSaw
-		dc.w $78C0
-		dc.l Nem_Sol
-		dc.w $7BC0
-		dc.l Nem_Rexon
-		dc.w $6FC0
-		dc.l Nem_Spiker
-		dc.w $A400
-		dc.l Nem_Spikes
-		dc.w $8680
-		dc.l Nem_DignlSprng
-		dc.w $8780
-		dc.l Nem_VrtclSprng
-		dc.w $8B80
-		dc.l Nem_HrzntlSprng
-		dc.w $8E00
+PLC_HTZ1:	plcheader			
+		plcm	Nem_Fireball1,vram_HTZFireball1
+		plcm	Nem_HTZRock,vram_HTZRock
+		plcm	Nem_SeeSaw,vram_SeeSaw
+		plcm	Nem_Sol,vram_Sol
+		plcm	Nem_Rexon,vram_Rexon
+		plcm	Nem_Spiker,vram_Spiker
+		plcm	Nem_Spikes,vram_Spikes
+		plcm	Nem_DignlSprng,vram_DignlSprng
+		plcm	Nem_VrtclSprng,vram_VrtclSprng
+		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
+	PLC_HTZ1_end:	
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;HTZ Secondary
+; Pattern load cues - Hill Top Secondary
 ;---------------------------------------------------------------------------------------
-PLC_HTZ2:		dc.w 2			
-		dc.l Nem_HTZZipline
-		dc.w $7CC0
-		dc.l Nem_HTZFireball2
-		dc.w $82C0
-		dc.l Nem_HTZOneWayBarrier
-		dc.w $84C0
-		
-		
-		
-		
+PLC_HTZ2:	plcheader		
+		plcm	Nem_HTZZipline,vram_HTZZipline
+		plcm	Nem_HTZFireball2,vram_HTZFireball2
+		plcm	Nem_HTZOneWayBarrier,vram_HTZOneWayBarrier
+	PLC_HTZ2_end:		
 		
 PLC_HPZ1:		
 PLC_HPZ2:		
 		
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;OOZ Primary
+; Pattern load cues - Oil Ocean Primary
 ;---------------------------------------------------------------------------------------
-PLC_OOZ1:		dc.w 8			
-		dc.l Nem_OOZBurn
-		dc.w $5C40
-		dc.l Nem_OOZElevator
-		dc.w $5E80
-		dc.l Nem_OOZSpikedBall
-		dc.w $6180
-		dc.l Nem_BurnerLid
-		dc.w $6580
-		dc.l Nem_StripedBlocksVert
-		dc.w $6640
-		dc.l Nem_Oilfall
-		dc.w $66C0
-		dc.l Nem_Oilfall2
-		dc.w $68C0
-		dc.l Nem_OOZSpringBall
-		dc.w $6A80
-		dc.l Nem_LaunchBall
-		dc.w $6D00
+PLC_OOZ1:	plcheader			
+		plcm	Nem_OOZBurn,vram_OOZBurn
+		plcm	Nem_OOZElevator,vram_OOZElevator
+		plcm	Nem_OOZSpikedBall,vram_OOZSpikedBall
+		plcm	Nem_BurnerLid,vram_BurnerLid
+		plcm	Nem_StripedBlocksVert,vram_StripedBlocksVert
+		plcm	Nem_Oilfall,vram_Oilfall
+		plcm	Nem_Oilfall2,vram_Oilfall2
+		plcm	Nem_OOZSpringBall,vram_OOZSpringBall
+		plcm	Nem_LaunchBall,vram_LaunchBall
+	PLC_OOZ1_end:	
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;OOZ Secondary
+; Pattern load cues - Oil Ocean Secondary
 ;---------------------------------------------------------------------------------------
-PLC_OOZ2:		dc.w $B			
-		dc.l Nem_OOZPlatform
-		dc.w $73A0
-		dc.l Nem_PushSpring
-		dc.w $78A0
-		dc.l Nem_OOZSwingPlat
-		dc.w $7C60
-		dc.l Nem_StripedBlocksHoriz
-		dc.w $7FE0
-		dc.l Nem_OOZFan
-		dc.w $8060
-		dc.l Nem_Button
-		dc.w $8480
-		dc.l Nem_Spikes
-		dc.w $8680
-		dc.l Nem_DignlSprng
-		dc.w $8780
-		dc.l Nem_VrtclSprng
-		dc.w $8B80
-		dc.l Nem_HrzntlSprng
-		dc.w $8E00
-		dc.l Nem_Aquis
-		dc.w $A000
-		dc.l Nem_Octus
-		dc.w $A700
+PLC_OOZ2:	plcheader		
+		plcm	Nem_OOZPlatform,vram_OOZPlatform
+		plcm	Nem_PushSpring,vram_PushSpring
+		plcm	Nem_OOZSwingPlat,vram_OOZSwingPlat
+		plcm	Nem_StripedBlocksHoriz,vram_StripedBlocksHoriz
+		plcm	Nem_OOZFan,vram_OOZFan
+		plcm	Nem_Button,vram_Button
+		plcm	Nem_Spikes,vram_Spikes
+		plcm	Nem_DignlSprng,vram_DignlSprng
+		plcm	Nem_VrtclSprng,vram_VrtclSprng
+		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
+		plcm	Nem_Aquis,vram_Aquis
+		plcm	Nem_Octus,vram_Octus
+	PLC_OOZ2_end:
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;MCZ Primary
+; Pattern load cues - Mystic Cave Primary
 ;---------------------------------------------------------------------------------------
 PLC_MCZ1:		dc.w 5			
-		dc.l Nem_MCZCrate
+		dc.l Nem_Crate
 		dc.w $7A80
 		dc.l Nem_MCZCollapsingPlat
 		dc.w $7E80
@@ -92160,27 +92036,23 @@ PLC_MCZ1:		dc.w 5
 		dc.l Nem_Crawlton
 		dc.w $7800
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;MCZ Secondary
+; Pattern load cues - Mystic Cave Secondary
 ;---------------------------------------------------------------------------------------
 PLC_MCZ2:		dc.w 5			
 		dc.l Nem_HorizSpike
-		dc.w $8580
+		dc.w vram_HorizSpike
 		dc.l Nem_Spikes
-		dc.w $8680
+		dc.w vram_Spikes
 		dc.l Nem_MCZDrawbridgeLogs
 		dc.w $8780
 		dc.l Nem_LeverSpring
-		dc.w $8800
+		dc.w vram_LeverSpring
 		dc.l Nem_VrtclSprng
-		dc.w $8B80
+		dc.w vram_VrtclSprng
 		dc.l Nem_HrzntlSprng
-		dc.w $8E00
+		dc.w vram_HrzntlSprng
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;CNZ Primary
+; Pattern load cues - Casino Night Primary
 ;---------------------------------------------------------------------------------------
 PLC_CNZ1:		dc.w 9			
 		dc.l Nem_Crawl
@@ -92204,9 +92076,7 @@ PLC_CNZ1:		dc.w 9
 		dc.l Nem_CNZSaucerBumper
 		dc.w $7CC0
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;CNZ Secondary
+; Pattern load cues - Casino Night Secondary
 ;---------------------------------------------------------------------------------------
 PLC_CNZ2:		dc.w 5			
 		dc.l Nem_CNZDiagPlunger
@@ -92214,25 +92084,22 @@ PLC_CNZ2:		dc.w 5
 		dc.l Nem_CNZVertPlunger
 		dc.w $8440
 		dc.l Nem_Spikes
-		dc.w $8680
+		dc.w vram_Spikes
 		dc.l Nem_DignlSprng
-		dc.w $8780
+		dc.w vram_DignlSprng
 		dc.l Nem_VrtclSprng
-		dc.w $8B80
+		dc.w vram_VrtclSprng
 		dc.l Nem_HrzntlSprng
-		dc.w $8E00
+		dc.w vram_HrzntlSprng
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;CPZ Primary
+; Pattern load cues - Chemical Plant Primary
 ;---------------------------------------------------------------------------------------
 PLC_CPZ1:		dc.w 8			
 		dc.l Nem_CPZPylons
 		dc.w $6E60
 		dc.l Nem_ConstructionStripes
 		dc.w $7280
-		dc.l Nem_CPZBooster
-		dc.w $7380
+		plcm Nem_Booster,vram_Booster
 		dc.l Nem_CPZElevator
 		dc.w $7400
 		dc.l Nem_CPZDumpingPipePlat
@@ -92241,15 +92108,12 @@ PLC_CPZ1:		dc.w 8
 		dc.w $7C00
 		dc.l Nem_WaterSurface1
 		dc.w vram_WaterSurface
-;dc.w	Nem_WaterSurface1, vram_WaterSurface
 		dc.l Nem_CPZStairBlock
 		dc.w $8300
 		dc.l Nem_CPZMetalBlock
 		dc.w $8600
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;CPZ Secondary
+; Pattern load cues - Chemical Plant Secondary
 ;---------------------------------------------------------------------------------------
 PLC_CPZ2:		dc.w 6			
 		dc.l Nem_Grabber
@@ -92257,27 +92121,23 @@ PLC_CPZ2:		dc.w 6
 		dc.l Nem_Spiny
 		dc.w $A5A0
 		dc.l Nem_Spikes
-		dc.w $8680
+		dc.w vram_Spikes
 		dc.l Nem_CPZDroplet
 		dc.w $8780
 		dc.l Nem_LeverSpring
 		dc.w $8800
 		dc.l Nem_VrtclSprng
-		dc.w $8B80
+		dc.w vram_VrtclSprng
 		dc.l Nem_HrzntlSprng
-		dc.w $8E00
+		dc.w vram_HrzntlSprng
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;DEZ Primary
+; Pattern load cue - Death Egg Primary
 ;---------------------------------------------------------------------------------------
 PLC_DEZ1:		dc.w 0			
 		dc.l Nem_ConstructionStripes
 		dc.w $6500
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;DEZ Secondary
+; Pattern load cues - Death Egg Secondary
 ;---------------------------------------------------------------------------------------
 PLC_DEZ2:		dc.w 4			
 		dc.l Nem_MechaSonic
@@ -92291,9 +92151,7 @@ PLC_DEZ2:		dc.w 4
 		dc.l Nem_RobotnikLower
 		dc.w $AC80
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;ARZ Primary
+; Pattern load cues - Aquatic Ruin Primary
 ;---------------------------------------------------------------------------------------
 PLC_ARZ1:		dc.w 3			
 		dc.l Nem_ARZBarrier
@@ -92305,9 +92163,7 @@ PLC_ARZ1:		dc.w 3
 		dc.l Nem_ArrowAndShooter
 		dc.w $82E0
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;ARZ Secondary
+; Pattern load cues - Aquatic Ruin Secondary
 ;---------------------------------------------------------------------------------------
 PLC_ARZ2:		dc.w 7			
 		dc.l Nem_ChopChop
@@ -92319,43 +92175,32 @@ PLC_ARZ2:		dc.w 7
 		dc.l Nem_BubbleGenerator
 		dc.w $AB60
 		dc.l Nem_Spikes
-		dc.w $8680
+		dc.w vram_Spikes
 		dc.l Nem_LeverSpring
-		dc.w $8800
+		dc.w vram_LeverSpring
 		dc.l Nem_VrtclSprng
-		dc.w $8B80
+		dc.w vram_VrtclSprng
 		dc.l Nem_HrzntlSprng
-		dc.w $8E00
+		dc.w vram_HrzntlSprng
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;SCZ Primary
+; Pattern load cue - Sky Chase Primary
 ;---------------------------------------------------------------------------------------
-PLC_SCZ1:		dc.w 0			
-		dc.l Nem_Tornado
-		dc.w $A000
+PLC_SCZ1:	plcheader			
+		plcm Nem_Tornado,vram_Tornado
+	PLC_SCZ1_end:	
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;SCZ Secondary
+; Pattern load cues - Sky Chase Secondary
 ;---------------------------------------------------------------------------------------
-PLC_SCZ2:		dc.w 5			
-		dc.l Nem_Clouds
-		dc.w $A9E0
-		dc.l Nem_WFZVrtclPrpllr
-		dc.w $AC20
-		dc.l Nem_WFZHrzntlPrpllr
-		dc.w $79A0
-		dc.l Nem_Balkiry
-		dc.w $ACA0
-		dc.l Nem_Turtloid
-		dc.w $7140
-		dc.l Nem_Nebula
-		dc.w $6DC0
+PLC_SCZ2:	plcheader			
+		plcm	Nem_Clouds,vram_Clouds
+		plcm	Nem_WFZVrtclPrpllr,vram_WFZVrtclPrpllr
+		plcm	Nem_WFZHrzntlPrpllr,vram_WFZHrzntlPrpllr
+		plcm	Nem_Balkiry,vram_Balkriy
+		plcm	Nem_Turtloid,vram_Turtloid
+		plcm	Nem_Nebula,vram_Nebula
+	PLC_SCZ2_end:	
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;Sonic end of level results screen
+; Pattern load cues - Sonic end of level results screen
 ;---------------------------------------------------------------------------------------
 PLC_ResultsSonic:		dc.w 3			
 		dc.l Nem_TitleCard
@@ -92367,17 +92212,13 @@ PLC_ResultsSonic:		dc.w 3
 		dc.l Nem_Perfect
 		dc.w $A800
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;End of	level signpost
+; Pattern load cue - End of	level signpost
 ;---------------------------------------------------------------------------------------
-PLC_Signpost:		dc.w 0			
-		dc.l Nem_Signpost
-		dc.w $8680
+PLC_Signpost:	plcheader	
+		plcm Nem_Signpost,vram_Signpost
+	PLC_Signpost_end:	
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;CPZ Boss
+; Pattern load cues - Chemical Plant Boss
 ;---------------------------------------------------------------------------------------
 PLC_CPZBoss:		dc.w 4			
 		dc.l Nem_Eggpod
@@ -92391,9 +92232,7 @@ PLC_CPZBoss:		dc.w 4
 		dc.l Nem_FieryExplosion
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;EHZ Boss
+; Pattern load cues - Emerald Hill Boss
 ;---------------------------------------------------------------------------------------
 PLC_EHZBoss:		dc.w 3			
 		dc.l Nem_Eggpod
@@ -92405,9 +92244,7 @@ PLC_EHZBoss:		dc.w 3
 		dc.l Nem_FieryExplosion
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;HTZ Boss
+; Pattern load cues - Hill Top Boss
 ;---------------------------------------------------------------------------------------
 PLC_HTZBoss:		dc.w 3			
 		dc.l Nem_Eggpod
@@ -92419,9 +92256,7 @@ PLC_HTZBoss:		dc.w 3
 		dc.l Nem_BossSmoke
 		dc.w $BC80
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;ARZ Boss
+; Pattern load cues - Aquatic Ruin Boss
 ;---------------------------------------------------------------------------------------
 PLC_ARZBoss:		dc.w 2			
 		dc.l Nem_Eggpod
@@ -92431,9 +92266,7 @@ PLC_ARZBoss:		dc.w 2
 		dc.l Nem_FieryExplosion
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;MCZ Boss
+; Pattern load cues - Mystic Cave Boss
 ;---------------------------------------------------------------------------------------
 PLC_MCZBoss:		dc.w 2			
 		dc.l Nem_Eggpod
@@ -92443,9 +92276,7 @@ PLC_MCZBoss:		dc.w 2
 		dc.l Nem_FieryExplosion
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;CNZ Boss
+; Pattern load cues - Casino Night Boss
 ;---------------------------------------------------------------------------------------
 PLC_CNZBoss:		dc.w 2			
 		dc.l Nem_Eggpod
@@ -92455,9 +92286,7 @@ PLC_CNZBoss:		dc.w 2
 		dc.l Nem_FieryExplosion
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;MTZ Boss
+; Pattern load cues - Metropolis Boss
 ;---------------------------------------------------------------------------------------
 PLC_MTZBoss:		dc.w 3			
 		dc.l Nem_Eggpod
@@ -92469,9 +92298,7 @@ PLC_MTZBoss:		dc.w 3
 		dc.l Nem_FieryExplosion
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;OOZ Boss
+; Pattern load cues- Oil Ocean Boss
 ;---------------------------------------------------------------------------------------
 PLC_OOZBoss:		dc.w 1			
 		dc.l Nem_OOZBoss
@@ -92479,7 +92306,7 @@ PLC_OOZBoss:		dc.w 1
 		dc.l Nem_FieryExplosion
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
+; Pattern load cue
 ;
 ;Unknown
 ;---------------------------------------------------------------------------------------
@@ -92487,113 +92314,101 @@ PLC_FieryExplosion:		dc.w 0
 		dc.l Nem_FieryExplosion
 		dc.w $B000
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
-;
-;Death Egg
+; Pattern load cue - EggRobo
 ;---------------------------------------------------------------------------------------
 PLC_DEZBoss:		dc.w 0			
 		dc.l Nem_DEZBoss
 		dc.w $6600
 ;---------------------------------------------------------------------------------------
-;Pattern load cue
+; Pattern load cue
 ;
 ;EHZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_EHZAnimals:		dc.w 1			
-		dc.l Nem_Squirrel
-		dc.w $B000
-		dc.l Nem_Flicky
-		dc.w $B280
+PLC_EHZAnimals:		plcheader			
+		plcm Nem_Squirrel,vram_animal_1
+		plcm Nem_Flicky,vram_animal_2
+	PLC_EHZAnimals_end:		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
 ;
 ;MCZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_MCZAnimals:		dc.w 1			
-		dc.l Nem_Mouse
-		dc.w $B000
-		dc.l Nem_Chicken
-		dc.w $B280
+PLC_MCZAnimals:		plcheader			
+		plcm Nem_Mouse,vram_animal_1
+		plcm Nem_Chicken,vram_animal_2
+	PLC_MCZAnimals_end:		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
 ;
 ;HTZ/MTZ/WFZ animals
 ;---------------------------------------------------------------------------------------
-PLC_WFZAnimals:		dc.w 1			
-		dc.l Nem_Beaver
-		dc.w $B000
-		dc.l Nem_Eagle
-		dc.w $B280
+PLC_HTZ_MTZ_WFZAnimals:		plcheader			
+		plcm Nem_Beaver,vram_animal_1
+		plcm Nem_Eagle,vram_animal_2
+	PLC_HTZ_MTZ_WFZAnimals_end:	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
 ;
 ;DEZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_DEZAnimals:		dc.w 1			
-		dc.l Nem_Pig
-		dc.w $B000
-		dc.l Nem_Chicken
-		dc.w $B280
+PLC_DEZAnimals:		plcheader			
+		plcm Nem_Pig,vram_animal_1
+		plcm Nem_Chicken,vram_animal_2
+	PLC_DEZAnimals_end:	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
 ;
 ;HPZ animals
 ;---------------------------------------------------------------------------------------
-PLC_HPZAnimals:		dc.w 1			
-		dc.l Nem_Mouse
-		dc.w $B000
-		dc.l Nem_Seal
-		dc.w $B280
+PLC_HPZAnimals:		plcheader			
+		plcm Nem_Mouse,vram_animal_1
+		plcm Nem_Seal,vram_animal_2
+	PLC_HPZAnimals_end:	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
 ;
 ;OOZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_OOZAnimals:		dc.w 1			
-		dc.l Nem_Penguin
-		dc.w $B000
-		dc.l Nem_Seal
-		dc.w $B280
+PLC_OOZAnimals:		plcheader			
+		plcm Nem_Penguin,vram_animal_1
+		plcm Nem_Seal,vram_animal_2
+	PLC_OOZAnimals_end:	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
 ;
 ;SCZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_SCZAnimals:		dc.w 1			
-		dc.l Nem_Turtle
-		dc.w $B000
-		dc.l Nem_Chicken
-		dc.w $B280
+PLC_SCZAnimals:		plcheader			
+		plcm Nem_Turtle,vram_animal_1
+		plcm Nem_Chicken,vram_animal_2
+	PLC_SCZAnimals_end:		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
 ;
 ;CNZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_CNZAnimals:		dc.w 1			
-		dc.l Nem_Bear
-		dc.w $B000
-		dc.l Nem_Flicky
-		dc.w $B280
+PLC_CNZAnimals:		plcheader			
+		plcm Nem_Bear,vram_animal_1
+		plcm Nem_Flicky,vram_animal_2
+	PLC_CNZAnimals_end:	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
 ;
 ;CPZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_CPZAnimals:		dc.w 1			
-		dc.l Nem_Rabbit
-		dc.w $B000
-		dc.l Nem_Eagle
-		dc.w $B280
+PLC_CPZAnimals:		plcheader			
+		plcm Nem_Rabbit,vram_animal_1
+		plcm Nem_Eagle,vram_animal_2
+	PLC_CPZAnimals_end:	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
 ;
 ;ARZ Animals
 ;---------------------------------------------------------------------------------------
-PLC_ARZAnimals:		dc.w 1			
-		dc.l Nem_Penguin
-		dc.w $B000
-		dc.l Nem_Flicky
-		dc.w $B280
+PLC_ARZAnimals:		plcheader			
+		plcm Nem_Penguin,vram_animal_1
+		plcm Nem_Flicky,vram_animal_2
+	PLC_ARZAnimals_end:	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
 ;
@@ -92954,7 +92769,7 @@ LevelIndex:		index offset(*)
 		
 		incfile	Nem_CPZElevator				; ArtNem_82216:
 		incfile	Nem_WaterSurface1			; ArtNem_82364:
-		incfile	Nem_CPZBooster				; ArtNem_824D4:
+		incfile	Nem_Booster				; ArtNem_824D4:
 		incfile	Nem_CPZDroplet				; ArtNem_8253C:
 		incfile	Nem_CPZPylons				; ArtNem_825AE:
 		incfile	Nem_CPZMetalBlock			; ArtNem_827B8:
@@ -93013,9 +92828,9 @@ LevelIndex:		index offset(*)
 		incfile	Nem_WFZGunPlatform			; ArtNem_8D540:
 		incfile	Nem_WFZConveyorBeltWheel		; ArtNem_8D7D8:
 		incfile	Nem_WFZFloatingPlatform	
-		incfile	Nem_WFZVrtclLazer			; ArtNem_8DA6E:
+		incfile	Nem_WFZVrtclLaser			; ArtNem_8DA6E:
 		incfile	Nem_Clouds				; ArtNem_8DAFC:
-		incfile	Nem_WFZHrzntlLazer			; ArtNem_8DC42:
+		incfile	Nem_WFZHrzntlLaser			; ArtNem_8DC42:
 		incfile	Nem_WFZLaunchCatapult			; ArtNem_8DCA2:
 		incfile	Nem_WFZBeltPlatform			; ArtNem_8DD0C:
 		incfile	Nem_WFZUnusedBadnik			; ArtNem_8DDF6:
@@ -93220,42 +93035,42 @@ MapSpec_Turn7:		incbin "mappings/special stage/Curve Right 7.bin"
 ; --------------------------------------------------------------------------------------
 ; Ring location pointers
 ; --------------------------------------------------------------------------------------
-Off_Rings:	
+Off_Rings:	index offset(*)
 
-		dc.w Rings_EHZ_1-Off_Rings			; 0			
-		dc.w Rings_EHZ_2-Off_Rings			; 1
-		dc.w Rings_Lev1_1-Off_Rings			; 2
-		dc.w Rings_Lev1_2-Off_Rings			; 3
-		dc.w Rings_Lev2_1-Off_Rings			; 4
-		dc.w Rings_Lev2_2-Off_Rings			; 5
-		dc.w Rings_Lev3_1-Off_Rings			; 6
-		dc.w Rings_Lev3_2-Off_Rings			; 7
-		dc.w Rings_MTZ_1-Off_Rings			; 8
-		dc.w Rings_MTZ_2-Off_Rings			; 9
-		dc.w Rings_MTZ_3-Off_Rings			; 10
-		dc.w Rings_MTZ_4-Off_Rings			; 11
-		dc.w Rings_WFZ_1-Off_Rings			; 12
-		dc.w Rings_WFZ_2-Off_Rings			; 13
-		dc.w Rings_HTZ_1-Off_Rings			; 14
-		dc.w Rings_HTZ_2-Off_Rings			; 15
-		dc.w Rings_HPZ_1-Off_Rings			; 16
-		dc.w Rings_HPZ_2-Off_Rings			; 17
-		dc.w Rings_Lev9_1-Off_Rings			; 18
-		dc.w Rings_Lev9_2-Off_Rings			; 19
-		dc.w Rings_OOZ_1-Off_Rings			; 20
-		dc.w Rings_OOZ_2-Off_Rings			; 21
-		dc.w Rings_MCZ_1-Off_Rings			; 22
-		dc.w Rings_MCZ_2-Off_Rings			; 23
-		dc.w Rings_CNZ_1-Off_Rings			; 24
-		dc.w Rings_CNZ_2-Off_Rings			; 25
-		dc.w Rings_CPZ_1-Off_Rings			; 26
-		dc.w Rings_CPZ_2-Off_Rings			; 27
-		dc.w Rings_DEZ_1-Off_Rings			; 28
-		dc.w Rings_DEZ_2-Off_Rings			; 29
-		dc.w Rings_ARZ_1-Off_Rings			; 30
-		dc.w Rings_ARZ_2-Off_Rings			; 31
-		dc.w Rings_SCZ_1-Off_Rings			; 32
-		dc.w Rings_SCZ_2-Off_Rings			; 33
+		ptr Rings_EHZ_1			; 0			
+		ptr Rings_EHZ_2			; 1
+		ptr Rings_Lev1_1			; 2
+		ptr Rings_Lev1_2			; 3
+		ptr Rings_Lev2_1			; 4
+		ptr Rings_Lev2_2			; 5
+		ptr Rings_Lev3_1			; 6
+		ptr Rings_Lev3_2			; 7
+		ptr Rings_MTZ_1			; 8
+		ptr Rings_MTZ_2			; 9
+		ptr Rings_MTZ_3			; 10
+		ptr Rings_MTZ_4			; 11
+		ptr Rings_WFZ_1			; 12
+		ptr Rings_WFZ_2			; 13
+		ptr Rings_HTZ_1			; 14
+		ptr Rings_HTZ_2			; 15
+		ptr Rings_HPZ_1			; 16
+		ptr Rings_HPZ_2			; 17
+		ptr Rings_Lev9_1			; 18
+		ptr Rings_Lev9_2			; 19
+		ptr Rings_OOZ_1			; 20
+		ptr Rings_OOZ_2			; 21
+		ptr Rings_MCZ_1			; 22
+		ptr Rings_MCZ_2			; 23
+		ptr Rings_CNZ_1			; 24
+		ptr Rings_CNZ_2			; 25
+		ptr Rings_CPZ_1			; 26
+		ptr Rings_CPZ_2			; 27
+		ptr Rings_DEZ_1			; 28
+		ptr Rings_DEZ_2			; 29
+		ptr Rings_ARZ_1			; 30
+		ptr Rings_ARZ_2			; 31
+		ptr Rings_SCZ_1			; 32
+		ptr Rings_SCZ_2			; 33
 		
 Rings_EHZ_1:	incbin	"level/rings/EHZ 1.bin"
 Rings_EHZ_2:	incbin	"level/rings/EHZ 2.bin"
@@ -93297,42 +93112,43 @@ Rings_SCZ_2:	incbin	"level/rings/SCZ 2.bin"			; null
 ; --------------------------------------------------------------------------------------
 ; Objpos pointers
 ; --------------------------------------------------------------------------------------
-Off_Sprites:	
+Off_Sprites:	index offset(*)
 
-		dc.w ObjPos_EHZ_1-Off_Sprites			;	0 			
-		dc.w ObjPos_EHZ_2-Off_Sprites			;	1
-		dc.w ObjPos_Null-Off_Sprites			;	2
-		dc.w ObjPos_Null-Off_Sprites			;	3
-		dc.w ObjPos_Null-Off_Sprites			;	4
-		dc.w ObjPos_Null-Off_Sprites			;	5
-		dc.w ObjPos_Null-Off_Sprites			;	6
-		dc.w ObjPos_Null-Off_Sprites			;	7
-		dc.w ObjPos_MTZ_1-Off_Sprites			;	8
-		dc.w ObjPos_MTZ_2-Off_Sprites			;	9
-		dc.w ObjPos_MTZ_3-Off_Sprites			;	10
-		dc.w ObjPos_MTZ_3-Off_Sprites			;	11
-		dc.w ObjPos_WFZ_1-Off_Sprites			;	12
-		dc.w ObjPos_WFZ_2-Off_Sprites			;	13
-		dc.w ObjPos_HTZ_1-Off_Sprites			;	14
-		dc.w ObjPos_HTZ_2-Off_Sprites			;	15
-		dc.w ObjPos_HPZ_1-Off_Sprites			;	16
-		dc.w ObjPos_HPZ_2-Off_Sprites			;	17
-		dc.w ObjPos_Null-Off_Sprites			;	18
-		dc.w ObjPos_Null-Off_Sprites			;	19
-		dc.w ObjPos_OOZ_1-Off_Sprites			;	20
-		dc.w ObjPos_OOZ_2-Off_Sprites			;	21
-		dc.w ObjPos_MCZ_1-Off_Sprites			;	22
-		dc.w ObjPos_MCZ_2-Off_Sprites			;	23
-		dc.w ObjPos_CNZ_1-Off_Sprites			;	24
-		dc.w ObjPos_CNZ_2-Off_Sprites			;	25
-		dc.w ObjPos_CPZ_1-Off_Sprites			;	26
-		dc.w ObjPos_CPZ_2-Off_Sprites			;	27
-		dc.w ObjPos_DEZ_1-Off_Sprites			;	28
-		dc.w ObjPos_DEZ_2-Off_Sprites			;	29
-		dc.w ObjPos_ARZ_1-Off_Sprites			;	30
-		dc.w ObjPos_ARZ_2-Off_Sprites			;	31
-		dc.w ObjPos_SCZ_1-Off_Sprites			;	32
-		dc.w ObjPos_SCZ_2-Off_Sprites			;	33
+		ptr ObjPos_EHZ_1			;	0 			
+		ptr ObjPos_EHZ_2			;	1
+		ptr ObjPos_Null			;	2
+		ptr ObjPos_Null			;	3
+		ptr ObjPos_Null			;	4
+		ptr ObjPos_Null			;	5
+		ptr ObjPos_Null			;	6
+		ptr ObjPos_Null			;	7
+		ptr ObjPos_MTZ_1			;	8
+		ptr ObjPos_MTZ_2			;	9
+		ptr ObjPos_MTZ_3			;	10
+		ptr ObjPos_MTZ_3			;	11
+		ptr ObjPos_WFZ_1			;	12
+		ptr ObjPos_WFZ_2			;	13
+		ptr ObjPos_HTZ_1			;	14
+		ptr ObjPos_HTZ_2			;	15
+		ptr ObjPos_HPZ_1			;	16
+		ptr ObjPos_HPZ_2			;	17
+		ptr ObjPos_Null			;	18
+		ptr ObjPos_Null			;	19
+		ptr ObjPos_OOZ_1			;	20
+		ptr ObjPos_OOZ_2			;	21
+		ptr ObjPos_MCZ_1			;	22
+		ptr ObjPos_MCZ_2			;	23
+		ptr ObjPos_CNZ_1			;	24
+		ptr ObjPos_CNZ_2			;	25
+		ptr ObjPos_CPZ_1			;	26
+		ptr ObjPos_CPZ_2			;	27
+		ptr ObjPos_DEZ_1			;	28
+		ptr ObjPos_DEZ_2			;	29
+		ptr ObjPos_ARZ_1			;	30
+		ptr ObjPos_ARZ_2			;	31
+		ptr ObjPos_SCZ_1			;	32
+		ptr ObjPos_SCZ_2			;	33
+		
 		endobj
 ObjPos_EHZ_1:		incbin	"level/objects/EHZ 1.bin"
 		endobj
@@ -93612,28 +93428,28 @@ MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 ; Graphics - more level objects (making use of the rest of an otherwise empty bank)
 ;---------------------------------------------------------------------------------------		
 		
-		incfile	Nem_HTZFireball1
+		incfile	Nem_Fireball1
 		incfile	Nem_Waterfall
 		incfile	Nem_HTZFireball2
-		incfile	Nem_EHZBridge
+		incfile	Nem_Bridge
 		incfile	Nem_HTZZipline
 		incfile	Nem_HTZOneWayBarrier			;ArtNem_HtzValveBarrier
-		incfile	Nem_HTZSeeSaw
+		incfile	Nem_SeeSaw
 		incfile	Nem_UnusedFireball
 		incfile	Nem_HTZRock
 		incfile	Nem_Sol					; ArtNem_HtzSol:
 		incfile	Nem_MTZWheel
 		incfile	Nem_MTZWheelIndent
-		incfile	Nem_MTZSpikeBlock
-		incfile	Nem_MTZSteam
+		incfile	Nem_SpikeBlock
+		incfile	Nem_SteamSpring
 		incfile	Nem_MTZSpike
 		incfile	Nem_MTZAsstBlocks
-		incfile	Nem_MTZLavaBubble
-		incfile	Nem_MTZLavaCup
-		incfile	Nem_MTZBoltEnd_Rope
-		incfile	Nem_MTZCog
+		incfile	Nem_LavaBubble
+		incfile	Nem_LavaCup
+		incfile	Nem_BoltEnd_Rope
+		incfile	Nem_Cog
 		incfile	Nem_MTZSpinTubeFlash
-		incfile	Nem_MCZCrate
+		incfile	Nem_Crate
 		incfile	Nem_MCZCollapsingPlat			; ArtNem_F1ABA:
 		incfile	Nem_MCZVineSwitch			; ArtNem_F1C64:
 		incfile	Nem_MCZVinePulley			; ArtNem_F1D5C:

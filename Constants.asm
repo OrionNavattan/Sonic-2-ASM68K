@@ -87,7 +87,7 @@ vram_menu_bg:             	equ $E000			; Extends until $EFFF
 sizeof_vram_menu_pt:        equ $1000				; 64 cells x 32 cells x 2 bytes per cell
 
 
-; VRAM addresses or tile counts for individual items; tile counts are derived by dividing by $20
+; VRAM addresses for individual items; tile counts are derived by dividing by $20
 
 vram_start:                    equ $0000
 
@@ -96,8 +96,8 @@ vram_StandardFont:             equ $0200
 
 ; Sega Screen
 vram_SEGA:           		equ $0020
-vram_IntroTrails:               equ $1000
-vram_Giant_Sonic:          		equ $1100
+vram_IntroTrails:           equ $1000
+vram_Giant_Sonic:          	equ $1100
 
 ; Title Screen
 vram_Title:                 equ $0000
@@ -139,7 +139,6 @@ vram_SpecialBack:            equ $E000
 vram_SpecialStars:           equ $EFE0
 vram_SpecialTailsText:       equ $F480
 
-
 ; Ending
 vram_EndingCharacter:            equ $0320
 vram_EndingFinalTornado:     equ $2AC0
@@ -163,7 +162,67 @@ vram_MiniContinue:           equ $A480
 vram_ContinueScreen_Additional:     equ $B200
 vram_ContinueCountdown:             equ $DF80
 
+
+; ---------------------------------------------------------------------------
+; Universal locations.
+
+; Animals.
+vram_animal_1:               equ $B000
+vram_animal_2:               equ $B280
+
+; Game over.
+vram_Game_Over:              equ $9BC0
+
+; Titlecard.
+vram_TitleCard              = $0580
+ArtTile_LevelName                     = $05DE
+
+; End of level.
+vram_Signpost:               equ $8680
+ArtTile_HUD_Bonus_Score               = $0520
+vram_Perfect                = $0540
+vram_ResultsText            = $05B0
+ArtTile_ArtUnc_Signpost               = $05E8
+vram_MiniCharacter          = $05F4
+vram_Capsule                = $0680
+
+; Tornado.
+vram_Tornado:                equ $A000
+vram_TornadoThruster        = $0561
 ; Shared badniks and objects.
+
+
+vram_Checkpoint:             equ $8F80
+vram_TailsDust:              = $048C
+vram_SonicDust:              = $049C
+vram_Numbers:                equ $9580
+vram_Shield:                 equ $97C0
+vram_Invinciblity_Stars:     equ $9BC0
+vram_Powerups:               equ $D000
+vram_Ring:                   equ $D780
+vram_HUD:                    equ vram_Powerups+$940 ; $D940
+vram_Sonic:                 = $0780
+vram_Tails:                 = $07A0
+vram_Tails_Tails:           = $07B0
+
+; ---------------------------------------------------------------------------
+; HUD. The HUD components are linked in a chain, and linked to
+; power-ups, because the mappings of monitors and lives counter(s)
+; depend on one another. If you want to alter these (for example,
+; because you need the VRAM for something else), you will probably
+; have to edit the mappings (or move the power-ups and HUD as a
+; single block unit).
+;ArtTile_HUD_Score_E                   = vram_HUD + $18
+;ArtTile_HUD_Score                     = ArtTile_HUD_Score_E + 2
+;ArtTile_HUD_Rings                     = vram_HUD + $30
+;ArtTile_HUD_Minutes                   = vram_HUD + $28
+;ArtTile_HUD_Seconds                   = ArtTile_HUD_Minutes + 4
+vram_Miles_Tails_1UP:        equ vram_HUD+$540 ; $DE80
+;ArtTile_ArtUnc_2p_life_counter_lives  = ArtTile_ArtUnc_2p_life_counter + 9
+vram_lifecounter:				equ vram_HUD+$2140	; $FA80
+;vram_life_counter_lives     = vram_life_counter + 9
+
+; Shared objects and badniks
 
 ; Objects that use the same art tiles on all levels in which
 ; they are loaded, even if not all levels load them.
@@ -174,7 +233,12 @@ vram_Spikes:                 equ $8680
 vram_DignlSprng:             equ $8780
 vram_LeverSpring:            equ $8800
 vram_VrtclSprng:             equ $8B80
-vram_HrzntlSprng:            equ $8E80
+vram_HrzntlSprng:            equ $8E00
+
+; Some common objects loaded on all aquatic levels
+vram_Explosion:              equ $B480
+vram_Bubbles:                equ $BE40
+vram_SuperSonic_stars:       equ $BD00
 
 ; EHZ, HTZ
 ;ArtTile_ArtKos_Checkers:               = ArtTile_ArtKos_LevelArt+$0158
@@ -187,15 +251,15 @@ vram_Buzzer:                 	equ $7A40
 ; WFZ, SCZ
 vram_WFZHrzntlPrpllr:        	equ $79A0
 vram_Clouds:                	equ $A9E0
-vram_WfzVrtclPrpllr:         	equ $AC20
-vram_Balkrie:					equ $ACA0
+vram_WFZVrtclPrpllr:         	equ $AC20
+vram_Balkriy:					equ $ACA0
 
 
 ; Level-specific objects and badniks.
 ; EHZ
 ArtTile_ArtUnc_EHZPulseBall:           = $039C
 vram_Waterfall:              equ $73C0
-vram_EHZBridge:             equ $76C0
+vram_Bridge:				 equ $76C0
 vram_Buzzer_Fireball:        equ $77C0				; Actually unused
 vram_Coconuts:               equ $7DC0
 vram_Masher:                 equ $8280
@@ -208,41 +272,78 @@ ArtTile_ArtUnc_MTZCylinder            = $034C
 ArtTile_ArtUnc_MTZAnimBack_1          = $035C
 ArtTile_ArtUnc_MTZAnimBack_2          = $0362
 vram_Asteron:           	equ $6D00
-vram_MtzWheel               = $0378
-vram_MtzWheelIndent         = $03F0
-vram_LavaCup                = $03F9
-vram_BoltEnd_Rope           = $03FD
-vram_MtzSteam               = $0405
-vram_MtzSpikeBlock          = $0414
-vram_MtzSpike               = $041C
-vram_MtzMantis              = $043C
-vram_MtzAsstBlocks          = $0500
-vram_MtzLavaBubble          = $0536
-vram_MtzCog                 = $055F
-vram_MtzSpinTubeFlash       = $056B
+vram_MTZWheel:              equ $6F00
+vram_MTZWheelIndent:        equ $7E00
+vram_LavaCup:               equ $7F20
+vram_BoltEnd_Rope:          equ $7FA0
+vram_SteamSpring:           equ $80A0
+vram_SpikeBlock:          	equ $8280
+vram_MTZSpike:              equ $8380
+vram_Slicer:				equ $8780
+vram_MTZAsstBlocks:         equ $A000
+vram_LavaBubble:         	equ $A6C0
+vram_Cog:                	equ $ABE0
+vram_MTZSpinTubeFlash:      equ $AD60
 
 ; WFZ
-vram_WfzScratch             = $0379
-vram_WfzTiltPlatforms       = $0393
-vram_WfzVrtclLazer          = $039F
-vram_WfzWallTurret          = $03AB
-vram_WfzHrzntlLazer         = $03C3
-vram_WfzConveyorBeltWheel   = $03EA
-vram_WfzHook                = $03FA
-vram_WfzHook_Fudge          = vram_WfzHook + 4			; Bad mappings...
-vram_WfzBeltPlatform        = $040E
-vram_WfzGunPlatform         = $041A
-vram_WfzUnusedBadnik        = $0450
-vram_WfzLaunchCatapult      = $045C
-vram_WfzSwitch              = $0461
-vram_WfzThrust              = $0465
-vram_WfzFloatingPlatform    = $046D
-vram_BreakPanels            = $048C
+vram_Clucker:             	equ $6F20
+vram_WFZTiltPlatforms:		equ $7260
+vram_WFZVrtclLaser:         equ $73E0
+vram_WFZWallTurret:         equ $7560
+vram_WFZHrzntlLaser:        equ $7860
+vram_WFZConveyorBeltWheel:  equ $7D40
+vram_WFZHook                equ $7F40
+;vram_WFZHook_Fudge          equ vram_WFZHook+$80			; bad mappings
+vram_WFZBeltPlatform:       equ $81C0
+vram_WFZGunPlatform:        equ $8340
+vram_WFZUnusedBadnik:       equ $8A00
+vram_WFZLaunchCatapult:     equ $8B80
+vram_WFZSwitch:             equ $8C20
+vram_WFZThrust:             equ $8CA0
+vram_WFZFloatingPlatform:   equ $8DA0
+vram_BreakPanels:           equ $9180
 
 ; SCZ
-vram_Turtloid               = $038A
-vram_Nebula                 = $036E
+vram_Turtloid:              equ $7140
+vram_Nebula:                equ $6DC0
 
+; HTZ
+vram_Rexon:                 equ $6FC0
+vram_HTZFireball1:          equ $73C0
+vram_HTZRock:               equ $7640
+vram_SeeSaw:             	equ $78C0
+vram_Sol:                   equ $7BC0
+vram_HTZZipline:            equ $7CC0
+vram_HTZFireball2:          equ $82C0
+vram_HTZOneWayBarrier:      equ $84C0
+ArtTile_ArtUnc_HTZMountains:        = $0500
+ArtTile_ArtUnc_HTZClouds:              = ArtTile_ArtUnc_HTZMountains + $18
+vram_Spiker:                equ $A400
+
+
+
+; OOZ
+ArtTile_ArtUnc_OOZPulseBall           = $02B6
+ArtTile_ArtUnc_OOZSquareBall1         = $02BA
+ArtTile_ArtUnc_OOZSquareBall2         = $02BE
+ArtTile_ArtUnc_Oil1                   = $02C2
+ArtTile_ArtUnc_Oil2                   = $02D2
+vram_OOZBurn:                equ $5C40
+vram_OOZElevator:            equ $5E80
+vram_OOZSpikedBall:          equ $6180
+vram_BurnerLid:              equ $6580
+vram_StripedBlocksVert:      equ $6640
+vram_Oilfall:                equ $66C0
+vram_Oilfall2:               equ $68C0
+vram_OOZSpringBall:          equ $6A80
+vram_LaunchBall:             equ $6D00
+vram_OOZPlatform:            equ $73A0
+vram_PushSpring:             equ $78A0
+vram_OOZSwingPlat:           equ $7C60
+vram_StripedBlocksHoriz:     equ $7FE0
+vram_OOZFan:           		 equ $8060
+vram_Aquis:                  equ $A000
+vram_Octus:                  equ $A700
 
 ; Tile counts for several levels, used to patch tiles
 
@@ -263,6 +364,9 @@ ArtTile_ArtKos_NumTiles_WFZ_Sup       = $0073			; Overwrites several SCZ tiles.
 ArtTile_ArtKos_NumTiles_WFZ           = ArtTile_ArtKos_NumTiles_WFZ_Main + ArtTile_ArtKos_NumTiles_WFZ_Sup - 1
 ArtTile_ArtKos_NumTiles_DEZ           = $0326			; Skips several CPZ tiles.
 
+
+
+vram_Booster:				equ $7380
 
 ; Color and CRAM 
 countof_color:		equ 16					; colors per palette line
