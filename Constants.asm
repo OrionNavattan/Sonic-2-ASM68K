@@ -23,6 +23,11 @@ sizeof_level:       equ sizeof_levelrow*level_max_height
 
 screen_width:		equ 320
 screen_height:		equ 224
+screen_top:			equ 128					; y coordinate of top edge of screen for sprites
+screen_left:		equ 128					; x coordinate of left edge of screen for sprites
+screen_bottom:		equ screen_top+screen_height
+screen_right:		equ screen_left+screen_width
+
 
 
 ; VRAM Data - globals
@@ -167,28 +172,28 @@ vram_ContinueCountdown:             equ $DF80
 ; Universal locations.
 
 ; Animals.
-vram_animal_1:               equ $B000
-vram_animal_2:               equ $B280
+vram_animal_1:              equ $B000
+vram_animal_2:              equ $B280
 
 ; Game over.
-vram_Game_Over:              equ $9BC0
+vram_Game_Over:             equ $9BC0
 
 ; Titlecard.
-vram_TitleCard              = $0580
-ArtTile_LevelName                     = $05DE
+vram_TitleCard:             equ $B000
+ArtTile_LevelName:                     = $05DE
 
 ; End of level.
-vram_Signpost:               equ $8680
+vram_Signpost:              equ $8680
 ArtTile_HUD_Bonus_Score               = $0520
-vram_Perfect                = $0540
-vram_ResultsText            = $05B0
+vram_Perfect:               equ $A800
+vram_ResultsText:           equ $B600
 ArtTile_ArtUnc_Signpost               = $05E8
-vram_MiniCharacter          = $05F4
-vram_Capsule                = $0680
+vram_MiniCharacter:         equ $BE80
+vram_Capsule:               equ $D000
 
 ; Tornado.
-vram_Tornado:                equ $A000
-vram_TornadoThruster        = $0561
+vram_Tornado:               equ $A000
+vram_TornadoThruster:       equ $AC20
 ; Shared badniks and objects.
 
 
@@ -237,8 +242,8 @@ vram_HrzntlSprng:            equ $8E00
 
 ; Some common objects loaded on all aquatic levels
 vram_Explosion:              equ $B480
-vram_Bubbles:                equ $BE40
-vram_SuperSonic_stars:       equ $BD00
+vram_Bubbles:                equ $BD00
+vram_SuperSonic_stars:       equ $BE40
 
 ; EHZ, HTZ
 ;ArtTile_ArtKos_Checkers:               = ArtTile_ArtKos_LevelArt+$0158
@@ -320,8 +325,6 @@ ArtTile_ArtUnc_HTZMountains:        = $0500
 ArtTile_ArtUnc_HTZClouds:              = ArtTile_ArtUnc_HTZMountains + $18
 vram_Spiker:                equ $A400
 
-
-
 ; OOZ
 ArtTile_ArtUnc_OOZPulseBall           = $02B6
 ArtTile_ArtUnc_OOZSquareBall1         = $02BA
@@ -345,6 +348,129 @@ vram_OOZFan:           		 equ $8060
 vram_Aquis:                  equ $A000
 vram_Octus:                  equ $A700
 
+; MCZ
+vram_Flasher:                equ $7500
+vram_Crawlton:               equ $7800
+vram_Crate:                  equ $7A80
+vram_MCZCollapsingPlat:      equ $7E80
+vram_VineSwitch:             equ $81C0
+vram_VinePulley:             equ $83C0
+vram_DrawbridgeLogs:         equ $8780
+
+; CNZ
+vram_Crawl:                  equ $6800
+vram_CNZBigMovingBlock:      equ $6D80
+vram_CNZCaterpillarPlats:    equ $6F80
+vram_CNZBonusSpike:          equ $7000
+vram_CNZElevator:            equ $7080
+vram_CNZCage:                equ $7100
+vram_CNZHexBumper:           equ $7280
+vram_CNZRoundBumper:         equ $7340
+vram_CNZFlipper:             equ $7640
+vram_CNZSaucerBumper:        equ $7CC0
+vram_CNZDiagPlunger:         equ $8040
+vram_CNZVertPlunger:         equ $8440
+
+; Specific to 1p CNZ
+ArtTile_ArtUnc_CNZFlipTiles_1         = $0330
+ArtTile_ArtUnc_CNZFlipTiles_2         = $0540
+ArtTile_ArtUnc_CNZSlotPics_1          = $0550
+ArtTile_ArtUnc_CNZSlotPics_2          = $0560
+ArtTile_ArtUnc_CNZSlotPics_3          = $0570
+
+; Specific to 2p CNZ
+ArtTile_ArtUnc_CNZFlipTiles_1_2p      = $0330
+ArtTile_ArtUnc_CNZFlipTiles_2_2p      = $0740
+ArtTile_ArtUnc_CNZSlotPics_1_2p       = $0750
+ArtTile_ArtUnc_CNZSlotPics_2_2p       = $0760
+ArtTile_ArtUnc_CNZSlotPics_3_2p       = $0770
+
+; CPZ
+ArtTile_ArtUnc_CPZAnimBack            = $0370
+vram_CPZPylons:         		equ $6E60
+vram_CPZConstructionStripes:	equ $7280
+vram_Booster:				equ $7380
+vram_CPZElevator:           equ $7400
+vram_CPZDumpingPipePlat:    equ $7600
+vram_CPZTubeSpring:         equ $7C00
+vram_CPZStairBlock:         equ $8300
+vram_CPZMetalBlock:         equ $8600
+vram_CPZDroplet:            equ $8780
+vram_Grabber:               equ $A000
+vram_Spiny:                 equ $A5A0
+
+; DEZ
+ArtTile_ArtUnc_DEZAnimBack            = $0326
+vram_DEZConstructionStripes:  equ $6500
+
+; ARZ
+vram_ARZBarrier:        	equ $7F00
+vram_Leaves:                equ $8200
+vram_ArrowAndShooter:       equ $82E0
+ArtTile_ArtUnc_Waterfall3:             = $0428
+ArtTile_ArtUnc_Waterfall2:             = $042C
+ArtTile_ArtUnc_Waterfall1_1:           = $0430
+vram_Whisp:                 equ $A000
+vram_Grounder:              equ $A120
+vram_ChopChop:              equ $A760
+ArtTile_ArtUnc_Waterfall1_2:           = $0557
+vram_BubbleGenerator:       equ $AB60
+
+; ---------------------------------------------------------------------------
+; Bosses
+; Common tiles for some bosses (any for which no eggpod tiles are defined,
+; except for WFZ and DEZ bosses).
+vram_Eggpod_common:               equ $A000
+; Common tiles for all bosses.
+vram_FieryExplosion:        equ $B000
+
+; CPZ boss
+vram_CPZEggpodJets:  		equ $8300
+vram_CPZEggpod:     		equ $8400
+vram_CPZBoss:               equ $A000
+vram_CPZBossSmoke:          equ $AE00
+
+; EHZ boss
+vram_EHZEggpod:             equ $7400
+vram_EHZBoss:     			equ $8000
+vram_EggChopperBlades:		equ $AD80
+
+; HTZ boss
+vram_HTZEggpod:             equ $7820
+vram_HTZBoss:               equ $8420
+vram_HTZBossSmoke:          equ $BC80
+
+; ARZ boss
+vram_ARZBoss:               equ $7C00
+
+; MCZ boss
+vram_MCZBoss:               equ $7800
+ArtTile_ArtUnc_FallingRocks:           = $0560
+
+; CNZ boss
+vram_CNZBoss:               equ $80E0
+vram_CNZBoss_Fudge:         equ vram_CNZBoss-$C00 ; $74E0, badly reused mappings... ; 
+
+; MTZ boss
+vram_MTZBoss:               equ $6F80
+vram_MTZEggpodJets:         equ $AC00
+
+; OOZ boss
+vram_OOZBoss:               equ $7180
+
+; WFZ and DEZ
+vram_RobotnikUpper:         equ $A000
+vram_RobotnikRunning:       equ $A300
+vram_RobotnikLower:         equ $AC80
+
+; WFZ boss
+vram_WFZBoss:               equ $6F20
+
+; DEZ
+vram_DEZBoss:               equ $6600
+vram_DEZWindow:   			equ $6F00
+vram_MechaSonic:            equ $7000
+
 ; Tile counts for several levels, used to patch tiles
 
 ArtTile_ArtKos_LevelArt               = $0000
@@ -366,7 +492,7 @@ ArtTile_ArtKos_NumTiles_DEZ           = $0326			; Skips several CPZ tiles.
 
 
 
-vram_Booster:				equ $7380
+
 
 ; Color and CRAM 
 countof_color:		equ 16					; colors per palette line

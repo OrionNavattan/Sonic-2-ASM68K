@@ -22,20 +22,8 @@ align:		macro length,value
 	endm
 		
 ; ---------------------------------------------------------------------------
-; Align Z80 ROM bank contents to end of bank (replicates negative cnops).
-; input: current PC, offset, boundary, value to use as padding (default is 0)
-; ---------------------------------------------------------------------------
-
-;align_Z80_bank:	macro loc,offset
-	
-;	negoffset: equ -\offset
-;	alignval: equ ((\offset+$8000-\loc)&($8000-1))
-;	dcb.b alignval,0
-;	endm	
-; ---------------------------------------------------------------------------
 ; Save and restore registers from the stack.
 ; ---------------------------------------------------------------------------
-
 
 chkifreg:	macro
 		isreg: = 1					; assume string is register
@@ -73,20 +61,20 @@ pushr:		macro
 	endm
 
 popr:		macro
-		chkifreg "\1"
-		if (isreg=1)&(isregm=1)
-			ifarg \0				; check if size is specified
-			movem.\0	(sp)+,\1		; restore multiple registers (b/w)
-			else
-			movem.l	(sp)+,\1			; restore multiple whole registers
-			endc
+	chkifreg "\1"
+	if (isreg=1)&(isregm=1)
+		ifarg \0				; check if size is specified
+		movem.\0	(sp)+,\1		; restore multiple registers (b/w)
 		else
-			ifarg \0				; check if size is specified
-			move.\0	(sp)+,\1			; restore one register (b/w)
-			else
-			move.l	(sp)+,\1			; restore one whole register
-			endc
+		movem.l	(sp)+,\1			; restore multiple whole registers
 		endc
+	else
+		ifarg \0				; check if size is specified
+		move.\0	(sp)+,\1			; restore one register (b/w)
+		else
+		move.l	(sp)+,\1			; restore one whole register
+		endc
+	endc
 		endm
 
 ; ---------------------------------------------------------------------------		
@@ -107,8 +95,7 @@ popr:		macro
 ; below macros to disable it for the affected instructions.
 ; ---------------------------------------------------------------------------	
 
-	if ~ZeroOffsetOptimization
-
+	if ZeroOffsetOptimization=0
 ; Temporarily disable zero-offset optimization to assemble these instructions for a
 ; bit-perfect build.
 	
@@ -122,7 +109,7 @@ _move:	macro
 _add:	macro
 		pusho
 		opt	oz-
-		axd.\0	\_
+		axd.\0	\_	; axd = AXM68K mnemonic for add
 		popo
 	endm
 	
@@ -162,14 +149,13 @@ _tst:	macro
 	endm
 	
 	else
-	
-; Optimize these instructions, making them faster, and freeing up nearly 512 bytes!
+	; Optimize these instructions, making them faster, and freeing up nearly 512 bytes!
 	
 _move:	macros
 		move.\0 \_
 
 _add:	macros
-		axd.\0 \_
+		axd.\0 \_	; axd = AXM68K mnemonic for add
 
 _addq:	macros
 		addq.\0 \_
@@ -189,12 +175,12 @@ _tst:	macros
 	endc
 	
 ; ---------------------------------------------------------------------------
-; Add/sub optimizations.
+; Optimize many addi, subi, and adda to addq and subq.
 ; Almost all possible add/sub optimizations were made in Revision 2.
 ; ---------------------------------------------------------------------------
 	
     if AddSubOptimize
-; if AddSubOptimize, optimize these...
+	; if AddSubOptimize is enabled, optimize these...
 addi_:		macros	src,dest
 		addq.\0	\src,\dest
 		
@@ -205,8 +191,7 @@ adda_:		macros
 		addq.\0	\src,\dest
 
     else
-
-; ...otherwise, leave them unoptimized.
+	; ...otherwise, leave them unoptimized.
 addi_:		macros	src,dest
 		addi.\0	\src,\dest
 		
@@ -218,7 +203,6 @@ adda_:		macros
     endc
     
 ; ------------------------------------------------------------------------------
-; Relative lea.
 ; Optimize various lea instructions to be PC relative instead of absolute long.
 ; These were deoptimized to absolute long in Revision 2.
 ; ------------------------------------------------------------------------------
@@ -243,11 +227,12 @@ rev02even:	 macro
   	  endm
 
 ; ---------------------------------------------------------------------------
-; The assembler/linker used for Revisions 0 and 1 handled branches and jumps 
-; across source file boundaries in an awkward way, proxying them through
-; groups of jmp instructions appended to the end of each source file. 
-; Revision 2 used a different linker that almost always did direct jumps
-; and branches to the destination. These macros accomodate this difference. 
+; The assembler/linker used for Revisions 0 and 1 (most likely ProASM for
+; the Commodore Amiga) handled branches and jumps across source file boundaries 
+; in an awkward way, proxying them through groups of jmp instructions appended 
+; to the end of each source file. Revision 2 used a different assembler/linker 
+; (most likely 2500AD's x68K) that almost always did direct jumps and branches 
+; to the destination. These two macros accomodate this difference. 
 ; ---------------------------------------------------------------------------
 
 jsrto:		 macro directaddr,indirectaddr
@@ -265,6 +250,16 @@ jmpto:		 macro directaddr,indirectaddr
 			bra.w \indirectaddr			; otherwise, branch to an indirect JmpTo
 		endc
   		endm
+
+; ---------------------------------------------------------------------------
+; Sign-extend a value and place it in d0 with moveq
+; Replicates the signextendB function in Sonic 2 AS; required to prevent the 
+; assembler from generating a sign-extension warning.
+; --------------------------------------------------------------------------- 
+ 
+moveq_:		macros
+ 		moveq	#(\1\+-((-(\1\&(1<<(8-1))))&(1<<(8-1))))!-((-(\1\&(1<<(8-1))))&(1<<(8-1))),\2
+    
 
 ; ---------------------------------------------------------------------------
 ; Align the start of RAM sections, and mark the ends for the clear_ram macro.
@@ -380,15 +375,16 @@ index:		macro start,idstart,idinc
 		popo
 		list
 		endm
+		
 ; ---------------------------------------------------------------------------
 ; Item in a pointer index.
 ; input: pointer target, pointer label array (optional)
 ; ---------------------------------------------------------------------------
 
 ptr:		macro
-		nolist
-		pusho
-		opt	m-
+;		nolist
+;		pusho
+;		opt	m-
 
 		if index_start=-1
 			dc.\index_width \1-offset(*)
@@ -411,8 +407,8 @@ ptr:		macro
 		
 		ptr_id: = ptr_id+ptr_id_inc			; increment id
 
-		popo
-		list
+;		popo
+;		list
 		endm
 		
 ; ---------------------------------------------------------------------------
@@ -422,6 +418,7 @@ ptr:		macro
 ; (vram/vsram/cram), operation (read/write/dma), destination of 68K instruction,
 ; additional adjustment to command longword (shifts, ANDs)
 ; ---------------------------------------------------------------------------
+
 vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 
 		local type
@@ -452,18 +449,6 @@ vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 		endc
 		endm	
 	
-; ---------------------------------------------------------------------------
-; Set a VRAM address via the VDP control port.
-; input: 16-bit VRAM address, control port (default is ($C00004).l)
-; ---------------------------------------------------------------------------
-
-loc_vram:	macro loc,controlport
-		ifarg \controlport
-		vdp_comm.l	move,\loc,vram,write,\controlport
-		else
-		vdp_comm.l	move,\loc,vram,write,(vdp_control_port).l
-		endc
-		endm
 ; ---------------------------------------------------------------------------
 ; DMA copy data from 68K (ROM/RAM) to VRAM/CRAM/VSRAM.
 ; input: source, length, destination ([vram address]|cram|vsram),
@@ -557,7 +542,7 @@ dma_fill_sequential:	macro value,length,dest,firstlast
 
 disable_display:	macro
 		move.w	(v_vdp_mode_buffer).w,d0		; $81xx
-		andi.b	#$BF,d0					; clear bit 6
+		andi.b	#~vdp_hide_display&$FF,d0					; clear bit 6
 		move.w	d0,(vdp_control_port).l
 		endm
 
@@ -568,7 +553,7 @@ disable_display:	macro
 
 enable_display:	macro
 		move.w	(v_vdp_mode_buffer).w,d0		; $81xx
-		ori.b	#$40,d0					; set bit 6
+		ori.b	#vdp_hide_display&$FF,d0					; set bit 6
 		move.w	d0,(vdp_control_port).l
 		endm
 
@@ -693,7 +678,7 @@ bnkswtch_vals: macro *
 		rept 9
 
 		if OptimizeSoundDriver
-; Because why use a and e when you can use h and l?
+		; Because why use a and e when you can use h and l?
 			if (offset(*))&(1<<(15+cnt))<>0
 				bnkswtch_\*_\$ptr_num:	equ 75h	; ld (hl),l
 			else
@@ -730,16 +715,16 @@ startbank: macro *
 		ptr_id: = 80h					; initial pointer id constant
 		
 		
-; Unfortunately, because the bnkswtch_vals macro requires a label
-; on the same line, we can't invoke it here; we have no choice but
-; to include the entire macro a second time.
+	; Unfortunately, because the bnkswtch_vals macro requires a label
+	; on the same line, we can't invoke it here; we have no choice but
+	; to include the entire macro a second time.
 
 		cnt: = 0
 		ptr_num: = 1
 		rept 9
 
 		if OptimizeSoundDriver
-; Because why use a and e when you can use h and l?
+		; Because why use a and e when you can use h and l?
 			if (offset(*))&(1<<(15+cnt))<>0
 				bnkswtch_\*_\$ptr_num:	equ 75h	; ld (hl),l
 			else
@@ -784,17 +769,17 @@ finishbank: macro
     	endm 
     	
 ; ---------------------------------------------------------------------------
-; Align and reserve space at the end of a soundbank (replaces the negative 
-; cnops in Sonic 2 AS)
+; Align and reserve space at the end of a soundbank
+; Replaces the negative cnops in Sonic 2 AS.
 ; ---------------------------------------------------------------------------    
 
-	align_to_end:	macros 
-		dcb.b ((-\1\+sizeof_z80_bank-offset(*))&(sizeof_z80_bank-1)),0
-    
+align_to_end:	macros 
+		dcb.b ((-\1\+sizeof_z80_bank-offset(*))&(sizeof_z80_bank-1)),0		
+ 
 ; ---------------------------------------------------------------------------
 ; Define an external file
 ; input: label, file name (including folder), extension (actual),
-;  extension (uncompressed)
+; extension (uncompressed)
 ; ---------------------------------------------------------------------------
 
 filedef:	macro lbl,file,ex1,ex2
@@ -813,6 +798,7 @@ incfile:	macro lbl
 	\lbl:	incbin	"\filename"				; write file to ROM
 		even
 		endm
+		
 ; ---------------------------------------------------------------------------
 ; Incbin a palette (required due to the main Sonic/Tails palette spanning two lines)
 ; input: label, label of second line (both must be declared by filedef)

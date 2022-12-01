@@ -1,20 +1,22 @@
 ; ---------------------------------------------------------------------------
 ; Standard Z80 Mega Drive hardware addresses
 ; ---------------------------------------------------------------------------
-ym_reg_a0: 			equ	4000h
-ym_reg_d0:			equ	4001h
-ym_reg_a1:			equ	4002h
-ym_reg_d1: 			equ	4003h
-z_bank_select:		equ	6000h
-z_psg_input: 		equ	7F11h
-z_rom_window: 		equ	8000h
+ym_reg_a0: 				equ	4000h
+ym_reg_d0:				equ	4001h
+ym_reg_a1:				equ	4002h
+ym_reg_d1: 				equ	4003h
+z_bank_select:			equ	6000h
+z_bank_select_mirror:	equ 6001h
+z_psg_input: 			equ	7F11h
+z_rom_window: 			equ	8000h
 
 ; ---------------------------------------------------------------------------
-; Offsets for global sound driver variables
-; This setup is used because these are accessed both via immediate addressing 
-; and indexed addressing relative to the head of the Z80 stack. Additionally, 
-; z_soundqueue and its slots are additionally accessed by the 68K relative 
-; to the start of the Z80 variables.
+; Offsets of global sound driver variables
+; This setup is used because these are accessed both via immediate addressing
+; (e.g., z_abs_vars+f_current_tempo), and via indexed addressing relative to 
+; the start of the global variables (e.g., ix+f_current_tempo, where ix = z_abs_vars). 
+; Additionally, z_soundqueue and its slots are accessed by the 68K relative 
+; to z_abs_vars.
 ; ---------------------------------------------------------------------------
 				rsset 0
 v_priority:				rs.b 1			; 0 ; sound priority (priority of new SFX must be higher or equal to this value or it won't play; bit 7 of priority being set prevents this value from changing)
@@ -54,7 +56,7 @@ z_vars:		equ __rs					; 18h bytes
 ch_flags:		rs.b 1					; 0 ; all tracks
 ch_type:		rs.b 1					; 1 ; all tracks
 ; 	"voice control" bits:
-	fmii_bit:	equ 2					; 2 (04h): If set, bound for part II, otherwise 0 (see zWriteFMIorII)
+	fmii_bit:	equ 2					; 2 (04h): if set, bound for part II, otherwise 0 (see zWriteFMIorII)
 	f_psg:	equ 7						; 	7 (80h): PSG track
 ch_tick:				rs.b 1			; 2; all tracks; tempo divisor; 1 = Normal, 2 = Half, 3 = Third...
 ch_data_ptr_low:	rs.b 1					; 3; all tracks; track position low byte
@@ -131,15 +133,13 @@ tPSG4:			equ $E0					; PSG4 channel type
 	
 		
 ; ---------------------------------------------------------------------------
-; RAM addresses for the sound driver
+; Sound Driver RAM Addresses
 ; ---------------------------------------------------------------------------
 			rsset 1380h				; WARNING: if you change this, you MUST change the start location of the Music section in Compressed Music Header.asm to match
 z_music_data: 	rs.b 800h					; 1380h ; Z80 decompression buffer, (only 7C0h in size, remaining 40h is the Z80 stack)
 z_music_data_end:	equ __rs-40h				; 1B40h ; boundary between decompression buffer and Z80 stack
 z_stack_pointer: 		equ	__rs			; 1B80h ; Z80 initial stack pointer value
 
-; z_vars: used for indexed addressing with ix and iy
-; z_abs_vars: used for immediate addressing 
 
 z_abs_vars:			rs.b z_vars			; 1B80h ; all variables from v_priority to f_pal
 

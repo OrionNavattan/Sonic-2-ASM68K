@@ -282,9 +282,9 @@
 		filedef Nem_MTZSpinTubeFlash,"art/nemesis/MTZ Spin Tube Flash",nem,unc ; 4 tiles
 		filedef Nem_Crate,"art/nemesis/MCZ Crate",nem,unc ; 32 tiles
 		filedef Nem_MCZCollapsingPlat,"art/nemesis/MCZ Collapsing Platform",nem,unc ; 26 tiles
-		filedef Nem_MCZVineSwitch,"art/nemesis/MCZ Vine Switch",nem,unc ; 16 tiles
-		filedef Nem_MCZVinePulley,"art/nemesis/MCZ Vine Pulley",nem,unc ; 10 tiles
-		filedef Nem_MCZDrawbridgeLogs,"art/nemesis/MCZ Drawbridge Logs",nem,unc ; 20 tiles
+		filedef Nem_VineSwitch,"art/nemesis/MCZ Vine Switch",nem,unc ; 16 tiles
+		filedef Nem_VinePulley,"art/nemesis/MCZ Vine Pulley",nem,unc ; 10 tiles
+		filedef Nem_DrawbridgeLogs,"art/nemesis/MCZ Drawbridge Logs",nem,unc ; 20 tiles
 		
 
 ; ---------------------------------------------------------------------------

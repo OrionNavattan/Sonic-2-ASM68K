@@ -832,8 +832,8 @@ v_ost_sega_hide_tm:		rs.b sizeof_ost			; $FFFFB080 ; object that hides TM symbol
 v_title_sonic:	rs.b sizeof_ost					; $FFFFB040
 v_title_tails:	rs.b sizeof_ost					; $FFFFB080
 
-v_title_flashing_star:
-v_title_palette_changer_1: 	rs.b sizeof_ost			; $FFFFB0C0
+v_title_flashing_star:		rs.b sizeof_ost	
+v_title_palette_changer_1: 	equ v_title_palette_changer_1	; $FFFFB0C0
 
 v_title_palette_changer_3: 	rs.b sizeof_ost			; $FFFFB100
 v_title_logo_top:			rs.b sizeof_ost		; $FFFFB140
