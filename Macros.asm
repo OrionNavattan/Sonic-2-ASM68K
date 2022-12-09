@@ -252,7 +252,7 @@ jmpto:		 macro directaddr,indirectaddr
   		endm
 
 ; ---------------------------------------------------------------------------
-; Sign-extend a value and place it in d0 with moveq
+; Sign-extend a value and use it with moveq
 ; Replicates the signextendB function in Sonic 2 AS; required to prevent the 
 ; assembler from generating a sign-extension warning.
 ; --------------------------------------------------------------------------- 
@@ -520,7 +520,7 @@ dma_fill_sequential:	macro value,length,dest,firstlast
 		move.w	#vdp_auto_inc+1,(a5)			; and set VDP increment to 1 byte
 	endc	
 					
-		move.l	#$94000000+(((length-1)&$FF00)<<8)+$9300+((length-1)&$FF),(a5) ; set length of DMA
+		move.l	#(vdp_dma_length_hi<<16)+(((length-1)&$FF00)<<8)+vdp_dma_length_low+((length-1)&$FF),(a5) ; set length of DMA
 		move.w	#vdp_dma_vram_fill,(a5)			; set DMA mode to fill
 		move.l	#$40000080+(((dest)&$3FFF)<<16)+(((dest)&$C000)>>14),(a5) ; set target of DMA
 		move.w	#value<<8,(vdp_data_port).l		; set byte to fill with
@@ -563,10 +563,10 @@ enable_display:	macro
 ; input: index address, element size
 ; ---------------------------------------------------------------------------
 
-zonewarning:	macro loc,elementsize
+zonewarning:	macro dest,elementsize
 	.end:
-		if (.end-loc)-(ZoneCount*elementsize)<>0
-		inform 1,"Size of \loc ($%h) does not match ZoneCount ($\#ZoneCount).",(.end-loc)/elementsize
+		if (.end-dest)-(ZoneCount*elementsize)<>0
+		inform 1,"Size of \dest (%d) does not match ZoneCount (\#ZoneCount).",(.end-dest)/elementsize
 		endc
 		endm
 
@@ -642,19 +642,40 @@ objpos:		macro
 
 endobj:		macros
 		objpos $FFFF,0,0,0
-		
+
 ; ---------------------------------------------------------------------------
-; Turn a string of characters into binary data using a custom character set
-; WIP
-; ---------------------------------------------------------------------------		
-; make_char:		macro text
-;	iteration: = 1
-;		rept	strlen(\text)
-;		char = substr	iteration,iteration,"\text"
-;		; do things to make data here
-;		iteration: = iteration+1 ; advance to next character in string
-;		endr
-;	endm	
+; Remap ASCII to the custom character set used in the Options and 2P Menus
+; ---------------------------------------------------------------------------
+
+menutxt:	macro
+			menu_str:	equs \1			
+
+		dc.b	strlen(\1)-1
+	
+		rept strlen(\1)							; repeat for length of string
+		menu_chr:	substr ,1,"\menu_str"		; get current character
+		menu_str:	substr 2,,"\menu_str"		; advance to next character in string
+	
+		if strcmp(" ","\menu_chr")
+			dc.b	0	
+		elseif	instr("0123456789","\menu_chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$30)
+		elseif	instr("*","\menu_chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$20)
+		elseif	instr("@","\menu_chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$35)	 ; @ = copyright symbol	
+		elseif	instr(":","\menu_chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$2E)
+		elseif	instr(".","\menu_chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$21)		
+		elseif	instr("ABCDEFGHIJKLMNOPQRSTUVWXYZ","\menu_chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$33)
+		else 	
+			inform 3,"Invalid character in menu text (must be uppercase letter, numeral, '*', '@', ';', or '.')."
+		endc
+		endr
+		endm
+	
 
 ; ---------------------------------------------------------------------------
 ; Define a little-endian 16-bit pointer for the z80 sound driver relative

@@ -1,4 +1,9 @@
-Map_objDA:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - text, countdown, stars, and Tails on the continue screen
+; Art starts at $A000 in VRAM
+; -------------------------------------------------------------------------------
+
+Map_ContinueScreenItems:	index offset(*)
 	ptr	Map_objDA_000C
 	ptr	Map_objDA_000C
 	ptr	Map_objDA_0066

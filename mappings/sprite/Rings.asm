@@ -1,3 +1,13 @@
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Rings
+; Custom mappings format. Compare to Obj25_MapUnc_12382.
+
+; Differences include...
+;  No 'sprite pieces per frame' value (hardcoded to 1)
+
+; This was customised even further in Sonic 3 & Knuckles.
+; -------------------------------------------------------------------------------
+
 Map_Rings:	index offset(*)
 	ptr	MapUnc_Rings_1
 	ptr	MapUnc_Rings_2

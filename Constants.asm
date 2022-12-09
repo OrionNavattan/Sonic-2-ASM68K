@@ -11,7 +11,8 @@ sizeof_16x16_all:   equ sizeof_16x16*countof_16x16		; size of all 16x16 tiles ($
 sizeof_ost:		    equ $40				; size of one OST in bytes
 countof_ost:		equ $80					; total OSTs in RAM
 countof_ost_reserved:   equ $10					; reserved OSTs
-countof_ost_dynamic:    equ $70					; dynamic OSTs, used for level objects 
+countof_ost_dynamic:    equ $70					; dynamic OSTs, used for level objects
+countof_ost_dynamic_2P:	equ $28
 countof_ost_level_only:  equ $10				; additional reserved object ram for objects attached to players, and for the special stages                  
 sizeof_plc:			equ 6				; size of one pattern load cue
 sizeof_priority:	equ $80					; size of one priority section in sprite queue
@@ -717,7 +718,7 @@ ost_y_vel:			equ __rs-2			; $12 ; most objects; y-axis velocity (2 bytes)
 ost_inertia:		rs.w 1					; $14 ; Sonic/Tails potential speed (2 bytes)
 ost_height:			rs.b 1				; $16 ; most objects; height/2
 ost_width:			rs.b 1				; $17 ; most objects; width/2
-ost_priority:		rs.w 1					; $18 ; universal; sprite stack priority - 0 is highest, 7 is lowest
+ost_priority:		rs.w 1					; $18 ; universal except multi-sprite objects; sprite stack priority - 0 is highest, 7 is lowest
 ost_displaywidth:	equ __rs-1				; $19 ; universal; display width/2
 ost_frame:			rs.b 1				; $1A ; universal; current frame displayed
 ost_anim_frame:		rs.b 1					; $1B ; most objects; current frame in animation script

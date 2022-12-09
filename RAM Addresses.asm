@@ -16,7 +16,8 @@ v_sprite_queue_end:		equ __rs
 
                 rsblock ost					; $B000-$D400 
 v_ost_all:          rs.b sizeof_ost*countof_ost			; $FFFFB000 ; object variable space ($40 bytes per object; $90 objects) ($2400 bytes) 
-    v_ost_reserved:						; Reserved Object RAM
+	; Reserved object RAM: players, titlecards, and game over/time over
+    v_ost_reserved:			equ	v_ost_all
     v_ost_maincharacter:    equ v_ost_all			; first object (usually Sonic except in a Tails Alone game)
     v_ost_sidekick:         equ v_ost_all+sizeof_ost		; $FFFFB040 ; second object (Tails in a Sonic and Tails game or in 2P)
     v_ost_titlecard:
@@ -31,10 +32,10 @@ v_ost_all:          rs.b sizeof_ost*countof_ost			; $FFFFB000 ; object variable 
     v_ost_titlecard_bottom:			equ v_ost_all+(sizeof_ost*6) ; $FFFFB180 ; level title card: yellow part at the bottom
     v_ost_titlecard_left:			equ v_ost_all+(sizeof_ost*7) ; $FFFFB1C0 ; level title card: red part on the left
 
-; Reserved object RAM, free slots
+	; Reserved object RAM
 	v_ost_reserved_unused:	equ v_ost_all+(sizeof_ost*$C)	; $FFFFB200
 
-
+	; Reseved object RAM: level objects that are never unloaded
     v_ost_cpzpylon:			equ v_ost_all+(sizeof_ost*$D) ; $FFFFB340 ; Pylon in the foreground in CPZ
     v_ost_watersurface1:					; First water surface
     v_ost_oil:				equ v_ost_all+(sizeof_ost*$E) ; $FFFFB380 ; Oil at the bottom of OOZ
@@ -44,7 +45,6 @@ v_ost_all:          rs.b sizeof_ost*countof_ost			; $FFFFB000 ; object variable 
     v_ost_dynamic:         equ v_ost_all+(sizeof_ost*$10)	;  $FFFFFB400
     v_ost_dynamic_end:     equ v_ost_all+(sizeof_ost*countof_ost)
     v_ost_dynamic_2P_end:  equ v_ost_dynamic_end-($C*6)*sizeof_ost ; 2P mode reserves 6 'blocks' of 12 RAM slots at the end.
-    v_ost_end:             equ v_ost_dynamic_end
                 rsblockend ost
 
                 rsblock ost_level_only
@@ -62,7 +62,7 @@ v_ost_level_only:          rs.b sizeof_ost*countof_ost_level_only ; $FFFFD000
     v_ost_lo_tails_shield:  equ v_ost_level_only+(sizeof_ost*7)	; $FFFFD1C0
     v_ost_lo_sonic_invincibilitystars: equ v_ost_level_only+(sizeof_ost*$B) ; $FFFFD200
     v_ost_lo_tails_invincibilitystars: equ v_ost_level_only+(sizeof_ost*$C) ; $FFFFD300
-    v_ost_level_only_end:   equ v_ost_level_only+(sizeof_ost*countof_ost_level_only) ; $FFFFD400
+;    v_ost_level_only_end:   equ v_ost_level_only+(sizeof_ost*countof_ost_level_only) ; $FFFFD400
                 rsblockend ost_level_only
 
 						rs.b $200	; $FFFFD400-$FFFFD5FF; unused
@@ -739,7 +739,7 @@ f_two_player_monitors:			rs.w 1			; $FFFFFF74 ; flag for monitor contents in 2P 
 v_levelselect_hold_delay:		rs.w 1			; $FFFFFF80
 v_level_select_zone:			rs.w 1			; $FFFFFF82 ;  currently selected zone in level select
 v_sound_test_sound:				rs.w 1		; $FFFFFF84 ; current sound test selection
-v_title_screen_option:			rs.b 1			; $FFFFFF86 ; selected option on the title screen
+v_title_screen_option:			rs.b 1			; $FFFFFF86 ; selected option on the title screen (0 = 1P, 1 = 2P, 2 = Options Menu)
 								rs.b 1 ; $FFFFFF87 ; unused
 v_zone_2p:						rs.w 1	; $FFFFFF88 ; high byte is current zone number, low byte is current act number ; read as a byte if we only want the zone
 v_act_2p:						equ __rs-1 ; $FFFFFF89 ; read if we only want the act number

@@ -1113,7 +1113,7 @@ Credits_Loop39:
 	dc.b	nRst, nC4, nRst, nC4, nRst, nC4, $18, $08, nC4, $04
 	smpsPSGAlterVol     $01
 	
-	if ~FixBugs
+	if FixBugs=0
 	; If the above bug is fixed, then this line needs removing (the track
 	; will already be two octaves higher).
 	smpsAlterPitch      $18
