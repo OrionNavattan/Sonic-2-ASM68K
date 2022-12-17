@@ -20,13 +20,13 @@ v_ost_all:          rs.b sizeof_ost*countof_ost			; $FFFFB000 ; object variable 
     v_ost_reserved:			equ	v_ost_all
     v_ost_maincharacter:    equ v_ost_all			; first object (usually Sonic except in a Tails Alone game)
     v_ost_sidekick:         equ v_ost_all+sizeof_ost		; $FFFFB040 ; second object (Tails in a Sonic and Tails game or in 2P)
-    v_ost_titlecard:
-    v_ost_titlecard_zonename:					; level title card: zone name
-    v_ost_gameover_gametext:					; "GAME" from GAME OVER
-    v_ost_timeover_timetext:		equ v_ost_all+(sizeof_ost*2) ; $FFFFB080 ; "TIME" from TIME OVER 
-    v_ost_titlecard_zone:					; level title card: "ZONE"
-    v_ost_gameover_overtext:					; "OVER" from GAME OVER
-    v_ost_timeover_overtext:		equ v_ost_all+(sizeof_ost*3) ; $FFFFB0C0 ; "OVER" from TIME OVER
+    v_ost_titlecard:				equ	v_ost_all+(sizeof_ost*2) ; $FFFFB080 
+    v_ost_titlecard_zonename:		equ	v_ost_titlecard	; level title card: zone name
+    v_ost_gameover_gametext:		equ	v_ost_titlecard	; "GAME" from GAME OVER
+    v_ost_timeover_timetext:		equ v_ost_titlecard	; "TIME" from TIME OVER 
+    v_ost_titlecard_zone:			equ	v_ost_all+(sizeof_ost*3) ; $FFFFB0C0 level title card: "ZONE"
+    v_ost_gameover_overtext:		equ	v_ost_titlecard_zone ; "OVER" from GAME OVER
+    v_ost_timeover_overtext:		equ v_ost_titlecard_zone ; "OVER" from TIME OVER
     v_ost_titlecard_actnumber:		equ v_ost_all+(sizeof_ost*4) ; $FFFFB100 ; level title card: act number
     v_ost_titlecard_background:		equ v_ost_all+(sizeof_ost*5) ; $FFFFB140 ; level title card: background
     v_ost_titlecard_bottom:			equ v_ost_all+(sizeof_ost*6) ; $FFFFB180 ; level title card: yellow part at the bottom
@@ -35,10 +35,10 @@ v_ost_all:          rs.b sizeof_ost*countof_ost			; $FFFFB000 ; object variable 
 	; Reserved object RAM
 	v_ost_reserved_unused:	equ v_ost_all+(sizeof_ost*$C)	; $FFFFB200
 
-	; Reseved object RAM: level objects that are never unloaded
+	; Reseved object RAM: global level objects that are never unloaded
     v_ost_cpzpylon:			equ v_ost_all+(sizeof_ost*$D) ; $FFFFB340 ; Pylon in the foreground in CPZ
-    v_ost_watersurface1:					; First water surface
-    v_ost_oil:				equ v_ost_all+(sizeof_ost*$E) ; $FFFFB380 ; Oil at the bottom of OOZ
+    v_ost_watersurface1:	equ v_ost_all+(sizeof_ost*$E)	; First water surface
+    v_ost_oil:				equ v_ost_watersurface1	; $FFFFB380 ; Oil at the bottom of OOZ
     v_ost_watersurface2:	equ v_ost_all+(sizeof_ost*$F)	; $FFFFB3C0 ; Second water surface
     v_ost_reserved_end:						;equ v_ost_dynamic	
 
@@ -95,9 +95,9 @@ v_tails_pos_tracker_end:	equ __rs			; required for teleport swap table
 v_cnz_saucer_data:      	rs.b $40			; $FFFFE700 the number of CNZ saucer bumpers in a group which have been destroyed; used to determine when to give 500 points instead of 10
 v_cnz_saucer_data_end:		equ __rs			; required for clear_ram
     
-			            rs.b $C0			; $FFFFE740-$FFFFE7FF ; unused
+			            rs.b $C0			; $FFFFE740-$FFFFE7FF ; unused, but cleared during level init
 
-v_ring_positions:       rs.b    $600				; $FFFFE800
+v_ring_positions:       rs.b $600				; $FFFFE800
 v_ring_positions_end:   equ __rs				; required for clear_ram    
 
 				rsblock camera_ram
@@ -630,7 +630,7 @@ v_oscillating_table:			rs.l $10		; $FFFFFE60 ; table of 16 oscillating values, f
 ;v_oscillating_0_to_60_alt:	equ v_oscillating_table+$2C
 ;v_oscillating_0_to_A0_fast:	equ v_oscillating_table+$30
 ;v_oscillating_0_to_E0:		equ v_oscillating_table+$34
-
+v_oscillating_table_end:	equ __rs
 ; Synchronized animation counters: 0 = logspikes (unused), 1 = rings, 2 = unused, 3 = scattered rings
 
 v_syncani_0_time:		rs.b 1				; $FFFFFEA0 ; synchronised sprite animation 0 - time until next frame

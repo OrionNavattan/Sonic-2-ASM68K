@@ -478,14 +478,14 @@
 
 defdac:	macro	lbl,file
 		; Essentially the same as filedef, except we are adding the filesizes to
-		; a running total to get the total size of all DAC samples.
+		; a running total to get the size of all DAC samples.
 		if ~def(sizeof_dac_samples)
 			sizeof_dac_samples: = 0
 		endc
 		filename: equs \file				; get file name without quotes
 		file_\lbl: equs "\filename"			; record file name
 		sizeof_\lbl: equ filesize("\filename")		; record file size of associated uncompressed file
-		sizeof_dac_samples: = sizeof_dac_samples+sizeof_\lbl
+		sizeof_dac_samples: = sizeof_dac_samples+sizeof_\lbl ; add size to running total
 		endm
 
 		defdac	DAC_Kick,"sound/DAC/Kick.bin"

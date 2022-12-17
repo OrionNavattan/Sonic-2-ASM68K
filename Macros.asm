@@ -63,16 +63,16 @@ pushr:		macro
 popr:		macro
 	chkifreg "\1"
 	if (isreg=1)&(isregm=1)
-		ifarg \0				; check if size is specified
-		movem.\0	(sp)+,\1		; restore multiple registers (b/w)
+		ifarg \0					; check if size is specified
+		movem.\0	(sp)+,\1			; restore multiple registers (b/w)
 		else
-		movem.l	(sp)+,\1			; restore multiple whole registers
+		movem.l	(sp)+,\1				; restore multiple whole registers
 		endc
 	else
-		ifarg \0				; check if size is specified
-		move.\0	(sp)+,\1			; restore one register (b/w)
+		ifarg \0					; check if size is specified
+		move.\0	(sp)+,\1				; restore one register (b/w)
 		else
-		move.l	(sp)+,\1			; restore one whole register
+		move.l	(sp)+,\1				; restore one whole register
 		endc
 	endc
 		endm
@@ -109,7 +109,7 @@ _move:	macro
 _add:	macro
 		pusho
 		opt	oz-
-		axd.\0	\_	; axd = AXM68K mnemonic for add
+		axd.\0	\_					; axd = AXM68K mnemonic for add
 		popo
 	endm
 	
@@ -155,7 +155,7 @@ _move:	macros
 		move.\0 \_
 
 _add:	macros
-		axd.\0 \_	; axd = AXM68K mnemonic for add
+		axd.\0 \_					; axd = AXM68K mnemonic for add
 
 _addq:	macros
 		addq.\0 \_
@@ -533,8 +533,16 @@ dma_fill_sequential:	macro value,length,dest,firstlast
 		move.w	#vdp_auto_inc+2,(a5)			; set VDP increment back to 2 bytes
 	endc	
 		endm
-		
 
+; ---------------------------------------------------------------------------
+; Clear and reset the DMA queue
+; ---------------------------------------------------------------------------
+
+reset_dma_queue:	macro		
+		clr.w	(v_vdp_command_buffer).w		; clear the DMA queue
+		move.l	#v_vdp_command_buffer,(v_vdp_command_buffer_slot).w ; reset the buffer index		
+	endm
+	
 ; ---------------------------------------------------------------------------
 ; Disable display
 ; uses d0
@@ -542,7 +550,7 @@ dma_fill_sequential:	macro value,length,dest,firstlast
 
 disable_display:	macro
 		move.w	(v_vdp_mode_buffer).w,d0		; $81xx
-		andi.b	#~vdp_hide_display&$FF,d0					; clear bit 6
+		andi.b	#~vdp_hide_display&$FF,d0		; clear bit 6
 		move.w	d0,(vdp_control_port).l
 		endm
 
@@ -553,7 +561,7 @@ disable_display:	macro
 
 enable_display:	macro
 		move.w	(v_vdp_mode_buffer).w,d0		; $81xx
-		ori.b	#vdp_hide_display&$FF,d0					; set bit 6
+		ori.b	#vdp_hide_display&$FF,d0		; set bit 6
 		move.w	d0,(vdp_control_port).l
 		endm
 
@@ -652,7 +660,7 @@ menutxt:	macro
 
 		dc.b	strlen(\1)-1
 	
-		rept strlen(\1)							; repeat for length of string
+		rept strlen(\1)					; repeat for length of string
 		menu_chr:	substr ,1,"\menu_str"		; get current character
 		menu_str:	substr 2,,"\menu_str"		; advance to next character in string
 	
@@ -663,7 +671,7 @@ menutxt:	macro
 		elseif	instr("*","\menu_chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$20)
 		elseif	instr("@","\menu_chr")
-			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$35)	 ; @ = copyright symbol	
+			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$35) ; @ = copyright symbol	
 		elseif	instr(":","\menu_chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$2E)
 		elseif	instr(".","\menu_chr")
@@ -671,7 +679,7 @@ menutxt:	macro
 		elseif	instr("ABCDEFGHIJKLMNOPQRSTUVWXYZ","\menu_chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$33)
 		else 	
-			inform 3,"Invalid character in menu text (must be uppercase letter, numeral, '*', '@', ';', or '.')."
+			inform 3,"Invalid character in menu text (must be uppercase letter, numeral, '*', '@', ' ;', or '.')."
 		endc
 		endr
 		endm
@@ -688,7 +696,7 @@ z80_ptr: macros
 		
 ; ---------------------------------------------------------------------------		
 ; Generate the constants used by the sound driver's bankswitch macro.
-; This replaces part of the bankswitch macro in Sonic 2 AS.
+; This replaces part of the bankswitch macro in Sonic 2 AS' sound driver.
 ; ---------------------------------------------------------------------------	
 bnkswtch_vals: macro *
 

@@ -24,7 +24,7 @@ sizeof_level:       equ sizeof_levelrow*level_max_height
 
 screen_width:		equ 320
 screen_height:		equ 224
-screen_top:			equ 128					; y coordinate of top edge of screen for sprites
+screen_top:			equ 128				; y coordinate of top edge of screen for sprites
 screen_left:		equ 128					; x coordinate of left edge of screen for sprites
 screen_bottom:		equ screen_top+screen_height
 screen_right:		equ screen_left+screen_width
@@ -206,7 +206,7 @@ vram_Shield:                 equ $97C0
 vram_Invinciblity_Stars:     equ $9BC0
 vram_Powerups:               equ $D000
 vram_Ring:                   equ $D780
-vram_HUD:                    equ vram_Powerups+$940 ; $D940
+vram_HUD:                    equ vram_Powerups+$940		; $D940
 vram_Sonic:                 = $0780
 vram_Tails:                 = $07A0
 vram_Tails_Tails:           = $07B0
@@ -223,9 +223,9 @@ vram_Tails_Tails:           = $07B0
 ;ArtTile_HUD_Rings                     = vram_HUD + $30
 ;ArtTile_HUD_Minutes                   = vram_HUD + $28
 ;ArtTile_HUD_Seconds                   = ArtTile_HUD_Minutes + 4
-vram_Miles_Tails_1UP:        equ vram_HUD+$540 ; $DE80
+vram_Miles_Tails_1UP:        equ vram_HUD+$540			; $DE80
 ;ArtTile_ArtUnc_2p_life_counter_lives  = ArtTile_ArtUnc_2p_life_counter + 9
-vram_lifecounter:				equ vram_HUD+$2140	; $FA80
+vram_lifecounter:				equ vram_HUD+$2140 ; $FA80
 ;vram_life_counter_lives     = vram_life_counter + 9
 
 ; Shared objects and badniks
@@ -450,7 +450,7 @@ ArtTile_ArtUnc_FallingRocks:           = $0560
 
 ; CNZ boss
 vram_CNZBoss:               equ $80E0
-vram_CNZBoss_Fudge:         equ vram_CNZBoss-$C00 ; $74E0, badly reused mappings... ; 
+vram_CNZBoss_Fudge:         equ vram_CNZBoss-$C00		; $74E0, badly reused mappings... ; 
 
 ; MTZ boss
 vram_MTZBoss:               equ $6F80
@@ -509,6 +509,11 @@ palfade_2:		equ (countof_color*2)-1
 palfade_3:		equ (countof_color*3)-1
 palfade_all:		equ (countof_color*4)-1
 
+; Player Modes
+sonic_tails:		equ 0
+sonic_alone:		equ 1
+tails_alone:		equ 2
+
 ; Levels
 ; Zone IDs. Do NOT alter the order here, or zone tables will screw up.
 	rsset 0
@@ -533,7 +538,7 @@ id_SCZ:		rs.b 1						; $10
 ZoneCount:	equ __rs					; Total number of zone slots, not necessarily playable zones
 
 titlecard_flag: equ	7					; flag bit set in v_gamemode to indicate the level hasn't yet started
-id_TitleCard:	equ	1<<titlecard_flag			; flag mask
+id_TitleCard_mask:	equ	1<<titlecard_flag		; flag mask
 
 
 ; Act IDs

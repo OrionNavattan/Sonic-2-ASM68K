@@ -12,18 +12,18 @@ Map_TitleIntro:	index offset(*)
 	ptr	Frame_IntroSonic_0				; 5
 	ptr	Frame_IntroSonic_1				; 6
 	ptr	Frame_IntroSonic_2				; 7
-	ptr	Frame_IntroSonic_BetaLeftover	; 8; erroneously used duplicate of Frame_IntroSonic_NoArm
-	ptr	Frame_IntroSonic_Hand			; 9
-	ptr	Frame_LogoTop_NoTM					; $A
-	ptr	Frame_LogoTop_TM					; $B
+	ptr	Frame_IntroSonic_BetaLeftover			; 8; erroneously used duplicate of Frame_IntroSonic_NoArm
+	ptr	Frame_IntroSonic_Hand				; 9
+	ptr	Frame_LogoTop_NoTM				; $A
+	ptr	Frame_LogoTop_TM				; $B
 	ptr	Frame_IntroStar_0				; $C
 	ptr	Frame_IntroStar_1				; $D
 	ptr	Frame_IntroStar_2				; $E 
 	ptr	Frame_IntroStar_3				; $F
 	ptr	Frame_IntroTM					; $10
-	ptr	Frame_MaskingSprite					; $11
-	ptr	Frame_IntroSonic_NoArm			; $12
-	ptr	Frame_IntroTails_Hand					; $13
+	ptr	Frame_MaskingSprite				; $11
+	ptr	Frame_IntroSonic_NoArm				; $12
+	ptr	Frame_IntroTails_Hand				; $13
 
 Frame_IntroTails_0:	spriteHeader
 	spritePiece	$30, $10, 4, 1, 0, 0, 0, 1, 1

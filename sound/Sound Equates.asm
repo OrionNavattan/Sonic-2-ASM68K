@@ -57,7 +57,7 @@ ch_flags:		rs.b 1					; 0 ; all tracks
 ch_type:		rs.b 1					; 1 ; all tracks
 ; 	"voice control" bits:
 	fmii_bit:	equ 2					; 2 (04h): if set, bound for part II, otherwise 0 (see zWriteFMIorII)
-	f_psg:	equ 7						; 	7 (80h): PSG track
+	f_psg:		equ 7					; 	7 (80h): PSG track
 ch_tick:				rs.b 1			; 2; all tracks; tempo divisor; 1 = Normal, 2 = Half, 3 = Third...
 ch_data_ptr_low:	rs.b 1					; 3; all tracks; track position low byte
 ch_data_ptr_high:	rs.b 1					; 4; all tracks; track position high byte
@@ -213,7 +213,7 @@ f_paused:				db 0			; 1307h ; pause flag used by the driver program; 0 = normal,
 ; ---------------------------------------------------------------------------
 ; Additional constants
 ; ---------------------------------------------------------------------------
-Z80_space:						equ $F64 ; size of compressed sound driver (patched by S2 SndDriver Compress if necessary)
+Z80_space:						equ $F64 ; size of compressed sound driver (patched by S2 SounddDriver Compress if necessary)
 countof_music_tracks:			equ	(z_tracks_end-z_tracks_start)/z_track_vars
 countof_music_dac_fm_tracks:	equ (z_song_dac_fm_end-z_song_dac_fm_start)/z_track_vars
 countof_music_fm_tracks:		equ	(z_song_fm_end-z_song_fm_start)/z_track_vars
