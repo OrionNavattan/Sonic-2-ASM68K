@@ -42,7 +42,7 @@ rem "build tools\nemcmp.exe" "misc\Special Stage Level Layouts.unc"	"misc\Specia
 rem in the future, would like to compress Enigma files at build time if an accurate or more efficient compresser is developed
 rem for %%f in ("mappings\planes\*.unc") do "build tools\enicmp.exe" "%%f" "mappings\planes\%%~nf.eni"
 
-rem assemble final rom
+rem assemble final rom, outputting the sound driver and input data for S2 SoundDriver Compress to a separate file
 IF EXIST s2built.bin move /Y s2built.bin s2built.prev.bin >NUL
 axm68k /m /k /p sonic2.asm, s2built.bin >errors.txt, , sonic2.lst
 type errors.txt
@@ -52,8 +52,8 @@ IF NOT EXIST s2built.bin PAUSE & EXIT 2
 rem compress the sound driver and insert in rom. For more efficient compression, change the final two arguments to "build tools\saxcmp.exe" "-S"
 "S2 SoundDriver Compress.exe" "sound\Sound Driver.unc" "sound\MergeData.dat" s2built.bin "build tools\saxmandrv.exe" "e" "-s"
 
-rem if using an error handler such as Vladikomper's, handle processing and adding the symbol table here
+rem if using an error handler such as Vladikomper's, processing and appending the symbol table is done here
 
-rem fix checksum
+rem fix the ROm end address and calculate the checksum
 "build tools\fixheadr.exe" s2built.bin
 pause

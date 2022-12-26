@@ -15,7 +15,10 @@ countof_ost_dynamic:    equ $70					; dynamic OSTs, used for level objects
 countof_ost_dynamic_2P:	equ $28
 countof_ost_level_only:  equ $10				; additional reserved object ram for objects attached to players, and for the special stages                  
 sizeof_plc:			equ 6				; size of one pattern load cue
+countof_plc:		equ $10					; size of the PLC buffer
 sizeof_priority:	equ $80					; size of one priority section in sprite queue
+sizeof_dma:			equ $E					; size of one DMA command
+countof_dma:		equ $12					; number of slots in DMA queue
 
 level_max_width:	equ $80					; Doubled from Sonic 1 due to the switch to 128x128 level chunks
 level_max_height:	equ $10
@@ -32,16 +35,23 @@ screen_right:		equ screen_left+screen_width
 
 
 ; VRAM Data - globals
-sizeof_cell:		equ $20					; single 8x8 tile
-sizeof_vram_fg:		equ sizeof_vram_row*32			; fg nametable, assuming 64x32 ($1000 bytes)
-sizeof_vram_bg:		equ sizeof_vram_row*32			; bg nametable, assuming 64x32 ($1000 bytes)
-;sizeof_vram_sonic:	equ $17*sizeof_cell			; Sonic's graphics ($2E0 bytes)
-sizeof_sprite:		equ 8					; one sprite in sprite attribute table
+sizeof_cell:			equ $20					; single 8x8 tile, two pixels per byte
+widthof_cell:			equ	8					; width of single tile in pixels
+
+sizeof_vram_row_64:			equ (512/widthof_cell)*2				; $80,  single row of fg/bg nametable when 64 cells (512 pixels) wide 
+sizeof_vram_row_128:		equ (1024/widthof_cell)*2				; $100, single row of fg/bg nametable when 128 cells (1024 pixels) wide
+
+						; $1000
+sizeof_vram_planetable_64x32:	equ sizeof_vram_row_64*32				; $1000
+sizeof_vram_planetable_128x32:	equ sizeof_vram_row_128*32				; $2000 
+sizeof_vram_planetable_64x64:	equ sizeof_vram_row_64*64				; $2000 
+
+sizeof_sprite:			equ 8					; one sprite in sprite attribute table
 countof_max_sprites:	equ $50					; max number of sprites that can be displayed at once (80)
 sizeof_vram_sprites:	equ sizeof_sprite*countof_max_sprites	; sprite table ($280 bytes)
 sizeof_vram_hscroll:	equ $380
 sizeof_vram_hscroll_padded:	equ $400
-sizeof_vram_row:	equ 64*2				; single row of fg/bg nametable, assuming 64 wide
+
 draw_base:		equ vram_fg				; base address for nametables, used by Calc_VRAM_Pos (must be multiple of $4000)
 draw_fg:		equ $4000+(vram_fg-draw_base)		; VRAM write command + fg nametable address relative to base
 draw_bg:		equ $4000+(vram_bg-draw_base)		; VRAM write command + bg nametable address relative to base
@@ -52,49 +62,47 @@ vram_hscroll:			equ $FC00			; horizontal scroll table ($380 bytes); extends unti
 sizeof_vram_hscroll:	equ $380				; 224 lines * 2 bytes per entry * 2 plane nametables
 
 ; VRAM regions for main game
+; Plane dimensions 64x32
 vram_window:		equ $A000				; window nametable - unused
 vram_fg:			equ $C000			; foreground nametable ($1000 bytes); extends until $CFFF
 vram_bg:			equ $E000			; background nametable ($1000 bytes); extends until $EFFF
 vram_fg_2p:			equ $A000			; extends until $AFFF
 vram_bg_2p:			equ	$8000			; extends until $8FFF
-sizeof_vram_planetable:	equ $1000				; 64 cells x 32 cells x 2 bytes per cell
+
 ;vram_sonic:			equ $F000				; Sonic graphics ($2E0 bytes)
 ;tile_sonic:			equ vram_sonic/sizeof_cell
 
 ; VRAM regions for Sega Screen
+; Plane dimensions 128x32
 vram_sega_fg:			equ $C000			; extends until $DFFF
 vram_sega_bg:			equ $A000			; extends until $BFFF
-sizeof_vram_sega_pt:	equ $2000				; 128 cells x 32 cells x 2 bytes per cell
 
 ; VRAM regions for Special Stage
+; Plane dimensions 128x32
 vram_ss_fg1:       			equ $C000		; extends until $DFFF
 vram_ss_fg2:			    equ $8000			; extends until $9FFF
 vram_ss_bg:					equ $A000	; extends until $BFFF
-sizeof_vram_ss_pt:			equ $2000		; 128 cells x 32 cells x 2 bytes per cell
 vram_ss_sprites:			equ $F800		; extends until $FA7F
-sizeof_vram_ss_sprites:		equ $0280			; 640 bytes
-vram_ss_hscroll:			equ $FC00		; extends until $FF7F
-sizeof_vram_ss_hscroll:		equ $0380			; 224 lines * 2 bytes per entry * 2 plane nametables
 
 ; VRAM regions for title screen
+; Plane dimensions 64x32
 vram_title_fg:          	equ $C000			; extends until $CFFF
 vram_title_bg:          	equ $E000			; extends until $EFFF
-sizeof_vram_title_pt:   	equ $1000			; 64 cells x 32 cells x 2 bytes per cell
 
 ; VRAM regions for ending and credits
+; Plane dimensions 64x64
 vram_ending_fg:     	      equ $C000				; extends until $DFFF
 vram_ending_bg1:    	      equ $E000				; extends until $EFFF (plane size is 64x32)
 vram_ending_bg2:	          equ $4000			; extends until $5FFF
-sizeof_vram_ending_pt:        equ $2000				; 64 cells x 64 cells x 2 bytes per cell
+;sizeof_vram_ending_pt:        equ sizeof_vram_planetable_64x64			; 64 cells x 64 cells x 2 bytes per cell
 
 ; VRAM regions for menu screens
+; Plane dimensions 64x32
 vram_menu_fg:				equ $C000		; Extends until $CFFF
 vram_menu_bg:             	equ $E000			; Extends until $EFFF
-sizeof_vram_menu_pt:        equ $1000				; 64 cells x 32 cells x 2 bytes per cell
 
 
 ; VRAM addresses for individual items; tile counts are derived by dividing by $20
-
 vram_start:                    equ $0000
 
 ; Common to 1p and 2p menus.
@@ -569,6 +577,7 @@ id_HPZ_act1:	equ	(id_HPZ<<8)
 id_HPZ_act2:	equ	(id_HPZ<<8)+1
 
 ; Colors
+; Also usable as bitmasks to isolate the bits for red, green, and blue.
 cBlack:		equ $000					; color black
 cWhite:		equ $EEE					; color white
 cBlue:		equ $E00					; color blue

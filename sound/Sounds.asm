@@ -16,9 +16,9 @@
 ; Define background music
 ;
 ; This special macro is used to generate constants for both the main program and 
-; sound driver, and for the compressed music, file definitions.
+; sound driver, and for the compressed music file definitions.
 ; Unfortunately, we can't use it to generate the includes directly, as they are 
-; included in the rom in a completely different order.
+; included in the ROM in a completely different order.
 ; line format: \func	sound file, speed shoes tempo, flag 
 ; (20h = uncompressed, 40h = disables PAL mode), -128 = hack to force the
 ; Continue music's pointer to the correct value of 0.
@@ -64,16 +64,16 @@ MusicFiles:	macro func
 ; Define sound effects
 ; This special macro is used to generate pointers and constants.
 ; Unlike with music, we can also use it to generate includes as well,
-; since they are in the ROM in the same order as their IDs
+; since they are in the ROM in the same order as their IDs.
 ; Constants for IDs are: sfx_(name)
 ; line format: \func	sound file, sound priority
 ; ---------------------------------------------------------------------------
 
 SFXFiles:	macro	func
 
-; WARNING: Ring, RingLeft, Gloop, and SpinDashCharge are referenced directly by
-; the sound driver via ID. If you change their names here, you will need to change
-; their constants in the driver accordingly.
+		; WARNING: Ring, RingLeft, Gloop, and SpinDashCharge are referenced directly by
+		; the sound driver via their ID constants. If you change their names here,
+		; you will need to change their constants in the driver accordingly.
 
 		\func	Jump,			80h	
 		\func	Checkpoint,		70h
@@ -167,7 +167,7 @@ SFXFiles:	macro	func
 ; ---------------------------------------------------------------------------
 ; Define sound commands
 ; Constants for IDs are: cmd_(name)
-; This special macro is used to generate constants
+; This special macro is used to generate constants.
 ; line format: \func	command name, command priority
 
 ; Note that Pause and Unpause are not real commands, but instead signal 
@@ -183,7 +183,8 @@ DriverCmds:	macro	func
 		\func	Stop					; last real command
 		\func	Pause
 		\func	Unpause
-		endm		
+		endm
+			
 ; ---------------------------------------------------------------------------
 ; Generate constants for sound IDs in the main program
 ; (Constants for the sound driver are generated at ZMasterPlaylist)

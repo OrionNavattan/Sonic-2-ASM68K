@@ -1,25 +1,25 @@
 Map_Sonic:	index offset(*)
-	ptr	Map_Sonic_01AC
-	ptr	Map_Sonic_01AE
-	ptr	Map_Sonic_01D0
-	ptr	Map_Sonic_01E2
-	ptr	Map_Sonic_0204
-	ptr	Map_Sonic_0226
-	ptr	Map_Sonic_0250
-	ptr	Map_Sonic_026A
-	ptr	Map_Sonic_027C
-	ptr	Map_Sonic_028E
-	ptr	Map_Sonic_02A0
-	ptr	Map_Sonic_02B2
-	ptr	Map_Sonic_02D4
-	ptr	Map_Sonic_02F6
-	ptr	Map_Sonic_0310
-	ptr	Map_Sonic_0332
-	ptr	Map_Sonic_034C
-	ptr	Map_Sonic_035E
-	ptr	Map_Sonic_0378
-	ptr	Map_Sonic_039A
-	ptr	Map_Sonic_03B4
+	ptr	Frame_Blank
+	ptr	Frame_Stand
+	ptr	Frame_Blink
+	ptr	Frame_Wait1
+	ptr	Frame_Wait2		; 4
+	ptr	Frame_Wait3
+	ptr	Frame_Wait4
+	ptr	Frame_LayDown
+	ptr	Frame_Laying1	; $8
+	ptr	Frame_Laying2
+	ptr	Frame_GetUp
+	ptr	Frame_LookUp1
+	ptr	Frame_LookUp2	; $C
+	ptr	Frame_Walk11
+	ptr	Frame_Walk12
+	ptr	Frame_Walk13
+	ptr	Frame_Walk14	; $10
+	ptr	Frame_Walk15
+	ptr	Frame_Walk16
+	ptr	Frame_Walk17
+	ptr	Frame_Walk18	; $14
 	ptr	Map_Sonic_03C6
 	ptr	Map_Sonic_03E8
 	ptr	Map_Sonic_0412
@@ -214,36 +214,36 @@ Map_Sonic:	index offset(*)
 	ptr	Map_Sonic_18CC
 	ptr	Map_Sonic_18EE
 
-Map_Sonic_01AC:	spriteHeader 
+Frame_Blank:	spriteHeader 
 	spriteFooter 
 
-Map_Sonic_01AE:	spriteHeader 
+Frame_Stand:	spriteHeader 
 	spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$14, 1, 4, 4, 0, 0, 0, 0
 	spritePiece	-8, -$C, 3, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, 4, 3, 2, $E, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_01D0:	spriteHeader 
+Frame_Blink:	spriteHeader 
 	spritePiece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_01E2:	spriteHeader 
+Frame_Wait1:	spriteHeader 
 	spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	-8, -4, 2, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_0204:	spriteHeader 
+Frame_Wait2:	spriteHeader 
 	spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	-8, -4, 2, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_0226:	spriteHeader 
+Frame_Wait3:	spriteHeader 
 	spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	-8, -4, 2, 2, 8, 0, 0, 0, 0
@@ -251,90 +251,90 @@ Map_Sonic_0226:	spriteHeader
 	spritePiece	0, $C, 2, 2, $E, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_0250:	spriteHeader 
+Frame_Wait4:	spriteHeader 
 	spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, -$14, 2, 4, 4, 0, 0, 0, 0
 	spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_026A:	spriteHeader 
+Frame_LayDown:	spriteHeader 
 	spritePiece	-$10, -$C, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	8, 4, 1, 2, $C, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_027C:	spriteHeader 
+Frame_Laying1:	spriteHeader 
 	spritePiece	-$18, -$C, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	0, 4, 2, 2, $C, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_028E:	spriteHeader 
+Frame_Laying2:	spriteHeader 
 	spritePiece	-$18, -$C, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	0, 4, 2, 2, $C, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_02A0:	spriteHeader 
+Frame_GetUp:	spriteHeader 
 	spritePiece	-$10, -$1C, 3, 4, 0, 0, 0, 0, 0
 	spritePiece	-$10, 4, 4, 2, $C, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_02B2:	spriteHeader 
+Frame_LookUp1:	spriteHeader 
 	spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
 	spritePiece	-$10, -$14, 1, 4, 4, 0, 0, 0, 0
 	spritePiece	-8, -$C, 3, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, 4, 3, 2, $E, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_02D4:	spriteHeader 
+Frame_LookUp2:	spriteHeader 
 	spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
 	spritePiece	-8, -$1C, 2, 2, 4, 0, 0, 0, 0
 	spritePiece	-8, -$C, 2, 2, 8, 0, 0, 0, 0
 	spritePiece	-8, 4, 3, 2, $C, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_02F6:	spriteHeader 
+Frame_Walk11:	spriteHeader 
 	spritePiece	-$12, -$15, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, 3, 1, 2, 8, 0, 0, 0, 0
 	spritePiece	-$C, -5, 4, 4, $A, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_0310:	spriteHeader 
+Frame_Walk12:	spriteHeader 
 	spritePiece	-$12, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, 4, 1, 2, 8, 0, 0, 0, 0
 	spritePiece	-$C, -4, 3, 4, $A, 0, 0, 0, 0
 	spritePiece	$C, 4, 1, 2, $16, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_0332:	spriteHeader 
+Frame_Walk13:	spriteHeader 
 	spritePiece	-$13, -$13, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$C, -3, 3, 2, 8, 0, 0, 0, 0
 	spritePiece	-9, $D, 2, 2, $E, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_034C:	spriteHeader 
+Frame_Walk14:	spriteHeader 
 	spritePiece	-$C, -$14, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$12, -4, 4, 4, 6, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_035E:	spriteHeader 
+Frame_Walk15:	spriteHeader 
 	spritePiece	-$C, -$15, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$12, -5, 4, 4, 6, 0, 0, 0, 0
 	spritePiece	$E, -5, 1, 2, $16, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_0378:	spriteHeader 
+Frame_Walk16:	spriteHeader 
 	spritePiece	-$C, -$14, 3, 2, 0, 0, 0, 0, 0
 	spritePiece	-$14, 4, 1, 2, 6, 0, 0, 0, 0
 	spritePiece	-$C, -4, 3, 4, 8, 0, 0, 0, 0
 	spritePiece	$C, 4, 1, 2, $14, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_039A:	spriteHeader 
+Frame_Walk17:	spriteHeader 
 	spritePiece	-$13, -$13, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$C, -3, 3, 2, 8, 0, 0, 0, 0
 	spritePiece	-9, $D, 2, 2, $E, 0, 0, 0, 0
 	spriteFooter 
 
-Map_Sonic_03B4:	spriteHeader 
+Frame_Walk18:	spriteHeader 
 	spritePiece	-$12, -$14, 4, 2, 0, 0, 0, 0, 0
 	spritePiece	-$D, -4, 3, 4, 8, 0, 0, 0, 0
 	spriteFooter 

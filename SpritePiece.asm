@@ -1,7 +1,9 @@
+; ---------------------------------------------------------------------------		
 ; ASM68K version of SpritePiece, pruned down to just the Sonic 2 code,
 ; and modified for compatibility with the ASM68K section directives.
 ; The mappingsTable and mappingsTableEntry macros have been removed, as their functions 
 ; are now handled by the index and ptr macros.
+; ---------------------------------------------------------------------------		
 
 spriteHeader:	macro
 	if ~def(current_sprite)

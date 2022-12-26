@@ -5,7 +5,8 @@
 ; VDP addressses
 vdp_data_port:		equ $C00000
 vdp_control_port:	equ $C00004
-; Status register bits
+
+	; Status register bits
 	video_mode_bit:			equ 0			; PAL, 0 if NTSC, 1 if PAL
 	dma_status_bit:			equ 1			; DMA, 1 if a DMA is in progress
 	hblank_bit:				equ 2		; BB, 1 if HBlank is in progress
@@ -16,7 +17,8 @@ vdp_control_port:	equ $C00004
 	vertical_interrupt_bit: equ 7				; VI, 1 if a vertical interrupt has just occurred
 	fifo_full_bit:			equ 8			; F, 1 if VDP FIFO is full
 	fifo_empty_bit:			equ 9			; E, 1 if VDP FIFO is empty
-; VDP register settings
+
+	; VDP register settings
 	vdp_mode_register1:	equ $8000
 	vdp_left_border:	equ vdp_mode_register1+$20	; blank leftmost 8px to bg colour
 	vdp_enable_hint:	equ vdp_mode_register1+$10	; enable horizontal interrupts
@@ -26,7 +28,7 @@ vdp_control_port:	equ $C00004
 	
 	vdp_mode_register2:	equ $8100
 	vdp_128kb_vram:		equ vdp_mode_register2+$80	; use 128kB of VRAM, Teradrive only
-	vdp_hide_display:	equ vdp_mode_register2+$40	; fill display with bg colour
+	vdp_enable_display:	equ vdp_mode_register2+$40	; if not set, display is filled with background color
 	vdp_enable_vint:	equ vdp_mode_register2+$20	; enable vertical interrupts
 	vdp_enable_dma:		equ vdp_mode_register2+$10	; enable DMA operations
 	vdp_pal_display:	equ vdp_mode_register2+8	; 240px screen height (PAL)

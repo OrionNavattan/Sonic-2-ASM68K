@@ -14,13 +14,13 @@ use_s2_samples:			equ 1
 ; Set the following to one to use all S3D DAC samples, or to zero
 ; otherwise. Most of the S3D samples are also present in S3/S&K, but
 ; there are two samples specific to S3D.
-use_s3d_samples:			equ 1
+use_s3d_samples:			equ 0
 ; Set the following to one to use all S3 DAC samples,
 ; or to zero otherwise.
-use_s3_samples:			equ 1
+use_s3_samples:			equ 0
 ; Set the following to one to use all S&K DAC samples,
 ; or to zero otherwise.
-use_sk_samples:			equ 1
+use_sk_samples:			equ 0
 
 ; ---------------------------------------------------------------------------
 ; Define FM frequency equates for a single octave

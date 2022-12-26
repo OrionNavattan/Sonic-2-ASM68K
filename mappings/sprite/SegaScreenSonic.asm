@@ -7,7 +7,7 @@ Map_SegaScreenSonic:	index offset(*)
 	ptr	Map_objB1_003C
 	ptr	Map_objB1_006E
 	ptr	Map_objB1_00A0
-	ptr	Map_objB1_00D2
+	ptr	Frame_HideTM
 
 Map_objB1_000A:	spriteHeader
 	spritePiece	-$10, -$28, 4, 4, 0, 0, 0, 0, 0
@@ -45,7 +45,7 @@ Map_objB1_00A0:	spriteHeader
 	spritePiece	0, $18, 4, 4, $150, 0, 0, 0, 0
 	spriteFooter
 
-Map_objB1_00D2:	spriteHeader
+Frame_HideTM:	spriteHeader
 	spritePiece	-8, -4, 1, 1, 0, 0, 0, 0, 0
 	spritePiece	0, -4, 1, 1, 0, 0, 0, 0, 0
 	spriteFooter

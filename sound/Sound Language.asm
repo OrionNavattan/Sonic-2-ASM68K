@@ -14,12 +14,12 @@
 ; Orginally created for AS by Flamewing, based on S1SMPS2ASM version 1.1 
 ; by Marc Gordon (AKA Cinossu)
 
-; Initial ASM68K port by Brainulator; this modification by OrionNavattan
+; Initial ASM68K port by Brainulator; modified by OrionNavattan
 ; with some influence from Natsumi's AMPS.
 
 ; The conditionals for driver version, SMPS2ASM version, and sample settings, 
 ; as well as all note and sample definitions, are in "Frequency, Note, Envelope,
-; & Sample Definitions.asm", as are all definitions shared with the sound driver.
+; & Sample Definitions.asm".
 ; Everything in this file is specific to SMPS2ASM. 
 
 ; ---------------------------------------------------------------------------

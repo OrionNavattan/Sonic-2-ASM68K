@@ -154,8 +154,8 @@ Tails_InvincibilityStars:	equ	v_ost_lo_tails_invincibilitystars
 
 Primary_Collision:			equ	v_primary_collision
 Secondary_Collision:		equ	v_secondary_collision
-VDP_Command_Buffer:			equ	v_vdp_command_buffer
-VDP_Command_Buffer_Slot:	equ	v_vdp_command_buffer_slot
+VDP_Command_Buffer:			equ	v_dma_queue
+VDP_Command_Buffer_Slot:	equ	v_dma_queue_slot
 Sprite_Table_2:				equ	v_sprite_queue_2	
 Horiz_Scroll_Buf:			equ v_hscroll_buffer
 Sonic_Stat_Record_Buf:		equ	v_sonic_stat_tracker
@@ -332,7 +332,7 @@ Credits_Trigger:		equ	f_credits_trigger
 Ending_PalCycle_flag:	equ	f_ending_palcycle
 
 SegaScr_VInt_Subrout:	equ	v_segascr_vblank_subrout
-Ending_VInt_Subrout:	equ	v_ending_vint_subrout
+Ending_VInt_Subrout:	equ	v_ending_vblank_sub
 WFZ_BG_Y_Speed:			equ	v_wfz_bg_y_speed
 
 PalCycle_Timer2:	equ	v_palcycle_time2

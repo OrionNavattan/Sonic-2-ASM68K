@@ -96,8 +96,8 @@ popr:		macro
 ; ---------------------------------------------------------------------------	
 
 	if ZeroOffsetOptimization=0
-; Temporarily disable zero-offset optimization to assemble these instructions for a
-; bit-perfect build.
+		; Temporarily disable zero-offset optimization to assemble these instructions for a
+		; bit-perfect build.
 	
 _move:	macro
 		pusho
@@ -175,12 +175,12 @@ _tst:	macros
 	endc
 	
 ; ---------------------------------------------------------------------------
-; Optimize many addi, subi, and adda to addq and subq.
+; Optimize many addi, subi, and adda instructions to addq and subq.
 ; Almost all possible add/sub optimizations were made in Revision 2.
 ; ---------------------------------------------------------------------------
 	
     if AddSubOptimize
-	; if AddSubOptimize is enabled, optimize these...
+		; if AddSubOptimize is enabled, optimize these...
 addi_:		macros	src,dest
 		addq.\0	\src,\dest
 		
@@ -191,7 +191,7 @@ adda_:		macros
 		addq.\0	\src,\dest
 
     else
-	; ...otherwise, leave them unoptimized.
+		; ...otherwise, leave them unoptimized.
 addi_:		macros	src,dest
 		addi.\0	\src,\dest
 		
@@ -224,7 +224,7 @@ rev02even:	 macro
 		if Revision=2
 			even
 		endc
-  	  endm
+		endm
 
 ; ---------------------------------------------------------------------------
 ; The assembler/linker used for Revisions 0 and 1 (most likely ProASM for
@@ -296,7 +296,7 @@ rsobjend:	macro
 		if __rs>sizeof_ost
 			inform	3,"OST for \rsobj_name exceeds maximum by $%h bytes.",__rs-sizeof_ost
 		else
-;inform	0,"0-$%h bytes of OST for \rsobj_name used, leaving $%h bytes unused.",__rs-1,sizeof_ost-__rs
+			;inform	0,"0-$%h bytes of OST for \rsobj_name used, leaving $%h bytes unused.",__rs-1,sizeof_ost-__rs
 		endc
 		popo
 		endm
@@ -410,6 +410,16 @@ ptr:		macro
 ;		popo
 ;		list
 		endm
+	
+; ---------------------------------------------------------------------------
+; Make a size constant for an assembly array.
+; input: array start label
+; ---------------------------------------------------------------------------	
+
+arraysize:	macro	arrayname
+
+sizeof_\arrayname: equ	offset(*)-\arrayname
+		endm	
 		
 ; ---------------------------------------------------------------------------
 ; Make a 68K instruction with a VDP command longword or word as the source 
@@ -442,10 +452,10 @@ vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 		else inform 2,"Invalid VDP command type (must be read, write, or dma)."
 		endc
 
-		ifnotarg \dest
-			\inst\.\0	(((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)\adjustment\	
-		else			
+		ifarg \dest			
 			\inst\.\0	#(((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)\adjustment\,\dest
+		else	
+			\inst\.\0	(((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)\adjustment\	
 		endc
 		endm	
 	
@@ -455,35 +465,35 @@ vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 ; cram/vsram destination (0 by default)
 ; ---------------------------------------------------------------------------
 
-dma:		macro
+dma:		macro source,length,dest1,dest2
 		dma_type: = $4000
 		dma_type2: = $80
 		
-		if strcmp("\3","cram")
+		if strcmp("\dest1","cram")
 		dma_type: = $C000
-			if strlen("\4")=0
-			dma_dest: = 0
+			ifarg \dest2
+			dma_dest: =\dest2
 			else
-			dma_dest: = \4
+			dma_dest: = 0
 			endc
-		elseif strcmp("\3","vsram")
+		elseif strcmp("\dest1","vsram")
 		dma_type2: = $90
-			if strlen("\4")=0
-			dma_dest: = 0
+			ifarg \dest2
+			dma_dest: =\dest2
 			else
-			dma_dest: = \4
+			dma_dest: = 0
 			endc
 		else
-		dma_dest: = \3
+		dma_dest: = \dest1
 		endc
 		
 		lea	(vdp_control_port).l,a5
-		move.l	#(vdp_dma_length_hi<<16)+(((\2>>1)&$FF00)<<8)+vdp_dma_length_low+((\2>>1)&$FF),(a5) ; DMA length
-		move.l	#(vdp_dma_source_mid<<16)+(((\1>>1)&$FF00)<<8)+vdp_dma_source_low+((\1>>1)&$FF),(a5) ; DMA source high and mid bytes
-		move.w	#vdp_dma_source_hi+((((\1>>1)&$FF0000)>>16)&$7F),(a5) ; DMA source low byte
-		move.w	#dma_type+(dma_dest&$3FFF),(a5)		; DMA destination high byte
-		move.w	#dma_type2+((dma_dest&$C000)>>14),(v_vdp_dma_buffer).w ; DMA destination low byte; split into two words to work around a bug in the DMA controller on Model 1 VA0 and VA1 systems
-		move.w	(v_vdp_dma_buffer).w,(a5)		; set DMA destination; 68K will be halted immediately until the DMA is finished
+		move.l	#(vdp_dma_length_hi<<16)+((((length)>>1)&$FF00)<<8)+vdp_dma_length_low+(((length)>>1)&$FF),(a5)
+		move.l	#(vdp_dma_source_mid<<16)+((((source)>>1)&$FF00)<<8)+vdp_dma_source_low+(((source)>>1)&$FF),(a5)
+		move.w	#vdp_dma_source_hi+(((((source)>>1)&$FF0000)>>16)&$7F),(a5)
+		move.w	#dma_type+(dma_dest&$3FFF),(a5)
+		move.w	#dma_type2+((dma_dest&$C000)>>14),(v_vdp_dma_buffer).w
+		move.w	(v_vdp_dma_buffer).w,(a5)
 		endm
 
 ; ---------------------------------------------------------------------------
@@ -494,7 +504,7 @@ dma:		macro
 
 dma_fill:	macro value,length,dest
 		lea	(vdp_control_port).l,a5
-		move.w	#vdp_auto_inc|1,(a5)			; set VDP increment to 1 byte
+		move.w	#vdp_auto_inc+1,(a5)			; set VDP increment to 1 byte
 		move.l	#(vdp_dma_length_hi<<16)+(((length-1)&$FF00)<<8)+vdp_dma_length_low+((length-1)&$FF),(a5) ; set length of DMA
 		move.w	#vdp_dma_vram_fill,(a5)			; set DMA mode to fill
 		move.l	#$40000080+(((dest)&$3FFF)<<16)+(((dest)&$C000)>>14),(a5) ; set target of DMA
@@ -503,7 +513,7 @@ dma_fill:	macro value,length,dest
 		move.w	(a5),d1					; get status register
 		btst	#dma_status_bit,d1			; is DMA in progress?
 		bne.s	.wait_for_dma\@				; if yes, branch
-		move.w	#vdp_auto_inc|2,(a5)			; set VDP increment back to 2 bytes
+		move.w	#vdp_auto_inc+2,(a5)			; set VDP increment back to 2 bytes
 		endm
 
 ; ---------------------------------------------------------------------------
@@ -539,8 +549,8 @@ dma_fill_sequential:	macro value,length,dest,firstlast
 ; ---------------------------------------------------------------------------
 
 reset_dma_queue:	macro		
-		clr.w	(v_vdp_command_buffer).w		; clear the DMA queue
-		move.l	#v_vdp_command_buffer,(v_vdp_command_buffer_slot).w ; reset the buffer index		
+		clr.w	(v_dma_queue).w		; clear the first queue slot
+		move.l	#v_dma_queue,(v_dma_queue_slot).w ; reset the queue index		
 	endm
 	
 ; ---------------------------------------------------------------------------
@@ -550,7 +560,7 @@ reset_dma_queue:	macro
 
 disable_display:	macro
 		move.w	(v_vdp_mode_buffer).w,d0		; $81xx
-		andi.b	#~vdp_hide_display&$FF,d0		; clear bit 6
+		andi.b	#~vdp_enable_display&$FF,d0		; clear bit 6
 		move.w	d0,(vdp_control_port).l
 		endm
 
@@ -561,7 +571,7 @@ disable_display:	macro
 
 enable_display:	macro
 		move.w	(v_vdp_mode_buffer).w,d0		; $81xx
-		ori.b	#vdp_hide_display&$FF,d0		; set bit 6
+		ori.b	#vdp_enable_display&$FF,d0		; set bit 6
 		move.w	d0,(vdp_control_port).l
 		endm
 
@@ -574,7 +584,7 @@ enable_display:	macro
 zonewarning:	macro dest,elementsize
 	.end:
 		if (.end-dest)-(ZoneCount*elementsize)<>0
-		inform 1,"Size of \dest (%d) does not match ZoneCount (\#ZoneCount).",(.end-dest)/elementsize
+		inform 1,"Size of \dest ($%h) does not match ZoneCount ($%h).",(.end-dest)/elementsize,ZoneCount
 		endc
 		endm
 
@@ -583,14 +593,14 @@ zonewarning:	macro dest,elementsize
 ; input: source, destination, width [cells], height [cells]
 ; ---------------------------------------------------------------------------
 
-copy_tilemap:	macro source,loc,x,y,width,height
-		lea	(source).l,a1
-		vram_loc: = (loc)+(sizeof_vram_row*(y))+((x)*2)
-		locVRAM	vram_loc,d0
-		moveq	#width-1,d1
-		moveq	#height-1,d2
-		bsr.w	TilemapToVRAM
-		endm
+;copy_tilemap:	macro source,loc,x,y,width,height
+;		lea	(source).l,a1
+;		vram_loc: = (loc)+(sizeof_vram_row*(y))+((x)*2)
+;		locVRAM	vram_loc,d0
+;		moveq	#width-1,d1
+;		moveq	#height-1,d2
+;		bsr.w	TilemapToVRAM
+;		endm
 
 ; ---------------------------------------------------------------------------
 ; check if object moves out of range
@@ -650,13 +660,27 @@ objpos:		macro
 
 endobj:		macros
 		objpos $FFFF,0,0,0
+		
+		
+; ---------------------------------------------------------------------------
+; Declare subtype data for use with LoadSubType
+; input: mappings pointer, art tile, render flags, priority, width, collision flags
+; ---------------------------------------------------------------------------		
+
+subtypedata: 	macro mappings,vram,render,priority,width,collision
+
+		dc.l \mappings
+		dc.w \vram
+		dc.b \render,\priority,\width,\collision
+    	endm
 
 ; ---------------------------------------------------------------------------
 ; Remap ASCII to the custom character set used in the Options and 2P Menus
 ; ---------------------------------------------------------------------------
 
 menutxt:	macro
-			menu_str:	equs \1			
+		
+		menu_str:	equs \1			
 
 		dc.b	strlen(\1)-1
 	
@@ -679,7 +703,7 @@ menutxt:	macro
 		elseif	instr("ABCDEFGHIJKLMNOPQRSTUVWXYZ","\menu_chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$33)
 		else 	
-			inform 3,"Invalid character in menu text (must be uppercase letter, numeral, '*', '@', ' ;', or '.')."
+			inform 3,"Invalid character in menu text (must be uppercase letter, numeral, '*', '@', ';', or '.')."
 		endc
 		endr
 		endm
@@ -744,9 +768,9 @@ startbank: macro *
 		ptr_id: = 80h					; initial pointer id constant
 		
 		
-	; Unfortunately, because the bnkswtch_vals macro requires a label
-	; on the same line, we can't invoke it here; we have no choice but
-	; to include the entire macro a second time.
+		; Unfortunately, because the bnkswtch_vals macro requires a label
+		; on the same line, we can't invoke it here; we have no choice but
+		; to include the entire macro a second time.
 
 		cnt: = 0
 		ptr_num: = 1

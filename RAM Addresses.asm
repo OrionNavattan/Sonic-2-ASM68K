@@ -71,8 +71,8 @@ v_secondary_collision:  rs.b $300				; $FFFFD900
 
 				rsblockend ss_shared_ram
 
-v_vdp_command_buffer:       rs.w 7*$12				; $FFFFDC00 ; stores 18 ($12) VDP commands to issue the next time ProcessDMAQueue is called
-v_vdp_command_buffer_slot:  rs.l 1				; $FFFFDCFC ; stores the address of the next open slot for a queued VDP command
+v_dma_queue:       		rs.b sizeof_dma*countof_dma				; $FFFFDC00 ; stores 18 VDP commands to issue the next time ProcessDMAQueue is called
+v_dma_queue_slot:  		rs.l 1				; $FFFFDCFC ; stores the address of the next open slot for a queued VDP command
 v_sprite_queue_2:       rs.b $280				; $FFFFDD00 ; sprite attribute table buffer for the bottom split screen in 2-player mode
                         rs.b $80				; unused, but SAT buffer 2 can spill over into this area when there are too many sprites on-screen
 
@@ -342,7 +342,7 @@ f_ending_palcycle:			equ __rs-1		; $FFFFF661
 
 ; Following three variables share an address:
 v_segascr_vblank_sub:		equ __rs
-v_ending_vint_subrout:		equ __rs
+v_ending_vblank_sub:		equ __rs
 v_wfz_bg_y_speed:			rs.w 1			; $FFFFF662
 
 							rs.w 1	; $FFFFF664-$FFFFF665 ; unused
@@ -833,7 +833,7 @@ v_title_sonic:	rs.b sizeof_ost					; $FFFFB040
 v_title_tails:	rs.b sizeof_ost					; $FFFFB080
 
 v_title_flashing_star:		rs.b sizeof_ost	
-v_title_palette_changer_1: 	equ v_title_palette_changer_1	; $FFFFB0C0
+v_title_palette_changer_1: 	equ v_title_flashing_star	; $FFFFB0C0
 
 v_title_palette_changer_3: 	rs.b sizeof_ost			; $FFFFB100
 v_title_logo_top:			rs.b sizeof_ost		; $FFFFB140
