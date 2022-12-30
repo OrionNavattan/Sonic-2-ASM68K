@@ -1,7 +1,6 @@
 ; ---------------------------------------------------------------------------
 ; Frequency, Note, Envelope, and Sample Definitions
 ; Definitions generated here are used by both SMPS2ASM and the sound driver.
-
 ; ---------------------------------------------------------------------------
 ; Standard SMPS settings
 ; ---------------------------------------------------------------------------
@@ -399,7 +398,7 @@ DefineSamples:	macro	func
 			\func LowestPowerKickHit		; $C4
 		endc
 		
-; For conversions:
+		; For conversions:
 		if use_s2_samples
 			\func Kick				; if using s2 samples AND any combo of s3, s3k, s3d samples, we need to reset the rs counter here
 			\func Snare

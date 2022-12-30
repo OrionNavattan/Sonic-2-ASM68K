@@ -545,8 +545,8 @@ id_SCZ:		rs.b 1						; $10
 
 ZoneCount:	equ __rs					; Total number of zone slots, not necessarily playable zones
 
-titlecard_flag: equ	7					; flag bit set in v_gamemode to indicate the level hasn't yet started
-id_TitleCard_mask:	equ	1<<titlecard_flag		; flag mask
+titlecard_flag: 		equ	7						; flag bit set in v_gamemode to indicate the level hasn't yet started
+titlecard_flag_mask:	equ	1<<titlecard_flag		; flag mask
 
 
 ; Act IDs
@@ -644,14 +644,14 @@ camera_y_shift_default:		equ $60				; v_camera_y_shift normally
 camera_y_shift_down:		equ 8				; v_camera_y_shift when ducking
 
 ; Times
-sonic_shoe_time:		equ 20*60			; time in frames that speed shoes last (20 seconds)
-sonic_invincible_time:		equ 20*60			; time in frames that invincibility lasts (20 seconds)
-sonic_flash_time:		equ 2*60			; time in frames that Sonic flashes after being hit (2 seconds)
+shoe_time:		equ 20*60			; time in frames that speed shoes last (20 seconds)
+invincible_time:		equ 20*60			; time in frames that invincibility lasts (20 seconds)
+flash_time:		equ 2*60			; time in frames that Sonic flashes after being hit (2 seconds)
 ring_delay:			equ 30				; time in frames before Sonic is able to collect rings after being hit (0.5 seconds)
-sonic_lock_time_slope:		equ 30				; time in frames that controls are locked when stuck on a slope (0.5 seconds)
-sonic_lock_time_bubble:		equ 35				; time in frames that controls are locked after collecting a bubble (0.58 seconds)
-sonic_lock_time_spring:		equ 15				; time in frames that controls are locked after jumping on a spring (0.25 seconds)
-sonic_lock_time_slide:		equ 5				; time in frames that controls are locked after leaving a LZ slide (0.08 seconds)
+lock_time_slope:		equ 30				; time in frames that controls are locked when stuck on a slope (0.5 seconds)
+lock_time_bubble:		equ 35				; time in frames that controls are locked after collecting a bubble (0.58 seconds)
+lock_time_spring:		equ 15				; time in frames that controls are locked after jumping on a spring (0.25 seconds)
+lock_time_slide:		equ 5				; time in frames that controls are locked after leaving an oil slide (0.08 seconds)
 air_full:			equ 30				; time in seconds that Sonic can hold his breath
 air_ding1:			equ 25
 air_ding2:			equ 20
@@ -742,7 +742,7 @@ ost_anim_time:		rs.w 1					; $1E ; most objects; time to next frame (1 byte) / g
 ost_anim_time_low:	equ __rs-1				; $1F ; used by some objects as master copy of timer
 ost_col_type:		rs.b 1					; $20 ; non-player objects; collision response type - 0 equ none; 1-$3F = enemy; $41-$7F = items; $81-BF = hurts; $C1-$FF = custom
 ost_col_property:	rs.b 1					; $21 ; non-player objects;  collision extra property
-ost_status:			rs.b 1				; $22 ; most objects; bitfield indicating orientation or mode
+ost_primary_status:			rs.b 1				; $22 ; most objects; bitfield indicating orientation or mode
 	status_xflip_bit:	equ 0
 	status_yflip_bit:	equ 1				; only non-player objects
 	status_air_bit:		equ 1				; only Sonic and Tails
@@ -824,8 +824,16 @@ ost_flip_angle:				rs.b 1			; $27 ; angle about the x axis (360 degrees = 256) (
 ost_air_left:				rs.b 1			; $28 ; air left while underwater
 ost_flip_turned:			rs.b 1			; $29 ; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
 ost_obj_control:			rs.b 1			; $2A ; 0 for normal, 1 for hanging or for resting on a flipper, $81 for going through CNZ/OOZ/MTZ tubes or stopped in CNZ cages or stoppers or flying if Tails
-ost_status_secondary		rs.b 1				; $2B
-ost_flips_remaining			rs.b 1			; $2C ; number of flip revolutions remaining
+ost_secondary_status:		rs.b 1			; $2B ; status flags for powerups and oil slides
+	status_shield_bit:		equ	0			; set if character is equipped with a shield
+	status_invincible_bit:	equ	1			; set if character is invincible
+	status_speedshoes_bit:	equ	2			; set if character has speed shoes
+	status_sliding_bit:		equ	7			; 
+	status_shield:			equ	1<<status_shield_bit		; $01
+	status_invincible:		equ	1<<status_invincible_bit	; $02
+	status_speedshoes:		equ	1<<status_speedshoes_bit	; $04
+	status_sliding:			equ	1<<status_sliding_bit		; $80
+ost_flips_remaining:		rs.b 1			; $2C ; number of flip revolutions remaining
 ost_flip_speed:				rs.b 1			; $2D ; number of flip revolutions per frame / 256
 ost_lock_time:				rs.w 1			; $2E ; time left for locked d-pad controls (jumping is allowed), e.g. after hitting a spring
 ost_flash_time:				rs.w 1			; $30 ; time Sonic/Tails flashes for after getting hit

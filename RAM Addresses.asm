@@ -37,7 +37,7 @@ v_ost_all:          rs.b sizeof_ost*countof_ost			; $FFFFB000 ; object variable 
 
 	; Reseved object RAM: global level objects that are never unloaded
     v_ost_cpzpylon:			equ v_ost_all+(sizeof_ost*$D) ; $FFFFB340 ; Pylon in the foreground in CPZ
-    v_ost_watersurface1:	equ v_ost_all+(sizeof_ost*$E)	; First water surface
+    v_ost_watersurface1:	equ v_ost_all+(sizeof_ost*$E)	; $FFFFB380 ; First water surface
     v_ost_oil:				equ v_ost_watersurface1	; $FFFFB380 ; Oil at the bottom of OOZ
     v_ost_watersurface2:	equ v_ost_all+(sizeof_ost*$F)	; $FFFFB3C0 ; Second water surface
     v_ost_reserved_end:						;equ v_ost_dynamic	
@@ -71,14 +71,14 @@ v_secondary_collision:  rs.b $300				; $FFFFD900
 
 				rsblockend ss_shared_ram
 
-v_dma_queue:       		rs.b sizeof_dma*countof_dma				; $FFFFDC00 ; stores 18 VDP commands to issue the next time ProcessDMAQueue is called
+v_dma_queue:       		rs.b sizeof_dma*countof_dma				; $FFFFDC00 ; stores 18 DMA commands to issue the next time ProcessDMAQueue is called
 v_dma_queue_slot:  		rs.l 1				; $FFFFDCFC ; stores the address of the next open slot for a queued VDP command
-v_sprite_queue_2:       rs.b $280				; $FFFFDD00 ; sprite attribute table buffer for the bottom split screen in 2-player mode
+v_sprite_queue_2:       rs.b $280				; $FFFFDD00 ; sprite attribute table buffer for player 2's half of screen in two-player mode
                         rs.b $80				; unused, but SAT buffer 2 can spill over into this area when there are too many sprites on-screen
 
 				rsblock hscroll
-v_hscroll_buffer:  		rs.b sizeof_vram_hscroll	; $FFFFE000 ; horizontal scrolling table data ($380 bytes)
-                        rs.l 16					; A bug/optimisation in 'Swscrl_CPZ' causes 'Horiz_Scroll_Buf' to overflow into this.
+v_hscroll_buffer:  		rs.b sizeof_vram_hscroll	; $FFFFE000 ; horizontal scroll table buffer ($380 bytes)
+                        rs.l 16					; A bug/optimisation in 'Deform_CPZ' causes 'v_hscroll_buffer' to overflow into this.
 						rs.b $40	; $FFFFE3C0-$FFFFE3FF ; unused
 				rsblockend hscroll
 
@@ -164,7 +164,7 @@ v_bg3_redraw_direction_p2:		rs.w 1			; $FFFFEE5E ; bitfield ; for CPZ; bits 0-3 
 				rsblockend scroll_redraw_flags_p2
 
 				rsblock vblank_camera_copies	; required for teleport swap table
-; Copies of the camera position RAM and scroll redraw flags that are copied during VBlank and used copied during VBlank and used by DrawTilesWhenMoving:
+; Copies of the camera position RAM and scroll redraw flags that are copied during VBlank and used by DrawTilesWhenMoving:
 v_camera_pos_copy:			rs.l 2			; $FFFFEE60
 v_camera_pos_bg_copy:			rs.l 2			; $FFFFEE68
 v_camera_pos_bg2_copy:		rs.l 2				; $FFFFEE70
@@ -281,13 +281,14 @@ v_joypad_press_actual:		equ __rs-1			; $FFFFF605 ; joypad input - pressed, actua
 v_joypad2_hold_actual:		rs.w 1				; $FFFFF606 ; joypad 2 input - held, actual
 v_joypad2_press_actual:		equ __rs-1			; $FFFFF607 ; joypad 2 input - pressed, actual
 							rs.l 1	; $FFFFF608-$FFFFF60B ; unused
-v_vdp_mode_buffer:			rs.w 1			; $FFFFF60C ; VDP register $81 buffer - contains $8134 which is sent to vdp_control_port
+v_vdp_mode_buffer:			rs.w 1	; $FFFFF60C ; VDP register $81 buffer - contains $8134 which is ori'ed with vdp_enable_display&$FF and andi'ed with ~vdp_enable_display&$FF to enable and disable the display
 							rs.b 6	; $FFFFF60E-$FFFFF613 ; unused
 v_countdown:				rs.w 1			; $FFFFF614 ; decrements every time VBlank runs, used as a general purpose timer
 
-v_y_pos_vsram:				rs.w 1			; $FFFFF616
+v_y_pos_vsram:				rs.l 1			; $FFFFF616	; VScroll buffer
 v_fg_y_pos_vsram:			equ v_y_pos_vsram	; $FFFFF616 ; foreground y position, sent to VSRAM during VBlank
-v_bg_y_pos_vsram:			rs.w 1			; $FFFFF618 ; background y position, sent to VSRAM during VBlank
+v_bg_y_pos_vsram:			equ __rs-2			; $FFFFF618 ; background y position, sent to VSRAM during VBlank
+
 v_unused_ss:				rs.l 1			; $FFFFF61A ; cleared by VDPSetupGame, ClearScreen, and special stage init, but never used
 v_fg_y_pos_vsram_p2:		rs.w 1				; $FFFFF61E ; foreground y position for player 2
 v_bg_y_pos_vsram_p2:		rs.w 1				; $FFFFF620 ; background y position for player 2
@@ -310,8 +311,7 @@ v_palcycle_time:			rs.w 1			; $FFFFF634 ; palette cycling - time until the next 
 v_random:					rs.l 1		; $FFFFF636 ; pseudo random number generator result
 f_pause:					rs.w 1		; $FFFFF63A ; flag set to pause the game	
 							rs.b 4	; $FFFFF63C-$FFFFF63F ; unused
-v_vdp_dma_buffer:			rs.w 1			; $FFFFF640 ; VDP DMA command buffer. Data will NOT be preserved across V-INTs, so consider this space reserved.
-v_ss_shared_ram_end:		equ  v_vdp_dma_buffer
+v_vdp_dma_buffer:			rs.w 1			; $FFFFF640 ; buffer for final word of a DMA command. Data will NOT be preserved across V-INTs, so consider this space reserved.
 
 							rs.w 1	; $FFFFF642-$FFFFF643 ; unused
 f_hblank:					rs.w 1		; $FFFFF644 ; flag to run HBlank routine
@@ -337,7 +337,6 @@ v_dez_shake_timer:			equ __rs		; Word
 v_wfz_dle_subrout:			equ __rs		; Word
 f_segascr_paldone:			equ __rs		; Byte (cleared once as a word)
 f_credits_trigger:			rs.w 1			; cleared as a word a couple times
-
 f_ending_palcycle:			equ __rs-1		; $FFFFF661
 
 ; Following three variables share an address:
@@ -405,7 +404,7 @@ v_ring_end_p2:			rs.w 1				; $FFFFF718
 				rsblockend ring_manager_pointers_p2
 
 v_cnz_bumper_routine:		rs.b 1				; $FFFFF71A ; routine counter for the CNZ bumper manager psuedo-object
-f_unused_cnz_bumper_flag:	rs.b 1				; $FFFFF71B ; set by the CNZ bumper psuedo-object, never used again
+f_unused_cnz_bumper:		rs.b 1				; $FFFFF71B ; set by the CNZ bumper psuedo-object, never used again
 
 				rsblock bumper_manager_pointers
 v_cnz_visible_bumpers_start:		rs.l 1			; $FFFFF71C
@@ -421,7 +420,7 @@ f_screen_redraw:		rs.b 1				; $FFFFF72C ; flag indicating whole screen needs to 
 v_unused_cpz_scroll_timer:	rs.b 1				; $FFFFF72D ; used only in dead CPZ scrolling function
 f_wfz_scz_fire_toggle:		rs.b 1				; $FFFFF72E ; flag used by the WFZ palette cycle switcher	
 							rs.b 1	; $FFFFF72F ; unused
-f_water:				rs.b 1			; $FFFFF730 ; flag indicating if the level has water or oil		
+f_water:					rs.b 1			; $FFFFF730 ; flag indicating if the level has water or oil		
 							rs.b 1	; $FFFFF731 ; unused
 v_demo_input_counter_p2:	rs.w 1				; $FFFFF732 ; tracks progress in the demo input data for player 2, increases by 2 when input changes
 v_demo_input_time_p2:		rs.w 1				; $FFFFF734 ; time remaining for current demo "button press" for player 2
@@ -436,9 +435,9 @@ v_boss_collision_routine:	rs.b 1				; $FFFFF73F
 v_boss_anim_array:			rs.b $10		; $FFFFF740 ; up to $10 bytes; 2 bytes per entry
 v_ending_routine:						; $FFFFF750 ; which version of the ending cutscene to play
 v_boss_x_pos:				rs.l 1			; $FFFFF750 ; x_pos of current boss							
-; $FFFFF752 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
+											; $FFFFF752 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
 v_boss_y_pos:				rs.l 1			; $FFFFF754 ; y_pos of current boss
-; $FFFFF756 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
+											; $FFFFF756 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
 v_boss_x_vel:				rs.w 1			; $FFFFF758 ; x_vel of current boss
 v_boss_y_vel:				rs.w 1			; $FFFFF75A ; y_vel of current boss
 v_boss_timer:				rs.w 1			; $FFFFF75C ; general timer used by boss objects
@@ -563,6 +562,8 @@ v_debug_active:				rs.w 1			; $FFFFFE08 ; high byte is the debug mode routine co
 v_debug_move_delay:			rs.b 1			; $FFFFFE0A ; debug mode - time delay in frames between holding the d-pad and the object moving
 v_debug_move_speed:			rs.b 1			; $FFFFFE0B ; debug mode - speed the object moves, increases the longer d-pad is held
 v_vblank_counter:			rs.l 1			; $FFFFFE0C ; vertical interrupt counter, increments every VBlank
+v_vblank_counter_word:		equ __rs-2 ; $FFFFFE0E ; low word for v_vblank_counter
+v_vblank_counter_byte:		equ __rs-1 ; $FFFFFE0F ; low byte for v_vblank_counter
 v_zone:						rs.w 1		; $FFFFFE10 ; high byte is current zone number, low byte is current act number ; read as a byte if we only want the zone
 v_act:						equ __rs-1	; $FFFFFE11 ; read if we only want the act number
 v_lives:					rs.b 1		; $FFFFFE12 ; number of lives
@@ -616,7 +617,7 @@ v_oscillating_direction:		rs.w 1			; $FFFFFE5E ; bitfield for the direction valu
 				rsblock	oscillating_variables
 v_oscillating_table:			rs.l $10		; $FFFFFE60 ; table of 16 oscillating values, for platform movement - 1 word for current value, 1 word for rate
 ; TODO: This has been expanded compared to Sonic 1, and I am unsure of what the new values are.
-;v_oscillating_0_to_20:		equ v_oscillating_table
+v_oscillating_0_to_20:		equ v_oscillating_table
 ;v_oscillating_0_to_30:		equ v_oscillating_table+4
 ;v_oscillating_0_to_40:		equ v_oscillating_table+8
 ;v_oscillating_0_to_60:		equ v_oscillating_table+$C
@@ -805,7 +806,7 @@ v_checksum_pass:            rs.l 1				; $FFFFFFFC ; set to the text string "init
 ram_used:			equ __rs
 ram_final:			equ (ram_used-1)&$FFFF
 
-		if ram_used > 0
+		if ram_used>0
 			inform	3,"RAM usage exceeds maximum by $%h bytes.",ram_used
 		else
 			inform	0,"0-$%h bytes of RAM used with $%h bytes to spare.",ram_final,$FFFF-ram_final
@@ -981,7 +982,7 @@ f_ss_hide_ringstogo:			rs.b 1			; $FFFFDBA6
 f_ss_trigger_ringstogo:			rs.b 1			; $FFFFDBA7
 								rs.b $58 ; $FFFFDBA8-$FFFFDC00 ; unused
 
-		if __rs > offset(ss_shared_ram_end)
+		if __rs>offset(ss_shared_ram_end)
 			inform 3,"Special Stage variables exceed size of Special Stage shared RAM by $%h bytes.",(__rs-offset(ss_shared_ram_end))
 		endc
 
@@ -997,7 +998,7 @@ v_ss_x_offset:			rs.w 1				; $FFFFF73E
 v_ss_y_offset:			rs.w 1				; $FFFFF740
 f_ss_swap_positions:	rs.b 1					; $FFFFF742
 
-		if __rs > offset(boss_variables_end)
+		if __rs>offset(boss_variables_end)
 			inform 3,"Additional Special Stage variables exceed size of boss variables by $%h bytes.",(__rs-offset(boss_variables_end))
 		endc
 
@@ -1009,7 +1010,7 @@ f_ss_swap_positions:	rs.b 1					; $FFFFF742
 			rs.b sizeof_ost				; $FFFFB040
 v_continue_text:	rs.b sizeof_ost				; $FFFFB080 ; "CONTINUE" on the Continue screen
 v_continue_icons:	rs.b sizeof_ost*$D			; $FFFFB0C0-$FFFFB3C0 ; the icons on the Continue screen
-		if __rs > offset(ost_end)
+		if __rs>offset(ost_end)
 			inform 3,"Continue screen objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
 		endc
 
@@ -1017,14 +1018,14 @@ v_continue_icons:	rs.b sizeof_ost*$D			; $FFFFB0C0-$FFFFB3C0 ; the icons on the 
 ; 2P VS results screen variables
 				rsset	ost
 v_vs_results_hud: rs.b	sizeof_ost				; $FFFFB000 ; Blinking text at the bottom of the screeN
-		if __rs > offset(ost_end)
+		if __rs>offset(ost_end)
 			inform 3,"2P VS results screen objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
 		endc
 
 ; Menu screen variables
 ;				rsset ost
 ; No objects are loaded in the menu screens
-;		if __rs > Object_RAM_End
+;		if __rs>Object_RAM_End
 ;		inform 3,"Menu screen objects exceed size of object RAM buffer by $%h bytes.",(__rs-offset(ost_end))
 ;		endc
 
@@ -1039,7 +1040,7 @@ v_ending_tails_tails: 	rs.b sizeof_ost				; $FFFFB080	; Tails' tails on the cut 
 v_ending_palchanger:	rs.b sizeof_ost				; $FFFFB0C0
 v_ending_cutscene:		rs.b sizeof_ost			; $FFFFB100 ; the object that manages the cutscene
 
-		if __rs > offset(ost_end)
+		if __rs>offset(ost_end)
 			inform 3,"Ending sequence objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
 	    endc
 	    

@@ -26,7 +26,7 @@ prev_anim:		equ	ost_prev_anim
 anim_frame_duration:	equ ost_anim_time 
 collision_flags:		equ ost_col_type 
 collision_property:		equ ost_col_property
-status:					equ	ost_status
+status:					equ	ost_primary_status
 respawn_index:			equ ost_respawn
 routine:				equ ost_primary_routine
 routine_secondary:		equ	ost_secondary_routine
@@ -37,7 +37,7 @@ flip_angle:			equ ost_flip_angl
 air_left:			equ ost_air_left
 flip_turned:		equ ost_flop_turned
 obj_control:		equ ost_obj_control
-status_secondary:	equ ost_status_secondary
+status_secondary:	equ ost_secondary_status
 flips_remaining:	equ ost_flips_remaining
 flip_speed:			equ ost_flip_speed
 move_lock:			equ ost_lock_time
@@ -375,7 +375,7 @@ Ring_start_addr_P2:		equ	v_ring_start_p2
 Ring_end_addr_P2:		equ	v_ring_end_p2
 
 CNZ_Bumper_routine:		equ	v_cnz_bumper_routine
-CNZ_Bumper_UnkFlag:		equ f_unused_cnz_bumper_flag
+CNZ_Bumper_UnkFlag:		equ f_unused_cnz_bumper
 
 CNZ_Visible_bumpers_start:	equ	v_cnz_visible_bumpers_start
 CNZ_Visible_bumpers_end:	equ	v_cnz_visible_bumpers_end
@@ -856,9 +856,9 @@ TLPtrLow:			equ ch_tl_ptr_low
 TLPtrHigh:			equ ch_tl_ptr_high
 LoopCounters:		equ ch_loopcounters
 
-GoSubStack:			equ ch_gosub_stack
+GoSubStack:			equ ch_stack
 
-zTrack:				equ z_track_vars
+zTrack:				equ sizeof_trackvars
 
 zPalUpdTick			equ	v_pal_update_counter
 zCurDAC:			equ	v_current_dac	

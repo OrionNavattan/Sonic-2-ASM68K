@@ -175,31 +175,31 @@ _tst:	macros
 	endc
 	
 ; ---------------------------------------------------------------------------
-; Optimize many addi, subi, and adda instructions to addq and subq.
+; Optimize 87 addi, 6 adda, and 94 subi instructions to addq and subq.
 ; Almost all possible add/sub optimizations were made in Revision 2.
 ; ---------------------------------------------------------------------------
 	
     if AddSubOptimize
-		; if AddSubOptimize is enabled, optimize these...
-addi_:		macros	src,dest
-		addq.\0	\src,\dest
+		; if AddSubOptimize is enabled, optimize these to addq and subq...
+addi_:		macros	;src,dest
+		addq.\0	\_
 		
 subi_:		macros
-		subq.\0	\src,\dest
+		subq.\0	\_
 		
 adda_:		macros
-		addq.\0	\src,\dest
+		addq.\0	\_
 
     else
 		; ...otherwise, leave them unoptimized.
-addi_:		macros	src,dest
-		addi.\0	\src,\dest
+addi_:		macros	;src,dest
+		addi.\0	\_
 		
 subi_:		macros
-		subi.\0	\src,\dest
+		subi.\0 \_	
 		
 adda_:		macros
-		adda.\0	\src,\dest
+		adda.\0	\_
     endc
     
 ; ------------------------------------------------------------------------------
@@ -281,6 +281,7 @@ rsblockend:	macros						; Adapted to Sonic 2's macro-based RAM clearing
 ; ---------------------------------------------------------------------------
 ; Organise object RAM usage.
 ; ---------------------------------------------------------------------------
+
 rsobj:		macro name,start
 			rsobj_name: equs "\name"		; remember name of current object
 		ifarg \start

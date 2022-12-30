@@ -43,7 +43,7 @@ f_dac_enabled:			rs.b 1				; 15h ; set of 80h if DAC is enabled, 0 if FM6 is ena
 v_bank_number:			rs.b 1				; 16h ; current ROM bank (0 for MusicPoint1, $80 for MusicPoint2)
 f_pal:					rs.b 1			; 17h ; flag if the system is a PAL console
 
-z_vars:		equ __rs					; 18h bytes
+sizeof_soundvars:		equ __rs					; 18h bytes
 
 ; ---------------------------------------------------------------------------
 ; Constants for track variables
@@ -92,15 +92,15 @@ ch_voice_ptr_low:	rs.b 1					; $1C; FM SFX only; low byte of SFX voice table
 ch_voice_ptr_high:	rs.b 1					; $1D; FM SFX only; high byte of SFX voice table
 ch_tl_ptr_low:		rs.b 1					; $1E; FM only; low byte of where TL bytes of current voice begin (set during voice setting)
 ch_tl_ptr_high:		rs.b 1					; $1F; FM only; high byte of where TL bytes of current voice begin (set during voice setting)
-ch_loopcounters:	rs.b $A					; $20; loop counter index 0
+ch_loopcounters:	rs.b 0Ah				; $20; loop counter index 0
 
 ; The bytes between +20h and +29h are "open"; starting at +20h and going up are possible loop counters
 ; (for coord flag F7) while +2Ah going down (never AT 2Ah though) are stacked return addresses going
 ; down after calling coord flag F8h.  Of course, this does mean collisions are possible with either
 ; or other track memory if you're not careful with these!  No range checking is performed!	
 	
-ch_gosub_stack:		equ __rs				; 2Ah; start of next track, the two bytes below this is the coord flag "gosub" (F8h) return stack
-z_track_vars:  		equ __rs				; 2Ah;	length of each set of track variables
+ch_stack:				equ __rs				; 2Ah; start of next track, the two bytes below this is the coord flag "gosub" (F8h) return stack
+sizeof_trackvars:  		equ __rs				; 2Ah;	length of each set of track variables
 
 ; ---------------------------------------------------------------------------
 ; Constants for channel flag bits
@@ -126,10 +126,10 @@ tFM6:			equ 6					; FM6 channel type
 
 tDAC:			equ 6					; DAC channel type
 
-tPSG1:			equ $80					; PSG1 channel type
-tPSG2:			equ $A0					; PSG2 channel type
-tPSG3:			equ $C0					; PSG3 channel type
-tPSG4:			equ $E0					; PSG4 channel type
+tPSG1:			equ 80h					; PSG1 channel type
+tPSG2:			equ 0A0h					; PSG2 channel type
+tPSG3:			equ 0C0h					; PSG3 channel type
+tPSG4:			equ 0E0h					; PSG4 channel type
 	
 		
 ; ---------------------------------------------------------------------------
@@ -141,53 +141,54 @@ z_music_data_end:	equ __rs-40h				; 1B40h ; boundary between decompression buffe
 z_stack_pointer: 		equ	__rs			; 1B80h ; Z80 initial stack pointer value
 
 
-z_abs_vars:			rs.b z_vars			; 1B80h ; all variables from v_priority to f_pal
+z_abs_vars:			rs.b sizeof_soundvars			; 1B80h ; all variables from v_priority to f_pal
 
 z_tracks_start:		equ __rs
 z_song_dac_fm_start:	equ __rs
-z_song_dac:			rs.b z_track_vars		; 1B98h
+z_song_dac:			rs.b sizeof_trackvars		; 1B98h
 z_song_fm_start:	equ __rs
-z_song_fm1:			rs.b z_track_vars		; 1BC2h
-z_song_fm2:			rs.b z_track_vars		; 1BECh
-z_song_fm3:			rs.b z_track_vars		; 1C16h
-z_song_fm4:			rs.b z_track_vars		; 1C40h
-z_song_fm5:			rs.b z_track_vars		; 1C6Ah
-z_song_fm6:			rs.b z_track_vars		; 1C94h
+z_song_fm1:			rs.b sizeof_trackvars		; 1BC2h
+z_song_fm2:			rs.b sizeof_trackvars		; 1BECh
+z_song_fm3:			rs.b sizeof_trackvars		; 1C16h
+z_song_fm4:			rs.b sizeof_trackvars		; 1C40h
+z_song_fm5:			rs.b sizeof_trackvars		; 1C6Ah
+z_song_fm6:			rs.b sizeof_trackvars		; 1C94h
 z_song_fm_end:		equ __rs
 z_song_dac_fm_end:	equ __rs
+
 z_song_psg_start:	equ __rs
-z_song_psg1:		rs.b z_track_vars			; 1CBEh 
-z_song_psg2:		rs.b z_track_vars			; 1CE8h
-z_song_psg3:		rs.b z_track_vars			; 1D12h
+z_song_psg1:		rs.b sizeof_trackvars			; 1CBEh 
+z_song_psg2:		rs.b sizeof_trackvars			; 1CE8h
+z_song_psg3:		rs.b sizeof_trackvars			; 1D12h
 z_song_psg_end:		equ __rs
 z_tracks_end:		equ __rs
 
 z_tracks_sfx_start:	equ __rs
 z_sfx_fm_start:		equ __rs
-z_sfx_fm3:			rs.b z_track_vars		; 1D3Ch
-z_sfx_fm4:			rs.b z_track_vars		; 1D66h
-z_sfx_fm5:			rs.b z_track_vars		; 1D90h
+z_sfx_fm3:			rs.b sizeof_trackvars		; 1D3Ch
+z_sfx_fm4:			rs.b sizeof_trackvars		; 1D66h
+z_sfx_fm5:			rs.b sizeof_trackvars		; 1D90h
 z_sfx_fm_end:		equ __rs
 
 z_sfx_psg_start:	equ __rs
-z_sfx_psg1:			rs.b z_track_vars		; 1DBAh
-z_sfx_psg2:			rs.b z_track_vars		; 1DE4h
-z_sfx_psg3:			rs.b z_track_vars		; 1E0Eh
+z_sfx_psg1:			rs.b sizeof_trackvars		; 1DBAh
+z_sfx_psg2:			rs.b sizeof_trackvars		; 1DE4h
+z_sfx_psg3:			rs.b sizeof_trackvars		; 1E0Eh
 z_sfx_psg_end:		equ __rs
 z_tracks_sfx_end:	equ __rs
 
 z_tracks_save_start:	equ __rs				; When extra life plays, it backs up a large amount of memory (all track data plus 36 bytes)
-z_savevar:				rs.b z_vars		; 1E38h
-z_savesong_DAC:			rs.b z_track_vars		; 1E50h
-z_savesong_fm1:			rs.b z_track_vars		; 1E7Ah
-z_savesong_fm2:			rs.b z_track_vars		; 1EA4h
-z_savesong_fm3:			rs.b z_track_vars		; 1ECEh
-z_savesong_fm4:			rs.b z_track_vars		; 1EF8h
-z_savesong_fm5:			rs.b z_track_vars		; 1F22h
-z_savesong_fm6:			rs.b z_track_vars		; 1F4Ch
-z_savesong_psg1:		rs.b z_track_vars		; 1F76h
-z_savesong_psg2:		rs.b z_track_vars		; 1FA0h
-z_savesong_psg3:		rs.b z_track_vars		; 1FCAh
+z_savevar:				rs.b sizeof_soundvars		; 1E38h
+z_savesong_DAC:			rs.b sizeof_trackvars		; 1E50h
+z_savesong_fm1:			rs.b sizeof_trackvars		; 1E7Ah
+z_savesong_fm2:			rs.b sizeof_trackvars		; 1EA4h
+z_savesong_fm3:			rs.b sizeof_trackvars		; 1ECEh
+z_savesong_fm4:			rs.b sizeof_trackvars		; 1EF8h
+z_savesong_fm5:			rs.b sizeof_trackvars		; 1F22h
+z_savesong_fm6:			rs.b sizeof_trackvars		; 1F4Ch
+z_savesong_psg1:		rs.b sizeof_trackvars		; 1F76h
+z_savesong_psg2:		rs.b sizeof_trackvars		; 1FA0h
+z_savesong_psg3:		rs.b sizeof_trackvars		; 1FCAh
 z_tracks_save_end:		equ __rs
 
 ; ---------------------------------------------------------------------------
@@ -214,10 +215,12 @@ f_paused:				db 0			; 1307h ; pause flag used by the driver program; 0 = normal,
 ; Additional constants
 ; ---------------------------------------------------------------------------
 Z80_space:						equ $F64 ; size of compressed sound driver (patched by S2 SounddDriver Compress if necessary)
-countof_music_tracks:			equ	(z_tracks_end-z_tracks_start)/z_track_vars
-countof_music_dac_fm_tracks:	equ (z_song_dac_fm_end-z_song_dac_fm_start)/z_track_vars
-countof_music_fm_tracks:		equ	(z_song_fm_end-z_song_fm_start)/z_track_vars
-countof_music_psg_tracks:		equ	(z_song_psg_end-z_song_psg_start)/z_track_vars
-countof_sfx_tracks:				equ	(z_tracks_sfx_end-z_tracks_sfx_start)/z_track_vars
-countof_sfx_fm_tracks:			equ	(z_sfx_fm_end-z_sfx_fm_start)/z_track_vars
-countof_sfx_psg_tracks:			equ	(z_sfx_psg_end-z_sfx_psg_start)/z_track_vars
+countof_music_tracks:			equ	(z_tracks_end-z_tracks_start)/sizeof_trackvars
+countof_music_dac_fm_tracks:	equ (z_song_dac_fm_end-z_song_dac_fm_start)/sizeof_trackvars
+countof_music_fm_tracks:		equ	(z_song_fm_end-z_song_fm_start)/sizeof_trackvars
+countof_music_psg_tracks:		equ	(z_song_psg_end-z_song_psg_start)/sizeof_trackvars
+countof_sfx_tracks:				equ	(z_tracks_sfx_end-z_tracks_sfx_start)/sizeof_trackvars
+countof_sfx_fm_tracks:			equ	(z_sfx_fm_end-z_sfx_fm_start)/sizeof_trackvars
+countof_sfx_psg_tracks:			equ	(z_sfx_psg_end-z_sfx_psg_start)/sizeof_trackvars
+
+;sizeof_trackvars_all:			equ	sizeof_trackvars*(countof_music_tracks+countof_sfx_tracks)
