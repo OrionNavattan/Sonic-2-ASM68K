@@ -823,8 +823,8 @@ IsPalFlag:			equ f_pal
 PlaybackControl:	equ ch_flags
 VoiceControl:		equ ch_type
 TempoDivider:		equ ch_tick
-DataPointerLow:		equ ch_data_ptr_low
-DataPointerHigh:	equ ch_data_ptr_high
+DataPointerLow:		equ ch_dataptr_low
+DataPointerHigh:	equ ch_dataptr_high
 Transpose:			equ ch_transpose
 Volume:				equ ch_volume
 AMSFMSPan:			equ ch_ams_fms_pan

@@ -48,6 +48,12 @@ What has been done so far has been a massive undertaking. If you would like to h
 I welcome feedback, suggestions, and pull requests that help towards improving this disassembly
 and eventually bringing it to feature parity with Sonic 2 AS. 
 
-Major TODOs (not including documenting/implementing labels and symbolic constants):
+
+TODOs:
+* Implement index and ptr macros for all offset tables
+* Fix all object header comments
+* Replace all remaining raw addresses with named variables
+* Implement all constants for OST offsets, bits, et alt.
 * Write macros for handling credit and menu text
 * Fix up SonLVL INIs (some work has been done to keep them synced with filename changes, but they are currently broken and do not load)
+

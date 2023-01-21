@@ -181,7 +181,7 @@ _tst:	macros
 	
     if AddSubOptimize
 		; if AddSubOptimize is enabled, optimize these to addq and subq...
-addi_:		macros	;src,dest
+addi_:		macros
 		addq.\0	\_
 		
 subi_:		macros
@@ -192,7 +192,7 @@ adda_:		macros
 
     else
 		; ...otherwise, leave them unoptimized.
-addi_:		macros	;src,dest
+addi_:		macros
 		addi.\0	\_
 		
 subi_:		macros
@@ -304,7 +304,7 @@ rsobjend:	macro
 		
 ; ---------------------------------------------------------------------------
 ; Clear an area of RAM.
-; input: start location, end location (defined with rsblock)
+; input: start location, end location (may be defined with rsblock)
 ; ---------------------------------------------------------------------------		
 
 clear_ram:		macro startaddr,endaddr
@@ -345,9 +345,9 @@ clear_ram:		macro startaddr,endaddr
 ; ---------------------------------------------------------------------------
 
 index:		macro start,idstart,idinc
-		nolist
-		pusho
-		opt	m-
+;		nolist
+;		pusho
+;		opt	m-
 
 		ifarg \start					; check if start is defined
 			index_start: = \start
@@ -373,8 +373,8 @@ index:		macro start,idstart,idinc
 			ptr_id_inc: = 1				; use 1 by default
 		endc
 		
-		popo
-		list
+;		popo
+;		list
 		endm
 		
 ; ---------------------------------------------------------------------------
@@ -417,11 +417,9 @@ ptr:		macro
 ; input: array start label
 ; ---------------------------------------------------------------------------	
 
-arraysize:	macro	arrayname
+arraysize:	macros
+		sizeof_\1: equ	offset(*)-\1
 
-sizeof_\arrayname: equ	offset(*)-\arrayname
-		endm	
-		
 ; ---------------------------------------------------------------------------
 ; Make a 68K instruction with a VDP command longword or word as the source 
 ; (more or less replicating the vdpComm function in Sonic 2 AS)
@@ -432,8 +430,7 @@ sizeof_\arrayname: equ	offset(*)-\arrayname
 
 vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 
-		local type
-		local rwd
+		local type,rwd
 	
 		if stricmp ("\cmdtarget","vram")
 		type: =	$21					; %10 0001
@@ -664,8 +661,14 @@ endobj:		macros
 		
 		
 ; ---------------------------------------------------------------------------
-; Declare subtype data for use with LoadSubType
-; input: mappings pointer, art tile, render flags, priority, width, collision flags
+; Declare OST data for use with LoadSubType
+; Each set of data is $A bytes, and consists of:
+; - the object's mappings pointer (ost_mappings, longword) 
+; - the object's vram assignment (ost_tile, word)
+; - the object render flags (ost_render, byte)
+; - the object's priority (ost_priority, byte)
+; - the object's width (ost_width, byte)
+; - the object's collision flags (ost_collision, byte)
 ; ---------------------------------------------------------------------------		
 
 subtypedata: 	macro mappings,vram,render,priority,width,collision
@@ -675,6 +678,20 @@ subtypedata: 	macro mappings,vram,render,priority,width,collision
 		dc.b \render,\priority,\width,\collision
     	endm
 
+; ---------------------------------------------------------------------------
+; Declare OST data for use with LoadChild
+; Each set of data is 4 bytes, and consists of:
+; - the offset in the parent's OST where pointer to child will be stored (word)
+; - the child object's ID (ost_id, byte)
+; - the child object's subtype (ost_subtype, byte)
+; ---------------------------------------------------------------------------		
+
+childobjdata:	macro	chldptroffset,id,subtype
+
+		dc.w \chldptroffset
+		dc.b \id,\subtype
+		endm
+		
 ; ---------------------------------------------------------------------------
 ; Remap ASCII to the custom character set used in the Options and 2P Menus
 ; ---------------------------------------------------------------------------
@@ -823,7 +840,7 @@ finishbank: macro
     	endm 
     	
 ; ---------------------------------------------------------------------------
-; Align and reserve space at the end of a soundbank
+; Align soundbank contents to the end of the bank
 ; Replaces the negative cnops in Sonic 2 AS.
 ; ---------------------------------------------------------------------------    
 
@@ -858,9 +875,9 @@ incfile:	macro lbl
 ; input: label, label of second line (both must be declared by filedef)
 ; ---------------------------------------------------------------------------
 		
-incpal: macro label,label2
-		incfile \label
-    	ifarg label2
+incpal: macro lbl,lbl2
+		incfile \lbl
+    	ifarg lbl2
 			incbin "\filename"
 	    endc
 		endm		

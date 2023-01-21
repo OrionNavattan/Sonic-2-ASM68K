@@ -748,18 +748,26 @@ ost_primary_status:			rs.b 1				; $22 ; most objects; bitfield indicating orient
 	status_air_bit:		equ 1				; only Sonic and Tails
 	status_jump_bit:	equ 2
 	status_platform_bit:	equ 3
+	status_p1_platform_bit:	equ 3
+	status_p2_platform_bit:	equ 4
 	status_rolljump_bit:	equ 4
-	status_pushing_bit:		equ 5
+	status_p1_pushing_bit:		equ 5
+	status_p2_pushing_bit:		equ 6
 	status_underwater_bit:	equ 6
 	status_broken_bit:	equ 7
 	status_xflip:		equ 1<<status_xflip_bit		; xflip
 	status_yflip:		equ 1<<status_yflip_bit		; yflip (objects only)
 	status_air:			equ 1<<status_air_bit	; Sonic/Tails is in the air (Sonic/Tails only)
 	status_jump:		equ 1<<status_jump_bit		; jumping or rolling (Sonic/Tails only)
-	status_platform:	equ 1<<status_platform_bit	; Sonic/Tails is standing on this (objects) / Sonic/Tails is standing on object (Sonic)
-	status_rolljump:	equ 1<<status_rolljump_bit	; Sonic/Tails is jumping after rolling (Sonic only)
-	status_pushing:		equ 1<<status_pushing_bit	; Sonic/Tails is pushing this (objects) / Sonic/Tails is pushing an object (Sonic)
-	status_underwater:	equ 1<<status_underwater_bit	; Sonic/Tails is underwater (Sonic only)
+	status_platform:	equ 1<<status_platform_bit	; Sonic/Tails is standing on an object (Sonic/Tails only)
+	status_p1_platform:		equ 1<<maincharacter_standing_bit	; main character is standing on this object (objects only)
+	status_p2_platform:		equ 1<<sidekick_standing_bit		; sidekick is standing on this object (objects only)
+	status_standing_both:   equ status_p1_platform|status_p2_platform	; both players are standing on this object (objects only)
+	status_rolljump:	equ 1<<status_rolljump_bit	; Sonic/Tails is jumping after rolling (Sonic/Tails only)
+	status_p1_pushing:		equ 1<<status_p1_pushing_bit		; main character is pushing this (objects only)
+	status_p2_pushing:      equ 1<<status_p2_pushing_bit	; sidekick is pushing this (objects only)
+	status_pushing_both:    equ status_p1_pushing|status_p2_pushing	; both characters are pushing this (objects only)
+	status_underwater:	equ 1<<status_underwater_bit	; Sonic/Tails is underwater (Sonic/Tails only)
 	status_broken:		equ 1<<status_broken_bit	; object has been broken (enemies/bosses)
 ost_respawn:				rs.b 1			; $23 ; non-player objects; respawn list index number
 ost_primary_routine:		rs.b 1				; $24 ; most objects; primary routine number
@@ -879,7 +887,6 @@ ost_ss_rings_hundreds: 	equ $3C					; read as a byte if we only want hundreds
 ost_ss_rings_tens: 		equ $3D
 ost_ss_rings_units: 	equ $3E
 ost_ss_last_angle_index: equ $3F
-
 
 ; Additional object variables
 ost_parent1: 	equ $3E						; address of object that spawned this one

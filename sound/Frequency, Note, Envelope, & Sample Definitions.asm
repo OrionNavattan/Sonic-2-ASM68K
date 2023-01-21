@@ -45,24 +45,25 @@ fmfq_B1:	equ	1216					; B1	; <- used in S3K, as opposed to fmfq_B. This one seem
 ; Notes are tuned to where A4 = 440hz. Note that values are slightly off.
 ; By default, range from $80 to $DF. The first entries have lower ID.
 ;
-; line format: \func	constant, psg frequency, fm frequency
+; line format: \func	constant, psg frequency, fm frequency, flag to mark first octave
+; (used to enable a driver optimization)
 ; ---------------------------------------------------------------------------
 
 DefineNotes:	macro	func
-		\func	   ,	   , $0000|fmfq_B		; B-1 note (the fact that this entry exists seems like a bug)
+		\func	   ,	   , $0000|fmfq_B,f		; B-1 note (the fact that this entry exists seems like a bug)
 
-		\func	nC0,	854, $0000|fmfq_C		; C0 note
-		\func	nCs0,	806, $0000|fmfq_Cs		; C#0 note
-		\func	nD0,	761, $0000|fmfq_D		; D0 note
-		\func	nEb0,	718, $0000|fmfq_Ds		; D#0 note
-		\func	nE0,	677, $0000|fmfq_E		; E0 note
-		\func	nF0,	640, $0000|fmfq_F		; F0 note
-		\func	nFs0,	604, $0000|fmfq_Fs		; F#0 note
-		\func	nG0,	570, $0000|fmfq_G		; G0 note
-		\func	nAb0,	538, $0000|fmfq_Gs		; G#0 note
-		\func	nA0,	507, $0000|fmfq_A		; A0 note
-		\func	nBb0,	479, $0000|fmfq_As		; A#0 note
-		\func	nB0,	452, $0800|fmfq_B		; B0 note
+		\func	nC0,	854, $0000|fmfq_C,f		; C0 note
+		\func	nCs0,	806, $0000|fmfq_Cs,f		; C#0 note
+		\func	nD0,	761, $0000|fmfq_D,f		; D0 note
+		\func	nEb0,	718, $0000|fmfq_Ds,f		; D#0 note
+		\func	nE0,	677, $0000|fmfq_E,f		; E0 note
+		\func	nF0,	640, $0000|fmfq_F,f		; F0 note
+		\func	nFs0,	604, $0000|fmfq_Fs,f		; F#0 note
+		\func	nG0,	570, $0000|fmfq_G,f		; G0 note
+		\func	nAb0,	538, $0000|fmfq_Gs,f		; G#0 note
+		\func	nA0,	507, $0000|fmfq_A,f		; A0 note
+		\func	nBb0,	479, $0000|fmfq_As,f		; A#0 note
+		\func	nB0,	452, $0800|fmfq_B,f		; B0 note
 
 		\func	nC1,	427, $0800|fmfq_C		; C1 note
 		\func	nCs1,	403, $0800|fmfq_Cs		; C#1 note
@@ -194,59 +195,59 @@ VolumeEnv:	macro	func
 		\func	08
 		\func	09
 	elseif SonicDriverVer=2	
-		\func	$01
-		\func	$02
-		\func	$03
-		\func	$04
-		\func	$05
-		\func	$06
-		\func	$07
-		\func	$08
-		\func	$09
-		\func	$0A
-		\func	$0B
-		\func	$0C
-		\func	$0D
+		\func	01
+		\func	02
+		\func	03
+		\func	04
+		\func	05
+		\func	06
+		\func	07
+		\func	08
+		\func	09
+		\func	0Ah
+		\func	0Bh
+		\func	0Ch
+		\func	0Dh
 	else							;if SonicDriverVer>=3	
-		\func	$01
-		\func	$02
-		\func	$03
-		\func	$04
-		\func	$05
-		\func	$06
-		\func	$07
-		\func	$08
-		\func	$09
-		\func	$0A
-		\func	$0B
-		\func	$0C
-		\func	$0D
-		\func	$0E
-		\func	$0F
-		\func	$10
-		\func	$11
-		\func	$12	
-		\func	$13
-		\func	$14
-		\func	$15
-		\func	$16
-		\func	$17
-		\func	$18
-		\func	$19
-		\func	$1A
-		\func	$1B
-		\func	$1C
-		\func	$1D
-		\func	$1E
-		\func	$1F
-		\func	$20
-		\func	$21
-		\func	$22	
-		\func	$23
-		\func	$24
-		\func	$25
-		\func	$26
-		\func	$27
+		\func	01
+		\func	02
+		\func	03
+		\func	04
+		\func	05
+		\func	06
+		\func	07
+		\func	08
+		\func	09
+		\func	0Ah
+		\func	0Bh
+		\func	0Ch
+		\func	0Dh
+		\func	0Eh
+		\func	0Fh
+		\func	10h
+		\func	11h
+		\func	12h
+		\func	13h
+		\func	14h
+		\func	15h
+		\func	16h
+		\func	17h
+		\func	18h
+		\func	19h
+		\func	1Ah
+		\func	1Bh
+		\func	1Ch
+		\func	1Dh
+		\func	1Eh
+		\func	1Fh
+		\func	20h
+		\func	21h
+		\func	22h
+		\func	23h
+		\func	24h
+		\func	25h
+		\func	26h
+		\func	27h
 	endc	
 	endm
 
@@ -256,7 +257,7 @@ VolumeEnv:	macro	func
 
 GenEnvConst:	macro	const
 		num: = \const
-		numstr: substr 2,3,"\const"			; get digits for constant	
+		numstr: substr 1,2,"\const"			; get digits for constant	
 	if SonicDriverVer>=5
 		if num<=$0D 
 fTone_\numstr\:	rs.b 0						; if Flamewing's clone driver, generate fTone constants for envelopes $0D and lower for conversions
@@ -277,6 +278,7 @@ _firstVolEnv:	rs.b 0						; the first valid envelope
 		VolumeEnv	GenEnvConst			; generate constants for envelopes
 _lastVolEnv:	equ __rs-1					; the last valid envelope
 
+evcHold:		equ 80h			; terminator for PSG envelope lists
 
 ; ---------------------------------------------------------------------------
 ; Define samples for the sound driver and SMPS2ASM
@@ -462,3 +464,90 @@ _firstSample:	rs.b 0						; the first valid sample
 		DefineSamples	GenSampleConst			; generate constants for samples
 			
 _lastSample:	equ __rs-1					; the last valid sample
+
+; ---------------------------------------------------------------------------
+; Define track commands
+;
+; By default, range from $E0 to $FF, and $FF can have special flags.
+; The first entries have lower ID.
+; Constants for IDs are: com_(name)
+; This special macro is used to generate constants and jump tables
+;
+; line format: \func	name, alt1, alt2 [...]
+; ---------------------------------------------------------------------------
+TrackCommand:	macro	func
+;	if SonicDriverVer=1
+;		\func	Pan					; Pan FM channel (left/right/centre)
+;		\func	DetuneSet,Detune				; Detune a channel (change frequency)
+;		\func	Timing,Nop					; External song timing
+;		\func	Ret,Return					; Subroutine return
+;		\func	RestoreSong				; Restore previous song
+;		\func	ChannelTick,ChanTempoDiv			; Set tick multiplier for channel
+;		\func	VolAddFM,AlterVol				; FM volume add
+;		\func	Tie,NoAttack				; Do not key off. Can be used to tie two notes together (extend delay, run commands, set new note, etc)
+;		\func	Gate,NoteFill				; Set note gate timer (frames)
+;		\func	TransAdd,ChangeTransposition	; Transposition add
+;		\func	TempoSet,SetTempoMod				; Set tempo (affected by tick multiplier!)
+;		\func	SongTick,SetTempoDiv				; Set tick multiplier for song
+;		\func	VolAddPSG,PSGAlterVol				; PSG volume add
+;		\func	ClearPush				; Clear special push sound effect flag
+;		\func	StopSpecial				; End background sound effect channel
+;		\func	FMvoice					; Load FM voice
+;		\func	ModSet					; Set automatic vibrate
+;		\func	ModOn					; Enable automatic vibrate (without parameter set)
+;		\func	End					; End a song channel
+;		\func	NoiseSet				; Set PSG4 noise mode
+;		\func	VibOff					; Disable automatic vibrate (parameters preserved)
+;		\func	Env					; Set volume envelope (PSG only)
+;		\func	Jump					; Jump to song routine
+;		\func	Loop					; Loop song data
+;		\func	Call					; Call song subroutine
+;		\func	Release34				; Hacky command to immediately release ops 3 and 4. Used in SYZ music only
+;	elseif	SonicDriverVer=2
+		\func	Pan					; Pan FM channel (left/right/centre)
+		\func	Detuneset,Detune				; Detune a channel (change frequency)
+		\func	Timing,Nop				; External song timing
+		\func	Ret,Return					; Subroutine return
+		\func	RestoreSong				; Restore previous song
+		\func	ChannelTick,ChanTempoDiv				; Set tick multiplier for channel
+		\func	VolAddFM,AlterVol				; FM volume add
+		\func	Tie,NoAttack			; Do not key off. Can be used to tie two notes together (extend delay, run commands, set new note, etc)
+		\func	Gate,NoteFill					; Set note gate timer (frames)
+		\func	TransAdd,ChangeTransposition		; Transposition add
+		\func	TempoSet,SetTempoMod				; Set tempo (affected by tick multiplier!)
+		\func	SongTick,SetTempoDiv				; Set tick multiplier for song
+		\func	VolAddPSG,mPSGAlterVol				; PSG volume add
+		\func	NullCmd1				; unused, was Sonic 1's ClearPush
+		\func	NullCmd2				; unused, was Sonic 1's StopSpecial
+		\func	Voice,FMvoice					; Load FM voice
+		\func	Vib,ModSet					; Set automatic vibrate (aka, modulation)
+		\func	VibOn,ModOn					; Enable automatic vibrate (without parameter set)
+		\func	End,Stop					; End a song channel
+		\func	NoiseSet,PSGform			; Set PSG4 noise mode
+		\func	VibOff,ModOff				; Disable automatic vibrate (parameters preserved)
+		\func	Env,PSGvoice				; Set volume envelope (PSG only)
+		\func	Jump						; Jump to song routine
+		\func	Loop						; Loop song data
+		\func	Call						; Call song subroutine
+		\func	Release34,MaxRelRate		; Hacky command to immediately release ops 3 and 4. Used in Sonic 1's SYZ music only
+	;elseif	SonicDriverVer=3	
+	endm
+	
+; ---------------------------------------------------------------------------
+; Constants for tracker commands
+; ---------------------------------------------------------------------------
+
+GenComConst:	macro	const
+		rept narg-1
+com_\const:	rs.b 0						; generate alt constants
+		shift
+		endr
+
+com_\const:	rs.b 1						; generate the main constant
+		endm
+; ---------------------------------------------------------------------------
+
+		rsset	_lastNote+1				; commands come after the last note
+_firstCom:	rs.b 0						; the first valid command
+		TrackCommand	GenComConst			; generate constants for all main commands
+_lastCom:	equ __rs-1					; the last valid command

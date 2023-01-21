@@ -11,7 +11,14 @@ z_psg_input: 			equ	7F11h
 z_rom_window: 			equ	8000h
 
 ; ---------------------------------------------------------------------------
-; Offsets of global sound driver variables
+; YM2612/YM3438 registers:
+; ---------------------------------------------------------------------------
+
+; Global Registers
+ym_dac_enable:			equ 2Bh
+
+; ---------------------------------------------------------------------------
+; Offsets of global sound driver variables (relative to 1B80h by default)
 ; This setup is used because these are accessed both via immediate addressing
 ; (e.g., z_abs_vars+f_current_tempo), and via indexed addressing relative to 
 ; the start of the global variables (e.g., ix+f_current_tempo, where ix = z_abs_vars). 
@@ -54,45 +61,91 @@ sizeof_soundvars:		equ __rs					; 18h bytes
 ; ---------------------------------------------------------------------------
 				rsset 0
 ch_flags:		rs.b 1					; 0 ; all tracks
+	; Channel flag bits; 0, 5, and 6 are unused here
+	chf_rest_bit:	equ 1						; 02h; track is at rest
+	chf_mask_bit:	equ 2						; 04h; SFX is overriding this track
+	chf_vib_bit:	equ 3						; 08h; set if vibrato is enabled
+	chf_tie_bit:	equ 4						; 10h; do not attack next note
+	chf_enable_bit: equ 7						; 80h; track is playing	
+	chf_rest:	equ 1<<chf_rest_bit	
+	chf_mask:	equ 1<<chf_mask_bit
+	chf_vib:	equ 1<<chf_vib_bit
+	chf_tie:	equ 1<<chf_tie_bit
+	chf_enable: equ 1<<chf_enable_bit
+	
 ch_type:		rs.b 1					; 1 ; all tracks
-; 	"voice control" bits:
-	fmii_bit:	equ 2					; 2 (04h): if set, bound for part II, otherwise 0 (see zWriteFMIorII)
-	f_psg:		equ 7					; 	7 (80h): PSG track
-ch_tick:				rs.b 1			; 2; all tracks; tempo divisor; 1 = Normal, 2 = Half, 3 = Third...
-ch_data_ptr_low:	rs.b 1					; 3; all tracks; track position low byte
-ch_data_ptr_high:	rs.b 1					; 4; all tracks; track position high byte
-ch_transpose:			rs.b 1				; 5; FM/PSG; transpose (from coord flag E9)
+	; Voice control bits
+	t_fmii_bit:		equ 2					; if set, FM assignment bits refer to FM channels 4-6, otherwise FM channels 1-3 (also used to select zWriteFMI or zWriteFMII)
+	t_psg_bit:		equ 7					; if set, this is a PSG track
+	t_fmii:			equ 1<<t_fmii_bit
+	
+	; Channel assignment constants:
+	tFM1:			equ 0					; 0, FM1 channel type
+	tFM2:			equ 1					; 1, FM2 channel type
+	tFM3:			equ 2					; 2, FM3 channel type
+	tFM4:			equ t_fmii|tFM1			; 4, FM4 channel type
+	tFM5:			equ t_fmii|tFM2			; 5, FM5 channel type
+	tFM6:			equ t_fmii|tFM3			; 6, FM6 channel type
+	tDAC:			equ tFM6				; 6, DAC channel type
+	tPSG1:			equ 80h					; PSG1 channel type
+	tPSG2:			equ 0A0h					; PSG2 channel type
+	tPSG3:			equ 0C0h					; PSG3 channel type
+	tPSG4:			equ 0E0h					; PSG4 channel type
+	t_fm_assignment:	equ 1<<tFM1|1<<tFM2 	; bits 0 and 1 indicate channels 1-3, or 4-6 if t_fmii_bit is set
+
+	
+ch_tick:			rs.b 1				; 2; all tracks; tempo divisor; 1 = Normal, 2 = Half, 3 = Third...
+ch_dataptr_low:		rs.b 1				; 3; all tracks; track position low byte
+ch_dataptr_high:	rs.b 1				; 4; all tracks; track position high byte
+ch_transpose:		rs.b 1				; 5; FM/PSG; transpose (from coord flag E9)
 ch_volume:			rs.b 1				; 6; FM/PSG; channel volume (only applied at voice changes)
 ch_ams_fms_pan:		rs.b 1					; 7; FM/DAC; panning / AMS / FMS settings
+	fms_1_bit:			equ 0
+	fms_2_bit:			equ 1
+	fms_3_bit:			equ 2
+	ams_1_bit:			equ 4
+	ams_2_bit:			equ 5
+	pan_right_bit:		equ 6
+	pan_left_bit:		equ 7
+	fms_1:				equ 1<<fms_1_bit
+	fms_2:				equ 1<<fms_2_bit
+	fms_3:				equ 1<<fms_3_bit
+	ams_1:				equ 1<<ams_1_bit
+	ams_2:				equ 1<<ams_2_bit
+	pan_right:			equ 1<<pan_right_bit	
+	pan_left:			equ 1<<pan_left_bit
+	fms_settings:		equ fms_1|fms_2|fms_3
+	ams_fms_settings:	equ fms_1|fms_2|fms_3|ams_1|ams_2
+	
 ch_voice:			rs.b 1				; 8; FM only; current voice in use
 ch_vol_env_id:		equ ch_voice				; 8; PSG only; current PSG tone
 ch_flutter:			rs.b 1				; 9; PSG only; flutter (dynamically affects PSG volume for decay effects)
-ch_stackptr:		rs.b 1					; $A; all tracks; "gosub" stack position offset (starts at 2Ah, i.e. end of track, and each jump decrements by 2)
-ch_delay:			rs.b 1				; $B; all tracks;  current duration timeout; counting down to zero
-ch_saved_delay:		rs.b 1					; $C; all tracks; last set duration (if a note follows a note, this is reapplied to 0Bh)
+ch_stackptr:		rs.b 1					; Ah; all tracks; "gosub" stack position offset (starts at 2Ah, i.e. end of track, and each jump decrements by 2)
+ch_delay:			rs.b 1				; Bh; all tracks;  current duration timeout; counting down to zero
+ch_saved_delay:		rs.b 1					; Ch; all tracks; last set duration (if a note follows a note, this is reapplied to 0Bh)
 
-; $D-$E change a little depending on track -- essentially they hold data relevant to the next note to play
-ch_sample:			rs.b 1				; $D; DAC only; next sample to play
-ch_freq_low:		equ	ch_sample			; $D; FM/PSG: frequency low byte
-ch_freq_high:		rs.b 1					; $E; FM/PSG: frequency high byte
-ch_gate:			rs.b 1				; $F; FM/PSG; currently set note fill; counts down to zero and then cuts off note
-ch_savedgate:		rs.b 1					; $10; FM/PSG; reset value for current note fill
-ch_vibptr_low:		rs.b 1					; $11; FM/PSG; low byte of address of current modulation setting
-ch_vibptr_high:		rs.b 1					; $12; FM/PSG; high byte of address of current modulation setting
-ch_vib_delay:		rs.b 1					; $13; FM/PSG; wait for ww period of time before modulation starts
-ch_vib_speed:		rs.b 1					; $14; FM/PSG; modulation speed
-ch_vib_delta:		rs.b 1					; $15; FM/PSG; modulation change per mod. Step
-ch_vib_steps:		rs.b 1					; $16; FM/PSG; number of steps in modulation (divided by 2)
-ch_vibval_low:		rs.b 1					; $17; FM/PSG; current modulation value low byte
-ch_vibval_high:		rs.b 1					; $18; FM/PSG; current modulation value high byte
-ch_detune:			rs.b 1				; $19; FM/PSG; set by detune coord flag E1; used to add directly to FM/PSG frequency
-ch_vol_tl_mask:		rs.b 1					; $1A; FM only; zVolTLMaskTbl value set during voice setting (value based on algorithm indexing zGain table)
-ch_noisemode:		rs.b 1					; $1B; PSG only; noise channel modesetting
-ch_voice_ptr_low:	rs.b 1					; $1C; FM SFX only; low byte of SFX voice table
-ch_voice_ptr_high:	rs.b 1					; $1D; FM SFX only; high byte of SFX voice table
-ch_tl_ptr_low:		rs.b 1					; $1E; FM only; low byte of where TL bytes of current voice begin (set during voice setting)
-ch_tl_ptr_high:		rs.b 1					; $1F; FM only; high byte of where TL bytes of current voice begin (set during voice setting)
-ch_loopcounters:	rs.b 0Ah				; $20; loop counter index 0
+; Dh-Eh change a little depending on track -- essentially they hold data relevant to the next note to play
+ch_sample:			rs.b 1				; Dh; DAC only; next sample to play
+ch_freq_low:		equ	ch_sample			; Dh; FM/PSG: frequency low byte
+ch_freq_high:		rs.b 1					; Eh; FM/PSG: frequency high byte
+ch_gate:			rs.b 1				; Fh; FM/PSG; currently set note fill; counts down to zero and then cuts off note
+ch_savedgate:		rs.b 1					; 10h; FM/PSG; reset value for current note fill
+ch_vibptr_low:		rs.b 1					; 11h; FM/PSG; low byte of address of current modulation setting
+ch_vibptr_high:		rs.b 1					; 12h; FM/PSG; high byte of address of current modulation setting
+ch_vib_delay:		rs.b 1					; 13h; FM/PSG; wait for ww period of time before modulation starts
+ch_vib_speed:		rs.b 1					; 14h; FM/PSG; modulation speed
+ch_vib_delta:		rs.b 1					; 15h; FM/PSG; modulation change per mod. Step
+ch_vib_steps:		rs.b 1					; 16h; FM/PSG; number of steps in modulation (divided by 2)
+ch_vibval_low:		rs.b 1					; 17h; FM/PSG; current modulation value low byte
+ch_vibval_high:		rs.b 1					; 18h; FM/PSG; current modulation value high byte
+ch_detune:			rs.b 1				; 19h; FM/PSG; set by detune coord flag E1; used to add directly to FM/PSG frequency
+ch_vol_tl_mask:		rs.b 1					; 1Ah; FM only; zVolTLMaskTbl value set during voice setting (value based on algorithm indexing zGain table)
+ch_noisemode:		rs.b 1					; 1Bh; PSG only; noise channel modesetting
+ch_voice_ptr_low:	rs.b 1					; 1Ch; FM SFX only; low byte of SFX voice table
+ch_voice_ptr_high:	rs.b 1					; 1Dh; FM SFX only; high byte of SFX voice table
+ch_tl_ptr_low:		rs.b 1					; 1Eh; FM only; low byte of where TL bytes of current voice begin (set during voice setting)
+ch_tl_ptr_high:		rs.b 1					; 1Fh; FM only; high byte of where TL bytes of current voice begin (set during voice setting)
+ch_loopcounters:	rs.b 0Ah				; 20h; loop counter index 0
 
 ; The bytes between +20h and +29h are "open"; starting at +20h and going up are possible loop counters
 ; (for coord flag F7) while +2Ah going down (never AT 2Ah though) are stacked return addresses going
@@ -103,40 +156,10 @@ ch_stack:				equ __rs				; 2Ah; start of next track, the two bytes below this is
 sizeof_trackvars:  		equ __rs				; 2Ah;	length of each set of track variables
 
 ; ---------------------------------------------------------------------------
-; Constants for channel flag bits
-; ---------------------------------------------------------------------------
-		rsset 1
-chf_rest:	rs.b 1						; 1 (02h): track is at rest
-chf_mask:	rs.b 1						; 2 (04h): SFX is overriding this track
-chf_vib:	rs.b 1						; 3 (08h): set if vibrato is enabled
-chf_tie:	rs.b 1						; 4 (10h): do not attack next note
-		rs.b 2						; 5-6 unused
-chf_enable:	rs.b 1						; 7 (80h): track is playing	
-
-; ---------------------------------------------------------------------------
-; Constants for channel types (ch_type)
-; ---------------------------------------------------------------------------
-
-tFM1:			equ 0					; FM1 channel type
-tFM2:			equ 1					; FM2 channel type
-tFM3:			equ 2					; FM3 channel type
-tFM4:			equ 4					; FM4 channel type
-tFM5:			equ 5					; FM5 channel type
-tFM6:			equ 6					; FM6 channel type
-
-tDAC:			equ 6					; DAC channel type
-
-tPSG1:			equ 80h					; PSG1 channel type
-tPSG2:			equ 0A0h					; PSG2 channel type
-tPSG3:			equ 0C0h					; PSG3 channel type
-tPSG4:			equ 0E0h					; PSG4 channel type
-	
-		
-; ---------------------------------------------------------------------------
 ; Sound Driver RAM Addresses
 ; ---------------------------------------------------------------------------
 			rsset 1380h				; WARNING: if you change this, you MUST change the start location of the Music section in Compressed Music Header.asm to match
-z_music_data: 	rs.b 800h					; 1380h ; Z80 decompression buffer, (only 7C0h in size, remaining 40h is the Z80 stack)
+z_music_data: 	rs.b 800h					; 1380h ; Z80 decompression buffer (only 7C0h in size, remaining 40h is the Z80 stack)
 z_music_data_end:	equ __rs-40h				; 1B40h ; boundary between decompression buffer and Z80 stack
 z_stack_pointer: 		equ	__rs			; 1B80h ; Z80 initial stack pointer value
 
@@ -193,7 +216,7 @@ z_tracks_save_end:		equ __rs
 
 ; ---------------------------------------------------------------------------
 ; Additional global variables
-; These addresses are, for some reason, reserved and included at the end of 
+; These variables are, for some reason, reserved and included at the end of 
 ; the driver binary. They are defined here and included via macro.
 ; ---------------------------------------------------------------------------
 
@@ -212,9 +235,9 @@ f_paused:				db 0			; 1307h ; pause flag used by the driver program; 0 = normal,
 		endm
 
 ; ---------------------------------------------------------------------------
-; Additional constants
+; Size/count constants
 ; ---------------------------------------------------------------------------
-Z80_space:						equ $F64 ; size of compressed sound driver (patched by S2 SounddDriver Compress if necessary)
+Z80_space:						equ $F64 ; size of compressed sound driver. S2 SounddDriver Compress may ask you to increase this value if you've added code to the driver
 countof_music_tracks:			equ	(z_tracks_end-z_tracks_start)/sizeof_trackvars
 countof_music_dac_fm_tracks:	equ (z_song_dac_fm_end-z_song_dac_fm_start)/sizeof_trackvars
 countof_music_fm_tracks:		equ	(z_song_fm_end-z_song_fm_start)/sizeof_trackvars

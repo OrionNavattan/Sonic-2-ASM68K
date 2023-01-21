@@ -614,9 +614,9 @@ smpsHaltMusic macro flag
 
 smpsCopyData macro data,len
 	inform 3,"Coord. Flag to copy data should not be used. Complain to Flamewing if any music uses it."
-	dc.b	$FF,$03
-	little_endian \data
-	dc.b \len
+;	dc.b	$FF,$03
+;	little_endian \data
+;	dc.b \len
 	endm
 
 smpsSSGEG macro op1,op2,op3,op4
