@@ -94,7 +94,7 @@ psg_input:			equ $C00011
 debug_reg:			equ $C0001C
 
 ; Z80 address space
-z80_ram:		equ $A00000				; start of Z80 RAM
+z80_ram:		equ $A00000					; start of Z80 RAM
 z80_ram_end:	equ $A02000					; end of non-reserved Z80 RAM
 ym2612_a0:		equ $A04000
 ym2612_d0:		equ $A04001

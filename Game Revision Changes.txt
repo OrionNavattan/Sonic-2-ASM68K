@@ -12,8 +12,8 @@ Removes a debug check designed to crash the game if BuildSprites attempts to dis
 Adjusts the position of a Crawl and two flippers in CNZ1 2P
 Adjusts the position of 4 Crawls and two flippers in CNZ2 2P
 Changes the behavior of Tails' level reset routine in 2P mode
-Invisible solid blocks and MTZ springs walls are no longer visible in debug mode, with one jmpto consequently removed
-Fixes MTZ spring walls not checking if the player was hurt or dead
+Invisible solid blocks and MTZ spring walls are no longer visible in debug mode, with one jmpto consequently removed
+Fixes MTZ spring walls not checking if the character was hurt or dead
 Fixes CNZ pinball launchers not checking if AI Tails is flying
 Removes a partial duplicate of PLC_ResultsTails
 Fixes an incorrectly-placed plane switcher in EHZ2
@@ -25,7 +25,7 @@ Changes in Revision 2:
 Remove hundreds of proxied jumps and branches
 Remove all filler nops
 Almost all possible addq and subq optimizations made
-Many PC-relative leas been deoptimized to absolute long
+Many PC-relative leas deoptimized to absolute long
 LevelSizeLoad clears some additional variables (v_wfz_dle_subrout, v_wfz_bg_y_speed, 
 v_camera_x_pos_offset, and v_camera_y_pos_offset)
 Removes an unused duplicate of SwScrl_Minimal

@@ -96,7 +96,7 @@
 		filedef	Nem_HUD,"art/nemesis/HUD",nem,unc	; Score, Rings, & Time patterns - 24 tiles
 		filedef Nem_Sonic_Life_Counter,"art/nemesis/Sonic Lives Counter",nem,unc ; 12 tiles
 		filedef Nem_Ring,"art/nemesis/Ring",nem,unc	; 14 tiles
-		filedef Nem_Monitors_and_PowerUps,"art/nemesis/Monitors & Monitor Contents",nem,unc ; 60 tiles
+		filedef Nem_Monitors,"art/nemesis/Monitors & Monitor Contents",nem,unc ; 60 tiles
 		filedef Nem_Spikes,"art/nemesis/Spikes",nem,unc	; 8 tiles
 		filedef Nem_Numbers,"art/nemesis/Numbers",nem,unc ; 18 tiles
 		filedef Nem_Checkpoint,"art/nemesis/Star Pole",nem,unc ; 16 tiles
@@ -136,12 +136,12 @@
 		filedef Nem_Rabbit,"art/nemesis/Rabbit",nem,unc	; 18 tiles
 		filedef Nem_WFZSwitch,"art/nemesis/WFZ Boss Chamber Switch",nem,unc ; 4 tiles
 		filedef Nem_BreakPanels,"art/nemesis/WFZ Breakaway Panels",nem,unc ; 15 tiles
-		filedef Nem_OOZSpikedBall,"art/nemesis/OOZ Spiked Ball",nem,unc ; 32 tiles
+		filedef Nem_SlidingSpikes,"art/nemesis/OOZ Spiked Ball",nem,unc ; 32 tiles
 		filedef Nem_BurnerLid,"art/nemesis//OOZ Burner Lid Platform",nem,unc ; 6 tiles
 		filedef Nem_StripedBlocksVert,"art/nemesis/CPZ Striped Blocks 1",nem,unc ; 4 tiles
 		filedef Nem_Oilfall,"art/nemesis/OOZ Oil Falling Into Oil",nem,unc ; 16 tiles
 		filedef Nem_Oilfall2,"art/nemesis/OOZ Oil Cascades",nem,unc ; 13 tiles
-		filedef Nem_OOZSpringBall,"art/nemesis/OOZ Ball on Spring (Beta Leftover)",nem,unc ; Unused beta leftover - 20 tiles
+		filedef Nem_SpringBall,"art/nemesis/OOZ Ball on Spring (Beta Leftover)",nem,unc ; Unused beta leftover - 20 tiles
 		filedef Nem_LaunchBall,"art/nemesis/OOZ Transporter Ball",nem,unc ; 53 tiles
 		filedef Nem_HTZCliffs,"art/nemesis/HTZ Background Cliffs",nem,unc ; 192 tiles
 		filedef Nem_OOZPlatform,"art/nemesis/OOZ Collapsing Platform",nem,unc ; 40 tiles
@@ -149,28 +149,28 @@
 		filedef Nem_OOZSwingPlat,"art/nemesis/OOZ Swinging Platform",nem,unc ; 28 tiles
 		filedef Nem_StripedBlocksHoriz,"art/nemesis/OOZ Striped Blocks",nem,unc ; 4 tiles
 		filedef Nem_OOZElevator,"art/nemesis/OOZ Elevator",nem,unc ; 24 tiles
-		filedef Nem_OOZFan,"art/nemesis/OOZ Fan",nem,unc ; 30 tiles
-		filedef Nem_OOZBurn,"art/nemesis/OOZ Burner Flame",nem,unc ; 18 tiles
-		filedef Nem_CNZCaterpillarPlats,"art/nemesis/CNZ Caterpillar Platforms",nem,unc ; 4 tiles
-		filedef Nem_CNZBonusSpike,"art/nemesis/CNZ Slot Spikeballs",nem,unc ; 4 tiles
-		filedef Nem_CNZBigMovingBlock,"art/nemesis/CNZ Big Moving Block",nem,unc ; 16 tiles
+		filedef Nem_Fan,"art/nemesis/OOZ Fan",nem,unc ; 30 tiles
+		filedef Nem_Burner,"art/nemesis/OOZ Burner Flame",nem,unc ; 18 tiles
+		filedef Nem_SnakePlats,"art/nemesis/CNZ Caterpillar Platforms",nem,unc ; 4 tiles
+		filedef Nem_BombPenalty,"art/nemesis/CNZ Slot Spikeballs",nem,unc ; 4 tiles
+		filedef Nem_LargeMovingBlock,"art/nemesis/CNZ Big Moving Block",nem,unc ; 16 tiles
 		filedef Nem_CNZElevator,"art/nemesis/CNZ Elevator",nem,unc ; 4 tiles
-		filedef Nem_CNZCage,"art/nemesis/CNZ Cages",nem,unc ; 12 tiles
-		filedef Nem_CNZHexBumper,"art/nemesis/CNZ Hexagonal Bumper",nem,unc ; 6 tiles
-		filedef Nem_CNZRoundBumper,"art/nemesis/CNZ Round Bumper",nem,unc ; 24 tiles
-		filedef Nem_CNZDiagPlunger,"art/nemesis/CNZ Diagonal Pinball Launcher",nem,unc ; 32 tiles
-		filedef Nem_CNZVertPlunger,"art/nemesis/CNZ Vertical Pinball Launcher",nem,unc ; 18 tiles
-		filedef Nem_CNZSaucerBumper,"art/nemesis/CNZ Saucer Bumper",nem,unc ; 28 tiles
-		filedef Nem_CNZFlipper,"art/nemesis/CNZ Flipper",nem,unc ; 52 tiles
+		filedef Nem_Cage,"art/nemesis/CNZ Cages",nem,unc ; 12 tiles
+		filedef Nem_HexBumper,"art/nemesis/CNZ Hexagonal Bumper",nem,unc ; 6 tiles
+		filedef Nem_RoundBumper,"art/nemesis/CNZ Round Bumper",nem,unc ; 24 tiles
+		filedef Nem_DiagLauncher,"art/nemesis/CNZ Diagonal Pinball Launcher",nem,unc ; 32 tiles
+		filedef Nem_VertLauncher,"art/nemesis/CNZ Vertical Pinball Launcher",nem,unc ; 18 tiles
+		filedef Nem_SaucerBumper,"art/nemesis/CNZ Saucer Bumper",nem,unc ; 28 tiles
+		filedef Nem_Flipper,"art/nemesis/CNZ Flipper",nem,unc ; 52 tiles
 		filedef Nem_CPZElevator,"art/nemesis/CPZ Elevator",nem,unc ; 16 tiles
 		filedef Nem_WaterSurface1,"art/nemesis/CPZ & HPZ Water Surface",nem,unc ; 24 tiles
 		filedef Nem_Booster,"art/nemesis/CPZ Speed Booster",nem,unc ; 4 tiles
-		filedef Nem_CPZDroplet,"art/nemesis/CPZ Blue Balls",nem,unc ; 4 tiles
-		filedef Nem_CPZPylons,"art/nemesis/CPZ Pylons",nem,unc ; 33 tiles
+		filedef Nem_Droplet,"art/nemesis/CPZ Blue Balls",nem,unc ; 4 tiles
+		filedef Nem_Pylon,"art/nemesis/CPZ Pylons",nem,unc ; 33 tiles
 		filedef Nem_CPZMetalBlock,"art/nemesis/CPZ Breakable Metal Block",nem,unc ; 4 tiles
 		filedef Nem_ConstructionStripes,"art/nemesis/CPZ & DEZ Yellow & Black Striped Blocks",nem,unc ; 8 tiles
 		filedef Nem_CPZDumpingPipePlat,"art/nemesis/CPZ Dumping Pipe Platform",nem,unc ; 48 tiles
-		filedef Nem_CPZStairBlock,"art/nemesis/CPZ Stair Block",nem,unc ; 24 tiles
+		filedef Nem_StairBlock,"art/nemesis/CPZ Stair Block",nem,unc ; 24 tiles
 		filedef Nem_CPZTubeSpring,"art/nemesis/CPZ Spintube Exit Cover & Spring",nem,unc ; 32 tiles
 		filedef	Nem_WaterSurface2,"art/nemesis/ARZ Water Surface",nem,unc ; 16 tiles
 		filedef Nem_Leaves,"art/nemesis/ARZ Leaves",nem,unc ; 7 tiles
@@ -213,7 +213,7 @@
 		filedef Nem_MechaSonic,"art/nemesis/Mecha Sonic",nem,unc ; 217 tiles
 		filedef Nem_Tornado,"art/nemesis/The Tornado",nem,unc ; 79 tiles
 		filedef Nem_WFZWallTurret,"art/nemesis/WFZ Wall Turret",nem,unc ; 24 tiles
-		filedef Nem_WFZHook,"art/nemesis/WFZ Hook & Chain",nem,unc ; 20 tiles
+		filedef Nem_Hook,"art/nemesis/WFZ Hook & Chain",nem,unc ; 20 tiles
 		filedef Nem_WFZGunPlatform,"art/nemesis/WFZ Gun Platform",nem,unc ; 54 tiles
 		filedef Nem_WFZConveyorBeltWheel,"art/nemesis/WFZ Conveyer Belt Wheel",nem,unc ; 16 tiles
 		filedef Nem_WFZFloatingPlatform,"art/nemesis/WFZ Floating Platform",nem,unc ; 12 tiles
@@ -262,15 +262,15 @@
 		filedef Nem_Fireball1,"art/nemesis/HTZ Fireball 1",nem,unc ; 20 tiles
 		filedef Nem_Waterfall,"art/nemesis/Waterfall",nem,unc ; 24 tiles
 		filedef Nem_HTZFireball2,"art/nemesis/HTZ Fireball 2",nem,unc ; 16 tiles
-		filedef Nem_Bridge,"art/nemesis/EHZ Bridge",nem,unc ; 8 tiles
+		filedef Nem_EHZBridge,"art/nemesis/EHZ Bridge",nem,unc ; 8 tiles
 		filedef Nem_HTZZipline,"art/nemesis/HTZ Zipline Platform",nem,unc ; 48 tiles
 		filedef Nem_HTZOneWayBarrier,"art/nemesis/HTZ One-Way Barrier",nem,unc ; 4 tiles
 		filedef Nem_SeeSaw,"art/nemesis/HTZ See-saw",nem,unc ; 24 tiles 
 		filedef Nem_UnusedFireball,"art/nemesis/Unused Fireball",nem,unc ; 24 tiles
 		filedef Nem_HTZRock,"art/nemesis/HTZ Rock",nem,unc ; 20 tiles
 		filedef Nem_Sol,"art/nemesis/Sol",nem,unc	; 4 tiles
-		filedef Nem_MTZWheel,"art/nemesis/MTZ Large Spinning Wheel",nem,unc ; 120 tiles
-		filedef Nem_MTZWheelIndent,"art/nemesis/MTZ Large Spinning Wheel Indent",nem,unc ; 9 tiles
+		filedef Nem_Wheel,"art/nemesis/MTZ Large Spinning Wheel",nem,unc ; 120 tiles
+		filedef Nem_WheelIndent,"art/nemesis/MTZ Large Spinning Wheel Indent",nem,unc ; 9 tiles
 		filedef Nem_SpikeBlock,"art/nemesis/MTZ Spike Block",nem,unc ; 8 tiles
 		filedef Nem_SteamSpring,"art/nemesis/MTZ Steam",nem,unc ; 15 tiles
 		filedef Nem_MTZSpike,"art/nemesis/MTZ Spike",nem,unc ; 8 tiles
@@ -279,7 +279,7 @@
 		filedef Nem_LavaCup,"art/nemesis/MTZ Lava Cup",nem,unc ; 4 tiles
 		filedef Nem_BoltEnd_Rope,"art/nemesis/MTZ Bolt End & Rope",nem,unc ; 8 tiles
 		filedef Nem_Cog,"art/nemesis/MTZ Small Cog",nem,unc ; 12 tiles
-		filedef Nem_MTZSpinTubeFlash,"art/nemesis/MTZ Spin Tube Flash",nem,unc ; 4 tiles
+		filedef Nem_SpinTubeFlash,"art/nemesis/MTZ Spin Tube Flash",nem,unc ; 4 tiles
 		filedef Nem_Crate,"art/nemesis/MCZ Crate",nem,unc ; 32 tiles
 		filedef Nem_MCZCollapsingPlat,"art/nemesis/MCZ Collapsing Platform",nem,unc ; 26 tiles
 		filedef Nem_VineSwitch,"art/nemesis/MCZ Vine Switch",nem,unc ; 16 tiles
@@ -473,7 +473,7 @@
 		filedef SegaPCM,"sound/PCM/SEGA",pcm,pcm
 	
 	if sizeof_SegaPCM>sizeof_z80_bank
-		inform 3,"Sega sound must fit within $8000 bytes, but you have a $%h byte Sega sound.",sizeof_SegaPCM
+		inform 3,"Sega sound must fit within $%h bytes, but you have a $%h byte Sega sound.",sizeof_z80_bank,sizeof_SegaPCM
 	endif
 
 defdac:	macro	lbl,file
@@ -484,7 +484,7 @@ defdac:	macro	lbl,file
 		endc
 		filename: equs \file				; get file name without quotes
 		file_\lbl: equs "\filename"			; record file name
-		sizeof_\lbl: equ filesize("\filename")		; record file size of associated uncompressed file
+		sizeof_\lbl: equ filesize("\filename")		; record file size
 		sizeof_dac_samples: = sizeof_dac_samples+sizeof_\lbl ; add size to running total
 		endm
 
@@ -497,5 +497,5 @@ defdac:	macro	lbl,file
 		defdac	DAC_VLowClap,"sound/DAC/Low Clap.bin"
 		
 	if sizeof_dac_samples>sizeof_z80_bank
-		inform 3,"DAC samples must fit within $8000 bytes, but you have $%h bytes of DAC samples.",sizeof_dac_samples
+		inform 3,"DAC samples must fit within $%h bytes, but you have $%h bytes of DAC samples.",sizeof_z80_bank,sizeof_dac_samples
 	endc

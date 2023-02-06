@@ -289,7 +289,7 @@ v_y_pos_vsram:				rs.l 1			; $FFFFF616	; VScroll buffer
 v_fg_y_pos_vsram:			equ v_y_pos_vsram	; $FFFFF616 ; foreground y position, sent to VSRAM during VBlank
 v_bg_y_pos_vsram:			equ __rs-2			; $FFFFF618 ; background y position, sent to VSRAM during VBlank
 
-v_unused_ss:				rs.l 1			; $FFFFF61A ; cleared by VDPSetupGame, ClearScreen, and special stage init, but never used
+v_unused_ss:				rs.l 1			; $FFFFF61A ; cleared by VDPSetupGame, ClearScreen, special stage init, and ending sequence init, but never used
 v_fg_y_pos_vsram_p2:		rs.w 1				; $FFFFF61E ; foreground y position for player 2
 v_bg_y_pos_vsram_p2:		rs.w 1				; $FFFFF620 ; background y position for player 2
 v_teleport_timer:			rs.b 1			; $FFFFF622 ; timer for teleport effect
@@ -525,7 +525,7 @@ v_anim_counters:				rs.b $10	; $FFFFF7F0-$FFFFF7FF
 				
 v_sprite_buffer:			rs.b sizeof_vram_sprites ; $FFFFF800 ; Sprite attribute table buffer
 v_sprite_buffer_end:		equ __rs			; $FFFFFA80 ; required by clear_ram
-							rs.b $80 ; unused, but SAT buffer can spill over into this area when there are too many sprites on-screen
+							rs.b $80 ; unused, but v_sprite_buffer buffer can spill over into this area when there are too many sprites on-screen (see the bugfix in BuildSpr_DrawLoop)
 
 				rsblock		palette_buffer
 v_pal_dry:					rs.w sizeof_pal_all/2 ; $FFFFFB00 ; main palette for non-underwater parts of the screen
@@ -875,6 +875,8 @@ v_ss_shadow_tails:	rs.b sizeof_ost				; $FFFFB180
 v_ss_tails_tails:	rs.b sizeof_ost				; $FFFFB1C0
 
 v_ss_dynamic_object_ram:	rs.b sizeof_ost*$18		; $FFFFB200-$FFFFB7FF
+
+	
 v_ss_results_1:		rs.b sizeof_ost				; $FFFFB800
 
 				rs.b sizeof_ost*$C		; $FFFFB840-$FFFFBB3F ; unused
@@ -884,8 +886,9 @@ v_ss_results_2:	rs.b sizeof_ost					; $FFFFBB40
 				rs.b sizeof_ost*$51		; $FFFFBB80-$FFFFCFBF ; unused
 				
 v_ss_dynamic_object_ram_end: equ __rs				; $FFFFCFC0
-
-		if __rs > offset(ost_end)
+	ramblocksize	v_ss_dynamic_object_ram
+	
+		if __rs>offset(ost_end)
 			inform 3,"Special stage objects exceed size of OST by $%h bytes.",(__rs-offset(ost_end))
 		endc
 
