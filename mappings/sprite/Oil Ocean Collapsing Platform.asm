@@ -1,4 +1,8 @@
-Map_obj1F_b:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Oil Ocean collapsing platform
+; -------------------------------------------------------------------------------
+
+Map_CFlo_OOZ:	index offset(*)
 	ptr	Map_obj1F_b_0006
 	ptr	Map_obj1F_b_0006
 	ptr	Map_obj1F_b_0006

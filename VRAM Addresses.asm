@@ -275,7 +275,7 @@ vram_DrawbridgeLogs:        equ $8780
 vram_Crawl:                 equ $6800
 vram_LargeMovingBlock:     	equ $6D80
 vram_SnakePlats:   			equ $6F80
-vram_BombPenalty:         equ $7000
+vram_BombPenalty:         	equ $7000
 vram_CNZElevator:           equ $7080
 vram_Cage:               	equ $7100
 vram_HexBumper:           	equ $7280
@@ -413,10 +413,10 @@ ArtTile_ArtKos_NumTiles_DEZ           = $0326			; Skips several CPZ tiles.
 vram_HPZPulseOrb_1:       			equ $5D00
 vram_HPZPulseOrb_2:      			equ $5E00
 vram_HPZPulseOrb_3:       			equ $5F00
-vram_HPZBridge:						equ $6000
+vram_HiddenPalaceBridge:						equ $6000
 vram_HPZWaterfall:       			equ $62A0
 vram_HPZPlatform:           		equ $6940
-vram_HPZOrb:             			equ $6B40
+vram_HiddenPalaceOrb:             			equ $6B40
 vram_HPZEmerald:         			equ $7240
 vram_Unknown:             			equ $7F40
 vram_FloatPlatform:       			equ $8300

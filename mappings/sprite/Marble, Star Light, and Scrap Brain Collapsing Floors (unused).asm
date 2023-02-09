@@ -1,4 +1,9 @@
-Map_obj1F_a:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - Marble, Star Light, and Scrap Brain collapsing floors
+; (unused Sonic 1 leftovers)
+; ---------------------------------------------------------------------------
+
+Map_CFlo_S1:	index offset(*)
 	ptr	Map_obj1F_a_0008
 	ptr	Map_obj1F_a_002A
 	ptr	Map_obj1F_a_006C

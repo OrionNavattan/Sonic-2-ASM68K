@@ -1,4 +1,4 @@
-Map_objCF:	index offset(*)
+Map_TornadoHelices:	index offset(*)
 	ptr	Map_objCF_0034
 	ptr	Map_objCF_006E
 	ptr	Map_objCF_0090

@@ -1,4 +1,7 @@
-Map_obj1A_a:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - Green Hill collapsing ledge (unused Sonic 1 leftover)
+; ---------------------------------------------------------------------------
+Map_Ledge:	index offset(*)
 	ptr	Map_obj1A_a_0008
 	ptr	Map_obj1A_a_008A
 	ptr	Map_obj1A_a_010C

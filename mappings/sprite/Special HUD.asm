@@ -1,4 +1,4 @@
-Obj5E_MapUnc_7070:	index offset(*)
+Map_SpecialHUD:	index offset(*)
 	ptr	Map_obj5E_0008
 	ptr	Map_obj5E_002A
 	ptr	Map_obj5E_004C

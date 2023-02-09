@@ -1,4 +1,8 @@
-Map_obj18_b:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Aquatic Ruin stationary platforms
+; -------------------------------------------------------------------------------
+
+Map_Plat_ARZ:	index offset(*)
 	ptr	Map_obj18_b_0004
 	ptr	Map_obj18_b_0026
 

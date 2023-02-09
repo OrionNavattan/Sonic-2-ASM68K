@@ -1,4 +1,8 @@
-Map_obj15_a:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Oil Ocean swinging platforms
+; -------------------------------------------------------------------------------
+
+Map_Swing_OOZ:	index offset(*)
 	ptr	Map_obj15_a_0008
 	ptr	Map_obj15_a_002A
 	ptr	Map_obj15_a_002A

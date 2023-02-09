@@ -1,4 +1,8 @@
-Map_obj71_a:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Hidden Palace orb (unused)
+; -------------------------------------------------------------------------------
+
+Map_HiddenPalaceOrb:	index offset(*)
 	ptr	Map_obj71_a_0008
 	ptr	Map_obj71_a_0012
 	ptr	Map_obj71_a_001C

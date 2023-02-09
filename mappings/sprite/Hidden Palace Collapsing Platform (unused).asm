@@ -1,4 +1,8 @@
-Map_obj1A_b:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Hidden Palace collapsing platform (unused beta leftover)
+; -------------------------------------------------------------------------------
+
+Map_CPlat_HPZ:	index offset(*)
 	ptr	Map_obj1A_b_0006
 	ptr	Map_obj1A_b_0048
 	ptr	Map_obj1A_b_0048

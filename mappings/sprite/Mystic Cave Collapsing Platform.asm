@@ -1,4 +1,8 @@
-Map_obj1F_c:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Mystic Cave collapsing platform
+; -------------------------------------------------------------------------------
+
+Map_CFlo_MCZ:	index offset(*)
 	ptr	Map_obj1F_c_0004
 	ptr	Map_obj1F_c_0026
 

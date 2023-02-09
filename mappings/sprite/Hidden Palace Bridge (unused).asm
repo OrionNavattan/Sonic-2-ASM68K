@@ -1,4 +1,8 @@
-Map_obj11_a:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Hidden Palace bridge (unused)
+; -------------------------------------------------------------------------------
+
+Map_HiddenPalaceBridge:	index offset(*)
 	ptr	Map_obj11_a_000C
 	ptr	Map_obj11_a_0016
 	ptr	Map_obj11_a_0020

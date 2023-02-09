@@ -1,4 +1,8 @@
-Map_obj17:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - helix of spikes on a pole (unused Sonic 1 leftover)
+; -------------------------------------------------------------------------------
+
+Map_Hel:	index offset(*)
 	ptr	Map_obj17_0010
 	ptr	Map_obj17_001A
 	ptr	Map_obj17_0024

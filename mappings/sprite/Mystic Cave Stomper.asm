@@ -1,7 +1,11 @@
-Map_obj2A:	index offset(*)
-	ptr	Map_obj2A_0002
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Mystic Cave Stomper
+; -------------------------------------------------------------------------------
 
-Map_obj2A_0002:	spriteHeader
+Map_Stomper:	index offset(*)
+	ptr	Frame_Stomper
+
+Frame_Stomper:	spriteHeader
 	spritePiece	-$10, -$50, 3, 2, $1A, 0, 0, 0, 0
 	spritePiece	-$10, -$40, 4, 4, $20, 0, 0, 0, 0
 	spritePiece	-$10, -$20, 4, 4, $30, 0, 0, 0, 0

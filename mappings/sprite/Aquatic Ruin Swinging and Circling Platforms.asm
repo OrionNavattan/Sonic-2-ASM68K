@@ -1,4 +1,8 @@
-Map_obj83:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Aquatic Ruin swinging and circling platforms
+; -------------------------------------------------------------------------------
+
+Map_Swing_Circle_ARZ:	index offset(*)
 	ptr	Map_obj83_0008
 	ptr	Map_obj83_001A
 	ptr	Map_obj83_0024

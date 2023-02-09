@@ -1,4 +1,8 @@
-Map_obj1F_d:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Aquatic Ruin collapsing platform
+; -------------------------------------------------------------------------------
+
+Map_CFlo_ARZ:	index offset(*)
 	ptr	Map_obj1F_d_0004
 	ptr	Map_obj1F_d_0026
 

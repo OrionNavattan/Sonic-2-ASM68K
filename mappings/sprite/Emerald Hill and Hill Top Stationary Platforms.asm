@@ -1,4 +1,8 @@
-Map_obj18_a:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite Mappings - Emerald Hill and Hill Top stationary platforms
+; -------------------------------------------------------------------------------
+
+Map_Plat_EHZ_HTZ:	index offset(*)
 	ptr	Map_obj18_a_0004
 	ptr	Map_obj18_a_0016
 
