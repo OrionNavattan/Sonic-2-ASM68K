@@ -674,8 +674,11 @@ objpos:		macro
 		obj_xflip: = 0
 		obj_yflip: = 0
 		obj_rem: = 0
+		obj_unkflg: = 0
 		rept narg-4
-			if strcmp("\5","xflip")
+			if strcmp("\5","unkflg")
+				obj_unkflg: = $1000
+			elseif strcmp("\5","xflip")
 				obj_xflip: = $2000
 			elseif strcmp("\5","yflip")
 				obj_yflip: = $4000
@@ -686,7 +689,7 @@ objpos:		macro
 		shift
 		endr
 		
-		dc.w obj_rem+obj_ypos+obj_xflip+obj_yflip
+		dc.w obj_rem+obj_ypos+obj_xflip+obj_yflip+obj_unkflg
 		dc.b obj_id, obj_sub\@
 		endm
 

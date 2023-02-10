@@ -9751,17 +9751,17 @@ loc_7B7C:
 ContinueCharacters:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_7B96(pc,d0.w),d1
-		jsr	off_7B96(pc,d1.w)
+		move.w	ContinueCharacters_Index(pc,d0.w),d1
+		jsr	ContinueCharacters_Index(pc,d1.w)
 		jmp	DisplaySprite
 ; ===========================================================================
-off_7B96:	
-		dc.w loc_7BA2-off_7B96				; 0 			
-		dc.w loc_7BD2-off_7B96				; 2
-		dc.w loc_7BFA-off_7B96				; 4
-		dc.w loc_7C22-off_7B96				; 6
-		dc.w loc_7C52-off_7B96				; 8
-		dc.w loc_7C88-off_7B96				; $A
+ContinueCharacters_Index:	index offset(*)
+		ptr loc_7BA2				; 0 			
+		ptr loc_7BD2				; 2
+		ptr loc_7BFA				; 4
+		ptr loc_7C22				; 6
+		ptr loc_7C52				; 8
+		ptr loc_7C88				; $A
 ; ===========================================================================
 
 loc_7BA2:				
@@ -10176,30 +10176,27 @@ loc_80BA:
 TwoPlayerResults:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_80CC(pc,d0.w),d1
-		jmp	off_80CC(pc,d1.w)
+		move.w	TwoPlayerResults_Index(pc,d0.w),d1
+		jmp	TwoPlayerResults_Index(pc,d1.w)
 ; ===========================================================================
-off_80CC:	dc.w loc_80E4-off_80CC				; 0 
-					
-		dc.w loc_812C-off_80CC				; 1
-		dc.w loc_81BC-off_80CC				; 2
-		dc.w loc_8214-off_80CC				; 3
-		dc.w loc_81BC-off_80CC				; 4
-		dc.w loc_81FC-off_80CC				; 5
-		dc.w loc_81AA+2-off_80CC			; 6
-		dc.w loc_8214-off_80CC				; 7
-		dc.w loc_81BC-off_80CC				; 8
-		dc.w loc_8214-off_80CC				; 9
-		dc.w loc_81BC-off_80CC				; 10
-		dc.w loc_8214-off_80CC				; 11
-; ===========================================================================
+TwoPlayerResults_Index:	index offset(*)
+		ptr loc_80E4			; 0 				
+		ptr loc_812C			; 2
+
+word_80D0:
+		;      x,    y
+		dc.w screen_left+112, screen_top+200
+		dc.w screen_left+112, screen_top+176
+		dc.w screen_left+96, screen_top+200
+		dc.w screen_left+112, screen_top+200
+		dc.w screen_left+112, screen_top+200
 
 loc_80E4:				
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	(v_results_screen_2p).w,d0
 		add.w	d0,d0
 		add.w	d0,d0
-		move.l	off_80CC+4(pc,d0.w),8(a0)
+		move.l	word_80D0(pc,d0.w),8(a0)
 		move.l	#Map_2P_Results_Text,ost_mappings(a0)
 		move.w	#vram_1P2PWins/sizeof_cell,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo2_Adjust2PArtPointer
@@ -10566,9 +10563,7 @@ loc_8522:
 
 ; ===========================================================================
 
-
-sub_854A:				
-					
+sub_854A:								
 		move.w	(a5),d0
 		bmi.s	loc_8582
 		move.w	d6,d2
@@ -10784,8 +10779,7 @@ word_86F0:
 ; ===========================================================================
 
 
-sub_86F6:				
-					
+sub_86F6:									
 		lea	(v_128x128_tiles).l,a2
 		lea	(a2,d2.w),a2
 		lea	(word_8732).l,a3
@@ -28491,10 +28485,10 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr WaterfallEmeraldHill
 		ptr Octus
 		ptr Buzzer
-		ptr NullObject					; $4C
-		ptr NullObject
-		ptr NullObject
-		ptr NullObject
+		ptr Obj4C					; $4C
+		ptr Obj4D
+		ptr Obj4E
+		ptr Obj4F
 		ptr Aquis					; $50
 		ptr BossCasinoNight
 		ptr BossHillTop
@@ -28513,7 +28507,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr StartBannerSpecial
 		ptr RingsSpecial				; $60
 		ptr BombSpecial
-		ptr NullObject
+		ptr Obj62
 		ptr ShadowSpecial				; not Shads, but rather the character's shadows in the Special Stages :P
 		ptr TwinStompers				; $64
 		ptr LongPlatform
@@ -28557,13 +28551,13 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr PalSwitcherWingFortress
 		ptr Whisp					; $8C
 		ptr GrounderInWall
-		ptr GrounderInWall
+		ptr GrounderInWall_Dup
 		ptr GrounderWall
 		ptr GrounderRocks				; $90
 		ptr ChopChop
 		ptr Spiker
 		ptr SpikerDrill
-		ptr Rexon					; $94
+		ptr Rexon_Dup					; $94
 		ptr Sol
 		ptr Rexon
 		ptr RexonHead
@@ -28623,8 +28617,8 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr EndingFlickies
 		ptr EndingSonicTails	
 		ptr TornadoHelicies
-		ptr NullObject					; $D0
-		ptr NullObject
+		ptr ObjD0					; $D0
+		ptr ObjD1
 		ptr SnakePlatform				; CNZ snake platform
 		ptr BombPenalty					; penalty spikeballs from CNZ slot machines
 		ptr LargeMovingBlock				; $D4
@@ -28642,7 +28636,13 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 ; Object 4C, 4D, 4E, 4F, 62, D0, and D1
 ; Objects removed from the game. All it does is deallocate its array.
 ; ----------------------------------------------------------------------------
-
+Obj4C:
+Obj4D:
+Obj4E:
+Obj4F:
+Obj62:
+ObjD0:
+ObjD1:
 NullObject:
 		bra.w	DeleteObject
 
@@ -31363,10 +31363,10 @@ OPL_Init:
 		beq.s	loc_17AF0
 		cmpi.b	#$C,(v_zone).w
 		bne.s	loc_17AF0
-		lea	(Objects_CNZ1_2P).l,a0
+		lea	(ObjPos_CNZ_1_2P).l,a0
 		tst.b	(v_act).w
 		beq.s	loc_17AF0
-		lea	(Objects_CNZ2_2P).l,a0
+		lea	(ObjPos_CNZ_2_2P).l,a0
 
 loc_17AF0:				
 		move.l	a0,(v_opl_ptr_right).w
@@ -32069,27 +32069,24 @@ FindFreeObjWithin12:
 	; could potentially read past the start of the file and load random
 	; objects.
 		endobj
-    endif
+    endc
     
 	if Revision=0
-Objects_CNZ1_2P:	incbin	"level/objects/CNZ 1 2P (REV00).bin"
+		include	"level/objects/CNZ_1_2P_(REV00).asm"
 	else
-	; a Crawl badnik was moved slightly further away from a ledge
-	; 2 flippers were moved closer to a wall
-Objects_CNZ1_2P:	incbin	"level/objects/CNZ 1 2P.bin"
+		; a Crawl badnik was moved slightly further away from a ledge
+		; 2 flippers were moved closer to a wall
+		include	"level/objects/CNZ_1_2P.asm"
 	endc
-	
-		endobj
 	
 	if Revision=0
-Objects_CNZ2_2P:	incbin	"level/objects/CNZ22P (REV00).bin"
+		include	"level/objects/CNZ_2_2P_(REV00).asm"
 	else	
-	; 4 Crawl badniks were slightly moved, placing them closer/farther away from ledges
-	; 2 flippers were moved away from a wall to keep players from getting stuck behind them
-Objects_CNZ2_2P:	incbin	"level/objects/CNZ 2 2P.bin"
+		; 4 Crawl badniks were slightly moved, placing them closer/farther away from ledges
+		; 2 flippers were moved away from a wall to keep players from getting stuck behind them
+		include	"level/objects/CNZ_2_2P.asm"
 	endc
 
-		endobj
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 41 - Spring
@@ -73807,8 +73804,8 @@ byte_36A64:	dc.b   0,  2,$F8,  8,  0,  6,  0,  3,$FF,$F4,  0,  8,  0,  3,  0,  1
 ; ----------------------------------------------------------------------------
 ; Object 8D - Grounder in wall
 ; ----------------------------------------------------------------------------
-
-GrounderInWall:				
+GrounderInWall:
+GrounderInWall_Dup:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
 		move.w	off_36A84(pc,d0.w),d1
@@ -74682,7 +74679,7 @@ word_37318:	dc.w 1
 ; ----------------------------------------------------------------------------
 ; Object 94,96 - Rexon 
 ; ----------------------------------------------------------------------------
-
+Rexon_Dup:
 Rexon:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
@@ -92180,77 +92177,64 @@ Off_Sprites:	index offset(*)
 		ptr ObjPos_SCZ_2				;	33
 		
 		endobj
-ObjPos_EHZ_1:		incbin	"level/objects/EHZ 1.bin"
-;					include "level/objects/EHZ 1.asm"
+		
+		include "level/objects/EHZ_1.asm"
+		
+	if Revision=0
+		include "level/objects/EHZ_2_(REV00).asm"
+	else
+		; fixes a pair of incorrectly placed plane switchers
+		include	"level/objects/EHZ_2.asm"
+	endc
+	
+		include	"level/objects/MTZ_1.asm"
+		include	"level/objects/MTZ_2.asm"
+		include	"level/objects/MTZ_3.asm"
+
+	if Revision=0
+		; all starposts are misconfigured: none of them have the 'remember state' flag set
+		include	"level/objects/WFZ_1_(REV00).asm"
+	else
+		include	"level/objects/WFZ_1.asm"
+	endc
+
+ObjPos_WFZ_2:
 		endobj
-;if Revision=0
-; a plane switcher was improperly placed
-;ObjPos_EHZ_2:		incbin 	"level/objects/EHZ 2 (REV00).bin"
-;else
-ObjPos_EHZ_2:		incbin	"level/objects/EHZ 2.bin"
-;endc
+		include	"level/objects/HTZ_1.asm"
+		include	"level/objects/HTZ_2.asm"
+		include	"level/objects/HPZ_1.asm"
+ObjPos_HPZ_2:	;include	"level/objects/HPZ_2.asm"
 		endobj
-ObjPos_MTZ_1:		incbin	"level/objects/MTZ 1.bin"
-		endobj
-ObjPos_MTZ_2:		incbin	"level/objects/MTZ 2.bin"
-		endobj
-ObjPos_MTZ_3:		incbin	"level/objects/MTZ 3.bin"
 		endobj
 
-;if Revision=0
-; the lampposts were bugged: their 'remember state' flags weren't set
-;ObjPos_WFZ_1:		incbin  "level/objects/WFZ 1 (REV00).bin"
-;else
-ObjPos_WFZ_1:		incbin	"level/objects/WFZ 1.bin"
-;endc
-		endobj
-ObjPos_WFZ_2:							;incbin	"level/objects/WFZ 2.bin"
-		endobj
-ObjPos_HTZ_1:		incbin	"level/objects/HTZ 1.bin"
-		endobj
-ObjPos_HTZ_2:		incbin	"level/objects/HTZ 2.bin"
-		endobj
-ObjPos_HPZ_1:		incbin	"level/objects/HPZ 1.bin"
-		endobj
-ObjPos_HPZ_2:							;incbin	"level/objects/HPZ 2.bin"
-		endobj
-		endobj
-ObjPos_OOZ_1:		incbin	"level/objects/OOZ 1.bin"
-		endobj
-ObjPos_OOZ_2:		incbin	"level/objects/OOZ 2.bin"
-		endobj
-ObjPos_MCZ_1:		incbin	"level/objects/MCZ 1.bin"
-		endobj
-ObjPos_MCZ_2:		incbin	"level/objects/MCZ 2.bin"
+		include	"level/objects/OOZ_1.asm"
+		include	"level/objects/OOZ_2.asm"
+		include	"level/objects/MCZ_1.asm"
+		include	"level/objects/MCZ_2.asm"
+
+	if Revision=0
+		; the signposts are too low, causing them to poke out the bottom of the ground
+		include	"level/objects/CNZ_1_(REV00).asm"
+		include	"level/objects/CNZ_2_(REV00).asm"
+	else
+		include	"level/objects/CNZ_1.asm"
+		include	"level/objects/CNZ_2.asm"
+	endc
+
+		include	"level/objects/CPZ_1.asm"
+		include	"level/objects/CPZ_2.asm"
+		include	"level/objects/DEZ_1.asm"
+
+ObjPos_DEZ_2:
 		endobj
 
-;if Revision=0
-; the signposts are too low, causing them to poke out the bottom of the ground
-;ObjPos_CNZ_1:		incbin	"level/objects/CNZ 1 (REV00).bin"
-;		endobj
-;ObjPos_CNZ_2:		incbin	"level/objects/CNZ 2 (REV00).bin"
-;else
-ObjPos_CNZ_1:		incbin	"level/objects/CNZ 1.bin"
+		include	"level/objects/ARZ_1.asm"
+		include	"level/objects/ARZ_2.asm"
+		include	"level/objects/SCZ_1.asm"
+		
+ObjPos_SCZ_2:
 		endobj
-ObjPos_CNZ_2:		incbin	"level/objects/CNZ 2.bin"
-;endc
-		endobj	
-ObjPos_CPZ_1:		incbin	"level/objects/CPZ 1.bin"
-		endobj
-ObjPos_CPZ_2:		incbin	"level/objects/CPZ 2.bin"
-		endobj
-ObjPos_DEZ_1:		incbin	"level/objects/DEZ 1.bin"
-		endobj
-ObjPos_DEZ_2:							;incbin	"level/objects/DEZ 2.bin"
-		endobj
-ObjPos_ARZ_1:		incbin	"level/objects/ARZ 1.bin"
-		endobj
-ObjPos_ARZ_2:		incbin	"level/objects/ARZ 2.bin"
-		endobj
-ObjPos_SCZ_1:		incbin	"level/objects/SCZ 1.bin"
-		endobj
-ObjPos_SCZ_2:							;incbin	"level/objects/SCZ 2.bin"
-		endobj
+		
 ObjPos_Null:
 		endobj
 		endobj
