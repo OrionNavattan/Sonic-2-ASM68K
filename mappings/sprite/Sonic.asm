@@ -3,115 +3,115 @@ Map_Sonic:	index offset(*)
 	ptr	Frame_Sonic_Stand
 	ptr	Frame_Sonic_Blink
 	ptr	Frame_Sonic_Wait1
-	ptr	Frame_Sonic_Wait2		; 4
+	ptr	Frame_Sonic_Wait2				; 4
 	ptr	Frame_Sonic_Wait3
 	ptr	Frame_Sonic_Wait4
 	ptr	Frame_Sonic_LayDown
-	ptr	Frame_Sonic_Laying1	; $8
+	ptr	Frame_Sonic_Laying1				; $8
 	ptr	Frame_Sonic_Laying2
 	ptr	Frame_Sonic_GetUp
 	ptr	Frame_Sonic_LookUp1
-	ptr	Frame_Sonic_LookUp2	; $C
+	ptr	Frame_Sonic_LookUp2				; $C
 	ptr	Frame_Sonic_Walk11
 	ptr	Frame_Sonic_Walk12
 	ptr	Frame_Sonic_Walk13
-	ptr	Frame_Sonic_Walk14	; $10
+	ptr	Frame_Sonic_Walk14				; $10
 	ptr	Frame_Sonic_Walk15
 	ptr	Frame_Sonic_Walk16
 	ptr	Frame_Sonic_Walk17
-	ptr	Frame_Sonic_Walk18	; $14
+	ptr	Frame_Sonic_Walk18				; $14
 	ptr	Frame_Sonic_Walk21
 	ptr	Frame_Sonic_Walk22
 	ptr	Frame_Sonic_Walk23
-	ptr	Frame_Sonic_Walk24	; $18
+	ptr	Frame_Sonic_Walk24				; $18
 	ptr	Frame_Sonic_Walk25
 	ptr	Frame_Sonic_Walk26
 	ptr	Frame_Sonic_Walk27
-	ptr	Frame_Sonic_Walk28	; $1C
+	ptr	Frame_Sonic_Walk28				; $1C
 	ptr	Frame_Sonic_Walk31
 	ptr	Frame_Sonic_Walk32
 	ptr	Frame_Sonic_Walk33
-	ptr	Frame_Sonic_Walk34	; $20
+	ptr	Frame_Sonic_Walk34				; $20
 	ptr	Frame_Sonic_Walk35
 	ptr	Frame_Sonic_Walk36
 	ptr	Frame_Sonic_Walk37
-	ptr	Frame_Sonic_Walk38	; $24
+	ptr	Frame_Sonic_Walk38				; $24
 	ptr	Frame_Sonic_Walk41
 	ptr	Frame_Sonic_Walk42
 	ptr	Frame_Sonic_Walk43
-	ptr	Frame_Sonic_Walk44	; $28
+	ptr	Frame_Sonic_Walk44				; $28
 	ptr	Frame_Sonic_Walk45
 	ptr	Frame_Sonic_Walk46
 	ptr	Frame_Sonic_Walk47
-	ptr	Frame_Sonic_Walk48	; $2C
+	ptr	Frame_Sonic_Walk48				; $2C
 	ptr	Frame_Sonic_Run11
 	ptr	Frame_Sonic_Run12
 	ptr	Frame_Sonic_Run13
-	ptr	Frame_Sonic_Run14		; $30
+	ptr	Frame_Sonic_Run14				; $30
 	ptr	Frame_Sonic_Run21
 	ptr	Frame_Sonic_Run22
 	ptr	Frame_Sonic_Run23
-	ptr	Frame_Sonic_Run24		; $34
+	ptr	Frame_Sonic_Run24				; $34
 	ptr	Frame_Sonic_Run31
 	ptr	Frame_Sonic_Run32
 	ptr	Frame_Sonic_Run33
-	ptr	Frame_Sonic_Run34		; $38
+	ptr	Frame_Sonic_Run34				; $38
 	ptr	Frame_Sonic_Run41
 	ptr	Frame_Sonic_Run42
 	ptr	Frame_Sonic_Run43
-	ptr	Frame_Sonic_Run44		; $3C
+	ptr	Frame_Sonic_Run44				; $3C
 	ptr	Frame_Sonic_Roll1
 	ptr	Frame_Sonic_Roll2
 	ptr	Frame_Sonic_Roll3
-	ptr	Frame_Sonic_Roll4		; $40
+	ptr	Frame_Sonic_Roll4				; $40
 	ptr	Frame_Sonic_Roll5
 	ptr	Frame_Sonic_Spindash1
 	ptr	Frame_Sonic_Spindash2
-	ptr	Frame_Sonic_Spindash3	; $44
+	ptr	Frame_Sonic_Spindash3				; $44
 	ptr	Frame_Sonic_Spindash4
 	ptr	Frame_Sonic_Spindash5
 	ptr	Frame_Sonic_Spindash6
-	ptr	Frame_Sonic_Push1		; $48
+	ptr	Frame_Sonic_Push1				; $48
 	ptr	Frame_Sonic_Push2
 	ptr	Frame_Sonic_Push3
 	ptr	Frame_Sonic_Push4
-	ptr	Frame_Sonic_Duck1		; $4C
+	ptr	Frame_Sonic_Duck1				; $4C
 	ptr	Frame_Sonic_Duck2
 	ptr	Frame_Sonic_Injury
 	ptr	Frame_Sonic_OilSlide
-	ptr	Frame_Sonic_Hang11		; $50
+	ptr	Frame_Sonic_Hang11				; $50
 	ptr	Frame_Sonic_Hang12
 	ptr	Frame_Sonic_Hang21
 	ptr	Frame_Sonic_Hang22
-	ptr	Frame_Sonic_Float1		; $54
+	ptr	Frame_Sonic_Float1				; $54
 	ptr	Frame_Sonic_Float2
 	ptr	Frame_Sonic_Float3
 	ptr	Frame_Sonic_Float4
-	ptr	Frame_Sonic_Float5		; $58
+	ptr	Frame_Sonic_Float5				; $58
 	ptr	Frame_Sonic_Float6
 	ptr	Frame_Sonic_GetAir
 	ptr	Frame_Sonic_Spring
-	ptr	Frame_Sonic_Death		; $5C
+	ptr	Frame_Sonic_Death				; $5C
 	ptr	Frame_Sonic_Drown
 	ptr	Frame_Sonic_Burnt
 	ptr	Frame_Sonic_Tumble1
-	ptr	Frame_Sonic_Tumble2		; $60
+	ptr	Frame_Sonic_Tumble2				; $60
 	ptr	Frame_Sonic_Tumble3
 	ptr	Frame_Sonic_Tumble4
 	ptr	Frame_Sonic_Tumble5
-	ptr	Frame_Sonic_Tumble6		; $64
+	ptr	Frame_Sonic_Tumble6				; $64
 	ptr	Frame_Sonic_Tumble7
 	ptr	Frame_Sonic_Tumble8
 	ptr	Frame_Sonic_Tumble9
-	ptr	Frame_Sonic_Tumble10	; $68
+	ptr	Frame_Sonic_Tumble10				; $68
 	ptr	Frame_Sonic_Tumble11
 	ptr	Frame_Sonic_Tumble12
 	ptr	Frame_Sonic_Vine1
-	ptr	Frame_Sonic_Vine2		; $6C
+	ptr	Frame_Sonic_Vine2				; $6C
 	ptr	Frame_SuperSonic_Transform1
 	ptr	Frame_SuperSonic_Transform2
-	ptr	Frame_SuperSonic_Transform3	; bug: Sonic's left fist is 1 pixel higher than it should be
-	ptr	Frame_SuperSonic_Transform4	; $70
+	ptr	Frame_SuperSonic_Transform3			; bug: Sonic's left fist is 1 pixel higher than it should be
+	ptr	Frame_SuperSonic_Transform4			; $70
 	ptr	Frame_SuperSonic_Transform5
 	ptr	Map_Sonic_0C90
 	ptr	Map_Sonic_0CA2

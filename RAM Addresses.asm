@@ -40,8 +40,8 @@ v_ost_all:          rs.b sizeof_ost*countof_ost			; $FFFFB000 ; object variable 
     v_ost_watersurface1:	equ v_ost_all+(sizeof_ost*$E)	; $FFFFB380 ; First water surface
     v_ost_oil:				equ v_ost_watersurface1	; $FFFFB380 ; Oil at the bottom of OOZ
     v_ost_watersurface2:	equ v_ost_all+(sizeof_ost*$F)	; $FFFFB3C0 ; Second water surface
-    v_ost_reserved_end:						;equ v_ost_dynamic	
-
+    v_ost_reserved_end:		equ v_ost_all+(sizeof_ost*$10)	
+			
     v_ost_dynamic:         equ v_ost_all+(sizeof_ost*$10)	;  $FFFFFB400
     v_ost_dynamic_end:     equ v_ost_all+(sizeof_ost*countof_ost)
     v_ost_dynamic_2P_end:  equ v_ost_dynamic_end-($C*6)*sizeof_ost ; 2P mode reserves 6 'blocks' of 12 RAM slots at the end.
@@ -71,7 +71,7 @@ v_secondary_collision:  rs.b $300				; $FFFFD900
 
 				rsblockend ss_shared_ram
 
-v_dma_queue:       		rs.b sizeof_dma*countof_dma				; $FFFFDC00 ; stores 18 DMA commands to issue the next time ProcessDMAQueue is called
+v_dma_queue:       		rs.b sizeof_dma*countof_dma	; $FFFFDC00 ; stores 18 DMA commands to issue the next time ProcessDMAQueue is called
 v_dma_queue_slot:  		rs.l 1				; $FFFFDCFC ; stores the address of the next open slot for a queued VDP command
 v_sprite_queue_2:       rs.b $280				; $FFFFDD00 ; sprite attribute table buffer for player 2's half of screen in two-player mode
                         rs.b $80				; unused, but SAT buffer 2 can spill over into this area when there are too many sprites on-screen
@@ -281,13 +281,13 @@ v_joypad_press_actual:		equ __rs-1			; $FFFFF605 ; joypad input - pressed, actua
 v_joypad2_hold_actual:		rs.w 1				; $FFFFF606 ; joypad 2 input - held, actual
 v_joypad2_press_actual:		equ __rs-1			; $FFFFF607 ; joypad 2 input - pressed, actual
 							rs.l 1	; $FFFFF608-$FFFFF60B ; unused
-v_vdp_mode_buffer:			rs.w 1	; $FFFFF60C ; VDP register $81 buffer - contains $8134 which is ori'ed with vdp_enable_display&$FF and andi'ed with ~vdp_enable_display&$FF to enable and disable the display
+v_vdp_mode_buffer:			rs.w 1			; $FFFFF60C ; VDP register $81 buffer - contains $8134 which is ori'ed with vdp_enable_display&$FF and andi'ed with ~vdp_enable_display&$FF to enable and disable the display
 							rs.b 6	; $FFFFF60E-$FFFFF613 ; unused
 v_countdown:				rs.w 1			; $FFFFF614 ; decrements every time VBlank runs, used as a general purpose timer
 
 v_y_pos_vsram:				rs.l 1			; $FFFFF616	; VScroll buffer
 v_fg_y_pos_vsram:			equ v_y_pos_vsram	; $FFFFF616 ; foreground y position, sent to VSRAM during VBlank
-v_bg_y_pos_vsram:			equ __rs-2			; $FFFFF618 ; background y position, sent to VSRAM during VBlank
+v_bg_y_pos_vsram:			equ __rs-2		; $FFFFF618 ; background y position, sent to VSRAM during VBlank
 
 v_unused_ss:				rs.l 1			; $FFFFF61A ; cleared by VDPSetupGame, ClearScreen, special stage init, and ending sequence init, but never used
 v_fg_y_pos_vsram_p2:		rs.w 1				; $FFFFF61E ; foreground y position for player 2
@@ -420,7 +420,7 @@ f_screen_redraw:		rs.b 1				; $FFFFF72C ; flag indicating whole screen needs to 
 v_unused_cpz_scroll_timer:	rs.b 1				; $FFFFF72D ; used only in dead CPZ scrolling function
 f_wfz_scz_fire_toggle:		rs.b 1				; $FFFFF72E ; flag used by the WFZ palette cycle switcher	
 							rs.b 1	; $FFFFF72F ; unused
-f_water:					rs.b 1			; $FFFFF730 ; flag indicating if the level has water or oil		
+f_water:					rs.b 1		; $FFFFF730 ; flag indicating if the level has water or oil		
 							rs.b 1	; $FFFFF731 ; unused
 v_demo_input_counter_p2:	rs.w 1				; $FFFFF732 ; tracks progress in the demo input data for player 2, increases by 2 when input changes
 v_demo_input_time_p2:		rs.w 1				; $FFFFF734 ; time remaining for current demo "button press" for player 2
@@ -435,9 +435,9 @@ v_boss_collision_routine:	rs.b 1				; $FFFFF73F
 v_boss_anim_array:			rs.b $10		; $FFFFF740 ; up to $10 bytes; 2 bytes per entry
 v_ending_routine:						; $FFFFF750 ; which version of the ending cutscene to play
 v_boss_x_pos:				rs.l 1			; $FFFFF750 ; x_pos of current boss							
-											; $FFFFF752 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
+								; $FFFFF752 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
 v_boss_y_pos:				rs.l 1			; $FFFFF754 ; y_pos of current boss
-											; $FFFFF756 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
+								; $FFFFF756 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
 v_boss_x_vel:				rs.w 1			; $FFFFF758 ; x_vel of current boss
 v_boss_y_vel:				rs.w 1			; $FFFFF75A ; y_vel of current boss
 v_boss_timer:				rs.w 1			; $FFFFF75C ; general timer used by boss objects
@@ -562,8 +562,8 @@ v_debug_active:				rs.w 1			; $FFFFFE08 ; high byte is the debug mode routine co
 v_debug_move_delay:			rs.b 1			; $FFFFFE0A ; debug mode - time delay in frames between holding the d-pad and the object moving
 v_debug_move_speed:			rs.b 1			; $FFFFFE0B ; debug mode - speed the object moves, increases the longer d-pad is held
 v_vblank_counter:			rs.l 1			; $FFFFFE0C ; vertical interrupt counter, increments every VBlank
-v_vblank_counter_word:		equ __rs-2 ; $FFFFFE0E ; low word for v_vblank_counter
-v_vblank_counter_byte:		equ __rs-1 ; $FFFFFE0F ; low byte for v_vblank_counter
+v_vblank_counter_word:		equ __rs-2			; $FFFFFE0E ; low word for v_vblank_counter
+v_vblank_counter_byte:		equ __rs-1			; $FFFFFE0F ; low byte for v_vblank_counter
 v_zone:						rs.w 1		; $FFFFFE10 ; high byte is current zone number, low byte is current act number ; read as a byte if we only want the zone
 v_act:						equ __rs-1	; $FFFFFE11 ; read if we only want the act number
 v_lives:					rs.b 1		; $FFFFFE12 ; number of lives

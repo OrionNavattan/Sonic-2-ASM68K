@@ -9,15 +9,15 @@ sizeof_16x16:		equ 8					; size of one 16x16 tile
 countof_16x16:		equ $180				; max number of 16x16 tiles
 sizeof_16x16_all:   equ sizeof_16x16*countof_16x16		; size of all 16x16 tiles ($C00)
 sizeof_ost:		    equ $40				; size of one OST in bytes
-countof_ost:		equ $80					; total OSTs in RAM
+countof_ost:		equ $80					; total OSTs in RAM, excluding level only objects
 countof_ost_reserved:   equ $10					; reserved OSTs
 countof_ost_dynamic:    equ $70					; dynamic OSTs, used for level objects
 countof_ost_dynamic_2P:	equ $28
-countof_ost_level_only:  equ $10				; additional reserved object ram for objects attached to players, and for the special stages                  
+countof_ost_level_only: equ $10					; additional reserved object ram for objects attached to players, and for the special stages                  
 sizeof_plc:			equ 6				; size of one pattern load cue
 countof_plc:		equ $10					; size of the PLC buffer
 sizeof_priority:	equ $80					; size of one priority section in sprite queue
-sizeof_dma:			equ $E					; size of one DMA command
+sizeof_dma:			equ $E				; size of one DMA command
 countof_dma:		equ $12					; number of slots in DMA queue
 
 level_max_width:	equ $80					; Doubled from Sonic 1 due to the switch to 128x128 level chunks
@@ -37,17 +37,18 @@ screen_right:		equ screen_left+screen_width
 ; VRAM constants and regions
 ; VRAM addresses for individual items are defined in VRAM Addresses.asm
 ; ---------------------------------------------------------------------------
-sizeof_cell:			equ $20					; single 8x8 tile, two pixels per byte
-widthof_cell:			equ	8					; width of single tile in pixels
 
-sizeof_vram_row_64:			equ (512/widthof_cell)*2				; $80,  single row of fg/bg nametable when 64 cells (512 pixels) wide 
-sizeof_vram_row_128:		equ (1024/widthof_cell)*2				; $100, single row of fg/bg nametable when 128 cells (1024 pixels) wide
+sizeof_cell:			equ $20				; single 8x8 tile, two pixels per byte
+widthof_cell:			equ	8			; width of single tile in pixels
 
-sizeof_vram_planetable_64x32:	equ sizeof_vram_row_64*32				; $1000
-sizeof_vram_planetable_128x32:	equ sizeof_vram_row_128*32				; $2000 
-sizeof_vram_planetable_64x64:	equ sizeof_vram_row_64*64				; $2000 
+sizeof_vram_row_64:			equ (512/widthof_cell)*2 ; $80,  single row of fg/bg nametable when 64 cells (512 pixels) wide 
+sizeof_vram_row_128:		equ (1024/widthof_cell)*2	; $100, single row of fg/bg nametable when 128 cells (1024 pixels) wide
 
-sizeof_sprite:			equ 8					; one sprite in sprite attribute table
+sizeof_vram_planetable_64x32:	equ sizeof_vram_row_64*32	; $1000
+sizeof_vram_planetable_128x32:	equ sizeof_vram_row_128*32	; $2000 
+sizeof_vram_planetable_64x64:	equ sizeof_vram_row_64*64	; $2000 
+
+sizeof_sprite:			equ 8				; one sprite in sprite attribute table
 countof_max_sprites:	equ $50					; max number of sprites that can be displayed at once (80)
 sizeof_vram_sprites:	equ sizeof_sprite*countof_max_sprites	; sprite table ($280 bytes)
 sizeof_vram_hscroll:	equ $380
@@ -104,6 +105,7 @@ draw_bg:		equ $4000+(vram_bg-draw_base)		; VRAM write command + bg nametable add
 ; ---------------------------------------------------------------------------
 ; Color and CRAM constants
 ; ---------------------------------------------------------------------------
+
 countof_color:		equ 16					; colors per palette line
 countof_colour:	equ countof_color				; silly Brits. :P
 countof_pal:		equ 4					; total palette lines
@@ -131,6 +133,7 @@ cMagenta:	equ cBlue+cRed					; color magenta
 ; ---------------------------------------------------------------------------
 ; Joypad input
 ; ---------------------------------------------------------------------------
+
 bitStart:	equ 7
 bitA:		equ 6
 bitC:		equ 5
@@ -182,7 +185,7 @@ id_SCZ:		rs.b 1						; $10
 
 ZoneCount:	equ __rs					; Total number of zone slots, not necessarily playable zones
 
-titlecard_flag_bit: 	equ	7						; flag bit set in v_gamemode to indicate the level hasn't yet started
+titlecard_flag_bit: 	equ	7				; flag bit set in v_gamemode to indicate the level hasn't yet started
 titlecard_flag:			equ	1<<titlecard_flag_bit
 
 
@@ -248,9 +251,9 @@ camera_y_shift_default:		equ $60				; v_camera_y_shift normally
 camera_y_shift_down:		equ 8				; v_camera_y_shift when ducking
 
 ; Times
-shoe_time:		equ 20*60			; time in frames that speed shoes last (20 seconds)
+shoe_time:		equ 20*60				; time in frames that speed shoes last (20 seconds)
 invincible_time:		equ 20*60			; time in frames that invincibility lasts (20 seconds)
-flash_time:		equ 2*60			; time in frames that Sonic flashes after being hit (2 seconds)
+flash_time:		equ 2*60				; time in frames that Sonic flashes after being hit (2 seconds)
 ring_delay:			equ 30				; time in frames before Sonic is able to collect rings after being hit (0.5 seconds)
 lock_time_slope:		equ 30				; time in frames that controls are locked when stuck on a slope (0.5 seconds)
 lock_time_bubble:		equ 35				; time in frames that controls are locked after collecting a bubble (0.58 seconds)
@@ -282,6 +285,34 @@ points_for_life:		equ 50000/10			; points needed for extra life (awarded every 5
 countof_emeralds:		equ 7				; number of chaos emeralds
 
 
+; ----------------------------------------------------------------------------
+; This macro is used to keep Sonic and Tails' primary routine IDs synchronized,
+; as much of the code depends on them being the same.
+; ----------------------------------------------------------------------------
+
+CharacterRoutines:	macro	func
+		\func	Main					; 0
+		\func	Control					; 2
+		\func	Hurt					; 4
+		\func	Death					; 6
+		\func	ResetLevel				; 8
+		\func	Respawn					; $A
+	if FixBugs
+		\func	Drown					; $C
+	endc		
+		endm	
+
+		
+CommonRoutineIDs:	macro	routinename
+		id_\routinename:	equ	ptr_id
+		ptr_id: = ptr_id+ptr_id_inc	
+		endm
+
+		ptr_id:		= 0
+		ptr_id_inc: = 2
+
+		CharacterRoutines	CommonRoutineIDs	; generate routine IDs without character names (used wherever code applies to both characters)
+
 ; ---------------------------------------------------------------------------
 ; Object variable offsets
 ; ---------------------------------------------------------------------------
@@ -307,10 +338,10 @@ ost_render:		rs.b 1					; 1 ; universal; bitfield for x/y flip, display mode; bi
 	render_bg:			equ 1<<render_bg_bit	; align to background
 	render_useheight:	equ 1<<render_useheight_bit	; use ost_height to decide if object is on screen, otherwise height is assumed to be $20 (used for large objects)
 	render_rawmap:		equ 1<<render_rawmap_bit	; sprites use raw mappings - i.e. object consists of a single sprite instead of multipart sprite mappings (e.g. broken block fragments)
-	render_subobjects:		equ 1<<render_subobjects_bit	; has subobjects to be rendered
+	render_subobjects:		equ 1<<render_subobjects_bit ; has subobjects to be rendered
 	render_onscreen:	equ 1<<render_onscreen_bit	; object is on screen
 
-ost_tile:		rs.w 1		; 2 ; universal; tile VRAM, palette, priority, and x-flip/y-flip (2 bytes)
+ost_tile:		rs.w 1					; 2 ; universal; tile VRAM, palette, priority, and x-flip/y-flip (2 bytes)
 	; Low byte and bits 0-2 of high byte are the VRAM address divided by sizeof_cell ($20).
 	; Bits 3-7 of upper byte are bitfield as follows. 
 	tile_xflip_bit:	equ 3
@@ -319,18 +350,18 @@ ost_tile:		rs.w 1		; 2 ; universal; tile VRAM, palette, priority, and x-flip/y-f
 	tile_pal34_bit:	equ 6
 	tile_hi_bit:	equ 7
 	
-	tile_xflip:	equ 1<<(tile_xflip_bit+8) ; $800
-	tile_yflip:	equ 1<<(tile_yflip_bit+8) ; $1000
-	tile_pal1:	equ (0>>5)<<(tile_pal12_bit+8) ; 0
-	tile_pal2:	equ ((1<<tile_pal12_bit)>>5)<<(tile_pal12_bit+8)	; $2000
-	tile_pal3:	equ ((1<<tile_pal34_bit)>>5)<<(tile_pal12_bit+8)	; $4000
-	tile_pal4:	equ (((1<<tile_pal12_bit)|(1<<tile_pal34_bit))>>5)<<(tile_pal12_bit+8)	; $6000
-	tile_hi:	equ 1<<(tile_hi_bit+8); $8000
+	tile_xflip:	equ 1<<(tile_xflip_bit+8)		; $800
+	tile_yflip:	equ 1<<(tile_yflip_bit+8)		; $1000
+	tile_pal1:	equ (0>>5)<<(tile_pal12_bit+8)		; 0
+	tile_pal2:	equ ((1<<tile_pal12_bit)>>5)<<(tile_pal12_bit+8) ; $2000
+	tile_pal3:	equ ((1<<tile_pal34_bit)>>5)<<(tile_pal12_bit+8) ; $4000
+	tile_pal4:	equ (((1<<tile_pal12_bit)|(1<<tile_pal34_bit))>>5)<<(tile_pal12_bit+8) ; $6000
+	tile_hi:	equ 1<<(tile_hi_bit+8)			; $8000
 	
-	tile_palette:	equ tile_pal4									; $6000
-	tile_settings:	equ	tile_xflip|tile_yflip|tile_palette|tile_hi	; $F800
-	tile_vram:		equ (~tile_settings)&$FFFF								; $7FF
-	tile_draw:		equ	(~tile_hi)&$FFFF									; $7FFF
+	tile_palette:	equ tile_pal4				; $6000
+	tile_settings:	equ	tile_xflip|tile_yflip|tile_palette|tile_hi ; $F800
+	tile_vram:		equ (~tile_settings)&$FFFF	; $7FF
+	tile_draw:		equ	(~tile_hi)&$FFFF	; $7FFF
 	
 	
 ost_mappings:		rs.l 1					; 4 ; universal; mappings address (4 bytes)
@@ -356,7 +387,7 @@ ost_anim_time:		rs.w 1					; $1E ; most objects; time to next frame (1 byte) / g
 ost_anim_time_low:	equ __rs-1				; $1F ; used by some objects as master copy of timer
 ost_col_type:		rs.b 1					; $20 ; non-player objects; collision response type - 0 equ none; 1-$3F = enemy; $41-$7F = items; $81-BF = hurts; $C1-$FF = custom
 ost_col_property:	rs.b 1					; $21 ; non-player objects;  collision extra property
-ost_primary_status:			rs.b 1				; $22 ; most objects; bitfield indicating orientation or mode
+ost_primary_status:			rs.b 1			; $22 ; most objects; bitfield indicating orientation or mode
 	status_xflip_bit:	equ 0
 	status_yflip_bit:	equ 1				; only non-player objects
 	status_air_bit:		equ 1				; only Sonic and Tails
@@ -374,13 +405,13 @@ ost_primary_status:			rs.b 1				; $22 ; most objects; bitfield indicating orient
 	status_air:			equ 1<<status_air_bit	; Sonic/Tails is in the air (Sonic/Tails only)
 	status_jump:		equ 1<<status_jump_bit		; jumping or rolling (Sonic/Tails only)
 	status_platform:	equ 1<<status_platform_bit	; Sonic/Tails is standing on an object (Sonic/Tails only)
-	status_p1_platform:		equ 1<<maincharacter_standing_bit	; main character is standing on this object (objects only)
-	status_p2_platform:		equ 1<<sidekick_standing_bit		; sidekick is standing on this object (objects only)
-	status_standing_both:   equ status_p1_platform|status_p2_platform	; both players are standing on this object (objects only)
+	status_p1_platform:		equ 1<<maincharacter_standing_bit ; main character is standing on this object (objects only)
+	status_p2_platform:		equ 1<<sidekick_standing_bit ; sidekick is standing on this object (objects only)
+	status_standing_both:   equ status_p1_platform|status_p2_platform ; both players are standing on this object (objects only)
 	status_rolljump:	equ 1<<status_rolljump_bit	; Sonic/Tails is jumping after rolling (Sonic/Tails only)
-	status_p1_pushing:		equ 1<<status_p1_pushing_bit		; main character is pushing this (objects only)
+	status_p1_pushing:		equ 1<<status_p1_pushing_bit ; main character is pushing this (objects only)
 	status_p2_pushing:      equ 1<<status_p2_pushing_bit	; sidekick is pushing this (objects only)
-	status_pushing_both:    equ status_p1_pushing|status_p2_pushing	; both players are pushing this (objects only)
+	status_pushing_both:    equ status_p1_pushing|status_p2_pushing ; both players are pushing this (objects only)
 	status_underwater:	equ 1<<status_underwater_bit	; Sonic/Tails is underwater (Sonic/Tails only)
 	status_broken:		equ 1<<status_broken_bit	; object has been broken (enemies/bosses)
 ost_respawn:				rs.b 1			; $23 ; non-player objects; respawn list index number
@@ -444,16 +475,16 @@ ost_flip_angle:				rs.b 1			; $27 ; angle about the x axis (360 degrees = 256) (
 ost_air_left:				rs.b 1			; $28 ; air left while underwater
 ost_flip_turned:			rs.b 1			; $29 ; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
 ost_obj_control:			rs.b 1			; $2A ; 0 for normal, 1 for hanging or for resting on a flipper, $81 for going through CNZ/OOZ/MTZ tubes or stopped in CNZ cages or stoppers or flying if Tails
-ost_secondary_status:		rs.b 1			; $2B ; status flags for powerups and oil slides
-	status_shield_bit:		equ	0			; set if character is equipped with a shield
+ost_secondary_status:		rs.b 1				; $2B ; status flags for powerups and oil slides
+	status_shield_bit:		equ	0		; set if character is equipped with a shield
 	status_invincible_bit:	equ	1			; set if character is invincible
 	status_speedshoes_bit:	equ	2			; set if character has speed shoes
-	status_sliding_bit:		equ	7			; 
-	status_shield:			equ	1<<status_shield_bit		; $01
-	status_invincible:		equ	1<<status_invincible_bit	; $02
-	status_speedshoes:		equ	1<<status_speedshoes_bit	; $04
-	status_sliding:			equ	1<<status_sliding_bit		; $80
-ost_flips_remaining:		rs.b 1			; $2C ; number of flip revolutions remaining
+	status_sliding_bit:		equ	7		; 
+	status_shield:			equ	1<<status_shield_bit ; $01
+	status_invincible:		equ	1<<status_invincible_bit ; $02
+	status_speedshoes:		equ	1<<status_speedshoes_bit ; $04
+	status_sliding:			equ	1<<status_sliding_bit ; $80
+ost_flips_remaining:		rs.b 1				; $2C ; number of flip revolutions remaining
 ost_flip_speed:				rs.b 1			; $2D ; number of flip revolutions per frame / 256
 ost_lock_time:				rs.w 1			; $2E ; time left for locked d-pad controls (jumping is allowed), e.g. after hitting a spring
 ost_flash_time:				rs.w 1			; $30 ; time Sonic/Tails flashes for after getting hit

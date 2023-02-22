@@ -278,7 +278,7 @@ _firstVolEnv:	rs.b 0						; the first valid envelope
 		VolumeEnv	GenEnvConst			; generate constants for envelopes
 _lastVolEnv:	equ __rs-1					; the last valid envelope
 
-evcHold:		equ 80h			; terminator for PSG envelope lists
+evcHold:		equ 80h					; terminator for PSG envelope lists
 
 ; ---------------------------------------------------------------------------
 ; Define samples for the sound driver and SMPS2ASM
@@ -505,31 +505,31 @@ TrackCommand:	macro	func
 ;		\func	Release34				; Hacky command to immediately release ops 3 and 4. Used in SYZ music only
 ;	elseif	SonicDriverVer=2
 		\func	Pan					; Pan FM channel (left/right/centre)
-		\func	Detuneset,Detune				; Detune a channel (change frequency)
+		\func	Detuneset,Detune			; Detune a channel (change frequency)
 		\func	Timing,Nop				; External song timing
-		\func	Ret,Return					; Subroutine return
+		\func	Ret,Return				; Subroutine return
 		\func	RestoreSong				; Restore previous song
-		\func	ChannelTick,ChanTempoDiv				; Set tick multiplier for channel
-		\func	VolAddFM,AlterVol				; FM volume add
-		\func	Tie,NoAttack			; Do not key off. Can be used to tie two notes together (extend delay, run commands, set new note, etc)
-		\func	Gate,NoteFill					; Set note gate timer (frames)
+		\func	ChannelTick,ChanTempoDiv		; Set tick multiplier for channel
+		\func	VolAddFM,AlterVol			; FM volume add
+		\func	Tie,NoAttack				; Do not key off. Can be used to tie two notes together (extend delay, run commands, set new note, etc)
+		\func	Gate,NoteFill				; Set note gate timer (frames)
 		\func	TransAdd,ChangeTransposition		; Transposition add
-		\func	TempoSet,SetTempoMod				; Set tempo (affected by tick multiplier!)
-		\func	SongTick,SetTempoDiv				; Set tick multiplier for song
-		\func	VolAddPSG,mPSGAlterVol				; PSG volume add
+		\func	TempoSet,SetTempoMod			; Set tempo (affected by tick multiplier!)
+		\func	SongTick,SetTempoDiv			; Set tick multiplier for song
+		\func	VolAddPSG,mPSGAlterVol			; PSG volume add
 		\func	NullCmd1				; unused, was Sonic 1's ClearPush
 		\func	NullCmd2				; unused, was Sonic 1's StopSpecial
-		\func	Voice,FMvoice					; Load FM voice
-		\func	Vib,ModSet					; Set automatic vibrate (aka, modulation)
-		\func	VibOn,ModOn					; Enable automatic vibrate (without parameter set)
-		\func	End,Stop					; End a song channel
+		\func	Voice,FMvoice				; Load FM voice
+		\func	Vib,ModSet				; Set automatic vibrate (aka, modulation)
+		\func	VibOn,ModOn				; Enable automatic vibrate (without parameter set)
+		\func	End,Stop				; End a song channel
 		\func	NoiseSet,PSGform			; Set PSG4 noise mode
 		\func	VibOff,ModOff				; Disable automatic vibrate (parameters preserved)
 		\func	Env,PSGvoice				; Set volume envelope (PSG only)
-		\func	Jump						; Jump to song routine
-		\func	Loop						; Loop song data
-		\func	Call						; Call song subroutine
-		\func	Release34,MaxRelRate		; Hacky command to immediately release ops 3 and 4. Used in Sonic 1's SYZ music only
+		\func	Jump					; Jump to song routine
+		\func	Loop					; Loop song data
+		\func	Call					; Call song subroutine
+		\func	Release34,MaxRelRate			; Hacky command to immediately release ops 3 and 4. Used in Sonic 1's SYZ music only
 	;elseif	SonicDriverVer=3	
 	endm
 	

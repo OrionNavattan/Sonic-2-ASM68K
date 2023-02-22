@@ -149,7 +149,7 @@
 		filedef Nem_OOZSwingPlat,"art/nemesis/OOZ Swinging Platform",nem,unc ; 28 tiles
 		filedef Nem_StripedBlocksHoriz,"art/nemesis/OOZ Striped Blocks",nem,unc ; 4 tiles
 		filedef Nem_OOZElevator,"art/nemesis/OOZ Elevator",nem,unc ; 24 tiles
-		filedef Nem_Fan,"art/nemesis/OOZ Fan",nem,unc ; 30 tiles
+		filedef Nem_Fan,"art/nemesis/OOZ Fan",nem,unc	; 30 tiles
 		filedef Nem_Burner,"art/nemesis/OOZ Burner Flame",nem,unc ; 18 tiles
 		filedef Nem_SnakePlats,"art/nemesis/CNZ Caterpillar Platforms",nem,unc ; 4 tiles
 		filedef Nem_BombPenalty,"art/nemesis/CNZ Slot Spikeballs",nem,unc ; 4 tiles
@@ -319,7 +319,7 @@
 		filedef	Art_Tails,"art/uncompressed/Tails",bin,bin
 		filedef	Art_SplashAndDust,"art/uncompressed/Water Splash & Skid Dust",bin,bin
 		filedef	Art_Signpost,"art/uncompressed/Signpost",bin,bin
-		filedef	Art_Countdown,"art/uncompressed/Drowning Countdown Numbers",bin,bin
+		filedef	Art_Countdown,"art/uncompressed/Drowning Countdown Numbers",bin,bin ; 36 tiles; 6 for each of the numbers 0-5
 		filedef	Art_MenuBack,"art/uncompressed/Sonic & Miles Animated Background",bin,bin
 		filedef	Art_FallingRocks,"art/uncompressed/MCZ Boss Falling Rocks & Stalactites",bin,bin ; 8 tiles
 

@@ -50,7 +50,7 @@ f_dac_enabled:			rs.b 1				; 15h ; set of 80h if DAC is enabled, 0 if FM6 is ena
 v_bank_number:			rs.b 1				; 16h ; current ROM bank (0 for MusicPoint1, $80 for MusicPoint2)
 f_pal:					rs.b 1			; 17h ; flag if the system is a PAL console
 
-sizeof_soundvars:		equ __rs					; 18h bytes
+sizeof_soundvars:		equ __rs			; 18h bytes
 
 ; ---------------------------------------------------------------------------
 ; Constants for track variables
@@ -62,11 +62,11 @@ sizeof_soundvars:		equ __rs					; 18h bytes
 				rsset 0
 ch_flags:		rs.b 1					; 0 ; all tracks
 	; Channel flag bits; 0, 5, and 6 are unused here
-	chf_rest_bit:	equ 1						; 02h; track is at rest
-	chf_mask_bit:	equ 2						; 04h; SFX is overriding this track
-	chf_vib_bit:	equ 3						; 08h; set if vibrato is enabled
-	chf_tie_bit:	equ 4						; 10h; do not attack next note
-	chf_enable_bit: equ 7						; 80h; track is playing	
+	chf_rest_bit:	equ 1					; 02h; track is at rest
+	chf_mask_bit:	equ 2					; 04h; SFX is overriding this track
+	chf_vib_bit:	equ 3					; 08h; set if vibrato is enabled
+	chf_tie_bit:	equ 4					; 10h; do not attack next note
+	chf_enable_bit: equ 7					; 80h; track is playing	
 	chf_rest:	equ 1<<chf_rest_bit	
 	chf_mask:	equ 1<<chf_mask_bit
 	chf_vib:	equ 1<<chf_vib_bit
@@ -75,29 +75,29 @@ ch_flags:		rs.b 1					; 0 ; all tracks
 	
 ch_type:		rs.b 1					; 1 ; all tracks
 	; Voice control bits
-	t_fmii_bit:		equ 2					; if set, FM assignment bits refer to FM channels 4-6, otherwise FM channels 1-3 (also used to select zWriteFMI or zWriteFMII)
-	t_psg_bit:		equ 7					; if set, this is a PSG track
+	t_fmii_bit:		equ 2				; if set, FM assignment bits refer to FM channels 4-6, otherwise FM channels 1-3 (also used to select zWriteFMI or zWriteFMII)
+	t_psg_bit:		equ 7				; if set, this is a PSG track
 	t_fmii:			equ 1<<t_fmii_bit
 	
 	; Channel assignment constants:
-	tFM1:			equ 0					; 0, FM1 channel type
-	tFM2:			equ 1					; 1, FM2 channel type
-	tFM3:			equ 2					; 2, FM3 channel type
+	tFM1:			equ 0				; 0, FM1 channel type
+	tFM2:			equ 1				; 1, FM2 channel type
+	tFM3:			equ 2				; 2, FM3 channel type
 	tFM4:			equ t_fmii|tFM1			; 4, FM4 channel type
 	tFM5:			equ t_fmii|tFM2			; 5, FM5 channel type
 	tFM6:			equ t_fmii|tFM3			; 6, FM6 channel type
-	tDAC:			equ tFM6				; 6, DAC channel type
-	tPSG1:			equ 80h					; PSG1 channel type
-	tPSG2:			equ 0A0h					; PSG2 channel type
-	tPSG3:			equ 0C0h					; PSG3 channel type
-	tPSG4:			equ 0E0h					; PSG4 channel type
-	t_fm_assignment:	equ 1<<tFM1|1<<tFM2 	; bits 0 and 1 indicate channels 1-3, or 4-6 if t_fmii_bit is set
+	tDAC:			equ tFM6			; 6, DAC channel type
+	tPSG1:			equ 80h				; PSG1 channel type
+	tPSG2:			equ 0A0h			; PSG2 channel type
+	tPSG3:			equ 0C0h			; PSG3 channel type
+	tPSG4:			equ 0E0h			; PSG4 channel type
+	t_fm_assignment:	equ 1<<tFM1|1<<tFM2		; bits 0 and 1 indicate channels 1-3, or 4-6 if t_fmii_bit is set
 
 	
 ch_tick:			rs.b 1				; 2; all tracks; tempo divisor; 1 = Normal, 2 = Half, 3 = Third...
-ch_dataptr_low:		rs.b 1				; 3; all tracks; track position low byte
-ch_dataptr_high:	rs.b 1				; 4; all tracks; track position high byte
-ch_transpose:		rs.b 1				; 5; FM/PSG; transpose (from coord flag E9)
+ch_dataptr_low:		rs.b 1					; 3; all tracks; track position low byte
+ch_dataptr_high:	rs.b 1					; 4; all tracks; track position high byte
+ch_transpose:		rs.b 1					; 5; FM/PSG; transpose (from coord flag E9)
 ch_volume:			rs.b 1				; 6; FM/PSG; channel volume (only applied at voice changes)
 ch_ams_fms_pan:		rs.b 1					; 7; FM/DAC; panning / AMS / FMS settings
 	fms_1_bit:			equ 0
@@ -152,8 +152,8 @@ ch_loopcounters:	rs.b 0Ah				; 20h; loop counter index 0
 ; down after calling coord flag F8h.  Of course, this does mean collisions are possible with either
 ; or other track memory if you're not careful with these!  No range checking is performed!	
 	
-ch_stack:				equ __rs				; 2Ah; start of next track, the two bytes below this is the coord flag "gosub" (F8h) return stack
-sizeof_trackvars:  		equ __rs				; 2Ah;	length of each set of track variables
+ch_stack:				equ __rs		; 2Ah; start of next track, the two bytes below this is the coord flag "gosub" (F8h) return stack
+sizeof_trackvars:  		equ __rs			; 2Ah;	length of each set of track variables
 
 ; ---------------------------------------------------------------------------
 ; Sound Driver RAM Addresses
@@ -164,7 +164,7 @@ z_music_data_end:	equ __rs-40h				; 1B40h ; boundary between decompression buffe
 z_stack_pointer: 		equ	__rs			; 1B80h ; Z80 initial stack pointer value
 
 
-z_abs_vars:			rs.b sizeof_soundvars			; 1B80h ; all variables from v_priority to f_pal
+z_abs_vars:			rs.b sizeof_soundvars		; 1B80h ; all variables from v_priority to f_pal
 
 z_tracks_start:		equ __rs
 z_song_dac_fm_start:	equ __rs
@@ -201,7 +201,7 @@ z_sfx_psg_end:		equ __rs
 z_tracks_sfx_end:	equ __rs
 
 z_tracks_save_start:	equ __rs				; When extra life plays, it backs up a large amount of memory (all track data plus 36 bytes)
-z_savevar:				rs.b sizeof_soundvars		; 1E38h
+z_savevar:				rs.b sizeof_soundvars	; 1E38h
 z_savesong_DAC:			rs.b sizeof_trackvars		; 1E50h
 z_savesong_fm1:			rs.b sizeof_trackvars		; 1E7Ah
 z_savesong_fm2:			rs.b sizeof_trackvars		; 1EA4h

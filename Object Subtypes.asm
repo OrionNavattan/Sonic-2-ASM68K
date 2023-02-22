@@ -2,6 +2,9 @@
 ; Object subtypes
 ; ---------------------------------------------------------------------------
 
+; DrownCount
+type_drowncount_manager:			equ	$81	; invisible object that manages air count, triggers all relates events including drowning, and spawns numbers and small bubbles
+
 ; TitleIntro
 ; These match each of this object's routines.
 type_titleintro_sonic: 			equ id_TitleIntro_Sonic	; 2

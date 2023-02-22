@@ -10,6 +10,7 @@ vram_StandardFont:             equ $0200
 ; Sega Screen
 vram_SEGA:           		equ $0020
 vram_IntroTrails:           equ $1000
+tile_Nem_IntroTrails:		equ vram_IntroTrails/sizeof_cell
 vram_Giant_Sonic:          	equ $1100
 
 ; Title Screen
@@ -102,12 +103,15 @@ vram_TornadoThruster:       equ $AC20
 vram_Checkpoint:			equ $8F80
 vram_TailsDust:				equ $9180
 vram_SonicDust:				equ $9380
+vram_TailsDrownNum:			equ vram_TailsDust
+vram_SonicDrownNum:			equ vram_SonicDust
+sizeof_CountdownNum:		equ sizeof_Art_Countdown/6	
 vram_Numbers:				equ $9580
 vram_Shield					equ $97C0
 vram_Invinciblity_Stars:	equ $9BC0
 vram_Monitors:				equ $D000
 vram_Ring:					equ $D780
-vram_HUD:					equ vram_Monitors+$940		; $D940
+vram_HUD:					equ vram_Monitors+$940 ; $D940
 vram_Sonic:					equ $F000
 tile_Sonic:					equ vram_Sonic/sizeof_cell
 vram_Tails:                 equ $F400
@@ -177,13 +181,13 @@ vram_Balkriy:					equ $ACA0
 
 ; Level-specific objects and badniks.
 ; EHZ
-vram_EHZPulseBall:				= $7380	; uncompressed
+vram_EHZPulseBall:				= $7380		; uncompressed
 vram_Waterfall: 				equ $73C0
 vram_Bridge:					equ $76C0
-vram_Buzzer_Fireball:       	equ $77C0	; actually unused
+vram_Buzzer_Fireball:       	equ $77C0			; actually unused
 vram_Coconuts:            		equ $7DC0
 vram_Masher:               		equ $8280
-ArtTile_ArtUnc_EHZMountains:	=	$A000	; uncompressed
+ArtTile_ArtUnc_EHZMountains:	=	$A000			; uncompressed
 
 ; MTZ
 vram_Shellcracker:          equ $6380
@@ -212,7 +216,7 @@ vram_WFZVrtclLaser:         equ $73E0
 vram_WFZWallTurret:         equ $7560
 vram_WFZHrzntlLaser:        equ $7860
 vram_WFZConveyorBeltWheel:  equ $7D40
-vram_Hook:              	equ $7F40 ; mappings for this object are bugged, this is worked around by adding 4 to the tile setting
+vram_Hook:              	equ $7F40			; mappings for this object are bugged, this is worked around by adding 4 to the tile setting
 vram_WFZBeltPlatform:       equ $81C0
 vram_WFZGunPlatform:        equ $8340
 vram_WFZUnusedBadnik:       equ $8A00

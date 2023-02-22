@@ -3,23 +3,23 @@
   <Images>
     <ImageFromMappings id="platform">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../mappings/sprite/Chemical Plant and Mystic Cave Swinging and Tracked Platforms.asm" label="Map_obj7A_a_0008" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/CPZ & MCZ Swinging and Tracked Platforms.asm" label="Map_obj7A_a_0008" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="platformwithspikes">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../mappings/sprite/Mystic Cave Spiked Swinging Platform.asm" label="Map_obj15_b_0006" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/MCZ Spiked Swinging Platform.asm" label="Map_obj15_b_0006" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="longchain">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../mappings/sprite/Chemical Plant and Mystic Cave Swinging and Tracked Platforms.asm" label="Map_obj7A_a_0036" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/CPZ & MCZ Swinging and Tracked Platforms.asm" label="Map_obj7A_a_0036" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="link">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../mappings/sprite/Chemical Plant and Mystic Cave Swinging and Tracked Platforms.asm" label="Map_obj7A_a_001A" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/CPZ & MCZ Swinging and Tracked Platforms.asm" label="Map_obj7A_a_001A" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="base">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../mappings/sprite/Chemical Plant and Mystic Cave Swinging and Tracked Platforms.asm" label="Map_obj7A_a_0024" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/CPZ & MCZ Swinging and Tracked Platforms.asm" label="Map_obj7A_a_0024" startpal="0" />
     </ImageFromMappings>
   </Images>
   <Properties>

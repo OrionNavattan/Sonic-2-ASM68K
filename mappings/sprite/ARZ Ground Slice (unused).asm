@@ -1,0 +1,20 @@
+; -------------------------------------------------------------------------------
+; Unused Sprite Mappings - Scenery1 subtype 9
+; The tile value used with them suggests ARZ, and they do produce legible sprites,
+; (a bit of grass and a slide of ground), but what they would have been used for
+; is unknown.
+; -------------------------------------------------------------------------------
+
+Map_ARZUnusedScenery:	index offset(*)
+	ptr	Frame_ARZSceneryGrass
+	ptr	Frame_ARZSceneryGround
+
+Frame_ARZSceneryGrass:	spriteHeader
+	spritePiece	-4, -8, 1, 2, 0, 0, 0, 0, 0
+	spriteFooter
+
+Frame_ARZSceneryGround:	spriteHeader
+	spritePiece	-4, -8, 1, 2, 2, 0, 0, 0, 0
+	spriteFooter
+
+	even

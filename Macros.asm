@@ -274,6 +274,7 @@ rsblock:	macro
 		rsalign 2					; align to even address
 		\1\: equ __rs
 		endm
+	
 
 rsblockend:	macros						; Adapted to Sonic 2's macro-based RAM clearing
 		\1\_end:	equ __rs			; generate symbol for end
@@ -339,7 +340,7 @@ rsobjend:	macro
 		if __rs>sizeof_ost
 			inform	3,"OST for \rsobj_name exceeds maximum by $%h bytes.",__rs-sizeof_ost
 		else
-			;inform	0,"0-$%h bytes of OST for \rsobj_name used, leaving $%h bytes unused.",__rs-1,sizeof_ost-__rs
+								;inform	0,"0-$%h bytes of OST for \rsobj_name used, leaving $%h bytes unused.",__rs-1,sizeof_ost-__rs
 		endc
 		popo
 		endm
@@ -421,7 +422,8 @@ index:		macro start,idstart,idinc
 		
 ; ---------------------------------------------------------------------------
 ; Item in a pointer index.
-; input: pointer target, pointer label array (optional)
+; input: pointer target, optional alias (useful if multiple pointers point 
+; to same location, such as the bubble mappings or deleted objects
 ; ---------------------------------------------------------------------------
 
 ptr:		macro
@@ -441,11 +443,15 @@ ptr:		macro
 		
 		if instr("\1",".")=1				; check if pointer is local
 		else
-			if ~def(\prefix_id\\1)
+		
+			ifarg \2
+				\prefix_id\\2: equ ptr_id	; create id for pointer using explicitly specified alias			
+			elseif ~def(\prefix_id\\1)
 				\prefix_id\\1: equ ptr_id	; create id for pointer
 			else
 				\prefix_id\\1_\$ptr_id: equ ptr_id ; if id already exists, append number
 			endc
+			
 		endc
 		
 		ptr_id: = ptr_id+ptr_id_inc			; increment id
@@ -581,8 +587,8 @@ dma_fill_sequential:	macro value,length,dest,firstlast
 ; ---------------------------------------------------------------------------
 
 reset_dma_queue:	macro		
-		clr.w	(v_dma_queue).w		; clear the first queue slot
-		move.l	#v_dma_queue,(v_dma_queue_slot).w ; reset the queue index		
+		clr.w	(v_dma_queue).w				; clear the first queue slot
+		move.l	#v_dma_queue,(v_dma_queue_slot).w	; reset the queue index		
 	endm
 	
 ; ---------------------------------------------------------------------------
@@ -745,6 +751,18 @@ sceneryobjdata:	macro	frame,mappings,vram,width,priority
 		dc.w \vram
 		dc.b \width,\priority
 		endm
+
+
+; ---------------------------------------------------------------------------
+; Declare OST data for use with SpawnProjectiles
+; Each set of data is 6 bytes, and consists of:
+; - the x and y offsets from the parent object where the projectiles
+;	will be spawned (calculated and stored in ost_x_pos and ost_y_pos)
+; - the projectile's x and y velocities (ost_x_vel, ost_y_vel)
+; -	the projectile's mapping frame (ost_frame)
+; -	the projectile's render flags (ost_render)
+; ---------------------------------------------------------------------------	
+
 		
 ; ---------------------------------------------------------------------------
 ; Remap ASCII to the custom character set used in the Options and 2P Menus
@@ -775,7 +793,7 @@ menutxt:	macro
 		elseif	instr("ABCDEFGHIJKLMNOPQRSTUVWXYZ","\menu_chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$33)
 		else 	
-			inform 3,"Invalid character in menu text (must be uppercase letter, numeral, '*', '@', ';', or '.')."
+			inform 3,"Invalid character in menu text (must be uppercase letter, numeral, '*', '@', ' ;', or '.')."
 		endc
 		endr
 		endm

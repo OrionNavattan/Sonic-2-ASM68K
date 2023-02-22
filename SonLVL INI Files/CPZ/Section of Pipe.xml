@@ -3,7 +3,7 @@
   <Images>
     <ImageFromMappings id="section">
       <ArtFile filename="../art/nemesis/CPZ Dumping Pipe Platform.nem" />
-      <MapFile type="ASM" filename="../mappings/sprite/Chemical Plant Dumping Pipe Platform.asm" frame="0" startpal="3" />
+      <MapFile type="ASM" filename="../mappings/sprite/CPZ Dumping Pipe Platform.asm" frame="0" startpal="3" />
     </ImageFromMappings>
   </Images>
   <Properties>
