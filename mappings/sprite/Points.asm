@@ -3,41 +3,41 @@
 ; ---------------------------------------------------------------------------
 
 Map_Points:	index offset(*)
-	ptr	Map_obj29_000E
-	ptr	Map_obj29_0018
-	ptr	Map_obj29_0022
-	ptr	Map_obj29_002C
-	ptr	Map_obj29_003E
-	ptr	Map_obj29_0048
-	ptr	Map_obj29_005A
+	ptr	Frame_Points_100
+	ptr	Frame_Points_200
+	ptr	Frame_Points_500
+	ptr	Frame_Points_1K
+	ptr	Frame_Points_10
+	ptr	Frame_Points_10K
+	ptr	Frame_Points_50K
 
-Map_obj29_000E:	spriteHeader
+Frame_Points_100:	spriteHeader
 	spritePiece	-8, -8, 2, 2, 2, 0, 0, 0, 0
 	spriteFooter
 
-Map_obj29_0018:	spriteHeader
+Frame_Points_200:	spriteHeader
 	spritePiece	-8, -8, 2, 2, 6, 0, 0, 0, 0
 	spriteFooter
 
-Map_obj29_0022:	spriteHeader
+Frame_Points_500:	spriteHeader
 	spritePiece	-8, -8, 2, 2, $A, 0, 0, 0, 0
 	spriteFooter
 
-Map_obj29_002C:	spriteHeader
+Frame_Points_1K:	spriteHeader
 	spritePiece	-8, -8, 1, 2, 0, 0, 0, 0, 0
 	spritePiece	0, -8, 2, 2, $E, 0, 0, 0, 0
 	spriteFooter
 
-Map_obj29_003E:	spriteHeader
+Frame_Points_10:	spriteHeader
 	spritePiece	-4, -8, 1, 2, 0, 0, 0, 0, 0
 	spriteFooter
 
-Map_obj29_0048:	spriteHeader
+Frame_Points_10K:	spriteHeader
 	spritePiece	-$10, -8, 2, 2, 2, 0, 0, 0, 0
 	spritePiece	0, -8, 2, 2, $E, 0, 0, 0, 0
 	spriteFooter
 
-Map_obj29_005A:	spriteHeader
+Frame_Points_50K:	spriteHeader
 	spritePiece	-$10, -8, 2, 2, $A, 0, 0, 0, 0
 	spritePiece	0, -8, 2, 2, $E, 0, 0, 0, 0
 	spriteFooter

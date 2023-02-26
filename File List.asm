@@ -310,7 +310,7 @@
 		filedef	Art_Oil1,"art/uncompressed/OOZ Oil - 1",bin,bin
 		filedef	Art_Oil2,"art/uncompressed/OOZ Oil - 2",bin,bin
 		filedef	Art_CNZFlipTiles,"art/uncompressed/CNZ Flipping Foreground Panel",bin,bin
-		filedef	Art_CNZSlotPics,"art/uncompressed/CNZ Slot Pictures",bin,bin
+		filedef	Art_CNZSlotPics,"art/uncompressed/CNZ Slot Pictures",bin,bin ; 96 tiles, 16 each for each of the 6 slot pics
 		filedef	Art_CPZAnimBack,"art/uncompressed/CPZ & DEZ Animated Background",bin,bin
 		filedef	Art_Waterfall1,"art/uncompressed/ARZ Waterfalls - 1",bin,bin
 		filedef	Art_Waterfall2,"art/uncompressed/ARZ Waterfalls - 2",bin,bin

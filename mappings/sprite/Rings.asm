@@ -6,6 +6,8 @@
 ;  No 'sprite pieces per frame' value (hardcoded to 1)
 
 ; This was customised even further in Sonic 3 & Knuckles.
+
+; CNZ prize rings and rings placed in debug mode use Map_Ring instead.
 ; -------------------------------------------------------------------------------
 
 Map_Rings:	index offset(*)

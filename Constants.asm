@@ -405,8 +405,8 @@ ost_primary_status:			rs.b 1			; $22 ; most objects; bitfield indicating orienta
 	status_air:			equ 1<<status_air_bit	; Sonic/Tails is in the air (Sonic/Tails only)
 	status_jump:		equ 1<<status_jump_bit		; jumping or rolling (Sonic/Tails only)
 	status_platform:	equ 1<<status_platform_bit	; Sonic/Tails is standing on an object (Sonic/Tails only)
-	status_p1_platform:		equ 1<<maincharacter_standing_bit ; main character is standing on this object (objects only)
-	status_p2_platform:		equ 1<<sidekick_standing_bit ; sidekick is standing on this object (objects only)
+	status_p1_platform:		equ 1<<status_p1_platform_bit ; main character is standing on this object (objects only)
+	status_p2_platform:		equ 1<<status_p2_platform_bit ; sidekick is standing on this object (objects only)
 	status_standing_both:   equ status_p1_platform|status_p2_platform ; both players are standing on this object (objects only)
 	status_rolljump:	equ 1<<status_rolljump_bit	; Sonic/Tails is jumping after rolling (Sonic/Tails only)
 	status_p1_pushing:		equ 1<<status_p1_pushing_bit ; main character is pushing this (objects only)
@@ -418,7 +418,7 @@ ost_respawn:				rs.b 1			; $23 ; non-player objects; respawn list index number
 ost_primary_routine:		rs.b 1				; $24 ; most objects; primary routine number
 ost_secondary_routine:		rs.b 1				; $25 ; most objects; secondary routine number
 ;ost_solid:		equ ost_secondary_routine			; $25 ; solid status flag
-ost_angle:					rs.w 1		; $26 ; most objects; angle of floor or rotation - 0 = flat; $40 = vertical left; $80 = ceiling; $C0 = vertical right
+ost_angle:					rs.w 1		; $26 ; most o	bjects; angle of floor or rotation - 0 = flat; $40 = vertical left; $80 = ceiling; $C0 = vertical right
 ost_subtype:				rs.w 1			; $28 ; non-player objects;  object subtype - must go last because some objects use this as a start address for a list (1 byte, but sometimes read as a word)
 ost_used:		equ __rs-1				; bytes used by regular OST, everything after this is scratch RAM
 		popo						; restore options
@@ -437,7 +437,7 @@ ost_mainspr_childsprites:	rs.b 1				; $F ; number of childsprites
 ost_subspr2_x_pos:			rs.b 2			; $10 ; in place of ost_x_vel
 ost_subspr2_y_pos:			rs.b 2			; $12 ; in place of ost_y_vel
 ost_mainspr_height:			rs.b 1			; $14 ; parent sprite width
-ost_subspr2_mapframe:		rs.b 1				; $15
+ost_subspr2_frame:			rs.b 1			; $15
 ost_subspr3_x_pos:			rs.b 2			; $16 ; in place of ost_height
 ost_subspr3_y_pos:			rs.b 2			; $18 ; in place of priority
 							rs.b 1	; $1A ; unused in this context

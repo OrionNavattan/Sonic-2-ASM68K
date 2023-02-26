@@ -556,6 +556,7 @@ v_keep_after_reset:         equ __rs				; $FFFFFE00 ; everything after this addr
 f_ss_2p:					rs.w 1		; $FFFFFE00-$FFFFFE01 ; flag indicating Special Stage 2P mode
 f_restart:					rs.w 1		; $FFFFFE02 ; flag set to end/restart level(2 bytes)
 v_frame_counter:			rs.w 1			; $FFFFFE04 ; frame counter, increments every frame
+v_frame_counter_low:		equ __rs-1			; v_frame_counter_low ; low byte for frame counter
 v_debug_item_index:			rs.b 1			; $FFFFFE06 ; debug item currently selected (NOT the object id of the item)
 							rs.b 1	; $FFFFFE07 ; unused
 v_debug_active:				rs.w 1			; $FFFFFE08 ; high byte is the debug mode routine counter ; low byte is placement mode flag: xx01 when Sonic is an item; 0 otherwise
@@ -577,7 +578,7 @@ v_ring_reward:				rs.b 1			; $FFFFFE1B ; tracks which rewards have been given fo
 
 ; HUD update flags
 f_hud_lives_update:			rs.b 1			; $FFFFFE1C ; lives counter update flag
-v_hud_rings_update:			rs.b 1			; $FFFFFE1D ; ring counter update flag - 1 = general update; $80 = reset to 0
+v_hud_rings_update:			rs.b 1			; $FFFFFE1D ; ring counter update flag - 1 = general update; $80 = reset to 0; $81 = deincrement 1
 f_hud_time_update:			rs.b 1			; $FFFFFE1E ; time counter update flag
 f_hud_score_update:			rs.b 1			; $FFFFFE1F ; score counter update flag
 v_rings:					rs.w 1		; $FFFFFE20 ; rings
@@ -704,33 +705,52 @@ v_perfect_rings_left:		rs.w 1				; $FFFFFF40 ; remaining number of rings in a le
 f_ss_perfect:				rs.w 1			; $FFFFFF42 ; flag set if all rings in a special stage are collected
 							rs.b 8	; $FFFFFF44-$FFFFFF4B ; unused
 v_credits_index:			rs.w 1			; $FFFFFF4C ; current frame of the credits sequence
-f_slot_machine_use:			equ v_credits_index	; $FFFFFF4C ; flag indicating a CNZ slot machine is in use
+f_slot_use:					equ v_credits_index ; $FFFFFF4C ; flag indicating a CNZ slot machine is in use
 
 ; CNZ slot machine variables; $12 values
-; v_slot_machine_routine and v_slot_machine_reward are respectively written and read via absolute addressing
-; by the CNZ cage object to trigger the machines and retrieve the reward respectively.
-; The others are used solely by the slot machine psuedo-object, and are only accessed via 
-; indirect displacement relative to v_slot_machine_variables. I've only declared the former here, 
-; but the latter are nevertheless listed below in comments for the sake of documentation and compatibility.
+; The CNZ cage object writes v_slot_routine and reads v_slot_reward via 
+; absolute addressing, but the rest of the variables are only ever accessed via indirect 
+; displacement relative to slot_machine_vars. The below macro generates both the
+; absolute equates and the displacement constants.
 
-v_slot_machine_variables:		rs.b $12		; $FFFFFF4E
-v_slot_machine_routine:			equ v_slot_machine_variables ; $FFFFFF4E ; current routine of the slot machine psuedoobject
-;v_slot_machine_timer:			equ __rs-$11 ; v_slot_machine_variables+1 ; $FFFFFF4F 
+slotvar:	macro	absolute,offset,num
+	\offset:		equ	__rs-slot_machine_vars	; make constant for address register indirect
+	\absolute:		rs.\0 \num			; generate a global variable name and advance RS counter
+	endm
+		
+	ramblock	slot_machine_vars
+	v_slot_machine_vars:		equ __rs
+	slotvar.b	v_slot_routine,slot_primary_routine,1	; $FFFFFF4E, 0 ; current routine of the slot machine psuedoobject
+	slotvar.b	v_slot_timer,slot_timer,1		; $FFFFFF4F, 1
 
-;equ __rs-$10 ; v_slot_machine_variables+2 ; $FFFFFF50 ; apparently unused except for 1 write
+				rs.b 1				; $FFFFFF50 ; only ever cleared, never used
 
-;v_slot_machine_index:			equ __rs-$F ; v_slot_machine_variables+3 ; $FFFFFF51
-v_slot_machine_reward:			equ __rs-$E		; v_slot_machine_variables+4 ; $FFFFFF52
-
-;v_slot_machine_slot1_pos:		equ __rs-$C ; v_slot_machine_variables+5 ; $FFFFFF54
-;v_slot_machine_slot1_speed:	equ __rs-$A ; v_slot_machine_variables+7 ; $FFFFFF56
-;v_slot_machine_slot1_rout:		equ __rs-9 ; v_slot_machine_variables+8  ; $FFFFFF57
-;v_slot_machine_slot2_pos:		equ __rs-8 ; v_slot_machine_variables+9  ; $FFFFFF58
-;v_slot_machine_slot2_speed:	equ __rs-6 ; v_slot_machine_variables+$B ; $FFFFFF5A
-;v_slot_machine_slot2_rout:		equ __rs-5 ; v_slot_machine_variables+$C ; $FFFFFF5B
-;v_slot_machine_slot3_pos:		equ __rs-4 ; v_slot_machine_variables+$D ; $FFFFFF5C
-;v_slot_machine_slot3_speed:	equ __rs-2 ; v_slot_machine_variables+$F ; $FFFFFF5E
-;v_slot_machine_slot3_rout:		equ __rs-1 ; v_slot_machine_variables+$10 ; $FFFFFF5F
+	slotvar.b	v_slot_index,slot_index,1		; $FFFFFF51, 3	
+	slotvar.w  	v_slot_reward,slot_targs,1		; $FFFFFF52, 4	; used to store the target faces, and to pass the reward back to the cage object
+	slot_targ1:		equ	slot_targs		; $FFFFFF52, 4
+	slot_targ23:	equ	slot_targs+1			; $FFFFFF53, 5
+	
+	slot_data:	equ __rs-slot_machine_vars		; $FFFFFF54, 6
+	
+	slotvar.w	v_slot1_pos,slot1_index,1		; $FFFFFF54, 6
+	slot1_offset:	equ slot1_index+1			; $FFFFFF55, 7
+	slotvar.b	v_slot1_speed,slot1_speed,1		; $FFFFFF56, 8
+	slotvar.b	v_slot1_rout,slot1_rout,1		; $FFFFFF57, 9
+	
+	slotvar.w	v_slot2_pos,slot2_index,1		; $FFFFFF58, $A
+	slot2_offset:	equ slot2_index+1			; $FFFFFF59, $B	
+	slotvar.b	v_slot2_speed,slot2_speed,1		; $FFFFFF5A, $C
+	slotvar.b	v_slot2_rout,slot2_rout,1		; $FFFFFF5B, $D
+	
+	slotvar.w	v_slot3_pos,slot3_index,1		; $FFFFFF5C, $E
+	slot3_offset:	equ slot3_index+1			; $FFFFFF5D, $F	
+	slotvar.b	v_slot3_speed,slot3_speed,1		; $FFFFFF5E, $10	
+	slotvar.b	v_slot3_rout,slot3_rout,1		; $FFFFFF5F, $11
+	
+	slot_offset:	equ slot1_offset-slot1_index		; $1
+	slot_speed:		equ	slot1_speed-slot1_index	; $2
+	slot_subroutine:	equ slot1_rout-slot1_index	; $3
+	ramblocksize	slot_machine_vars
 
 								rs.b $10 ; $FFFFFF60-$FFFFFF6F ; seems unused		
 v_player_mode:					rs.w 1		; $FFFFFF70 ; current player mode; 0 = Sonic and Tails, 1 = Sonic, 2 = Tails
@@ -750,6 +770,7 @@ v_options_menu_box:				rs.b 1		; $FFFFFF8C ; currently selected box in options m
 v_total_bonus_countdown:		rs.w 1			; $FFFFFF8E
 v_level_music:					rs.w 1		; $FFFFFF90
 v_bonus_count_3:				rs.w 1		; $FFFFFF92
+v_casinobmb_snd_delay:				equ v_bonus_count_3 ; $FFFFFF92 ; delay until 
 								rs.b 4 ; $FFFFFF94-$FFFFFF97 ; unused
 v_game_over_2p:					rs.w 1		; $FFFFFF98
 								rs.b 6 ; $FFFFFF9A-$FFFFFF9F ; unused					
@@ -1008,7 +1029,7 @@ f_ss_swap_positions:	rs.b 1					; $FFFFF742
 
 ; Continue Screen variables:
 				rsset ost
-; These two object slots are presumably used by Sonic and Tails
+; These two object slots are used by Sonic and Tails
 			rs.b sizeof_ost				; $FFFFB000
 			rs.b sizeof_ost				; $FFFFB040
 v_continue_text:	rs.b sizeof_ost				; $FFFFB080 ; "CONTINUE" on the Continue screen

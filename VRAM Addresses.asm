@@ -292,16 +292,17 @@ vram_VertLauncher:       	equ $8440
 ; Specific to 1p CNZ
 ArtTile_ArtUnc_CNZFlipTiles_1         = $0330
 ArtTile_ArtUnc_CNZFlipTiles_2         = $0540
-ArtTile_ArtUnc_CNZSlotPics_1          = $0550
-ArtTile_ArtUnc_CNZSlotPics_2          = $0560
-ArtTile_ArtUnc_CNZSlotPics_3          = $0570
+vram_SlotPics_1:         	equ $AA00
+vram_SlotPics_2:          	equ $AC00
+vram_SlotPics_3:         	equ $AE00
+sizeof_SlotPic:				equ sizeof_art_cnzslotpics/6 ; size of each individual slot pic in bytes
 
 ; Specific to 2p CNZ
 ArtTile_ArtUnc_CNZFlipTiles_1_2p      = $0330
 ArtTile_ArtUnc_CNZFlipTiles_2_2p      = $0740
-ArtTile_ArtUnc_CNZSlotPics_1_2p       = $0750
-ArtTile_ArtUnc_CNZSlotPics_2_2p       = $0760
-ArtTile_ArtUnc_CNZSlotPics_3_2p       = $0770
+vram_SlotPics_1_2p:       	equ $EA00
+vram_SlotPics_2_2p:      	equ $EC00
+vram_SlotPics_3_2p:       	equ $EE00
 
 ; CPZ
 ArtTile_ArtUnc_CPZAnimBack            = $0370

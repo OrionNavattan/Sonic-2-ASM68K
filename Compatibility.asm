@@ -83,7 +83,7 @@ mainspr_childsprites:	equ	ost_mainspr_childsprites
 sub2_x_pos:				equ	ost_subspr2_x_pos		
 sub2_y_pos:				equ ost_subspr2_y_pos
 mainspr_height:			equ ost_mainspr_height
-sub2_mapframe:			equ ost_subspr2_mapframe
+sub2_mapframe:			equ ost_subspr2_frame
 sub3_x_pos:				equ ost_subspr3_x_pos
 sub3_y_pos:				equ ost_subspr3_y_pos
 sub3_mapframe:			equ ost_subspr3_frame
@@ -590,10 +590,10 @@ Perfect_rings_left:	equ	v_perfect_rings_left
 Perfect_rings_flag:	equ	f_ss_perfect
 
 CreditsScreenIndex:		equ	v_credits_index
-SlotMachineInUse:		equ	f_slot_machine_use
-SlotMachineVariables:	equ	v_slot_machine_variables
-SlotMachine_Routine:	equ	v_slot_machine_routine
-SlotMachine_Reward:		equ	v_slot_machine_reward
+SlotMachineInUse:		equ	f_slot_use
+SlotMachineVariables:	equ	slot_machine_vars
+SlotMachine_Routine:	equ	v_slot_routine
+SlotMachine_Reward:		equ	v_slot_reward
 
 Player_mode:		equ	v_player_mode
 Player_option:		equ	v_player_option
