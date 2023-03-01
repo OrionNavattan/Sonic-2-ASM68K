@@ -15,10 +15,12 @@ countof_ost_dynamic:    equ $70					; dynamic OSTs, used for level objects
 countof_ost_dynamic_2P:	equ $28
 countof_ost_level_only: equ $10					; additional reserved object ram for objects attached to players, and for the special stages                  
 sizeof_plc:			equ 6				; size of one pattern load cue
-countof_plc:		equ $10					; size of the PLC buffer
+countof_plc:		equ $10					; number of slots in the pattern load cue buffer
+sizeof_plc_buffer:	equ sizeof_plc*countof_plc	; total size of the PLC buffer, $60 by default
 sizeof_priority:	equ $80					; size of one priority section in sprite queue
 sizeof_dma:			equ $E				; size of one DMA command
 countof_dma:		equ $12					; number of slots in DMA queue
+sizeof_dma_queue:	equ sizeof_dma*countof_dma	; total size of the DMA queue, $FC by default
 
 level_max_width:	equ $80					; Doubled from Sonic 1 due to the switch to 128x128 level chunks
 level_max_height:	equ $10
@@ -321,8 +323,8 @@ CommonRoutineIDs:	macro	routinename
 			rsset 0
 
 ; Main OST					
-ost_id:			rs.b 1					; 0 ; universal; object id
-ost_render:		rs.b 1					; 1 ; universal; bitfield for x/y flip, display mode; bits defined below
+ost_id:			rs.b 1					; * 0 ; universal; object id
+ost_render:		rs.b 1					; * 1 ; universal; bitfield for x/y flip, display mode; bits defined below
 	render_xflip_bit:	equ 0
 	render_yflip_bit:	equ 1
 	render_rel_bit:		equ 2
@@ -341,7 +343,7 @@ ost_render:		rs.b 1					; 1 ; universal; bitfield for x/y flip, display mode; bi
 	render_subobjects:		equ 1<<render_subobjects_bit ; has subobjects to be rendered
 	render_onscreen:	equ 1<<render_onscreen_bit	; object is on screen
 
-ost_tile:		rs.w 1					; 2 ; universal; tile VRAM, palette, priority, and x-flip/y-flip (2 bytes)
+ost_tile:		rs.w 1					; * 2 ; universal; tile VRAM, palette, priority, and x-flip/y-flip (2 bytes)
 	; Low byte and bits 0-2 of high byte are the VRAM address divided by sizeof_cell ($20).
 	; Bits 3-7 of upper byte are bitfield as follows. 
 	tile_xflip_bit:	equ 3
@@ -364,12 +366,12 @@ ost_tile:		rs.w 1					; 2 ; universal; tile VRAM, palette, priority, and x-flip/
 	tile_draw:		equ	(~tile_hi)&$FFFF	; $7FFF
 	
 	
-ost_mappings:		rs.l 1					; 4 ; universal; mappings address (4 bytes)
-ost_x_pos:			rs.l 1				; 8 ; universal; x-axis position (2 bytes)
-ost_x_screen:		equ ost_x_pos				; 8 ; x-axis position for screen-fixed items (2 bytes)
-ost_x_sub:			equ __rs-2			; $A ; universal; x-axis subpixel position (2 bytes)
+ost_mappings:		rs.l 1					; * 4 ; universal; mappings address (4 bytes)
+ost_x_pos:			rs.l 1				; * 8 ; universal; x-axis position (2 bytes)
+ost_x_screen:		equ ost_x_pos				; * 8 ; x-axis position for screen-fixed items (2 bytes)
+ost_x_sub:			equ __rs-2			; * $A ; universal; x-axis subpixel position (2 bytes)
 ost_y_screen:		equ __rs-2				; $A ; y-axis position for screen-fixed items (2 bytes)
-ost_y_pos:			rs.l 1				; $C ; universal; y-axis position (2 bytes)
+ost_y_pos:			rs.l 1				; * $C ; universal; y-axis position (2 bytes)
 ost_y_sub:			equ __rs-2			; $E ; universal; y-axis subpixel position (2 bytes)
 
 ost_x_vel:			rs.l 1				; $10 ; most objects; x-axis velocity (2 bytes)
@@ -439,7 +441,7 @@ ost_subspr2_y_pos:			rs.b 2			; $12 ; in place of ost_y_vel
 ost_mainspr_height:			rs.b 1			; $14 ; parent sprite width
 ost_subspr2_frame:			rs.b 1			; $15
 ost_subspr3_x_pos:			rs.b 2			; $16 ; in place of ost_height
-ost_subspr3_y_pos:			rs.b 2			; $18 ; in place of priority
+ost_subspr3_y_pos:			rs.b 2			; $18 ; in place of ost_priority
 							rs.b 1	; $1A ; unused in this context
 ost_subspr3_frame:			rs.b 1			; $1B ; in place of ost_anim_frame
 ost_subspr4_x_pos:			rs.b 2			; $1C ; in place of ost_anim
@@ -447,8 +449,8 @@ ost_subspr4_y_pos:			rs.b 2			; $1E ; in place of ost_anim_time
 
 			rsset ost_col_property			; $21
 ost_subspr4_frame:			rs.b 1			; $21 ; in place of ost_col_property
-ost_subspr5_x_pos:			rs.b 2			; $22 ; in place of status
-ost_subspr5_y_pos:			rs.b 2			; $24 ; in place of routine
+ost_subspr5_x_pos:			rs.b 2			; $22 ; in place of ost_status
+ost_subspr5_y_pos:			rs.b 2			; $24 ; in place of ost_routine
 							rs.b 1	; $26 ; unused in this context
 ost_subspr5_frame:			rs.b 1			; $27
 ost_subspr6_x_pos:			rs.b 2			; $28 ; in place of ost_subtype
@@ -504,10 +506,10 @@ ost_lrb_solid_bit:			rs.w 1			; $3F ; ; the bit to check for left/right/bottom s
 
 
 ; Boss object variables
-ost_boss_subtype: 		equ $A
-ost_boss_flash_time: 	equ $14
-ost_boss_sine_count:	equ $1A
-ost_boss_routine		equ $26				; angle
+ost_boss_subtype: 		equ $A		; * subtype counter for all bosses except EHZ and CPZ; also determines primary routine
+ost_boss_flash_time: 	equ $14		; *
+ost_boss_wobble:		equ $1A		; *
+ost_boss_routine:		equ $26				; angle
 ost_boss_defeated		equ $2C
 ost_boss_hitcount2		equ $32
 ost_boss_hurt_sonic		equ $38				; flag set by collision response routine when Sonic has just been hurt (by boss?)

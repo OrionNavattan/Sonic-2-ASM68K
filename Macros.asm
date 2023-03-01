@@ -765,7 +765,7 @@ endobj:		macros
 		
 		
 ; ---------------------------------------------------------------------------
-; Declare OST data for use with LoadSubType
+; Declare OST data for use with LoadSubtypeData
 ; Each set of data is $A bytes, and consists of:
 ; - the object's mappings pointer (ost_mappings, longword) 
 ; - the object's vram assignment (ost_tile, word)

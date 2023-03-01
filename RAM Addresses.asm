@@ -18,8 +18,8 @@ v_sprite_queue_end:		equ __rs
 v_ost_all:          rs.b sizeof_ost*countof_ost			; $FFFFB000 ; object variable space ($40 bytes per object; $90 objects) ($2400 bytes) 
 	; Reserved object RAM: players, titlecards, and game over/time over
     v_ost_reserved:			equ	v_ost_all
-    v_ost_maincharacter:    equ v_ost_all			; first object (usually Sonic except in a Tails Alone game)
-    v_ost_sidekick:         equ v_ost_all+sizeof_ost		; $FFFFB040 ; second object (Tails in a Sonic and Tails game or in 2P)
+    v_ost_player1:   	 	equ v_ost_all			; $FFFFB040 first object (Tails in a Tails Alone game; Sonic otherwise)
+    v_ost_player2:         	equ v_ost_all+sizeof_ost		; $FFFFB040 ; second object (Tails in a Sonic and Tails game or in 2P mode)
     v_ost_titlecard:				equ	v_ost_all+(sizeof_ost*2) ; $FFFFB080 
     v_ost_titlecard_zonename:		equ	v_ost_titlecard	; level title card: zone name
     v_ost_gameover_gametext:		equ	v_ost_titlecard	; "GAME" from GAME OVER
@@ -32,7 +32,6 @@ v_ost_all:          rs.b sizeof_ost*countof_ost			; $FFFFB000 ; object variable 
     v_ost_titlecard_bottom:			equ v_ost_all+(sizeof_ost*6) ; $FFFFB180 ; level title card: yellow part at the bottom
     v_ost_titlecard_left:			equ v_ost_all+(sizeof_ost*7) ; $FFFFB1C0 ; level title card: red part on the left
 
-	; Reserved object RAM
 	v_ost_reserved_unused:	equ v_ost_all+(sizeof_ost*$C)	; $FFFFB200
 
 	; Reseved object RAM: global level objects that are never unloaded
@@ -71,7 +70,7 @@ v_secondary_collision:  rs.b $300				; $FFFFD900
 
 				rsblockend ss_shared_ram
 
-v_dma_queue:       		rs.b sizeof_dma*countof_dma	; $FFFFDC00 ; stores 18 DMA commands to issue the next time ProcessDMAQueue is called
+v_dma_queue:       		rs.b sizeof_dma_queue	; $FFFFDC00 ; queued DMA commands to be executed the next time ProcessDMA is called, $12 commands by default, $E bytes each, $FC bytes total
 v_dma_queue_slot:  		rs.l 1				; $FFFFDCFC ; stores the address of the next open slot for a queued VDP command
 v_sprite_queue_2:       rs.b $280				; $FFFFDD00 ; sprite attribute table buffer for player 2's half of screen in two-player mode
                         rs.b $80				; unused, but SAT buffer 2 can spill over into this area when there are too many sprites on-screen
@@ -358,7 +357,7 @@ v_camera_arz_bg_x_pos:		rs.l 1				; $FFFFF672
 					rsblockend misc_level_variables
 
 					rsblock plc_buffer_and_regs
-v_plc_buffer:				rs.b $60		; $FFFFF680 ; pattern load cues buffer, maximum $10 PLCs, 6 bytes each, $60 bytes total
+v_plc_buffer:				rs.b sizeof_plc_buffer	; $FFFFF680 ; pattern load cues buffer, $10 PLCs by default, 6 bytes each, $60 bytes total
 v_plc_buffer_dest:			equ v_plc_buffer+4	; $FFFFF684 ; VRAM destination for 1st item in PLC buffer (2 bytes)
 v_plc_buffer_end:			equ __rs		; required for clearing				
 
@@ -369,7 +368,7 @@ v_nem_pixel:				rs.l 1			; $FFFFF6E8 ; Nemesis register buffer - d1: pixel value
 v_nem_d2:					rs.l 1		; $FFFFF6EC ; Nemesis register buffer - d2	
 v_nem_header:				rs.l 1			; $FFFFF6F0 ; Nemesis register buffer - d5: 3rd & 4th bytes of Nemesis archive header	
 v_nem_shift:				rs.l 1			; $FFFFF6F4 ; Nemesis register buffer - d6: shift value
-v_nem_tile_count:			rs.w 1			; $FFFFF6F8 ; number of 8x8 tiles in a Nemesis archive
+v_nem_tile_count:			rs.w 1			; $FFFFF6F8 ; number of 8x8 tiles in a Nemesis archive; also used as a flag to indicate there are PLCs to process 	
 v_nem_tile_count_frame:		rs.w 1				; $FFFFF6FA ; number of 8x8 tiles to process in 1 frame	
 							rs.b 4	; $FFFFF6FC-FFFFF6FF ; unused
 				rsblockend plc_buffer_and_regs
@@ -383,11 +382,11 @@ v_tails_respawn_counter:	rs.w 1				; $FFFFF704 ; time until Tails respawns
 
 							rs.w 1	; $FFFFF706-$FFFFF707 ; unused
 
-v_tails_cpu_routine:		rs.w 1				; $FFFFF708 ; routine counter for Tails' AI code
-v_tails_cpu_target_x:		rs.w 1				; $FFFFF70A ; target x-pos when Tails is flying
-v_tails_cpu_target_y:		rs.w 1				; $FFFFF70C ; target y-pos when Tails is flying
-v_tails_interact_id:		rs.b 1				; $FFFFF70E ; object ID of last object Tails stood on
-f_tails_cpu_jumping:		rs.b 1				; $FFFFF70F ; flag to indicate Tails is jumping
+v_tails_cpu_routine:		rs.w 1				; $FFFFF708 ; routine counter for Tails' AI
+v_tails_cpu_x_target:		rs.w 1				; $FFFFF70A ; target x-pos when Tails is flying
+v_tails_cpu_y_target:		rs.w 1				; $FFFFF70C ; target y-pos when Tails is flying
+v_tails_interact_id:		rs.b 1				; $FFFFF70E ; ID of last object Tails stood on
+f_tails_cpu_jumping:		rs.b 1				; $FFFFF70F ; flag indicating Tails is jumping
 ; end AI variables
 
 v_ring_manager_routine:		rs.b 1				; $FFFFF710 ; routine counter for rings manager
@@ -416,11 +415,11 @@ v_cnz_visible_bumpers_start_p2:		rs.l 1			; $FFFFF724
 v_cnz_visible_bumpers_end_p2:		rs.l 1			; $FFFFF728
 				rsblockend bumper_manager_pointers_p2
 
-f_screen_redraw:		rs.b 1				; $FFFFF72C ; flag indicating whole screen needs to redraw, such as when you destroy the piston before the boss in WFZ
+f_screen_redraw:		rs.b 1				; $FFFFF72C ; flag indicating whole screen needs to redraw, such as when you destroy the rivet before the boss in WFZ
 v_unused_cpz_scroll_timer:	rs.b 1				; $FFFFF72D ; used only in dead CPZ scrolling function
 f_wfz_scz_fire_toggle:		rs.b 1				; $FFFFF72E ; flag used by the WFZ palette cycle switcher	
 							rs.b 1	; $FFFFF72F ; unused
-f_water:					rs.b 1		; $FFFFF730 ; flag indicating if the level has water or oil		
+f_water:					rs.b 1		; $FFFFF730 ; flag indicating the level has water or oil		
 							rs.b 1	; $FFFFF731 ; unused
 v_demo_input_counter_p2:	rs.w 1				; $FFFFF732 ; tracks progress in the demo input data for player 2, increases by 2 when input changes
 v_demo_input_time_p2:		rs.w 1				; $FFFFF734 ; time remaining for current demo "button press" for player 2
@@ -963,7 +962,7 @@ v_ss_draw_reg_buffer_end:			equ __rs	; $FFFFDB4A
 							rs.b 2	; unused ; $FFFFDB4A-$FFFFDB4B, unused
 
 v_ss_last_segment_2:		rs.b 1				; $FFFFDB4C
-f_unknown_ss_bomb:			rs.b 1			; $FFFFDB4D ; set by the SS bomb object, never used again
+f_unused_ss_bomb:			rs.b 1			; $FFFFDB4D ; set by the SS bomb object, never used again
 
 							rs.b $14 ; $FFFFDB4E-$FFFFDB61 ; unused
 

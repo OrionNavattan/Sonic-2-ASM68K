@@ -107,6 +107,9 @@ sub9_y_pos:				equ ost_subspr9_y_pos
 sub9_mapframe:			equ ost_subspr9_frame
 
 
+boss_subtype:			equ ost_boss_subtype
+boss_invulnerable_time: equ ost_boss_flash_time
+boss_sine_count:		equ ost_boss_wobble
 ; ---------------------------------------------------------------------------
 
 ; Variables/RAM Addresses
@@ -120,7 +123,7 @@ Sprite_Table_Input:		equ	v_sprite_queue
 Object_RAM:				equ v_ost_all
 Reserved_Object_RAM:	equ v_ost_reserved
 MainCharacter:			equ v_ost_player
-Sidekick:				equ v_ost_sidekick
+Sidekick:				equ v_ost_player2
 ;TitleCard:				equ	v_ost_titlecard
 TitleCard_ZoneName:		equ v_ost_titlecard_zonename
 GameOver_GameText:		equ	v_ost_gameover_gametext
@@ -360,8 +363,8 @@ Tails_control_counter:	equ	v_tails_control_counter
 Tails_respawn_counter:	equ	v_tails_respawn_counter
 
 Tails_CPU_routine:		equ	v_tails_cpu_routine
-Tails_CPU_target_x:		equ	v_tails_cpu_target_x
-Tails_CPU_target_y:		equ	v_tails_cpu_target_y
+Tails_CPU_target_x:		equ	v_tails_cpu_x_target
+Tails_CPU_target_y:		equ	v_tails_cpu_y_target
 Tails_interact_ID:		equ	v_tails_interact_id
 Tails_CPU_jumping:		equ	f_tails_cpu_jumping
 
@@ -725,7 +728,7 @@ SSDrawRegBuffer:				equ	v_ss_draw_reg_buffer
 SSDrawRegBuffer_End:				equ	v_ss_draw_reg_buffer_end
 
 SpecialStage_LastSegment2:		equ	v_ss_last_segment_2
-SS_unk_DB4D:					equ	f_unknown_ss_bomb
+SS_unk_DB4D:					equ	f_unused_ss_bomb
 
 SS_Ctrl_Record_Buf:				equ	v_ss_ctrl_record_buffer
 SS_Last_Ctrl_Record:			equ	v_ss_last_ctrl_record
@@ -775,11 +778,55 @@ EndSeqPaletteChanger:	equ	v_ending_palchanger
 
 ; Major subroutines
 
-DelayProgram	equ	WaitForVBlank
+DelayProgram:	equ	WaitForVBlank
 WindTunnel		equ	WindTunnels
+QueueDMATransfer: 	equ	AddDMA
+ProcessDMAQueue:	equ	ProcessDMA
+DrawInitialBG:	equ	DrawTilesAtStart
+MarkObjGone:	equ DespawnObject
+MarkObjGone2:	equ DespawnObject2
+MarkObjGone3:	equ DespawnObject3
+;PlatformObject_ChkYRange:	equ Plat_NoXCheck_AltY ; find
+RideObject_SetRide:	equ Plat_NoCheck
 
-DrawInitialBG	equ	DrawTilesAtStart
 
+;ObjCheckLeftWallDist:	equ FindWallLeftObj ; find
+Find_Tile:		equ FindNearestTile
+ObjectMoveAndFall:	equ ObjectFall
+ObjectMove:		equ SpeedToPos
+SlopedPlatform:		equ SlopeObject
+SolidObject_Always:	equ SolidObject_NoRenderChk
+SlopedSolid:		equ SolidObject_Heightmap
+BreakObjectToPieces:	equ SmashObject
+
+Sonic_AnglePos:	equ Player_AnglePos
+Sonic_Angle:	equ Player_UpdateAngle
+Sonic_WalkVertR:	equ Player_WalkVertR
+RingCheckFloorDist	equ FindFloorRing
+Ring_FindFloor:		equ FindFloorRing_Cont
+
+
+CalcRoomInFront:	equ Player_CalcRoomAhead
+CalcRoomOverHead:	equ Player_CalcHeadroom
+Sonic_CheckFloor:	equ Player_FindFloor
+CheckFloorDist_Part2:	equ Player_FindFloor_Quick
+loc_1ECFE:			equ Player_SnapAngle
+ChkFloorEdge:		equ FindFloorEdge
+ChkFloorEdge_Part2:	equ	FindFloorEdge_NoX
+ChkFloorEdge2:		equ FindFloorEdge2
+FireCheckFloorDist:	equ FindFloorFire
+CheckRightCeilingDist:	equ Player_FindWallRight
+ObjCheckFloorDist:	equ FindFloorObj
+ObjCheckRightWallDist:	equ FindWallRightObj
+CheckRightWallDist:		equ FindWallRight_Quick_UsePos
+CheckRightWallDist_Part2:	equ FindWallRight_Quick
+ObjCheckCeilingDist	equ FindCeilingObj
+Sonic_CheckCeiling:	equ Player_FindCeiling
+CheckCeilingDist_Part2:	equ Player_FindCeiling_Quick
+CheckLeftCeilingDist:	equ Player_FindWallLeft
+CheckLeftWallDist:	equ Player_FindWallLeft_Quick_UsePos
+CheckLeftWallDist_Part2:	equ Player_FindWallLeft_Quick
+ObjCheckLeftWallDist:	equ FindWallLeftObj
 ; ---------------------------------------------------------------------------
 
 ; Sound Driver Compatibility
