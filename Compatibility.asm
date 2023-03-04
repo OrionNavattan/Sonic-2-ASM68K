@@ -863,7 +863,7 @@ TempoTurbo:			equ v_tempo_speed
 SpeedUpFlag:		equ f_speedup
 DACEnabled:			equ f_dac_enabled
 MusicBankNumber:	equ v_bank_number
-IsPalFlag:			equ f_pal
+IsPalFlag:			equ f_adjust_pal
 
 
 

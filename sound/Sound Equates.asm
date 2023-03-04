@@ -48,7 +48,7 @@ v_tempo_speed:			rs.b 1				; 13h ; original tempo for speed shoe restore (or 7Bh
 f_speedup:				rs.b 1			; 14h ; flag indicating whether speed shoes tempo is on (FFh) or off (0)
 f_dac_enabled:			rs.b 1				; 15h ; set of 80h if DAC is enabled, 0 if FM6 is enabled
 v_bank_number:			rs.b 1				; 16h ; current ROM bank (0 for MusicPoint1, $80 for MusicPoint2)
-f_pal:					rs.b 1			; 17h ; flag if the system is a PAL console
+f_adjust_pal:					rs.b 1			; 17h ; indicates the current music will be adjusted for PAL
 
 sizeof_soundvars:		equ __rs			; 18h bytes
 
@@ -164,7 +164,7 @@ z_music_data_end:	equ __rs-40h				; 1B40h ; boundary between decompression buffe
 z_stack_pointer: 		equ	__rs			; 1B80h ; Z80 initial stack pointer value
 
 
-z_abs_vars:			rs.b sizeof_soundvars		; 1B80h ; all variables from v_priority to f_pal
+z_abs_vars:			rs.b sizeof_soundvars		; 1B80h ; all variables from v_priority to f_adjust_pal
 
 z_tracks_start:		equ __rs
 z_song_dac_fm_start:	equ __rs

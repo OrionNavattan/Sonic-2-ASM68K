@@ -91731,13 +91731,13 @@ SoundDriverLoad:
 		bne.s	.waitforbus
 		jsr	DecompressSoundDriver(pc)		; could be bsr.s
 		btst	#video_mode_bit,(vdp_control_port+1).l	; check video mode
-		sne	(z80_ram+7).l				; set if PAL
+		sne	(z80_ram+f_pal).l				; set if PAL
 		move.w	d2,(a2)					; hold Z80 reset
 		move.w	d2,(a3)					; release Z80 bus
-		moveq	#-$1A,d0
+		moveq_	$E6,d0					; $FFE6
 
 	.wait:				
-		dbf	d0,.wait				; wait for 2,314 cycles
+		dbf	d0,.wait				; wait for 2,314 cycles (this is completely unnecessary, only 24 or so 68k cycles are necessary)
 		move.w	d1,(a2)					; release Z80 reset
 		popr	d0-a6
 		move	(sp)+,sr
@@ -91749,92 +91749,95 @@ DecompressSoundDriver:
 		lea	SoundDriver(pc),a6
 	; WARNING: you must edit MergeCode if you rename this label
 	movewZ80CompSize:		
-		move.w	#$0F64,d7				; patched after compression by SndDriverCompress.exe, since the compressed size is impossible to know beforehand
-		moveq	#0,d6					; The decompressor knows it's run out of descriptor bits when it starts reading 0's in bit 8
+		move.w	#$F64,d7				; size of compressed data; patched if necessary by SndDriverCompress.exe
+		moveq	#0,d6					; make the decompressor fetch the first descriptor byte 
 		lea	(z80_ram).l,a5
-		moveq	#0,d5
+		moveq	#0,d5					; d5 = offset of end of decompressed data
 		lea	(z80_ram).l,a4
 
+; ---------------------------------------------------------------------------
+; Saxman Decompression algorithm 
+; Requires size of data to be specified externally
 
-SaxDec_Loop:
-		lsr.w	#1,d6					; next descriptor bit
-		btst	#8,d6					; check if we've run out of bits
-		bne.s	.bitsremaining				; (lsr 'shifts in' 0's)
-		jsr	SaxDec_GetByte(pc)
+; input:
+;	d7.w = size of compressed data
+; 	a4 = destination address (used for dictionary matches)
+;	a5 = destination address
+;	a6 = source address
+	
+;	uses d0,w, d3.w, d4.w, d5.w, d6.w, d7.w, a5, a6
+
+; See http://www.segaretro.org/Saxman_compression for format description
+; ---------------------------------------------------------------------------
+
+SaxDec:
+		lsr.w	#1,d6					; shift to next descriptor bit (if we've run out, bit 8 will be zero)
+		btst	#8,d6					; have we run out of bits?
+		bne.s	.bitsremaining			; branch if not
+		jsr	SaxDec_GetByte(pc)			; get next descriptor byte
 		move.b	d0,d6
-		ori.w	#$FF00,d6				; these set bits will disappear from the high byte as the register is shifted
+		ori.w	#$FF00,d6				; set all bits of high word; when these are fully shifted to low word, it's time to get another byte
 
 	.bitsremaining:				
-		btst	#0,d6
-		beq.s	loc_EC086
+		btst	#0,d6					; is the next byte compressed?
+		beq.s	SaxDec_ReadCompressed	; branch if so
 
-	;SaxDec_ReadUncompressed:		
-		jsr	SaxDec_GetByte(pc)
-		move.b	d0,(a5)+
-		addq.w	#1,d5
-		bra.w	SaxDec_Loop
+	;read_uncompressed:		
+		jsr	SaxDec_GetByte(pc)			; get uncompressed byte
+		move.b	d0,(a5)+				; write to destination
+		addq.w	#1,d5					; increment pointer to end of decompressed data
+		bra.w	SaxDec
 ; ===========================================================================
 
-loc_EC086:				
-		jsr	SaxDec_GetByte(pc)
+SaxDec_ReadCompressed:				
+		jsr	SaxDec_GetByte(pc)			; get low byte of target address of match
 		moveq	#0,d4
 		move.b	d0,d4
-		jsr	SaxDec_GetByte(pc)
+		jsr	SaxDec_GetByte(pc)			; get high byte of target address and length of match
 		move.b	d0,d3
 		andi.w	#$F,d3
-		addq.w	#2,d3					; d3 is the length of the match minus 1
+		addq.w	#2,d3					; d3 = length of the match minus 1
 		andi.w	#$F0,d0
-		lsl.w	#4,d0
-		add.w	d0,d4
+		lsl.w	#4,d0					
+		add.w	d0,d4					; combine high and low nybbles of target address
 		addi.w	#$12,d4
-		andi.w	#$FFF,d4				; d4 is the offset into the current $1000-byte window
-; This part is a little tricky. You see, d4 currently contains the low three nibbles of an offset into the decompressed data,
-; where the dictionary match lies. The way the high nibble is decided is first by taking it from the offset of the end
-; of the decompressed data so far. Then, we see if the resulting offset in d4 is somehow higher than d5.
-; If it is, then it's invalid... *unless* you subtract $1000 from it, in which case it refers to data in the previous $1000 block of bytes.
-; This is all just a really gimmicky way of having an offset with a range of $1000 bytes from the end of the decompressed data.
-; If, however, we cannot subtract $1000 because that would put the pointer before the start of the decompressed data, then
-; this is actually a 'zero-fill' match, which encodes a series of zeroes.		
-		move.w	d5,d0
+		andi.w	#$FFF,d4				; d4 = offset into the current $1000 byte window of decompressed data
+		move.w	d5,d0					; get current offset of end of decompressed data
 		andi.w	#$F000,d0
-		add.w	d0,d4
-		cmp.w	d4,d5
-		bcc.s	SaxDec_IsDictionaryReference
-		subi.w	#$1000,d4
-		bcc.s	SaxDec_IsDictionaryReference
+		add.w	d0,d4					; add offset in d4
+		cmp.w	d4,d5				; is result greater than offset in d5?
+		bcc.s	SaxDec_IsMatch		; if not, d4 is index to the match
+		subi.w	#$1000,d4			; else, subtract 1000
+		bcc.s	SaxDec_IsMatch			; if result is negative, this is a zero-fill match; else d4 is index to match
 		
-; SaxDec_IsSequenceOfZeroes:		
-		add.w	d3,d5
+;is_zeros:		
+		add.w	d3,d5				; add length of zero-fill match to offset pointer (d3 + 1)
 		addq.w	#1,d5
 
 	.loop:				
-		move.b	#0,(a5)+
+		move.b	#0,(a5)+			; fill zeros for length of match
 		dbf	d3,.loop
 
-		bra.w	SaxDec_Loop
+		bra.w	SaxDec
 		
 ; ===========================================================================
-; loc_EC0CC:
-SaxDec_IsDictionaryReference:
-		add.w	d3,d5
+SaxDec_IsMatch:
+		add.w	d3,d5				; add length of match to offset pointer (d3 + 1)
 		addq.w	#1,d5
 
 	.loop:				
-		move.b	(a4,d4.w),(a5)+
-		addq.w	#1,d4
-		dbf	d3,.loop
+		move.b	(a4,d4.w),(a5)+		; copy matched byte
+		addq.w	#1,d4				; increment index
+		dbf	d3,.loop				; repeat for length of match
 		
-		bra.w	SaxDec_Loop
-
+		bra.w	SaxDec
 
 ; ===========================================================================
-
-; sub_EC0DE
 SaxDec_GetByte:						
-		move.b	(a6)+,d0
+		move.b	(a6)+,d0				; get next byte in compressed data
 		subq.w	#1,d7					; decrement remaining number of bytes
-		bne.s	.exit
-		addq.w	#4,sp					; exit the decompressor by meddling with the stack
+		bne.s	.exit					; branch if bytes remain
+		addq.w	#4,sp					; if none remain, we are done
 
 	.exit:				
 		rts	
