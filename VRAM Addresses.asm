@@ -76,14 +76,16 @@ tile_LevelArt:				equ $0000
 
 ; Animals.
 vram_animal_1:              equ $B000
+tile_Nem_Animal_1:				equ vram_animal_1/sizeof_cell
 vram_animal_2:              equ $B280
+tile_Nem_Animal_2:				equ vram_animal_2/sizeof_cell
 
 ; Game over.
 vram_Game_Over:             equ $9BC0
 
 ; Titlecard.
 vram_TitleCard:             equ $B000
-ArtTile_LevelName:                     = $05DE
+vram_LevelName:				equ $BBC0
 
 ; End of level.
 vram_Signpost:              equ $8680

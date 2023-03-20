@@ -77,7 +77,6 @@ button_start_mask:	equ btnStart
 object_size			equ sizeof_ost
 next_object			equ sizeof_ost
 
-next_subspr:			equ	ost_next_subsprite
 mainspr_mapframe:		equ ost_mainspr_frame
 mainspr_childsprites:	equ	ost_mainspr_childsprites
 sub2_x_pos:				equ	ost_subspr2_x_pos		
@@ -110,6 +109,10 @@ sub9_mapframe:			equ ost_subspr9_frame
 boss_subtype:			equ ost_boss_subtype
 boss_invulnerable_time: equ ost_boss_flash_time
 boss_sine_count:		equ ost_boss_wobble
+boss_routine:			equ ost_boss_routine
+boss_defeated:			equ ost_boss_defeated
+boss_hitcount2:			equ ost_boss_hitcount2
+boss_hurt_sonic:		equ ost_boss_hurtplayer
 ; ---------------------------------------------------------------------------
 
 ; Variables/RAM Addresses
@@ -219,8 +222,8 @@ Camera_Y_pos_diff:		equ v_camera_y_diff
 Camera_BG_X_pos_diff:	equ	v_bg_x_pos_diff
 Camera_BG_Y_pos_diff:	equ	v_bg_y_pos_diff
 
-Camera_X_pos_diff_P2:	equ	v_camera_x_pos_diff_p2
-Camera_Y_pos_diff_P2:	equ	v_camera_y_pos_diff_p2
+Camera_X_pos_diff_P2:	equ	v_camera_x_diff_p2
+Camera_Y_pos_diff_P2:	equ	v_camera_y_diff_p2
 
 Screen_Shaking_Flag_HTZ:	equ	f_screen_shake_htz
 Screen_Shaking_Flag:		equ	f_screen_shake
@@ -415,7 +418,6 @@ Primary_Angle:			equ v_angle_right
 Secondary_Angle:		equ v_angle_left
 Obj_placement_routine:	equ v_opl_routine
 Camera_X_pos_last:		equ v_opl_screen_x_pos
-Camera_X_pos_last_End:	equ	v_opl_screen_x_pos_end
 
 Obj_load_addr_right:	equ v_opl_ptr_right
 Obj_load_addr_left:		equ v_opl_ptr_left
@@ -592,7 +594,7 @@ SS_Total_Won:		equ	v_ss_total_won
 Perfect_rings_left:	equ	v_perfect_rings_left
 Perfect_rings_flag:	equ	f_ss_perfect
 
-CreditsScreenIndex:		equ	v_credits_index
+CreditsScreenIndex:		equ	v_credits_num
 SlotMachineInUse:		equ	f_slot_use
 SlotMachineVariables:	equ	slot_machine_vars
 SlotMachine_Routine:	equ	v_slot_routine

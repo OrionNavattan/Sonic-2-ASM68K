@@ -23,7 +23,7 @@ trip until an accurate Nemesis compressor is developed. (I would love to offer t
 Enigma compression as well, but currently all existing solutions seem to produce larger 
 file sizes than the originals.)
 
-Many macros have been taken straight from S1 HB 2022, including dma (renamed to dma__), gmptr, 
+Many macros have been taken straight from S1 HB 2022, including dma, gmptr, 
 index, ptr, filedef, incfile, and plcm, though a few have been modified to work with 
 changes in Sonic 2. Additionally, some macros have been ported from Sonic 2 AS, including 
 clearRAM (eliminating the need to strictly align the end of RAM blocks) and those used
@@ -51,7 +51,6 @@ and eventually bringing it to feature parity with Sonic 2 AS.
 
 TODOs:
 * Implement index and ptr macros for all offset tables
-* Fix all object header comments
 * Replace all remaining raw addresses with named variables
 * Implement all constants for OST offsets, bits, et alt.
 * Write macros for handling credit and menu text

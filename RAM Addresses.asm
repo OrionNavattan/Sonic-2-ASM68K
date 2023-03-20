@@ -81,27 +81,26 @@ v_hscroll_buffer:  		rs.b sizeof_vram_hscroll	; $FFFFE000 ; horizontal scroll ta
 						rs.b $40	; $FFFFE3C0-$FFFFE3FF ; unused
 				rsblockend hscroll
 
-
 v_sonic_stat_tracker:   	rs.b $100			; $FFFFE400
 
 
 v_sonic_pos_tracker:    	rs.b $100			; $FFFFE500
-v_sonic_pos_tracker_end:	equ __rs			; required for teleport swap table
+		ramblocksize	v_sonic_pos_tracker
 
 v_tails_pos_tracker:   		rs.b $100			; $FFFFE600
-v_tails_pos_tracker_end:	equ __rs			; required for teleport swap table
+		ramblocksize	v_tails_pos_tracker
 
 v_cnz_saucer_data:      	rs.b $40			; $FFFFE700 the number of CNZ saucer bumpers in a group which have been destroyed; used to determine when to give 500 points instead of 10
-v_cnz_saucer_data_end:		equ __rs			; required for clear_ram
+		ramblockend v_cnz_saucer_data			; required for clear_ram
     
 			            rs.b $C0			; $FFFFE740-$FFFFE7FF ; unused, but cleared during level init
 
-v_ring_positions:       rs.b $600				; $FFFFE800
-v_ring_positions_end:   equ __rs				; required for clear_ram    
+v_ring_positions:       rs.l $180				; $FFFFE800 ; $600 bytes
+		ramblockend	v_ring_positions   
 
 				rsblock camera_ram
 
-				rsblock camera_positions	; required for teleport swap table
+				ramblock camera_positions	; required for teleport swap table
 v_camera_x_pos:		rs.l 1					; $FFFFEE00 ; foreground camera x position
 v_camera_y_pos:		rs.l 1					; $FFFFEE04 ; foreground camera y position
 v_bg1_x_pos:		rs.l 1					; $FFFFEE08 ; background x position, only used sometimes as the layer deformation makes it sort of redundant
@@ -110,10 +109,10 @@ v_bg2_x_pos:		rs.l 1					; $FFFFEE10 ; background 2 x position; only used someti
 v_bg2_y_pos:		rs.l 1					; $FFFFEE14 ; background 2 y position
 v_bg3_x_pos:		rs.l 1					; $FFFFEE18 ; background 3 x position; used in Sonic 1, but unused here (only initialised at beginning of level)?
 v_bg3_y_pos:		rs.l 1					; $FFFFEE1C ; background 3 y position; unused (only initialised at beginning of level)?
-				rsblockend camera_positions
+				ramblocksize	camera_positions
 
 
-				rsblock camera_positions_p2	; required for teleport swap table
+				ramblock camera_positions_p2	; required for teleport swap table
 ; Camera positions for the second player in 2P mode				
 v_camera_x_pos_p2:		rs.l 1				; $FFFFEE20
 v_camera_y_pos_p2:		rs.l 1				; $FFFFEE24
@@ -123,11 +122,9 @@ v_bg2_x_pos_p2:			rs.l 1				; $FFFFEE30 ; unused (only initialised at beginning 
 v_bg2_y_pos_p2:			rs.l 1				; $FFFFEE34 
 v_bg3_x_pos_p2:			rs.l 1				; $FFFFEE38 ; unused (only initialised at beginning of level)?
 v_bg3_y_pos_p2:			rs.l 1				; $FFFFEE3C
-				rsblockend camera_positions_p2
+				ramblocksize	camera_positions_p2
 
-
-
-				rsblock block_redraw_flags	; required for teleport swap table
+				ramblock block_redraw_flags	; required for teleport swap table
 ; Foreground and background redraw flags
 v_fg_x_redraw_flag:		rs.b 1				; $FFFFEE40 ; $10 when foreground camera x has moved 16 pixels and needs redrawing
 v_fg_y_redraw_flag:		rs.b 1				; $FFFFEE41 ; $10 when foreground camera y has moved 16 pixels and needs redrawing
@@ -137,69 +134,69 @@ v_bg2_x_redraw_flag:	rs.b 1					; $FFFFEE44 ; used only in CPZ
 						rs.b 1		; $FFFFEE45 ; unused
 v_bg3_x_redraw_flag: 	rs.b 1					; $FFFFEE46
 						rs.b 1		; $FFFFEE47 ; unused
-				rsblockend block_redraw_flags
+				ramblocksize block_redraw_flags
 
-				rsblock block_redraw_flags_p2	; required for teleport swap table
+				ramblock block_redraw_flags_p2	; required for teleport swap table
 ; Redraw flags for lower half of screen in 2P mode				
 v_fg_x_redraw_flag_p2:	rs.b 1					; $FFFFEE48
 v_fg_y_redraw_flag_p2:	rs.b 1					; $FFFFEE49
 						rs.b 6		; $FFFFEE4A-$FFFFEE4F ; unused
-				rsblockend block_redraw_flags_p2
+				ramblocksize block_redraw_flags_p2
 
-				rsblock scroll_redraw_flags	; required for teleport swap table
-; Scroll redraw flags
+				ramblock scroll_redraw_flags	; required for teleport swap table
+; Scroll redraw flags; accessed as longwords when copied to their duplicates during VBlank
 v_fg_redraw_direction: 		rs.w 1				; $FFFFEE50 ; bitfield ; bit 0 = redraw top row, bit 1 = redraw bottom row, bit 2 = redraw left-most column, bit 3 = redraw right-most column
 v_bg1_redraw_direction:		rs.w 1				; $FFFFEE52 ; bitfield ; bits 0-3 as above, bit 4 = redraw top row (except leftmost block), bit 5 = redraw bottom row (except leftmost block), bits 6-7 = as bits 0-1
 v_bg2_redraw_direction:		rs.w 1				; $FFFFEE54 ; bitfield ; essentially unused; bit 0 = redraw left-most column, bit 1 = redraw right-most column
 v_bg3_redraw_direction:		rs.w 1				; $FFFFEE56 ; bitfield ; for CPZ; bits 0-3 as Scroll_flags_BG but using Y-dependent BG camera; bits 4-5 = bits 2-3; bits 6-7 = bits 2-3
-				rsblockend scroll_redraw_flags
+				ramblocksize scroll_redraw_flags
 
-				rsblock scroll_redraw_flags_p2	; required for teleport swap table
+				ramblock scroll_redraw_flags_p2	; required for teleport swap table
 ; Scroll redraw flags for second player in 2P mode
 v_fg_redraw_direction_p2:		rs.w 1			; $FFFFEE58 ; bitfield ; bit 0 = redraw top row, bit 1 = redraw bottom row, bit 2 = redraw left-most column, bit 3 = redraw right-most column
 v_bg1_redraw_direction_p2:		rs.w 1			; $FFFFEE5A ; bitfield ; bits 0-3 as above, bit 4 = redraw top row (except leftmost block), bit 5 = redraw bottom row (except leftmost block), bits 6-7 = as bits 0-1
 v_bg2_redraw_direction_p2:		rs.w 1			; $FFFFEE5C ; bitfield ; essentially unused; bit 0 = redraw left-most column, bit 1 = redraw right-most column
 v_bg3_redraw_direction_p2:		rs.w 1			; $FFFFEE5E ; bitfield ; for CPZ; bits 0-3 as Scroll_flags_BG but using Y-dependent BG camera; bits 4-5 = bits 2-3; bits 6-7 = bits 2-3
-				rsblockend scroll_redraw_flags_p2
+				ramblocksize scroll_redraw_flags_p2
 
-				rsblock vblank_camera_copies	; required for teleport swap table
+				ramblock vblank_camera_copies	; required for teleport swap table
 ; Copies of the camera position RAM and scroll redraw flags that are copied during VBlank and used by DrawTilesWhenMoving:
 v_camera_pos_copy:			rs.l 2			; $FFFFEE60
-v_camera_pos_bg_copy:			rs.l 2			; $FFFFEE68
+v_camera_pos_bg_copy:		rs.l 2			; $FFFFEE68
 v_camera_pos_bg2_copy:		rs.l 2				; $FFFFEE70
 v_camera_pos_bg3_copy:		rs.l 2				; $FFFFEE78
-				rsblockend vblank_camera_copies
+				ramblocksize vblank_camera_copies
 
 v_camera_pos_p2_copy:			rs.l 8			; $FFFFEE80
-v_camera_pos_p2_copy_end:		equ __rs		; required for teleport swap table
+				ramblocksize v_camera_pos_p2_copy
 
-				rsblock	vblank_scroll_redraw_flags ; required for teleport swap table
+				ramblock	vblank_scroll_redraw_flags ; required for teleport swap table
 v_fg_redraw_direction_copy: 		rs.w 1			; $FFFFEEA0 
 v_bg1_redraw_direction_copy:		rs.w 1			; $FFFFEEA2
 v_bg2_redraw_direction_copy:		rs.w 1			; $FFFFEEA4
 v_bg3_redraw_direction_copy:		rs.w 1			; $FFFFEEA6
-				rsblockend	vblank_scroll_redraw_flags
+				ramblocksize	vblank_scroll_redraw_flags
 
-				rsblock	vblank_scroll_redraw_flags_p2 ; required for teleport swap table
+				ramblock	vblank_scroll_redraw_flags_p2 ; required for teleport swap table
 v_fg_redraw_direction_p2_copy:		rs.w 1			; $FFFFEEA8
 v_bg1_redraw_direction_p2_copy:		rs.w 1			; $FFFFEEAA
 v_bg2_redraw_direction_p2_copy:		rs.w 1			; $FFFFEEAC
 v_bg3_redraw_direction_p2_copy:		rs.w 1			; $FFFFEEAE
-				rsblockend	vblank_scroll_redraw_flags_p2
+				ramblocksize	vblank_scroll_redraw_flags_p2
 
-				rsblock camera_diffs		; required for teleport swap table
+				ramblock camera_diffs		; required for teleport swap table
 ; Camera differences
-v_camera_x_pos_diff:		rs.w 1				; $FFFFEEB0 ; (new X pos - old X pos) * 256
-v_camera_y_pos_diff:		rs.w 1				; $FFFFEEB2 ; (new X pos - old X pos) * 256 
-				rsblockend camera_diffs
+v_camera_x_diff:		rs.w 1				; $FFFFEEB0 ; (new X pos - old X pos) * 256
+v_camera_y_diff:		rs.w 1				; $FFFFEEB2 ; (new X pos - old X pos) * 256 
+				ramblocksize camera_diffs
 
 v_bg_x_pos_diff: 			rs.w 1			; $FFFFEEB4 ; Effective camera change used in WFZ ending and HTZ screen shake
 v_bg_y_pos_diff:			rs.w 1			; $FFFFEEB6 ; Effective camera change used in WFZ ending and HTZ screen shake
 
-				rsblock camera_diffs_p2		; required for teleport swap table
-v_camera_x_pos_diff_p2:		rs.w 1				; $FFFFEEB8 ; (new X pos - old X pos) * 256
-v_camera_y_pos_diff_p2:		rs.w 1				; $FFFFEEBA ; (new X pos - old X pos) * 256
-				rsblockend camera_diffs_p2
+				ramblock camera_diffs_p2		; required for teleport swap table
+v_camera_x_diff_p2:		rs.w 1				; $FFFFEEB8 ; (new X pos - old X pos) * 256
+v_camera_y_diff_p2:		rs.w 1				; $FFFFEEBA ; (new X pos - old X pos) * 256
+				ramblocksize camera_diffs_p2
 
 f_screen_shake_htz:		rs.b 1				; $FFFFEEBC ; flag to activate screen shaking code in HTZ's layer deformation routine
 f_screen_shake: 			rs.b 1			; $FFFFEEBD ; flag to activate screen shaking code (if existent) in layer deformation routine
@@ -211,27 +208,28 @@ unk_eec4:				rs.w 1			; $FFFFEEC4 ; same as above. The write being a long also o
 
 v_boundary_bottom_next: 	rs.w 1				; $FFFFEEC6 ; bottom level boundary, next
 
-				rsblock camera_boundaries	; required for teleport swap table
+				ramblock camera_boundaries	; required for teleport swap table
 v_boundary_left_next:		rs.w 1				; $FFFFEEC8 ; left level boundary, next (actual boundary shifts to match this)
 v_boundary_right_next:		rs.w 1				; $FFFFEECA ; right level boundary, next
 v_boundary_top_next:		rs.w 1				; $FFFFEECC ; top level boundary, next
 v_boundary_bottom:			rs.w 1			; $FFFFEECE ; bottom level boundary was "Camera_max_scroll_spd"...
-				rsblockend camera_boundaries
+				ramblocksize camera_boundaries
 
-				rsblock horiz_scroll_delay	; required for teleport swap table (Camera_Delay)
+				ramblock horiz_scroll_delay	; required for teleport swap table 
 v_hscroll_delay_val:		rs.w 1				; $FFFFEED0 ; if its value is a, where a != 0, X scrolling will be based on the player's X position a-1 frames ago
 v_sonic_pos_tracker_num:		rs.w 1			; $FFFFEED2 ; current location within Sonic's position tracking data
-				rsblockend horiz_scroll_delay
+				ramblocksize horiz_scroll_delay
 
-				rsblock horiz_scroll_delay_p2	; required for teleport swap table (Camera_Delay_P2)
+				ramblock horiz_scroll_delay_p2	; required for teleport swap table 
 v_hscroll_delay_val_p2:	rs.w 1					; $FFFFEED4 ; same as above, but for Tails in 2P
 v_tails_pos_tracker_num:		rs.w 1			; $FFFFEED6 ; current location within Tails' position tracking data
-				rsblockend horiz_scroll_delay_p2
+				ramblocksize horiz_scroll_delay_p2
 
 v_camera_y_shift:				rs.w 1		; $FFFFEED8 ; camera y position shift when Sonic looks up/down - $60 = default; $C8 = look up; 8 = look down
-v_camera_y_shift_end:			equ __rs		; required for teleport swap table (Camera_Y_pos_bias)
+		ramblocksize	v_camera_y_shift
+		
 v_camera_y_shift_p2:			rs.w 1			; $FFFFEEDA ; same as above, but for Tails in 2P
-v_camera_y_shift_p2_end:		equ __rs		; required for teleport swap table (Camera_Y_pos_bias_P2)
+		ramblocksize	v_camera_y_shift_p2
 
 f_disable_scrolling:			rs.b 1			; $FFFFEEDC ; flag to disable all background deformation
 			 					rs.b 1 ; $FFFFEEDD ; unused
@@ -247,16 +245,16 @@ v_hblank_fg_y_pos_vsram_p2:		rs.l 1			; $FFFFEEEC
 v_camera_x_pos_copy:			rs.l 1			; $FFFFEEF0
 v_camera_y_pos_copy:			rs.l 1			; $FFFFEEF4
 
-				rsblock camera_boundaries_p2	; required for teleport swap table
+				ramblock camera_boundaries_p2	; required for teleport swap table
 v_boundary_left_next_p2:		rs.w 1			; $FFFFEEF8
 v_boundary_right_next_p2:		rs.w 1			; $FFFFEEFA
 v_boundary_top_next_p2:			rs.w 1			; $FFFFEEFC ; seems not actually implemented (only written to)
 v_boundary_bottom_next_p2:		rs.w 1			; $FFFFEEFE 
-					rsblockend camera_boundaries_p2
-					rsblockend camera_ram
+				ramblocksize camera_boundaries_p2
+				rsblockend camera_ram
 
-v_block_cache:					rs.w 512/16*2	; $FFFFEF00 ; equ 64 ; width of plane in blocks, with each block getting two words.
-v_ring_consumption_table:		rs.b $80		; $FFFFEF80 ; contains RAM addresses of rings currently being consumed
+v_block_cache:					rs.l 512/16	; $FFFFEF00 ; equ 32 ; width of plane in 16x16 blocks, one longword per block.
+v_ring_consumption_table:		rs.w $40		; $FFFFEF80 ; contains RAM addresses of rings currently being consumed
 v_ring_consumption_table_end:	equ __rs
 v_pal_water_next:				rs.w sizeof_pal_all/2 ; $FFFFF000 ; These four are addresses are used by the screen-fading subroutines.
 v_pal_water_next_line1:			equ v_pal_water_next
@@ -395,11 +393,13 @@ f_level_started:		rs.b 1				; $FFFFF711
 				rsblock ring_manager_pointers
 v_ring_start:			rs.w 1				; $FFFFF712
 v_ring_end:				rs.w 1			; $FFFFF714
-				rsblockend ring_manager_pointers
+				ramblocksize	ring_manager_pointers
+				rsblockend 	ring_manager_pointers
 
 				rsblock ring_manager_pointers_p2
 v_ring_start_p2:		rs.w 1				; $FFFFF716
 v_ring_end_p2:			rs.w 1				; $FFFFF718
+				ramblocksize	ring_manager_pointers_p2
 				rsblockend ring_manager_pointers_p2
 
 v_cnz_bumper_routine:		rs.b 1				; $FFFFF71A ; routine counter for the CNZ bumper manager psuedo-object
@@ -408,12 +408,14 @@ f_unused_cnz_bumper:		rs.b 1				; $FFFFF71B ; set by the CNZ bumper psuedo-objec
 				rsblock bumper_manager_pointers
 v_cnz_visible_bumpers_start:		rs.l 1			; $FFFFF71C
 v_cnz_visible_bumpers_end:			rs.l 1		; $FFFFF720
-				rsblockend bumper_manager_pointers
+				ramblocksize	bumper_manager_pointers
+				rsblockend	bumper_manager_pointers
 
 				rsblock bumper_manager_pointers_p2
 v_cnz_visible_bumpers_start_p2:		rs.l 1			; $FFFFF724
 v_cnz_visible_bumpers_end_p2:		rs.l 1			; $FFFFF728
-				rsblockend bumper_manager_pointers_p2
+				ramblocksize	bumper_manager_pointers_p2
+				rsblockend	bumper_manager_pointers_p2
 
 f_screen_redraw:		rs.b 1				; $FFFFF72C ; flag indicating whole screen needs to redraw, such as when you destroy the rivet before the boss in WFZ
 v_unused_cpz_scroll_timer:	rs.b 1				; $FFFFF72D ; used only in dead CPZ scrolling function
@@ -432,8 +434,8 @@ v_boss_spawn_delay:			rs.b 1			; $FFFFF73A ; timer for delay until boss spawns
 							rs.b 4	; $FFFFF73B-$FFFFF73E; unused
 v_boss_collision_routine:	rs.b 1				; $FFFFF73F
 v_boss_anim_array:			rs.b $10		; $FFFFF740 ; up to $10 bytes; 2 bytes per entry
-v_ending_routine:						; $FFFFF750 ; which version of the ending cutscene to play
-v_boss_x_pos:				rs.l 1			; $FFFFF750 ; x_pos of current boss							
+v_ending_routine:			rs.l 1			; $FFFFF750 ; which version of the ending cutscene to play (only used as a word)
+v_boss_x_pos:				equ v_ending_routine	; $FFFFF750 ; x_pos of current boss							
 								; $FFFFF752 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
 v_boss_y_pos:				rs.l 1			; $FFFFF754 ; y_pos of current boss
 								; $FFFFF756 ; Boss_MoveObject reads a long, but all other places in the game use only the high word
@@ -447,7 +449,8 @@ v_boss_timer:				rs.w 1			; $FFFFF75C ; general timer used by boss objects
 v_sonic_max_speed:			rs.w 1			; $FFFFF760 ; Sonic's maximum speed
 v_sonic_acceleration:		rs.w 1				; $FFFFF762 ; Sonic's acceleration
 v_sonic_deceleration:		rs.w 1				; $FFFFF764 ; Sonic's deceleration
-				rsblockend sonic_speeds
+				ramblocksize	sonic_speeds
+				rsblockend	sonic_speeds
 
 v_sonic_last_frame_id:		rs.b 1				; $FFFFF766 ; Sonic's previous frame id; compared with current frame to determine if graphics need updating. can be set to a dummy value like -1 to force a refresh DMA.
 							rs.b 1	; $FFFFF767 ; unused
@@ -458,17 +461,19 @@ v_angle_left:				rs.b 1			; $FFFFF76A ; angle of floor on Sonic's left side
 v_opl_routine:				rs.b 1			; $FFFFF76C ; ObjPosLoad routine counter
 							rs.b 1	; $FFFFF76D ; unused
 v_opl_screen_x_pos:			rs.w 1			; $FFFFF76E ; ObjPosLoad - screen x position, rounded down to nearest $80
-v_opl_screen_x_pos_end:		equ __rs			; required for teleport swap table
+		ramblocksize	v_opl_screen_x_pos
 
 				rsblock object_manager_addresses ; required for teleport swap table
 v_opl_ptr_right:			rs.l 1			; $FFFFF770 ; contains the address of the next object to load when moving right
 v_opl_ptr_left:				rs.l 1			; $FFFFF774 ; contains the address of the last object loaded when moving left
-				rsblockend object_manager_addresses 
+				ramblocksize	object_manager_addresses
+				rsblockend 		object_manager_addresses 
 
 				rsblock object_manager_addresses_p2 ; required for teleport swap table
 v_opl_ptr_right_p2:			rs.l 1			; $FFFFF778
 v_opl_ptr_left_p2:			rs.l 1			; $FFFFF77C
-				rsblockend object_manager_addresses_p2
+				ramblocksize	object_manager_addresses_p2
+				rsblockend 		object_manager_addresses_p2
 
 				rsblock object_manager_2p	; The next 16 bytes belong to this.
 v_opl_ram_block_indices:		rs.b 6			; $FFFFF780 ; seems to be an array of horizontal chunk positions, used for object position range checks
@@ -476,10 +481,11 @@ v_opl_loaded_object_blocks_p1:	rs.b 3				; $FFFFF786
 v_opl_loaded_object_blocks_p2:	rs.b 3				; $FFFFF789
 
 v_opl_screen_x_pos_p2:		rs.w 1				; $FFFFF78C
-v_opl_screen_x_pos_p2_end:	equ __rs			; required for teleport swap table
+		ramblocksize	v_opl_screen_x_pos_p2
 
 v_respawn_list_p2:			rs.b 2			; $FFFFF78E ; respawn table indices of the next objects when moving left or right for the second player
-v_respawn_list_p2_end:		equ __rs			; required for teleport swap table
+		ramblocksize	v_respawn_list_p2
+
 				rsblockend object_manager_2p
 
 v_demo_input_counter:		rs.w 1				; $FFFFF790 ; tracks progress in the demo input data for player 1, increases by 2 when input changes
@@ -513,9 +519,11 @@ v_bonus_count_2:			rs.w 1			; $FFFFF7D4 ; level results ring bonus or special st
 f_pass_bonus_update:		rs.b 1				; $FFFFF7D6 ; flag set to update bonuses at the end of an act
 							rs.b 3	; $FFFFF7D7-$FFFFF7D9 ; unused
 v_camera_x_pos_coarse:		rs.w 1				; $FFFFF7DA ; (v_camera_x_pos - 128) / 256 ; used by MarkObjGone
-v_camera_x_pos_coarse_end:	equ __rs			; required for teleport swap table
+	ramblocksize	v_camera_x_pos_coarse
+
 v_camera_x_pos_coarse_p2:		rs.w 1			; $FFFFF7DC
-v_camera_x_pos_coarse_p2_end:	equ __rs			; required for teleport swap table
+	ramblocksize	v_camera_x_pos_coarse_p2
+
 v_tails_last_frame_id:			rs.b 1			; $FFFFF7DE ; Tails' previous frame id; compared with current frame to determine if graphics need updating. can be set to a dummy value like -1 to force a refresh DMA.
 v_tailstails_last_frame_id:		rs.b 1			; $FFFFF7DF ; Previous frame id of Tails' tails; compared with current frame to determine if graphics need updating. can be set to a dummy value like -1 to force a refresh DMA.
 v_button_state:					rs.b $10	; $FFFFF7E0 ; 16 byte flag array, #subtype byte set when button/vine of respective subtype activated
@@ -544,11 +552,14 @@ v_pal_dry_next_line4:		equ v_pal_dry_next+(sizeof_pal*3) ; $FFFFFBE0
 
 ;Object_Respawn_Table:
 v_respawn_list:				rs.b 2			; $FFFFFC00 ; respawn table indices of the next objects when moving left or right for the first player
-v_respawn_list_end:			equ	__rs		; required by clear_ram
-v_respawn_data:				rs.b $BE		; $FFFFFC02	; For stock S2, $80 is enough
-v_respawn_data_end:			equ	__rs		; required by clear_ram
+	ramblocksize	v_respawn_list
+;v_respawn_list_end:			equ	__rs		; required by clear_ram
 
-v_stack:					rs.b $140	; $FFFFFCC0 ; system stack; the first $BE bytes are cleared by ObjectsManager_Init due to a bug, with possibly disastrous consequences. At least $A0 bytes are needed.
+v_respawn_data:				rs.b $BE		; $FFFFFC02	; For stock S2, $80 is enough
+	ramblocksize	v_respawn_data
+
+				rsalign 4
+v_stack:					rs.l $50	; $FFFFFCC0 ; system stack; $140 bytes, the first $BE bytes are cleared by ObjectsManager_Init due to a bug, with possibly disastrous consequences. At least $A0 bytes are needed.
 v_stack_pointer:			equ	__rs		; $FFFFFE00 ; initial stack pointer - items are added to the stack backwards from this address
 v_keep_after_reset:         equ __rs				; $FFFFFE00 ; everything after this address is kept in RAM after a soft reset
 
@@ -614,7 +625,7 @@ v_dle_routine_lampcopy:			rs.b 1			;  $FFFFFE58  ; lamppost copy of v_dle_routin
 								rs.b 5 ; $FFFFFE59-$FFFFFE5D ; unused
 
 v_oscillating_direction:		rs.w 1			; $FFFFFE5E ; bitfield for the direction values in the table below are moving - 0 = up; 1 = down
-				rsblock	oscillating_variables
+				rsblock	synctables
 v_oscillating_table:			rs.l $10		; $FFFFFE60 ; table of 16 oscillating values, for platform movement - 1 word for current value, 1 word for rate
 ; TODO: This has been expanded compared to Sonic 1, and I am unsure of what the new values are.
 v_oscillating_0_to_20:		equ v_oscillating_table
@@ -631,7 +642,7 @@ v_oscillating_0_to_20:		equ v_oscillating_table
 ;v_oscillating_0_to_60_alt:	equ v_oscillating_table+$2C
 ;v_oscillating_0_to_A0_fast:	equ v_oscillating_table+$30
 ;v_oscillating_0_to_E0:		equ v_oscillating_table+$34
-v_oscillating_table_end:	equ __rs
+;v_oscillating_table_end:	equ __rs
 ; Synchronized animation counters: 0 = logspikes (unused), 1 = rings, 2 = unused, 3 = scattered rings
 
 v_syncani_0_time:		rs.b 1				; $FFFFFEA0 ; synchronised sprite animation 0 - time until next frame
@@ -644,15 +655,16 @@ v_syncani_3_time:		rs.b 1				; $FFFFFEA6 ; synchronised sprite animation 3 - tim
 v_syncani_3_frame:		rs.b 1				; $FFFFFEA7 ; synchronised sprite animation 3 - current frame
 v_syncani_3_accumulator:	rs.w 1				; $FFFFFEA8 ; synchronised sprite animation 3 - v_syncani_3_time added to this value every frame
 				rs.b 6				; $FFFFFEA9-$FFFFFEAF ; unused, but cleared once
-				rsblockend	oscillating_variables
+				rsblockend	synctables
 				
 				rs.b $10			; $FFFFFEB0-$FFFFFEBF ; unused				
 
 				rsblock tails_speeds		; required for teleport swap table
 v_tails_max_speed:			rs.w 1			; $FFFFFEC0 ; Tails' maximum speed
 v_tails_acceleration:		rs.w 1				; $FFFFFEC2 ; Tails' acceleration
-v_tails_deceleration:		rs.w 1				; $FFFFFEC4 ; Tails' deceleration		
-				rsblockend tails_speeds
+v_tails_deceleration:		rs.w 1				; $FFFFFEC4 ; Tails' deceleration	
+				ramblocksize	tails_speeds	
+				rsblockend		tails_speeds
 
 ; Variables for the second player in 2P mode				
 v_lives_p2:					rs.b 1		; $FFFFFEC6
@@ -703,8 +715,8 @@ v_ss_total_won:				rs.w 1			; $FFFFFF38 ; high byte is player 1, low byte is pla
 v_perfect_rings_left:		rs.w 1				; $FFFFFF40 ; remaining number of rings in a level
 f_ss_perfect:				rs.w 1			; $FFFFFF42 ; flag set if all rings in a special stage are collected
 							rs.b 8	; $FFFFFF44-$FFFFFF4B ; unused
-v_credits_index:			rs.w 1			; $FFFFFF4C ; current frame of the credits sequence
-f_slot_use:					equ v_credits_index ; $FFFFFF4C ; flag indicating a CNZ slot machine is in use
+v_credits_num:			rs.w 1			; $FFFFFF4C ; current frame of the credits sequence
+f_slot_use:					equ v_credits_num ; $FFFFFF4C ; flag indicating a CNZ slot machine is in use
 
 ; CNZ slot machine variables; $12 values
 ; The CNZ cage object writes v_slot_routine and reads v_slot_reward via 
@@ -876,7 +888,8 @@ v_title_falling_star:	rs.b sizeof_ost				; $FFFFB440
 
 ; Special Stage variables:	
 				rsset RAM_Start			; character art, stage layout, and object location data
-v_ss_character_art:		rs.b $353*$20			; $FFFF0000 ; $353 art blocks ;  SSRAM_Nem_SpecialSonicAndTails
+v_ss_character_art:		rs.b sizeof_nem_specialsonicandtails		; $FFFF0000 ; $353 art blocks ;  SSRAM_Nem_SpecialSonicAndTails
+
 v_ss_perspective_data:	rs.b $1AFC				; $FFFF6A60 ; SSRAM_Kos_SpecialPerspective
 v_ss_level_layout:		rs.b $180			; $FFFF855C ; SSRAM_Nem_SpecialLevelLayout:
 						rs.b $9C	; $FFFF86DC-$FFFF8777 ; unused

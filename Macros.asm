@@ -320,7 +320,8 @@ rsblockend:	macros						; Adapted to Sonic 2's macro-based RAM clearing
 		\1\_end:	equ __rs			; generate symbol for end
 
 ; ---------------------------------------------------------------------------
-; Make a size constant for a block of RAM.
+; Mark the start and end of a RAM block without alignment, and generate size 
+; constants (used by the slot machine variables and the teleport swap table).
 ; input: block start label
 ; ---------------------------------------------------------------------------		
 
@@ -329,6 +330,9 @@ ramblock:	macros
 
 ramblocksize:	macros
 		sizeof_\1: equ	__rs-\1
+		
+ramblockend:	macros
+		\1\_end:	equ __rs			; generate symbol for end	
 		
 ; ---------------------------------------------------------------------------
 ; Manage VRAM usage.
@@ -403,13 +407,13 @@ clear_ram:		macro startaddr,endaddr
   		endc
     
 		if ((startaddr)&$8000)=0
-			lea	(\startaddr).l,a1
+			lea	(\startaddr).l,a1	; if start address is greater than $FFFF8000
    		else
-			lea	(\startaddr).w,a1
+			lea	(\startaddr).w,a1	; if start address is less than $FFFF8000
 	   	endc
 			moveq	#0,d0
     	if (\startaddr&1)
-			move.b	d0,(a1)+
+			move.b	d0,(a1)+		; clear the first byte if start address is odd
 	    endc
 		move.w	#((\endaddr-\startaddr)-(\startaddr&1))/4-1,d1
 			
@@ -417,10 +421,10 @@ clear_ram:		macro startaddr,endaddr
 		move.l	d0,(a1)+
 		dbf	d1,.loop\@
 	    if (((endaddr-startaddr)-((startaddr)&1))&2)
-			move.w	d0,(a1)+
+			move.w	d0,(a1)+		; if amount to clear is not divisible by longword, clear the last whole word
     	endc
     	if (((endaddr-startaddr)-((startaddr)&1))&1)
-			move.b	d0,(a1)+
+			move.b	d0,(a1)+		; if amount to clear is not divisible by word, clear the last byte
     	endc
     	endm		
 
@@ -523,15 +527,15 @@ braptr:		macro
 	
 ; ---------------------------------------------------------------------------
 ; Make a 68K instruction with a VDP command longword or word as the source 
-; (more or less replicating the vdpComm function in Sonic 2 AS)
-; input: 68k instruction mnemonic, VRAM/VSRAM/CRAM offset, destination RAM
+; This more or less replicating the vdpComm function in Sonic 2 AS.
+; input: 68k instruction mnemonic, destination offset, destination 
 ; (vram/vsram/cram), operation (read/write/dma), destination of 68K instruction,
 ; additional adjustment to command longword (shifts, ANDs)
 ; ---------------------------------------------------------------------------
 
 vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 
-		local type,rwd
+		local type,rwd,command
 	
 		if stricmp ("\cmdtarget","vram")
 		type: =	$21					; %10 0001
@@ -550,11 +554,17 @@ vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 		rwd: = $27					; %10 0111
 		else inform 2,"Invalid VDP command type (must be read, write, or dma)."
 		endc
-
+		
+		if stricmp ("\0",".w")
+		command: = (((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)$FFFF ; AND to word-length
+		else
+		command: = (((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)
+		endc
+		
 		ifarg \dest			
-			\inst\.\0	#(((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)\adjustment\,\dest
+			\inst\.\0	#command\adjustment\,\dest
 		else	
-			\inst\.\0	(((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)\adjustment\	
+			\inst\.\0	command\adjustment\	
 		endc
 		endm	
 	
@@ -650,7 +660,7 @@ dma_fill_sequential:	macro value,length,dest,firstlast
 reset_dma_queue:	macro		
 		clr.w	(v_dma_queue).w				; clear the first queue slot
 		move.l	#v_dma_queue,(v_dma_queue_slot).w	; reset the queue index		
-	endm
+		endm
 	
 ; ---------------------------------------------------------------------------
 ; Disable display

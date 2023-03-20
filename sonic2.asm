@@ -70,6 +70,7 @@ RelativeLea: equ 0|(Revision<>2|AllOptimizations)
 
 		include "Mega Drive.asm"
 		include "Macros.asm"
+		include "File List.asm"
 		include "SpritePiece.asm"
 		include "Constants.asm"
 		include "RAM Addresses.asm"
@@ -79,7 +80,6 @@ RelativeLea: equ 0|(Revision<>2|AllOptimizations)
 		include "sound/Sound Language.asm"		; SMPS2ASM macros and conversion functionality
 		include "sound/Sounds.asm"
 	
-		include "File List.asm"
 		include "VRAM Addresses.asm"
 		include "Object Subtypes.asm"			; object subtype constants
 		include "Compatibility.asm"			; compatibility with Sonic 2 AS
@@ -1594,14 +1594,13 @@ AddDMA:
 
 ;  uses d0.w, a1, a5
 ; ---------------------------------------------------------------------------
-
 ; sub_14AC: CopyToVRAM: IssueVDPCommands: Process_DMA: Process_DMA_Queue: ; ProcessDMAQueue:
 ProcessDMA:							
 		lea	(vdp_control_port).l,a5
 		lea	(v_dma_queue).w,a1
 
 	; loc_14B6: ProcessDMAQueue_Loop:
-	.process_dmaqueue_loop:
+	.process_dma_loop:
 		move.w	(a1)+,d0
 		beq.s	.done					; exit if we reached a stop token
 		move.w	d0,(a5)					; transfer length
@@ -1612,7 +1611,7 @@ ProcessDMA:
 		move.w	(a1)+,(a5)				; destination
 		move.w	(a1)+,(a5)				; destination
 		cmpa.w	#v_dma_queue_slot,a1			; have we reached the end of the buffer?
-		bne.s	.process_dmaqueue_loop			; if not, loop
+		bne.s	.process_dma_loop			; if not, loop
 
 	.done:
 		move.w	#0,(v_dma_queue).w
@@ -1957,8 +1956,8 @@ RunPLC:
     if FixBugs=0
 		; This is done too early. This variable is also used as a flag to indicate
 		; there are PLCs to process, which means that as soon as this
-		; variable is set, PLC processing will occur during VBlank. If a vertical
-		; interrupt occurs between here and the end of this function, then
+		; variable is set, PLC processing will occur. If an interrupt
+		; occurs between here and the end of this function, then
 		; the PLC processor will begin despite it not being fully
 		; initialized, causing a crash (as can happen in Sonic 1 at the end of LZ1 & 2). 
 		; S3K fixes this bug by moving this instruction to the end of the function.		
@@ -4515,7 +4514,7 @@ GM_Level:
 		clear_ram	ost,ost_level_only_end		; clear all object RAM
 		clear_ram	misc_level_variables,misc_level_variables_end ; clear two large blocks of variables
 		clear_ram	misc_variables,misc_variables_end
-		clear_ram	oscillating_variables,oscillating_variables_end ; clear oscillating number tables  and synchronized animation counters
+		clear_ram	synctables,synctables_end ; clear oscillating number tables  and synchronized animation counters
 	
 	if FixBugs
 		clear_ram	v_cnz_saucer_data,v_cnz_saucer_data_end ; clear the CNZ saucer bumper data
@@ -6720,7 +6719,7 @@ loc_57DE:
 		addi.w	#$40,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#6,d5
 		bra.w	loc_572E
@@ -6741,7 +6740,7 @@ loc_5806:
 		addi.w	#$40,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#7,d5
 		bra.w	loc_572E
@@ -6755,7 +6754,7 @@ loc_5836:
 		addi.w	#$40,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#0,d5
 		bra.w	loc_572E
@@ -6773,7 +6772,7 @@ loc_5856:
 		addi.w	#$40,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#1,d5
 		bra.w	loc_572E
@@ -6791,7 +6790,7 @@ loc_5880:
 		addi.w	#$40,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#2,d5
 		bra.w	loc_572E
@@ -6809,7 +6808,7 @@ loc_58AA:
 		addi.w	#$40,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#3,d5
 		bra.w	loc_572E
@@ -6827,7 +6826,7 @@ loc_58D4:
 		addi.w	#$40,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#4,d5
 		bra.w	loc_572E
@@ -6845,7 +6844,7 @@ loc_58FE:
 		addi.w	#$40,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#5,d5
 		bra.w	loc_572E
@@ -6875,7 +6874,7 @@ loc_5944:
 		or.b	d1,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#3,d5
 		bra.w	loc_572E
@@ -6892,7 +6891,7 @@ loc_596A:
 		or.b	d1,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#4,d5
 		bra.w	loc_572E
@@ -6909,7 +6908,7 @@ loc_5990:
 		or.b	d1,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#5,d5
 		bra.w	loc_572E
@@ -6926,7 +6925,7 @@ loc_59B6:
 		or.b	d1,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#6,d5
 		bra.w	loc_572E
@@ -6943,7 +6942,7 @@ loc_59DC:
 		or.b	d1,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#7,d5
 		bra.w	loc_572E
@@ -6954,7 +6953,7 @@ loc_5A02:
 		andi.w	#$3F,d4
 		add.w	d4,d4
 		move.w	(a3,d4.w),d4
-		ori.w	#$6000,d4
+		ori.w	#tile_pal4,d4
 		move.w	d4,(a6)
 		moveq	#0,d5
 		bra.w	loc_572E
@@ -6966,7 +6965,7 @@ loc_5A1A:
 		andi.w	#$3F,d0
 		add.w	d0,d0
 		move.w	(a3,d0.w),d0
-		ori.w	#$6000,d0
+		ori.w	#tile_pal4,d0
 		move.w	d0,(a6)
 		moveq	#1,d5
 		bra.w	loc_572E
@@ -6985,7 +6984,7 @@ loc_5A34:
 		add.w	d0,d0
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5A5C:				
 		move.w	d1,(a6)
@@ -7010,7 +7009,7 @@ loc_5A66:
 		add.w	d0,d0
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5A98:				
 		move.w	d1,(a6)
@@ -7035,7 +7034,7 @@ loc_5AA2:
 		add.w	d0,d0
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5AD4:				
 		move.w	d1,(a6)
@@ -7060,7 +7059,7 @@ loc_5ADE:
 		add.w	d0,d0
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5B10:				
 		move.w	d1,(a6)
@@ -7085,7 +7084,7 @@ loc_5B1A:
 		add.w	d0,d0
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5B4C:				
 		move.w	d1,(a6)
@@ -7110,7 +7109,7 @@ loc_5B56:
 		add.w	d0,d0
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5B88:				
 		move.w	d1,(a6)
@@ -7135,7 +7134,7 @@ loc_5B92:
 		add.w	d0,d0
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5BC4:				
 		move.w	d1,(a6)
@@ -7154,7 +7153,7 @@ loc_5BCE:
 		add.w	d2,d2
 		move.w	(a4,d2.w),d1
 		move.w	2(a4,d2.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5BF2:				
 		move.w	d1,(a6)
@@ -7172,7 +7171,7 @@ loc_5BFC:
 		moveq	#2,d3
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5C18:				
 		move.w	d1,(a6)
@@ -7194,7 +7193,7 @@ loc_5C22:
 		add.w	d0,d0
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5C48:				
 		move.w	d1,(a6)
@@ -7216,7 +7215,7 @@ loc_5C52:
 		moveq	#4,d3
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5C78:				
 		move.w	d1,(a6)
@@ -7238,7 +7237,7 @@ loc_5C82:
 		moveq	#5,d3
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5CA8:				
 		move.w	d1,(a6)
@@ -7260,7 +7259,7 @@ loc_5CB2:
 		moveq	#6,d3
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5CD8:				
 		move.w	d1,(a6)
@@ -7282,7 +7281,7 @@ loc_5CE2:
 		moveq	#7,d3
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5D08:				
 		move.w	d1,(a6)
@@ -7298,7 +7297,7 @@ loc_5D12:
 		moveq	#0,d3
 		move.w	(a4,d2.w),d1
 		move.w	2(a4,d2.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5D2A:				
 		move.w	d1,(a6)
@@ -7315,7 +7314,7 @@ loc_5D34:
 		moveq	#1,d3
 		move.w	(a4,d0.w),d1
 		move.w	2(a4,d0.w),d0
-		ori.w	#-$2000,d1
+		ori.w	#tile_pal4|tile_hi,d1
 
 loc_5D4E:				
 		move.w	d1,(a6)
@@ -7338,12 +7337,9 @@ loc_5D58:
 loc_5D76:				
 		lea	(v_ss_draw_reg_buffer).w,a2
 		moveq	#0,d0
+		rept 6
 		move.w	d0,(a2)+
-		move.w	d0,(a2)+
-		move.w	d0,(a2)+
-		move.w	d0,(a2)+
-		move.w	d0,(a2)+
-		move.w	d0,(a2)+
+		endr
 		rts	
 ; ===========================================================================
 
@@ -8195,6 +8191,7 @@ word_651E:
 		dc.w $8813,$88C2,$805C,$8064,$80D8,$881B,$88CC,$8811 ; 144
 		dc.w $8855,$88E2,$88F3,$8044,$88D8,$8085,$80A1,$80C1 ; 152
 		dc.w $8119,$8889,$880A,$8822			; 160
+		
 		dc.w $803F,$805B,$807F,$8886,$8808,$8080,$8866,$88E0 ; 0
 		dc.w $88C1,$8020,$8022,$8054,$80D2,$8859,$88B1,$8860 ; 8
 		dc.w $8919,$88A4,$888F,$800A,$8061,$8075,$8095,$80B6 ; 16
@@ -8394,6 +8391,7 @@ SS_LoadCompressedData:
 		lea	(Kos_Special).l,a0
 		lea	(v_128x128_tiles).l,a1
 		bsr.w	KosDec
+		
 		vdp_comm.l	move,vram_start,vram,write,(VDP_control_port).l
 		lea	(vdp_data_port).l,a1
 		movea.l	#v_128x128_tiles,a0
@@ -8410,9 +8408,11 @@ SS_LoadCompressedData:
 		lea	(Kos_SpecialPerspective).l,a0
 		lea	(v_ss_perspective_data).l,a1
 		bsr.w	KosDec
+		
 		lea	(Nem_SpecialLevelLayouts).l,a0
 		lea	(v_ss_level_layout).w,a4
 		bsr.w	NemDecToRAM
+		
 		lea	(Koz_SpecialObjectLocations).l,a0
 		lea	(v_ss_object_locations).w,a1
 		bsr.w	KosDec
@@ -8980,6 +8980,7 @@ locret_723E:
 
 		include "mappings/sprite/obj5F_a.asm"
 		include "mappings/sprite/obj5F_b.asm"
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 87 - Number of rings in Special Stage
@@ -9086,7 +9087,7 @@ loc_7480:
 		beq.s	loc_74A4
 		addq.w	#1,d3
 		move.b	d0,(a2)
-		lea	ost_next_subsprite(a2),a2
+		lea	next_subspr(a2),a2
 
 loc_74A4:				
 		move.b	(v_ost_player1+ost_ss_rings_tens).w,d0
@@ -9098,12 +9099,12 @@ loc_74A4:
 loc_74B0:				
 		addq.w	#1,d3
 		move.b	d0,(a2)
-		lea	ost_next_subsprite(a2),a2
+		lea	next_subspr(a2),a2
 
 loc_74B8:				
 		addq.w	#1,d3
 		move.b	(v_ost_player1+ost_ss_rings_units).w,(a2)
-		lea	ost_next_subsprite(a2),a2
+		lea	next_subspr(a2),a2
 		move.w	d3,d4
 		subq.w	#1,d4
 		move.w	#$48,d1
@@ -9127,7 +9128,7 @@ loc_74EA:
 		beq.s	loc_74FC
 		addq.w	#1,d4
 		move.b	d0,(a2)
-		lea	ost_next_subsprite(a2),a2
+		lea	next_subspr(a2),a2
 
 loc_74FC:				
 		move.b	(v_ost_player2+ost_ss_rings_tens).w,d0
@@ -9139,7 +9140,7 @@ loc_74FC:
 loc_7508:				
 		addq.w	#1,d4
 		move.b	d0,(a2)
-		lea	ost_next_subsprite(a2),a2
+		lea	next_subspr(a2),a2
 
 loc_7510:				
 		move.b	(v_ost_player2+ost_ss_rings_units).w,(a2)
@@ -9271,12 +9272,12 @@ loc_75E6:
 		beq.s	loc_761C
 		addq.w	#1,d2
 		move.w	#$20,(a1)
-		lea	ost_next_subsprite(a1),a1
+		lea	next_subspr(a1),a1
 		subi.b	#$10,d0
 		beq.s	loc_761C
 		addq.w	#1,d2
 		move.w	#$30,(a1)
-		lea	ost_next_subsprite(a1),a1
+		lea	next_subspr(a1),a1
 		subi.b	#$10,d0
 		beq.s	loc_761C
 		addq.w	#1,d2
@@ -9290,12 +9291,12 @@ loc_761C:
 		beq.s	loc_7648
 		addq.w	#1,d2
 		move.w	#$B8,(a1)
-		lea	ost_next_subsprite(a1),a1
+		lea	next_subspr(a1),a1
 		subi_.b	#1,d1
 		beq.s	loc_7648
 		addq.w	#1,d2
 		move.w	#$C8,(a1)
-		lea	ost_next_subsprite(a1),a1
+		lea	next_subspr(a1),a1
 		subi_.b	#1,d1
 		beq.s	loc_7648
 		addq.w	#1,d2
@@ -9346,23 +9347,23 @@ loc_7672:
 
 ; ===========================================================================
 SS_CurveOffsets:	
-		dc.b $13,   0,   $13,   0,   $13,   0,   $13,   0 ; $00
-		dc.b   9, -$A,     0,-$1C,     0,-$1C,     0,-$20 ; $04
-		dc.b   0,-$24,     0,-$2A,     0,-$10,     0,   6 ; $08
-		dc.b   0,  $E,     0, $10,     0, $12,     0, $12 ; $0C
-		dc.b   9, $12					; $10; upward curve
-		dc.b   0,   0,     0,   0,     0,   0,     0,   0 ; $11; straight
-		dc.b $13,   0,   $13,   0,   $13,   0,   $13,   0 ; $15
-		dc.b  $B,  $C,     0,  $C,     0, $12,     0,  $A ; $19
-		dc.b   0,   8,     0,   2,     0, $10,     0,-$20 ; $1D
-		dc.b   0,-$1F,     0,-$1E,     0,-$1B,     0,-$18 ; $21
-		dc.b   0, -$E					; $25; downward curve
-		dc.b $13,   0,   $13,   0,   $13,   0,   $13,   0 ; $26
-		dc.b $13,   0,   $13,   0			; $2B; turning
-		dc.b $13,   0,   $13,   0,   $13,   0,   $13,   0 ; $2C
-		dc.b  $B,   0					; $30; exit turn
-		dc.b   0,   0,     0,   0,     0,   0,     0,   0 ; $31
-		dc.b   0,   0,     0,   0,     3,   0		; $35; straight
+		dc.b $13,   0,   $13,   0,   $13,   0,   $13,   0 	; $00
+		dc.b   9, -$A,     0,-$1C,     0,-$1C,     0,-$20 	; $04
+		dc.b   0,-$24,     0,-$2A,     0,-$10,     0,   6	; $08
+		dc.b   0,  $E,     0, $10,     0, $12,     0, $12 	; $0C
+		dc.b   9, $12										; $10; upward curve
+		dc.b   0,   0,     0,   0,     0,   0,     0,   0 	; $11; straight
+		dc.b $13,   0,   $13,   0,   $13,   0,   $13,   0 	; $15
+		dc.b  $B,  $C,     0,  $C,     0, $12,     0,  $A 	; $19
+		dc.b   0,   8,     0,   2,     0, $10,     0,-$20	; $1D
+		dc.b   0,-$1F,     0,-$1E,     0,-$1B,     0,-$18 	; $21
+		dc.b   0, -$E										; $25; downward curve
+		dc.b $13,   0,   $13,   0,   $13,   0,   $13,   0	; $26
+		dc.b $13,   0,   $13,   0							; $2B; turning
+		dc.b $13,   0,   $13,   0,   $13,   0,   $13,   0 	; $2C
+		dc.b  $B,   0										; $30; exit turn
+		dc.b   0,   0,     0,   0,     0,   0,     0,   0 	; $31
+		dc.b   0,   0,     0,   0,     3,   0				; $35; straight
 ; ===========================================================================
 
 SS_StartNewAct:				
@@ -9750,7 +9751,7 @@ loc_7AF8:
 		subi.w	#$A,ost_x_screen(a1)
 
 loc_7B0C:				
-		move.w	#$D0,ost_y_screen(a1)
+		move.w	#screen_top+80,ost_y_screen(a1)
 		move.b	#4,$1A(a1)
 		move.b	#6,$24(a1)
 		move.l	#Map_ContinueScreenItems,ost_mappings(a1)
@@ -9836,7 +9837,7 @@ loc_7BE4:
 loc_7BFA:				
 		cmpi.w	#$800,ost_inertia(a0)
 		bne.s	loc_7C0A
-		move.w	#$1000,$10(a0)
+		move.w	#$1000,ost_x_vel(a0)
 		bra.s	loc_7C10
 ; ===========================================================================
 
@@ -9878,7 +9879,7 @@ loc_7C64:
 loc_7C88:				
 		cmpi.w	#$720,ost_inertia(a0)
 		bne.s	loc_7C98
-		move.w	#$1000,$10(a0)
+		move.w	#$1000,ost_x_vel(a0)
 		bra.s	loc_7C9E
 ; ===========================================================================
 
@@ -10228,7 +10229,7 @@ TwoPlayerResults_Index:	index offset(*),,2
 		ptr loc_80E4					; 0 				
 		ptr loc_812C					; 2
 
-TWoPlayerResults_PosData:
+TwoPlayerResults_PosData:
 		;      x,    y
 		dc.w screen_left+112, screen_top+200
 		dc.w screen_left+112, screen_top+176
@@ -10241,7 +10242,7 @@ loc_80E4:
 		move.w	(v_results_screen_2p).w,d0
 		add.w	d0,d0
 		add.w	d0,d0
-		move.l	TWoPlayerResults_PosData(pc,d0.w),ost_x_screen(a0)
+		move.l	TwoPlayerResults_PosData(pc,d0.w),ost_x_screen(a0) ; and ost_y_screen(a0)
 		move.l	#Map_2P_Results_Text,ost_mappings(a0)
 		move.w	#vram_1P2PWins/sizeof_cell,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo2_Adjust2PArtPointer
@@ -12131,14 +12132,13 @@ EndingSequence:
 		move.b	#$F,(v_palette_timer).w
 		move.w	#$30,(v_palette_frame).w
 
-loc_9D64:				
-					
+loc_9D64:						
 		moveq	#0,d0
 		cmpi.w	#tails_alone,(v_player_mode).w
 		beq.s	loc_9D78
 		tst.b	(f_super).w
 		bne.s	loc_9D7A
-		bra.w	loc_9D7C
+		bra.w	EndSeq_LoadArt
 ; ===========================================================================
 
 loc_9D78:				
@@ -12147,43 +12147,52 @@ loc_9D78:
 loc_9D7A:				
 		addq.w	#2,d0
 
-loc_9D7C:				
-		move.w	d0,($FFFFF750).w
-		bsr.w	sub_ABE2
-		bsr.w	sub_AC30
-		move.l	#$6AC00000,(vdp_control_port).l
+EndSeq_LoadArt:				
+		move.w	d0,(v_ending_routine).w
+		bsr.w	EndSeq_LoadCharacterArt
+		bsr.w	EndSeq_LoadBirdArt
+		
+		vdp_comm.l	move,vram_EndingFinalTornado,vram,write,(vdp_control_port).l
 		lea	(Nem_EndingFinalTornado).l,a0
 		jsrto	NemDec,JmpTo_NemDec
-		move.l	#$65000001,(vdp_control_port).l
+		
+		vdp_comm.l	move,vram_EndingPics,vram,write,(vdp_control_port).l		
 		lea	(Nem_EndingStills).l,a0
 		jsrto	NemDec,JmpTo_NemDec
-		move.l	#$52600002,(vdp_control_port).l
+		
+		vdp_comm.l	move,vram_EndingMiniTornado,vram,write,(vdp_control_port).l				
 		lea	(Nem_EndingMiniTornado).l,a0
 		jsrto	NemDec,JmpTo_NemDec
-		move.l	#$60000002,(vdp_control_port).l
+		
+		vdp_comm.l	move,vram_Tornado,vram,write,(vdp_control_port).l			
 		lea	(Nem_Tornado).l,a0
 		jsrto	NemDec,JmpTo_NemDec
-		move.l	#$69E00002,(vdp_control_port).l
+		
+		vdp_comm.l	move,vram_Clouds,vram,write,(vdp_control_port).l			
 		lea	(Nem_Clouds).l,a0
 		jsrto	NemDec,JmpTo_NemDec
-		move.w	#$E00,(v_zone).w
+		
+		move.w	#id_DEZ_act1,(v_zone).w
 		enable_ints
-		moveq	#-$6B,d0
+		moveq_	mus_Ending,d0					; play ending music
 		jsrto	PlayMusic,JmpTo2_PlayMusic
-		move.l	#$EEE0EEE,d1
-		lea	($FFFFFB00).w,a1
-		moveq	#$1F,d0
+		move.l	#cWhite<<16|cWhite,d1			; two consecutive palette entries of white
 
-loc_9E08:				
-		move.l	d1,(a1)+
-		dbf	d0,loc_9E08
+		lea	(v_pal_dry).w,a1
+		moveq	#(sizeof_pal_all/4)-1,d0
+
+	.fillwhite:			
+		move.l	d1,(a1)+		; fill entire CRAM with white
+		dbf	d0,.fillwhite
+		
 		lea	(Pal_EndingSonic).l,a1
 		lea	(v_pal_dry_next).w,a2
-		moveq	#$1F,d0
+		moveq	#(sizeof_pal_all/4)-1,d0
 
-loc_9E1A:				
+	.loadpal:				
 		move.l	(a1)+,(a2)+
-		dbf	d0,loc_9E1A
+		dbf	d0,.loadpal
+		
 		clr.b	(f_screen_shake).w
 		moveq	#0,d0
 		move.w	d0,(v_debug_active).w
@@ -12198,8 +12207,8 @@ loc_9E1A:
 		move.l	d0,(v_fg_y_pos_vsram).w
 		move.b	d0,(v_bg1_x_redraw_flag).w
 		move.b	d0,(v_bg1_y_redraw_flag).w
-		move.w	d0,($FFFFF662).w
-		move.w	d0,($FFFFF660).w
+		move.w	d0,(v_ending_vblank_sub).w
+		move.w	d0,(f_credits_trigger).w
 
 		lea	(v_hscroll_buffer).w,a1
 		moveq	#0,d0
@@ -12599,8 +12608,8 @@ loc_A34C:
 		bmi.s	loc_A366
 		moveq	#0,d4
 		moveq	#0,d5
-		move.w	#0,(v_camera_x_pos_diff).w
-		move.w	#$100,(v_camera_y_pos_diff).w
+		move.w	#0,(v_camera_x_diff).w
+		move.w	#$100,(v_camera_y_diff).w
 		bra.w	Deform_DEZ
 ; ===========================================================================
 
@@ -12671,8 +12680,8 @@ loc_A3DA:
 loc_A3FC:				
 		move.w	#-$10,ost_x_pos(a0)
 		move.w	#$C0,ost_y_pos(a0)
-		move.w	#$100,$10(a0)
-		move.w	#-$80,$12(a0)
+		move.w	#$100,ost_x_vel(a0)
+		move.w	#-$80,ost_y_vel(a0)
 		move.b	#$14,$35(a0)
 		move.b	#3,$18(a0)
 		move.w	#4,($FFFFF662).w
@@ -12726,8 +12735,8 @@ loc_A48A:
 loc_A4A2:				
 		move.w	#$40,$32(a0)
 		st.b	($FFFFB134).w
-		clr.w	$10(a0)
-		clr.w	$12(a0)
+		clr.w	ost_x_vel(a0)
+		clr.w	ost_y_vel(a0)
 		bra.s	loc_A480
 ; ===========================================================================
 
@@ -13248,7 +13257,7 @@ loc_AA06:
 		andi.w	#3,d0
 		move.b	byte_AA6A(pc,d0.w),$1A(a0)
 		add.w	d0,d0
-		move.w	word_AA6E(pc,d0.w),$12(a0)
+		move.w	word_AA6E(pc,d0.w),ost_y_vel(a0)
 		tst.b	($FFFFB134).w
 		beq.s	loc_AA5A
 		andi.w	#$FF,d1
@@ -13277,8 +13286,8 @@ loc_AA76:
 		tst.b	($FFFFB134).w
 		beq.s	loc_AA8A
 		addq.b	#2,ost_primary_routine(a0)
-		move.w	$12(a0),$10(a0)
-		clr.w	$12(a0)
+		move.w	ost_y_vel(a0),ost_x_vel(a0)
+		clr.w	ost_y_vel(a0)
 
 loc_AA8A:				
 					
@@ -13296,7 +13305,7 @@ loc_AAA2:
 		jmpto	DisplaySprite,JmpTo5_DisplaySprite
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object CB - Birds in ending cutscene
+; Object CD - Birds in ending cutscene
 ; ----------------------------------------------------------------------------
 
 EndingFlickies:				
@@ -13305,8 +13314,8 @@ EndingFlickies:
 		move.w	off_AABC(pc,d0.w),d1
 		jmp	off_AABC(pc,d1.w)
 ; ===========================================================================
-off_AABC:	dc.w loc_AAC0-off_AABC				; 0 
-					
+off_AABC:	
+		dc.w loc_AAC0-off_AABC				; 0 		
 		dc.w loc_AB0E-off_AABC				; 1
 ; ===========================================================================
 
@@ -13326,14 +13335,14 @@ loc_AAC0:
 		moveq	#8,d2
 		add.w	d1,d2
 		move.w	d2,ost_y_pos(a0)
-		move.w	#$100,$10(a0)
+		move.w	#$100,ost_x_vel(a0)
 		moveq	#$20,d0
 		cmpi.w	#$20,d1
 		bcs.s	loc_AB02
 		neg.w	d0
 
 loc_AB02:				
-		move.w	d0,$12(a0)
+		move.w	d0,ost_y_vel(a0)
 		move.w	#$C0,$3C(a0)
 		rts	
 ; ===========================================================================
@@ -13358,10 +13367,10 @@ loc_AB34:
 		subq.w	#1,$3C(a0)
 		bpl.s	locret_AB5A
 		addq.b	#2,$25(a0)
-		move.w	$12(a0),$2E(a0)
-		clr.w	$10(a0)
+		move.w	ost_y_vel(a0),$2E(a0)
+		clr.w	ost_x_vel(a0)
 		move.w	ost_y_pos(a0),$32(a0)
-		move.w	#$80,$12(a0)
+		move.w	#$80,ost_y_vel(a0)
 		move.w	#$180,$3C(a0)
 
 locret_AB5A:				
@@ -13378,14 +13387,14 @@ loc_AB5C:
 		neg.w	d1
 
 loc_AB70:				
-		add.w	d1,$12(a0)
+		add.w	d1,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_AB76:				
 		addq.b	#2,$25(a0)
-		move.w	#-$100,$10(a0)
-		move.w	$2E(a0),$12(a0)
+		move.w	#-$100,ost_x_vel(a0)
+		move.w	$2E(a0),ost_y_vel(a0)
 		move.w	#$C0,$3C(a0)
 		rts	
 ; ===========================================================================
@@ -13436,66 +13445,80 @@ locret_ABE0:
 		rts	
 
 ; ===========================================================================
+; EndSeq_LoadCharacterArt could be optimized down to this:
+
+;EndSeq_LoadCharacterArt:
+;		vdp_comm.l	move,vram_EndingCharacter,vram,write,(vdp_control_port).l				
+;		move.w	(v_ending_routine).w,d0
+;		add.w	d0,d0
+;		movea.l	EndSeq_LoadCharacterArt_Ptrs(pc,d0.w),a0
+;		jmpto	NemDec,JmpTo_NemDec
+		
+		
+;EndSeq_LoadCharacterArt_Ptrs:
+;		dc.l Nem_EndingSonic			; 0
+;		dc.l Nem_EndingSuperSonic		; 4
+;		dc.l Nem_EndingTails			; 8
 
 
-sub_ABE2:				
-		move.w	($FFFFF750).w,d0
-		move.w	off_ABEE(pc,d0.w),d0
-		jmp	off_ABEE(pc,d0.w)
+EndSeq_LoadCharacterArt:				
+		move.w	(v_ending_routine).w,d0
+		move.w	EndSeq_LoadCharacterArt_Index(pc,d0.w),d0
+		jmp	EndSeq_LoadCharacterArt_Index(pc,d0.w)
 
 ; ===========================================================================
-off_ABEE:	dc.w loc_ABF4-off_ABEE				; 0 
-					
-		dc.w loc_AC08-off_ABEE				; 1
-		dc.w loc_AC1C-off_ABEE				; 2
+EndSeq_LoadCharacterArt_Index:	index offset(*)
+		ptr EndSeq_LoadCharacterArt_Sonic			; 0 		
+		ptr EndSeq_LoadCharacterArt_SuperSonic		; 2
+		ptr EndSeq_LoadCharacterArt_Tails			; 4
 ; ===========================================================================
 
-loc_ABF4:				
-		move.l	#$43200000,(vdp_control_port).l
+EndSeq_LoadCharacterArt_Sonic:				
+		vdp_comm.l	move,vram_EndingCharacter,vram,write,(vdp_control_port).l
 		lea	(Nem_EndingSonic).l,a0
 		jmpto	NemDec,JmpTo_NemDec
 ; ===========================================================================
 
-loc_AC08:				
-		move.l	#$43200000,(vdp_control_port).l
+EndSeq_LoadCharacterArt_SuperSonic:				
+		vdp_comm.l	move,vram_EndingCharacter,vram,write,(vdp_control_port).l
 		lea	(Nem_EndingSuperSonic).l,a0
 		jmpto	NemDec,JmpTo_NemDec
 ; ===========================================================================
 
-loc_AC1C:				
-		move.l	#$43200000,(vdp_control_port).l
+EndSeq_LoadCharacterArt_Tails:				
+		vdp_comm.l	move,vram_EndingCharacter,vram,write,(vdp_control_port).l
 		lea	(Nem_EndingTails).l,a0
 		jmpto	NemDec,JmpTo_NemDec
 
 ; ===========================================================================
 
 
-sub_AC30:				
-		move.w	($FFFFF750).w,d0
-		move.w	off_AC3C(pc,d0.w),d0
-		jmp	off_AC3C(pc,d0.w)
+EndSeq_LoadBirdArt:				
+		move.w	(v_ending_routine).w,d0
+		move.w	EndSeq_LoadBirdArt_Index(pc,d0.w),d0
+		jmp	EndSeq_LoadBirdArt_Index(pc,d0.w)
 
 ; ===========================================================================
-off_AC3C:	dc.w loc_AC42-off_AC3C				; 0 
-					
-		dc.w loc_AC56-off_AC3C				; 1
-		dc.w loc_AC6A-off_AC3C				; 2
+EndSeq_LoadBirdArt_Index:	index offset(*)
+		ptr	EndSeq_LoadBirdArt_Flicky		; 0 		
+		ptr EndSeq_LoadBirdArt_Eagle		; 2
+		ptr	EndSeq_LoadBirdArt_Chicken		; 4
 ; ===========================================================================
 
-loc_AC42:				
-		move.l	#$72800002,(vdp_control_port).l
+EndSeq_LoadBirdArt_Flicky:				
+		vdp_comm.l	move,vram_animal_2,vram,write,(vdp_control_port).l
 		lea	(Nem_Flicky).l,a0
 		jmpto	NemDec,JmpTo_NemDec
 ; ===========================================================================
 
-loc_AC56:				
-		move.l	#$72800002,(vdp_control_port).l
+EndSeq_LoadBirdArt_Eagle:				
+		vdp_comm.l	move,vram_animal_2,vram,write,(vdp_control_port).l
 		lea	(Nem_Eagle).l,a0
 		jmpto	NemDec,JmpTo_NemDec
 ; ===========================================================================
 
-loc_AC6A:				
-		move.l	#$72800002,(vdp_control_port).l
+EndSeq_LoadBirdArt_Chicken:				
+		vdp_comm.l	move,vram_animal_2,vram,write,(vdp_control_port).l
 		lea	(Nem_Chicken).l,a0
 		jmpto	NemDec,JmpTo_NemDec
 ; ===========================================================================
@@ -13506,38 +13529,74 @@ loc_AC6A:
 		incfile	Pal_EndingStills			; Pal_AD1E:
 		incfile	Pal_EndingSuperSonic			; Pal_AD3E
 					
-dword_AD5E:	dc.l $3ECB00		
-dword_AD62:	dc.l $3ECC00		
-dword_AD66:	dc.l $3ECD00		
-dword_AD6A:	dc.l $3ECE00		
-dword_AD6E:	dc.l $3ECF00
+dword_AD5E:
+		childobjdata $3E,id_EndingClouds,0
+				
+dword_AD62:	
+		childobjdata $3E,id_EndingTrigger,0
+				
+dword_AD66:	
+		childobjdata $3E,id_EndingFlickies,0
+			
+dword_AD6A:	
+		childobjdata $3E,id_EndingSonicTails,0	
+			
+dword_AD6E:	
+		childobjdata $3E,id_TornadoHelicies,0	
 		
 off_AD72:	
-		dc.l Map_Animal1				; 0 
-		dc.w $594
-		dc.w $402
-		dc.w $800
+		subtypedata Map_Animal1,tile_Nem_Animal_2,4,2,8,0
+		
+byte_AD7C:	index offset(*)
+		ptr byte_AD7E
+		
+byte_AD7E:
+		dc.b   5
+		dc.b   0
+		dc.b   1
+		dc.b afEnd
+		even
 
-byte_AD7C:	
-		dc.b   0					; 0 
-		dc.b   2					; 1
-		dc.b   5					; 2
-		dc.b   0					; 3
-		dc.b   1					; 4
-		dc.b $FF					; 5
-
-off_AD82:	
-		dc.w byte_AD88-off_AD82				; 0 		
-		dc.w byte_AD8E-off_AD82				; 1
-		dc.w byte_AD9E-off_AD82				; 2
-byte_AD88:	dc.b   3,  0,  0,  1,$FA,  0			; 0	
-byte_AD8E:	dc.b   3,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  3,  3,  4,$FA,  0 ; 0
+off_AD82:	index offset(*)	
+		ptr byte_AD88			; 0 		
+		ptr byte_AD8E			; 2
+		ptr byte_AD9E			; 4
+		
+byte_AD88:	
+		dc.b 3
+		dc.b 0
+		dc.b 0
+		dc.b 1
+		dc.b af2ndRoutine
+		even
+		
+byte_AD8E:	
+		dc.b 3
+		dc.b 1
+		dc.b 1
+		dc.b 1
+		dc.b 1
+		dc.b 1
+		dc.b 2
+		dc.b 2
+		dc.b 2
+		dc.b 2
+		dc.b 2
+		dc.b 3
+		dc.b 3
+		dc.b 4
+		dc.b af2ndRoutine
+		even
 					
-byte_AD9E:	dc.b   1,  5,  6,$FF				; 0 
-
+byte_AD9E:	
+		dc.b 1
+		dc.b 5
+		dc.b 6
+		dc.b afEnd
+		even 
+		
 
 		include "mappings/sprite/Tornado Helices.asm"
-		
 		incfile	Eni_EndGameLogo
 
 ; ===========================================================================
@@ -13559,7 +13618,7 @@ loc_B27C:
 		bmi.s	loc_B298
 		movea.l	d0,a2
 		move.w	(a1)+,d0
-		bsr.s	sub_B29E
+		bsr.s	ConvertVRAMAddToWriteCmd
 		move.l	d0,vdp_control_port-vdp_data_port(a6)
 		move.b	(a2)+,d0
 		lsl.w	#8,d0
@@ -13583,11 +13642,11 @@ loc_B298:
 ; ===========================================================================
 
 
-sub_B29E:				
+ConvertVRAMAddToWriteCmd:				
 		andi.l	#$FFFF,d0
 		lsl.l	#2,d0
 		lsr.w	#2,d0
-		ori.w	#$4000,d0
+		vdp_comm.w	oxi,0,vram,write,d0,>>16	; oxi = AXM68K ori
 		swap	d0
 		rts	
 
@@ -14578,10 +14637,10 @@ DeformLayers:
 		clr.w	(v_bg1_redraw_direction_p2).w
 		clr.w	(v_bg2_redraw_direction_p2).w
 		clr.w	(v_bg3_redraw_direction_p2).w
-		clr.w	(v_camera_x_pos_diff).w
-		clr.w	(v_camera_y_pos_diff).w
-		clr.w	(v_camera_x_pos_diff_p2).w
-		clr.w	(v_camera_y_pos_diff_p2).w
+		clr.w	(v_camera_x_diff).w
+		clr.w	(v_camera_y_diff).w
+		clr.w	(v_camera_x_diff_p2).w
+		clr.w	(v_camera_y_diff_p2).w
 		cmpi.b	#$10,(v_zone).w
 		bne.w	loc_C41A
 		tst.w	(v_debug_active).w
@@ -14594,7 +14653,7 @@ loc_C41A:
 		lea	(v_camera_x_pos).w,a1
 		lea	(v_boundary_left_next).w,a2
 		lea	(v_fg_redraw_direction).w,a3
-		lea	(v_camera_x_pos_diff).w,a4
+		lea	(v_camera_x_diff).w,a4
 		lea	(v_hscroll_delay_val).w,a5
 		lea	(v_sonic_pos_tracker).w,a6
 		cmpi.w	#tails_alone,(v_player_mode).w
@@ -14608,7 +14667,7 @@ loc_C44C:
 		bsr.w	sub_D6E2
 		lea	(v_camera_y_pos).w,a1
 		lea	(v_boundary_left_next).w,a2
-		lea	(v_camera_y_pos_diff).w,a4
+		lea	(v_camera_y_diff).w,a4
 		move.w	(v_camera_y_shift).w,d3
 		cmpi.w	#tails_alone,(v_player_mode).w
 		bne.s	loc_C474
@@ -14628,7 +14687,7 @@ loc_C480:
 		lea	(v_camera_x_pos_p2).w,a1
 		lea	(v_boundary_left_next_p2).w,a2
 		lea	(v_fg_redraw_direction_p2).w,a3
-		lea	(v_camera_x_pos_diff_p2).w,a4
+		lea	(v_camera_x_diff_p2).w,a4
 		lea	(v_hscroll_delay_val_p2).w,a5
 		lea	(v_tails_pos_tracker).w,a6
 		bsr.w	sub_D704
@@ -14636,7 +14695,7 @@ loc_C480:
 		bsr.w	sub_D6E2
 		lea	(v_camera_y_pos_p2).w,a1
 		lea	(v_boundary_left_next_p2).w,a2
-		lea	(v_camera_y_pos_diff_p2).w,a4
+		lea	(v_camera_y_diff_p2).w,a4
 		move.w	(v_camera_y_shift_p2).w,d3
 		bsr.w	sub_D77A
 		lea	(v_fg_y_redraw_flag_p2).w,a2
@@ -15009,10 +15068,10 @@ Deform_EHZ_2P:
 Deform_Lev2:
 	if Revision<2
 	; Just a duplicate of 'SwScrl_Minimal'.				
-		move.w	(v_camera_x_pos_diff).w,d4
+		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
 		asl.l	#5,d4
-		move.w	(v_camera_y_pos_diff).w,d5
+		move.w	(v_camera_y_diff).w,d5
 		ext.l	d5
 		asl.l	#6,d5
 		bsr.w	UpdateBG_XY
@@ -15033,10 +15092,10 @@ loc_C7EA:
 ; ===========================================================================
 
 Deform_MTZ:				
-		move.w	(v_camera_x_pos_diff).w,d4
+		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
 		asl.l	#5,d4
-		move.w	(v_camera_y_pos_diff).w,d5
+		move.w	(v_camera_y_diff).w,d5
 		ext.l	d5
 		asl.l	#6,d5
 		bsr.w	UpdateBG_XY
@@ -15398,10 +15457,10 @@ loc_CB08:
 
 
 Deform_HTZ_2P:				
-		move.w	(v_camera_x_pos_diff).w,d4
+		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
 		asl.l	#6,d4
-		move.w	(v_camera_y_pos_diff).w,d5
+		move.w	(v_camera_y_diff).w,d5
 		ext.l	d5
 		asl.l	#2,d5
 		moveq	#0,d5
@@ -15420,7 +15479,7 @@ Deform_HTZ_2P:
 loc_CB50:				
 		move.l	d0,(a1)+
 		dbf	d1,loc_CB50
-		move.w	(v_camera_x_pos_diff_p2).w,d4
+		move.w	(v_camera_x_diff_p2).w,d4
 		ext.l	d4
 		asl.l	#6,d4
 		add.l	d4,(v_bg1_x_pos_p2).w
@@ -15445,12 +15504,12 @@ loc_CB98:
 ; ===========================================================================
 
 Deform_HPZ:				
-		move.w	(v_camera_x_pos_diff).w,d4
+		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
 		asl.l	#6,d4
 		moveq	#2,d6
 		bsr.w	UpdateBG_Y2
-		move.w	(v_camera_y_pos_diff).w,d5
+		move.w	(v_camera_y_diff).w,d5
 		ext.l	d5
 		asl.l	#7,d5
 		moveq	#6,d6
@@ -15530,11 +15589,11 @@ loc_CC48:
 ; ===========================================================================
 
 Deform_OOZ:				
-		move.w	(v_camera_x_pos_diff).w,d0
+		move.w	(v_camera_x_diff).w,d0
 		ext.l	d0
 		asl.l	#5,d0
 		add.l	d0,(v_bg1_x_pos).w
-		move.w	(v_camera_y_pos_diff).w,d0
+		move.w	(v_camera_y_diff).w,d0
 		ext.l	d0
 		asl.l	#5,d0
 		move.l	(v_bg1_y_pos).w,d3
@@ -16300,14 +16359,14 @@ byte_D270:
 ; ===========================================================================
 
 Deform_CPZ:				
-		move.w	(v_camera_x_pos_diff).w,d4
+		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
 		asl.l	#5,d4
-		move.w	(v_camera_y_pos_diff).w,d5
+		move.w	(v_camera_y_diff).w,d5
 		ext.l	d5
 		asl.l	#6,d5
 		bsr.w	UpdateBG_XY
-		move.w	(v_camera_x_pos_diff).w,d4
+		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
 		asl.l	#7,d4
 		moveq	#4,d6
@@ -16414,10 +16473,10 @@ loc_D36E:
 ; ===========================================================================
 
 Deform_DEZ:									
-		move.w	(v_camera_x_pos_diff).w,d4
+		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
 		asl.l	#8,d4
-		move.w	(v_camera_y_pos_diff).w,d5
+		move.w	(v_camera_y_diff).w,d5
 		ext.l	d5
 		asl.l	#8,d5
 		bsr.w	UpdateBG_XY
@@ -16568,12 +16627,12 @@ byte_D48A:	dc.b $80					; 0
 ; ===========================================================================
 
 Deform_ARZ:				
-		move.w	(v_camera_x_pos_diff).w,d4
+		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
 		muls.w	#$119,d4
 		moveq	#2,d6
 		bsr.w	UpdateBG_Y_Absolute_ARZ
-		move.w	(v_camera_y_pos_diff).w,d5
+		move.w	(v_camera_y_diff).w,d5
 		ext.l	d5
 		asl.l	#7,d5
 		tst.b	(v_act).w
@@ -16707,7 +16766,7 @@ Deform_SCZ:
 		bne.w	Deform_Minimal
 		lea	(v_camera_x_pos).w,a1
 		lea	(v_fg_redraw_direction).w,a3
-		lea	(v_camera_x_pos_diff).w,a4
+		lea	(v_camera_x_diff).w,a4
 		move.w	(v_tornado_x_vel).w,d0
 		move.w	(a1),d4
 		add.w	(a1),d0
@@ -16719,7 +16778,7 @@ Deform_SCZ:
 		lea	(v_fg_x_redraw_flag).w,a2
 		bsr.w	sub_D6E2
 		lea	(v_camera_y_pos).w,a1
-		lea	(v_camera_y_pos_diff).w,a4
+		lea	(v_camera_y_diff).w,a4
 		move.w	(v_tornado_y_vel).w,d0
 		move.w	(a1),d4
 		add.w	(a1),d0
@@ -16730,7 +16789,7 @@ Deform_SCZ:
 		move.w	d1,(a4)
 		lea	(v_fg_y_redraw_flag).w,a2
 		bsr.w	sub_D878
-		move.w	(v_camera_x_pos_diff).w,d4
+		move.w	(v_camera_x_diff).w,d4
 		beq.s	loc_D638
 		move.w	#$100,d4
 
@@ -16756,10 +16815,10 @@ loc_D65E:
 
 Deform_Minimal:				
 					
-		move.w	(v_camera_x_pos_diff).w,d4
+		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
 		asl.l	#5,d4
-		move.w	(v_camera_y_pos_diff).w,d5
+		move.w	(v_camera_y_diff).w,d5
 		ext.l	d5
 		asl.l	#6,d5
 		bsr.w	UpdateBG_XY
@@ -19048,8 +19107,8 @@ loc_E88E:
 
 loc_E8A8:				
 					
-		move.w	(v_camera_x_pos_diff).w,(v_bg_x_pos_diff).w
-		move.w	(v_camera_y_pos_diff).w,(v_bg_y_pos_diff).w
+		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
+		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
 		bra.w	sub_EB78
@@ -19075,8 +19134,8 @@ loc_E8E6:
 		add.w	d0,(v_camera_y_pos_offset).w
 
 loc_E8EC:				
-		move.w	(v_camera_x_pos_diff).w,(v_bg_x_pos_diff).w
-		move.w	(v_camera_y_pos_diff).w,(v_bg_y_pos_diff).w
+		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
+		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
 		bra.w	sub_EB78
@@ -19102,8 +19161,8 @@ loc_E92C:
 
 loc_E932:				
 					
-		move.w	(v_camera_x_pos_diff).w,(v_bg_x_pos_diff).w
-		move.w	(v_camera_y_pos_diff).w,(v_bg_y_pos_diff).w
+		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
+		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
 		bra.w	sub_EB78
@@ -19247,8 +19306,8 @@ loc_EAA0:
 		bcs.s	loc_EAC8
 		cmpi.w	#$1F00,(v_camera_x_pos).w
 		bcc.s	loc_EAEE
-		move.w	(v_camera_x_pos_diff).w,(v_bg_x_pos_diff).w
-		move.w	(v_camera_y_pos_diff).w,(v_bg_y_pos_diff).w
+		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
+		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
 		bra.w	sub_EB78
@@ -19489,8 +19548,8 @@ loc_ED22:
 		bcs.s	loc_ED4A
 		cmpi.w	#$1B00,(v_camera_x_pos).w
 		bcc.s	loc_ED70
-		move.w	(v_camera_x_pos_diff).w,(v_bg_x_pos_diff).w
-		move.w	(v_camera_y_pos_diff).w,(v_bg_y_pos_diff).w
+		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
+		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
 		bra.w	sub_EB78
@@ -19605,8 +19664,8 @@ loc_EE84:
 		bcs.s	loc_EEAC
 		cmpi.w	#$1B00,(v_camera_x_pos).w
 		bcc.s	loc_EED2
-		move.w	(v_camera_x_pos_diff).w,(v_bg_x_pos_diff).w
-		move.w	(v_camera_y_pos_diff).w,(v_bg_y_pos_diff).w
+		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
+		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
 		bra.w	sub_EB78
@@ -20494,7 +20553,7 @@ sub_F728:
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	ost_render(a0),ost_render(a1)
 		bset	#render_subobjects_bit,ost_render(a1)
-		move.b	#$40,$E(a1)
+		move.b	#$40,ost_mainspr_width(a1)
 		move.b	d1,ost_mainspr_childsprites(a1)
 		subq.b	#1,d1
 		lea	ost_subspr2_x_pos(a1),a2
@@ -20688,10 +20747,10 @@ loc_F8D2:
 		move.w	d0,d1
 		add.w	d0,d0
 		add.w	d1,d0
-		move.w	$12(a2,d0.w),d0
+		move.w	ost_subspr2_y_pos(a2,d0.w),d0
 		subq.w	#8,d0
 		moveq	#0,d1
-		move.b	$16(a1),d1
+		move.b	ost_height(a1),d1
 		sub.w	d1,d0
 		move.w	d0,ost_y_pos(a1)
 		moveq	#0,d4
@@ -20772,8 +20831,8 @@ loc_F972:
 
 loc_F980:				
 		movea.l	$30(a0),a1
-		lea	$45(a1),a2
-		lea	$15(a1),a1
+		lea	ost_subspr9_frame+next_subspr(a1),a2
+		lea	ost_subspr2_frame(a1),a1
 		moveq	#0,d1
 		move.b	$28(a0),d1
 		subq.b	#1,d1
@@ -20827,7 +20886,7 @@ loc_F9D0:
 		cmpa.w	a2,a1
 		bne.s	loc_F9E2
 		movea.l	$34(a0),a1
-		lea	$15(a1),a1
+		lea	ost_subspr2_frame(a1),a1
 
 loc_F9E2:				
 		dbf	d1,loc_F996
@@ -20849,7 +20908,7 @@ loc_F9E8:
 		move.w	d3,d2
 		add.w	d0,d3
 		moveq	#0,d5
-		lea	(loc_FA16+2).l,a5
+		lea	(byte_FA98-$80).l,a5
 		move.b	(a5,d3.w),d5
 
 loc_FA16:				
@@ -20857,8 +20916,8 @@ loc_FA16:
 		lsl.w	#4,d3
 		lea	(a4,d3.w),a3
 		movea.l	$30(a0),a1
-		lea	$42(a1),a2
-		lea	$12(a1),a1
+		lea	ost_subspr9_y_pos+next_subspr(a1),a2
+		lea	ost_subspr2_y_pos(a1),a1
 
 loc_FA2C:				
 		moveq	#0,d0
@@ -20873,7 +20932,7 @@ loc_FA2C:
 		cmpa.w	a2,a1
 		bne.s	loc_FA4C
 		movea.l	$34(a0),a1
-		lea	$12(a1),a1
+		lea	ost_subspr2_y_pos(a1),a1
 
 loc_FA4C:				
 		dbf	d2,loc_FA2C
@@ -20905,7 +20964,7 @@ loc_FA72:
 		cmpa.w	a2,a1
 		bne.s	loc_FA92
 		movea.l	$34(a0),a1
-		lea	$12(a1),a1
+		lea	ost_subspr2_y_pos(a1),a1
 
 loc_FA92:				
 		dbf	d2,loc_FA72
@@ -20913,6 +20972,7 @@ loc_FA92:
 locret_FA96:								
 		rts	
 ; ===========================================================================
+byte_FA98:
 		dc.b   2,  4,  6,  8,  8,  6,  4,  2,  0,  0,  0,  0,  0,  0,  0,  0 ; 0
 		dc.b   2,  4,  6,  8, $A,  8,  6,  4,  2,  0,  0,  0,  0,  0,  0,  0 ; 16
 		dc.b   2,  4,  6,  8, $A, $A,  8,  6,  4,  2,  0,  0,  0,  0,  0,  0 ; 32
@@ -20995,7 +21055,7 @@ loc_FCCA:
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,$18(a0)
 		move.b	#$20,$19(a0)
-		move.b	#$10,$16(a0)
+		move.b	#$10,ost_height(a0)
 		move.w	ost_y_pos(a0),$38(a0)
 		move.w	ost_x_pos(a0),$3A(a0)
 		cmpi.b	#$B,(v_zone).w
@@ -21003,7 +21063,7 @@ loc_FCCA:
 		move.l	#Map_Swing_Track_CPZ_MCZ,ost_mappings(a0)
 		move.w	#0,ost_tile(a0)
 		move.b	#$18,$19(a0)
-		move.b	#8,$16(a0)
+		move.b	#8,ost_height(a0)
 
 loc_FD22:				
 		cmpi.b	#$F,(v_zone).w
@@ -21011,7 +21071,7 @@ loc_FD22:
 		move.l	#Map_Swing_Circle_ARZ,ost_mappings(a0)
 		move.w	#0,ost_tile(a0)
 		move.b	#$20,$19(a0)
-		move.b	#8,$16(a0)
+		move.b	#8,ost_height(a0)
 
 loc_FD44:				
 		bsr.w	Adjust2PArtPointer
@@ -21037,7 +21097,7 @@ loc_FD54:
 		move.b	#4,$24(a1)
 		move.b	#4,$18(a1)
 		move.b	#$10,$19(a1)
-		move.b	#$50,$16(a1)
+		move.b	#$50,ost_height(a1)
 		bset	#render_useheight_bit,ost_render(a1)
 		move.b	#3,$1A(a1)
 		move.w	d2,ost_x_pos(a1)
@@ -21050,7 +21110,7 @@ loc_FD54:
 
 loc_FDC6:				
 		bset	#render_subobjects_bit,ost_render(a1)
-		move.b	#$48,$E(a1)
+		move.b	#$48,ost_mainspr_width(a1)
 		move.b	d1,ost_mainspr_childsprites(a1)
 		subq.b	#1,d1
 		lea	ost_subspr2_x_pos(a1),a2
@@ -21093,7 +21153,7 @@ loc_FE50:
 		moveq	#0,d1
 		move.b	$19(a0),d1
 		moveq	#0,d3
-		move.b	$16(a0),d3
+		move.b	ost_height(a0),d3
 		addq.b	#1,d3
 		popr.w	d4
 		jsrto	DetectPlatform2,JmpTo_DetectPlatform2
@@ -21182,7 +21242,7 @@ loc_FF0A:
 		popr.l	d4-d5
 		add.l	d0,d4
 		add.l	d1,d5
-		addq.w	#ost_next_subsprite-4,a2
+		addq.w	#next_subspr-4,a2
 		dbf	d6,loc_FF0A
 		
 		pushr.l	d4-d5
@@ -21304,7 +21364,7 @@ loc_1003E:
 		moveq	#0,d1
 		move.b	$19(a0),d1
 		moveq	#0,d3
-		move.b	$16(a0),d3
+		move.b	ost_height(a0),d3
 		addq.b	#1,d3
 		move.w	(sp)+,d4
 		jsrto	DetectPlatform2,JmpTo_DetectPlatform2
@@ -21328,10 +21388,10 @@ loc_1007A:
 		addq.b	#2,$24(a1)
 
 loc_10098:				
-		move.w	#$200,$10(a1)
+		move.w	#$200,ost_x_vel(a1)
 		btst	#0,$22(a0)
 		beq.s	loc_100AA
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 
 loc_100AA:				
 		bset	#1,$22(a1)
@@ -21375,13 +21435,13 @@ loc_10100:
 		btst	#1,$22(a0)
 		beq.s	loc_1013E
 		bsr.w	SpeedToPos
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		cmpi.w	#$720,ost_y_pos(a0)
 		bcs.s	loc_1014E
 		move.w	#$720,ost_y_pos(a0)
 		bclr	#1,$22(a0)
-		move.w	#0,$10(a0)
-		move.w	#0,$12(a0)
+		move.w	#0,ost_x_vel(a0)		; could be clr.w
+		move.w	#0,ost_y_vel(a0)
 		move.w	ost_y_pos(a0),$38(a0)
 		bra.s	loc_1014E
 ; ===========================================================================
@@ -21398,7 +21458,7 @@ loc_1014E:
 		moveq	#0,d1
 		move.b	$19(a0),d1
 		moveq	#0,d3
-		move.b	$16(a0),d3
+		move.b	ost_height(a0),d3
 		addq.b	#1,d3
 		move.w	(sp)+,d4
 		jsrto	DetectPlatform2,JmpTo_DetectPlatform2
@@ -21410,15 +21470,15 @@ loc_10166:
 		bsr.w	SpeedToPos
 		btst	#1,$22(a0)
 		beq.s	loc_101A2
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		move.w	(v_water_height_normal).w,d0
 		cmp.w	ost_y_pos(a0),d0
 		bhi.s	loc_101D0
 		move.w	d0,ost_y_pos(a0)
 		move.w	d0,$38(a0)
 		bclr	#1,$22(a0)
-		move.w	#$100,$10(a0)
-		move.w	#0,$12(a0)
+		move.w	#$100,ost_x_vel(a0)
+		move.w	#0,ost_y_vel(a0)
 		bra.s	loc_101D0
 ; ===========================================================================
 
@@ -21428,7 +21488,7 @@ loc_101A2:
 		lsr.w	#1,d0
 		add.w	$38(a0),d0
 		move.w	d0,ost_y_pos(a0)
-		tst.w	$10(a0)
+		tst.w	ost_x_vel(a0)
 		beq.s	loc_101D0
 		moveq	#0,d3
 		move.b	$19(a0),d3
@@ -21436,14 +21496,14 @@ loc_101A2:
 		tst.w	d1
 		bpl.s	loc_101D0
 		add.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
+		move.w	#0,ost_x_vel(a0)		; could be clr.w
 
 loc_101D0:				
 					
 		moveq	#0,d1
 		move.b	$19(a0),d1
 		moveq	#0,d3
-		move.b	$16(a0),d3
+		move.b	ost_height(a0),d3
 		addq.b	#1,d3
 		move.w	(sp)+,d4
 		jsrto	DetectPlatform2,JmpTo_DetectPlatform2
@@ -21664,10 +21724,10 @@ loc_1050E:
 		bpl.s	loc_10564
 		addq.b	#6,ost_primary_routine(a0)
 		andi.b	#$F,$28(a0)
-		move.b	#$30,$16(a0)
+		move.b	#$30,ost_height(a0)
 		cmpi.b	#$F,(v_zone).w
 		bne.s	loc_1055A
-		move.b	#$28,$16(a0)
+		move.b	#$28,ost_height(a0)
 
 loc_1055A:				
 		bset	#render_useheight_bit,ost_render(a0)
@@ -21756,7 +21816,7 @@ loc_105FE:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	(sp)+,d4
@@ -21914,12 +21974,12 @@ loc_1071C:
 loc_10730:				
 					
 		move.l	$2C(a0),d3
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
 		move.l	d3,$2C(a0)
-		addi.w	#$38,$12(a0)
+		addi.w	#$38,ost_y_vel(a0)
 		move.w	(v_boundary_bottom).w,d0
 		addi.w	#$120,d0
 		cmp.w	$2C(a0),d0
@@ -21937,7 +21997,7 @@ sub_1075E:
 		bset	#1,$22(a1)
 		bclr	#3,$22(a1)
 		move.b	#2,$24(a1)
-		move.w	$12(a0),$12(a1)
+		move.w	ost_y_vel(a0),ost_y_vel(a1)
 		rts	
 
 ; ===========================================================================
@@ -22081,7 +22141,7 @@ loc_10938:
 loc_10962:				
 		move.l	#byte_10C3C,$3C(a0)
 		move.b	#$34,$19(a0)
-		move.b	#$38,$16(a0)
+		move.b	#$38,ost_height(a0)
 		bset	#render_useheight_bit,ost_render(a0)
 
 loc_1097C:				
@@ -22315,7 +22375,7 @@ loc_10B9E:
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	$18(a0),$18(a1)
 		move.b	$19(a0),$19(a1)
-		move.b	$16(a0),$16(a1)
+		move.b	ost_height(a0),ost_height(a1)
 		move.b	(a4)+,$38(a1)
 		cmpa.l	a0,a1
 		bcc.s	loc_10BE0
@@ -22482,7 +22542,7 @@ loc_112A4:
 		lea	Scenery1_Radii(pc),a1
 		move.b	(a1,d1.w),d1
 		beq.s	loc_112EC
-		move.b	d1,$16(a0)
+		move.b	d1,ost_height(a0)
 		bset	#render_useheight_bit,ost_render(a0)
 
 loc_112EC:				
@@ -22583,7 +22643,7 @@ loc_115D6:
 		move.b	#$10,$19(a0)
 		move.b	#4,$18(a0)
 		move.w	ost_y_pos(a0),$32(a0)
-		move.b	#$50,$16(a0)
+		move.b	#$50,ost_height(a0)
 		bset	#render_useheight_bit,ost_render(a0)
 
 loc_11610:				
@@ -22962,11 +23022,11 @@ Anml_Main:
 		move.l	Anml_EndMap(pc,d0.w),ost_mappings(a0)
 		lea	Anml_EndSpeeds(pc),a1
 		move.w	(a1,d0.w),$32(a0)
-		move.w	(a1,d0.w),$10(a0)
+		move.w	(a1,d0.w),ost_x_vel(a0)
 		move.w	2(a1,d0.w),$34(a0)
-		move.w	2(a1,d0.w),$12(a0)
+		move.w	2(a1,d0.w),ost_y_vel(a0)
 		bsr.w	Adjust2PArtPointer
-		move.b	#$C,$16(a0)
+		move.b	#$C,ost_height(a0)
 		move.b	#render_rel,ost_render(a0)
 		bset	#render_xflip_bit,ost_render(a0)
 		move.b	#6,$18(a0)
@@ -22998,14 +23058,14 @@ loc_11A46:
 		move.w	(a1)+,$34(a0)
 		move.l	(a1)+,ost_mappings(a0)
 		bsr.w	Adjust2PArtPointer
-		move.b	#$C,$16(a0)
+		move.b	#$C,ost_height(a0)
 		move.b	#render_rel,ost_render(a0)
 		bset	#render_xflip_bit,ost_render(a0)
 		move.b	#6,$18(a0)
 		move.b	#8,$19(a0)
 		move.b	#7,$1E(a0)
 		move.b	#2,$1A(a0)
-		move.w	#-$400,$12(a0)
+		move.w	#-$400,ost_y_vel(a0)
 		tst.b	$38(a0)
 		bne.s	loc_11AD0
 		bsr.w	FindFreeObj
@@ -23023,7 +23083,7 @@ loc_11ACC:
 
 loc_11AD0:				
 		move.b	#$1C,ost_primary_routine(a0)
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 		bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -23031,14 +23091,14 @@ loc_11ADE:
 		tst.b	ost_render(a0)
 		bpl.w	DeleteObject
 		bsr.w	ObjectFall
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	loc_11B34
 		jsr	FindFloorObj
 		tst.w	d1
 		bpl.s	loc_11B34
 		add.w	d1,ost_y_pos(a0)
-		move.w	$32(a0),$10(a0)
-		move.w	$34(a0),$12(a0)
+		move.w	$32(a0),ost_x_vel(a0)
+		move.w	$34(a0),ost_y_vel(a0)
 		move.b	#1,$1A(a0)
 		move.b	$30(a0),d0
 		add.b	d0,d0
@@ -23048,7 +23108,7 @@ loc_11ADE:
 		beq.s	loc_11B34
 		btst	#4,(v_vblank_counter_byte).w
 		beq.s	loc_11B34
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
 
 loc_11B34:								
@@ -23059,14 +23119,14 @@ loc_11B38:
 					
 		bsr.w	ObjectFall
 		move.b	#1,$1A(a0)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	loc_11B62
 		move.b	#0,$1A(a0)
 		jsr	FindFloorObj
 		tst.w	d1
 		bpl.s	loc_11B62
 		add.w	d1,ost_y_pos(a0)
-		move.w	$34(a0),$12(a0)
+		move.w	$34(a0),ost_y_vel(a0)
 
 loc_11B62:				
 					
@@ -23080,19 +23140,19 @@ loc_11B62:
 loc_11B74:				
 					
 		bsr.w	SpeedToPos
-		addi.w	#$18,$12(a0)
-		tst.w	$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	loc_11BB0
 		jsr	FindFloorObj
 		tst.w	d1
 		bpl.s	loc_11BB0
 		add.w	d1,ost_y_pos(a0)
-		move.w	$34(a0),$12(a0)
+		move.w	$34(a0),ost_y_vel(a0)
 		tst.b	$28(a0)
 		beq.s	loc_11BB0
 		cmpi.b	#$A,$28(a0)
 		beq.s	loc_11BB0
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
 
 loc_11BB0:				
@@ -23141,8 +23201,8 @@ loc_11C10:
 loc_11C14:				
 		bsr.w	sub_11DB8
 		bcc.s	loc_11C30
-		move.w	$32(a0),$10(a0)
-		move.w	$34(a0),$12(a0)
+		move.w	$32(a0),ost_x_vel(a0)
+		move.w	$34(a0),ost_y_vel(a0)
 		move.b	#$E,ost_primary_routine(a0)
 		bra.w	loc_11B74
 ; ===========================================================================
@@ -23154,10 +23214,10 @@ loc_11C30:
 loc_11C34:				
 		bsr.w	sub_11DB8
 		bpl.s	loc_11C6A
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 		clr.w	$32(a0)
 		bsr.w	SpeedToPos
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		bsr.w	sub_11D78
 		bsr.w	sub_11DA0
 		subq.b	#1,$1E(a0)
@@ -23173,8 +23233,8 @@ loc_11C6A:
 loc_11C6E:				
 		bsr.w	sub_11DB8
 		bpl.s	loc_11CC4
-		move.w	$32(a0),$10(a0)
-		move.w	$34(a0),$12(a0)
+		move.w	$32(a0),ost_x_vel(a0)
+		move.w	$34(a0),ost_y_vel(a0)
 		move.b	#4,ost_primary_routine(a0)
 		bra.w	loc_11B38
 ; ===========================================================================
@@ -23182,7 +23242,7 @@ loc_11C6E:
 loc_11C8A:				
 		bsr.w	ObjectFall
 		move.b	#1,$1A(a0)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	loc_11CC4
 		move.b	#0,$1A(a0)
 		jsr	FindFloorObj
@@ -23190,12 +23250,12 @@ loc_11C8A:
 		bpl.s	loc_11CC4
 		not.b	$29(a0)
 		bne.s	loc_11CBA
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
 
 loc_11CBA:				
 		add.w	d1,ost_y_pos(a0)
-		move.w	$34(a0),$12(a0)
+		move.w	$34(a0),ost_y_vel(a0)
 
 loc_11CC4:				
 					
@@ -23205,7 +23265,7 @@ loc_11CC4:
 loc_11CC8:				
 		bsr.w	sub_11DB8
 		bpl.s	loc_11CE2
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 		clr.w	$32(a0)
 		bsr.w	ObjectFall
 		bsr.w	sub_11D78
@@ -23220,16 +23280,16 @@ loc_11CE6:
 		bpl.s	loc_11D20
 		bsr.w	ObjectFall
 		move.b	#1,$1A(a0)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	loc_11D20
 		move.b	#0,$1A(a0)
 		jsr	FindFloorObj
 		tst.w	d1
 		bpl.s	loc_11D20
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
 		add.w	d1,ost_y_pos(a0)
-		move.w	$34(a0),$12(a0)
+		move.w	$34(a0),ost_y_vel(a0)
 
 loc_11D20:				
 					
@@ -23240,20 +23300,20 @@ loc_11D24:
 		bsr.w	sub_11DB8
 		bpl.s	loc_11D74
 		bsr.w	SpeedToPos
-		addi.w	#$18,$12(a0)
-		tst.w	$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	loc_11D5E
 		jsr	FindFloorObj
 		tst.w	d1
 		bpl.s	loc_11D5E
 		not.b	$29(a0)
 		bne.s	loc_11D54
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
 
 loc_11D54:				
 		add.w	d1,ost_y_pos(a0)
-		move.w	$34(a0),$12(a0)
+		move.w	$34(a0),ost_y_vel(a0)
 
 loc_11D5E:				
 					
@@ -23273,14 +23333,14 @@ loc_11D74:
 sub_11D78:				
 					
 		move.b	#1,$1A(a0)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	locret_11D9E
 		move.b	#0,$1A(a0)
 		jsr	FindFloorObj
 		tst.w	d1
 		bpl.s	locret_11D9E
 		add.w	d1,ost_y_pos(a0)
-		move.w	$34(a0),$12(a0)
+		move.w	$34(a0),ost_y_vel(a0)
 
 locret_11D9E:									
 		rts	
@@ -23527,7 +23587,7 @@ loc_120B2:
 loc_120BA:				
 		_move.b	#id_RingLoss,ost_id(a1)
 		addq.b	#2,$24(a1)
-		move.b	#8,$16(a1)
+		move.b	#8,ost_height(a1)
 		move.b	#8,$17(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
@@ -23557,8 +23617,8 @@ loc_120BA:
 
 loc_12132:				
 					
-		move.w	d2,$10(a1)
-		move.w	d3,$12(a1)
+		move.w	d2,ost_x_vel(a1)
+		move.w	d3,ost_y_vel(a1)
 		neg.w	d2
 		neg.w	d4
 		dbf	d5,loc_120B2
@@ -23583,7 +23643,7 @@ loc_12178:
 					
 		move.b	(v_syncani_3_frame).w,$1A(a0)
 		bsr.w	SpeedToPos
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		bmi.s	loc_121B8
 		move.b	(v_vblank_counter_byte).w,d0
 		add.b	d7,d0
@@ -23595,10 +23655,10 @@ loc_12178:
 		tst.w	d1
 		bpl.s	loc_121B8
 		add.w	d1,ost_y_pos(a0)
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		asr.w	#2,d0
-		sub.w	d0,$12(a0)
-		neg.w	$12(a0)
+		sub.w	d0,ost_y_vel(a0)
+		neg.w	ost_y_vel(a0)
 
 loc_121B8:				
 					
@@ -23908,7 +23968,7 @@ off_1267E:
 
 loc_12688:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.b	#$E,$16(a0)
+		move.b	#$E,ost_height(a0)
 		move.b	#$E,$17(a0)
 		move.l	#Map_Monitor,ost_mappings(a0)
 		move.w	#tile_Nem_Monitors,ost_tile(a0)
@@ -23943,7 +24003,7 @@ loc_126FA:
 		tst.w	d1
 		bpl.w	loc_1271C
 		add.w	d1,ost_y_pos(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		clr.b	$25(a0)
 
 loc_1271C:				
@@ -24091,7 +24151,7 @@ loc_12868:
 loc_1287C:
 		move.b	#3,$18(a0)
 		move.b	#8,$19(a0)
-		move.w	#-$300,$12(a0)
+		move.w	#-$300,ost_y_vel(a0)
 		moveq	#0,d0
 		move.b	$1C(a0),d0
 		tst.w	(f_two_player).w
@@ -24133,10 +24193,10 @@ loc_128DE:
 
 
 sub_128E4:				
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bpl.w	loc_128F8
 		bsr.w	SpeedToPos
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -24166,7 +24226,7 @@ off_12924:
 		dc.w loc_129E0-off_12924			; 5
 		dc.w loc_12A2C-off_12924			; 6
 		dc.w Invincible_Monitor-off_12924		; 7
-		dc.w loc_12AA6-off_12924			; 8
+		dc.w Pow_Teleport-off_12924			; 8
 		dc.w loc_12CBE-off_12924			; 9
 ; ===========================================================================
 
@@ -24314,20 +24374,20 @@ Invincible_Monitor:
 		rts	
 ; ===========================================================================
 
-loc_12AA6:				
+Pow_Teleport:				
 		addq.w	#1,(a2)
-		cmpi.b	#6,($FFFFB024).w
-		bcc.s	locret_12AB8
-		cmpi.b	#6,($FFFFB064).w
-		bcs.s	loc_12ABA
+		cmpi.b	#id_Sonic_Death,(v_ost_player1+ost_primary_routine).w	; is player 1 dead or respawning?
+		bcc.s	.no_teleport									; if so, branch
+		cmpi.b	#id_Tails_Death,(v_ost_player2+ost_primary_routine).w	; is player 2 dead or respawning?	
+		bcs.s	.swap_players										; if not, branch
 
-locret_12AB8:				
-		rts	
+	.no_teleport:				
+		rts			; we can't teleport if one player is dead or respawning
 ; ===========================================================================
 
-loc_12ABA:				
+.swap_players:				
 		lea	(Teleport_Swap_Table).l,a3
-		moveq	#(sizeof_Teleport_Swap_Table/6)-1,d2
+		moveq	#(sizeof_Teleport_Swap_Table/6)-1,d2 	; number of entries in table - 1
 
 loc_12AC2:				
 		movea.w	(a3)+,a1
@@ -24413,7 +24473,7 @@ loc_12B94:
 		move.w	a1,($FFFFD23E).w
 		btst	#2,$22(a1)
 		bne.s	loc_12BC8
-		move.b	#$13,$16(a1)
+		move.b	#$13,ost_height(a1)
 		move.b	#9,$17(a1)
 
 loc_12BC8:				
@@ -24435,7 +24495,7 @@ loc_12BEC:
 		move.w	a1,($FFFFD33E).w
 		btst	#2,$22(a1)
 		bne.s	loc_12C18
-		move.b	#$F,$16(a1)
+		move.b	#$F,ost_height(a1)
 		move.b	#9,$17(a1)
 
 loc_12C18:				
@@ -24455,23 +24515,36 @@ loc_12C3C:
 		move.w	#$EC,d0	
 		jmp	PlayMusic
 ; ===========================================================================
-;teleport_table_entry macro addressA, addressB
-;sizeA equ addressA_End-addressA
-;sizeB equ addressB_End-addressB
-;	if (sizeA<>sizeB)
-;		inform 3,"The space between 'addressA' and 'addressA_End' ($%h bytes), and 'addressB' and 'addressB_End' ($%h bytes) need to be the same size.",sizeA,sizeB
-;	endc
-;	dc.w	addressA, addressB, (.sizeA/2)-1
-;	endm
 
-Teleport_Swap_Table:	
-		dc.b $B0,  8,$B0,$48,  0,$1B,$F7,$6E,$F7,$8C,  0,  0,$FC,  0,$F7,$8E ; 0			
-		dc.b   0,  0,$F7,$70,$F7,$78,  0,  3,$F7,$60,$FE,$C0,  0,  2,$F7,$12 ; 16
-		dc.b $F7,$16,  0,  1,$F7,$1C,$F7,$24,  0,  3,$EE,  0,$EE,$20,  0, $F ; 32
-		dc.b $F7,$DA,$F7,$DC,  0,  0,$EE,$C8,$EE,$F8,  0,  3,$EE,$D0,$EE,$D4 ; 48
-		dc.b   0,  1,$EE,$D8,$EE,$DA,  0,  0,$EE,$40,$EE,$48,  0,  3,$EE,$50 ; 64
-		dc.b $EE,$58,  0,  3,$EE,$60,$EE,$80,  0, $F,$EE,$A0,$EE,$A8,  0,  3 ; 80
-		dc.b $EE,$B0,$EE,$B8,  0,  1,$E5,  0,$E6,  0,  0,$7F ; 96
+teleport_table_entry: macro address_a,address_b
+		if (sizeof_\address_a<>sizeof_\address_b)
+			inform 3,"The blocks of RAM assigned to \address_a and \address_b must be the same size, but they are $%h bytes and $%h bytes respectively.",sizeof_\address_a,sizeof_\address_b
+		endc
+		dc.w	\address_a,\address_b, (sizeof_\address_a\/2)-1
+		endm
+
+Teleport_Swap_Table:
+	
+		dc.w v_ost_player1+ost_x_pos, v_ost_player2+ost_x_pos, ((sizeof_ost-ost_x_pos)/2)-1
+
+		teleport_table_entry	v_opl_screen_x_pos,			v_opl_screen_x_pos_p2
+		teleport_table_entry 	v_respawn_list, 			v_respawn_list_p2
+		teleport_table_entry 	object_manager_addresses, 	object_manager_addresses_p2
+		teleport_table_entry 	sonic_speeds, 				tails_speeds
+		teleport_table_entry	ring_manager_pointers,		ring_manager_pointers_p2
+		teleport_table_entry	bumper_manager_pointers,	bumper_manager_pointers_p2
+		teleport_table_entry	camera_positions,			camera_positions_p2
+		teleport_table_entry	v_camera_x_pos_coarse,		v_camera_x_pos_coarse_p2
+		teleport_table_entry	camera_boundaries, 			camera_boundaries_p2
+		teleport_table_entry	horiz_scroll_delay,			horiz_scroll_delay_P2
+		teleport_table_entry	v_camera_y_shift,			v_camera_y_shift_p2
+		teleport_table_entry	block_redraw_flags, 		block_redraw_flags_p2
+		teleport_table_entry	scroll_redraw_flags, 		scroll_redraw_flags_p2
+		teleport_table_entry	vblank_camera_copies,		v_camera_pos_p2_copy
+		teleport_table_entry 	vblank_scroll_redraw_flags, vblank_scroll_redraw_flags_p2
+		teleport_table_entry	camera_diffs, 				camera_diffs_p2
+		teleport_table_entry	v_sonic_pos_tracker,		v_tails_pos_tracker
+
 		arraysize Teleport_Swap_Table
 ; ===========================================================================
 
@@ -24872,7 +24945,7 @@ TitleIntro_LogoTop_Main:
 
 	.notJPKR:				
 		move.b	#2,ost_priority(a0)
-		move.w	#screen_left+320/2,ost_x_screen(a0)
+		move.w	#screen_left+(screen_width/2),ost_x_screen(a0)
 		move.w	#screen_top+104,ost_y_screen(a0)
 
 TitleIntro_NextSecondaryRoutine:				
@@ -25425,8 +25498,8 @@ off_13612:
 
 loc_13616:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.w	#screen_left+168,ost_x_screen(a0)
-		move.w	#screen_top+204,ost_y_screen(a0)
+		move.w	#screen_left+(screen_width/2)+8,ost_x_screen(a0)
+		move.w	#screen_top+(screen_height/2)+92,ost_y_screen(a0)
 		move.l	#Map_TitleMenu,ost_mappings(a0)
 		move.w	#vram_start,ost_tile(a0)
 		bsr.w	Adjust2PArtPointer
@@ -25752,8 +25825,8 @@ Card_Move:
 		neg.w	d0					; move in the other direction
 
 	.beyond_target:				
-		sub.w	d0,ost_x_screen(a0)			; move the item
-		cmpi.w	#$200,ost_x_screen(a0)			; is item right of $200 on x-axis?
+		sub.w	d0,ost_x_screen(a0)				; move the item
+		cmpi.w	#screen_right+64,ost_x_screen(a0)			; is is more than 64 pixels beyond right edge of screen?
 		bhi.s	.no_display				; if so, branch	
 
 	.at_target:				
@@ -25836,7 +25909,7 @@ Card_MoveBack:
 
 	.not_at_target:				
 		sub.w	d0,ost_x_screen(a0)			; move the item
-		cmpi.w	#$200,ost_x_screen(a0)			; is item right of $200 on x-axis?
+		cmpi.w	#screen_right+64,ost_x_screen(a0)			; is is more than 64 pixels beyond right edge of screen?
 		bhi.s	.no_display				; if so, branch
 		bra.w	DisplaySprite
 ; ===========================================================================
@@ -25881,8 +25954,8 @@ Card_WaitAndGoAway:
 
 	.beyond_target:				
 		sub.w	d0,ost_x_screen(a0)			; update position
-		cmpi.w	#$200,ost_x_screen(a0)			; is item right of $200 on x-axis?
-		bhi.s	Card_ChangeArt				; if it is, branch
+		cmpi.w	#screen_right+64,ost_x_screen(a0)			; is is more than 64 pixels beyond right edge of screen?
+		bhi.s	Card_ChangeArt				; if so, branch
 
 	.display:				
 		bra.w	DisplaySprite
@@ -26223,8 +26296,8 @@ loc_14214:
 loc_14220:				
 		_move.b	#id_GotThroughCard,ost_id(a1)
 		move.b	#$12,$24(a1)
-		move.w	#$188,ost_x_screen(a1)
-		move.w	#$118,ost_y_screen(a1)
+		move.w	#screen_left+264,ost_x_screen(a1)
+		move.w	#screen_top+152,ost_y_screen(a1)
 		move.l	#Map_GotThrough,ost_mappings(a1)
 		bsr.w	Adjust2PArtPointer2
 		move.b	#render_abs,ost_render(a1)
@@ -26799,9 +26872,9 @@ Obj6F_InitAndMoveSuperMsg:
 		move.w	ost_x_pos(a0),d0
 		cmp.w	$32(a0),d0
 		bne.s	loc_14714
-		move.b	#$14,$64(a0)
-		subq.w	#8,$4A(a0)
-		move.b	#$1A,$5A(a0)
+		move.b	#$14,sizeof_ost+ost_primary_routine(a0)
+		subq.w	#8,sizeof_ost+ost_y_screen(a0)
+		move.b	#$1A,sizeof_ost+ost_frame(a0)
 		move.b	#$34,ost_primary_routine(a0)
 		subq.w	#8,ost_y_screen(a0)
 		move.b	#$1B,$1A(a0)
@@ -26818,8 +26891,7 @@ Obj6F_InitAndMoveSuperMsg:
 		bra.w	DisplaySprite
 ; ===========================================================================
 
-loc_14714:				
-					
+loc_14714:								
 		moveq	#$20,d0
 		move.w	ost_x_pos(a0),d1
 		cmp.w	$32(a0),d1
@@ -26848,20 +26920,20 @@ loc_14736:
 		move.b	#$20,ost_primary_routine(a0)
 		bra.w	DisplaySprite
 ; ===========================================================================
-byte_14752:	; define in terms of screen bounds
-		gotthrough_data  $240, $120,  $AA,   2,   0	; "Special Stage"
-		gotthrough_data     0, $120,  $98,   4,   1	; "Sonic got a"
-		gotthrough_data  $118,    0,  $C4,   6,   5	; Emerald 0
-		gotthrough_data  $130,    0,  $D0,   8,   6	; Emerald 1
-		gotthrough_data  $130,    0,  $E8,  $A,   7	; Emerald 2
-		gotthrough_data  $118,    0,  $F4,  $C,   8	; Emerald 3
-		gotthrough_data  $100,    0,  $E8,  $E,   9	; Emerald 4
-		gotthrough_data  $100,    0,  $D0, $10,  $A	; Emerald 5
-		gotthrough_data  $118,    0,  $DC, $12,  $B	; Emerald 6
-		gotthrough_data  $330, $120, $108, $14,  $C	; Score
-		gotthrough_data  $340, $120, $118, $16,  $D	; Sonic Rings
-		gotthrough_data  $350, $120, $128, $18,  $E	; Miles Rings
-		gotthrough_data  $360, $120, $138, $1A, $10	; Gems Bonus
+byte_14752:
+		gotthrough_data  screen_right+128, 	screen_left+160,	screen_top+42,   2,   0	; "Special Stage"
+		gotthrough_data  0, 				screen_left+160,	screen_top+24,   4,   1	; "Sonic got a"
+		gotthrough_data  screen_left+152,   0,  				screen_top+68,   6,   5	; Emerald 0
+		gotthrough_data  screen_left+176,   0,  				screen_top+80,   8,   6	; Emerald 1
+		gotthrough_data  screen_left+176,	0,					screen_top+104,  $A,   7	; Emerald 2
+		gotthrough_data  screen_left+152,   0,					screen_top+116,  $C,   8	; Emerald 3
+		gotthrough_data  screen_left+128,   0,					screen_top+104,  $E,   9	; Emerald 4
+		gotthrough_data  screen_left+128,	0,					screen_top+80, 	$10,  $A	; Emerald 5
+		gotthrough_data  screen_left+152,   0,  				screen_top+92,	$12,  $B	; Emerald 6
+		gotthrough_data  screen_right+368, 	screen_left+160,	screen_top+136, $14,  $C	; Score
+		gotthrough_data  screen_right+384, 	screen_left+160,	screen_top+152, $16,  $D	; Sonic Rings
+		gotthrough_data  screen_right+400, 	screen_left+160,	screen_top+168, $18,  $E	; Miles Rings
+		gotthrough_data  screen_right+416, 	screen_left+160,	screen_top+184, $1A, $10	; Gems Bonus
 
 ; ===========================================================================
 
@@ -27040,7 +27112,7 @@ loc_15702:
 		move.l	d0,vdp_control_port-vdp_data_port(a6)
 		move.l	d6,(a6)
 		move.l	d6,(a6)
-		addi.l	#$800000,d0
+		addi.l	#$80<<16,d0
 		dbf	d4,loc_15702
 
 loc_15714:				
@@ -27052,7 +27124,8 @@ loc_15714:
 		beq.s	loc_15758
 		lea	(v_camera_x_pos_p2).w,a3
 		lea	(v_level_layout).w,a4
-		move.w	#$6000,d2
+		;move.w	#$6000,d2
+		vdp_comm.w	move,vram_fg_2p,vram,write,d2,>>16,d0
 		moveq	#1,d6
 
 loc_15736:				
@@ -27115,9 +27188,8 @@ LoadTitleCardSS:
 ; ===========================================================================
 
 
-sub_157B0:				
-					
-		move.l	#$70000002,(vdp_control_port).l
+sub_157B0:							
+		vdp_comm.l	move,vram_TitleCard,vram,write,(vdp_control_port).l
 		lea	(Nem_TitleCard).l,a0
 		jsrto	NemDec,JmpTo2_NemDec
 		lea	(v_level_layout).w,a4
@@ -27131,8 +27203,8 @@ LoadTitleCard:
 		move.b	(v_zone).w,d0
 		move.b	byte_15820(pc,d0.w),d0
 		lea	word_15832(pc),a0
-		lea	(a0,d0.w),a0
-		move.l	#$7BC00002,d0
+		lea	(a0,d0.w),a0	
+		vdp_comm.l	move,vram_LevelName,vram,write,d0
 
 loc_157EC:				
 		disable_ints
@@ -27244,7 +27316,7 @@ loc_15926:
 		lsr.w	#3,d0
 		adda.w	d0,a1
 		move.b	(a1)+,$19(a0)
-		move.b	(a1)+,$16(a0)
+		move.b	(a1)+,ost_height(a0)
 		lsr.w	#1,d0
 		move.b	d0,$1A(a0)
 		cmpi.b	#4,d0
@@ -27269,7 +27341,7 @@ loc_15996:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	ost_x_pos(a0),d4
@@ -27302,7 +27374,7 @@ loc_159E6:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	(sp)+,d4
@@ -27336,7 +27408,7 @@ loc_15A42:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	ost_x_pos(a0),d4
@@ -27371,7 +27443,7 @@ React_ChkHurt2:
 		cmpi.b	#4,$24(a1)
 		bcc.s	locret_15AC4
 		move.l	ost_y_pos(a1),d3
-		move.w	$12(a1),d0
+		move.w	ost_y_vel(a1),d0
 		ext.l	d0
 		asl.l	#8,d0
 		sub.l	d0,d3
@@ -27567,7 +27639,7 @@ loc_15DAE:
 loc_15DC2:				
 		cmpi.w	#$480,d0
 		bcs.s	locret_15DAC
-		move.w	$30(a0),$10(a1)
+		move.w	$30(a0),ost_x_vel(a1)
 		addq.w	#4,ost_x_pos(a1)
 		lea	(word_15E8C).l,a4
 		move.w	ost_x_pos(a0),d0
@@ -27577,14 +27649,14 @@ loc_15DC2:
 		lea	(word_15EAC).l,a4
 
 loc_15DEE:				
-		move.w	$10(a1),ost_inertia(a1)
+		move.w	ost_x_vel(a1),ost_inertia(a1)
 		bclr	#5,$22(a0)
 		bclr	#5,$22(a1)
 		bsr.s	SmashObject
 
 loc_15E02:				
 		bsr.w	SpeedToPos
-		addi.w	#$70,$12(a0)
+		addi.w	#$70,ost_y_vel(a0)
 		tst.b	ost_render(a0)
 		bpl.w	DeleteObject
 		bra.w	DisplaySprite
@@ -27622,8 +27694,8 @@ loc_15E46:
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	$18(a0),$18(a1)
 		move.b	$19(a0),$19(a1)
-		move.w	(a4)+,$10(a1)
-		move.w	(a4)+,$12(a1)
+		move.w	(a4)+,ost_x_vel(a1)
+		move.w	(a4)+,ost_y_vel(a1)
 		dbf	d1,loc_15E3E
 
 loc_15E82:				
@@ -28890,7 +28962,7 @@ loc_1698C:
 		btst	#4,d4
 		beq.s	loc_16A0E
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		move.w	ost_y_pos(a0),d2
 		sub.w	4(a1),d2
 		move.w	d2,d1
@@ -29008,7 +29080,7 @@ loc_16AA6:
 		btst	#4,d4
 		beq.s	loc_16B22
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		move.w	ost_y_pos(a0),d2
 		sub.w	4(a1),d2
 		move.w	d2,d1
@@ -29025,19 +29097,19 @@ loc_16AA6:
 loc_16B14:				
 		move.w	ost_y_screen(a0),d2
 		move.w	ost_x_screen(a0),d3
-		addi.w	#$160,d2
+		addi.w	#screen_top+screen_height,d2
 		bra.s	loc_16B3E
 ; ===========================================================================
 
 loc_16B22:				
 		move.w	ost_y_pos(a0),d2
 		sub.w	4(a1),d2
-		addi.w	#$80,d2	
-		cmpi.w	#$60,d2
+		addi.w	#128,d2	
+		cmpi.w	#128-32,d2
 		bcs.s	loc_16B64
-		cmpi.w	#$180,d2
+		cmpi.w	#32+128+224,d2
 		bcc.s	loc_16B64
-		addi.w	#$160,d2
+		addi.w	#128+224,d2
 
 loc_16B3E:				
 					
@@ -29842,7 +29914,7 @@ loc_170D0:
 		move.w	ost_y_pos(a0),d3
 		subi_.w	#8,d2
 		moveq	#0,d5
-		move.b	$16(a0),d5
+		move.b	ost_height(a0),d5
 		subq.b	#3,d5
 		sub.w	d5,d3
 		cmpi.b	#$4D,$1A(a0)
@@ -30082,7 +30154,7 @@ loc_172BC:
 		move.w	(v_zone).w,d0
 		ror.b	#1,d0
 		lsr.w	#6,d0
-		lea	(Off_Rings).l,a1
+		lea	(RingPos_Index).l,a1
 		move.w	(a1,d0.w),d0
 		lea	(a1,d0.w),a1
 		lea	($FFFFE806).w,a2
@@ -30333,7 +30405,7 @@ loc_174DE:
 		move.w	ost_y_pos(a0),d3
 		subi.w	#9,d2
 		moveq	#0,d5
-		move.b	$16(a0),d5
+		move.b	ost_height(a0),d5
 		subq.b	#3,d5
 		sub.w	d5,d3
 		cmpi.b	#$4D,$1A(a0)
@@ -30427,7 +30499,7 @@ loc_17586:
 		neg.w	d0
 		cmpi.w	#$20,d0
 		blt.s	loc_175A0
-		move.w	#$A00,$12(a0)
+		move.w	#$A00,ost_y_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30437,7 +30509,7 @@ loc_175A0:
 		neg.w	d0
 		cmpi.w	#$20,d0
 		blt.s	loc_175BA
-		move.w	#$A00,$10(a0)
+		move.w	#$A00,ost_x_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30465,8 +30537,8 @@ locret_175E8:
 ; ===========================================================================
 
 loc_175EA:				
-		move.w	$10(a0),d1
-		move.w	$12(a0),d2
+		move.w	ost_x_vel(a0),d1
+		move.w	ost_y_vel(a0),d2
 		jsr	(CalcAngle).l
 		move.b	d0,(v_cnz_bumper_debug1).w
 		sub.w	d3,d0
@@ -30488,10 +30560,10 @@ loc_17618:
 		jsr	CalcSine
 		muls.w	#-$A00,d1
 		asr.l	#8,d1
-		move.w	d1,$10(a0)
+		move.w	d1,ost_x_vel(a0)
 		muls.w	#-$A00,d0
 		asr.l	#8,d0
-		move.w	d0,$12(a0)
+		move.w	d0,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -30501,7 +30573,7 @@ loc_17638:
 		neg.w	d0
 		cmpi.w	#$20,d0
 		blt.s	loc_17652
-		move.w	#$A00,$12(a0)
+		move.w	#$A00,ost_y_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30510,7 +30582,7 @@ loc_17652:
 		sub.w	ost_x_pos(a0),d0
 		cmpi.w	#$20,d0
 		blt.s	loc_1766A
-		move.w	#-$A00,$10(a0)
+		move.w	#-$A00,ost_x_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30544,7 +30616,7 @@ loc_1769E:
 		neg.w	d0
 		cmpi.w	#8,d0
 		blt.s	loc_176B8
-		move.w	#$A00,$12(a0)
+		move.w	#$A00,ost_y_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30553,7 +30625,7 @@ loc_176B8:
 		sub.w	ost_x_pos(a0),d0
 		cmpi.w	#$40,d0
 		blt.s	loc_176D0
-		move.w	#-$A00,$10(a0)
+		move.w	#-$A00,ost_x_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30561,7 +30633,7 @@ loc_176D0:
 		neg.w	d0
 		cmpi.w	#$40,d0
 		blt.s	loc_176E2
-		move.w	#$A00,$10(a0)
+		move.w	#$A00,ost_x_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30581,7 +30653,7 @@ loc_176F6:
 		sub.w	ost_y_pos(a0),d0
 		cmpi.w	#8,d0
 		blt.s	loc_1770E
-		move.w	#-$A00,$12(a0)
+		move.w	#-$A00,ost_y_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30590,7 +30662,7 @@ loc_1770E:
 		sub.w	ost_x_pos(a0),d0
 		cmpi.w	#$40,d0
 		blt.s	loc_17726
-		move.w	#-$A00,$10(a0)
+		move.w	#-$A00,ost_x_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30598,7 +30670,7 @@ loc_17726:
 		neg.w	d0
 		cmpi.w	#$40,d0
 		blt.s	loc_17738
-		move.w	#$A00,$10(a0)
+		move.w	#$A00,ost_x_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30619,7 +30691,7 @@ loc_1774C:
 		neg.w	d0
 		cmpi.w	#8,d0
 		blt.s	loc_17766
-		move.w	#$A00,$10(a0)
+		move.w	#$A00,ost_x_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30628,7 +30700,7 @@ loc_17766:
 		sub.w	ost_y_pos(a0),d0
 		cmpi.w	#$40,d0
 		blt.s	loc_1777E
-		move.w	#-$A00,$12(a0)
+		move.w	#-$A00,ost_y_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30636,7 +30708,7 @@ loc_1777E:
 		neg.w	d0
 		cmpi.w	#$40,d0
 		blt.s	loc_17790
-		move.w	#$A00,$10(a0)
+		move.w	#$A00,ost_x_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30656,7 +30728,7 @@ loc_177A4:
 		sub.w	ost_x_pos(a0),d0
 		cmpi.w	#8,d0
 		blt.s	loc_177BC
-		move.w	#$A00,$10(a0)
+		move.w	#$A00,ost_x_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30665,7 +30737,7 @@ loc_177BC:
 		sub.w	ost_y_pos(a0),d0
 		cmpi.w	#$40,d0
 		blt.s	loc_177D4
-		move.w	#-$A00,$12(a0)
+		move.w	#-$A00,ost_y_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30673,7 +30745,7 @@ loc_177D4:
 		neg.w	d0
 		cmpi.w	#$40,d0
 		blt.s	loc_177E6
-		move.w	#$A00,$10(a0)
+		move.w	#$A00,ost_x_vel(a0)
 		bra.w	loc_177FA
 ; ===========================================================================
 
@@ -30697,9 +30769,9 @@ loc_177FA:
 ; ===========================================================================
 byte_1781A:	
     if FixBugs
-; Sonic Team forgot to start this file with a boundary marker,
-; meaning the game could potentially read past the start of the file
-; and load random bumpers.
+		; Sonic Team forgot to start this file with a boundary marker,
+		; meaning the game could potentially read past the start of the file
+		; and load random bumpers.
 		dc.w	$0000, $0000, $0000
    	endc	
 		incbin	"level/objects/CNZ 1 Bumpers.bin"
@@ -30740,10 +30812,10 @@ ObjPosLoad:
 		jmp	OPL_Index(pc,d0.w)
 ; ===========================================================================
 ; ObjectsManager_States:
-OPL_Index:	
-		dc.w OPL_Init-OPL_Index				; 0 
-		dc.w loc_17B84-OPL_Index			; 1
-		dc.w loc_17CCC-OPL_Index			; 2
+OPL_Index:	index offset(*),,2
+		ptr OPL_Init		; 0 
+		ptr loc_17B84		; 2
+		ptr loc_17CCC		; 4
 ; ===========================================================================
 ; loc_17AB8: ObjectsManager_Init:
 OPL_Init:				
@@ -30770,11 +30842,26 @@ loc_17AF0:
 		move.l	a0,(v_opl_ptr_left_p2).w
 		lea	(v_respawn_list).w,a2
 		move.w	#$101,(a2)+
-		move.w	#$5E,d0
-
-loc_17B0C:				
+	
+	if FixBugs
+		move.w	#(sizeof_v_respawn_data/4)-1,d0	
+	else	
+		; The loop counter mistakenly uses the number of loops to clear the data using
+		; words, not longwords! This causes it to clear $17C bytes rather than $BE.
+		move.w	#(sizeof_v_respawn_data/2)-1,d0
+	endc
+	
+	loc_17B0C:				
 		clr.l	(a2)+
 		dbf	d0,loc_17B0C
+		
+    if FixBugs
+		; Clear the last word, since the above loop only does longwords.
+    	if sizeof_v_respawn_data&2
+		clr.w	(a2)+
+    	endc
+    endc
+    		
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d2
 		move.w	(v_camera_x_pos).w,d6
@@ -31605,14 +31692,14 @@ loc_189C0:
 loc_189CA:				
 		move.w	#$100,$1C(a0)
 		addq.w	#8,ost_y_pos(a1)
-		move.w	$30(a0),$12(a1)
+		move.w	$30(a0),ost_y_vel(a1)
 		bset	#1,$22(a1)
 		bclr	#3,$22(a1)
 		move.b	#$10,$1C(a1)
 		move.b	#2,$24(a1)
 		move.b	$28(a0),d0
 		bpl.s	loc_189FE
-		move.w	#0,$10(a1)
+		move.w	#0,ost_x_vel(a1)
 
 loc_189FE:				
 		btst	#0,d0
@@ -31698,18 +31785,18 @@ loc_18AE0:
 
 loc_18AEE:				
 		move.w	#$300,$1C(a0)
-		move.w	$30(a0),$10(a1)
+		move.w	$30(a0),ost_x_vel(a1)
 		addq.w	#8,ost_x_pos(a1)
 		bset	#0,$22(a1)
 		btst	#0,$22(a0)
 		bne.s	loc_18B1C
 		bclr	#0,$22(a1)
 		subi.w	#$10,ost_x_pos(a1)
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 
 loc_18B1C:				
 		move.w	#$F,$2E(a1)
-		move.w	$10(a1),ost_inertia(a1)
+		move.w	ost_x_vel(a1),ost_inertia(a1)
 		btst	#2,$22(a1)
 		bne.s	loc_18B36
 		move.b	#0,$1C(a1)
@@ -31717,7 +31804,7 @@ loc_18B1C:
 loc_18B36:				
 		move.b	$28(a0),d0
 		bpl.s	loc_18B42
-		move.w	#0,$12(a1)
+		move.w	#0,ost_y_vel(a1)
 
 loc_18B42:				
 		btst	#0,d0
@@ -31857,11 +31944,11 @@ loc_18CBC:
 loc_18CC6:				
 		move.w	#$100,$1C(a0)
 		subq.w	#8,ost_y_pos(a1)
-		move.w	$30(a0),$12(a1)
-		neg.w	$12(a1)
+		move.w	$30(a0),ost_y_vel(a1)
+		neg.w	ost_y_vel(a1)
 		move.b	$28(a0),d0
 		bpl.s	loc_18CE6
-		move.w	#0,$10(a1)
+		move.w	#0,ost_x_vel(a1)
 
 loc_18CE6:				
 		btst	#0,d0
@@ -31949,8 +32036,8 @@ loc_18DCA:
 
 loc_18DD8:				
 		move.w	#$500,$1C(a0)
-		move.w	$30(a0),$12(a1)
-		move.w	$30(a0),$10(a1)
+		move.w	$30(a0),ost_y_vel(a1)
+		move.w	$30(a0),ost_x_vel(a1)
 		addq.w	#6,ost_y_pos(a1)
 		addq.w	#6,ost_x_pos(a1)
 		bset	#0,$22(a1)
@@ -31958,7 +32045,7 @@ loc_18DD8:
 		bne.s	loc_18E10
 		bclr	#0,$22(a1)
 		subi.w	#$C,ost_x_pos(a1)
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 
 loc_18E10:				
 		bset	#1,$22(a1)
@@ -32032,9 +32119,9 @@ loc_18EDA:
 
 loc_18EE6:				
 		move.w	#$500,$1C(a0)
-		move.w	$30(a0),$12(a1)
-		neg.w	$12(a1)
-		move.w	$30(a0),$10(a1)
+		move.w	$30(a0),ost_y_vel(a1)
+		neg.w	ost_y_vel(a1)
+		move.w	$30(a0),ost_x_vel(a1)
 		subq.w	#6,ost_y_pos(a1)
 		addq.w	#6,ost_x_pos(a1)
 		bset	#0,$22(a1)
@@ -32042,7 +32129,7 @@ loc_18EE6:
 		bne.s	loc_18F22
 		bclr	#0,$22(a1)
 		subi.w	#$C,ost_x_pos(a1)
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 
 loc_18F22:				
 		bset	#1,$22(a1)
@@ -32741,7 +32828,7 @@ loc_198CC:
 		sub.w	d2,d0
 		add.w	d3,d0
 		moveq	#0,d1
-		move.b	$16(a1),d1
+		move.b	ost_height(a1),d1
 		sub.w	d1,d0
 		move.w	d0,ost_y_pos(a1)
 		sub.w	ost_x_pos(a0),d4
@@ -32761,7 +32848,7 @@ loc_198EC:
 		bhi.w	loc_19AC4
 		move.w	ost_y_pos(a0),d5
 		add.w	d3,d5
-		move.b	$16(a1),d3
+		move.b	ost_height(a1),d3
 		ext.w	d3
 		add.w	d3,d2
 		move.w	ost_y_pos(a1),d3
@@ -32798,7 +32885,7 @@ loc_19954:
 		ext.w	d3
 		move.w	ost_y_pos(a0),d5
 		sub.w	d3,d5
-		move.b	$16(a1),d3
+		move.b	ost_height(a1),d3
 		ext.w	d3
 		add.w	d3,d2
 		move.w	ost_y_pos(a1),d3
@@ -32838,7 +32925,7 @@ loc_199AE:
 		sub.w	d3,d5
 		move.w	ost_y_pos(a1),d3
 		sub.w	d5,d3
-		move.b	$16(a1),d5
+		move.b	ost_height(a1),d5
 		ext.w	d5
 		add.w	d5,d3
 		addq.w	#4,d3
@@ -32864,7 +32951,7 @@ Solid_SkipRenderChk:
 		add.w	d3,d3
 		cmp.w	d3,d0
 		bhi.w	loc_19AC4
-		move.b	$16(a1),d3
+		move.b	ost_height(a1),d3
 		ext.w	d3
 		add.w	d3,d2
 		move.w	ost_y_pos(a1),d3
@@ -32912,18 +32999,18 @@ loc_19A6A:
 		tst.w	d0
 		beq.s	loc_19A90
 		bmi.s	loc_19A7E
-		tst.w	$10(a1)
+		tst.w	ost_x_vel(a1)
 		bmi.s	loc_19A90
 		bra.s	loc_19A84
 ; ===========================================================================
 
 loc_19A7E:				
-		tst.w	$10(a1)
+		tst.w	ost_x_vel(a1)
 		bpl.s	loc_19A90
 
 loc_19A84:				
 		move.w	#0,ost_inertia(a1)
-		move.w	#0,$10(a1)
+		move.w	#0,ost_x_vel(a1)
 
 loc_19A90:				
 		sub.w	d0,ost_x_pos(a1)
@@ -32982,7 +33069,7 @@ loc_19AEE:
 ; ===========================================================================
 
 loc_19B06:				
-		tst.w	$12(a1)
+		tst.w	ost_y_vel(a1)
 		beq.s	loc_19B28
 		bpl.s	loc_19B1C
 		tst.w	d3
@@ -32996,7 +33083,7 @@ loc_19B06:
 		; but didn't do it very well.		
 		sub.w	d3,ost_y_pos(a1)
 	endc	
-		move.w	#0,$12(a1)
+		move.w	#0,ost_y_vel(a1)
 
 loc_19B1C:
 	if FixBugs
@@ -33047,7 +33134,7 @@ loc_19B56:
 		bmi.s	loc_19B8E
 		cmp.w	d2,d1
 		bcc.s	loc_19B8E
-		tst.w	$12(a1)
+		tst.w	ost_y_vel(a1)
 		bmi.s	loc_19B8E
 		sub.w	d3,ost_y_pos(a1)
 		subq.w	#1,ost_y_pos(a1)
@@ -33081,7 +33168,7 @@ loc_19BA2:
 		tst.w	(v_debug_active).w
 		bne.s	locret_19BCA
 		moveq	#0,d1
-		move.b	$16(a1),d1
+		move.b	ost_height(a1),d1
 		sub.w	d1,d0
 		move.w	d0,ost_y_pos(a1)
 		sub.w	ost_x_pos(a0),d2
@@ -33109,7 +33196,7 @@ loc_19BEC:
 		move.w	ost_y_pos(a0),d0
 		sub.w	d1,d0
 		moveq	#0,d1
-		move.b	$16(a1),d1
+		move.b	ost_height(a1),d1
 		sub.w	d1,d0
 		move.w	d0,ost_y_pos(a1)
 		sub.w	ost_x_pos(a0),d2
@@ -33299,7 +33386,7 @@ loc_19D92:
 ; ===========================================================================
 
 loc_19D9C:				
-		tst.w	$12(a1)
+		tst.w	ost_y_vel(a1)
 		bmi.w	locret_19E8E
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
@@ -33311,7 +33398,7 @@ loc_19D9C:
 ; ===========================================================================
 
 loc_19DBA:				
-		tst.w	$12(a1)
+		tst.w	ost_y_vel(a1)
 		bmi.w	locret_19E8E
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
@@ -33327,7 +33414,7 @@ loc_19DD8:
 
 loc_19DDE:				
 		move.w	ost_y_pos(a1),d2
-		move.b	$16(a1),d1
+		move.b	ost_height(a1),d1
 		ext.w	d1
 		add.w	d2,d1
 		addq.w	#4,d1
@@ -33360,8 +33447,8 @@ loc_19E30:
 		andi.w	#$7F,d0
 		move.b	d0,$3D(a1)
 		move.b	#0,$26(a1)
-		move.w	#0,$12(a1)
-		move.w	$10(a1),ost_inertia(a1)
+		move.w	#0,ost_y_vel(a1)
+		move.w	ost_x_vel(a1),ost_inertia(a1)
 		btst	#1,$22(a1)
 		beq.s	loc_19E7E
 		move.l	a0,-(sp)
@@ -33391,7 +33478,7 @@ locret_19E8E:
 ; ===========================================================================
 
 loc_19E90:				
-		tst.w	$12(a1)
+		tst.w	ost_y_vel(a1)
 		bmi.w	locret_19E8E
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
@@ -33415,7 +33502,7 @@ loc_19EB6:
 ; ===========================================================================
 
 loc_19EC8:				
-		tst.w	$12(a1)
+		tst.w	ost_y_vel(a1)
 		bmi.w	locret_19E8E
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
@@ -33490,7 +33577,7 @@ Sonic_Index:	index offset(*),,2
 
 Sonic_Main:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.b	#$13,$16(a0)
+		move.b	#$13,ost_height(a0)
 		move.b	#9,$17(a0)
 		move.l	#Map_Sonic,ost_mappings(a0)
 		move.b	#2,$18(a0)
@@ -33682,9 +33769,9 @@ loc_1A18E:
 		move.w	#$80,(v_sonic_deceleration).w
 
 loc_1A1E0:				
-		asr	$10(a0)
-		asr	$12(a0)
-		asr	$12(a0)
+		asr	ost_x_vel(a0)
+		asr	ost_y_vel(a0)
+		asr	ost_y_vel(a0)
 		beq.s	locret_1A18C
 		move.w	#$100,($FFFFD11C).w
 		move.w	#$AA,d0	
@@ -33708,17 +33795,17 @@ loc_1A1FE:
 loc_1A236:				
 		cmpi.b	#4,ost_primary_routine(a0)
 		beq.s	loc_1A242
-		asl	$12(a0)
+		asl	ost_y_vel(a0)
 
 loc_1A242:				
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		beq.w	locret_1A18C
 		move.w	#$100,($FFFFD11C).w
 		movea.l	a0,a1
 		bsr.w	ResumeMusic
-		cmpi.w	#-$1000,$12(a0)
+		cmpi.w	#-$1000,ost_y_vel(a0)
 		bgt.s	loc_1A264
-		move.w	#-$1000,$12(a0)
+		move.w	#-$1000,ost_y_vel(a0)
 
 loc_1A264:				
 		move.w	#$AA,d0	
@@ -33769,7 +33856,7 @@ loc_1A2E0:
 		jsr	ObjectFall
 		btst	#6,$22(a0)
 		beq.s	loc_1A300
-		subi.w	#$28,$12(a0)
+		subi.w	#$28,ost_y_vel(a0)
 
 loc_1A300:				
 		bsr.w	loc_1AE4A
@@ -33799,7 +33886,7 @@ loc_1A330:
 		jsr	ObjectFall
 		btst	#6,$22(a0)
 		beq.s	loc_1A350
-		subi.w	#$28,$12(a0)
+		subi.w	#$28,ost_y_vel(a0)
 
 loc_1A350:				
 		bsr.w	loc_1AE4A
@@ -34060,10 +34147,10 @@ loc_1A630:
 		jsr	CalcSine
 		muls.w	ost_inertia(a0),d1
 		asr.l	#8,d1
-		move.w	d1,$10(a0)
+		move.w	d1,ost_x_vel(a0)
 		muls.w	ost_inertia(a0),d0
 		asr.l	#8,d0
-		move.w	d0,$12(a0)
+		move.w	d0,ost_y_vel(a0)
 
 loc_1A64E:				
 		move.b	$26(a0),d0
@@ -34091,26 +34178,26 @@ loc_1A666:
 		beq.s	loc_1A6A8
 		cmpi.b	#-$80,d0
 		beq.s	loc_1A6A2
-		add.w	d1,$10(a0)
+		add.w	d1,ost_x_vel(a0)
 		bset	#5,$22(a0)
 		move.w	#0,ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
 loc_1A6A2:				
-		sub.w	d1,$12(a0)
+		sub.w	d1,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_1A6A8:				
-		sub.w	d1,$10(a0)
+		sub.w	d1,ost_x_vel(a0)
 		bset	#5,$22(a0)
 		move.w	#0,ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
 loc_1A6BA:				
-		add.w	d1,$12(a0)
+		add.w	d1,ost_y_vel(a0)
 
 locret_1A6BE:				
 		rts	
@@ -34239,7 +34326,7 @@ loc_1A7F0:
 		bsr.w	loc_1A8C6
 
 loc_1A7FC:				
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		beq.s	loc_1A81E
 		bmi.s	loc_1A812
 		sub.w	d5,d0
@@ -34247,7 +34334,7 @@ loc_1A7FC:
 		move.w	#0,d0
 
 loc_1A80C:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 		bra.s	loc_1A81E
 ; ===========================================================================
 
@@ -34257,15 +34344,15 @@ loc_1A812:
 		move.w	#0,d0
 
 loc_1A81A:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 
 loc_1A81E:				
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		bne.s	loc_1A85A
 		tst.b	$39(a0)
 		bne.s	loc_1A848
 		bclr	#2,$22(a0)
-		move.b	#$13,$16(a0)
+		move.b	#$13,ost_height(a0)
 		move.b	#9,$17(a0)
 		move.b	#5,$1C(a0)
 		subq.w	#5,ost_y_pos(a0)
@@ -34273,10 +34360,10 @@ loc_1A81E:
 ; ===========================================================================
 
 loc_1A848:				
-		move.w	#$400,$14(a0)
+		move.w	#$400,ost_inertia(a0)
 		btst	#0,$22(a0)
 		beq.s	loc_1A85A
-		neg.w	$14(a0)
+		neg.w	ost_inertia(a0)
 
 loc_1A85A:				
 		cmpi.w	#$60,(v_camera_y_shift).w
@@ -34290,10 +34377,10 @@ loc_1A868:
 loc_1A86C:				
 		move.b	$26(a0),d0
 		jsr	CalcSine
-		muls.w	$14(a0),d0
+		muls.w	ost_inertia(a0),d0
 		asr.l	#8,d0
-		move.w	d0,$12(a0)
-		muls.w	$14(a0),d1
+		move.w	d0,ost_y_vel(a0)
+		muls.w	ost_inertia(a0),d1
 		asr.l	#8,d1
 		cmpi.w	#$1000,d1
 		ble.s	loc_1A890
@@ -34305,12 +34392,12 @@ loc_1A890:
 		move.w	#-$1000,d1
 
 loc_1A89A:				
-		move.w	d1,$10(a0)
+		move.w	d1,ost_x_vel(a0)
 		bra.w	loc_1A64E
 ; ===========================================================================
 
 loc_1A8A2:				
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		beq.s	loc_1A8AA
 		bpl.s	loc_1A8B8
 
@@ -34326,12 +34413,12 @@ loc_1A8B8:
 		move.w	#-$80,d0
 
 loc_1A8C0:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
 loc_1A8C6:				
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		bmi.s	loc_1A8DA
 		bclr	#0,$22(a0)
 		move.b	#2,$1C(a0)
@@ -34344,7 +34431,7 @@ loc_1A8DA:
 		move.w	#$80,d0	
 
 loc_1A8E2:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
@@ -34354,7 +34441,7 @@ loc_1A8E8:
 		asl.w	#1,d5
 		btst	#4,$22(a0)
 		bne.s	loc_1A932
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		btst	#2,(v_joypad_hold).w
 		beq.s	loc_1A918
 		bset	#0,$22(a0)
@@ -34375,7 +34462,7 @@ loc_1A918:
 		move.w	d6,d0
 
 loc_1A92E:				
-		move.w	d0,$10(a0)
+		move.w	d0,ost_x_vel(a0)
 
 loc_1A932:				
 		cmpi.w	#$60,(v_camera_y_shift).w
@@ -34387,9 +34474,9 @@ loc_1A940:
 		subq.w	#2,(v_camera_y_shift).w
 
 loc_1A944:				
-		cmpi.w	#-$400,$12(a0)
+		cmpi.w	#-$400,ost_y_vel(a0)
 		bcs.s	locret_1A972
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		move.w	d0,d1
 		asr.w	#5,d1
 		beq.s	locret_1A972
@@ -34399,7 +34486,7 @@ loc_1A944:
 		move.w	#0,d0
 
 loc_1A960:				
-		move.w	d0,$10(a0)
+		move.w	d0,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -34409,7 +34496,7 @@ loc_1A966:
 		move.w	#0,d0
 
 loc_1A96E:				
-		move.w	d0,$10(a0)
+		move.w	d0,ost_x_vel(a0)
 
 locret_1A972:				
 		rts	
@@ -34417,7 +34504,7 @@ locret_1A972:
 
 loc_1A974:				
 		move.l	ost_x_pos(a0),d1
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d1
@@ -34451,15 +34538,15 @@ loc_1A9B6:
 loc_1A9BA:				
 		move.w	d0,ost_x_pos(a0)
 		move.w	#0,ost_x_sub(a0)			; 2+x_pos
-		move.w	#0,$10(a0)
-		move.w	#0,$14(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	#0,ost_inertia(a0)
 		bra.s	loc_1A9A6
 ; ===========================================================================
 
 loc_1A9D2:				
 		tst.b	$2B(a0)
 		bmi.s	locret_1A9F8
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		bpl.s	loc_1A9E0
 		neg.w	d0
 
@@ -34484,15 +34571,15 @@ loc_1A9FA:
 
 loc_1AA04:				
 		bset	#2,$22(a0)
-		move.b	#$E,$16(a0)
+		move.b	#$E,ost_height(a0)
 		move.b	#7,$17(a0)
 		move.b	#2,$1C(a0)
 		addq.w	#5,ost_y_pos(a0)
 		move.w	#$BE,d0	
 		jsr	PlaySound
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		bne.s	locret_1AA36
-		move.w	#$200,$14(a0)
+		move.w	#$200,ost_inertia(a0)
 
 locret_1AA36:				
 		rts	
@@ -34525,10 +34612,10 @@ loc_1AA74:
 		jsr	CalcSine
 		muls.w	d2,d1
 		asr.l	#8,d1
-		add.w	d1,$10(a0)
+		add.w	d1,ost_x_vel(a0)
 		muls.w	d2,d0
 		asr.l	#8,d0
-		add.w	d0,$12(a0)
+		add.w	d0,ost_y_vel(a0)
 		bset	#1,$22(a0)
 		bclr	#5,$22(a0)
 		addq.l	#4,sp
@@ -34536,11 +34623,11 @@ loc_1AA74:
 		clr.b	$38(a0)
 		move.w	#$A0,d0	
 		jsr	PlaySound
-		move.b	#$13,$16(a0)
+		move.b	#$13,ost_height(a0)
 		move.b	#9,$17(a0)
 		btst	#2,$22(a0)
 		bne.s	loc_1AAE8
-		move.b	#$E,$16(a0)
+		move.b	#$E,ost_height(a0)
 		move.b	#7,$17(a0)
 		move.b	#2,$1C(a0)
 		bset	#2,$22(a0)
@@ -34564,15 +34651,15 @@ loc_1AAF0:
 		move.w	#-$200,d1
 
 loc_1AB06:				
-		cmp.w	$12(a0),d1
+		cmp.w	ost_y_vel(a0),d1
 		ble.s	loc_1AB1A
 		move.b	(v_joypad_hold).w,d0
 		andi.b	#$70,d0
 		bne.s	loc_1AB1A
-		move.w	d1,$12(a0)
+		move.w	d1,ost_y_vel(a0)
 
 loc_1AB1A:				
-		tst.b	$12(a0)
+		tst.b	ost_y_vel(a0)
 		beq.s	loc_1AB38
 		rts	
 ; ===========================================================================
@@ -34580,9 +34667,9 @@ loc_1AB1A:
 loc_1AB22:				
 		tst.b	$39(a0)
 		bne.s	locret_1AB36
-		cmpi.w	#-$FC0,$12(a0)
+		cmpi.w	#-$FC0,ost_y_vel(a0)
 		bge.s	locret_1AB36
-		move.w	#-$FC0,$12(a0)
+		move.w	#-$FC0,ost_y_vel(a0)
 
 locret_1AB36:				
 		rts	
@@ -34690,7 +34777,7 @@ loc_1AC8E:
 		move.b	(v_joypad_hold).w,d0
 		btst	#1,d0
 		bne.w	loc_1AD30
-		move.b	#$E,$16(a0)
+		move.b	#$E,ost_height(a0)
 		move.b	#7,$17(a0)
 		move.b	#2,$1C(a0)
 		addq.w	#5,ost_y_pos(a0)
@@ -34698,13 +34785,13 @@ loc_1AC8E:
 		moveq	#0,d0
 		move.b	$3A(a0),d0
 		add.w	d0,d0
-		move.w	word_1AD0C(pc,d0.w),$14(a0)
+		move.w	word_1AD0C(pc,d0.w),ost_inertia(a0)
 		tst.b	(f_super).w
 		beq.s	loc_1ACD0
-		move.w	word_1AD1E(pc,d0.w),$14(a0)
+		move.w	word_1AD1E(pc,d0.w),ost_inertia(a0)
 
 loc_1ACD0:				
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		subi.w	#$800,d0
 		add.w	d0,d0
 		andi.w	#$1F00,d0
@@ -34713,7 +34800,7 @@ loc_1ACD0:
 		move.w	d0,(v_hscroll_delay_val).w
 		btst	#0,$22(a0)
 		beq.s	loc_1ACF4
-		neg.w	$14(a0)
+		neg.w	ost_inertia(a0)
 
 loc_1ACF4:				
 		bset	#2,$22(a0)
@@ -34790,19 +34877,19 @@ loc_1AD96:
 		jsr	CalcSine
 		muls.w	#$20,d0
 		asr.l	#8,d0
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		beq.s	locret_1ADCA
 		bmi.s	loc_1ADC6
 		tst.w	d0
 		beq.s	locret_1ADC4
-		add.w	d0,$14(a0)
+		add.w	d0,ost_inertia(a0)
 
 locret_1ADC4:				
 		rts	
 ; ===========================================================================
 
 loc_1ADC6:				
-		add.w	d0,$14(a0)
+		add.w	d0,ost_inertia(a0)
 
 locret_1ADCA:				
 		rts	
@@ -34817,14 +34904,14 @@ loc_1ADCC:
 		jsr	CalcSine
 		muls.w	#$50,d0
 		asr.l	#8,d0
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		bmi.s	loc_1ADFC
 		tst.w	d0
 		bpl.s	loc_1ADF6
 		asr.l	#2,d0
 
 loc_1ADF6:				
-		add.w	d0,$14(a0)
+		add.w	d0,ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
@@ -34834,7 +34921,7 @@ loc_1ADFC:
 		asr.l	#2,d0
 
 loc_1AE02:				
-		add.w	d0,$14(a0)
+		add.w	d0,ost_inertia(a0)
 
 locret_1AE06:				
 		rts	
@@ -34850,14 +34937,14 @@ loc_1AE08:
 		addi.b	#$20,d0
 		andi.b	#-$40,d0
 		beq.s	locret_1AE42
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		bpl.s	loc_1AE2C
 		neg.w	d0
 
 loc_1AE2C:				
 		cmpi.w	#$280,d0
 		bcc.s	locret_1AE42
-		clr.w	$14(a0)
+		clr.w	ost_inertia(a0)
 		bset	#1,$22(a0)
 		move.w	#$1E,$2E(a0)
 
@@ -34893,7 +34980,7 @@ loc_1AE60:
 loc_1AE64:				
 		move.b	$27(a0),d0
 		beq.s	locret_1AEA8
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		bmi.s	loc_1AE88
 
 loc_1AE70:				
@@ -34935,8 +35022,8 @@ loc_1AEAA:
 
 loc_1AEC2:				
 		move.b	$3F(a0),d5
-		move.w	$10(a0),d1
-		move.w	$12(a0),d2
+		move.w	ost_x_vel(a0),d1
+		move.w	ost_y_vel(a0),d2
 		jsr	(CalcAngle).l
 		subi.b	#$20,d0
 		andi.b	#-$40,d0
@@ -34950,20 +35037,20 @@ loc_1AEC2:
 		tst.w	d1
 		bpl.s	loc_1AF06
 		sub.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
+		move.w	#0,ost_x_vel(a0)
 
 loc_1AF06:				
 		bsr.w	FindWallRight_Quick_UsePos
 		tst.w	d1
 		bpl.s	loc_1AF18
 		add.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
+		move.w	#0,ost_x_vel(a0)
 
 loc_1AF18:				
 		bsr.w	Player_FindFloor
 		tst.w	d1
 		bpl.s	locret_1AF8A
-		move.b	$12(a0),d2
+		move.b	ost_y_vel(a0),d2
 		addq.b	#8,d2
 		neg.b	d2
 		cmp.b	d2,d1
@@ -34983,27 +35070,27 @@ loc_1AF30:
 		addi.b	#$10,d0
 		andi.b	#$20,d0
 		beq.s	loc_1AF5A
-		asr	$12(a0)
+		asr	ost_y_vel(a0)
 		bra.s	loc_1AF7C
 ; ===========================================================================
 
 loc_1AF5A:				
-		move.w	#0,$12(a0)
-		move.w	$10(a0),$14(a0)
+		move.w	#0,ost_y_vel(a0)
+		move.w	ost_x_vel(a0),ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
 loc_1AF68:				
-		move.w	#0,$10(a0)
-		cmpi.w	#$FC0,$12(a0)
+		move.w	#0,ost_x_vel(a0)
+		cmpi.w	#$FC0,ost_y_vel(a0)
 		ble.s	loc_1AF7C
-		move.w	#$FC0,$12(a0)
+		move.w	#$FC0,ost_y_vel(a0)
 
 loc_1AF7C:				
-		move.w	$12(a0),$14(a0)
+		move.w	ost_y_vel(a0),ost_inertia(a0)
 		tst.b	d3
 		bpl.s	locret_1AF8A
-		neg.w	$14(a0)
+		neg.w	ost_inertia(a0)
 
 locret_1AF8A:				
 		rts	
@@ -35014,8 +35101,8 @@ loc_1AF8C:
 		tst.w	d1
 		bpl.s	loc_1AFA6
 		sub.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
-		move.w	$12(a0),$14(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	ost_y_vel(a0),ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
@@ -35024,16 +35111,16 @@ loc_1AFA6:
 		tst.w	d1
 		bpl.s	loc_1AFC0
 		sub.w	d1,ost_y_pos(a0)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bpl.s	locret_1AFBE
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 
 locret_1AFBE:				
 		rts	
 ; ===========================================================================
 
 loc_1AFC0:				
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	locret_1AFE6
 		bsr.w	Player_FindFloor
 		tst.w	d1
@@ -35041,8 +35128,8 @@ loc_1AFC0:
 		add.w	d1,ost_y_pos(a0)
 		move.b	d3,$26(a0)
 		bsr.w	Sonic_ResetOnFloor
-		move.w	#0,$12(a0)
-		move.w	$10(a0),$14(a0)
+		move.w	#0,ost_y_vel(a0)
+		move.w	ost_x_vel(a0),ost_inertia(a0)
 
 locret_1AFE6:				
 		rts	
@@ -35053,14 +35140,14 @@ loc_1AFE8:
 		tst.w	d1
 		bpl.s	loc_1AFFA
 		sub.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
+		move.w	#0,ost_x_vel(a0)
 
 loc_1AFFA:				
 		bsr.w	FindWallRight_Quick_UsePos
 		tst.w	d1
 		bpl.s	loc_1B00C
 		add.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
+		move.w	#0,ost_x_vel(a0)
 
 loc_1B00C:				
 		bsr.w	Player_FindCeiling
@@ -35071,17 +35158,17 @@ loc_1B00C:
 		addi.b	#$20,d0
 		andi.b	#$40,d0
 		bne.s	loc_1B02C
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_1B02C:				
 		move.b	d3,$26(a0)
 		bsr.w	Sonic_ResetOnFloor
-		move.w	$12(a0),$14(a0)
+		move.w	ost_y_vel(a0),ost_inertia(a0)
 		tst.b	d3
 		bpl.s	locret_1B042
-		neg.w	$14(a0)
+		neg.w	ost_inertia(a0)
 
 locret_1B042:				
 		rts	
@@ -35092,8 +35179,8 @@ loc_1B044:
 		tst.w	d1
 		bpl.s	loc_1B05E
 		add.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
-		move.w	$12(a0),$14(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	ost_y_vel(a0),ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
@@ -35102,16 +35189,16 @@ loc_1B05E:
 		tst.w	d1
 		bpl.s	loc_1B078
 		sub.w	d1,ost_y_pos(a0)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bpl.s	locret_1B076
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 
 locret_1B076:				
 		rts	
 ; ===========================================================================
 
 loc_1B078:				
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	locret_1B09E
 		bsr.w	Player_FindFloor
 		tst.w	d1
@@ -35119,8 +35206,8 @@ loc_1B078:
 		add.w	d1,ost_y_pos(a0)
 		move.b	d3,$26(a0)
 		bsr.w	Sonic_ResetOnFloor
-		move.w	#0,$12(a0)
-		move.w	$10(a0),$14(a0)
+		move.w	#0,ost_y_vel(a0)
+		move.w	ost_x_vel(a0),ost_inertia(a0)
 
 locret_1B09E:				
 		rts	
@@ -35137,7 +35224,7 @@ Sonic_ResetOnFloor_2:
 		btst	#2,$22(a0)
 		beq.s	loc_1B0DA
 		bclr	#2,$22(a0)
-		move.b	#$13,$16(a0)
+		move.b	#$13,ost_height(a0)
 		move.b	#9,$17(a0)
 		move.b	#0,$1C(a0)
 		subq.w	#5,ost_y_pos(a0)
@@ -35174,10 +35261,10 @@ loc_1B13A:
 		tst.b	$25(a0)
 		bmi.w	loc_1B1CA
 		jsr	SpeedToPos
-		addi.w	#$30,$12(a0)
+		addi.w	#$30,ost_y_vel(a0)
 		btst	#6,$22(a0)
 		beq.s	loc_1B15C
-		subi.w	#$20,$12(a0)
+		subi.w	#$20,ost_y_vel(a0)
 
 loc_1B15C:				
 		cmpi.w	#-$100,(v_boundary_top_next).w
@@ -35202,9 +35289,9 @@ loc_1B184:
 		btst	#1,$22(a0)
 		bne.s	locret_1B1C8
 		moveq	#0,d0
-		move.w	d0,$12(a0)
-		move.w	d0,$10(a0)
-		move.w	d0,$14(a0)
+		move.w	d0,ost_y_vel(a0)
+		move.w	d0,ost_x_vel(a0)
+		move.w	d0,ost_inertia(a0)
 		move.b	d0,$2A(a0)
 		move.b	#0,$1C(a0)
 		subq.b	#2,ost_primary_routine(a0)
@@ -35297,9 +35384,9 @@ loc_1B2B8:
 		clr.b	(v_ring_reward).w
 		move.b	#0,$2A(a0)
 		move.b	#5,$1C(a0)
-		move.w	#0,$10(a0)
-		move.w	#0,$12(a0)
-		move.w	#0,$14(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	#0,ost_y_vel(a0)
+		move.w	#0,ost_inertia(a0)
 		move.b	#2,$22(a0)
 		move.w	#0,$2E(a0)
 		move.w	#0,$3A(a0)
@@ -35320,9 +35407,9 @@ locret_1B32E:
 ; ===========================================================================
 
 Sonic_Respawn:				
-		tst.w	(v_camera_x_pos_diff).w
+		tst.w	(v_camera_x_diff).w
 		bne.s	loc_1B342
-		tst.w	(v_camera_y_pos_diff).w
+		tst.w	(v_camera_y_diff).w
 		bne.s	loc_1B342
 		move.b	#2,ost_primary_routine(a0)
 
@@ -35461,7 +35548,7 @@ loc_1B424:
 		bne.w	loc_1B5D2
 		lsr.b	#4,d0
 		andi.b	#6,d0
-		move.w	$14(a0),d2
+		move.w	ost_inertia(a0),d2
 		bpl.s	loc_1B448
 		neg.w	d2
 
@@ -35611,7 +35698,7 @@ loc_1B586:
 		bpl.w	locret_1B3C2
 		addq.b	#1,d0
 		bne.s	loc_1B5D2
-		move.w	$14(a0),d2
+		move.w	ost_inertia(a0),d2
 		bpl.s	loc_1B59A
 		neg.w	d2
 
@@ -35640,7 +35727,7 @@ loc_1B5B6:
 loc_1B5D2:				
 		subq.b	#1,$1E(a0)
 		bpl.w	locret_1B3C2
-		move.w	$14(a0),d2
+		move.w	ost_inertia(a0),d2
 		bmi.s	loc_1B5E2
 		neg.w	d2
 
@@ -35983,7 +36070,7 @@ Tails_Index:	index offset(*),,2
 
 Tails_Main:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.b	#$F,$16(a0)
+		move.b	#$F,ost_height(a0)
 		move.b	#9,$17(a0)
 		move.l	#Map_Tails,ost_mappings(a0)
 		move.b	#2,$18(a0)
@@ -36161,9 +36248,9 @@ loc_1BAFE:
 		move.w	#6,(v_tails_cpu_routine).w
 		move.b	#0,$2A(a0)
 		move.b	#0,$1C(a0)
-		move.w	#0,$10(a0)
-		move.w	#0,$12(a0)
-		move.w	#0,$14(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	#0,ost_y_vel(a0)
+		move.w	#0,ost_inertia(a0)
 		move.b	#0,$22(a0)
 		move.w	#0,(v_tails_respawn_counter).w
 		rts	
@@ -36250,7 +36337,7 @@ loc_1BC14:
 		moveq	#$C,d2
 
 loc_1BC1E:				
-		move.b	$10(a1),d1
+		move.b	ost_x_vel(a1),d1
 		bpl.s	loc_1BC26
 		neg.b	d1
 
@@ -36302,9 +36389,9 @@ loc_1BC68:
 		move.w	#6,(v_tails_cpu_routine).w
 		move.b	#0,$2A(a0)
 		move.b	#0,$1C(a0)
-		move.w	#0,$10(a0)
-		move.w	#0,$12(a0)
-		move.w	#0,$14(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	#0,ost_y_vel(a0)
+		move.w	#0,ost_inertia(a0)
 		move.b	#2,$22(a0)
 		move.w	#0,$2E(a0)
 		andi.w	#tile_draw,ost_tile(a0)
@@ -36346,7 +36433,7 @@ loc_1BD0E:
 		bmi.w	loc_1BE28
 		tst.w	$2E(a0)
 		beq.s	loc_1BD34
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		bne.s	loc_1BD34
 		move.w	#8,(v_tails_cpu_routine).w
 
@@ -36379,7 +36466,7 @@ loc_1BD6C:
 		ori.w	#$404,d1
 
 loc_1BD84:				
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		beq.s	loc_1BDCE
 		btst	#0,$22(a0)
 		beq.s	loc_1BDCE
@@ -36394,7 +36481,7 @@ loc_1BD98:
 		ori.w	#$808,d1
 
 loc_1BDA6:				
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		beq.s	loc_1BDCE
 		btst	#0,$22(a0)
 		bne.s	loc_1BDCE
@@ -36511,7 +36598,7 @@ loc_1BEB8:
 		bne.s	locret_1BF36
 		tst.b	$39(a0)
 		bne.s	loc_1BF0C
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		bne.s	locret_1BF36
 		bclr	#0,$22(a0)
 		move.w	ost_x_pos(a0),d0
@@ -36583,9 +36670,9 @@ loc_1BF5A:
 		move.w	#$300,(v_tails_max_speed).w
 		move.w	#6,(v_tails_acceleration).w
 		move.w	#$40,(v_tails_deceleration).w
-		asr	$10(a0)
-		asr	$12(a0)
-		asr	$12(a0)
+		asr	ost_x_vel(a0)
+		asr	ost_y_vel(a0)
+		asr	ost_y_vel(a0)
 		beq.s	locret_1BF58
 		move.w	#$100,($FFFFD15C).w
 		move.w	#$AA,d0	
@@ -36602,17 +36689,17 @@ loc_1BFB2:
 		move.w	#$80,(v_tails_deceleration).w
 		cmpi.b	#4,ost_primary_routine(a0)
 		beq.s	loc_1BFDE
-		asl	$12(a0)
+		asl	ost_y_vel(a0)
 
 loc_1BFDE:				
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		beq.w	locret_1BF58
 		move.w	#$100,($FFFFD15C).w
 		movea.l	a0,a1
 		bsr.w	ResumeMusic
-		cmpi.w	#-$1000,$12(a0)
+		cmpi.w	#-$1000,ost_y_vel(a0)
 		bgt.s	loc_1C000
-		move.w	#-$1000,$12(a0)
+		move.w	#-$1000,ost_y_vel(a0)
 
 loc_1C000:				
 		move.w	#$AA,d0	
@@ -36639,7 +36726,7 @@ loc_1C032:
 		jsr	ObjectFall
 		btst	#6,$22(a0)
 		beq.s	loc_1C052
-		subi.w	#$28,$12(a0)
+		subi.w	#$28,ost_y_vel(a0)
 
 loc_1C052:				
 		bsr.w	loc_1C8FA
@@ -36669,7 +36756,7 @@ loc_1C082:
 		jsr	ObjectFall
 		btst	#6,$22(a0)
 		beq.s	loc_1C0A2
-		subi.w	#$28,$12(a0)
+		subi.w	#$28,ost_y_vel(a0)
 
 loc_1C0A2:				
 		bsr.w	loc_1C8FA
@@ -36699,7 +36786,7 @@ loc_1C0E0:
 		addi.b	#$20,d0
 		andi.b	#-$40,d0
 		bne.w	loc_1C1D0
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		bne.w	loc_1C1D0
 		bclr	#5,$22(a0)
 		move.b	#5,$1C(a0)
@@ -36794,7 +36881,7 @@ loc_1C1E8:
 		move.b	(v_joypad2_hold).w,d0
 		andi.b	#$C,d0
 		bne.s	loc_1C214
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		beq.s	loc_1C214
 		bmi.s	loc_1C208
 		sub.w	d5,d0
@@ -36802,7 +36889,7 @@ loc_1C1E8:
 		move.w	#0,d0
 
 loc_1C202:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 		bra.s	loc_1C214
 ; ===========================================================================
 
@@ -36812,24 +36899,24 @@ loc_1C208:
 		move.w	#0,d0
 
 loc_1C210:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 
 loc_1C214:				
 		move.b	$26(a0),d0
 		jsr	CalcSine
-		muls.w	$14(a0),d1
+		muls.w	ost_inertia(a0),d1
 		asr.l	#8,d1
-		move.w	d1,$10(a0)
-		muls.w	$14(a0),d0
+		move.w	d1,ost_x_vel(a0)
+		muls.w	ost_inertia(a0),d0
 		asr.l	#8,d0
-		move.w	d0,$12(a0)
+		move.w	d0,ost_y_vel(a0)
 
 loc_1C232:				
 		move.b	$26(a0),d0
 		addi.b	#$40,d0
 		bmi.s	locret_1C2A2
 		move.b	#$40,d1
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		beq.s	locret_1C2A2
 		bmi.s	loc_1C24A
 		neg.w	d1
@@ -36850,33 +36937,33 @@ loc_1C24A:
 		beq.s	loc_1C28C
 		cmpi.b	#-$80,d0
 		beq.s	loc_1C286
-		add.w	d1,$10(a0)
+		add.w	d1,ost_x_vel(a0)
 		bset	#5,$22(a0)
-		move.w	#0,$14(a0)
+		move.w	#0,ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
 loc_1C286:				
-		sub.w	d1,$12(a0)
+		sub.w	d1,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_1C28C:				
-		sub.w	d1,$10(a0)
+		sub.w	d1,ost_x_vel(a0)
 		bset	#5,$22(a0)
-		move.w	#0,$14(a0)
+		move.w	#0,ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
 loc_1C29E:				
-		add.w	d1,$12(a0)
+		add.w	d1,ost_y_vel(a0)
 
 locret_1C2A2:				
 		rts	
 ; ===========================================================================
 
 loc_1C2A4:				
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		beq.s	loc_1C2AC
 		bpl.s	loc_1C2DE
 
@@ -36898,7 +36985,7 @@ loc_1C2C0:
 		move.w	d1,d0
 
 loc_1C2D2:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 		move.b	#0,$1C(a0)
 		rts	
 ; ===========================================================================
@@ -36909,7 +36996,7 @@ loc_1C2DE:
 		move.w	#-$80,d0
 
 loc_1C2E6:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 		move.b	$26(a0),d0
 		addi.b	#$20,d0
 		andi.b	#-$40,d0
@@ -36930,7 +37017,7 @@ locret_1C328:
 ; ===========================================================================
 
 loc_1C32A:				
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		bmi.s	loc_1C35E
 		bclr	#0,$22(a0)
 		beq.s	loc_1C344
@@ -36947,7 +37034,7 @@ loc_1C344:
 		move.w	d6,d0
 
 loc_1C352:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 		move.b	#0,$1C(a0)
 		rts	
 ; ===========================================================================
@@ -36958,7 +37045,7 @@ loc_1C35E:
 		move.w	#$80,d0	
 
 loc_1C366:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 		move.b	$26(a0),d0
 		addi.b	#$20,d0
 		andi.b	#-$40,d0
@@ -36999,7 +37086,7 @@ loc_1C3D6:
 		bsr.w	loc_1C4AC
 
 loc_1C3E2:				
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		beq.s	loc_1C404
 		bmi.s	loc_1C3F8
 		sub.w	d5,d0
@@ -37007,7 +37094,7 @@ loc_1C3E2:
 		move.w	#0,d0
 
 loc_1C3F2:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 		bra.s	loc_1C404
 ; ===========================================================================
 
@@ -37017,15 +37104,15 @@ loc_1C3F8:
 		move.w	#0,d0
 
 loc_1C400:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 
 loc_1C404:				
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		bne.s	loc_1C440
 		tst.b	$39(a0)
 		bne.s	loc_1C42E
 		bclr	#2,$22(a0)
-		move.b	#$F,$16(a0)
+		move.b	#$F,ost_height(a0)
 		move.b	#9,$17(a0)
 		move.b	#5,$1C(a0)
 		subq.w	#1,ost_y_pos(a0)
@@ -37033,10 +37120,10 @@ loc_1C404:
 ; ===========================================================================
 
 loc_1C42E:				
-		move.w	#$400,$14(a0)
+		move.w	#$400,ost_inertia(a0)
 		btst	#0,$22(a0)
 		beq.s	loc_1C440
-		neg.w	$14(a0)
+		neg.w	ost_inertia(a0)
 
 loc_1C440:				
 		cmpi.w	#$60,(v_camera_y_shift_p2).w
@@ -37050,10 +37137,10 @@ loc_1C44E:
 loc_1C452:				
 		move.b	$26(a0),d0
 		jsr	CalcSine
-		muls.w	$14(a0),d0
+		muls.w	ost_inertia(a0),d0
 		asr.l	#8,d0
-		move.w	d0,$12(a0)
-		muls.w	$14(a0),d1
+		move.w	d0,ost_y_vel(a0)
+		muls.w	ost_inertia(a0),d1
 		asr.l	#8,d1
 		cmpi.w	#$1000,d1
 		ble.s	loc_1C476
@@ -37065,12 +37152,12 @@ loc_1C476:
 		move.w	#-$1000,d1
 
 loc_1C480:				
-		move.w	d1,$10(a0)
+		move.w	d1,ost_x_vel(a0)
 		bra.w	loc_1C232
 ; ===========================================================================
 
 loc_1C488:				
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		beq.s	loc_1C490
 		bpl.s	loc_1C49E
 
@@ -37086,12 +37173,12 @@ loc_1C49E:
 		move.w	#-$80,d0
 
 loc_1C4A6:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
 loc_1C4AC:				
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		bmi.s	loc_1C4C0
 		bclr	#0,$22(a0)
 		move.b	#2,$1C(a0)
@@ -37104,7 +37191,7 @@ loc_1C4C0:
 		move.w	#$80,d0	
 
 loc_1C4C8:				
-		move.w	d0,$14(a0)
+		move.w	d0,ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
@@ -37114,7 +37201,7 @@ loc_1C4CE:
 		asl.w	#1,d5
 		btst	#4,$22(a0)
 		bne.s	loc_1C518
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		btst	#2,(v_joypad2_hold).w
 		beq.s	loc_1C4FE
 		bset	#0,$22(a0)
@@ -37135,7 +37222,7 @@ loc_1C4FE:
 		move.w	d6,d0
 
 loc_1C514:				
-		move.w	d0,$10(a0)
+		move.w	d0,ost_x_vel(a0)
 
 loc_1C518:				
 		cmpi.w	#$60,(v_camera_y_shift_p2).w
@@ -37147,9 +37234,9 @@ loc_1C526:
 		subq.w	#2,(v_camera_y_shift_p2).w
 
 loc_1C52A:				
-		cmpi.w	#-$400,$12(a0)
+		cmpi.w	#-$400,ost_y_vel(a0)
 		bcs.s	locret_1C558
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		move.w	d0,d1
 		asr.w	#5,d1
 		beq.s	locret_1C558
@@ -37159,7 +37246,7 @@ loc_1C52A:
 		move.w	#0,d0
 
 loc_1C546:				
-		move.w	d0,$10(a0)
+		move.w	d0,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -37169,7 +37256,7 @@ loc_1C54C:
 		move.w	#0,d0
 
 loc_1C554:				
-		move.w	d0,$10(a0)
+		move.w	d0,ost_x_vel(a0)
 
 locret_1C558:				
 		rts	
@@ -37177,7 +37264,7 @@ locret_1C558:
 
 loc_1C55A:				
 		move.l	ost_x_pos(a0),d1
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d1
@@ -37211,15 +37298,15 @@ loc_1C59C:
 loc_1C5A0:				
 		move.w	d0,ost_x_pos(a0)
 		move.w	#0,ost_x_sub(a0)			; 2+x_pos
-		move.w	#0,$10(a0)
-		move.w	#0,$14(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	#0,ost_inertia(a0)
 		bra.s	loc_1C58C
 ; ===========================================================================
 
 loc_1C5B8:				
 		tst.b	$2B(a0)
 		bmi.s	locret_1C5DE
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		bpl.s	loc_1C5C6
 		neg.w	d0
 
@@ -37244,15 +37331,15 @@ loc_1C5E0:
 
 loc_1C5EA:				
 		bset	#2,$22(a0)
-		move.b	#$E,$16(a0)
+		move.b	#$E,ost_height(a0)
 		move.b	#7,$17(a0)
 		move.b	#2,$1C(a0)
 		addq.w	#1,ost_y_pos(a0)
 		move.w	#$BE,d0	
 		jsr	PlaySound
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		bne.s	locret_1C61C
-		move.w	#$200,$14(a0)
+		move.w	#$200,ost_inertia(a0)
 
 locret_1C61C:				
 		rts	
@@ -37280,10 +37367,10 @@ loc_1C650:
 		jsr	CalcSine
 		muls.w	d2,d1
 		asr.l	#8,d1
-		add.w	d1,$10(a0)
+		add.w	d1,ost_x_vel(a0)
 		muls.w	d2,d0
 		asr.l	#8,d0
-		add.w	d0,$12(a0)
+		add.w	d0,ost_y_vel(a0)
 		bset	#1,$22(a0)
 		bclr	#5,$22(a0)
 		addq.l	#4,sp
@@ -37291,11 +37378,11 @@ loc_1C650:
 		clr.b	$38(a0)
 		move.w	#$A0,d0	
 		jsr	PlaySound
-		move.b	#$F,$16(a0)
+		move.b	#$F,ost_height(a0)
 		move.b	#9,$17(a0)
 		btst	#2,$22(a0)
 		bne.s	loc_1C6C4
-		move.b	#$E,$16(a0)
+		move.b	#$E,ost_height(a0)
 		move.b	#7,$17(a0)
 		move.b	#2,$1C(a0)
 		bset	#2,$22(a0)
@@ -37319,12 +37406,12 @@ loc_1C6CC:
 		move.w	#-$200,d1
 
 loc_1C6E2:				
-		cmp.w	$12(a0),d1
+		cmp.w	ost_y_vel(a0),d1
 		ble.s	locret_1C6F6
 		move.b	(v_joypad2_hold).w,d0
 		andi.b	#$70,d0
 		bne.s	locret_1C6F6
-		move.w	d1,$12(a0)
+		move.w	d1,ost_y_vel(a0)
 
 locret_1C6F6:				
 		rts	
@@ -37333,9 +37420,9 @@ locret_1C6F6:
 loc_1C6F8:				
 		tst.b	$39(a0)
 		bne.s	locret_1C70C
-		cmpi.w	#-$FC0,$12(a0)
+		cmpi.w	#-$FC0,ost_y_vel(a0)
 		bge.s	locret_1C70C
-		move.w	#-$FC0,$12(a0)
+		move.w	#-$FC0,ost_y_vel(a0)
 
 locret_1C70C:				
 		rts	
@@ -37371,7 +37458,7 @@ loc_1C75E:
 		move.b	(v_joypad2_hold).w,d0
 		btst	#1,d0
 		bne.s	loc_1C7E0
-		move.b	#$E,$16(a0)
+		move.b	#$E,ost_height(a0)
 		move.b	#7,$17(a0)
 		move.b	#2,$1C(a0)
 		addq.w	#1,ost_y_pos(a0)
@@ -37379,8 +37466,8 @@ loc_1C75E:
 		moveq	#0,d0
 		move.b	$3A(a0),d0
 		add.w	d0,d0
-		move.w	word_1C7CE(pc,d0.w),$14(a0)
-		move.w	$14(a0),d0
+		move.w	word_1C7CE(pc,d0.w),ost_inertia(a0)
+		move.w	ost_inertia(a0),d0
 		subi.w	#$800,d0
 		add.w	d0,d0
 		andi.w	#$1F00,d0
@@ -37389,7 +37476,7 @@ loc_1C75E:
 		move.w	d0,(v_hscroll_delay_val_p2).w
 		btst	#0,$22(a0)
 		beq.s	loc_1C7B6
-		neg.w	$14(a0)
+		neg.w	ost_inertia(a0)
 
 loc_1C7B6:				
 		bset	#2,$22(a0)
@@ -37456,19 +37543,19 @@ loc_1C846:
 		jsr	CalcSine
 		muls.w	#$20,d0
 		asr.l	#8,d0
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		beq.s	locret_1C87A
 		bmi.s	loc_1C876
 		tst.w	d0
 		beq.s	locret_1C874
-		add.w	d0,$14(a0)
+		add.w	d0,ost_inertia(a0)
 
 locret_1C874:				
 		rts	
 ; ===========================================================================
 
 loc_1C876:				
-		add.w	d0,$14(a0)
+		add.w	d0,ost_inertia(a0)
 
 locret_1C87A:				
 		rts	
@@ -37483,14 +37570,14 @@ loc_1C87C:
 		jsr	CalcSine
 		muls.w	#$50,d0
 		asr.l	#8,d0
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		bmi.s	loc_1C8AC
 		tst.w	d0
 		bpl.s	loc_1C8A6
 		asr.l	#2,d0
 
 loc_1C8A6:				
-		add.w	d0,$14(a0)
+		add.w	d0,ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
@@ -37500,7 +37587,7 @@ loc_1C8AC:
 		asr.l	#2,d0
 
 loc_1C8B2:				
-		add.w	d0,$14(a0)
+		add.w	d0,ost_inertia(a0)
 
 locret_1C8B6:				
 		rts	
@@ -37516,14 +37603,14 @@ loc_1C8B8:
 		addi.b	#$20,d0
 		andi.b	#-$40,d0
 		beq.s	locret_1C8F2
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		bpl.s	loc_1C8DC
 		neg.w	d0
 
 loc_1C8DC:				
 		cmpi.w	#$280,d0
 		bcc.s	locret_1C8F2
-		clr.w	$14(a0)
+		clr.w	ost_inertia(a0)
 		bset	#1,$22(a0)
 		move.w	#$1E,$2E(a0)
 
@@ -37559,7 +37646,7 @@ loc_1C910:
 loc_1C914:				
 		move.b	$27(a0),d0
 		beq.s	locret_1C958
-		tst.w	$14(a0)
+		tst.w	ost_inertia(a0)
 		bmi.s	loc_1C938
 
 loc_1C920:				
@@ -37601,8 +37688,8 @@ loc_1C95A:
 
 loc_1C972:				
 		move.b	$3F(a0),d5
-		move.w	$10(a0),d1
-		move.w	$12(a0),d2
+		move.w	ost_x_vel(a0),d1
+		move.w	ost_y_vel(a0),d2
 		jsr	(CalcAngle).l
 		subi.b	#$20,d0
 		andi.b	#-$40,d0
@@ -37616,20 +37703,20 @@ loc_1C972:
 		tst.w	d1
 		bpl.s	loc_1C9B6
 		sub.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
+		move.w	#0,ost_x_vel(a0)
 
 loc_1C9B6:				
 		bsr.w	FindWallRight_Quick_UsePos
 		tst.w	d1
 		bpl.s	loc_1C9C8
 		add.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
+		move.w	#0,ost_x_vel(a0)
 
 loc_1C9C8:				
 		bsr.w	Player_FindFloor
 		tst.w	d1
 		bpl.s	locret_1CA3A
-		move.b	$12(a0),d2
+		move.b	ost_y_vel(a0),d2
 		addq.b	#8,d2
 		neg.b	d2
 		cmp.b	d2,d1
@@ -37649,27 +37736,27 @@ loc_1C9E0:
 		addi.b	#$10,d0
 		andi.b	#$20,d0
 		beq.s	loc_1CA0A
-		asr	$12(a0)
+		asr	ost_y_vel(a0)
 		bra.s	loc_1CA2C
 ; ===========================================================================
 
 loc_1CA0A:				
-		move.w	#0,$12(a0)
-		move.w	$10(a0),$14(a0)
+		move.w	#0,ost_y_vel(a0)
+		move.w	ost_x_vel(a0),ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
 loc_1CA18:				
-		move.w	#0,$10(a0)
-		cmpi.w	#$FC0,$12(a0)
+		move.w	#0,ost_x_vel(a0)
+		cmpi.w	#$FC0,ost_y_vel(a0)
 		ble.s	loc_1CA2C
-		move.w	#$FC0,$12(a0)
+		move.w	#$FC0,ost_y_vel(a0)
 
 loc_1CA2C:				
-		move.w	$12(a0),$14(a0)
+		move.w	ost_y_vel(a0),ost_inertia(a0)
 		tst.b	d3
 		bpl.s	locret_1CA3A
-		neg.w	$14(a0)
+		neg.w	ost_inertia(a0)
 
 locret_1CA3A:				
 		rts	
@@ -37680,8 +37767,8 @@ loc_1CA3C:
 		tst.w	d1
 		bpl.s	loc_1CA56
 		sub.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
-		move.w	$12(a0),$14(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	ost_y_vel(a0),ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
@@ -37690,16 +37777,16 @@ loc_1CA56:
 		tst.w	d1
 		bpl.s	loc_1CA70
 		sub.w	d1,ost_y_pos(a0)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bpl.s	locret_1CA6E
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 
 locret_1CA6E:				
 		rts	
 ; ===========================================================================
 
 loc_1CA70:				
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	locret_1CA96
 		bsr.w	Player_FindFloor
 		tst.w	d1
@@ -37707,8 +37794,8 @@ loc_1CA70:
 		add.w	d1,ost_y_pos(a0)
 		move.b	d3,$26(a0)
 		bsr.w	loc_1CB50
-		move.w	#0,$12(a0)
-		move.w	$10(a0),$14(a0)
+		move.w	#0,ost_y_vel(a0)
+		move.w	ost_x_vel(a0),ost_inertia(a0)
 
 locret_1CA96:				
 		rts	
@@ -37719,14 +37806,14 @@ loc_1CA98:
 		tst.w	d1
 		bpl.s	loc_1CAAA
 		sub.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
+		move.w	#0,ost_x_vel(a0)
 
 loc_1CAAA:				
 		bsr.w	FindWallRight_Quick_UsePos
 		tst.w	d1
 		bpl.s	loc_1CABC
 		add.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
+		move.w	#0,ost_x_vel(a0)
 
 loc_1CABC:				
 		bsr.w	Player_FindCeiling
@@ -37737,17 +37824,17 @@ loc_1CABC:
 		addi.b	#$20,d0
 		andi.b	#$40,d0
 		bne.s	loc_1CADC
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_1CADC:				
 		move.b	d3,$26(a0)
 		bsr.w	loc_1CB50
-		move.w	$12(a0),$14(a0)
+		move.w	ost_y_vel(a0),ost_inertia(a0)
 		tst.b	d3
 		bpl.s	locret_1CAF2
-		neg.w	$14(a0)
+		neg.w	ost_inertia(a0)
 
 locret_1CAF2:				
 		rts	
@@ -37758,8 +37845,8 @@ loc_1CAF4:
 		tst.w	d1
 		bpl.s	loc_1CB0E
 		add.w	d1,ost_x_pos(a0)
-		move.w	#0,$10(a0)
-		move.w	$12(a0),$14(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	ost_y_vel(a0),ost_inertia(a0)
 		rts	
 ; ===========================================================================
 
@@ -37768,16 +37855,16 @@ loc_1CB0E:
 		tst.w	d1
 		bpl.s	loc_1CB28
 		sub.w	d1,ost_y_pos(a0)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bpl.s	locret_1CB26
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 
 locret_1CB26:				
 		rts	
 ; ===========================================================================
 
 loc_1CB28:				
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	locret_1CB4E
 		bsr.w	Player_FindFloor
 		tst.w	d1
@@ -37785,8 +37872,8 @@ loc_1CB28:
 		add.w	d1,ost_y_pos(a0)
 		move.b	d3,$26(a0)
 		bsr.w	loc_1CB50
-		move.w	#0,$12(a0)
-		move.w	$10(a0),$14(a0)
+		move.w	#0,ost_y_vel(a0)
+		move.w	ost_x_vel(a0),ost_inertia(a0)
 
 locret_1CB4E:				
 		rts	
@@ -37801,7 +37888,7 @@ loc_1CB5C:
 		btst	#2,$22(a0)
 		beq.s	loc_1CB80
 		bclr	#2,$22(a0)
-		move.b	#$F,$16(a0)
+		move.b	#$F,ost_height(a0)
 		move.b	#9,$17(a0)
 		move.b	#0,$1C(a0)
 		subq.w	#1,ost_y_pos(a0)
@@ -37826,10 +37913,10 @@ locret_1CBC4:
 
 Tails_Hurt:				
 		jsr	SpeedToPos
-		addi.w	#$30,$12(a0)
+		addi.w	#$30,ost_y_vel(a0)
 		btst	#6,$22(a0)
 		beq.s	loc_1CBE0
-		subi.w	#$20,$12(a0)
+		subi.w	#$20,ost_y_vel(a0)
 
 loc_1CBE0:				
 		cmpi.w	#-$100,(v_boundary_top_next).w
@@ -37854,9 +37941,9 @@ loc_1CC08:
 		btst	#1,$22(a0)
 		bne.s	locret_1CC4E
 		moveq	#0,d0
-		move.w	d0,$12(a0)
-		move.w	d0,$10(a0)
-		move.w	d0,$14(a0)
+		move.w	d0,ost_y_vel(a0)
+		move.w	d0,ost_x_vel(a0)
+		move.w	d0,ost_inertia(a0)
 		move.b	d0,$2A(a0)
 		move.b	#0,$1C(a0)
 		move.b	#2,ost_primary_routine(a0)
@@ -37951,9 +38038,9 @@ Tails_RestartLevel:
 		clr.b	(v_ring_reward_p2).w
 		move.b	#0,$2A(a0)
 		move.b	#5,$1C(a0)
-		move.w	#0,$10(a0)
-		move.w	#0,$12(a0)
-		move.w	#0,$14(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	#0,ost_y_vel(a0)
+		move.w	#0,ost_inertia(a0)
 		move.b	#2,$22(a0)
 		move.w	#0,$2E(a0)
 
@@ -37973,9 +38060,9 @@ locret_1CDA2:
 ; ===========================================================================
 
 Tails_Respawn:				
-		tst.w	(v_camera_x_pos_diff_p2).w
+		tst.w	(v_camera_x_diff_p2).w
 		bne.s	loc_1CDB6
-		tst.w	(v_camera_y_pos_diff_p2).w
+		tst.w	(v_camera_y_diff_p2).w
 		bne.s	loc_1CDB6
 		move.b	#2,ost_primary_routine(a0)
 
@@ -37991,7 +38078,7 @@ loc_1CDB6:
 ; ---------------------------------------------------------------------------		
 Tails_Drown:
 		bsr.w	SpeedToPos
-		addi.w	#$10,ost_y_vel(a0)			; make Tails move down
+		addi.w	#$10,ost_y_vel(a0)
 		bsr.w	Tails_RecordPosition
 		bsr.s	Tails_Animate
 		bsr.w	Tails_LoadGFX
@@ -38099,7 +38186,7 @@ loc_1CE92:
 		bne.w	loc_1CFB2
 		lsr.b	#4,d0
 		andi.b	#6,d0
-		move.w	$14(a0),d2
+		move.w	ost_inertia(a0),d2
 		bpl.s	loc_1CEB6
 		neg.w	d2
 
@@ -38179,7 +38266,7 @@ loc_1CF5A:
 loc_1CF6E:				
 		addq.b	#1,d0
 		bne.s	loc_1CFE4
-		move.w	$14(a0),d2
+		move.w	ost_inertia(a0),d2
 		bpl.s	loc_1CF7A
 		neg.w	d2
 
@@ -38206,7 +38293,7 @@ loc_1CF96:
 ; ===========================================================================
 
 loc_1CFB2:				
-		move.w	$14(a0),d2
+		move.w	ost_inertia(a0),d2
 		bmi.s	loc_1CFBA
 		neg.w	d2
 
@@ -38227,8 +38314,8 @@ loc_1CFC2:
 ; ===========================================================================
 
 loc_1CFE4:				
-		move.w	$10(a2),d1
-		move.w	$12(a2),d2
+		move.w	ost_x_vel(a2),d1
+		move.w	ost_y_vel(a2),d2
 		jsr	(CalcAngle).l
 		moveq	#0,d1
 		move.b	$22(a0),d2
@@ -39209,7 +39296,7 @@ loc_1D9AE:
 		bsr.w	Adjust2PArtPointer2
 		move.b	#render_rel,ost_render(a1)
 		bset	#render_subobjects_bit,ost_render(a1)
-		move.b	#$10,$E(a1)
+		move.b	#$10,ost_mainspr_width(a1)
 		move.b	#2,ost_mainspr_childsprites(a1)
 		move.w	$3E(a0),$3E(a1)
 		move.b	d2,$36(a1)
@@ -39725,7 +39812,7 @@ loc_1E292:
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d2
 		move.b	$17(a0),d0
@@ -39739,7 +39826,7 @@ loc_1E292:
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d2
 		move.b	$17(a0),d0
@@ -39764,7 +39851,7 @@ locret_1E31C:
 ; ===========================================================================
 
 loc_1E31E:				
-		move.b	$10(a0),d0
+		move.b	ost_x_vel(a0),d0
 		bpl.s	loc_1E326
 		neg.b	d0
 
@@ -39841,7 +39928,7 @@ Player_WalkVertR:
 		ext.w	d0
 		neg.w	d0
 		add.w	d0,d2
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d3
 		lea	(v_angle_right).w,a4
@@ -39855,7 +39942,7 @@ Player_WalkVertR:
 		move.b	$17(a0),d0
 		ext.w	d0
 		add.w	d0,d2
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d3
 		lea	(v_angle_left).w,a4
@@ -39876,7 +39963,7 @@ locret_1E400:
 ; ===========================================================================
 
 loc_1E402:				
-		move.b	$12(a0),d0
+		move.b	ost_y_vel(a0),d0
 		bpl.s	loc_1E40A
 		neg.b	d0
 
@@ -39908,7 +39995,7 @@ Sonic_WalkCeiling:
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		sub.w	d0,d2
 		eori.w	#$F,d2
@@ -39923,7 +40010,7 @@ Sonic_WalkCeiling:
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		sub.w	d0,d2
 		eori.w	#$F,d2
@@ -39948,7 +40035,7 @@ locret_1E4AE:
 ; ===========================================================================
 
 loc_1E4B0:				
-		move.b	$10(a0),d0
+		move.b	ost_x_vel(a0),d0
 		bpl.s	loc_1E4B8
 		neg.b	d0
 
@@ -39983,7 +40070,7 @@ Sonic_WalkVertL:
 		move.b	$17(a0),d0
 		ext.w	d0
 		sub.w	d0,d2
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		sub.w	d0,d3
 		eori.w	#$F,d3
@@ -39998,7 +40085,7 @@ Sonic_WalkVertL:
 		move.b	$17(a0),d0
 		ext.w	d0
 		add.w	d0,d2
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		sub.w	d0,d3
 		eori.w	#$F,d3
@@ -40020,7 +40107,7 @@ locret_1E55C:
 ; ===========================================================================
 
 loc_1E55E:				
-		move.b	$12(a0),d0
+		move.b	ost_y_vel(a0),d0
 		bpl.s	loc_1E566
 		neg.b	d0
 
@@ -40561,11 +40648,11 @@ loc_1EB9C:
 		move.b	$3F(a0),d5
 		move.l	ost_x_pos(a0),d3
 		move.l	ost_y_pos(a0),d2
-		move.w	$10(a0),d1
+		move.w	ost_x_vel(a0),d1
 		ext.l	d1
 		asl.l	#8,d1
 		add.l	d1,d3
-		move.w	$12(a0),d1
+		move.w	ost_y_vel(a0),d1
 		ext.l	d1
 		asl.l	#8,d1
 		add.l	d1,d2
@@ -40642,7 +40729,7 @@ loc_1EC66:
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d2
 		move.b	$17(a0),d0
@@ -40656,7 +40743,7 @@ loc_1EC66:
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d2
 		move.b	$17(a0),d0
@@ -40737,7 +40824,7 @@ FindFloorEdge:
 FindFloorEdge_NoX:				
 		move.w	ost_y_pos(a0),d2
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d2
 		move.l	#-$2A00,(v_collision_index_ptr).w
@@ -40765,7 +40852,7 @@ FindFloorEdge2:
 		move.w	ost_x_pos(a1),d3
 		move.w	ost_y_pos(a1),d2
 		moveq	#0,d0
-		move.b	$16(a1),d0
+		move.b	ost_height(a1),d0
 		ext.w	d0
 		add.w	d0,d2
 		move.l	#-$2A00,(v_collision_index_ptr).w
@@ -40792,7 +40879,7 @@ locret_1EDF8:
 FindFloorObj:							
 		move.w	ost_x_pos(a0),d3
 		move.w	ost_y_pos(a0),d2
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d2
 		lea	(v_angle_right).w,a4
@@ -40815,7 +40902,7 @@ locret_1EE2E:
 FindFloorFire:				
 		move.w	ost_x_pos(a1),d3
 		move.w	ost_y_pos(a1),d2
-		move.b	$16(a1),d0
+		move.b	ost_height(a1),d0
 		ext.w	d0
 		add.w	d0,d2
 		lea	(v_angle_right).w,a4
@@ -40829,7 +40916,7 @@ FindFloorFire:
 FindFloorRing:				
 		move.w	ost_x_pos(a0),d3
 		move.w	ost_y_pos(a0),d2
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d2
 		lea	(v_angle_right).w,a4
@@ -40847,7 +40934,7 @@ Player_FindWallRight:
 		move.b	$17(a0),d0
 		ext.w	d0
 		sub.w	d0,d2
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d3
 		lea	(v_angle_right).w,a4
@@ -40861,7 +40948,7 @@ Player_FindWallRight:
 		move.b	$17(a0),d0
 		ext.w	d0
 		add.w	d0,d2
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d3
 		lea	(v_angle_left).w,a4
@@ -40909,7 +40996,7 @@ Player_FindCeiling:
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		sub.w	d0,d2
 		eori.w	#$F,d2
@@ -40924,7 +41011,7 @@ Player_FindCeiling:
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		sub.w	d0,d2
 		eori.w	#$F,d2
@@ -40958,7 +41045,7 @@ FindCeilingObj:
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		sub.w	d0,d2
 		eori.w	#$F,d2
@@ -40983,7 +41070,7 @@ Player_FindWallLeft:
 		move.b	$17(a0),d0
 		ext.w	d0
 		sub.w	d0,d2
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		sub.w	d0,d3
 		eori.w	#$F,d3
@@ -40998,7 +41085,7 @@ Player_FindWallLeft:
 		move.b	$17(a0),d0
 		ext.w	d0
 		add.w	d0,d2
-		move.b	$16(a0),d0
+		move.b	ost_height(a0),d0
 		ext.w	d0
 		sub.w	d0,d3
 		eori.w	#$F,d3
@@ -41364,8 +41451,8 @@ loc_1F50A:
 		move.b	$18(a0),$18(a1)
 		move.b	#8,$19(a1)
 		move.b	#1,$1A(a1)
-		move.w	#-$400,$10(a1)
-		move.w	#0,$12(a1)
+		move.w	#-$400,ost_x_vel(a1)
+		move.w	#0,ost_y_vel(a1)
 		move.w	d2,$34(a1)
 		addi.w	#$40,d2
 		dbf	d1,loc_1F4C8
@@ -41641,10 +41728,10 @@ loc_1F79C:
 		jsr	CalcSine
 		muls.w	#-$700,d1
 		asr.l	#8,d1
-		move.w	d1,$10(a1)
+		move.w	d1,ost_x_vel(a1)
 		muls.w	#-$700,d0
 		asr.l	#8,d0
-		move.w	d0,$12(a1)
+		move.w	d0,ost_y_vel(a1)
 		bset	#1,$22(a1)
 		bclr	#4,$22(a1)
 		bclr	#5,$22(a1)
@@ -41758,7 +41845,7 @@ loc_1F900:
 loc_1F90A:				
 		move.b	d0,$1C(a0)
 		move.w	ost_x_pos(a0),$30(a0)
-		move.w	#-$88,$12(a0)
+		move.w	#-$88,ost_y_vel(a0)
 		jsr	RandomNumber
 		move.b	d0,$26(a0)
 
@@ -41978,9 +42065,9 @@ loc_1FB0C:
 		bsr.w	ResumeMusic
 		move.w	#$AD,d0	
 		jsr	PlaySound
-		clr.w	$10(a1)
-		clr.w	$12(a1)
-		clr.w	$14(a1)
+		clr.w	ost_x_vel(a1)
+		clr.w	ost_y_vel(a1)
+		clr.w	ost_inertia(a1)
 		move.b	#$15,$1C(a1)
 		move.w	#$23,$2E(a1)
 		move.b	#0,$3C(a1)
@@ -41991,14 +42078,14 @@ loc_1FB0C:
 		cmpi.b	#1,(a1)
 		bne.s	loc_1FBA8
 		bclr	#2,$22(a1)
-		move.b	#$13,$16(a1)
+		move.b	#$13,ost_height(a1)
 		move.b	#9,$17(a1)
 		subq.w	#5,ost_y_pos(a1)
 		bra.s	loc_1FBB8
 ; ===========================================================================
 
 loc_1FBA8:				
-		move.b	#$F,$16(a1)
+		move.b	#$F,ost_height(a1)
 		move.b	#9,$17(a1)
 		subq.w	#1,ost_y_pos(a1)
 
@@ -42666,7 +42753,7 @@ loc_203C0:
 		move.b	#1,$18(a0)
 		move.b	#$12,$1A(a0)
 		bsr.s	loc_20428
-		move.b	#-$60,$16(a1)
+		move.b	#-$60,ost_height(a1)
 		bset	#render_useheight_bit,ost_render(a1)
 		move.l	a1,$38(a0)
 
@@ -43156,7 +43243,7 @@ loc_20BB0:
 		move.b	#$20,$19(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		move.b	#0,$18(a0)
-		move.b	#-$80,$16(a0)
+		move.b	#-$80,ost_height(a0)
 		bset	#render_useheight_bit,ost_render(a0)
 
 loc_20BEA:				
@@ -43385,14 +43472,14 @@ loc_20EF2:
 		andi.w	#$F,d1
 		addq.w	#1,d1
 		lsl.w	#3,d1
-		move.b	d1,$16(a0)
+		move.b	d1,ost_height(a0)
 
 loc_20F2E:				
 		moveq	#0,d1
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	ost_x_pos(a0),d4
@@ -43464,7 +43551,7 @@ loc_21006:
 		asr.w	#1,d1
 		add.w	d1,d0
 		neg.w	d0
-		move.w	d0,ost_x_pos(a0)
+		move.w	d0,ost_x_screen(a0)
 		move.w	(v_camera_y_pos).w,d1
 		asr.w	#1,d1
 		andi.w	#$3F,d1
@@ -43716,7 +43803,7 @@ loc_212C4:
 
 loc_212CE:				
 		bset	#2,$22(a1)
-		move.b	#$E,$16(a1)
+		move.b	#$E,ost_height(a1)
 		move.b	#7,$17(a1)
 		move.b	#2,$1C(a1)
 		addq.w	#5,ost_y_pos(a1)
@@ -43980,7 +44067,7 @@ loc_21520:
 		bne.s	loc_21580
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		tst.w	$10(a1)
+		tst.w	ost_x_vel(a1)
 		bmi.s	loc_21556
 		cmpi.w	#-$C0,d0
 		bgt.s	locret_215BE
@@ -44010,7 +44097,7 @@ loc_21562:
 loc_21580:				
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		tst.w	$10(a1)
+		tst.w	ost_x_vel(a1)
 		bmi.s	loc_2159C
 		cmpi.w	#-$B0,d0
 		bgt.s	locret_215BE
@@ -44038,7 +44125,7 @@ locret_215BE:
 ; ===========================================================================
 
 loc_215C0:				
-		move.w	$14(a1),d0
+		move.w	ost_inertia(a1),d0
 		bpl.s	loc_215C8
 		neg.w	d0
 
@@ -44070,7 +44157,7 @@ loc_21602:
 		move.w	ost_y_pos(a0),d2
 		add.w	d1,d2
 		moveq	#0,d1
-		move.b	$16(a1),d1
+		move.b	ost_height(a1),d1
 		subi.w	#$13,d1
 		sub.w	d1,d2
 		move.w	d2,ost_y_pos(a1)
@@ -44142,7 +44229,7 @@ loc_2181E:
 		move.w	ost_y_pos(a0),d0
 		addi.w	#$3C,d0
 		move.w	ost_y_pos(a1),d2
-		move.b	$16(a1),d1
+		move.b	ost_height(a1),d1
 		ext.w	d1
 		add.w	d2,d1
 		addq.w	#4,d1
@@ -44159,9 +44246,9 @@ loc_2181E:
 		bsr.w	loc_19E14
 		move.w	#1,$1C(a1)
 		move.b	#0,(a2)
-		tst.w	$14(a1)
+		tst.w	ost_inertia(a1)
 		bne.s	locret_2188A
-		move.w	#1,$14(a1)
+		move.w	#1,ost_inertia(a1)
 
 locret_2188A:				
 		rts	
@@ -44191,12 +44278,12 @@ loc_218C6:
 		addi.b	#$20,d0
 		cmpi.b	#$40,d0
 		bcc.s	loc_218D8
-		asr	$12(a1)
+		asr	ost_y_vel(a1)
 		bra.s	loc_218A8
 ; ===========================================================================
 
 loc_218D8:				
-		move.w	#0,$12(a1)
+		move.w	#0,ost_y_vel(a1)
 		bra.s	loc_218A8
 ; ===========================================================================
 
@@ -44210,16 +44297,16 @@ loc_218E0:
 		move.w	ost_y_pos(a0),d2
 		add.w	d1,d2
 		moveq	#0,d1
-		move.b	$16(a1),d1
+		move.b	ost_height(a1),d1
 		subi.w	#$13,d1
 		sub.w	d1,d2
 		move.w	d2,ost_y_pos(a1)
 		move.b	(a2),d0
 		move.b	d0,$27(a1)
 		addq.b	#4,(a2)
-		tst.w	$14(a1)
+		tst.w	ost_inertia(a1)
 		bne.s	locret_2191E
-		move.w	#1,$14(a1)
+		move.w	#1,ost_inertia(a1)
 
 locret_2191E:				
 		rts	
@@ -44437,12 +44524,12 @@ loc_21B14:
 		move.w	#-$A0,d2
 
 loc_21B3A:				
-		move.w	d1,$12(a0)
-		move.w	d2,$10(a0)
+		move.w	d1,ost_y_vel(a0)
+		move.w	d2,ost_x_vel(a0)
 		move.w	ost_x_pos(a0),d0
 		sub.w	$30(a0),d0
 		bcc.s	loc_21B50
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_21B50:				
 		addq.b	#2,ost_primary_routine(a0)
@@ -44475,7 +44562,7 @@ loc_21B74:
 loc_21B94:				
 					
 		bsr.w	loc_21C66
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bpl.s	loc_21BB6
 		jsrto	ObjectFall,JmpTo_ObjectFall
 		move.w	$34(a0),d0
@@ -44507,7 +44594,7 @@ loc_21BD6:
 		bgt.s	locret_21C2A
 		movea.l	$3C(a0),a1
 		moveq	#2,d1
-		tst.w	$10(a0)
+		tst.w	ost_x_vel(a0)
 		bmi.s	loc_21BF4
 		moveq	#0,d1
 
@@ -44528,8 +44615,8 @@ loc_21C10:
 		bsr.s	loc_21C2C
 
 loc_21C1E:				
-		clr.w	$10(a0)
-		clr.w	$12(a0)
+		clr.w	ost_x_vel(a0)
+		clr.w	ost_y_vel(a0)
 		subq.b	#2,ost_primary_routine(a0)
 
 locret_21C2A:				
@@ -44537,8 +44624,8 @@ locret_21C2A:
 ; ===========================================================================
 
 loc_21C2C:				
-		move.w	$12(a0),$12(a2)
-		neg.w	$12(a2)
+		move.w	ost_y_vel(a0),ost_y_vel(a2)
+		neg.w	ost_y_vel(a2)
 		bset	#1,$22(a2)
 		bclr	#3,$22(a2)
 		clr.b	$3C(a2)
@@ -44658,7 +44745,7 @@ loc_21DBE:
 		move.b	#1,$18(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		move.w	ost_y_pos(a0),$32(a0)
-		move.b	#$40,$16(a0)
+		move.b	#$40,ost_height(a0)
 		bset	#render_useheight_bit,ost_render(a0)
 		moveq	#0,d0
 		move.b	$28(a0),d0
@@ -44692,13 +44779,13 @@ loc_21E40:
 		andi.b	#$18,d0
 		beq.s	locret_21E66
 		addq.b	#2,$25(a0)
-		move.w	#$200,$10(a0)
+		move.w	#$200,ost_x_vel(a0)
 		btst	#0,$22(a0)
 		beq.s	loc_21E60
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_21E60:				
-		move.w	#$100,$12(a0)
+		move.w	#$100,ost_y_vel(a0)
 
 locret_21E66:				
 		rts	
@@ -44717,8 +44804,8 @@ loc_21E7C:
 		bne.s	locret_21EC0
 		addq.b	#2,$25(a0)
 		move.b	#2,$1A(a0)
-		move.w	#0,$10(a0)
-		move.w	#0,$12(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	#0,ost_y_vel(a0)
 		jsrto	FindNextFreeObj,JmpTo4_FindNextFreeObj
 		bne.s	locret_21EC0
 		_move.b	#id_Scenery1,ost_id(a1)
@@ -44733,7 +44820,7 @@ locret_21EC0:
 
 loc_21EC2:				
 		jsrto	SpeedToPos,JmpTo4_SpeedToPos
-		addi.w	#$38,$12(a0)
+		addi.w	#$38,ost_y_vel(a0)
 		move.w	(v_boundary_bottom).w,d0
 		addi.w	#$E0,d0	
 		cmp.w	ost_y_pos(a0),d0
@@ -44974,7 +45061,7 @@ loc_22176:
 		neg.w	d1
 
 loc_2218C:				
-		add.w	d1,$12(a0)
+		add.w	d1,ost_y_vel(a0)
 		bne.s	locret_22196
 		addq.b	#1,$28(a0)
 
@@ -44993,7 +45080,7 @@ loc_22198:
 		neg.w	d1
 
 loc_221AE:				
-		add.w	d1,$12(a0)
+		add.w	d1,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -45175,7 +45262,7 @@ loc_22384:
 ; ===========================================================================
 
 loc_22388:				
-		move.w	$10(a1),d0
+		move.w	ost_x_vel(a1),d0
 		btst	#0,$22(a0)
 		beq.s	loc_22396
 		neg.w	d0
@@ -45183,16 +45270,16 @@ loc_22388:
 loc_22396:				
 		cmpi.w	#$1000,d0
 		bge.s	loc_223D8
-		move.w	$30(a0),$10(a1)
+		move.w	$30(a0),ost_x_vel(a1)
 		bclr	#0,$22(a1)
 		btst	#0,$22(a0)
 		beq.s	loc_223BA
 		bset	#0,$22(a1)
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 
 loc_223BA:				
 		move.w	#$F,$2E(a1)
-		move.w	$10(a1),$14(a1)
+		move.w	ost_x_vel(a1),ost_inertia(a1)
 		bclr	#5,$22(a0)
 		bclr	#6,$22(a0)
 		bclr	#5,$22(a1)
@@ -45247,7 +45334,7 @@ off_22416:	dc.w loc_22428-off_22416			; 0
 
 loc_22428:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.w	#-$480,$12(a0)
+		move.w	#-$480,ost_y_vel(a0)
 		moveq	#0,d1
 		move.b	$28(a0),d1
 		move.b	d1,d0
@@ -45281,8 +45368,8 @@ loc_22458:
 		move.b	#-$75,$20(a1)
 		move.w	ost_x_pos(a1),$38(a1)
 		move.w	ost_y_pos(a1),$30(a1)
-		move.w	$12(a0),$12(a1)
-		move.w	$12(a1),$34(a1)
+		move.w	ost_y_vel(a0),ost_y_vel(a1)
+		move.w	ost_y_vel(a1),$34(a1)
 		move.b	#8,$19(a1)
 		move.w	#$60,$3A(a1)
 		move.w	#$B,$36(a1)
@@ -45315,10 +45402,10 @@ loc_224F0:
 loc_224F4:				
 		jsrto	SpeedToPos,JmpTo6_SpeedToPos
 		move.w	$36(a0),d0
-		add.w	d0,$10(a0)
+		add.w	d0,ost_x_vel(a0)
 
 loc_22500:
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		bne.s	loc_2250C
 		neg.w	$36(a0)
 
@@ -45326,8 +45413,8 @@ loc_2250C:
 		move.w	$30(a0),d0
 		cmp.w	ost_y_pos(a0),d0
 		bhi.s	loc_22524
-		move.w	$34(a0),$12(a0)
-		clr.w	$10(a0)
+		move.w	$34(a0),ost_y_vel(a0)
+		clr.w	ost_x_vel(a0)
 		subq.b	#2,ost_primary_routine(a0)
 
 loc_22524:				
@@ -45336,14 +45423,14 @@ loc_22524:
 
 loc_22528:				
 		jsrto	SpeedToPos,JmpTo6_SpeedToPos
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		bne.s	loc_22540
 		move.w	$3A(a0),d0
 		add.w	$38(a0),d0
 		move.w	d0,ost_x_pos(a0)
 
 loc_22540:				
-		cmpi.w	#$180,$12(a0)
+		cmpi.w	#$180,ost_y_vel(a0)
 		bne.s	loc_22552
 		move.w	#$DA,d0	
 		jsr	PlaySoundLocal
@@ -45352,7 +45439,7 @@ loc_22552:
 		move.w	$30(a0),d0
 		cmp.w	ost_y_pos(a0),d0
 		bhi.s	loc_22572
-		move.w	$34(a0),$12(a0)
+		move.w	$34(a0),ost_y_vel(a0)
 		move.w	$38(a0),ost_x_pos(a0)
 		move.w	#$DA,d0	
 		jsr	PlaySoundLocal
@@ -45524,9 +45611,9 @@ loc_22688:
 		addq.b	#2,(a4)
 		move.b	#-$7F,$2A(a1)
 		move.b	#2,$1C(a1)
-		move.w	#$800,$14(a1)
-		move.w	#0,$10(a1)
-		move.w	#0,$12(a1)
+		move.w	#$800,ost_inertia(a1)
+		move.w	#0,ost_x_vel(a1)
+		move.w	#0,ost_y_vel(a1)
 		bclr	#5,$22(a0)
 		bclr	#5,$22(a1)
 		bset	#1,$22(a1)
@@ -45570,11 +45657,11 @@ loc_22740:
 loc_2275E:				
 		move.l	ost_x_pos(a1),d2
 		move.l	ost_y_pos(a1),d3
-		move.w	$10(a1),d0
+		move.w	ost_x_vel(a1),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d2
-		move.w	$12(a1),d0
+		move.w	ost_y_vel(a1),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
@@ -45644,11 +45731,11 @@ loc_2281C:
 loc_22832:				
 		move.l	ost_x_pos(a1),d2
 		move.l	ost_y_pos(a1),d3
-		move.w	$10(a1),d0
+		move.w	ost_x_vel(a1),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d2
-		move.w	$12(a1),d0
+		move.w	ost_y_vel(a1),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
@@ -45759,8 +45846,8 @@ loc_22920:
 		divs.w	d1,d0
 
 loc_2293E:				
-		move.w	d0,$10(a1)
-		move.w	d3,$12(a1)
+		move.w	d0,ost_x_vel(a1)
+		move.w	d3,ost_y_vel(a1)
 		tst.w	d1
 		bpl.s	loc_2294C
 		neg.w	d1
@@ -45784,8 +45871,8 @@ loc_22952:
 		divs.w	d0,d1
 
 loc_2296C:				
-		move.w	d1,$12(a1)
-		move.w	d2,$10(a1)
+		move.w	d1,ost_y_vel(a1)
+		move.w	d2,ost_x_vel(a1)
 		tst.w	d0
 		bpl.s	loc_2297A
 		neg.w	d0
@@ -45981,7 +46068,7 @@ off_23006:	dc.w loc_23014-off_23006			; 0
 
 loc_23014:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.b	#8,$16(a0)
+		move.b	#8,ost_height(a0)
 		move.b	#8,$17(a0)
 		move.l	#Map_23254,ost_mappings(a0)
 		move.w	#tile_Nem_HTZFireball2+tile_hi,ost_tile(a0)
@@ -45995,8 +46082,8 @@ loc_23014:
 		lsl.w	#3,d0
 		andi.w	#$780,d0
 		neg.w	d0
-		move.w	d0,$10(a0)
-		move.w	d0,$12(a0)
+		move.w	d0,ost_x_vel(a0)
+		move.w	d0,ost_y_vel(a0)
 		move.b	$28(a0),d0
 		andi.w	#$F,d0
 		lsl.w	#4,d0
@@ -46018,7 +46105,7 @@ loc_23084:
 		jsrto	FindNextFreeObj,JmpTo6_FindNextFreeObj
 		bne.s	loc_230A6
 		bsr.s	loc_230C2
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 		bset	#render_xflip_bit,ost_render(a1)
 
 loc_230A6:				
@@ -46037,9 +46124,9 @@ loc_230C2:
 		move.b	#8,$24(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		move.w	$10(a0),$10(a1)
-		move.w	$12(a0),$12(a1)
-		move.b	#8,$16(a1)
+		move.w	ost_x_vel(a0),ost_x_vel(a1)
+		move.w	ost_y_vel(a0),ost_y_vel(a1)
+		move.b	#8,ost_height(a1)
 		move.b	#8,$17(a1)
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
@@ -46073,7 +46160,7 @@ loc_23144:
 
 loc_2315A:				
 		jsrto	SpeedToPos,JmpTo7_SpeedToPos
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		move.w	(v_boundary_bottom).w,d0
 		addi.w	#$E0,d0	
 		cmp.w	ost_y_pos(a0),d0
@@ -46083,7 +46170,7 @@ loc_2315A:
 
 loc_23176:				
 		bclr	#render_yflip_bit,ost_render(a0)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	loc_231CE
 		bset	#render_yflip_bit,ost_render(a0)
 		bsr.w	FindFloorObj
@@ -46093,7 +46180,7 @@ loc_23176:
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#2,$1C(a0)
 		move.b	#4,$1A(a0)
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 		move.l	#Map_23294,ost_mappings(a0)
 		move.w	#(vram_HTZFireball1/sizeof_cell)+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo17_Adjust2PArtPointer
@@ -46123,7 +46210,7 @@ loc_231F0:
 		move.w	#9,$32(a1)
 		move.w	#$200,$1C(a1)
 		move.w	#$E,d0
-		tst.w	$10(a1)
+		tst.w	ost_x_vel(a1)
 		bpl.s	loc_23214
 		neg.w	d0
 
@@ -46244,9 +46331,9 @@ loc_2331E:
 		move.b	$28(a0),d0
 		andi.w	#$1E,d0
 		lea	byte_23314(pc,d0.w),a2
-		move.b	(a2)+,$16(a0)
+		move.b	(a2)+,ost_height(a0)
 		move.b	(a2)+,$1A(a0)
-		move.b	#$20,$16(a0)
+		move.b	#$20,ost_height(a0)
 		bset	#render_useheight_bit,ost_render(a0)
 
 loc_23368:				
@@ -46257,7 +46344,7 @@ loc_23368:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	ost_x_pos(a0),d4
@@ -46335,7 +46422,7 @@ loc_2343E:
 
 loc_23444:				
 		bset	#2,$22(a1)
-		move.b	#$E,$16(a1)
+		move.b	#$E,ost_height(a1)
 		move.b	#7,$17(a1)
 		move.b	#2,$1C(a1)
 
@@ -46389,7 +46476,7 @@ loc_234DC:
 		jsrto	SpeedToPos,JmpTo8_SpeedToPos
 
 loc_234E0:
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		tst.b	ost_render(a0)
 		bpl.w	JmpTo22_DeleteObject
 		jmpto	DisplaySprite,JmpTo12_DisplaySprite
@@ -46524,10 +46611,10 @@ loc_23602:
 
 loc_23608:				
 		bset	#2,$22(a1)
-		move.b	#$E,$16(a1)
+		move.b	#$E,ost_height(a1)
 		move.b	#7,$17(a1)
 		move.b	#2,$1C(a1)
-		move.w	#-$300,$12(a1)
+		move.w	#-$300,ost_y_vel(a1)
 
 loc_23626:				
 		bset	#1,$22(a1)
@@ -46555,7 +46642,7 @@ loc_23652:
 
 loc_2366A:				
 		jsrto	SpeedToPos,JmpTo8_SpeedToPos
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		tst.b	ost_render(a0)
 		bpl.w	JmpTo22_DeleteObject
 		jmpto	DisplaySprite,JmpTo12_DisplaySprite
@@ -47007,9 +47094,9 @@ loc_23C52:
 		cmp.w	d3,d0
 		bcc.s	locret_23C9E
 		move.b	#1,$2A(a1)
-		move.w	#0,$14(a1)
-		move.w	#0,$10(a1)
-		move.w	#0,$12(a1)
+		move.w	#0,ost_inertia(a1)
+		move.w	#0,ost_x_vel(a1)
+		move.w	#0,ost_y_vel(a1)
 		bclr	#5,$22(a1)
 		bclr	#tile_hi_bit,ost_tile(a1)
 		move.l	#-$96800,$32(a0)
@@ -47035,15 +47122,15 @@ loc_23CA0:
 		cmp.w	d3,d0
 		bcc.s	locret_23D1E
 		move.b	#1,$2A(a1)
-		move.w	#0,$14(a1)
-		move.w	#0,$10(a1)
-		move.w	#0,$12(a1)
+		move.w	#0,ost_inertia(a1)
+		move.w	#0,ost_x_vel(a1)
+		move.w	#0,ost_y_vel(a1)
 		bclr	#5,$22(a1)
 		bclr	#tile_hi_bit,ost_tile(a1)
 		move.b	#1,$2A(a2)
-		move.w	#0,$14(a2)
-		move.w	#0,$10(a2)
-		move.w	#0,$12(a2)
+		move.w	#0,ost_inertia(a2)
+		move.w	#0,ost_x_vel(a2)
+		move.w	#0,ost_y_vel(a2)
 		bclr	#5,$22(a2)
 		bclr	#tile_hi_bit,ost_tile(a2)
 		move.l	#-$96800,$32(a0)
@@ -47078,9 +47165,9 @@ loc_23D60:
 		beq.s	locret_23D96
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.b	#2,$1C(a1)
-		move.w	#$800,$14(a1)
+		move.w	#$800,ost_inertia(a1)
 		bset	#1,$22(a1)
-		move.w	#-$1000,$12(a1)
+		move.w	#-$1000,ost_y_vel(a1)
 		bclr	#3,$22(a1)
 		move.b	#0,$2A(a1)
 		move.w	#$CC,d0	
@@ -47537,19 +47624,19 @@ loc_241C6:
 loc_241D4:				
 		bclr	d6,$22(a0)
 		beq.w	locret_24278
-		move.w	$30(a0),$12(a1)
+		move.w	$30(a0),ost_y_vel(a1)
 		bset	#1,$22(a1)
 		bclr	#3,$22(a1)
 		move.b	#$10,$1C(a1)
 		move.b	#2,$24(a1)
 		move.b	$28(a0),d0
 		bpl.s	loc_24206
-		move.w	#0,$10(a1)
+		move.w	#0,ost_x_vel(a1)
 
 loc_24206:				
 		btst	#0,d0
 		beq.s	loc_24246
-		move.w	#1,$14(a1)
+		move.w	#1,ost_inertia(a1)
 		move.b	#1,$27(a1)
 		move.b	#0,$1C(a1)
 		move.b	#0,$2C(a1)
@@ -47562,7 +47649,7 @@ loc_24236:
 		btst	#0,$22(a1)
 		beq.s	loc_24246
 		neg.b	$27(a1)
-		neg.w	$14(a1)
+		neg.w	ost_inertia(a1)
 
 loc_24246:				
 		andi.b	#$C,d0
@@ -47665,7 +47752,7 @@ loc_2433C:
 		bne.w	locret_243CE
 		tst.w	d0
 		bne.w	loc_2435E
-		tst.w	$14(a1)
+		tst.w	ost_inertia(a1)
 		beq.s	locret_243CE
 		bpl.s	loc_243C8
 		bra.s	locret_243CE
@@ -47687,7 +47774,7 @@ loc_24378:
 		beq.s	locret_243CE
 		tst.w	d0
 		bne.w	loc_2438E
-		tst.w	$14(a1)
+		tst.w	ost_inertia(a1)
 		bmi.s	loc_243C8
 		bra.s	locret_243CE
 ; ===========================================================================
@@ -47703,8 +47790,8 @@ loc_2438E:
 
 loc_243A6:				
 		add.w	d0,ost_x_pos(a1)
-		move.w	d1,$14(a1)
-		move.w	#0,$10(a1)
+		move.w	d1,ost_inertia(a1)
+		move.w	#0,ost_x_vel(a1)
 		move.w	$34(a0),d0
 		sub.w	ost_x_pos(a0),d0
 		bcc.s	loc_243C0
@@ -47743,18 +47830,18 @@ loc_243FE:
 		addi.w	#$A,d0
 		lsl.w	#7,d0
 		neg.w	d0
-		move.w	d0,$10(a1)
+		move.w	d0,ost_x_vel(a1)
 		subq.w	#4,ost_x_pos(a1)
 		bset	#0,$22(a1)
 		btst	#0,$22(a0)
 		bne.s	loc_2442C
 		bclr	#0,$22(a1)
 		addi_.w	#8,ost_x_pos(a1)
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 
 loc_2442C:				
 		move.w	#$F,$2E(a1)
-		move.w	$10(a1),$14(a1)
+		move.w	ost_x_vel(a1),ost_inertia(a1)
 		btst	#2,$22(a1)
 		bne.s	loc_24446
 		move.b	#0,$1C(a1)
@@ -47762,12 +47849,12 @@ loc_2442C:
 loc_24446:				
 		move.b	$28(a0),d0
 		bpl.s	loc_24452
-		move.w	#0,$12(a1)
+		move.w	#0,ost_y_vel(a1)
 
 loc_24452:				
 		btst	#0,d0
 		beq.s	loc_24492
-		move.w	#1,$14(a1)
+		move.w	#1,ost_inertia(a1)
 		move.b	#1,$27(a1)
 		move.b	#0,$1C(a1)
 		move.b	#1,$2C(a1)
@@ -47780,7 +47867,7 @@ loc_24482:
 		btst	#0,$22(a1)
 		beq.s	loc_24492
 		neg.b	$27(a1)
-		neg.w	$14(a1)
+		neg.w	ost_inertia(a1)
 
 loc_24492:				
 		andi.b	#$C,d0
@@ -48054,7 +48141,7 @@ loc_24A2C:
 
 loc_24A48:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.b	#$F,$16(a0)
+		move.b	#$F,ost_height(a0)
 		move.b	#$F,$17(a0)
 		move.l	#Map_24C52,ost_mappings(a0)
 		move.w	#tile_Nem_SpringBall+tile_pal4,ost_tile(a0)
@@ -48099,7 +48186,7 @@ loc_24AEA:
 loc_24B04:				
 		addq.b	#2,ost_primary_routine(a0)
 		bset	#1,$22(a0)
-		move.w	#-$300,$12(a0)
+		move.w	#-$300,ost_y_vel(a0)
 		move.w	#$100,$14(a0)
 		movea.l	$3C(a0),a1
 		move.b	#1,$30(a1)
@@ -48117,7 +48204,7 @@ loc_24B38:
 		jsrto	SpeedToPos,JmpTo9_SpeedToPos
 		btst	#1,$22(a0)
 		beq.s	loc_24B8C
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		bmi.s	loc_24B8A
 		move.w	(v_boundary_bottom).w,d0
 		addi.w	#$E0,d0	
@@ -48127,12 +48214,12 @@ loc_24B38:
 		tst.w	d1
 		bpl.w	loc_24B8A
 		add.w	d1,ost_y_pos(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		bclr	#1,$22(a0)
-		move.w	#$100,$10(a0)
+		move.w	#$100,ost_x_vel(a0)
 		btst	#0,$22(a0)
 		beq.s	loc_24B8A
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_24B8A:				
 		bra.s	loc_24BA4
@@ -48480,10 +48567,10 @@ loc_24EB2:
 
 loc_24EB8:				
 		bset	#2,$22(a1)
-		move.b	#$E,$16(a1)
+		move.b	#$E,ost_height(a1)
 		move.b	#7,$17(a1)
 		move.b	#2,$1C(a1)
-		move.w	d1,$12(a1)
+		move.w	d1,ost_y_vel(a1)
 
 loc_24ED4:				
 		bset	#1,$22(a1)
@@ -48523,7 +48610,7 @@ loc_24F28:
 
 loc_24F3C:				
 		jsrto	SpeedToPos,JmpTo10_SpeedToPos
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		tst.b	ost_render(a0)
 		bpl.w	JmpTo26_DeleteObject
 		jmpto	DisplaySprite,JmpTo14_DisplaySprite
@@ -48577,19 +48664,19 @@ loc_24FC2:
 		addq.b	#2,(a4)
 		move.b	#-$7F,$2A(a1)
 		move.b	#2,$1C(a1)
-		move.w	#$800,$14(a1)
+		move.w	#$800,ost_inertia(a1)
 		tst.b	$28(a0)
 		beq.s	loc_24FF0
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
-		move.w	#0,$10(a1)
-		move.w	#-$800,$12(a1)
+		move.w	#0,ost_x_vel(a1)
+		move.w	#-$800,ost_y_vel(a1)
 		bra.s	loc_25002
 ; ===========================================================================
 
 loc_24FF0:				
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		move.w	#$800,$10(a1)
-		move.w	#0,$12(a1)
+		move.w	#$800,ost_x_vel(a1)
+		move.w	#0,ost_y_vel(a1)
 
 loc_25002:				
 		bclr	#5,$22(a0)
@@ -48621,11 +48708,11 @@ loc_25036:
 loc_25054:				
 		move.l	ost_x_pos(a1),d2
 		move.l	ost_y_pos(a1),d3
-		move.w	$10(a1),d0
+		move.w	ost_x_vel(a1),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d2
-		move.w	$12(a1),d0
+		move.w	ost_y_vel(a1),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
@@ -48877,9 +48964,9 @@ loc_25360:
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#-$7F,$2A(a1)
 		move.b	#2,$1C(a1)
-		move.w	#$1000,$14(a1)
-		move.w	#0,$10(a1)
-		move.w	#0,$12(a1)
+		move.w	#$1000,ost_inertia(a1)
+		move.w	#0,ost_x_vel(a1)
+		move.w	#0,ost_y_vel(a1)
 		bclr	#5,$22(a0)
 		bclr	#5,$22(a1)
 		bset	#1,$22(a1)
@@ -48931,8 +49018,8 @@ loc_2541A:
 		andi.w	#3,d0
 		add.w	d0,d0
 		add.w	d0,d0
-		move.w	word_25464(pc,d0.w),$10(a1)
-		move.w	word_25464+2(pc,d0.w),$12(a1)
+		move.w	word_25464(pc,d0.w),ost_x_vel(a1)
+		move.w	word_25464+2(pc,d0.w),ost_y_vel(a1)
 		move.w	#3,$1E(a0)
 		tst.b	$28(a0)
 		bpl.s	locret_25462
@@ -48990,11 +49077,11 @@ loc_254C2:
 loc_254CC:				
 		move.l	ost_x_pos(a1),d2
 		move.l	ost_y_pos(a1),d3
-		move.w	$10(a1),d0
+		move.w	ost_x_vel(a1),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d2
-		move.w	$12(a1),d0
+		move.w	ost_y_vel(a1),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
@@ -49183,16 +49270,16 @@ loc_25768:
 
 loc_2577A:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.b	#8,$16(a0)
+		move.b	#8,ost_height(a0)
 		move.b	#$10,$17(a0)
 		move.b	#4,$18(a0)
 		move.b	#-$65,$20(a0)
 		move.b	#8,$19(a0)
 		move.b	#0,$1A(a0)
-		move.w	#$400,$10(a0)
+		move.w	#$400,ost_x_vel(a0)
 		btst	#0,$22(a0)
 		beq.s	loc_257B4
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_257B4:				
 		move.w	#$AE,d0	
@@ -49296,7 +49383,7 @@ loc_2589E:
 		jsrto	Adjust2PArtPointer,JmpTo25_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,$19(a0)
-		move.b	#$20,$16(a0)
+		move.b	#$20,ost_height(a0)
 		move.b	#4,$18(a0)
 		jsrto	FindNextFreeObj,JmpTo10_FindNextFreeObj
 		bne.s	loc_25922
@@ -49311,7 +49398,7 @@ loc_2589E:
 		addi.w	#$30,ost_y_pos(a1)
 		move.b	ost_render(a0),ost_render(a1)
 		move.b	#$10,$19(a1)
-		move.b	#$10,$16(a1)
+		move.b	#$10,ost_height(a1)
 		move.b	#4,$18(a1)
 		move.b	#1,$1A(a1)
 
@@ -49323,7 +49410,7 @@ loc_25922:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	(sp)+,d4
@@ -49397,12 +49484,12 @@ byte_259B0:
 
 loc_259B8:				
 		jsrto	SpeedToPos,JmpTo12_SpeedToPos
-		addi.w	#$38,$12(a0)
+		addi.w	#$38,ost_y_vel(a0)
 		bsr.w	FindFloorObj
 		tst.w	d1
 		bpl.w	locret_259E4
 		add.w	d1,ost_y_pos(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		move.w	ost_y_pos(a0),$32(a0)
 		move.b	#2,$1A(a0)
 		clr.b	$25(a0)
@@ -49457,7 +49544,7 @@ loc_25A6E:
 		jsrto	Adjust2PArtPointer,JmpTo25_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,$19(a0)
-		move.b	#$18,$16(a0)
+		move.b	#$18,ost_height(a0)
 		move.b	#4,$18(a0)
 
 loc_25A9C:				
@@ -49467,7 +49554,7 @@ loc_25A9C:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	(sp)+,d4
@@ -49496,7 +49583,7 @@ loc_25AF6:
 		bclr	d6,$22(a0)
 		beq.s	locret_25B26
 		bset	#2,$22(a1)
-		move.b	#$E,$16(a1)
+		move.b	#$E,ost_height(a1)
 		move.b	#7,$17(a1)
 		move.b	#2,$1C(a1)
 		bset	#1,$22(a1)
@@ -49546,7 +49633,7 @@ loc_25B66:
 		bcc.s	locret_25B8C
 		move.w	#3,$34(a0)
 		subq.w	#4,ost_y_pos(a0)
-		addq.b	#4,$16(a0)
+		addq.b	#4,ost_height(a0)
 		addq.b	#1,$1A(a0)
 		cmpi.b	#6,$1A(a0)
 		bne.s	locret_25B8C
@@ -49566,7 +49653,7 @@ loc_25B8E:
 
 loc_25B9A:				
 		jsrto	SpeedToPos,JmpTo12_SpeedToPos
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 
 loc_25BA4:				
 		tst.b	ost_render(a0)
@@ -49629,8 +49716,8 @@ loc_25C24:
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	$18(a0),$18(a1)
 		move.b	$19(a0),$19(a1)
-		move.w	(a4)+,$10(a1)
-		move.w	(a4)+,$12(a1)
+		move.w	(a4)+,ost_x_vel(a1)
+		move.w	(a4)+,ost_y_vel(a1)
 		move.b	(a2)+,$3F(a1)
 		dbf	d1,loc_25C1C
 
@@ -49923,14 +50010,14 @@ loc_261C2:
 ; ===========================================================================
 
 loc_261C8:				
-		move.w	$10(a2),d0
+		move.w	ost_x_vel(a2),d0
 		bpl.s	loc_261D0
 		neg.w	d0
 
 loc_261D0:				
 		cmpi.w	#$200,d0
 		bcc.s	loc_261E4
-		move.w	$12(a2),d0
+		move.w	ost_y_vel(a2),d0
 		bpl.s	loc_261DE
 		neg.w	d0
 
@@ -49957,11 +50044,11 @@ loc_261EC:
 		andi.w	#$F,d0
 		subq.w	#8,d0
 		add.w	d0,ost_y_pos(a1)
-		move.w	(a3)+,$10(a1)
-		move.w	(a3)+,$12(a1)
+		move.w	(a3)+,ost_x_vel(a1)
+		move.w	(a3)+,ost_y_vel(a1)
 		btst	#0,$22(a2)
 		beq.s	loc_2623A
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 
 loc_2623A:				
 		move.w	ost_x_pos(a1),$30(a1)
@@ -50014,11 +50101,11 @@ loc_26296:
 loc_262B4:				
 		move.l	$30(a0),d2
 		move.l	$34(a0),d3
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d2
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
@@ -50027,7 +50114,7 @@ loc_262B4:
 		swap	d2
 		andi.w	#3,d3
 		addq.w	#4,d3
-		add.w	d3,$12(a0)
+		add.w	d3,ost_y_vel(a0)
 		move.b	$26(a0),d0
 		jsrto	CalcSine,JmpTo7_CalcSine
 		asr.w	#6,d0
@@ -50209,8 +50296,8 @@ loc_2647A:
 loc_26480:				
 		lea	(byte_26550).l,a3
 		move.b	(a3,d0.w),d0
-		move.w	#-$400,$12(a1)
-		sub.b	d0,$12(a1)
+		move.w	#-$400,ost_y_vel(a1)
+		sub.b	d0,ost_y_vel(a1)
 		bset	#0,$22(a1)
 		btst	#0,$22(a0)
 		bne.s	loc_264AA
@@ -50218,14 +50305,14 @@ loc_26480:
 		neg.b	d0
 
 loc_264AA:				
-		move.w	$10(a1),d1
+		move.w	ost_x_vel(a1),d1
 		bpl.s	loc_264B2
 		neg.w	d1
 
 loc_264B2:				
 		cmpi.w	#$400,d1
 		bcs.s	loc_264BC
-		sub.b	d0,$10(a1)
+		sub.b	d0,ost_x_vel(a1)
 
 loc_264BC:				
 		bset	#1,$22(a1)
@@ -50236,7 +50323,7 @@ loc_264BC:
 		move.b	$28(a0),d0
 		btst	#0,d0
 		beq.s	loc_2651E
-		move.w	#1,$14(a1)
+		move.w	#1,ost_inertia(a1)
 		move.b	#1,$27(a1)
 		move.b	#0,$1C(a1)
 		move.b	#1,$2C(a1)
@@ -50249,7 +50336,7 @@ loc_2650E:
 		btst	#0,$22(a1)
 		beq.s	loc_2651E
 		neg.b	$27(a1)
-		neg.w	$14(a1)
+		neg.w	ost_inertia(a1)
 
 loc_2651E:				
 		andi.b	#$C,d0
@@ -50450,7 +50537,7 @@ loc_2678E:
 ; ===========================================================================
 
 loc_26798:				
-		move.w	#-$A00,$12(a1)
+		move.w	#-$A00,ost_y_vel(a1)
 		bset	#1,$22(a1)
 		bclr	#3,$22(a1)
 		move.b	#$10,$1C(a1)
@@ -50458,12 +50545,12 @@ loc_26798:
 		move.b	#0,$39(a1)
 		move.b	$28(a0),d0
 		bpl.s	loc_267C8
-		move.w	#0,$10(a1)
+		move.w	#0,ost_x_vel(a1)
 
 loc_267C8:				
 		btst	#0,d0
 		beq.s	loc_26808
-		move.w	#1,$14(a1)
+		move.w	#1,ost_inertia(a1)
 		move.b	#1,$27(a1)
 		move.b	#0,$1C(a1)
 		move.b	#0,$2C(a1)
@@ -50476,7 +50563,7 @@ loc_267F8:
 		btst	#0,$22(a1)
 		beq.s	loc_26808
 		neg.b	$27(a1)
-		neg.w	$14(a1)
+		neg.w	ost_inertia(a1)
 
 loc_26808:				
 		andi.b	#$C,d0
@@ -50603,7 +50690,7 @@ loc_2693A:
 		lsr.w	#2,d0
 		move.b	d0,$1A(a0)
 		bne.s	loc_2696A
-		move.b	#$6C,$16(a0)
+		move.b	#$6C,ost_height(a0)
 		bset	#render_useheight_bit,ost_render(a0)
 
 loc_2696A:				
@@ -50772,7 +50859,7 @@ loc_26B06:
 		andi.w	#$1C,d0
 		lea	byte_26AF6(pc,d0.w),a3
 		move.b	(a3)+,$19(a0)
-		move.b	(a3)+,$16(a0)
+		move.b	(a3)+,ost_height(a0)
 		lsr.w	#2,d0
 		move.b	d0,$1A(a0)
 		cmpi.b	#1,d0
@@ -50848,7 +50935,7 @@ loc_26C1C:
 		move.b	$19(a0),d1
 		addi_.w	#5,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		jsrto	SolidObject,JmpTo10_SolidObject
@@ -51207,19 +51294,19 @@ loc_26F6A:
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#8,$19(a0)
 		move.b	#4,$18(a0)
-		move.b	#$40,$16(a0)
+		move.b	#$40,ost_height(a0)
 		move.b	$28(a0),d0
 		lsr.b	#4,d0
 		andi.b	#7,d0
 		move.b	d0,$1A(a0)
 		beq.s	loc_26FAE
-		move.b	#-$80,$16(a0)
+		move.b	#-$80,ost_height(a0)
 
 loc_26FAE:				
 					
 		move.w	#$13,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	ost_x_pos(a0),d4
@@ -51293,18 +51380,18 @@ loc_27042:
 ; ===========================================================================
 
 loc_2704C:				
-		move.w	$30(a0),$10(a1)
-		move.w	#-$800,$10(a1)
-		move.w	#-$800,$12(a1)
+		move.w	$30(a0),ost_x_vel(a1)
+		move.w	#-$800,ost_x_vel(a1)
+		move.w	#-$800,ost_y_vel(a1)
 		bset	#0,$22(a1)
 		btst	#0,$22(a0)
 		bne.s	loc_27076
 		bclr	#0,$22(a1)
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 
 loc_27076:				
 		move.w	#$F,$2E(a1)
-		move.w	$10(a1),$14(a1)
+		move.w	ost_x_vel(a1),ost_inertia(a1)
 		btst	#2,$22(a1)
 		bne.s	loc_27090
 		move.b	#0,$1C(a1)
@@ -51314,12 +51401,12 @@ loc_27090:
 		bpl.s	loc_2709C
 
 loc_27096:
-		move.w	#0,$12(a1)
+		move.w	#0,ost_y_vel(a1)
 
 loc_2709C:				
 		btst	#0,d0
 		beq.s	loc_270DC
-		move.w	#1,$14(a1)
+		move.w	#1,ost_inertia(a1)
 		move.b	#1,$27(a1)
 		move.b	#0,$1C(a1)
 		move.b	#1,$2C(a1)
@@ -51332,7 +51419,7 @@ loc_270CC:
 		btst	#0,$22(a1)
 		beq.s	loc_270DC
 		neg.b	$27(a1)
-		neg.w	$14(a1)
+		neg.w	ost_inertia(a1)
 
 loc_270DC:				
 		andi.b	#$C,d0
@@ -51458,9 +51545,9 @@ loc_271EE:
 		addq.b	#2,(a4)
 		move.b	#-$7F,$2A(a1)
 		move.b	#2,$1C(a1)
-		move.w	#$800,$14(a1)
-		move.w	#0,$10(a1)
-		move.w	#0,$12(a1)
+		move.w	#$800,ost_inertia(a1)
+		move.w	#0,ost_x_vel(a1)
+		move.w	#0,ost_y_vel(a1)
 		bclr	#5,$22(a0)
 		bclr	#5,$22(a1)
 		bset	#1,$22(a1)
@@ -51519,11 +51606,11 @@ loc_272B2:
 loc_272C8:				
 		move.l	ost_x_pos(a1),d2
 		move.l	ost_y_pos(a1),d3
-		move.w	$10(a1),d0
+		move.w	ost_x_vel(a1),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d2
-		move.w	$12(a1),d0
+		move.w	ost_y_vel(a1),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
@@ -51538,8 +51625,8 @@ loc_272EE:
 		clr.b	$2A(a1)
 		btst	#4,$28(a0)
 		bne.s	locret_2730E
-		move.w	#0,$10(a1)
-		move.w	#0,$12(a1)
+		move.w	#0,ost_x_vel(a1)
+		move.w	#0,ost_y_vel(a1)
 
 locret_2730E:				
 		rts	
@@ -51620,8 +51707,8 @@ loc_27392:
 		divs.w	d1,d0
 
 loc_273B0:				
-		move.w	d0,$10(a1)
-		move.w	d3,$12(a1)
+		move.w	d0,ost_x_vel(a1)
+		move.w	d3,ost_y_vel(a1)
 		tst.w	d1
 		bpl.s	loc_273BE
 		neg.w	d1
@@ -51645,8 +51732,8 @@ loc_273C4:
 		divs.w	d0,d1
 
 loc_273DE:				
-		move.w	d1,$12(a1)
-		move.w	d2,$10(a1)
+		move.w	d1,ost_y_vel(a1)
+		move.w	d2,ost_x_vel(a1)
 		tst.w	d0
 		bpl.s	loc_273EC
 		neg.w	d0
@@ -52035,7 +52122,7 @@ loc_2789A:
 		jsrto	Adjust2PArtPointer,JmpTo32_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$20,$19(a0)
-		move.b	#$B,$16(a0)
+		move.b	#$B,ost_height(a0)
 		move.b	#4,$18(a0)
 		move.w	ost_y_pos(a0),$32(a0)
 		move.b	$28(a0),d0
@@ -52167,13 +52254,13 @@ loc_279D4:
 
 loc_279FC:				
 		jsrto	SpeedToPos,JmpTo13_SpeedToPos
-		addi.w	#$38,$12(a0)
+		addi.w	#$38,ost_y_vel(a0)
 		jsrto	FindFloorObj,JmpTo_FindFloorObj
 		tst.w	d1
 		bpl.w	loc_27A22
 		add.w	d1,ost_y_pos(a0)
 		andi.w	#$7FF,ost_y_pos(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		addq.b	#2,ost_primary_routine(a0)
 
 loc_27A22:				
@@ -52247,7 +52334,7 @@ loc_27AC4:
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,$18(a0)
 		move.b	#$20,$19(a0)
-		move.b	#$C,$16(a0)
+		move.b	#$C,ost_height(a0)
 		move.l	#byte_27CDC,$2C(a0)
 		move.b	#1,$1A(a0)
 		cmpi.b	#id_MCZ,(v_zone).w
@@ -52256,7 +52343,7 @@ loc_27AC4:
 		move.l	#Map_27D30,ost_mappings(a0)
 		move.w	#tile_Nem_Crate+tile_pal4,ost_tile(a0)
 		move.b	#$20,$19(a0)
-		move.b	#$20,$16(a0)
+		move.b	#$20,ost_height(a0)
 		move.l	#byte_27CF4,$2C(a0)
 		btst	#0,$22(a0)
 		beq.s	loc_27B3C
@@ -52358,7 +52445,7 @@ loc_27C3E:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		jsrto	SolidObject,JmpTo13_SolidObject
@@ -52383,7 +52470,7 @@ loc_27C7A:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		jsrto	SolidObject,JmpTo13_SolidObject
@@ -52398,8 +52485,8 @@ loc_27CA2:
 		move.b	$38(a0),d0
 		movea.l	$2C(a0),a1
 		lea	(a1,d0.w),a1
-		move.w	(a1)+,$10(a0)
-		move.w	(a1)+,$12(a0)
+		move.w	(a1)+,ost_x_vel(a0)
+		move.w	(a1)+,ost_y_vel(a0)
 		move.w	(a1)+,$34(a0)
 		move.w	#7,$3A(a0)
 		move.b	#0,$36(a0)
@@ -52487,7 +52574,7 @@ loc_27DAE:
 		andi.w	#$1C,d0
 		lea	byte_27D7E(pc,d0.w),a2
 		move.b	(a2)+,$19(a0)
-		move.b	(a2)+,$16(a0)
+		move.b	(a2)+,ost_height(a0)
 		move.b	(a2)+,$1A(a0)
 		move.w	ost_x_pos(a0),$34(a0)
 		move.w	ost_y_pos(a0),$30(a0)
@@ -52520,7 +52607,7 @@ loc_27E0E:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		jsrto	SolidObject,JmpTo14_SolidObject
@@ -52613,12 +52700,12 @@ locret_27EE0:
 
 loc_27EE2:				
 		move.l	ost_y_pos(a0),d3
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
 		move.l	d3,ost_y_pos(a0)
-		addi_.w	#8,$12(a0)
+		addi_.w	#8,ost_y_vel(a0)
 		move.w	(v_boundary_bottom).w,d0
 		addi.w	#$E0,d0	
 		cmp.w	ost_y_pos(a0),d0
@@ -52640,14 +52727,14 @@ loc_27F10:
 loc_27F26:				
 		jsrto	SpeedToPos,JmpTo14_SpeedToPos
 		andi.w	#$7FF,ost_y_pos(a0)
-		cmpi.w	#$2A8,$12(a0)
+		cmpi.w	#$2A8,ost_y_vel(a0)
 		bne.s	loc_27F3C
 		neg.b	$38(a0)
 
 loc_27F3C:				
 		move.b	$38(a0),d1
 		ext.w	d1
-		add.w	d1,$12(a0)
+		add.w	d1,ost_y_vel(a0)
 		bne.s	locret_27F4C
 		clr.b	$28(a0)
 
@@ -52965,8 +53052,8 @@ loc_28202:
 		neg.w	d0
 
 loc_28218:				
-		move.w	d0,$10(a0)
-		move.w	d3,$12(a0)
+		move.w	d0,ost_x_vel(a0)
+		move.w	d3,ost_y_vel(a0)
 		swap	d0
 		move.w	d0,ost_x_sub(a0)
 		clr.w	ost_y_sub(a0)
@@ -52983,8 +53070,8 @@ loc_2822C:
 		neg.w	d1
 
 loc_2823E:				
-		move.w	d1,$12(a0)
-		move.w	d2,$10(a0)
+		move.w	d1,ost_y_vel(a0)
+		move.w	d2,ost_x_vel(a0)
 		swap	d1
 		move.w	d1,ost_y_sub(a0)
 		clr.w	ost_x_sub(a0)
@@ -53083,7 +53170,7 @@ loc_283C8:
 		andi.w	#$E,d0
 		lea	byte_283C0(pc,d0.w),a3
 		move.b	(a3)+,$19(a0)
-		move.b	(a3)+,$16(a0)
+		move.b	(a3)+,ost_height(a0)
 		lsr.w	#1,d0
 		move.b	d0,$1A(a0)
 		move.w	ost_x_pos(a0),$34(a0)
@@ -53127,7 +53214,7 @@ loc_28462:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		jsrto	SolidObject,JmpTo15_SolidObject
@@ -53792,7 +53879,7 @@ loc_28C5E:
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		bset	#render_subobjects_bit,ost_render(a1)
-		move.b	#$40,$E(a1)
+		move.b	#$40,ost_mainspr_width(a1)
 		move.w	ost_x_pos(a0),d2
 		move.w	ost_y_pos(a0),d3
 		move.b	d1,ost_mainspr_childsprites(a1)
@@ -53964,7 +54051,7 @@ loc_28E0E:
 		andi.w	#$1C,d0
 		lea	byte_28E0A(pc,d0.w),a2
 		move.b	(a2)+,$19(a0)
-		move.b	(a2)+,$16(a0)
+		move.b	(a2)+,ost_height(a0)
 		move.b	(a2)+,$1A(a0)
 		move.w	ost_x_pos(a0),$34(a0)
 		move.w	ost_y_pos(a0),$30(a0)
@@ -53983,7 +54070,7 @@ loc_28E5E:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		jsrto	SolidObject,JmpTo19_SolidObject
@@ -54785,19 +54872,19 @@ loc_296B6:
 loc_296C2:				
 		move.w	#$100,$1C(a0)
 		addq.w	#4,ost_y_pos(a1)
-		move.w	$30(a0),$12(a1)
+		move.w	$30(a0),ost_y_vel(a1)
 		bset	#1,$22(a1)
 		bclr	#3,$22(a1)
 		move.b	#$10,$1C(a1)
 		move.b	#2,$24(a1)
 		move.b	$28(a0),d0
 		bpl.s	loc_296F6
-		move.w	#0,$10(a1)
+		move.w	#0,ost_x_vel(a1)
 
 loc_296F6:				
 		btst	#0,d0
 		beq.s	loc_29736
-		move.w	#1,$14(a1)
+		move.w	#1,ost_inertia(a1)
 		move.b	#1,$27(a1)
 		move.b	#0,$1C(a1)
 		move.b	#0,$2C(a1)
@@ -54810,7 +54897,7 @@ loc_29726:
 		btst	#0,$22(a1)
 		beq.s	loc_29736
 		neg.b	$27(a1)
-		neg.w	$14(a1)
+		neg.w	ost_inertia(a1)
 
 loc_29736:				
 		andi.b	#$C,d0
@@ -54926,7 +55013,7 @@ loc_2983C:
 		move.b	#$3C,2(a2)
 
 loc_29860:				
-		move.w	#-$300,$12(a1)
+		move.w	#-$300,ost_y_vel(a1)
 		move.b	$28(a0),d0
 		andi.w	#$F,d0
 		lea	(v_button_state).w,a3
@@ -54966,9 +55053,9 @@ loc_2989E:
 		bcc.s	locret_29936
 		tst.w	(v_debug_active).w
 		bne.s	locret_29936
-		clr.w	$10(a1)
-		clr.w	$12(a1)
-		clr.w	$14(a1)
+		clr.w	ost_x_vel(a1)
+		clr.w	ost_y_vel(a1)
+		clr.w	ost_inertia(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$30,ost_y_pos(a1)
@@ -55035,7 +55122,7 @@ loc_29990:
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,$19(a0)
 		move.b	#4,$18(a0)
-		move.b	#-$80,$16(a0)
+		move.b	#-$80,ost_height(a0)
 		bset	#render_useheight_bit,ost_render(a0)
 		move.w	ost_y_pos(a0),$3C(a0)
 		cmpi.b	#6,(v_zone).w
@@ -55159,15 +55246,15 @@ loc_29ACC:
 loc_29B02:				
 		btst	#$A,d0
 		beq.s	loc_29B0E
-		move.w	#-$200,$10(a1)
+		move.w	#-$200,ost_x_vel(a1)
 
 loc_29B0E:				
 		btst	#$B,d0
 		beq.s	loc_29B1A
-		move.w	#$200,$10(a1)
+		move.w	#$200,ost_x_vel(a1)
 
 loc_29B1A:				
-		move.w	#-$380,$12(a1)
+		move.w	#-$380,ost_y_vel(a1)
 		bset	#1,$22(a1)
 		tst.b	$34(a0)
 		beq.s	locret_29B40
@@ -55217,9 +55304,9 @@ loc_29B6C:
 		bcc.s	locret_29BF8
 		tst.w	(v_debug_active).w
 		bne.s	locret_29BF8
-		clr.w	$10(a1)
-		clr.w	$12(a1)
-		clr.w	$14(a1)
+		clr.w	ost_x_vel(a1)
+		clr.w	ost_y_vel(a1)
+		clr.w	ost_inertia(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$94,ost_y_pos(a1)
@@ -55510,7 +55597,7 @@ loc_2A092:
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		bset	#render_subobjects_bit,ost_render(a1)
-		move.b	#$40,$E(a1)
+		move.b	#$40,ost_mainspr_width(a1)
 		move.w	$30(a0),d2
 		move.w	$32(a0),d3
 		moveq	#8,d1
@@ -55727,7 +55814,7 @@ loc_2A2AA:
 		andi.w	#$E,d0
 		lea	byte_2A2A2(pc,d0.w),a2
 		move.b	(a2)+,$19(a0)
-		move.b	(a2),$16(a0)
+		move.b	(a2),ost_height(a0)
 		lsr.w	#1,d0
 		move.b	d0,$1A(a0)
 		move.w	ost_x_pos(a0),$34(a0)
@@ -55756,7 +55843,7 @@ loc_2A312:
 		move.b	$19(a0),d1
 		addi.w	#$B,d1
 		moveq	#0,d2
-		move.b	$16(a0),d2
+		move.b	ost_height(a0),d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		jsrto	SolidObject,JmpTo23_SolidObject
@@ -55804,13 +55891,13 @@ loc_2A382:
 
 loc_2A392:				
 		jsrto	SpeedToPos,JmpTo16_SpeedToPos
-		addi_.w	#8,$12(a0)
+		addi_.w	#8,ost_y_vel(a0)
 		jsrto	FindFloorObj,JmpTo2_FindFloorObj
 		tst.w	d1
 		bpl.w	locret_2A3B4
 		addq.w	#1,d1
 		add.w	d1,ost_y_pos(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		clr.b	$28(a0)
 
 locret_2A3B4:				
@@ -55819,12 +55906,12 @@ locret_2A3B4:
 
 loc_2A3B6:				
 		jsrto	SpeedToPos,JmpTo16_SpeedToPos
-		subi_.w	#8,$12(a0)
+		subi_.w	#8,ost_y_vel(a0)
 		jsrto	FindCeilingObj,JmpTo_FindCeilingObj
 		tst.w	d1
 		bpl.w	locret_2A3D6
 		sub.w	d1,ost_y_pos(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		clr.b	$28(a0)
 
 locret_2A3D6:				
@@ -56005,7 +56092,7 @@ loc_2A522:
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		bset	#render_subobjects_bit,ost_render(a1)
-		move.b	#$40,$E(a1)
+		move.b	#$40,ost_mainspr_width(a1)
 		moveq	#8,d1
 		move.b	d1,ost_mainspr_childsprites(a1)
 		subq.w	#1,d1
@@ -56416,8 +56503,8 @@ loc_2A9D4:
 		asr.w	#4,d1
 		add.w	d1,ost_y_pos(a1)
 		bset	#1,$22(a1)
-		move.w	#0,$12(a1)
-		move.w	#1,$14(a1)
+		move.w	#0,ost_y_vel(a1)
+		move.w	#1,ost_inertia(a1)
 		tst.b	$27(a1)
 		bne.s	locret_2AA10
 		move.b	#1,$27(a1)
@@ -56563,7 +56650,7 @@ loc_2ABFA:
 		tst.b	$28(a0)
 		beq.s	loc_2AC54
 		addq.b	#2,ost_primary_routine(a0)
-		move.b	#$20,$E(a0)
+		move.b	#$20,ost_mainspr_width(a0)
 		move.b	#$18,$19(a0)
 		move.w	ost_x_pos(a0),$2E(a0)
 		move.w	ost_y_pos(a0),$34(a0)
@@ -56579,7 +56666,7 @@ loc_2ABFA:
 ; ===========================================================================
 
 loc_2AC54:				
-		move.b	#$18,$E(a0)
+		move.b	#$18,ost_mainspr_width(a0)
 		move.b	#$18,$19(a0)
 		move.w	ost_y_pos(a0),$34(a0)
 		move.w	ost_x_pos(a0),d2
@@ -56596,10 +56683,10 @@ loc_2AC84:
 		move.w	$34(a0),d0
 		add.w	$38(a0),d0
 		move.w	d0,ost_y_pos(a0)
-		move.b	#2,$15(a0)
+		move.b	#2,ost_subspr2_frame(a0)
 		cmpi.w	#$10,$38(a0)
 		bcs.s	loc_2ACAA
-		move.b	#3,$15(a0)
+		move.b	#3,ost_subspr2_frame(a0)
 
 loc_2ACAA:				
 		move.w	#$23,d1
@@ -56656,18 +56743,18 @@ loc_2AD26:
 loc_2AD2A:				
 		tst.w	(v_debug_active).w
 		bne.s	locret_2AD78
-		tst.w	$12(a1)
+		tst.w	ost_y_vel(a1)
 		bmi.s	locret_2AD78
 		jsrto	SolidObject_Always_SingleCharacter,JmpTo5_SolidObject_Always_SingleCharacter
 		btst	d6,$22(a0)
 		beq.s	locret_2AD78
 		move.b	#-$7F,$2A(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
-		move.w	#0,$10(a1)
-		move.w	#0,$12(a1)
-		move.w	#0,$14(a1)
+		move.w	#0,ost_x_vel(a1)
+		move.w	#0,ost_y_vel(a1)
+		move.w	#0,ost_inertia(a1)
 		bset	#2,$22(a1)
-		move.b	#$E,$16(a1)
+		move.b	#$E,ost_height(a1)
 		move.b	#7,$17(a1)
 		move.b	#2,$1C(a1)
 		addq.b	#1,(a2)
@@ -56735,9 +56822,9 @@ loc_2AE0C:
 		addi.w	#$10,d0
 		lsl.w	#7,d0
 		neg.w	d0
-		move.w	d0,$12(a1)
-		move.w	#0,$10(a1)
-		move.w	#$800,$14(a1)
+		move.w	d0,ost_y_vel(a1)
+		move.w	#0,ost_x_vel(a1)
+		move.w	#$800,ost_inertia(a1)
 		bset	#1,$22(a1)
 		bclr	#3,$22(a1)
 		move.b	#2,$24(a1)
@@ -56757,10 +56844,10 @@ loc_2AE56:
 		move.w	$34(a0),d0
 		add.w	d1,d0
 		move.w	d0,ost_y_pos(a0)
-		move.b	#2,$15(a0)
+		move.b	#2,ost_subspr2_frame(a0)
 		cmpi.w	#$10,$38(a0)
 		bcs.s	loc_2AE8A
-		move.b	#3,$15(a0)
+		move.b	#3,ost_subspr2_frame(a0)
 
 loc_2AE8A:				
 		move.w	#$23,d1
@@ -56815,7 +56902,7 @@ loc_2AF06:
 		bne.s	loc_2AF7A
 		tst.w	(v_debug_active).w
 		bne.s	locret_2AF78
-		tst.w	$12(a1)
+		tst.w	ost_y_vel(a1)
 		bmi.s	locret_2AF78
 		jsrto	SolidObject_Always_SingleCharacter,JmpTo5_SolidObject_Always_SingleCharacter
 		btst	d6,$22(a0)
@@ -56832,11 +56919,11 @@ loc_2AF2E:
 		addi.w	#$13,ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		subi.w	#$13,ost_y_pos(a1)
-		move.w	#0,$10(a1)
-		move.w	#0,$12(a1)
-		move.w	#0,$14(a1)
+		move.w	#0,ost_x_vel(a1)
+		move.w	#0,ost_y_vel(a1)
+		move.w	#0,ost_inertia(a1)
 		bset	#2,$22(a1)
-		move.b	#$E,$16(a1)
+		move.b	#$E,ost_height(a1)
 		move.b	#7,$17(a1)
 		move.b	#2,$1C(a1)
 		addq.b	#1,(a2)
@@ -56908,10 +56995,10 @@ loc_2B018:
 		move.w	$38(a0),d0
 		addi_.w	#4,d0
 		lsl.w	#7,d0
-		move.w	d0,$10(a1)
+		move.w	d0,ost_x_vel(a1)
 		neg.w	d0
-		move.w	d0,$12(a1)
-		move.w	#$800,$14(a1)
+		move.w	d0,ost_y_vel(a1)
+		move.w	#$800,ost_inertia(a1)
 		bset	#1,$22(a1)
 
 loc_2B044:
@@ -56919,7 +57006,7 @@ loc_2B044:
 		tst.b	$28(a0)
 		bpl.s	loc_2B068
 		neg.w	d0
-		move.w	d0,$14(a1)
+		move.w	d0,ost_inertia(a1)
 		bclr	#0,$22(a1)
 		bclr	#1,$22(a1)
 		move.b	#-$20,$26(a1)
@@ -57064,7 +57151,7 @@ loc_2B20A:
 		btst	d6,$22(a0)
 		beq.s	locret_2B208
 		move.b	#1,$2A(a1)
-		move.b	#$E,$16(a1)
+		move.b	#$E,ost_height(a1)
 		move.b	#7,$17(a1)
 		move.b	#2,$1C(a1)
 		bset	#2,$22(a1)
@@ -57099,9 +57186,9 @@ loc_2B254:
 loc_2B272:				
 		add.w	d1,ost_x_pos(a1)
 		lsl.w	#8,d1
-		move.w	d1,$10(a1)
-		move.w	d1,$14(a1)
-		move.w	#0,$12(a1)
+		move.w	d1,ost_x_vel(a1)
+		move.w	d1,ost_inertia(a1)
+		move.w	#0,ost_y_vel(a1)
 		rts	
 ; ===========================================================================
 
@@ -57137,13 +57224,13 @@ loc_2B2BA:
 		muls.w	d2,d1
 		asr.l	#8,d0
 		asr.l	#8,d1
-		move.w	d0,$12(a1)
+		move.w	d0,ost_y_vel(a1)
 		btst	#0,$22(a0)
 		beq.s	loc_2B2E2
 		neg.w	d1
 
 loc_2B2E2:				
-		move.w	d1,$10(a1)
+		move.w	d1,ost_x_vel(a1)
 		bset	#1,$22(a1)
 		bclr	#3,$22(a1)
 		move.b	#2,$24(a1)
@@ -57184,7 +57271,7 @@ loc_2B352:
 
 loc_2B35C:				
 		move.w	#$300,$1C(a0)
-		move.w	#-$1000,$10(a1)
+		move.w	#-$1000,ost_x_vel(a1)
 		addq.w	#8,ost_x_pos(a1)
 		bset	#0,$22(a1)
 		move.w	ost_x_pos(a0),d0
@@ -57192,13 +57279,13 @@ loc_2B35C:
 		bcc.s	loc_2B392
 		bclr	#0,$22(a1)
 		subi.w	#$10,ost_x_pos(a1)
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 		move.w	#$400,$1C(a0)
 
 loc_2B392:				
 		move.w	#$F,$2E(a1)
-		move.w	$10(a1),$14(a1)
-		move.b	#$E,$16(a1)
+		move.w	ost_x_vel(a1),ost_inertia(a1)
+		move.b	#$E,ost_height(a1)
 		move.b	#7,$17(a1)
 		move.b	#2,$1C(a1)
 		bset	#2,$22(a1)
@@ -57663,7 +57750,7 @@ loc_2B9A2:
 		neg.w	d1
 
 loc_2B9B0:				
-		add.w	d1,$10(a0)
+		add.w	d1,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -57675,7 +57762,7 @@ loc_2B9B6:
 		neg.w	d1
 
 loc_2B9C4:				
-		add.w	d1,$12(a0)
+		add.w	d1,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -57732,7 +57819,7 @@ loc_2BA1A:
 		move.b	#$10,$19(a0)
 		move.b	#4,$18(a0)
 		move.w	ost_y_pos(a0),$32(a0)
-		move.w	#-$8000,$E(a0)
+		move.w	#-$8000,ost_y_sub(a0)
 		moveq	#0,d0
 		move.b	$28(a0),d0
 		lsl.w	#2,d0
@@ -57784,7 +57871,7 @@ loc_2BAB6:
 		neg.w	d1
 
 loc_2BAC4:				
-		add.w	d1,$12(a0)
+		add.w	d1,ost_y_vel(a0)
 		bne.s	locret_2BAEC
 		addq.w	#2,$34(a0)
 		move.w	d0,ost_y_pos(a0)
@@ -57821,7 +57908,7 @@ loc_2BB08:
 		neg.w	d1
 
 loc_2BB16:				
-		add.w	d1,$12(a0)
+		add.w	d1,ost_y_vel(a0)
 		bne.s	locret_2BB3E
 		clr.w	$34(a0)
 		move.w	d0,ost_y_pos(a0)
@@ -58082,7 +58169,7 @@ Cage_Active:
 		andi.w	#$F,d0
 		bne.s	.skip_sound				
 		move.w	#sfx_SlotMachine,d0				
-		jsr	PlaySound				; play 'ding' sound every 16th frame (could be jmp)
+		jsr	PlaySound				; play 'ding' sound every 16 frames (could be jmp)
 
 	.skip_sound:				
 		rts	
@@ -58893,37 +58980,37 @@ loc_2C4D8:
 		beq.s	loc_2C534
 		cmpi.w	#$C0,d0	
 		beq.s	loc_2C542
-		move.w	#-$800,$10(a1)
+		move.w	#-$800,ost_x_vel(a1)
 		move.b	#2,$1C(a0)
 		bra.s	loc_2C55E
 ; ===========================================================================
 
 loc_2C516:				
-		subi.w	#$200,$10(a1)
+		subi.w	#$200,ost_x_vel(a1)
 		tst.w	d1
 		bpl.s	loc_2C526
-		addi.w	#$400,$10(a1)
+		addi.w	#$400,ost_x_vel(a1)
 
 loc_2C526:				
-		move.w	#-$800,$12(a1)
+		move.w	#-$800,ost_y_vel(a1)
 		move.b	#1,$1C(a0)
 		bra.s	loc_2C55E
 ; ===========================================================================
 
 loc_2C534:				
-		move.w	#$800,$10(a1)
+		move.w	#$800,ost_x_vel(a1)
 		move.b	#2,$1C(a0)
 		bra.s	loc_2C55E
 ; ===========================================================================
 
 loc_2C542:				
-		subi.w	#$200,$10(a1)
+		subi.w	#$200,ost_x_vel(a1)
 		tst.w	d1
 		bpl.s	loc_2C552
-		addi.w	#$400,$10(a1)
+		addi.w	#$400,ost_x_vel(a1)
 
 loc_2C552:				
-		move.w	#$800,$12(a1)
+		move.w	#$800,ost_y_vel(a1)
 		move.b	#1,$1C(a0)
 
 loc_2C55E:				
@@ -59131,11 +59218,11 @@ loc_2C74E:
 
 loc_2C75C:				
 		move.b	#3,$1C(a0)
-		move.w	#-$700,$12(a1)
+		move.w	#-$700,ost_y_vel(a1)
 		move.w	ost_y_pos(a0),d2
 		sub.w	ost_y_pos(a1),d2
 		bpl.s	loc_2C776
-		neg.w	$12(a1)
+		neg.w	ost_y_vel(a1)
 
 loc_2C776:				
 		bra.w	loc_2C806
@@ -59151,8 +59238,8 @@ loc_2C77A:
 		move.w	#$60,d3
 
 loc_2C794:				
-		move.w	$10(a1),d1
-		move.w	$12(a1),d2
+		move.w	ost_x_vel(a1),d1
+		move.w	ost_y_vel(a1),d2
 		jsr	(CalcAngle).l
 		sub.w	d3,d0
 		move.w	d0,d1
@@ -59182,20 +59269,20 @@ loc_2C7D0:
 		jsr	CalcSine
 		muls.w	#-$700,d1
 		asr.l	#8,d1
-		move.w	d1,$10(a1)
+		move.w	d1,ost_x_vel(a1)
 		muls.w	#-$700,d0
 		asr.l	#8,d0
-		move.w	d0,$12(a1)
+		move.w	d0,ost_y_vel(a1)
 		bra.s	loc_2C806
 ; ===========================================================================
 
 loc_2C7EC:				
 		move.b	#5,$1C(a0)
-		move.w	#-$700,$10(a1)
+		move.w	#-$700,ost_x_vel(a1)
 		move.w	ost_x_pos(a0),d2
 		sub.w	ost_x_pos(a1),d2
 		bpl.s	loc_2C806
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 
 loc_2C806:				
 		bset	#1,$22(a1)
@@ -59343,7 +59430,7 @@ loc_2C972:
 		move.b	#$3C,2(a2)
 
 loc_2C996:				
-		move.w	#-$300,$12(a1)
+		move.w	#-$300,ost_y_vel(a1)
 		bra.w	locret_2CA08
 ; ===========================================================================
 
@@ -59369,9 +59456,9 @@ loc_2C9AE:
 		bcc.s	locret_2CA08
 		tst.w	(v_debug_active).w
 		bne.s	locret_2CA08
-		clr.w	$10(a1)
-		clr.w	$12(a1)
-		clr.w	$14(a1)
+		clr.w	ost_x_vel(a1)
+		clr.w	ost_y_vel(a1)
+		clr.w	ost_inertia(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#$14,$1C(a1)
 		move.b	#1,$2A(a1)
@@ -59439,14 +59526,14 @@ loc_2CA52:
 		move.b	#$A,$20(a0)
 		move.b	#4,$18(a0)
 		move.b	#$10,$19(a0)
-		move.b	#$B,$16(a0)
+		move.b	#$B,ost_height(a0)
 		move.b	#8,$17(a0)
 		jsrto	ObjectFall,JmpTo2_ObjectFall
 		jsr	FindFloorObj
 		tst.w	d1
 		bpl.s	loc_2CAB0
 		add.w	d1,ost_y_pos(a0)
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	ost_x_pos(a0),d0
 		sub.w	($FFFFB008).w,d0
@@ -59498,12 +59585,12 @@ loc_2CB04:
 loc_2CB0C:				
 		addq.b	#2,$25(a0)
 		move.b	#4,$1C(a0)
-		move.w	#-$200,$12(a0)
+		move.w	#-$200,ost_y_vel(a0)
 		jmpto	SpeedToPos,JmpTo19_SpeedToPos
 ; ===========================================================================
 
 loc_2CB20:				
-		addi.w	#$10,$12(a0)
+		addi.w	#$10,ost_y_vel(a0)
 		bpl.s	loc_2CB2C
 		jmpto	SpeedToPos,JmpTo19_SpeedToPos
 ; ===========================================================================
@@ -59526,7 +59613,7 @@ loc_2CB42:
 ; ===========================================================================
 
 loc_2CB48:				
-		addi.w	#$10,$12(a0)
+		addi.w	#$10,ost_y_vel(a0)
 		move.w	ost_y_pos(a0),d0
 		cmp.w	$2A(a0),d0
 		bcc.s	loc_2CB5C
@@ -59536,7 +59623,7 @@ loc_2CB48:
 loc_2CB5C:				
 		clr.b	$25(a0)
 		clr.b	$1C(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		move.b	#1,$1A(a0)
 		rts	
 ; ===========================================================================
@@ -59560,10 +59647,10 @@ loc_2CB70:
 		move.b	$22(a0),$22(a1)
 		move.b	#2,$1C(a1)
 		move.b	#-$68,$20(a1)
-		move.w	#-$200,$10(a1)
+		move.w	#-$200,ost_x_vel(a1)
 		btst	#render_xflip_bit,ost_render(a1)
 		beq.s	locret_2CBDA
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 
 locret_2CBDA:				
 		rts	
@@ -59661,7 +59748,7 @@ loc_2CCDE:
 		move.b	#$A,$20(a0)
 		move.b	#4,$18(a0)
 		move.b	#$10,$19(a0)
-		move.w	#-$100,$10(a0)
+		move.w	#-$100,ost_x_vel(a0)
 		move.b	$28(a0),d0
 		move.b	d0,d1
 		andi.w	#$F0,d1	
@@ -59785,8 +59872,8 @@ loc_2CE24:
 loc_2CE9A:				
 		sub.w	d0,ost_y_pos(a1)
 		sub.w	d1,ost_x_pos(a1)
-		move.w	d2,$10(a1)
-		move.w	#$200,$12(a1)
+		move.w	d2,ost_x_vel(a1)
+		move.w	#$200,ost_y_vel(a1)
 
 locret_2CEAC:				
 		rts	
@@ -59803,9 +59890,9 @@ loc_2CEAE:
 
 loc_2CEC8:				
 		move.w	word_2CEE6(pc,d0.w),d2
-		add.w	d2,$10(a0)
+		add.w	d2,ost_x_vel(a0)
 		move.w	word_2CEE6(pc,d1.w),d2
-		add.w	d2,$12(a0)
+		add.w	d2,ost_y_vel(a0)
 		move.w	#$100,d0
 		move.w	d0,d1
 		jsrto	ObjCapSpeed,JmpTo_ObjCapSpeed
@@ -59831,7 +59918,7 @@ loc_2CF00:
 		subq.b	#1,$2E(a0)
 		bmi.s	loc_2CF1C
 		subq.b	#2,$25(a0)
-		move.w	#-$100,$12(a0)
+		move.w	#-$100,ost_y_vel(a0)
 		move.b	#-$80,$3C(a0)
 		clr.b	$2D(a0)
 		rts	
@@ -59839,8 +59926,8 @@ loc_2CF00:
 
 loc_2CF1C:				
 		move.b	#6,$25(a0)
-		move.w	#-$200,$10(a0)
-		clr.w	$12(a0)
+		move.w	#-$200,ost_x_vel(a0)
+		clr.w	ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -60005,7 +60092,7 @@ loc_2D0C8:
 		move.b	#$A,$20(a0)
 		move.b	#4,$18(a0)
 		move.b	#$10,$19(a0)
-		move.b	#$10,$16(a0)
+		move.b	#$10,ost_height(a0)
 		move.b	#$18,$17(a0)
 		move.b	#3,$18(a0)
 		addq.b	#2,ost_primary_routine(a0)
@@ -60025,10 +60112,10 @@ loc_2D0C8:
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.w	#$100,$2E(a0)
-		move.w	#-$100,$10(a0)
+		move.w	#-$100,ost_x_vel(a0)
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	locret_2D172
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 locret_2D172:				
 		rts	
@@ -60066,7 +60153,7 @@ locret_2D1B8:
 
 loc_2D1BA:				
 		sf.b	$32(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
 		bchg	#0,$22(a0)
 		move.w	#$100,$2E(a0)
@@ -60147,11 +60234,11 @@ loc_2D24E:
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$18,ost_y_pos(a1)
 		move.w	#$D,d0
-		move.w	#$180,$12(a1)
-		move.w	#-$180,$10(a1)
+		move.w	#$180,ost_y_vel(a1)
+		move.w	#-$180,ost_x_vel(a1)
 		btst	#render_xflip_bit,ost_render(a1)
 		beq.s	loc_2D2C8
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 		neg.w	d0
 
 loc_2D2C8:				
@@ -60251,19 +60338,19 @@ loc_2D3AA:
 		move.b	#4,$18(a0)
 		move.b	#9,$20(a0)
 		move.b	#$10,$19(a0)
-		move.w	#-$400,$12(a0)
+		move.w	#-$400,ost_y_vel(a0)
 		move.w	ost_y_pos(a0),$30(a0)
 
 loc_2D3E4:				
 		lea	(off_2D430).l,a1
 		jsrto	AnimateSprite,JmpTo16_AnimateSprite
 		jsrto	SpeedToPos,JmpTo22_SpeedToPos
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		move.w	$30(a0),d0
 		cmp.w	ost_y_pos(a0),d0
 		bcc.s	loc_2D40C
 		move.w	d0,ost_y_pos(a0)
-		move.w	#-$500,$12(a0)
+		move.w	#-$500,ost_y_vel(a0)
 
 loc_2D40C:				
 		move.b	#1,$1C(a0)
@@ -60271,7 +60358,7 @@ loc_2D40C:
 		cmp.w	ost_y_pos(a0),d0
 		bcc.s	locret_2D42E
 		move.b	#0,$1C(a0)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	locret_2D42E
 		move.b	#2,$1C(a0)
 
@@ -60404,9 +60491,9 @@ word_2D554:	dc.w 1
 
 		
 BOOZ_Hit:	; only used by OOZ boss; all others handle hits in their own code			
-		cmpi.b	#8,$26(a0)
+		cmpi.b	#8,ost_boss_routine(a0)
 		bcc.s	locret_2D5C2
-		tst.b	$32(a0)
+		tst.b	ost_boss_hitcount2(a0)
 		beq.s	loc_2D5C4
 		tst.b	$20(a0)
 		bne.s	locret_2D5C2
@@ -60437,7 +60524,7 @@ loc_2D5C4:
 		moveq	#$64,d0
 		jsrto	AddPoints,JmpTo_AddPoints
 		move.w	#$B3,(v_boss_timer).w
-		move.b	#8,$26(a0)
+		move.b	#8,ost_boss_routine(a0)
 		moveq	#$40,d0
 		jsrto	AddPLC,JmpTo4_AddPLC
 		rts	
@@ -60478,7 +60565,7 @@ loc_2D61C:
 		move.b	ost_mainspr_childsprites(a0),d6
 		subq.w	#1,d6
 		bmi.s	locret_2D690
-		lea	$15(a0),a3
+		lea	ost_subspr2_frame(a0),a3
 
 loc_2D62A:				
 		movea.l	a4,a1
@@ -60781,7 +60868,7 @@ loc_2D9B4:
 		bpl.w	loc_2DB34
 		bset	#0,$22(a0)
 		bclr	#7,$22(a0)
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 		addq.b	#2,$25(a0)
 		move.w	#-$26,$3C(a0)
 		rts	
@@ -60791,12 +60878,12 @@ loc_2D9D8:
 		addq.w	#1,$3C(a0)
 		beq.s	loc_2D9E8
 		bpl.s	loc_2D9EE
-		addi.w	#$18,$12(a0)
+		addi.w	#$18,ost_y_vel(a0)
 		bra.s	loc_2DA1A
 ; ===========================================================================
 
 loc_2D9E8:				
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		bra.s	loc_2DA1A
 ; ===========================================================================
 
@@ -60811,12 +60898,12 @@ loc_2D9EE:
 ; ===========================================================================
 
 loc_2DA06:				
-		subi_.w	#8,$12(a0)
+		subi_.w	#8,ost_y_vel(a0)
 		bra.s	loc_2DA1A
 ; ===========================================================================
 
 loc_2DA0E:				
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		jsrto	RestoreLevelMusic,JmpTo_RestoreLevelMusic
 		jsrto	LoadAnimalExplosionArt,JmpTo_LoadAnimalExplosionArt
 
@@ -60827,8 +60914,8 @@ loc_2DA1A:
 
 loc_2DA22:				
 		bset	#6,$2E(a0)
-		move.w	#$400,$10(a0)
-		move.w	#-$40,$12(a0)
+		move.w	#$400,ost_x_vel(a0)
+		move.w	#-$40,ost_y_vel(a0)
 		cmpi.w	#$2C30,(v_boundary_right_next).w
 		bcc.s	loc_2DA42
 		addq.w	#2,(v_boundary_right_next).w
@@ -60857,11 +60944,11 @@ JmpTo51_DeleteObject:
 ; ===========================================================================
 
 loc_2DA62:				
-		move.w	#$100,$12(a0)
+		move.w	#$100,ost_y_vel(a0)
 		bsr.w	loc_2DB0E
 		cmpi.w	#$4C0,$38(a0)
 		bne.s	loc_2DA7E
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 		addq.b	#2,$25(a0)
 
 loc_2DA7E:				
@@ -60918,11 +61005,11 @@ loc_2DAEA:
 loc_2DB0E:				
 		move.l	$30(a0),d2
 		move.l	$38(a0),d3
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d2
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
@@ -60988,12 +61075,12 @@ loc_2DBB4:
 		ble.s	loc_2DBD6
 		cmp.w	$30(a0),d1
 		bgt.s	loc_2DBC8
-		move.w	#-$300,$10(a0)
+		move.w	#-$300,ost_x_vel(a0)
 		bra.s	loc_2DBCE
 ; ===========================================================================
 
 loc_2DBC8:				
-		move.w	#$300,$10(a0)
+		move.w	#$300,ost_x_vel(a0)
 
 loc_2DBCE:				
 		bsr.w	loc_2DB0E
@@ -61003,8 +61090,8 @@ loc_2DBCE:
 loc_2DBD6:				
 		cmpi.w	#$4C0,$38(a0)
 		bne.w	loc_2DA7E
-		move.w	#0,$10(a0)
-		move.w	#0,$12(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	#0,ost_y_vel(a0)
 		addq.b	#2,$25(a0)
 		bchg	#3,$2D(a0)
 		bset	#0,$2E(a0)
@@ -61055,11 +61142,11 @@ loc_2DC5E:
 loc_2DC80:				
 		subq.w	#1,$2A(a0)
 		bpl.w	JmpTo34_DisplaySprite
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		add.w	d0,ost_x_pos(a0)
 		move.l	ost_y_pos(a0),d3
-		move.w	$12(a0),d0
-		addi.w	#$38,$12(a0)
+		move.w	ost_y_vel(a0),d0
+		addi.w	#$38,ost_y_vel(a0)
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
@@ -61093,8 +61180,8 @@ loc_2DCEC:
 		jsr	RandomNumber
 		asr.w	#8,d0
 		asr.w	#6,d0
-		move.w	d0,$10(a0)
-		move.w	#-$380,$12(a0)
+		move.w	d0,ost_x_vel(a0)
+		move.w	#-$380,ost_y_vel(a0)
 		moveq	#1,d2
 		addq.w	#1,d3
 
@@ -61116,8 +61203,8 @@ loc_2DD26:
 		jsr	RandomNumber
 		asr.w	#8,d0
 		asr.w	#6,d0
-		move.w	d0,$10(a1)
-		move.w	#-$380,$12(a1)
+		move.w	d0,ost_x_vel(a1)
+		move.w	#-$380,ost_y_vel(a1)
 		swap	d0
 		addi.b	#$1E,d0
 		andi.w	#$7F,d0
@@ -61376,8 +61463,8 @@ loc_2E04E:
 		jsr	RandomNumber
 		asr.w	#8,d0
 		asr.w	#6,d0
-		move.w	d0,$10(a0)
-		move.w	#-$380,$12(a0)
+		move.w	d0,ost_x_vel(a0)
+		move.w	#-$380,ost_y_vel(a0)
 		swap	d0
 		addi.b	#$1E,d0
 		andi.w	#$7F,d0
@@ -61579,8 +61666,8 @@ loc_2E314:
 		jsr	RandomNumber
 		asr.w	#8,d0
 		asr.w	#6,d0
-		move.w	d0,$10(a0)
-		move.w	#-$380,$12(a0)
+		move.w	d0,ost_x_vel(a0)
+		move.w	#-$380,ost_y_vel(a0)
 		moveq	#0,d7
 		move.w	$2E(a0),d0
 		addi.w	#$18,d0
@@ -61627,8 +61714,8 @@ loc_2E3BC:
 		jsr	RandomNumber
 		asr.w	#8,d0
 		asr.w	#6,d0
-		move.w	d0,$10(a1)
-		move.w	#-$380,$12(a1)
+		move.w	d0,ost_x_vel(a1)
+		move.w	#-$380,ost_y_vel(a1)
 		swap	d0
 		addi.b	#$1E,d0
 		andi.w	#$7F,d0
@@ -61869,9 +61956,9 @@ off_2E688:	dc.w loc_2E692-off_2E688			; 0
 
 loc_2E692:				
 		addq.b	#2,$25(a0)
-		move.b	#$20,$16(a0)
+		move.b	#$20,ost_height(a0)
 		move.b	#$19,$1C(a0)
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 		movea.l	$34(a0),a1
 		movea.l	$34(a1),a1
 		btst	#2,$2D(a1)
@@ -61967,7 +62054,7 @@ loc_2E7D0:
 		subi.w	#$18,ost_x_pos(a0)
 
 loc_2E7F4:				
-		move.b	#4,$16(a0)
+		move.b	#4,ost_height(a0)
 		move.b	#4,$17(a0)
 
 loc_2E800:
@@ -61977,10 +62064,10 @@ loc_2E804:
 		move.b	#9,$1A(a0)
 
 loc_2E80A:
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		lsr.w	#1,d0
 		neg.w	d0
-		move.w	d0,$12(a0)
+		move.w	d0,ost_y_vel(a0)
 		jsr	RandomNumber
 		asr.w	#6,d0
 		bmi.s	loc_2E824
@@ -61988,7 +62075,7 @@ loc_2E80A:
 
 loc_2E824:				
 		addi.w	#-$100,d0
-		move.w	d0,$10(a0)
+		move.w	d0,ost_x_vel(a0)
 		move.b	#0,$20(a0)
 		moveq	#3,d3
 
@@ -62004,13 +62091,13 @@ loc_2E834:
 		move.b	#2,$18(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
-		move.b	#4,$16(a1)
+		move.b	#4,ost_height(a1)
 		move.b	#4,$17(a1)
 		move.b	#9,$1A(a1)
 		move.b	#$C,$24(a1)
 		move.b	#4,$25(a1)
 		move.b	#1,$28(a1)
-		move.w	$12(a0),$12(a1)
+		move.w	ost_y_vel(a0),ost_y_vel(a1)
 		move.b	$20(a0),$20(a1)
 		jsr	RandomNumber
 		asr.w	#6,d0
@@ -62019,10 +62106,10 @@ loc_2E834:
 
 loc_2E8B2:				
 		addi.w	#-$80,d0
-		move.w	d0,$10(a1)
+		move.w	d0,ost_x_vel(a1)
 		swap	d0
 		andi.w	#$3FF,d0
-		sub.w	d0,$12(a1)
+		sub.w	d0,ost_y_vel(a1)
 		dbf	d3,loc_2E834
 
 BranchTo_JmpTo34_DisplaySprite:				
@@ -62043,10 +62130,10 @@ loc_2E8DE:
 
 		; a bit of unused/dead code here
 		add.w	d1,ost_y_pos(a0)
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		lsr.w	#1,d0
 		neg.w	d0
-		move.w	d0,$12(a0)
+		move.w	d0,ost_y_vel(a0)
 		jmpto	DisplaySprite,JmpTo34_DisplaySprite
 ; ===========================================================================
 
@@ -62509,7 +62596,7 @@ loc_2EF36:
 		move.w	#$29D0,ost_x_pos(a0)
 		move.w	#$426,ost_y_pos(a0)
 		move.b	#$20,$19(a0)
-		move.b	#$14,$16(a0)
+		move.b	#$14,ost_height(a0)
 		move.b	#4,$18(a0)
 		move.b	#$F,$20(a0)
 		move.b	#8,$21(a0)
@@ -62549,7 +62636,7 @@ loc_2F004:
 loc_2F008:
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$30,$19(a1)
-		move.b	#$10,$16(a1)
+		move.b	#$10,ost_height(a1)
 		move.b	#3,$18(a1)
 		move.w	#$2AF0,ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
@@ -62590,7 +62677,7 @@ loc_2F098:
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,$19(a1)
 		move.b	#2,$18(a1)
-		move.b	#$10,$16(a1)
+		move.b	#$10,ost_height(a1)
 		move.b	#$10,$17(a1)
 		move.w	#$2AF0,ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
@@ -62613,7 +62700,7 @@ loc_2F110:
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,$19(a1)
 		move.b	#2,$18(a1)
-		move.b	#$10,$16(a1)
+		move.b	#$10,ost_height(a1)
 		move.b	#$10,$17(a1)
 		move.w	#$2AF0,ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
@@ -62636,7 +62723,7 @@ loc_2F188:
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,$19(a1)
 		move.b	#3,$18(a1)
-		move.b	#$10,$16(a1)
+		move.b	#$10,ost_height(a1)
 		move.b	#$10,$17(a1)
 		move.w	#$2AF0,ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
@@ -62731,7 +62818,7 @@ loc_2F2CC:
 loc_2F2E0:				
 		subi_.w	#1,$2A(a0)
 		bpl.w	JmpTo35_DisplaySprite
-		move.w	#-$200,$10(a0)
+		move.w	#-$200,ost_x_vel(a0)
 		addq.b	#2,$25(a0)
 		move.b	#$F,$20(a0)
 		bset	#1,$2D(a0)
@@ -62747,7 +62834,7 @@ loc_2F304:
 		move.w	d0,ost_y_pos(a0)
 		move.w	#0,$2E(a0)
 		move.l	ost_x_pos(a0),d2
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d2
@@ -62764,12 +62851,12 @@ loc_2F336:
 		tst.w	d1
 		bpl.w	JmpTo35_DisplaySprite
 		add.w	d1,ost_y_pos(a0)
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
 loc_2F35C:				
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 		addq.b	#2,$25(a0)
 		move.w	#-$26,$3C(a0)
 		move.w	#$C,$2A(a0)
@@ -62879,7 +62966,7 @@ loc_2F484:
 loc_2F494:				
 		bchg	#0,$22(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 locret_2F4A4:				
 		rts	
@@ -62919,10 +63006,10 @@ loc_2F4EE:
 		moveq	#$64,d0
 		jsrto	AddPoints,JmpTo3_AddPoints
 		move.b	#6,$25(a0)
-		move.w	#0,$10(a0)
+		move.w	#0,ost_x_vel(a0)
 
 loc_2F500:
-		move.w	#-$180,$12(a0)
+		move.w	#-$180,ost_y_vel(a0)
 		move.w	#$B3,$3C(a0)
 		bset	#3,$2D(a0)
 		movea.l	$34(a0),a1
@@ -63051,7 +63138,7 @@ off_2F672:
 loc_2F67C:				
 		cmpi.w	#$28F0,(v_boundary_left_next).w
 		bcs.w	JmpTo35_DisplaySprite
-		move.w	#$100,$12(a0)
+		move.w	#$100,ost_y_vel(a0)
 		cmpi.b	#1,$28(a0)
 		bgt.s	loc_2F6B6
 		beq.s	loc_2F6A6
@@ -63103,7 +63190,7 @@ loc_2F6FA:
 		beq.s	loc_2F706
 
 loc_2F700:
-		move.w	#-$200,$10(a0)
+		move.w	#-$200,ost_x_vel(a0)
 
 loc_2F706:				
 		lea	(off_2FA44).l,a1
@@ -63147,7 +63234,7 @@ loc_2F768:
 		add.w	d1,ost_y_pos(a0)
 
 loc_2F77E:				
-		move.w	#$100,$12(a0)
+		move.w	#$100,ost_y_vel(a0)
 		cmpi.b	#2,$18(a0)
 		bne.s	loc_2F798
 		move.w	ost_y_pos(a0),d0
@@ -63165,10 +63252,10 @@ loc_2F7A6:
 		bpl.w	JmpTo35_DisplaySprite
 		addq.b	#2,$25(a0)
 		move.w	#$A,$2A(a0)
-		move.w	#-$300,$12(a0)
+		move.w	#-$300,ost_y_vel(a0)
 		cmpi.b	#2,$18(a0)
 		beq.w	JmpTo35_DisplaySprite
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 
@@ -63179,7 +63266,7 @@ loc_2F7D2:
 		jsrto	FindFloorObj,JmpTo3_FindFloorObj
 		tst.w	d1
 		bpl.s	loc_2F7F0
-		move.w	#-$200,$12(a0)
+		move.w	#-$200,ost_y_vel(a0)
 		add.w	d1,ost_y_pos(a0)
 
 loc_2F7F0:				
@@ -63517,12 +63604,12 @@ loc_2FC68:
 		move.b	#4,$18(a0)
 		move.w	#$3040,ost_x_pos(a0)
 		move.w	#$580,ost_y_pos(a0)
-		move.b	#1,$2C(a0)
+		move.b	#1,ost_boss_defeated(a0)
 		move.b	#1,ost_mainspr_frame(a0)
 		addq.b	#2,ost_boss_subtype(a0)
 		bset	#render_subobjects_bit,ost_render(a0)
 		move.b	#$32,$20(a0)
-		move.b	#8,$32(a0)
+		move.b	#8,ost_boss_hitcount2(a0)
 		move.w	#-$E0,(v_boss_y_vel).w
 		move.w	ost_x_pos(a0),($FFFFF750).w
 		move.w	ost_y_pos(a0),(v_boss_y_pos).w
@@ -63531,9 +63618,9 @@ loc_2FC68:
 		; with the bug fixed.
 		clr.b	ost_boss_flash_time(a0)	
 	endc	
-		move.w	ost_x_pos(a0),$10(a0)
-		move.w	ost_y_pos(a0),$12(a0)
-		move.b	#2,$15(a0)
+		move.w	ost_x_pos(a0),ost_subspr2_x_pos(a0)
+		move.w	ost_y_pos(a0),ost_subspr2_y_pos(a0)
+		move.b	#2,ost_subspr2_frame(a0)
 		bsr.w	loc_2FCEA
 		rts	
 ; ===========================================================================
@@ -63549,11 +63636,12 @@ loc_2FCEA:
 
 loc_2FD00:				
 		moveq	#0,d0
-		move.b	$26(a0),d0
+		move.b	ost_boss_routine(a0),d0
 		move.w	off_2FD0E(pc,d0.w),d1
 		jmp	off_2FD0E(pc,d1.w)
 ; ===========================================================================
-off_2FD0E:	dc.w loc_2FD18-off_2FD0E			; 0 
+off_2FD0E:	
+		dc.w loc_2FD18-off_2FD0E			; 0 
 		dc.w loc_2FD5E-off_2FD0E			; 1
 		dc.w loc_2FDDA-off_2FD0E			; 2
 		dc.w loc_2FE0E-off_2FD0E			; 3
@@ -63563,7 +63651,7 @@ off_2FD0E:	dc.w loc_2FD18-off_2FD0E			; 0
 loc_2FD18:				
 		move.b	#0,(v_boss_collision_routine).w
 		bsr.w	BossMove
-		tst.b	$2C(a0)
+		tst.b	ost_boss_defeated(a0)
 		bne.s	loc_2FD32
 		cmpi.w	#$518,(v_boss_y_pos).w
 		bgt.s	loc_2FD50
@@ -63577,7 +63665,7 @@ loc_2FD32:
 loc_2FD3A:				
 		move.w	#0,(v_boss_y_vel).w
 		move.b	#4,ost_boss_wobble(a0)
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		move.b	#$3C,$3E(a0)
 
 loc_2FD50:				
@@ -63634,14 +63722,14 @@ loc_2FDDA:
 		subi_.b	#1,$3E(a0)
 		bne.w	loc_2FDC0
 		move.w	#$E0,(v_boss_y_vel).w
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		bsr.w	loc_2FEDE
 		jmpto	DisplaySprite,JmpTo36_DisplaySprite
 ; ===========================================================================
 
 loc_2FE0E:				
 		bsr.w	BossMove
-		tst.b	$2C(a0)
+		tst.b	ost_boss_defeated(a0)
 		bne.s	loc_2FE22
 		cmpi.w	#$538,(v_boss_y_pos).w
 		blt.s	loc_2FE58
@@ -63666,7 +63754,7 @@ loc_2FE2A:
 		jsrto	Playsound,JmpTo7_PlaySound
 
 loc_2FE58:				
-		tst.b	$2C(a0)
+		tst.b	ost_boss_defeated(a0)
 		bne.s	loc_2FE6E
 		cmpi.w	#$5A0,(v_boss_y_pos).w
 		blt.s	loc_2FED0
@@ -63681,21 +63769,21 @@ loc_2FE6E:
 
 loc_2FE7C:				
 		move.w	#-$E0,(v_boss_y_vel).w
-		move.b	#0,$26(a0)
+		move.b	#0,ost_boss_routine(a0)
 		sf.b	$38(a0)
 		move.w	($FFFFB008).w,d0
 		subi.w	#$2FC0,d0
 		bmi.s	loc_2FEA8
 		move.w	#$580,(v_boss_y_pos).w
 		move.w	#$3040,ost_x_pos(a0)
-		st.b	$2C(a0)
+		st.b	ost_boss_defeated(a0)
 		bra.s	loc_2FEB8
 ; ===========================================================================
 
 loc_2FEA8:				
 		move.w	#$2F40,ost_x_pos(a0)
 		move.w	#$5A0,(v_boss_y_pos).w
-		sf.b	$2C(a0)
+		sf.b	ost_boss_defeated(a0)
 
 loc_2FEB8:				
 		move.w	ost_x_pos(a0),d0
@@ -63717,8 +63805,8 @@ loc_2FED0:
 loc_2FEDE:				
 		move.w	ost_x_pos(a0),d0
 		move.w	ost_y_pos(a0),d1
-		move.w	d0,$10(a0)
-		move.w	d1,$12(a0)
+		move.w	d0,ost_subspr2_x_pos(a0)
+		move.w	d1,ost_subspr2_y_pos(a0)
 		rts	
 ; ===========================================================================
 
@@ -63751,12 +63839,12 @@ loc_2FF02:
 
 loc_2FF46:				
 		add.w	d0,ost_x_pos(a0)
-		move.w	d1,$10(a0)
+		move.w	d1,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_2FF50:				
-		move.w	$10(a0),d1
+		move.w	ost_x_vel(a0),d1
 		add.w	d1,ost_x_pos(a0)
 		lea	(off_30288).l,a1
 		jsrto	AnimateSprite,JmpTo18_AnimateSprite
@@ -63798,7 +63886,7 @@ loc_2FF94:
 		move.b	#7,$1C(a1)
 		move.b	#-$75,$20(a1)
 		move.b	d2,$2E(a1)
-		move.b	#8,$16(a1)
+		move.b	#8,ost_height(a1)
 		move.b	#8,$17(a1)
 		move.w	ost_x_pos(a1),$2A(a1)
 		move.w	#$1C00,d0
@@ -63807,11 +63895,11 @@ loc_2FF94:
 		neg.w	d0
 
 loc_2FFE8:				
-		move.w	d0,$10(a1)
-		move.w	#-$5400,$12(a1)
+		move.w	d0,ost_x_vel(a1)
+		move.w	#-$5400,ost_y_vel(a1)
 		cmpi.w	#$2F40,ost_x_pos(a1)
 		beq.s	loc_30000
-		move.w	#-$6400,$12(a1)
+		move.w	#-$6400,ost_y_vel(a1)
 
 loc_30000:				
 		addq.w	#1,d2
@@ -63837,7 +63925,7 @@ loc_3000C:
 		move.b	#4,$1A(a0)
 
 loc_3002E:
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 		move.l	#Map_23294,ost_mappings(a0)
 		move.w	#tile_Nem_Fireball1+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo62_Adjust2PArtPointer
@@ -63858,12 +63946,12 @@ loc_30064:
 loc_30072:				
 		move.l	$2A(a0),d2
 		move.l	ost_y_pos(a0),d3
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		ext.l	d0
 		asl.l	#4,d0
 		add.l	d0,d2
-		move.w	$12(a0),d0
-		addi.w	#$380,$12(a0)
+		move.w	ost_y_vel(a0),d0
+		addi.w	#$380,ost_y_vel(a0)
 		ext.l	d0
 		asl.l	#4,d0
 		add.l	d0,d3
@@ -63874,9 +63962,9 @@ loc_30072:
 ; ===========================================================================
 
 loc_300A4:				
-		cmpi.b	#8,$26(a0)
+		cmpi.b	#8,ost_boss_routine(a0)
 		bcc.s	locret_300EA
-		tst.b	$32(a0)
+		tst.b	ost_boss_hitcount2(a0)
 		beq.s	loc_300EC
 		tst.b	$20(a0)
 		bne.s	locret_300EA
@@ -63907,8 +63995,8 @@ loc_300EC:
 		moveq	#$64,d0
 		jsrto	AddPoints,JmpTo4_AddPoints
 		move.w	#$B3,(v_boss_timer).w
-		move.b	#8,$26(a0)
-		moveq	#$40,d0
+		move.b	#8,ost_boss_routine(a0)
+		moveq	#id_PLC_Capsule,d0
 		jsrto	AddPLC,JmpTo7_AddPLC
 		rts	
 ; ===========================================================================
@@ -63959,7 +64047,7 @@ loc_30170:
 loc_30182:				
 		tst.b	ost_render(a0)
 		bpl.s	loc_301AA
-		tst.b	$2C(a0)
+		tst.b	ost_boss_defeated(a0)
 		bne.s	loc_3019C
 		cmpi.w	#$578,ost_y_pos(a0)
 		bgt.w	loc_301AA
@@ -63997,8 +64085,8 @@ loc_301B4:
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.w	ost_x_pos(a0),$2A(a1)
 		subi.w	#$28,ost_y_pos(a1)
-		move.w	#-$60,$10(a1)
-		move.w	#-$C0,$12(a1)
+		move.w	#-$60,ost_x_vel(a1)
+		move.w	#-$C0,ost_y_vel(a1)
 		move.b	#0,$1A(a1)
 		move.b	#$11,$1E(a1)
 
@@ -64017,11 +64105,11 @@ loc_30210:
 loc_3022A:				
 		move.l	$2A(a0),d2
 		move.l	ost_y_pos(a0),d3
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d2
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
@@ -64217,11 +64305,9 @@ loc_304D4:
 		move.w	#tile_Nem_ARZBoss,ost_tile(a0)
 		move.l	#Map_30E04,ost_mappings(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#$20,$E(a0)
+		move.b	#$20,ost_mainspr_width(a0)
 		move.b	#2,$18(a0)
 		move.b	#2,ost_boss_subtype(a0)
-
-loc_30500:
 		move.w	#$2AE0,ost_x_pos(a0)
 		move.w	#$388,ost_y_pos(a0)
 		move.w	#$2AE0,($FFFFF750).w
@@ -64229,19 +64315,19 @@ loc_30500:
 		bset	#render_subobjects_bit,ost_render(a0)
 		move.b	#3,ost_mainspr_childsprites(a0)
 		move.b	#$F,$20(a0)
-		move.b	#8,$32(a0)
+		move.b	#8,ost_boss_hitcount2(a0)
 		move.b	#8,ost_mainspr_frame(a0)
 		move.w	#-$380,$2E(a0)
 		clr.b	(v_boss_collision_routine).w
-		move.w	#$2AE0,$10(a0)
-		move.w	#$488,$12(a0)
-		move.b	#0,$15(a0)
-		move.w	#$2AE0,$16(a0)
-		move.w	#$488,$18(a0)
-		move.b	#9,$1B(a0)
-		move.w	#$2AE0,$1C(a0)
-		move.w	#$488,$1E(a0)
-		move.b	#6,$21(a0)
+		move.w	#$2AE0,ost_subspr2_x_pos(a0)
+		move.w	#$488,ost_subspr2_y_pos(a0)
+		move.b	#0,ost_subspr2_frame(a0)
+		move.w	#$2AE0,ost_subspr3_x_pos(a0)
+		move.w	#$488,ost_subspr3_y_pos(a0)
+		move.b	#9,ost_subspr3_frame(a0)
+		move.w	#$2AE0,ost_subspr4_x_pos(a0)
+		move.w	#$488,ost_subspr4_y_pos(a0)
+		move.b	#6,ost_subspr4_frame(a0)
 		move.w	#$100,(v_boss_y_vel).w
 		
 		jsrto	FindFreeObj,JmpTo14_FindFreeObj
@@ -64258,7 +64344,7 @@ loc_30500:
 		move.l	a0,$2A(a1)
 		move.b	#0,$1A(a1)
 		move.b	#2,$18(a1)
-		move.b	#$20,$16(a1)
+		move.b	#$20,ost_height(a1)
 		movea.l	a1,a2
 		jsrto	FindNextFreeObj,JmpTo22_FindNextFreeObj
 		bne.s	loc_305F4
@@ -64292,11 +64378,12 @@ loc_305FA:
 
 loc_30620:				
 		moveq	#0,d0
-		move.b	$26(a0),d0
+		move.b	ost_boss_routine(a0),d0
 		move.w	off_3062E(pc,d0.w),d1
 		jmp	off_3062E(pc,d1.w)
 ; ===========================================================================
-off_3062E:	dc.w loc_3063C-off_3062E			; 0 
+off_3062E:	
+		dc.w loc_3063C-off_3062E			; 0 
 		dc.w loc_3067A-off_3062E			; 1
 		dc.w loc_306B8-off_3062E			; 2
 		dc.w loc_30706-off_3062E			; 3
@@ -64312,7 +64399,7 @@ loc_3063C:
 		cmpi.w	#$430,(v_boss_y_pos).w
 		blt.s	loc_3066C
 		move.w	#$430,(v_boss_y_pos).w
-		addi_.b	#2,$26(a0)
+		addi_.b	#2,ost_boss_routine(a0)
 		move.w	#0,(v_boss_y_vel).w
 		move.w	#-$C8,(v_boss_x_vel).w
 		st.b	$38(a0)
@@ -64339,7 +64426,7 @@ loc_30696:
 		bgt.s	loc_306AA
 
 loc_3069E:				
-		addi_.b	#2,$26(a0)
+		addi_.b	#2,ost_boss_routine(a0)
 		move.w	#0,(v_boss_x_vel).w
 
 loc_306AA:				
@@ -64357,7 +64444,7 @@ loc_306B8:
 		lea	($FFFFF740).w,a1
 		andi.b	#-$10,4(a1)
 		ori.b	#3,4(a1)
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		btst	#render_xflip_bit,ost_render(a0)
 		sne	$38(a0)
 		move.w	#$1E,(v_boss_timer).w
@@ -64380,7 +64467,7 @@ loc_3071A:
 		subi_.w	#1,(v_boss_timer).w
 		bpl.s	loc_30742
 		clr.b	(v_boss_collision_routine).w
-		move.b	#2,$26(a0)
+		move.b	#2,ost_boss_routine(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
 		beq.s	loc_3073C
 		move.w	#-$C8,(v_boss_x_vel).w
@@ -64428,9 +64515,9 @@ loc_3078E:
 		move.w	d0,ost_y_pos(a0)
 		move.w	($FFFFF750).w,ost_x_pos(a0)
 		addq.b	#2,ost_boss_wobble(a0)
-		cmpi.b	#8,$26(a0)
+		cmpi.b	#8,ost_boss_routine(a0)
 		bcc.s	locret_307F2
-		tst.b	$32(a0)
+		tst.b	ost_boss_hitcount2(a0)
 		beq.s	loc_307F4
 		tst.b	$20(a0)
 		bne.s	locret_307F2
@@ -64461,29 +64548,29 @@ loc_307F4:
 		moveq	#$64,d0
 		jsrto	AddPoints,JmpTo5_AddPoints
 		move.w	#$B3,(v_boss_timer).w
-		move.b	#8,$26(a0)
+		move.b	#8,ost_boss_routine(a0)
 
 loc_30806:
 		lea	($FFFFF740).w,a1
 		move.b	#5,2(a1)
 		move.b	#0,3(a1)
-		moveq	#$40,d0
+		moveq	#id_PLC_Capsule,d0
 		jsrto	AddPLC,JmpTo8_AddPLC
-		move.b	#5,$15(a0)
+		move.b	#5,ost_subspr2_frame(a0)
 		rts	
 ; ===========================================================================
 
 loc_30824:				
 		move.w	ost_x_pos(a0),d0
 		move.w	ost_y_pos(a0),d1
-		move.w	d0,$10(a0)
-		move.w	d1,$12(a0)
-		move.w	d0,$1C(a0)
-		move.w	d1,$1E(a0)
-		tst.b	$2C(a0)
+		move.w	d0,ost_subspr2_x_pos(a0)
+		move.w	d1,ost_subspr2_y_pos(a0)
+		move.w	d0,ost_subspr4_x_pos(a0)
+		move.w	d1,ost_subspr4_y_pos(a0)
+		tst.b	ost_boss_defeated(a0)
 		bne.s	loc_30850
-		move.w	d0,$16(a0)
-		move.w	d1,$18(a0)
+		move.w	d0,ost_subspr3_x_pos(a0)
+		move.w	d1,ost_subspr3_y_pos(a0)
 		move.w	d1,$3A(a0)
 		rts	
 ; ===========================================================================
@@ -64491,7 +64578,7 @@ loc_30824:
 loc_30850:				
 		cmpi.w	#$78,(v_boss_timer).w
 		bgt.s	locret_3088A
-		subi_.w	#1,$16(a0)
+		subi_.w	#1,ost_subspr3_x_pos(a0)
 		move.l	$3A(a0),d0
 		move.w	$2E(a0),d1
 		addi.w	#$38,$2E(a0)
@@ -64499,8 +64586,8 @@ loc_30850:
 		asl.l	#8,d1
 		add.l	d1,d0
 		move.l	d0,$3A(a0)
-		move.w	$3A(a0),$18(a0)
-		cmpi.w	#$540,$18(a0)
+		move.w	$3A(a0),ost_subspr3_y_pos(a0)
+		cmpi.w	#$540,ost_subspr3_y_pos(a0)
 		blt.s	locret_3088A
 		move.w	#0,$2E(a0)
 
@@ -64509,7 +64596,7 @@ locret_3088A:
 ; ===========================================================================
 
 loc_3088C:				
-		st.b	$2C(a0)
+		st.b	ost_boss_defeated(a0)
 		subq.w	#1,(v_boss_timer).w
 		bmi.s	loc_3089C
 		bsr.w	BossExplode
@@ -64526,7 +64613,7 @@ loc_3089C:
 		bset	#render_xflip_bit,ost_render(a0)
 		clr.w	(v_boss_x_vel).w
 		clr.w	(v_boss_y_vel).w
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		move.w	#-$12,(v_boss_timer).w
 
 loc_308D6:				
@@ -64557,7 +64644,7 @@ loc_3090A:
 		beq.s	loc_3092A
 		cmpi.w	#$20,(v_boss_timer).w
 		bcs.s	loc_30936
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		bra.s	loc_30936
 ; ===========================================================================
 
@@ -64613,7 +64700,7 @@ loc_309A2:
 loc_309A8:				
 		moveq	#0,d0
 		movea.l	$2A(a0),a1
-		cmpi.b	#8,$26(a1)
+		cmpi.b	#8,ost_boss_routine(a1)
 		blt.s	loc_309BC
 		move.b	#4,$25(a0)
 
@@ -64800,7 +64887,7 @@ loc_30B7A:
 loc_30B9E:				
 		moveq	#0,d0
 		movea.l	$38(a0),a1
-		cmpi.b	#8,$26(a1)
+		cmpi.b	#8,ost_boss_routine(a1)
 		blt.s	loc_30BB2
 		move.b	#6,$2A(a0)
 
@@ -64821,25 +64908,25 @@ loc_30BC8:
 		move.l	#Map_30D68,ost_mappings(a0)
 		move.w	#tile_Nem_ARZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#-$70,$E(a0)
+		move.b	#-$70,ost_mainspr_width(a0)
 		move.b	#4,$18(a0)
 		addq.b	#2,$2A(a0)
 		movea.l	$34(a0),a1
 		move.w	ost_x_pos(a1),ost_x_pos(a0)
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
-		move.w	#4,$12(a0)
+		move.w	#4,ost_y_vel(a0)
 		move.b	#4,$1A(a0)
 		addi.w	#9,ost_y_pos(a0)
 		tst.b	$28(a0)
 		beq.s	loc_30C28
 		bset	#0,$22(a0)
 		bset	#render_xflip_bit,ost_render(a0)
-		move.w	#-3,$10(a0)
+		move.w	#-3,ost_x_vel(a0)
 		bra.s	loc_30C2E
 ; ===========================================================================
 
 loc_30C28:				
-		move.w	#3,$10(a0)
+		move.w	#3,ost_x_vel(a0)
 
 loc_30C2E:				
 		move.b	#-$50,$20(a0)
@@ -64853,8 +64940,8 @@ loc_30C36:
 
 loc_30C44:				
 		move.w	ost_x_pos(a0),d0
-		add.w	$10(a0),d0
-		tst.w	$10(a0)
+		add.w	ost_x_vel(a0),d0
+		tst.w	ost_x_vel(a0)
 		bpl.s	loc_30C5E
 		cmpi.w	#$2A77,d0
 		bgt.s	loc_30C7E
@@ -64896,7 +64983,7 @@ loc_30C9A:
 loc_30CAC:				
 		bsr.w	loc_30D04
 		move.w	ost_y_pos(a0),d0
-		add.w	$12(a0),d0
+		add.w	ost_y_vel(a0),d0
 		cmpi.w	#$4F0,d0
 		bgt.w	JmpTo55_DeleteObject
 		move.w	d0,ost_y_pos(a0)
@@ -65128,32 +65215,30 @@ loc_30FB8:
 		move.w	#$560,ost_y_pos(a0)
 		move.b	#5,ost_mainspr_frame(a0)
 		addq.b	#2,ost_boss_subtype(a0)
-		move.b	#2,$26(a0)
+		move.b	#2,ost_boss_routine(a0)
 		bset	#render_subobjects_bit,ost_render(a0)
 		move.b	#4,ost_mainspr_childsprites(a0)
 		move.b	#$F,$20(a0)
-		move.b	#8,$32(a0)
-
-loc_31006:
+		move.b	#8,ost_boss_hitcount2(a0)
 		move.w	ost_x_pos(a0),(v_boss_x_pos).w
 		move.w	ost_y_pos(a0),(v_boss_y_pos).w
 		move.w	#$C0,(v_boss_y_vel).w
 		move.b	#0,(v_boss_collision_routine).w
 		move.b	#1,(f_screen_shake).w
-		move.b	#$40,$E(a0)
-		move.w	ost_x_pos(a0),$10(a0)
-		move.w	ost_y_pos(a0),$12(a0)
-		move.b	#2,$15(a0)
-		move.w	ost_x_pos(a0),$16(a0)
-		move.w	ost_y_pos(a0),$18(a0)
-		move.b	#1,$1B(a0)
-		move.w	ost_x_pos(a0),$1C(a0)
-		move.w	ost_y_pos(a0),$1E(a0)
-		move.b	#$E,$21(a0)
-		move.w	ost_x_pos(a0),$22(a0)
+		move.b	#$40,ost_mainspr_width(a0)
+		move.w	ost_x_pos(a0),ost_subspr2_x_pos(a0)
+		move.w	ost_y_pos(a0),ost_subspr2_y_pos(a0)
+		move.b	#2,ost_subspr2_frame(a0)
+		move.w	ost_x_pos(a0),ost_subspr3_x_pos(a0)
+		move.w	ost_y_pos(a0),ost_subspr3_y_pos(a0)
+		move.b	#1,ost_subspr3_frame(a0)
+		move.w	ost_x_pos(a0),ost_subspr4_x_pos(a0)
+		move.w	ost_y_pos(a0),ost_subspr4_y_pos(a0)
+		move.b	#$E,ost_subspr4_frame(a0)
+		move.w	ost_x_pos(a0),ost_subspr5_x_pos(a0)
 		move.w	ost_y_pos(a0),ost_subspr5_y_pos(a0)
-		move.b	#2,$27(a0)
-		subi.w	#$28,$22(a0)
+		move.b	#2,ost_subspr5_frame(a0)
+		subi.w	#$28,ost_subspr5_x_pos(a0)
 		move.w	#$28,(v_boss_timer).w
 		move.w	#-$380,$2E(a0)
 		move.w	#-$380,$30(a0)
@@ -65178,11 +65263,12 @@ loc_31090:
 
 loc_310BE:				
 		moveq	#0,d0
-		move.b	$26(a0),d0
+		move.b	ost_boss_routine(a0),d0
 		move.w	off_310CC(pc,d0.w),d1
 		jmp	off_310CC(pc,d1.w)
 ; ===========================================================================
-off_310CC:	dc.w loc_310DA-off_310CC			; 0 
+off_310CC:	
+		dc.w loc_310DA-off_310CC			; 0 
 		dc.w loc_3116E-off_310CC			; 1
 		dc.w loc_311AA-off_310CC			; 2
 		dc.w loc_3124A-off_310CC			; 3
@@ -65211,7 +65297,7 @@ loc_3110A:
 
 loc_3110E:				
 		move.w	d3,($FFFFF750).w
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		bclr	#render_xflip_bit,ost_render(a0)
 		move.w	($FFFFB008).w,d0
 		sub.w	($FFFFF750).w,d0
@@ -65244,7 +65330,7 @@ loc_3116E:
 		bsr.w	loc_313C6
 		cmpi.w	#$620,(v_boss_y_pos).w
 		blt.s	loc_31188
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		move.b	#0,(f_screen_shake).w
 
 loc_31188:				
@@ -65262,7 +65348,7 @@ loc_311AA:
 		cmpi.w	#$660,(v_boss_y_pos).w
 		blt.s	loc_31228
 		move.w	#$660,(v_boss_y_pos).w
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		lea	($FFFFF740).w,a1
 		andi.b	#-$10,2(a1)
 		ori.b	#6,2(a1)
@@ -65307,9 +65393,9 @@ loc_3124A:
 		bpl.w	loc_312E8
 
 loc_31268:
-		tst.b	$38(a0)
+		tst.b	ost_boss_hurtplayer(a0)
 		beq.s	loc_31274
-		sf.b	$38(a0)
+		sf.b	ost_boss_hurtplayer(a0)
 		bra.s	loc_31298
 ; ===========================================================================
 
@@ -65334,7 +65420,7 @@ loc_31298:
 
 loc_312A2:				
 		move.w	#0,(v_boss_x_vel).w
-		move.b	#0,$26(a0)
+		move.b	#0,ost_boss_routine(a0)
 		lea	($FFFFF740).w,a1
 		andi.b	#-$10,2(a1)
 		ori.b	#$B,2(a1)
@@ -65359,33 +65445,33 @@ loc_312E8:
 loc_3130A:				
 		move.w	ost_x_pos(a0),d0
 		move.w	ost_y_pos(a0),d1
-		move.w	d0,$16(a0)
-		move.w	d1,$18(a0)
-		move.w	d0,$1C(a0)
-		move.w	d1,$1E(a0)
-		tst.b	$2C(a0)
+		move.w	d0,ost_subspr3_x_pos(a0)
+		move.w	d1,ost_subspr3_y_pos(a0)
+		move.w	d0,ost_subspr4_x_pos(a0)
+		move.w	d1,ost_subspr4_y_pos(a0)
+		tst.b	ost_boss_defeated(a0)
 		bne.s	loc_31358
-		move.w	d0,$22(a0)
+		move.w	d0,ost_subspr5_x_pos(a0)
 		move.w	d1,ost_subspr5_y_pos(a0)
-		move.w	d0,$10(a0)
-		move.w	d1,$12(a0)
+		move.w	d0,ost_subspr2_x_pos(a0)
+		move.w	d1,ost_subspr2_y_pos(a0)
 		move.w	d1,$3A(a0)
 		move.w	d1,$34(a0)
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	loc_31350
-		addi.w	#$28,$22(a0)
+		addi.w	#$28,ost_subspr5_x_pos(a0)
 		rts	
 ; ===========================================================================
 
 loc_31350:				
-		subi.w	#$28,$22(a0)
+		subi.w	#$28,ost_subspr5_x_pos(a0)
 		rts	
 ; ===========================================================================
 
 loc_31358:				
 		cmpi.w	#$78,(v_boss_timer).w
 		bgt.s	locret_313C4
-		subi_.w	#1,$22(a0)
+		subi_.w	#1,ost_subspr5_x_pos(a0)
 		move.l	$3A(a0),d0
 		move.w	$2E(a0),d1
 		addi.w	#$38,$2E(a0)
@@ -65399,7 +65485,7 @@ loc_31358:
 		move.w	#0,$2E(a0)
 
 loc_31392:				
-		addi_.w	#1,$10(a0)
+		addi_.w	#1,ost_subspr2_x_pos(a0)
 		move.l	$34(a0),d0
 		move.w	$30(a0),d1
 		addi.w	#$38,$30(a0)
@@ -65407,8 +65493,8 @@ loc_31392:
 		asl.l	#8,d1
 		add.l	d1,d0
 		move.l	d0,$34(a0)
-		move.w	$34(a0),$12(a0)
-		cmpi.w	#$6F0,$12(a0)
+		move.w	$34(a0),ost_subspr2_y_pos(a0)
+		cmpi.w	#$6F0,ost_subspr2_y_pos(a0)
 		blt.s	locret_313C4
 		move.w	#0,$30(a0)
 
@@ -65473,9 +65559,9 @@ loc_31452:
 		addq.b	#2,ost_boss_wobble(a0)
 
 loc_31470:				
-		cmpi.b	#8,$26(a0)
+		cmpi.b	#8,ost_boss_routine(a0)
 		bcc.s	locret_314B6
-		tst.b	$32(a0)
+		tst.b	ost_boss_hitcount2(a0)
 		beq.s	loc_314B8
 		tst.b	$20(a0)
 		bne.s	locret_314B6
@@ -65506,18 +65592,18 @@ loc_314B8:
 		moveq	#$64,d0
 		jsrto	AddPoints,JmpTo6_AddPoints
 		move.w	#$B3,(v_boss_timer).w
-		move.b	#8,$26(a0)
+		move.b	#8,ost_boss_routine(a0)
 		moveq	#$40,d0
 		jsrto	AddPLC,JmpTo9_AddPLC
 		rts	
 ; ===========================================================================
 
 loc_314D2:				
-		st.b	$2C(a0)
+		st.b	ost_boss_defeated(a0)
 		move.b	#0,(f_screen_shake).w
 		subq.w	#1,(v_boss_timer).w
 		bmi.s	loc_314F4
-		move.b	#$13,$21(a0)
+		move.b	#$13,ost_subspr4_frame(a0)
 		move.b	#7,ost_mainspr_frame(a0)
 		bsr.w	BossExplode
 		bra.s	loc_31512
@@ -65527,8 +65613,8 @@ loc_314F4:
 		bset	#render_xflip_bit,ost_render(a0)
 		clr.w	(v_boss_x_vel).w
 		clr.w	(v_boss_y_vel).w
-		addq.b	#2,$26(a0)
-		move.b	#$12,$21(a0)
+		addq.b	#2,ost_boss_routine(a0)
+		move.b	#$12,ost_subspr4_frame(a0)
 		move.w	#-$12,(v_boss_timer).w
 
 loc_31512:				
@@ -65572,7 +65658,7 @@ loc_31548:
 		_move.b	#2,0(a2)
 	endc	
 		move.b	#0,1(a1)
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		bra.s	loc_3158A
 ; ===========================================================================
 
@@ -65625,7 +65711,7 @@ JmpTo56_DeleteObject:
 
 loc_315F2:				
 		jsrto	ObjectFall,JmpTo5_ObjectFall
-		subi.w	#$28,$12(a0)
+		subi.w	#$28,ost_subspr2_y_pos(a0)
 		cmpi.w	#$6F0,ost_y_pos(a0)
 		
 	if RemoveJmpTos	
@@ -65828,7 +65914,7 @@ loc_31904:
 		move.w	#$2A46,ost_x_pos(a0)
 		move.w	#$654,ost_y_pos(a0)
 		move.b	#0,ost_mainspr_frame(a0)
-		move.b	#$20,$E(a0)
+		move.b	#$20,ost_mainspr_width(a0)
 	if FixBugs=0
 		; This instruction is pointless, as render_useheight_bit of 'ost_render' 
 		; is never set anyway. Also, it clashes with 'ost_boss_flash_time', 
@@ -65840,11 +65926,11 @@ loc_31904:
 		move.b	#$80,ost_mainspr_height(a0)
 	endc	
 		addq.b	#2,ost_boss_subtype(a0)
-		move.b	#0,$26(a0)
+		move.b	#0,ost_boss_routine(a0)
 		bset	#render_subobjects_bit,ost_render(a0)
 		move.b	#4,ost_mainspr_childsprites(a0)
 		move.b	#$F,$20(a0)
-		move.b	#8,$32(a0)
+		move.b	#8,ost_boss_hitcount2(a0)
 		move.w	ost_x_pos(a0),(v_boss_x_pos).w
 		move.w	ost_y_pos(a0),(v_boss_y_pos).w
 		move.w	ost_x_pos(a0),ost_subspr2_x_pos(a0)
@@ -65894,7 +65980,7 @@ loc_31A04:
 
 loc_31A1C:				
 		moveq	#0,d0
-		move.b	$26(a0),d0
+		move.b	ost_boss_routine(a0),d0
 		move.w	off_31A2A(pc,d0.w),d1
 		jmp	off_31A2A(pc,d1.w)
 ; ===========================================================================
@@ -65959,7 +66045,7 @@ loc_31AB6:
 		cmpi.b	#3,$2D(a0)
 		bcc.s	loc_31B46
 		addq.b	#1,$2D(a0)
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		move.b	#8,($FFFFF740).w
 		move.b	#0,($FFFFF743).w
 		move.b	#0,($FFFFF749).w
@@ -65977,7 +66063,7 @@ loc_31B06:
 		move.b	#$20,($FFFFF743).w
 		move.b	#$20,($FFFFF749).w
 		move.b	#9,($FFFFF740).w
-		addq.b	#4,$26(a0)
+		addq.b	#4,ost_boss_routine(a0)
 		move.w	#0,(v_boss_x_vel).w
 		move.w	#$180,(v_boss_y_vel).w
 		move.b	#0,$3E(a0)
@@ -66023,7 +66109,7 @@ loc_31BC6:
 		bgt.w	loc_31C08
 		move.b	#0,($FFFFF743).w
 		move.b	#0,($FFFFF749).w
-		move.b	#0,$26(a0)
+		move.b	#0,ost_boss_routine(a0)
 		move.w	#-1,(v_boss_timer).w
 		move.b	#$40,$3F(a0)
 		bra.w	loc_31C08
@@ -66074,7 +66160,7 @@ loc_31C22:
 loc_31C60:				
 		cmpi.w	#$654,ost_y_pos(a0)
 		bcc.s	loc_31C08
-		move.b	#0,$26(a0)
+		move.b	#0,ost_boss_routine(a0)
 		move.w	#0,(v_boss_y_vel).w
 		move.w	#-$180,(v_boss_x_vel).w
 		btst	#render_xflip_bit,ost_render(a0)
@@ -66122,9 +66208,9 @@ loc_31CDC:
 		move.w	d0,ost_y_pos(a0)
 		move.w	(v_boss_x_pos).w,ost_x_pos(a0)
 		addq.b	#2,ost_boss_wobble(a0)
-		cmpi.b	#6,$26(a0)
+		cmpi.b	#6,ost_boss_routine(a0)
 		bcc.s	locret_31D40
-		tst.b	$32(a0)
+		tst.b	ost_boss_hitcount2(a0)
 		beq.s	loc_31D42
 		tst.b	$20(a0)
 		bne.s	locret_31D40
@@ -66155,14 +66241,14 @@ loc_31D42:
 		moveq	#$64,d0
 		jsrto	AddPoints,JmpTo7_AddPoints
 		move.w	#$B3,(v_boss_timer).w
-		move.b	#6,$26(a0)
+		move.b	#6,ost_boss_routine(a0)
 		moveq	#$40,d0
 		jsrto	AddPLC,JmpTo10_AddPLC
 		rts	
 ; ===========================================================================
 
 loc_31D5C:				
-		st.b	$2C(a0)
+		st.b	ost_boss_defeated(a0)
 		subq.w	#1,(v_boss_timer).w
 		bmi.s	loc_31D7E
 		move.b	#0,(v_boss_collision_routine).w
@@ -66176,7 +66262,7 @@ loc_31D7E:
 		bset	#render_xflip_bit,ost_render(a0)
 		clr.w	(v_boss_x_vel).w
 		clr.w	(v_boss_y_vel).w
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		lea	($FFFFF740).w,a1
 		andi.b	#-$10,6(a1)
 		ori.b	#3,6(a1)
@@ -66211,7 +66297,7 @@ loc_31DE2:
 		beq.s	loc_31E02
 		cmpi.w	#$20,(v_boss_timer).w
 		bcs.s	loc_31E0E
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		bra.s	loc_31E0E
 ; ===========================================================================
 
@@ -66273,7 +66359,7 @@ loc_31E76:
 		move.w	d1,ost_subspr3_y_pos(a0)
 		move.w	d0,ost_subspr4_x_pos(a0)
 		move.w	d1,ost_subspr4_y_pos(a0)
-		tst.b	$2C(a0)
+		tst.b	ost_boss_defeated(a0)
 		bne.s	loc_31EAE
 		move.w	d0,ost_subspr5_x_pos(a0)
 		move.w	d1,ost_subspr5_y_pos(a0)
@@ -66287,7 +66373,7 @@ loc_31E76:
 loc_31EAE:				
 		cmpi.w	#$78,(v_boss_timer).w
 		bgt.s	locret_31F22
-		subi_.w	#1,$22(a0)
+		subi_.w	#1,ost_subspr5_x_pos(a0)
 		move.l	$3A(a0),d0
 		move.w	$2E(a0),d1
 		addi.w	#$38,$2E(a0)
@@ -66303,7 +66389,7 @@ loc_31EAE:
 loc_31EE8:				
 		cmpi.w	#$3C,(v_boss_timer).w
 		bgt.s	locret_31F22
-		addi_.w	#1,$10(a0)
+		addi_.w	#1,ost_subspr2_x_pos(a0)
 		move.l	$34(a0),d0
 		move.w	$30(a0),d1
 		addi.w	#$38,$30(a0)
@@ -66311,8 +66397,8 @@ loc_31EE8:
 		asl.l	#8,d1
 		add.l	d1,d0
 		move.l	d0,$34(a0)
-		move.w	$34(a0),$12(a0)
-		cmpi.w	#$6F0,$12(a0)
+		move.w	$34(a0),ost_subspr2_y_pos(a0)
+		cmpi.w	#$6F0,ost_subspr2_y_pos(a0)
 		blt.s	locret_31F22
 		move.w	#0,$30(a0)
 
@@ -66322,7 +66408,7 @@ locret_31F22:
 
 loc_31F24:				
 		movea.l	$34(a0),a1
-		cmpi.b	#6,$26(a1)
+		cmpi.b	#6,ost_boss_routine(a1)
 		bcc.w	JmpTo59_DeleteObject
 		moveq	#0,d0
 		move.b	$25(a0),d0
@@ -66346,7 +66432,7 @@ loc_31F48:
 		move.w	ost_x_pos(a1),ost_x_pos(a0)
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
 		addi.w	#$30,ost_y_pos(a0)
-		move.b	#8,$16(a0)
+		move.b	#8,ost_height(a0)
 		move.b	#8,$17(a0)
 		move.b	#$12,ost_boss_wobble(a0)
 		move.b	#-$68,$20(a0)
@@ -66369,8 +66455,8 @@ loc_31FBC:
 		tst.w	(v_boss_timer).w
 		bne.w	JmpTo39_DisplaySprite
 		addq.b	#2,$25(a0)
-		move.w	#0,$10(a0)
-		move.w	#0,$12(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	#0,ost_y_vel(a0)
 	
 	if RemoveJmpTos&FixBugs
 	; Moved so that it doesn't point to 'DisplaySprite3'.
@@ -66399,15 +66485,15 @@ loc_31FF8:
 loc_32002:
 		move.w	ost_y_pos(a0),d3
 		swap	d3
-		move.w	$10(a0),d0
+		move.w	ost_x_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d2
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
-		addi.w	#$38,$12(a0)
+		addi.w	#$38,ost_y_vel(a0)
 		swap	d2
 		move.w	d2,ost_x_pos(a0)
 		swap	d3
@@ -66420,8 +66506,8 @@ loc_32030:
 		jsrto	PlaySound,JmpTo9_PlaySound
 		move.w	#tile_Nem_CNZBoss-$60,ost_tile(a0)
 		move.b	#7,$1C(a0)
-		move.w	#-$300,$12(a0)
-		move.w	#-$100,$10(a0)
+		move.w	#-$300,ost_y_vel(a0)
+		move.w	#-$100,ost_x_vel(a0)
 		move.b	#4,ost_boss_subtype(a0)
 		move.b	#6,$25(a0)
 		move.b	#-$68,$20(a0)
@@ -66434,7 +66520,7 @@ loc_3206E:
 		move.l	(a0,d0.w),(a1,d0.w)
 		addq.w	#4,d0
 		dbf	d1,loc_3206E
-		neg.w	$10(a1)
+		neg.w	ost_x_vel(a1)
 
 locret_3207E:				
 		rts	
@@ -66603,36 +66689,32 @@ loc_3229E:
 		move.w	#$380,ost_y_pos(a0)
 		move.b	#2,ost_mainspr_frame(a0)
 		addq.b	#2,ost_boss_subtype(a0)
-
-loc_322CE:
 		bset	#render_subobjects_bit,ost_render(a0)
 		move.b	#2,ost_mainspr_childsprites(a0)
 		move.b	#$F,$20(a0)
-		move.b	#8,$32(a0)
+		move.b	#8,ost_boss_hitcount2(a0)
 		move.b	#7,$3E(a0)
 		move.w	ost_x_pos(a0),(v_boss_x_pos).w
 		move.w	ost_y_pos(a0),(v_boss_y_pos).w
 		move.w	#0,(v_boss_x_vel).w
 		move.w	#$100,(v_boss_y_vel).w
-		move.b	#$20,$E(a0)
+		move.b	#$20,ost_mainspr_width(a0)
 		clr.b	$2B(a0)
 		clr.b	$2C(a0)
 		move.b	#$40,ost_boss_wobble(a0)
 		move.b	#$27,$33(a0)
 		move.b	#$27,$39(a0)
-		move.w	ost_x_pos(a0),$10(a0)
-		move.w	ost_y_pos(a0),$12(a0)
-		move.b	#$C,$15(a0)
-		move.w	ost_x_pos(a0),$16(a0)
-
-loc_3233C:
-		move.w	ost_y_pos(a0),$18(a0)
-		move.b	#0,$1B(a0)
+		move.w	ost_x_pos(a0),ost_subspr2_x_pos(a0)
+		move.w	ost_y_pos(a0),ost_subspr2_y_pos(a0)
+		move.b	#$C,ost_subspr2_frame(a0)
+		move.w	ost_x_pos(a0),ost_subspr3_x_pos(a0)
+		move.w	ost_y_pos(a0),ost_subspr3_y_pos(a0)
+		move.b	#0,ost_subspr3_frame(a0)
 		jsrto	FindFreeObj,JmpTo17_FindFreeObj
 		bne.s	loc_3239C
 		move.b	#id_BossMetropolis,ost_id(a1)
 		move.b	#6,ost_boss_subtype(a1)
-		move.b	#$13,$1A(a1)
+		move.b	#$13,ost_frame(a1)
 		move.l	#Map_32DC6,ost_mappings(a1)
 		move.w	#tile_Nem_MTZBoss,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
@@ -66659,11 +66741,12 @@ loc_3239C:
 
 loc_323BA:				
 		moveq	#0,d0
-		move.b	$26(a0),d0
+		move.b	ost_boss_routine(a0),d0
 		move.w	off_323C8(pc,d0.w),d1
 		jmp	off_323C8(pc,d1.w)
 ; ===========================================================================
-off_323C8:	dc.w loc_323DC-off_323C8			; 0 
+off_323C8:	
+		dc.w loc_323DC-off_323C8			; 0 
 		dc.w loc_32456-off_323C8			; 1
 		dc.w loc_324DC-off_323C8			; 2
 		dc.w loc_32524-off_323C8			; 3
@@ -66680,7 +66763,7 @@ loc_323DC:
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		cmpi.w	#$4A0,(v_boss_y_pos).w
 		bcs.s	loc_32426
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		move.w	#0,(v_boss_y_vel).w
 		move.w	#-$100,(v_boss_x_vel).w
 		bclr	#7,$2B(a0)
@@ -66721,7 +66804,7 @@ loc_32456:
 		bset	#render_xflip_bit,ost_render(a0)
 		bset	#6,$2B(a0)
 		beq.s	loc_324BC
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		move.w	#-$100,(v_boss_y_vel).w
 		bra.s	loc_324BC
 ; ===========================================================================
@@ -66734,7 +66817,7 @@ loc_32490:
 		bclr	#render_xflip_bit,ost_render(a0)
 		bset	#6,$2B(a0)
 		beq.s	loc_324BC
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		move.w	#-$100,(v_boss_y_vel).w
 
 loc_324BC:				
@@ -66773,7 +66856,7 @@ loc_32514:
 		move.w	(v_boss_x_vel).w,d0
 		or.w	(v_boss_y_vel).w,d0
 		bne.s	loc_32522
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 
 loc_32522:				
 		bra.s	loc_324BC
@@ -66790,7 +66873,7 @@ loc_32524:
 loc_32536:				
 		subq.b	#1,$39(a0)
 		bne.s	loc_32540
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 
 loc_32540:				
 		bra.w	loc_324BC
@@ -66808,7 +66891,7 @@ loc_32552:
 		cmpi.b	#$27,$39(a0)
 		bcs.s	loc_32570
 		move.w	#$100,(v_boss_y_vel).w
-		move.b	#0,$26(a0)
+		move.b	#0,ost_boss_routine(a0)
 		bclr	#6,$2B(a0)
 
 loc_32570:				
@@ -66844,7 +66927,7 @@ loc_325A4:
 		move.b	#-$80,$3A(a0)
 
 loc_325B6:				
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 
 loc_325BA:				
 		bra.w	loc_324BC
@@ -66863,7 +66946,7 @@ loc_325BE:
 
 loc_325D8:				
 		move.w	#$100,(v_boss_y_vel).w
-		move.b	#0,$26(a0)
+		move.b	#0,ost_boss_routine(a0)
 		bclr	#6,$2B(a0)
 		bra.s	loc_3262A
 ; ===========================================================================
@@ -66878,7 +66961,7 @@ loc_325EC:
 		bset	#render_xflip_bit,ost_render(a0)
 
 loc_32612:				
-		move.b	#$E,$26(a0)
+		move.b	#$E,ost_boss_routine(a0)
 		move.b	#0,$2E(a0)
 		bclr	#6,$2B(a0)
 		move.b	#0,$2F(a0)
@@ -67007,10 +67090,10 @@ locret_32772:
 loc_32774:				
 		move.w	ost_x_pos(a0),d0
 		move.w	ost_y_pos(a0),d1
-		move.w	d0,$10(a0)
-		move.w	d1,$12(a0)
-		move.w	d0,$16(a0)
-		move.w	d1,$18(a0)
+		move.w	d0,ost_subspr2_x_pos(a0)
+		move.w	d1,ost_subspr2_y_pos(a0)
+		move.w	d0,ost_subspr3_x_pos(a0)
+		move.w	d1,ost_subspr3_y_pos(a0)
 		rts	
 ; ===========================================================================
 
@@ -67024,7 +67107,7 @@ loc_3278E:
 		ori.b	#5,2(a1)
 		tst.b	$3E(a0)
 		beq.s	loc_327CA
-		move.b	#$A,$26(a0)
+		move.b	#$A,ost_boss_routine(a0)
 		move.w	#-$180,(v_boss_y_vel).w
 		subq.b	#1,$3E(a0)
 		move.w	#0,(v_boss_x_vel).w
@@ -67068,7 +67151,7 @@ loc_32820:
 		bset	#render_xflip_bit,ost_render(a0)
 		clr.w	(v_boss_x_vel).w
 		clr.w	(v_boss_y_vel).w
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		move.w	#-$12,(v_boss_timer).w
 		lea	($FFFFF740).w,a1
 		move.b	#3,2(a1)
@@ -67127,9 +67210,9 @@ loc_328C0:
 		addq.b	#2,ost_boss_wobble(a0)
 
 loc_328DE:				
-		cmpi.b	#$10,$26(a0)
+		cmpi.b	#$10,ost_boss_routine(a0)
 		bcc.s	locret_32924
-		tst.b	$32(a0)
+		tst.b	ost_boss_hitcount2(a0)
 		beq.s	loc_32926
 		tst.b	$20(a0)
 		bne.s	locret_32924
@@ -67160,7 +67243,7 @@ loc_32926:
 		moveq	#$64,d0
 		jsrto	AddPoints,JmpTo8_AddPoints
 		move.w	#$EF,(v_boss_timer).w
-		move.b	#$10,$26(a0)
+		move.b	#$10,ost_boss_routine(a0)
 		moveq	#$40,d0
 		jsrto	AddPLC,JmpTo11_AddPLC
 		rts	
@@ -67246,7 +67329,7 @@ loc_329DA:
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#$3C,$32(a0)
 		move.b	#2,$1C(a0)
-		move.w	#-$400,$12(a0)
+		move.w	#-$400,ost_y_vel(a0)
 		move.w	#-$80,d1
 		move.w	($FFFFB008).w,d0
 		sub.w	ost_x_pos(a0),d0
@@ -67270,7 +67353,7 @@ loc_32A40:
 		bset	#render_xflip_bit,ost_render(a0)
 
 loc_32A50:				
-		move.w	d1,$10(a0)
+		move.w	d1,ost_x_vel(a0)
 		bra.s	loc_32A64
 ; ===========================================================================
 
@@ -67392,10 +67475,10 @@ loc_32B64:
 
 loc_32B76:				
 		jsrto	ObjectFall,JmpTo6_ObjectFall
-		subi.w	#$20,$12(a0)
-		cmpi.w	#$180,$12(a0)
+		subi.w	#$20,ost_y_vel(a0)
+		cmpi.w	#$180,ost_y_vel(a0)
 		blt.s	loc_32B8E
-		move.w	#$180,$12(a0)
+		move.w	#$180,ost_y_vel(a0)
 
 loc_32B8E:				
 		cmpi.w	#$4AC,ost_y_pos(a0)
@@ -67540,7 +67623,7 @@ loc_32CC0:
 		addi_.w	#8,ost_x_pos(a0)
 
 loc_32D1A:				
-		move.w	d0,$10(a0)
+		move.w	d0,ost_x_vel(a0)
 		move.b	#-$67,$20(a0)
 		move.b	#-$16,d0
 		jsrto	PlaySound,JmpTo10_PlaySound
@@ -67751,14 +67834,14 @@ loc_32FA8:
 		move.b	#0,ost_mainspr_childsprites(a0)
 		addq.b	#2,ost_boss_subtype(a0)
 		move.b	#$F,$20(a0)
-		move.b	#8,$32(a0)
-		move.b	#$40,$E(a0)
+		move.b	#8,ost_boss_hitcount2(a0)
+		move.b	#$40,ost_mainspr_width(a0)
 		rts	
 ; ===========================================================================
 
 loc_32FE6:				
 		moveq	#0,d0
-		move.b	$26(a0),d0
+		move.b	ost_boss_routine(a0),d0
 		move.w	off_32FF4(pc,d0.w),d1
 		jmp	off_32FF4(pc,d1.w)
 ; ===========================================================================
@@ -67783,16 +67866,14 @@ loc_3301A:
 		move.w	#$2D0,(v_boss_y_pos).w
 		move.b	#8,ost_mainspr_frame(a0)
 		move.b	#1,ost_mainspr_childsprites(a0)
-		addq.b	#2,$26(a0)
-
-loc_33036:
+		addq.b	#2,ost_boss_routine(a0)
 		move.w	#-$80,(v_boss_y_vel).w
 		move.b	#$F,$20(a0)
-		move.w	ost_x_pos(a0),$10(a0)
-		move.w	ost_y_pos(a0),$12(a0)
+		move.w	ost_x_pos(a0),ost_subspr2_x_pos(a0)
+		move.w	ost_y_pos(a0),ost_subspr2_y_pos(a0)
 		clr.b	ost_boss_wobble(a0)
 		clr.b	$2A(a0)
-		move.b	#8,$15(a0)
+		move.b	#8,ost_subspr2_frame(a0)
 		lea	($FFFFF740).w,a2
 		move.b	#5,(a2)+
 		move.b	#0,(a2)+
@@ -67809,7 +67890,7 @@ loc_33078:
 		cmpi.w	#$290,(v_boss_y_pos).w
 		bcc.w	loc_3315E
 		move.w	#$290,(v_boss_y_pos).w
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		move.w	#$A8,(v_boss_timer).w
 		btst	#7,$2A(a0)
 		bne.w	loc_3315E
@@ -67830,7 +67911,7 @@ loc_330BA:
 		move.b	#0,(a2)
 
 loc_330DC:				
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		move.w	#-$40,(v_boss_y_vel).w
 		bra.w	loc_3315E
 ; ===========================================================================
@@ -67863,7 +67944,7 @@ loc_3313C:
 		cmpi.w	#$2D0,(v_boss_y_pos).w
 		bcs.s	loc_3315E
 		move.w	#$2D0,(v_boss_y_pos).w
-		clr.b	$26(a0)
+		clr.b	ost_boss_routine(a0)
 		addq.b	#2,ost_boss_subtype(a0)
 		btst	#7,$2A(a0)
 		beq.s	loc_3315E
@@ -67893,8 +67974,8 @@ locret_33192:
 loc_33194:				
 		move.w	ost_x_pos(a0),d0
 		move.w	ost_y_pos(a0),d1
-		move.w	d0,$10(a0)
-		move.w	d1,$12(a0)
+		move.w	d0,ost_subspr2_x_pos(a0)
+		move.w	d1,ost_subspr2_y_pos(a0)
 		rts	
 ; ===========================================================================
 
@@ -67948,7 +68029,7 @@ BranchTo_JmpTo62_DeleteObject:
 
 loc_3320A:				
 		moveq	#0,d0
-		move.b	$26(a0),d0
+		move.b	ost_boss_routine(a0),d0
 		move.w	off_33218(pc,d0.w),d1
 		jmp	off_33218(pc,d1.w)
 ; ===========================================================================
@@ -67972,7 +68053,7 @@ loc_33222:
 loc_33242:				
 		move.w	#$2B0,(v_boss_y_pos).w
 		move.w	#$2B0,ost_y_pos(a0)
-		move.b	#2,$26(a0)
+		move.b	#2,ost_boss_routine(a0)
 		move.b	#-$76,$20(a0)
 		move.b	#5,ost_mainspr_frame(a0)
 		moveq	#7,d0
@@ -67982,8 +68063,8 @@ loc_33242:
 
 loc_3326A:				
 		addi.w	#$F,d5
-		move.b	d0,$15(a0,d4.w)
-		move.w	d5,$12(a0,d4.w)
+		move.b	d0,ost_subspr2_frame(a0,d4.w)
+		move.w	d5,ost_subspr2_y_pos(a0,d4.w)
 		addq.w	#6,d4
 		dbf	d2,loc_3326A
 		move.b	#8,ost_mainspr_childsprites(a0)
@@ -67999,7 +68080,7 @@ loc_33296:
 		bcc.w	loc_333BA
 		move.w	#$240,(v_boss_y_pos).w
 		move.w	#0,(v_boss_y_vel).w
-		addi_.b	#2,$26(a0)
+		addi_.b	#2,ost_boss_routine(a0)
 		move.w	#$80,(v_boss_timer).w
 		move.b	#3,$38(a0)
 		bra.w	loc_333BA
@@ -68025,14 +68106,14 @@ loc_332E8:
 		bset	d0,$3E(a0)
 		add.w	d0,d0
 		move.w	word_3331C(pc,d0.w),(v_boss_timer).w
-		addq.b	#2,$26(a0)
+		addq.b	#2,ost_boss_routine(a0)
 		bsr.w	loc_333C6
 		bra.w	loc_333BA
 ; ===========================================================================
 
 loc_3330C:				
 		move.w	#$80,(v_boss_y_vel).w
-		move.b	#8,$26(a0)
+		move.b	#8,ost_boss_routine(a0)
 		bra.w	loc_333BA
 ; ===========================================================================
 word_3331C:	
@@ -68067,7 +68148,7 @@ loc_33342:
 		move.l	a0,$34(a1)
 		move.b	#-$16,d0
 		jsrto	PlaySound,JmpTo11_PlaySound
-		move.b	#4,$26(a0)
+		move.b	#4,ost_boss_routine(a0)
 		move.w	#$28,(v_boss_timer).w
 		move.w	#-$80,(v_boss_y_vel).w
 		bra.w	loc_333BA
@@ -68084,7 +68165,7 @@ loc_33394:
 		bcs.s	loc_333BA
 		move.w	#$2B0,(v_boss_y_pos).w
 		move.w	#0,(v_boss_y_vel).w
-		move.b	#0,$26(a0)
+		move.b	#0,ost_boss_routine(a0)
 		move.b	#2,ost_boss_subtype(a0)
 		rts	
 ; ===========================================================================
@@ -68153,8 +68234,8 @@ loc_3342A:
 		addi.w	#$F,d6
 		subi.b	#$10,d3
 		bsr.w	loc_33446
-		move.w	d1,$10(a0,d4.w)
-		move.w	d0,$12(a0,d4.w)
+		move.w	d1,ost_subspr2_x_pos(a0,d4.w)
+		move.w	d0,ost_subspr2_y_pos(a0,d4.w)
 		addq.w	#6,d4
 		dbf	d2,loc_3342A
 		rts	
@@ -68172,7 +68253,7 @@ loc_33446:
 
 loc_33456:				
 		moveq	#0,d0
-		move.b	$26(a0),d0
+		move.b	ost_boss_routine(a0),d0
 		move.w	off_33464(pc,d0.w),d1
 		jmp	off_33464(pc,d1.w)
 ; ===========================================================================
@@ -68195,16 +68276,16 @@ loc_3348E:
 		move.w	#$2A0,(v_boss_y_pos).w
 		move.b	#2,ost_mainspr_frame(a0)
 		move.b	#-$76,$20(a0)
-		addq.b	#2,$26(a0)
-		move.b	#-$80,$E(a0)
+		addq.b	#2,ost_boss_routine(a0)
+		move.b	#$80,ost_mainspr_width(a0)
 		clr.b	ost_boss_wobble(a0)
 		moveq	#7,d0
 		moveq	#7,d1
 		moveq	#0,d2
 
 loc_334B4:				
-		move.b	d1,$15(a0,d2.w)
-		addq.w	#6,d2
+		move.b	d1,ost_subspr2_frame(a0,d2.w)
+		addq.w	#next_subspr,d2
 		dbf	d0,loc_334B4
 		move.b	#8,ost_mainspr_childsprites(a0)
 		move.b	#2,(v_boss_collision_routine).w
@@ -68215,7 +68296,7 @@ loc_334CC:
 		bsr.w	loc_334EE				; could be bsr.s
 		cmpi.b	#$FE,ost_boss_wobble(a0)
 		bcs.s	loc_334E6
-		move.b	#0,$26(a0)
+		move.b	#0,ost_boss_routine(a0)
 		move.b	#4,ost_boss_subtype(a0)
 		rts	
 ; ===========================================================================
@@ -68239,9 +68320,9 @@ loc_334EE:
 loc_3350E:				
 		subi_.b	#6,d3
 		bsr.w	loc_33526
-		move.w	d1,$10(a0,d4.w)
-		move.w	d0,$12(a0,d4.w)
-		addq.w	#6,d4
+		move.w	d1,ost_subspr2_x_pos(a0,d4.w)
+		move.w	d0,ost_subspr2_y_pos(a0,d4.w)
+		addq.w	#next_subspr,d4
 		dbf	d2,loc_3350E
 		rts	
 ; ===========================================================================
@@ -68309,11 +68390,11 @@ loc_33586:
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
 		move.b	#$C,$1A(a0)
 		move.w	#-$20,d0
-		move.w	#-$400,$10(a0)
+		move.w	#-$400,ost_x_vel(a0)
 		btst	#render_xflip_bit,ost_render(a1)
 		beq.s	loc_335D2
 		neg.w	d0
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_335D2:				
 		add.w	d0,ost_x_pos(a0)
@@ -68334,7 +68415,7 @@ loc_335DE:
 loc_335FE:				
 		cmpi.w	#$250,ost_y_pos(a0)
 		bcs.s	locret_33626
-		tst.w	$10(a0)
+		tst.w	ost_x_vel(a0)
 		bmi.w	loc_33628
 		move.w	ost_x_pos(a0),d0
 		cmpi.w	#$2980,d0
@@ -68370,21 +68451,17 @@ loc_33640:
 		move.b	#8,ost_boss_subtype(a1)
 		move.b	#4,$25(a1)
 		move.b	#-$75,$20(a1)
-
-loc_3365C:
 		move.b	#2,$1C(a1)
 		move.b	#$D,$1A(a1)
-		move.w	#0,$12(a1)
+		move.w	#0,ost_y_vel(a1)
 		move.l	#Map_33756,ost_mappings(a1)
 		move.w	#tile_Nem_OOZBoss,ost_tile(a1)
 		jsrto	Adjust2PArtPointer,JmpTo63_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#2,$18(a1)
-
-loc_3368C:
 		move.w	#5,$32(a1)
 		move.b	#7,$36(a1)
-		move.w	$10(a0),$10(a1)
+		move.w	ost_x_vel(a0),ost_x_vel(a1)
 		move.w	d1,ost_x_pos(a1)
 		move.w	#$250,ost_y_pos(a1)
 		move.b	#-$15,d0
@@ -68412,7 +68489,7 @@ loc_336D0:
 		move.w	#5,$32(a1)
 		move.w	#$200,$1C(a1)
 		move.w	#$10,d0
-		tst.w	$10(a1)
+		tst.w	ost_x_vel(a1)
 		bpl.s	loc_336F4
 		neg.w	d0
 
@@ -68570,18 +68647,18 @@ JmpTo25_SpeedToPos:
 ; ----------------------------------------------------------------------------
 
 SonicSpecial:				
-		bsr.w	loc_33908
+		bsr.w	loc_33908	; could be bsr.s
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_338FE(pc,d0.w),d1
-		jmp	off_338FE(pc,d1.w)
+		move.w	SSS_Index(pc,d0.w),d1
+		jmp	SSS_Index(pc,d1.w)
 ; ===========================================================================
-off_338FE:	
-		dc.w loc_3391C-off_338FE			; 0 
-		dc.w loc_339D6-off_338FE			; 1
-		dc.w loc_33BAE-off_338FE			; 2
-		dc.w off_338FE-off_338FE			; 3
-		dc.w loc_33BD8-off_338FE			; 4
+SSS_Index:	index offset(*),,2
+		ptr loc_3391C			; 0 
+		ptr loc_339D6			; 2
+		ptr loc_33BAE			; 4
+		ptr SSS_Index			; 6 - invalid
+		ptr loc_33BD8			; 8
 ; ===========================================================================
 
 loc_33908:				
@@ -68598,44 +68675,40 @@ loc_3390E:
 loc_3391C:				
 		move.b	#2,ost_primary_routine(a0)
 		moveq	#0,d0
-		move.l	d0,$2A(a0)
+		move.l	d0,ost_ss_x_pos(a0)
 		move.w	#$80,d1	
-		move.w	d1,$2E(a0)
-		move.w	d0,$30(a0)
+		move.w	d1,ost_ss_y_pos(a0)
+		move.w	d0,ost_ss_y_sub(a0)
 		add.w	($FFFFF73E).w,d0
 		move.w	d0,ost_x_pos(a0)
 		add.w	($FFFFF740).w,d1
 		move.w	d1,ost_y_pos(a0)
-		move.b	#$E,$16(a0)
+		move.b	#$E,ost_height(a0)
 		move.b	#7,$17(a0)
 		move.l	#Map_34212,ost_mappings(a0)
 		move.w	#(vram_SpecialSonic/sizeof_cell)+tile_pal2,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,$18(a0)
-		move.w	#$6E,$34(a0)
+		move.w	#$6E,ost_ss_z_pos(a0)
 		clr.b	($FFFFF742).w
-		move.w	#$400,$32(a0)
-		move.b	#$40,$26(a0)
+		move.w	#$400,ost_ss_init_flip_timer(a0)
+		move.b	#$40,ost_angle(a0)
 		move.b	#1,(v_sonic_last_frame_id).w
-		clr.b	$37(a0)
+		clr.b	ost_ss_slide_timer(a0)
 		bclr	#6,$22(a0)
-		clr.b	$21(a0)
-		clr.b	$23(a0)
-		movea.l	#-$4EC0,a1
+		clr.b	ost_col_property(a0)
+		clr.b	ost_ss_dplc_timer(a0)
+		movea.l	#v_ss_shadow_sonic,a1
 		move.b	#id_ShadowSpecial,ost_id(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
-
-loc_339A8:
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$18,ost_y_pos(a1)
 		move.l	#off_34492,ost_mappings(a1)
-
-loc_339BC:
 		move.w	#tile_Nem_SpecialHorizShadow+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#4,$18(a1)
-		move.l	a0,$38(a1)
-		bra.w	loc_33AB2
+		move.l	a0,ost_shadspec_parent(a1)
+		bra.w	SSS_LoadGFX
 ; ===========================================================================
 
 loc_339D6:				
@@ -68652,7 +68725,7 @@ loc_339D6:
 		lea	(off_341E4).l,a1
 		bsr.w	loc_33F00
 		bsr.w	loc_33DFC
-		bra.w	loc_33AB2
+		bra.w	SSS_LoadGFX
 ; ===========================================================================
 
 loc_33A0E:				
@@ -68660,17 +68733,17 @@ loc_33A0E:
 		bsr.w	loc_33E44
 		bsr.w	loc_3404A
 		bsr.w	loc_34084
-		bra.w	loc_33AB2
+		bra.w	SSS_LoadGFX
 ; ===========================================================================
 
 loc_33A22:				
 		moveq	#0,d0
-		move.b	$36(a0),d0
+		move.b	ost_ss_hurt_timer(a0),d0
 		addi_.b	#8,d0
-		move.b	d0,$36(a0)
+		move.b	d0,ost_ss_hurt_timer(a0)
 		bne.s	loc_33A3E
 		move.b	#0,$25(a0)
-		move.b	#$1E,$23(a0)
+		move.b	#$1E,ost_ss_dplc_timer(a0)
 
 loc_33A3E:				
 		add.b	$26(a0),d0
@@ -68681,7 +68754,7 @@ loc_33A3E:
 		move.b	byte_33A92(pc,d0.w),$1A(a0)
 		move.b	byte_33A92+1(pc,d0.w),d0
 		or.b	d0,ost_render(a0)
-		move.b	$36(a0),d0
+		move.b	ost_ss_hurt_timer(a0),d0
 		subi_.b	#8,d0
 		bne.s	locret_33A90
 		move.b	d0,$21(a0)
@@ -68699,7 +68772,7 @@ loc_33A7C:
 loc_33A82:				
 		jsrto	FindFreeObjSpecial,JmpTo_FindFreeObjSpecial
 		bne.s	locret_33A90
-		move.l	a0,$38(a1)
+		move.l	a0,ost_ringlossspec_parent(a1)
 		move.b	#id_RingLossSpecial,ost_id(a1)
 
 locret_33A90:				
@@ -68714,6 +68787,7 @@ byte_33A92:
 		dc.b   0,  2					; 10
 		dc.b   4,  3					; 12
 		dc.b  $C,  1					; 14
+		
 dword_33AA2:	
 		dc.l   $FF0000					; 0 
 		dc.l   $FF0B00					; 1
@@ -68721,11 +68795,11 @@ dword_33AA2:
 		dc.l   $FF2E20					; 3
 ; ===========================================================================
 
-loc_33AB2:				
-		move.b	$23(a0),d0
+SSS_LoadGFX:				
+		move.b	ost_ss_dplc_timer(a0),d0
 		beq.s	loc_33AC6
 		subq.b	#1,d0
-		move.b	d0,$23(a0)
+		move.b	d0,ost_ss_dplc_timer(a0)
 		andi.b	#1,d0
 		beq.s	loc_33AC6
 		rts	
@@ -68738,7 +68812,7 @@ loc_33AC6:
 		move.w	#$5CA0,d4
 		moveq	#0,d1
 
-loc_33AD8:				
+SpecialPlayer_LoadGFX:				
 		moveq	#0,d0
 		move.b	$1A(a0),d0
 		cmp.b	(a4),d0
@@ -68799,10 +68873,10 @@ loc_33B44:
 		jsr	CalcSine
 		muls.w	d2,d1
 		asr.l	#8,d1
-		add.w	d1,$10(a0)
+		add.w	d1,ost_x_vel(a0)
 		muls.w	d2,d0
 		asr.l	#7,d0
-		add.w	d0,$12(a0)
+		add.w	d0,ost_y_vel(a0)
 		bset	#2,$22(a0)
 		move.b	#4,ost_primary_routine(a0)
 		move.b	#3,$1C(a0)
@@ -68836,7 +68910,7 @@ loc_33BAE:
 		bsr.w	loc_34084
 		lea	(off_341E4).l,a1
 		bsr.w	loc_33F00
-		bra.w	loc_33AB2
+		bra.w	SSS_LoadGFX
 ; ===========================================================================
 
 loc_33BD8:				
@@ -68850,23 +68924,23 @@ loc_33BD8:
 		bsr.w	loc_33EA0
 		lea	(off_341E4).l,a1
 		bsr.w	loc_33F00
-		bra.w	loc_33AB2
+		bra.w	SSS_LoadGFX
 ; ===========================================================================
 
 loc_33C06:				
-		move.l	$2A(a0),d2
-		move.l	$2E(a0),d3
-		move.w	$10(a0),d0
+		move.l	ost_ss_x_pos(a0),d2
+		move.l	ost_ss_y_pos(a0),d3
+		move.w	ost_x_vel(a0),d0
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d2
-		move.w	$12(a0),d0
-		addi.w	#$A8,$12(a0)
+		move.w	ost_y_vel(a0),d0
+		addi.w	#$A8,ost_y_vel(a0)
 		ext.l	d0
 		asl.l	#8,d0
 		add.l	d0,d3
-		move.l	d2,$2A(a0)
-		move.l	d3,$2E(a0)
+		move.l	d2,ost_ss_x_pos(a0)
+		move.l	d3,ost_ss_y_pos(a0)
 		rts	
 ; ===========================================================================
 
@@ -68880,21 +68954,21 @@ loc_33C32:
 ; ===========================================================================
 
 loc_33C44:				
-		subi.w	#$40,$10(a0)
+		subi.w	#$40,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_33C4C:				
-		addi.w	#$40,$10(a0)
+		addi.w	#$40,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_33C54:				
 		moveq	#0,d2
 		moveq	#0,d3
-		move.w	$2E(a0),d2
+		move.w	ost_ss_y_pos(a0),d2
 		bmi.s	loc_33CB4
-		move.w	$2A(a0),d3
+		move.w	ost_ss_x_pos(a0),d3
 		bmi.s	loc_33C90
 		cmp.w	d2,d3
 		bcs.s	loc_33C80
@@ -68943,7 +69017,7 @@ loc_33CA4:
 
 loc_33CB4:				
 		neg.w	d2
-		move.w	$2A(a0),d3
+		move.w	ost_ss_x_pos(a0),d3
 		bpl.s	loc_33CE0
 		neg.w	d3
 		cmp.w	d2,d3
@@ -68986,14 +69060,14 @@ loc_33CF2:
 loc_33D02:				
 		moveq	#0,d6
 		moveq	#0,d0
-		move.w	$2A(a1),d0
+		move.w	ost_ss_x_pos(a1),d0
 		bpl.s	loc_33D10
 		st.b	d6
 		neg.w	d0
 
 loc_33D10:				
 		lsl.l	#7,d0
-		divu.w	$34(a1),d0
+		divu.w	ost_ss_z_pos(a1),d0
 		move.b	byte_33D32(pc,d0.w),d0
 		tst.b	d6
 		bne.s	loc_33D24
@@ -69001,7 +69075,7 @@ loc_33D10:
 		neg.b	d0
 
 loc_33D24:				
-		tst.w	$2E(a1)
+		tst.w	ost_ss_y_pos(a1)
 		bpl.s	loc_33D2C
 		neg.b	d0
 
@@ -69018,27 +69092,28 @@ byte_33D32:
 		dc.b $5B,$5B,$5C,$5C,$5D,$5D,$5E,$5E,$5E,$5F,$5F,$60,$60,$61,$61,$62 ; 80
 		dc.b $62,$63,$63,$64,$64,$65,$65,$66,$66,$67,$67,$68,$68,$69,$6A,$6A ; 96
 		dc.b $6B,$6C,$6C,$6D,$6E,$6E,$6F,$70,$71,$72,$73,$74,$75,$77,$78,$7A ; 112
-		dc.b $80,  0					; 128
+		dc.b $80					; 128
+		even
 ; ===========================================================================
 
 loc_33DB4:				
-		move.w	$2E(a0),d0
+		move.w	ost_ss_y_pos(a0),d0
 		ble.s	locret_33DFA
 		muls.w	d0,d0
-		move.w	$2A(a0),d1
+		move.w	ost_ss_x_pos(a0),d1
 		muls.w	d1,d1
 		add.w	d1,d0
-		move.w	$34(a0),d1
+		move.w	ost_ss_z_pos(a0),d1
 		mulu.w	d1,d1
 		cmp.l	d1,d0
 		bcs.s	locret_33DFA
 		move.b	#2,ost_primary_routine(a0)
 		bclr	#2,$22(a0)
 		moveq	#0,d0
-		move.w	d0,$10(a0)
-		move.w	d0,$12(a0)
-		move.w	d0,$14(a0)
-		move.b	d0,$37(a0)
+		move.w	d0,ost_x_vel(a0)
+		move.w	d0,ost_y_vel(a0)
+		move.w	d0,ost_inertia(a0)
+		move.b	d0,ost_ss_slide_timer(a0)
 		bset	#6,$22(a0)
 		bsr.w	loc_3404A
 		bsr.w	loc_34084
@@ -69051,10 +69126,10 @@ loc_33DFC:
 		tst.b	$21(a0)
 		beq.s	locret_33E42
 		clr.b	$21(a0)
-		tst.b	$23(a0)
+		tst.b	ost_ss_dplc_timer(a0)
 		bne.s	locret_33E42
-		clr.b	$14(a0)
-		cmpa.l	#-$5000,a0
+		clr.b	ost_inertia(a0)
+		cmpa.l	#v_ost_player1,a0
 		bne.s	loc_33E24
 		st.b	($FFFFF742).w
 		tst.w	(v_rings).w
@@ -69073,7 +69148,7 @@ loc_33E2E:
 
 loc_33E38:				
 		move.b	#2,$25(a0)
-		clr.b	$36(a0)
+		clr.b	ost_ss_hurt_timer(a0)
 
 locret_33E42:				
 		rts	
@@ -69082,8 +69157,8 @@ locret_33E42:
 loc_33E44:				
 		tst.w	(v_player_mode).w
 		bne.s	locret_33E8E
-		move.w	$34(a0),d0
-		cmpa.l	#-$5000,a0
+		move.w	ost_ss_z_pos(a0),d0
+		cmpa.l	#v_ost_player1,a0
 		bne.s	loc_33E5E
 		tst.b	($FFFFF742).w
 		beq.s	loc_33E6E
@@ -69107,7 +69182,7 @@ loc_33E6E:
 		subq.w	#1,d0
 
 loc_33E76:				
-		move.w	d0,$34(a0)
+		move.w	d0,ost_ss_z_pos(a0)
 		cmpi.w	#$77,d0
 		bcc.s	loc_33E88
 		move.b	#3,$18(a0)
@@ -69164,7 +69239,7 @@ loc_33ED6:
 		bne.s	locret_33EFE
 
 loc_33EF8:				
-		move.w	#$400,$32(a0)
+		move.w	#$400,ost_ss_init_flip_timer(a0)
 
 locret_33EFE:				
 		rts	
@@ -69189,11 +69264,11 @@ loc_33F1C:
 		move.b	d0,$1E(a0)
 		cmpi.b	#0,$1C(a0)				; could be optimized to tst.b
 		bne.s	loc_33F54
-		subi_.b	#1,$33(a0)
+		subi_.b	#1,ost_ss_flip_timer(a0)
 		bgt.s	loc_33F54
 		bchg	#0,$22(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
-		move.b	$32(a0),$33(a0)
+		move.b	ost_ss_init_flip_timer(a0),ost_ss_flip_timer(a0)
 
 loc_33F54:				
 		moveq	#0,d1
@@ -69217,7 +69292,7 @@ locret_33F88:
 ; ===========================================================================
 
 loc_33F8A:				
-		move.w	$14(a0),d2
+		move.w	ost_inertia(a0),d2
 		move.b	(a2),d0
 		btst	#2,d0
 		bne.s	loc_33FDC
@@ -69225,7 +69300,7 @@ loc_33F8A:
 		bne.w	loc_33FEC
 		bset	#6,$22(a0)
 		bne.s	loc_33FAC
-		move.b	#$1E,$37(a0)
+		move.b	#$1E,ost_ss_slide_timer(a0)
 
 loc_33FAC:				
 		move.b	$26(a0),d0
@@ -69245,11 +69320,11 @@ loc_33FC4:
 		sub.w	d1,d2
 
 loc_33FCA:				
-		move.w	d2,$14(a0)
-		move.b	$37(a0),d0
+		move.w	d2,ost_inertia(a0)
+		move.b	ost_ss_slide_timer(a0),d0
 		beq.s	locret_33FDA
 		subq.b	#1,d0
-		move.b	d0,$37(a0)
+		move.b	d0,ost_ss_slide_timer(a0)
 
 locret_33FDA:				
 		rts	
@@ -69270,20 +69345,20 @@ loc_33FEC:
 		move.w	#-$600,d2
 
 loc_33FFA:				
-		move.w	d2,$14(a0)
+		move.w	d2,ost_inertia(a0)
 		bclr	#6,$22(a0)
-		clr.b	$37(a0)
+		clr.b	ost_ss_slide_timer(a0)
 		rts	
 ; ===========================================================================
 
 loc_3400A:				
-		tst.b	$37(a0)
+		tst.b	ost_ss_slide_timer(a0)
 		bne.s	loc_34024
 		move.b	$26(a0),d0
 		jsr	CalcSine
 		muls.w	#$50,d1
 		asr.l	#8,d1
-		add.w	d1,$14(a0)
+		add.w	d1,ost_inertia(a0)
 
 loc_34024:				
 		move.b	$26(a0),d0
@@ -69291,7 +69366,7 @@ loc_34024:
 		addi_.b	#4,d0
 		cmpi.b	#-$78,d0
 		bcs.s	locret_34048
-		move.w	$14(a0),d0
+		move.w	ost_inertia(a0),d0
 		bpl.s	loc_3403C
 		neg.w	d0
 
@@ -69307,7 +69382,7 @@ locret_34048:
 loc_3404A:				
 		moveq	#0,d0
 		moveq	#0,d1
-		move.w	$14(a0),d2
+		move.w	ost_inertia(a0),d2
 		bpl.s	loc_3405E
 		neg.w	d2
 		lsr.w	#8,d2
@@ -69322,22 +69397,22 @@ loc_3405E:
 loc_34064:				
 		move.b	$26(a0),d0
 		jsr	CalcSine
-		muls.w	$34(a0),d1
+		muls.w	ost_ss_z_pos(a0),d1
 		asr.l	#8,d1
-		move.w	d1,$2A(a0)
-		muls.w	$34(a0),d0
+		move.w	d1,ost_ss_x_pos(a0)
+		muls.w	ost_ss_z_pos(a0),d0
 		asr.l	#8,d0
-		move.w	d0,$2E(a0)
+		move.w	d0,ost_ss_y_pos(a0)
 		rts	
 ; ===========================================================================
 
 loc_34084:				
-		move.w	$2A(a0),d0
+		move.w	ost_ss_x_pos(a0),d0
 		muls.w	#$CC,d0	
 		asr.l	#8,d0
 		add.w	($FFFFF73E).w,d0
 		move.w	d0,ost_x_pos(a0)
-		move.w	$2E(a0),d0
+		move.w	ost_ss_y_pos(a0),d0
 		add.w	($FFFFF740).w,d0
 		move.w	d0,ost_y_pos(a0)
 		rts	
@@ -69346,13 +69421,19 @@ loc_34084:
 ; Object 63 - Character shadow in Special Stage
 ; ----------------------------------------------------------------------------
 
-ShadowSpecial:				
-		movea.l	$38(a0),a1
+ShadowSpecial:	
+
+		rsobj ShadowSpecial,$38
+ost_shadspec_parent:	rs.l 1 ; $38; parent player of this shadow
+		rsobjend
+			
+		movea.l	ost_shadspec_parent(a0),a1
 		cmpa.l	#-$5000,a1
 		bne.s	loc_340BC
 		movea.l	#-$5000,a1
 		bsr.s	loc_340CC
 		jmpto	DisplaySprite,JmpTo42_DisplaySprite
+		
 ; ===========================================================================
 
 loc_340BC:				
@@ -69368,12 +69449,12 @@ loc_340CC:
 		bsr.w	loc_33D02
 		move.b	$26(a0),d0
 		jsr	CalcSine
-		muls.w	$34(a1),d1
+		muls.w	ost_ss_z_pos(a1),d1
 		muls.w	#$CC,d1	
 		swap	d1
 		add.w	($FFFFF73E).w,d1
 		move.w	d1,ost_x_pos(a0)
-		muls.w	$34(a1),d0
+		muls.w	ost_ss_z_pos(a1),d0
 		asr.l	#8,d0
 		add.w	($FFFFF740).w,d0
 		move.w	d0,ost_y_pos(a0)
@@ -69957,33 +70038,33 @@ off_347FA:
 loc_34804:				
 		addq.b	#2,ost_primary_routine(a0)
 		moveq	#0,d0
-		move.w	d0,$2A(a0)
+		move.w	d0,ost_ss_x_pos(a0)
 		move.w	#$80,d1	
-		move.w	d1,$2E(a0)
+		move.w	d1,ost_ss_y_pos(a0)
 		add.w	($FFFFF73E).w,d0
 		move.w	d0,ost_x_pos(a0)
 		add.w	($FFFFF740).w,d1
 		move.w	d1,ost_y_pos(a0)
-		move.b	#$E,$16(a0)
+		move.b	#$E,ost_height(a0)
 		move.b	#7,$17(a0)
 		move.l	#Map_34B3E,ost_mappings(a0)
 		move.w	#(vram_SpecialTails/sizeof_cell)+tile_pal3,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#2,$18(a0)
-		move.w	#$80,$34(a0)
+		move.w	#$80,ost_ss_z_pos(a0)
 		tst.w	(v_player_mode).w
 		beq.s	loc_34864
 		move.b	#3,$18(a0)
-		move.w	#$6E,$34(a0)
+		move.w	#$6E,ost_ss_z_pos(a0)
 
 loc_34864:				
-		move.w	#$400,$32(a0)
+		move.w	#$400,ost_ss_init_flip_timer(a0)
 		move.b	#$40,$26(a0)
 		move.b	#1,(v_tails_last_frame_id).w
 		clr.b	$21(a0)
-		clr.b	$23(a0)
-		bsr.w	loc_349C8
-		movea.l	#-$4E80,a1
+		clr.b	ost_ss_dplc_timer(a0)
+		bsr.w	TSS_LoadGFX
+		movea.l	#v_ss_shadow_tails,a1
 		move.b	#id_ShadowSpecial,ost_id(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
@@ -69992,8 +70073,8 @@ loc_34864:
 		move.w	#tile_Nem_SpecialHorizShadow+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#4,$18(a1)
-		move.l	a0,$38(a1)
-		movea.l	#-$4E40,a1
+		move.l	a0,ost_shadspec_parent(a1)
+		movea.l	#v_ss_tails_tails,a1
 		move.b	#id_TailsTailsSpecial,ost_id(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
@@ -70002,11 +70083,11 @@ loc_34864:
 		move.b	#render_rel,ost_render(a1)
 		move.b	$18(a0),$18(a1)
 		subi_.b	#1,$18(a1)
-		move.l	a0,$38(a1)
+		move.l	a0,ost_ttspec_parent(a1)
 		movea.l	a1,a0
 		move.b	#1,(v_tailstails_last_frame_id).w
-		clr.b	$23(a0)
-		movea.l	$38(a0),a0
+		clr.b	ost_ss_dplc_timer(a0)
+		movea.l	ost_ttspec_parent(a0),a0
 		rts	
 ; ===========================================================================
 
@@ -70037,7 +70118,7 @@ loc_34944:
 		lea	(off_34B1C).l,a1
 		bsr.w	loc_33F00
 		bsr.w	loc_33DFC
-		bra.w	loc_349C8
+		bra.w	TSS_LoadGFX
 ; ===========================================================================
 
 loc_3495E:				
@@ -70045,7 +70126,7 @@ loc_3495E:
 		bsr.w	loc_33E44
 		bsr.w	loc_3404A
 		bsr.w	loc_34084
-		bra.w	loc_349C8
+		bra.w	TSS_LoadGFX
 ; ===========================================================================
 
 loc_34972:				
@@ -70093,11 +70174,11 @@ dword_349B8:
 		dc.l   $FF53C0					; 3
 ; ===========================================================================
 
-loc_349C8:				
-		move.b	$23(a0),d0
+TSS_LoadGFX:				
+		move.b	ost_ss_dplc_timer(a0),d0
 		beq.s	loc_349DC
 		subq.b	#1,d0
-		move.b	d0,$23(a0)
+		move.b	d0,ost_ss_dplc_timer(a0)
 		andi.b	#1,d0
 		beq.s	loc_349DC
 		rts	
@@ -70109,7 +70190,7 @@ loc_349DC:
 		lea	(v_tails_last_frame_id).w,a4
 		move.w	#$6000,d4
 		moveq	#$12,d1
-		bra.w	loc_33AD8
+		bra.w	SpecialPlayer_LoadGFX
 ; ===========================================================================
 
 loc_349F2:				
@@ -70127,7 +70208,7 @@ loc_34A00:
 		bsr.w	loc_33C54
 		lea	(off_34B1C).l,a1
 		bsr.w	loc_33F00
-		bra.s	loc_349C8
+		bra.s	TSS_LoadGFX
 ; ===========================================================================
 
 loc_34A24:				
@@ -70146,14 +70227,19 @@ loc_34A32:
 		bsr.w	loc_33EA0
 		lea	(off_34B1C).l,a1
 		bsr.w	loc_33F00
-		bra.w	loc_349C8
+		bra.w	TSS_LoadGFX
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 88 - Tails' tails in Special Stage
 ; ----------------------------------------------------------------------------
 
-TailsTailsSpecial:				
-		movea.l	$38(a0),a1
+TailsTailsSpecial:	
+
+		rsobj 	TailsTailsSpecial,$38
+ost_ttspec_parent:	rs.l 1 ; $38		
+		rsobjend
+				
+		movea.l	ost_ttspec_parent(a0),a1
 		move.w	ost_x_pos(a1),ost_x_pos(a0)
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
 		move.b	ost_render(a1),ost_render(a0)
@@ -70166,21 +70252,21 @@ TailsTailsSpecial:
 		bcc.s	locret_34A9E
 		lea	(off_34D86).l,a1
 		jsrto	AnimateSprite,JmpTo23_AnimateSprite
-		bra.w	loc_34AAC
+		bra.w	TTSS_LoadGFX
 ; ===========================================================================
 
 locret_34A9E:				
 		rts	
 ; ===========================================================================
 dword_34AA0:	
-		dc.l   $FF55C0					; 0
-		dc.l   $FF5C60					; 1
-		dc.l   $FF63C0					; 2
+		dc.l	(v_ss_character_art&$FFFFFF)+$55C0
+		dc.l	(v_ss_character_art&$FFFFFF)+$5C60					; 1
+		dc.l	(v_ss_character_art&$FFFFFF)+$63C0					; 2
 ; ===========================================================================
 
-loc_34AAC:				
-		movea.l	$38(a0),a1
-		move.b	$23(a1),d0
+TTSS_LoadGFX:				
+		movea.l	ost_ttspec_parent(a0),a1
+		move.b	ost_ss_dplc_timer(a1),d0
 		beq.s	loc_34ABE
 		andi.b	#1,d0
 		beq.s	loc_34ABE
@@ -71009,15 +71095,20 @@ byte_353F4:
 RingLossSpecial:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3540C(pc,d0.w),d1
-		jmp	off_3540C(pc,d1.w)
+		move.w	RLS_Index(pc,d0.w),d1
+		jmp	RLS_Index(pc,d1.w)
 ; ===========================================================================
-off_3540C:	dc.w loc_35410-off_3540C			; 0 
-		dc.w loc_354E4-off_3540C			; 1
+RLS_Index:	index offset(*),,2
+		ptr loc_35410			; 0 
+		ptr loc_354E4			; 2
+		
+		rsobj	RingLossSpecial,$38
+ost_ringlossspec_parent:	rs.l 1 ; $38
+		rsobjend
 ; ===========================================================================
 
 loc_35410:				
-		movea.l	$38(a0),a3
+		movea.l	ost_ringlossspec_parent(a0),a3
 		moveq	#0,d1
 		move.b	$3D(a3),d1
 		beq.s	loc_35428
@@ -71089,10 +71180,10 @@ loc_3547E:
 		jsr	CalcSine
 		muls.w	#$400,d1
 		asr.l	#8,d1
-		move.w	d1,$10(a1)
+		move.w	d1,ost_x_vel(a1)
 		muls.w	#$1000,d0
 		asr.l	#8,d0
-		move.w	d0,$12(a1)
+		move.w	d0,ost_y_vel(a1)
 
 loc_354DE:				
 		dbf	d2,loc_35478
@@ -71101,7 +71192,7 @@ loc_354DE:
 
 loc_354E4:				
 		jsrto	ObjectFall,JmpTo7_ObjectFall
-		addi.w	#$80,$12(a0)
+		addi.w	#$80,ost_y_vel(a0)
 		bsr.w	loc_3551C
 		tst.w	ost_x_pos(a0)
 		bmi.w	JmpTo63_DeleteObject
@@ -71115,7 +71206,7 @@ loc_354E4:
 ; ===========================================================================
 
 loc_3551C:				
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.w	locret_35530
 		move.b	#0,$18(a0)
 		move.b	#9,$1C(a0)
@@ -72793,7 +72884,7 @@ locret_36718:
 ; ===========================================================================
 
 ObjCapSpeed:				
-		move.w	$10(a0),d2
+		move.w	ost_x_vel(a0),d2
 		bpl.s	loc_3672C
 		neg.w	d0
 		cmp.w	d0,d2
@@ -72808,7 +72899,7 @@ loc_3672C:
 		move.w	d0,d2
 
 loc_36732:				
-		move.w	$12(a0),d3
+		move.w	ost_y_vel(a0),d3
 		bpl.s	loc_36744
 		neg.w	d1
 		cmp.w	d1,d3
@@ -72823,15 +72914,15 @@ loc_36744:
 		move.w	d1,d3
 
 loc_3674A:				
-		move.w	d2,$10(a0)
-		move.w	d3,$12(a0)
+		move.w	d2,ost_x_vel(a0)
+		move.w	d3,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
 ObjMoveStop:				
 		moveq	#0,d0
-		move.w	d0,$10(a0)
-		move.w	d0,$12(a0)
+		move.w	d0,ost_x_vel(a0)
+		move.w	d0,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -73162,15 +73253,15 @@ loc_36970:
 		bpl.s	loc_36996
 		move.b	#8,ost_primary_routine(a0)
 		bclr	#0,$22(a0)
-		clr.w	$12(a0)
-		move.w	#-$200,$10(a0)
-		move.w	#-$200,$12(a0)
+		clr.w	ost_y_vel(a0)
+		move.w	#-$200,ost_x_vel(a0)
+		move.w	#-$200,ost_y_vel(a0)
 		bra.w	loc_36A26
 ; ===========================================================================
 
 loc_36996:				
 		move.b	#4,ost_primary_routine(a0)
-		move.w	#-$100,$12(a0)
+		move.w	#-$100,ost_y_vel(a0)
 		move.b	#$60,$2A(a0)
 
 loc_369A8:				
@@ -73184,9 +73275,9 @@ loc_369A8:
 
 loc_369C2:				
 		move.w	word_369F4(pc,d0.w),d2
-		add.w	d2,$10(a0)
+		add.w	d2,ost_x_vel(a0)
 		move.w	word_369F4(pc,d1.w),d2
-		add.w	d2,$12(a0)
+		add.w	d2,ost_y_vel(a0)
 		move.w	#$200,d0
 		move.w	d0,d1
 		bsr.w	ObjCapSpeed
@@ -73265,13 +73356,13 @@ loc_36A90:
 		andi.w	#tile_draw,ost_tile(a0)
 
 loc_36AA8:				
-		move.b	#$14,$16(a0)
+		move.b	#$14,ost_height(a0)
 		move.b	#$10,$17(a0)
 		jsr	FindFloorObj
 		tst.w	d1
 		bpl.s	loc_36AC8
 		add.w	d1,ost_y_pos(a0)
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 
 loc_36AC8:				
 		_move.b	ost_id(a0),d0
@@ -73309,7 +73400,7 @@ loc_36B00:
 loc_36B0E:				
 		addq.b	#2,ost_primary_routine(a0)
 		bsr.w	GetClosestPlayer
-		move.w	word_36B30(pc,d0.w),$10(a0)
+		move.w	word_36B30(pc,d0.w),ost_x_vel(a0)
 		bclr	#0,$22(a0)
 		tst.w	d0
 		beq.s	loc_36B2C
@@ -73350,7 +73441,7 @@ loc_36B6A:
 
 loc_36B74:				
 		move.b	#8,ost_primary_routine(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#0,$22(a0)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -73385,8 +73476,8 @@ loc_36BA6:
 loc_36BB4:				
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	$2E(a0),d0
-		move.b	byte_36BCC(pc,d0.w),$10(a0)
-		move.b	byte_36BCC+1(pc,d0.w),$12(a0)
+		move.b	byte_36BCC(pc,d0.w),ost_x_vel(a0)
+		move.b	byte_36BCC+1(pc,d0.w),ost_y_vel(a0)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 byte_36BCC:	dc.b   1,$FE					; 0
@@ -73413,8 +73504,8 @@ loc_36BE6:
 		bsr.w	LoadSubtypeData
 		move.w	#tile_Nem_Grounder+tile_pal3,ost_tile(a0)
 		move.w	$2E(a0),d0
-		move.b	byte_36C12(pc,d0.w),$10(a0)
-		move.b	byte_36C12+1(pc,d0.w),$12(a0)
+		move.b	byte_36C12(pc,d0.w),ost_x_vel(a0)
+		move.b	byte_36C12+1(pc,d0.w),ost_y_vel(a0)
 		lsr.w	#1,d0
 		move.b	byte_36C0C(pc,d0.w),$1A(a0)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
@@ -73603,7 +73694,7 @@ loc_36DC2:
 		neg.w	d0
 
 loc_36DDE:				
-		move.w	d0,$10(a0)
+		move.w	d0,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -73618,7 +73709,7 @@ loc_36DEE:
 		move.w	#$200,$2A(a0)
 		bchg	#0,$22(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_36E0A:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
@@ -73633,7 +73724,7 @@ loc_36E0A:
 loc_36E20:				
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#$10,$2A(a0)
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
@@ -73647,20 +73738,22 @@ loc_36E3C:
 		addq.b	#2,ost_primary_routine(a0)
 		bsr.w	GetClosestPlayer
 		lsr.w	#1,d0
-		move.b	byte_36E62(pc,d0.w),$10(a0)
+		move.b	byte_36E62(pc,d0.w),ost_x_vel(a0)
 		addi.w	#$10,d3
 		cmpi.w	#$20,d3
 		bcs.s	loc_36E5E
 		lsr.w	#1,d1
-		move.b	byte_36E64(pc,d1.w),$13(a0)
+		move.b	byte_36E64(pc,d1.w),ost_y_vel+1(a0)
 
 loc_36E5E:				
 		bra.w	loc_36E6A
 ; ===========================================================================
-byte_36E62:	dc.b $FE					; 0
-		dc.b   2					; 1
-byte_36E64:	dc.b $80					; 0
-		dc.b $80					; 1
+byte_36E62:	
+		dc.b  -2	; 0 - player is left from object -> move left
+		dc.b   2	; 1 - player is right from object -> move right
+byte_36E64:	
+		dc.b $80	; 0 - player is above object -> ...move down?
+		dc.b $80	; 1 - player is below object -> move down
 ; ===========================================================================
 
 loc_36E66:				
@@ -73699,13 +73792,13 @@ loc_36EB2:
 		bcc.s	loc_36EDE
 		tst.w	d2
 		bmi.s	loc_36ECA
-		tst.w	$10(a0)
+		tst.w	ost_x_vel(a0)
 		bpl.s	loc_36EDE
 		bra.w	loc_36ED2
 ; ===========================================================================
 
 loc_36ECA:				
-		tst.w	$10(a0)
+		tst.w	ost_x_vel(a0)
 		bmi.s	loc_36EDE
 		neg.w	d2
 
@@ -73760,7 +73853,7 @@ off_36F1C:	dc.w loc_36F24-off_36F1C			; 0
 loc_36F24:				
 		bsr.w	LoadSubtypeData
 		move.b	#$40,$2A(a0)
-		move.w	#$80,$10(a0)
+		move.w	#$80,ost_x_vel(a0)
 		bchg	#0,$22(a0)
 		rts	
 ; ===========================================================================
@@ -73797,7 +73890,7 @@ loc_36F74:
 loc_36F78:				
 		subq.b	#2,ost_primary_routine(a0)
 		move.b	#$40,$2A(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#0,$22(a0)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -73856,7 +73949,7 @@ loc_36FF8:
 		neg.w	d1
 
 loc_37022:				
-		move.b	d1,$12(a0)
+		move.b	d1,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -73953,7 +74046,7 @@ loc_37116:
 		move.b	#4,$18(a0)
 		move.b	#$B,$20(a0)
 		move.b	#$C,$19(a0)
-		move.w	#-$40,$10(a0)
+		move.w	#-$40,ost_x_vel(a0)
 		moveq	#0,d2
 		lea	$37(a0),a2
 		movea.l	a2,a3
@@ -73993,10 +74086,10 @@ loc_371BA:
 		move.b	d0,$36(a0)
 		move.b	$28(a0),ost_primary_routine(a0)
 		addq.b	#2,ost_primary_routine(a0)
-		move.w	#-$40,$10(a0)
+		move.w	#-$40,ost_x_vel(a0)
 		btst	#0,$22(a0)
 		beq.s	locret_371DA
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 locret_371DA:				
 		rts	
@@ -74056,10 +74149,10 @@ loc_3723C:
 		addq.b	#2,$24(a1)
 
 loc_37278:				
-		move.w	#-$200,$10(a0)
+		move.w	#-$200,ost_x_vel(a0)
 		btst	#0,$22(a1)
 		beq.s	loc_3728A
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_3728A:				
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
@@ -74132,7 +74225,7 @@ off_37330:	dc.w loc_37338-off_37330			; 0
 loc_37338:				
 		bsr.w	LoadSubtypeData
 		move.b	#2,$1A(a0)
-		move.w	#-$20,$10(a0)
+		move.w	#-$20,ost_x_vel(a0)
 		move.b	#-$80,$2A(a0)
 		rts	
 ; ===========================================================================
@@ -74159,7 +74252,7 @@ loc_37380:
 		subq.b	#1,$2A(a0)
 		bpl.s	loc_37396
 		move.b	#-$80,$2A(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
 
 loc_37396:				
@@ -74262,8 +74355,8 @@ loc_37454:
 
 loc_37462:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.w	#-$120,$10(a0)
-		move.w	#-$200,$12(a0)
+		move.w	#-$120,ost_x_vel(a0)
+		move.w	#-$200,ost_y_vel(a0)
 		move.w	$2E(a0),d0
 		subi_.w	#8,d0
 		neg.w	d0
@@ -74275,7 +74368,7 @@ loc_37462:
 loc_37488:
 	if (Revision=2)|FixBugs	
 		moveq	#$10,d0
-		add.w	d0,$10(a0)
+		add.w	d0,ost_x_vel(a0)
 		subq.b	#1,$2A(a0)
 		bmi.s	loc_374A0
 		bsr.w	loc_3750C
@@ -74283,7 +74376,7 @@ loc_37488:
 		; The call to loc_3750C is in the wrong place, causing an occasional crash.			
 		bsr.w	loc_3750C
 		moveq	#$10,d0
-		add.w	d0,$10(a0)
+		add.w	d0,ost_x_vel(a0)
 		subq.b	#1,$2A(a0)
 		bmi.s	loc_374A0
 	endc	
@@ -74342,7 +74435,7 @@ loc_3750C:
 		beq.s	locret_37526
 		move.b	#8,ost_primary_routine(a0)
 		move.w	$2E(a0),d0
-		move.w	word_37528(pc,d0.w),$10(a0)
+		move.w	word_37528(pc,d0.w),ost_x_vel(a0)
 
 locret_37526:				
 		rts	
@@ -74373,10 +74466,10 @@ loc_37532:
 		neg.w	d1
 
 loc_37576:				
-		move.b	d0,$10(a1)
+		move.b	d0,ost_x_vel(a1)
 		add.w	d1,ost_x_pos(a1)
 		addq.w	#4,ost_y_pos(a1)
-		move.b	#-$80,$13(a1)
+		move.b	#-$80,ost_y_vel+1(a1)
 
 locret_37588:				
 		rts	
@@ -74578,7 +74671,7 @@ loc_3771A:
 ; ===========================================================================
 
 loc_37728:				
-		addi.w	#$20,$12(a0)
+		addi.w	#$20,ost_y_vel(a0)
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		rts	
 ; ===========================================================================
@@ -74590,7 +74683,7 @@ loc_37734:
 ; ===========================================================================
 
 loc_37742:				
-		addi.w	#$20,$12(a0)
+		addi.w	#$20,ost_y_vel(a0)
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		lea	(off_38CC4).l,a1
 		jmpto	AnimateSprite,JmpTo25_AnimateSprite
@@ -74659,7 +74752,7 @@ off_377D6:	dc.w loc_377DC-off_377D6			; 0
 
 loc_377DC:				
 		bsr.w	LoadSubtypeData
-		move.w	#-$C0,$10(a0)
+		move.w	#-$C0,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -74681,7 +74774,7 @@ loc_377FA:
 
 loc_37810:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.w	#-$A0,$12(a0)
+		move.w	#-$A0,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -74695,7 +74788,7 @@ loc_3781C:
 		bsr.w	loc_37850
 
 loc_37834:				
-		addi_.w	#1,$12(a0)
+		addi_.w	#1,ost_y_vel(a0)
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		bsr.w	loc_36776
 		lea	(off_37892).l,a1
@@ -74773,7 +74866,7 @@ off_37944:	dc.w loc_37948-off_37944			; 0
 
 loc_37948:				
 		bsr.w	LoadSubtypeData
-		move.w	#-$80,$10(a0)
+		move.w	#-$80,ost_x_vel(a0)
 		bsr.w	loc_37A4A
 		lea	(off_37B56).l,a1
 		move.l	a1,$2E(a0)
@@ -74812,7 +74905,7 @@ loc_379A0:
 		cmpi.w	#$80,d2	
 		bcc.w	locret_37A48
 		addq.b	#2,$25(a0)
-		move.w	#0,$10(a0)
+		move.w	#0,ost_x_vel(a0)
 		move.b	#4,$2A(a0)
 		move.b	#1,$1A(a0)
 		rts	
@@ -74832,7 +74925,7 @@ loc_379EA:
 		subq.b	#1,$2A(a0)
 		bpl.s	locret_37A02
 		addq.b	#2,$25(a0)
-		move.w	#-$80,$10(a0)
+		move.w	#-$80,ost_x_vel(a0)
 		clr.b	$1A(a0)
 		movea.w	$2C(a0),a1
 
@@ -74958,7 +75051,7 @@ loc_37AF2:
 		subi.w	#$14,ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$A,ost_y_pos(a1)
-		move.w	#-$100,$10(a1)
+		move.w	#-$100,ost_x_vel(a1)
 		lea_	loc_3771A,a2
 		move.l	a2,$2A(a1)
 
@@ -75090,7 +75183,7 @@ loc_37C8E:
 		lea	byte_37CA2(pc,d0.w),a1
 		addq.w	#2,d0
 		move.w	d0,$2C(a0)
-		move.b	(a1)+,$12(a0)
+		move.b	(a1)+,ost_y_vel(a0)
 		move.b	(a1)+,$2A(a0)
 		rts	
 ; ===========================================================================
@@ -75172,8 +75265,8 @@ loc_37D58:
 		lea	word_37D76(pc,d0.w),a2
 		move.w	(a2)+,d0
 		add.w	d0,ost_x_pos(a1)
-		move.w	(a2)+,$10(a1)
-		move.w	#-$100,$12(a1)
+		move.w	(a2)+,ost_x_vel(a1)
+		move.w	#-$100,ost_y_vel(a1)
 		lea_	loc_37728,a2
 		move.l	a2,$2A(a1)
 
@@ -75227,7 +75320,8 @@ Crawlton:
 		move.w	off_37E24(pc,d0.w),d1
 		jmp	off_37E24(pc,d1.w)
 ; ===========================================================================
-off_37E24:	dc.w loc_37E30-off_37E24			; 0 
+off_37E24:	
+		dc.w loc_37E30-off_37E24			; 0 
 		dc.w loc_37E42-off_37E24			; 1
 		dc.w loc_37E98-off_37E24			; 2
 		dc.w loc_37EB6-off_37E24			; 3
@@ -75237,7 +75331,7 @@ off_37E24:	dc.w loc_37E30-off_37E24			; 0
 
 loc_37E30:				
 		bsr.w	LoadSubtypeData
-		move.b	#-$80,$16(a0)
+		move.b	#-$80,ost_height(a0)
 		addq.b	#2,$3B(a0)
 		bra.w	loc_37F74
 ; ===========================================================================
@@ -75269,11 +75363,11 @@ loc_37E7C:
 		neg.w	d4
 		lsl.w	#3,d4
 		andi.w	#-$100,d4
-		move.w	d4,$10(a0)
+		move.w	d4,ost_x_vel(a0)
 		neg.w	d5
 		lsl.w	#3,d5
 		andi.w	#-$100,d5
-		move.w	d5,$12(a0)
+		move.w	d5,ost_y_vel(a0)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
@@ -75313,8 +75407,8 @@ loc_37EDE:
 		move.b	#6,$3B(a0)
 		move.b	#2,$39(a0)
 		move.b	#$1C,$3A(a0)
-		neg.w	$10(a0)
-		neg.w	$12(a0)
+		neg.w	ost_x_vel(a0)
+		neg.w	ost_y_vel(a0)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
@@ -75333,9 +75427,9 @@ loc_37F1C:
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
 		cmpi.b	#6,$3B(a1)
 		bne.s	loc_37F6C
-		move.w	$10(a1),d2
+		move.w	ost_x_vel(a1),d2
 		asr.w	#8,d2
-		move.w	$12(a1),d3
+		move.w	ost_y_vel(a1),d3
 		asr.w	#8,d3
 		lea	ost_subspr2_x_pos(a0),a2
 		move.b	$3A(a1),d0
@@ -75373,7 +75467,7 @@ loc_37F74:
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#$A,$3B(a1)
 		move.b	#0,ost_mainspr_frame(a1)
-		move.b	#-$80,$E(a1)
+		move.b	#$80,ost_mainspr_width(a1)
 		move.b	#7,ost_mainspr_childsprites(a1)
 		move.w	a0,$3E(a1)
 		move.w	ost_x_pos(a0),d2
@@ -75432,8 +75526,8 @@ loc_38022:
 		bset	#0,$22(a0)
 
 loc_38034:				
-		move.w	#-$40,$10(a0)
-		move.b	#$C,$16(a0)
+		move.w	#-$40,ost_x_vel(a0)
+		move.b	#$C,ost_height(a0)
 		move.b	#$18,$17(a0)
 		move.w	#$140,$2A(a0)
 		rts	
@@ -75467,7 +75561,7 @@ loc_38068:
 ; ===========================================================================
 
 loc_38096:				
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_3809A:				
 		addq.b	#2,ost_primary_routine(a0)
@@ -75641,7 +75735,7 @@ loc_381EA:
 		neg.w	d2
 
 loc_38206:				
-		move.w	d2,$10(a0)
+		move.w	d2,ost_x_vel(a0)
 		lsr.w	#1,d0
 		move.b	byte_38222(pc,d0.w),d1
 		move.b	d1,$2A(a0)
@@ -75687,7 +75781,7 @@ loc_38244:
 
 loc_3824E:				
 		addq.b	#2,$25(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -75826,8 +75920,8 @@ loc_383CC:
 		neg.w	d0
 
 loc_383DE:				
-		move.w	d0,$10(a0)
-		move.b	#$10,$16(a0)
+		move.w	d0,ost_x_vel(a0)
+		move.b	#$10,ost_height(a0)
 		move.b	#$10,$17(a0)
 		rts	
 ; ===========================================================================
@@ -75884,7 +75978,7 @@ loc_38466:
 
 loc_38470:				
 		subq.b	#2,ost_primary_routine(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#0,$22(a0)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -75948,9 +76042,9 @@ off_384F6:	dc.w loc_384F8-off_384F6
 loc_384F8:				
 		bsr.w	GetClosestPlayer
 		move.w	word_38516(pc,d0.w),d2
-		add.w	d2,$10(a0)
+		add.w	d2,ost_x_vel(a0)
 		move.w	word_38516(pc,d1.w),d2
-		add.w	d2,$12(a0)
+		add.w	d2,ost_y_vel(a0)
 		move.w	#$200,d0
 		move.w	d0,d1
 		bra.w	ObjCapSpeed
@@ -75996,7 +76090,7 @@ loc_38546:
 		bset	#0,$22(a1)
 
 loc_3858A:				
-		move.w	d0,$10(a1)
+		move.w	d0,ost_x_vel(a1)
 		lea	byte_385BC(pc,d1.w),a3
 		move.b	(a3)+,d0
 		ext.w	d0
@@ -76128,8 +76222,8 @@ loc_38766:
 
 loc_38770:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.w	#-$100,$10(a0)
-		move.w	#$40,$12(a0)
+		move.w	#-$100,ost_x_vel(a0)
+		move.w	#$40,ost_y_vel(a0)
 		move.w	#2,$2E(a0)
 		clr.w	$2A(a0)
 		move.w	#$80,$30(a0)
@@ -76143,7 +76237,7 @@ loc_38794:
 		bmi.w	JmpTo65_DeleteObject
 		bclr	#render_xflip_bit,ost_render(a0)
 		bclr	#0,$22(a0)
-		tst.w	$10(a0)
+		tst.w	ost_x_vel(a0)
 		bmi.s	loc_387C0
 		bset	#render_xflip_bit,ost_render(a0)
 		bset	#0,$22(a0)
@@ -76165,11 +76259,11 @@ loc_387C0:
 loc_387E4:				
 		tst.b	(a1)+
 		beq.s	loc_387EC
-		neg.w	$12(a0)
+		neg.w	ost_y_vel(a0)
 
 loc_387EC:				
 		move.w	$2E(a0),d0
-		add.w	d0,$10(a0)
+		add.w	d0,ost_x_vel(a0)
 
 loc_387F4:
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
@@ -76352,7 +76446,7 @@ loc_389E4:
 		bcs.s	loc_389FA
 		cmpi.w	#$60,d2
 		bcc.s	loc_389FA
-		move.w	word_38A1A(pc,d0.w),$10(a0)
+		move.w	word_38A1A(pc,d0.w),ost_x_vel(a0)
 		bsr.w	loc_38A1E
 
 loc_389FA:				
@@ -76365,7 +76459,7 @@ loc_38A00:
 		bcs.s	loc_38A16
 		cmpi.w	#$60,d3
 		bcc.s	loc_38A16
-		move.w	word_38A1A(pc,d1.w),$12(a0)
+		move.w	word_38A1A(pc,d1.w),ost_y_vel(a0)
 		bsr.w	loc_38A1E
 
 loc_38A16:				
@@ -76466,7 +76560,7 @@ off_38AF8:	dc.w loc_38AFE-off_38AF8			; 0
 
 loc_38AFE:				
 		bsr.w	LoadSubtypeData
-		move.w	#-$40,$10(a0)
+		move.w	#-$40,ost_x_vel(a0)
 		move.w	#$80,$2A(a0)
 		rts	
 ; ===========================================================================
@@ -76488,7 +76582,7 @@ loc_38B2C:
 		subq.b	#1,$2A(a0)
 		bne.s	loc_38B3C
 		move.w	#$80,$2A(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_38B3C:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
@@ -76537,7 +76631,7 @@ off_38B94:	dc.w loc_38B9A-off_38B94			; 0
 
 loc_38B9A:				
 		bsr.w	LoadSubtypeData
-		move.w	#-$40,$12(a0)
+		move.w	#-$40,ost_y_vel(a0)
 		move.w	#$80,$2A(a0)
 		rts	
 ; ===========================================================================
@@ -76559,7 +76653,7 @@ loc_38BC8:
 		subq.b	#1,$2A(a0)
 		bne.s	loc_38BD8
 		move.w	#$80,$2A(a0)
-		neg.w	$12(a0)
+		neg.w	ost_y_vel(a0)
 
 loc_38BD8:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
@@ -76600,7 +76694,7 @@ loc_38C22:
 		move.b	#$34,$28(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		move.w	#-$300,$12(a1)
+		move.w	#-$300,ost_y_vel(a1)
 		move.w	#$100,d1
 		lea	($FFFFB000).w,a2
 		move.w	ost_x_pos(a0),d0
@@ -76609,7 +76703,7 @@ loc_38C22:
 		neg.w	d1
 
 loc_38C60:				
-		move.w	d1,$10(a1)
+		move.w	d1,ost_x_vel(a1)
 		lea_	loc_37742,a2
 		move.l	a2,$2A(a1)
 
@@ -76631,7 +76725,7 @@ loc_38C6E:
 		neg.w	d1
 
 loc_38CA0:				
-		move.w	d1,$10(a1)
+		move.w	d1,ost_x_vel(a1)
 		lea_	loc_37742,a2
 		move.l	a2,$2A(a1)
 
@@ -76709,7 +76803,7 @@ loc_38DCC:
 		neg.w	d0
 
 loc_38DDE:				
-		move.w	d0,$10(a0)
+		move.w	d0,ost_x_vel(a0)
 		move.w	#$FF,$2A(a0)
 		move.b	#2,$2D(a0)
 		lea	(byte_391E0).l,a2
@@ -76758,7 +76852,7 @@ loc_38E66:
 		subq.w	#1,$2A(a0)
 		bpl.s	locret_38E82
 		move.w	#$FF,$2A(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
 		bchg	#0,$22(a0)
 
@@ -76768,8 +76862,8 @@ locret_38E82:
 
 loc_38E84:				
 		addq.b	#2,$25(a0)
-		move.w	$10(a0),$2E(a0)
-		clr.w	$10(a0)
+		move.w	ost_x_vel(a0),$2E(a0)
+		clr.w	ost_x_vel(a0)
 		move.b	#$10,$2C(a0)
 		rts	
 ; ===========================================================================
@@ -76782,7 +76876,7 @@ loc_38E9A:
 
 loc_38EA2:				
 		addq.b	#2,$25(a0)
-		move.w	#$200,$12(a0)
+		move.w	#$200,ost_y_vel(a0)
 		move.b	#$40,$2C(a0)
 		rts	
 ; ===========================================================================
@@ -76794,7 +76888,7 @@ loc_38EB4:
 		beq.s	loc_38ED6
 		cmpi.b	#$20,$2C(a0)
 		bne.s	loc_38ECC
-		neg.w	$12(a0)
+		neg.w	ost_y_vel(a0)
 
 loc_38ECC:				
 		lea	(off_39214).l,a1
@@ -76803,8 +76897,8 @@ loc_38ECC:
 
 loc_38ED6:				
 		move.b	#0,$25(a0)
-		clr.w	$12(a0)
-		move.w	$2E(a0),$10(a0)
+		clr.w	ost_y_vel(a0)
+		move.w	$2E(a0),ost_x_vel(a0)
 		move.b	#0,$1A(a0)
 		rts	
 ; ===========================================================================
@@ -76813,13 +76907,13 @@ loc_38EEE:
 		addq.b	#2,$25(a0)
 		movea.w	$32(a0),a1
 		move.b	#-$7F,$2A(a1)
-		clr.w	$10(a1)
-		clr.w	$12(a1)
+		clr.w	ost_x_vel(a1)
+		clr.w	ost_y_vel(a1)
 		move.b	#$E,$1C(a1)
 		move.b	#1,$1A(a0)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	loc_38F2A
-		neg.w	$12(a0)
+		neg.w	ost_y_vel(a0)
 		move.b	$2C(a0),d0
 		subi.b	#$40,d0
 		neg.w	d0
@@ -76843,7 +76937,7 @@ loc_38F3E:
 
 loc_38F4E:				
 		addq.b	#2,$25(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -77061,7 +77155,7 @@ loc_390FA:
 		cmpi.b	#4,$38(a0)
 		bcs.s	loc_3912A
 		move.b	#$A,$25(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		clr.b	$20(a0)
 		movea.w	$32(a0),a2
 		move.b	#0,$2A(a2)
@@ -77266,10 +77360,10 @@ off_39388:	dc.w loc_3938C-off_39388			; 0
 loc_3938C:				
 		bsr.w	LoadSubtypeData
 		move.b	#1,$1A(a0)
-		move.w	#-$300,$10(a0)
+		move.w	#-$300,ost_x_vel(a0)
 		bclr	#render_yflip_bit,ost_render(a0)
 		beq.s	loc_393AA
-		move.w	#-$500,$10(a0)
+		move.w	#-$500,ost_x_vel(a0)
 
 loc_393AA:				
 		lea_	off_37B5C,a1
@@ -77447,7 +77541,7 @@ loc_39526:
 		neg.w	d1
 
 loc_39564:				
-		move.w	d0,$10(a1)
+		move.w	d0,ost_x_vel(a1)
 		add.w	d1,ost_x_pos(a1)
 		lea_	loc_37734,a2
 		move.l	a2,$2A(a1)
@@ -77588,7 +77682,7 @@ off_3973A:	dc.w loc_3975E-off_3973A			; 0
 
 loc_3975E:				
 		bsr.w	LoadSubtypeData
-		move.b	#$1B,$16(a0)
+		move.b	#$1B,ost_height(a0)
 		move.b	#$10,$17(a0)
 		move.b	#0,$20(a0)
 		move.b	#8,$21(a0)
@@ -77614,7 +77708,7 @@ loc_397AC:
 loc_397BA:				
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	#$3C,$2A(a0)
-		move.w	#$100,$12(a0)
+		move.w	#$100,ost_y_vel(a0)
 		move.w	#$224,d0
 		move.w	d0,(v_boundary_left_next).w
 		move.w	d0,(v_boundary_right_next).w
@@ -77659,7 +77753,7 @@ loc_3980E:
 
 loc_39830:				
 		add.w	d1,ost_y_pos(a0)
-		move.w	#0,$12(a0)
+		move.w	#0,ost_y_vel(a0)
 		move.b	#$1A,$20(a0)
 		bset	#1,$22(a0)
 		bra.w	loc_399D6
@@ -77817,7 +77911,7 @@ loc_399C2:
 		subq.b	#1,$2C(a0)
 		beq.s	loc_399D6
 		move.b	#2,$25(a0)
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 		bra.w	loc_3992E
 ; ===========================================================================
 
@@ -77825,7 +77919,7 @@ loc_399D6:
 		move.b	#8,ost_primary_routine(a0)
 		move.b	#0,$1C(a0)
 		move.b	#$64,$2A(a0)
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 		movea.w	$3E(a0),a1
 		move.b	#$12,$24(a1)
 		movea.w	$3C(a0),a1
@@ -77885,8 +77979,8 @@ loc_39A7C:
 		addq.b	#2,$25(a0)
 		move.b	#5,$1C(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
-		clr.w	$10(a0)
-		clr.w	$12(a0)
+		clr.w	ost_x_vel(a0)
+		clr.w	ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -77929,7 +78023,7 @@ loc_39ADE:
 
 loc_39AE8:				
 		addq.b	#2,$25(a0)
-		move.w	#-$600,$12(a0)
+		move.w	#-$600,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -77942,7 +78036,7 @@ loc_39AF4:
 		bsr.w	loc_39B1A
 
 loc_39B0A:				
-		addi.w	#$38,$12(a0)
+		addi.w	#$38,ost_y_vel(a0)
 		lea	(off_39DE2).l,a1
 		bra.w	AnimateSprite2
 ; ===========================================================================
@@ -77950,7 +78044,7 @@ loc_39B0A:
 loc_39B1A:				
 		addq.b	#2,$25(a0)
 		add.w	d1,ost_y_pos(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -77968,7 +78062,7 @@ loc_39B44:
 		bmi.w	loc_39A7C
 		tst.b	$2E(a0)
 		bne.s	loc_39B66
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	loc_39B66
 		st.b	$2E(a0)
 		bsr.w	loc_39D82
@@ -77982,7 +78076,7 @@ loc_39B66:
 		bsr.w	loc_39B84
 
 loc_39B74:				
-		addi.w	#$38,$12(a0)
+		addi.w	#$38,ost_y_vel(a0)
 		lea	(off_39DE2).l,a1			; could be PC relative
 		bra.w	AnimateSprite2
 ; ===========================================================================
@@ -77990,7 +78084,7 @@ loc_39B74:
 loc_39B84:				
 		addq.b	#2,$25(a0)
 		add.w	d1,ost_y_pos(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -78199,18 +78293,18 @@ loc_39D60:
 
 loc_39D68:				
 		not.b	$2D(a0)
-		move.w	d0,$10(a0)
+		move.w	d0,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_39D72:				
 		moveq	#$20,d0
-		tst.w	$10(a0)
+		tst.w	ost_x_vel(a0)
 		bmi.s	loc_39D7C
 		neg.w	d0
 
 loc_39D7C:				
-		add.w	d0,$10(a0)
+		add.w	d0,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -79066,7 +79160,7 @@ off_3A8BA:	dc.w loc_3A8C2-off_3A8BA			; 0
 loc_3A8C2:				
 		addq.b	#2,$25(a0)
 		move.w	#$C0,$32(a0)
-		move.w	#$100,$10(a0)
+		move.w	#$100,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -79088,8 +79182,8 @@ loc_3A8FC:
 		addq.b	#2,$25(a0)
 		move.w	#$60,$2A(a0)
 		move.w	#1,$32(a0)
-		move.w	#$100,$10(a0)
-		move.w	#$100,$12(a0)
+		move.w	#$100,ost_x_vel(a0)
+		move.w	#$100,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -79191,9 +79285,9 @@ loc_3AA0E:
 loc_3AA22:				
 		addq.b	#2,$25(a0)
 		clr.w	(v_joypad_hold).w
-		clr.w	$10(a1)
-		clr.w	$12(a1)
-		clr.w	$14(a1)
+		clr.w	ost_x_vel(a1)
+		clr.w	ost_y_vel(a1)
+		clr.w	ost_inertia(a1)
 		move.w	#$600,(v_sonic_max_speed).w
 		move.w	#$C,(v_sonic_acceleration).w
 		move.w	#$80,(v_sonic_deceleration).w
@@ -79209,8 +79303,8 @@ loc_3AA4C:
 
 loc_3AA5C:				
 		addq.b	#2,$25(a0)
-		move.w	#$100,$10(a0)
-		move.w	#-$100,$12(a0)
+		move.w	#$100,ost_x_vel(a0)
+		move.w	#-$100,ost_y_vel(a0)
 		clr.w	$2A(a0)
 		bra.w	loc_3AC56
 ; ===========================================================================
@@ -79270,17 +79364,17 @@ loc_3AB18:
 		clr.w	(v_joypad_hold).w
 		lea	($FFFFB000).w,a1
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
-		clr.w	$10(a1)
-		clr.w	$12(a1)
-		clr.w	$14(a1)
+		clr.w	ost_x_vel(a1)
+		clr.w	ost_y_vel(a1)
+		clr.w	ost_inertia(a1)
 		bclr	#1,$22(a1)
 		bclr	#2,$22(a1)
 		move.l	#$1000505,$1A(a1)
 		move.w	#$100,$1E(a1)
-		move.b	#$13,$16(a1)
+		move.b	#$13,ost_height(a1)
 		cmpi.w	#tails_alone,(v_player_mode).w
 		bne.s	loc_3AB60
-		move.b	#$F,$16(a1)
+		move.b	#$F,ost_height(a1)
 
 loc_3AB60:				
 		bsr.w	loc_3AD8C
@@ -79331,8 +79425,8 @@ loc_3ABDE:
 		addq.w	#2,d1
 		move.w	d1,$34(a0)
 		lea	byte_3AC2A(pc,d1.w),a1
-		move.b	(a1)+,$10(a0)
-		move.b	(a1)+,$12(a0)
+		move.b	(a1)+,ost_x_vel(a0)
+		move.b	(a1)+,ost_y_vel(a0)
 
 loc_3AC0E:				
 		bsr.w	loc_3AD8C
@@ -79415,8 +79509,8 @@ loc_3AC84:
 		movea.w	$2C(a0),a1
 		bset	#6,$22(a1)
 		lea	($FFFFB000).w,a1
-		clr.w	$10(a1)
-		clr.w	$12(a1)
+		clr.w	ost_x_vel(a1)
+		clr.w	ost_y_vel(a1)
 		move.w	ost_x_pos(a0),d0
 		subi.w	#$10,d0
 		move.w	d0,ost_x_pos(a1)
@@ -79439,8 +79533,8 @@ locret_3ACF0:
 
 loc_3ACF2:				
 		lea	($FFFFB000).w,a1
-		clr.w	$10(a1)
-		clr.w	$12(a1)
+		clr.w	ost_x_vel(a1)
+		clr.w	ost_y_vel(a1)
 		move.w	ost_x_pos(a0),d0
 		subi.w	#$10,d0
 		move.w	d0,ost_x_pos(a1)
@@ -79561,25 +79655,25 @@ loc_3ADF6:
 		beq.s	locret_3AE38
 		st.b	$2F(a0)
 		clr.b	$30(a0)
-		move.w	#$200,$12(a0)
+		move.w	#$200,ost_y_vel(a0)
 		move.b	#$14,$31(a0)
 
 loc_3AE16:				
 		subq.b	#1,$31(a0)
 		bpl.s	loc_3AE26
 		clr.b	$2F(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_3AE26:				
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		cmpi.w	#-$100,d0
 		ble.s	loc_3AE34
 		addi.w	#-$20,d0
 
 loc_3AE34:				
-		move.w	d0,$12(a0)
+		move.w	d0,ost_y_vel(a0)
 
 locret_3AE38:				
 		rts	
@@ -79591,7 +79685,7 @@ loc_3AE3A:
 		beq.s	loc_3AEA0
 		tst.b	$2F(a0)
 		bne.s	loc_3AE72
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		move.w	(v_joypad_hold_actual).w,d2
 		move.w	#$80,d3	
 		andi.w	#$300,d2
@@ -79601,7 +79695,7 @@ loc_3AE3A:
 		neg.w	d3
 
 loc_3AE66:				
-		move.w	d3,$12(a0)
+		move.w	d3,ost_y_vel(a0)
 		bsr.w	loc_3AF0C
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 
@@ -79611,7 +79705,7 @@ loc_3AE72:
 		add.w	d3,d2
 		cmpi.w	#$20,d2
 		bcs.s	locret_3AE9E
-		move.w	$14(a1),d2
+		move.w	ost_inertia(a1),d2
 		bpl.s	loc_3AE88
 		neg.w	d2
 
@@ -79638,25 +79732,25 @@ loc_3AEA0:
 		beq.s	locret_3AE9E
 		st.b	$30(a0)
 		clr.b	$2F(a0)
-		move.w	#$200,$12(a0)
+		move.w	#$200,ost_y_vel(a0)
 		move.b	#$2B,$31(a0)
 
 loc_3AEC0:				
 		subq.b	#1,$31(a0)
 		bpl.s	loc_3AED0
 		clr.b	$30(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_3AED0:				
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		cmpi.w	#-$100,d0
 		ble.s	loc_3AEDE
 		addi.w	#-$20,d0
 
 loc_3AEDE:				
-		move.w	d0,$12(a0)
+		move.w	d0,ost_y_vel(a0)
 		bsr.w	loc_3AF0C
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		rts	
@@ -79684,7 +79778,7 @@ locret_3AF0A:
 loc_3AF0C:				
 		move.w	(v_camera_y_pos).w,d0
 		move.w	ost_y_pos(a0),d1
-		move.w	$12(a0),d2
+		move.w	ost_y_vel(a0),d2
 		beq.s	locret_3AF32
 		bpl.s	loc_3AF26
 		addi.w	#$34,d0
@@ -79699,7 +79793,7 @@ loc_3AF26:
 		bcs.s	locret_3AF32
 
 loc_3AF2E:				
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 
 locret_3AF32:				
 		rts	
@@ -79897,7 +79991,8 @@ Cloud:
 		move.w	off_3B2EC(pc,d0.w),d1
 		jmp	off_3B2EC(pc,d1.w)
 ; ===========================================================================
-off_3B2EC:	dc.w loc_3B2F0-off_3B2EC			; 0 
+off_3B2EC:
+		dc.w loc_3B2F0-off_3B2EC			; 0 
 		dc.w loc_3B312-off_3B2EC			; 1
 ; ===========================================================================
 
@@ -79908,7 +80003,7 @@ loc_3B2F0:
 		subi.b	#$5E,d0
 
 loc_3B2FE:
-		move.w	word_3B30C(pc,d0.w),$10(a0)
+		move.w	word_3B30C(pc,d0.w),ost_x_vel(a0)
 		lsr.w	#1,d0
 		move.b	d0,$1A(a0)
 		rts	
@@ -79924,11 +80019,12 @@ loc_3B312:
 		add.w	d0,ost_x_pos(a0)
 		bra.w	DeleteBehindScreen
 ; ===========================================================================
-off_3B322:	dc.l Map_3B32C	
-					
+off_3B322:	
+		dc.l Map_3B32C				
 		dc.w $454F
 		dc.w $406
 		dc.w $3000
+		
 Map_3B32C:				
 		dc.w byte_3B334-Map_3B32C			; 0
 		dc.w byte_3B34E-Map_3B32C			; 1
@@ -79952,7 +80048,8 @@ VerticalPropeller:
 		move.w	off_3B378(pc,d0.w),d1
 		jmp	off_3B378(pc,d1.w)
 ; ===========================================================================
-off_3B378:	dc.w loc_3B37C-off_3B378			; 0 
+off_3B378:
+		dc.w loc_3B37C-off_3B378			; 0 
 		dc.w loc_3B38E-off_3B378			; 1
 ; ===========================================================================
 
@@ -79978,12 +80075,17 @@ loc_3B38E:
 loc_3B3A8:				
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3B3AC:	dc.l Map_3B3BE	
+off_3B3AC:
+		dc.l Map_3B3BE	
 		dc.w $A561
 		dc.w $404
 		dc.w $4A8
-off_3B3B6:	dc.w byte_3B3B8-off_3B3B6 
-byte_3B3B8:	dc.b   1,  0,  1,  2,$FF,  0			; 0	
+		
+off_3B3B6:
+		dc.w byte_3B3B8-off_3B3B6 
+
+byte_3B3B8:	
+		dc.b   1,  0,  1,  2,$FF,  0			; 0	
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
@@ -80011,7 +80113,8 @@ HorizontalPropeller:
 		move.w	off_3B408(pc,d0.w),d1
 		jmp	off_3B408(pc,d1.w)
 ; ===========================================================================
-off_3B408:	dc.w loc_3B40E-off_3B408			; 0 
+off_3B408:
+		dc.w loc_3B40E-off_3B408			; 0 
 		dc.w loc_3B426-off_3B408			; 1
 		dc.w loc_3B448-off_3B408			; 2
 ; ===========================================================================
@@ -80034,7 +80137,8 @@ loc_3B426:
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3B442:	dc.w loc_3B444-off_3B442
+off_3B442:
+		dc.w loc_3B444-off_3B442
 ; ===========================================================================
 
 loc_3B444:				
@@ -80079,8 +80183,8 @@ loc_3B4A0:
 		asr.w	#4,d1
 		add.w	d1,ost_y_pos(a1)
 		bset	#1,$22(a1)
-		move.w	#0,$12(a1)
-		move.w	#1,$14(a1)
+		move.w	#0,ost_y_vel(a1)
+		move.w	#1,ost_inertia(a1)
 		tst.b	$27(a1)
 		bne.s	locret_3B4DC
 		move.b	#1,$27(a1)
@@ -80156,7 +80260,8 @@ TiltingPlatform:
 		move.w	off_3B5DE(pc,d0.w),d1
 		jmp	off_3B5DE(pc,d1.w)
 ; ===========================================================================
-off_3B5DE:	dc.w loc_3B5E8-off_3B5DE			; 0 
+off_3B5DE:
+		dc.w loc_3B5E8-off_3B5DE			; 0 
 		dc.w loc_3B602-off_3B5DE			; 1
 		dc.w loc_3B65C-off_3B5DE			; 2
 		dc.w loc_3B6C8-off_3B5DE			; 3
@@ -80181,7 +80286,8 @@ loc_3B602:
 		jsr	off_3B614(pc,d1.w)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3B614:	dc.w loc_3B61C-off_3B614			; 0 
+off_3B614:
+		dc.w loc_3B61C-off_3B614			; 0 
 		dc.w loc_3B624-off_3B614			; 1
 		dc.w loc_3B644-off_3B614			; 2
 		dc.w loc_3B64E-off_3B614			; 3
@@ -80225,7 +80331,8 @@ loc_3B65C:
 		jsr	word_3B66E(pc,d1.w)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-word_3B66E:	dc.w loc_3B61C-word_3B66E			; 0 
+word_3B66E:
+		dc.w loc_3B61C-word_3B66E			; 0 
 		dc.w loc_3B674-word_3B66E
 		dc.w loc_3B6A6-word_3B66E
 ; ===========================================================================
@@ -80272,7 +80379,8 @@ loc_3B6D2:
 		jsr	off_3B6DA(pc,d1.w)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3B6DA:	dc.w loc_3B6E2-off_3B6DA			; 0 
+off_3B6DA:
+		dc.w loc_3B6E2-off_3B6DA			; 0 
 		dc.w loc_3B6FE-off_3B6DA			; 1
 		dc.w loc_3B72C-off_3B6DA			; 2
 		dc.w loc_3B736-off_3B6DA			; 3
@@ -80333,7 +80441,8 @@ loc_3B73C:
 		jsr	off_3B74E(pc,d1.w)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3B74E:	dc.w loc_3B756-off_3B74E			; 0 
+off_3B74E:
+		dc.w loc_3B756-off_3B74E			; 0 
 		dc.w loc_3B764-off_3B74E
 		dc.w loc_3B644-off_3B74E
 		dc.w loc_3B64E-off_3B74E
@@ -80469,7 +80578,8 @@ VerticalLaser:
 		move.w	off_3B8B4(pc,d0.w),d1
 		jmp	off_3B8B4(pc,d1.w)
 ; ===========================================================================
-off_3B8B4:	dc.w loc_3B8B8-off_3B8B4			; 0 
+off_3B8B4:
+		dc.w loc_3B8B8-off_3B8B4			; 0 
 		dc.w loc_3B8C4-off_3B8B4			; 1
 ; ===========================================================================
 
@@ -80517,7 +80627,8 @@ WallTurret:
 		move.w	off_3B976(pc,d0.w),d1
 		jmp	off_3B976(pc,d1.w)
 ; ===========================================================================
-off_3B976:	dc.w loc_3B97C-off_3B976			; 0 
+off_3B976:
+		dc.w loc_3B97C-off_3B976			; 0 
 		dc.w loc_3B980-off_3B976			; 1
 		dc.w loc_3B9AA-off_3B976			; 2
 ; ===========================================================================
@@ -80587,8 +80698,8 @@ loc_3B9D8:
 		move.b	(a2)+,d0
 		ext.w	d0
 		add.w	d0,ost_y_pos(a1)
-		move.b	(a2)+,$10(a1)
-		move.b	(a2)+,$12(a1)
+		move.b	(a2)+,ost_x_vel(a1)
+		move.b	(a2)+,ost_y_vel(a1)
 
 locret_3BA28:				
 		rts	
@@ -80648,7 +80759,8 @@ HorizontalLaser:
 		move.w	off_3BAC8(pc,d0.w),d1
 		jmp	off_3BAC8(pc,d1.w)
 ; ===========================================================================
-off_3BAC8:	dc.w loc_3BACE-off_3BAC8			; 0 
+off_3BAC8:
+		dc.w loc_3BACE-off_3BAC8			; 0 
 		dc.w loc_3BAD2-off_3BAC8			; 1
 		dc.w loc_3BAF0-off_3BAC8			; 2
 ; ===========================================================================
@@ -80665,7 +80777,7 @@ loc_3BAD2:
 
 loc_3BADC:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.w	#-$1000,$10(a0)
+		move.w	#-$1000,ost_x_vel(a0)
 		moveq	#-$11,d0
 		jsrto	PlaySound,JmpTo12_PlaySound
 		bra.w	loc_3BAF8
@@ -80710,7 +80822,8 @@ WheelWingFortress:
 		move.w	off_3BB5A(pc,d0.w),d1
 		jmp	off_3BB5A(pc,d1.w)
 ; ===========================================================================
-off_3BB5A:	dc.w loc_3BB5E-off_3BB5A			; 0 
+off_3BB5A:
+		dc.w loc_3BB5E-off_3BB5A			; 0 
 		dc.w loc_3BB62-off_3BB5A			; 1
 ; ===========================================================================
 
@@ -80721,7 +80834,8 @@ loc_3BB5E:
 loc_3BB62:				
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3BB66:	dc.l Map_3BB70	
+off_3BB66:
+		dc.l Map_3BB70	
 		dc.w $C3EA
 		dc.w $404
 		dc.w $1000
@@ -80743,7 +80857,8 @@ Unknown2:
 		move.w	off_3BB8A(pc,d0.w),d1
 		jmp	off_3BB8A(pc,d1.w)
 ; ===========================================================================
-off_3BB8A:	dc.w loc_3BB8E-off_3BB8A			; 0 
+off_3BB8A:
+		dc.w loc_3BB8E-off_3BB8A			; 0 
 		dc.w loc_3BB92-off_3BB8A			; 1
 ; ===========================================================================
 
@@ -80778,7 +80893,8 @@ ShipExhaust:
 		move.w	off_3BBCA(pc,d0.w),d1
 		jmp	off_3BBCA(pc,d1.w)
 ; ===========================================================================
-off_3BBCA:	dc.w loc_3BBCE-off_3BBCA			; 0 
+off_3BBCA:
+		dc.w loc_3BBCE-off_3BBCA			; 0 
 		dc.w loc_3BBDA-off_3BBCA			; 1
 ; ===========================================================================
 
@@ -80822,7 +80938,8 @@ ConveyerPlatforms:
 		move.w	off_3BC2A(pc,d0.w),d1
 		jmp	off_3BC2A(pc,d1.w)
 ; ===========================================================================
-off_3BC2A:	dc.w loc_3BC30-off_3BC2A			; 0 
+off_3BC2A:
+		dc.w loc_3BC30-off_3BC2A			; 0 
 		dc.w loc_3BC3C-off_3BC2A			; 1
 		dc.w loc_3BC50-off_3BC2A			; 2
 ; ===========================================================================
@@ -80850,7 +80967,8 @@ loc_3BC50:
 		jsr	off_3BC62(pc,d1.w)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3BC62:	dc.w loc_3BC6C-off_3BC62			; 0 
+off_3BC62:
+		dc.w loc_3BC6C-off_3BC62			; 0 
 		dc.w loc_3BCAC-off_3BC62			; 1
 		dc.w loc_3BCB6-off_3BC62			; 2
 		dc.w loc_3BCCC-off_3BC62			; 3
@@ -80872,7 +80990,7 @@ loc_3BC92:
 		move.b	$28(a0),d0
 		subi.b	#$7E,d0
 		move.b	d0,$28(a0)
-		move.w	word_3BCA8(pc,d0.w),$12(a0)
+		move.w	word_3BCA8(pc,d0.w),ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 word_3BCA8:	dc.w $FF00					; 0
@@ -80966,7 +81084,8 @@ LateralCannon:
 		move.w	off_3BD88(pc,d0.w),d1
 		jmp	off_3BD88(pc,d1.w)
 ; ===========================================================================
-off_3BD88:	dc.w loc_3BD94-off_3BD88			; 0 
+off_3BD88:
+		dc.w loc_3BD94-off_3BD88			; 0 
 		dc.w loc_3BDA2-off_3BD88			; 1
 		dc.w loc_3BDC6-off_3BD88			; 2
 		dc.w loc_3BDD4-off_3BD88			; 3
@@ -81037,7 +81156,8 @@ loc_3BE16:
 		move.w	(sp)+,d4
 		jmpto	DetectPlatform,JmpTo9_DetectPlatform
 ; ===========================================================================
-off_3BE2C:	dc.l Map_3BE46	
+off_3BE2C:
+		dc.l Map_3BE46	
 		dc.w $E41A
 		dc.w $404
 		dc.w $1800
@@ -81080,7 +81200,8 @@ Stick:
 		move.w	off_3BEB8(pc,d0.w),d1
 		jmp	off_3BEB8(pc,d1.w)
 ; ===========================================================================
-off_3BEB8:	dc.w loc_3BEBC-off_3BEB8			; 0 
+off_3BEB8:
+		dc.w loc_3BEBC-off_3BEB8			; 0 
 		dc.w loc_3BEC0-off_3BEB8			; 1
 ; ===========================================================================
 
@@ -81093,10 +81214,12 @@ loc_3BEC0:
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3BECE:	dc.l Map_3BEE0	
+off_3BECE:
+		dc.l Map_3BEE0	
 		dc.w $E450
 		dc.w $404
 		dc.w $404
+		
 off_3BED8:	dc.w byte_3BEDA-off_3BED8 
 byte_3BEDA:	dc.b   1,  0,  1,  2,$FF,  0			; 0	
 Map_3BEE0:				
@@ -81120,7 +81243,8 @@ Catapult:
 		move.w	off_3BF12(pc,d0.w),d1
 		jmp	off_3BF12(pc,d1.w)
 ; ===========================================================================
-off_3BF12:	dc.w loc_3BF16-off_3BF12			; 0 
+off_3BF12:
+		dc.w loc_3BF16-off_3BF12			; 0 
 		dc.w loc_3BF3E-off_3BF12			; 1
 ; ===========================================================================
 
@@ -81151,7 +81275,8 @@ loc_3BF3E:
 		jsrto	DetectPlatform,JmpTo9_DetectPlatform
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3BF60:	dc.w loc_3BF66-off_3BF60			; 0 
+off_3BF60:
+		dc.w loc_3BF66-off_3BF60			; 0 
 		dc.w loc_3BFD8-off_3BF60			; 1
 		dc.w loc_3C062-off_3BF60			; 2
 ; ===========================================================================
@@ -81161,11 +81286,11 @@ loc_3BF66:
 		andi.b	#$18,d0
 		beq.s	locret_3BFB2
 		addq.b	#2,$25(a0)
-		move.w	#$C00,$10(a0)
+		move.w	#$C00,ost_x_vel(a0)
 		move.w	#$80,$30(a0)
 		btst	#0,$22(a0)
 		bne.s	loc_3BF90
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		neg.w	$30(a0)
 
 loc_3BF90:				
@@ -81188,8 +81313,8 @@ locret_3BFB2:
 ; ===========================================================================
 
 loc_3BFB4:				
-		clr.w	$14(a1)
-		clr.w	$10(a1)
+		clr.w	ost_inertia(a1)
+		clr.w	ost_x_vel(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		bclr	#0,$22(a1)
 		btst	#0,$22(a0)
@@ -81202,7 +81327,7 @@ locret_3BFD6:
 
 loc_3BFD8:				
 		move.w	$30(a0),d0
-		add.w	d0,$10(a0)
+		add.w	d0,ost_x_vel(a0)
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		move.w	$32(a0),d0
 		sub.w	ost_x_pos(a0),d0
@@ -81235,8 +81360,8 @@ locret_3C01E:
 ; ===========================================================================
 
 loc_3C020:				
-		move.w	$10(a0),$10(a1)
-		move.w	#-$400,$12(a1)
+		move.w	ost_x_vel(a0),ost_x_vel(a1)
+		move.w	#-$400,ost_y_vel(a1)
 		bset	#1,$22(a1)
 		rts	
 ; ===========================================================================
@@ -81284,7 +81409,8 @@ loc_3C088:
 		move.w	d0,ost_x_pos(a0)
 		rts	
 ; ===========================================================================
-off_3C08E:	dc.l Map_3C098	
+off_3C08E:
+		dc.l Map_3C098	
 		dc.w $245C
 		dc.w $404
 		dc.w $1000
@@ -81293,7 +81419,9 @@ off_3C08E:	dc.l Map_3C098
 ; ----------------------------------------------------------------------------
 Map_3C098:				
 		dc.w word_3C09A-Map_3C098
-word_3C09A:	dc.w 2			
+		
+word_3C09A:	
+		dc.w 2			
 		dc.w $E908,    0,    0,$FFF0			; 0
 		dc.w $E101,    3,    1,	   8			; 4
 ; ===========================================================================
@@ -81308,7 +81436,8 @@ BreakablePlating:
 		move.w	off_3C0BA(pc,d0.w),d1
 		jmp	off_3C0BA(pc,d1.w)
 ; ===========================================================================
-off_3C0BA:	dc.w loc_3C0C0-off_3C0BA			; 0 
+off_3C0BA:
+		dc.w loc_3C0C0-off_3C0BA			; 0 
 		dc.w loc_3C0D6-off_3C0BA			; 1
 		dc.w loc_3C1AA-off_3C0BA			; 2
 ; ===========================================================================
@@ -81373,8 +81502,8 @@ loc_3C140:
 		clr.b	$21(a0)
 		cmpi.b	#4,$24(a1)
 		bcc.s	loc_3C196
-		clr.w	$10(a1)
-		clr.w	$12(a1)
+		clr.w	ost_x_vel(a1)
+		clr.w	ost_y_vel(a1)
 		move.w	ost_x_pos(a0),d0
 		subi.w	#$14,d0
 		move.w	d0,ost_x_pos(a1)
@@ -81402,7 +81531,7 @@ loc_3C1AA:
 
 loc_3C1B6:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		addi_.w	#8,$12(a0)
+		addi_.w	#8,ost_y_vel(a0)
 		lea	(off_3C1D6).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 
@@ -81411,13 +81540,20 @@ loc_3C1CA:
 		bpl.w	JmpTo65_DeleteObject
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3C1D6:	dc.w byte_3C1D8-off_3C1D6 
-byte_3C1D8:	dc.b   3,  2,  3,  4,  5,  1,$FF,  0		; 0	
-byte_3C1E0:	dc.b   0					; 0 
+off_3C1D6:
+		dc.w byte_3C1D8-off_3C1D6 
+
+byte_3C1D8:	
+		dc.b   3,  2,  3,  4,  5,  1,$FF,  0		; 0	
+
+byte_3C1E0:	
+		dc.b   0					; 0 
 		dc.b   4					; 1
 		dc.b $18					; 2
-		dc.b $20					; 3
-byte_3C1E4:	dc.b $FF,$F0					; 0 
+		dc.b $20	
+						; 3
+byte_3C1E4:	
+		dc.b $FF,$F0					; 0 
 		dc.b $FF,$F0					; 2
 		dc.b $FF,$F0					; 4
 		dc.b   0,$10					; 6
@@ -81458,8 +81594,8 @@ loc_3C20E:
 		move.b	d4,$18(a1)
 		move.b	#$10,$19(a1)
 		move.b	#1,$1A(a1)
-		move.w	#-$400,$10(a1)
-		move.w	#0,$12(a1)
+		move.w	#-$400,ost_x_vel(a1)
+		move.w	#0,ost_y_vel(a1)
 		move.b	(a2)+,$3F(a1)
 		dbf	d1,loc_3C208
 
@@ -81517,7 +81653,8 @@ Rivet:
 		move.w	off_3C336(pc,d0.w),d1
 		jmp	off_3C336(pc,d1.w)
 ; ===========================================================================
-off_3C336:	dc.w loc_3C33A-off_3C336			; 0 
+off_3C336:
+		dc.w loc_3C33A-off_3C336			; 0 
 		dc.w loc_3C33E-off_3C336			; 1
 ; ===========================================================================
 
@@ -81582,7 +81719,8 @@ TornadoSmoke:
 		move.w	off_3C3E4(pc,d0.w),d1
 		jmp	off_3C3E4(pc,d1.w)
 ; ===========================================================================
-off_3C3E4:	dc.w loc_3C3E8-off_3C3E4			; 0 
+off_3C3E4:
+		dc.w loc_3C3E8-off_3C3E4			; 0 
 		dc.w loc_3C416-off_3C3E4			; 1
 ; ===========================================================================
 
@@ -81594,8 +81732,8 @@ loc_3C3E8:
 		andi.w	#$1C,d0
 		sub.w	d0,ost_x_pos(a0)
 		addi.w	#$10,ost_y_pos(a0)
-		move.w	#-$100,$12(a0)
-		move.w	#-$100,$10(a0)
+		move.w	#-$100,ost_y_vel(a0)
+		move.w	#-$100,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -81611,7 +81749,8 @@ loc_3C416:
 loc_3C434:				
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3C438:	dc.l Map_21120	
+off_3C438:
+		dc.l Map_21120	
 		dc.w $5A4
 		dc.w $405
 		dc.w $C00
@@ -81654,7 +81793,8 @@ loc_3C476:
 		jsr	off_3C488(pc,d1.w)
 		bra.w	loc_3CBEC
 ; ===========================================================================
-off_3C488:	dc.w loc_3C4A8-off_3C488			; 0 
+off_3C488:
+		dc.w loc_3C4A8-off_3C488			; 0 
 		dc.w loc_3C4DC-off_3C488			; 1
 		dc.w loc_3C552-off_3C488			; 2
 		dc.w loc_3C570-off_3C488			; 3
@@ -81697,7 +81837,7 @@ loc_3C4DC:
 
 loc_3C4EE:				
 		addq.b	#2,$25(a0)
-		move.w	#$40,$12(a0)
+		move.w	#$40,ost_y_vel(a0)
 		lea	(byte_3CC60).l,a2
 		bsr.w	LoadChild
 		subi.w	#$88,ost_x_pos(a1)
@@ -81741,7 +81881,7 @@ loc_3C570:
 
 loc_3C57E:				
 		addq.b	#2,$25(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -81755,7 +81895,7 @@ loc_3C58A:
 		neg.w	d1
 
 loc_3C59C:				
-		move.w	d1,$10(a0)
+		move.w	d1,ost_x_vel(a0)
 		bset	#2,$22(a0)
 		move.w	#$70,$2A(a0)
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
@@ -81765,7 +81905,7 @@ loc_3C5B0:
 		subq.w	#1,$2A(a0)
 		bmi.s	loc_3C5DC
 		move.w	ost_x_pos(a0),d0
-		tst.w	$10(a0)
+		tst.w	ost_x_vel(a0)
 		bmi.s	loc_3C5CA
 		cmp.w	$36(a0),d0
 		bcc.s	loc_3C5D0
@@ -81777,7 +81917,7 @@ loc_3C5CA:
 		bcc.s	loc_3C5D4
 
 loc_3C5D0:				
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_3C5D4:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
@@ -81851,7 +81991,7 @@ loc_3C66C:
 		neg.w	d1
 
 loc_3C684:				
-		move.w	d1,$10(a0)
+		move.w	d1,ost_x_vel(a0)
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -81859,7 +81999,7 @@ loc_3C68C:
 		subq.w	#1,$2A(a0)
 		bmi.s	loc_3C6B8
 		move.w	ost_x_pos(a0),d0
-		tst.w	$10(a0)
+		tst.w	ost_x_vel(a0)
 		bmi.s	loc_3C6A6
 		cmp.w	$36(a0),d0
 		bcc.s	loc_3C6AC
@@ -81871,7 +82011,7 @@ loc_3C6A6:
 		bcc.s	loc_3C6B0
 
 loc_3C6AC:				
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 
 loc_3C6B0:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
@@ -81945,7 +82085,8 @@ loc_3C748:
 		move.w	(sp)+,d4
 		jmpto	SolidObject,JmpTo27_SolidObject
 ; ===========================================================================
-off_3C772:	dc.w loc_3C778-off_3C772			; 0 
+off_3C772:
+		dc.w loc_3C778-off_3C772			; 0 
 		dc.w loc_3C786-off_3C772			; 1
 		dc.w loc_3C7AE-off_3C772			; 2
 ; ===========================================================================
@@ -81999,7 +82140,8 @@ loc_3C7EE:
 		move.w	off_3C7FC(pc,d0.w),d1
 		jmp	off_3C7FC(pc,d1.w)
 ; ===========================================================================
-off_3C7FC:	dc.w loc_3C806-off_3C7FC			; 0 
+off_3C7FC:
+		dc.w loc_3C806-off_3C7FC			; 0 
 		dc.w loc_3C818-off_3C7FC			; 1
 		dc.w loc_3C83C-off_3C7FC			; 2
 		dc.w loc_3C85C-off_3C7FC			; 3
@@ -82023,7 +82165,7 @@ loc_3C818:
 loc_3C828:				
 		addq.b	#2,$25(a0)
 		move.w	#$40,$2A(a0)
-		move.w	#$40,$12(a0)
+		move.w	#$40,ost_y_vel(a0)
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -82036,7 +82178,7 @@ loc_3C83C:
 
 loc_3C84A:				
 		addq.b	#2,$25(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		move.w	#$10,$2A(a0)
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -82102,7 +82244,7 @@ loc_3C8F0:
 		addq.b	#2,$25(a0)
 		move.b	#3,$1C(a0)
 		move.b	#7,$1A(a0)
-		move.w	#$100,$12(a0)
+		move.w	#$100,ost_y_vel(a0)
 		move.w	#$60,$2A(a0)
 		lea	(byte_3CC68).l,a2
 		bra.w	LoadChild
@@ -82118,7 +82260,7 @@ loc_3C916:
 loc_3C924:				
 		addq.b	#2,$25(a0)
 		move.w	#$60,$2A(a0)
-		move.w	#-$100,$10(a0)
+		move.w	#-$100,ost_x_vel(a0)
 		move.w	ost_y_pos(a0),$34(a0)
 		bra.w	loc_3C968
 ; ===========================================================================
@@ -82128,7 +82270,7 @@ loc_3C93E:
 		subq.w	#1,$2A(a0)
 		bne.s	loc_3C952
 		move.w	#$C0,$2A(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_3C952:				
 		moveq	#4,d0
@@ -82138,7 +82280,7 @@ loc_3C952:
 		neg.w	d0
 
 loc_3C960:				
-		add.w	d0,$12(a0)
+		add.w	d0,ost_y_vel(a0)
 		bra.w	*+4
 
 loc_3C968:				
@@ -82204,7 +82346,8 @@ loc_3C9EA:
 		move.w	off_3CA06(pc,d0.w),d1
 		jmp	off_3CA06(pc,d1.w)
 ; ===========================================================================
-off_3CA06:	dc.w loc_3CA0C-off_3CA06			; 0 
+off_3CA06:
+		dc.w loc_3CA0C-off_3CA06			; 0 
 		dc.w loc_3CA1A-off_3CA06			; 1
 		dc.w loc_3CA2E-off_3CA06			; 2
 ; ===========================================================================
@@ -82240,7 +82383,8 @@ loc_3CA3C:
 		bne.w	locret_37A48
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3CA66:	dc.w loc_3CA70-off_3CA66			; 0 
+off_3CA66:	
+		dc.w loc_3CA70-off_3CA66			; 0 
 		dc.w loc_3CA98-off_3CA66			; 1
 		dc.w loc_3CAD0-off_3CA66			; 2
 		dc.w loc_3CAE4-off_3CA66			; 3
@@ -82317,13 +82461,16 @@ loc_3CB0A:
 		bset	#3,$22(a1)
 		rts	
 ; ===========================================================================
-byte_3CB26:	dc.b  $E					; 0
+byte_3CB26:	
+		dc.b  $E					; 0
 		dc.b  $F					; 1
 		dc.b $10					; 2
 		dc.b $11					; 3
 		dc.b $12					; 4
 		dc.b   0					; 5
-byte_3CB2C:	dc.b $86					; 0
+
+byte_3CB2C:	
+		dc.b $86					; 0
 		dc.b $AB					; 1
 		dc.b $AC					; 2
 		dc.b $AD					; 3
@@ -82604,7 +82751,9 @@ word_3CE8A:	dc.w 6
 ; ----------------------------------------------------------------------------
 Map_3CEBC:				
 		dc.w word_3CEBE-Map_3CEBC
-word_3CEBE:	dc.w 2			
+
+word_3CEBE:
+		dc.w 2			
 		dc.w $F40E,    0,    0,$FFE0			; 0
 		dc.w $F40E, $800, $800,	   0			; 4
 ; ===========================================================================
@@ -82638,7 +82787,8 @@ loc_3CEF8:
 		move.w	off_3CF06(pc,d0.w),d1
 		jmp	off_3CF06(pc,d1.w)
 ; ===========================================================================
-off_3CF06:	dc.w loc_3CF10-off_3CF06			; 0 
+off_3CF06:	
+		dc.w loc_3CF10-off_3CF06			; 0 
 		dc.w loc_3CF32-off_3CF06			; 1
 		dc.w loc_3CF58-off_3CF06			; 2
 		dc.w loc_3CF7C-off_3CF06			; 3
@@ -82679,7 +82829,7 @@ loc_3CF58:
 loc_3CF62:				
 		addq.b	#2,$25(a0)
 		bset	#2,$22(a0)
-		move.w	#$200,$10(a0)
+		move.w	#$200,ost_x_vel(a0)
 		move.w	#$10,$2A(a0)
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -82710,12 +82860,12 @@ loc_3CFAE:
 
 loc_3CFC0:				
 		move.b	#2,$1A(a0)
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 		tst.b	ost_render(a0)
 		bpl.s	loc_3CFF2
 		addq.b	#2,$25(a0)
-		move.w	#$80,$10(a0)
-		move.w	#-$200,$12(a0)
+		move.w	#$80,ost_x_vel(a0)
+		move.w	#-$200,ost_y_vel(a0)
 		move.b	#2,$1A(a0)
 		move.w	#$50,$2A(a0)
 		bset	#3,$22(a0)
@@ -82729,7 +82879,7 @@ loc_3CFF6:
 		bmi.w	JmpTo65_DeleteObject
 
 loc_3CFFE:
-		addi.w	#$10,$12(a0)
+		addi.w	#$10,ost_y_vel(a0)
 
 loc_3D004:
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
@@ -82743,7 +82893,7 @@ loc_3D00C:
 		bsr.w	LoadChild
 		move.b	#-$56,$28(a1)
 		move.b	#5,$1A(a1)
-		move.w	#-$100,$10(a1)
+		move.w	#-$100,ost_x_vel(a1)
 		subi.w	#$18,ost_y_pos(a1)
 		move.w	#8,$2A(a1)
 		rts	
@@ -82798,7 +82948,7 @@ loc_3D086:
 loc_3D09C:				
 		subq.w	#1,$2A(a0)
 		bmi.w	JmpTo65_DeleteObject
-		addi.w	#$10,$12(a0)
+		addi.w	#$10,ost_y_vel(a0)
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -82907,7 +83057,8 @@ Crawl:
 		move.w	off_3D24C(pc,d0.w),d1
 		jmp	off_3D24C(pc,d1.w)
 ; ===========================================================================
-off_3D24C:	dc.w loc_3D254-off_3D24C			; 0 
+off_3D24C:
+		dc.w loc_3D254-off_3D24C			; 0 
 		dc.w loc_3D27C-off_3D24C			; 1
 		dc.w loc_3D2A6-off_3D24C			; 2
 		dc.w loc_3D2D4-off_3D24C			; 3
@@ -82922,8 +83073,8 @@ loc_3D254:
 		neg.w	d0
 
 loc_3D26A:				
-		move.w	d0,$10(a0)
-		move.b	#$F,$16(a0)
+		move.w	d0,ost_x_vel(a0)
+		move.b	#$F,ost_height(a0)
 		move.b	#$10,$17(a0)
 		rts	
 ; ===========================================================================
@@ -82954,7 +83105,7 @@ loc_3D2A6:
 loc_3D2B4:				
 		move.b	#2,ost_primary_routine(a0)
 		move.w	#$200,$2A(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
 		bchg	#0,$22(a0)
 		jmpto	DespawnObject,JmpTo39_DespawnObject
@@ -83061,10 +83212,10 @@ loc_3D3B8:
 		jsr	CalcSine
 		muls.w	#-$700,d1
 		asr.l	#8,d1
-		move.w	d1,$10(a1)
+		move.w	d1,ost_x_vel(a1)
 		muls.w	#-$700,d0
 		asr.l	#8,d0
-		move.w	d0,$12(a1)
+		move.w	d0,ost_y_vel(a1)
 		bset	#1,$22(a1)
 		bclr	#4,$22(a1)
 		bclr	#5,$22(a1)
@@ -83075,7 +83226,7 @@ loc_3D404:
 		jsr	PlaySound
 		rts	
 ; ===========================================================================
-		rts	
+		rts		; dead
 ; ===========================================================================
 
 loc_3D416:				
@@ -83093,12 +83244,17 @@ loc_3D416:
 locret_3D43E:				
 		rts	
 ; ===========================================================================
-off_3D440:	dc.l Map_3D450	
+off_3D440:	
+		dc.l Map_3D450	
 		dc.w $8340
 		dc.w $403
 		dc.w $10D7
-off_3D44A:	dc.w byte_3D44C-off_3D44A 
-byte_3D44C:	dc.b $13,  0,  1,$FF				; 0 
+
+off_3D44A:	
+		dc.w byte_3D44C-off_3D44A 
+		
+byte_3D44C:
+		dc.b $13,  0,  1,$FF				; 0 
 ; ----------------------------------------------------------------------------
 ; Unknown Sprite Mappings
 ; ----------------------------------------------------------------------------
@@ -83135,7 +83291,8 @@ EggRobo:
 		move.w	off_3D4D6(pc,d0.w),d1
 		jmp	off_3D4D6(pc,d1.w)
 ; ===========================================================================
-off_3D4D6:	dc.w loc_3D4F8-off_3D4D6			; 0 
+off_3D4D6:	
+		dc.w loc_3D4F8-off_3D4D6			; 0 
 		dc.w loc_3D508-off_3D4D6			; 1
 		dc.w loc_3DA14-off_3D4D6			; 2
 		dc.w loc_3DA4A-off_3D4D6			; 3
@@ -83168,7 +83325,8 @@ loc_3D508:
 		jsr	off_3D51A(pc,d1.w)
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3D51A:	dc.w loc_3D52A-off_3D51A			; 0 
+off_3D51A:	
+		dc.w loc_3D52A-off_3D51A			; 0 
 		dc.w loc_3D5A8-off_3D51A			; 1
 		dc.w loc_3D5C2-off_3D51A			; 2
 		dc.w loc_3D5EA-off_3D51A			; 3
@@ -83228,7 +83386,7 @@ loc_3D5C2:
 loc_3D5CA:				
 		addq.b	#2,$25(a0)
 		move.b	#$79,$1E(a0)
-		move.w	#-$100,$12(a0)
+		move.w	#-$100,ost_y_vel(a0)
 		movea.w	$38(a0),a1
 		move.b	#4,$25(a1)
 		moveq	#-$6C,d0
@@ -83247,7 +83405,7 @@ loc_3D5EA:
 
 loc_3D604:				
 		addq.b	#2,$25(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		move.b	#$1F,$1E(a0)
 		move.b	#$16,$20(a0)
 		move.b	#$C,$21(a0)
@@ -83289,7 +83447,8 @@ loc_3D640:
 locret_3D67E:				
 		rts	
 ; ===========================================================================
-byte_3D680:	dc.b   2					; 0
+byte_3D680:
+		dc.b   2					; 0
 		dc.b   0					; 1
 		dc.b   2					; 2
 		dc.b   4					; 3
@@ -83302,7 +83461,8 @@ loc_3D684:
 		move.w	off_3D696(pc,d0.w),d1
 		jmp	off_3D696(pc,d1.w)
 ; ===========================================================================
-off_3D696:	dc.w loc_3D6AA-off_3D696			; 0 
+off_3D696:
+		dc.w loc_3D6AA-off_3D696			; 0 
 		dc.w loc_3D702-off_3D696			; 1
 		dc.w loc_3D83C-off_3D696			; 2
 ; ===========================================================================
@@ -83322,7 +83482,8 @@ loc_3D6AA:
 		move.w	off_3D6B8(pc,d0.w),d1
 		jmp	off_3D6B8(pc,d1.w)
 ; ===========================================================================
-off_3D6B8:	dc.w loc_3D6C0-off_3D6B8			; 0 
+off_3D6B8:	
+		dc.w loc_3D6C0-off_3D6B8			; 0 
 		dc.w loc_3D6CE-off_3D6B8			; 1
 		dc.w loc_3D6C0-off_3D6B8			; 2
 		dc.w loc_3D6E8-off_3D6B8			; 3
@@ -83371,7 +83532,8 @@ loc_3D702:
 		move.w	word_3D710(pc,d0.w),d1
 		jmp	word_3D710(pc,d1.w)
 ; ===========================================================================
-word_3D710:	dc.w loc_3D6C0-word_3D710			; 0 
+word_3D710:	
+		dc.w loc_3D6C0-word_3D710			; 0 
 		dc.w loc_3D720-word_3D710
 		dc.w loc_3D744-word_3D710
 		dc.w loc_3D6C0-word_3D710
@@ -83391,8 +83553,8 @@ loc_3D720:
 loc_3D72E:				
 		addq.b	#2,$1D(a0)
 		move.b	#-$80,$1E(a0)
-		clr.w	$10(a0)
-		move.w	#-$200,$12(a0)
+		clr.w	ost_x_vel(a0)
+		move.w	#-$200,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -83413,10 +83575,10 @@ loc_3D75A:
 
 loc_3D768:				
 		addq.b	#2,$1D(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		lea	(byte_3E584).l,a2
 		bsr.w	LoadChild
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 		clr.w	$28(a0)
 		rts	
 ; ===========================================================================
@@ -83437,7 +83599,7 @@ loc_3D78C:
 
 loc_3D7A6:				
 		bsr.w	loc_3E168
-		move.w	#$800,$12(a0)
+		move.w	#$800,ost_y_vel(a0)
 		move.b	#$20,$1E(a0)
 		rts	
 ; ===========================================================================
@@ -83452,7 +83614,7 @@ loc_3D7B8:
 
 loc_3D7CC:				
 		addq.b	#2,$1D(a0)
-		clr.w	$12(a0)
+		clr.w	ost_y_vel(a0)
 		move.b	#1,(f_screen_shake).w
 		move.w	#$40,($FFFFF660).w
 		movea.w	$38(a0),a1
@@ -83508,7 +83670,8 @@ loc_3D83C:
 		move.w	word_3D84A(pc,d0.w),d1
 		jmp	word_3D84A(pc,d1.w)
 ; ===========================================================================
-word_3D84A:	dc.w loc_3D6C0-word_3D84A			; 0 
+word_3D84A:	
+		dc.w loc_3D6C0-word_3D84A			; 0 
 		dc.w loc_3D856-word_3D84A
 		dc.w loc_3D6C0-word_3D84A
 		dc.w loc_3D89E-word_3D84A
@@ -83577,7 +83740,8 @@ loc_3D8D2:
 		move.w	off_3D8E0(pc,d0.w),d1
 		jmp	off_3D8E0(pc,d1.w)
 ; ===========================================================================
-off_3D8E0:	dc.w loc_3D8E6-off_3D8E0			; 0 
+off_3D8E0:
+		dc.w loc_3D8E6-off_3D8E0			; 0 
 		dc.w loc_3D922-off_3D8E0			; 1
 		dc.w loc_3D93C-off_3D8E0			; 2
 ; ===========================================================================
@@ -83593,13 +83757,13 @@ loc_3D8E6:
 
 loc_3D8FA:				
 		move.w	#$15C,ost_y_pos(a0)
-		move.w	$12(a0),d0
+		move.w	ost_y_vel(a0),d0
 		bmi.s	loc_3D916
 		lsr.w	#2,d0
 		cmpi.w	#$100,d0
 		bcs.s	loc_3D916
 		neg.w	d0
-		move.w	d0,$12(a0)
+		move.w	d0,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -83659,7 +83823,8 @@ loc_3D984:
 		move.w	off_3D9AC(pc,d0.w),d1
 		jmp	off_3D9AC(pc,d1.w)
 ; ===========================================================================
-off_3D9AC:	dc.w loc_3D9B0-off_3D9AC			; 0 
+off_3D9AC:
+		dc.w loc_3D9B0-off_3D9AC			; 0 
 		dc.w loc_3D9D6-off_3D9AC			; 1
 ; ===========================================================================
 
@@ -83717,9 +83882,12 @@ loc_3DA14:
 		beq.w	locret_37A48
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3DA34:	dc.w loc_3DA3C-off_3DA34			; 0 
+off_3DA34:	
+		dc.w loc_3DA3C-off_3DA34			; 0 
 		dc.w locret_3DA48-off_3DA34			; 1
-byte_3DA38:	dc.b   0					; 0 
+
+byte_3DA38:
+		dc.b   0					; 0 
 		dc.b  $C					; 1
 		dc.b $FF					; 2
 		dc.b $EC					; 3
@@ -83744,7 +83912,8 @@ loc_3DA4A:
 		beq.w	locret_37A48
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3DA62:	dc.w loc_3DA66-off_3DA62			; 0 
+off_3DA62:	
+		dc.w loc_3DA66-off_3DA62			; 0 
 		dc.w locret_3DA72-off_3DA62			; 1
 ; ===========================================================================
 
@@ -83769,7 +83938,8 @@ loc_3DA74:
 		bne.w	locret_37A48
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3DA96:	dc.w loc_3DAA0-off_3DA96			; 0 
+off_3DA96:	
+		dc.w loc_3DAA0-off_3DA96			; 0 
 		dc.w loc_3DAAC-off_3DA96			; 1
 		dc.w loc_3DACC-off_3DA96			; 2
 		dc.w loc_3DB32-off_3DA96			; 3
@@ -83799,7 +83969,7 @@ loc_3DABA:
 loc_3DACC:				
 		subq.w	#1,$2A(a0)
 		bmi.s	loc_3DADC
-		addi.w	#$20,$12(a0)
+		addi.w	#$20,ost_y_vel(a0)
 		bra.w	JmpTo26_SpeedToPos
 ; ===========================================================================
 
@@ -83825,7 +83995,7 @@ loc_3DAFA:
 		neg.w	d2
 
 loc_3DB0A:				
-		move.w	d2,$12(a0)
+		move.w	d2,ost_y_vel(a0)
 		move.w	#$800,d2
 		movea.w	$2C(a0),a1
 		btst	#render_xflip_bit,ost_render(a0)
@@ -83833,11 +84003,12 @@ loc_3DB0A:
 		neg.w	d2
 
 loc_3DB20:				
-		move.w	d2,$10(a0)
+		move.w	d2,ost_x_vel(a0)
 		moveq	#-$44,d0
 		jmpto	PlaySound,JmpTo12_PlaySound
 ; ===========================================================================
-word_3DB2A:	dc.w  $200					; 0
+word_3DB2A:	
+		dc.w  $200					; 0
 		dc.w  $100					; 1
 		dc.w   $80					; 2
 		dc.w	 0					; 3
@@ -83851,12 +84022,12 @@ loc_3DB32:
 
 loc_3DB3C:				
 		addq.b	#2,$25(a0)
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 		move.w	#$20,$2A(a0)
 		move.w	$2E(a0),d0
 		sub.w	ost_y_pos(a0),d0
 		asl.w	#3,d0
-		move.w	d0,$12(a0)
+		move.w	d0,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -83868,8 +84039,8 @@ loc_3DB5A:
 
 loc_3DB64:				
 		move.b	#2,$25(a0)
-		clr.w	$10(a0)
-		clr.w	$12(a0)
+		clr.w	ost_x_vel(a0)
+		clr.w	ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -83882,7 +84053,8 @@ loc_3DB74:
 		beq.w	locret_37A48
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3DB8C:	dc.w loc_3DB90-off_3DB8C			; 0 
+off_3DB8C:	
+		dc.w loc_3DB90-off_3DB8C			; 0 
 		dc.w locret_3DB9C-off_3DB8C			; 1
 ; ===========================================================================
 
@@ -83905,7 +84077,8 @@ loc_3DB9E:
 		beq.w	locret_37A48
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3DBB6:	dc.w loc_3DBBA-off_3DBB6			; 0 
+off_3DBB6:	
+		dc.w loc_3DBBA-off_3DBB6			; 0 
 		dc.w locret_3DBC6-off_3DBB6			; 1
 ; ===========================================================================
 
@@ -83930,12 +84103,15 @@ loc_3DBC8:
 		beq.w	locret_37A48
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3DBE8:	dc.w loc_3DBF6-off_3DBE8			; 0 
+off_3DBE8:	
+		dc.w loc_3DBF6-off_3DBE8			; 0 
 		dc.w loc_3DC02-off_3DBE8			; 1
 		dc.w loc_3DC1C-off_3DBE8			; 2
 		dc.w loc_3DC2A-off_3DBE8			; 3
 		dc.w loc_3DC46-off_3DBE8			; 4
-byte_3DBF2:	dc.b   0					; 0 
+		
+byte_3DBF2:	
+		dc.b   0					; 0 
 		dc.b   0					; 1
 		dc.b $FF					; 2
 		dc.b $CC					; 3
@@ -83992,12 +84168,15 @@ loc_3DC50:
 		lea	byte_3DC70(pc),a1
 		bra.w	loc_3E282
 ; ===========================================================================
-off_3DC66:	dc.w loc_3DC74-off_3DC66			; 0 
+off_3DC66:	
+		dc.w loc_3DC74-off_3DC66			; 0 
 		dc.w loc_3DC80-off_3DC66			; 1
 		dc.w loc_3DC86-off_3DC66			; 2
 		dc.w loc_3DC94-off_3DC66			; 3
 		dc.w loc_3DC80-off_3DC66			; 4
-byte_3DC70:	dc.b   0					; 0 
+		
+byte_3DC70:	
+		dc.b   0					; 0 
 		dc.b $38					; 1
 		dc.b   0					; 2
 		dc.b $18					; 3
@@ -84033,7 +84212,8 @@ loc_3DC9C:
 		beq.w	locret_37A48
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3DCB4:	dc.w loc_3DCB8-off_3DCB4			; 0 
+off_3DCB4:	
+		dc.w loc_3DCB8-off_3DCB4			; 0 
 		dc.w locret_3DCCA-off_3DCB4			; 1
 ; ===========================================================================
 
@@ -84057,7 +84237,8 @@ loc_3DCCC:
 		beq.w	locret_37A48
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3DCE4:	dc.w loc_3DCEE-off_3DCE4			; 0 
+off_3DCE4:
+		dc.w loc_3DCEE-off_3DCE4			; 0 
 		dc.w loc_3DD00-off_3DCE4
 		dc.w loc_3DACC-off_3DCE4
 		dc.w loc_3DB32-off_3DCE4
@@ -84094,7 +84275,8 @@ loc_3DD20:
 		beq.w	locret_37A48
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3DD38:	dc.w loc_3DD3C-off_3DD38			; 0 
+off_3DD38:	
+		dc.w loc_3DD3C-off_3DD38			; 0 
 		dc.w locret_3DD4E-off_3DD38			; 1
 ; ===========================================================================
 
@@ -84115,7 +84297,8 @@ loc_3DD50:
 		move.w	off_3DD5E(pc,d0.w),d1
 		jmp	off_3DD5E(pc,d1.w)
 ; ===========================================================================
-off_3DD5E:	dc.w loc_3DD64-off_3DD5E			; 0 
+off_3DD5E:	
+		dc.w loc_3DD64-off_3DD5E			; 0 
 		dc.w loc_3DDA6-off_3DD5E			; 1
 		dc.w loc_3DE3C-off_3DD5E			; 2
 ; ===========================================================================
@@ -84129,8 +84312,8 @@ loc_3DD64:
 		lea	($FFFFB000).w,a1
 		move.w	ost_x_pos(a1),ost_x_pos(a0)
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
-		move.w	$10(a1),$30(a0)
-		move.w	$12(a1),$32(a0)
+		move.w	ost_x_vel(a1),$30(a0)
+		move.w	ost_y_vel(a1),$32(a0)
 		move.w	#$18,$26(a0)
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -84140,21 +84323,21 @@ loc_3DDA6:
 		bmi.s	loc_3DE0A
 		lea	$40(a0),a1
 		movea.l	a1,a2
-		move.w	-(a1),$12(a0)
-		move.w	-(a1),$10(a0)
+		move.w	-(a1),ost_y_vel(a0)
+		move.w	-(a1),ost_x_vel(a0)
 		moveq	#2,d6
 
 loc_3DDBC:				
 		move.l	-(a1),-(a2)
 		dbf	d6,loc_3DDBC
 		lea	($FFFFB000).w,a2
-		move.w	$10(a2),d0
+		move.w	ost_x_vel(a2),d0
 		bne.s	loc_3DDD2
 		move.w	ost_x_pos(a2),ost_x_pos(a0)
 
 loc_3DDD2:				
 		move.w	d0,(a1)+
-		move.w	$12(a2),d0
+		move.w	ost_y_vel(a2),d0
 		bne.s	loc_3DDE0
 		move.w	ost_y_pos(a2),ost_y_pos(a0)
 
@@ -84183,7 +84366,7 @@ loc_3DE0A:
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
 		lea	(byte_3E588).l,a2
 		bsr.w	LoadChild
-		clr.w	$10(a0)
+		clr.w	ost_x_vel(a0)
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -84246,7 +84429,8 @@ loc_3DEC2:
 		move.w	off_3DED0(pc,d0.w),d1
 		jmp	off_3DED0(pc,d1.w)
 ; ===========================================================================
-off_3DED0:	dc.w loc_3DED8-off_3DED0			; 0 
+off_3DED0:	
+		dc.w loc_3DED8-off_3DED0			; 0 
 		dc.w loc_3DF04-off_3DED0			; 1
 		dc.w loc_3DF36-off_3DED0			; 2
 		dc.w loc_3DF80-off_3DED0			; 3
@@ -84262,7 +84446,8 @@ loc_3DED8:
 		bsr.w	loc_3E282
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-byte_3DF00:	dc.b   0					; 0 
+byte_3DF00:	
+		dc.b   0					; 0 
 		dc.b $38					; 1
 		dc.b $FF					; 2
 		dc.b $EC					; 3
@@ -84404,8 +84589,8 @@ loc_3E05A:
 		bset	#7,$22(a0)
 		clr.b	$1C(a0)
 		clr.b	$20(a0)
-		clr.w	$10(a0)
-		clr.w	$12(a0)
+		clr.w	ost_x_vel(a0)
+		clr.w	ost_y_vel(a0)
 		bsr.w	loc_3E11E
 		bsr.w	loc_3E094
 		movea.w	$38(a0),a1
@@ -84426,12 +84611,13 @@ loc_3E0A2:
 		move.b	#$1E,$24(a3)
 		clr.b	$25(a3)
 		move.w	#$80,$2A(a3)
-		move.w	(a2)+,$10(a3)
-		move.w	(a2)+,$12(a3)
+		move.w	(a2)+,ost_x_vel(a3)
+		move.w	(a2)+,ost_y_vel(a3)
 		dbf	d6,loc_3E0A2
 		rts	
 ; ===========================================================================
-word_3E0C6:	dc.w  $200,$FC00				; 0 
+word_3E0C6:	
+		dc.w  $200,$FC00				; 0 
 		dc.w $FF00,$FF00				; 2
 		dc.w  $300,$FD00				; 4
 		dc.w $FF00,$FC00				; 6
@@ -84439,7 +84625,9 @@ word_3E0C6:	dc.w  $200,$FC00				; 0
 		dc.w $FE00,$FD00				; 10
 		dc.w	 0,$FC00				; 12
 		dc.w  $100,$FD00				; 14
-byte_3E0E6:	dc.b $2C					; 0 
+		
+byte_3E0E6:	
+		dc.b $2C					; 0 
 		dc.b $2E					; 1
 		dc.b $30					; 2
 		dc.b $32					; 3
@@ -84464,7 +84652,8 @@ loc_3E104:
 		dbf	d6,loc_3E0FA
 		rts	
 ; ===========================================================================
-byte_3E10A:	dc.b   0					; 0 
+byte_3E10A:
+		dc.b   0					; 0 
 		dc.b $8F					; 1
 		dc.b $9C					; 2
 		dc.b   0					; 3
@@ -84474,7 +84663,9 @@ byte_3E10A:	dc.b   0					; 0
 		dc.b $8F					; 7
 		dc.b $9C					; 8
 		dc.b $8B					; 9
-byte_3E114:	dc.b $2C					; 0 
+		
+byte_3E114:	
+		dc.b $2C					; 0 
 		dc.b $2E					; 1
 		dc.b $30					; 2
 		dc.b $32					; 3
@@ -84512,8 +84703,8 @@ loc_3E13C:
 		neg.w	d0
 
 loc_3E152:				
-		move.w	d0,$10(a1)
-		move.w	(a3)+,$12(a1)
+		move.w	d0,ost_x_vel(a1)
+		move.w	(a3)+,ost_y_vel(a1)
 		dbf	d6,loc_3E13C
 		rts	
 ; ===========================================================================
@@ -84542,7 +84733,8 @@ loc_3E176:
 		move.b	d2,$22(a2)
 		bra.s	loc_3E176
 ; ===========================================================================
-byte_3E19E:	dc.b $2C					; 0 
+byte_3E19E:	
+		dc.b $2C					; 0 
 		dc.b $2E					; 1
 		dc.b $30					; 2
 		dc.b $32					; 3
@@ -84647,7 +84839,8 @@ loc_3E23E:
 loc_3E248:
 		jmp	off_3E24C(pc,d1.w)
 ; ===========================================================================
-off_3E24C:	dc.w loc_3E252-off_3E24C			; 0 
+off_3E24C:	
+		dc.w loc_3E252-off_3E24C			; 0 
 		dc.w loc_3E27A-off_3E24C			; 1
 		dc.w loc_3E27E-off_3E24C			; 2
 ; ===========================================================================
@@ -85351,18 +85544,14 @@ off_3EAD6:
 
 loc_3EADA:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.w	#$120,ost_x_screen(a0)
-		move.w	#$F0,ost_y_screen(a0)
+		move.w	#screen_left+160,ost_x_screen(a0)
+		move.w	#screen_top+112,ost_y_screen(a0)
 		move.l	#Map_3EB4E,ost_mappings(a0)
 		move.w	#vram_S1Credits/sizeof_cell,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo65_Adjust2PArtPointer
 		move.w	(v_s1_ending_demo_num).w,d0
 		move.b	d0,$1A(a0)
-
-loc_3EB04:
 		move.b	#render_abs,ost_render(a0)
-
-loc_3EB0A:
 		move.b	#0,$18(a0)
 		cmpi.b	#4,(v_gamemode).w
 		bne.s	loc_3EB48
@@ -85373,7 +85562,7 @@ loc_3EB0A:
 		beq.s	loc_3EB48
 		cmpi.b	#$72,(v_joypad_hold_actual).w
 		bne.s	loc_3EB48
-		move.w	#$EEE,($FFFFFBC0).w
+		move.w	#cWhite,($FFFFFBC0).w
 		move.w	#$880,($FFFFFBC2).w
 		jmp	DeleteObject
 ; ===========================================================================
@@ -85731,8 +85920,8 @@ loc_3F2B4:
 		move.w	ost_y_pos(a2),ost_y_pos(a1)
 
 loc_3F2E0:				
-		move.w	#-$400,$12(a2)
-		move.w	#$800,$10(a2)
+		move.w	#-$400,ost_y_vel(a2)
+		move.w	#$800,ost_x_vel(a2)
 		addq.b	#2,$25(a2)
 		move.w	#$1D,$34(a0)
 		addq.b	#2,$25(a0)
@@ -85944,7 +86133,7 @@ ReactToItem:
 		move.w	ost_y_pos(a0),d3
 		subi_.w	#8,d2
 		moveq	#0,d5
-		move.b	$16(a0),d5
+		move.b	ost_height(a0),d5
 		subq.b	#3,d5
 		sub.w	d5,d3
 		cmpi.b	#$4D,$1A(a0)
@@ -86078,7 +86267,7 @@ loc_3F666:
 		move.w	ost_y_pos(a0),d3
 		subi_.w	#8,d2
 		moveq	#0,d5
-		move.b	$16(a0),d5
+		move.b	ost_height(a0),d5
 		subq.b	#3,d5
 		sub.w	d5,d3
 		cmpi.b	#$4D,$1A(a0)
@@ -86217,12 +86406,12 @@ loc_3F78C:
 loc_3F7A6:				
 		btst	#render_subobjects_bit,ost_render(a1)
 		beq.s	loc_3F7C8
-		tst.b	$32(a1)
+		tst.b	ost_boss_hitcount2(a1)
 		beq.s	locret_3F7C6
-		neg.w	$10(a0)
-		neg.w	$12(a0)
+		neg.w	ost_x_vel(a0)
+		neg.w	ost_y_vel(a0)
 		move.b	#0,$20(a1)
-		subq.b	#1,$32(a1)
+		subq.b	#1,ost_boss_hitcount2(a1)
 
 locret_3F7C6:				
 		rts	
@@ -86231,8 +86420,8 @@ locret_3F7C6:
 loc_3F7C8:				
 		tst.b	$21(a1)
 		beq.s	loc_3F7EA
-		neg.w	$10(a0)
-		neg.w	$12(a0)
+		neg.w	ost_x_vel(a0)
+		neg.w	ost_y_vel(a0)
 		move.b	#0,$20(a1)
 		subq.b	#1,$21(a1)
 		bne.s	locret_3F7E8
@@ -86270,22 +86459,22 @@ loc_3F81C:
 		bsr.w	AddPoints2
 		_move.b	#id_ExplosionItem,ost_id(a1)
 		move.b	#0,$24(a1)
-		tst.w	$12(a0)
+		tst.w	ost_y_vel(a0)
 		bmi.s	loc_3F844
 		move.w	ost_y_pos(a0),d0
 		cmp.w	ost_y_pos(a1),d0
 		bcc.s	loc_3F84C
-		neg.w	$12(a0)
+		neg.w	ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_3F844:				
-		addi.w	#$100,$12(a0)
+		addi.w	#$100,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
 loc_3F84C:				
-		subi.w	#$100,$12(a0)
+		subi.w	#$100,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 off_3F854:	
@@ -86343,21 +86532,21 @@ loc_3F8BE:
 		move.b	#4,ost_primary_routine(a0)
 		jsrto	Sonic_ResetOnFloor_2,JmpTo_Sonic_ResetOnFloor_2
 		bset	#1,$22(a0)
-		move.w	#-$400,$12(a0)
-		move.w	#-$200,$10(a0)
+		move.w	#-$400,ost_y_vel(a0)
+		move.w	#-$200,ost_x_vel(a0)
 		btst	#6,$22(a0)
 		beq.s	loc_3F8EE
-		move.w	#-$200,$12(a0)
-		move.w	#-$100,$10(a0)
+		move.w	#-$200,ost_y_vel(a0)
+		move.w	#-$100,ost_x_vel(a0)
 
 loc_3F8EE:				
 		move.w	ost_x_pos(a0),d0
 		cmp.w	ost_x_pos(a2),d0
 		bcs.s	loc_3F8FC
-		neg.w	$10(a0)
+		neg.w	ost_x_vel(a0)
 
 loc_3F8FC:				
-		move.w	#0,$14(a0)
+		move.w	#0,ost_inertia(a0)
 		move.b	#$1A,$1C(a0)
 		move.w	#$78,$30(a0)
 		move.w	#$A3,d0	
@@ -86378,9 +86567,9 @@ KillCharacter:
 		move.b	#6,ost_primary_routine(a0)
 		jsrto	Sonic_ResetOnFloor_2,JmpTo_Sonic_ResetOnFloor_2
 		bset	#1,$22(a0)
-		move.w	#-$700,$12(a0)
-		move.w	#0,$10(a0)
-		move.w	#0,$14(a0)
+		move.w	#-$700,ost_y_vel(a0)
+		move.w	#0,ost_x_vel(a0)
+		move.w	#0,ost_inertia(a0)
 		move.b	#$18,$1C(a0)
 		bset	#tile_hi_bit,ost_tile(a0)
 		move.w	#$A3,d0	
@@ -86598,7 +86787,7 @@ loc_3FAF6:
 ; ===========================================================================
 
 loc_3FAFE:				
-		sf.b	$38(a1)
+		sf.b	ost_boss_hurtplayer(a1)
 		cmpi.b	#1,(v_boss_collision_routine).w
 		blt.s	loc_3FB46
 	if FixBugs	
@@ -86625,7 +86814,7 @@ loc_3FB28:
 		move.b	$20(a1),d0
 		cmpi.w	#$78,$30(a0)
 		bne.s	locret_3FB44
-		st.b	$38(a1)
+		st.b	ost_boss_hurtplayer(a1)
 
 locret_3FB44:				
 		rts	
@@ -86651,7 +86840,7 @@ loc_3FB50:
 		move.b	$20(a1),d0
 		cmpi.w	#$78,$30(a0)
 		bne.s	locret_3FB88
-		st.b	$38(a1)
+		st.b	ost_boss_hurtplayer(a1)
 
 locret_3FB88:				
 		rts	
@@ -86812,8 +87001,8 @@ loc_3FC9E:
 		bhi.w	locret_3FC86
 
 loc_3FCA4:				
-		neg.w	$10(a0)
-		neg.w	$12(a0)
+		neg.w	ost_x_vel(a0)
+		neg.w	ost_y_vel(a0)
 		rts	
 ; ===========================================================================
 
@@ -88903,7 +89092,7 @@ JmpTo_BuildSpr_DrawLoop:
 	
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; When debug mode is currently in use
+; Psuedoobject that runs debug placement mode
 ; ---------------------------------------------------------------------------
 ; loc_41A78:
 DebugMode:				
@@ -89116,7 +89305,7 @@ loc_41C56:
 
 loc_41C82:				
 		bsr.s	sub_41CB8
-		move.b	#$13,$16(a1)
+		move.b	#$13,ost_height(a1)
 		move.b	#9,$17(a1)
 		move.w	(v_boundary_top_next_debug).w,(v_boundary_top_next).w
 		move.w	(v_boundary_bottom_next_debug).w,(v_boundary_bottom_next).w
@@ -89141,9 +89330,9 @@ sub_41CB8:
 		move.w	d0,ost_y_sub(a1)
 		move.b	d0,$2A(a1)
 		move.b	d0,$39(a1)
-		move.w	d0,$10(a1)
-		move.w	d0,$12(a1)
-		move.w	d0,$14(a1)
+		move.w	d0,ost_x_vel(a1)
+		move.w	d0,ost_y_vel(a1)
+		move.w	d0,ost_inertia(a1)
 		move.b	#2,$22(a1)
 		move.b	#2,$24(a1)
 		move.b	#0,$25(a1)
@@ -90167,7 +90356,7 @@ plcm:		macro gfx,vram,suffix
 		last_vram: = plcm_vram+sizeof_\gfx
 		dc.w plcm_vram
 		ifarg \suffix
-			tile_\gfx\_\suffix: equ plcm_vram/sizeof_cell ; Hivebrain stores the vram address, and calculates the tile count from it
+			tile_\gfx\_\suffix: equ plcm_vram/sizeof_cell
 		else
 			if ~def(tile_\gfx)
 			tile_\gfx: equ plcm_vram/sizeof_cell
@@ -91004,9 +91193,8 @@ PLC_ResultsTails_dup:	plcheader
 	PLC_ResultsTails_dup_end:	
 	endc
 	
-
 ;---------------------------------------------------------------------------------------
-; Collision Data
+; Collision data
 ;---------------------------------------------------------------------------------------
 
 		incfile ColCurveMap
@@ -91035,7 +91223,7 @@ PLC_ResultsTails_dup:	plcheader
 		
 ;---------------------------------------------------------------------------------------
 ; Level layout pointers
-; Two entries per act, pointing to the level layouts for	acts 1 and 2 of	each level
+; Two entries per act, pointing to the level layouts for aAts 1 and 2 of each level
 ; respectively.
 ; TODO: Figure out which ones are unused and note them accordingly
 ;---------------------------------------------------------------------------------------
@@ -91076,7 +91264,6 @@ LevelIndex:		index offset(*)
 		ptr Level_SCZ					; $20
 		ptr Level_SCZ					; $21
 
-
 ; ---------------------------------------------------------------------------
 ; Level	layouts (Kosinski Compression)
 ; ---------------------------------------------------------------------------
@@ -91101,7 +91288,6 @@ LevelIndex:		index offset(*)
 		incfile	Level_ARZ1
 		incfile	Level_ARZ2
 		incfile	Level_SCZ
-
 
 ;---------------------------------------------------------------------------------------
 ; Animated level graphics
@@ -91168,7 +91354,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_MenuJunk				; ArtNem_78CBC:
 		
 ;---------------------------------------------------------------------------------------
-; Graphics - various
+; Graphics - global level objects, HUD, title cards, text, and menus
 ;---------------------------------------------------------------------------------------			
 		
 		incfile	Nem_Button				; ArtNem_78DAC:
@@ -91498,7 +91684,7 @@ MapSpec_Turn6:		incbin "mappings/special stage/Curve Right 6.bin"
 MapSpec_Turn7:		incbin "mappings/special stage/Curve Right 7.bin"
 
 ; ----------------------------------------------------------------------------------
-; Special Stage graphics, plane mappings, and misc data
+; Special Stage graphics, plane mappings, and layout data
 ; ----------------------------------------------------------------------------------
 
 		incfile	Kos_Special				; Koz_DCA38
@@ -91527,9 +91713,10 @@ MapSpec_Turn7:		incbin "mappings/special stage/Curve Right 7.bin"
 		align $100					; (unnecessary; could be replaced with "even")
 
 ; --------------------------------------------------------------------------------------
-; Ring location pointers
+; Ring position index
 ; --------------------------------------------------------------------------------------
-Off_Rings:	index offset(*)
+
+RingPos_Index:	index offset(*)
 
 		ptr Rings_EHZ_1					; 0			
 		ptr Rings_EHZ_2					; 1
@@ -91564,7 +91751,7 @@ Off_Rings:	index offset(*)
 		ptr Rings_ARZ_1					; 30
 		ptr Rings_ARZ_2					; 31
 		ptr Rings_SCZ_1					; 32
-		ptr Rings_SCZ_2					; 33
+		ptr Rings_SCZ_2					; 33		
 		
 Rings_EHZ_1:	incbin	"level/rings/EHZ 1.bin"
 Rings_EHZ_2:	incbin	"level/rings/EHZ 2.bin"
@@ -91604,7 +91791,7 @@ Rings_SCZ_2:	incbin	"level/rings/SCZ 2.bin"			; null
 		align $200					; (unnecessary; could be replaced with "even")
 
 ; --------------------------------------------------------------------------------------
-; Object position pointers
+; Object position index
 ; --------------------------------------------------------------------------------------
 ObjPos_Index:	index offset(*)
 
@@ -91723,21 +91910,22 @@ SoundDriverLoad:
 		lea	(z80_reset).l,a2
 		moveq	#0,d2
 		move.w	#$100,d1
-		move.w	d1,(a3)					; get Z80 bus
-		move.w	d1,(a2)					; release Z80 reset (was held high by console on startup)
+		move.w	d1,(a3)					; stop the Z80
+		move.w	d1,(a2)					; ensure Z80 reset is not asserted
 
-	.waitforbus:				
+	.waitforZ80:				
 		btst	d2,(a3)
-		bne.s	.waitforbus
+		bne.s	.waitforZ80
+		
 		jsr	DecompressSoundDriver(pc)		; could be bsr.s
-		btst	#video_mode_bit,(vdp_control_port+1).l	; check video mode
+		btst	#video_mode_bit,(vdp_control_port+1).l	; check video mode (why do it this way)
 		sne	(z80_ram+f_pal).l				; set if PAL
-		move.w	d2,(a2)					; hold Z80 reset
-		move.w	d2,(a3)					; release Z80 bus
+		move.w	d2,(a2)					; assert Z80 reset
+		move.w	d2,(a3)					; start the Z80
 		moveq_	$E6,d0					; $FFE6
 
 	.wait:				
-		dbf	d0,.wait				; wait for 2,314 cycles (this is completely unnecessary, only 24 or so 68k cycles are necessary)
+		dbf	d0,.wait				; wait for 2,314 cycles to reset the YM2612/3438 (pointless, as they are reset on both cold boot and soft reset by the behavior of the ZRES line) 
 		move.w	d1,(a2)					; release Z80 reset
 		popr	d0-a6
 		move	(sp)+,sr
@@ -91750,14 +91938,14 @@ DecompressSoundDriver:
 	; WARNING: you must edit MergeCode if you rename this label
 	movewZ80CompSize:		
 		move.w	#$F64,d7				; size of compressed data; patched if necessary by SndDriverCompress.exe
-		moveq	#0,d6					; make the decompressor fetch the first descriptor byte 
+		moveq	#0,d6					; make the decompressor fetch the first byte of descriptor bits
 		lea	(z80_ram).l,a5
 		moveq	#0,d5					; d5 = offset of end of decompressed data
 		lea	(z80_ram).l,a4
 
 ; ---------------------------------------------------------------------------
 ; Saxman Decompression algorithm 
-; Requires size of data to be specified externally
+; Requires size of data as input in d7
 
 ; input:
 ;	d7.w = size of compressed data
@@ -91774,9 +91962,9 @@ SaxDec:
 		lsr.w	#1,d6					; shift to next descriptor bit (if we've run out, bit 8 will be zero)
 		btst	#8,d6					; have we run out of bits?
 		bne.s	.bitsremaining			; branch if not
-		jsr	SaxDec_GetByte(pc)			; get next descriptor byte
+		jsr	SaxDec_GetByte(pc)			; get next byte of descriptor bits
 		move.b	d0,d6
-		ori.w	#$FF00,d6				; set all bits of high word; when these are fully shifted to low word, it's time to get another byte
+		ori.w	#$FF00,d6				; set all bits of high word; when these are fully shifted to low word, it's time to get another byte of descriptor bits
 
 	.bitsremaining:				
 		btst	#0,d6					; is the next byte compressed?
@@ -91805,9 +91993,9 @@ SaxDec_ReadCompressed:
 		move.w	d5,d0					; get current offset of end of decompressed data
 		andi.w	#$F000,d0
 		add.w	d0,d4					; add offset in d4
-		cmp.w	d4,d5				; is result greater than offset in d5?
-		bcc.s	SaxDec_IsMatch		; if not, d4 is index to the match
-		subi.w	#$1000,d4			; else, subtract 1000
+		cmp.w	d4,d5					; is result greater than offset in d5?
+		bcc.s	SaxDec_IsMatch			; if not, d4 is index to the match
+		subi.w	#$1000,d4				; else, subtract 1000
 		bcc.s	SaxDec_IsMatch			; if result is negative, this is a zero-fill match; else d4 is index to match
 		
 ;is_zeros:		
@@ -91834,10 +92022,10 @@ SaxDec_IsMatch:
 
 ; ===========================================================================
 SaxDec_GetByte:						
-		move.b	(a6)+,d0				; get next byte in compressed data
-		subq.w	#1,d7					; decrement remaining number of bytes
-		bne.s	.exit					; branch if bytes remain
-		addq.w	#4,sp					; if none remain, we are done
+		move.b	(a6)+,d0			; get next byte in compressed data
+		subq.w	#1,d7				; decrement remaining number of bytes
+		bne.s	.exit				; branch if bytes remain
+		addq.w	#4,sp				; if here, we are done; exit the decompressor
 
 	.exit:				
 		rts	
@@ -91863,15 +92051,10 @@ MergeCode: section org(0), file("sound/MergeData.dat"),over(Main) ; make data fi
 		even
 
 ; ===========================================================================
-
 ; ---------------------------------------------------------------------------
 ; DAC samples
 ; ---------------------------------------------------------------------------
 
-; the DAC data has to line up with the end of the bank.
-
-; actually it only has to fit within one bank, but we'll line it up to the end anyway
-; because the padding gives the sound driver some room to grow
 		align_to_end	sizeof_DAC_samples		; replaces cnop -$2F00,$8000
 
 ; Macro to include DAC samples, and generate bank pointer constants
@@ -91978,32 +92161,32 @@ MusicPoint2:		startbank
 		sndbank_ptr	MusFile_Drowning
 		sndbank_ptr	MusFile_Credits
 
-MusFile_HPZ:	incbin	"sound/music/compressed/HPZ.sax"
-MusFile_Drowning:	incbin	"sound/music/compressed/Drowning.sax"
-MusFile_Invincible:	incbin	"sound/music/compressed/Invincible.sax"
-MusFile_CNZ_2P:	incbin	"sound/music/compressed/CNZ2P.sax"
-MusFile_EHZ:	incbin	"sound/music/compressed/EHZ.sax"
-MusFile_MTZ:	incbin	"sound/music/compressed/MTZ.sax"
-MusFile_CNZ:	incbin	"sound/music/compressed/CNZ.sax"
-MusFile_MCZ:	incbin	"sound/music/compressed/MCZ.sax"
-MusFile_MCZ_2P:	incbin	"sound/music/compressed/MCZ2P.sax"
-MusFile_ARZ:	incbin	"sound/music/compressed/ARZ.sax"
-MusFile_DEZ:	incbin	"sound/music/compressed/DEZ.sax"
+MusFile_HPZ:			incbin	"sound/music/compressed/HPZ.sax"
+MusFile_Drowning:		incbin	"sound/music/compressed/Drowning.sax"
+MusFile_Invincible:		incbin	"sound/music/compressed/Invincible.sax"
+MusFile_CNZ_2P:			incbin	"sound/music/compressed/CNZ2P.sax"
+MusFile_EHZ:			incbin	"sound/music/compressed/EHZ.sax"
+MusFile_MTZ:			incbin	"sound/music/compressed/MTZ.sax"
+MusFile_CNZ:			incbin	"sound/music/compressed/CNZ.sax"
+MusFile_MCZ:			incbin	"sound/music/compressed/MCZ.sax"
+MusFile_MCZ_2P:			incbin	"sound/music/compressed/MCZ2P.sax"
+MusFile_ARZ:			incbin	"sound/music/compressed/ARZ.sax"
+MusFile_DEZ:			incbin	"sound/music/compressed/DEZ.sax"
 MusFile_SpecialStage:	incbin	"sound/music/compressed/SpecialStage.sax"
-MusFile_Options:	incbin	"sound/music/compressed/Options.sax"
-MusFile_Ending:	incbin	"sound/music/compressed/Ending.sax"
-MusFile_FinalBoss:	incbin	"sound/music/compressed/FinalBoss.sax"
-MusFile_CPZ:	incbin	"sound/music/compressed/CPZ.sax"
-MusFile_Boss:	incbin	"sound/music/compressed/Boss.sax"
-MusFile_SCZ:	incbin	"sound/music/compressed/SCZ.sax"
-MusFile_OOZ:	incbin	"sound/music/compressed/OOZ.sax"
-MusFile_WFZ:	incbin	"sound/music/compressed/WFZ.sax"
-MusFile_EHZ_2P:	incbin	"sound/music/compressed/EHZ2P.sax"
-MusFile_2PResults:	incbin	"sound/music/compressed/2PResult.sax"
-MusFile_SuperSonic:	incbin	"sound/music/compressed/SuperSonic.sax"
-MusFile_HTZ:	incbin	"sound/music/compressed/HTZ.sax"
-MusFile_Title:	incbin	"sound/music/compressed/TitleScreen.sax"
-MusFile_EndLevel:	incbin	"sound/music/compressed/EndLevel.sax"
+MusFile_Options:		incbin	"sound/music/compressed/Options.sax"
+MusFile_Ending:			incbin	"sound/music/compressed/Ending.sax"
+MusFile_FinalBoss:		incbin	"sound/music/compressed/FinalBoss.sax"
+MusFile_CPZ:			incbin	"sound/music/compressed/CPZ.sax"
+MusFile_Boss:			incbin	"sound/music/compressed/Boss.sax"
+MusFile_SCZ:			incbin	"sound/music/compressed/SCZ.sax"
+MusFile_OOZ:			incbin	"sound/music/compressed/OOZ.sax"
+MusFile_WFZ:			incbin	"sound/music/compressed/WFZ.sax"
+MusFile_EHZ_2P:			incbin	"sound/music/compressed/EHZ2P.sax"
+MusFile_2PResults:		incbin	"sound/music/compressed/2PResult.sax"
+MusFile_SuperSonic:		incbin	"sound/music/compressed/SuperSonic.sax"
+MusFile_HTZ:			incbin	"sound/music/compressed/HTZ.sax"
+MusFile_Title:			incbin	"sound/music/compressed/TitleScreen.sax"
+MusFile_EndLevel:		incbin	"sound/music/compressed/EndLevel.sax"
 
 MusFile_ExtraLife:		include	"sound/music/ExtraLife.asm"
 MusFile_GameOver:		include	"sound/music/GameOver.asm"
@@ -92020,7 +92203,7 @@ SFXPointers:	macro	name
 		endm
 		
 SoundIndex:		bnkswtch_vals
-		SFXFiles	SFXPointers			; generate little endian pointers and constants for SFX
+		SFXFiles	SFXPointers			; generate little endian pointers and  constants for SFX
 
 IncludeSFX:	macro	name
 SFXFile_\name:	include	"sound/sfx/\name\.asm"
