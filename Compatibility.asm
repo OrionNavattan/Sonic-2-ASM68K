@@ -22,7 +22,7 @@ width_pixels:	equ	ost_displaywidth
 mapping_frame:	equ	ost_frame
 anim_frame:		equ	ost_anim_frame
 anim:			equ	ost_anim
-prev_anim:		equ	ost_prev_anim
+prev_anim:		equ	ost_anim_restart
 anim_frame_duration:	equ ost_anim_time 
 collision_flags:		equ ost_col_type 
 collision_property:		equ ost_col_property

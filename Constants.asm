@@ -378,16 +378,16 @@ ost_x_vel:			rs.l 1				; *  $10 ; most objects; x-axis velocity (2 bytes)
 ost_y_vel:			equ __rs-2			; * $12 ; most objects; y-axis velocity (2 bytes)
 ost_inertia:		rs.w 1					; * $14 ; Sonic/Tails potential speed (2 bytes)
 ost_height:			rs.b 1				; * $16 ; most objects; height/2
-ost_width:			rs.b 1				; $17 ; most objects; width/2
-ost_priority:		rs.w 1					; $18 ; universal except multi-sprite objects; sprite stack priority - 0 is highest, 7 is lowest
+ost_width:			rs.b 1				; * $17 ; most objects; width/2
+ost_priority:		rs.w 1					; * $18 ; universal except multi-sprite objects; sprite stack priority - 0 is highest, 7 is lowest
 ost_displaywidth:	equ __rs-1				; $19 ; universal; display width/2
-ost_frame:			rs.b 1				; $1A ; universal; current frame displayed
-ost_anim_frame:		rs.b 1					; $1B ; most objects; current frame in animation script
-ost_anim:			rs.w 1				; $1C ; most objects; current animation
-ost_anim_restart:	equ __rs-1				; $1D ; most objects; restart animation flag / next animation number (Sonic)
-ost_anim_time:		rs.w 1					; $1E ; most objects; time to next frame (1 byte) / general timer (2 bytes)
-ost_anim_time_low:	equ __rs-1				; $1F ; used by some objects as master copy of timer
-ost_col_type:		rs.b 1					; $20 ; non-player objects; collision response type - 0 equ none; 1-$3F = enemy; $41-$7F = items; $81-BF = hurts; $C1-$FF = custom
+ost_frame:			rs.b 1				; * $1A ; universal; current frame displayed
+ost_anim_frame:		rs.b 1					; * $1B ; most objects; current frame in animation script
+ost_anim:			rs.w 1				; * $1C ; most objects; current animation
+ost_anim_restart:	equ __rs-1				; * $1D ; most objects; restart animation flag / next animation number (Sonic)
+ost_anim_time:		rs.w 1					; * $1E ; most objects; time to next frame (1 byte) / general timer (2 bytes)
+ost_anim_time_low:	equ __rs-1				; * $1F ; used by some objects as master copy of timer
+ost_col_type:		rs.b 1					; * $20 ; non-player objects; collision response type - 0 equ none; 1-$3F = enemy; $41-$7F = items; $81-BF = hurts; $C1-$FF = custom
 ost_col_property:	rs.b 1					; $21 ; non-player objects;  collision extra property
 ost_primary_status:			rs.b 1			; $22 ; most objects; bitfield indicating orientation or mode
 	status_xflip_bit:	equ 0
@@ -398,6 +398,7 @@ ost_primary_status:			rs.b 1			; $22 ; most objects; bitfield indicating orienta
 	status_p1_platform_bit:	equ 3
 	status_p2_platform_bit:	equ 4
 	status_rolljump_bit:	equ 4
+	status_pushing_bit:		equ 5
 	status_p1_pushing_bit:		equ 5
 	status_p2_pushing_bit:		equ 6
 	status_underwater_bit:	equ 6
@@ -411,6 +412,7 @@ ost_primary_status:			rs.b 1			; $22 ; most objects; bitfield indicating orienta
 	status_p2_platform:		equ 1<<status_p2_platform_bit ; sidekick is standing on this object (objects only)
 	status_standing_both:   equ status_p1_platform|status_p2_platform ; both players are standing on this object (objects only)
 	status_rolljump:	equ 1<<status_rolljump_bit	; Sonic/Tails is jumping after rolling (Sonic/Tails only)
+	status_pushing:		equ 1<<status_pushing_bit ; Sonic/Tails is pushing an object (Sonic/Tails only)
 	status_p1_pushing:		equ 1<<status_p1_pushing_bit ; main character is pushing this (objects only)
 	status_p2_pushing:      equ 1<<status_p2_pushing_bit	; sidekick is pushing this (objects only)
 	status_pushing_both:    equ status_p1_pushing|status_p2_pushing ; both players are pushing this (objects only)
@@ -526,10 +528,10 @@ ost_ss_flip_timer: 		equ $33 ; *
 ost_ss_z_pos: 			equ $34 ; *
 ost_ss_hurt_timer: 		equ $36 ; *
 ost_ss_slide_timer: 	equ $37 ; *
-ost_ss_rings_base:		equ $3C				; read as a word
-ost_ss_rings_hundreds: 	equ $3C					; read as a byte if we only want hundreds
-ost_ss_rings_tens: 		equ $3D
-ost_ss_rings_units: 	equ $3E
+ost_ss_rings_base:		equ $3C	; * ; read as a word
+ost_ss_rings_hundreds: 	equ $3C	; * : read as a byte if we only want hundreds
+ost_ss_rings_tens: 		equ $3D ; * 
+ost_ss_rings_units: 	equ $3E ; * 
 ost_ss_last_angle_index: equ $3F
 
 ; Additional object variables
