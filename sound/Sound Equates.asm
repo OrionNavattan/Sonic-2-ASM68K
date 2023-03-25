@@ -48,7 +48,7 @@ v_tempo_speed:			rs.b 1				; 13h ; original tempo for speed shoe restore (or 7Bh
 f_speedup:				rs.b 1			; 14h ; flag indicating whether speed shoes tempo is on (FFh) or off (0)
 f_dac_enabled:			rs.b 1				; 15h ; set of 80h if DAC is enabled, 0 if FM6 is enabled
 v_bank_number:			rs.b 1				; 16h ; current ROM bank (0 for MusicPoint1, $80 for MusicPoint2)
-f_adjust_pal:					rs.b 1			; 17h ; indicates the current music will be adjusted for PAL
+f_adjust_pal:					rs.b 1		; 17h ; indicates the current music will be adjusted for PAL
 
 sizeof_soundvars:		equ __rs			; 18h bytes
 

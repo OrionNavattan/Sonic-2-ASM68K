@@ -16,11 +16,11 @@ countof_ost_dynamic_2P:	equ $28
 countof_ost_level_only: equ $10					; additional reserved object ram for objects attached to players, and for the special stages                  
 sizeof_plc:			equ 6				; size of one pattern load cue
 countof_plc:		equ $10					; number of slots in the pattern load cue buffer
-sizeof_plc_buffer:	equ sizeof_plc*countof_plc	; total size of the PLC buffer, $60 by default
+sizeof_plc_buffer:	equ sizeof_plc*countof_plc		; total size of the PLC buffer, $60 by default
 sizeof_priority:	equ $80					; size of one priority section in sprite queue
 sizeof_dma:			equ $E				; size of one DMA command
 countof_dma:		equ $12					; number of slots in DMA queue
-sizeof_dma_queue:	equ sizeof_dma*countof_dma	; total size of the DMA queue, $FC by default
+sizeof_dma_queue:	equ sizeof_dma*countof_dma		; total size of the DMA queue, $FC by default
 
 level_max_width:	equ $80					; Doubled from Sonic 1 due to the switch to 128x128 level chunks
 level_max_height:	equ $10
@@ -323,8 +323,8 @@ CommonRoutineIDs:	macro	routinename
 			rsset 0
 
 ; Main OST					
-ost_id:			rs.b 1					; * 0 ; universal; object id
-ost_render:		rs.b 1					; * 1 ; universal; bitfield for x/y flip, display mode; bits defined below
+ost_id:			rs.b 1					;  0 ; universal; object id
+ost_render:		rs.b 1					;  1 ; universal; bitfield for x/y flip, display mode; bits defined below
 	render_xflip_bit:	equ 0
 	render_yflip_bit:	equ 1
 	render_rel_bit:		equ 2
@@ -343,7 +343,7 @@ ost_render:		rs.b 1					; * 1 ; universal; bitfield for x/y flip, display mode; 
 	render_subobjects:		equ 1<<render_subobjects_bit ; has subobjects to be rendered
 	render_onscreen:	equ 1<<render_onscreen_bit	; object is on screen
 
-ost_tile:		rs.w 1					; * 2 ; universal; tile VRAM, palette, priority, and x-flip/y-flip (2 bytes)
+ost_tile:		rs.w 1					;  2 ; universal; tile VRAM, palette, priority, and x-flip/y-flip (2 bytes)
 	; Low byte and bits 0-2 of high byte are the VRAM address divided by sizeof_cell ($20).
 	; Bits 3-7 of upper byte are bitfield as follows. 
 	tile_xflip_bit:	equ 3
@@ -352,44 +352,44 @@ ost_tile:		rs.w 1					; * 2 ; universal; tile VRAM, palette, priority, and x-fli
 	tile_pal34_bit:	equ 6
 	tile_hi_bit:	equ 7
 	
-	tile_xflip:	equ (1<<tile_xflip_bit)<<8							; $800
-	tile_yflip:	equ (1<<tile_yflip_bit)<<8							; $1000
-	tile_pal1:	equ (0<<tile_xflip_bit)<<8							; 0
-	tile_pal2:	equ (1<<tile_pal12_bit)<<8							; $2000
-	tile_pal3:	equ (1<<tile_pal34_bit)<<8							; $4000
-	tile_pal4:	equ ((1<<tile_pal34_bit)|(1<<tile_pal12_bit))<<8	; $6000
-	tile_hi:	equ (1<<tile_hi_bit)<<8								; $8000
+	tile_xflip:	equ (1<<tile_xflip_bit)<<8		; $800
+	tile_yflip:	equ (1<<tile_yflip_bit)<<8		; $1000
+	tile_pal1:	equ (0<<tile_xflip_bit)<<8		; 0
+	tile_pal2:	equ (1<<tile_pal12_bit)<<8		; $2000
+	tile_pal3:	equ (1<<tile_pal34_bit)<<8		; $4000
+	tile_pal4:	equ ((1<<tile_pal34_bit)|(1<<tile_pal12_bit))<<8 ; $6000
+	tile_hi:	equ (1<<tile_hi_bit)<<8			; $8000
 	
-	tile_palette:	equ tile_pal4									; $6000
-	tile_settings:	equ	tile_xflip|tile_yflip|tile_palette|tile_hi	; $F800
-	tile_vram:		equ (~tile_settings)&$FFFF						; $7FF
-	tile_draw:		equ	(~tile_hi)&$FFFF							; $7FFF
+	tile_palette:	equ tile_pal4				; $6000
+	tile_settings:	equ	tile_xflip|tile_yflip|tile_palette|tile_hi ; $F800
+	tile_vram:		equ (~tile_settings)&$FFFF	; $7FF
+	tile_draw:		equ	(~tile_hi)&$FFFF	; $7FFF
 	
 	
-ost_mappings:		rs.l 1					; * 4 ; universal; mappings address (4 bytes)
-ost_x_pos:			rs.l 1				; * 8 ; universal; x-axis position (2 bytes)
-ost_x_screen:		equ ost_x_pos				; * 8 ; x-axis position for screen-fixed items (2 bytes)
-ost_x_sub:			equ __rs-2			; * $A ; universal; x-axis subpixel position (2 bytes)
-ost_y_screen:		equ __rs-2				; * $A ; y-axis position for screen-fixed items (2 bytes)
-ost_y_pos:			rs.l 1				; * $C ; universal; y-axis position (2 bytes)
-ost_y_sub:			equ __rs-2			; * $E ; universal; y-axis subpixel position (2 bytes)
+ost_mappings:		rs.l 1					;  4 ; universal; mappings address (4 bytes)
+ost_x_pos:			rs.l 1				;  8 ; universal; x-axis position (2 bytes)
+ost_x_screen:		equ ost_x_pos				;  8 ; x-axis position for screen-fixed items (2 bytes)
+ost_x_sub:			equ __rs-2			;  $A ; universal; x-axis subpixel position (2 bytes)
+ost_y_screen:		equ __rs-2				;  $A ; y-axis position for screen-fixed items (2 bytes)
+ost_y_pos:			rs.l 1				;  $C ; universal; y-axis position (2 bytes)
+ost_y_sub:			equ __rs-2			;  $E ; universal; y-axis subpixel position (2 bytes)
 
-ost_x_vel:			rs.l 1				; *  $10 ; most objects; x-axis velocity (2 bytes)
-ost_y_vel:			equ __rs-2			; * $12 ; most objects; y-axis velocity (2 bytes)
-ost_inertia:		rs.w 1					; * $14 ; Sonic/Tails potential speed (2 bytes)
-ost_height:			rs.b 1				; * $16 ; most objects; height/2
-ost_width:			rs.b 1				; * $17 ; most objects; width/2
-ost_priority:		rs.w 1					; * $18 ; universal except multi-sprite objects; sprite stack priority - 0 is highest, 7 is lowest
+ost_x_vel:			rs.l 1				;   $10 ; most objects; x-axis velocity (2 bytes)
+ost_y_vel:			equ __rs-2			;  $12 ; most objects; y-axis velocity (2 bytes)
+ost_inertia:		rs.w 1					;  $14 ; Sonic/Tails potential speed (2 bytes)
+ost_height:			rs.b 1				;  $16 ; most objects; height/2
+ost_width:			rs.b 1				;  $17 ; most objects; width/2
+ost_priority:		rs.w 1					;  $18 ; universal except multi-sprite objects; sprite stack priority - 0 is highest, 7 is lowest
 ost_displaywidth:	equ __rs-1				; $19 ; universal; display width/2
-ost_frame:			rs.b 1				; * $1A ; universal; current frame displayed
-ost_anim_frame:		rs.b 1					; * $1B ; most objects; current frame in animation script
-ost_anim:			rs.w 1				; * $1C ; most objects; current animation
-ost_anim_restart:	equ __rs-1				; * $1D ; most objects; restart animation flag / next animation number (Sonic)
-ost_anim_time:		rs.w 1					; * $1E ; most objects; time to next frame (1 byte) / general timer (2 bytes)
-ost_anim_time_low:	equ __rs-1				; * $1F ; used by some objects as master copy of timer
-ost_col_type:		rs.b 1					; * $20 ; non-player objects; collision response type - 0 equ none; 1-$3F = enemy; $41-$7F = items; $81-BF = hurts; $C1-$FF = custom
-ost_col_property:	rs.b 1					; $21 ; non-player objects;  collision extra property
-ost_primary_status:			rs.b 1			; $22 ; most objects; bitfield indicating orientation or mode
+ost_frame:			rs.b 1				;  $1A ; universal; current frame displayed
+ost_anim_frame:		rs.b 1					;  $1B ; most objects; current frame in animation script
+ost_anim:			rs.w 1				;  $1C ; most objects; current animation
+ost_anim_restart:	equ __rs-1				;  $1D ; most objects; restart animation flag / next animation number (Sonic)
+ost_anim_time:		rs.w 1					;  $1E ; most objects; time to next frame (1 byte) / general timer (2 bytes)
+ost_anim_time_low:	equ __rs-1				;  $1F ; used by some objects as master copy of timer
+ost_col_type:		rs.b 1					;  $20 ; non-player objects; collision response type - 0 equ none; 1-$3F = enemy; $41-$7F = items; $81-BF = hurts; $C1-$FF = custom
+ost_col_property:	rs.b 1					;  $21 ; non-player objects;  collision extra property
+ost_primary_status:			rs.b 1			;  $22 ; most objects; bitfield indicating orientation or mode
 	status_xflip_bit:	equ 0
 	status_yflip_bit:	equ 1				; only non-player objects
 	status_air_bit:		equ 1				; only Sonic and Tails
@@ -412,17 +412,17 @@ ost_primary_status:			rs.b 1			; $22 ; most objects; bitfield indicating orienta
 	status_p2_platform:		equ 1<<status_p2_platform_bit ; sidekick is standing on this object (objects only)
 	status_standing_both:   equ status_p1_platform|status_p2_platform ; both players are standing on this object (objects only)
 	status_rolljump:	equ 1<<status_rolljump_bit	; Sonic/Tails is jumping after rolling (Sonic/Tails only)
-	status_pushing:		equ 1<<status_pushing_bit ; Sonic/Tails is pushing an object (Sonic/Tails only)
+	status_pushing:		equ 1<<status_pushing_bit	; Sonic/Tails is pushing an object (Sonic/Tails only)
 	status_p1_pushing:		equ 1<<status_p1_pushing_bit ; main character is pushing this (objects only)
 	status_p2_pushing:      equ 1<<status_p2_pushing_bit	; sidekick is pushing this (objects only)
 	status_pushing_both:    equ status_p1_pushing|status_p2_pushing ; both players are pushing this (objects only)
 	status_underwater:	equ 1<<status_underwater_bit	; Sonic/Tails is underwater (Sonic/Tails only)
 	status_broken:		equ 1<<status_broken_bit	; object has been broken (enemies/bosses)
-ost_respawn:				rs.b 1			; $23 ; non-player objects; respawn list index number
-ost_primary_routine:		rs.b 1				; $24 ; most objects; primary routine number
-ost_secondary_routine:		rs.b 1				; $25 ; most objects; secondary routine number
+ost_respawn:				rs.b 1			;  $23 ; non-player objects; respawn list index number
+ost_primary_routine:		rs.b 1				;  $24 ; most objects; primary routine number
+ost_secondary_routine:		rs.b 1				;  $25 ; most objects; secondary routine number
 ;ost_solid:		equ ost_secondary_routine			; $25 ; solid status flag
-ost_angle:					rs.w 1		; $26 ; most objects; angle of floor or rotation - 0 = flat; $40 = vertical left; $80 = ceiling; $C0 = vertical right
+ost_angle:					rs.w 1		;  $26 ; most objects; angle of floor or rotation - 0 = flat; $40 = vertical left; $80 = ceiling; $C0 = vertical right
 ost_subtype:				rs.w 1			; $28 ; non-player objects;  object subtype - must go last because some objects use this as a start address for a list (1 byte, but sometimes read as a word)
 ost_used:		equ __rs-1				; bytes used by regular OST, everything after this is scratch RAM
 		popo						; restore options
@@ -434,51 +434,51 @@ ost_used:		equ __rs-1				; bytes used by regular OST, everything after this is s
 next_subspr:	equ 6
 			
 			rsset ost_y_pos-1			; $B
-ost_mainspr_frame:			rs.b 1			; * $B ; current frame of parent sprite
+ost_mainspr_frame:			rs.b 1			;  $B ; current frame of parent sprite
 							rs.b 2	; $C-D; unused in this context
-ost_mainspr_width:			rs.b 1			; * $E ; parent sprite width
-ost_mainspr_childsprites:	rs.b 1				; * $F ; number of childsprites
-ost_subspr2_x_pos:			rs.b 2			; * $10 ; in place of ost_x_vel
-ost_subspr2_y_pos:			rs.b 2			; * $12 ; in place of ost_y_vel
-ost_mainspr_height:			rs.b 1			; * $14 ; parent sprite width
-ost_subspr2_frame:			rs.b 1			; * $15
-ost_subspr3_x_pos:			rs.b 2			; * $16 ; in place of ost_height
-ost_subspr3_y_pos:			rs.b 2			; * $18 ; in place of ost_priority
-							rs.b 1			; $1A ; unused in this context
-ost_subspr3_frame:			rs.b 1			; * $1B ; in place of ost_anim_frame
-ost_subspr4_x_pos:			rs.b 2			; * $1C ; in place of ost_anim
-ost_subspr4_y_pos:			rs.b 2			; * $1E ; in place of ost_anim_time
+ost_mainspr_width:			rs.b 1			;  $E ; parent sprite width
+ost_mainspr_childsprites:	rs.b 1				;  $F ; number of childsprites
+ost_subspr2_x_pos:			rs.b 2			;  $10 ; in place of ost_x_vel
+ost_subspr2_y_pos:			rs.b 2			;  $12 ; in place of ost_y_vel
+ost_mainspr_height:			rs.b 1			;  $14 ; parent sprite width
+ost_subspr2_frame:			rs.b 1			;  $15
+ost_subspr3_x_pos:			rs.b 2			;  $16 ; in place of ost_height
+ost_subspr3_y_pos:			rs.b 2			;  $18 ; in place of ost_priority
+							rs.b 1	; $1A ; unused in this context
+ost_subspr3_frame:			rs.b 1			;  $1B ; in place of ost_anim_frame
+ost_subspr4_x_pos:			rs.b 2			;  $1C ; in place of ost_anim
+ost_subspr4_y_pos:			rs.b 2			;  $1E ; in place of ost_anim_time
 
 			rsset ost_col_property			; $21
-ost_subspr4_frame:			rs.b 1			; * $21 ; in place of ost_col_property
-ost_subspr5_x_pos:			rs.b 2			; * $22 ; in place of ost_status
-ost_subspr5_y_pos:			rs.b 2			; * $24 ; in place of ost_routine
+ost_subspr4_frame:			rs.b 1			;  $21 ; in place of ost_col_property
+ost_subspr5_x_pos:			rs.b 2			;  $22 ; in place of ost_status
+ost_subspr5_y_pos:			rs.b 2			;  $24 ; in place of ost_routine
 							rs.b 1	; $26 ; unused in this context
-ost_subspr5_frame:			rs.b 1			; * $27
-ost_subspr6_x_pos:			rs.b 2			; * $28 ; in place of ost_subtype
-ost_subspr6_y_pos:			rs.b 2			; * $2A
+ost_subspr5_frame:			rs.b 1			;  $27
+ost_subspr6_x_pos:			rs.b 2			;  $28 ; in place of ost_subtype
+ost_subspr6_y_pos:			rs.b 2			;  $2A
 							rs.b 1	; $2C ; unused in this context
-ost_subspr6_frame:			rs.b 1			; * $2D
-ost_subspr7_x_pos:			rs.b 2			; * $2E
-ost_subspr7_y_pos:			rs.b 2			; * $30
+ost_subspr6_frame:			rs.b 1			;  $2D
+ost_subspr7_x_pos:			rs.b 2			;  $2E
+ost_subspr7_y_pos:			rs.b 2			;  $30
 							rs.b 1	; $32 ; unused in this context
-ost_subspr7_frame:			rs.b 1			; * $33
-ost_subspr8_x_pos:			rs.b 2			; * $34
-ost_subspr8_y_pos:			rs.b 2			; * $36
+ost_subspr7_frame:			rs.b 1			;  $33
+ost_subspr8_x_pos:			rs.b 2			;  $34
+ost_subspr8_y_pos:			rs.b 2			;  $36
 							rs.b 1	; $38 ; unused in this context
-ost_subspr8_frame:			rs.b 1			; * $39
-ost_subspr9_x_pos:			rs.b 2			; * $3A
-ost_subspr9_y_pos:			rs.b 2			; * $3C
+ost_subspr8_frame:			rs.b 1			;  $39
+ost_subspr9_x_pos:			rs.b 2			;  $3A
+ost_subspr9_y_pos:			rs.b 2			;  $3C
 							rs.b 1	; $3E ; unused in this context
-ost_subspr9_frame:			rs.b 1			; * $3F
+ost_subspr9_frame:			rs.b 1			;  $3F
 
 
 ; Object variables specific to Sonic & Tails
 			rsset $27
-ost_flip_angle:				rs.b 1			; $27 ; angle about the x axis (360 degrees = 256) (twist/tumble)
-ost_air_left:				rs.b 1			; $28 ; air left while underwater
-ost_flip_turned:			rs.b 1			; $29 ; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
-ost_obj_control:			rs.b 1			; $2A ; 0 for normal, 1 for hanging or for resting on a flipper, $81 for going through CNZ/OOZ/MTZ tubes or stopped in CNZ cages or stoppers or flying if Tails
+ost_flip_angle:				rs.b 1			;  $27 ; angle about the x axis (360 degrees = 256) (twist/tumble)
+ost_air_left:				rs.b 1			;  $28 ; air left while underwater
+ost_flip_turned:			rs.b 1			;  $29 ; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
+ost_obj_control:			rs.b 1			; $2A ; 0 for normal, 1 for hanging or for resting on a flipper, $81 for going through CNZ/OOZ/MTZ tubes, stopped in CNZ cages or launcher, or flying if Tails
 ost_secondary_status:		rs.b 1				; $2B ; status flags for powerups and oil slides
 	status_shield_bit:		equ	0		; set if character is equipped with a shield
 	status_invincible_bit:	equ	1			; set if character is invincible
@@ -508,30 +508,30 @@ ost_lrb_solid_bit:			rs.w 1			; $3F ; ; the bit to check for left/right/bottom s
 
 
 ; Boss object variables
-ost_boss_subtype: 		equ $A		; * subtype counter for all bosses except EHZ and CPZ; also determines primary routine
-ost_boss_flash_time: 	equ $14		; *
-ost_boss_wobble:		equ $1A		; *
-ost_boss_routine:		equ $26		; * in place of ost_angle
-ost_boss_defeated:		equ $2C		; *
-ost_boss_hitcount2:		equ $32		; *
-ost_boss_hurtplayer:		equ $38	; * flag set by collision response routine when player 1 has just been hurt by a boss
+ost_boss_subtype: 		equ $A				;  subtype counter for all bosses except EHZ and CPZ; also determines primary routine
+ost_boss_flash_time: 	equ $14					; 
+ost_boss_wobble:		equ $1A				; 
+ost_boss_routine:		equ $26				;  in place of ost_angle
+ost_boss_defeated:		equ $2C				; 
+ost_boss_hitcount2:		equ $32				; 
+ost_boss_hurtplayer:		equ $38				;  flag set by collision response routine when player 1 has just been hurt by a boss
 
 
 ; Special Stage object properties
-ost_ss_dplc_timer: 		equ $23 ; *
-ost_ss_x_pos: 			equ $2A ; *
-ost_ss_x_sub: 			equ $2C ; *
-ost_ss_y_pos: 			equ $2E ; *
-ost_ss_y_sub:			equ $30 ; *
-ost_ss_init_flip_timer: equ $32 ; *
-ost_ss_flip_timer: 		equ $33 ; *
-ost_ss_z_pos: 			equ $34 ; *
-ost_ss_hurt_timer: 		equ $36 ; *
-ost_ss_slide_timer: 	equ $37 ; *
-ost_ss_rings_base:		equ $3C	; * ; read as a word
-ost_ss_rings_hundreds: 	equ $3C	; * : read as a byte if we only want hundreds
-ost_ss_rings_tens: 		equ $3D ; * 
-ost_ss_rings_units: 	equ $3E ; * 
+ost_ss_dplc_timer: 		equ $23				; 
+ost_ss_x_pos: 			equ $2A				; 
+ost_ss_x_sub: 			equ $2C				; 
+ost_ss_y_pos: 			equ $2E				; 
+ost_ss_y_sub:			equ $30				; 
+ost_ss_init_flip_timer: equ $32					; 
+ost_ss_flip_timer: 		equ $33				; 
+ost_ss_z_pos: 			equ $34				; 
+ost_ss_hurt_timer: 		equ $36				; 
+ost_ss_slide_timer: 	equ $37					; 
+ost_ss_rings_base:		equ $3C				;  ; read as a word
+ost_ss_rings_hundreds: 	equ $3C					;  : read as a byte if we only want hundreds
+ost_ss_rings_tens: 		equ $3D				;  
+ost_ss_rings_units: 	equ $3E					;  
 ost_ss_last_angle_index: equ $3F
 
 ; Additional object variables

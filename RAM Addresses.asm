@@ -19,7 +19,7 @@ v_ost_all:          rs.b sizeof_ost*countof_ost			; $FFFFB000 ; object variable 
 	; Reserved object RAM: players, titlecards, and game over/time over
     v_ost_reserved:			equ	v_ost_all
     v_ost_player1:   	 	equ v_ost_all			; $FFFFB040 first object (Tails in a Tails Alone game; Sonic otherwise)
-    v_ost_player2:         	equ v_ost_all+sizeof_ost		; $FFFFB040 ; second object (Tails in a Sonic and Tails game or in 2P mode)
+    v_ost_player2:         	equ v_ost_all+sizeof_ost	; $FFFFB040 ; second object (Tails in a Sonic and Tails game or in 2P mode)
     v_ost_titlecard:				equ	v_ost_all+(sizeof_ost*2) ; $FFFFB080 
     v_ost_titlecard_zonename:		equ	v_ost_titlecard	; level title card: zone name
     v_ost_gameover_gametext:		equ	v_ost_titlecard	; "GAME" from GAME OVER
@@ -70,7 +70,7 @@ v_secondary_collision:  rs.b $300				; $FFFFD900
 
 				rsblockend ss_shared_ram
 
-v_dma_queue:       		rs.b sizeof_dma_queue	; $FFFFDC00 ; queued DMA commands to be executed the next time ProcessDMA is called, $12 commands by default, $E bytes each, $FC bytes total
+v_dma_queue:       		rs.b sizeof_dma_queue		; $FFFFDC00 ; queued DMA commands to be executed the next time ProcessDMA is called, $12 commands by default, $E bytes each, $FC bytes total
 v_dma_queue_slot:  		rs.l 1				; $FFFFDCFC ; stores the address of the next open slot for a queued VDP command
 v_sprite_queue_2:       rs.b $280				; $FFFFDD00 ; sprite attribute table buffer for player 2's half of screen in two-player mode
                         rs.b $80				; unused, but SAT buffer 2 can spill over into this area when there are too many sprites on-screen
@@ -162,7 +162,7 @@ v_bg3_redraw_direction_p2:		rs.w 1			; $FFFFEE5E ; bitfield ; for CPZ; bits 0-3 
 				ramblock vblank_camera_copies	; required for teleport swap table
 ; Copies of the camera position RAM and scroll redraw flags that are copied during VBlank and used by DrawTilesWhenMoving:
 v_camera_pos_copy:			rs.l 2			; $FFFFEE60
-v_camera_pos_bg_copy:		rs.l 2			; $FFFFEE68
+v_camera_pos_bg_copy:		rs.l 2				; $FFFFEE68
 v_camera_pos_bg2_copy:		rs.l 2				; $FFFFEE70
 v_camera_pos_bg3_copy:		rs.l 2				; $FFFFEE78
 				ramblocksize vblank_camera_copies
@@ -193,7 +193,7 @@ v_camera_y_diff:		rs.w 1				; $FFFFEEB2 ; (new X pos - old X pos) * 256
 v_bg_x_pos_diff: 			rs.w 1			; $FFFFEEB4 ; Effective camera change used in WFZ ending and HTZ screen shake
 v_bg_y_pos_diff:			rs.w 1			; $FFFFEEB6 ; Effective camera change used in WFZ ending and HTZ screen shake
 
-				ramblock camera_diffs_p2		; required for teleport swap table
+				ramblock camera_diffs_p2	; required for teleport swap table
 v_camera_x_diff_p2:		rs.w 1				; $FFFFEEB8 ; (new X pos - old X pos) * 256
 v_camera_y_diff_p2:		rs.w 1				; $FFFFEEBA ; (new X pos - old X pos) * 256
 				ramblocksize camera_diffs_p2
@@ -715,7 +715,7 @@ v_ss_total_won:				rs.w 1			; $FFFFFF38 ; high byte is player 1, low byte is pla
 v_perfect_rings_left:		rs.w 1				; $FFFFFF40 ; remaining number of rings in a level
 f_ss_perfect:				rs.w 1			; $FFFFFF42 ; flag set if all rings in a special stage are collected
 							rs.b 8	; $FFFFFF44-$FFFFFF4B ; unused
-v_credits_num:			rs.w 1			; $FFFFFF4C ; current frame of the credits sequence
+v_credits_num:			rs.w 1				; $FFFFFF4C ; current frame of the credits sequence
 f_slot_use:					equ v_credits_num ; $FFFFFF4C ; flag indicating a CNZ slot machine is in use
 
 ; CNZ slot machine variables; $12 values
@@ -888,7 +888,7 @@ v_title_falling_star:	rs.b sizeof_ost				; $FFFFB440
 
 ; Special Stage variables:	
 				rsset RAM_Start			; character art, stage layout, and object location data
-v_ss_character_art:		rs.b sizeof_nem_specialsonicandtails		; $FFFF0000 ; $353 art blocks ;  SSRAM_Nem_SpecialSonicAndTails
+v_ss_character_art:		rs.b sizeof_nem_specialsonicandtails ; $FFFF0000 ; $353 art blocks ;  SSRAM_Nem_SpecialSonicAndTails
 
 v_ss_perspective_data:	rs.b $1AFC				; $FFFF6A60 ; SSRAM_Kos_SpecialPerspective
 v_ss_level_layout:		rs.b $180			; $FFFF855C ; SSRAM_Nem_SpecialLevelLayout:

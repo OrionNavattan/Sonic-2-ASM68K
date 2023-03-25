@@ -214,7 +214,7 @@ zUpdateEverything:
 		; If the system is PAL, then this performs some timing adjustments
 		; (i.e. you need to update 1.2x as much to keep up the same rate)
 		ld	hl,f_pal				; Get address of f_pal
-		ld	a,(z_abs_vars+f_adjust_pal)			; load f_adjust_pal into 'a'
+		ld	a,(z_abs_vars+f_adjust_pal)		; load f_adjust_pal into 'a'
 		and	a,(hl)					; and them together
 		jr	z,.not_pal				; if zero, branch
 		ld	hl,v_pal_update_counter
@@ -1446,7 +1446,7 @@ Sound_PlayBGM:
 		ld	c,a					; Result -> 'c'
 		ccf						; Invert carry flag...
 		sbc	a,a					; ... so that this sets a to FFh if bit 6 of original a was clear (allow PAL double-update), zero otherwise (do not allow PAL double-update)
-		ld	(z_abs_vars+f_adjust_pal),a			; Set f_adjust_pal
+		ld	(z_abs_vars+f_adjust_pal),a		; Set f_adjust_pal
 		ld	a,c					; Put prior multiply result back in
 		add	a,a					; Now multiplied by 8!
 		sbc	a,a					; This is FFh if bit 5 of original a was set (uncompressed song), zero otherwise (compressed song)
