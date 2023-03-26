@@ -65,9 +65,9 @@
 		filedef	Kos_MCZ,"art/kosinski/MCZ",kos,unc
 		filedef	Kos_CNZ,"art/kosinski/CNZ",kos,unc
 		filedef	Kos_CPZ,"art/kosinski/CPZ_DEZ",kos,unc
-		filedef	Kos_ARZ,"art/kosinski/ARZ",kos,kos
-		filedef	Kos_SCZ,"art/kosinski/WFZ_SCZ",kos,kos
-		filedef	Kos_WFZ,"art/kosinski/WFZ_Supp",kos,kos
+		filedef	Kos_ARZ,"art/kosinski/ARZ",kos,unc
+		filedef	Kos_SCZ,"art/kosinski/WFZ_SCZ",kos,unc
+		filedef	Kos_WFZ,"art/kosinski/WFZ_Supp",kos,unc
 		
 		; Special Stage level patterns
 		; Only one line of each tile is stored in this file. The other 7 lines are

@@ -6,7 +6,7 @@
 
 						rsset $FFFF0000
 RAM_Start:				equ __rs
-v_128x128_tiles:		rs.b $8000			;equ   $FFFF0000 ; 128x128 tile mappings ($8000 bytes)
+v_128x128_tiles:		rs.b $8000			;equ   $FFFF0000 ; 128x128 tile mappings ($8000 bytes); also used as decompression buffer for level tiles
 v_level_layout:         rs.b sizeof_level			; $FFFF8000 ; level and background layouts ($1000 bytes)
 v_16x16_tiles:          rs.w sizeof_16x16_all			; $FFFF9000 ; 16x16 tile mappings ($C00 bytes)
 v_bgscroll_buffer:      rs.b $200				; $FFFFA800 ; used by some layer deformation routines
@@ -203,8 +203,8 @@ f_screen_shake: 			rs.b 1			; $FFFFEEBD ; flag to activate screen shaking code (
 f_disable_horiz_scroll:			rs.b 1			; $FFFFEEBE ; flag to disable horizontal scrolling for entire screen in 1P or top half in 2P
 f_disable_horiz_scroll_p2:		rs.b 1			; $FFFFEEBF ; flag to disable horizontal scrolling for bottom half of screen in 2P 
 
-unk_eec0:				rs.l 1			; $FFFFEEC0 ; unused other than a single write in LevelSizeLoad
-unk_eec4:				rs.w 1			; $FFFFEEC4 ; same as above. The write being a long also overwrites the address below
+v_boundary_unused1:				rs.l 1			; $FFFFEEC0 ; unused other than a single write in LevelSizeLoad
+v_boundary_unused2:				rs.w 1			; $FFFFEEC4 ; same as above. The write being a long also overwrites the address below
 
 v_boundary_bottom_next: 	rs.w 1				; $FFFFEEC6 ; bottom level boundary, next
 

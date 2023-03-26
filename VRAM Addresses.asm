@@ -393,25 +393,10 @@ vram_DEZBoss:               equ $6600
 vram_DEZWindow:   			equ $6F00
 vram_MechaSonic:            equ $7000
 
-; Tile counts for several levels, used to patch tiles
+; Tile addresses for patching HTZ and WFZ
 
-ArtTile_ArtKos_LevelArt               = $0000
-ArtTile_ArtKos_NumTiles_EHZ           = $0393
-ArtTile_ArtKos_NumTiles_CPZ           = $0364
-ArtTile_ArtKos_NumTiles_ARZ           = $03F6
-ArtTile_ArtKos_NumTiles_CNZ           = $0331
-ArtTile_ArtKos_NumTiles_HTZ_Main      = $01FC			; Until this tile, equal to EHZ tiles.
-ArtTile_ArtKos_NumTiles_HTZ_Sup       = $0183			; Overwrites several EHZ tiles.
-ArtTile_ArtKos_NumTiles_HTZ           = ArtTile_ArtKos_NumTiles_HTZ_Main + ArtTile_ArtKos_NumTiles_HTZ_Sup - 1
-ArtTile_ArtKos_NumTiles_MCZ           = $03A9
-ArtTile_ArtKos_NumTiles_OOZ           = $02AA
-ArtTile_ArtKos_NumTiles_MTZ           = $0319
-ArtTile_ArtKos_NumTiles_SCZ           = $036E
-ArtTile_ArtKos_NumTiles_WFZ_Main      = $0307			; Until this tile, equal to SCZ tiles.
-ArtTile_ArtKos_NumTiles_WFZ_Sup       = $0073			; Overwrites several SCZ tiles.
-ArtTile_ArtKos_NumTiles_WFZ           = ArtTile_ArtKos_NumTiles_WFZ_Main + ArtTile_ArtKos_NumTiles_WFZ_Sup - 1
-ArtTile_ArtKos_NumTiles_DEZ           = $0326			; Skips several CPZ tiles.
-
+tile_HTZ_Patch:      		equ $3F80	; until this address, equal to EHZ tiles
+tile_WFZ_Patch:				equ $60E0	; Until this address, equal to SCZ tiles
 
 ; ---------------------------------------------------------------------------
 ; Unused beta leftovers
@@ -420,10 +405,10 @@ ArtTile_ArtKos_NumTiles_DEZ           = $0326			; Skips several CPZ tiles.
 vram_HPZPulseOrb_1:       			equ $5D00
 vram_HPZPulseOrb_2:      			equ $5E00
 vram_HPZPulseOrb_3:       			equ $5F00
-vram_HiddenPalaceBridge:						equ $6000
+vram_HiddenPalaceBridge:			equ $6000
 vram_HPZWaterfall:       			equ $62A0
 vram_HPZPlatform:           		equ $6940
-vram_HiddenPalaceOrb:             			equ $6B40
+vram_HiddenPalaceOrb:             	equ $6B40
 vram_HPZEmerald:         			equ $7240
 vram_Unknown:             			equ $7F40
 vram_FloatPlatform:       			equ $8300

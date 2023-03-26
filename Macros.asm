@@ -255,7 +255,7 @@ jmpto:		 macro directaddr,indirectaddr
 ; ---------------------------------------------------------------------------
 ; Convert to absolute value (i.e., always positive)
 
-; Some instances unnecessarily use word-length branches. These macros
+; Some instances unnecessarily use word-length branches. The absw macro
 ; allow optimizing those instances automatically. 
 ; nxg = AXM68K modded mnemonic for neg.
 ; ---------------------------------------------------------------------------
@@ -289,8 +289,6 @@ mvabs:	macro src,dest						; move absolute value from source to destination
 	
 		.already_pos\@:
    		endm
-
-
 
 ; ---------------------------------------------------------------------------
 ; Sign-extend a value and use it with moveq
@@ -634,10 +632,10 @@ dma_fill:	macro value,length,dest
 
 dma_fill_sequential:	macro value,length,dest,firstlast
 	
-	if strcmp("\firstlast","first")				; if this is the first DMA fill,
-		lea	(vdp_control_port).l,a5			; load the VDP control port,
-		move.w	#vdp_auto_inc+1,(a5)			; and set VDP increment to 1 byte
-	endc	
+		if strcmp("\firstlast","first")				; if this is the first DMA fill,
+			lea	(vdp_control_port).l,a5			; load the VDP control port,
+			move.w	#vdp_auto_inc+1,(a5)			; and set VDP increment to 1 byte
+		endc	
 					
 		move.l	#(vdp_dma_length_hi<<16)+(((length-1)&$FF00)<<8)+vdp_dma_length_low+((length-1)&$FF),(a5) ; set length of DMA
 		move.w	#vdp_dma_vram_fill,(a5)			; set DMA mode to fill
@@ -648,9 +646,10 @@ dma_fill_sequential:	macro value,length,dest,firstlast
 		btst	#dma_status_bit,d1			; is DMA in progress?
 		bne.s	.wait_for_dma\@				; if yes, branch
 		
-	if strcmp("\firstlast","last")				; if this is the last DMA fill in the sequence,
-		move.w	#vdp_auto_inc+2,(a5)			; set VDP increment back to 2 bytes
-	endc	
+		if strcmp("\firstlast","last")				; if this is the last DMA fill in the sequence,
+			move.w	#vdp_auto_inc+2,(a5)			; set VDP increment back to 2 bytes
+		endc	
+		
 		endm
 
 ; ---------------------------------------------------------------------------
@@ -693,7 +692,7 @@ enable_display:	macro
 zonewarning:	macro dest,elementsize
 	.end:
 		if (.end-dest)-(ZoneCount*elementsize)<>0
-		inform 1,"Size of \dest ($%h) does not match ZoneCount ($%h).",(.end-dest)/elementsize,ZoneCount
+			inform 1,"Size of \dest ($%h) does not match ZoneCount ($%h).",(.end-dest)/elementsize,ZoneCount
 		endc
 		endm
 
@@ -836,37 +835,67 @@ sceneryobjdata:	macro	frame,mappings,vram,width,priority
 
 		
 ; ---------------------------------------------------------------------------
-; Remap ASCII to the custom character set used in the Options and 2P Menus
+; Remap ASCII to the custom character sets used throughout the game
+; input: character set to use, text to display
 ; ---------------------------------------------------------------------------
 
-menutxt:	macro
-		
-		menu_str:	equs \1			
+charset:	macro	charset,txt
 
-		dc.b	strlen(\1)-1
+		local str,chr
+		str:	equs \txt
+		
+		if stricmp("\charset","menu")
+		
+		dc.b	strlen(\txt)-1
 	
-		rept strlen(\1)					; repeat for length of string
-		menu_chr:	substr ,1,"\menu_str"		; get current character
-		menu_str:	substr 2,,"\menu_str"		; advance to next character in string
+		rept strlen(\txt)				; repeat for length of string
+		chr:	substr ,1,"\str"		; get current character
+		str:	substr 2,,"\str"		; advance to next character in string
 	
-		if strcmp(" ","\menu_chr")
+		if strcmp(" ","\chr")
 			dc.b	0	
-		elseif	instr("0123456789","\menu_chr")
-			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$30)
-		elseif	instr("*","\menu_chr")
-			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$20)
-		elseif	instr("@","\menu_chr")
-			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$35) ; @ = copyright symbol	
-		elseif	instr(":","\menu_chr")
-			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$2E)
-		elseif	instr(".","\menu_chr")
-			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$21)		
-		elseif	instr("ABCDEFGHIJKLMNOPQRSTUVWXYZ","\menu_chr")
-			dc.b	(vram_StandardFont/sizeof_cell)+("\menu_chr"-$33)
+		elseif	instr("0123456789","\chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$30)
+		elseif	instr("*","\chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$20)
+		elseif	instr("@","\chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$35) ; @ = copyright symbol	
+		elseif	instr(":","\chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$2E)
+		elseif	instr(".","\chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$21)		
+		elseif	instr("ABCDEFGHIJKLMNOPQRSTUVWXYZ","\chr")
+			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$33)
 		else 	
 			inform 2,"Invalid character in menu text (must be uppercase letter, numeral, '*', '@', ' ;', or '.')."
+		endc		
+		endr
+					
+		elseif stricmp("\charset","copyright")
+		
+		rept strlen(\txt)				; repeat for length of string
+		chr:	substr ,1,"\str"		; get current character
+		str:	substr 2,,"\str"		; advance to next character in string
+	
+		if strcmp(" ","\chr")
+			dc.w	0
+		elseif	instr("0123456789","\chr")
+			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$30)
+		elseif	instr("*","\chr")
+			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$2A)
+		elseif	instr("@","\chr")
+			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$35) ; @ = copyright symbol	
+		elseif	instr(":","\chr")
+			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$2E)
+		elseif	instr(".","\chr")
+			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$21)		
+		elseif	instr("ABCDEFGHIJKLMNOPQRSTUVWXYZ","\chr")
+			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$33)
+		else 	
+			inform 2,"Invalid character in title screen copyright text (must be uppercase letter, numeral, '*', '@', ' ;', or '.')."
 		endc
 		endr
+		endc
 		endm
 	
 
@@ -892,7 +921,7 @@ bnkswtch_vals: macro *
 		rept 9
 
 		if OptimizeSoundDriver
-		; Because why use a and e when you can use h and l?
+			; Because why use a and e when you can use h and l?
 			if (offset(*))&(1<<(15+cnt))<>0
 				bnkswtch_\*_\$ptr_num:	equ 75h	; ld (hl),l
 			else
@@ -924,7 +953,7 @@ startbank: macro *
 		else
 			sndbnk_id: = sndbnk_id+1
 		endc		
-		align	sizeof_z80_bank				; align to $8000 boundary
+		align	sizeof_z80_bank				; align to 32KB boundary
 		sound_bank_start: = offset(*)			; start address of sound bank
 		ptr_id: = 80h					; initial pointer id constant
 		
