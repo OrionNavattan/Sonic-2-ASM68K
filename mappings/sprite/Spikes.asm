@@ -12,68 +12,68 @@ Map_Spike:	index offset(*)
 		ptr	Map_obj36_00EC
 		ptr	Map_obj36_011E
 
-Map_obj36_0010:	spriteHeader
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 0, 0, 0, 0, 0
-		spriteFooter
+Map_obj36_0010:	spritemap
+		piece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	0, -$10, 2, 4, 0, 0, 0, 0, 0
+		endsprite
 
-Map_obj36_0022:	spriteHeader
-		spritePiece	-$20, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spriteFooter
+Map_obj36_0022:	spritemap
+		piece	-$20, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	0, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	$10, -$10, 2, 4, 0, 0, 0, 0, 0
+		endsprite
 
-Map_obj36_0044:	spriteHeader
-		spritePiece	-$30, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-$20, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	$20, -$10, 2, 4, 0, 0, 0, 0, 0
-		spriteFooter
+Map_obj36_0044:	spritemap
+		piece	-$30, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	-$20, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	0, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	$10, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	$20, -$10, 2, 4, 0, 0, 0, 0, 0
+		endsprite
 
-Map_obj36_0076:	spriteHeader
-		spritePiece	-$40, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-$30, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-$20, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	$20, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	$30, -$10, 2, 4, 0, 0, 0, 0, 0
-		spriteFooter
+Map_obj36_0076:	spritemap
+		piece	-$40, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	-$30, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	-$20, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	0, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	$10, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	$20, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	$30, -$10, 2, 4, 0, 0, 0, 0, 0
+		endsprite
 
-Map_obj36_00B8:	spriteHeader
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 0, 0, 0, 0, 0
-		spriteFooter
+Map_obj36_00B8:	spritemap
+		piece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, 0, 4, 2, 0, 0, 0, 0, 0
+		endsprite
 
-Map_obj36_00CA:	spriteHeader
-		spritePiece	-$10, -$20, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, $10, 4, 2, 0, 0, 0, 0, 0
-		spriteFooter
+Map_obj36_00CA:	spritemap
+		piece	-$10, -$20, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, 0, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, $10, 4, 2, 0, 0, 0, 0, 0
+		endsprite
 
-Map_obj36_00EC:	spriteHeader
-		spritePiece	-$10, -$30, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$20, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, $10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, $20, 4, 2, 0, 0, 0, 0, 0
-		spriteFooter
+Map_obj36_00EC:	spritemap
+		piece	-$10, -$30, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, -$20, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, 0, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, $10, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, $20, 4, 2, 0, 0, 0, 0, 0
+		endsprite
 
-Map_obj36_011E:	spriteHeader
-		spritePiece	-$10, -$40, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$30, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$20, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, $10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, $20, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, $30, 4, 2, 0, 0, 0, 0, 0
-		spriteFooter
+Map_obj36_011E:	spritemap
+		piece	-$10, -$40, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, -$30, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, -$20, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, 0, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, $10, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, $20, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, $30, 4, 2, 0, 0, 0, 0, 0
+		endsprite
 
 		even

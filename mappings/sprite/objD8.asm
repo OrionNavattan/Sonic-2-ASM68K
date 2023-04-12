@@ -6,28 +6,28 @@ Map_objD8:	index offset(*)
 	ptr	Map_objD8_0034
 	ptr	Map_objD8_003E
 
-Map_objD8_000C:	spriteHeader
-	spritePiece	-$10, -8, 4, 2, 0, 0, 0, 0, 0
-	spriteFooter
+Map_objD8_000C:	spritemap
+	piece	-$10, -8, 4, 2, 0, 0, 0, 0, 0
+	endsprite
 
-Map_objD8_0016:	spriteHeader
-	spritePiece	-$C, -$10, 3, 4, 8, 0, 0, 0, 0
-	spriteFooter
+Map_objD8_0016:	spritemap
+	piece	-$C, -$10, 3, 4, 8, 0, 0, 0, 0
+	endsprite
 
-Map_objD8_0020:	spriteHeader
-	spritePiece	-8, -$10, 2, 4, $14, 0, 0, 0, 0
-	spriteFooter
+Map_objD8_0020:	spritemap
+	piece	-8, -$10, 2, 4, $14, 0, 0, 0, 0
+	endsprite
 
-Map_objD8_002A:	spriteHeader
-	spritePiece	-$10, -6, 4, 2, 0, 0, 0, 0, 0
-	spriteFooter
+Map_objD8_002A:	spritemap
+	piece	-$10, -6, 4, 2, 0, 0, 0, 0, 0
+	endsprite
 
-Map_objD8_0034:	spriteHeader
-	spritePiece	-$E, -$E, 3, 4, 8, 0, 0, 0, 0
-	spriteFooter
+Map_objD8_0034:	spritemap
+	piece	-$E, -$E, 3, 4, 8, 0, 0, 0, 0
+	endsprite
 
-Map_objD8_003E:	spriteHeader
-	spritePiece	-$A, -$10, 2, 4, $14, 0, 0, 0, 0
-	spriteFooter
+Map_objD8_003E:	spritemap
+	piece	-$A, -$10, 2, 4, $14, 0, 0, 0, 0
+	endsprite
 
 	even

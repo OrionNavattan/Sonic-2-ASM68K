@@ -36,91 +36,91 @@ Map_YellowSpring:	index offset(*)
 ; Sprite mappings - springs
 ; ----------------------------------------------------------------------------
 
-word_19048:	spriteHeader
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 2, 2, 8, 0, 0, 0, 0
-		spriteFooter
+word_19048:	spritemap
+		piece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
+		piece	-8, 0, 2, 2, 8, 0, 0, 0, 0
+		endsprite
 
-word_1905A:	spriteHeader
-		spritePiece	-$10, -8, 4, 2, 0, 0, 0, 0, 0
-		spriteFooter
+word_1905A:	spritemap
+		piece	-$10, -8, 4, 2, 0, 0, 0, 0, 0
+		endsprite
 
-word_19064:	spriteHeader
-		spritePiece	-$10, -$20, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, -$10, 2, 4, $C, 0, 0, 0, 0
-		spriteFooter
+word_19064:	spritemap
+		piece	-$10, -$20, 4, 2, 0, 0, 0, 0, 0
+		piece	-8, -$10, 2, 4, $C, 0, 0, 0, 0
+		endsprite
 
-word_19076:	spriteHeader
-		spritePiece	0, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, -8, 1, 2, 4, 0, 0, 0, 0
-		spriteFooter
+word_19076:	spritemap
+		piece	0, -$10, 1, 4, 0, 0, 0, 0, 0
+		piece	-8, -8, 1, 2, 4, 0, 0, 0, 0
+		endsprite
 
-word_19088:	spriteHeader
-		spritePiece	-8, -$10, 1, 4, 0, 0, 0, 0, 0
-		spriteFooter
+word_19088:	spritemap
+		piece	-8, -$10, 1, 4, 0, 0, 0, 0, 0
+		endsprite
 
-word_19092:	spriteHeader
-		spritePiece	$10, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, -8, 3, 2, 6, 0, 0, 0, 0
-		spriteFooter
+word_19092:	spritemap
+		piece	$10, -$10, 1, 4, 0, 0, 0, 0, 0
+		piece	-8, -8, 3, 2, 6, 0, 0, 0, 0
+		endsprite
 
-word_190A4:	spriteHeader
-		spritePiece	-$10, 0, 4, 2, 0, 0, 1, 0, 0
-		spritePiece	-8, -$10, 2, 2, 8, 0, 1, 0, 0
-		spriteFooter
+word_190A4:	spritemap
+		piece	-$10, 0, 4, 2, 0, 0, 1, 0, 0
+		piece	-8, -$10, 2, 2, 8, 0, 1, 0, 0
+		endsprite
 
-word_190B6:	spriteHeader
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	0, 0, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$A, -5, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 1, 0
-		spriteFooter
+word_190B6:	spritemap
+		piece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
+		piece	0, 0, 2, 2, 8, 0, 0, 0, 0
+		piece	-$A, -5, 2, 2, $C, 0, 0, 0, 0
+		piece	-$10, 0, 2, 2, $1C, 0, 0, 1, 0
+		endsprite
 
-word_190D8:	spriteHeader
-		spritePiece	-$16, -$A, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-6, 6, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 1, 0
-		spriteFooter
+word_190D8:	spritemap
+		piece	-$16, -$A, 4, 2, 0, 0, 0, 0, 0
+		piece	-6, 6, 2, 2, 8, 0, 0, 0, 0
+		piece	-$10, 0, 2, 2, $1C, 0, 0, 1, 0
+		endsprite
 
-word_190F2:	spriteHeader
-		spritePiece	-5, -$1A, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	$B, -$A, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$A, -$D, 3, 4, $10, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 1, 0
-		spriteFooter
+word_190F2:	spritemap
+		piece	-5, -$1A, 4, 2, 0, 0, 0, 0, 0
+		piece	$B, -$A, 2, 2, 8, 0, 0, 0, 0
+		piece	-$A, -$D, 3, 4, $10, 0, 0, 0, 0
+		piece	-$10, 0, 2, 2, $1C, 0, 0, 1, 0
+		endsprite
 
-word_19114:	spriteHeader
-		spritePiece	-$10, 0, 4, 2, 0, 0, 1, 0, 0
-		spritePiece	0, -$10, 2, 2, 8, 0, 1, 0, 0
-		spritePiece	-$A, -$B, 2, 2, $C, 0, 1, 0, 0
-		spritePiece	-$10, -$10, 2, 2, $1C, 0, 1, 1, 0
-		spriteFooter
+word_19114:	spritemap
+		piece	-$10, 0, 4, 2, 0, 0, 1, 0, 0
+		piece	0, -$10, 2, 2, 8, 0, 1, 0, 0
+		piece	-$A, -$B, 2, 2, $C, 0, 1, 0, 0
+		piece	-$10, -$10, 2, 2, $1C, 0, 1, 1, 0
+		endsprite
 
-word_19136:	spriteHeader
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	0, 0, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$A, -5, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 0, 0
-		spriteFooter
+word_19136:	spritemap
+		piece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
+		piece	0, 0, 2, 2, 8, 0, 0, 0, 0
+		piece	-$A, -5, 2, 2, $C, 0, 0, 0, 0
+		piece	-$10, 0, 2, 2, $1C, 0, 0, 0, 0
+		endsprite
 
-word_19158:	spriteHeader
-		spritePiece	-$16, -$A, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-6, 6, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 0, 0
-		spriteFooter
+word_19158:	spritemap
+		piece	-$16, -$A, 4, 2, 0, 0, 0, 0, 0
+		piece	-6, 6, 2, 2, 8, 0, 0, 0, 0
+		piece	-$10, 0, 2, 2, $1C, 0, 0, 0, 0
+		endsprite
 
-word_19172:	spriteHeader
-		spritePiece	-5, -$1A, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	$B, -$A, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$A, -$D, 3, 4, $10, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 0, 0
-		spriteFooter
+word_19172:	spritemap
+		piece	-5, -$1A, 4, 2, 0, 0, 0, 0, 0
+		piece	$B, -$A, 2, 2, 8, 0, 0, 0, 0
+		piece	-$A, -$D, 3, 4, $10, 0, 0, 0, 0
+		piece	-$10, 0, 2, 2, $1C, 0, 0, 0, 0
+		endsprite
 
-word_19194:	spriteHeader
-		spritePiece	-$10, 0, 4, 2, 0, 0, 1, 0, 0
-		spritePiece	0, -$10, 2, 2, 8, 0, 1, 0, 0
-		spritePiece	-$A, -$B, 2, 2, $C, 0, 1, 0, 0
-		spritePiece	-$10, -$10, 2, 2, $1C, 0, 1, 0, 0
-		spriteFooter
+word_19194:	spritemap
+		piece	-$10, 0, 4, 2, 0, 0, 1, 0, 0
+		piece	0, -$10, 2, 2, 8, 0, 1, 0, 0
+		piece	-$A, -$B, 2, 2, $C, 0, 1, 0, 0
+		piece	-$10, -$10, 2, 2, $1C, 0, 1, 0, 0
+		endsprite
 
 		even

@@ -9,12 +9,12 @@ Map_ARZUnusedScenery:	index offset(*)
 	ptr	Frame_ARZSceneryGrass
 	ptr	Frame_ARZSceneryGround
 
-Frame_ARZSceneryGrass:	spriteHeader
-	spritePiece	-4, -8, 1, 2, 0, 0, 0, 0, 0
-	spriteFooter
+Frame_ARZSceneryGrass:	spritemap
+	piece	-4, -8, 1, 2, 0, 0, 0, 0, 0
+	endsprite
 
-Frame_ARZSceneryGround:	spriteHeader
-	spritePiece	-4, -8, 1, 2, 2, 0, 0, 0, 0
-	spriteFooter
+Frame_ARZSceneryGround:	spritemap
+	piece	-4, -8, 1, 2, 2, 0, 0, 0, 0
+	endsprite
 
 	even

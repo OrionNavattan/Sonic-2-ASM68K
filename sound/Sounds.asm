@@ -154,7 +154,7 @@ SFXFiles:	macro	func
 		\func	QuickDoorSlam,	70h			; unused
 		\func	DrawbridgeDown,	70h
 		\func	LaserBurst,		6Fh		; OOZ & MTZ boss lasers
-		\func	Scatter,		6Fh		; OOZ boss laser on platform floor, Tornado shot down in WFZ
+		\func	Scatter,		6Fh		; OOZ boss laser on platform floor, laser that shoots Tornado shot down in WFZ
 		\func	Teleport,		70h
 		\func	Error,			71h
 		\func	MechaSonicBuzz,	70h

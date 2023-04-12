@@ -8,42 +8,42 @@ Map_obj42:	index offset(*)
 	ptr	Map_obj42_006C
 	ptr	Map_obj42_007E
 
-Map_obj42_0010:	spriteHeader
-	spritePiece	-$18, -1, 1, 1, 0, 0, 0, 0, 0
-	spriteFooter
+Map_obj42_0010:	spritemap
+	piece	-$18, -1, 1, 1, 0, 0, 0, 0, 0
+	endsprite
 
-Map_obj42_001A:	spriteHeader
-	spritePiece	-$18, -1, 2, 1, 1, 0, 0, 0, 0
-	spriteFooter
+Map_obj42_001A:	spritemap
+	piece	-$18, -1, 2, 1, 1, 0, 0, 0, 0
+	endsprite
 
-Map_obj42_0024:	spriteHeader
-	spritePiece	-$14, -4, 2, 2, 3, 0, 0, 0, 0
-	spriteFooter
+Map_obj42_0024:	spritemap
+	piece	-$14, -4, 2, 2, 3, 0, 0, 0, 0
+	endsprite
 
-Map_obj42_002E:	spriteHeader
-	spritePiece	-8, -4, 2, 2, 7, 0, 0, 0, 0
-	spritePiece	-$10, -4, 2, 2, 3, 0, 0, 0, 0
-	spriteFooter
+Map_obj42_002E:	spritemap
+	piece	-8, -4, 2, 2, 7, 0, 0, 0, 0
+	piece	-$10, -4, 2, 2, 3, 0, 0, 0, 0
+	endsprite
 
-Map_obj42_0040:	spriteHeader
-	spritePiece	0, -4, 2, 2, 7, 0, 1, 0, 0
-	spritePiece	-8, -4, 1, 2, $B, 0, 1, 0, 0
-	spriteFooter
+Map_obj42_0040:	spritemap
+	piece	0, -4, 2, 2, 7, 0, 1, 0, 0
+	piece	-8, -4, 1, 2, $B, 0, 1, 0, 0
+	endsprite
 
-Map_obj42_0052:	spriteHeader
-	spritePiece	$C, -4, 1, 2, $D, 0, 0, 0, 0
-	spritePiece	4, -4, 1, 2, $B, 0, 0, 0, 0
-	spritePiece	-4, -4, 1, 2, $D, 1, 1, 0, 0
-	spriteFooter
+Map_obj42_0052:	spritemap
+	piece	$C, -4, 1, 2, $D, 0, 0, 0, 0
+	piece	4, -4, 1, 2, $B, 0, 0, 0, 0
+	piece	-4, -4, 1, 2, $D, 1, 1, 0, 0
+	endsprite
 
-Map_obj42_006C:	spriteHeader
-	spritePiece	$10, -4, 1, 2, $D, 0, 0, 0, 0
-	spritePiece	8, -4, 1, 2, $D, 1, 1, 0, 0
-	spriteFooter
+Map_obj42_006C:	spritemap
+	piece	$10, -4, 1, 2, $D, 0, 0, 0, 0
+	piece	8, -4, 1, 2, $D, 1, 1, 0, 0
+	endsprite
 
-Map_obj42_007E:	spriteHeader
-	spritePiece	-$10, -$10, 2, 4, $15, 0, 0, 0, 0
-	spritePiece	0, -$10, 2, 4, $1D, 0, 0, 0, 0
-	spriteFooter
+Map_obj42_007E:	spritemap
+	piece	-$10, -$10, 2, 4, $15, 0, 0, 0, 0
+	piece	0, -$10, 2, 4, $1D, 0, 0, 0, 0
+	endsprite
 
 	even

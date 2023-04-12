@@ -1098,11 +1098,11 @@ zPSGNoteOff:
 		or	a,1Fh					; Attenuation Off
 		ld	(zPSG),a
     if FixBugs
-; Without zInitMusicPlayback forcefully muting all channels, there's the
-; risk of music accidentally playing noise because it can't detect if
-; the PSG4/noise channel needs muting, on track initialisation.
-; This bug can be heard be playing the End of Level music in CNZ, whose
-; music uses the noise channel. S&K's driver contains a fix just like this.
+		; Without zInitMusicPlayback forcefully muting all channels, there's the
+		; risk of music accidentally playing noise because it can't detect if
+		; the PSG4/noise channel needs muting, on track initialisation.
+		; This bug can be heard be playing the End of Level music in CNZ, whose
+		; music uses the noise channel. S&K's driver contains a fix just like this.
 		cp	0DFh					; Are we stopping PSG3?
 		ret	nz
 		ld	a,0FFh					; If so, stop noise channel while we're at it
@@ -1121,7 +1121,7 @@ zPSGNoteOff:
 
 GenNoteFM:	macro	const, psgfq, fmfq, firstoctave
 		if OptimizeSoundDriver
-								; Only include values for the first octave; the rest will be calculated on the fly to save space.
+			; Only include values for the first octave; the rest will be calculated on the fly to save space.
 			if strlen("\fmfq")>0&strlen("\firstoctave")>0
 			dw \fmfq				; add FM note value into ROM
 			endc
