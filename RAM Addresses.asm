@@ -6,7 +6,7 @@
 
 						rsset $FFFF0000
 RAM_Start:				equ __rs
-v_128x128_tiles:		rs.b $8000			;equ   $FFFF0000 ; 128x128 tile mappings ($8000 bytes); also used as decompression buffer for level tiles
+v_128x128_tiles:		rs.b $8000			;   $FFFF0000 ; 128x128 tile mappings ($8000 bytes); also used as decompression buffer for level tiles
 v_level_layout:         rs.b sizeof_level			; $FFFF8000 ; level and background layouts ($1000 bytes)
 v_16x16_tiles:          rs.w sizeof_16x16_all			; $FFFF9000 ; 16x16 tile mappings ($C00 bytes)
 v_bgscroll_buffer:      rs.b $200				; $FFFFA800 ; used by some layer deformation routines

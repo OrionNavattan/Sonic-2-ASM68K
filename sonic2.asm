@@ -17813,7 +17813,7 @@ loc_DE94:
 		movea.w	word_DE7E(pc,d0.w),a3
 		movem.l	d4-d5/a0,-(sp)
 		movem.l	d4-d5,-(sp)
-		bsr.w	GetBlock
+		bsr.w	GetBlockData
 		movem.l	(sp)+,d4-d5
 		bsr.w	Calc_VRAM_Pos_P1
 		bsr.w	DrawBlock_Vertical
@@ -17838,7 +17838,7 @@ loc_DED0:
 		movea.w	word_DE7E(pc,d0.w),a3
 		movem.l	d4-d5/a0,-(sp)
 		movem.l	d4-d5,-(sp)
-		bsr.w	GetBlock
+		bsr.w	GetBlockData
 		movem.l	(sp)+,d4-d5
 		bsr.w	Calc_VRAM_Pos_P1
 		bsr.w	sub_E1FA
@@ -18279,7 +18279,7 @@ loc_E234:
 ; ===========================================================================
 
 
-GetBlock:								
+GetBlockData:								
 		add.w	(a3),d5
 		add.w	4(a3),d4
 		lea	(v_16x16_tiles).w,a1
@@ -22346,9 +22346,9 @@ Scenery1_ObjData:
 		sceneryobjdata	id_Frame_Rope2,Map_BoltEnd_Rope,tile_Nem_BoltEnd_Rope+tile_pal3,4,6 ; end of looped rope emerging from lava (left)
 		sceneryobjdata	1,Map_EmeraldHillBridge,tile_Nem_EHZBridge+tile_pal3,4,1
 		sceneryobjdata	id_Frame_BoltEnd,Map_BoltEnd_Rope,tile_Nem_BoltEnd_Rope+tile_pal2,$10,6 ; bottom tip of hanging bolts
-		sceneryobjdata	3,Map_21F14,tile_Nem_HTZZipline+tile_pal3,8,4
-		sceneryobjdata	4,Map_21F14,tile_Nem_HTZZipline+tile_pal3,8,4
-		sceneryobjdata	1,Map_21F14,tile_Nem_HTZZipline+tile_pal3,$20,1
+		sceneryobjdata	3,Map_Tram,tile_Nem_Tram+tile_pal3,8,4
+		sceneryobjdata	4,Map_Tram,tile_Nem_Tram+tile_pal3,8,4
+		sceneryobjdata	1,Map_Tram,tile_Nem_Tram+tile_pal3,$20,1
 		sceneryobjdata	0,Map_TramStake,tile_LevelArt+tile_pal3,8,1
 		sceneryobjdata	1,Map_TramStake,tile_LevelArt+tile_pal3,8,1
 		sceneryobjdata	0,Map_ARZUnusedScenery,tile_Waterfall3+tile_pal3,4,4 ; unused, appears to be a small slice of ground
@@ -32486,8 +32486,9 @@ SolidObject:
 		rts	
 
 ; ---------------------------------------------------------------------------
-; As above, but the object's and the sidekick's on-screen status are not checked
+; As above, but the object and sidekick's on-screen statuses are not checked
 ; ---------------------------------------------------------------------------
+
 SolidObject_NoRenderChk:				
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
@@ -32564,18 +32565,18 @@ SolidObject_Heightmap_SingleCharacter:
 ; ===========================================================================
 ; unused/dead code: check for an object that is sloped at the top and at the bottom.
 
-;DoubleSlopedSolid:
-		lea	($FFFFB000).w,a1
+;SlopeObject_Double:
+		lea	(v_ost_player1).w,a1
 		moveq	#3,d6
-		movem.l	d1-d4,-(sp)
+		pushr.l	d1-d4
 		bsr.s	loc_1983E
-		movem.l	(sp)+,d1-d4
-		lea	($FFFFB040).w,a1
+		popr.l	d1-d4
+		lea	(v_ost_player2).w,a1
 		addq.b	#1,d6
 
 loc_1983E:				
 		btst	d6,ost_primary_status(a0)
-		beq.w	loc_19988
+		beq.w	SlopeObject_Double_cont
 		move.w	d1,d2
 		add.w	d2,d2
 		btst	#1,ost_primary_status(a1)
@@ -32597,23 +32598,23 @@ loc_19862:
 
 loc_19876:				
 		move.w	d4,d2
-		bsr.w	loc_19C0E
+		bsr.w	MoveOnDoubleSlope
 		moveq	#0,d4
 		rts	
 ; ===========================================================================
 
 SolidObject_OOZSpring:				
-		lea	($FFFFB000).w,a1
+		lea	(v_ost_player1).w,a1
 		moveq	#3,d6
 		movem.l	d1-d4,-(sp)
 		bsr.s	loc_19896
 		movem.l	(sp)+,d1-d4
-		lea	($FFFFB040).w,a1
+		lea	(v_ost_player2).w,a1
 		addq.b	#1,d6
 
 loc_19896:				
 		btst	d6,ost_primary_status(a0)
-		beq.w	loc_198EC
+		beq.w	SolidObject_OOZSpring_cont
 		btst	#1,ost_primary_status(a1)
 		bne.s	loc_198B8
 		move.w	ost_x_pos(a1),d0
@@ -32631,7 +32632,7 @@ loc_198B8:
 		moveq	#0,d4
 		rts	
 ; ===========================================================================
-
+; In-lined call to MoveWithPlatform
 loc_198CC:				
 		move.w	ost_y_pos(a0),d0
 		sub.w	d2,d0
@@ -32646,15 +32647,15 @@ loc_198CC:
 		rts	
 ; ===========================================================================
 
-loc_198EC:				
+SolidObject_OOZSpring_cont:				
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
 		add.w	d1,d0
-		bmi.w	loc_19AC4
+		bmi.w	Solid_NoCollision
 		move.w	d1,d4
 		add.w	d4,d4
 		cmp.w	d4,d0
-		bhi.w	loc_19AC4
+		bhi.w	Solid_NoCollision
 		move.w	ost_y_pos(a0),d5
 		add.w	d3,d5
 		move.b	ost_height(a1),d3
@@ -32664,30 +32665,30 @@ loc_198EC:
 		sub.w	d5,d3
 		addq.w	#4,d3
 		add.w	d2,d3
-		bmi.w	loc_19AC4
+		bmi.w	Solid_NoCollision
 		move.w	d2,d4
 		add.w	d4,d4
 		cmp.w	d4,d3
-		bcc.w	loc_19AC4
-		bra.w	loc_19A2E
+		bcc.w	Solid_NoCollision
+		bra.w	Solid_Collision
 ; ===========================================================================
 
 SolidObject_Heightmap_Cont:				
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
 		add.w	d1,d0
-		bmi.w	loc_19AC4
+		bmi.w	Solid_NoCollision
 		move.w	d1,d3
 		add.w	d3,d3
 		cmp.w	d3,d0
-		bhi.w	loc_19AC4
+		bhi.w	Solid_NoCollision
 		move.w	d0,d5
 		btst	#render_xflip_bit,ost_render(a0)
-		beq.s	loc_19954
+		beq.s	.no_xflip
 		not.w	d5
 		add.w	d3,d5
 
-loc_19954:				
+	.no_xflip:				
 		lsr.w	#1,d5
 		move.b	(a2,d5.w),d3
 		sub.b	(a2),d3
@@ -32701,23 +32702,23 @@ loc_19954:
 		sub.w	d5,d3
 		addq.w	#4,d3
 		add.w	d2,d3
-		bmi.w	loc_19AC4
+		bmi.w	Solid_NoCollision
 		move.w	d2,d4
 		add.w	d4,d4
 		cmp.w	d4,d3
-		bcc.w	loc_19AC4
-		bra.w	loc_19A2E
+		bcc.w	Solid_NoCollision
+		bra.w	Solid_Collision
 ; ===========================================================================
-
-loc_19988:				
+; unused/dead
+SlopeObject_Double_cont:				
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
 		add.w	d1,d0
-		bmi.w	loc_19AC4
+		bmi.w	Solid_NoCollision
 		move.w	d1,d3
 		add.w	d3,d3
 		cmp.w	d3,d0
-		bhi.w	loc_19AC4
+		bhi.w	Solid_NoCollision
 		move.w	d0,d5
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	loc_199AE
@@ -32738,28 +32739,28 @@ loc_199AE:
 		ext.w	d5
 		add.w	d5,d3
 		addq.w	#4,d3
-		bmi.w	loc_19AC4
+		bmi.w	Solid_NoCollision
 		add.w	d5,d2
 		move.w	d2,d4
 		add.w	d5,d4
 		cmp.w	d4,d3
-		bcc.w	loc_19AC4
-		bra.w	loc_19A2E
+		bcc.w	Solid_NoCollision
+		bra.w	Solid_Collision
 ; ===========================================================================
 
 Solid_ChkCollision:				
 		tst.b	ost_render(a0)
-		bpl.w	loc_19AC4
+		bpl.w	Solid_NoCollision
 
 Solid_SkipRenderChk:				
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
 		add.w	d1,d0
-		bmi.w	loc_19AC4
+		bmi.w	Solid_NoCollision
 		move.w	d1,d3
 		add.w	d3,d3
 		cmp.w	d3,d0
-		bhi.w	loc_19AC4
+		bhi.w	Solid_NoCollision
 		move.b	ost_height(a1),d3
 		ext.w	d3
 		add.w	d3,d2
@@ -32767,64 +32768,68 @@ Solid_SkipRenderChk:
 		sub.w	ost_y_pos(a0),d3
 		addq.w	#4,d3
 		add.w	d2,d3
-		bmi.w	loc_19AC4
+		bmi.w	Solid_NoCollision
 		andi.w	#$7FF,d3
 		move.w	d2,d4
 		add.w	d4,d4
 		cmp.w	d4,d3
-		bcc.w	loc_19AC4
+		bcc.w	Solid_NoCollision
 
-loc_19A2E:				
+Solid_Collision:				
 		tst.b	$2A(a1)
-		bmi.w	loc_19AC4
+		bmi.w	Solid_NoCollision
 		cmpi.b	#6,ost_primary_routine(a1)
-		bcc.w	loc_19AEA
+		bcc.w	Solid_Debug
 		tst.w	(v_debug_active).w
-		bne.w	loc_19AEA
+		bne.w	Solid_Debug
 		move.w	d0,d5
 		cmp.w	d0,d1
-		bcc.s	loc_19A56
+		bcc.s	.player_left
+		
+	;.player_right:	
 		add.w	d1,d1
 		sub.w	d1,d0
 		move.w	d0,d5
 		neg.w	d5
 
-loc_19A56:				
+	.player_left:				
 		move.w	d3,d1
 		cmp.w	d3,d2
-		bcc.s	loc_19A64
+		bcc.s	.player_top
+		
+	;.player_bottom:	
 		subq.w	#4,d3
 		sub.w	d4,d3
 		move.w	d3,d1
 		neg.w	d1
 
-loc_19A64:				
+	.player_top:				
 		cmp.w	d1,d5
-		bhi.w	loc_19AEE
+		bhi.w	Solid_TopBottom
 
-loc_19A6A:				
+Solid_LeftRight:				
 		cmpi.w	#4,d1
-		bls.s	loc_19AB6
+		bls.s	Solid_SideAir
 		tst.w	d0
-		beq.s	loc_19A90
-		bmi.s	loc_19A7E
+		beq.s	Solid_AlignToSide
+		bmi.s	Solid_OnRight
 		tst.w	ost_x_vel(a1)
-		bmi.s	loc_19A90
-		bra.s	loc_19A84
+		bmi.s	Solid_AlignToSide
+		bra.s	Solid_StopX
 ; ===========================================================================
 
-loc_19A7E:				
+Solid_OnRight:				
 		tst.w	ost_x_vel(a1)
-		bpl.s	loc_19A90
+		bpl.s	Solid_AlignToSide
 
-loc_19A84:				
+Solid_StopX:				
 		move.w	#0,ost_inertia(a1)
 		move.w	#0,ost_x_vel(a1)
 
-loc_19A90:				
+Solid_AlignToSide:				
 		sub.w	d0,ost_x_pos(a1)
 		btst	#1,ost_primary_status(a1)
-		bne.s	loc_19AB6
+		bne.s	Solid_SideAir
 		move.l	d6,d4
 		addq.b	#2,d4
 		bset	d4,ost_primary_status(a0)
@@ -32836,8 +32841,8 @@ loc_19A90:
 		rts	
 ; ===========================================================================
 
-loc_19AB6:				
-		bsr.s	loc_19ADC
+Solid_SideAir:				
+		bsr.s	Solid_NotPushing
 		move.w	d6,d4
 		addi.b	#$D,d4
 		bset	d4,d6
@@ -32845,44 +32850,46 @@ loc_19AB6:
 		rts	
 ; ===========================================================================
 
-loc_19AC4:				
+Solid_NoCollision:				
 		move.l	d6,d4
 		addq.b	#2,d4
 		btst	d4,ost_primary_status(a0)
-		beq.s	loc_19AEA
+		beq.s	Solid_Debug
 		cmpi.b	#2,ost_anim(a1)
-		beq.s	loc_19ADC
+		beq.s	Solid_NotPushing
 		move.w	#1,ost_anim(a1)
 
-loc_19ADC:				
+Solid_NotPushing:				
 		move.l	d6,d4
 		addq.b	#2,d4
 		bclr	d4,ost_primary_status(a0)
 		bclr	#5,ost_primary_status(a1)
 
-loc_19AEA:				
+Solid_Debug:				
 		moveq	#0,d4
 		rts	
 ; ===========================================================================
 
-loc_19AEE:				
+Solid_TopBottom:				
 		tst.w	d3
-		bmi.s	loc_19B06
+		bmi.s	Solid_Below
+		
+;Solid_Above:		
 		cmpi.w	#$10,d3
-		bcs.s	loc_19B56
+		bcs.s	Solid_Landed
 		cmpi.b	#id_PinballLauncher,ost_id(a0)
-		bne.s	loc_19AC4
+		bne.s	Solid_NoCollision
 		cmpi.w	#$14,d3
-		bcs.s	loc_19B56
-		bra.s	loc_19AC4
+		bcs.s	Solid_Landed
+		bra.s	Solid_NoCollision
 ; ===========================================================================
 
-loc_19B06:				
+Solid_Below:				
 		tst.w	ost_y_vel(a1)
-		beq.s	loc_19B28
-		bpl.s	loc_19B1C
+		beq.s	Solid_Squash
+		bpl.s	Solid_TopBtmAir
 		tst.w	d3
-		bpl.s	loc_19B1C
+		bpl.s	Solid_TopBtmAir
 	if FixBugs=0
 		; This is in the wrong place: Sonic will not be pushed out of an object 
 		; from above if he's not moving upwards against it!
@@ -32894,7 +32901,7 @@ loc_19B06:
 	endc	
 		move.w	#0,ost_y_vel(a1)
 
-loc_19B1C:
+Solid_TopBtmAir:
 	if FixBugs
 		; See the bug above.
 		sub.w	d3,ost_y_pos(a1)
@@ -32906,13 +32913,9 @@ loc_19B1C:
 		rts	
 ; ===========================================================================
 
-loc_19B28:				
+Solid_Squash:				
 		btst	#1,ost_primary_status(a1)
-		bne.s	loc_19B1C
-		;move.w	d0,d4
-		;bpl.s	loc_19B36
-		;neg.w	d4
-;loc_19B36:	
+		bne.s	Solid_TopBtmAir	
 		mvabs.w	d0,d4
 
 		; Hey, look: it's the two lines of code that the Taxman/Stealth
@@ -32920,7 +32923,7 @@ loc_19B28:
 		; If Sonic is near the left or right edge of the object, then don't
 		; kill him, instead just push him away horizontally.			
 		cmpi.w	#$10,d4
-		bcs.w	loc_19A6A
+		bcs.w	Solid_LeftRight
 		pushr.l	a0
 		movea.l	a1,a0
 		jsr	(KillCharacter).l
@@ -32932,7 +32935,7 @@ loc_19B28:
 		rts	
 ; ===========================================================================
 
-loc_19B56:				
+Solid_Landed:				
 		subq.w	#4,d3
 		moveq	#0,d1
 		move.b	ost_displaywidth(a0),d1
@@ -32940,11 +32943,11 @@ loc_19B56:
 		add.w	d2,d2
 		add.w	ost_x_pos(a1),d1
 		sub.w	ost_x_pos(a0),d1
-		bmi.s	loc_19B8E
+		bmi.s	Solid_Miss
 		cmp.w	d2,d1
-		bcc.s	loc_19B8E
+		bcc.s	Solid_Miss
 		tst.w	ost_y_vel(a1)
-		bmi.s	loc_19B8E
+		bmi.s	Solid_Miss
 		sub.w	d3,ost_y_pos(a1)
 		subq.w	#1,ost_y_pos(a1)
 		bsr.w	loc_19E14
@@ -32955,7 +32958,7 @@ loc_19B56:
 		rts	
 ; ===========================================================================
 
-loc_19B8E:				
+Solid_Miss:				
 		moveq	#0,d4
 		rts	
 ; ===========================================================================
@@ -33015,7 +33018,7 @@ locret_19C0C:
 		rts	
 ; ===========================================================================
 
-loc_19C0E:				
+MoveOnDoubleSlope:				
 		btst	#3,ost_primary_status(a1)
 		beq.s	locret_19C0C
 		move.w	ost_x_pos(a1),d0
@@ -42034,11 +42037,11 @@ JmpTo3_SpeedToPos:
 PlaneSwitcher:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_1FCF0(pc,d0.w),d1
-		jsr	off_1FCF0(pc,d1.w)
+		move.w	PSwitch_Index(pc,d0.w),d1
+		jsr	PSwitch_Index(pc,d1.w)
 		jmp	(DespawnObject3).l
 ; ===========================================================================
-off_1FCF0	index offset(*),,2	
+PSwitch_Index	index offset(*),,2	
 		ptr loc_1FCF6	; 0 
 		ptr loc_1FDA4	; 2
 		ptr loc_1FEAE	; 4
@@ -42046,7 +42049,7 @@ off_1FCF0	index offset(*),,2
 
 loc_1FCF6:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_1FFB8,ost_mappings(a0)
+		move.l	#Map_PSwitch,ost_mappings(a0)
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a0)
 
 loc_1FD08:
@@ -42276,49 +42279,9 @@ loc_1FFA4:
 
 locret_1FFB6:				
 		rts	
-; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_1FFB8:				
-		dc.w word_1FFC8-Map_1FFB8			; 0
-		dc.w word_1FFEA-Map_1FFB8			; 1
-		dc.w word_2000C-Map_1FFB8			; 2
-		dc.w word_2000C-Map_1FFB8			; 3
-		dc.w word_2002E-Map_1FFB8			; 4
-		dc.w word_20050-Map_1FFB8			; 5
-		dc.w word_20072-Map_1FFB8			; 6
-		dc.w word_20072-Map_1FFB8			; 7
-word_1FFC8:	dc.w 4			
-word_1FFCA:	dc.w $E005,    0,    0,$FFF8			; 0
-		dc.w $F005,    0,    0,$FFF8			; 4
-		dc.w	 5,    0,    0,$FFF8			; 8
-		dc.w $1005,    0,    0,$FFF8			; 12
-word_1FFEA:	dc.w 4			
-word_1FFEC:	dc.w $C005,    0,    0,$FFF8			; 0
-		dc.w $E005,    0,    0,$FFF8			; 4
-		dc.w	 5,    0,    0,$FFF8			; 8
-		dc.w $3005,    0,    0,$FFF8			; 12
-word_2000C:	dc.w 4			
-		dc.w $8005,    0,    0,$FFF8			; 0
-		dc.w $E005,    0,    0,$FFF8			; 4
-		dc.w	 5,    0,    0,$FFF8			; 8
-		dc.w $7005,    0,    0,$FFF8			; 12
-word_2002E:	dc.w 4			
-		dc.w $F805,    0,    0,$FFE0			; 0
-		dc.w $F805,    0,    0,$FFF0			; 4
-		dc.w $F805,    0,    0,	   0			; 8
-		dc.w $F805,    0,    0,	 $10			; 12
-word_20050:	dc.w 4			
-		dc.w $F805,    0,    0,$FFC0			; 0
-		dc.w $F805,    0,    0,$FFE0			; 4
-		dc.w $F805,    0,    0,	   0			; 8
-		dc.w $F805,    0,    0,	 $30			; 12
-word_20072:	dc.w 4			
-		dc.w $F805,    0,    0,$FF80			; 0
-		dc.w $F805,    0,    0,$FFE0			; 4
-		dc.w $F805,    0,    0,	   0			; 8
-		dc.w $F805,    0,    0,	 $70			; 12
+
+		include "mappings/sprite/Plane Switcher.asm"
+		
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -42457,7 +42420,7 @@ off_2021E:		index offset(*),,2
 
 loc_20222:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_202FA,ost_mappings(a0)
+		move.l	#Map_CPZBetaPlat,ost_mappings(a0)
 		move.w	#(vram_FloatPlatform/sizeof_cell)+tile_pal4+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo9_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -42528,12 +42491,9 @@ loc_202E6:
 		move.w	ost_x_pos(a0),d4
 		bsr.w	DetectPlatform
 		jmpto	DespawnObject,JmpTo4_DespawnObject
+
 ; ===========================================================================
-; ===========================================================================
-Map_202FA:				
-		dc.w word_202FC-Map_202FA			; 0
-word_202FC:	dc.w 1			
-word_202FE:	dc.w $F80D,  0,	 0,$FFF0			; 0
+		include "mappings/sprite/CPZ Beta Platform (unused).asm"
 ; ===========================================================================
 
     if Revision<2
@@ -42559,17 +42519,17 @@ JmpTo5_CalcSine
 GiantEmerald:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2032A(pc,d0.w),d1
-		jmp	off_2032A(pc,d1.w)
+		move.w	GiantEmrld_Index(pc,d0.w),d1
+		jmp	GiantEmrld_Index(pc,d1.w)
 ; ===========================================================================
-off_2032A:	index offset(*),,2	
+GiantEmrld_Index:	index offset(*),,2	
 		ptr loc_2032E		; 0 
 		ptr loc_20356		; 2
 ; ===========================================================================
 
 loc_2032E:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_20382,ost_mappings(a0)
+		move.l	#Map_GiantEmrld,ost_mappings(a0)
 		move.w	#(vram_HPZEmerald/sizeof_cell)+tile_pal4,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo10_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -42588,15 +42548,9 @@ loc_20356:
 		cmpi.w	#$280,d0
 		bhi.w	JmpTo16_DeleteObject
 		jmpto	DisplaySprite,JmpTo8_DisplaySprite
-; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_20382:				
-		dc.w word_20384-Map_20382			; 0
-word_20384:	dc.w 2			
-		dc.w $F00F,    0,    0,$FFE0			; 0
-		dc.w $F00F,  $10,    8,	   0			; 4
+		
+; ===========================================================================	
+		include "mappings/sprite/Giant Emerald (unused).asm"
 ; ===========================================================================
 	
 	if Revision<2
@@ -42625,10 +42579,10 @@ JmpTo10_Adjust2PArtPointer:
 WaterfallHiddenPalace:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_203BA(pc,d0.w),d1
-		jmp	off_203BA(pc,d1.w)
+		move.w	HPZWFall_Index(pc,d0.w),d1
+		jmp	HPZWFall_Index(pc,d1.w)
 ; ===========================================================================
-off_203BA:	index offset(*),,2	
+HPZWFall_Index:	index offset(*),,2	
 		ptr loc_203C0			; 0 
 		ptr loc_20486			; 2
 		ptr loc_20510			; 4
@@ -42636,7 +42590,7 @@ off_203BA:	index offset(*),,2
 
 loc_203C0:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_20528,ost_mappings(a0)
+		move.l	#Map_HPZWFall,ost_mappings(a0)
 		move.w	#(vram_HPZWaterfall/sizeof_cell)+tile_pal4+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo11_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -42667,7 +42621,7 @@ loc_20428:
 		addq.b	#4,ost_primary_routine(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		move.l	#Map_20528,ost_mappings(a1)
+		move.l	#Map_HPZWFall,ost_mappings(a1)
 		move.w	#(vram_HPZWaterfall/sizeof_cell)+tile_pal4+tile_hi,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo2_Adjust2PArtPointer2
 		move.b	#render_rel,ost_render(a1)
@@ -42754,166 +42708,7 @@ loc_20510:
 		bhi.w	JmpTo17_DeleteObject
 		jmpto	DisplaySprite,JmpTo9_DisplaySprite
 ; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_20528:				
-		dc.w word_20562-Map_20528			; 0
-		dc.w word_2056C-Map_20528			; 1
-		dc.w word_2057E-Map_20528			; 2
-		dc.w word_20590-Map_20528			; 3
-		dc.w word_205AA-Map_20528			; 4
-		dc.w word_205C4-Map_20528			; 5
-		dc.w word_205E6-Map_20528			; 6
-		dc.w word_20608-Map_20528			; 7
-		dc.w word_20632-Map_20528			; 8
-		dc.w word_2065C-Map_20528			; 9
-		dc.w word_2068E-Map_20528			; 10
-		dc.w word_206C0-Map_20528			; 11
-		dc.w word_206FA-Map_20528			; 12
-		dc.w word_20734-Map_20528			; 13
-		dc.w word_20776-Map_20528			; 14
-		dc.w word_207B8-Map_20528			; 15
-		dc.w word_20802-Map_20528			; 16
-		dc.w word_20802-Map_20528			; 17
-		dc.w word_20802-Map_20528			; 18
-		dc.w word_20560-Map_20528			; 19
-		dc.w word_20814-Map_20528			; 20
-		dc.w word_2081E-Map_20528			; 21
-		dc.w word_20828-Map_20528			; 22
-		dc.w word_2083A-Map_20528			; 23
-		dc.w word_2084C-Map_20528			; 24
-		dc.w word_20866-Map_20528			; 25
-		dc.w word_20880-Map_20528			; 26
-		dc.w word_208A2-Map_20528			; 27
-word_20560:	dc.w 0			
-word_20562:	dc.w 1			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-word_2056C:	dc.w 2			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880D,  $2D,  $16,$FFF0			; 4
-word_2057E:	dc.w 2			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-word_20590:	dc.w 3			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80D,  $2D,  $16,$FFF0			; 8
-word_205AA:	dc.w 3			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-word_205C4:	dc.w 4			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-		dc.w $C80D,  $2D,  $16,$FFF0			; 12
-word_205E6:	dc.w 4			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-		dc.w $C80F,    0,    0,$FFF0			; 12
-word_20608:	dc.w 5			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-		dc.w $C80F,    0,    0,$FFF0			; 12
-		dc.w $E80D,  $2D,  $16,$FFF0			; 16
-word_20632:	dc.w 5			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-		dc.w $C80F,    0,    0,$FFF0			; 12
-		dc.w $E80F,    0,    0,$FFF0			; 16
-word_2065C:	dc.w 6			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-		dc.w $C80F,    0,    0,$FFF0			; 12
-		dc.w $E80F,    0,    0,$FFF0			; 16
-		dc.w  $80D,  $2D,  $16,$FFF0			; 20
-word_2068E:	dc.w 6			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-		dc.w $C80F,    0,    0,$FFF0			; 12
-		dc.w $E80F,    0,    0,$FFF0			; 16
-		dc.w  $80F,    0,    0,$FFF0			; 20
-word_206C0:	dc.w 7			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-		dc.w $C80F,    0,    0,$FFF0			; 12
-		dc.w $E80F,    0,    0,$FFF0			; 16
-		dc.w  $80F,    0,    0,$FFF0			; 20
-		dc.w $280D,  $2D,  $16,$FFF0			; 24
-word_206FA:	dc.w 7			
-word_206FC:	dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-		dc.w $C80F,    0,    0,$FFF0			; 12
-		dc.w $E80F,    0,    0,$FFF0			; 16
-		dc.w  $80F,    0,    0,$FFF0			; 20
-		dc.w $280F,    0,    0,$FFF0			; 24
-word_20734:	dc.w 8			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-		dc.w $C80F,    0,    0,$FFF0			; 12
-		dc.w $E80F,    0,    0,$FFF0			; 16
-		dc.w  $80F,    0,    0,$FFF0			; 20
-		dc.w $280F,    0,    0,$FFF0			; 24
-		dc.w $480D,  $2D,  $16,$FFF0			; 28
-word_20776:	dc.w 8			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-		dc.w $C80F,    0,    0,$FFF0			; 12
-		dc.w $E80F,    0,    0,$FFF0			; 16
-		dc.w  $80F,    0,    0,$FFF0			; 20
-		dc.w $280F,    0,    0,$FFF0			; 24
-		dc.w $480F,    0,    0,$FFF0			; 28
-word_207B8:	dc.w 9			
-		dc.w $800C,  $10,    8,$FFF0			; 0
-		dc.w $880F,    0,    0,$FFF0			; 4
-		dc.w $A80F,    0,    0,$FFF0			; 8
-		dc.w $C80F,    0,    0,$FFF0			; 12
-		dc.w $E80F,    0,    0,$FFF0			; 16
-		dc.w  $80F,    0,    0,$FFF0			; 20
-		dc.w $280F,    0,    0,$FFF0			; 24
-		dc.w $480F,    0,    0,$FFF0			; 28
-		dc.w $680D,  $2D,  $16,$FFF0			; 32
-word_20802:	dc.w 2			
-		dc.w $F00A,  $18,   $C,$FFE8			; 0
-		dc.w $F00A, $818, $80C,	   0			; 4
-word_20814:	dc.w 1			
-		dc.w $E00D,  $2D,  $16,$FFF0			; 0
-word_2081E:	dc.w 1			
-		dc.w $E00F,    0,    0,$FFF0			; 0
-word_20828:	dc.w 2			
-		dc.w $E00F,    0,    0,$FFF0			; 0
-		dc.w	$D,  $2D,  $16,$FFF0			; 4
-word_2083A:	dc.w 2			
-		dc.w $E00F,    0,    0,$FFF0			; 0
-		dc.w	$F,    0,    0,$FFF0			; 4
-word_2084C:	dc.w 3			
-		dc.w $E00F,    0,    0,$FFF0			; 0
-		dc.w	$F,    0,    0,$FFF0			; 4
-		dc.w $200D,  $2D,  $16,$FFF0			; 8
-word_20866:	dc.w 3			
-		dc.w $E00F,    0,    0,$FFF0			; 0
-		dc.w	$F,    0,    0,$FFF0			; 4
-		dc.w $200F,    0,    0,$FFF0			; 8
-word_20880:	dc.w 4			
-		dc.w $E00F,    0,    0,$FFF0			; 0
-		dc.w	$F,    0,    0,$FFF0			; 4
-		dc.w $200F,    0,    0,$FFF0			; 8
-		dc.w $400D,  $2D,  $16,$FFF0			; 12
-word_208A2:	dc.w 4			
-		dc.w $E00F,    0,    0,$FFF0			; 0
-		dc.w	$F,    0,    0,$FFF0			; 4
-		dc.w $200F,    0,    0,$FFF0			; 8
-		dc.w $400F,    0,    0,$FFF0			; 12
+		include "mappings/sprite/Hidden Palace Waterfall (unused).asm"
 ; ===========================================================================
 
 	if RemoveJmpTos
@@ -42934,7 +42729,7 @@ JmpTo11_Adjust2PArtPointer:
 	
 ; ===========================================================================	
 ; ----------------------------------------------------------------------------
-; Object 04 - water surface
+; Object 04 - Water surface
 ; ----------------------------------------------------------------------------
 
 WaterSurface:				
@@ -42944,23 +42739,23 @@ WaterSurface:
 		jmp	off_208EA(pc,d1.w)
 ; ===========================================================================
 off_208EA:	index offset(*),,2	
-		ptr loc_208F0			; 0 
+		ptr loc_208F0		; 0 
 		ptr loc_20930		; 2
-		ptr loc_209C2			; 4
+		ptr loc_209C2		; 4
 ; ===========================================================================
 
 loc_208F0:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_20A0E,ost_mappings(a0)
+		move.l	#Map_Surf1,ost_mappings(a0)
 		move.w	#tile_Nem_WaterSurface1+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
 		move.b	#-$80,ost_displaywidth(a0)
 		move.w	ost_x_pos(a0),$30(a0)
-		cmpi.b	#id_ARZ,(v_zone).w
-		bne.s	loc_20930
-		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_20AFE,ost_mappings(a0)
+		cmpi.b	#id_ARZ,(v_zone).w			; is it ARZ?
+		bne.s	loc_20930					; if not, branch
+		addq.b	#2,ost_primary_routine(a0)	; use ARZ-specific code and mappings
+		move.l	#Map_Surf2,ost_mappings(a0)
 		bra.w	loc_209C2
 ; ===========================================================================
 
@@ -43035,79 +42830,8 @@ loc_209F4:
 BranchTo_JmpTo10_DisplaySprite:				
 		jmpto	DisplaySprite,JmpTo10_DisplaySprite
 ; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_20A0E:				
-		dc.w word_20A1A-Map_20A0E			; 0
-		dc.w word_20A34-Map_20A0E			; 1
-		dc.w word_20A4E-Map_20A0E			; 2
-		dc.w word_20A68-Map_20A0E			; 3
-		dc.w word_20A9A-Map_20A0E			; 4
-		dc.w word_20ACC-Map_20A0E			; 5
-word_20A1A:	dc.w 3			
-		dc.w $F80D,    0,    0,$FFA0			; 0
-		dc.w $F80D,    0,    0,$FFE0			; 4
-		dc.w $F80D,    0,    0,	 $20			; 8
-word_20A34:	dc.w 3			
-		dc.w $F80D,    8,    4,$FFA0			; 0
-		dc.w $F80D,    8,    4,$FFE0			; 4
-		dc.w $F80D,    8,    4,	 $20			; 8
-word_20A4E:	dc.w 3			
-		dc.w $F80D,  $10,    8,$FFA0			; 0
-		dc.w $F80D,  $10,    8,$FFE0			; 4
-		dc.w $F80D,  $10,    8,	 $20			; 8
-word_20A68:	dc.w 6			
-		dc.w $F80D,    0,    0,$FFA0			; 0
-		dc.w $F80D,    8,    4,$FFC0			; 4
-		dc.w $F80D,    0,    0,$FFE0			; 8
-		dc.w $F80D,    8,    4,	   0			; 12
-		dc.w $F80D,    0,    0,	 $20			; 16
-		dc.w $F80D,    8,    4,	 $40			; 20
-word_20A9A:	dc.w 6			
-		dc.w $F80D,    8,    4,$FFA0			; 0
-		dc.w $F80D,  $10,    8,$FFC0			; 4
-		dc.w $F80D,    8,    4,$FFE0			; 8
-		dc.w $F80D,  $10,    8,	   0			; 12
-		dc.w $F80D,    8,    4,	 $20			; 16
-		dc.w $F80D,  $10,    8,	 $40			; 20
-word_20ACC:	dc.w 6			
-		dc.w $F80D,  $10,    8,$FFA0			; 0
-		dc.w $F80D,    8,    4,$FFC0			; 4
-		dc.w $F80D,  $10,    8,$FFE0			; 8
-		dc.w $F80D,    8,    4,	   0			; 12
-		dc.w $F80D,  $10,    8,	 $20			; 16
-		dc.w $F80D,    8,    4,	 $40			; 20
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_20AFE:				
-		dc.w word_20B06-Map_20AFE			; 0
-		dc.w word_20B20-Map_20AFE			; 1
-		dc.w word_20B3A-Map_20AFE			; 2
-		dc.w word_20B6C-Map_20AFE			; 3
-word_20B06:	dc.w 3			
-		dc.w $FC0D,    0,    0,$FFA0			; 0
-		dc.w $FC0D,    0,    0,$FFE0			; 4
-		dc.w $FC0D,    0,    0,	 $20			; 8
-word_20B20:	dc.w 3			
-		dc.w $FC0D,    8,    4,$FFA0			; 0
-		dc.w $FC0D,    8,    4,$FFE0			; 4
-		dc.w $FC0D,    8,    4,	 $20			; 8
-word_20B3A:	dc.w 6			
-		dc.w $FC0D,    0,    0,$FFA0			; 0
-		dc.w $FC0D,    0,    0,$FFC0			; 4
-		dc.w $FC0D,    0,    0,$FFE0			; 8
-		dc.w $FC0D,    0,    0,	   0			; 12
-		dc.w $FC0D,    0,    0,	 $20			; 16
-		dc.w $FC0D,    0,    0,	 $40			; 20
-word_20B6C:	dc.w 6			
-		dc.w $FC0D,    8,    4,$FFA0			; 0
-		dc.w $FC0D,    8,    4,$FFC0			; 4
-		dc.w $FC0D,    8,    4,$FFE0			; 8
-		dc.w $FC0D,    8,    4,	   0			; 12
-		dc.w $FC0D,    8,    4,	 $20			; 16
-		dc.w $FC0D,    8,    4,	 $40			; 20
+		include "mappings/sprite/CPZ & HPZ Water Surface.asm"
+		include "mappings/sprite/ARZ Water Surface.asm"
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 49 - EHZ Waterfall
@@ -43120,13 +42844,13 @@ WaterfallEmeraldHill:
 		jmp	off_20BAC(pc,d1.w)
 ; ===========================================================================
 off_20BAC:	index offset(*),,2	
-		ptr loc_20BB0			; 0 
+		ptr loc_20BB0		; 0 
 		ptr loc_20BEA		; 2
 ; ===========================================================================
 
 loc_20BB0:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_20C50,ost_mappings(a0)
+		move.l	#Map_EHZWFall,ost_mappings(a0)
 		move.w	#tile_Nem_Waterfall+tile_pal2,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -43174,72 +42898,7 @@ loc_20C48:
 		add.b	d3,ost_frame(a0)
 		jmpto	DisplaySprite,JmpTo10_DisplaySprite
 ; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_20C50:				
-		dc.w word_20C60-Map_20C50			; 0
-		dc.w word_20C72-Map_20C50			; 1
-		dc.w word_20D04-Map_20C50			; 2
-		dc.w word_20D06-Map_20C50			; 3
-		dc.w word_20D04-Map_20C50			; 4
-		dc.w word_20D28-Map_20C50			; 5
-		dc.w word_20C60-Map_20C50			; 6
-		dc.w word_20D7A-Map_20C50			; 7
-word_20C60:	dc.w 2			
-		dc.w $800D,    0,    0,$FFE0			; 0
-		dc.w $800D,    0,    0,	   0			; 4
-word_20C72:	dc.w   $12					; 0 
-		dc.w $800D,    0,    0,$FFE0			; 0
-		dc.w $800D,    0,    0,	   0			; 4
-		dc.w $800F,    8,    4,$FFE0			; 8
-		dc.w $800F,    8,    4,	   0			; 12
-		dc.w $A00F,    8,    4,$FFE0			; 16
-		dc.w $A00F,    8,    4,	   0			; 20
-		dc.w $C00F,    8,    4,$FFE0			; 24
-		dc.w $C00F,    8,    4,	   0			; 28
-		dc.w $E00F,    8,    4,$FFE0			; 32
-		dc.w $E00F,    8,    4,	   0			; 36
-		dc.w	$F,    8,    4,$FFE0			; 40
-		dc.w	$F,    8,    4,	   0			; 44
-		dc.w $200F,    8,    4,$FFE0			; 48
-		dc.w $200F,    8,    4,	   0			; 52
-		dc.w $400F,    8,    4,$FFE0			; 56
-		dc.w $400F,    8,    4,	   0			; 60
-		dc.w $600F,    8,    4,$FFE0			; 64
-		dc.w $600F,    8,    4,	   0			; 68
-word_20D04:	dc.w 0			
-word_20D06:	dc.w 4			
-		dc.w $E00F,    8,    4,$FFE0			; 0
-		dc.w $E00F,    8,    4,	   0			; 4
-		dc.w	$F,    8,    4,$FFE0			; 8
-		dc.w	$F,    8,    4,	   0			; 12
-word_20D28:	dc.w $A			
-		dc.w $C00F,    8,    4,$FFE0			; 0
-		dc.w $C00F,    8,    4,	   0			; 4
-		dc.w $E00F,    8,    4,$FFE0			; 8
-		dc.w $E00F,    8,    4,	   0			; 12
-		dc.w	$F,    8,    4,$FFE0			; 16
-		dc.w	$F,    8,    4,	   0			; 20
-		dc.w $200F,    8,    4,$FFE0			; 24
-		dc.w $200F,    8,    4,	   0			; 28
-		dc.w $400F,    8,    4,$FFE0			; 32
-		dc.w $400F,    8,    4,	   0			; 36
-word_20D7A:	dc.w $E			
-		dc.w $800D,    0,    0,$FFE0			; 0
-		dc.w $800D,    0,    0,	   0			; 4
-		dc.w $800F,    8,    4,$FFE0			; 8
-		dc.w $800F,    8,    4,	   0			; 12
-		dc.w $A00F,    8,    4,$FFE0			; 16
-		dc.w $A00F,    8,    4,	   0			; 20
-		dc.w $C00F,    8,    4,$FFE0			; 24
-		dc.w $C00F,    8,    4,	   0			; 28
-		dc.w $E00F,    8,    4,$FFE0			; 32
-		dc.w $E00F,    8,    4,	   0			; 36
-		dc.w	$F,    8,    4,$FFE0			; 40
-		dc.w	$F,    8,    4,	   0			; 44
-		dc.w $200F,    8,    4,$FFE0			; 48
-		dc.w $200F,    8,    4,	   0			; 52
+		include "mappings/sprite/EHZ Waterfall.asm"
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 31 - invisible	lava marker
@@ -43267,19 +42926,25 @@ loc_20E02:
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		move.b	LTag_ColTypes(pc,d0.w),ost_col_type(a0)
-		move.l	#Map_20E6C,ost_mappings(a0)
+	
+	if FixBugs	
+		move.l	#Map_LTag,ost_mappings(a0)		
+	else	
+		; Load blank mappings! This is a dumb workaround for the bug below.
+		move.l	#NonMap_LTag,ost_mappings(a0)
 		tst.w	(v_debug_active).w
 		beq.s	loc_20E28
-		move.l	#Map_20E74,ost_mappings(a0)
-
-loc_20E28:				
+		move.l	#Map_LTag,ost_mappings(a0)
+	loc_20E28:	
+	endc			
 		move.w	#tile_Nem_Monitors+tile_hi,ost_tile(a0)	; uses the question mark monitor icon
 	if FixBugs
 		move.b	#render_rel,ost_render(a0)	
 	else
 		; 'render_onscreen' should not be set here: this causes
 		; this object to become visible when the player dies, because of how
-		; 'ExecuteObjects.dead' works.
+		; 'ExecuteObjects.dead' works. Amazingly, someone tried to work around
+		; this by loading blank mappings if not in debug mode.
 		move.b	#render_rel|render_onscreen,ost_render(a0)
 	endc
 		move.b	#-$80,ost_displaywidth(a0)
@@ -43305,36 +42970,10 @@ loc_20E60:
 locret_20E6A:				
 		rts	
 ; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_20E6C:				
-		dc.w word_20E72-Map_20E6C			; 0
-		dc.w word_20E72-Map_20E6C			; 1
-		dc.w word_20E72-Map_20E6C			; 2
-word_20E72:	dc.w 0			
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_20E74:				
-		dc.w word_20E7A-Map_20E74			; 0
-		dc.w word_20E9C-Map_20E74			; 1
-		dc.w word_20EBE-Map_20E74			; 2
-word_20E7A:	dc.w 4			
-		dc.w $E005,  $34,  $1A,$FFE0			; 0
-		dc.w $E005,  $34,  $1A,	 $10			; 4
-		dc.w $1005,  $34,  $1A,$FFE0			; 8
-		dc.w $1005,  $34,  $1A,	 $10			; 12
-word_20E9C:	dc.w 4			
-		dc.w $E005,  $34,  $1A,$FFC0			; 0
-		dc.w $E005,  $34,  $1A,	 $30			; 4
-		dc.w $1005,  $34,  $1A,$FFC0			; 8
-		dc.w $1005,  $34,  $1A,	 $30			; 12
-word_20EBE:	dc.w 4			
-		dc.w $E005,  $34,  $1A,$FF80			; 0
-		dc.w $E005,  $34,  $1A,	 $70			; 4
-		dc.w $1005,  $34,  $1A,$FF80			; 8
-		dc.w $1005,  $34,  $1A,	 $70			; 12
+	if FixBugs=0
+		include "mappings/sprite/Invisible Lava Tag (non-mappings).asm"	
+	endc	
+		include "mappings/sprite/Invisible Lava Tag.asm"	
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 74 - invisible	solid block
@@ -43352,7 +42991,7 @@ off_20EEE:	index offset(*),,2
 
 loc_20EF2:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_20F66,ost_mappings(a0)
+		move.l	#Map_Invis,ost_mappings(a0)
 		move.w	#tile_Nem_Monitors+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -43399,28 +43038,7 @@ loc_20F2E:
 	.locret_20F64:				
 		rts	
 ; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_20F66:				
-		dc.w word_20F6C-Map_20F66			; 0
-		dc.w word_20F8E-Map_20F66			; 1
-		dc.w word_20FB0-Map_20F66			; 2
-word_20F6C:	dc.w 4			
-		dc.w $F005,  $1C,   $E,$FFF0			; 0
-		dc.w $F005,  $1C,   $E,	   0			; 4
-		dc.w	 5,  $1C,   $E,$FFF0			; 8
-		dc.w	 5,  $1C,   $E,	   0			; 12
-word_20F8E:	dc.w 4			
-		dc.w $E005,  $1C,   $E,$FFC0			; 0
-		dc.w $E005,  $1C,   $E,	 $30			; 4
-		dc.w $1005,  $1C,   $E,$FFC0			; 8
-		dc.w $1005,  $1C,   $E,	 $30			; 12
-word_20FB0:	dc.w 4			
-		dc.w $E005,  $1C,   $E,$FF80			; 0
-		dc.w $E005,  $1C,   $E,	 $70			; 4
-		dc.w $1005,  $1C,   $E,$FF80			; 8
-		dc.w $1005,  $1C,   $E,	 $70			; 12
+		include "mappings/sprite/Invisible Solid Blocks.asm"
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 7C - CPZ foreground pylons
@@ -43439,7 +43057,7 @@ off_20FE0:	index offset(*),,2
 
 loc_20FE4:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2103C,ost_mappings(a0)
+		move.l	#Map_Pylon,ost_mappings(a0)
 		move.w	#tile_Nem_Pylon+tile_pal3+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
 		move.b	#$10,ost_displaywidth(a0)
@@ -43468,21 +43086,7 @@ loc_21006:
 locret_2103A:				
 		rts	
 ; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_2103C:				
-		dc.w word_2103E-Map_2103C
-word_2103E:	dc.w 9			
-		dc.w $800F,$A000,$A000,$FFF0			; 0
-		dc.w $A00F,$B000,$B000,$FFF0			; 4
-		dc.w $C00F,$A000,$A000,$FFF0			; 8
-		dc.w $E00F,$B000,$B000,$FFF0			; 12
-		dc.w	$F,$A000,$A000,$FFF0			; 16
-		dc.w $200F,$B000,$B000,$FFF0			; 20
-		dc.w $400F,$A000,$A000,$FFF0			; 24
-		dc.w $600F,$B000,$B000,$FFF0			; 28
-		dc.w $7F0F,$A000,$A000,$FFF0			; 32
+		include "mappings/sprite/CPZ Pylon.asm"
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 27 - explosion	from a destroyed enemy or monitor
@@ -43511,7 +43115,7 @@ loc_2109C:
 
 loc_210BE:
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_21120,ost_mappings(a0)
+		move.l	#Map_ExplodeItem,ost_mappings(a0)
 		move.w	#tile_Nem_Explosion,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -43534,25 +43138,7 @@ loc_21102:
 loc_2111C:				
 		jmpto	DisplaySprite,JmpTo10_DisplaySprite
 ; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_21120:				
-		dc.w word_2112A-Map_21120			; 0
-		dc.w word_21134-Map_21120			; 1
-		dc.w word_2113E-Map_21120			; 2
-		dc.w word_21148-Map_21120			; 3
-		dc.w word_21152-Map_21120			; 4
-word_2112A:	dc.w 1			
-		dc.w $F805,    0,    0,$FFF8			; 0
-word_21134:	dc.w 1			
-		dc.w $F00F,$2004,$2002,$FFF0			; 0
-word_2113E:	dc.w 1			
-		dc.w $F00F,$2014,$200A,$FFF0			; 0
-word_21148:	dc.w 1			
-		dc.w $F00F,$2024,$2012,$FFF0			; 0
-word_21152:	dc.w 1			
-		dc.w $F00F,$2034,$201A,$FFF0			; 0
+		include "mappings/sprite/Explosions.asm"
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 84 - Pinball mode enable/disable
@@ -43574,7 +43160,7 @@ off_21170:	index offset(*),,2
 
 loc_21176:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_1FFB8,ost_mappings(a0)
+		move.l	#Map_PSwitch,ost_mappings(a0)
 		move.w	#tile_Nem_Ring,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -43797,7 +43383,7 @@ word_213AA:
 
 loc_213B2:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_1FFB8,ost_mappings(a0)
+		move.l	#Map_PSwitch,ost_mappings(a0)
 		move.w	#tile_Nem_Ring,ost_tile(a0)
 
 loc_213C4:
@@ -44242,7 +43828,7 @@ off_2193E:	index offset(*),,2
 
 loc_2194A:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_21CF0,ost_mappings(a0)
+		move.l	#Map_Seesaw,ost_mappings(a0)
 		move.w	#tile_Nem_SeeSaw,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo13_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -44382,7 +43968,7 @@ locret_21AA0:
 
 loc_21AA2:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_21D7C,ost_mappings(a0)
+		move.l	#Map_SSawBall,ost_mappings(a0)
 		move.w	#tile_Nem_Sol,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo13_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -44531,11 +44117,7 @@ loc_21C2C:
 		jmp	(PlaySound).l
 ; ===========================================================================
 word_21C5C:
-		dc.w $FFF8					; 0 
-		dc.w $FFE4					; 1
-		dc.w $FFD1					; 2
-		dc.w $FFE4					; 3
-		dc.w $FFF8					; 4
+		dc.w -8, -28, -47, -28, -8 ; low, balanced, high, balanced, low
 ; ===========================================================================
 
 loc_21C66:				
@@ -44565,42 +44147,12 @@ byte_21CBF:
 		dc.b   5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5 ; 16
 		dc.b   5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5 ; 32
 		dc.b   0					; 48
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_21CF0:				
-		dc.w word_21CF8-Map_21CF0			; 0
-		dc.w word_21D3A-Map_21CF0			; 1
-		dc.w word_21CF8-Map_21CF0			; 2
-		dc.w word_21D3A-Map_21CF0			; 3
-word_21CF8:	dc.w 8			
-		dc.w $FC05,$4014,$400A,$FFF8			; 0
-		dc.w  $C01,$2012,$2009,$FFFC			; 4
-		dc.w $E405,$4006,$4003,$FFD0			; 8
-		dc.w $EC05,$400A,$4005,$FFE0			; 12
-		dc.w $F405,$400A,$4005,$FFF0			; 16
-		dc.w $FC05,$400A,$4005,	   0			; 20
-		dc.w  $405,$400A,$4005,	 $10			; 24
-		dc.w  $C05,$400E,$4007,	 $20			; 28
-word_21D3A:	dc.w 8			
-		dc.w $FC05,$4014,$400A,$FFF8			; 0
-		dc.w  $C01,$2012,$2009,$FFFC			; 4
-		dc.w $F405,$4000,$4000,$FFD0			; 8
-		dc.w $F405,$4002,$4001,$FFE0			; 12
-		dc.w $F405,$4002,$4001,$FFF0			; 16
-		dc.w $F405,$4002,$4001,	   0			; 20
-		dc.w $F405,$4002,$4001,	 $10			; 24
-		dc.w $F405,$4800,$4800,	 $20			; 28
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_21D7C:				
-		dc.w word_21D80-Map_21D7C			; 0
-		dc.w word_21D8A-Map_21D7C			; 1
-word_21D80:	dc.w 1			
-		dc.w $F805,    0,    0,$FFF8			; 0
-word_21D8A:	dc.w 1			
-		dc.w $F805,$2000,$2000,$FFF8			; 0
+
+; ===========================================================================
+
+		include "mappings/sprite/HTZ Seesaws.asm"
+		include "mappings/sprite/HTZ Seesaw Ball.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -44634,8 +44186,8 @@ off_21DBA:	index offset(*),,2
 
 loc_21DBE:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_21F14,ost_mappings(a0)
-		move.w	#tile_Nem_HTZZipline+tile_pal3,ost_tile(a0)
+		move.l	#Map_Tram,ost_mappings(a0)
+		move.w	#tile_Nem_Tram+tile_pal3,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo14_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
@@ -44744,46 +44296,9 @@ loc_21F0C:
 locret_21F12:				
 		rts	
 ; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_21F14:				
-		dc.w word_21F1E-Map_21F14			; 0
-		dc.w word_21F70-Map_21F14			; 1
-		dc.w word_21FB2-Map_21F14			; 2
-		dc.w word_21FC4-Map_21F14			; 3
-		dc.w word_21FDE-Map_21F14			; 4
-word_21F1E:	dc.w $A			
-		dc.w $C105,    0,    0,$FFE4			; 0
-		dc.w $D003,    4,    2,$FFE6			; 4
-		dc.w $F003,    4,    2,$FFE6			; 8
-		dc.w $1001,    8,    4,$FFE7			; 12
-		dc.w $D505,   $A,    5,	  $C			; 16
-		dc.w $E003,   $E,    7,	 $11			; 20
-		dc.w $1001,  $12,    9,	 $11			; 24
-		dc.w	 3,   $E,    7,	 $11			; 28
-		dc.w $200D,  $14,   $A,$FFE0			; 32
-		dc.w $200D, $814, $80A,	   0			; 36
-word_21F70:	dc.w 8			
-		dc.w $C105,    0,    0,$FFE4			; 0
-		dc.w $D003,    4,    2,$FFE6			; 4
-		dc.w $F003,    4,    2,$FFE6			; 8
-		dc.w $1001,  $2C,  $16,$FFE6			; 12
-		dc.w $D505,   $A,    5,	  $C			; 16
-		dc.w $E003,   $E,    7,	 $11			; 20
-		dc.w $1801,  $2E,  $17,	 $11			; 24
-		dc.w	 3,   $E,    7,	 $11			; 28
-word_21FB2:	dc.w 2			
-		dc.w $200D,  $14,   $A,$FFE0			; 0
-		dc.w $200D, $814, $80A,	   0			; 4
-word_21FC4:	dc.w 3			
-		dc.w $D805,  $1C,   $E,$FFF8			; 0
-		dc.w $E807,  $20,  $10,$FFF8			; 4
-		dc.w  $807,  $20,  $10,$FFF8			; 8
-word_21FDE:	dc.w 3			
-		dc.w $D805,  $28,  $14,$FFF8			; 0
-		dc.w $E807, $820, $810,$FFF8			; 4
-		dc.w  $807, $820, $810,$FFF8			; 8
+
+		include "mappings/sprite/HTZ Tram.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -44816,16 +44331,17 @@ off_22026:	index offset(*),,2
 		ptr loc_22032			; 0 
 		ptr loc_220B8			; 2
 		
-word_2202A:
-		dc.w $2000					; 0
-		dc.w $1801					; 1
-		dc.w $4002					; 2
-		dc.w $2003					; 3
+Plat2_SubtypeProperties:
+		; ost_displaywidth. ost_frame
+		dc.b $20, 0
+		dc.b $18, 1
+		dc.b $40, 2
+		dc.b $20, 3
 ; ===========================================================================
 
 loc_22032:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2222A,ost_mappings(a0)
+		move.l	#Map_Plat2,ost_mappings(a0)
 		move.w	#tile_Nem_CPZElevator+tile_pal4,ost_tile(a0)
 		cmpi.b	#id_OOZ,(v_zone).w
 		bne.s	loc_22052
@@ -44843,7 +44359,7 @@ loc_22060:
 		move.b	ost_subtype(a0),d0
 		lsr.w	#3,d0
 		andi.w	#$1E,d0
-		lea	word_2202A(pc,d0.w),a2
+		lea	Plat2_SubtypeProperties(pc,d0.w),a2
 		move.b	(a2)+,ost_displaywidth(a0)
 		move.b	(a2)+,ost_frame(a0)
 		move.b	#4,ost_priority(a0)
@@ -45037,28 +44553,9 @@ loc_22216:
 		move.w	d2,ost_y_pos(a0)
 		rts	
 ; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_2222A:				
-		dc.w word_22232-Map_2222A			; 0
-		dc.w word_22244-Map_2222A			; 1
-		dc.w word_22256-Map_2222A			; 2
-		dc.w word_22278-Map_2222A			; 3
-word_22232:	dc.w 2			
-		dc.w $F00F,    0,    0,$FFE0			; 0
-		dc.w $F00F, $800, $800,	   0			; 4
-word_22244:	dc.w 2			
-		dc.w $F00B,    0,    0,$FFE8			; 0
-		dc.w $F00B, $800, $800,	   0			; 4
-word_22256:	dc.w 4			
-		dc.w $F00E,    0,    0,$FFC0			; 0
-		dc.w $F00E,   $C,    6,$FFE0			; 4
-		dc.w $F00E, $80C, $806,	   0			; 8
-		dc.w $F00E, $800, $800,	 $20			; 12
-word_22278:	dc.w 2			
-		dc.w $F00E,    0,    0,$FFE0			; 0
-		dc.w $F00E, $800, $800,	   0			; 4
+
+		include "mappings/sprite/CPZ, OOZ, and WFZ Platforms.asm"
+		
 ; ===========================================================================
 		
 	if Revision<2	
@@ -45091,21 +44588,21 @@ JmpTo5_SpeedToPos:
 SpeedBooster:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_222BA(pc,d0.w),d1
-		jmp	off_222BA(pc,d1.w)
+		move.w	Bstr_Index(pc,d0.w),d1
+		jmp	Bstr_Index(pc,d1.w)
 ; ===========================================================================
-off_222BA:	index offset(*),,2	
+Bstr_Index:	index offset(*),,2	
 		ptr loc_222C2			; 0 
 		ptr loc_222F8			; 2
 		
-word_222BE:	
+Bstr_Speeds:	
 		dc.w $1000					; 0
 		dc.w  $A00					; 1
 ; ===========================================================================
 
 loc_222C2:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_223E2,ost_mappings(a0)
+		move.l	#Map_Bstr,ost_mappings(a0)
 		move.w	#tile_Nem_Booster+tile_pal4+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo16_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -45113,7 +44610,7 @@ loc_222C2:
 		move.b	#1,ost_priority(a0)
 		move.b	ost_subtype(a0),d0
 		andi.w	#2,d0
-		move.w	word_222BE(pc,d0.w),$30(a0)
+		move.w	Bstr_Speeds(pc,d0.w),$30(a0)
 
 loc_222F8:				
 		move.b	(v_frame_counter_low).w,d0
@@ -45127,7 +44624,8 @@ loc_222F8:
 		move.w	d2,d3
 		subi.w	#$10,d2
 		addi.w	#$10,d3
-		lea	($FFFFB000).w,a1
+		; if debug mode is active, then skip
+		lea	(v_ost_player1).w,a1
 		btst	#1,ost_primary_status(a1)
 		bne.s	loc_22354
 		move.w	ost_x_pos(a1),d4
@@ -45145,7 +44643,7 @@ loc_222F8:
 		move.w	(sp)+,d0
 
 loc_22354:				
-		lea	($FFFFB040).w,a1
+		lea	(v_ost_player2).w,a1
 		btst	#1,ost_primary_status(a1)
 		bne.s	loc_22384
 		move.w	ost_x_pos(a1),d4
@@ -45188,20 +44686,12 @@ loc_223BA:
 		bclr	#5,ost_primary_status(a1)
 
 loc_223D8:				
-		move.w	#$CC,d0	
+		move.w	#sfx_Spring,d0	
 		jmp	(PlaySound).l
 ; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_223E2:				
-		dc.w word_223E8-Map_223E2			; 0
-		dc.w word_223E8-Map_223E2			; 1
-		dc.w word_223FA-Map_223E2			; 2
-word_223E8:	dc.w 2			
-		dc.w $F805,    0,    0,$FFE8			; 0
-		dc.w $F805,    0,    0,	   8			; 4
-word_223FA:	dc.w 0			
+
+		include "mappings/sprite/CPZ Speed Booster.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -45221,10 +44711,10 @@ JmpTo16_Adjust2PArtPointer:
 BlueBalls:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_22416(pc,d0.w),d1
-		jmp	off_22416(pc,d1.w)
+		move.w	BBalls_Index(pc,d0.w),d1
+		jmp	BBalls_Index(pc,d1.w)
 ; ===========================================================================
-off_22416:	index offset(*),,2	
+BBalls_Index:	index offset(*),,2	
 		ptr loc_22428			; 0 
 		ptr loc_224D6			; 2
 		ptr loc_224F4			; 4
@@ -45266,7 +44756,7 @@ loc_22458:
 		move.b	d5,ost_primary_routine(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		move.l	#Map_22576,ost_mappings(a1)
+		move.l	#Map_BBalls,ost_mappings(a1)
 		move.w	#tile_Nem_Droplet+tile_pal4,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo3_Adjust2PArtPointer2
 		move.b	#render_rel,ost_render(a1)
@@ -45298,7 +44788,7 @@ loc_224D6:
 		bpl.s	loc_224F0
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	#$3B,$32(a0)
-		move.w	#$DA,d0	
+		move.w	#sfx_Gloop,d0	
 		jsr	(PlaySoundLocal).l
 
 loc_224F0:				
@@ -45347,19 +44837,15 @@ loc_22552:
 		bhi.s	loc_22572
 		move.w	$34(a0),ost_y_vel(a0)
 		move.w	$38(a0),ost_x_pos(a0)
-		move.w	#$DA,d0	
+		move.w	#sfx_Gloop,d0	
 		jsr	(PlaySoundLocal).l
 
 loc_22572:				
 		jmpto	DespawnObject,JmpTo7_DespawnObject
 ; ===========================================================================
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_22576:				
-		dc.w word_22578-Map_22576
-word_22578:	dc.w 1			
-		dc.w $F805,    0,    0,$FFF8			; 0
+		
+		include "mappings/sprite/CPZ Blue Balls.asm"
+		
 ; ===========================================================================
 
 	if Revision<2
@@ -49841,7 +49327,7 @@ loc_2611C:
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		move.b	LeafGen_ColTypes(pc,d0.w),ost_col_type(a0)
-		move.l	#Map_20E74,ost_mappings(a0)
+		move.l	#Map_LTag,ost_mappings(a0)
 		move.w	#tile_Nem_Monitors+tile_hi,ost_tile(a0)
 	if FixBugs
 		move.b	#render_rel,ost_render(a0)
@@ -82188,7 +81674,7 @@ loc_3C434:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3C438:
-		dc.l Map_21120	
+		dc.l Map_ExplodeItem	
 		dc.w $5A4
 		dc.w $405
 		dc.w $C00
@@ -89898,16 +89384,16 @@ DbgEHZ_41D40:	dc.w $13
 		dc.l $79000000+Map_Starpost
 		dc.w $100
 		dc.w $47C
-		dc.l $3000000+Map_1FFB8
+		dc.l $3000000+Map_PSwitch
 		dc.w $901
 		dc.w $26BC
-		dc.l $49000000+Map_20C50
+		dc.l $49000000+Map_EHZWFall
 		dc.w 0
 		dc.w $239E
-		dc.l $49000000+Map_20C50
+		dc.l $49000000+Map_EHZWFall
 		dc.w $203
 		dc.w $239E
-		dc.l $49000000+Map_20C50
+		dc.l $49000000+Map_EHZWFall
 		dc.w $405
 		dc.w $239E
 		dc.l $18000000+Map_Plat_EHZ_HTZ
@@ -89956,7 +89442,7 @@ DbgMTZ_41DDA:	dc.w $22
 		dc.l $79000000+Map_Starpost
 		dc.w $100
 		dc.w $47C
-		dc.l $3000000+Map_1FFB8
+		dc.l $3000000+Map_PSwitch
 		dc.w $901
 		dc.w $26BC
 		dc.l $42000000+Map_2686C
@@ -90037,13 +89523,13 @@ DbgMTZ_41DDA:	dc.w $22
 		dc.l $A1000000+Map_385E2
 		dc.w $2800
 		dc.w $243C
-		dc.l $31000000+Map_20E74
+		dc.l $31000000+Map_LTag
 		dc.w 0
 		dc.w $8680
-		dc.l $31000000+Map_20E74
+		dc.l $31000000+Map_LTag
 		dc.w $101
 		dc.w $8680
-		dc.l $31000000+Map_20E74
+		dc.l $31000000+Map_LTag
 		dc.w $202
 		dc.w $8680
 		dc.l $3E000000+Map_3F436
@@ -90056,7 +89542,7 @@ DbgWFZ_41EEC:	dc.w $20
 		dc.l $26000000+Map_Monitor
 		dc.w $800
 		dc.w $680
-		dc.l $8B000000+Map_1FFB8
+		dc.l $8B000000+Map_PSwitch
 		dc.w 0
 		dc.w $6BC
 		dc.l $79000000+Map_Starpost
@@ -90134,7 +89620,7 @@ DbgWFZ_41EEC:	dc.w $20
 		dc.l $C2000000+Map_3C3C2
 		dc.w $8A00
 		dc.w $A461
-		dc.l $19000000+Map_2222A
+		dc.l $19000000+Map_Plat2
 		dc.w $3803
 		dc.w $A46D
 		dc.l $D9000000+Map_Ring
@@ -90156,13 +89642,13 @@ DbgHTZ_41FEE:	dc.w $1F
 		dc.l $79000000+Map_Starpost
 		dc.w $100
 		dc.w $47C
-		dc.l $84000000+Map_1FFB8
+		dc.l $84000000+Map_PSwitch
 		dc.w 0
 		dc.w $6BC
-		dc.l $84000000+Map_1FFB8
+		dc.l $84000000+Map_PSwitch
 		dc.w $404
 		dc.w $6BC
-		dc.l $3000000+Map_1FFB8
+		dc.l $3000000+Map_PSwitch
 		dc.w $901
 		dc.w $26BC
 		dc.l $18000000+Map_Plat_EHZ_HTZ
@@ -90174,7 +89660,7 @@ DbgHTZ_41FEE:	dc.w $1F
 		dc.l $36000000+Map_Spike
 		dc.w 0
 		dc.w $2434
-		dc.l $14000000+Map_21CF0
+		dc.l $14000000+Map_Seesaw
 		dc.w 0
 		dc.w $3C6
 		dc.l $2D000000+Map_Barrier
@@ -90201,13 +89687,13 @@ DbgHTZ_41FEE:	dc.w $1F
 		dc.l $41000000+Map_RedSpring
 		dc.w $400A
 		dc.w $43C
-		dc.l $16000000+Map_21F14
+		dc.l $16000000+Map_Tram
 		dc.w 0
 		dc.w $43E6
-		dc.l $1C000000+Map_21F14
+		dc.l $1C000000+Map_Tram
 		dc.w $403
 		dc.w $43E6
-		dc.l $1C000000+Map_21F14
+		dc.l $1C000000+Map_Tram
 		dc.w $504
 		dc.w $43E6
 		dc.l $1C000000+Map_TramStake
@@ -90219,13 +89705,13 @@ DbgHTZ_41FEE:	dc.w $1F
 		dc.l $32000000+Map_23852
 		dc.w 0
 		dc.w $43B2
-		dc.l $31000000+Map_20E74
+		dc.l $31000000+Map_LTag
 		dc.w 0
 		dc.w $8680
-		dc.l $31000000+Map_20E74
+		dc.l $31000000+Map_LTag
 		dc.w $101
 		dc.w $8680
-		dc.l $31000000+Map_20E74
+		dc.l $31000000+Map_LTag
 		dc.w $202
 		dc.w $8680
 		dc.l $96000000+Map_37678
@@ -90256,7 +89742,7 @@ DbgOOZ_420E8:	dc.w $21
 		dc.l $43000000+Map_23FE0
 		dc.w 0
 		dc.w $C30C
-		dc.l $19000000+Map_2222A
+		dc.l $19000000+Map_Plat2
 		dc.w $2302
 		dc.w $62F4
 		dc.l $45000000+Map_2451A
@@ -90380,7 +89866,7 @@ DbgMCZ_421F2:	dc.w $18
 		dc.l $40000000+Map_265F4
 		dc.w $100
 		dc.w $440
-		dc.l $74000000+Map_20F66
+		dc.l $74000000+Map_Invis
 		dc.w $1100
 		dc.w $8680
 		dc.l $75000000+Map_28D8A
@@ -90423,16 +89909,16 @@ DbgCNZ_422B4:	dc.w $18
 		dc.l $79000000+Map_Starpost
 		dc.w $100
 		dc.w $47C
-		dc.l $84000000+Map_1FFB8
+		dc.l $84000000+Map_PSwitch
 		dc.w 0
 		dc.w $6BC
-		dc.l $84000000+Map_1FFB8
+		dc.l $84000000+Map_PSwitch
 		dc.w $404
 		dc.w $6BC
-		dc.l $3000000+Map_1FFB8
+		dc.l $3000000+Map_PSwitch
 		dc.w $901
 		dc.w $26BC
-		dc.l $3000000+Map_1FFB8
+		dc.l $3000000+Map_PSwitch
 		dc.w $D05
 		dc.w $26BC
 		dc.l $44000000+Map_RoundBump
@@ -90499,13 +89985,13 @@ DbgCPZ_42376:	dc.w $18
 		dc.l $B000000+Map_obj0B
 		dc.w $7000
 		dc.w $E3B0
-		dc.l $1B000000+Map_223E2
+		dc.l $1B000000+Map_Bstr
 		dc.w 0
 		dc.w $E39C
-		dc.l $1D000000+Map_22576
+		dc.l $1D000000+Map_BBalls
 		dc.w $500
 		dc.w $E43C
-		dc.l $19000000+Map_2222A
+		dc.l $19000000+Map_Plat2
 		dc.w $600
 		dc.w $63A0
 		dc.l $2D000000+Map_Barrier
@@ -90526,10 +90012,10 @@ DbgCPZ_42376:	dc.w $18
 		dc.l $7B000000+Map_29780
 		dc.w $200
 		dc.w $3E0
-		dc.l $3000000+Map_1FFB8
+		dc.l $3000000+Map_PSwitch
 		dc.w $901
 		dc.w $26BC
-		dc.l $3000000+Map_1FFB8
+		dc.l $3000000+Map_PSwitch
 		dc.w $D05
 		dc.w $26BC
 		dc.l $36000000+Map_Spike
@@ -90587,13 +90073,13 @@ DbgARZ_42438:	dc.w $1D
 		dc.l $2B000000+Map_25C6E
 		dc.w 0
 		dc.w $2000
-		dc.l $2C000000+Map_20E74
+		dc.l $2C000000+Map_LTag
 		dc.w 0
 		dc.w $8680
-		dc.l $2C000000+Map_20E74
+		dc.l $2C000000+Map_LTag
 		dc.w $101
 		dc.w $8680
-		dc.l $2C000000+Map_20E74
+		dc.l $2C000000+Map_LTag
 		dc.w $202
 		dc.w $8680
 		dc.l $40000000+Map_265F4
@@ -90608,7 +90094,7 @@ DbgARZ_42438:	dc.w $1D
 		dc.l $41000000+Map_RedSpring
 		dc.w $A006
 		dc.w $45C
-		dc.l $3000000+Map_1FFB8
+		dc.l $3000000+Map_PSwitch
 		dc.w $901
 		dc.w $26BC
 		dc.l $36000000+Map_Spike
@@ -90654,7 +90140,7 @@ DbgSCZ_42522:	dc.w $D
 		dc.l $26000000+Map_Monitor
 		dc.w $800
 		dc.w $680
-		dc.l $8B000000+Map_1FFB8
+		dc.l $8B000000+Map_PSwitch
 		dc.w 0
 		dc.w $6BC
 		dc.l $B3000000+Map_3B32C
@@ -91038,7 +90524,7 @@ PLC_HTZ1:	plcheader
 ; Pattern load cues - Hill Top Secondary
 ;---------------------------------------------------------------------------------------
 PLC_HTZ2:	plcheader		
-		plcm	Nem_HTZZipline,vram_HTZZipline
+		plcm	Nem_Tram,vram_Tram
 		plcm	Nem_HTZFireball2,vram_HTZFireball2
 		plcm	Nem_HTZOneWayBarrier,vram_HTZOneWayBarrier
 	PLC_HTZ2_end:		
@@ -92602,7 +92088,7 @@ MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		incfile	Nem_Waterfall
 		incfile	Nem_HTZFireball2
 		incfile	Nem_EHZBridge
-		incfile	Nem_HTZZipline
+		incfile	Nem_Tram
 		incfile	Nem_HTZOneWayBarrier			;ArtNem_HtzValveBarrier
 		incfile	Nem_SeeSaw
 		incfile	Nem_UnusedFireball

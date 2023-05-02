@@ -1,5 +1,5 @@
 ; --------------------------------------------------------------------------
-; Sprite Mappings - 2P Results Score/Rings/Time display
+; Sprite mappings - 2P Results Score/Rings/Time display
 ; --------------------------------------------------------------------------
 Map_2P_Results_Text:	index offset(*)
 	ptr	Map_obj21_0006

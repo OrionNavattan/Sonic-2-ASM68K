@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Hidden Palace orb (unused)
+; Sprite mappings - Hidden Palace orb (unused)
 ; -------------------------------------------------------------------------------
 
 Map_HiddenPalaceOrb:	index offset(*)

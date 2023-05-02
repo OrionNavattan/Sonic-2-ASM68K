@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Mystic Cave swinging platform with spikes
+; Sprite mappings - Mystic Cave swinging platform with spikes
 ; -------------------------------------------------------------------------------
 
 Map_SpikedSwing_MCZ:	index offset(*)

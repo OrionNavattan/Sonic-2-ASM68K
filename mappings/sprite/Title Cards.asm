@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Level Title Cards
+; Sprite mappings - Level Title Cards
 ; Frame_Card_Zone and Frame_Card_Act1-3 also used by end-of-level results
 ; -------------------------------------------------------------------------------
 Map_Card:	index offset(*)

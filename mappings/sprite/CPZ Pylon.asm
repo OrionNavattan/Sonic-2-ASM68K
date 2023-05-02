@@ -1,4 +1,8 @@
-Map_obj7C:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - Chemical Plant foreground pylons
+; ---------------------------------------------------------------------------
+
+Map_Pylon:	index offset(*)
 	ptr	Map_obj7C_0002
 
 Map_obj7C_0002:	spritemap

@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Aquatic Ruin stationary platforms
+; Sprite mappings - Aquatic Ruin stationary platforms
 ; -------------------------------------------------------------------------------
 
 Map_Plat_ARZ:	index offset(*)

@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Chemical Plant, Aquatic Ruin, Hill Top, and Death Egg one-way barrier 
+; Sprite mappings - Chemical Plant, Aquatic Ruin, Hill Top, and Death Egg one-way barrier 
 
 ; The frames for CPZ, ARZ, and DEZ are unused because Sonic Team
 ; forgot to set the subtype for these objects in the object layouts.

@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Hidden Palace bridge (unused)
+; Sprite mappings - Hidden Palace bridge (unused)
 ; -------------------------------------------------------------------------------
 
 Map_HiddenPalaceBridge:	index offset(*)

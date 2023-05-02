@@ -1,4 +1,8 @@
-Map_obj03:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Collision plane switcher
+; -------------------------------------------------------------------------------
+
+Map_PSwitch:	index offset(*)
 	ptr	Map_obj03_0010
 	ptr	Map_obj03_0032
 	ptr	Map_obj03_0054

@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Mystic Cave Stomper
+; Sprite mappings - Mystic Cave Stomper
 ; -------------------------------------------------------------------------------
 
 Map_Stomper:	index offset(*)

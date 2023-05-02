@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Chemical Plany and Mystic Cave swinging and tracked platforms
+; Sprite mappings - Chemical Plany and Mystic Cave swinging and tracked platforms
 ; -------------------------------------------------------------------------------
 
 Map_Swing_Track_CPZ_MCZ:	index offset(*)

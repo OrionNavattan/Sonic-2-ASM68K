@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - OOZ narrow falling oil
+; Sprite mappings - OOZ narrow falling oil
 ; -------------------------------------------------------------------------------
 
 Map_NarrowFallingOil:	index offset(*)

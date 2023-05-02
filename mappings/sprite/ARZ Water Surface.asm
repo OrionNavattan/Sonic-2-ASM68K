@@ -1,4 +1,8 @@
-Map_obj04_b:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - Aquatic Ruin water surface
+; ---------------------------------------------------------------------------
+
+Map_Surf2:	index offset(*)
 	ptr	Map_obj04_b_0008
 	ptr	Map_obj04_b_0022
 	ptr	Map_obj04_b_003C

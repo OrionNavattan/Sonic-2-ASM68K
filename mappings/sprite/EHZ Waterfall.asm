@@ -1,4 +1,8 @@
-Map_obj49:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Emerald Hill waterfall
+; -------------------------------------------------------------------------------
+
+Map_EHZWFall:	index offset(*)
 	ptr	Map_obj49_0010
 	ptr	Map_obj49_0022
 	ptr	Map_obj49_00B4

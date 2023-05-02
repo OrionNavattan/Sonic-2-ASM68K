@@ -238,7 +238,7 @@ vram_HTZFireball1:          equ $73C0
 vram_HTZRock:               equ $7640
 vram_SeeSaw:             	equ $78C0
 vram_Sol:                   equ $7BC0
-vram_HTZZipline:            equ $7CC0
+vram_Tram:            equ $7CC0
 vram_HTZFireball2:          equ $82C0
 vram_HTZOneWayBarrier:      equ $84C0
 ArtTile_ArtUnc_HTZMountains:        = $0500

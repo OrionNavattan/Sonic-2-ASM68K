@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Mystic Cave collapsing platform
+; Sprite mappings - Mystic Cave collapsing platform
 ; -------------------------------------------------------------------------------
 
 Map_CFlo_MCZ:	index offset(*)

@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - CPZ Dumping Pipe Platform
+; Sprite mappings - CPZ Dumping Pipe Platform
 ; -------------------------------------------------------------------------------
 
 Map_obj0B:	index offset(*)

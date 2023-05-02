@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Aquatic Ruin swinging and circling platforms
+; Sprite mappings - Aquatic Ruin swinging and circling platforms
 ; -------------------------------------------------------------------------------
 
 Map_Swing_Circle_ARZ:	index offset(*)

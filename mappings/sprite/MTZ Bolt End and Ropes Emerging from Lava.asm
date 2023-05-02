@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Metropolis bolt ends and ropes emerging/disappearing into lava
+; Sprite mappings - Metropolis bolt ends and ropes emerging/disappearing into lava
 ; -------------------------------------------------------------------------------
 
 Map_BoltEnd_Rope:	index offset(*)

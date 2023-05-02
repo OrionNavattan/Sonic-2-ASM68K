@@ -263,7 +263,7 @@
 		filedef Nem_Waterfall,"art/nemesis/Waterfall",nem,unc ; 24 tiles
 		filedef Nem_HTZFireball2,"art/nemesis/HTZ Fireball 2",nem,unc ; 16 tiles
 		filedef Nem_EHZBridge,"art/nemesis/EHZ Bridge",nem,unc ; 8 tiles
-		filedef Nem_HTZZipline,"art/nemesis/HTZ Zipline Platform",nem,unc ; 48 tiles
+		filedef Nem_Tram,"art/nemesis/HTZ Zipline Platform",nem,unc ; 48 tiles
 		filedef Nem_HTZOneWayBarrier,"art/nemesis/HTZ One-Way Barrier",nem,unc ; 4 tiles
 		filedef Nem_SeeSaw,"art/nemesis/HTZ See-saw",nem,unc ; 24 tiles 
 		filedef Nem_UnusedFireball,"art/nemesis/Unused Fireball",nem,unc ; 24 tiles

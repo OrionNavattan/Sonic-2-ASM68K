@@ -1,4 +1,8 @@
-Map_obj04_a:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - Chemical Plant and Hidden Palace water surface
+; ---------------------------------------------------------------------------
+
+Map_Surf1:	index offset(*)
 	ptr	Map_obj04_a_000C
 	ptr	Map_obj04_a_0026
 	ptr	Map_obj04_a_0040

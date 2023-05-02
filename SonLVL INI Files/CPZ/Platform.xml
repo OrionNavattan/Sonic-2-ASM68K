@@ -3,11 +3,11 @@
   <Images>
     <ImageFromMappings id="large">
       <ArtFile filename="../art/nemesis/CPZ Elevator.nem" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj19.asm" frame="0" startpal="3" />
+      <MapFile type="ASM" filename="../mappings/sprite/CPZ, OOZ, and WFZ Platforms.asm" frame="0" startpal="3" />
     </ImageFromMappings>
     <ImageFromMappings id="small">
       <ArtFile filename="../art/nemesis/CPZ Elevator.nem" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj19.asm" frame="1" startpal="3" />
+      <MapFile type="ASM" filename="../mappings/sprite/CPZ, OOZ, and WFZ Platforms.asm" frame="1" startpal="3" />
     </ImageFromMappings>
   </Images>
   <Subtypes>

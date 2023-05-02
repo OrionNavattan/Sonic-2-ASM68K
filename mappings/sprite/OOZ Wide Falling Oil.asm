@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - OOZ wide falling oil
+; Sprite mappings - OOZ wide falling oil
 ; -------------------------------------------------------------------------------
 Map_WideFallingOil:	index offset(*)
 	ptr	Map_obj1C_d_000A

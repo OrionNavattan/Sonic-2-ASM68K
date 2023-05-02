@@ -1,4 +1,8 @@
-Map_obj14_a:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - Hill Top seesaws
+; ---------------------------------------------------------------------------
+
+Map_Seesaw:	index offset(*)
 	ptr	Map_obj14_a_0008
 	ptr	Map_obj14_a_004A
 	ptr	Map_obj14_a_0008

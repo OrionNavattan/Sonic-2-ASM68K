@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Oil Ocean collapsing platform
+; Sprite mappings - Oil Ocean collapsing platform
 ; -------------------------------------------------------------------------------
 
 Map_CFlo_OOZ:	index offset(*)

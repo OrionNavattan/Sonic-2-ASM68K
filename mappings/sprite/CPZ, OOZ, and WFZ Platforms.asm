@@ -1,4 +1,8 @@
-Map_obj19:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - Chemical Plant, Oil Ocean, and Wing Fortress platforms
+; ---------------------------------------------------------------------------
+
+Map_Plat2:	index offset(*)
 	ptr	Map_obj19_0008
 	ptr	Map_obj19_001A
 	ptr	Map_obj19_002C

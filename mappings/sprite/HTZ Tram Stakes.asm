@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Hill Top tram stakes
+; Sprite mappings - Hill Top tram stakes
 ; -------------------------------------------------------------------------------
 
 Map_TramStake:	index offset(*)

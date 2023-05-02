@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Aquatic Ruin collapsing platform
+; Sprite mappings - Aquatic Ruin collapsing platform
 ; -------------------------------------------------------------------------------
 
 Map_CFlo_ARZ:	index offset(*)

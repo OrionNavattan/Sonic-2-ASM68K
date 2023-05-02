@@ -1,4 +1,8 @@
-Map_obj13:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Hidden Palace waterfall (unused)
+; -------------------------------------------------------------------------------
+
+Map_HPZWFall:	index offset(*)
 	ptr	Map_obj13_003A
 	ptr	Map_obj13_0044
 	ptr	Map_obj13_0056

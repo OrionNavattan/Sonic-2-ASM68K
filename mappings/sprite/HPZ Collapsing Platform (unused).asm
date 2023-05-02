@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Hidden Palace collapsing platform (unused beta leftover)
+; Sprite mappings - Hidden Palace collapsing platform (unused beta leftover)
 ; -------------------------------------------------------------------------------
 
 Map_CPlat_HPZ:	index offset(*)

@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - text, countdown, stars, and Tails on the continue screen
+; Sprite mappings - text, countdown, stars, and Tails on the continue screen
 ; Art starts at $A000 in VRAM
 ; -------------------------------------------------------------------------------
 

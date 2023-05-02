@@ -140,7 +140,7 @@ SFXFiles:	macro	func
 		\func	PreArrowFiring,	62h			; ARZ arrow shooters
 		\func	Fire,			60h
 		\func	ArrowStick,		60h
-		\func	Helicopter,		60h		; Eggman's autogyro in EHZ, propellers in WFZ
+		\func	Helicopter,		60h		; Eggman's helicopter in EHZ, propellers in WFZ
 		\func	Transform,		70h		; Super Sonic transformation
 		
 		\func	SpinDashCharge,	70h			; charging a spindash

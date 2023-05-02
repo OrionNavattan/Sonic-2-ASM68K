@@ -1,4 +1,8 @@
-Map_obj31_b:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - invisible lava tag
+; -------------------------------------------------------------------------------
+
+Map_LTag:	index offset(*)
 	ptr	Map_obj31_b_0006
 	ptr	Map_obj31_b_0028
 	ptr	Map_obj31_b_004A

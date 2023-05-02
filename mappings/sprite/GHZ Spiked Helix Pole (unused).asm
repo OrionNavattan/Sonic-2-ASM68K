@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - helix of spikes on a pole (unused Sonic 1 leftover)
+; Sprite mappings - helix of spikes on a pole (unused Sonic 1 leftover)
 ; -------------------------------------------------------------------------------
 
 Map_Hel:	index offset(*)

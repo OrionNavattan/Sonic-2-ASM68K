@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Unused Sprite Mappings - Scenery1 subtype 9
+; Sprite mappings - Scenery1 subtype 9 (unused)
 ; The tile value used with them suggests ARZ, and they do produce legible sprites,
 ; (a bit of grass and a slide of ground), but what they would have been used for
 ; is unknown.

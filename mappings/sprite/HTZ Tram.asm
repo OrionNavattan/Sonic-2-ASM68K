@@ -1,4 +1,8 @@
-Map_obj16:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - Hill Top Zipline/Tram
+; ---------------------------------------------------------------------------
+
+Map_Tram:	index offset(*)
 	ptr	Map_obj16_000A
 	ptr	Map_obj16_005C
 	ptr	Map_obj16_009E

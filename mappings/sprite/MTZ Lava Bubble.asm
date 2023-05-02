@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Metropolis lava bubble
+; Sprite mappings - Metropolis lava bubble
 ; -------------------------------------------------------------------------------
 
 Map_LavaBubble:	index offset(*)

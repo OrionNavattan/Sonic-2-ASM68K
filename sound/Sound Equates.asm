@@ -18,7 +18,7 @@ z_rom_window: 			equ	8000h
 ym_dac_enable:			equ 2Bh
 
 ; ---------------------------------------------------------------------------
-; Offsets of global sound driver variables (relative to 1B80h by default)
+; Offsets of global driver variables (relative to 1B80h by default)
 ; This setup is used because these are accessed both via immediate addressing
 ; (e.g., z_abs_vars+f_current_tempo), and via indexed addressing relative to 
 ; the start of the global variables (e.g., ix+f_current_tempo, where ix = z_abs_vars). 
@@ -53,7 +53,7 @@ f_adjust_pal:					rs.b 1		; 17h ; indicates the current music will be adjusted f
 sizeof_soundvars:		equ __rs			; 18h bytes
 
 ; ---------------------------------------------------------------------------
-; Constants for track variables
+; Track variables structure
 ; This group of variables is duplicated 26 times in the Z80 RAM: once for each 
 ; channel for music, a duplicate used to back up each channel when the extra life 
 ; music is played, and additional duplicates of FM3-5 and all PSG tracks 
@@ -62,16 +62,16 @@ sizeof_soundvars:		equ __rs			; 18h bytes
 				rsset 0
 ch_flags:		rs.b 1					; 0 ; all tracks
 	; Channel flag bits; 0, 5, and 6 are unused here
-	chf_rest_bit:	equ 1					; 02h; track is at rest
-	chf_mask_bit:	equ 2					; 04h; SFX is overriding this track
-	chf_vib_bit:	equ 3					; 08h; set if vibrato is enabled
-	chf_tie_bit:	equ 4					; 10h; do not attack next note
-	chf_enable_bit: equ 7					; 80h; track is playing	
-	chf_rest:	equ 1<<chf_rest_bit	
-	chf_mask:	equ 1<<chf_mask_bit
-	chf_vib:	equ 1<<chf_vib_bit
-	chf_tie:	equ 1<<chf_tie_bit
-	chf_enable: equ 1<<chf_enable_bit
+	chf_rest_bit:	equ 1					
+	chf_mask_bit:	equ 2					
+	chf_vib_bit:	equ 3					
+	chf_tie_bit:	equ 4
+	chf_enable_bit: equ 7					
+	chf_rest:	equ 1<<chf_rest_bit		; 02h; track is at rest
+	chf_mask:	equ 1<<chf_mask_bit		; 04h; SFX is overriding this track
+	chf_vib:	equ 1<<chf_vib_bit		; 08h; set if vibrato is enabled
+	chf_tie:	equ 1<<chf_tie_bit		; 10h; do not attack next note
+	chf_enable: equ 1<<chf_enable_bit	; 80h; track is playing	
 	
 ch_type:		rs.b 1					; 1 ; all tracks
 	; Voice control bits

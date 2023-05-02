@@ -1,4 +1,8 @@
-Map_obj27:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - explosion from a badnik or monitor
+; ---------------------------------------------------------------------------
+
+Map_ExplodeItem:	index offset(*)
 	ptr	Map_obj27_000A
 	ptr	Map_obj27_0014
 	ptr	Map_obj27_001E

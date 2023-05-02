@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Oil Ocean swinging platforms
+; Sprite mappings - Oil Ocean swinging platforms
 ; -------------------------------------------------------------------------------
 
 Map_Swing_OOZ:	index offset(*)

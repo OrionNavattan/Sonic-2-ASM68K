@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Rings
+; Sprite mappings - Rings
 ; Custom mappings format. Compare to Obj25_MapUnc_12382.
 
 ; Differences include...

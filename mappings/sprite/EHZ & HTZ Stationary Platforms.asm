@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite Mappings - Emerald Hill and Hill Top stationary platforms
+; Sprite mappings - Emerald Hill and Hill Top stationary platforms
 ; -------------------------------------------------------------------------------
 
 Map_Plat_EHZ_HTZ:	index offset(*)

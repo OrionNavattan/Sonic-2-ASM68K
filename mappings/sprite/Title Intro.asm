@@ -1,5 +1,5 @@
 ; -----------------------------------------------------------------------------
-; Sprite Mappings - Sonic, Tails, flashing/falling stars, logo top, masking 
+; Sprite mappings - Sonic, Tails, flashing/falling stars, logo top, masking 
 ; sprite, and TM symbol on Title Screen
 ; -----------------------------------------------------------------------------
 

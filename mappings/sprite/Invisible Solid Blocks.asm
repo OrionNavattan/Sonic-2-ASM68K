@@ -1,4 +1,8 @@
-Map_obj74:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - invisible solid blocks (visible in debug mode)
+; ---------------------------------------------------------------------------
+
+Map_Invis:	index offset(*)
 	ptr	Map_obj74_0006
 	ptr	Map_obj74_0028
 	ptr	Map_obj74_004A
