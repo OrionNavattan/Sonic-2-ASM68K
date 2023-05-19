@@ -15,13 +15,12 @@
 ; by Marc Gordon (AKA Cinossu)
 
 ; Initial ASM68K port by Brainulator; modified by OrionNavattan
-; with some influence from Natsumi's AMPS.
+; with some influence from NatsumiFox's AMPS.
 
 ; The conditionals for driver version, SMPS2ASM version, and sample settings, 
 ; as well as all note and sample definitions, are in "Frequency, Note, Envelope,
 ; & Sample Definitions.asm".
 ; Everything in this file is specific to SMPS2ASM. 
-
 ; ---------------------------------------------------------------------------
 
 ; PSG conversion to S3/S&K/S3D drivers require a tone shift of 12 semi-tones.
@@ -101,7 +100,7 @@ convertMainTempoMod macro val
 		if SonicDriverVer=2
 			s1TempotoS2	\val
 			dc.b s12convval
-		else						;if SonicDriverVer>=3
+		else;if SonicDriverVer>=3
 			s1TempotoS3	\val
 			dc.b s13convval
 		endc
@@ -168,14 +167,14 @@ SourceSMPS2ASM = 0
 songStart = offset(*)
 
 	if SMPS2ASMVer<SourceSMPS2ASM
-		inform 1,"Song at 0x%h was made for a newer version of SMPS2ASM (this is version %d, but song wants at least version %d).",songStart,SMPS2ASMVer,SourceSMPS2ASM
+		inform 1,"Song at $%h was made for a newer version of SMPS2ASM (this is version %d, but song wants at least version %d).",songStart,SMPS2ASMVer,SourceSMPS2ASM
 	endc
 
 	endm
 
 smpsHeaderVoiceNull macro
 	if songStart<>offset(*)
-		inform 3,"Missing smpsHeaderStartSong"
+		inform 3,"Missing smpsHeaderStartSong."
 	endc
 		dc.w $0000
 	endm
@@ -184,13 +183,13 @@ smpsHeaderVoiceNull macro
 ; Common to music and SFX
 smpsHeaderVoice macro location
 	if songStart<>offset(*)
-		inform 3,"Missing smpsHeaderStartSong"
+		inform 3,"Missing smpsHeaderStartSong."
 	endc
 	if SonicDriverVer<>1
 		z80_ptr	\location\
 	else
 		if def(\location)
-			inform 3,"Voice banks for Sonic 1 songs must come after the song"
+			inform 3,"Voice banks for Sonic 1 songs must come after the song."
 		else
 			dc.w \location\-songStart
 		endc
@@ -208,7 +207,7 @@ smpsHeaderVoiceUVB macro
 	elseif SonicDriverVer>=3
 		little_endian	z80_UniVoiceBank
 	else
-		inform 3,"Universal Voice Bank does not exist in Sonic 1 or Sonic 2 drivers"
+		inform 3,"Universal Voice Bank does not exist in Sonic 1 or Sonic 2 drivers."
 	endc
 	endm
 
@@ -835,7 +834,7 @@ vcTL2 = vcTL2&$7F
 vcTL3 = vcTL3&$7F
 vcTL4 = vcTL4&$7F
 	elseif (SonicDriverVer<3)&(SourceDriver>=3)&((((vcTL1|vcTLMask1)&$80)<>$80)|(((vcTL2|vcTLMask2)&$80)<>((vcAlgorithm>=5)<<7))|(((vcTL3|vcTLMask3)&$80)<>((vcAlgorithm>=4)<<7))|(((vcTL4|vcTLMask4)&$80)<>((vcAlgorithm=7)<<7)))
-		inform 1,"Voice at 0x%h has TL bits that do not match its algorithm setting. This voice will not work in S1/S2 drivers.",offset(*)
+		inform 1,"Voice at $%h has TL bits that do not match its algorithm setting. This voice will not work in S1/S2 drivers.",offset(*)
 	endc
 
 	if SonicDriverVer=2

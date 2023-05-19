@@ -844,14 +844,14 @@ zROMWindow:			equ z_rom_window
 
 
 SFXPriorityVal:		equ v_priority
-TempoTimeout: 		equ f_tempo_counter
-CurrentTempo: 		equ f_current_tempo
+TempoTimeout: 		equ v_tempo_counter
+CurrentTempo: 		equ v_current_tempo
 StopMusic:			equ f_pause_sound
 FadeOutCounter:		equ v_fadeout_counter
 FadeOutDelay:		equ v_fadeout_delay
 Communication:		equ v_timing
 DACUpdating:		equ f_updating_dac
-QueueToPlay:		equ z_soundqueue
+QueueToPlay:		equ v_sound_id
 Queue0:				equ z_queue_0
 Queue1:				equ z_queue_1
 Queue2:				equ z_queue_2
@@ -912,7 +912,7 @@ zTrack:				equ sizeof_trackvars
 zPalUpdTick			equ	v_pal_update_counter
 zCurDAC:			equ	v_current_dac	
 zCurSong			equ	v_current_song	
-zDoSFXFlag:			equ	f_dosfx	
+zDoSFXFlag:			equ	f_sfx	
 zRingSpeaker:			equ	f_stereo_alt
 zGloopFlag:				equ	f_gloop
 zSpindashPlayingCounter:		equ	v_spindash_counter

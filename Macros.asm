@@ -319,7 +319,7 @@ rsblockend:	macros						; Adapted to Sonic 2's macro-based RAM clearing
 
 ; ---------------------------------------------------------------------------
 ; Mark the start and end of a RAM block without alignment, and generate size 
-; constants (used by the slot machine variables and the teleport swap table).
+; constants.
 ; input: block start label
 ; ---------------------------------------------------------------------------		
 
@@ -405,13 +405,13 @@ clear_ram:		macro startaddr,endaddr
   		endc
     
 		if ((startaddr)&$8000)=0
-			lea	(\startaddr).l,a1	; if start address is greater than $FFFF8000
+			lea	(\startaddr).l,a1		; if start address is greater than $FFFF8000
    		else
-			lea	(\startaddr).w,a1	; if start address is less than $FFFF8000
+			lea	(\startaddr).w,a1		; if start address is less than $FFFF8000
 	   	endc
 			moveq	#0,d0
     	if (\startaddr&1)
-			move.b	d0,(a1)+		; clear the first byte if start address is odd
+			move.b	d0,(a1)+			; clear the first byte if start address is odd
 	    endc
 		move.w	#((\endaddr-\startaddr)-(\startaddr&1))/4-1,d1
 			
@@ -419,10 +419,10 @@ clear_ram:		macro startaddr,endaddr
 		move.l	d0,(a1)+
 		dbf	d1,.loop\@
 	    if (((endaddr-startaddr)-((startaddr)&1))&2)
-			move.w	d0,(a1)+		; if amount to clear is not divisible by longword, clear the last whole word
+			move.w	d0,(a1)+			; if amount to clear is not divisible by longword, clear the last whole word
     	endc
     	if (((endaddr-startaddr)-((startaddr)&1))&1)
-			move.b	d0,(a1)+		; if amount to clear is not divisible by word, clear the last byte
+			move.b	d0,(a1)+			; if amount to clear is not divisible by word, clear the last byte
     	endc
     	endm		
 
@@ -632,9 +632,9 @@ dma_fill:	macro value,length,dest
 
 dma_fill_sequential:	macro value,length,dest,firstlast
 	
-		if strcmp("\firstlast","first")				; if this is the first DMA fill,
-			lea	(vdp_control_port).l,a5			; load the VDP control port,
-			move.w	#vdp_auto_inc+1,(a5)			; and set VDP increment to 1 byte
+		if strcmp("\firstlast","first")			; if this is the first DMA fill,
+			lea	(vdp_control_port).l,a5		; load the VDP control port,
+			move.w	#vdp_auto_inc+1,(a5)		; and set VDP increment to 1 byte
 		endc	
 					
 		move.l	#(vdp_dma_length_hi<<16)+(((length-1)&$FF00)<<8)+vdp_dma_length_low+((length-1)&$FF),(a5) ; set length of DMA
@@ -646,8 +646,8 @@ dma_fill_sequential:	macro value,length,dest,firstlast
 		btst	#dma_status_bit,d1			; is DMA in progress?
 		bne.s	.wait_for_dma\@				; if yes, branch
 		
-		if strcmp("\firstlast","last")				; if this is the last DMA fill in the sequence,
-			move.w	#vdp_auto_inc+2,(a5)			; set VDP increment back to 2 bytes
+		if strcmp("\firstlast","last")			; if this is the last DMA fill in the sequence,
+			move.w	#vdp_auto_inc+2,(a5)		; set VDP increment back to 2 bytes
 		endc	
 		
 		endm
@@ -849,8 +849,8 @@ charset:	macro	charset,txt
 		dc.b	strlen(\txt)-1
 	
 		rept strlen(\txt)				; repeat for length of string
-		chr:	substr ,1,"\str"		; get current character
-		str:	substr 2,,"\str"		; advance to next character in string
+		chr:	substr ,1,"\str"			; get current character
+		str:	substr 2,,"\str"			; advance to next character in string
 	
 		if strcmp(" ","\chr")
 			dc.b	0	
@@ -874,8 +874,8 @@ charset:	macro	charset,txt
 		elseif stricmp("\charset","copyright")
 		
 		rept strlen(\txt)				; repeat for length of string
-		chr:	substr ,1,"\str"		; get current character
-		str:	substr 2,,"\str"		; advance to next character in string
+		chr:	substr ,1,"\str"			; get current character
+		str:	substr 2,,"\str"			; advance to next character in string
 	
 		if strcmp(" ","\chr")
 			dc.w	0
@@ -921,7 +921,7 @@ bnkswtch_vals: macro *
 		rept 9
 
 		if OptimizeSoundDriver
-			; Because why use a and e when you can use h and l?
+								; Because why use a and e when you can use h and l?
 			if (offset(*))&(1<<(15+cnt))<>0
 				bnkswtch_\*_\$ptr_num:	equ 75h	; ld (hl),l
 			else
@@ -949,13 +949,15 @@ startbank: macro *
 \* equ *
 
 		if ~def(sndbnk_id)				; generate id of soundbank, used later to check for overflow
-			sndbnk_id: = 1			
+			sndbnk_id: = 1
+			ptr_id: = 0				; initial pointer id constant			
 		else
 			sndbnk_id: = sndbnk_id+1
+			ptr_id: = 80h				; initial pointer id constant; bit 7 is set to indicate second bank
 		endc		
 		align	sizeof_z80_bank				; align to 32KB boundary
 		sound_bank_start: = offset(*)			; start address of sound bank
-		ptr_id: = 80h					; initial pointer id constant
+		
 		
 		
 		; Unfortunately, because the bnkswtch_vals macro requires a label

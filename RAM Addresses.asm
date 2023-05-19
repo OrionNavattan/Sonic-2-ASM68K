@@ -4,9 +4,11 @@
 		pusho						; save options
 		opt	ae+					; enable auto evens
 
+
 						rsset $FFFF0000
+						
 RAM_Start:				equ __rs
-v_128x128_tiles:		rs.b $8000			;   $FFFF0000 ; 128x128 tile mappings ($8000 bytes); also used as decompression buffer for level tiles
+v_128x128_tiles:		rs.b $8000			;   $FFFF0000 ; 128x128 tile mappings ($8000 bytes); also used as decompression buffer for level tiles; referenced by both a full 32 bit address and by 24 bit addresses.
 v_level_layout:         rs.b sizeof_level			; $FFFF8000 ; level and background layouts ($1000 bytes)
 v_16x16_tiles:          rs.w sizeof_16x16_all			; $FFFF9000 ; 16x16 tile mappings ($C00 bytes)
 v_bgscroll_buffer:      rs.b $200				; $FFFFA800 ; used by some layer deformation routines
@@ -15,7 +17,7 @@ v_sprite_queue:         rs.b sizeof_priority*8			; $FFFFAC00 ; sprite display qu
 v_sprite_queue_end:		equ __rs
 
                 rsblock ost					; $B000-$D400 
-v_ost_all:          rs.b sizeof_ost_all			; $FFFFB000 ; object variable space ($40 bytes per object; $90 objects) ($2400 bytes) 
+v_ost_all:          rs.b sizeof_ost_all				; $FFFFB000 ; object variable space ($40 bytes per object; $90 objects) ($2400 bytes) 
 	; Reserved object RAM: players, titlecards, and game over/time over
     v_ost_reserved:			equ	v_ost_all
     v_ost_player1:   	 	equ v_ost_all			; $FFFFB040 first object (Tails in a Tails Alone game; Sonic otherwise)
@@ -41,7 +43,7 @@ v_ost_all:          rs.b sizeof_ost_all			; $FFFFB000 ; object variable space ($
     v_ost_watersurface2:	equ v_ost_all+(sizeof_ost*$F)	; $FFFFB3C0 ; Second water surface
     v_ost_reserved_end:		equ v_ost_all+(sizeof_ost*$10)	
 			
-v_ost_dynamic:         equ v_ost_all+(sizeof_ost*$10)	;  $FFFFFB400
+v_ost_dynamic:         equ v_ost_all+(sizeof_ost*$10)		;  $FFFFFB400
     v_ost_dynamic_end:     equ v_ost_all+(sizeof_ost*countof_ost)
     v_ost_dynamic_2P_end:  equ v_ost_dynamic_end-($C*6)*sizeof_ost ; 2P mode reserves 6 'blocks' of 12 RAM slots at the end.
                 rsblockend ost
@@ -49,7 +51,7 @@ v_ost_dynamic:         equ v_ost_all+(sizeof_ost*$10)	;  $FFFFFB400
                 rsblock ost_level_only
                 rsblock ss_shared_ram
 
-v_ost_level_only:          rs.b sizeof_ost_level_only ; $FFFFD000       
+v_ost_level_only:          rs.b sizeof_ost_level_only		; $FFFFD000       
 
     v_ost_lo_tails_tails:      equ v_ost_level_only		; $FFFFD000
     v_ost_lo_supersonicstars:  equ v_ost_level_only+sizeof_ost	; $FFFFD040
@@ -203,8 +205,8 @@ f_screen_shake: 			rs.b 1			; $FFFFEEBD ; flag to activate screen shaking code (
 f_disable_horiz_scroll:			rs.b 1			; $FFFFEEBE ; flag to disable horizontal scrolling for entire screen in 1P or top half in 2P
 f_disable_horiz_scroll_p2:		rs.b 1			; $FFFFEEBF ; flag to disable horizontal scrolling for bottom half of screen in 2P 
 
-v_boundary_unused1:				rs.l 1			; $FFFFEEC0 ; unused Sonic 1 leftover: these were that game's 'v_boundary_left' and 'v_boundary right'
-v_boundary_unused2:				rs.w 1			; $FFFFEEC4 ; unused Sonic 1 leftover: was 'v_boundary_top.' Written to as a longword to populate the still-used variable below
+v_boundary_unused1:				rs.l 1		; $FFFFEEC0 ; unused Sonic 1 leftover: these were that game's 'v_boundary_left' and 'v_boundary right'
+v_boundary_unused2:				rs.w 1		; $FFFFEEC4 ; unused Sonic 1 leftover: was 'v_boundary_top.' Written to as a longword to populate the still-used variable below
 
 v_boundary_bottom_next: 	rs.w 1				; $FFFFEEC6 ; bottom level boundary, next
 
@@ -588,7 +590,7 @@ v_ring_reward:				rs.b 1			; $FFFFFE1B ; tracks which rewards have been given fo
 
 ; HUD update flags
 f_hud_lives_update:			rs.b 1			; $FFFFFE1C ; lives counter update flag
-v_hud_rings_update:			rs.b 1			; $FFFFFE1D ; ring counter update flag - 1 = general update; $80 = reset to 0; $81 = deincrement 1
+v_hud_rings_update:			rs.b 1			; $FFFFFE1D ; ring counter update flag - 1 = general update; $80 = reset to 0; $81 = decrement 1
 f_hud_time_update:			rs.b 1			; $FFFFFE1E ; time counter update flag
 f_hud_score_update:			rs.b 1			; $FFFFFE1F ; score counter update flag
 v_rings:					rs.w 1		; $FFFFFE20 ; rings

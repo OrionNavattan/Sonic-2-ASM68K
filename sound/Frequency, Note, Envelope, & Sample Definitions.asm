@@ -5,21 +5,21 @@
 ; Standard SMPS settings
 ; ---------------------------------------------------------------------------
 
-SonicDriverVer:		equ 2
+SonicDriverVer:			equ 2
 SMPS2ASMVer:			equ 1
 ; Set the following to one to use all S2 DAC samples, or to zero otherwise.
 ; The S1 samples are a subset of this.
-use_s2_samples:			equ 1
+;use_s2_samples:			equ 1
 ; Set the following to one to use all S3D DAC samples, or to zero
 ; otherwise. Most of the S3D samples are also present in S3/S&K, but
 ; there are two samples specific to S3D.
-use_s3d_samples:			equ 0
+;use_s3d_samples:			equ 0
 ; Set the following to one to use all S3 DAC samples,
 ; or to zero otherwise.
-use_s3_samples:			equ 0
+;use_s3_samples:			equ 0
 ; Set the following to one to use all S&K DAC samples,
 ; or to zero otherwise.
-use_sk_samples:			equ 0
+;use_sk_samples:			equ 0
 
 ; ---------------------------------------------------------------------------
 ; Define FM frequency equates for a single octave
@@ -184,31 +184,17 @@ _lastNote:	equ __rs-1					; the last note
 ; ---------------------------------------------------------------------------
 
 VolumeEnv:	macro	func
-	if SonicDriverVer=1
-		\func	01
-		\func	02
-		\func	03
-		\func	04
-		\func	05
-		\func	06
-		\func	07
-		\func	08
-		\func	09
-	elseif SonicDriverVer=2	
-		\func	01
-		\func	02
-		\func	03
-		\func	04
-		\func	05
-		\func	06
-		\func	07
-		\func	08
-		\func	09
-		\func	0Ah
-		\func	0Bh
-		\func	0Ch
-		\func	0Dh
-	else							;if SonicDriverVer>=3	
+;	if SonicDriverVer=1
+;		\func	01
+;		\func	02
+;		\func	03
+;		\func	04
+;		\func	05
+;		\func	06
+;		\func	07
+;		\func	08
+;		\func	09
+;	elseif SonicDriverVer=2	
 		\func	01
 		\func	02
 		\func	03
@@ -222,33 +208,47 @@ VolumeEnv:	macro	func
 		\func	0Bh
 		\func	0Ch
 		\func	0Dh
-		\func	0Eh
-		\func	0Fh
-		\func	10h
-		\func	11h
-		\func	12h
-		\func	13h
-		\func	14h
-		\func	15h
-		\func	16h
-		\func	17h
-		\func	18h
-		\func	19h
-		\func	1Ah
-		\func	1Bh
-		\func	1Ch
-		\func	1Dh
-		\func	1Eh
-		\func	1Fh
-		\func	20h
-		\func	21h
-		\func	22h
-		\func	23h
-		\func	24h
-		\func	25h
-		\func	26h
-		\func	27h
-	endc	
+;	else							;if SonicDriverVer>=3	
+;		\func	01
+;		\func	02
+;		\func	03
+;		\func	04
+;		\func	05
+;		\func	06
+;		\func	07
+;		\func	08
+;		\func	09
+;		\func	0Ah
+;		\func	0Bh
+;		\func	0Ch
+;		\func	0Dh
+;		\func	0Eh
+;		\func	0Fh
+;		\func	10h
+;		\func	11h
+;		\func	12h
+;		\func	13h
+;		\func	14h
+;		\func	15h
+;		\func	16h
+;		\func	17h
+;		\func	18h
+;		\func	19h
+;		\func	1Ah
+;		\func	1Bh
+;		\func	1Ch
+;		\func	1Dh
+;		\func	1Eh
+;		\func	1Fh
+;		\func	20h
+;		\func	21h
+;		\func	22h
+;		\func	23h
+;		\func	24h
+;		\func	25h
+;		\func	26h
+;		\func	27h
+;	endc	
 	endm
 
 ; ---------------------------------------------------------------------------
@@ -258,16 +258,16 @@ VolumeEnv:	macro	func
 GenEnvConst:	macro	const
 		num: = \const
 		numstr: substr 1,2,"\const"			; get digits for constant	
-	if SonicDriverVer>=5
-		if num<=$0D 
-fTone_\numstr\:	rs.b 0						; if Flamewing's clone driver, generate fTone constants for envelopes $0D and lower for conversions
-		endc
-sTone_\numstr\:	rs.b 1						; generate main constant for Flamewing's clone driver		
-	elseif  SonicDriverVer>=3	
-sTone_\numstr\:	rs.b 1						; generate constant for S3, S3K, S3D
-	else							;if SonicDriverVer<=2	
+;	if SonicDriverVer>=5
+;		if num<=$0D 
+;fTone_\numstr\:	rs.b 0						; if Flamewing's clone driver, generate fTone constants for envelopes $0D and lower for conversions
+;		endc
+;sTone_\numstr\:	rs.b 1						; generate main constant for Flamewing's clone driver		
+;	elseif  SonicDriverVer>=3	
+;sTone_\numstr\:	rs.b 1						; generate constant for S3, S3K, S3D
+;	else							;if SonicDriverVer<=2	
 fTone_\numstr\:	rs.b 1						; generate constans for S1 & 2	
-	endc
+;	endc
 	endm			
 		
 ; ---------------------------------------------------------------------------
@@ -291,20 +291,20 @@ evcHold:		equ 80h					; terminator for PSG envelope lists
 
 DefineSamples:	macro	func
 
-	if SonicDriverVer=1
-		\func	Kick					; Kick sample
-		\func	Snare					; Snare sample
-		\func	Timpani					; Timpani sample (DO NOT USE)
-		\func	Null84					; this sample is not defined
-		\func	Null85					; this sample is not defined
-		\func	Null86					; this sample is not defined
-		\func	Null87					; this sample is not defined
-		\func	TimpaniHi				; Timpani high pitch
-		\func	TimpaniMid				; Timpani middle pitch
-		\func	TimpaniLow				; Timpani low pitch
-		\func	TimpaniFloor				; Timpani very low pitch
+;	if SonicDriverVer=1
+;		\func	Kick					; Kick sample
+;		\func	Snare					; Snare sample
+;		\func	Timpani					; Timpani sample (DO NOT USE)
+;		\func	Null84					; this sample is not defined
+;		\func	Null85					; this sample is not defined
+;		\func	Null86					; this sample is not defined
+;		\func	Null87					; this sample is not defined
+;		\func	TimpaniHi				; Timpani high pitch
+;		\func	TimpaniMid				; Timpani middle pitch
+;		\func	TimpaniLow				; Timpani low pitch
+;		\func	TimpaniFloor				; Timpani very low pitch
 		
-	elseif SonicDriverVer=2
+;	elseif SonicDriverVer=2
 	
 		\func Kick					; Kick Sample
 		\func Snare					; Snare sample
@@ -324,113 +324,113 @@ DefineSamples:	macro	func
 		\func MidClap					; Mid clap
 		\func LowClap					; Low clap
 		
-	else;if SonicDriverVer>=3
-		if use_s3_samples|use_sk_samples|use_s3d_samples
-			\func SnareS3				; $81
-			\func HighTom
-			\func MidTomS3
-			\func LowTomS3
-			\func FloorTomS3
-			\func KickS3
-			\func MuffledSnare
-			\func CrashCymbal
-			\func RideCymbal
-			\func LowMetalHit
-			\func MetalHit
-			\func HighMetalHit
-			\func HigherMetalHit
-			\func MidMetalHit
-			\func ClapS3 
-			\func ElectricHighTom			; $90
-			\func ElectricMidTom
-			\func ElectricLowTom
-			\func ElectricFloorTom
-			\func TightSnare
-			\func MidpitchSnare
-			\func LooseSnare
-			\func LooserSnare
-			\func HiTimpaniS3
-			\func LowTimpaniS3
-			\func MidTimpaniS3
-			\func QuickLooseSnare
-			\func Click
-			\func PowerKick
-			\func QuickGlassCrash			; $9E
-		endc
+;	else;if SonicDriverVer>=3
+;		if use_s3_samples|use_sk_samples|use_s3d_samples
+;			\func SnareS3				; $81
+;			\func HighTom
+;			\func MidTomS3
+;			\func LowTomS3
+;			\func FloorTomS3
+;			\func KickS3
+;			\func MuffledSnare
+;			\func CrashCymbal
+;			\func RideCymbal
+;			\func LowMetalHit
+;			\func MetalHit
+;			\func HighMetalHit
+;			\func HigherMetalHit
+;			\func MidMetalHit
+;			\func ClapS3 
+;			\func ElectricHighTom			; $90
+;			\func ElectricMidTom
+;			\func ElectricLowTom
+;			\func ElectricFloorTom
+;			\func TightSnare
+;			\func MidpitchSnare
+;			\func LooseSnare
+;			\func LooserSnare
+;			\func HiTimpaniS3
+;			\func LowTimpaniS3
+;			\func MidTimpaniS3
+;			\func QuickLooseSnare
+;			\func Click
+;			\func PowerKick
+;			\func QuickGlassCrash			; $9E
+;		endc
 		
-		if use_s3_samples|use_sk_samples
-			\func GlassCrashSnare			; $9F
-			\func GlassCrash
-			\func GlassCrashKick
-			\func QuietGlassCrash
-			\func OddSnareKick
-			\func KickExtraBass
-			\func ComeOn
-			\func DanceSnare
-			\func LooseKick	
-			\func ModLooseKick
-			\func Woo
-			\func Go
-			\func SnareGo
-			\func PowerTom
-			\func HiWoodBlock
-			\func LowWoodBlock
-			\func HiHitDrum1			; $AF
+;		if use_s3_samples|use_sk_samples
+;			\func GlassCrashSnare			; $9F
+;			\func GlassCrash
+;			\func GlassCrashKick
+;			\func QuietGlassCrash
+;			\func OddSnareKick
+;			\func KickExtraBass
+;			\func ComeOn
+;			\func DanceSnare
+;			\func LooseKick	
+;			\func ModLooseKick
+;			\func Woo
+;			\func Go
+;			\func SnareGo
+;			\func PowerTom
+;			\func HiWoodBlock
+;			\func LowWoodBlock
+;			\func HiHitDrum1			; $AF
 		
-			\func LowHitDrum
-			\func MetalCrashHit
-			\func EchoedClapHit
-			\func LowerEchoedClapHit
-			\func HipHopHitKick
-			\func HipHopHitPowerKick
-			\func BassHey
-			\func DanceStyleKick
-			\func HipHopHitKick2
-			\func HipHopHitKick3
-			\func ReverseFadingWind
-			\func ScratchS3
-			\func LooseSnareNoise
-			\func PowerKick2
-			\func CrashingNoiseWoo
-			\func QuickHit				; $BF
-			\func KickHey
-			\func PowerKickHit
-			\func LowPowerKickHit
-			\func LowerPowerKickHit
-			\func LowestPowerKickHit		; $C4
-		endc
+;			\func LowHitDrum
+;			\func MetalCrashHit
+;			\func EchoedClapHit
+;			\func LowerEchoedClapHit
+;			\func HipHopHitKick
+;			\func HipHopHitPowerKick
+;			\func BassHey
+;			\func DanceStyleKick
+;			\func HipHopHitKick2
+;			\func HipHopHitKick3
+;			\func ReverseFadingWind
+;			\func ScratchS3
+;			\func LooseSnareNoise
+;			\func PowerKick2
+;			\func CrashingNoiseWoo
+;			\func QuickHit				; $BF
+;			\func KickHey
+;			\func PowerKickHit
+;			\func LowPowerKickHit
+;			\func LowerPowerKickHit
+;			\func LowestPowerKickHit		; $C4
+;		endc
 		
 		; For conversions:
-		if use_s2_samples
-			\func Kick				; if using s2 samples AND any combo of s3, s3k, s3d samples, we need to reset the rs counter here
-			\func Snare
-			\func Clap
-			\func Scratch
-			\func Timpani
-			\func HiTom
-			\func VLowClap
-			\func HiTimpani
-			\func MidTimpani
-			\func LowTimpani
-			\func VLowTimpani
-			\func MidTom
-			\func LowTom
-			\func FloorTom
-			\func HiClap
-			\func MidClap
-			\func LowClap
-		endc
+;		if use_s2_samples
+;			\func Kick				; if using s2 samples AND any combo of s3, s3k, s3d samples, we need to reset the rs counter here
+;			\func Snare
+;			\func Clap
+;			\func Scratch
+;			\func Timpani
+;			\func HiTom
+;			\func VLowClap
+;			\func HiTimpani
+;			\func MidTimpani
+;			\func LowTimpani
+;			\func VLowTimpani
+;			\func MidTom
+;			\func LowTom
+;			\func FloorTom
+;			\func HiClap
+;			\func MidClap
+;			\func LowClap
+;		endc
 		
-		if use_s3d_samples
-			\func FinalFightMetalCrash
-			\func IntroKick
-		endc
+;		if use_s3d_samples
+;			\func FinalFightMetalCrash
+;			\func IntroKick
+;		endc
 		
-		if use_s3_samples
-			\func EchoedClapHit_S3
-			\func LowerEchoedClapHit_S3
-		endc
-	endc					
+;		if use_s3_samples
+;			\func EchoedClapHit_S3
+;			\func LowerEchoedClapHit_S3
+;		endc
+;	endc					
 	endm
 
 ; ---------------------------------------------------------------------------
@@ -441,13 +441,13 @@ GenSampleConst:	macro	const
 ; for SMPS conversions, if we are using the Sonic 3 driver or greater, Sonic 2 samples,
 ; AND any combination of S3, S3K, or S3D samples, then reset the rs counter to $81  
 ; starting with the S2 kick sample
-	if SonicDriverVer>=3
-		if use_s2_samples&(use_s3_samples|use_sk_samples|use_s3d_samples)
-			if stricmp("\const","Kick")
-				rsset $81
-			endc	
-		endc	
-	endc		
+;	if SonicDriverVer>=3
+;		if use_s2_samples&(use_s3_samples|use_sk_samples|use_s3d_samples)
+;			if stricmp("\const","Kick")
+;				rsset $81
+;			endc	
+;		endc	
+;	endc		
 		rept narg-1
 d\const:	rs.b 0						; generate alt constants
 		shift
@@ -517,8 +517,8 @@ TrackCommand:	macro	func
 		\func	TempoSet,SetTempoMod			; Set tempo (affected by tick multiplier!)
 		\func	SongTick,SetTempoDiv			; Set tick multiplier for song
 		\func	VolAddPSG,mPSGAlterVol			; PSG volume add
-		\func	NullCmd1				; unused, was Sonic 1's ClearPush
-		\func	NullCmd2				; unused, was Sonic 1's StopSpecial
+		\func	ClearPush,NullCmd1			; unused, was Sonic 1's ClearPush
+		\func	EndBack,NullCmd2			; unused, was Sonic 1's StopSpecial
 		\func	Voice,FMvoice				; Load FM voice
 		\func	Vib,ModSet				; Set automatic vibrate (aka, modulation)
 		\func	VibOn,ModOn				; Enable automatic vibrate (without parameter set)

@@ -9,10 +9,10 @@ type_drowncount_manager:			equ	$81	; invisible object that manages air count, tr
 ; These match each of this object's routines.
 type_titlintr_sonic: 			equ id_TitlIntr_Sonic	; 2
 type_titlintr_tails:			equ	id_TitlIntr_Tails ; 4
-type_titlintr_logotop:		equ	id_TitlIntr_LogoTop ; 6
+type_titlintr_logotop:		equ	id_TitlIntr_LogoTop	; 6
 type_titlintr_flashingstar:	equ	id_TitlIntr_FlashingStar ; 8
 type_titlintr_sonichand:		equ	id_TitlIntr_SonicHand ; $A
-type_titlintr_fallingstar:	equ	id_TitlIntr_FallingStar ; $C
+type_titlintr_fallingstar:	equ	id_TitlIntr_FallingStar	; $C
 type_titlintr_maskingsprite:	equ	id_TitlIntr_MaskingSprite ; $E
 type_titlintr_tailshand:		equ	id_TitlIntr_TailsHand ; $10
 

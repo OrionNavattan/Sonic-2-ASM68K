@@ -1,18 +1,4 @@
 ; ---------------------------------------------------------------------------
-; Macro for playing a sound or a command
-; ---------------------------------------------------------------------------
-
-;play:		macro	queue, command, song
-;		move.\0	#\song,d0				; load the song to d0
-
-;		if (\queue < 0) | (\queue > v_soundqueue_size)
-;			inform 2,"Invalid or undefined sound queue slot. Must be between 0 and \#v_soundqueue_size"
-;		endc
-
-;		\command	PlaySound\queue			; call playsound based on the slot ID
-;		endm
-
-; ---------------------------------------------------------------------------
 ; Define background music
 ;
 ; This special macro is used to generate constants for both the main program and 
@@ -20,45 +6,52 @@
 ; Unfortunately, we can't use it to generate the includes directly, as they are 
 ; included in the ROM in a completely different order.
 ; line format: \func	sound file, speed shoes tempo, flag 
-; (20h = uncompressed, 40h = disables PAL mode), -128 = hack to force the
-; Continue music's pointer to the correct value of 0.
+; (20h = uncompressed, 40h = disables PAL adjustment)
 ; ---------------------------------------------------------------------------
 
+; Flag constants
+uncompressed_mus_bit:	equ 5					; if set, this track is uncompressed in ROM
+disable_pal_bit:		equ 6				; if set, this track will NOT be adjusted for PAL
+mus_bank_bit:			equ 7				; if set, track is in bank 2, otherwise bank 1
+uncompressed_mus:		equ 1<<uncompressed_mus_bit
+disable_pal:			equ 1<<disable_pal_bit
+mus_bank:				equ 1<<mus_bank_bit
+mus_flags:			equ uncompressed_mus|disable_pal|mus_bank
 
 MusicFiles:	macro func
 
-		\func	2PResults,		$68, 0
-		\func	EHZ,			$BE, 0
-		\func	MCZ_2P,			$FF, 0
-		\func	OOZ,			$F0, 0
-		\func	MTZ,			$FF, 0
-		\func	HTZ,			$DE, 0
-		\func	ARZ,			$FF, 0
-		\func	CNZ_2P,			$DD, 0
-		\func	CNZ,			$68, 0
-		\func	DEZ,			$80, 0
-		\func	MCZ,			$D6, 0
-		\func	EHZ_2P,			$7B, 0
-		\func	SCZ,			$7B, 0
-		\func	CPZ,			$FF, 0
-		\func	WFZ,			$A8, 0
-		\func	HPZ,			$FF, 0
-		\func	Options,		$87, 0
-		\func	SpecialStage,	$FF, 0
-		\func	Boss,			$FF, 0
-		\func	FinalBoss,		$C9, 0
-		\func	Ending,			$97, 0
-		\func	SuperSonic,		$FF, 0
-		\func	Invincible,		$FF, 0
-		\func	ExtraLife,		$CD, 20h
-		\func	Title,			$CD, 0
-		\func	EndLevel,		$AA, 0
-		\func	GameOver,		$F2, 20h
-		\func	Continue,		$DB, -128	; force the continue music's pointer to the correct value
-		\func	Emerald,		$D5, 20h
-		\func	Credits,		$F0, 20h
-		\func	Drowning,		$80, 40h	; don't adjust the drowning music for PAL, keep it synchronized with the gameplay
-	endm	
+		\func	2PResults,		68h,	0
+		\func	EHZ,			0BEh,	0
+		\func	MCZ_2P,			0FFh,	0
+		\func	OOZ,			0F0h,	0
+		\func	MTZ,			0FFh,	0
+		\func	HTZ,			0DEh,	0
+		\func	ARZ,			0FFh,	0
+		\func	CNZ_2P,			0DDh,	0
+		\func	CNZ,			68h,	0
+		\func	DEZ,			80h,	0
+		\func	MCZ,			0D6h,	0
+		\func	EHZ_2P,			7Bh,	0
+		\func	SCZ,			7Bh,	0
+		\func	CPZ,			0FFh,	0
+		\func	WFZ,			0A8h,	0
+		\func	HPZ,			0FFh,	0
+		\func	Options,		87h,	0
+		\func	SpecialStage,	0FFh,	0
+		\func	Boss,			0FFh,	0
+		\func	FinalBoss,		0C9h,	0
+		\func	Ending,			97h,	0
+		\func	SuperSonic,		0FFh,	0
+		\func	Invincible,		0FFh,	0
+		\func	ExtraLife,		0CDh,	uncompressed_mus
+		\func	Title,			0CDh,	0
+		\func	EndLevel,		0AAh,	0
+		\func	GameOver,		0F2h,	uncompressed_mus
+		\func	Continue,		0DBh,	0
+		\func	Emerald,		0D5h,	uncompressed_mus
+		\func	Credits,		0F0h,	uncompressed_mus
+		\func	Drowning,		80h,	disable_pal ; don't adjust the drowning music for PAL; keep it synchronized with the gameplay
+		endm	
 
 ; ---------------------------------------------------------------------------
 ; Define sound effects
@@ -170,24 +163,25 @@ SFXFiles:	macro	func
 ; This special macro is used to generate constants.
 ; line format: \func	command name, command priority
 
-; Note that Pause and Unpause are not real commands, but instead signal 
-; SndDriverInput to set the driver's pause flag.
+; Note that Pause and Unpause are not real commands: but instead signal 
+; SndDriverInput to set the driver's pause flag, and are not passed to the
+; driver itself.
 ; ---------------------------------------------------------------------------
 DriverCmds:	macro	func
 		
-		\func	StopSFX
-		\func	Fade
-		\func	Sega	
-		\func	Speedup	
-		\func	Slowdown	
-		\func	Stop					; last real command
+		\func	StopSFX,	real
+		\func	Fade,		real
+		\func	Sega,		real	
+		\func	Speedup,	real	
+		\func	Slowdown,	real	
+		\func	Stop,		real			; last real command
 		\func	Pause
 		\func	Unpause
 		endm
 			
 ; ---------------------------------------------------------------------------
 ; Generate constants for sound IDs in the main program
-; (Constants for the sound driver are generated at ZMasterPlaylist)
+; (Constants for the sound driver are generated at MusicIndex)
 ; ---------------------------------------------------------------------------
 
 ; Background music

@@ -395,8 +395,8 @@ vram_MechaSonic:            equ $7000
 
 ; Tile addresses for patching HTZ and WFZ
 
-tile_HTZ_Patch:      		equ $3F80	; until this address, equal to EHZ tiles
-tile_WFZ_Patch:				equ $60E0	; Until this address, equal to SCZ tiles
+tile_HTZ_Patch:      		equ $3F80			; until this address, equal to EHZ tiles
+tile_WFZ_Patch:				equ $60E0		; Until this address, equal to SCZ tiles
 
 ; ---------------------------------------------------------------------------
 ; Unused beta leftovers

@@ -12,7 +12,7 @@ sizeof_ost:		    equ $40				; size of one OST in bytes
 countof_ost_reserved:   equ $10					; reserved OSTs
 countof_ost_dynamic:    equ $70					; dynamic OSTs, used for level objects
 countof_ost:			equ countof_ost_reserved+countof_ost_dynamic ; $80; total OSTs in RAM, excluding level only objects
-sizeof_ost_all:		equ sizeof_ost*countof_ost	; size of regular OSTs
+sizeof_ost_all:		equ sizeof_ost*countof_ost		; size of regular OSTs
 
 countof_ost_dynamic_2P:	equ $28
 countof_ost_level_only: equ $10					; additional reserved object ram for objects attached to players, run only when in level 
@@ -59,7 +59,7 @@ sizeof_sprite:			equ 8				; one sprite in sprite attribute table
 countof_max_sprites:	equ $50					; max number of sprites that can be displayed at once (80)
 sizeof_vram_sprites:	equ sizeof_sprite*countof_max_sprites	; sprite attribute table ($280 bytes)
 sizeof_vram_hscroll:	equ $380
-sizeof_vram_hscroll_padded:	equ sizeof_vram_hscroll+$80 ; $400
+sizeof_vram_hscroll_padded:	equ sizeof_vram_hscroll+$80	; $400
 
 vram_start:				 equ $0000
 
@@ -171,7 +171,7 @@ sonic_alone:		equ 1
 tails_alone:		equ 2
 
 ; Level and zone IDs. Do NOT alter the order here, or zone tables will screw up.
-	rsset 0
+	rsreset
 id_EHZ:		rs.b 1						; 0
 id_Level1:	rs.b 1						; 1
 id_WZ:		rs.b 1						; 2
@@ -325,7 +325,7 @@ CommonRoutineIDs:	macro	routinename
 ; ---------------------------------------------------------------------------
 		pusho						; save options
 		opt	ae+					; enable auto evens
-			rsset 0
+			rsreset
 
 ; Main OST					
 ost_id:			rs.b 1					;  0 ; universal; object id

@@ -199,7 +199,7 @@ EntryPoint:
 		move.w	d7,(a2)					; reset the z80
 
 	.loop_ram:				
-		move.l	d0,-(a6)				; clear 4 bytes of RAM and deincrement
+		move.l	d0,-(a6)				; clear 4 bytes of RAM and decrement
 		dbf	d6,.loop_ram				; repeat until entire RAM is clear
 		move.l	(a5)+,(a4)				; set VDP display mode and increment mode
 		move.l	(a5)+,(a4)				; set VDP to CRAM write
@@ -477,7 +477,7 @@ VBlank_Index:	index offset(*),,2
 		ptr  VBlank_PCM					; $14
 		ptr  VBlank_Menu				; $16
 		ptr  VBlank_Ending				; $18
-		ptr  VBlank_DMA				; $1A
+		ptr  VBlank_DMA					; $1A
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; VBlank Routine 0 - runs when a frame ends before the game loop reaches 
@@ -781,14 +781,14 @@ VBlank_SpecialStage:
 .SS_FG_Transfer_Table_Index:					; SS_PNTA_Transfer_Table: off_97A
 		index offset(*)
 
-		ptr SS_FGTblTrans_2_0	; 0
-		ptr SS_FGTblTrans_2_1	; 1
-		ptr SS_FGTblTrans_2_2	; 2
-		ptr SS_FGTblTrans_2_3	; 3
-		ptr SS_FGTblTrans_1_0	; 4
-		ptr SS_FGTblTrans_1_1	; 5
-		ptr SS_FGTblTrans_1_2	; 6
-		ptr SS_FGTblTrans_1_3	; 7
+		ptr SS_FGTblTrans_2_0				; 0
+		ptr SS_FGTblTrans_2_1				; 1
+		ptr SS_FGTblTrans_2_2				; 2
+		ptr SS_FGTblTrans_2_3				; 3
+		ptr SS_FGTblTrans_1_0				; 4
+		ptr SS_FGTblTrans_1_1				; 5
+		ptr SS_FGTblTrans_1_2				; 6
+		ptr SS_FGTblTrans_1_3				; 7
 ; ===========================================================================
 	.secondarybuffer:
 		move.w 	#vdp_fg_nametable|(vram_ss_fg2>>10),(a6) ; secondary FG plane table starts at $C000
@@ -1123,10 +1123,10 @@ HBlank_PalToCRAM:
 ; ===========================================================================
 
 SoundDriverInput:							
-		lea	(v_soundqueue&$00FFFFFF).l,a0
+		lea	(v_soundqueue&$FFFFFF).l,a0
 		lea	(z80_ram+z_abs_vars).l,a1		; $A01B80
 
-		cmpi.b	#$80,z_soundqueue(a1)			; is sound driver processing a previous sound request?
+		cmpi.b	#com_Null,v_sound_id(a1)		; is sound driver processing a previous sound request?
 		bne.s	.doSFX					; if so, branch; we'll try again on the next VBlank
 
 		_move.b	music_0(a0),d0				; is there anything in music queue 0?
@@ -1153,7 +1153,7 @@ SoundDriverInput:
 ; ===========================================================================
 
 	.notpause:				
-		move.b	d0,z_soundqueue(a1)			; send the music's sound id to the driver
+		move.b	d0,v_sound_id(a1)			; send the music's sound id to the driver
 
 	.doSFX:	
 		; process the SFX queue
@@ -1195,7 +1195,7 @@ JmpTo_SegaScreen_VBlank:
 
 JoypadInit:
 		stopZ80						; unnecessary, this is a workaround for an I/O controller
-		waitz80						; bug exposed only by very early mask ROM cartridges
+		waitz80						; bug exposed by early mask ROM cartridges
 		moveq	#$40,d0
 		move.b	d0,(port_1_control).l			; init port 1 (joypad 1)
 		move.b	d0,(port_2_control).l			; init port 2 (joypad 2)
@@ -1401,8 +1401,6 @@ PlaySoundLocal:
 
 	.exit:				
 		rts	
-
-
 ; ===========================================================================
 
 ; sub_1388
@@ -2523,7 +2521,7 @@ PCycle_Null:
 
 PCycle_EHZ:				
 		lea	(Pal_EHZ_ARZWaterCyc).l,a0
-		subq.w	#1,(v_palcycle_time).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time).w			; decrement timer
 		bpl.s	.exit					; if time remains, exit
 		move.w	#7,(v_palcycle_time).w			; reset timer to 7 frames
 		move.w	(v_palcycle_num).w,d0			; get cycle number
@@ -2538,12 +2536,12 @@ PCycle_EHZ:
 ; ===========================================================================
 ; Unused beta leftover
 PCycle_WZ:				
-		subq.w	#1,(v_palcycle_time).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time).w			; decrement timer
 		bpl.s	.exit					; if time remains, exit
 		move.w	#2,(v_palcycle_time).w			; reset timer to 2 frames
 		lea	(Pal_WoodConveyerCyc).l,a0
 		move.w	(v_palcycle_num).w,d0			; get cycle number
-		subq.w	#2,(v_palcycle_num).w			; deincrement cycle number
+		subq.w	#2,(v_palcycle_num).w			; decrement cycle number
 		bcc.s	.no_reset				; if greater than 0, bramch
 		move.w	#6,(v_palcycle_num).w			; reset cycle nummber
 
@@ -2557,7 +2555,7 @@ PCycle_WZ:
 ; ===========================================================================
 
 PCycle_MTZ:				
-		subq.w	#1,(v_palcycle_time).w			; deincrement timer 1
+		subq.w	#1,(v_palcycle_time).w			; decrement timer 1
 		bpl.s	.cycle2					; if time remains, branch		
 		move.w	#$11,(v_palcycle_time).w		; reset timer to 17 frames
 		lea	(Pal_MTZCyc1).l,a0
@@ -2572,7 +2570,7 @@ PCycle_MTZ:
 		move.w	(a0,d0.w),(a1)				; copy one color
 
 	.cycle2:				
-		subq.w	#1,(v_palcycle_time2).w			; deincrement timer 2
+		subq.w	#1,(v_palcycle_time2).w			; decrement timer 2
 		bpl.s	.cycle3					; if time remains, branch	
 		move.w	#2,(v_palcycle_time2).w			; reset timer to 2 frames
 		lea	(Pal_MTZCyc2).l,a0
@@ -2588,7 +2586,7 @@ PCycle_MTZ:
 		move.w	4(a0,d0.w),(a1)				; copy one more color
 
 	.cycle3:				
-		subq.w	#1,(v_palcycle_time3).w			; deincrement timer 3
+		subq.w	#1,(v_palcycle_time3).w			; decrement timer 3
 		bpl.s	.exit					; if time remains, exit
 		move.w	#9,(v_palcycle_time3).w			; reset timer to 9 frames
 		lea	(Pal_MTZCyc3).l,a0
@@ -2608,7 +2606,7 @@ PCycle_MTZ:
 
 PCycle_HTZ:				
 		lea	(Pal_HTZLavaCyc).l,a0
-		subq.w	#1,(v_palcycle_time).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time).w			; decrement timer
 		bpl.s	.exit					; if time remains, exit
 		move.w	#0,(v_palcycle_time).w			; clear timer
 		move.w	(v_palcycle_num).w,d0			; get cycle number
@@ -2631,12 +2629,12 @@ PCycle_HTZ_LavaDelayData:					; number of frames between changes of the lava pal
 ; ===========================================================================
 ; Unused beta leftover
 PCycle_HPZ:				
-		subq.w	#1,(v_palcycle_time).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time).w			; decrement timer
 		bpl.s	.exit					; if time remains, exit
 		move.w	#4,(v_palcycle_time).w			; reset timer to 4 frames
 		lea	(Pal_HPZWaterCyc).l,a0
 		move.w	(v_palcycle_num).w,d0			; get cycle number
-		subq.w	#2,(v_palcycle_num).w			; deincrement cycle number
+		subq.w	#2,(v_palcycle_num).w			; decrement cycle number
 		bcc.s	.no_reset				; if greater than 0, branch
 		move.w	#6,(v_palcycle_num).w			; reset cycle number
 
@@ -2654,12 +2652,12 @@ PCycle_HPZ:
 ; ===========================================================================
 
 PCycle_OOZ:				
-		subq.w	#1,(v_palcycle_time).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time).w			; decrement timer
 		bpl.s	.exit					; if time remains, exit
 		move.w	#7,(v_palcycle_time).w			; reset timer to 7 frames
 		lea	(Pal_OOZOilCyc).l,a0
 		move.w	(v_palcycle_num).w,d0			; get cycle number
-		addq.w	#2,(v_palcycle_num).w			; deincrement cycle number
+		addq.w	#2,(v_palcycle_num).w			; decrement cycle number
 		andi.w	#6,(v_palcycle_num).w			; if greater than 6, reset to 0
 		lea	(v_pal_dry_line3+(10*2)).w,a1		; 3rd line, 10th color
 		move.l	(a0,d0.w),(a1)+				; copy two colors
@@ -2672,7 +2670,7 @@ PCycle_OOZ:
 PCycle_MCZ:				
 		tst.b	(v_current_boss).w			; is the MCZ boss fight in progress?
 		bne.s	.exit					; if so, exit
-		subq.w	#1,(v_palcycle_time).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time).w			; decrement timer
 		bpl.s	.exit					; if time remains, exit
 		move.w	#1,(v_palcycle_time).w			; reset timer to 1 frame
 		lea	(Pal_MCZLanternCyc).l,a0
@@ -2686,7 +2684,7 @@ PCycle_MCZ:
 ; ===========================================================================
 
 PCycle_CNZ:				
-		subq.w	#1,(v_palcycle_time).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time).w			; decrement timer
 		bpl.w	.chk_boss				; if time remains, branch
 		move.w	#7,(v_palcycle_time).w			; reset timer
 		lea	(Pal_CNZCyc1_Cyc2).l,a0
@@ -2730,7 +2728,7 @@ PCycle_CNZ:
 	.chk_boss:				
 		tst.b	(v_current_boss).w			; is the boss fight in progress?
 		beq.w	.exit					; if not, exit
-		subq.w	#1,(v_palcycle_time2).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time2).w			; decrement timer
 		bpl.w	.exit					; if time remains, exit
 		move.w	#3,(v_palcycle_time2).w			; reset timer to 3 frames
 		move.w	(v_palcycle_num2).w,d0			; get cycle number
@@ -2768,7 +2766,7 @@ PCycle_CNZ:
 ; ===========================================================================
 
 PCycle_CPZ:				
-		subq.w	#1,(v_palcycle_time).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time).w			; decrement timer
 		bpl.s	.exit					; if time remains, exit
 		move.w	#7,(v_palcycle_time).w			; reset timer to 7 frames
 		lea	(Pal_CPZCyc1).l,a0
@@ -2805,7 +2803,7 @@ PCycle_CPZ:
 
 PCycle_ARZ:				
 		lea	(Pal_EHZ_ARZWaterCyc).l,a0
-		subq.w	#1,(v_palcycle_time).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time).w			; decrement timer
 		bpl.s	.exit					; branch if time remains
 		move.w	#5,(v_palcycle_time).w			; reset timer to 5 frames
 		move.w	(v_palcycle_num).w,d0			; get cycle number
@@ -2821,7 +2819,7 @@ PCycle_ARZ:
 ; ===========================================================================
 
 PCycle_WFZ:				
-		subq.w	#1,(v_palcycle_time).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time).w			; decrement timer
 		bpl.s	.cycle2					; if time remains, branch
 		move.w	#1,(v_palcycle_time).w			; reset timer to 1 frame
 		lea	(Pal_WFZFireCyc).l,a0
@@ -2843,7 +2841,7 @@ PCycle_WFZ:
 		move.l	4(a0,d0.w),(a1)				; copy two colors
 
 	.cycle2:				
-		subq.w	#1,(v_palcycle_time2).w			; deincrement timer
+		subq.w	#1,(v_palcycle_time2).w			; decrement timer
 		bpl.s	.cycle3					; if time remains, branch
 		move.w	#3,(v_palcycle_time2).w			; reset timer to 3 frames
 		lea	(Pal_WFZCyc1).l,a0
@@ -2857,7 +2855,7 @@ PCycle_WFZ:
 		move.w	(a0,d0.w),(v_pal_dry_line3+(14*2)).w	; copy one color to 3rd line, 14th color
 
 	.cycle3:				
-		subq.w	#1,(v_palcycle_time3).w			; deincrement timer	
+		subq.w	#1,(v_palcycle_time3).w			; decrement timer	
 		bpl.s	.exit					; if time remains, exit
 		move.w	#5,(v_palcycle_time3).w			; reset timer to 5 frames
 		lea	(Pal_WFZCyc2).l,a0
@@ -2948,12 +2946,12 @@ PCycle_SuperSonic:
 
 .revert:
 		; Run the fade-in transition backwards.
-		subq.b	#1,(v_palette_timer).w			; deincrement timer
+		subq.b	#1,(v_palette_timer).w			; decrement timer
 		bpl.s	.exit					; if time remains, exit
 		move.b	#3,(v_palette_timer).w			; reset timer to 3 frames
 		lea	(Pal_SS_TransformationCyc).l,a0
 		move.w	(v_palette_frame).w,d0			; get palette frame
-		subq.w	#8,(v_palette_frame).w			; deincrement palette frame
+		subq.w	#8,(v_palette_frame).w			; decrement palette frame
 
 	if FixBugs
 		; Branch to common palette cycle routine and fix the bug described below.
@@ -2993,7 +2991,7 @@ PCycle_SuperSonic:
 ; ===========================================================================
 
 .normal:
-		subq.b	#1,(v_palette_timer).w			; deincrement timer
+		subq.b	#1,(v_palette_timer).w			; decrement timer
 		bpl.s	.exit					; if time remains, exit
 		move.b	#7,(v_palette_timer).w			; reset timer to 7 frames
 		lea	(Pal_SS_TransformationCyc).l,a0
@@ -4138,7 +4136,7 @@ GM_Title:
 		move.b	#id_TitleIntro,(v_title_sonic+ost_id).w	; load TitleIntro object (manages the entire intro animation)
 		move.b	#type_titlintr_sonic,(v_title_sonic+ost_subtype).w ; set to subtype 2
 		
-		jsr	(ExecuteObjects).l				; run for a frame to allow it to initialize
+		jsr	(ExecuteObjects).l			; run for a frame to allow it to initialize
 		jsr	(BuildSprites).l
 		
 		moveq	#id_PLC_Main,d0				; load standard PLCs
@@ -4204,7 +4202,7 @@ Title_MainLoop:
 		tst.w	(v_countdown).w				; has counter hit 0?  (started at 640)
 		beq.w	PlayDemo				; if so, branch
 		
-		tst.b	(v_title_sonic+ost_titlintr_complete).w ; is intro animation still playing?
+		tst.b	(v_title_sonic+ost_titlintr_complete).w	; is intro animation still playing?
 		beq.w	Title_MainLoop				; if so, branch (don't want start button starting the game)
 
 		move.b	(v_joypad_press_actual).w,d0		; get joypad states
@@ -4442,7 +4440,7 @@ GM_Level:
 		bmi.s	.clear_ram				; if by miracle it is, branch
 		disable_ints
 		bsr.w	ClearScreen
-		jsr	(LoadTitleCard).l				; load title card graphics
+		jsr	(LoadTitleCard).l			; load title card graphics
 		enable_ints
 		moveq	#0,d0
 		move.w	d0,(v_frame_counter).w			; clear frame counter
@@ -4502,12 +4500,12 @@ GM_Level:
 		beq.s	.init_water				; if so, branch
 		cmpi.b	#id_ARZ,(v_zone).w			; is it ARZ?
 		beq.s	.init_water				; if so, branch
-		cmpi.b	#id_HPZ,(v_zone).w				; is it HPZ? (unused)
+		cmpi.b	#id_HPZ,(v_zone).w			; is it HPZ? (unused)
 		bne.s	.level_vdp_setup			; if not, branch
 
 	; Level_InitWater:
 	.init_water:									
-		move.b	#1,(f_water).w		; set water flag
+		move.b	#1,(f_water).w				; set water flag
 		move.w	#0,(f_two_player).w
 
 	.level_vdp_setup:
@@ -4622,7 +4620,7 @@ GM_Level:
 Level_TtlCardLoop:								
 		move.b	#id_VBlank_TitleCard,(v_vblank_routine).w ; run title card VBlank routine
 		bsr.w	WaitForVBlank
-		jsr	(ExecuteObjects).l				; run the title card objects
+		jsr	(ExecuteObjects).l			; run the title card objects
 		jsr	(BuildSprites).l
 		bsr.w	RunPLC
 		move.w	(v_ost_titlecard_zonename+ost_x_pos).w,d0
@@ -4640,7 +4638,7 @@ Level_TtlCardLoop:
 		bsr.w	LevelParameterLoad			; load level boundaries, set Sonic's start position, and clear all scroll, redraw, and screen shaking flags
 		jsrto	DeformLayers,JmpTo_DeformLayers		; initialize camera, background scrolling, and DLE (including the CNZ slot machines) 
 		clr.w	(v_fg_y_pos_vsram).w			
-		move.w	#$FF20,(v_fg_y_pos_vsram_p2).w	; -224
+		move.w	#$FF20,(v_fg_y_pos_vsram_p2).w		; -224
 
 		clear_ram	hscroll,hscroll_end		; clear the h-scroll buffer
 		
@@ -4648,7 +4646,7 @@ Level_TtlCardLoop:
 		jsrto	LevelBlockMapsLoad,JmpTo_LevelBlockMapsLoad ; load 16x16 block and 128x128 chunk mappings and secondary level PLC
 		jsr	(AnimatedBlocksLoad).l			; load animated blocks
 		jsrto DrawTilesAtStart,JmpTo_DrawTilesAtStart	; draw the initial background state
-		jsr	(ConvertCollisionArray).l			; unused development leftover
+		jsr	(ConvertCollisionArray).l		; unused development leftover
 		bsr.w	SetColIndexPtr				; load collision data
 		bsr.w	WaterFeatures				; initialize water if applicable
 		bsr.w	InitPlayers				; load player objects
@@ -4712,10 +4710,10 @@ Level_TtlCardLoop:
 		move.b	#1,(f_hud_time_update_p2).w
 		
 		jsr	(ObjPosLoad).l				; load initial level objects
-		jsr	(RingsManager).l				; initialize the rings manager and load rings
+		jsr	(RingsManager).l			; initialize the rings manager and load rings
 		jsr	(SpecialCNZBumpers).l			; initialize the CNZ bumpers if applicable
-		jsr	(ExecuteObjects).l				; run all objects for one frame to initialize
-		jsr	(BuildSprites).l				; render the objects	
+		jsr	(ExecuteObjects).l			; run all objects for one frame to initialize
+		jsr	(BuildSprites).l			; render the objects	
 		jsrto	AnimateLevelGFX,JmpTo_AnimateLevelGFX	; initialize animated level graphics
 		bsr.w	SetLevelEndType				; set f_has_signpost according to level/act
 		move.w	#0,(v_demo_input_counter).w
@@ -4766,7 +4764,7 @@ Level_TtlCardLoop:
 	if FixBugs	
 		; If this is a water level, enable horizontal interrupts here to prevent the title card from being
 		; drawn with the water palette. See the bugfix at GM_Level.not_2P for more information.
-		move.w	#vdp_md_color|vdp_enable_hint,(vdp_control_port).l	; normal color mode, horizontal interrupts enabled
+		move.w	#vdp_md_color|vdp_enable_hint,(vdp_control_port).l ; normal color mode, horizontal interrupts enabled
 	endc
 		
 	.nowater:				
@@ -4813,12 +4811,12 @@ Level_MainLoop:
 		addq.w	#1,(v_frame_counter).w			; increment level timer
 		bsr.w	MoveSonicAndTailsInDemo			; move players if this is a demo
 		bsr.w	WaterFeatures				; manage water levels, oil slides, and wind tunnels if required
-		jsr	(ExecuteObjects).l				; run all objects except rings
+		jsr	(ExecuteObjects).l			; run all objects except rings
 		tst.w	(f_restart).w				; is level restart flag set?
 		bne.w	GM_Level				; if yes, branch
 		jsrto	DeformLayers,JmpTo_DeformLayers		; run background scrolling and update camera
 		bsr.w	UpdateWaterSurface			; update water surface if necessary
-		jsr	(RingsManager).l				; run rings that are part of layout (debug mode placed rings are handled as individual objects)
+		jsr	(RingsManager).l			; run rings that are part of layout (debug mode placed rings are handled as individual objects)
 		cmpi.b	#id_CNZ,(v_zone).w			; is it CNZ?
 		bne.s	.notCNZ					; if not, branch
 		jsr	(SpecialCNZBumpers).l			; run the special CNZ bumpers
@@ -4830,7 +4828,7 @@ Level_MainLoop:
 		bsr.w	OscillateNumDo				; update oscillatory values for objects
 		bsr.w	SynchroAnimate				; update values for synchronised object animations (rings are the only ones)
 		bsr.w	SignpostArtLoad				; check for level end, and load signpost graphics if needed
-		jsr	(BuildSprites).l				; build the sprite table
+		jsr	(BuildSprites).l			; build the sprite table
 		jsr	(ObjPosLoad).l				; load objects/update the OST
 		cmpi.b	#id_Demo,(v_gamemode).w			; is it demo mode?
 		beq.s	Level_Demo				; if so, branch
@@ -5901,65 +5899,65 @@ Demo_ARZ:
 ; sub_4E98: LoadZoneTiles:
 LevelArtLoad:				
 		moveq	#0,d0
-		move.b	(v_zone).w,d0		; get current zone
+		move.b	(v_zone).w,d0				; get current zone
 		add.w	d0,d0
 		add.w	d0,d0
 		move.w	d0,d1
 		add.w	d0,d0
-		add.w	d1,d0				; make index into level header array
-		lea	(LevelHeaders).l,a2		; load level headers
-		lea	(a2,d0.w),a2			; a2 = first longword of target level header
+		add.w	d1,d0					; make index into level header array
+		lea	(LevelHeaders).l,a2			; load level headers
+		lea	(a2,d0.w),a2				; a2 = first longword of target level header
 		move.l	(a2)+,d0			
-		andi.l	#$FFFFFF,d0			; d0 = pointer to compressed level art 
+		andi.l	#$FFFFFF,d0				; d0 = pointer to compressed level art 
 		movea.l	d0,a0
-		lea	(v_128x128_tiles).l,a1	; 128x128 mappings RAM is used as decompression buffer
-		bsr.w	KosDec				; decompress the level art
-		move.w	a1,d3				; end address of decompressed tiles
+		lea	(v_128x128_tiles).l,a1			; 128x128 mappings RAM is used as decompression buffer
+		bsr.w	KosDec					; decompress the level art
+		move.w	a1,d3					; end address of decompressed tiles
 		
-		cmpi.b	#id_HTZ,(v_zone).w	; are we loading HTZ?
-		bne.s	.notHTZ				; if not, branch
+		cmpi.b	#id_HTZ,(v_zone).w			; are we loading HTZ?
+		bne.s	.notHTZ					; if not, branch
 		
-		lea	(Kos_HTZ).l,a0			; HTZ supplement to EHZ art
+		lea	(Kos_HTZ).l,a0				; HTZ supplement to EHZ art
 		lea	(v_128x128_tiles+tile_HTZ_Patch).l,a1	; start address of HTZ patch
-		bsr.w	KosDec				; add the HTZ patch to EHZ's art
+		bsr.w	KosDec					; add the HTZ patch to EHZ's art
 		move.w	#tile_HTZ_Patch+sizeof_Kos_HTZ,d3	; end address of HTZ tiles
 
 	.notHTZ:				
-		cmpi.b	#id_WFZ,(v_zone).w	; are we loading WFZ?
-		bne.s	.notWFZ				; if not, branch
-		lea	(Kos_WFZ).l,a0			; WFZ supplement to SCZ art
+		cmpi.b	#id_WFZ,(v_zone).w			; are we loading WFZ?
+		bne.s	.notWFZ					; if not, branch
+		lea	(Kos_WFZ).l,a0				; WFZ supplement to SCZ art
 		lea	(v_128x128_tiles+tile_WFZ_Patch).l,a1	; start address of WFZ patch	
-		bsr.w	KosDec				; add the WFZ patch to SCZ's art
+		bsr.w	KosDec					; add the WFZ patch to SCZ's art
 		move.w	#tile_WFZ_Patch+sizeof_Kos_WFZ,d3	; end address of WFZ tiles
 
 	.notWFZ:				
-		cmpi.b	#id_DEZ,(v_zone).w	; is it DEZ?
-		bne.s	.prepare_dma			; if not, branch
+		cmpi.b	#id_DEZ,(v_zone).w			; is it DEZ?
+		bne.s	.prepare_dma				; if not, branch
 		move.w	#sizeof_Kos_CPZ-($3D*sizeof_cell),d3	; DEZ doesn't use the last $3D of CPZ's tiles
 
 .prepare_dma:
 		; Transfer the decompressed art to VRAM, starting  with the highest tiles and 
 		; working backwards in $1000 byte chunks. 
-		move.w	d3,d7		; d3 & d7 = end address of decompressed tiles
-		andi.w	#$FFF,d3	; divide lower 12 bits by 2
-		lsr.w	#1,d3		; d3 = size of first DMA transfer in words
-		rol.w	#4,d7		; divide by 4
-		andi.w	#$F,d7		; d7 = number of DMAs needed to transfer everything-1
+		move.w	d3,d7					; d3 & d7 = end address of decompressed tiles
+		andi.w	#$FFF,d3				; divide lower 12 bits by 2
+		lsr.w	#1,d3					; d3 = size of first DMA transfer in words
+		rol.w	#4,d7					; divide by 4
+		andi.w	#$F,d7					; d7 = number of DMAs needed to transfer everything-1
 
 	.loop:				
-		move.w	d7,d2		; get loop counter
-		lsl.w	#7,d2		; multiply by $1000
-		lsl.w	#5,d2		; destination is nearest multiple of $1000 that does not exceed size
+		move.w	d7,d2					; get loop counter
+		lsl.w	#7,d2					; multiply by $1000
+		lsl.w	#5,d2					; destination is nearest multiple of $1000 that does not exceed size
 		move.l	#$FFFFFF,d1	
-		move.w	d2,d1		; d1 = source
-		jsr	(AddDMA).l		; queue the DMA transfer (could be bsr.w)
-		pushr.w	d7			; back up loop counter
+		move.w	d2,d1					; d1 = source
+		jsr	(AddDMA).l				; queue the DMA transfer (could be bsr.w)
+		pushr.w	d7					; back up loop counter
 		move.b	#id_VBlank_TitleCard,(v_vblank_routine).w	
-		bsr.w	WaitForVBlank			; wait for VBlank to run DMA
+		bsr.w	WaitForVBlank				; wait for VBlank to run DMA
 		bsr.w	RunPLC					; process any pending PLCs		
-		popr.w	d7						; restore loop counter
-		move.w	#$800,d3	; all remaining transfers are $1000 bytes in length
-		dbf	d7,.loop		; repeat until everything has been transferred
+		popr.w	d7					; restore loop counter
+		move.w	#$800,d3				; all remaining transfers are $1000 bytes in length
+		dbf	d7,.loop				; repeat until everything has been transferred
 		rts	
 
 ; ===========================================================================
@@ -6066,7 +6064,7 @@ GM_SpecialStage:
 		bsr.w	SS_InitHScroll				; set up initial H-scroll values
 		bsr.w	SS_LoadCompressedData			; load halfpipe graphics and layout, perspective, and object location data
 		move.w	#0,(v_ss_current_segment).w
-		moveq	#id_PLC_SpecialStage,d0			; load Special Stage PLCs
+		moveq	#id_PLC_SpecialStage,d0			; load special stage PLCs
 		bsr.w	QuickPLC
 		clr.b	(f_level_started).w
 		move.l	#0,(v_camera_x_pos).w
@@ -13422,7 +13420,7 @@ EndSeq_LoadCharacterArt:
 ; ===========================================================================
 EndSeq_LoadCharacterArt_Index:	index offset(*),,2
 		ptr EndSeq_LoadCharacterArt_Sonic		; 0 		
-		ptr EndSeq_LoadCharacterArt_SuperSonic	; 2
+		ptr EndSeq_LoadCharacterArt_SuperSonic		; 2
 		ptr EndSeq_LoadCharacterArt_Tails		; 4
 ; ===========================================================================
 
@@ -13454,7 +13452,7 @@ EndSeq_LoadBirdArt:
 ; ===========================================================================
 EndSeq_LoadBirdArt_Index:	index offset(*),,2
 		ptr	EndSeq_LoadBirdArt_Flicky		; 0 		
-		ptr EndSeq_LoadBirdArt_Eagle		; 2
+		ptr EndSeq_LoadBirdArt_Eagle			; 2
 		ptr	EndSeq_LoadBirdArt_Chicken		; 4
 ; ===========================================================================
 
@@ -14217,7 +14215,7 @@ JmpTo_LoadSubtypeData_Part3:
 
 
 LevelParameterLoad:		
-		clr.w	(v_fg_redraw_direction).w			; clear all redraw, scroll, and screen shaking flags
+		clr.w	(v_fg_redraw_direction).w		; clear all redraw, scroll, and screen shaking flags
 		clr.w	(v_bg1_redraw_direction).w
 		clr.w	(v_bg2_redraw_direction).w
 		clr.w	(v_bg3_redraw_direction).w
@@ -14248,19 +14246,19 @@ LevelParameterLoad:
 		move.w	d0,(v_camera_y_pos_offset).w
     endc
 		move.w	(v_zone).w,d0				; get zone/act number
-		ror.b	#1,d0						; move act number next to zone number
-		lsr.w	#4,d0						; move both into low byte
+		ror.b	#1,d0					; move act number next to zone number
+		lsr.w	#4,d0					; move both into low byte
 		lea	LevelBoundaryList(pc,d0.w),a0		; load level boundaries
-		move.l	(a0)+,d0						; get x boundaries 
+		move.l	(a0)+,d0				; get x boundaries 
 		move.l	d0,(v_boundary_left_next).w		; set x boundaries (including unused variable)
 		move.l	d0,(v_boundary_unused1).w		; x boundaries are also written to this unused variable
 		move.l	d0,(v_boundary_left_next_p2).w
-		move.l	(a0)+,d0						; get y boundaries
+		move.l	(a0)+,d0				; get y boundaries
 		move.l	d0,(v_boundary_top_next).w		; set y-boundaries
 		move.l	d0,(v_boundary_unused2).w		; (this also writes v_boundary_bottom_next)
 		move.l	d0,(v_boundary_top_next_p2).w
 		move.w	#$1010,(v_fg_x_redraw_flag).w		; set fg redraw flag
-		move.w	#camera_y_shift_default,(v_camera_y_shift).w; default camera shift = $60 (changes when Sonic or Tails look up/down)	
+		move.w	#camera_y_shift_default,(v_camera_y_shift).w ; default camera shift = $60 (changes when Sonic or Tails look up/down)	
 		move.w	#camera_y_shift_default,(v_camera_y_shift_p2).w
 		bra.w	LPL_StartPos
 ; ===========================================================================
@@ -14862,8 +14860,8 @@ Deform_EHZ:
 	; Only 222 out of 224 lines have been processed.
 
     if FixBugs
-	; The bottom two lines haven't had their H-scroll values set.
-	; Knuckles in Sonic 2 fixes this with the following code:
+		; The bottom two lines haven't had their H-scroll values set.
+		; Knuckles in Sonic 2 fixes this with the following code:
 		move.w	d4,(a1)+
 		move.w	d3,(a1)+
 		move.w	d4,(a1)+
@@ -18424,12 +18422,12 @@ DrawTilesAtStart:
 ;	else
 		; This is a nasty hack to work around the bug described above.
 		moveq	#0,d4
-		cmpi.b	#id_CNZ,(v_zone).w				; is it CNZ?
+		cmpi.b	#id_CNZ,(v_zone).w			; is it CNZ?
 		beq.w	DrawTilesAtStart_Dynamic		; if it is, branch 
 ;	endc	
 		tst.w	(f_two_player).w			; is it two-player mode?
 		beq.w	loc_E336				; if not, branch
-		cmpi.b	#id_MCZ,(v_zone).w				; is it MCZ 2P?
+		cmpi.b	#id_MCZ,(v_zone).w			; is it MCZ 2P?
 		beq.w	loc_E396				; if it is, branch
 
 	loc_E336:				
@@ -21978,9 +21976,9 @@ CollapseLedge:
 		jmp	off_108CA(pc,d1.w)
 ; ===========================================================================
 off_108CA:	index offset(*),,2
-		ptr loc_108D0		; 0 		
-		ptr loc_1097C		; 2
-		ptr loc_109B4		; 4
+		ptr loc_108D0					; 0 		
+		ptr loc_1097C					; 2
+		ptr loc_109B4					; 4
 ; ===========================================================================
 
 loc_108D0:				
@@ -22098,9 +22096,9 @@ CollapseFloor:
 		jmp	off_10A16(pc,d1.w)
 ; ===========================================================================
 off_10A16:	index offset(*),,2
-		ptr loc_10A1C			; 0 			
-		ptr loc_10AD6			; 2
-		ptr loc_10B0E			; 4
+		ptr loc_10A1C					; 0 			
+		ptr loc_10AD6					; 2
+		ptr loc_10B0E					; 4
 ; ===========================================================================
 
 loc_10A1C:				
@@ -22504,8 +22502,8 @@ Stomper:
 		jmp	off_115D2(pc,d1.w)
 ; ===========================================================================
 off_115D2:	index offset(*),,2
-		ptr loc_115D6		; 0 		
-		ptr loc_11610		; 2
+		ptr loc_115D6					; 0 		
+		ptr loc_11610					; 2
 ; ===========================================================================
 
 loc_115D6:				
@@ -22566,8 +22564,8 @@ Barrier:
 		jmp	off_116A8(pc,d1.w)
 ; ===========================================================================
 off_116A8:	index offset(*),,2
-		ptr loc_116AC	; 0 			
-		ptr loc_1175E	; 2
+		ptr loc_116AC					; 0 			
+		ptr loc_1175E					; 2
 ; ===========================================================================
 
 loc_116AC:				
@@ -23286,11 +23284,11 @@ Ring:
 		jmp	off_11F52(pc,d1.w)
 ; ===========================================================================
 off_11F52:	index offset(*),,2
-		ptr loc_11F5C			; 0 	
-		ptr loc_11F90			; 2
-		ptr loc_11F9E			; 4
-		ptr loc_11FB0			; 6
-		ptr loc_11FBE			; 8
+		ptr loc_11F5C					; 0 	
+		ptr loc_11F90					; 2
+		ptr loc_11F9E					; 4
+		ptr loc_11FB0					; 6
+		ptr loc_11FBE					; 8
 ; ===========================================================================
 
 loc_11F5C:				
@@ -23407,11 +23405,11 @@ RingLoss:
 		jmp	off_12086(pc,d1.w)
 ; ===========================================================================
 off_12086:	index offset(*),,2	
-		ptr loc_12090		; 0 		
-		ptr loc_12178		; 2
-		ptr loc_121DA		; 4
-		ptr loc_121EE		; 6
-		ptr loc_121FC		; 8
+		ptr loc_12090					; 0 		
+		ptr loc_12178					; 2
+		ptr loc_121DA					; 4
+		ptr loc_121EE					; 6
+		ptr loc_121FC					; 8
 ; ===========================================================================
 
 loc_12090:				
@@ -23554,10 +23552,10 @@ GiantRing:
 		jmp	off_1220E(pc,d1.w)
 ; ===========================================================================
 off_1220E:		index offset(*),,2
-		ptr loc_12216		; 0 			
-		ptr loc_12264		; 2
-		ptr loc_12282		; 4
-		ptr loc_122C0		; 6
+		ptr loc_12216					; 0 			
+		ptr loc_12264					; 2
+		ptr loc_12282					; 4
+		ptr loc_122C0					; 6
 ; ===========================================================================
 
 loc_12216:				
@@ -23628,9 +23626,9 @@ RingFlash:
 		jmp	off_122D2(pc,d1.w)
 ; ===========================================================================
 off_122D2:	index offset(*),,2	
-		ptr loc_122D8			; 0 			
-		ptr loc_12306			; 2
-		ptr loc_12376			; 4
+		ptr loc_122D8					; 0 			
+		ptr loc_12306					; 2
+		ptr loc_12376					; 4
 ; ===========================================================================
 
 loc_122D8:				
@@ -23752,10 +23750,10 @@ RingPrize_Main:
 		move.w	ost_casinoprz_y_pos(a0),ost_y_pos(a0)	; set new y pos of ring
 		lea	Ani_RingPrize(pc),a1
 		bsr.w	AnimateSprite
-		subq.w	#1,ost_casinoprz_display_delay(a0)	; deincrement timer
+		subq.w	#1,ost_casinoprz_display_delay(a0)	; decrement timer
 		bne.w	DisplaySprite				; branch if time remains
 		movea.l	ost_casinoprz_childcnt_ptr(a0),a1	; parent's cage's child counter
-		subq.w	#1,(a1)					; deincrement child counter
+		subq.w	#1,(a1)					; decrement child counter
 		bsr.w	CollectRing				; add ring to player's count
 		addi_.b	#2,ost_primary_routine(a0)		; go to RingPrize_Animate next
 
@@ -23806,11 +23804,11 @@ Monitor:
 		jmp	off_1267E(pc,d1.w)
 ; ===========================================================================
 off_1267E:	index offset(*),,2	
-		ptr loc_12688		; 0 			
-		ptr loc_126FA		; 2
-		ptr loc_127BC		; 4
-		ptr loc_12748		; 6
-		ptr loc_12752		; 8
+		ptr loc_12688					; 0 			
+		ptr loc_126FA					; 2
+		ptr loc_127BC					; 4
+		ptr loc_12748					; 6
+		ptr loc_12752					; 8
 ; ===========================================================================
 
 loc_12688:				
@@ -23981,9 +23979,9 @@ PowerUp:
 		jmp	off_12862(pc,d1.w)
 ; ===========================================================================
 off_12862:	index offset(*),,2	
-		ptr loc_12868			; 0 			
-		ptr loc_128DE			; 2
-		ptr loc_12CC2			; 4
+		ptr loc_12868					; 0 			
+		ptr loc_128DE					; 2
+		ptr loc_12CC2					; 4
 ; ===========================================================================
 
 loc_12868:				
@@ -24059,16 +24057,16 @@ loc_12914:
 
 ; ===========================================================================
 off_12924:	index offset(*)	
-		ptr loc_12938			; 0 			
-		ptr loc_1293E			; 1
-		ptr loc_12954			; 2
-		ptr loc_12938			; 3
-		ptr loc_1296A			; 4
-		ptr loc_129E0			; 5
-		ptr loc_12A2C			; 6
-		ptr Pow_Invinc			; 7
-		ptr Pow_Teleport		; 8
-		ptr loc_12CBE			; 9
+		ptr loc_12938					; 0 			
+		ptr loc_1293E					; 1
+		ptr loc_12954					; 2
+		ptr loc_12938					; 3
+		ptr loc_1296A					; 4
+		ptr loc_129E0					; 5
+		ptr loc_12A2C					; 6
+		ptr Pow_Invinc					; 7
+		ptr Pow_Teleport				; 8
+		ptr loc_12CBE					; 9
 ; ===========================================================================
 
 loc_12938:				
@@ -24395,17 +24393,17 @@ loc_12CC2:
 		bra.w	DisplaySprite
 ; ===========================================================================
 Ani_Monitor:	index offset(*)
-		ptr byte_12CE4			; 0 			
-		ptr byte_12CE8			; 1
-		ptr byte_12CF0			; 2
-		ptr byte_12CF8			; 3
-		ptr byte_12D00			; 4
-		ptr byte_12D08			; 5
-		ptr byte_12D10			; 6
-		ptr byte_12D18			; 7
-		ptr byte_12D20			; 8
-		ptr byte_12D28			; 9
-		ptr byte_12D30			; 10
+		ptr byte_12CE4					; 0 			
+		ptr byte_12CE8					; 1
+		ptr byte_12CF0					; 2
+		ptr byte_12CF8					; 3
+		ptr byte_12D00					; 4
+		ptr byte_12D08					; 5
+		ptr byte_12D10					; 6
+		ptr byte_12D18					; 7
+		ptr byte_12D20					; 8
+		ptr byte_12D28					; 9
+		ptr byte_12D30					; 10
 byte_12CE4:	dc.b   1,  0,  1,$FF				; 0 
 byte_12CE8:	dc.b   1,  0,  2,  2,  1,  2,  2,$FF		; 0	
 byte_12CF0:	dc.b   1,  0,  3,  3,  1,  3,  3,$FF		; 0	
@@ -24441,21 +24439,21 @@ TitleIntro:
 		jmp	TitlIntr_Index(pc,d1.w)
 ; ===========================================================================
 TitlIntr_Index:	index offset(*),,2
-		ptr TitlIntr_Main					; 0 				
+		ptr TitlIntr_Main				; 0 				
 		ptr TitlIntr_Sonic				; 2
 		ptr TitlIntr_Tails				; 4
 		ptr TitlIntr_LogoTop				; 6
 		ptr TitlIntr_FlashingStar			; 8
-		ptr TitlIntr_SonicHand			; $A
+		ptr TitlIntr_SonicHand				; $A
 		ptr TitlIntr_FallingStar			; $C
-		ptr TitlIntr_MaskingSprite		; $E
-		ptr TitlIntr_TailsHand			; $10
+		ptr TitlIntr_MaskingSprite			; $E
+		ptr TitlIntr_TailsHand				; $10
 		
 		rsobj	TitleIntro,$2A
 ost_titlintr_counter:			rs.w 1			; $2A
 ost_titlintr_array_index:		rs.w 1			; $2C; pointer to current location in position arrays
 		rsset $2F
-ost_titlintr_complete:		rs.b 1			; $2F
+ost_titlintr_complete:		rs.b 1				; $2F
 ost_titlintr_music_flag:	rs.b 1				; $30
 		rsset $34
 ost_titlintr_current_frame:	rs.w 1				; $34		
@@ -24484,13 +24482,13 @@ TitlIntr_Sonic:
 		jmp	TitlIntr_Sonic_Index(pc,d1.w)
 ; ===========================================================================
 TitlIntr_Sonic_Index:		index offset(*),,2
-		ptr TitlIntr_Sonic_Main					; 0 					
+		ptr TitlIntr_Sonic_Main				; 0 					
 		ptr TitlIntr_Sonic_FadeInAndPlayMusic		; 2
 		ptr TitlIntr_Sonic_LoadPalette			; 4
-		ptr TitlIntr_Sonic_Move					; 6
-		ptr TitlIntr_Animate						; 8
+		ptr TitlIntr_Sonic_Move				; 6
+		ptr TitlIntr_Animate				; 8
 		ptr TitlIntr_Sonic_AnimationFinished		; $A
-		ptr TitlIntr_Sonic_SpawnTails				; $C
+		ptr TitlIntr_Sonic_SpawnTails			; $C
 		ptr TitlIntr_Sonic_FlashBackground		; $E
 		ptr TitlIntr_Sonic_SpawnFallingStar		; $10
 		ptr TitlIntr_Sonic_FallingStarSparkle		; $12
@@ -24569,7 +24567,7 @@ TitlIntr_Move:
 		bne.s	.display				; if it has not reached 4, branch
 		
 	;.update_position:
-		move.w	ost_titlintr_array_index(a0),d1	; get current array index
+		move.w	ost_titlintr_array_index(a0),d1		; get current array index
 		addq.w	#4,d1					; increment
 		cmp.w	d2,d1					; have we reached the end?
 		bcc.w	TitlIntr_NextSecondaryRoutine		; if so, go to TitlIntr_Animate next?
@@ -24675,14 +24673,14 @@ TitlIntr_Sonic_FallingStarSparkle:
 		bne.s	.display				; if frame count is not a multiple of 8, branch
 
 		; Update palette cycle of falling star every 8 frames.
-		move.w	ost_titlintr_array_index(a0),d0	; get index
+		move.w	ost_titlintr_array_index(a0),d0		; get index
 		addq.w	#2,d0					; increment
 		cmpi.w	#sizeof_Pal_TitleStarCyc,d0		; have we reached the end?
 		bcs.s	.not_done				; if we have not, branch
 		moveq	#0,d0					; reset index
 
 	.not_done:				
-		move.w	d0,ost_titlintr_array_index(a0)	; update index
+		move.w	d0,ost_titlintr_array_index(a0)		; update index
 		move.w	Pal_TitleStarCyc(pc,d0.w),(v_pal_dry_line3+(5*2)).w ; copy updated color to palette
 
 	.display:				
@@ -24711,8 +24709,8 @@ TitlIntr_Tails:
 		jmp	TitlIntr_Tails_Index(pc,d1.w)
 ; ===========================================================================
 TitlIntr_Tails_Index:	index offset(*),,2
-		ptr TitlIntr_Tails_Main			; 0 			
-		ptr TitlIntr_Tails_Move			; 2
+		ptr TitlIntr_Tails_Main				; 0 			
+		ptr TitlIntr_Tails_Move				; 2
 		ptr TitlIntr_Animate				; 4
 		ptr TitlIntr_Tails_AnimationFinished		; 6
 		ptr BranchTo10_DisplaySprite			; 8
@@ -24798,7 +24796,7 @@ TitlIntr_MaskingSprite:
 		jmp	TitlIntr_MaskingSprite_Index(pc,d1.w)
 ; ===========================================================================
 TitlIntr_MaskingSprite_Index:	index offset(*),,2
-		ptr TitlIntr_MaskingSprite_Main		; 0 			
+		ptr TitlIntr_MaskingSprite_Main			; 0 			
 		ptr BranchTo12_DisplaySprite			; 2
 ; ===========================================================================
 
@@ -24821,10 +24819,10 @@ TitlIntr_FlashingStar:
 		jmp	TitlIntr_FlashingStar_Index(pc,d1.w)
 ; ===========================================================================
 TitlIntr_FlashingStar_Index:	index offset(*),,2
-		ptr TitlIntr_FlashingStar_Main		; 0 			
+		ptr TitlIntr_FlashingStar_Main			; 0 			
 		ptr TitlIntr_Animate				; 2
-		ptr TitlIntr_FlashingStar_Wait		; 4
-		ptr TitlIntr_FlashingStar_Move		; 6
+		ptr TitlIntr_FlashingStar_Wait			; 4
+		ptr TitlIntr_FlashingStar_Move			; 6
 ; ===========================================================================
 
 TitlIntr_FlashingStar_Main:				
@@ -24840,7 +24838,7 @@ TitlIntr_FlashingStar_Main:
 ; ===========================================================================
 
 TitlIntr_FlashingStar_Wait:				
-		subq.w	#1,ost_titlintr_counter(a0)		; deincrement counter
+		subq.w	#1,ost_titlintr_counter(a0)		; decrement counter
 		bmi.s	.wait_done				; if less than 0, branch
 		rts	
 ; ===========================================================================
@@ -24856,11 +24854,11 @@ TitlIntr_FlashingStar_Move:
 		move.b	#0,ost_anim_time(a0)
 		move.w	#6,ost_titlintr_counter(a0)
 		
-		move.w	ost_titlintr_array_index(a0),d0	; get current index
+		move.w	ost_titlintr_array_index(a0),d0		; get current index
 		addq.w	#4,d0					; increment
 		cmpi.w	#sizeof_TitlIntr_FlashingStar_Positions+4,d0 ; have we reached the end?
 		bcc.w	DeleteObject				; if so, branch
-		move.w	d0,ost_titlintr_array_index(a0)	; store new index
+		move.w	d0,ost_titlintr_array_index(a0)		; store new index
 		
 		move.l	TitlIntr_FlashingStar_Positions-4(pc,d0.w),d0 ; get new position from array
 		move.w	d0,ost_y_screen(a0)
@@ -25059,10 +25057,10 @@ PalChanger_Init:
 ; ===========================================================================
 
 PalChanger_Main:
-		subq.b	#1,ost_palchngr_fadein_time_left(a0)	; deincrement time left
+		subq.b	#1,ost_palchngr_fadein_time_left(a0)	; decrement time left
 		bpl.s	.exit					; if there is time left, exit
 		move.b	ost_palchngr_fadein_time(a0),ost_palchngr_fadein_time_left(a0) ; reset time left
-		subq.b	#1,ost_palchngr_fadein_amount(a0)	; deincrement fade amount
+		subq.b	#1,ost_palchngr_fadein_amount(a0)	; decrement fade amount
 		bmi.w	DeleteObject				; if fade-in is complete, delete the PalChanger object
 		movea.l	ost_palchngr_codeptr(a0),a2		; get code pointer
 		movea.l	a0,a3					; back up a0								
@@ -25083,7 +25081,7 @@ PalChanger_Main:
 ; ===========================================================================
 
 PalChangerData_Index:	index offset(*),,2
-		ptr PalChngrData_TitleLogo				; 0 			
+		ptr PalChngrData_TitleLogo			; 0 			
 		ptr PalChngrData_TitleBackground		; 2
 		ptr PalChngrData_EndingStillFirst		; 4
 		ptr PalChngrData_EndingStillNext		; 6
@@ -25328,8 +25326,8 @@ TitleMenu:
 		bra.w	DisplaySprite
 ; ===========================================================================
 off_13612:	index offset(*),,2
-		ptr loc_13616		; 0			
-		ptr loc_13644		; 2
+		ptr loc_13616					; 0			
+		ptr loc_13644					; 2
 ; ===========================================================================
 
 loc_13616:				
@@ -25374,8 +25372,8 @@ locret_13684:
 ; ===========================================================================
 Ani_TitleIntro:	index offset(*)
 
-		ptr Ani_TitlIntr_Sonic			; 0 			
-		ptr Ani_TitlIntr_Tails			; 1
+		ptr Ani_TitlIntr_Sonic				; 0 			
+		ptr Ani_TitlIntr_Tails				; 1
 		ptr Ani_TitlIntr_FlashingStar			; 2
 		ptr Ani_TitlIntr_FallingStar			; 3
 
@@ -25498,7 +25496,7 @@ Card_Load:
 
 		clr.w	(v_fg_y_pos_vsram).w
 		move.w	#$FF20,(v_fg_y_pos_vsram_p2).w
-		clear_ram hscroll,hscroll_end
+		clear_ram hscroll,hscroll_end			; clear the hscroll buffer
 		
 		rts	
 ; ===========================================================================
@@ -25531,7 +25529,7 @@ TitleCard_Data:
 
 ;Obj34_Wait:
 Card_Wait:								
-		subq.b	#1,ost_anim_time(a0)			; deincrement timer
+		subq.b	#1,ost_anim_time(a0)			; decrement timer
 		bne.s	.timeleft				; if it's not 0, branch
 		move.b	#1,ost_anim_time(a0)			; reset timer
 		rts	
@@ -25774,7 +25772,7 @@ Card_RightOut:
 Card_WaitAndGoAway:				
 		tst.w	ost_anim_time(a0)			; has timer hit 0?
 		beq.s	.moveback				; if so, branch
-		subq.w	#1,ost_anim_time(a0)			; deincrement timer
+		subq.w	#1,ost_anim_time(a0)			; decrement timer
 		bra.s	.display
 ; ===========================================================================
 
@@ -25956,18 +25954,18 @@ GotThroughCard:
 		jmp	off_14094(pc,d1.w)
 ; ===========================================================================
 off_14094:	index offset(*),,2
-		ptr loc_140AC			; 0 		
-		ptr loc_14102			; 2
-		ptr loc_14142			; 4
-		ptr loc_14146			; 6
-		ptr loc_14168			; 8
-		ptr loc_1419C			; $A
-		ptr loc_141AA			; $C
-		ptr loc_1419C			; $E
-		ptr loc_14270			; $10
-		ptr loc_142B0			; $12
-		ptr loc_142CC			; $14
-		ptr loc_1413A			; $16
+		ptr loc_140AC					; 0 		
+		ptr loc_14102					; 2
+		ptr loc_14142					; 4
+		ptr loc_14146					; 6
+		ptr loc_14168					; 8
+		ptr loc_1419C					; $A
+		ptr loc_141AA					; $C
+		ptr loc_1419C					; $E
+		ptr loc_14270					; $10
+		ptr loc_142B0					; $12
+		ptr loc_142CC					; $14
+		ptr loc_1413A					; $16
 ; ===========================================================================
 
 loc_140AC:				
@@ -26372,33 +26370,33 @@ SSResult:
 		jmp	SSR_Index(pc,d1.w)
 ; ===========================================================================
 SSR_Index:	index offset(*),,2
-		ptr loc_14406			; 0 			
-		ptr loc_14450			; 2
-		ptr loc_14484			; 4
-		ptr loc_144C2			; 6
-		ptr loc_144C0			; 8
-		ptr loc_144BE			; $A
-		ptr loc_144BC			; $C
-		ptr loc_144BA			; $E
-		ptr loc_144B8			; $10
-		ptr loc_144B6			; $12
-		ptr loc_14564			; $14
-		ptr loc_14500			; $16
-		ptr loc_144DC			; $18
-		ptr loc_14568			; $1A
-		ptr loc_14572			; $1C
-		ptr loc_14580			; $1E
-		ptr loc_14572			; $20
-		ptr loc_1461C			; $22
-		ptr loc_14572			; $24
-		ptr loc_14572			; $26
-		ptr loc_14626			; $28
-		ptr loc_14692			; $2A
-		ptr loc_14572			; $2C
-		ptr loc_1461C			; $2E
-		ptr SSR_InitAndMoveSuperMsg	; $30
-		ptr loc_14714			; $32
-		ptr loc_14736			; $34
+		ptr loc_14406					; 0 			
+		ptr loc_14450					; 2
+		ptr loc_14484					; 4
+		ptr loc_144C2					; 6
+		ptr loc_144C0					; 8
+		ptr loc_144BE					; $A
+		ptr loc_144BC					; $C
+		ptr loc_144BA					; $E
+		ptr loc_144B8					; $10
+		ptr loc_144B6					; $12
+		ptr loc_14564					; $14
+		ptr loc_14500					; $16
+		ptr loc_144DC					; $18
+		ptr loc_14568					; $1A
+		ptr loc_14572					; $1C
+		ptr loc_14580					; $1E
+		ptr loc_14572					; $20
+		ptr loc_1461C					; $22
+		ptr loc_14572					; $24
+		ptr loc_14572					; $26
+		ptr loc_14626					; $28
+		ptr loc_14692					; $2A
+		ptr loc_14572					; $2C
+		ptr loc_1461C					; $2E
+		ptr SSR_InitAndMoveSuperMsg			; $30
+		ptr loc_14714					; $32
+		ptr loc_14736					; $34
 ; ===========================================================================
 
 loc_14406:				
@@ -27099,10 +27097,10 @@ Spikes:
 		jmp	off_1590E(pc,d1.w)
 ; ===========================================================================
 off_1590E:	index offset(*),,2
-		ptr loc_15926			; 0 		
-		ptr loc_15996			; 2
-		ptr loc_159E6			; 4
-		ptr loc_15A42			; 6
+		ptr loc_15926					; 0 		
+		ptr loc_15996					; 2
+		ptr loc_159E6					; 4
+		ptr loc_15A42					; 6
 		
 byte_15916:	
 		dc.b $10					; 0 
@@ -27286,9 +27284,9 @@ sub_15AC6:
 
 ; ===========================================================================
 off_15AD6:	index offset(*)
-		ptr locret_15ADC	; 0 			
-		ptr loc_15ADE		; 2
-		ptr loc_15AF2		; 4
+		ptr locret_15ADC				; 0 			
+		ptr loc_15ADE					; 2
+		ptr loc_15AF2					; 4
 ; ===========================================================================
 
 locret_15ADC:				
@@ -27365,8 +27363,8 @@ PurpleRock:
 		jmp	off_15CD6(pc,d1.w)
 ; ===========================================================================
 off_15CD6:	index offset(*),,2
-		ptr loc_15CDA		; 0 			
-		ptr loc_15D02		; 2
+		ptr loc_15CDA					; 0 			
+		ptr loc_15D02					; 2
 ; ===========================================================================
 
 loc_15CDA:				
@@ -27415,9 +27413,9 @@ SmashWall:
 		bra.w	DespawnObject
 ; ===========================================================================
 off_15D56:	index offset(*),,2	
-		ptr loc_15D5C			; 0 	
-		ptr loc_15D8A			; 2
-		ptr loc_15E02		; 4
+		ptr loc_15D5C					; 0 	
+		ptr loc_15D8A					; 2
+		ptr loc_15E02					; 4
 ; ===========================================================================
 
 loc_15D5C:				
@@ -27563,7 +27561,7 @@ ExecuteObjects:
 		bne.s	.run_object
 
 	.in_level:				
-		move.w	#(countof_ost+countof_ost_level_only)-1,d7	; $90 objects -1 (main and level only OSTs)
+		move.w	#(countof_ost+countof_ost_level_only)-1,d7 ; $90 objects -1 (main and level only OSTs)
 		tst.w	(f_two_player).w
 		bne.s	.run_object
 		cmpi.b	#id_Death,(v_ost_player1+ost_primary_routine).w ; is main character dead, drowning, or respawning?
@@ -29469,7 +29467,7 @@ CheckOffScreen:
 		rts	
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Unuused Sonic 1 leftover: Subroutine to check if an object is off screen
+; Unused Sonic 1 leftover: Subroutine to check if an object is off screen
 ; More precise than above subroutine, taking width into account
 
 ; output:
@@ -29534,8 +29532,8 @@ RingsManager:
 		jmp	off_16F96(pc,d0.w)
 ; ===========================================================================
 off_16F96:	index offset(*),,2
-		ptr loc_16F9A		; 0 
-		ptr loc_16FDE		; 2
+		ptr loc_16F9A					; 0 
+		ptr loc_16FDE					; 2
 ; ===========================================================================
 
 loc_16F9A:				
@@ -30047,8 +30045,8 @@ SpecialCNZBumpers:
 		jmp	off_173CA(pc,d0.w)
 ; ===========================================================================
 off_173CA:	index offset(*),,2
-		ptr loc_173CE			; 0 
-		ptr loc_17422			; 2
+		ptr loc_173CE					; 0 
+		ptr loc_17422					; 2
 ; ===========================================================================
 
 loc_173CE:				
@@ -30287,12 +30285,12 @@ locret_17578:
 		rts	
 ; ===========================================================================
 off_1757A:	index offset(*),,2
-		ptr loc_17586		; 0 
-		ptr loc_17638		; 2
-		ptr loc_1769E		; 4
-		ptr loc_176F6		; 6
-		ptr loc_1774C		; 8
-		ptr loc_177A4		; $A
+		ptr loc_17586					; 0 
+		ptr loc_17638					; 2
+		ptr loc_1769E					; 4
+		ptr loc_176F6					; 6
+		ptr loc_1774C					; 8
+		ptr loc_177A4					; $A
 ; ===========================================================================
 
 loc_17586:				
@@ -31383,12 +31381,12 @@ Springs:
 		jmp	(DespawnObject).l
 ; ===========================================================================
 Spring_Index:	index offset(*),,2
-		ptr Spring_Main			; 0 
-		ptr Spring_Up			; 2
-		ptr Spring_LR			; 4
-		ptr Spring_Dwn			; 6
-		ptr Spring_DiagUp			; 8
-		ptr Spring_DiagDwn			; $A
+		ptr Spring_Main					; 0 
+		ptr Spring_Up					; 2
+		ptr Spring_LR					; 4
+		ptr Spring_Dwn					; 6
+		ptr Spring_DiagUp				; 8
+		ptr Spring_DiagDwn				; $A
 		
 ; ===========================================================================
 
@@ -31406,11 +31404,11 @@ Spring_Main:
 		jmp	Spring_Init_Subtype(pc,d0.w)
 ; ===========================================================================
 Spring_Init_Subtype:	index offset(*),,2
-		ptr .init_up				; 0 
-		ptr .init_horiz				; 2
-		ptr .init_down				; 4
-		ptr .init_diag_up			; 6
-		ptr .init_diag_dwn			; 8
+		ptr .init_up					; 0 
+		ptr .init_horiz					; 2
+		ptr .init_down					; 4
+		ptr .init_diag_up				; 6
+		ptr .init_diag_dwn				; 8
 ; ===========================================================================
 
 .init_horiz:				
@@ -31459,7 +31457,7 @@ Spring_Init_Subtype:	index offset(*),,2
 		move.l	#Map_YellowSpring,ost_mappings(a0)
 
 	.red:				
-		bsr.w	Adjust2PArtPointer ; could be bra.w
+		bsr.w	Adjust2PArtPointer			; could be bra.w
 		rts	
 ; ===========================================================================
 Spring_Powers:	
@@ -31984,12 +31982,12 @@ byte_18FC6:
 		dc.b $FA,$FC,$FE,  0,  2,  4,  4,  4,  4,  4,  4,  4 ; 16
 		
 off_18FE2:	index offset(*)
-		ptr byte_18FEE			; 0 
-		ptr byte_18FF1			; 1
-		ptr byte_18FFD			; 2
-		ptr byte_19000			; 3
-		ptr byte_1900C			; 4
-		ptr byte_1900F			; 5
+		ptr byte_18FEE					; 0 
+		ptr byte_18FF1					; 1
+		ptr byte_18FFD					; 2
+		ptr byte_19000					; 3
+		ptr byte_1900C					; 4
+		ptr byte_1900F					; 5
 byte_18FEE:	dc.b  $F					; 0 
 		dc.b   0					; 1
 		dc.b $FF					; 2
@@ -32182,10 +32180,10 @@ loc_19350:
 		jmp	off_1935E(pc,d1.w)
 ; ===========================================================================
 off_1935E:	index offset(*),,2
-		ptr locret_19366			; 0 
-		ptr loc_19368			; 2
-		ptr loc_19418			; 4
-		ptr loc_194FC			; 6
+		ptr locret_19366				; 0 
+		ptr loc_19368					; 2
+		ptr loc_19418					; 4
+		ptr loc_194FC					; 6
 ; ===========================================================================
 
 locret_19366:				
@@ -32405,11 +32403,11 @@ locret_1958C:
 		rts	
 ; ===========================================================================
 Ani_Sign:	index offset(*)
-		ptr byte_19598		; 0 
-		ptr byte_1959B		; 1
-		ptr byte_195A9		; 2
-		ptr byte_195B7		; 3
-		ptr byte_195BA		; 4
+		ptr byte_19598					; 0 
+		ptr byte_1959B					; 1
+		ptr byte_195A9					; 2
+		ptr byte_195B7					; 3
+		ptr byte_195BA					; 4
 byte_19598:	dc.b  $F,  2,$FF				; 0 
 byte_1959B:	dc.b   1,  2,  3,  4,  5,  1,  3,  4,  5,  0,  3,  4,  5,$FF ; 0
 					
@@ -33480,10 +33478,10 @@ loc_1A0BA:
 		bra.w	Sonic_LoadGFX
 ; ===========================================================================
 Sonic_Modes:	index offset(*),,2
-		ptr loc_1A26E			; 0 
-		ptr loc_1A2E0			; 2
-		ptr loc_1A30A			; 4
-		ptr loc_1A330			; 6
+		ptr loc_1A26E					; 0 
+		ptr loc_1A2E0					; 2
+		ptr loc_1A30A					; 4
+		ptr loc_1A330					; 6
 ; ===========================================================================
 
 loc_1A0C6:				
@@ -35601,40 +35599,40 @@ loc_1B602:
 		bra.w	loc_1B3AA
 ; ===========================================================================
 Ani_Sonic:	index offset(*)
-		ptr byte_1B65C			; 0 
-		ptr byte_1B666			; 1
-		ptr byte_1B670			; 2
-		ptr byte_1B67A			; 3
-		ptr byte_1B684			; 4
-		ptr byte_1B68E			; 5
-		ptr byte_1B744			; 6
-		ptr byte_1B74A			; 7
-		ptr byte_1B74F			; 8
-		ptr byte_1B754			; 9
-		ptr byte_1B760			; 10
-		ptr byte_1B764			; 11
-		ptr byte_1B768			; 12
-		ptr byte_1B76E			; 13
-		ptr byte_1B775			; 14
-		ptr byte_1B779			; 15
-		ptr byte_1B780			; 16
-		ptr byte_1B784			; 17
-		ptr byte_1B788			; 18
-		ptr byte_1B78E			; 19
-		ptr byte_1B793			; 20
-		ptr byte_1B797			; 21
-		ptr byte_1B79E			; 22
-		ptr byte_1B7A1			; 23
-		ptr byte_1B7A4			; 24
-		ptr byte_1B7A7			; 25
-		ptr byte_1B7A7			; 26
-		ptr byte_1B7AA			; 27
-		ptr byte_1B7AE			; 28
-		ptr byte_1B7B2			; 29
-		ptr byte_1B7B6			; 30
-		ptr byte_1B837			; 31
-		ptr byte_1B7BE			; 32
-		ptr byte_1B7C2			; 33
+		ptr byte_1B65C					; 0 
+		ptr byte_1B666					; 1
+		ptr byte_1B670					; 2
+		ptr byte_1B67A					; 3
+		ptr byte_1B684					; 4
+		ptr byte_1B68E					; 5
+		ptr byte_1B744					; 6
+		ptr byte_1B74A					; 7
+		ptr byte_1B74F					; 8
+		ptr byte_1B754					; 9
+		ptr byte_1B760					; 10
+		ptr byte_1B764					; 11
+		ptr byte_1B768					; 12
+		ptr byte_1B76E					; 13
+		ptr byte_1B775					; 14
+		ptr byte_1B779					; 15
+		ptr byte_1B780					; 16
+		ptr byte_1B784					; 17
+		ptr byte_1B788					; 18
+		ptr byte_1B78E					; 19
+		ptr byte_1B793					; 20
+		ptr byte_1B797					; 21
+		ptr byte_1B79E					; 22
+		ptr byte_1B7A1					; 23
+		ptr byte_1B7A4					; 24
+		ptr byte_1B7A7					; 25
+		ptr byte_1B7A7					; 26
+		ptr byte_1B7AA					; 27
+		ptr byte_1B7AE					; 28
+		ptr byte_1B7B2					; 29
+		ptr byte_1B7B6					; 30
+		ptr byte_1B837					; 31
+		ptr byte_1B7BE					; 32
+		ptr byte_1B7C2					; 33
 		
 byte_1B65C:	
 		dc.b $FF
@@ -36022,10 +36020,10 @@ loc_1BA4A:
 		bra.w	Tails_LoadGFX
 ; ===========================================================================
 Tails_Modes:	index offset(*),,2
-		ptr loc_1C00A			; 0 
-		ptr loc_1C032			; 2
-		ptr loc_1C05C			; 4
-		ptr loc_1C082			; 6
+		ptr loc_1C00A					; 0 
+		ptr loc_1C032					; 2
+		ptr loc_1C05C					; 4
+		ptr loc_1C082					; 6
 ; ===========================================================================
 
 loc_1BA56:				
@@ -36087,11 +36085,11 @@ loc_1BAE4:
 		jmp	off_1BAF4(pc,d0.w)
 ; ===========================================================================
 off_1BAF4:	index offset(*),,2
-		ptr loc_1BAFE			; 0 
-		ptr loc_1BB30			; 2
-		ptr loc_1BB8A			; 4
-		ptr loc_1BCE0			; 6
-		ptr loc_1BEB8			; 8
+		ptr loc_1BAFE					; 0 
+		ptr loc_1BB30					; 2
+		ptr loc_1BB8A					; 4
+		ptr loc_1BCE0					; 6
+		ptr loc_1BEB8					; 8
 ; ===========================================================================
 
 loc_1BAFE:				
@@ -37801,7 +37799,7 @@ loc_1CBEE:
 		bsr.w	Tails_RecordPosition
 		bsr.w	Tails_Animate
 		bsr.w	Tails_LoadGFX
-		jmp	(DisplaySprite).l				; could be bra.w
+		jmp	(DisplaySprite).l			; could be bra.w
 ; ===========================================================================
 
 loc_1CC08:				
@@ -37832,7 +37830,7 @@ Tails_Death:
 		bsr.w	Tails_RecordPosition
 		bsr.w	Tails_Animate
 		bsr.w	Tails_LoadGFX
-		jmp	(DisplaySprite).l				; could be bra.w
+		jmp	(DisplaySprite).l			; could be bra.w
 ; ===========================================================================
 
 loc_1CC6C:				
@@ -37941,7 +37939,7 @@ Tails_Respawn:
 loc_1CDB6:				
 		bsr.w	Tails_Animate
 		bsr.w	Tails_LoadGFX
-		jmp	(DisplaySprite).l				; could be bra.w
+		jmp	(DisplaySprite).l			; could be bra.w
 ; ===========================================================================
 	if FixBugs
 		; Drowning fixes. See Sonic_Drown for more information
@@ -38219,39 +38217,39 @@ loc_1D00E:
 		rts	
 ; ===========================================================================
 Ani_Tails:	index offset(*)
-		ptr byte_1D07A		; 0 
-		ptr byte_1D084		; 1
-		ptr byte_1D08E		; 2
-		ptr byte_1D093		; 3
-		ptr byte_1D098		; 4
-		ptr byte_1D0A2		; 5
-		ptr byte_1D0E0		; 6
-		ptr byte_1D0F8		; 7
-		ptr byte_1D0FB		; 8
-		ptr byte_1D0FE		; 9
-		ptr byte_1D103		; 10
-		ptr byte_1D106		; 11
-		ptr byte_1D10C		; 12
-		ptr byte_1D110		; 13
-		ptr byte_1D117		; 14
-		ptr byte_1D11B		; 15
-		ptr byte_1D122		; 16
-		ptr byte_1D131		; 17
-		ptr byte_1D135		; 18
-		ptr byte_1D13B		; 19
-		ptr byte_1D140		; 20
-		ptr byte_1D144		; 21
-		ptr byte_1D14B		; 22
-		ptr byte_1D14E		; 23
-		ptr byte_1D151		; 24
-		ptr byte_1D154		; 25
-		ptr byte_1D157		; 26
-		ptr byte_1D15A		; 27
-		ptr byte_1D15E		; 28
-		ptr byte_1D162		; 29
-		ptr byte_1D16C		; 30
-		ptr byte_1D176		; 31
-		ptr byte_1D180		; 32
+		ptr byte_1D07A					; 0 
+		ptr byte_1D084					; 1
+		ptr byte_1D08E					; 2
+		ptr byte_1D093					; 3
+		ptr byte_1D098					; 4
+		ptr byte_1D0A2					; 5
+		ptr byte_1D0E0					; 6
+		ptr byte_1D0F8					; 7
+		ptr byte_1D0FB					; 8
+		ptr byte_1D0FE					; 9
+		ptr byte_1D103					; 10
+		ptr byte_1D106					; 11
+		ptr byte_1D10C					; 12
+		ptr byte_1D110					; 13
+		ptr byte_1D117					; 14
+		ptr byte_1D11B					; 15
+		ptr byte_1D122					; 16
+		ptr byte_1D131					; 17
+		ptr byte_1D135					; 18
+		ptr byte_1D13B					; 19
+		ptr byte_1D140					; 20
+		ptr byte_1D144					; 21
+		ptr byte_1D14B					; 22
+		ptr byte_1D14E					; 23
+		ptr byte_1D151					; 24
+		ptr byte_1D154					; 25
+		ptr byte_1D157					; 26
+		ptr byte_1D15A					; 27
+		ptr byte_1D15E					; 28
+		ptr byte_1D162					; 29
+		ptr byte_1D16C					; 30
+		ptr byte_1D176					; 31
+		ptr byte_1D180					; 32
 byte_1D07A:	dc.b $FF,$10,$11,$12,$13,$14,$15, $E, $F,$FF	; 0	
 
 byte_1D084:	dc.b $FF,$2E,$2F,$30,$31,$FF,$FF,$FF,$FF,$FF	; 0	
@@ -38360,8 +38358,8 @@ TailsTails:
 		jmp	off_1D20E(pc,d1.w)
 ; ===========================================================================
 off_1D20E:	index offset(*),,2
-		ptr loc_1D212			; 0 
-		ptr loc_1D23A			; 2
+		ptr loc_1D212					; 0 
+		ptr loc_1D23A					; 2
 ; ===========================================================================
 
 loc_1D212:				
@@ -38414,7 +38412,7 @@ loc_1D288:
 		lea	(Ani_TailsTails).l,a1
 		bsr.w	loc_1CDCA
 		bsr.w	loc_1D184
-		jsr	(DisplaySprite).l	; could be jmp
+		jsr	(DisplaySprite).l			; could be jmp
 		rts	
 ; ===========================================================================
 AniSelect_TailsTails:	
@@ -38423,17 +38421,17 @@ AniSelect_TailsTails:
 		dc.b   0,  0					; 32
 
 Ani_TailsTails:	index offset(*)
-		ptr byte_1D2D6			; 0 
-		ptr byte_1D2D9			; 1
-		ptr byte_1D2E0			; 2
-		ptr byte_1D2E8			; 3
-		ptr byte_1D2EE			; 4
-		ptr byte_1D2F4			; 5
-		ptr byte_1D2FA			; 6
-		ptr byte_1D300			; 7
-		ptr byte_1D306			; 8
-		ptr byte_1D30C			; 9
-		ptr byte_1D312			; 10
+		ptr byte_1D2D6					; 0 
+		ptr byte_1D2D9					; 1
+		ptr byte_1D2E0					; 2
+		ptr byte_1D2E8					; 3
+		ptr byte_1D2EE					; 4
+		ptr byte_1D2F4					; 5
+		ptr byte_1D2FA					; 6
+		ptr byte_1D300					; 7
+		ptr byte_1D306					; 8
+		ptr byte_1D30C					; 9
+		ptr byte_1D312					; 10
 byte_1D2D6:	dc.b $20,  0,$FF				; 0 
 byte_1D2D9:	dc.b   7,  9, $A, $B, $C, $D,$FF		; 0 
 byte_1D2E0:	dc.b   3,  9, $A, $B, $C, $D,$FD,  1		; 0	
@@ -38522,7 +38520,7 @@ Drown_Main:
 
 Drown_Animate:				
 		lea	(Ani_Drown).l,a1			; could be PC-relative
-		jsr	(AnimateSprite).l				; run animation and go to Drown_ChkWater next
+		jsr	(AnimateSprite).l			; run animation and go to Drown_ChkWater next
 
 Drown_ChkWater:				
 		move.w	(v_water_height_actual).w,d0
@@ -38603,7 +38601,7 @@ Drown_AirLeft:
 		movea.l	ost_drown_parent(a0),a2			; a2 = character
 		cmpi.b	#air_alert,ost_air_left(a2)		; check air remaining
 		bhi.s	.delete					; if higher than $C, branch
-		subq.w	#1,ost_drown_num_time(a0)		; deincrement timer
+		subq.w	#1,ost_drown_num_time(a0)		; decrement timer
 		bne.s	.display				; branch if time remains
 		move.b	#id_Drown_Display_Num,ost_primary_routine(a0) ; go to Drown_Display_Num next
 		addq.b	#7,ost_anim(a0)
@@ -38626,7 +38624,7 @@ Drown_AirLeft:
 Drown_ShowNumber:				
 		tst.w	ost_drown_num_time(a0)			; is this a number bubble?
 		beq.s	.nonumber				; if not, exit
-		subq.w	#1,ost_drown_num_time(a0)		; deincrement timer
+		subq.w	#1,ost_drown_num_time(a0)		; decrement timer
 		bne.s	.nonumber				; branch if time remains
 		cmpi.b	#id_Ani_Drown_ZeroFlash,ost_anim(a0)
 		bcc.s	.nonumber				; branch if animation is a number flash
@@ -38650,7 +38648,7 @@ Drown_ShowNumber:
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Data for a bubble's side-to-side wobble. Second copy of data is unused
-; Sonic 1 leftover: was used by the background ripple effect in Revision 1.
+; Sonic 1 leftover: it was used by the background ripple effect in Revision 1.
 ; ---------------------------------------------------------------------------
 Drown_WobbleData:
 		rept 2	
@@ -38732,7 +38730,7 @@ Drown_Countdown:
 		jsr	(PlayMusic).l
 
 	.skipmusic:				
-		subq.b	#1,ost_drown_disp_time(a0)		; deincrement number display timer
+		subq.b	#1,ost_drown_disp_time(a0)		; decrement number display timer
 		bpl.s	.reduceair				; branch if time remains
 		move.b	ost_drown_type(a0),ost_drown_disp_time(a0) ; reset display timer
 		bset	#make_num_bit,ost_drown_extra_flag(a0)	; set flag to spawn a number bubble
@@ -38884,7 +38882,7 @@ Drown_Countdown:
 		move.w	#28,ost_drown_num_time(a1)		; indicate that this bubble will turn into a number
 
 .create_bubble_done:				
-		subq.b	#1,ost_drown_extra_bub(a0)		; deincrement count of bubbles to spawn
+		subq.b	#1,ost_drown_extra_bub(a0)		; decrement count of bubbles to spawn
 		bpl.s	.nocountdown				; branch if more bubbles are to be spawned
 		clr.w	ost_drown_extra_flag(a0)		; clear the bubble flags
 
@@ -38936,7 +38934,7 @@ Ani_Drown:	index offset(*)
 		ptr Ani_Drown_ThreeFlash			; $A
 		ptr Ani_Drown_FourFlash				; $B
 		ptr Ani_Drown_FiveFlash				; $C
-		ptr Ani_Drown_Blank					; $D
+		ptr Ani_Drown_Blank				; $D
 		ptr Ani_Drown_MediumBubble			; $E
 		
 Ani_Drown_ZeroAppear:	
@@ -39111,8 +39109,8 @@ ShieldItem:
 		jmp	off_1D900(pc,d1.w)
 ; ===========================================================================
 off_1D900:	index offset(*),,2
-		ptr loc_1D904			; 0 
-		ptr loc_1D92C			; 2
+		ptr loc_1D904					; 0 
+		ptr loc_1D92C					; 2
 ; ===========================================================================
 
 loc_1D904:				
@@ -39163,9 +39161,9 @@ InvincibiltyStars:
 		jmp	off_1D98C(pc,d1.w)
 ; ===========================================================================
 off_1D98C:	index offset(*),,2	
-		ptr loc_1D9A4			; 0 
-		ptr loc_1DA0C			; 2
-		ptr loc_1DA80			; 4
+		ptr loc_1D9A4					; 0 
+		ptr loc_1DA0C					; 2
+		ptr loc_1DA80					; 4
 		
 ost_invstars_routine:	equ $A
 		
@@ -39371,10 +39369,10 @@ Splash_SpindashDust:
 		jmp	off_1DD2E(pc,d1.w)
 ; ===========================================================================
 off_1DD2E: index offset(*),,2	
-		ptr loc_1DD36			; 0 
-		ptr loc_1DD90			; 2
-		ptr loc_1DE46			; 4
-		ptr loc_1DE4A			; 6
+		ptr loc_1DD36					; 0 
+		ptr loc_1DD90					; 2
+		ptr loc_1DE46					; 4
+		ptr loc_1DE4A					; 6
 ; ===========================================================================
 
 loc_1DD36:				
@@ -39407,10 +39405,10 @@ loc_1DD90:
 		jmp	off_1DDA4(pc,d1.w)
 ; ===========================================================================
 off_1DDA4:	index offset(*)
-		ptr loc_1DE28			; 0 
-		ptr loc_1DDAC			; 1
-		ptr loc_1DDCC			; 2
-		ptr loc_1DE20			; 3
+		ptr loc_1DE28					; 0 
+		ptr loc_1DDAC					; 1
+		ptr loc_1DDCC					; 2
+		ptr loc_1DE20					; 3
 ; ===========================================================================
 
 loc_1DDAC:				
@@ -39547,10 +39545,10 @@ locret_1DF36:
 		rts	
 ; ===========================================================================
 Ani_SplashDust:	index offset(*)
-		ptr byte_1DF40			; 0 
-		ptr byte_1DF43			; 1
-		ptr byte_1DF4F			; 2
-		ptr byte_1DF58			; 3
+		ptr byte_1DF40					; 0 
+		ptr byte_1DF43					; 1
+		ptr byte_1DF4F					; 2
+		ptr byte_1DF58					; 3
 		
 byte_1DF40:	dc.b $1F,  0,$FF				; 0 
 byte_1DF43:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,  9,$FD,  0 ; 0	
@@ -41478,8 +41476,8 @@ HiddenBonus:
 		jmp	off_1F632(pc,d1.w)
 ; ===========================================================================
 off_1F632:	index offset(*),,2
-		ptr loc_1F636			; 0 
-		ptr loc_1F6DA			; 2
+		ptr loc_1F636					; 0 
+		ptr loc_1F6DA					; 2
 ; ===========================================================================
 
 loc_1F636:				
@@ -41579,8 +41577,8 @@ Bumper:
 		jmp	off_1F73E(pc,d1.w)
 ; ===========================================================================
 off_1F73E:	index offset(*),,2	
-		ptr loc_1F742			; 0 
-		ptr loc_1F770			; 2
+		ptr loc_1F742					; 0 
+		ptr loc_1F770					; 2
 ; ===========================================================================
 
 loc_1F742:				
@@ -41672,8 +41670,8 @@ loc_1F83E:
 		jmpto	DespawnObject,JmpTo2_DespawnObject
 ; ===========================================================================
 off_1F84C:		index offset(*)
-		ptr byte_1F850		; 0 
-		ptr byte_1F853			; 1
+		ptr byte_1F850					; 0 
+		ptr byte_1F853					; 1
 		
 byte_1F850:	dc.b  $F,  0,$FF				; 0 
 byte_1F853:	dc.b   3,  1,  0,  1,$FD,  0,  0		; 0 
@@ -41993,13 +41991,13 @@ locret_1FBCA:
 		rts	
 ; ===========================================================================
 off_1FBCC:	index offset(*)	
-		ptr byte_1FBDA			; 0 
-		ptr byte_1FBDF			; 1
-		ptr byte_1FBE5			; 2
-		ptr byte_1FBEC			; 3
-		ptr byte_1FBEC			; 4
-		ptr byte_1FBEE			; 5
-		ptr byte_1FBF2			; 6
+		ptr byte_1FBDA					; 0 
+		ptr byte_1FBDF					; 1
+		ptr byte_1FBE5					; 2
+		ptr byte_1FBEC					; 3
+		ptr byte_1FBEC					; 4
+		ptr byte_1FBEE					; 5
+		ptr byte_1FBF2					; 6
 byte_1FBDA:	dc.b  $E,  0,  1,  2,$FC			; 0 
 byte_1FBDF:	dc.b  $E,  1,  2,  3,  4,$FC			; 0	
 byte_1FBE5:	dc.b  $E,  2,  3,  4,  5,  6,$FC		; 0 
@@ -42042,9 +42040,9 @@ PlaneSwitcher:
 		jmp	(DespawnObject3).l
 ; ===========================================================================
 PSwitch_Index	index offset(*),,2	
-		ptr loc_1FCF6	; 0 
-		ptr loc_1FDA4	; 2
-		ptr loc_1FEAE	; 4
+		ptr loc_1FCF6					; 0 
+		ptr loc_1FDA4					; 2
+		ptr loc_1FEAE					; 4
 ; ===========================================================================
 
 loc_1FCF6:				
@@ -42303,9 +42301,9 @@ TippingPipe:
 		jmp	off_200AA(pc,d1.w)
 ; ===========================================================================
 off_200AA:	index offset(*),,2	
-		ptr loc_200B0		; 0 
-		ptr loc_20104		; 2
-		ptr loc_20112		; 4
+		ptr loc_200B0					; 0 
+		ptr loc_20104					; 2
+		ptr loc_20112					; 4
 ; ===========================================================================
 
 loc_200B0:				
@@ -42382,8 +42380,8 @@ BranchTo_JmpTo3_DespawnObject:
 		jmpto	DespawnObject, JmpTo3_DespawnObject
 ; ===========================================================================
 Ani_obj0B:	index offset(*)	
-		ptr byte_20190		; 0 
-		ptr byte_20198		; 1
+		ptr byte_20190					; 0 
+		ptr byte_20198					; 1
 		
 byte_20190:	dc.b   7,  0,  1,  2,  3,  4,$FE,  1		; 0	
 byte_20198:	dc.b   7,  4,  3,  2,  1,  0,$FE,  1		; 0	
@@ -42414,8 +42412,8 @@ CPZBetaPlatform:
 		jmp	off_2021E(pc,d1.w)
 ; ===========================================================================
 off_2021E:		index offset(*),,2
-		ptr loc_20222			; 0 
-		ptr loc_20282			; 2
+		ptr loc_20222					; 0 
+		ptr loc_20282					; 2
 ; ===========================================================================
 
 loc_20222:				
@@ -42523,8 +42521,8 @@ GiantEmerald:
 		jmp	GiantEmrld_Index(pc,d1.w)
 ; ===========================================================================
 GiantEmrld_Index:	index offset(*),,2	
-		ptr loc_2032E		; 0 
-		ptr loc_20356		; 2
+		ptr loc_2032E					; 0 
+		ptr loc_20356					; 2
 ; ===========================================================================
 
 loc_2032E:				
@@ -42583,9 +42581,9 @@ WaterfallHiddenPalace:
 		jmp	HPZWFall_Index(pc,d1.w)
 ; ===========================================================================
 HPZWFall_Index:	index offset(*),,2	
-		ptr loc_203C0			; 0 
-		ptr loc_20486			; 2
-		ptr loc_20510			; 4
+		ptr loc_203C0					; 0 
+		ptr loc_20486					; 2
+		ptr loc_20510					; 4
 ; ===========================================================================
 
 loc_203C0:				
@@ -42739,9 +42737,9 @@ WaterSurface:
 		jmp	off_208EA(pc,d1.w)
 ; ===========================================================================
 off_208EA:	index offset(*),,2	
-		ptr loc_208F0		; 0 
-		ptr loc_20930		; 2
-		ptr loc_209C2		; 4
+		ptr loc_208F0					; 0 
+		ptr loc_20930					; 2
+		ptr loc_209C2					; 4
 ; ===========================================================================
 
 loc_208F0:				
@@ -42753,8 +42751,8 @@ loc_208F0:
 		move.b	#-$80,ost_displaywidth(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		cmpi.b	#id_ARZ,(v_zone).w			; is it ARZ?
-		bne.s	loc_20930					; if not, branch
-		addq.b	#2,ost_primary_routine(a0)	; use ARZ-specific code and mappings
+		bne.s	loc_20930				; if not, branch
+		addq.b	#2,ost_primary_routine(a0)		; use ARZ-specific code and mappings
 		move.l	#Map_Surf2,ost_mappings(a0)
 		bra.w	loc_209C2
 ; ===========================================================================
@@ -42844,8 +42842,8 @@ WaterfallEmeraldHill:
 		jmp	off_20BAC(pc,d1.w)
 ; ===========================================================================
 off_20BAC:	index offset(*),,2	
-		ptr loc_20BB0		; 0 
-		ptr loc_20BEA		; 2
+		ptr loc_20BB0					; 0 
+		ptr loc_20BEA					; 2
 ; ===========================================================================
 
 loc_20BB0:				
@@ -42985,8 +42983,8 @@ Invisibarrier:
 		jmp	off_20EEE(pc,d1.w)
 ; ===========================================================================
 off_20EEE:	index offset(*),,2	
-		ptr loc_20EF2		; 0 
-		ptr loc_20F2E		; 2
+		ptr loc_20EF2					; 0 
+		ptr loc_20F2E					; 2
 ; ===========================================================================
 
 loc_20EF2:				
@@ -43051,8 +43049,8 @@ Pylon:
 		jmp	off_20FE0(pc,d1.w)
 ; ===========================================================================
 off_20FE0:	index offset(*),,2		
-		ptr loc_20FE4			; 0 
-		ptr loc_21006			; 2
+		ptr loc_20FE4					; 0 
+		ptr loc_21006					; 2
 ; ===========================================================================
 
 loc_20FE4:				
@@ -43099,9 +43097,9 @@ ExplosionItem:
 		jmp	off_21096(pc,d1.w)
 ; ===========================================================================
 off_21096:	index offset(*),,2		
-		ptr loc_2109C			; 0 
-		ptr loc_210BE			; 2
-		ptr loc_21102			; 4
+		ptr loc_2109C					; 0 
+		ptr loc_210BE					; 2
+		ptr loc_21102					; 4
 ; ===========================================================================
 
 loc_2109C:				
@@ -43153,9 +43151,9 @@ PinballMode:
 		jmp	(DespawnObject3).l
 ; ===========================================================================
 off_21170:	index offset(*),,2		
-		ptr loc_21176			; 0 
-		ptr loc_21224			; 2
-		ptr loc_212F6			; 4
+		ptr loc_21176					; 0 
+		ptr loc_21224					; 2
+		ptr loc_212F6					; 4
 ; ===========================================================================
 
 loc_21176:				
@@ -43370,8 +43368,8 @@ PalSwitcherWingFortress:
 		jmp	(DespawnObject3).l
 ; ===========================================================================
 off_213A6:	index offset(*),,2		
-		ptr loc_213B2		; 0 
-		ptr loc_21412		; 2
+		ptr loc_213B2					; 0 
+		ptr loc_21412					; 2
 
 ; ===========================================================================		
 word_213AA:	
@@ -43519,9 +43517,9 @@ loc_214EE:
 		jmp	(DeleteObject).l
 ; ===========================================================================
 off_214F4:	index offset(*),,2
-		ptr loc_214FA			; 0 
-		ptr loc_21512			; 2
-		ptr loc_21808			; 4
+		ptr loc_214FA					; 0 
+		ptr loc_21512					; 2
+		ptr loc_21808					; 4
 ; ===========================================================================
 
 loc_214FA:				
@@ -43818,12 +43816,12 @@ Seesaw:
 		jmpto	DespawnObject2,JmpTo_DespawnObject2
 ; ===========================================================================
 off_2193E:	index offset(*),,2
-		ptr loc_2194A			; 0 
-		ptr loc_219B8			; 2
-		ptr locret_21A74			; 4
-		ptr loc_21AA2			; 6
-		ptr loc_21AFC			; 8
-		ptr loc_21B94			; $A
+		ptr loc_2194A					; 0 
+		ptr loc_219B8					; 2
+		ptr locret_21A74				; 4
+		ptr loc_21AA2					; 6
+		ptr loc_21AFC					; 8
+		ptr loc_21B94					; $A
 ; ===========================================================================
 
 loc_2194A:				
@@ -44117,7 +44115,7 @@ loc_21C2C:
 		jmp	(PlaySound).l
 ; ===========================================================================
 word_21C5C:
-		dc.w -8, -28, -47, -28, -8 ; low, balanced, high, balanced, low
+		dc.w -8, -28, -47, -28, -8			; low, balanced, high, balanced, low
 ; ===========================================================================
 
 loc_21C66:				
@@ -44180,8 +44178,8 @@ Tram:
 		jmp	off_21DBA(pc,d1.w)
 ; ===========================================================================
 off_21DBA:	index offset(*),,2
-		ptr loc_21DBE		; 0 
-		ptr loc_21E10		; 2
+		ptr loc_21DBE					; 0 
+		ptr loc_21E10					; 2
 ; ===========================================================================
 
 loc_21DBE:				
@@ -44220,9 +44218,9 @@ loc_21E2C:
 		jmp	off_21E3A(pc,d1.w)
 ; ===========================================================================
 off_21E3A:	index offset(*),,2	
-		ptr loc_21E40			; 0 
-		ptr loc_21E68			; 2
-		ptr loc_21EC2			; 4
+		ptr loc_21E40					; 0 
+		ptr loc_21E68					; 2
+		ptr loc_21EC2					; 4
 ; ===========================================================================
 
 loc_21E40:				
@@ -44328,8 +44326,8 @@ Platform2:
 		jmp	off_22026(pc,d1.w)
 ; ===========================================================================
 off_22026:	index offset(*),,2	
-		ptr loc_22032			; 0 
-		ptr loc_220B8			; 2
+		ptr loc_22032					; 0 
+		ptr loc_220B8					; 2
 		
 Plat2_SubtypeProperties:
 		; ost_displaywidth. ost_frame
@@ -44403,22 +44401,22 @@ loc_220E8:
 		jmp	off_220FC(pc,d1.w)
 ; ===========================================================================
 off_220FC:	index offset(*)	
-		ptr loc_2211C		; 0 
-		ptr loc_22126		; 1
-		ptr loc_22146		; 2
-		ptr loc_22166		; 3
-		ptr loc_22176		; 4
-		ptr locret_22196		; 5
-		ptr loc_22198		; 6
-		ptr loc_22198		; 7
-		ptr loc_221B4		; 8
-		ptr loc_221B4		; 9
-		ptr loc_221B4		; 10
-		ptr loc_221B4		; 11
-		ptr loc_221EE		; 12
-		ptr loc_221EE		; 13
-		ptr loc_221EE		; 14
-		ptr loc_221EE		; 15
+		ptr loc_2211C					; 0 
+		ptr loc_22126					; 1
+		ptr loc_22146					; 2
+		ptr loc_22166					; 3
+		ptr loc_22176					; 4
+		ptr locret_22196				; 5
+		ptr loc_22198					; 6
+		ptr loc_22198					; 7
+		ptr loc_221B4					; 8
+		ptr loc_221B4					; 9
+		ptr loc_221B4					; 10
+		ptr loc_221B4					; 11
+		ptr loc_221EE					; 12
+		ptr loc_221EE					; 13
+		ptr loc_221EE					; 14
+		ptr loc_221EE					; 15
 ; ===========================================================================
 
 loc_2211C:				
@@ -44592,8 +44590,8 @@ SpeedBooster:
 		jmp	Bstr_Index(pc,d1.w)
 ; ===========================================================================
 Bstr_Index:	index offset(*),,2	
-		ptr loc_222C2			; 0 
-		ptr loc_222F8			; 2
+		ptr loc_222C2					; 0 
+		ptr loc_222F8					; 2
 		
 Bstr_Speeds:	
 		dc.w $1000					; 0
@@ -44715,11 +44713,11 @@ BlueBalls:
 		jmp	BBalls_Index(pc,d1.w)
 ; ===========================================================================
 BBalls_Index:	index offset(*),,2	
-		ptr loc_22428			; 0 
-		ptr loc_224D6			; 2
-		ptr loc_224F4			; 4
-		ptr loc_224D6			; 6
-		ptr loc_22528			; 8
+		ptr loc_22428					; 0 
+		ptr loc_224D6					; 2
+		ptr loc_224F4					; 4
+		ptr loc_224D6					; 6
+		ptr loc_22528					; 8
 
 ; unused table of speed values		
 		dc.w $FB80					; 0
@@ -44886,8 +44884,8 @@ JmpTo_DespawnObject3:
     endC		
 ; ===========================================================================
 off_225B8	index offset(*),,2	
-		ptr loc_225C2			; 0 
-		ptr loc_225D6			; 2
+		ptr loc_225C2					; 0 
+		ptr loc_225D6					; 2
 		
 word_225BC:
 		dc.w   $A0					; 0
@@ -44916,10 +44914,10 @@ loc_225E8:
 		jmp	off_225F4(pc,d0.w)
 ; ===========================================================================
 off_225F4:	index offset(*),,2	
-		ptr loc_225FC			; 0 
-		ptr loc_2271A			; 2
-		ptr loc_227FE			; 4
-		ptr loc_2286A			; 6
+		ptr loc_225FC					; 0 
+		ptr loc_2271A					; 2
+		ptr loc_227FE					; 4
+		ptr loc_2286A					; 6
 ; ===========================================================================
 
 loc_225FC:				
@@ -45454,13 +45452,13 @@ LavaBubble:
 		jmp	off_23006(pc,d1.w)
 ; ===========================================================================
 off_23006:	index offset(*),,2	
-		ptr loc_23014			; 0 
-		ptr loc_23076			; 2
-		ptr loc_23084			; 4
-		ptr loc_2311E			; 6
-		ptr loc_23144			; 8
-		ptr loc_231D2			; $A
-		ptr loc_23232			; $C
+		ptr loc_23014					; 0 
+		ptr loc_23076					; 2
+		ptr loc_23084					; 4
+		ptr loc_2311E					; 6
+		ptr loc_23144					; 8
+		ptr loc_231D2					; $A
+		ptr loc_23232					; $C
 ; ===========================================================================
 
 loc_23014:				
@@ -45702,9 +45700,9 @@ SmashGround:
 		jmp	off_2330E(pc,d1.w)
 ; ===========================================================================
 off_2330E:	index offset(*),,2
-		ptr loc_2331E			; 0 
-		ptr loc_23368			; 2
-		ptr loc_234DC			; 4
+		ptr loc_2331E					; 0 
+		ptr loc_23368					; 2
+		ptr loc_234DC					; 4
 
 byte_23314:	
 		dc.b $24					; 0
@@ -45934,9 +45932,9 @@ SmashBlock:
 		jmp	off_23528(pc,d1.w)
 ; ===========================================================================
 off_23528:	index offset(*),,2	
-		ptr loc_2352E			; 0 
-		ptr loc_23582			; 2
-		ptr loc_2366A			; 4
+		ptr loc_2352E					; 0 
+		ptr loc_23582					; 2
+		ptr loc_2366A					; 4
 ; ===========================================================================
 
 loc_2352E:				
@@ -46206,8 +46204,8 @@ RisingLava:
 		jmp	off_238EA(pc,d1.w)
 ; ===========================================================================
 off_238EA:	index offset(*),,2		
-		ptr loc_238F8			; 0 
-		ptr loc_23944			; 2
+		ptr loc_238F8					; 0 
+		ptr loc_23944					; 2
 
 byte_238EE:
 		dc.b $C0					; 0
@@ -46265,11 +46263,11 @@ loc_23944:
 		rts	
 ; ===========================================================================
 off_23968:	index offset(*),,2		
-		ptr loc_23972			; 0 
-		ptr loc_23972			; 2
-		ptr loc_2398A			; 4
-		ptr loc_239D0			; 6
-		ptr loc_239EA			; 8
+		ptr loc_23972					; 0 
+		ptr loc_23972					; 2
+		ptr loc_2398A					; 4
+		ptr loc_239D0					; 6
+		ptr loc_239EA					; 8
 ; ===========================================================================
 
 loc_23972:				
@@ -46372,9 +46370,9 @@ BurnerPlatform:
 		jmp	off_23B02(pc,d1.w)
 ; ===========================================================================
 off_23B02:	index offset(*),,2	
-		ptr loc_23B08			; 0 
-		ptr loc_23B90			; 2
-		ptr loc_23D9A			; 4
+		ptr loc_23B08					; 0 
+		ptr loc_23B90					; 2
+		ptr loc_23D9A					; 4
 ; ===========================================================================
 
 loc_23B08:				
@@ -46423,11 +46421,11 @@ loc_23B90:
 		jmpto	DespawnObject,JmpTo10_DespawnObject
 ; ===========================================================================
 off_23BBC:	index offset(*),,2	
-		ptr loc_23BC6			; 0 
-		ptr loc_23BEA			; 2
-		ptr loc_23C26			; 4
-		ptr loc_23D20			; 6
-		ptr locret_23D98			; 8
+		ptr loc_23BC6					; 0 
+		ptr loc_23BEA					; 2
+		ptr loc_23C26					; 4
+		ptr loc_23D20					; 6
+		ptr locret_23D98				; 8
 ; ===========================================================================
 
 loc_23BC6:				
@@ -46644,9 +46642,9 @@ RailSpikes:
 		jmp	off_23E4E(pc,d1.w)
 ; ===========================================================================
 off_23E4E:	index offset(*),,2	
-		ptr loc_23E66			; 0 
-		ptr loc_23F0A			; 2
-		ptr loc_23F5C			; 4
+		ptr loc_23E66					; 0 
+		ptr loc_23F0A					; 2
+		ptr loc_23F5C					; 4
 		
 byte_23E54:	
 		dc.b   0					; 0
@@ -46837,8 +46835,8 @@ Oil:
 		jmp	off_2402E(pc,d1.w)
 ; ===========================================================================
 off_2402E:	index offset(*),,2	
-		ptr loc_24032			; 0 
-		ptr loc_24054			; 2
+		ptr loc_24032					; 0 
+		ptr loc_24054					; 2
 ; ===========================================================================
 
 loc_24032:				
@@ -46942,9 +46940,9 @@ PressureSpring:
 		jmpto	DespawnObject,JmpTo11_DespawnObject
 ; ===========================================================================
 off_2410A:	index offset(*),,2	
-		ptr loc_24110			; 0 
-		ptr loc_24186			; 2
-		ptr loc_2427A			; 4
+		ptr loc_24110					; 0 
+		ptr loc_24186					; 2
+		ptr loc_2427A					; 4
 ; ===========================================================================
 
 loc_24110:				
@@ -46960,9 +46958,9 @@ loc_24110:
 		move.w	off_24146(pc,d0.w),d0
 		jmp	off_24146(pc,d0.w)
 ; ===========================================================================
-off_24146:	index offset(*)	; verify subtype IDs
-		ptr loc_2416E			; 0 
-		ptr loc_2414A			; 1
+off_24146:	index offset(*)					; verify subtype IDs
+		ptr loc_2416E					; 0 
+		ptr loc_2414A					; 1
 ; ===========================================================================
 
 loc_2414A:				
@@ -47292,8 +47290,8 @@ locret_244D0:
 ; ===========================================================================
 ; Unused animation script
 off_244D2:	index offset(*)	
-		ptr byte_244D6			; 0 
-		ptr byte_244F8			; 1
+		ptr byte_244D6					; 0 
+		ptr byte_244F8					; 1
 		
 byte_244D6:	
 		dc.b   0,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  9,  9,  9,  9,  9 ; 0			
@@ -47521,10 +47519,10 @@ GiantBall:
 		jmp	off_24A24(pc,d1.w)
 ; ===========================================================================
 off_24A24:	index offset(*),,2	
-		ptr loc_24A2C			; 0 
-		ptr loc_24AEA			; 2
-		ptr loc_24B38			; 4
-		ptr loc_24BDC			; 6
+		ptr loc_24A2C					; 0 
+		ptr loc_24AEA					; 2
+		ptr loc_24B38					; 4
+		ptr loc_24BDC					; 6
 ; ===========================================================================
 
 loc_24A2C:				
@@ -47785,8 +47783,8 @@ Button:
 		jmp	off_24D02(pc,d1.w)
 ; ===========================================================================
 off_24D02:	index offset(*),,2	
-		ptr loc_24D06			; 0 
-		ptr loc_24D32			; 2
+		ptr loc_24D06					; 0 
+		ptr loc_24D32					; 2
 ; ===========================================================================
 
 loc_24D06:				
@@ -47878,10 +47876,10 @@ LauncherBlock:
 		jmp	off_24DDE(pc,d1.w)
 ; ===========================================================================
 off_24DDE:	index offset(*),,2
-		ptr loc_24DE6			; 0 
-		ptr loc_24E26			; 2
-		ptr loc_24F3C			; 4
-		ptr loc_24F52			; 6
+		ptr loc_24DE6					; 0 
+		ptr loc_24E26					; 2
+		ptr loc_24F3C					; 4
+		ptr loc_24F52					; 6
 ; ===========================================================================
 
 loc_24DE6:				
@@ -48025,8 +48023,8 @@ loc_24F74:
 		jmp	off_24F80(pc,d0.w)
 ; ===========================================================================
 off_24F80:	index offset(*),,2
-		ptr loc_24F84			; 0 
-		ptr loc_25036			; 2
+		ptr loc_24F84					; 0 
+		ptr loc_25036					; 2
 ; ===========================================================================
 
 loc_24F84:				
@@ -48250,8 +48248,8 @@ JmpTo14_DespawnObject:
     	
 ; ===========================================================================
 off_25262:	index offset(*),,2	
-		ptr loc_25276			; 0 
-		ptr loc_252C6			; 2
+		ptr loc_25276					; 0 
+		ptr loc_252C6					; 2
 
 byte_25266:	; ost_render, ost_3F
 		dc.b   render_rel,  							0 ; 0
@@ -48303,10 +48301,10 @@ loc_252DC:
 		jmp	off_252E8(pc,d0.w)
 ; ===========================================================================
 off_252E8:	index offset(*),,2	
-		ptr loc_252F0			; 0 
-		ptr loc_253C6			; 2
-		ptr loc_25474			; 4
-		ptr loc_254F2			; 6
+		ptr loc_252F0					; 0 
+		ptr loc_253C6					; 2
+		ptr loc_25474					; 4
+		ptr loc_254F2					; 6
 ; ===========================================================================
 
 loc_252F0:				
@@ -48577,11 +48575,11 @@ ArrowShooter:
 		jmp	off_256A2(pc,d1.w)
 ; ===========================================================================
 off_256A2:	index offset(*),,2	
-		ptr loc_256AC			; 0 
-		ptr loc_256E0			; 2
-		ptr loc_2572A			; 4
-		ptr loc_2577A			; 6
-		ptr loc_257BE			; 8
+		ptr loc_256AC					; 0 
+		ptr loc_256E0					; 2
+		ptr loc_2572A					; 4
+		ptr loc_2577A					; 6
+		ptr loc_257BE					; 8
 ; ===========================================================================
 
 loc_256AC:				
@@ -48756,8 +48754,8 @@ FallingPillar:
 		jmp	off_2589A(pc,d1.w)
 ; ===========================================================================
 off_2589A:	index offset(*),,2	
-		ptr loc_2589E			; 0 
-		ptr loc_25922			; 2
+		ptr loc_2589E					; 0 
+		ptr loc_25922					; 2
 ; ===========================================================================
 
 loc_2589E:				
@@ -48808,10 +48806,10 @@ loc_25948:
 		jmp	off_25956(pc,d1.w)
 ; ===========================================================================
 off_25956:	index offset(*),,2	
-		ptr locret_2598C			; 0 
-		ptr loc_2595E			; 2
-		ptr loc_2598E			; 4
-		ptr loc_259B8			; 6
+		ptr locret_2598C				; 0 
+		ptr loc_2595E					; 2
+		ptr loc_2598E					; 4
+		ptr loc_259B8					; 6
 ; ===========================================================================
 
 loc_2595E:				
@@ -48913,9 +48911,9 @@ RisingPillar:
 		jmp	off_25A68(pc,d1.w)
 ; ===========================================================================
 off_25A68:	index offset(*),,2
-		ptr loc_25A6E			; 0 
-		ptr loc_25A9C			; 2
-		ptr loc_25B8E			; 4
+		ptr loc_25A6E					; 0 
+		ptr loc_25A9C					; 2
+		ptr loc_25B8E					; 4
 ; ===========================================================================
 
 loc_25A6E:				
@@ -48982,9 +48980,9 @@ loc_25B28:
 		jmp	off_25B36(pc,d1.w)
 ; ===========================================================================
 off_25B36:	index offset(*),,2	
-		ptr loc_25B3C			; 0 
-		ptr loc_25B66			; 2
-		ptr locret_25B64			; 4
+		ptr loc_25B3C					; 0 
+		ptr loc_25B66					; 2
+		ptr locret_25B64				; 4
 ; ===========================================================================
 
 loc_25B3C:				
@@ -49518,7 +49516,6 @@ JmpTo29_DeleteObject: ; JmpTo
     endc
     		
 ; ===========================================================================
-; ===========================================================================
 off_2631E:	dc.w word_26326-off_2631E			; 0 
 		dc.w word_26330-off_2631E			; 1
 		dc.w word_2633A-off_2631E			; 2
@@ -49565,8 +49562,8 @@ Springboard:
 		jmpto	DespawnObject,JmpTo17_DespawnObject
 ; ===========================================================================
 off_26382:	index offset(*),,2	
-		ptr loc_2638C			; 0 
-		ptr loc_263C8			; 2
+		ptr loc_2638C					; 0 
+		ptr loc_263C8					; 2
 		
 word_26386:
 		dc.w $FC00					; 0
@@ -49796,9 +49793,9 @@ SteamSpring:
 		jmp	off_26642(pc,d1.w)
 ; ===========================================================================
 off_26642:	index offset(*),,2	
-		ptr loc_26648			; 0 
-		ptr loc_26688			; 2
-		ptr loc_2683A			; 4
+		ptr loc_26648					; 0 
+		ptr loc_26688					; 2
+		ptr loc_2683A					; 4
 ; ===========================================================================
 
 loc_26648:				
@@ -50047,8 +50044,8 @@ TwinStompers:
 		jmp	off_2692E(pc,d1.w)
 ; ===========================================================================
 off_2692E:	index offset(*),,2	
-		ptr loc_2693A			; 0 
-		ptr loc_269A2			; 2
+		ptr loc_2693A					; 0 
+		ptr loc_269A2					; 2
 
 byte_26932:
 		dc.b $40, $C					; 0
@@ -50210,10 +50207,10 @@ LongPlatform:
 		jmp	off_26AEE(pc,d1.w)
 ; ===========================================================================
 off_26AEE:	index offset(*),,2
-		ptr loc_26B06			; 0 
-		ptr loc_26C1C			; 2
-		ptr loc_26EA4			; 4
-		ptr loc_26EC2			; 6
+		ptr loc_26B06					; 0 
+		ptr loc_26C1C					; 2
+		ptr loc_26EA4					; 4
+		ptr loc_26EC2					; 6
 
 byte_26AF6:
 		dc.b $40, $C					; 0
@@ -50338,14 +50335,14 @@ loc_26C78:
 		jmp	(DeleteObject).l
 ; ===========================================================================
 off_26C7E:	index offset(*)
-		ptr locret_26C8E			; 0 
-		ptr loc_26CA4			; 1
-		ptr loc_26D34			; 2
-		ptr loc_26D94			; 3
-		ptr loc_26E3C			; 4
-		ptr loc_26E4A			; 5
-		ptr loc_26C90			; 6
-		ptr loc_26D14			; 7
+		ptr locret_26C8E				; 0 
+		ptr loc_26CA4					; 1
+		ptr loc_26D34					; 2
+		ptr loc_26D94					; 3
+		ptr loc_26E3C					; 4
+		ptr loc_26E4A					; 5
+		ptr loc_26C90					; 6
+		ptr loc_26D14					; 7
 ; ===========================================================================
 
 locret_26C8E:				
@@ -50658,8 +50655,8 @@ SpringWall:
 		jmp	off_26F66(pc,d1.w)
 ; ===========================================================================
 off_26F66:	index offset(*),,2
-		ptr loc_26F6A			; 0 
-		ptr loc_26FAE			; 2
+		ptr loc_26F6A					; 0 
+		ptr loc_26FAE					; 2
 ; ===========================================================================
 
 loc_26F6A:				
@@ -50863,8 +50860,8 @@ SpinTubeMetropolis:
 		jmpto	DisplaySprite,JmpTo19_DisplaySprite
 ; ===========================================================================
 off_27184:	index offset(*),,2	
-		ptr loc_27188			; 0 
-		ptr loc_271AC			; 2
+		ptr loc_27188					; 0 
+		ptr loc_271AC					; 2
 ; ===========================================================================
 
 loc_27188:				
@@ -50889,9 +50886,9 @@ loc_271BE:
 		jmp	off_271CA(pc,d0.w)
 ; ===========================================================================
 off_271CA:	index offset(*),,2
-		ptr loc_271D0			; 0 
-		ptr loc_27260			; 2
-		ptr loc_27294			; 4
+		ptr loc_271D0					; 0 
+		ptr loc_27260					; 2
+		ptr loc_27294					; 4
 ; ===========================================================================
 
 loc_271D0:				
@@ -51210,9 +51207,9 @@ loc_2759A:
 		jmp	off_275A2(pc,d1.w)
 ; ===========================================================================
 off_275A2:	index offset(*),,2	
-		ptr loc_275A8			; 0 
-		ptr loc_2764A			; 2
-		ptr loc_27662			; 4
+		ptr loc_275A8					; 0 
+		ptr loc_2764A					; 2
+		ptr loc_27662					; 4
 ; ===========================================================================
 
 loc_275A8:				
@@ -51272,10 +51269,10 @@ loc_27662:
 		jmpto	DespawnObject2,JmpTo2_DespawnObject2
 ; ===========================================================================
 off_2767E:	index offset(*)	
-		ptr loc_27686			; 0 
-		ptr loc_27698			; 1
-		ptr loc_276A8			; 2
-		ptr loc_276B8			; 3
+		ptr loc_27686					; 0 
+		ptr loc_27698					; 1
+		ptr loc_276A8					; 2
+		ptr loc_276B8					; 3
 ; ===========================================================================
 
 loc_27686:				
@@ -51387,8 +51384,8 @@ FloorSpike:
 		jmp	off_277A2(pc,d1.w)
 ; ===========================================================================
 off_277A2:	index offset(*),,2	
-		ptr loc_277A6			; 0 
-		ptr loc_277E0			; 2
+		ptr loc_277A6					; 0 
+		ptr loc_277E0					; 2
 ; ===========================================================================
 
 loc_277A6:				
@@ -51480,19 +51477,19 @@ Nut:
 		jmp	off_27892(pc,d1.w)
 ; ===========================================================================
 off_27892:	index offset(*),,2	
-		ptr loc_2789A			; 0 
-		ptr loc_278DC			; 2
-		ptr loc_279FC			; 4
-		ptr loc_278F4			; 6
+		ptr loc_2789A					; 0 
+		ptr loc_278DC					; 2
+		ptr loc_279FC					; 4
+		ptr loc_278F4					; 6
 		
 		rsobj	Nut,$32
 ost_nut_32:			rs.w 1	
 ost_nut_34:			rs.w 1
 ost_nut_36:			rs.w 1
-ost_nut_p1_mode:	rs.b 1 ; $38
+ost_nut_p1_mode:	rs.b 1					; $38
 ost_nut_39:			rs.b 1
 		rsset $3C
-ost_nut_p2_mode:	rs.b 1 ; $3C
+ost_nut_p2_mode:	rs.b 1					; $3C
 ost_nut_3D:			rs.b 1
 		rsobjend	
 ; ===========================================================================
@@ -51557,7 +51554,7 @@ loc_2792C:
 
 loc_27934:				
 		addq.b	#2,(a4)
-		move.b	#0,1(a4) ; ost_nut_39 or 3D
+		move.b	#0,1(a4)				; ost_nut_39 or 3D
 		move.w	ost_x_pos(a0),d0
 		sub.w	ost_x_pos(a1),d0
 		bcc.s	loc_2794C
@@ -51566,7 +51563,7 @@ loc_27934:
 loc_2794C:								
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		tst.b	1(a4) ; ost_nut_39 or 3D
+		tst.b	1(a4)					; ost_nut_39 or 3D
 		beq.s	loc_2795E
 		addi.w	#$F,d0
 
@@ -51702,9 +51699,9 @@ Platform3:
 		jmp	off_27ABE(pc,d1.w)
 ; ===========================================================================
 off_27ABE:	index offset(*),,2
-		ptr loc_27AC4			; 0 
-		ptr loc_27BDE			; 2
-		ptr loc_27C66			; 4
+		ptr loc_27AC4					; 0 
+		ptr loc_27BDE					; 2
+		ptr loc_27C66					; 4
 ; ===========================================================================
 
 loc_27AC4:				
@@ -51922,8 +51919,8 @@ Platform4:
 		jmp	off_27D7A(pc,d1.w)
 ; ===========================================================================
 off_27D7A:	index offset(*),,2
-		ptr loc_27D86			; 0 
-		ptr loc_27E0E			; 2
+		ptr loc_27D86					; 0 
+		ptr loc_27E0E					; 2
 
 byte_27D7E:
 		dc.b $20					; 0
@@ -51997,18 +51994,18 @@ loc_27E46:
 		jmpto	DespawnObject2,JmpTo4_DespawnObject2
 ; ===========================================================================
 off_27E4E:	index offset(*)
-		ptr locret_27E66			; 0 
-		ptr loc_27E68			; 1
-		ptr loc_27E74			; 2
-		ptr loc_27E96			; 3
-		ptr loc_27EA2			; 4
-		ptr loc_27EC4			; 5
-		ptr loc_27EE2			; 6
-		ptr loc_27F10			; 7
-		ptr loc_27F4E			; 8
-		ptr loc_27F60			; 9
-		ptr loc_27F70			; 10
-		ptr loc_27F80			; 11
+		ptr locret_27E66				; 0 
+		ptr loc_27E68					; 1
+		ptr loc_27E74					; 2
+		ptr loc_27E96					; 3
+		ptr loc_27EA2					; 4
+		ptr loc_27EC4					; 5
+		ptr loc_27EE2					; 6
+		ptr loc_27F10					; 7
+		ptr loc_27F4E					; 8
+		ptr loc_27F60					; 9
+		ptr loc_27F70					; 10
+		ptr loc_27F80					; 11
 ; ===========================================================================
 
 locret_27E66:				
@@ -52263,8 +52260,8 @@ loc_28058:
 		jmpto	Deleteobject,JmpTo34_DeleteObject
 ; ===========================================================================
 off_2805C:	index offset(*),,2
-		ptr loc_28060			; 0 
-		ptr loc_28168			; 2
+		ptr loc_28060					; 0 
+		ptr loc_28168					; 2
 ; ===========================================================================
 
 loc_28060:				
@@ -52457,9 +52454,9 @@ loc_2823E:
 		rts	
 ; ===========================================================================
 off_28252:	index offset(*)
-		ptr byte_28258			; 0 
-		ptr byte_28282			; 1
-		ptr byte_282AC			; 2
+		ptr byte_28258					; 0 
+		ptr byte_28282					; 1
+		ptr byte_282AC					; 2
 
 byte_28258:	
 		dc.b   0,$28,  0,  0,  0,  0,$FF,$EA,  0, $A,$FF,$E0,  0,$20,$FF,$E0 ; 0			
@@ -52477,9 +52474,9 @@ byte_282AC:
 		dc.b   1,$E0,  0,$20,  0,$20,  0,$16,  0, $A	; 32
 
 off_282D6:	index offset(*)	
-		ptr byte_282DC			; 0 
-		ptr byte_2830E		; 1
-		ptr byte_28340		; 2
+		ptr byte_282DC					; 0 
+		ptr byte_2830E					; 1
+		ptr byte_28340					; 2
 		
 byte_282DC:	
 		dc.b   0,  7,  0,  0,  0,  0,  0,  1,$FF,$E0,  0,$3A,  0,  3,$FF,$E0 ; 0		
@@ -52535,9 +52532,9 @@ LargeRotatingPlatform:
 		jmp	off_283BA(pc,d1.w)
 ; ===========================================================================
 off_283BA:	index offset(*),,2
-		ptr loc_283C8			; 0 
-		ptr loc_28432			; 2
-		ptr loc_284BC			; 4
+		ptr loc_283C8					; 0 
+		ptr loc_28432					; 2
+		ptr loc_284BC					; 4
 		
 byte_283C0:	
 		dc.b $10, $C					; 0
@@ -52693,8 +52690,8 @@ Cog:
 		jmp	off_285CE(pc,d1.w)
 ; ===========================================================================
 off_285CE:	index offset(*),,2
-		ptr loc_285D2			; 0 
-		ptr loc_28652			; 2
+		ptr loc_285D2					; 0 
+		ptr loc_28652					; 2
 ; ===========================================================================
 
 loc_285D2:				
@@ -52959,8 +52956,8 @@ ConveyerBelt:
 		jmp	off_2894A(pc,d1.w)
 ; ===========================================================================
 off_2894A:	index offset(*),,2
-		ptr loc_2894E			; 0 
-		ptr loc_28980			; 2
+		ptr loc_2894E					; 0 
+		ptr loc_28980					; 2
 ; ===========================================================================
 
 loc_2894E:				
@@ -53031,9 +53028,9 @@ MysticCaveRotatingRings:
 		jmp	off_289E2(pc,d1.w)
 ; ===========================================================================
 off_289E2:	index offset(*),,2	
-		ptr loc_289E8			; 0 
-		ptr loc_28AD6			; 2
-		ptr loc_28B7E			; 4
+		ptr loc_289E8					; 0 
+		ptr loc_28AD6					; 2
+		ptr loc_28B7E					; 4
 ; ===========================================================================
 
 loc_289E8:				
@@ -53220,9 +53217,9 @@ loc_28BE0:
 		jmpto	DisplaySprite3,JmpTo_DisplaySprite3
 ; ===========================================================================
 off_28BE8:	index offset(*),,2	
-		ptr loc_28BEE			; 0 
-		ptr loc_28CCA			; 2
-		ptr loc_28D6C			; 4
+		ptr loc_28BEE					; 0 
+		ptr loc_28CCA					; 2
+		ptr loc_28D6C					; 4
 ; ===========================================================================
 
 loc_28BEE:				
@@ -53411,8 +53408,8 @@ SlidingSpikePlat:
 		jmp	SlidSpks_Index(pc,d1.w)
 ; ===========================================================================
 SlidSpks_Index:	index offset(*),,2	
-		ptr loc_28E0E			; 0 
-		ptr loc_28E5E			; 2
+		ptr loc_28E0E					; 0 
+		ptr loc_28E5E					; 2
 		
 SlidSpks_InitData:	
 		dc.b $40					; 0
@@ -53484,8 +53481,8 @@ loc_28EC2:
 		jmpto	DespawnObject2,JmpTo5_DespawnObject2
 ; ===========================================================================
 SlidSpks_Modes:	index offset(*),,2
-		ptr SlidSpks_ChkPlayer			; 0 
-		ptr SlidSpks_SlideOut			; 2
+		ptr SlidSpks_ChkPlayer				; 0 
+		ptr SlidSpks_SlideOut				; 2
 ; ===========================================================================
 
 SlidSpks_ChkPlayer:				
@@ -53639,8 +53636,8 @@ loc_2904C:
 ; ===========================================================================
 
 Ani_BridgeMCZ:	index offset(*)
-		ptr Ani_BridgeMCZ_Close			; 0 
-		ptr Ani_BridgeMCZ_Open			; 1
+		ptr Ani_BridgeMCZ_Close				; 0 
+		ptr Ani_BridgeMCZ_Open				; 1
 		
 Ani_BridgeMCZ_Close:	
 		dc.b   3,  4,  3,  2,  1,  0,$FE,  1
@@ -53726,9 +53723,9 @@ StairBlocks:
 		jmpto	DespawnObject2,JmpTo6_DespawnObject2
 ; ===========================================================================
 off_291E2:	index offset(*),,2
-		ptr loc_291E8			; 0 
-		ptr loc_2926C			; 2
-		ptr loc_29280			; 4
+		ptr loc_291E8					; 0 
+		ptr loc_2926C					; 2
+		ptr loc_29280					; 4
 ; ===========================================================================
 
 loc_291E8:				
@@ -53798,14 +53795,14 @@ loc_29280:
 		rts	
 ; ===========================================================================
 off_292B8:	index offset(*)
-		ptr loc_292C8			; 0 
-		ptr loc_29334			; 1
-		ptr loc_292EC			; 2
-		ptr loc_29334			; 3
-		ptr loc_292C8			; 4
-		ptr loc_2935E			; 5
-		ptr loc_292EC			; 6
-		ptr loc_2935E			; 7
+		ptr loc_292C8					; 0 
+		ptr loc_29334					; 1
+		ptr loc_292EC					; 2
+		ptr loc_29334					; 3
+		ptr loc_292C8					; 4
+		ptr loc_2935E					; 5
+		ptr loc_292EC					; 6
+		ptr loc_2935E					; 7
 ; ===========================================================================
 
 loc_292C8:				
@@ -53934,9 +53931,9 @@ TrackPlatform:
 		jmp	off_293AE(pc,d1.w)
 ; ===========================================================================
 off_293AE:	index offset(*),,2
-		ptr loc_293CC			; 0 
-		ptr loc_2948E			; 2
-		ptr loc_294EA			; 4
+		ptr loc_293CC					; 0 
+		ptr loc_2948E					; 2
+		ptr loc_294EA					; 4
 
 byte_293B4:	
 		dc.b   0					; 0
@@ -54168,8 +54165,8 @@ JmpTo40_DeleteObject:
     endc		
 ; ===========================================================================
 off_295C0:	index offset(*),,2
-		ptr loc_295C8			; 0 
-		ptr loc_295FE			; 2
+		ptr loc_295C8					; 0 
+		ptr loc_295FE					; 2
 byte_295C4:	
 		; Speed applied on Sonic
 		dc.w -$1000
@@ -54306,10 +54303,10 @@ loc_2975E:
 		jmp	(PlaySound).l
 ; ===========================================================================
 off_29768:	index offset(*)
-		ptr byte_29770			; 0 
-		ptr byte_29773			; 1
-		ptr byte_29777			; 2
-		ptr byte_29777			; 3
+		ptr byte_29770					; 0 
+		ptr byte_29773					; 1
+		ptr byte_29777					; 2
+		ptr byte_29777					; 3
 		
 byte_29770:	
 		dc.b  $F,  0,$FF				; 0 
@@ -54372,8 +54369,8 @@ VineSwitch:
 		jmp	off_297F2(pc,d1.w)
 ; ===========================================================================
 off_297F2:	index offset(*),,2	
-		ptr loc_297F6			; 0 
-		ptr loc_2981E			; 2
+		ptr loc_297F6					; 0 
+		ptr loc_2981E					; 2
 ; ===========================================================================
 
 loc_297F6:				
@@ -54508,9 +54505,9 @@ MovingVineHooks:
 		jmp	off_2998A(pc,d1.w)
 ; ===========================================================================
 off_2998A:	index offset(*),,2
-		ptr loc_29990			; 0 
-		ptr loc_29A66			; 2
-		ptr loc_29BFA			; 4
+		ptr loc_29990					; 0 
+		ptr loc_29A66					; 2
+		ptr loc_29BFA					; 4
 ; ===========================================================================
 
 loc_29990:				
@@ -54948,9 +54945,9 @@ loc_2A018:
 		jmpto	DisplaySprite3,JmpTo2_DisplaySprite3
 ; ===========================================================================
 off_2A020:	index offset(*),,2
-		ptr loc_2A026			; 0 
-		ptr loc_2A0FE			; 2
-		ptr loc_2A18A			; 4
+		ptr loc_2A026					; 0 
+		ptr loc_2A0FE					; 2
+		ptr loc_2A18A					; 4
 ; ===========================================================================
 
 loc_2A026:				
@@ -55179,8 +55176,8 @@ PillarPlatform:
 		jmp	off_2A29E(pc,d1.w)
 ; ===========================================================================
 off_2A29E:	index offset(*),,2
-		ptr loc_2A2AA		; 0 
-		ptr loc_2A312		; 2
+		ptr loc_2A2AA					; 0 
+		ptr loc_2A312					; 2
 		
 byte_2A2A2:
 		dc.b $20					; 0
@@ -55248,14 +55245,14 @@ loc_2A350:
 		jmpto	DespawnObject2,JmpTo7_DespawnObject2
 ; ===========================================================================
 off_2A358:	index offset(*)
-		ptr locret_2A368			; 0 
-		ptr loc_2A36A			; 1
-		ptr loc_2A392			; 2
-		ptr loc_2A36A			; 3
-		ptr loc_2A3B6			; 4
-		ptr loc_2A3D8			; 5
-		ptr loc_2A392			; 6
-		ptr loc_2A3EC			; 7
+		ptr locret_2A368				; 0 
+		ptr loc_2A36A					; 1
+		ptr loc_2A392					; 2
+		ptr loc_2A36A					; 3
+		ptr loc_2A3B6					; 4
+		ptr loc_2A3D8					; 5
+		ptr loc_2A392					; 6
+		ptr loc_2A3EC					; 7
 ; ===========================================================================
 
 locret_2A368:				
@@ -55447,9 +55444,9 @@ loc_2A514:
 		jmpto	DisplaySprite3,JmpTo3_DisplaySprite3
 ; ===========================================================================
 off_2A51C:	index offset(*),,2
-		ptr loc_2A522			; 0 
-		ptr loc_2A620			; 2
-		ptr loc_2A74E			; 4
+		ptr loc_2A522					; 0 
+		ptr loc_2A620					; 2
+		ptr loc_2A74E					; 4
 ; ===========================================================================
 
 loc_2A522:				
@@ -55692,9 +55689,9 @@ Fan:
 		jmp	off_2A7BE(pc,d1.w)
 ; ===========================================================================
 off_2A7BE:	index offset(*),,2
-		ptr loc_2A7C4			; 0 
-		ptr loc_2A802			; 2
-		ptr loc_2A8FE			; 4
+		ptr loc_2A7C4					; 0 
+		ptr loc_2A802					; 2
+		ptr loc_2A8FE					; 4
 ; ===========================================================================
 
 loc_2A7C4:				
@@ -56015,9 +56012,9 @@ BranchTo_JmpTo43_DeleteObject:
 		jmpto	DeleteObject,JmpTo43_DeleteObject
 ; ===========================================================================
 off_2ABCE:	index offset(*),,2
-		ptr loc_2ABD4			; 0 
-		ptr loc_2AC84			; 2
-		ptr loc_2AE56			; 4
+		ptr loc_2ABD4					; 0 
+		ptr loc_2AC84					; 2
+		ptr loc_2AE56					; 4
 ; ===========================================================================
 
 loc_2ABD4:				
@@ -56465,9 +56462,9 @@ Flipper:
 		jmpto	DespawnObject,JmpTo27_DespawnObject
 ; ===========================================================================
 off_2B152:	index offset(*),,2	
-		ptr loc_2B158			; 0 
-		ptr loc_2B194			; 2
-		ptr loc_2B312			; 4
+		ptr loc_2B158					; 0 
+		ptr loc_2B194					; 2
+		ptr loc_2B312					; 4
 ; ===========================================================================
 
 loc_2B158:				
@@ -56695,11 +56692,11 @@ byte_2B40E:
 		dc.b $10,$10,$10,$10				; 32
 		
 off_2B432:	index offset(*)
-		ptr byte_2B43C			; 0 
-		ptr byte_2B43F			; 1
-		ptr byte_2B445			; 2
-		ptr byte_2B448			; 3
-		ptr byte_2B451			; 4
+		ptr byte_2B43C					; 0 
+		ptr byte_2B43F					; 1
+		ptr byte_2B445					; 2
+		ptr byte_2B448					; 3
+		ptr byte_2B451					; 4
 byte_2B43C:	dc.b  $F,  0,$FF				; 0 
 byte_2B43F:	dc.b   3,  1,  2,  1,$FD,  0			; 0	
 byte_2B445:	dc.b  $F,  4,$FF				; 0 
@@ -56772,8 +56769,8 @@ SnakePlatform:
 		jmp	off_2B536(pc,d1.w)
 ; ===========================================================================
 off_2B536:	index offset(*),,2
-		ptr loc_2B53A			; 0 
-		ptr loc_2B57E			; 2
+		ptr loc_2B53A					; 0 
+		ptr loc_2B57E					; 2
 ; ===========================================================================
 
 loc_2B53A:				
@@ -57012,10 +57009,10 @@ ost_casinobmb_player_low:		equ __rs-1		; $3F; tested to check which player to de
 		asr.l	#4,d0					; divide by 16
 		sub.l	d0,ost_casinobmb_y_pos(a0)		; subtract from old y pos to get new y pos
 		move.w	ost_casinobmb_y_pos(a0),ost_y_pos(a0)	; set new y pos of bomb
-		subq.w	#1,ost_casinobmb_display_delay(a0)	; deincrement delay timer
+		subq.w	#1,ost_casinobmb_display_delay(a0)	; decrement delay timer
 		bne.w	JmpTo28_DisplaySprite			; branch if time remains
 		movea.l	ost_casinobmb_childcnt_ptr(a0),a1	; parent's cage's child counter
-		subq.w	#1,(a1)					; deincrement child counter
+		subq.w	#1,(a1)					; decrement child counter
 		cmpi.w	#5,(v_casinobmb_snd_delay).w		; is sound delay counter over 5?		
 		bcs.s	.skip_sound				; if not, branch
 		clr.w	(v_casinobmb_snd_delay).w		; reset sound delay counter
@@ -57027,17 +57024,17 @@ ost_casinobmb_player_low:		equ __rs-1		; $3F; tested to check which player to de
 		beq.s	.player1				; branch if bombs are for player 1					
 		tst.w	(v_rings_p2).w					
 		beq.s	.chk2P					; branch if player 2 doesn't have any rings
-		subq.w	#1,(v_rings_p2).w			; deincrement player 2's ring counter
+		subq.w	#1,(v_rings_p2).w			; decrement player 2's ring counter
 		ori.b	#$81,(v_hud_rings_update_p2).w		; set flag to update their HUD
 
 	.chk2P:				
 		tst.w	(f_two_player).w			; is it two-player mode?
-		bne.s	.delete		; if so, branch
+		bne.s	.delete					; if so, branch
 
 	.player1:				
 		tst.w	(v_rings).w					
-		beq.s	.delete		; branch if player 1 doesn't have any rings
-		subq.w	#1,(v_rings).w				; deincrement player 1's ring counter
+		beq.s	.delete					; branch if player 1 doesn't have any rings
+		subq.w	#1,(v_rings).w				; decrement player 1's ring counter
 		ori.b	#$81,(v_hud_rings_update).w		; set flag to update their HUD
 
 .delete:				
@@ -57075,8 +57072,8 @@ LargeMovingBlock:
 		jmp	off_2B8FA(pc,d1.w)
 ; ===========================================================================
 off_2B8FA:	index offset(*),,2	
-		ptr loc_2B8FE			; 0 
-		ptr loc_2B96E			; 2
+		ptr loc_2B8FE					; 0 
+		ptr loc_2B96E					; 2
 ; ===========================================================================
 
 loc_2B8FE:				
@@ -57122,8 +57119,8 @@ loc_2B96E:
 		jmpto	DespawnObject2,JmpTo10_DespawnObject2
 ; ===========================================================================
 off_2B99E:	index offset(*),,2
-		ptr loc_2B9A2			; 0 
-		ptr loc_2B9B6			; 2
+		ptr loc_2B9A2					; 0 
+		ptr loc_2B9B6					; 2
 ; ===========================================================================
 
 loc_2B9A2:				
@@ -57188,8 +57185,8 @@ Elevator:
 		jmp	off_2BA16(pc,d1.w)
 ; ===========================================================================
 off_2BA16:	index offset(*),,2	
-		ptr loc_2BA1A			; 0 
-		ptr loc_2BA68			; 2
+		ptr loc_2BA1A					; 0 
+		ptr loc_2BA68					; 2
 ; ===========================================================================
 
 loc_2BA1A:				
@@ -57227,10 +57224,10 @@ loc_2BA90:
 		jmpto	DespawnObject,JmpTo28_DespawnObject
 ; ===========================================================================
 off_2BA94:	index offset(*),,2
-		ptr loc_2BA9C			; 0 
-		ptr loc_2BAB6			; 2
-		ptr loc_2BAEE			; 4
-		ptr loc_2BB08			; 6
+		ptr loc_2BA9C					; 0 
+		ptr loc_2BAB6					; 2
+		ptr loc_2BAEE					; 4
+		ptr loc_2BB08					; 6
 ; ===========================================================================
 
 loc_2BA9C:				
@@ -57480,7 +57477,7 @@ Cage_GiveSlotReward:
 		move.l	a2,ost_casinobmb_childcnt_ptr(a1)	; set pointer to cage's child counter
 		move.w	ost_cage_player(a0),ost_casinobmb_player(a1) ; parent of cage is also parent of bomb
 		addq.w	#1,ost_cage_childcount(a0)		; add to child counter
-		subq.w	#1,ost_cage_bombcount(a0)		; deincrement number of bombs remaining
+		subq.w	#1,ost_cage_bombcount(a0)		; decrement number of bombs remaining
 
 	.chkbombcount:				
 		tst.w	ost_cage_childcount(a0)			; have all bombs despawned?
@@ -57527,7 +57524,7 @@ Cage_GiveRings:
 		move.l	a2,ost_casinoprz_childcnt_ptr(a1)	; set pointer to cage's child counter
 		move.w	ost_cage_player(a0),ost_casinoprz_player(a1) ; parent of cage is also parent of ring
 		addq.w	#1,ost_cage_childcount(a0)		; add to child counter
-		subq.w	#1,(v_slot_reward).w			; deincrement number of rings remaining
+		subq.w	#1,(v_slot_reward).w			; decrement number of rings remaining
 
 	.chkringcount:				
 		tst.w	ost_cage_childcount(a0)			; have all rings despawned?
@@ -57556,7 +57553,7 @@ Cage_Active:
 ; ===========================================================================
 
 .chkpoints:				
-		subq.w	#1,2(a2)				; deincrement timer
+		subq.w	#1,2(a2)				; decrement timer
 		bpl.s	Cage_GivePoints				; branch if time remains
 
 Cage_ReleasePlayer:				
@@ -57593,7 +57590,7 @@ Cage_GivePoints:
 ; ===========================================================================
 
 Cage_Ignore:				
-		subq.w	#1,2(a2)				; deincrement timer
+		subq.w	#1,2(a2)				; decrement timer
 		bpl.s	.return					; branch if time remains
 		clr.w	(a2)					; character can now be caught by cage again
 		tst.b	ost_subtype(a0)				; is it a slot machine cage?
@@ -57647,7 +57644,7 @@ SlotMachine_Index: bra_index
 		rts						; $18
 
 		; IDs for slot faces
-		rsset 0		
+		rsreset		
 id_Slot_Sonic:		rs.b 1					; 0
 id_Slot_Tails:		rs.b 1					; 1
 id_Slot_Robotnik:	rs.b 1					; 2
@@ -57964,7 +57961,7 @@ Slot_Draw_Index:
 ; ===========================================================================
 Slot_Draw3:
 		clr.b	slot_index(a4)				; go to Slot_DrawSlot1 next
-		subq.b	#1,slot_timer(a4)			; deincrement timer
+		subq.b	#1,slot_timer(a4)			; decrement timer
 		move.w	#vram_SlotPics_3,d2			; DMA destination
 		bra.s	Slot_DrawChk
 ; ===========================================================================
@@ -58026,7 +58023,7 @@ Slot_DrawChk:
 
 	.not2P:				
 		move.w	#sizeof_SlotPic/2,d3			; DMA length in words
-		jsr	(AddDMA).l	; could be jmp
+		jsr	(AddDMA).l				; could be jmp
 		rts	
 ; ===========================================================================
 
@@ -58301,8 +58298,8 @@ HexagonalBumper:
 		jmp	off_2C456(pc,d1.w)
 ; ===========================================================================
 off_2C456:	index offset(*),,2
-		ptr loc_2C45A			; 0 
-		ptr loc_2C4AC			; 2
+		ptr loc_2C45A					; 0 
+		ptr loc_2C4AC					; 2
 ; ===========================================================================
 
 loc_2C45A:				
@@ -58467,9 +58464,9 @@ JmpTo30_DespawnObject:
     endc		
 ; ===========================================================================
 off_2C610:	index offset(*)
-		ptr byte_2C616			; 0 
-		ptr byte_2C619			; 1
-		ptr byte_2C61F			; 2
+		ptr byte_2C616					; 0 
+		ptr byte_2C619					; 1
+		ptr byte_2C61F					; 2
 		
 byte_2C616:
 		dc.b  $F,  0,$FF
@@ -58531,9 +58528,9 @@ SaucerBumper:
 		jmp	off_2C6BA(pc,d1.w)
 ; ===========================================================================
 off_2C6BA:	index offset(*),,2	
-		ptr loc_2C6C0			; 0 
-		ptr loc_2C6FC			; 2
-		ptr loc_2C884			; 4
+		ptr loc_2C6C0					; 0 
+		ptr loc_2C6FC					; 2
+		ptr loc_2C884					; 4
 ; ===========================================================================
 
 loc_2C6C0:				
@@ -58720,12 +58717,12 @@ JmpTo46_DeleteObject:
     endc		
 ; ===========================================================================
 off_2C89C:	index offset(*)
-		ptr byte_2C8A8			; 0 
-		ptr byte_2C8AB			; 1
-		ptr byte_2C8AE			; 2
-		ptr byte_2C8B1			; 3
-		ptr byte_2C8B7			; 4
-		ptr byte_2C8BD			; 5
+		ptr byte_2C8A8					; 0 
+		ptr byte_2C8AB					; 1
+		ptr byte_2C8AE					; 2
+		ptr byte_2C8B1					; 3
+		ptr byte_2C8B7					; 4
+		ptr byte_2C8BD					; 5
 		
 byte_2C8A8:	
 		dc.b  $F,  0,$FF
@@ -58798,8 +58795,8 @@ InvisibleGrabBlock:
 		jmp	off_2C93A(pc,d1.w)
 ; ===========================================================================
 off_2C93A:	index offset(*),,2	
-		ptr loc_2C93E			; 0 
-		ptr loc_2C954			; 2
+		ptr loc_2C93E					; 0 
+		ptr loc_2C954					; 2
 ; ===========================================================================
 
 loc_2C93E:				
@@ -58893,10 +58890,10 @@ Octus:
 		jmp	off_2CA22(pc,d1.w)
 ; ===========================================================================
 off_2CA22:	index offset(*),,2	
-		ptr loc_2CA52			; 0 
-		ptr loc_2CAB8			; 2
-		ptr loc_2CA46			; 4
-		ptr loc_2CA2A			; 6
+		ptr loc_2CA52					; 0 
+		ptr loc_2CAB8					; 2
+		ptr loc_2CA46					; 4
+		ptr loc_2CA2A					; 6
 ; ===========================================================================
 
 loc_2CA2A:				
@@ -58959,11 +58956,11 @@ loc_2CAB8:
 		jmpto	DespawnObject,JmpTo32_DespawnObject
 ; ===========================================================================
 off_2CAD4:	index offset(*),,2	
-		ptr loc_2CADE			; 0 
-		ptr loc_2CB04			; 2
-		ptr loc_2CB20			; 4
-		ptr loc_2CB3A			; 6
-		ptr loc_2CB48			; 8
+		ptr loc_2CADE					; 0 
+		ptr loc_2CB04					; 2
+		ptr loc_2CB20					; 4
+		ptr loc_2CB3A					; 6
+		ptr loc_2CB48					; 8
 ; ===========================================================================
 
 loc_2CADE:				
@@ -59061,11 +59058,11 @@ locret_2CBDA:
 		rts	
 ; ===========================================================================
 off_2CBDC:	index offset(*)
-		ptr byte_2CBE6			; 0 
-		ptr byte_2CBEA			; 1
-		ptr byte_2CBEF			; 2
-		ptr byte_2CBF4			; 3
-		ptr byte_2CBF8			; 4
+		ptr byte_2CBE6					; 0 
+		ptr byte_2CBEA					; 1
+		ptr byte_2CBEF					; 2
+		ptr byte_2CBF4					; 3
+		ptr byte_2CBF8					; 4
 		
 byte_2CBE6:
 		dc.b  $F,  1,  0,$FF
@@ -59155,10 +59152,10 @@ Aquis:
 		jmp	off_2CCD6(pc,d1.w)
 ; ===========================================================================
 off_2CCD6:	index offset(*),,2
-		ptr loc_2CCDE			; 0 
-		ptr loc_2CDA2			; 2
-		ptr loc_2CDCA			; 4
-		ptr loc_2CDF4			; 6
+		ptr loc_2CCDE					; 0 
+		ptr loc_2CDA2					; 2
+		ptr loc_2CDCA					; 4
+		ptr loc_2CDF4					; 6
 ; ===========================================================================
 
 loc_2CCDE:				
@@ -59213,10 +59210,10 @@ loc_2CDA2:
 		jmpto	DespawnObject,JmpTo33_DespawnObject
 ; ===========================================================================
 off_2CDC2:	index offset(*),,2
-		ptr loc_2CE06			; 0 
-		ptr loc_2CE14			; 2
-		ptr loc_2CE1A			; 4
-		ptr loc_2CF2E			; 6
+		ptr loc_2CE06					; 0 
+		ptr loc_2CE14					; 2
+		ptr loc_2CE1A					; 4
+		ptr loc_2CF2E					; 6
 ; ===========================================================================
 
 loc_2CDCA:				
@@ -59320,8 +59317,8 @@ loc_2CEC8:
 		jmpto	SpeedToPos,JmpTo20_SpeedToPos
 ; ===========================================================================
 word_2CEE6:
-		dc.w -$10 ; 0
-		dc.w  $10 ; 2
+		dc.w -$10					; 0
+		dc.w  $10					; 2
 ; ===========================================================================
 
 loc_2CEEA:				
@@ -59482,10 +59479,10 @@ Buzzer:
 		jmp	off_2D076(pc,d1.w)
 ; ===========================================================================
 off_2D076:	index offset(*),,2
-		ptr loc_2D0C8			; 0 
-		ptr loc_2D174			; 2
-		ptr loc_2D090			; 4
-		ptr loc_2D07E			; 6
+		ptr loc_2D0C8					; 0 
+		ptr loc_2D174					; 2
+		ptr loc_2D090					; 4
+		ptr loc_2D07E					; 6
 ; ===========================================================================
 
 loc_2D07E:				
@@ -59572,8 +59569,8 @@ loc_2D174:
 		jmpto	DespawnObject_P1,JmpTo_DespawnObject_P1
 ; ===========================================================================
 off_2D190:	index offset(*),,2	
-		ptr loc_2D194			; 0 
-		ptr loc_2D234			; 2
+		ptr loc_2D194					; 0 
+		ptr loc_2D234					; 2
 ; ===========================================================================
 
 loc_2D194:				
@@ -59687,10 +59684,10 @@ loc_2D2C8:
 		rts	
 ; ===========================================================================
 off_2D2CE:	index offset(*)
-		ptr byte_2D2D6			; 0 
-		ptr byte_2D2D9			; 1
-		ptr byte_2D2DD			; 2
-		ptr byte_2D2E1			; 3
+		ptr byte_2D2D6					; 0 
+		ptr byte_2D2D9					; 1
+		ptr byte_2D2DD					; 2
+		ptr byte_2D2E1					; 3
 
 byte_2D2D6:
 		dc.b  $F,  0,$FF
@@ -59777,8 +59774,8 @@ Masher:
 		jmpto	DespawnObject,JmpTo34_DespawnObject
 ; ===========================================================================
 off_2D3A6:	index offset(*),,2	
-		ptr loc_2D3AA			; 0 
-		ptr loc_2D3E4			; 2
+		ptr loc_2D3AA					; 0 
+		ptr loc_2D3E4					; 2
 ; ===========================================================================
 
 loc_2D3AA:				
@@ -59818,9 +59815,9 @@ locret_2D42E:
 		rts	
 ; ===========================================================================
 off_2D430:	index offset(*)
-		ptr byte_2D436			; 0 
-		ptr byte_2D43A			; 1
-		ptr byte_2D43E			; 2
+		ptr byte_2D436					; 0 
+		ptr byte_2D43A					; 1
+		ptr byte_2D43E					; 2
 		
 byte_2D436:
 		dc.b   7,  0,  1,$FF
@@ -59874,8 +59871,8 @@ BossExplosion:
 		jmp	off_2D4A2(pc,d1.w)
 ; ===========================================================================
 off_2D4A2:	index offset(*),,2	
-		ptr loc_2D4A6			; 0 
-		ptr loc_2D4EC			; 2
+		ptr loc_2D4A6					; 0 
+		ptr loc_2D4EC					; 2
 ; ===========================================================================
 
 loc_2D4A6:				
@@ -60167,40 +60164,40 @@ BossChemicalPlant:
 		jmp	BCPZ_Index(pc,d1.w)
 ; ===========================================================================
 BCPZ_Index:	index offset(*),,2
-		ptr BCPZ_Main			; 0 
-		ptr BCPZ_ShipMain		; 2
-		ptr BCPZ_Pipe			; 4
-		ptr BCPZ_Pipe_Pump		; 6
-		ptr BCPZ_Pipe_Retract	; 8
-		ptr BCPZ_Dripper		; $A
-		ptr BCPZ_Gunk			; $C
-		ptr BCPZ_PipeSegment	; $E
-		ptr BCPZ_Container		; $10
-		ptr BCPZ_Pump			; $12
-		ptr BCPZ_FallingParts	; $14
-		ptr BCPZ_Eggman			; $16
-		ptr BCPZ_Flame			; $18
-		ptr BCPZ_Smoke			; $1A
+		ptr BCPZ_Main					; 0 
+		ptr BCPZ_ShipMain				; 2
+		ptr BCPZ_Pipe					; 4
+		ptr BCPZ_Pipe_Pump				; 6
+		ptr BCPZ_Pipe_Retract				; 8
+		ptr BCPZ_Dripper				; $A
+		ptr BCPZ_Gunk					; $C
+		ptr BCPZ_PipeSegment				; $E
+		ptr BCPZ_Container				; $10
+		ptr BCPZ_Pump					; $12
+		ptr BCPZ_FallingParts				; $14
+		ptr BCPZ_Eggman					; $16
+		ptr BCPZ_Flame					; $18
+		ptr BCPZ_Smoke					; $1A
 		
 		rsobj BossChemicalPlant,$2A
 	; Some of these are only used by certain subobjects of this object,
 	; hence the overlapping. 
-ost_bcpz_timer2:			rs.w 1		; $2A
-ost_bcpz_pipe_segments:		rs.w 1		; $2C
-ost_bcpz_primary_status:	equ __rs-1	; $2D
-ost_bcpz_x_vel:				rs.w 1		; $2E
-ost_bcpz_secondary_status:	equ	ost_bcpz_x_vel	; $2E; read as byte
-ost_bcpz_x_pos_next:		rs.l 1	; $30
+ost_bcpz_timer2:			rs.w 1			; $2A
+ost_bcpz_pipe_segments:		rs.w 1				; $2C
+ost_bcpz_primary_status:	equ __rs-1			; $2D
+ost_bcpz_x_vel:				rs.w 1			; $2E
+ost_bcpz_secondary_status:	equ	ost_bcpz_x_vel		; $2E; read as byte
+ost_bcpz_x_pos_next:		rs.l 1				; $30
 ost_bcpz_timer:				equ	ost_bcpz_x_pos_next ; $30; read as byte
-ost_bcpz_y_offset:			equ __rs-3 ; $31; read as byte
-ost_bcpz_timer3:			equ __rs-2 ; $32; read as byte
-ost_bcpz_parent:			rs.l 1 ; $34
-ost_bcpz_y_pos_next:		rs.l 1 ; $38
-ost_bcpz_defeat_timer:		rs.w 1 ; $3C
-ost_bcpz_flag:				equ ost_bcpz_defeat_timer	; $3C; read as byte
-ost_bcpz_timer4:			equ ost_bcpz_defeat_timer	; $3C; read as byte
-ost_bcpz_invulnerable_time:	rs.b 1 ; $3E
-ost_bcpz_hover_counter:		rs.b 1 ; $3F
+ost_bcpz_y_offset:			equ __rs-3		; $31; read as byte
+ost_bcpz_timer3:			equ __rs-2		; $32; read as byte
+ost_bcpz_parent:			rs.l 1			; $34
+ost_bcpz_y_pos_next:		rs.l 1				; $38
+ost_bcpz_defeat_timer:		rs.w 1				; $3C
+ost_bcpz_flag:				equ ost_bcpz_defeat_timer ; $3C; read as byte
+ost_bcpz_timer4:			equ ost_bcpz_defeat_timer ; $3C; read as byte
+ost_bcpz_invulnerable_time:	rs.b 1				; $3E
+ost_bcpz_hover_counter:		rs.b 1				; $3F
 		
 		rsobjend
 ; ===========================================================================
@@ -60317,13 +60314,13 @@ BCPZ_ShipMain:
 		jmp	(DisplaySprite).l
 ; ===========================================================================
 BCPZ_Ship_Index:	index offset(*),,2	
-		ptr loc_2DA62			; 0 
-		ptr loc_2DB98			; 2
-		ptr loc_2DC00			; 4
-		ptr loc_2DC14			; 6
-		ptr loc_2D9B4			; 8
-		ptr loc_2D9D8			; $A
-		ptr loc_2DA22			; $C
+		ptr loc_2DA62					; 0 
+		ptr loc_2DB98					; 2
+		ptr loc_2DC00					; 4
+		ptr loc_2DC14					; 6
+		ptr loc_2D9B4					; 8
+		ptr loc_2D9D8					; $A
+		ptr loc_2DA22					; $C
 ; ===========================================================================
 
 loc_2D992:				
@@ -60701,8 +60698,8 @@ BCPZ_Pipe:
 		jmp	BCPZ_Pipe_Index(pc,d1.w)
 ; ===========================================================================
 BCPZ_Pipe_Index:	index offset(*),,2
-		ptr BCPZ_Pipe_Init			; 0 
-		ptr BCPZ_Pipe_LoadSegment	; 2
+		ptr BCPZ_Pipe_Init				; 0 
+		ptr BCPZ_Pipe_LoadSegment			; 2
 ; ===========================================================================
 
 BCPZ_Pipe_Init:				
@@ -60732,11 +60729,11 @@ BCPZ_Pipe_Init:
 BCPZ_Pipe_LoadSegment:
     if FixBugs
 		; See the bugfix in BCPZ_Pipe_LoadSegment_2.
-		subq.w  #1,ost_bcpz_pipe_segments(a0)	; is pipe fully extended?
+		subq.w  #1,ost_bcpz_pipe_segments(a0)		; is pipe fully extended?
 		blt.s   loc_2DE56				; if yes, branch
     endc				
-		jsr	(FindNextFreeObj).l	; find next free OST slot
-		beq.s	.found		; branch if found	
+		jsr	(FindNextFreeObj).l			; find next free OST slot
+		beq.s	.found					; branch if found	
 		rts	
 ; ===========================================================================
 
@@ -60785,9 +60782,9 @@ BCPZ_Pipe_Pump:
 		jmp	off_2DE74(pc,d1.w)
 ; ===========================================================================
 off_2DE74:	index offset(*),,2
-		ptr loc_2DE7A			; 0 
-		ptr loc_2DF08			; 2
-		ptr loc_2DF76			; 4
+		ptr loc_2DE7A					; 0 
+		ptr loc_2DF08					; 2
+		ptr loc_2DF76					; 4
 ; ===========================================================================
 
 loc_2DE7A:				
@@ -60987,9 +60984,9 @@ BCPZ_Dripper:
 		jmp	off_2E092(pc,d1.w)
 ; ===========================================================================
 off_2E092:	index offset(*),,2	
-		ptr loc_2E098			; 0 
-		ptr loc_2E0DE			; 2
-		ptr loc_2E130			; 4
+		ptr loc_2E098					; 0 
+		ptr loc_2E0DE					; 2
+		ptr loc_2E130					; 4
 ; ===========================================================================
 
 loc_2E098:				
@@ -61063,12 +61060,12 @@ BCPZ_Container:
 		jmp	off_2E1A0(pc,d1.w)
 ; ===========================================================================
 off_2E1A0:	index offset(*),,2	
-		ptr loc_2E1AC			; 0 
-		ptr loc_2E25C			; 2
-		ptr loc_2E610			; 4
-		ptr loc_2E5A4			; 6
-		ptr loc_2E666			; 8
-		ptr loc_2E2E8			; $A
+		ptr loc_2E1AC					; 0 
+		ptr loc_2E25C					; 2
+		ptr loc_2E610					; 4
+		ptr loc_2E5A4					; 6
+		ptr loc_2E666					; 8
+		ptr loc_2E2E8					; $A
 ; ===========================================================================
 
 loc_2E1AC:				
@@ -61455,11 +61452,11 @@ BCPZ_Gunk:
 		jmp	off_2E688(pc,d1.w)
 ; ===========================================================================
 off_2E688:	index offset(*),,2		
-		ptr loc_2E692			; 0 
-		ptr loc_2E6CA			; 2
-		ptr loc_2E7D0			; 4
-		ptr loc_2E746			; 6
-		ptr loc_2E790			; 8
+		ptr loc_2E692					; 0 
+		ptr loc_2E6CA					; 2
+		ptr loc_2E7D0					; 4
+		ptr loc_2E746					; 6
+		ptr loc_2E790					; 8
 ; ===========================================================================
 
 loc_2E692:				
@@ -61759,33 +61756,33 @@ BranchTo2_JmpTo34_DisplaySprite:
 		jmpto	DisplaySprite,JmpTo34_DisplaySprite
 ; ===========================================================================
 off_2EA3C:	index offset(*)	
-		ptr byte_2EA72			; 0 
-		ptr byte_2EA75			; 1
-		ptr byte_2EA78			; 2
-		ptr byte_2EA7D			; 3
-		ptr byte_2EA81			; 4
-		ptr byte_2EA88			; 5
-		ptr byte_2EA8B			; 6
-		ptr byte_2EA8E			; 7
-		ptr byte_2EA91			; 8
-		ptr byte_2EA94			; 9
-		ptr byte_2EA97			; 10
-		ptr byte_2EAA3			; 11
-		ptr byte_2EAAE			; 12
-		ptr byte_2EAB1			; 13
-		ptr byte_2EAB4			; 14
-		ptr byte_2EAB7			; 15
-		ptr byte_2EABA			; 16
-		ptr byte_2EABD			; 17
-		ptr byte_2EAC0			; 18
-		ptr byte_2EAC3			; 19
-		ptr byte_2EAC6			; 20
-		ptr byte_2EAC9			; 21
-		ptr byte_2EACC			; 22
-		ptr byte_2EACF			; 23
-		ptr byte_2EAD2			; 24
-		ptr byte_2EAD5			; 25
-		ptr byte_2EAD9			; 26
+		ptr byte_2EA72					; 0 
+		ptr byte_2EA75					; 1
+		ptr byte_2EA78					; 2
+		ptr byte_2EA7D					; 3
+		ptr byte_2EA81					; 4
+		ptr byte_2EA88					; 5
+		ptr byte_2EA8B					; 6
+		ptr byte_2EA8E					; 7
+		ptr byte_2EA91					; 8
+		ptr byte_2EA94					; 9
+		ptr byte_2EA97					; 10
+		ptr byte_2EAA3					; 11
+		ptr byte_2EAAE					; 12
+		ptr byte_2EAB1					; 13
+		ptr byte_2EAB4					; 14
+		ptr byte_2EAB7					; 15
+		ptr byte_2EABA					; 16
+		ptr byte_2EABD					; 17
+		ptr byte_2EAC0					; 18
+		ptr byte_2EAC3					; 19
+		ptr byte_2EAC6					; 20
+		ptr byte_2EAC9					; 21
+		ptr byte_2EACC					; 22
+		ptr byte_2EACF					; 23
+		ptr byte_2EAD2					; 24
+		ptr byte_2EAD5					; 25
+		ptr byte_2EAD9					; 26
 byte_2EA72:	dc.b  $F,  0,$FF				; 0 
 byte_2EA75:	dc.b  $F,  1,$FF				; 0 
 byte_2EA78:	dc.b   5,  2,  3,  2,$FF			; 0 
@@ -62077,14 +62074,14 @@ BossEmeraldHill:
 		jmp	off_2EF26(pc,d1.w)
 ; ===========================================================================
 off_2EF26:	index offset(*),,2		
-		ptr loc_2EF36			; 0 
-		ptr loc_2F262			; 2
-		ptr loc_2F54E			; 4
-		ptr loc_2F5F6			; 6
-		ptr loc_2F664			; 8
-		ptr loc_2F7F4			; $A
-		ptr loc_2F52A			; $C
-		ptr loc_2F8DA			; $E
+		ptr loc_2EF36					; 0 
+		ptr loc_2F262					; 2
+		ptr loc_2F54E					; 4
+		ptr loc_2F5F6					; 6
+		ptr loc_2F664					; 8
+		ptr loc_2F7F4					; $A
+		ptr loc_2F52A					; $C
+		ptr loc_2F8DA					; $E
 ; ===========================================================================
 
 loc_2EF36:				
@@ -62268,12 +62265,12 @@ loc_2F262:
 		jmp	off_2F270(pc,d1.w)
 ; ===========================================================================
 off_2F270:	index offset(*),,2		
-		ptr loc_2F27C			; 0 
-		ptr loc_2F2A8			; 2
-		ptr loc_2F304			; 6
-		ptr loc_2F336			; 8
-		ptr loc_2F374			; $A
-		ptr loc_2F38A			; $C
+		ptr loc_2F27C					; 0 
+		ptr loc_2F2A8					; 2
+		ptr loc_2F304					; 6
+		ptr loc_2F336					; 8
+		ptr loc_2F374					; $A
+		ptr loc_2F38A					; $C
 ; ===========================================================================
 
 loc_2F27C:				
@@ -62298,8 +62295,8 @@ loc_2F2A8:
 		jmp	off_2F2B6(pc,d1.w)
 ; ===========================================================================
 off_2F2B6:	index offset(*),,2	
-		ptr loc_2F2BA			; 0 
-		ptr loc_2F2E0			; 2
+		ptr loc_2F2BA					; 0 
+		ptr loc_2F2E0					; 2
 ; ===========================================================================
 
 loc_2F2BA:				
@@ -62380,9 +62377,9 @@ loc_2F38A:
 		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
 off_2F39C:	index offset(*),,2	
-		ptr loc_2F3A2		; 0 
-		ptr loc_2F424		; 2
-		ptr loc_2F442		; 4
+		ptr loc_2F3A2					; 0 
+		ptr loc_2F424					; 2
+		ptr loc_2F442					; 4
 ; ===========================================================================
 
 loc_2F3A2:				
@@ -62540,8 +62537,8 @@ loc_2F54E:
 		jmp	off_2F55C(pc,d1.w)
 ; ===========================================================================
 off_2F55C:	index offset(*),,2		
-		ptr loc_2F560			; 0
-		ptr loc_2F5C6			; 2
+		ptr loc_2F560					; 0
+		ptr loc_2F5C6					; 2
 ; ===========================================================================
 
 loc_2F560:				
@@ -62630,11 +62627,11 @@ loc_2F664:
 		jmp	off_2F672(pc,d1.w)
 ; ===========================================================================
 off_2F672:	index offset(*),,2		
-		ptr loc_2F67C			; 0 
-		ptr loc_2F714			; 2
-		ptr loc_2F746			; 4
-		ptr loc_2F7A6			; 6
-		ptr loc_2F7D2			; 8
+		ptr loc_2F67C					; 0 
+		ptr loc_2F714					; 2
+		ptr loc_2F746					; 4
+		ptr loc_2F7A6					; 6
+		ptr loc_2F7D2					; 8
 ; ===========================================================================
 
 loc_2F67C:				
@@ -62890,9 +62887,9 @@ loc_2F924:
 		jmp	(DisplaySprite).l
 ; ===========================================================================
 off_2F936:	index offset(*)
-		ptr byte_2F93C			; 0 
-		ptr byte_2F940			; 1
-		ptr byte_2F956			; 2
+		ptr byte_2F93C					; 0 
+		ptr byte_2F940					; 1
+		ptr byte_2F956					; 2
 
 byte_2F93C:	
 		dc.b   1,  5,  6,$FF
@@ -63082,11 +63079,11 @@ BossHillTop:
 		jmp	off_2FC5E(pc,d1.w)
 ; ===========================================================================
 off_2FC5E:	index offset(*),,2	
-		ptr loc_2FC68			; 0 
-		ptr loc_2FD00			; 2
-		ptr loc_2FEF0			; 4
-		ptr loc_2FF66			; 6
-		ptr loc_30210			; 8
+		ptr loc_2FC68					; 0 
+		ptr loc_2FD00					; 2
+		ptr loc_2FEF0					; 4
+		ptr loc_2FF66					; 6
+		ptr loc_30210					; 8
 ; ===========================================================================
 
 loc_2FC68:				
@@ -63142,11 +63139,11 @@ loc_2FD00:
 		jmp	off_2FD0E(pc,d1.w)
 ; ===========================================================================
 off_2FD0E:	index offset(*),,2	
-		ptr loc_2FD18			; 0 
-		ptr loc_2FD5E			; 2
-		ptr loc_2FDDA			; 4
-		ptr loc_2FE0E			; 6
-		ptr loc_30106			; 8
+		ptr loc_2FD18					; 0 
+		ptr loc_2FD5E					; 2
+		ptr loc_2FDDA					; 4
+		ptr loc_2FE0E					; 6
+		ptr loc_30106					; 8
 ; ===========================================================================
 
 loc_2FD18:				
@@ -63635,14 +63632,14 @@ word_3027E:	dc.w 1
 		dc.w $F805,$200C,$2006,$FFF8			; 0
 
 off_30288:	index offset(*)	
-		ptr byte_30298			; 0 
-		ptr byte_3029D			; 1
-		ptr byte_302A2			; 2
-		ptr byte_302A7			; 3
-		ptr byte_302AC			; 4
-		ptr byte_302B0			; 5
-		ptr byte_302B4			; 6
-		ptr byte_302B7			; 7
+		ptr byte_30298					; 0 
+		ptr byte_3029D					; 1
+		ptr byte_302A2					; 2
+		ptr byte_302A7					; 3
+		ptr byte_302AC					; 4
+		ptr byte_302B0					; 5
+		ptr byte_302B4					; 6
+		ptr byte_302B7					; 7
 byte_30298:	dc.b   1,  2,  3,$FD,  1			; 0 
 byte_3029D:	dc.b   2,  4,  5,$FD,  2			; 0 
 byte_302A2:	dc.b   3,  6,  7,$FD,  3			; 0 
@@ -63774,9 +63771,9 @@ BossAquaticRuin:
 		jmp	off_3048E(pc,d1.w)
 ; ===========================================================================
 off_3048E:	index offset(*),,2
-		ptr loc_30494			; 0 
-		ptr loc_30620			; 2
-		ptr loc_309A8			; 4
+		ptr loc_30494					; 0 
+		ptr loc_30620					; 2
+		ptr loc_309A8					; 4
 ; ===========================================================================
 
 loc_30494:				
@@ -63884,13 +63881,13 @@ loc_30620:
 		jmp	off_3062E(pc,d1.w)
 ; ===========================================================================
 off_3062E:	index offset(*),,2
-		ptr loc_3063C			; 0 
-		ptr loc_3067A			; 2
-		ptr loc_306B8			; 4
-		ptr loc_30706			; 6
-		ptr loc_3088C			; 8
-		ptr loc_308F4			; $A
-		ptr loc_3095C			; $C
+		ptr loc_3063C					; 0 
+		ptr loc_3067A					; 2
+		ptr loc_306B8					; 4
+		ptr loc_30706					; 6
+		ptr loc_3088C					; 8
+		ptr loc_308F4					; $A
+		ptr loc_3095C					; $C
 ; ===========================================================================
 
 loc_3063C:				
@@ -64211,11 +64208,11 @@ loc_309BC:
 		jmp	off_309C8(pc,d1.w)
 ; ===========================================================================
 off_309C8:	index offset(*),,2	
-		ptr loc_309D2			; 0 
-		ptr loc_30A04			; 2
-		ptr loc_30B4A			; 4
-		ptr loc_30B9E			; 6
-		ptr loc_30B6C			; 8
+		ptr loc_309D2					; 0 
+		ptr loc_30A04					; 2
+		ptr loc_30B4A					; 4
+		ptr loc_30B9E					; 6
+		ptr loc_30B6C					; 8
 ; ===========================================================================
 
 loc_309D2:				
@@ -64401,11 +64398,11 @@ loc_30BB2:
 		jmp	off_30BBE(pc,d1.w)
 ; ===========================================================================
 off_30BBE:	index offset(*),,2	
-		ptr loc_30BC8			; 0 
-		ptr loc_30C36			; 2
-		ptr loc_30C86			; 4
-		ptr loc_30CAC			; 6
-		ptr BranchTo_JmpTo55_DeleteObject	; 8
+		ptr loc_30BC8					; 0 
+		ptr loc_30C36					; 2
+		ptr loc_30C86					; 4
+		ptr loc_30CAC					; 6
+		ptr BranchTo_JmpTo55_DeleteObject		; 8
 ; ===========================================================================
 
 loc_30BC8:				
@@ -64542,8 +64539,8 @@ locret_30D2A:
 		rts	
 ; ===========================================================================
 off_30D2C:	index offset(*)	
-		ptr byte_30D30			; 0 
-		ptr byte_30D47			; 1
+		ptr byte_30D30					; 0 
+		ptr byte_30D47					; 1
 		
 byte_30D30:	
 		dc.b   1,  4,  6,  5,  4,  6,  4,  5,  4,  6,  4,  4,  6,  5,  4,  6 ; 0				
@@ -64581,12 +64578,12 @@ word_30DBE:	dc.w 1
 		dc.w $FC0C,$20A2,$2051,$FFF0			; 0
 
 off_30DC8:	index offset(*)	
-		ptr byte_30DD4			; 0 
-		ptr byte_30DEA			; 2
-		ptr byte_30DEE			; 4
-		ptr byte_30DF1			; 6
-		ptr byte_30DFD			; 8
-		ptr byte_30E00			; $A
+		ptr byte_30DD4					; 0 
+		ptr byte_30DEA					; 2
+		ptr byte_30DEE					; 4
+		ptr byte_30DF1					; 6
+		ptr byte_30DFD					; 8
+		ptr byte_30E00					; $A
 
 byte_30DD4:
 		dc.b   7,  0,  1,$FF,  2,  3,  2,  3,  2,  3,  2,  3,$FF,  4,  4,  4			
@@ -64713,9 +64710,9 @@ BossMysticCave:
 		jmp	off_30FB2(pc,d1.w)
 ; ===========================================================================
 off_30FB2:	index offset(*),,2
-		ptr loc_30FB8			; 0 
-		ptr loc_310BE			; 2
-		ptr loc_315F2			; 4
+		ptr loc_30FB8					; 0 
+		ptr loc_310BE					; 2
+		ptr loc_315F2					; 4
 ; ===========================================================================
 
 loc_30FB8:				
@@ -64784,13 +64781,13 @@ loc_310BE:
 		jmp	off_310CC(pc,d1.w)
 ; ===========================================================================
 off_310CC	index offset(*),,2
-		ptr loc_310DA			; 0 
-		ptr loc_3116E			; 2
-		ptr loc_311AA			; 4
-		ptr loc_3124A			; 6
-		ptr loc_314D2			; 8
-		ptr loc_31526			; $A
-		ptr loc_315A6			; $C
+		ptr loc_310DA					; 0 
+		ptr loc_3116E					; 2
+		ptr loc_311AA					; 4
+		ptr loc_3124A					; 6
+		ptr loc_314D2					; 8
+		ptr loc_31526					; $A
+		ptr loc_315A6					; $C
 ; ===========================================================================
 
 loc_310DA:				
@@ -65239,21 +65236,21 @@ loc_315F2:
 		jmpto	DisplaySprite,JmpTo38_DisplaySprite
 ; ===========================================================================
 off_3160A:	index offset(*)	
-		ptr byte_31628			; 0 
-		ptr byte_3162E			; 1
-		ptr byte_31631			; 2
-		ptr byte_31638			; 3
-		ptr byte_31649			; 4
-		ptr byte_3165A			; 5
-		ptr byte_31661			; 6
-		ptr byte_31673			; 7
-		ptr byte_31684			; 8
-		ptr byte_31695			; 9
-		ptr byte_316A6			; 10
-		ptr byte_316AD			; 11
-		ptr byte_316BF			; 12
-		ptr byte_316D1			; 13
-		ptr byte_316E8			; 14
+		ptr byte_31628					; 0 
+		ptr byte_3162E					; 1
+		ptr byte_31631					; 2
+		ptr byte_31638					; 3
+		ptr byte_31649					; 4
+		ptr byte_3165A					; 5
+		ptr byte_31661					; 6
+		ptr byte_31673					; 7
+		ptr byte_31684					; 8
+		ptr byte_31695					; 9
+		ptr byte_316A6					; 10
+		ptr byte_316AD					; 11
+		ptr byte_316BF					; 12
+		ptr byte_316D1					; 13
+		ptr byte_316E8					; 14
 		
 byte_31628:	
 		dc.b  $F,  1,$FF,  0,$FC,  2
@@ -65452,9 +65449,9 @@ BossCasinoNight:
 		jmp	off_318FE(pc,d1.w)
 ; ===========================================================================
 off_318FE:	index offset(*),,2	
-		ptr loc_31904			; 0 
-		ptr loc_31A04			; 2
-		ptr loc_31F24			; 4
+		ptr loc_31904					; 0 
+		ptr loc_31A04					; 2
+		ptr loc_31F24					; 4
 ; ===========================================================================
 
 loc_31904:				
@@ -65536,12 +65533,12 @@ loc_31A1C:
 		jmp	off_31A2A(pc,d1.w)
 ; ===========================================================================
 off_31A2A:	index offset(*),,2
-		ptr loc_31A36			; 0 
-		ptr loc_31BA8			; 2
-		ptr loc_31C22			; 4
-		ptr loc_31D5C			; 6
-		ptr loc_31DCC			; 8
-		ptr loc_31E2A			; $A
+		ptr loc_31A36					; 0 
+		ptr loc_31BA8					; 2
+		ptr loc_31C22					; 4
+		ptr loc_31D5C					; 6
+		ptr loc_31DCC					; 8
+		ptr loc_31E2A					; $A
 ; ===========================================================================
 
 loc_31A36:				
@@ -65551,8 +65548,8 @@ loc_31A36:
 		jmp	off_31A44(pc,d0.w)
 ; ===========================================================================
 off_31A44:	index offset(*),,2
-		ptr loc_31A48			; 0 
-		ptr loc_31A78			; 2
+		ptr loc_31A48					; 0 
+		ptr loc_31A78					; 2
 ; ===========================================================================
 
 loc_31A48:				
@@ -66006,10 +66003,10 @@ loc_31F24:
 		jmp	off_31F40(pc,d1.w)
 ; ===========================================================================
 off_31F40:	index offset(*),,2
-		ptr loc_31F48			; 0 
-		ptr loc_31F96			; 2
-		ptr loc_31FDC			; 4
-		ptr loc_32080			; 6
+		ptr loc_31F48					; 0 
+		ptr loc_31F96					; 2
+		ptr loc_31FDC					; 4
+		ptr loc_32080					; 6
 ; ===========================================================================
 
 loc_31F48:				
@@ -66125,16 +66122,16 @@ loc_32080:
 		jmpto	JmpTo59_DeleteObject,JmpTo59_DeleteObject
 ; ===========================================================================
 off_3209C:	index offset(*)
-		ptr byte_320B0			; 0 
-		ptr byte_320B3			; 1
-		ptr byte_320B9			; 2
-		ptr byte_320BF			; 3
-		ptr byte_320C3			; 4
-		ptr byte_320C8			; 5
-		ptr byte_320D3			; 6
-		ptr byte_320DD			; 7
-		ptr byte_320E1			; 8
-		ptr byte_320E4			; 9
+		ptr byte_320B0					; 0 
+		ptr byte_320B3					; 1
+		ptr byte_320B9					; 2
+		ptr byte_320BF					; 3
+		ptr byte_320C3					; 4
+		ptr byte_320C8					; 5
+		ptr byte_320D3					; 6
+		ptr byte_320DD					; 7
+		ptr byte_320E1					; 8
+		ptr byte_320E4					; 9
 		
 byte_320B0:
 		dc.b  $F,  1,$FF
@@ -66293,10 +66290,10 @@ BossMetropolis:
 		jmp	off_32296(pc,d1.w)
 ; ===========================================================================
 off_32296:	index offset(*),,2
-		ptr loc_3229E			; 0 
-		ptr loc_323BA			; 2
-		ptr loc_32CAE			; 4
-		ptr loc_32D48			; 6
+		ptr loc_3229E					; 0 
+		ptr loc_323BA					; 2
+		ptr loc_32CAE					; 4
+		ptr loc_32D48					; 6
 ; ===========================================================================
 
 loc_3229E:				
@@ -66365,16 +66362,16 @@ loc_323BA:
 		jmp	off_323C8(pc,d1.w)
 ; ===========================================================================
 off_323C8:	index offset(*),,2
-		ptr loc_323DC			; 0 
-		ptr loc_32456			; 2
-		ptr loc_324DC			; 4
-		ptr loc_32524			; 6
-		ptr loc_32544			; 8
-		ptr loc_32574			; $A
-		ptr loc_325BE			; $C
-		ptr loc_3262E			; $E
-		ptr loc_32802			; $10
-		ptr loc_32864			; $12
+		ptr loc_323DC					; 0 
+		ptr loc_32456					; 2
+		ptr loc_324DC					; 4
+		ptr loc_32524					; 6
+		ptr loc_32544					; 8
+		ptr loc_32574					; $A
+		ptr loc_325BE					; $C
+		ptr loc_3262E					; $E
+		ptr loc_32802					; $10
+		ptr loc_32864					; $12
 ; ===========================================================================
 
 loc_323DC:				
@@ -66603,9 +66600,9 @@ loc_3263C:
 		jmp	off_3264A(pc,d1.w)
 ; ===========================================================================
 off_3264A:	index offset(*),,2
-		ptr loc_32650			; 0 
-		ptr loc_326B8			; 2
-		ptr loc_32704			; 4
+		ptr loc_32650					; 0 
+		ptr loc_326B8					; 2
+		ptr loc_32704					; 4
 ; ===========================================================================
 
 loc_32650:				
@@ -66879,11 +66876,11 @@ BossMetropolisOrb:
 		jmp	off_3294E(pc,d1.w)
 ; ===========================================================================
 off_3294E:	index offset(*),,2
-		ptr loc_32958			; 0 
-		ptr loc_329DA			; 2
-		ptr loc_32B64			; 4
-		ptr loc_32BDC			; 6
-		ptr loc_32C98			; 8
+		ptr loc_32958					; 0 
+		ptr loc_329DA					; 2
+		ptr loc_32B64					; 4
+		ptr loc_32BDC					; 6
+		ptr loc_32C98					; 8
 ; ===========================================================================
 
 loc_32958:				
@@ -67220,8 +67217,8 @@ loc_32CAE:
 		jmp	off_32CBC(pc,d0.w)
 ; ===========================================================================
 off_32CBC:	index offset(*),,2	
-		ptr loc_32CC0			; 0 
-		ptr loc_32D2C			; 2
+		ptr loc_32CC0					; 0 
+		ptr loc_32D2C					; 2
 ; ===========================================================================
 
 loc_32CC0:				
@@ -67276,14 +67273,14 @@ JmpTo40_DisplaySprite:
 		jmpto	DisplaySprite,JmpTo40_DisplaySprite
 ; ===========================================================================
 off_32D7A:	index offset(*)
-		ptr byte_32D8A			; 0 
-		ptr byte_32D8D			; 1
-		ptr byte_32D91			; 2
-		ptr byte_32DA6			; 3
-		ptr byte_32DAA			; 4
-		ptr byte_32DB5			; 5
-		ptr byte_32DC0			; 6
-		ptr byte_32DC3			; 7
+		ptr byte_32D8A					; 0 
+		ptr byte_32D8D					; 1
+		ptr byte_32D91					; 2
+		ptr byte_32DA6					; 3
+		ptr byte_32DAA					; 4
+		ptr byte_32DB5					; 5
+		ptr byte_32DC0					; 6
+		ptr byte_32DC3					; 7
 		
 byte_32D8A:	
 		dc.b  $F,  2,$FF				; 0 
@@ -67437,11 +67434,11 @@ BossOilOcean:
 		jmp	off_32F9E(pc,d1.w)
 ; ===========================================================================
 off_32F9E:	index offset(*),,2
-		ptr loc_32FA8			; 0 
-		ptr loc_32FE6			; 2
-		ptr loc_3320A			; 4
-		ptr loc_33456			; 6
-		ptr loc_33570			; 8
+		ptr loc_32FA8					; 0 
+		ptr loc_32FE6					; 2
+		ptr loc_3320A					; 4
+		ptr loc_33456					; 6
+		ptr loc_33570					; 8
 ; ===========================================================================
 
 loc_32FA8:				
@@ -67465,11 +67462,11 @@ loc_32FE6:
 		jmp	off_32FF4(pc,d1.w)
 ; ===========================================================================
 off_32FF4:	index offset(*),,2
-		ptr loc_32FFE			; 0 
-		ptr loc_33078			; 2
-		ptr loc_330BA			; 4
-		ptr loc_33104			; 6
-		ptr loc_331A6			; 8
+		ptr loc_32FFE					; 0 
+		ptr loc_33078					; 2
+		ptr loc_330BA					; 4
+		ptr loc_33104					; 6
+		ptr loc_331A6					; 8
 ; ===========================================================================
 
 loc_32FFE:				
@@ -67653,11 +67650,11 @@ loc_3320A:
 		jmp	off_33218(pc,d1.w)
 ; ===========================================================================
 off_33218:	index offset(*),,2
-		ptr loc_33222			; 0 
-		ptr loc_33296			; 2
-		ptr loc_332C6			; 4
-		ptr loc_33324			; 6
-		ptr loc_33388			; 8
+		ptr loc_33222					; 0 
+		ptr loc_33296					; 2
+		ptr loc_332C6					; 4
+		ptr loc_33324					; 6
+		ptr loc_33388					; 8
 ; ===========================================================================
 
 loc_33222:				
@@ -67877,8 +67874,8 @@ loc_33456:
 		jmp	off_33464(pc,d1.w)
 ; ===========================================================================
 off_33464:	index offset(*),,2	
-		ptr loc_33468			; 0 
-		ptr loc_334CC			; 2
+		ptr loc_33468					; 0 
+		ptr loc_334CC					; 2
 ; ===========================================================================
 
 loc_33468:				
@@ -67992,10 +67989,10 @@ loc_33572:
 		jmp	off_3357E(pc,d0.w)
 ; ===========================================================================
 off_3357E:	index offset(*),,2
-		ptr loc_33586			; 0 
-		ptr loc_335DE			; 2
-		ptr loc_336B2			; 4
-		ptr loc_3370E			; 6
+		ptr loc_33586					; 0 
+		ptr loc_335DE					; 2
+		ptr loc_336B2					; 4
+		ptr loc_3370E					; 6
 ; ===========================================================================
 
 loc_33586:				
@@ -68127,12 +68124,12 @@ loc_3370E:
 		bra.w	JmpTo62_DeleteObject
 ; ===========================================================================
 off_33712:	index offset(*)
-		ptr byte_3371E			; 0 
-		ptr byte_33738			; 1
-		ptr byte_3373B			; 2
-		ptr byte_3374D			; 3
-		ptr byte_33750			; 4
-		ptr byte_33753			; 5
+		ptr byte_3371E					; 0 
+		ptr byte_33738					; 1
+		ptr byte_3373B					; 2
+		ptr byte_3374D					; 3
+		ptr byte_33750					; 4
+		ptr byte_33753					; 5
 
 byte_3371E:	
 		dc.b   9,  8,  8,  8,  8,  9,  9,  9,  9,  8,  8,  8,  8,  9,  9,  9 ; 0		
@@ -69152,11 +69149,11 @@ byte_341E2:
 		dc.b $FC					; 1
 
 off_341E4:	index offset(*)
-		ptr byte_341EE			; 0 
-		ptr byte_341F4			; 1
-		ptr byte_341FE			; 2
-		ptr byte_34204			; 3
-		ptr byte_34208			; 4
+		ptr byte_341EE					; 0 
+		ptr byte_341F4					; 1
+		ptr byte_341FE					; 2
+		ptr byte_34204					; 3
+		ptr byte_34208					; 4
 		
 byte_341EE:
 		dc.b   3,  0,  1,  2,  3,$FF
@@ -69385,63 +69382,63 @@ word_345F0:	dc.w 1
 ; a small space optimization. These frames only have one dplc per frame ever,
 ; hence the two-byte dplc count is removed from each frame.		
 SS_Sonic_Tails_DPLC:	index offset(*)
-		ptr word_3466C		; 0 
-		ptr word_34674		; 1
-		ptr word_3467C		; 2
-		ptr word_34684		; 3
-		ptr word_3468C		; 4
-		ptr word_34696		; 5
-		ptr word_346A2		; 6
-		ptr word_346AE		; 7
-		ptr word_346BA		; 8
-		ptr word_346C4		; 9
-		ptr word_346D0		; 10
-		ptr word_346DC		; 11
-		ptr word_346EA		; 12
-		ptr word_346F2		; 13
-		ptr word_346FA		; 14
-		ptr word_34702		; 15
-		ptr word_3470A		; 16
-		ptr word_34710		; 17
-		ptr word_34716		; 18
-		ptr word_3471E		; 19
-		ptr word_34728		; 20
-		ptr word_34732		; 21
-		ptr word_3473E		; 22
-		ptr word_34746		; 23
-		ptr word_34750		; 24
-		ptr word_3475C		; 25
-		ptr word_34766		; 26
-		ptr word_34770		; 27
-		ptr word_3477C		; 28
-		ptr word_34788		; 29
-		ptr word_34792		; 30
-		ptr word_34798		; 31
-		ptr word_347A0		; 32
-		ptr word_347A6		; 33
-		ptr word_347AE		; 34
-		ptr word_347B2		; 35
-		ptr word_347B6		; 36
-		ptr word_347B8		; 37
-		ptr word_347BA		; 38
-		ptr word_347BC		; 39
-		ptr word_347BE		; 40
-		ptr word_347C0		; 41
-		ptr word_347C2		; 42
-		ptr word_347C4		; 43
-		ptr word_347C6		; 44
-		ptr word_347C8		; 45
-		ptr word_347CA		; 46
-		ptr word_347CC		; 47
-		ptr word_347CE		; 48
-		ptr word_347D0		; 49
-		ptr word_347D2		; 50
-		ptr word_347D4		; 51
-		ptr word_347D6		; 52
-		ptr word_347D8		; 53
-		ptr word_347DA		; 54
-		ptr word_347DC		; 55
-		ptr word_347DE		; 56
+		ptr word_3466C					; 0 
+		ptr word_34674					; 1
+		ptr word_3467C					; 2
+		ptr word_34684					; 3
+		ptr word_3468C					; 4
+		ptr word_34696					; 5
+		ptr word_346A2					; 6
+		ptr word_346AE					; 7
+		ptr word_346BA					; 8
+		ptr word_346C4					; 9
+		ptr word_346D0					; 10
+		ptr word_346DC					; 11
+		ptr word_346EA					; 12
+		ptr word_346F2					; 13
+		ptr word_346FA					; 14
+		ptr word_34702					; 15
+		ptr word_3470A					; 16
+		ptr word_34710					; 17
+		ptr word_34716					; 18
+		ptr word_3471E					; 19
+		ptr word_34728					; 20
+		ptr word_34732					; 21
+		ptr word_3473E					; 22
+		ptr word_34746					; 23
+		ptr word_34750					; 24
+		ptr word_3475C					; 25
+		ptr word_34766					; 26
+		ptr word_34770					; 27
+		ptr word_3477C					; 28
+		ptr word_34788					; 29
+		ptr word_34792					; 30
+		ptr word_34798					; 31
+		ptr word_347A0					; 32
+		ptr word_347A6					; 33
+		ptr word_347AE					; 34
+		ptr word_347B2					; 35
+		ptr word_347B6					; 36
+		ptr word_347B8					; 37
+		ptr word_347BA					; 38
+		ptr word_347BC					; 39
+		ptr word_347BE					; 40
+		ptr word_347C0					; 41
+		ptr word_347C2					; 42
+		ptr word_347C4					; 43
+		ptr word_347C6					; 44
+		ptr word_347C8					; 45
+		ptr word_347CA					; 46
+		ptr word_347CC					; 47
+		ptr word_347CE					; 48
+		ptr word_347D0					; 49
+		ptr word_347D2					; 50
+		ptr word_347D4					; 51
+		ptr word_347D6					; 52
+		ptr word_347D8					; 53
+		ptr word_347DA					; 54
+		ptr word_347DC					; 55
+		ptr word_347DE					; 56
 		
 word_3466C:	dc.w 3			
 		dc.w $F000					; 0
@@ -69654,11 +69651,11 @@ TailsSpecial:
 		jmp	TSS_Index(pc,d1.w)
 ; ===========================================================================
 TSS_Index:	index offset(*),,2
-		ptr loc_34804			; 0 
-		ptr loc_34908			; 2
-		ptr loc_349F2			; 2
-		ptr TSS_Index			; 6	- invalid
-		ptr loc_34A24			; 8
+		ptr loc_34804					; 0 
+		ptr loc_34908					; 2
+		ptr loc_349F2					; 2
+		ptr TSS_Index					; 6	- invalid
+		ptr loc_34A24					; 8
 ; ===========================================================================
 
 loc_34804:				
@@ -69936,10 +69933,10 @@ locret_34B1A:
 		rts	
 ; ===========================================================================
 off_34B1C:	index offset(*)
-		ptr byte_34B24			; 0 
-		ptr byte_34B2A			; 1
-		ptr byte_34B34			; 2
-		ptr byte_34B3A			; 3
+		ptr byte_34B24					; 0 
+		ptr byte_34B2A					; 1
+		ptr byte_34B34					; 2
+		ptr byte_34B3A					; 3
 		
 byte_34B24:
 		dc.b   3,  0,  1,  2,  3,$FF
@@ -70057,9 +70054,9 @@ word_34D74:	dc.w 2
 
 
 off_34D86:	index offset(*)
-		ptr byte_34D8C			; 0 
-		ptr byte_34D95			; 1
-		ptr byte_34D9E			; 2
+		ptr byte_34D8C					; 0 
+		ptr byte_34D95					; 1
+		ptr byte_34D9E					; 2
 		
 byte_34D8C:
 		dc.b   3,  0,  1,  2,  3,  4,  5,  6,$FF
@@ -70241,10 +70238,10 @@ RingsSpecial:
 		jmp	off_34FAE(pc,d1.w)
 ; ===========================================================================
 off_34FAE:	index offset(*),,2
-		ptr loc_34FB6			; 0 
-		ptr loc_34FF0			; 2
-		ptr loc_3533A			; 4
-		ptr loc_35010			; 6
+		ptr loc_34FB6					; 0 
+		ptr loc_34FF0					; 2
+		ptr loc_3533A					; 4
+		ptr loc_35010					; 6
 ; ===========================================================================
 
 loc_34FB6:				
@@ -70877,17 +70874,17 @@ MessageSpecial:
 		jmp	off_35562(pc,d1.w)
 ; ===========================================================================
 off_35562:	index offset(*),,2
-		ptr loc_35578			; 0 
-		ptr loc_357FE			; 2
-		ptr loc_35B5A			; 4
-		ptr loc_359CE			; 6
-		ptr loc_35B96			; 8
-		ptr loc_359A6			; $A
-		ptr loc_359BC			; $C
-		ptr loc_35706			; $E
-		ptr loc_357B2			; $10
-		ptr loc_357D2			; $12
-		ptr loc_357E8			; $14
+		ptr loc_35578					; 0 
+		ptr loc_357FE					; 2
+		ptr loc_35B5A					; 4
+		ptr loc_359CE					; 6
+		ptr loc_35B96					; 8
+		ptr loc_359A6					; $A
+		ptr loc_359BC					; $C
+		ptr loc_35706					; $E
+		ptr loc_357B2					; $10
+		ptr loc_357D2					; $12
+		ptr loc_357E8					; $14
 ; ===========================================================================
 
 loc_35578:				
@@ -71574,24 +71571,24 @@ locret_35C60:
 		rts	
 ; ===========================================================================
 off_35C62:	index offset(*),,2
-		ptr byte_35C86			; 0 
-		ptr byte_35C8A			; 2
-		ptr byte_35C90			; 4
-		ptr byte_35C96			; 6
-		ptr byte_35C9A			; 8
-		ptr byte_35CA1			; $A
-		ptr byte_35CA8			; $C
-		ptr byte_35CAD			; $E
-		ptr byte_35CB3			; $10
-		ptr byte_35CB9			; $12
-		ptr byte_35CBF			; $14
-		ptr byte_35CC4			; $16
-		ptr byte_35CC8			; $18
-		ptr byte_35CCE			; $1A
-		ptr byte_35CD3			; $1C
-		ptr byte_35CD5			; $1E
-		ptr byte_35CD9			; $20
-		ptr byte_35CDB			; $22
+		ptr byte_35C86					; 0 
+		ptr byte_35C8A					; 2
+		ptr byte_35C90					; 4
+		ptr byte_35C96					; 6
+		ptr byte_35C9A					; 8
+		ptr byte_35CA1					; $A
+		ptr byte_35CA8					; $C
+		ptr byte_35CAD					; $E
+		ptr byte_35CB3					; $10
+		ptr byte_35CB9					; $12
+		ptr byte_35CBF					; $14
+		ptr byte_35CC4					; $16
+		ptr byte_35CC8					; $18
+		ptr byte_35CCE					; $1A
+		ptr byte_35CD3					; $1C
+		ptr byte_35CD5					; $1E
+		ptr byte_35CD9					; $20
+		ptr byte_35CDB					; $22
 		
 byte_35C86:	dc.b   0,  1,  2,$FF
 byte_35C8A:	dc.b   3,  4,  5,  0,  6,$FF
@@ -71732,18 +71729,18 @@ byte_35DD6:
 		;even
 		
 off_35DDE: index offset(*),,2
-		ptr byte_35DF6			; 0 
-		ptr byte_35DF7			; 2
-		ptr byte_35DFA			; 4
-		ptr byte_35DFC			; 6
-		ptr byte_35E01			; 8
-		ptr byte_35E05			; $A
-		ptr byte_35E09			; $C
-		ptr byte_35E0C			; $E
-		ptr byte_35E0F			; $10
-		ptr byte_35E11			; $12
-		ptr byte_35E16			; $14
-		ptr byte_35E19			; $16
+		ptr byte_35DF6					; 0 
+		ptr byte_35DF7					; 2
+		ptr byte_35DFA					; 4
+		ptr byte_35DFC					; 6
+		ptr byte_35E01					; 8
+		ptr byte_35E05					; $A
+		ptr byte_35E09					; $C
+		ptr byte_35E0C					; $E
+		ptr byte_35E0F					; $10
+		ptr byte_35E11					; $12
+		ptr byte_35E16					; $14
+		ptr byte_35E19					; $16
 		
 byte_35DF6:	dc.b $FF					; 0 
 byte_35DF7:	dc.b   2,$1C,$FF				; 0 
@@ -71860,11 +71857,11 @@ EmeraldSpecial:
 		jmp	off_35FCA(pc,d1.w)
 ; ===========================================================================
 off_35FCA:	index offset(*),,2
-		ptr loc_35FD4	; 0 
-		ptr loc_36022	; 2
-		ptr loc_3533A	; 4
-		ptr loc_36160	; 6
-		ptr loc_36172	; 8
+		ptr loc_35FD4					; 0 
+		ptr loc_36022					; 2
+		ptr loc_3533A					; 4
+		ptr loc_36160					; 6
+		ptr loc_36172					; 8
 ; ===========================================================================
 
 loc_35FD4:				
@@ -72053,11 +72050,11 @@ byte_361C8:
 
 SS_ClearObjects:				
 		movea.l	#v_ost_all&$FFFFFF,a1
-		move.w	#(sizeof_ost_all/(4*4))-1,d0	; number of loops to clear the OST with $10 bytes per loop
+		move.w	#(sizeof_ost_all/(4*4))-1,d0		; number of loops to clear the OST with $10 bytes per loop
 		moveq	#0,d1
 
 	.loop:				
-		move.l	d1,(a1)+	; clear $10 bytes of the OST
+		move.l	d1,(a1)+				; clear $10 bytes of the OST
 		move.l	d1,(a1)+
 		move.l	d1,(a1)+
 		move.l	d1,(a1)+
@@ -72095,16 +72092,16 @@ loc_3621C:
 ; end of unused/dead code	
 ; ===========================================================================
 off_36228:	index offset(*)
-		ptr byte_3623C			; 0 
-		ptr byte_3623F			; 1
-		ptr byte_36242			; 2
-		ptr byte_36245			; 3
-		ptr byte_36248			; 4
-		ptr byte_3624B			; 5
-		ptr byte_3624E			; 6
-		ptr byte_36251			; 7
-		ptr byte_36254			; 8
-		ptr byte_36257			; 9
+		ptr byte_3623C					; 0 
+		ptr byte_3623F					; 1
+		ptr byte_36242					; 2
+		ptr byte_36245					; 3
+		ptr byte_36248					; 4
+		ptr byte_3624B					; 5
+		ptr byte_3624E					; 6
+		ptr byte_36251					; 7
+		ptr byte_36254					; 8
+		ptr byte_36257					; 9
 		
 byte_3623C:	dc.b  $B,  0,$FF				; 0 
 byte_3623F:	dc.b  $B,  1,$FF				; 0 
@@ -72151,17 +72148,17 @@ word_362C8:	dc.w 1
 	
 ; ===========================================================================		
 off_362D2:	index offset(*)
-		ptr byte_362E8			; 0 
-		ptr byte_362EE			; 1
-		ptr byte_362F4			; 2
-		ptr byte_362FA			; 3
-		ptr byte_36300			; 4
-		ptr byte_36306			; 5
-		ptr byte_3630C			; 6
-		ptr byte_36312			; 7
-		ptr byte_36318			; 8
-		ptr byte_3631E			; 9
-		ptr byte_36324			; 10
+		ptr byte_362E8					; 0 
+		ptr byte_362EE					; 1
+		ptr byte_362F4					; 2
+		ptr byte_362FA					; 3
+		ptr byte_36300					; 4
+		ptr byte_36306					; 5
+		ptr byte_3630C					; 6
+		ptr byte_36312					; 7
+		ptr byte_36318					; 8
+		ptr byte_3631E					; 9
+		ptr byte_36324					; 10
 byte_362E8:	dc.b   5,  0, $A,$14, $A,$FF			; 0	
 byte_362EE:	dc.b   5,  1, $B,$15, $B,$FF			; 0	
 byte_362F4:	dc.b   5,  2, $C,$16, $C,$FF			; 0	
@@ -72280,17 +72277,17 @@ word_364BC:	dc.w 2
 		
 ; ===========================================================================		
 off_364CE:	index offset(*)
-		ptr byte_364E4			; 0 
-		ptr byte_364E7			; 1
-		ptr byte_364EA			; 2
-		ptr byte_364ED			; 3
-		ptr byte_364F0			; 4
-		ptr byte_364F3			; 5
-		ptr byte_364F6			; 6
-		ptr byte_364F9			; 7
-		ptr byte_364FC			; 8
-		ptr byte_364FF			; 9
-		ptr byte_36502			; 10
+		ptr byte_364E4					; 0 
+		ptr byte_364E7					; 1
+		ptr byte_364EA					; 2
+		ptr byte_364ED					; 3
+		ptr byte_364F0					; 4
+		ptr byte_364F3					; 5
+		ptr byte_364F6					; 6
+		ptr byte_364F9					; 7
+		ptr byte_364FC					; 8
+		ptr byte_364FF					; 9
+		ptr byte_36502					; 10
 		
 byte_364E4:	dc.b  $B,  0,$FF				; 0 
 byte_364E7:	dc.b  $B,  1,$FF				; 0 
@@ -72350,7 +72347,7 @@ word_365A2:	dc.w 3
 ; ===========================================================================
 
 JmpTo44_DisplaySprite:				
-		jmp	(DisplaySprite).l				; for some reason, this was not changed in Revision 2
+		jmp	(DisplaySprite).l			; for some reason, this was not changed in Revision 2
 		
 		
 	if RemoveJmpTos=0
@@ -72639,7 +72636,7 @@ DeleteBehindScreen:
 		andi.w	#-$80,d0
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		bmi.w	JmpTo64_DeleteObject			; if more than 80 pixels to left of screen, delete
-		jmp	(DisplaySprite).l				; else, display
+		jmp	(DisplaySprite).l			; else, display
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Subroutine to set a child object's x and y flip based on the parent object.
@@ -72684,7 +72681,7 @@ InheritParentXYFlip:
 ;	uses d0.w, a0, a1, a2 
 ; ---------------------------------------------------------------------------
 LoadChild:				
-		jsr	(FindNextFreeObj).l				; find free OST slot after parent
+		jsr	(FindNextFreeObj).l			; find free OST slot after parent
 		bne.s	.fail					; branch if not found
 		move.w	(a2)+,d0				; offset in parent's OST where pointer to child will be stored
 		move.w	a1,(a0,d0.w)				; set pointer to child object
@@ -72743,7 +72740,7 @@ SpawnProjectiles:
 		moveq	#0,d1
 
 	.loop:				
-		jsr	(FindNextFreeObj).l				; find free OST slot after parent
+		jsr	(FindNextFreeObj).l			; find free OST slot after parent
 		bne.s	.fail					; branch if not found
 		_move.b	#id_Projectile,ost_id(a1)		; load projectile object	
 		move.b	d2,ost_subtype(a1)			; set subtype
@@ -72871,11 +72868,11 @@ Whisp:
 		jmp	off_36932(pc,d1.w)
 ; ===========================================================================
 off_36932:	index offset(*),,2
-		ptr loc_3693C			; 0 
-		ptr loc_3694E			; 2
-		ptr loc_369A8			; 4
-		ptr loc_36958			; 6
-		ptr loc_36A26			; 8
+		ptr loc_3693C					; 0 
+		ptr loc_3694E					; 2
+		ptr loc_369A8					; 4
+		ptr loc_36958					; 6
+		ptr loc_36A26					; 8
 ; ===========================================================================
 
 loc_3693C:				
@@ -72997,12 +72994,12 @@ GrounderInWall_Dup:
 		jmp	off_36A84(pc,d1.w)
 ; ===========================================================================
 off_36A84:	index offset(*),,2
-		ptr loc_36A90			; 0 
-		ptr loc_36ADC			; 2
-		ptr loc_36B00			; 4
-		ptr loc_36B0E			; 6
-		ptr loc_36B34			; 8
-		ptr loc_36B6A			; $A
+		ptr loc_36A90					; 0 
+		ptr loc_36ADC					; 2
+		ptr loc_36B00					; 4
+		ptr loc_36B0E					; 6
+		ptr loc_36B34					; 8
+		ptr loc_36B6A					; $A
 ; ===========================================================================
 
 loc_36A90:				
@@ -73113,9 +73110,9 @@ GrounderWall:
 		jmp	off_36B96(pc,d1.w)
 ; ===========================================================================
 off_36B96:	index offset(*),,2
-		ptr loc_36B9C			; 0 
-		ptr loc_36BA6			; 2
-		ptr loc_36C1C			; 4
+		ptr loc_36B9C					; 0 
+		ptr loc_36BA6					; 2
+		ptr loc_36C1C					; 4
 ; ===========================================================================
 
 loc_36B9C:				
@@ -73155,8 +73152,8 @@ GrounderRocks:
 		jmp	off_36BE2(pc,d1.w)
 ; ===========================================================================
 off_36BE2:	index offset(*),,2
-		ptr loc_36BE6			; 0 
-		ptr loc_36C1C			; 2
+		ptr loc_36BE6					; 0 
+		ptr loc_36C1C					; 2
 ; ===========================================================================
 
 loc_36BE6:				
@@ -73346,10 +73343,10 @@ ChopChop:
 		jmp	off_36DBA(pc,d1.w)
 ; ===========================================================================
 off_36DBA:	index offset(*),,2
-		ptr loc_36DC2			; 0 
-		ptr loc_36DE4			; 2
-		ptr loc_36E32			; 4
-		ptr loc_36E66			; 6
+		ptr loc_36DC2					; 0 
+		ptr loc_36DE4					; 2
+		ptr loc_36E32					; 4
+		ptr loc_36E66					; 6
 ; ===========================================================================
 
 loc_36DC2:				
@@ -73492,10 +73489,10 @@ off_36EE6:
 		dc.w $1002
 		
 off_36EF0:	index offset(*)
-		ptr byte_36EF2 ; 0
+		ptr byte_36EF2					; 0
 
 byte_36EF2:	
-	dc.b   4,  0,  1,$FF				; 0 
+	dc.b   4,  0,  1,$FF					; 0 
 ; --------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; --------------------------------------------------------------------------
@@ -73518,10 +73515,10 @@ Spiker:
 		jmp	off_36F1C(pc,d1.w)
 ; ===========================================================================
 off_36F1C:	index offset(*),,2
-		ptr loc_36F24			; 0 
-		ptr loc_36F3C			; 2
-		ptr loc_36F68			; 4
-		ptr loc_36F90			; 6
+		ptr loc_36F24					; 0 
+		ptr loc_36F3C					; 2
+		ptr loc_36F68					; 4
+		ptr loc_36F90					; 6
 ; ===========================================================================
 
 loc_36F24:				
@@ -73606,8 +73603,8 @@ SpikerDrill:
 		jmp	off_36FF4(pc,d1.w)
 ; ===========================================================================
 off_36FF4:	index offset(*),,2
-		ptr loc_36FF8			; 0 
-		ptr loc_37028			; 2
+		ptr loc_36FF8					; 0 
+		ptr loc_37028					; 2
 ; ===========================================================================
 
 loc_36FF8:				
@@ -73668,8 +73665,8 @@ off_3707C:
 		dc.w $1012
 		
 off_37086:	index offset(*)
-		ptr byte_3708A			; 0 
-		ptr byte_3708E			; 1
+		ptr byte_3708A					; 0 
+		ptr byte_3708E					; 1
 		
 byte_3708A:
 		dc.b   9,  0,  1,$FF				; 0 
@@ -73713,11 +73710,11 @@ Sol:
 		jmp	off_3710C(pc,d1.w)
 ; ===========================================================================
 off_3710C:	index offset(*),,2
-		ptr loc_37116			; 0 
-		ptr loc_371DC			; 1
-		ptr loc_37224			; 2
-		ptr loc_3723C			; 3
-		ptr loc_372B8			; 4
+		ptr loc_37116					; 0 
+		ptr loc_371DC					; 1
+		ptr loc_37224					; 2
+		ptr loc_3723C					; 3
+		ptr loc_372B8					; 4
 ; ===========================================================================
 
 loc_37116:				
@@ -73863,8 +73860,8 @@ loc_372B8:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_372D2:	index offset(*)
-		ptr byte_372D6			; 0 
-		ptr byte_372DA			; 1
+		ptr byte_372D6					; 0 
+		ptr byte_372DA					; 1
 		
 byte_372D6:	
 		dc.b  $F,  0,$FF,  0				; 0 
@@ -73906,10 +73903,10 @@ Rexon:
 		jmp	off_37330(pc,d1.w)
 ; ===========================================================================
 off_37330:	index offset(*),,2
-		ptr loc_37338			; 0 
-		ptr loc_37350			; 2
-		ptr loc_3739C			; 4
-		ptr loc_373CA			; 6
+		ptr loc_37338					; 0 
+		ptr loc_37350					; 2
+		ptr loc_3739C					; 4
+		ptr loc_373CA					; 6
 ; ===========================================================================
 
 loc_37338:				
@@ -73985,11 +73982,11 @@ RexonHead:
 		jmp	off_373DE(pc,d1.w)
 ; ===========================================================================
 off_373DE:	index offset(*),,2
-		ptr loc_373E8			; 0 
-		ptr loc_37454			; 2
-		ptr loc_37488			; 4
-		ptr loc_374C2			; 6
-		ptr loc_374F4			; 8
+		ptr loc_373E8					; 0 
+		ptr loc_37454					; 2
+		ptr loc_37488					; 4
+		ptr loc_374C2					; 6
+		ptr loc_374F4					; 8
 ; ===========================================================================
 
 loc_373E8:				
@@ -74248,10 +74245,10 @@ locret_37650:
 		rts	
 ; ===========================================================================
 off_37652:	index offset(*)
-		ptr locret_3765A		; 0 
-		ptr loc_3765C			; 1
-		ptr loc_37662			; 2
-		ptr loc_37668			; 3
+		ptr locret_3765A				; 0 
+		ptr loc_3765C					; 1
+		ptr loc_37662					; 2
+		ptr loc_37668					; 3
 ; ===========================================================================
 
 locret_3765A:				
@@ -74340,8 +74337,8 @@ Projectile:
 		jmp	off_376F6(pc,d1.w)
 ; ===========================================================================
 off_376F6:	index offset(*),,2
-		ptr loc_376FA			; 0 
-		ptr loc_376FE			; 2
+		ptr loc_376FA					; 0 
+		ptr loc_376FE					; 2
 ; ===========================================================================
 
 loc_376FA:				
@@ -74453,9 +74450,9 @@ Nebula:
 		jmp	off_377D6(pc,d1.w)
 ; ===========================================================================
 off_377D6:	index offset(*),,2
-		ptr loc_377DC			; 0 
-		ptr loc_377E8			; 2
-		ptr loc_3781C			; 4
+		ptr loc_377DC					; 0 
+		ptr loc_377E8					; 2
+		ptr loc_3781C					; 4
 ; ===========================================================================
 
 loc_377DC:				
@@ -74572,8 +74569,8 @@ Turtloid:
 		jmp	off_37944(pc,d1.w)
 ; ===========================================================================
 off_37944:	index offset(*),,2
-		ptr loc_37948			; 0 
-		ptr loc_37964			; 2
+		ptr loc_37948					; 0 
+		ptr loc_37964					; 2
 ; ===========================================================================
 
 loc_37948:				
@@ -74594,10 +74591,10 @@ loc_37964:
 		bra.w	DeleteBehindScreen
 ; ===========================================================================
 off_3797A:	index offset(*),,2
-		ptr loc_379A0			; 0 
-		ptr loc_379CA			; 1
-		ptr loc_379EA			; 2
-		ptr locret_37A04			; 3
+		ptr loc_379A0					; 0 
+		ptr loc_379CA					; 1
+		ptr loc_379EA					; 2
+		ptr locret_37A04				; 3
 ; ===========================================================================
 
 loc_37982:				
@@ -74660,8 +74657,8 @@ TurtloidRider:
 		jmp	off_37A14(pc,d1.w)
 ; ===========================================================================
 off_37A14:	index offset(*),,2
-		ptr loc_37A18			; 0 
-		ptr loc_37A1C			; 2
+		ptr loc_37A18					; 0 
+		ptr loc_37A1C					; 2
 ; ===========================================================================
 
 loc_37A18:				
@@ -74718,8 +74715,8 @@ BalkiryJet:
 		jmp	off_37A90(pc,d1.w)
 ; ===========================================================================
 off_37A90:	index offset(*),,2	
-		ptr loc_37A94			; 0 
-		ptr loc_37A98			; 2
+		ptr loc_37A94					; 0 
+		ptr loc_37A98					; 2
 ; ===========================================================================
 
 loc_37A94:				
@@ -74854,10 +74851,10 @@ Coconuts:
 		jmp	off_37C08(pc,d1.w)
 ; ===========================================================================
 off_37C08:	index offset(*)
-		ptr loc_37C10			; 0 
-		ptr loc_37C1C			; 2
-		ptr loc_37CAE			; 4
-		ptr loc_37CD4			; 6
+		ptr loc_37C10					; 0 
+		ptr loc_37C1C					; 2
+		ptr loc_37CAE					; 4
+		ptr loc_37CD4					; 6
 ; ===========================================================================
 
 loc_37C10:				
@@ -74949,8 +74946,8 @@ loc_37CD4:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 off_37CE6:	index offset(*),,2
-		ptr loc_37CEA			; 0 
-		ptr loc_37D06			; 2
+		ptr loc_37CEA					; 0 
+		ptr loc_37D06					; 2
 ; ===========================================================================
 
 loc_37CEA:				
@@ -75006,8 +75003,8 @@ locret_37D74:
 		rts	
 ; ===========================================================================
 word_37D76:
-		dc.w   -$B,  $100	; 0
-		dc.w	$B, -$100	; 4
+		dc.w   -$B,  $100				; 0
+		dc.w	$B, -$100				; 4
 		
 off_37D7E:
 		dc.l Map_37D96	
@@ -75016,8 +75013,8 @@ off_37D7E:
 		dc.w $C09
 		
 off_37D88:	index offset(*)
-		ptr byte_37D8C			; 0 
-		ptr byte_37D90			; 1
+		ptr byte_37D8C					; 0 
+		ptr byte_37D90					; 1
 		
 byte_37D8C:
 		dc.b   5,  0,  1,$FF
@@ -75060,12 +75057,12 @@ Crawlton:
 		jmp	off_37E24(pc,d1.w)
 ; ===========================================================================
 off_37E24:	index offset(*),,2	
-		ptr loc_37E30			; 0 
-		ptr loc_37E42			; 2
-		ptr loc_37E98			; 4
-		ptr loc_37EB6			; 6
-		ptr loc_37ED4			; 8
-		ptr loc_37EFC			; $A
+		ptr loc_37E30					; 0 
+		ptr loc_37E42					; 2
+		ptr loc_37E98					; 4
+		ptr loc_37EB6					; 6
+		ptr loc_37ED4					; 8
+		ptr loc_37EFC					; $A
 ; ===========================================================================
 
 loc_37E30:				
@@ -75254,10 +75251,10 @@ Shellcracker:
 		jmp	off_3801A(pc,d1.w)
 ; ===========================================================================
 off_3801A:	index offset(*),,2
-		ptr loc_38022			; 0 
-		ptr loc_3804E			; 2
-		ptr loc_380C4			; 4
-		ptr loc_380FC			; 6
+		ptr loc_38022					; 0 
+		ptr loc_3804E					; 2
+		ptr loc_380C4					; 4
+		ptr loc_380FC					; 6
 ; ===========================================================================
 
 loc_38022:				
@@ -75352,9 +75349,9 @@ loc_380FC:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 off_3810E:	index offset(*),,2	
-		ptr loc_38114			; 0 
-		ptr loc_3812A			; 2
-		ptr loc_3813E			; 4
+		ptr loc_38114					; 0 
+		ptr loc_3812A					; 2
+		ptr loc_3813E					; 4
 ; ===========================================================================
 
 loc_38114:				
@@ -75405,9 +75402,9 @@ ShellcrackerClaw:
 		jmp	off_3816A(pc,d1.w)
 ; ===========================================================================
 off_3816A:	index offset(*),,2
-		ptr loc_38170			; 0 
-		ptr loc_381AC			; 2
-		ptr loc_38280			; 4
+		ptr loc_38170					; 0 
+		ptr loc_381AC					; 2
+		ptr loc_38280					; 4
 ; ===========================================================================
 
 loc_38170:				
@@ -75449,10 +75446,10 @@ loc_381AC:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 off_381C8:	index offset(*),,2
-		ptr loc_381E0			; 0 
-		ptr loc_3822A			; 2
-		ptr loc_38244			; 4
-		ptr loc_38258			; 6
+		ptr loc_381E0					; 0 
+		ptr loc_3822A					; 2
+		ptr loc_38244					; 4
+		ptr loc_38258					; 6
 ; ===========================================================================
 
 loc_381D0:				
@@ -75601,8 +75598,8 @@ off_382FA:
 		dc.w $C9A
 
 off_38304:	index offset(*)	
-		ptr byte_38308			; 0 
-		ptr byte_3830E			; 1
+		ptr byte_38308					; 0 
+		ptr byte_3830E					; 1
 		
 byte_38308:	
 		dc.b  $E,  0,  1,  2,$FF
@@ -75654,11 +75651,11 @@ Slicer:
 		jmp	off_383C2(pc,d1.w)
 ; ===========================================================================
 off_383C2:	index offset(*),,2
-		ptr loc_383CC			; 0 
-		ptr loc_383F0			; 2
-		ptr loc_38466			; 4
-		ptr loc_38482			; 6
-		ptr loc_3849E			; 8
+		ptr loc_383CC					; 0 
+		ptr loc_383F0					; 2
+		ptr loc_38466					; 4
+		ptr loc_38482					; 6
+		ptr loc_3849E					; 8
 ; ===========================================================================
 
 loc_383CC:				
@@ -75759,9 +75756,9 @@ SlicerPincers:
 		jmp	off_384B0(pc,d1.w)
 ; ===========================================================================
 off_384B0:	index offset(*),,2
-		ptr loc_384B6			; 0 
-		ptr loc_384BE			; 2
-		ptr loc_38524			; 4
+		ptr loc_384B6					; 0 
+		ptr loc_384BE					; 2
+		ptr loc_38524					; 4
 ; ===========================================================================
 
 loc_384B6:				
@@ -75960,13 +75957,13 @@ Flasher:
 		jmp	off_3874C(pc,d1.w)
 ; ===========================================================================
 off_3874C:	index offset(*),,2
-		ptr loc_3875A			; 0 
-		ptr loc_38766			; 2
-		ptr loc_38794			; 4
-		ptr loc_38832			; 6
-		ptr loc_3885C			; 8
-		ptr loc_38880			; $A
-		ptr loc_3888E			; $C
+		ptr loc_3875A					; 0 
+		ptr loc_38766					; 2
+		ptr loc_38794					; 4
+		ptr loc_38832					; 6
+		ptr loc_3885C					; 8
+		ptr loc_38880					; $A
+		ptr loc_3888E					; $C
 ; ===========================================================================
 
 loc_3875A:				
@@ -76187,10 +76184,10 @@ Asteron:
 		jmp	off_389AA(pc,d1.w)
 ; ===========================================================================
 off_389AA:	index offset(*),,2
-		ptr loc_389B2			; 0 
-		ptr loc_389B6			; 2
-		ptr loc_389DA			; 4
-		ptr loc_38A2C			; 6
+		ptr loc_389B2					; 0 
+		ptr loc_389B6					; 2
+		ptr loc_389DA					; 4
+		ptr loc_38A2C					; 6
 ; ===========================================================================
 
 loc_389B2:				
@@ -76339,9 +76336,9 @@ Spiny:
 		jmp	off_38AF8(pc,d1.w)
 ; ===========================================================================
 off_38AF8:	index offset(*),,2
-		ptr loc_38AFE		; 0 
-		ptr loc_38B10		; 2
-		ptr loc_38B62		; 4
+		ptr loc_38AFE					; 0 
+		ptr loc_38B10					; 2
+		ptr loc_38B62					; 4
 ; ===========================================================================
 
 loc_38AFE:				
@@ -76411,9 +76408,9 @@ SpinyWall:
 		jmp	off_38B94(pc,d1.w)
 ; ===========================================================================
 off_38B94:	index offset(*),,2
-		ptr loc_38B9A			; 0 
-		ptr loc_38BAC			; 2
-		ptr loc_38BFE			; 4
+		ptr loc_38B9A					; 0 
+		ptr loc_38BAC					; 2
+		ptr loc_38BFE					; 4
 ; ===========================================================================
 
 loc_38B9A:				
@@ -76591,8 +76588,8 @@ Grabber:
 		jmp	off_38DC8(pc,d1.w)
 ; ===========================================================================
 off_38DC8:	index offset(*),,2	
-		ptr loc_38DCC			; 0 
-		ptr loc_38E0C			; 2
+		ptr loc_38DCC					; 0 
+		ptr loc_38E0C					; 2
 ; ===========================================================================
 
 loc_38DCC:				
@@ -76632,12 +76629,12 @@ loc_38E0C:
 		bra.w	loc_39182
 ; ===========================================================================
 off_38E46:	index offset(*),,2	
-		ptr loc_38E52			; 0 
-		ptr loc_38E9A			; 2
-		ptr loc_38EB4			; 4
-		ptr loc_38F3E			; 6
-		ptr loc_38F58			; 8
-		ptr loc_38F62			; $A
+		ptr loc_38E52					; 0 
+		ptr loc_38E9A					; 2
+		ptr loc_38EB4					; 4
+		ptr loc_38F3E					; 6
+		ptr loc_38F58					; 8
+		ptr loc_38F62					; $A
 ; ===========================================================================
 
 loc_38E52:				
@@ -76762,10 +76759,10 @@ GrabberLegs:
 		jmp	off_38F74(pc,d1.w)
 ; ===========================================================================
 off_38F74:	index offset(*),,2	
-		ptr loc_38F7C			; 0 
-		ptr loc_38F88			; 2
-		ptr loc_38FE8			; 4
-		ptr loc_39022			; 6
+		ptr loc_38F7C					; 0 
+		ptr loc_38F88					; 2
+		ptr loc_38FE8					; 4
+		ptr loc_39022					; 6
 ; ===========================================================================
 
 loc_38F7C:				
@@ -76850,8 +76847,8 @@ GrabberBox:
 		jmp	off_39040(pc,d1.w)
 ; ===========================================================================
 off_39040:	index offset(*),,2
-		ptr loc_39044			; 0 
-		ptr loc_39056			; 2
+		ptr loc_39044					; 0 
+		ptr loc_39056					; 2
 ; ===========================================================================
 
 loc_39044:				
@@ -76878,8 +76875,8 @@ GrabberString:
 		jmp	off_39074(pc,d1.w)
 ; ===========================================================================
 off_39074:	index offset(*),,2	
-		ptr loc_39078			; 0 
-		ptr loc_39082			; 2
+		ptr loc_39078					; 0 
+		ptr loc_39082					; 2
 ; ===========================================================================
 
 loc_39078:				
@@ -76912,8 +76909,8 @@ Unknown1:
 		jmp	off_390B0(pc,d1.w)
 ; ===========================================================================
 off_390B0:	index offset(*),,2
-		ptr loc_390B4			; 0 
-		ptr loc_390B8			; 2
+		ptr loc_390B4					; 0 
+		ptr loc_390B8					; 2
 ; ===========================================================================
 
 loc_390B4:				
@@ -77084,28 +77081,28 @@ byte_39216:
 		dc.b   7,  0,  1,$FF
 ; ===========================================================================
 Map_3921A:	index offset(*)			
-		ptr word_3923A			; 0
-		ptr word_39254			; 1
-		ptr word_3926E			; 2
-		ptr word_39278			; 3
-		ptr word_39282			; 4
-		ptr word_3928C			; 5
-		ptr word_39296			; 6
+		ptr word_3923A					; 0
+		ptr word_39254					; 1
+		ptr word_3926E					; 2
+		ptr word_39278					; 3
+		ptr word_39282					; 4
+		ptr word_3928C					; 5
+		ptr word_39296					; 6
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
 Map_39228:		index offset(*)				
-		ptr word_392A0			; 0
-		ptr word_392AA			; 1
-		ptr word_392B4			; 2
-		ptr word_392C6			; 3
-		ptr word_392D8			; 4
+		ptr word_392A0					; 0
+		ptr word_392AA					; 1
+		ptr word_392B4					; 2
+		ptr word_392C6					; 3
+		ptr word_392D8					; 4
 		; Mappings below here are unused, as the Grabbers never
 		; descend far enough for them to be used.
-		ptr word_3930C			; 5
-		ptr word_392F2			; 6
-		ptr word_3932E			; 7
-		ptr word_3932E			; 8
+		ptr word_3930C					; 5
+		ptr word_392F2					; 6
+		ptr word_3932E					; 7
+		ptr word_3932E					; 8
 		
 word_3923A:	dc.w 3			
 		dc.w $F801,    0,    0,$FFE5			; 0
@@ -77171,8 +77168,8 @@ Balkiry:
 		jmp	off_39388(pc,d1.w)
 ; ===========================================================================
 off_39388:	index offset(*),,2
-		ptr loc_3938C			; 0 
-		ptr loc_393B6			; 2
+		ptr loc_3938C					; 0 
+		ptr loc_393B6					; 2
 ; ===========================================================================
 
 loc_3938C:				
@@ -77226,8 +77223,8 @@ CluckerBase:
 		jmp	off_3942A(pc,d1.w)
 ; ===========================================================================
 off_3942A:	index offset(*),,2	
-		ptr loc_3942E			; 0 
-		ptr loc_3943A			; 2
+		ptr loc_3942E					; 0 
+		ptr loc_3943A					; 2
 ; ===========================================================================
 
 loc_3942E:				
@@ -77255,13 +77252,13 @@ Clucker:
 		jmp	off_39460(pc,d1.w)
 ; ===========================================================================
 off_39460:	index offset(*)		
-		ptr loc_3946E			; 0 
-		ptr loc_39488			; 2
-		ptr loc_394A2			; 4
-		ptr loc_394D2			; 6
-		ptr loc_394E0			; 8
-		ptr loc_39508			; $A
-		ptr loc_39516			; $C
+		ptr loc_3946E					; 0 
+		ptr loc_39488					; 2
+		ptr loc_394A2					; 4
+		ptr loc_394D2					; 6
+		ptr loc_394E0					; 8
+		ptr loc_39508					; $A
+		ptr loc_39516					; $C
 ; ===========================================================================
 
 loc_3946E:				
@@ -77499,24 +77496,24 @@ MechaSonic:
 		jmp	off_3973A(pc,d1.w)
 ; ===========================================================================
 off_3973A:	index offset(*),,2
-		ptr loc_3975E	; 0
-		ptr loc_397AC	; 2
-		ptr loc_397E6	; 4
-		ptr loc_397FE	; 6
-		ptr loc_3984A	; 8
-		ptr loc_398C0	; $A
-		ptr loc_39B92	; $C
-		ptr loc_39BBA	; $E
-		ptr loc_39BCC	; $10
-		ptr loc_39BE2	; $12
-		ptr loc_39BEA	; $14
-		ptr loc_39C02	; $16
-		ptr loc_39C0A	; $18
-		ptr loc_39C12	; $1A
-		ptr loc_39C2A	; $1C
-		ptr loc_39C42	; $1E
-		ptr loc_39C50	; $20
-		ptr loc_39CA0	; $22
+		ptr loc_3975E					; 0
+		ptr loc_397AC					; 2
+		ptr loc_397E6					; 4
+		ptr loc_397FE					; 6
+		ptr loc_3984A					; 8
+		ptr loc_398C0					; $A
+		ptr loc_39B92					; $C
+		ptr loc_39BBA					; $E
+		ptr loc_39BCC					; $10
+		ptr loc_39BE2					; $12
+		ptr loc_39BEA					; $14
+		ptr loc_39C02					; $16
+		ptr loc_39C0A					; $18
+		ptr loc_39C12					; $1A
+		ptr loc_39C2A					; $1C
+		ptr loc_39C42					; $1E
+		ptr loc_39C50					; $20
+		ptr loc_39CA0					; $22
 ; ===========================================================================
 
 loc_3975E:				
@@ -77666,28 +77663,28 @@ loc_398C0:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_398F2:	index offset(*),,2
-		ptr loc_3991E	; 0
-		ptr loc_39946	; 2
-		ptr loc_39976	; 4
-		ptr loc_39A0A	; 6
-		ptr loc_39A1C	; 8
-		ptr loc_39A44	; $A
-		ptr loc_39A68	; $C
-		ptr loc_39A96	; $E
-		ptr loc_39A0A	; $10
-		ptr loc_39A1C	; $12
-		ptr loc_39AAA	; $14
-		ptr loc_39ACE	; $16
-		ptr loc_39AF4	; $18
-		ptr loc_39B28	; $1A
-		ptr loc_39A96	; $1C
-		ptr loc_39A0A	; $1E
-		ptr loc_39A1C	; $20
-		ptr loc_39AAA	; $22
-		ptr loc_39ACE	; $24
-		ptr loc_39B44	; $26
-		ptr loc_39B28	; $28
-		ptr loc_39A96	; $2A
+		ptr loc_3991E					; 0
+		ptr loc_39946					; 2
+		ptr loc_39976					; 4
+		ptr loc_39A0A					; 6
+		ptr loc_39A1C					; 8
+		ptr loc_39A44					; $A
+		ptr loc_39A68					; $C
+		ptr loc_39A96					; $E
+		ptr loc_39A0A					; $10
+		ptr loc_39A1C					; $12
+		ptr loc_39AAA					; $14
+		ptr loc_39ACE					; $16
+		ptr loc_39AF4					; $18
+		ptr loc_39B28					; $1A
+		ptr loc_39A96					; $1C
+		ptr loc_39A0A					; $1E
+		ptr loc_39A1C					; $20
+		ptr loc_39AAA					; $22
+		ptr loc_39ACE					; $24
+		ptr loc_39B44					; $26
+		ptr loc_39B28					; $28
+		ptr loc_39A96					; $2A
 ; ===========================================================================
 
 loc_3991E:				
@@ -78180,12 +78177,12 @@ off_39DD8:	dc.l Map_3A08C
 		dc.w $1000
 		
 off_39DE2:	index offset(*)
-		ptr byte_39DEE			; 0 
-		ptr byte_39DF4			; 1
-		ptr byte_39DF8			; 2
-		ptr byte_39DFE			; 3
-		ptr byte_39E14			; 4
-		ptr byte_39E1A			; 5
+		ptr byte_39DEE					; 0 
+		ptr byte_39DF4					; 1
+		ptr byte_39DF8					; 2
+		ptr byte_39DFE					; 3
+		ptr byte_39E14					; 4
+		ptr byte_39E1A					; 5
 		
 byte_39DEE:
 		dc.b   2,  0,  1,  2,$FF
@@ -78212,9 +78209,9 @@ byte_39E1A:
 		even
 
 off_39E30:	index offset(*)
-		ptr byte_39E36			; 0 
-		ptr byte_39E3A			; 1
-		ptr byte_39E3E			; 2
+		ptr byte_39E36					; 0 
+		ptr byte_39E3A					; 1
+		ptr byte_39E3E					; 2
 		
 byte_39E36:
 		dc.b   1, $B, $C,$FF
@@ -78227,11 +78224,11 @@ byte_39E3E:
 		even
 
 off_39E42:	index offset(*)
-		ptr byte_39E4C			; 0 
-		ptr byte_39E54			; 1
-		ptr byte_39E5C			; 2
-		ptr byte_39E60			; 3
-		ptr byte_39E64			; 4
+		ptr byte_39E4C					; 0 
+		ptr byte_39E54					; 1
+		ptr byte_39E5C					; 2
+		ptr byte_39E60					; 3
+		ptr byte_39E64					; 4
 
 byte_39E4C:
 		dc.b   3,  4,  3,  2,  1,  0,$FC
@@ -78549,7 +78546,7 @@ sizeof_SonicSegaScreen_ScaledSpriteData: equ	SonicSegaScreen_ScaledSpriteDataEnd
 
 SonicSegaScreen_RunLeft:				
 		subi.w	#$20,ost_x_screen(a0)			; move Sonic left 32 pixels
-		subq.w	#1,ost_sonicsega_frame_counter(a0)	; deincrement frame counter
+		subq.w	#1,ost_sonicsega_frame_counter(a0)	; decrement frame counter
 		bmi.s	.runleft_done				; if we're done, branch
 		bsr.w	SonicSegaScreen_MoveStreaksLeft		; move blue streaks to the left
 		lea	(Ani_SonicSegaScreen).l,a1
@@ -78567,7 +78564,7 @@ SonicSegaScreen_RunLeft:
 SonicSegaScreen_MidWipe:				
 		tst.w	ost_sonicsega_frame_counter(a0)		; has frame counter reached 0?
 		beq.s	.updatepalette				; if so, branch	
-		subq.w	#1,ost_sonicsega_frame_counter(a0)	; deincrement frame counter
+		subq.w	#1,ost_sonicsega_frame_counter(a0)	; decrement frame counter
 		bsr.w	SonicSegaScreen_MoveStreaksLeft		; move blue streaks to left
 
 	.updatepalette:				
@@ -78597,7 +78594,7 @@ SonicSegaScreen_RunRightInit:
 		; This clears a lot more than the horizontal scroll buffer. This is because the loop 
 		; counter is erroneously set to the size of the buffer in bytes ($400) rather than
 		; the size in longwords-1.
-		clear_ram	hscroll,hscroll_end+$C04	; clear the HScroll buffer
+		clear_ram	hscroll,hscroll_end+$C04	; clear the HScroll buffer and then some
 	endc	
 	
 		; Initialize streak horizontal offsets for Sonic going right.
@@ -78615,7 +78612,7 @@ SonicSegaScreen_RunRightInit:
 ; ===========================================================================
 
 SonicSegaScreen_RunRight:				
-		subq.w	#1,ost_sonicsega_frame_counter(a0)	; deincrement frame counter
+		subq.w	#1,ost_sonicsega_frame_counter(a0)	; decrement frame counter
 		bmi.s	.runright_done				; if we're done, branch
 		addi.w	#$20,ost_x_screen(a0)			; move Sonic 32 pixels right
 		bsr.w	SonicSegaScreen_MoveStreaksRight	; move blue streaks to the right
@@ -78635,7 +78632,7 @@ SonicSegaScreen_RunRight:
 SonicSegaScreen_EndWipe:				
 		tst.w	ost_sonicsega_frame_counter(a0)		; has frame counter reached 0?			
 		beq.s	.updatepalette				; if so, branch
-		subq.w	#1,ost_sonicsega_frame_counter(a0)	; deincrement counter
+		subq.w	#1,ost_sonicsega_frame_counter(a0)	; decrement counter
 		bsr.w	SonicSegaScreen_MoveStreaksRight	; move blue streaks to the right
 
 	.updatepalette:				
@@ -78711,7 +78708,7 @@ SonicSegaScreen_MoveStreaksRight:
 ;	uses d0.b, d1.b, d2.b, a1, a2, a3
 ; ----------------------------------------------------------------------------
 SonicSegaScreen_UpdateStreakPals:		
-		subq.b	#1,ost_sonicsega_wait_time(a0)		; deincrement frame counter
+		subq.b	#1,ost_sonicsega_wait_time(a0)		; decrement frame counter
 		bne.s	.do_nothing				; if not zero, branch
 		moveq	#0,d0
 		move.b	ost_sonicsega_streakcounter(a0),d0	; number of times the palette update has been run
@@ -78732,7 +78729,7 @@ SonicSegaScreen_UpdateStreakPals:
 		beq.s	.set_target				; if so, branch
 
 	.calc_offset:				
-		subq.b	#1,d0					; deincrement 
+		subq.b	#1,d0					; decrement 
 		beq.s	.adjust_source				; if it has reached zero, branch
 		add.w	d2,d1					; increase d1 by number of colors to skip
 		bra.s	.calc_offset				; loop until d0 reaches zero to get source offset
@@ -78759,7 +78756,7 @@ SonicSegaScreen_UpdateStreakPals:
 		rts	
 ; ===========================================================================
 Pal_SegaScreen2:	
-	; some data describing how to use the following palette
+		; some data describing how to use the following palette
 		dc.b	4					; 0	; How many frames before each iteration
 		dc.b	8-1					; 1	; How many iterations-1
 		dc.b	8*2					; 2	; Number of colors * 2 to skip each iteration
@@ -78769,7 +78766,7 @@ Pal_SegaScreen2:
 		incbin "art/palettes/Sega Screen 2.bin"
 
 Pal_SegaScreen3:
-; some data describing how to use the following palette
+		; some data describing how to use the following palette
 		dc.b	4					; 0	; How many frames before each iteration
 		dc.b	8-1					; 1	; How many iterations
 		dc.b	8*2					; 2	; Number of colors * 2 to skip each iteration
@@ -78865,7 +78862,7 @@ SonicSegaScreen_StreakFadeRight:
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+7+(1<<$A) ; 14 ; bit $A is used as a flag to use this entry $29 times
 
 SonicSegaScreen_StreakFadeLeft:	
-		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+7+(1<<$A) ; 0  ; bit $A is used as a flag to use this tile $29 times
+		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+7+(1<<$A) ; 0  ; bit $A is used as a flag to use this entry $29 times
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+6	; 2
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+5	; 4
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+4	; 6
@@ -78910,7 +78907,7 @@ Streak_Horizontal_Offsets:
 		dc.b  $E					; 32
 		dc.b $10					; 33
 		dc.b $16					; 34
-	arraysize	Streak_Horizontal_Offsets
+		arraysize	Streak_Horizontal_Offsets
 		even
 		
 ; ===========================================================================
@@ -78925,14 +78922,14 @@ Tornado:
 		jmp	off_3A79E(pc,d1.w)
 ; ===========================================================================
 off_3A79E:	index offset(*),,2
-		ptr loc_3A7AE			; 0 
-		ptr loc_3A7DE			; 2
-		ptr loc_3A89A			; 4
-		ptr loc_3A954			; 6
-		ptr loc_3AC6A			; 8
-		ptr loc_3AD0C			; $A
-		ptr loc_3AD2A			; $C
-		ptr loc_3AD42			; $E
+		ptr loc_3A7AE					; 0 
+		ptr loc_3A7DE					; 2
+		ptr loc_3A89A					; 4
+		ptr loc_3A954					; 6
+		ptr loc_3AC6A					; 8
+		ptr loc_3AD0C					; $A
+		ptr loc_3AD2A					; $C
+		ptr loc_3AD42					; $E
 ; ===========================================================================
 
 loc_3A7AE:				
@@ -79028,10 +79025,10 @@ loc_3A89A:
 		bra.w	DeleteOffScreen
 ; ===========================================================================
 off_3A8BA:	index offset(*),,2
-		ptr loc_3A8C2			; 0 
-		ptr loc_3A8D4			; 2
-		ptr loc_3A91A			; 4
-		ptr loc_3A94E		; 6
+		ptr loc_3A8C2					; 0 
+		ptr loc_3A8D4					; 2
+		ptr loc_3A91A					; 4
+		ptr loc_3A94E					; 6
 ; ===========================================================================
 
 loc_3A8C2:				
@@ -79103,15 +79100,15 @@ loc_3A954:
 		jmpto	AnimateSprite,JmpTo25_AnimateSprite
 ; ===========================================================================
 off_3A970:	index offset(*),,2
-		ptr loc_3A982			; 0 
-		ptr loc_3AA0E			; 2
-		ptr loc_3AA4C			; 4
-		ptr loc_3AA74			; 6
-		ptr loc_3AAA8			; 8
-		ptr loc_3AAFE			; $A
-		ptr loc_3AB68			; $C
-		ptr loc_3AB7C			; $E
-		ptr loc_3ABDE			; $10
+		ptr loc_3A982					; 0 
+		ptr loc_3AA0E					; 2
+		ptr loc_3AA4C					; 4
+		ptr loc_3AA74					; 6
+		ptr loc_3AAA8					; 8
+		ptr loc_3AAFE					; $A
+		ptr loc_3AB68					; $C
+		ptr loc_3AB7C					; $E
+		ptr loc_3ABDE					; $10
 ; ===========================================================================
 
 loc_3A982:				
@@ -79370,9 +79367,9 @@ loc_3AC6A:
 		jmp	off_3AC78(pc,d1.w)
 ; ===========================================================================
 off_3AC78	index offset(*),,2	
-		ptr loc_3AC7E			; 0 
-		ptr loc_3AC84			; 2
-		ptr loc_3ACF2			; 4
+		ptr loc_3AC7E					; 0 
+		ptr loc_3AC84					; 2
+		ptr loc_3ACF2					; 4
 ; ===========================================================================
 
 loc_3AC7E:				
@@ -79426,7 +79423,7 @@ loc_3AD0C:
 		jmp	off_3AD1A(pc,d1.w)
 ; ===========================================================================
 off_3AD1A:	index offset(*),,2	
-		ptr loc_3AD1C	; 0
+		ptr loc_3AD1C					; 0
 ; ===========================================================================
 
 loc_3AD1C:				
@@ -79457,8 +79454,8 @@ loc_3AD42:
 		jmp	off_3AD50(pc,d1.w)
 ; ===========================================================================
 off_3AD50:	index offset(*),,2	
-		ptr loc_3AD54		; 0 
-		ptr loc_3AD5C		; 2
+		ptr loc_3AD54					; 0 
+		ptr loc_3AD5C					; 2
 ; ===========================================================================
 
 loc_3AD54:				
@@ -79791,8 +79788,8 @@ off_3AFD2:
 		dc.w $4000
 
 Ani_3AFDC:	index offset(*)
-		ptr Ani_3AFE0			; 0 
-		ptr Ani_3AFE6			; 1
+		ptr Ani_3AFE0					; 0 
+		ptr Ani_3AFE6					; 1
 
 Ani_3AFE0:
 		dc.b   0,  0,  1,  2,  3,$FF
@@ -79903,8 +79900,8 @@ Cloud:
 		jmp	off_3B2EC(pc,d1.w)
 ; ===========================================================================
 off_3B2EC:	index offset(*),,2
-		ptr loc_3B2F0			; 0 
-		ptr loc_3B312			; 2
+		ptr loc_3B2F0					; 0 
+		ptr loc_3B312					; 2
 ; ===========================================================================
 
 loc_3B2F0:				
@@ -79961,8 +79958,8 @@ VerticalPropeller:
 		jmp	off_3B378(pc,d1.w)
 ; ===========================================================================
 off_3B378:	index offset(*),,2
-		ptr loc_3B37C			; 0 
-		ptr loc_3B38E			; 2
+		ptr loc_3B37C					; 0 
+		ptr loc_3B38E					; 2
 ; ===========================================================================
 
 loc_3B37C:				
@@ -80025,9 +80022,9 @@ HorizontalPropeller:
 		jmp	off_3B408(pc,d1.w)
 ; ===========================================================================
 off_3B408:	index offset(*),,2
-		ptr loc_3B40E			; 0 
-		ptr loc_3B426			; 2
-		ptr loc_3B448			; 4
+		ptr loc_3B40E					; 0 
+		ptr loc_3B426					; 2
+		ptr loc_3B448					; 4
 ; ===========================================================================
 
 loc_3B40E:				
@@ -80113,16 +80110,16 @@ off_3B4DE:
 		dc.w $4000
 		
 off_3B4E8:	index offset(*)
-		ptr byte_3B4FC			; 0 
-		ptr byte_3B506			; 1
-		ptr byte_3B50E			; 2
-		ptr byte_3B516			; 3
-		ptr byte_3B51C			; 4
-		ptr byte_3B524			; 5
-		ptr byte_3B52A			; 6
-		ptr byte_3B532			; 7
-		ptr byte_3B53A			; 8
-		ptr byte_3B544			; 9
+		ptr byte_3B4FC					; 0 
+		ptr byte_3B506					; 1
+		ptr byte_3B50E					; 2
+		ptr byte_3B516					; 3
+		ptr byte_3B51C					; 4
+		ptr byte_3B524					; 5
+		ptr byte_3B52A					; 6
+		ptr byte_3B532					; 7
+		ptr byte_3B53A					; 8
+		ptr byte_3B544					; 9
 		
 byte_3B4FC:	dc.b   7,  0,  1,  2,  3,  4,  5,$FD,  1,  0	; 0	
 byte_3B506:	dc.b   4,  0,  1,  2,  3,  4,$FD,  2		; 0	
@@ -80174,11 +80171,11 @@ TiltingPlatform:
 		jmp	off_3B5DE(pc,d1.w)
 ; ===========================================================================
 off_3B5DE:	index offset(*),,2
-		ptr loc_3B5E8			; 0 
-		ptr loc_3B602			; 2
-		ptr loc_3B65C			; 4
-		ptr loc_3B6C8			; 6
-		ptr loc_3B73C			; *
+		ptr loc_3B5E8					; 0 
+		ptr loc_3B602					; 2
+		ptr loc_3B65C					; 4
+		ptr loc_3B6C8					; 6
+		ptr loc_3B73C					; *
 ; ===========================================================================
 
 loc_3B5E8:				
@@ -80200,10 +80197,10 @@ loc_3B602:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 off_3B614:	index offset(*),,2
-		ptr loc_3B61C			; 0 
-		ptr loc_3B624			; 2
-		ptr loc_3B644			; 4
-		ptr loc_3B64E			; 6
+		ptr loc_3B61C					; 0 
+		ptr loc_3B624					; 2
+		ptr loc_3B644					; 4
+		ptr loc_3B64E					; 6
 ; ===========================================================================
 
 loc_3B61C:				
@@ -80293,10 +80290,10 @@ loc_3B6D2:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 off_3B6DA:	index offset(*),,2
-		ptr loc_3B6E2		; 0 
-		ptr loc_3B6FE		; 2
-		ptr loc_3B72C		; 4
-		ptr loc_3B736		; 6
+		ptr loc_3B6E2					; 0 
+		ptr loc_3B6FE					; 2
+		ptr loc_3B72C					; 4
+		ptr loc_3B736					; 6
 ; ===========================================================================
 
 loc_3B6E2:				
@@ -80449,13 +80446,13 @@ off_3B818:
 		dc.w $1000
 		
 off_3B822:	index offset(*)
-		ptr byte_3B830			; 0 
-		ptr byte_3B836			; 1
-		ptr byte_3B83A			; 2
-		ptr byte_3B840			; 3
-		ptr byte_3B846			; 4
-		ptr byte_3B84C			; 5
-		ptr byte_3B850			; 6
+		ptr byte_3B830					; 0 
+		ptr byte_3B836					; 1
+		ptr byte_3B83A					; 2
+		ptr byte_3B840					; 3
+		ptr byte_3B846					; 4
+		ptr byte_3B84C					; 5
+		ptr byte_3B850					; 6
 		
 byte_3B830:	dc.b   3,  1,  2,$FD,  1,  0			; 0	
 byte_3B836:	dc.b $3F,  2,$FD,  2				; 0 
@@ -80494,8 +80491,8 @@ VerticalLaser:
 		jmp	off_3B8B4(pc,d1.w)
 ; ===========================================================================
 off_3B8B4:	index offset(*),,2
-		ptr loc_3B8B8			; 0 
-		ptr loc_3B8C4			; 2
+		ptr loc_3B8B8					; 0 
+		ptr loc_3B8C4					; 2
 ; ===========================================================================
 
 loc_3B8B8:				
@@ -80543,9 +80540,9 @@ WallTurret:
 		jmp	off_3B976(pc,d1.w)
 ; ===========================================================================
 off_3B976:	index offset(*),,2
-		ptr loc_3B97C			; 0 
-		ptr loc_3B980			; 2
-		ptr loc_3B9AA			; 4
+		ptr loc_3B97C					; 0 
+		ptr loc_3B980					; 2
+		ptr loc_3B9AA					; 4
 ; ===========================================================================
 
 loc_3B97C:				
@@ -80681,9 +80678,9 @@ HorizontalLaser:
 		jmp	off_3BAC8(pc,d1.w)
 ; ===========================================================================
 off_3BAC8:	index offset(*),,2
-		ptr loc_3BACE			; 0 
-		ptr loc_3BAD2			; 2
-		ptr loc_3BAF0			; 4
+		ptr loc_3BACE					; 0 
+		ptr loc_3BAD2					; 2
+		ptr loc_3BAF0					; 4
 ; ===========================================================================
 
 loc_3BACE:				
@@ -80743,8 +80740,8 @@ WheelWingFortress:
 		jmp	off_3BB5A(pc,d1.w)
 ; ===========================================================================
 off_3BB5A:	index offset(*),,2
-		ptr loc_3BB5E			; 0 
-		ptr loc_3BB62			; 2
+		ptr loc_3BB5E					; 0 
+		ptr loc_3BB62					; 2
 ; ===========================================================================
 
 loc_3BB5E:				
@@ -80776,8 +80773,8 @@ Unknown2:
 		jmp	off_3BB8A(pc,d1.w)
 ; ===========================================================================
 off_3BB8A:	index offset(*),,2
-		ptr loc_3BB8E			; 0 
-		ptr loc_3BB92			; 2
+		ptr loc_3BB8E					; 0 
+		ptr loc_3BB92					; 2
 ; ===========================================================================
 
 loc_3BB8E:				
@@ -80811,8 +80808,8 @@ ShipExhaust:
 		jmp	off_3BBCA(pc,d1.w)
 ; ===========================================================================
 off_3BBCA:	index offset(*),,2
-		ptr loc_3BBCE			; 0 
-		ptr loc_3BBDA			; 2
+		ptr loc_3BBCE					; 0 
+		ptr loc_3BBDA					; 2
 ; ===========================================================================
 
 loc_3BBCE:				
@@ -80855,9 +80852,9 @@ ConveyerPlatforms:
 		jmp	off_3BC2A(pc,d1.w)
 ; ===========================================================================
 off_3BC2A:	index offset(*),,2
-		ptr loc_3BC30			; 0 
-		ptr loc_3BC3C			; 2
-		ptr loc_3BC50			; 4
+		ptr loc_3BC30					; 0 
+		ptr loc_3BC3C					; 2
+		ptr loc_3BC50					; 4
 ; ===========================================================================
 
 loc_3BC30:				
@@ -80884,11 +80881,11 @@ loc_3BC50:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 off_3BC62:	index offset(*),,2
-		ptr loc_3BC6C			; 0 
-		ptr loc_3BCAC			; 2
-		ptr loc_3BCB6			; 4
-		ptr loc_3BCCC			; 6
-		ptr loc_3BCD6			; 8
+		ptr loc_3BC6C					; 0 
+		ptr loc_3BCAC					; 2
+		ptr loc_3BCB6					; 4
+		ptr loc_3BCCC					; 6
+		ptr loc_3BCD6					; 8
 ; ===========================================================================
 
 loc_3BC6C:				
@@ -80910,7 +80907,7 @@ loc_3BC92:
 		rts	
 ; ===========================================================================
 word_3BCA8:	
-	dc.w $FF00					; 0
+	dc.w $FF00						; 0
 		dc.w  $100					; 1
 ; ===========================================================================
 
@@ -80971,8 +80968,8 @@ off_3BD24:
 		dc.w $1800
 		
 off_3BD2E:	index offset(*)
-		ptr byte_3BD32			; 0 
-		ptr byte_3BD38			; 1
+		ptr byte_3BD32					; 0 
+		ptr byte_3BD38					; 1
 		
 byte_3BD32:	
 		dc.b   3,  2,  1,  0,$FA
@@ -81007,12 +81004,12 @@ LateralCannon:
 		jmp	off_3BD88(pc,d1.w)
 ; ===========================================================================
 off_3BD88:	index offset(*),,2
-		ptr loc_3BD94			; 0 
-		ptr loc_3BDA2			; 2
-		ptr loc_3BDC6			; 4
-		ptr loc_3BDD4			; 6
-		ptr loc_3BDC6			; 8
-		ptr loc_3BDF4			; $A
+		ptr loc_3BD94					; 0 
+		ptr loc_3BDA2					; 2
+		ptr loc_3BDC6					; 4
+		ptr loc_3BDD4					; 6
+		ptr loc_3BDC6					; 8
+		ptr loc_3BDF4					; $A
 ; ===========================================================================
 
 loc_3BD94:				
@@ -81085,8 +81082,8 @@ off_3BE2C:
 		dc.w $1800
 		
 off_3BE36:	index offset(*)	
-		ptr byte_3BE3A			; 0 
-		ptr byte_3BE40			; 1
+		ptr byte_3BE3A					; 0 
+		ptr byte_3BE40					; 1
 byte_3BE3A:
 		dc.b   5,  0,  1,  2,  3,$FC
 		
@@ -81126,8 +81123,8 @@ Stick:
 		jmp	off_3BEB8(pc,d1.w)
 ; ===========================================================================
 off_3BEB8:	index offset(*),,2
-		ptr loc_3BEBC			; 0 
-		ptr loc_3BEC0			; 2
+		ptr loc_3BEBC					; 0 
+		ptr loc_3BEC0					; 2
 ; ===========================================================================
 
 loc_3BEBC:				
@@ -81173,8 +81170,8 @@ Catapult:
 		jmp	off_3BF12(pc,d1.w)
 ; ===========================================================================
 off_3BF12:	index offset(*),,2
-		ptr loc_3BF16			; 0 
-		ptr loc_3BF3E			; 2
+		ptr loc_3BF16					; 0 
+		ptr loc_3BF3E					; 2
 ; ===========================================================================
 
 loc_3BF16:				
@@ -81205,9 +81202,9 @@ loc_3BF3E:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 off_3BF60:	index offset(*),,2
-		ptr loc_3BF66			; 0 
-		ptr loc_3BFD8			; 2
-		ptr loc_3C062			; 4
+		ptr loc_3BF66					; 0 
+		ptr loc_3BFD8					; 2
+		ptr loc_3C062					; 4
 ; ===========================================================================
 
 loc_3BF66:				
@@ -81364,9 +81361,9 @@ BreakablePlating:
 		jmp	off_3C0BA(pc,d1.w)
 ; ===========================================================================
 off_3C0BA:	index offset(*),,2
-		ptr loc_3C0C0			; 0 
-		ptr loc_3C0D6			; 2
-		ptr loc_3C1AA			; 4
+		ptr loc_3C0C0					; 0 
+		ptr loc_3C0D6					; 2
+		ptr loc_3C1AA					; 4
 ; ===========================================================================
 
 loc_3C0C0:				
@@ -81481,14 +81478,14 @@ byte_3C1E0:
 		dc.b $20	
 								; 3
 byte_3C1E4:	
-		dc.w  -$10	; 0
-		dc.w  -$10	; 2
-		dc.w  -$10	; 4
-		dc.w   $10	; 6
-		dc.w  -$30	; 8
-		dc.w  -$10	; 10
-		dc.w  -$30	; 12
-		dc.w   $10	; 14
+		dc.w  -$10					; 0
+		dc.w  -$10					; 2
+		dc.w  -$10					; 4
+		dc.w   $10					; 6
+		dc.w  -$30					; 8
+		dc.w  -$10					; 10
+		dc.w  -$30					; 12
+		dc.w   $10					; 14
 ; ===========================================================================
 
 loc_3C1F4:				
@@ -81580,8 +81577,8 @@ Rivet:
 		jmp	off_3C336(pc,d1.w)
 ; ===========================================================================
 off_3C336:	index offset(*),,2
-		ptr loc_3C33A			; 0 
-		ptr loc_3C33E			; 2
+		ptr loc_3C33A					; 0 
+		ptr loc_3C33E					; 2
 ; ===========================================================================
 
 loc_3C33A:				
@@ -81644,8 +81641,8 @@ TornadoSmoke:
 		jmp	off_3C3E4(pc,d1.w)
 ; ===========================================================================
 off_3C3E4:	index offset(*),,2
-		ptr loc_3C3E8			; 0 
-		ptr loc_3C416			; 2
+		ptr loc_3C3E8					; 0 
+		ptr loc_3C416					; 2
 ; ===========================================================================
 
 loc_3C3E8:				
@@ -81691,16 +81688,16 @@ BossWingFortress:
 		jmp	off_3C450(pc,d1.w)
 ; ===========================================================================
 off_3C450:	index offset(*),,2
-		ptr loc_3C464		; 0 
-		ptr loc_3C476		; 2
-		ptr loc_3C748		; 4
-		ptr loc_3C7EE		; 6
-		ptr loc_3C8C8		; 8
-		ptr loc_3C9AA		; $A
-		ptr loc_3C9EA		; $C
-		ptr loc_3CA3C		; $E
-		ptr loc_3CB3E		; $10
-		ptr loc_3CBBE		; $12
+		ptr loc_3C464					; 0 
+		ptr loc_3C476					; 2
+		ptr loc_3C748					; 4
+		ptr loc_3C7EE					; 6
+		ptr loc_3C8C8					; 8
+		ptr loc_3C9AA					; $A
+		ptr loc_3C9EA					; $C
+		ptr loc_3CA3C					; $E
+		ptr loc_3CB3E					; $10
+		ptr loc_3CBBE					; $12
 ; ===========================================================================
 
 loc_3C464:				
@@ -81719,22 +81716,22 @@ loc_3C476:
 		bra.w	loc_3CBEC
 ; ===========================================================================
 off_3C488:	index offset(*),,2
-		ptr loc_3C4A8			; 0 
-		ptr loc_3C4DC			; 2
-		ptr loc_3C552			; 4
-		ptr loc_3C570			; 6
-		ptr loc_3C58A			; 8
-		ptr loc_3C5B0			; $A
-		ptr loc_3C5E8			; $C
-		ptr loc_3C5F6			; $E
-		ptr loc_3C60E			; $10
-		ptr loc_3C640			; $12
-		ptr loc_3C65C			; $14
-		ptr loc_3C68C			; $16
-		ptr loc_3C6E4			; $18
-		ptr loc_3C5E8			; $1A
-		ptr loc_3C704			; $1C
-		ptr loc_3C712			; $1E
+		ptr loc_3C4A8					; 0 
+		ptr loc_3C4DC					; 2
+		ptr loc_3C552					; 4
+		ptr loc_3C570					; 6
+		ptr loc_3C58A					; 8
+		ptr loc_3C5B0					; $A
+		ptr loc_3C5E8					; $C
+		ptr loc_3C5F6					; $E
+		ptr loc_3C60E					; $10
+		ptr loc_3C640					; $12
+		ptr loc_3C65C					; $14
+		ptr loc_3C68C					; $16
+		ptr loc_3C6E4					; $18
+		ptr loc_3C5E8					; $1A
+		ptr loc_3C704					; $1C
+		ptr loc_3C712					; $1E
 ; ===========================================================================
 
 loc_3C4A8:				
@@ -82010,9 +82007,9 @@ loc_3C748:
 		jmpto	SolidObject,JmpTo27_SolidObject
 ; ===========================================================================
 off_3C772:	index offset(*),,2
-		ptr loc_3C778			; 0 
-		ptr loc_3C786			; 2
-		ptr loc_3C7AE			; 4
+		ptr loc_3C778					; 0 
+		ptr loc_3C786					; 2
+		ptr loc_3C7AE					; 4
 ; ===========================================================================
 
 loc_3C778:				
@@ -82065,11 +82062,11 @@ loc_3C7EE:
 		jmp	off_3C7FC(pc,d1.w)
 ; ===========================================================================
 off_3C7FC:	index offset(*),,2
-		ptr loc_3C806			; 0 
-		ptr loc_3C818			; 2
-		ptr loc_3C83C			; 4
-		ptr loc_3C85C			; 6
-		ptr loc_3C8B4			; 8
+		ptr loc_3C806					; 0 
+		ptr loc_3C818					; 2
+		ptr loc_3C83C					; 4
+		ptr loc_3C85C					; 6
+		ptr loc_3C8B4					; 8
 ; ===========================================================================
 
 loc_3C806:				
@@ -82160,9 +82157,9 @@ loc_3C8C8:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3C8EA:	index offset(*),,2	
-		ptr loc_3C8F0			; 0 
-		ptr loc_3C916			; 2
-		ptr loc_3C93E			; 4
+		ptr loc_3C8F0					; 0 
+		ptr loc_3C916					; 2
+		ptr loc_3C93E					; 4
 ; ===========================================================================
 
 loc_3C8F0:				
@@ -82242,8 +82239,8 @@ loc_3C9AA:
 		jmp	off_3C9B8(pc,d1.w)
 ; ===========================================================================
 off_3C9B8:	index offset(*),,2
-		ptr loc_3C9BC			; 0 
-		ptr loc_3C9C8			; 2
+		ptr loc_3C9BC					; 0 
+		ptr loc_3C9C8					; 2
 ; ===========================================================================
 
 loc_3C9BC:				
@@ -82273,9 +82270,9 @@ loc_3C9EA:
 		jmp	off_3CA06(pc,d1.w)
 ; ===========================================================================
 off_3CA06:	index offset(*),,2
-		ptr loc_3CA0C			; 0 
-		ptr loc_3CA1A			; 2
-		ptr loc_3CA2E			; 4
+		ptr loc_3CA0C					; 0 
+		ptr loc_3CA1A					; 2
+		ptr loc_3CA2E					; 4
 ; ===========================================================================
 
 loc_3CA0C:				
@@ -82310,11 +82307,11 @@ loc_3CA3C:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3CA66:	index offset(*),,2
-		ptr loc_3CA70			; 0 
-		ptr loc_3CA98			; 2
-		ptr loc_3CAD0			; 4
-		ptr loc_3CAE4			; 6
-		ptr loc_3CB32			; 8
+		ptr loc_3CA70					; 0 
+		ptr loc_3CA98					; 2
+		ptr loc_3CAD0					; 4
+		ptr loc_3CAE4					; 6
+		ptr loc_3CB32					; 8
 ; ===========================================================================
 
 loc_3CA70:				
@@ -82417,9 +82414,9 @@ loc_3CB3E:
 		jmp	off_3CB4C(pc,d1.w)
 ; ===========================================================================
 off_3CB4C:	index offset(*),,2
-		ptr loc_3CB52			; 0 
-		ptr loc_3CB7C			; 2
-		ptr loc_3CBA4			; 4
+		ptr loc_3CB52					; 0 
+		ptr loc_3CB7C					; 2
+		ptr loc_3CBA4					; 4
 ; ===========================================================================
 
 loc_3CB52:				
@@ -82580,10 +82577,10 @@ off_3CCA8:
 		dc.w $2000
 
 off_3CCB2:	index offset(*)
-		ptr byte_3CCBA			; 0 
-		ptr byte_3CCC4			; 1
-		ptr byte_3CCCC			; 2
-		ptr byte_3CCD0			; 3
+		ptr byte_3CCBA					; 0 
+		ptr byte_3CCC4					; 1
+		ptr byte_3CCCC					; 2
+		ptr byte_3CCD0					; 3
 		
 byte_3CCBA:	
 		dc.b   5,  0,  1,  2,  3,  3,  3,  3,$FA
@@ -82710,10 +82707,10 @@ Eggman:
 		jmp	off_3CEDE(pc,d1.w)
 ; ===========================================================================
 off_3CEDE:	index offset(*),,2
-		ptr loc_3CEE6			; 0 
-		ptr loc_3CEF8			; 2
-		ptr loc_3D036			; 4
-		ptr loc_3D09C			; 6
+		ptr loc_3CEE6					; 0 
+		ptr loc_3CEF8					; 2
+		ptr loc_3D036					; 4
+		ptr loc_3D09C					; 6
 ; ===========================================================================
 
 loc_3CEE6:				
@@ -82731,11 +82728,11 @@ loc_3CEF8:
 		jmp	off_3CF06(pc,d1.w)
 ; ===========================================================================
 off_3CF06:	index offset(*),,2
-		ptr loc_3CF10			; 0 
-		ptr loc_3CF32			; 2
-		ptr loc_3CF58			; 4
-		ptr loc_3CF7C			; 6
-		ptr loc_3CFF6			; 8
+		ptr loc_3CF10					; 0 
+		ptr loc_3CF32					; 2
+		ptr loc_3CF58					; 4
+		ptr loc_3CF7C					; 6
+		ptr loc_3CFF6					; 8
 ; ===========================================================================
 
 loc_3CF10:				
@@ -82849,9 +82846,9 @@ loc_3D036:
 		jmp	off_3D044(pc,d1.w)
 ; ===========================================================================
 off_3D044:	index offset(*),,2
-		ptr loc_3D04A			; 0 
-		ptr loc_3D066			; 2
-		ptr loc_3D078			; 4
+		ptr loc_3D04A					; 0 
+		ptr loc_3D066					; 2
+		ptr loc_3D078					; 4
 ; ===========================================================================
 
 loc_3D04A:				
@@ -82923,8 +82920,8 @@ byte_3D0D4:
 		dc.b $AA
 		
 off_3D0D8:	index offset(*)
-		ptr byte_3D0DC			; 0 
-		ptr byte_3D0E2			; 1
+		ptr byte_3D0DC					; 0 
+		ptr byte_3D0E2					; 1
 
 byte_3D0DC:
 		dc.b   5,  2,  3,  4,$FF
@@ -83015,10 +83012,10 @@ Crawl:
 		jmp	off_3D24C(pc,d1.w)
 ; ===========================================================================
 off_3D24C:	index offset(*),,2
-		ptr loc_3D254			; 0 
-		ptr loc_3D27C			; 2
-		ptr loc_3D2A6			; 4
-		ptr loc_3D2D4			; 6
+		ptr loc_3D254					; 0 
+		ptr loc_3D27C					; 2
+		ptr loc_3D2A6					; 4
+		ptr loc_3D2D4					; 6
 ; ===========================================================================
 
 loc_3D254:				
@@ -83248,23 +83245,23 @@ EggRobo:
 		jmp	off_3D4D6(pc,d1.w)
 ; ===========================================================================
 off_3D4D6:	index offset(*),,2
-		ptr loc_3D4F8			; 0 
-		ptr loc_3D508			; 2
-		ptr loc_3DA14			; 4
-		ptr loc_3DA4A			; 6
-		ptr loc_3DA74			; 8
-		ptr loc_3DB74			; $A
-		ptr loc_3DB9E			; $C
-		ptr loc_3DBC8			; $E
-		ptr loc_3DC50			; $10
-		ptr loc_3DC9C			; $12
-		ptr loc_3DCCC			; $14
-		ptr loc_3DD20			; $16
-		ptr loc_3DD50			; $18
-		ptr loc_3DE70			; $1A
-		ptr loc_3DEC2			; $1C
-		ptr loc_3DFAA			; $1E
-		ptr loc_3D970			; $20
+		ptr loc_3D4F8					; 0 
+		ptr loc_3D508					; 2
+		ptr loc_3DA14					; 4
+		ptr loc_3DA4A					; 6
+		ptr loc_3DA74					; 8
+		ptr loc_3DB74					; $A
+		ptr loc_3DB9E					; $C
+		ptr loc_3DBC8					; $E
+		ptr loc_3DC50					; $10
+		ptr loc_3DC9C					; $12
+		ptr loc_3DCCC					; $14
+		ptr loc_3DD20					; $16
+		ptr loc_3DD50					; $18
+		ptr loc_3DE70					; $1A
+		ptr loc_3DEC2					; $1C
+		ptr loc_3DFAA					; $1E
+		ptr loc_3D970					; $20
 ; ===========================================================================
 
 loc_3D4F8:				
@@ -83282,14 +83279,14 @@ loc_3D508:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3D51A:	index offset(*),,2	
-		ptr loc_3D52A			; 0 
-		ptr loc_3D5A8			; 2
-		ptr loc_3D5C2			; 4
-		ptr loc_3D5EA			; 6
-		ptr loc_3D62E			; 8
-		ptr loc_3D640			; $A
-		ptr loc_3D684			; $C
-		ptr loc_3D8D2			; $E
+		ptr loc_3D52A					; 0 
+		ptr loc_3D5A8					; 2
+		ptr loc_3D5C2					; 4
+		ptr loc_3D5EA					; 6
+		ptr loc_3D62E					; 8
+		ptr loc_3D640					; $A
+		ptr loc_3D684					; $C
+		ptr loc_3D8D2					; $E
 ; ===========================================================================
 
 loc_3D52A:				
@@ -83419,9 +83416,9 @@ loc_3D684:
 		jmp	off_3D696(pc,d1.w)
 ; ===========================================================================
 off_3D696:	index offset(*),,2
-		ptr loc_3D6AA			; 0 
-		ptr loc_3D702			; 2
-		ptr loc_3D83C			; 4
+		ptr loc_3D6AA					; 0 
+		ptr loc_3D702					; 2
+		ptr loc_3D83C					; 4
 ; ===========================================================================
 		subq.b	#1,ost_anim_time(a0)
 		bmi.s	loc_3D6A4
@@ -83440,10 +83437,10 @@ loc_3D6AA:
 		jmp	off_3D6B8(pc,d1.w)
 ; ===========================================================================
 off_3D6B8:	index offset(*),,2	
-		ptr loc_3D6C0			; 0 
-		ptr loc_3D6CE			; 2
-		ptr loc_3D6C0			; 4
-		ptr loc_3D6E8			; 6
+		ptr loc_3D6C0					; 0 
+		ptr loc_3D6CE					; 2
+		ptr loc_3D6C0					; 4
+		ptr loc_3D6E8					; 6
 ; ===========================================================================
 
 loc_3D6C0:				
@@ -83698,9 +83695,9 @@ loc_3D8D2:
 		jmp	off_3D8E0(pc,d1.w)
 ; ===========================================================================
 off_3D8E0:	index offset(*),,2
-		ptr loc_3D8E6			; 0 
-		ptr loc_3D922			; 2
-		ptr loc_3D93C			; 4
+		ptr loc_3D8E6					; 0 
+		ptr loc_3D922					; 2
+		ptr loc_3D93C					; 4
 ; ===========================================================================
 
 loc_3D8E6:				
@@ -83781,8 +83778,8 @@ loc_3D984:
 		jmp	off_3D9AC(pc,d1.w)
 ; ===========================================================================
 off_3D9AC:	index offset(*),,2
-		ptr loc_3D9B0			; 0 
-		ptr loc_3D9D6			; 2
+		ptr loc_3D9B0					; 0 
+		ptr loc_3D9D6					; 2
 ; ===========================================================================
 
 loc_3D9B0:				
@@ -83840,8 +83837,8 @@ loc_3DA14:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DA34:	index offset(*),,2
-		ptr loc_3DA3C			; 0 
-		ptr locret_3DA48			; 2
+		ptr loc_3DA3C					; 0 
+		ptr locret_3DA48				; 2
 
 byte_3DA38:
 		dc.b   0					; 0 
@@ -83871,8 +83868,8 @@ loc_3DA4A:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DA62:	index offset(*),,2	
-		ptr loc_3DA66			; 0 
-		ptr locret_3DA72			; 2
+		ptr loc_3DA66					; 0 
+		ptr locret_3DA72				; 2
 ; ===========================================================================
 
 loc_3DA66:				
@@ -83897,11 +83894,11 @@ loc_3DA74:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DA96:	index offset(*),,2	
-		ptr loc_3DAA0			; 0 
-		ptr loc_3DAAC			; 2
-		ptr loc_3DACC			; 4
-		ptr loc_3DB32			; 6
-		ptr loc_3DB5A			; 8
+		ptr loc_3DAA0					; 0 
+		ptr loc_3DAAC					; 2
+		ptr loc_3DACC					; 4
+		ptr loc_3DB32					; 6
+		ptr loc_3DB5A					; 8
 ; ===========================================================================
 
 loc_3DAA0:				
@@ -84012,8 +84009,8 @@ loc_3DB74:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DB8C:	index offset(*),,2	
-		ptr loc_3DB90			; 0 
-		ptr locret_3DB9C		; 2
+		ptr loc_3DB90					; 0 
+		ptr locret_3DB9C				; 2
 ; ===========================================================================
 
 loc_3DB90:				
@@ -84036,8 +84033,8 @@ loc_3DB9E:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DBB6:	index offset(*),,2	
-		ptr loc_3DBBA			; 0 
-		ptr locret_3DBC6		; 1
+		ptr loc_3DBBA					; 0 
+		ptr locret_3DBC6				; 1
 ; ===========================================================================
 
 loc_3DBBA:				
@@ -84062,11 +84059,11 @@ loc_3DBC8:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DBE8:	index offset(*),,2	
-		ptr loc_3DBF6			; 0 
-		ptr loc_3DC02			; 2
-		ptr loc_3DC1C			; 4
-		ptr loc_3DC2A			; 6
-		ptr loc_3DC46			; 8
+		ptr loc_3DBF6					; 0 
+		ptr loc_3DC02					; 2
+		ptr loc_3DC1C					; 4
+		ptr loc_3DC2A					; 6
+		ptr loc_3DC46					; 8
 		
 byte_3DBF2:	
 		dc.b   0					; 0 
@@ -84127,11 +84124,11 @@ loc_3DC50:
 		bra.w	loc_3E282
 ; ===========================================================================
 off_3DC66:	index offset(*),,2	
-		ptr loc_3DC74			; 0 
-		ptr loc_3DC80			; 2
-		ptr loc_3DC86			; 4
-		ptr loc_3DC94			; 6
-		ptr loc_3DC80			; 8
+		ptr loc_3DC74					; 0 
+		ptr loc_3DC80					; 2
+		ptr loc_3DC86					; 4
+		ptr loc_3DC94					; 6
+		ptr loc_3DC80					; 8
 		
 byte_3DC70:	
 		dc.b   0					; 0 
@@ -84170,8 +84167,8 @@ loc_3DC9C:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DCB4:	index offset(*),,2	
-		ptr loc_3DCB8			; 0 
-		ptr locret_3DCCA		; 2
+		ptr loc_3DCB8					; 0 
+		ptr locret_3DCCA				; 2
 ; ===========================================================================
 
 loc_3DCB8:				
@@ -84195,7 +84192,7 @@ loc_3DCCC:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DCE4:	index offset(*),,2
-		ptr loc_3DCEE			; 0 
+		ptr loc_3DCEE					; 0 
 		ptr loc_3DD00
 		ptr loc_3DACC
 		ptr loc_3DB32
@@ -84233,8 +84230,8 @@ loc_3DD20:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DD38:	index offset(*),,2	
-		ptr loc_3DD3C			; 0 
-		ptr locret_3DD4E		; 2
+		ptr loc_3DD3C					; 0 
+		ptr locret_3DD4E				; 2
 ; ===========================================================================
 
 loc_3DD3C:				
@@ -84255,9 +84252,9 @@ loc_3DD50:
 		jmp	off_3DD5E(pc,d1.w)
 ; ===========================================================================
 off_3DD5E:	index offset(*),,2	
-		ptr loc_3DD64			; 0 
-		ptr loc_3DDA6			; 2
-		ptr loc_3DE3C			; 4
+		ptr loc_3DD64					; 0 
+		ptr loc_3DDA6					; 2
+		ptr loc_3DE3C					; 4
 ; ===========================================================================
 
 loc_3DD64:				
@@ -84355,8 +84352,8 @@ loc_3DE70:
 		jmp	off_3DE7E(pc,d1.w)
 ; ===========================================================================
 off_3DE7E:	index offset(*),,2
-		ptr loc_3DE82		; 0 
-		ptr loc_3DEA2		; 2
+		ptr loc_3DE82					; 0 
+		ptr loc_3DEA2					; 2
 ; ===========================================================================
 
 loc_3DE82:				
@@ -84388,10 +84385,10 @@ loc_3DEC2:
 		jmp	off_3DED0(pc,d1.w)
 ; ===========================================================================
 off_3DED0:	index offset(*),,2	
-		ptr loc_3DED8			; 0 
-		ptr loc_3DF04			; 2
-		ptr loc_3DF36			; 4
-		ptr loc_3DF80			; 6
+		ptr loc_3DED8					; 0 
+		ptr loc_3DF04					; 2
+		ptr loc_3DF36					; 4
+		ptr loc_3DF80					; 6
 ; ===========================================================================
 
 loc_3DED8:				
@@ -84798,9 +84795,9 @@ loc_3E248:
 		jmp	off_3E24C(pc,d1.w)
 ; ===========================================================================
 off_3E24C:	index offset(*),,2	
-		ptr loc_3E252			; 0 
-		ptr loc_3E27A			; 2
-		ptr loc_3E27E			; 4
+		ptr loc_3E252					; 0 
+		ptr loc_3E27A					; 2
+		ptr loc_3E27E					; 4
 ; ===========================================================================
 
 loc_3E252:				
@@ -84920,15 +84917,15 @@ off_3E30A:
 ; Custom animation scripts
 ; -----------------------------------------------------------------------------
 Ani_3E318:	index offset(*)			
-		ptr byte_3E32A			; 0
-		ptr byte_3E33E			; 1
-		ptr byte_3E352			; 2
-		ptr byte_3E366			; 3
-		ptr byte_3E37A			; 4
-		ptr byte_3E380			; 5
-		ptr byte_3E394			; 6
-		ptr byte_3E3A8			; 7
-		ptr byte_3E3BC			; 8
+		ptr byte_3E32A					; 0
+		ptr byte_3E33E					; 1
+		ptr byte_3E352					; 2
+		ptr byte_3E366					; 3
+		ptr byte_3E37A					; 4
+		ptr byte_3E380					; 5
+		ptr byte_3E394					; 6
+		ptr byte_3E3A8					; 7
+		ptr byte_3E3BC					; 8
 		
 byte_3E32A:	
 		dc.b   5,  8,  0,$E0, $C,$30,$E0, $C,$32,$E0, $C,$3C,$E0, $C,$34,$F8 ; 0		
@@ -84937,7 +84934,7 @@ byte_3E32A:
 byte_3E33E:
 		dc.b   5,  8,  0,$EC,$14,$30,$EC,$14,$32,$EC,$14,$3C,$EC,$14,$34,$FA ; 0				
 		dc.b   6,$3E,$FA,  6
-						; 16
+								; 16
 byte_3E352:	
 		dc.b   5,  8,  0,$F8,$14,$30,$F8,$14,$32,$F8,$14,$3C,$F8,$14,$34,$FE ; 0		
 		dc.b   4,$3E,$FE,  4				; 16
@@ -84974,9 +84971,9 @@ off_3E3D0:
 ; Custom animation scripts
 ; -----------------------------------------------------------------------------
 Ani_3E3D8:	index offset(*)		
-		ptr byte_3E3DE			; 0
-		ptr byte_3E3F2			; 1
-		ptr byte_3E3F8			; 2
+		ptr byte_3E3DE					; 0
+		ptr byte_3E3F2					; 1
+		ptr byte_3E3F8					; 2
 byte_3E3DE:	
 		dc.b   5,$10,  0,  0,  4,$30,  0,  4,$32,  0,  4,$3C,  0,  4,$34,  0 ; 0		
 		dc.b   4,$3E,  0,  4				; 16
@@ -85003,18 +85000,18 @@ off_3E42C:
 ; Custom animation scripts
 ; -----------------------------------------------------------------------------
 Ani_3E438:	index offset(*)			
-		ptr byte_3E450			; 0
-		ptr byte_3E468			; 1
-		ptr byte_3E480			; 2
-		ptr byte_3E494			; 3
-		ptr byte_3E4AC			; 4
-		ptr byte_3E4C4			; 5
-		ptr byte_3E4D6			; 6
-		ptr byte_3E4EE			; 7
-		ptr byte_3E502			; 8
-		ptr byte_3E51A			; 9
-		ptr byte_3E532			; 10
-		ptr byte_3E544			; 11
+		ptr byte_3E450					; 0
+		ptr byte_3E468					; 1
+		ptr byte_3E480					; 2
+		ptr byte_3E494					; 3
+		ptr byte_3E4AC					; 4
+		ptr byte_3E4C4					; 5
+		ptr byte_3E4D6					; 6
+		ptr byte_3E4EE					; 7
+		ptr byte_3E502					; 8
+		ptr byte_3E51A					; 9
+		ptr byte_3E532					; 10
+		ptr byte_3E544					; 11
 		
 byte_3E450:	
 		dc.b   6,$20,$34,$F8,$F8,$2E,$F8,$F8,  0,  0,$FC,$30,  4,$FB,$32,  3 ; 0					
@@ -85131,7 +85128,7 @@ byte_3E58C:
 		dc.b $1C					; 3
 		
 off_3E590:
-		dc.l Map_EggRobo					; 0 
+		dc.l Map_EggRobo				; 0 
 		dc.w $330
 		dc.w $404
 		dc.w $3800
@@ -85144,10 +85141,10 @@ byte_3E59C:
 		even
 					
 off_3E5AA:	index offset(*)
-		ptr byte_3E5B2			; 0 
-		ptr byte_3E5B6			; 1
-		ptr byte_3E5D0			; 2
-		ptr byte_3E5EA			; 3
+		ptr byte_3E5B2					; 0 
+		ptr byte_3E5B6					; 1
+		ptr byte_3E5D0					; 2
+		ptr byte_3E5EA					; 3
 		
 byte_3E5B2:	
 		dc.b   1, $C, $D,$FF
@@ -85571,8 +85568,8 @@ S1_STP_Credits:
 		jmp	off_3EAD6(pc,d1.w)
 ; ===========================================================================
 off_3EAD6:index offset(*),,2
-		ptr loc_3EADA			; 0 
-		ptr loc_3EB48			; 2
+		ptr loc_3EADA					; 0 
+		ptr loc_3EB48					; 2
 ; ===========================================================================
 
 loc_3EADA:				
@@ -85856,18 +85853,18 @@ Prison:
 		jmp	off_3F1F2(pc,d1.w)
 ; ===========================================================================
 off_3F1F2:	index offset(*),,2
-		ptr loc_3F212			; 0 
-		ptr loc_3F278			; 2
-		ptr loc_3F354			; 4
-		ptr loc_3F38E			; 6
-		ptr loc_3F3A8			; 8
-		ptr loc_3F406			; $A
+		ptr loc_3F212					; 0 
+		ptr loc_3F278					; 2
+		ptr loc_3F354					; 4
+		ptr loc_3F38E					; 6
+		ptr loc_3F3A8					; 8
+		ptr loc_3F406					; $A
 		
 byte_3F1FE:
 		dc.b   0,  2,$20,  4,  0
-		dc.b $28,  4,$10,  5,  4	; 5
-		dc.b $18,  6,  8,  3,  5	; 10
-		dc.b   0,  8,$20,  4,  0	; 15
+		dc.b $28,  4,$10,  5,  4			; 5
+		dc.b $18,  6,  8,  3,  5			; 10
+		dc.b   0,  8,$20,  4,  0			; 15
 		even
 ; ===========================================================================
 
@@ -85921,9 +85918,9 @@ loc_3F278:
 		jmp	(DespawnObject).l
 ; ===========================================================================
 off_3F2AE:	index offset(*),,2
-		ptr loc_3F2B4		; 0 
-		ptr loc_3F2FC		; 2
-		ptr locret_3F352		; 4
+		ptr loc_3F2B4					; 0 
+		ptr loc_3F2FC					; 2
+		ptr locret_3F352				; 4
 ; ===========================================================================
 
 loc_3F2B4:				
@@ -86071,8 +86068,8 @@ locret_3F426:
 		rts	
 ; ===========================================================================
 off_3F428:	index offset(*)
-		ptr byte_3F42C			; 0 
-		ptr byte_3F42F			; 1
+		ptr byte_3F42C					; 0 
+		ptr byte_3F42F					; 1
 		
 byte_3F42C:	
 		dc.b  $F,  0,$FF
@@ -86715,15 +86712,15 @@ locret_3FA46:
 		rts	
 ; ===========================================================================
 off_3FA48:	index offset(*),1,1
-		ptr loc_3FA5A			; 1 
-		ptr loc_3FA5A			; 2
-		ptr loc_3FA60			; 3
-		ptr loc_3FAC8			; 4
-		ptr loc_3FAFE			; 5
-		ptr loc_3FB8A			; 6
-		ptr loc_3FBC4			; 7
-		ptr loc_3FBCA			; 8
-		ptr locret_3FA5E			; 9
+		ptr loc_3FA5A					; 1 
+		ptr loc_3FA5A					; 2
+		ptr loc_3FA60					; 3
+		ptr loc_3FAC8					; 4
+		ptr loc_3FAFE					; 5
+		ptr loc_3FB8A					; 6
+		ptr loc_3FBC4					; 7
+		ptr loc_3FBCA					; 8
+		ptr locret_3FA5E				; 9
 ; ===========================================================================
 
 loc_3FA5A:				
@@ -87185,7 +87182,7 @@ word_3FD9C:
 		dc.w  $E80,$1180,$1200,$1280,$1300,$1380	; 36
 		dc.w $1400,$1480,$1500,$1580,$1600,$1900	; 42
 		dc.w $1400,$1480,$1500,$1580,$1600,$1900	; 48
-		dc.w $1D00,$1D80,$1E00,$1F80,$2400,$2580 ; 54
+		dc.w $1D00,$1D80,$1E00,$1F80,$2400,$2580	; 54
 		dc.w $1D00,$1D80,$1E00,$1F80,$2400,$2580	; 60
 		dc.w $2600,$2680,$2780,$2B00,$2F00,$3280	; 66
 		dc.w $2600,$2680,$2780,$2B00,$2F00,$3280	; 72
@@ -87821,23 +87818,23 @@ loc_40338:
 		rts	
 ; ===========================================================================
 off_40350:	index offset(*),,1
-		ptr byte_40372			; 0 
-		ptr byte_407BE			; 1
-		ptr byte_407BE			; 2
-		ptr byte_407BE			; 3
-		ptr byte_403EE			; 4
-		ptr byte_403EE			; 5
-		ptr byte_407BE			; 6
-		ptr byte_40372			; 7
-		ptr byte_404C2			; 8
-		ptr byte_407BE			; 9
-		ptr byte_405B6			; 10
-		ptr byte_407BE			; 11
-		ptr byte_4061A			; 12
-		ptr byte_40762			; 13
-		ptr byte_4076E			; 14
-		ptr byte_4077A			; 15
-		ptr byte_407BE			; 16
+		ptr byte_40372					; 0 
+		ptr byte_407BE					; 1
+		ptr byte_407BE					; 2
+		ptr byte_407BE					; 3
+		ptr byte_403EE					; 4
+		ptr byte_403EE					; 5
+		ptr byte_407BE					; 6
+		ptr byte_40372					; 7
+		ptr byte_404C2					; 8
+		ptr byte_407BE					; 9
+		ptr byte_405B6					; 10
+		ptr byte_407BE					; 11
+		ptr byte_4061A					; 12
+		ptr byte_40762					; 13
+		ptr byte_4076E					; 14
+		ptr byte_4077A					; 15
+		ptr byte_407BE					; 16
 		;zonewarning
 
 ;anipat_header:	macro *
@@ -89349,23 +89346,23 @@ sub_41CEC:
 ; Offset index of object debug lists
 ; ---------------------------------------------------------------------------
 off_41D0C:	index offset(*),,1
-		ptr DbgEHZ_41D40			; 0 			
-		ptr DbgDef_41D2E			; 1
-		ptr DbgDef_41D2E			; 2
-		ptr DbgDef_41D2E			; 3
-		ptr DbgMTZ_41DDA			; 4
-		ptr DbgMTZ_41DDA			; 5
-		ptr DbgWFZ_41EEC			; 6
-		ptr DbgHTZ_41FEE			; 7
-		ptr DbgOOZ_420E8			; 8
-		ptr DbgDef_41D2E			; 9
-		ptr DbgOOZ_420E8			; 10
-		ptr DbgMCZ_421F2			; 11
-		ptr DbgCNZ_422B4			; 12
-		ptr DbgCPZ_42376			; 13
-		ptr DbgDef_41D2E			; 14
-		ptr DbgARZ_42438			; 15
-		ptr DbgSCZ_42522			; 16
+		ptr DbgEHZ_41D40				; 0 			
+		ptr DbgDef_41D2E				; 1
+		ptr DbgDef_41D2E				; 2
+		ptr DbgDef_41D2E				; 3
+		ptr DbgMTZ_41DDA				; 4
+		ptr DbgMTZ_41DDA				; 5
+		ptr DbgWFZ_41EEC				; 6
+		ptr DbgHTZ_41FEE				; 7
+		ptr DbgOOZ_420E8				; 8
+		ptr DbgDef_41D2E				; 9
+		ptr DbgOOZ_420E8				; 10
+		ptr DbgMCZ_421F2				; 11
+		ptr DbgCNZ_422B4				; 12
+		ptr DbgCPZ_42376				; 13
+		ptr DbgDef_41D2E				; 14
+		ptr DbgARZ_42438				; 15
+		ptr DbgSCZ_42522				; 16
 		
 DbgDef_41D2E:	dc.w 2			
 		dc.l $25000000+Map_Ring				; 0
@@ -91894,8 +91891,9 @@ ObjPos_End:
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to load the sound driver
+; This routine is a LOT more cautious than it really needs to be.
 ; ---------------------------------------------------------------------------
-; sub_EC000:
+
 SoundDriverLoad:
 		move	sr,-(sp)
 		pushr.l	d0-a6
@@ -91924,7 +91922,6 @@ SoundDriverLoad:
 		popr	d0-a6
 		move	(sp)+,sr
 		rts	
-
 ; ===========================================================================
 
 DecompressSoundDriver:				
@@ -91934,7 +91931,7 @@ DecompressSoundDriver:
 		move.w	#$F64,d7				; size of compressed data; patched if necessary by SndDriverCompress.exe
 		moveq	#0,d6					; make the decompressor fetch the first byte of descriptor bits
 		lea	(z80_ram).l,a5
-		moveq	#0,d5					; d5 = offset of end of decompressed data
+		moveq	#0,d5
 		lea	(z80_ram).l,a4
 
 ; ---------------------------------------------------------------------------
@@ -91958,7 +91955,7 @@ SaxDec:
 		bne.s	.bitsremaining				; branch if not
 		jsr	SaxDec_GetByte(pc)			; get next byte of descriptor bits
 		move.b	d0,d6
-		ori.w	#$FF00,d6				; set all bits of high word; when these are fully shifted to low word, it's time to get another byte of descriptor bits
+		ori.w	#$FF00,d6				; set all bits of high byte; when these are fully shifted into low byte, it's time to get another byte of descriptor bits
 
 	.bitsremaining:				
 		btst	#0,d6					; is the next byte compressed?
@@ -91996,13 +91993,13 @@ SaxDec_ReadCompressed:
 		add.w	d3,d5					; add length of zero-fill match to offset pointer (d3 + 1)
 		addq.w	#1,d5
 
-	.loop:				
-		move.b	#0,(a5)+				; fill zeros for length of match
-		dbf	d3,.loop
+	.fillzeros:				
+		move.b	#0,(a5)+				; write zeros for length of match
+		dbf	d3,.fillzeros
 
-		bra.w	SaxDec
-		
+		bra.w	SaxDec	
 ; ===========================================================================
+
 SaxDec_IsMatch:
 		add.w	d3,d5					; add length of match to offset pointer (d3 + 1)
 		addq.w	#1,d5
@@ -92013,8 +92010,8 @@ SaxDec_IsMatch:
 		dbf	d3,.loop				; repeat for length of match
 		
 		bra.w	SaxDec
-
 ; ===========================================================================
+
 SaxDec_GetByte:						
 		move.b	(a6)+,d0				; get next byte in compressed data
 		subq.w	#1,d7					; decrement remaining number of bytes
@@ -92074,7 +92071,7 @@ DAC_Start: bnkswtch_vals
 ; ------------------------------------------------------------------------------
 
 MusicPoint1:		startbank
-		sndbank_ptr	MusFile_Continue		; this value is corrected later with a hack
+		sndbank_ptr	MusFile_Continue
 					
 MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		finishbank
@@ -92197,7 +92194,7 @@ SFXPointers:	macro	name
 		endm
 		
 SoundIndex:		bnkswtch_vals
-		SFXFiles	SFXPointers			; generate little endian pointers and  constants for SFX
+		SFXFiles	SFXPointers			; generate little endian pointers and constants for SFX
 
 IncludeSFX:	macro	name
 SFXFile_\name:	include	"sound/sfx/\name\.asm"
