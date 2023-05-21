@@ -1,9 +1,10 @@
 ; Sonic the Hedgehog 2 disassembled Z80 sound driver
 
-; Disassembled by Xenowhirl for AS
+; Disassembled by Xenowhirl for AS 2007
 ; Additional disassembly work by RAS Oct 2008
 ; RAS' work merged into SVN by Flamewing
 ; Ported to AXM68K by OrionNavattan October 2022
+; Styling overhauled by OrionNavattan May 2023
 
 ; This code is compressed in the ROM, but you can edit it here as uncompressed
 ; and it will automatically be assembled and compressed into the correct place
@@ -14,7 +15,7 @@
 ; This is fortunate, as they contain references to each other's addresses.
 ;
 ; if you want to add significant amounts of extra code to this driver,
-; try putting your code as far down as possible, after the function zDecEnd.
+; try putting your code as far down as possible, after the function zSaxDec_End.
 ; That will make you less likely to run into space shortages from dislocated data alignment.
 
 ; Note that the Z80 syntax used here is slightly non-standard as of result of how AXM68k works:
@@ -23,10 +24,10 @@
 ; of ASM68K's section and group functionality, and shadow registers are not indicated 
 ; with an apostrophe; e.g., ex af,af' is simply written as ex af,af.
 
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Macro to perform a bank switch; after using this,
-; the start of zROMWindow points to the start of the given 68k address,
+; the start of z_rom_window points to the start of the given 68k address,
 ; rounded down to the nearest $8000 byte boundary.
 
 ; The version of this macro in the AS disassembly generates ld (hl),a or ld (hl),e
@@ -92,8 +93,8 @@ endpad:	= offset(*)
 			endc
 		endc
 		endm
-
 ; ===========================================================================
+
 ; Z80 'ROM' start:
  zEntryPoint:
 		if offset(*)<>0
@@ -101,9 +102,10 @@ endpad:	= offset(*)
 		endc
    
 		di						; disable interrupts
-		ld	sp,z_stack_pointer			; load initial stack pointer
+		ld	sp,z_stack_pointer			; set initial stack pointer
 		jp	InitDriver				; continue to driver init
 ; ===========================================================================
+
 f_pal:
 		db	0					; set by SoundDriverLoad to signal that we are on a PAL console
 
@@ -111,6 +113,7 @@ f_pal:
 ; Subroutine to wait for YM2612/3438 to not be busy.
 ; This is redundant: the Z80 is slow enough to not need to worry about this.
 ; ---------------------------------------------------------------------------
+
     if OptimizeSoundDriver=0
 		align	8
 WaitForYM:    rsttarget
@@ -127,11 +130,13 @@ WaitForYM:    rsttarget
 ;	a = destination register ID
 ;	c = data to write
 ; ---------------------------------------------------------------------------
+
 		align	8
 WriteFMIorII:    rsttarget
 		bit t_fmii_bit,(ix+ch_type)			; is this track playing on channels 0-2?
 		jr	z,WriteFMI				; if so, it's bound for a0/d0
 		jr	WriteFMII				; otherwise, it's bound for a1/d1
+; ===========================================================================
 
 		align	8
 WriteFMI:    rsttarget
@@ -151,6 +156,7 @@ WriteFMI:    rsttarget
 		ld	(ym_reg_d0),a				; write data to register
 		pop	af
 		ret
+; ===========================================================================
 
 		align	8
 WriteFMII:    rsttarget
@@ -174,6 +180,7 @@ WriteFMII:    rsttarget
 ; ---------------------------------------------------------------------------
 ; Subroutine to update all sound. Triggered on every VBlank.
 ; ---------------------------------------------------------------------------
+
 		align 38h
 UpdateSound:    rsttarget
 		push	af					; save 'af'
@@ -240,7 +247,8 @@ UpdateSound:    rsttarget
 		ld	(f_sfx),a				; set f_sfx flag to busy
 
     if FixBugs
-		; A bugfix in UpdateMusic prevents it from returning ix set to a convenient value, so set it explicitly here
+		; Moving the TempoWait call in UpdateMusic prevents it from returning ix set to a 
+		; convenient value, so we need to set it explicitly here.
 		ld	ix,z_tracks_sfx_start-sizeof_trackvars
     endc
 
@@ -270,6 +278,7 @@ UpdateSound:    rsttarget
 ; ---------------------------------------------------------------------------
 ; Subroutine to update the DAC sample
 ; ---------------------------------------------------------------------------
+
 UpdateDAC:
 		bankswitch DAC_Start				; bankswitch to the DAC data
 
@@ -281,6 +290,7 @@ UpdateDAC:
 		pop	af
 		ei						; enable interrupts
 		ret						; return to DAC loop
+; ===========================================================================
 
 	.dacqueued:
 		ld	a,80h
@@ -314,13 +324,15 @@ UpdateDAC:
 ; ---------------------------------------------------------------------------
 ; Subroutine to update music tracks
 ; ---------------------------------------------------------------------------
+
 UpdateMusic:
     if FixBugs=0
 		; Calling this function here is bad, because it can cause the
 		; first note of a newly-started song to be delayed for a frame.
 		; The vanilla driver resorts to a workaround to prevent such a
-		; delay from having side-effects, but it's better to just fix
-		; the problem directly, and move this call to the proper place.
+		; delay from having side-effects (namely, by setting every track
+		; at rest) but it's better to just fix the problem directly, 
+		; and move this call to the proper place.
 		call	TempoWait
     endc
 
@@ -364,6 +376,7 @@ UpdateMusic:
 ; ---------------------------------------------------------------------------
 ; Subroutine to set tempo update timer
 ; ---------------------------------------------------------------------------
+
 TempoWait:
 		ld	ix,z_abs_vars				; ix = start of global variables
 		ld	a,(ix+v_current_tempo)			; get current tempo value
@@ -382,7 +395,6 @@ TempoWait:
 		djnz	.tempoloop
 		
 		ret
-
 ; ===========================================================================
 
 InitDriver:
@@ -406,9 +418,9 @@ WriteToDAC:
 		ld	(ym_reg_a0),a				; set DAC port register
 		ld	a,(hl)					; get next DAC byte
 		rept 4
-		rlca
+		rlca						; shift upper nybble to lower nybble
 		endr
-		and	a,0Fh					; UPPER 4-bit offset into DACDecodeTbl
+		and	a,0Fh					; a = 4-bit offset into DACDecodeTbl
 		ld	(.highnybble+2),a			; store into the instruction after .highnybble (self-modifying code)
 		ex	af,af					; shadow register 'a' is the 'd' value for 'jman2050' encoding
 
@@ -430,7 +442,7 @@ WriteToDAC:
 		ld	a,(hl)					; get next DAC byte
 		inc	hl					; next byte in DAC stream...
 		dec	de					; one less byte
-		and	a,0Fh					; LOWER 4-bit offset into DACDecodeTbl
+		and	a,0Fh					; lower 4-bit offset into DACDecodeTbl
 		ld	(.lownybble+2),a			; store into the instruction after .lownybble (self-modifying code)
 		ex	af,af					; shadow register 'a' is the 'd' value for 'jman2050' encoding
 
@@ -440,13 +452,12 @@ WriteToDAC:
 		ex	af,af					; back to regular registers
 		ei						; enable interrupts (done updating DAC, busy waiting for next update)
 		jp	DACWaitLoop				; back to the wait loop; if there's more DAC to write, we come back down again!
-
 ; ===========================================================================
+
 DACDecodeTbl:
 		db	   0,    1,   2,   4,   8,  10h,  20h,  40h
 		db	 80h,   -1,  -2,  -4,  -8, -10h, -20h, -40h
 
-; =========================================================================
 ; ---------------------------------------------------------------------------
 ; RAM addresses for FM and PSG channel variables used by the SFX
 
@@ -549,12 +560,12 @@ FMUpdateTrack:
 		call	FMNoteOn				; key it on (if allowed)
 		call	DoModulation				; update modulation (if modulation doesn't change, we do not return here)
 		jp	FMUpdateFreq				; apply frequency update from modulation
+; ===========================================================================
 
 	.notegoing:
 		call	NoteTimeoutUpdate			; apply "note fill" (time until cut-off); Will not return here if "note fill" expires
 		call	DoModulation				; Update modulation (if modulation doesn't change, we do not return here)
 		jp	FMUpdateFreq				; apply frequency update from modulation
-
 ; ===========================================================================
 
 FMDoNext:
@@ -609,6 +620,7 @@ FMSetFreq:
 		jr	c,.gotoctave				; if this is less than zero, we are done
 		inc	c					; one octave up
 		jr	.loop
+; ===========================================================================
 
 	.gotoctave:
 		add	a,d					; add 1 octave back (so note index is positive)
@@ -770,7 +782,6 @@ DoModulation:
 		add	hl,bc					; add modulation value
 		ex	de,hl
 		jp	(hl)					; WILL return to zUpdateTrack
-
 ; ===========================================================================
 
 		ensure1byteoffset 8Ch
@@ -860,6 +871,7 @@ PSGDoNext:
 		jr	c,.gotnote				; if not, branch
 		call	SongCommand				; handle coordination flag
 		jr	.noteloop				; loop back around for another byte
+; ===========================================================================
 
 	.gotnote:
 		or	a					; is it a duration?
@@ -880,6 +892,7 @@ PSGDoNext:
 ; input:
 ;	a = note to get frequency for
 ; ---------------------------------------------------------------------------
+
 PSGSetFreq:
 		sub	a,_firstNote				; is it a rest?
 		jr	c,.restpsg				; if so, branch
@@ -957,7 +970,6 @@ PSGUpdateFreq:
 SetRest:
 		set	chf_rest_bit,(ix+ch_flags)		; Set "track at rest" bit
 		ret
-
 ; ===========================================================================
 
 PSGUpdateVolFX:
@@ -1025,6 +1037,7 @@ PSGCheckNoteTimeout:						; if you get here, then "do not attack next note" was 
 		jr	nz,PSGSendVolume			; branch if not
 		ret
 ; ===========================================================================
+
 VolEnvCmd_Hold:
     if FixBugs
 		dec	(ix+ch_flutter)				; decrement flutter to keep in place
@@ -1035,7 +1048,7 @@ VolEnvCmd_Hold:
 		dec	(ix+ch_flutter)				; put index back (before evcHold flag)
 		ret						; return and don't update ch_volume on this frame (!!!)
     endc
-
+; ===========================================================================
 
 PSGNoteOff:
 		bit chf_mask_bit,(ix+ch_flags)			; is SFX overriding?
@@ -1055,7 +1068,6 @@ PSGNoteOff:
 		ld	(zPSG),a				
     endc
 		ret
-
 ; ===========================================================================
 
     if OptimizeSoundDriver
@@ -1088,7 +1100,6 @@ PSGSilenceAll:
 		ld	(hl),tPSG3|psg_silence			; silence PSG 3
 		ld	(hl),tPSG4|psg_silence			; silence noise channel
 		ret
-
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to pause/unpause music
@@ -1216,6 +1227,7 @@ CycleSoundQueue:
 ; ---------------------------------------------------------------------------
 ; Subroutine to begin playing a sound
 ; ---------------------------------------------------------------------------
+
 PlaySoundID:
 		or	a					; is it sound 00?
 		jp	z,ClearTrackMemory			; if so, branch (RESET EVERYTHING!)
@@ -1272,6 +1284,7 @@ SoundCmd_Index:
 ; ---------------------------------------------------------------------------
 ; Subroutine to play the Sega sound
 ; ---------------------------------------------------------------------------
+
 SoundCmd_Sega:
     if FixBugs
 		; Reset panning (we don't want the Sega sound playing on only one speaker).
@@ -1329,11 +1342,14 @@ SoundCmd_Sega:
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to play a music track
+
+; input:
+;	a = sound ID
 ; ---------------------------------------------------------------------------
 
 Sound_PlayBGM:
     if FixBugs=0
-		; This is a workaround for a bug where playing a new song will distort any SFX that were already playing
+		; This is a workaround for a bug where playing a new song will distort any SFX that were already playing.
 		push	af
 		call	SoundCmd_StopSFX			; stop all sounds before starting BGM
 		pop	af
@@ -1489,8 +1505,8 @@ Sound_PlayBGM:
     if FixBugs
 		ld	(iy+ch_flags),chf_enable		; initial playback control; set "track playing" bit
     else
-    	; Setting chf_rest is a workaround for a bug in UpdateMusic. With that bug fixed,
-    	; this is no longer necessary.
+    	; Setting chf_rest is a workaround to mask the symptoms of the misplaced TempoWait
+    	; call in UpdateMusic. With that bug fixed, this is no longer necessary.
 		ld	(iy+ch_flags),chf_rest|chf_enable	; initial playback control; set "track playing" and "track at rest" bits
     endc
     if FixBugs=0
@@ -1542,6 +1558,7 @@ Sound_PlayBGM:
 		ld	c,a					; c = 0, will disable dac
     endc
 		jr	.set_dac				; jump to .set_dac
+; ===========================================================================
 
 	.silencefm6:
 	; Silence FM Channel 6 specifically if it's not in use.
@@ -1600,8 +1617,8 @@ Sound_PlayBGM:
     if FixBugs
 		ld	(iy+ch_flags),chf_enable		; set "track is playing" bit
     else
-    	; Setting chf_rest is a workaround for a bug in UpdateMusic. With that bug fixed,
-    	; this is no longer necessary.
+    	; Setting chf_rest is a workaround to mask the symptoms of the misplaced TempoWait
+    	; call in UpdateMusic. With that bug fixed, this is no longer necessary.
 		ld	(iy+ch_flags),chf_rest|chf_enable	; set "track is playing" and "track at rest" bits
     endc
     if FixBugs=0
@@ -1663,8 +1680,8 @@ Sound_PlayBGM:
 		sub	a,2					; otherwise, subtract 2
 		add	a,a					; multiply by 2 (preparing to index starting from FM 3 only)
 		jr	.gotchannelindex
-
 ; ===========================================================================
+
 	.sfxpsgchannel:
 		rept 4
 		rra	
@@ -1714,6 +1731,7 @@ Sound_PlayBGM:
 		add	ix,de					; next track
 		djnz	.psgnoteoffloop
 		ret
+; ===========================================================================
 
     if FixBugs
 FMSilenceChannel:
@@ -1724,6 +1742,7 @@ FMSilenceChannel:
 		ld	c,ym_tl_silence				; set to minimum envelope amplitude
 		call	.fm_op_writeloop
 		jp	FMNoteOff
+; ===========================================================================
 
 .set_max_rel:
 		ld	a,(ix+ch_type)				; get voice control byte
@@ -1750,7 +1769,10 @@ PSGInitBytes:
 		db  tPSG1,tPSG2,tPSG3				; specifically, these configure writes to the PSG port for each channel
 
 ; ---------------------------------------------------------------------------
-; Play a sound effect
+; Subroutine to play a sound effect
+
+; input:
+;	a = sound ID
 ; ---------------------------------------------------------------------------
 
 Sound_PlaySFX:
@@ -1856,6 +1878,7 @@ Sound_PlaySFX:
 		sub	a,2					; SFX can only use FM3, FM4 or FM5
 		add	a,a					; multiply by 2
 		jp	.sfxinitfm
+; ===========================================================================
 
 	.sfxinitpsg:
 		; This is a PSG track!
@@ -2064,7 +2087,6 @@ SoundCmd_StopSFX:
 		djnz	.trackloop				; repeat for all tracks
 		ret
 
-
 ; ---------------------------------------------------------------------------
 ; Subroutine to initialize music fade out
 ; ---------------------------------------------------------------------------
@@ -2105,6 +2127,7 @@ DoFadeOut:
 		jp	p,.sendfmtl				; branch if still positive
 		res	chf_enable_bit,(ix+ch_flags)		; stop track
 		jr	.nextfm
+; ===========================================================================
 
 	.sendfmtl:
 		push	bc
@@ -2127,6 +2150,7 @@ DoFadeOut:
 		jp	nc,.sendpsgvol				; branch if not
 		res	chf_enable_bit,(ix+ch_flags)		; stop track
 		jr	.nextpsg
+; ===========================================================================
 
 	.sendpsgvol:
 		push	bc
@@ -2216,7 +2240,6 @@ ClearTrackMemory:
 		call	FMSilenceAll				; silence FM
 		jp	PSGSilenceAll				; silence PSG
 
-
 ; ---------------------------------------------------------------------------
 ; Subroutine to initialise music
 ; ---------------------------------------------------------------------------
@@ -2271,8 +2294,8 @@ InitMusicPlayback:
 
     if FixBugs
 		; If a music file's header doesn't define each and every channel, they
-		; won't be silenced by .sfxnext, because their tracks aren't properly
-		; initialised. This can cause hanging notes. So, we'll set them up
+		; won't be silenced by Sound_PlayBGM.sfxnext, because their tracks aren't
+		; properly initialised. This can cause hanging notes. So, we'll set them up
 		; properly here.
 		ld	ix,z_tracks_start			; start at the first music track
 		ld	b,countof_music_tracks			; 7 DAC/FM tracks & 3 PSG tracks
@@ -2342,6 +2365,7 @@ DoFadeIn:
 		jr	z,.continuefade				; branch if so
 		dec	(ix+v_fadein_delay)			; decrement delay count
 		ret
+; ===========================================================================
 
 .continuefade:
 		ld	a,(z_abs_vars+v_fadein_counter)		; get fade counter
@@ -2353,6 +2377,7 @@ DoFadeIn:
 		xor	a
 		ld	(z_abs_vars+f_fadein),a			; clear fade-in flag, allowing SFX to play again
 		ret
+; ===========================================================================
 
 .fadenotdone:
 		dec	(ix+v_fadein_counter)			; decrement fade counter
@@ -2448,6 +2473,9 @@ BankSwitchToMusic:
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to handle track commands
+
+; input: 
+;	a = command ID
 ; ---------------------------------------------------------------------------
 
 SongCommand:
@@ -3025,7 +3053,6 @@ SongCom_VibOn:
 		set	chf_vib_bit,(ix+ch_flags)		; set "modulation on" bit
 		ret
 
-
 ; ---------------------------------------------------------------------------
 ; Track command: end of track
 ; ---------------------------------------------------------------------------
@@ -3158,8 +3185,6 @@ SongCom_Jump:
 		ld	h,(hl)					; get high byte of jump destination (since pointer advanced to it)
 		ld	l,a					; put low byte
 		ret
-; ===========================================================================
-
 
 ; ---------------------------------------------------------------------------
 ; Track command: loop
@@ -3342,7 +3367,7 @@ MasterPlaylist: macro  name,tempo,flag
 		db	ptr_musfile_\1\+\flag			; generate playlist entry with value generated by sndbnk_ptr macro plus flag value if applicable
 		zptr_mus_\1\: equ zptr_id			; generate signed byte constant for use in sound driver
 		
-		zptr_id: = zptr_id+1				; increment each pointer value
+		zptr_id: = zptr_id+1				; increment pointer value
 	endm	
 
 MusicIndex:		
@@ -3375,29 +3400,25 @@ DACPtrTbl:
 ; ===========================================================================
 
 		ensure1byteoffset 22h
+		
+GenDacPlaylist:	macro	name,src,pitch
+	
+	ifarg \src				; if this is a duplicate with a different pitch
+		db	d\src,\pitch
+	else
+		db	d\name,\pitch	
+	endc	
+	endm					
+		
 DACMasterPlaylist:
-; First byte selects one of the DAC samples. The number that
-; follows it is a wait time between each nibble written to the DAC
-; (thus higher = slower)
+		DefineSamples	GenDacPlaylist	; generate the DAC playlist
 
-		db	dKick,		17h			; 81h ; kick
-		db	dSnare,		1			; 82h ; snare
-		db	dClap,		6			; 83h ; clap
-		db	dScratch,	8			; 84h ; scratch
-		db	dTimpani,	1Bh			; 85h ; timpani
-		db	dHiTom,		0Ah			; 86h ; hitom
-		db	dVLowClap,	1Bh			; 87h ; vlowclap
-		db	dTimpani,	12h			; 88h ; hitimpani
-		db	dTimpani,	15h			; 89h ; midtimpani
-		db	dTimpani,	1Ch			; 8Ah ; lowtimpani
-		db	dTimpani,	1Dh			; 8Bh ; vlowtimpani
-		db	dHiTom,		2			; 8Ch ; midtom
-		db	dHiTom,		5			; 8Dh ; lowtom
-		db	dHiTom,		8			; 8Eh ; floortom
-		db	dVLowClap,	8			; 8Fh ; hiclap
-		db	dVLowClap,	0Bh			; 90h ; midclap
-		db	dVLowClap,	12h			; 91h ; lowclap
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Saxman Decompression algorithm 
+
+; input:
+;	hl = source address (in this case, compressed bytecode in the ROM window)
+; ---------------------------------------------------------------------------
 
 SaxDec_Z80:
     if OptimizeSoundDriver
@@ -3411,149 +3432,151 @@ SaxDec_Z80:
 		ld	de,0
     endc
 		exx
-		ld	de,z_music_data				; destination
+		ld	de,z_music_data				; destination address
 		ld	c,(hl)
 		inc	hl
-		ld	b,(hl)					; get size of compressed data
+		ld	b,(hl)					; bc = size of compressed data
 		inc	hl
-		ld	(zGetNextByte+1),hl			; modify inst. @ zGetNextByte -- set to beginning of decompression stream
+		ld	(zSaxDec_GetByte+1),hl			; self-modified code: set to beginning of decompression stream
     if OptimizeSoundDriver=0
+    	; An optimization in zSaxDec_CheckNextByte renders this unnecessary.
 		inc	bc
     endc
-		ld	(zDecEndOrGetByte+1),bc			; modify inst. @ zDecEndOrGetByte -- set to length of song, +1
+		ld	(zSaxDec_CheckNextByte+1),bc			; self-modified code: set to length of song (plus 1 if optimizations are disabled)
 
 SaxReadLoop:
-		exx						; shadow reg set
+		exx						; swap to shadow registers
     if OptimizeSoundDriver
-		srl	b					; b >> 1 (just a mask that lets us know when we need to reload)
-		jr	c,.skip_fetching_descriptor		; if next bit of 'b' is set, we still have bits left in 'c', so continue
-		; if you get here, we're out of bits in 'c'!
-		call	zDecEndOrGetByte			; get next byte -> 'a'
-		ld	c,a					; a -> 'c'
-		ld	b,7Fh					; b = 7Fh (7 new bits in 'c')
+    	; Slightly rework the read loop so that the shift of the descriptor bits is used 
+    	; to determine compressed vs uncompressed.
+		srl	b					; shift descriptor bit flags
+		jr	c,.skip_fetching_descriptor		; branch if we still have bits left
 
-.skip_fetching_descriptor:
-		srl	c					; test next bit of 'c'
+		call	zSaxDec_CheckNextByte		; get next byte of descriptor bits
+		ld	c,a					; put it in c
+		ld	b,7Fh					; 7 new bits in c (first one will be used below)
+
+	.skip_fetching_descriptor:
+		srl	c					; shift to next descriptor bit (carry flags set)
 		exx						; normal reg set
-		jr	nc,.is_dictionary_reference		; if bit not set, it's a compression bit; jump accordingly
+		jr	nc,zSaxDec_ReadCompressed		; branch if it's a compressed byte	
     else
-		srl	c					; c >> 1 (active control byte)
-		srl	b					; b >> 1 (just a mask that lets us know when we need to reload)
-		bit	0,b					; test next bit of 'b'
-		jr	nz,.skip_fetching_descriptor		; if it's set, we still have bits left in 'c', so continue
-; if you get here, we're out of bits in 'c'!
-		call	zDecEndOrGetByte			; get next byte -> 'a'
-		ld	c,a					; a -> 'c'
-		ld	b,0FFh					; b = FFh (8 new bits in 'c')
+		srl	c					; shift to next descriptor bit
+		srl	b					; shift descriptor bit flags
+		bit	0,b					; have we run out of bits?
+		jr	nz,.skip_fetching_descriptor		; branch if not
+
+		call	zSaxDec_CheckNextByte			; get next byte of descriptor bits
+		ld	c,a					; put it in c
+		ld	b,0FFh					; 8 new bits in c
 
 .skip_fetching_descriptor:
-		bit	0,c					; test next bit of 'c'
-		exx						; normal reg set
-		jr	z,.is_dictionary_reference		; if bit not set, it's a compression bit; jump accordingly
+		bit	0,c					; test current descriptor bit
+		exx						; swap to normal registers 
+		jr	z,zSaxDec_ReadCompressed		; branch if this is a compressed byte
     endc
-; if you get here, there's a non-compressed byte
-		call	zDecEndOrGetByte			; get next byte -> 'a'
-		ld	(de),a					; store it directly to the target memory address
-		inc	de					; de++
+    
+;read_uncompressed:
+		call	zSaxDec_CheckNextByte			; get uncompressed byte
+		ld	(de),a					; write to destination
+		inc	de					; increment destination pointer
 		exx						; shadow reg set
-		inc	de					; Also increase shadow-side 'de'... relative pointer only, does not point to output Z80_RAM
+		inc	de					; also increment relative pointer to destination (used for calculating dictionary match sources)
 		exx						; normal reg set
-		jr	SaxReadLoop				; loop back around...
+		jr	SaxReadLoop
+; ===========================================================================
 
-.is_dictionary_reference:
-		call	zDecEndOrGetByte			; get next byte -> 'a'
-		ld	c,a					; a -> 'c' (low byte of target address)
-		call	zDecEndOrGetByte			; get next byte -> 'a'
-		ld	b,a					; a -> 'b' (high byte of target address + count)
-		and	a,0Fh					; keep only lower four bits...
-		add	a,3					; add 3 (minimum 3 bytes are to be read in this mode)
-		push	af					; save 'a'...
-		ld	a,b					; b -> 'a' (low byte of target address)
-		rlca
-		rlca
-		rlca
-		rlca
-		and	a,0Fh					; basically (b >> 4) & 0xF (upper four bits now exclusively as lower four bits)
-		ld	b,a					; a -> 'b' (only upper four bits of value make up part of the address)
-		ld	a,c
-		add	a,12h
+zSaxDec_ReadCompressed:
+		call	zSaxDec_CheckNextByte			; get low byte of target address of match
+		ld	c,a									; store in c
+		call	zSaxDec_CheckNextByte			; get high byte of target address and length of match
+		ld	b,a									; store in b
+		and	a,0Fh
+		add	a,3					; a = length of match
+		push	af				; back up a
+		ld	a,b					; a = low byte of target address
+		rept 4
+		rlca					; shift to lower nybble
+		endr	
+		and	a,0Fh
+		ld	b,a					; b = adjusted low byte of target (only upper four bits of value make up part of the address)
+		ld	a,c					; a = high byte of target address
+		add	a,12h				
 		ld	c,a
 		adc	a,b
 		sub	a,c
 		and	a,0Fh
-		ld	b,a					; bc += 12h
-		pop	af					; restore 'a' (byte count to read; no less than 3)
+		ld	b,a					; bc = offset into the decompressed data
+		pop	af					; restore a
 		exx						; shadow reg set
-		push	de					; keep current 'de' (relative pointer) value...
-		ld	l,a					; how many bytes we will read -> 'hl'
+		push	de					; back up de (relative pointer to destination)
+		ld	l,a					; hl = length of match
 		ld	h,0
-		add	hl,de					; add current relative pointer...
-		ex	de,hl					; effectively, de += a
+		add	hl,de					; update relative pointer by adding length of match
+		ex	de,hl					; de = updated relative pointer
 		exx						; normal reg set
-		pop	hl					; shadow 'de' -> 'hl' (relative pointer, prior to all bytes read, relative)
-		or	a					; Clear carry
-		sbc	hl,bc					; hl -= bc
-		jr	nc,.is_not_zero_fill			; if result positive, jump ahead
-		ex	de,hl					; current output pointer -> 'hl'
-		ld	b,a					; how many bytes to load -> 'b'
+		pop	hl					; hl = previous relative pointer to destination
+		or	a					; clear carry flag
+		sbc	hl,bc					; subtract offset from relative pointer
+		jr	nc,zSaxDec_IsMatch		; branch if positive (dictionary match)
 
-.fill_zero_loop:
-		ld	(hl),0					; fill in zeroes that many times
+;is_zeros:		
+		ex	de,hl					; hl = absolute pointer to destination
+		ld	b,a					; b = length of zero-fill match
+
+	.fillzeros:
+		ld	(hl),0					; write zeros for length of match
 		inc	hl
-		djnz	.fill_zero_loop
+		djnz	.fillzeros
 
-		ex	de,hl					; output pointer updated
-		jr	SaxReadLoop				; loop back around...
+		ex	de,hl					; update absolute pointer to destination
+		jr	SaxReadLoop	
+; ===========================================================================
 
-.is_not_zero_fill:
-		ld	hl,z_music_data				; point at beginning of decompression point
-		add	hl,bc					; move ahead however many bytes
-		ld	c,a
-		ld	b,0
-		ldir
+zSaxDec_IsMatch:
+		ld	hl,z_music_data			; hl = start of decompressed data
+		add	hl,bc					; add offset to get source of match
+		ld	c,a						; (de already contains start of destination)
+		ld	b,0						; bc = length of match	
+		ldir						; copy match to destination
 		jr	SaxReadLoop
+; ===========================================================================
 
-
-
-; This is an ugly countdown to zero implemented in repeatedly modifying code!!
-; But basically, it starts at the full length of the song +1 (so it can decrement)
-; and waits until 'hl' decrements to zero
-; zsub_12E8
-zDecEndOrGetByte:
-		ld	hl,0					; Self-modified code: starts at full length of song +1, waits until it gets to 1...
+zSaxDec_CheckNextByte:
+		ld	hl,0					; self-modified code: set to number of bytes in compressed data (+1 if unoptimized), counts down to 1 (or zero if optimized)
     if OptimizeSoundDriver
+    	; Move this check up here to make exiting decompressor slightly faster, also eliminating the need to add +1
+    	; to the size of the compressed data.
 		ld	a,h
 		or	a,l
-		jr	z,zDecEnd				; if 'h' and 'l' both equal zero, we quit!!
+		jr	z,zSaxDec_End				; if hl = 0, we are done; exit the decompressor
     endc
-		dec	hl					; ...where this will be zero
-		ld	(zDecEndOrGetByte+1),hl			; Self-modified code: update the count in case it's not zero
+		dec	hl					; decrement remaining number of bytes
+		ld	(zSaxDec_CheckNextByte+1),hl			; update the count
     if OptimizeSoundDriver=0
 		ld	a,h
 		or	a,l
-		jr	z,zDecEnd				; if 'h' and 'l' both equal zero, we quit!!
+		jr	z,zSaxDec_End				; if hl = 0, we are done; exit the decompressor
     endc
-
-; zloc_12F3
-zGetNextByte:
-		ld	hl,0					; Self-modified code: get address of next compressed byte
-		ld	a,(hl)					; put it into -> 'a'
-		inc	hl					; next byte...
-		ld	(zGetNextByte+1),hl			; change inst @ zGetNextByte so it loads next compressed byte
-		ret						; still going...
-
-; zloc_12FC
-zDecEnd:
-		pop	hl					; throws away return address to this function call so that next 'ret' exits decompressor (we're done!)
-		ret						; Exit decompressor
-
 ; ===========================================================================
-; space for a few global variables
 
-		include_global_vars
+zSaxDec_GetByte:
+		ld	hl,0					; self-modified code: get address of next byte in compressed data
+		ld	a,(hl)					; load it
+		inc	hl					; advance to next byte
+		ld	(zSaxDec_GetByte+1),hl			; store in above instruction 
+		ret
+; ===========================================================================
 
+zSaxDec_End:
+		pop	hl					; throw away return address from call to zSaxDec_CheckNextByte
+		ret						; exit decompressor
+; ===========================================================================
 
-; end of Z80 'ROM'
+		include_global_vars		; include some global driver variables
+
+; End of Z80 'ROM'
+
 		if offset(*)>z_music_data
 			inform 3,"Your Z80 code won't fit before the music RAM. It's %hh bytes past the start of music data at %hh",\offset(*)-z_music_data,z_music_data
 		endc

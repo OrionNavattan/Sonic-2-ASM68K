@@ -286,7 +286,8 @@ evcHold:		equ 80h					; terminator for PSG envelope lists
 ; Constants for IDs are: d(name)
 ; This special macro is used to generate constants and jump tables
 ;
-; line format: \func	name, alt1, alt2 [...]
+; line format: \func	name, name of original sample if this is simply 
+; a pitch alias, sample pitch
 ; ---------------------------------------------------------------------------
 
 DefineSamples:	macro	func
@@ -306,23 +307,23 @@ DefineSamples:	macro	func
 		
 ;	elseif SonicDriverVer=2
 	
-		\func Kick					; Kick Sample
-		\func Snare					; Snare sample
-		\func Clap					; Clap sample
-		\func Scratch					; Record scratch sample	
-		\func Timpani					; Timpani sample (DO NOT USE)	
-		\func HiTom					; High tom sample
-		\func VLowClap					; Very low clap sample, apparently unused?
-		\func HiTimpani					; Timpani high pitch
-		\func MidTimpani				; Timpani middle pitch
-		\func LowTimpani				; Timpani low pitch
-		\func VLowTimpani				; Timpani very low pitch	
-		\func MidTom					; Middle tom sample
-		\func LowTom					; Low tom sample
-		\func FloorTom					; Very low tom sample
-		\func HiClap					; High clap
-		\func MidClap					; Mid clap
-		\func LowClap					; Low clap
+		\func Kick,			,			17h		; Kick Sample
+		\func Snare,		,			1			; Snare sample
+		\func Clap,			,			6		; Clap sample
+		\func Scratch,		,			8			; Record scratch sample	
+		\func Timpani,		,			1Bh			; Timpani sample (DO NOT USE DIRECTLY)	
+		\func HiTom,		,			0Ah			; High tom sample
+		\func VLowClap,		,			1Bh			; Very low clap sample, apparently unused directly?
+		\func HiTimpani,	Timpani,	12h				; Timpani high pitch
+		\func MidTimpani,	Timpani,	15h			; Timpani middle pitch
+		\func LowTimpani,	Timpani,	1Ch			; Timpani low pitch
+		\func VLowTimpani,	Timpani,	1Dh			; Timpani very low pitch	
+		\func MidTom,		HiTom,		2			; Middle tom sample
+		\func LowTom,		HiTom,		5			; Low tom sample
+		\func FloorTom,		HiTom,		8			; Very low tom sample
+		\func HiClap,		VLowClap,	8			; High clap
+		\func MidClap,		VLowClap,	0Bh			; Mid clap
+		\func LowClap,		VLowClap,	12h			; Low clap
 		
 ;	else;if SonicDriverVer>=3
 ;		if use_s3_samples|use_sk_samples|use_s3d_samples
@@ -448,10 +449,6 @@ GenSampleConst:	macro	const
 ;			endc	
 ;		endc	
 ;	endc		
-		rept narg-1
-d\const:	rs.b 0						; generate alt constants
-		shift
-		endr
 
 d\const:	rs.b 1						; generate the main constant
 

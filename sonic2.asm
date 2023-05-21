@@ -91936,7 +91936,7 @@ DecompressSoundDriver:
 
 ; ---------------------------------------------------------------------------
 ; Saxman Decompression algorithm 
-; Requires size of data as input in d7
+; Requires size of compressed data as input in d7
 
 ; input:
 ;	d7.w = size of compressed data
@@ -91964,7 +91964,7 @@ SaxDec:
 	;read_uncompressed:		
 		jsr	SaxDec_GetByte(pc)			; get uncompressed byte
 		move.b	d0,(a5)+				; write to destination
-		addq.w	#1,d5					; increment pointer to end of decompressed data
+		addq.w	#1,d5					; increment relative pointer to destination
 		bra.w	SaxDec
 ; ===========================================================================
 
@@ -91981,7 +91981,7 @@ SaxDec_ReadCompressed:
 		add.w	d0,d4					; combine high and low nybbles of target address
 		addi.w	#$12,d4
 		andi.w	#$FFF,d4				; d4 = offset into the current $1000 byte window of decompressed data
-		move.w	d5,d0					; get current offset of end of decompressed data
+		move.w	d5,d0					; get relative pointer to destination
 		andi.w	#$F000,d0
 		add.w	d0,d4					; add offset in d4
 		cmp.w	d4,d5					; is result greater than offset in d5?
@@ -92086,7 +92086,7 @@ MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		incfile	Nem_HTZFireball2
 		incfile	Nem_EHZBridge
 		incfile	Nem_Tram
-		incfile	Nem_HTZOneWayBarrier			;ArtNem_HtzValveBarrier
+		incfile	Nem_HTZOneWayBarrier			;ArtNem_HtzValveBarrier:
 		incfile	Nem_SeeSaw
 		incfile	Nem_UnusedFireball
 		incfile	Nem_HTZRock
