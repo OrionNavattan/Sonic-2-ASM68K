@@ -20964,7 +20964,7 @@ loc_FCCA:
 loc_FD22:				
 		cmpi.b	#id_ARZ,(v_zone).w
 		bne.s	loc_FD44
-		move.l	#Map_Swing_Circle_ARZ,ost_mappings(a0)
+		move.l	#Map_ARZPlats,ost_mappings(a0)
 		move.w	#tile_LevelArt,ost_tile(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#8,ost_height(a0)
@@ -22773,10 +22773,10 @@ zoneanmls:	macro	first,second
 		endm	
 
 Anml_VarIndex:
-		zoneanmls	id_Squirrel,id_Flicky		; EHZ;		0, 1
-		zoneanmls	id_Squirrel,id_Flicky		; Zone 1;	2, 3
-		zoneanmls	id_Squirrel,id_Flicky		; WZ;		4, 5
-		zoneanmls	id_Squirrel,id_Flicky		; Zone 3;	6, 7
+		zoneanmls	id_Squirrel,id_Flicky	; EHZ;		0, 1
+		zoneanmls	id_Squirrel,id_Flicky	; Zone 1;	2, 3
+		zoneanmls	id_Squirrel,id_Flicky	; WZ;		4, 5
+		zoneanmls	id_Squirrel,id_Flicky	; Zone 3;	6, 7
 		zoneanmls	id_Beaver,	id_Eagle	; MTZ 1/2;	8, 9
 		zoneanmls	id_Beaver,	id_Eagle	; MTZ 3;	$A, $B
 		zoneanmls	id_Beaver,	id_Eagle	; WFZ;		$C, $D
@@ -23726,7 +23726,7 @@ ost_casinoprz_y_pos:			rs.l 1			; $34; Y position of the ring with greater preci
 ost_casinoprz_machine_x_pos:	rs.w 1				; $38; X position of the slot machine that generated the ring
 ost_casinoprz_machine_y_pos:	rs.w 1				; $3A; Y position of the slot machine that generated the ring
 ost_casinoprz_display_delay:	rs.w 1				; $3C; number of frames remaining that ring will be displayed
-ost_casinoprz_player:			rs.w 1			; $3E; character this ring is being awarded to	
+ost_casinoprz_player:			rs.w 1			; $3E; id of player this ring is being awarded to	
 		rsobjend
 ; ===========================================================================
 
@@ -27676,7 +27676,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr SpeedBooster				; CPZ Speed Boosters
 		ptr Scenery1					; $1C; EHZ bridge stakes, HTZ tram stakes, OOZ falling oil
 		ptr BlueBalls
-		ptr ChemPlantSpinTube
+		ptr SpinTube
 		ptr CollapseFloor				; ARZ, MCZ, OOZ
 		ptr LavaBubble					; $20
 		ptr TwoPlayerResultsDisplay
@@ -27734,7 +27734,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr BossOilOcean
 		ptr BossEmeraldHill
 		ptr BossMysticCave
-		ptr BossExplosion				; $58
+		ptr ExplosionBomb				; $58
 		ptr EmeraldSpecial
 		ptr MessageSpecial
 		ptr RingLossSpecial
@@ -27747,9 +27747,9 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr Obj62
 		ptr ShadowSpecial				; not Shads, but rather the character's shadows in the Special Stages :P
 		ptr TwinStompers				; $64
-		ptr LongPlatform
+		ptr Platform5
 		ptr SpringWall
-		ptr SpinTubeMetropolis
+		ptr Teleporter
 		ptr SpikeBlock					; $68
 		ptr Nut
 		ptr Platform3
@@ -27765,7 +27765,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr Invisibarrier				; $74
 		ptr BrickAndSpikeChain
 		ptr SlidingSpikePlat
-		ptr BridgeMysticCave
+		ptr DoubleDrawbridge
 		ptr StairBlocks					; $78
 		ptr Starpost
 		ptr TrackPlatform
@@ -27774,8 +27774,8 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr HiddenBonus					; unused Sonic 1 leftover
 		ptr SuperSonicStars
 		ptr VineSwitch
-		ptr MovingVineHooks				; $80
-		ptr Drawbridge
+		ptr VineHook				; $80
+		ptr SingleDrawbridge
 		ptr PillarPlatform
 		ptr CirclingPlatform
 		ptr PinballMode					; $84
@@ -33108,7 +33108,7 @@ loc_19CD8:
 		rts	
 ; ===========================================================================
 ; Identical to DetectPlatform, except it branches to MoveWithPlatform.
-; Used only by ARZ swinging platform
+; Used only by ARZ, MCZ, and OOZ swinging platform
 DetectPlatform2:				
 		lea	($FFFFB000).w,a1
 		moveq	#3,d6
@@ -44552,7 +44552,7 @@ loc_22216:
 		rts	
 ; ===========================================================================
 
-		include "mappings/sprite/CPZ, OOZ, and WFZ Platforms.asm"
+		include "mappings/sprite/CPZ, OOZ, & WFZ Platforms.asm"
 		
 ; ===========================================================================
 		
@@ -44868,7 +44868,7 @@ JmpTo6_SpeedToPos:
 ; Object 1E - CPZ spin tube
 ; ----------------------------------------------------------------------------
 
-ChemPlantSpinTube:				
+SpinTube:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
 		move.w	off_225B8(pc,d0.w),d1
@@ -44901,10 +44901,10 @@ loc_225C2:
 		move.w	word_225BC(pc,d0.w),$2A(a0)
 
 loc_225D6:				
-		lea	($FFFFB000).w,a1
+		lea	(v_ost_player1).w,a1
 		lea	$2C(a0),a4
 		bsr.s	loc_225E8
-		lea	($FFFFB040).w,a1
+		lea	(v_ost_player2).w,a1
 		lea	$36(a0),a4
 
 loc_225E8:				
@@ -44988,7 +44988,7 @@ loc_22688:
 		add.w	d3,d2
 		add.w	d2,d2
 		andi.w	#$1E,d2
-		lea	off_22980(pc),a2
+		lea	SpinTube_Termini(pc),a2
 		adda.w	(a2,d2.w),a2
 		move.w	(a2)+,4(a4)
 		subq.w	#4,4(a4)
@@ -45169,7 +45169,7 @@ loc_22892:
 		neg.b	d0
 		move.b	#-4,1(a4)
 		add.w	d0,d0
-		lea	(off_22E88).l,a2
+		lea	(SpinTube_TubeData).l,a2
 		adda.w	(a2,d0.w),a2
 		move.w	(a2)+,d0
 		subq.w	#4,d0
@@ -45185,7 +45185,7 @@ loc_22892:
 
 loc_228C4:				
 		add.w	d0,d0
-		lea	(off_22E88).l,a2
+		lea	(SpinTube_TubeData).l,a2
 		adda.w	(a2,d0.w),a2
 		move.w	(a2)+,4(a4)
 		subq.w	#4,4(a4)
@@ -45276,157 +45276,15 @@ loc_2297A:
 		move.w	d0,2(a4)
 		rts	
 ; ===========================================================================
-off_22980:	dc.w word_22998-off_22980			; 0 
-		dc.w word_22A0E-off_22980			; 1
-		dc.w word_22A6C-off_22980			; 2
-		dc.w word_22AE2-off_22980			; 3
-		dc.w word_22B40-off_22980			; 4
-		dc.w word_22BB2-off_22980			; 5
-		dc.w word_22C10-off_22980			; 6
-		dc.w word_22C82-off_22980			; 7
-		dc.w word_22CE0-off_22980			; 8
-		dc.w word_22D56-off_22980			; 9
-		dc.w word_22DB4-off_22980			; 10
-		dc.w word_22E2A-off_22980			; 11
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-word_22998:	dc.w   $74,  $90,  $10,	 $90,  $70,  $40,  $70,	 $35 ; 0	
-		dc.w   $6F,  $28,  $6A,	 $1E,  $62,  $15,  $58,	 $11 ; 8
-		dc.w   $4A,  $10,  $40,	 $11,  $35,  $15,  $27,	 $1E ; 16
-		dc.w   $1E,  $28,  $15,	 $35,  $11,  $40,  $10,	 $50 ; 24
-		dc.w   $10,  $5E,  $12,	 $68,  $18,  $6D,  $24,	 $70 ; 32
-		dc.w   $30,  $6D,  $3D,	 $68,  $48,  $5E,  $4E,	 $50 ; 40
-		dc.w   $50,  $30,  $50,	 $22,  $52,  $17,  $5A,	 $11 ; 48
-		dc.w   $63,  $10,  $70				; 56
-word_22A0E:	dc.w   $5C,  $90,  $10,	 $90,  $70,  $40,  $70,	 $2E ; 0	
-		dc.w   $6E,  $1D,  $62,	 $13,  $53,  $10,  $40,	 $13 ; 8
-		dc.w   $2D,  $1D,  $1E,	 $2E,  $13,  $40,  $10,	 $58 ; 16
-		dc.w   $10,  $64,  $14,	 $6C,  $1A,  $70,  $28,	 $6C ; 24
-		dc.w   $36,  $64,  $3C,	 $58,  $40,  $4B,  $3D,	 $40 ; 32
-		dc.w   $38,  $36,  $32,	 $28,  $30,  $10,  $30	;	40
-word_22A6C:	dc.w   $74,  $10,  $70,	 $11,  $63,  $17,  $5A,	 $22 ; 0	
-		dc.w   $52,  $30,  $50,	 $50,  $50,  $5E,  $4E,	 $68 ; 8
-		dc.w   $48,  $6D,  $3D,	 $70,  $30,  $6D,  $24,	 $68 ; 16
-		dc.w   $18,  $5E,  $12,	 $50,  $10,  $40,  $10,	 $35 ; 24
-		dc.w   $11,  $28,  $15,	 $1E,  $1E,  $15,  $27,	 $11 ; 32
-		dc.w   $35,  $10,  $40,	 $11,  $4A,  $15,  $58,	 $1E ; 40
-		dc.w   $62,  $28,  $6A,	 $35,  $6F,  $40,  $70,	 $90 ; 48
-		dc.w   $70,  $90,  $10				; 56
-word_22AE2:	dc.w   $5C,  $10,  $30,	 $28,  $30,  $36,  $32,	 $40 ; 0	
-		dc.w   $38,  $4B,  $3D,	 $58,  $40,  $64,  $3C,	 $6C ; 8
-		dc.w   $36,  $70,  $28,	 $6C,  $1A,  $64,  $14,	 $58 ; 16
-		dc.w   $10,  $40,  $10,	 $2E,  $13,  $1D,  $1E,	 $13 ; 24
-		dc.w   $2D,  $10,  $40,	 $13,  $53,  $1D,  $62,	 $2E ; 32
-		dc.w   $6E,  $40,  $70,	 $90,  $70,  $90,  $10	;	40
-word_22B40:	dc.w   $70,  $10,  $10,	 $10,  $70,  $C0,  $70,	 $CA ; 0	
-		dc.w   $6F,  $D4,  $6C,	 $DB,  $68,  $E3,  $62,	 $E8 ; 8
-		dc.w   $5A,  $ED,  $52,	 $EF,  $48,  $F0,  $40,	 $EF ; 16
-		dc.w   $36,  $ED,  $2E,	 $E8,  $26,  $E3,  $1E,	 $DB ; 24
-		dc.w   $17,  $D4,  $14,	 $CA,  $12,  $C0,  $10,	 $B7 ; 32
-		dc.w   $11,  $AF,  $12,	 $A6,  $17,  $9E,  $1E,	 $97 ; 40
-		dc.w   $26,  $93,  $2E,	 $91,  $36,  $90,  $40,	 $90 ; 48
-		dc.w   $70					; 56
-word_22BB2:	dc.w   $5C,  $10,  $10,	 $10,  $70,  $C0,  $70,	 $D2 ; 0	
-		dc.w   $6E,  $E3,  $62,	 $ED,  $53,  $F0,  $40,	 $ED ; 8
-		dc.w   $2D,  $E3,  $1E,	 $D2,  $13,  $C0,  $10,	 $A8 ; 16
-		dc.w   $10,  $9C,  $14,	 $94,  $1A,  $90,  $28,	 $94 ; 24
-		dc.w   $36,  $9C,  $3C,	 $A8,  $40,  $B5,  $3D,	 $C0 ; 32
-		dc.w   $38,  $CA,  $32,	 $D8,  $30,  $F0,  $30	;	40
-word_22C10:	dc.w   $70,  $90,  $70,	 $90,  $40,  $91,  $36,	 $93 ; 0	
-		dc.w   $2E,  $97,  $26,	 $9E,  $1E,  $A6,  $17,	 $AF ; 8
-		dc.w   $12,  $B7,  $11,	 $C0,  $10,  $CA,  $12,	 $D4 ; 16
-		dc.w   $14,  $DB,  $17,	 $E3,  $1E,  $E8,  $26,	 $ED ; 24
-		dc.w   $2E,  $EF,  $36,	 $F0,  $40,  $EF,  $48,	 $ED ; 32
-		dc.w   $52,  $E8,  $5A,	 $E3,  $62,  $DB,  $68,	 $D4 ; 40
-		dc.w   $6C,  $CA,  $6F,	 $C0,  $70,  $10,  $70,	 $10 ; 48
-		dc.w   $10					; 56
-word_22C82:	dc.w   $5C,  $F0,  $30,	 $D8,  $30,  $CA,  $32,	 $C0 ; 0	
-		dc.w   $38,  $B5,  $3D,	 $A8,  $40,  $9C,  $3C,	 $94 ; 8
-		dc.w   $36,  $90,  $28,	 $94,  $1A,  $9C,  $14,	 $A8 ; 16
-		dc.w   $10,  $C0,  $10,	 $D2,  $13,  $E3,  $1E,	 $ED ; 24
-		dc.w   $2D,  $F0,  $40,	 $ED,  $53,  $E3,  $62,	 $D2 ; 32
-		dc.w   $6E,  $C0,  $70,	 $10,  $70,  $10,  $10	;	40
-word_22CE0:	dc.w   $74, $110,  $10,	$110,  $70,  $40,  $70,	 $35 ; 0	
-		dc.w   $6F,  $28,  $6A,	 $1E,  $62,  $15,  $58,	 $11 ; 8
-		dc.w   $4A,  $10,  $40,	 $11,  $35,  $15,  $27,	 $1E ; 16
-		dc.w   $1E,  $28,  $15,	 $35,  $11,  $40,  $10,	 $50 ; 24
-		dc.w   $10,  $5E,  $12,	 $68,  $18,  $6D,  $24,	 $70 ; 32
-		dc.w   $30,  $6D,  $3D,	 $68,  $48,  $5E,  $4E,	 $50 ; 40
-		dc.w   $50,  $30,  $50,	 $22,  $52,  $17,  $5A,	 $11 ; 48
-		dc.w   $63,  $10,  $70				; 56
-word_22D56:	dc.w   $5C, $110,  $10,	$110,  $70,  $40,  $70,	 $2E ; 0	
-		dc.w   $6E,  $1D,  $62,	 $13,  $53,  $10,  $40,	 $13 ; 8
-		dc.w   $2D,  $1D,  $1E,	 $2E,  $13,  $40,  $10,	 $58 ; 16
-		dc.w   $10,  $64,  $14,	 $6C,  $1A,  $70,  $28,	 $6C ; 24
-		dc.w   $36,  $64,  $3C,	 $58,  $40,  $4B,  $3D,	 $40 ; 32
-		dc.w   $38,  $36,  $32,	 $28,  $30,  $10,  $30	;	40
-word_22DB4:	dc.w   $74,  $10,  $70,	 $11,  $63,  $17,  $5A,	 $22 ; 0	
-		dc.w   $52,  $30,  $50,	 $50,  $50,  $5E,  $4E,	 $68 ; 8
-		dc.w   $48,  $6D,  $3D,	 $70,  $30,  $6D,  $24,	 $68 ; 16
-		dc.w   $18,  $5E,  $12,	 $50,  $10,  $40,  $10,	 $35 ; 24
-		dc.w   $11,  $28,  $15,	 $1E,  $1E,  $15,  $27,	 $11 ; 32
-		dc.w   $35,  $10,  $40,	 $11,  $4A,  $15,  $58,	 $1E ; 40
-		dc.w   $62,  $28,  $6A,	 $35,  $6F,  $40,  $70,	$110 ; 48
-		dc.w   $70, $110,  $10				; 56
-word_22E2A:	dc.w   $5C,  $10,  $30,	 $28,  $30,  $36,  $32,	 $40 ; 0	
-		dc.w   $38,  $4B,  $3D,	 $58,  $40,  $64,  $3C,	 $6C ; 8
-		dc.w   $36,  $70,  $28,	 $6C,  $1A,  $64,  $14,	 $58 ; 16
-		dc.w   $10,  $40,  $10,	 $2E,  $13,  $1D,  $1E,	 $13 ; 24
-		dc.w   $2D,  $10,  $40,	 $13,  $53,  $1D,  $62,	 $2E ; 32
-		dc.w   $6E,  $40,  $70,	$110,  $70, $110,  $10	;	40
-off_22E88:	dc.w byte_22EA6-off_22E88			; 0 
-		dc.w byte_22EA6-off_22E88			; 1
-		dc.w byte_22EBC-off_22E88			; 2
-		dc.w byte_22EE6-off_22E88			; 3
-		dc.w byte_22EFC-off_22E88			; 4
-		dc.w byte_22F12-off_22E88			; 5
-		dc.w byte_22F28-off_22E88			; 6
-		dc.w byte_22F3A-off_22E88			; 7
-		dc.w byte_22F54-off_22E88			; 8
-		dc.w byte_22F6E-off_22E88			; 9
-		dc.w word_22F80-off_22E88			; 10
-		dc.w word_22F92-off_22E88			; 11
-		dc.w word_22FAC-off_22E88			; 12
-		dc.w word_22FC2-off_22E88			; 13
-		dc.w word_22FD0-off_22E88			; 14
-byte_22EA6:	dc.b   0,$14,  7,$90,  3,$B0,  7,$10,  3,$B0,  7,$10,  6,$B0, $A,$90 ; 0
-					
-		dc.b   6,$B0, $A,$90,  6,$70			; 16
-byte_22EBC:	dc.b   0,$28,  7,$90,  3,$F0,  7,$90,  4,$B0, $A,  0,  4,$B0, $C,$10 ; 0
-					
-		dc.b   4,$B0, $C,$10,  3,$30, $D,$90,  3,$30, $D,$90,  1,$B0, $F,$10 ; 16
-		dc.b   1,$B0, $F,$10,  2,$B0, $F,$90,  2,$B0	; 32
-byte_22EE6:	dc.b   0,$14, $A,$F0,  6,$30, $E,$90,  6,$30, $E,$90,  6,$B0, $F,$90 ; 0
-					
-		dc.b   6,$B0, $F,$90,  6,$70			; 16
-byte_22EFC:	dc.b   0,$14, $F,$90,  2,$F0, $F,$90,  4,$B0, $F,$10,  4,$B0, $F,$10 ; 0
-					
-		dc.b   6,$30, $F,$90,  6,$30			; 16
-byte_22F12:	dc.b   0,$14,$14,$10,  5,$30,$11,$90,  5,$30,$11,$90,  6,$B0,$14,$10 ; 0
-					
-		dc.b   6,$B0,$14,$10,  5,$70			; 16
-byte_22F28:	dc.b   0,$10,$1A,$F0,  5,$30,$1B,$90,  5,$30,$1B,$90,  3,$30,$1E,$10 ; 0
-					
-		dc.b   3,$30					; 16
-byte_22F3A:	dc.b   0,$18,$1A,$90,  5,$70,$1A,$90,  5,$B0,$1C,$10,  5,$B0,$1C,$10 ; 0
-					
-		dc.b   4,$30,$1E,$10,  4,$30,$1E,$10,  3,$70	; 16
-byte_22F54:	dc.b   0,$18,$24,$90,  3,$70,$24,$90,  3,$D0,$23,$90,  3,$D0,$23,$90 ; 0
-					
-		dc.b   5,$D0,$25,$10,  5,$D0,$25,$10,  5,$70	; 16
-byte_22F6E:	dc.b   0,$10,$24,$F0,  3,$30,$25,$90,  3,$30,$25,$90,  5,$30,$25,$70 ; 0
-					
-		dc.b   5,$30					; 16
-word_22F80:	dc.w   $10, $310, $330,	$290, $330, $290, $230,	$490 ; 0	
-		dc.w  $230					; 8
-word_22F92:	dc.w   $18, $310, $370,	$310, $3B0, $410, $3B0,	$410 ; 0	
-		dc.w  $2B0, $490, $2B0,	$490, $270		; 8
-word_22FAC:	dc.w   $14, $490, $6F0,	$490, $730, $690, $730,	$890 ; 0	
-		dc.w  $730, $890, $6F0				; 8
-word_22FC2:	dc.w	$C, $BF0, $330,	$D90, $330, $D90, $2F0	;	0 
-word_22FD0:	dc.w   $1C, $D90, $2B0,	$C90, $2B0, $C90,  $B0,	$E80 ; 0	
-		dc.w   $B0,$1110,  $B0,$1110, $230,$10F0, $230	;	8
+; Generate size entries for the spintube and MTZ teleport position arrays.
+tubedatasize:	macro	*
+\* equ *
+		dc.w	sizeof_\*-2
+		endm	
+
+		include "misc/CPZ Spin Tube Termini.asm"
+		include "misc/CPZ Spin Tube Locations.asm"
+		
 ; ===========================================================================
 
 	if Revision<2
@@ -45465,7 +45323,7 @@ loc_23014:
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#8,ost_height(a0)
 		move.b	#8,ost_width(a0)
-		move.l	#Map_23254,ost_mappings(a0)
+		move.l	#Map_Fireball2,ost_mappings(a0)
 		move.w	#tile_Nem_HTZFireball2+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo17_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -45486,7 +45344,7 @@ loc_23014:
 		move.w	d0,$34(a0)
 
 loc_23076:				
-		lea	(off_23236).l,a1
+		lea	(Ani_LavaBub).l,a1
 		jsrto	AnimateSprite,JmpTo4_AnimateSprite
 		jmpto	DespawnObject,JmpTo8_DespawnObject
 ; ===========================================================================
@@ -45509,7 +45367,7 @@ loc_230A6:
 		addq.b	#2,ost_primary_routine(a0)
 
 loc_230B4:				
-		lea	(off_23236).l,a1
+		lea	(Ani_LavaBub).l,a1
 		jsrto	AnimateSprite,JmpTo4_AnimateSprite
 		jmpto	DespawnObject,JmpTo8_DespawnObject
 ; ===========================================================================
@@ -45541,7 +45399,7 @@ loc_2311E:
 		move.w	#1,ost_anim(a0)
 
 loc_23136:				
-		lea	(off_23236).l,a1
+		lea	(Ani_LavaBub).l,a1
 		jsrto	AnimateSprite,JmpTo4_AnimateSprite
 		jmpto	DespawnObject,JmpTo8_DespawnObject
 ; ===========================================================================
@@ -45576,7 +45434,7 @@ loc_23176:
 		move.b	#2,ost_anim(a0)
 		move.b	#4,ost_frame(a0)
 		move.w	#0,ost_y_vel(a0)
-		move.l	#Map_23294,ost_mappings(a0)
+		move.l	#Map_Fireball1,ost_mappings(a0)
 		move.w	#(vram_HTZFireball1/sizeof_cell)+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo17_Adjust2PArtPointer
 		move.b	#0,ost_frame(a0)
@@ -45617,7 +45475,7 @@ loc_23214:
 		add.w	d1,ost_y_pos(a1)
 
 loc_23224:				
-		lea	(off_23236).l,a1
+		lea	(Ani_LavaBub).l,a1
 		jsrto	AnimateSprite,JmpTo4_AnimateSprite
 		jmpto	DespawnObject,JmpTo8_DespawnObject
 ; ===========================================================================
@@ -45625,50 +45483,18 @@ loc_23224:
 loc_23232:				
 		jmpto	DeleteObject,JmpTo21_DeleteObject
 ; ===========================================================================
-off_23236:	dc.w byte_2323C-off_23236			; 0 
-		dc.w byte_23243-off_23236			; 1
-		dc.w byte_23246-off_23236			; 2
+Ani_LavaBub:	index offset(*)
+		ptr byte_2323C			; 0 
+		ptr byte_23243			; 1
+		ptr byte_23246			; 2
 byte_2323C:	dc.b  $B,  2,  3,$FC,  4,$FD,  1		; 0 
 byte_23243:	dc.b $7F,  5,$FF				; 0 
 byte_23246:	dc.b   5,  4,  5,  2,  3,  0,  1,  0,  1,  2,  3,  4,  5,$FC ; 0
 					
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_23254:				
-		dc.w word_23260-Map_23254			; 0
-		dc.w word_2326A-Map_23254			; 1
-		dc.w word_23274-Map_23254			; 2
-		dc.w word_2327E-Map_23254			; 3
-		dc.w word_23288-Map_23254			; 4
-		dc.w word_23292-Map_23254			; 5
-word_23260:	dc.w 1			
-		dc.w $F805,    0,    0,$FFF8			; 0
-word_2326A:	dc.w 1			
-		dc.w $F805,    4,    2,$FFF8			; 0
-word_23274:	dc.w 1			
-		dc.w $F905,    8,    4,$FFF8			; 0
-word_2327E:	dc.w 1			
-		dc.w $F605,    8,    4,$FFF8			; 0
-word_23288:	dc.w 1			
-		dc.w $F605,   $C,    6,$FFF8			; 0
-word_23292:	dc.w 0			
-; -------------------------------------------------------------------------------
-; Unknown Sprite Mappings
-; -------------------------------------------------------------------------------
-Map_23294:				
-		dc.w byte_2329E-word_23292			; 0
-		dc.w byte_232A8-word_23292			; 1
-		dc.w byte_232B2-word_23292			; 2
-		dc.w byte_232BC-word_23292			; 3
-		dc.w byte_232C6-word_23292			; 4
-byte_2329E:	dc.b   0,$3E,  0,  1,$F0,  7,  0,  0,  0,  0	; 0	
-byte_232A8:	dc.b $FF,$F8,  0,  1,$F0,  7,  8,  0,  8,  0	; 0	
-byte_232B2:	dc.b $FF,$F8,  0,  1,$F0,  7,  0,  8,  0,  4	; 0	
-byte_232BC:	dc.b $FF,$F8,  0,  1,$F0,  7,  8,  8,  8,  4	; 0	
-byte_232C6:	dc.b $FF,$F8,  0,  1,  0,  5,  0,$10,  0,  8,$FF,$F8,  0,  1,  0,  5 ; 0
-					
-		dc.b   8,$10,  8,  8,$FF,$F8			; 16
+
+		include "mappings/sprite/Fireball 2.asm"
+		include "mappings/sprite/Fireball 1.asm"
+	
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -45705,21 +45531,18 @@ off_2330E:	index offset(*),,2
 		ptr loc_234DC					; 4
 
 byte_23314:	
-		dc.b $24					; 0
-		dc.b   0					; 1
-		dc.b $20					; 2
-		dc.b   2					; 3
-		dc.b $18					; 4
-		dc.b   4					; 5
-		dc.b $10					; 6
-		dc.b   6					; 7
-		dc.b   8					; 8
-		dc.b   8					; 9
+		;    ost_height
+		;	 ost_frame
+		dc.b $24, 0	; 0
+		dc.b $20, 2	; 2
+		dc.b $18, 4	; 4
+		dc.b $10, 6	; 6
+		dc.b   8, 8	; 8
 ; ===========================================================================
 
 loc_2331E:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_236FA,ost_mappings(a0)
+		move.l	#Map_SmashGround,ost_mappings(a0)
 		move.w	#0+tile_pal3+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo18_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -45939,13 +45762,13 @@ off_23528:	index offset(*),,2
 
 loc_2352E:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_23852,ost_mappings(a0)
+		move.l	#Map_BreakRock,ost_mappings(a0)
 		move.w	#tile_Nem_HTZRock+tile_pal3,ost_tile(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.l	#byte_23680,$3C(a0)
 		cmpi.b	#id_CPZ,(v_zone).w
 		bne.s	loc_23572
-		move.l	#Map_23886,ost_mappings(a0)
+		move.l	#Map_SpinTubeBlock,ost_mappings(a0)
 		move.w	#tile_Nem_CPZMetalBlock+tile_pal4,ost_tile(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.l	#byte_23698,$3C(a0)
@@ -46046,12 +45869,20 @@ loc_2366A:
 		jmpto	DisplaySprite,JmpTo12_DisplaySprite
 ; ===========================================================================
 byte_23680:	
-		dc.b $FE,  0,$FE,  0,  0,  0,$FD,$80,  2,  0,$FE,  0,$FE,$40,$FE,$40 ; 0			
-		dc.b   0,  0,$FE,  0,  1,$C0,$FE,$40		; 16
+		;    x_vel y_vel
+		dc.w -$200,-$200
+		dc.w     0,-$280
+		dc.w  $200,-$200
+		dc.w -$1C0,-$1C0
+		dc.w     0,-$200
+		dc.w  $1C0,-$1C0
 		
 byte_23698:	
-		dc.b $FF,  0,$FE,  0,  1,  0,$FE,  0,$FF,$40,$FE,$40,  0,$C0,$FE,$40 ; 0
-					
+		;    x_vel y_vel
+		dc.w -$100,-$200
+		dc.w  $100,-$200
+		dc.w  -$C0,-$1C0
+		dc.w   $C0,-$1C0					
 ; ===========================================================================
 
 loc_236A8:				
@@ -46083,85 +45914,16 @@ locret_236F0:
 		rts	
 ; ===========================================================================
 word_236F2:	
-		dc.w	$A					; 0 
-		dc.w   $14					; 1
-		dc.w   $32					; 2
-		dc.w   $64					; 3
+		dc.w	10
+		dc.w	20	; 1
+		dc.w	50	; 2
+		dc.w   100	; 3
 ; ===========================================================================
-Map_236FA:				
-		dc.w word_2370E-Map_236FA			; 0
-		dc.w word_23758-Map_236FA			; 1
-		dc.w word_237AA-Map_236FA			; 2
-		dc.w word_237AA-Map_236FA			; 3
-		dc.w word_237EC-Map_236FA			; 4
-		dc.w word_237EC-Map_236FA			; 5
-		dc.w word_2381E-Map_236FA			; 6
-		dc.w word_2381E-Map_236FA			; 7
-		dc.w word_23840-Map_236FA			; 8
-		dc.w word_23840-Map_236FA			; 9
-word_2370E:	dc.w 9			
-		dc.w $D80D,  $12,    9,$FFF0			; 0
-		dc.w $E805,  $4A,  $25,$FFF0			; 4
-		dc.w $E805,  $4A,  $25,	   0			; 8
-		dc.w $F805,  $4E,  $27,$FFF0			; 12
-		dc.w $F805,  $4E,  $27,	   0			; 16
-		dc.w  $805,  $52,  $29,$FFF0			; 20
-		dc.w  $805,  $52,  $29,	   0			; 24
-		dc.w $1805,  $52,  $29,$FFF0			; 28
-		dc.w $1805,  $52,  $29,	   0			; 32
-word_23758:	dc.w $A			
-		dc.w $D805,  $12,    9,$FFF0			; 0
-		dc.w $D805,  $16,   $B,	   0			; 4
-		dc.w $E805,  $4A,  $25,$FFF0			; 8
-		dc.w $E805,  $4A,  $25,	   0			; 12
-		dc.w $F805,  $4E,  $27,$FFF0			; 16
-		dc.w $F805,  $4E,  $27,	   0			; 20
-		dc.w  $805,  $52,  $29,$FFF0			; 24
-		dc.w  $805,  $52,  $29,	   0			; 28
-		dc.w $1805,  $52,  $29,$FFF0			; 32
-		dc.w $1805,  $52,  $29,	   0			; 36
-word_237AA:	dc.w 8			
-		dc.w $E005,  $4A,  $25,$FFF0			; 0
-		dc.w $E005,  $4A,  $25,	   0			; 4
-		dc.w $F005,  $4E,  $27,$FFF0			; 8
-		dc.w $F005,  $4E,  $27,	   0			; 12
-		dc.w	 5,  $52,  $29,$FFF0			; 16
-		dc.w	 5,  $52,  $29,	   0			; 20
-		dc.w $1005,  $52,  $29,$FFF0			; 24
-		dc.w $1005,  $52,  $29,	   0			; 28
-word_237EC:	dc.w 6			
-		dc.w $E805,  $4E,  $27,$FFF0			; 0
-		dc.w $E805,  $4E,  $27,	   0			; 4
-		dc.w $F805,  $52,  $29,$FFF0			; 8
-		dc.w $F805,  $52,  $29,	   0			; 12
-		dc.w  $805,  $52,  $29,$FFF0			; 16
-		dc.w  $805,  $52,  $29,	   0			; 20
-word_2381E:	dc.w 4			
-		dc.w $F005,  $52,  $29,$FFF0			; 0
-		dc.w $F005,  $52,  $29,	   0			; 4
-		dc.w	 5,  $52,  $29,$FFF0			; 8
-		dc.w	 5,  $52,  $29,	   0			; 12
-word_23840:	dc.w 2			
-		dc.w $F805,  $52,  $29,$FFF0			; 0
-		dc.w $F805,  $52,  $29,	   0			; 4
-; ===========================================================================
-Map_23852:				
-		dc.w word_23854-Map_23852
-word_23854:	dc.w 6			
-		dc.w $F005,    0,    0,$FFE8			; 0
-		dc.w $F005,    4,    2,$FFF8			; 4
-		dc.w $F005,    8,    4,	   8			; 8
-		dc.w	 5,   $C,    6,$FFE8			; 12
-		dc.w	 5,  $10,    8,$FFF8			; 16
-		dc.w	 5,  $10,    8,	   8			; 20
-; ===========================================================================
-Map_23886:				
-		dc.w word_23888-Map_23886
-word_23888:	dc.w 4			
-		dc.w $F005,    0,    0,$FFF0			; 0
-		dc.w $F005, $800, $800,	   0			; 4
-		dc.w	 5,    0,    0,$FFF0			; 8
-		dc.w	 5, $800, $800,	   0			; 12
+
+		include "mappings/sprite/HTZ Smashable Ground.asm"
+		include "mappings/sprite/HTZ Breakable Rock.asm"
+		include "mappings/sprite/CPZ Spin Tube Block.asm"		
+
 ; ===========================================================================
 
 	if Revision<2
@@ -46218,6 +45980,7 @@ byte_238EE:
 		dc.b   0					; 7
 		dc.b $C0					; 8
 		dc.b   0					; 9
+		even
 ; ===========================================================================
 
 loc_238F8:				
@@ -46247,7 +46010,7 @@ loc_2392E:
 		bclr	#7,2(a2,d0.w)
 
 loc_23940:				
-		bra.w	JmpTo23_DeleteObject
+		jmpto	DeleteObject,JmpTo23_DeleteObject
 ; ===========================================================================
 
 loc_23944:				
@@ -46275,8 +46038,8 @@ loc_23972:
 		move.w	#$80,d2	
 		move.w	#$81,d3	
 		move.w	ost_x_pos(a0),d4
-		bsr.w	JmpTo_SolidObject_NoRenderChk
-		bra.w	JmpTo_DropOnFloor
+		jsrto	SolidObject_NoRenderChk,JmpTo_SolidObject_NoRenderChk
+		jmpto	DropOnFloor,JmpTo_DropOnFloor
 ; ===========================================================================
 
 loc_2398A:				
@@ -46284,8 +46047,8 @@ loc_2398A:
 		move.w	#$78,d2
 		move.w	#$79,d3
 		move.w	ost_x_pos(a0),d4
-		bsr.w	JmpTo_SolidObject_NoRenderChk
-		bsr.w	JmpTo_DropOnFloor
+		jsrto	SolidObject_NoRenderChk,JmpTo_SolidObject_NoRenderChk
+		jsrto	DropOnFloor,JmpTo_DropOnFloor
 
 loc_239A2:				
 		btst	#3,ost_primary_status(a0)
@@ -46293,7 +46056,7 @@ loc_239A2:
 		move.l	a0,-(sp)
 		movea.l	a0,a1
 		lea	($FFFFB000).w,a0
-		bsr.w	JmpTo_React_ChkHurt
+		jsrto	React_ChkHurt,JmpTo_React_ChkHurt
 		movea.l	(sp)+,a0
 
 loc_239B8:				
@@ -46302,7 +46065,7 @@ loc_239B8:
 		move.l	a0,-(sp)
 		movea.l	a0,a1
 		lea	($FFFFB040).w,a0
-		bsr.w	JmpTo_React_ChkHurt
+		jsrto	React_ChkHurt,JmpTo_React_ChkHurt
 		movea.l	(sp)+,a0
 
 locret_239CE:				
@@ -46314,8 +46077,8 @@ loc_239D0:
 		move.w	#$78,d2
 		move.w	#$79,d3
 		move.w	ost_x_pos(a0),d4
-		bsr.w	JmpTo_SolidObject_NoRenderChk
-		bsr.w	JmpTo_DropOnFloor
+		jsrto	SolidObject_NoRenderChk,JmpTo_SolidObject_NoRenderChk
+		jsrto	DropOnFloor,JmpTo_DropOnFloor
 		bra.s	loc_239A2
 ; ===========================================================================
 
@@ -46324,8 +46087,8 @@ loc_239EA:
 		move.w	#$2E,d2
 		move.w	ost_x_pos(a0),d4
 		lea	(byte_23A04).l,a2
-		bsr.w	JmpTo_SolidObject_Heightmap
-		bra.w	JmpTo_DropOnFloor
+		jsrto	SolidObject_Heightmap,JmpTo_SolidObject_Heightmap
+		jmpto	DropOnFloor,JmpTo_DropOnFloor
 ; ===========================================================================
 byte_23A04:	
 		dc.b $30,$30,$30,$30,$30,$30,$30,$30,$2F,$2F,$2E,$2E,$2D,$2D,$2C,$2C ; 0			
@@ -46343,8 +46106,10 @@ byte_23A04:
 		dc.b $D3,$D3,$D2,$D2,$D1,$D1,$D0,$D0,$D0,$D0,$D0,$D0 ; 192
 ; ===========================================================================
 
-
-
+	if RemoveJmpTos
+JmpTo2_DespawnObject3:				
+		jmp	(DespawnObject3).l	
+	else
 JmpTo23_DeleteObject:				
 		jmp	(DeleteObject).l
 JmpTo_React_ChkHurt:				
@@ -46358,9 +46123,12 @@ JmpTo_SolidObject_NoRenderChk:
 JmpTo_SolidObject_Heightmap:				
 		jmp	(SolidObject_Heightmap).l
 		
+		align 4
+	endc	
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 33 - OOZ Burner platform
+; Object 33 - OOZ burner platform
 ; ----------------------------------------------------------------------------
 
 BurnerPlatform:				
@@ -46377,7 +46145,7 @@ off_23B02:	index offset(*),,2
 
 loc_23B08:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_23DDC,ost_mappings(a0)
+		move.l	#Map_BurnPlat,ost_mappings(a0)
 		move.w	#tile_Nem_BurnerLid+tile_pal4,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
@@ -46397,7 +46165,7 @@ loc_23B48:
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		subi.w	#$10,ost_y_pos(a1)
-		move.l	#off_23DF0,ost_mappings(a1)
+		move.l	#Map_Burner,ost_mappings(a1)
 		move.w	#tile_Nem_Burner+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#4,ost_priority(a1)
@@ -46434,7 +46202,7 @@ loc_23BC6:
 		move.w	#$78,$36(a0)
 		move.l	#-$96800,$32(a0)
 		addq.b	#2,ost_secondary_routine(a0)
-		move.w	#$D4,d0	
+		move.w	#sfx_LidPop,d0	
 		jsr	(PlaySoundLocal).l
 
 locret_23BE8:				
@@ -46496,7 +46264,7 @@ loc_23C52:
 		bclr	#tile_hi_bit,ost_tile(a1)
 		move.l	#-$96800,$32(a0)
 		addq.b	#2,ost_secondary_routine(a0)
-		move.w	#$D4,d0	
+		move.w	#sfx_LidPop,d0	
 		jsr	(PlaySoundLocal).l
 
 locret_23C9E:				
@@ -46530,7 +46298,7 @@ loc_23CA0:
 		bclr	#tile_hi_bit,ost_tile(a2)
 		move.l	#-$96800,$32(a0)
 		addq.b	#2,ost_secondary_routine(a0)
-		move.w	#$D4,d0	
+		move.w	#sfx_LidPop,d0	
 		jsr	(PlaySoundLocal).l
 
 locret_23D1E:				
@@ -46565,7 +46333,7 @@ loc_23D60:
 		move.w	#-$1000,ost_y_vel(a1)
 		bclr	#3,ost_primary_status(a1)
 		move.b	#0,$2A(a1)
-		move.w	#$CC,d0	
+		move.w	#sfx_Spring,d0	
 		jsr	(PlaySoundLocal).l
 
 locret_23D96:				
@@ -46583,7 +46351,7 @@ loc_23D9A:
 		cmpi.w	#$14,d0
 		blt.s	loc_23DC2
 		move.b	#id_col_8x4+id_col_hurt,ost_col_type(a0)
-		lea	(off_23DD0).l,a1
+		lea	(Ani_BurnerFlame).l,a1
 		jsr	(AnimateSprite).l
 		jmpto	DespawnObject,JmpTo10_DespawnObject
 ; ===========================================================================
@@ -46594,29 +46362,17 @@ loc_23DC2:
 		rts	
 ; ===========================================================================
 
-off_23DD0:	index offset(*)
+Ani_BurnerFlame:	index offset(*)
 	ptr byte_23DD2
 
 byte_23DD2:
-		dc.b   2,  2,  0,  2,  0,  2,  0,  1,$FF,  0	; 0	
+		dc.b   2,  2,  0,  2,  0,  2,  0,  1,$FF
+		even
 ; ===========================================================================
-Map_23DDC:				
-		dc.w word_23DDE-Map_23DDC
-word_23DDE:	dc.w 2			
-		dc.w $F809,    0,    0,$FFE8			; 0
-		dc.w $F809, $800, $800,	   0			; 4
-off_23DF0:	dc.w word_23DF6-off_23DF0			; 0 
-		dc.w word_23E08-off_23DF0			; 1
-		dc.w word_23E1A-off_23DF0			; 2
-word_23DF6:	dc.w 2			
-		dc.w $F806,    0,    0,$FFF0			; 0
-		dc.w $F806, $800, $800,	   0			; 4
-word_23E08:	dc.w 2			
-		dc.w $F007,    6,    3,$FFF0			; 0
-		dc.w $F007, $806, $803,	   0			; 4
-word_23E1A:	dc.w 2			
-		dc.w	 5,   $E,    7,$FFF0			; 0
-		dc.w	 5, $80E, $807,	   0			; 4
+		
+		include "mappings/sprite/OOZ Burner Platform.asm"
+		include "mappings/sprite/OOZ Burner Flame.asm"
+		
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -46689,7 +46445,7 @@ loc_23E84:
 		move.b	#1,$36(a1)
 
 loc_23EA8:				
-		move.l	#Map_23FE0,ost_mappings(a1)
+		move.l	#Map_RailSpikes,ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#4,ost_priority(a1)
@@ -46764,7 +46520,7 @@ loc_23F66:
 		cmp.w	$32(a0),d1
 		bne.s	loc_23F88
 		move.b	#1,$36(a0)
-		move.w	#$D5,d0	
+		move.w	#sfx_SlidingSpike,d0	
 		jsr	(PlaySoundLocal).l
 
 loc_23F88:				
@@ -46778,7 +46534,7 @@ loc_23F8E:
 		cmp.w	$34(a0),d1
 		bne.s	loc_23FAA
 		move.b	#0,$36(a0)
-		move.w	#$D5,d0	
+		move.w	#sfx_SlidingSpike,d0	
 		jsr	(PlaySoundLocal).l
 
 loc_23FAA:				
@@ -46796,22 +46552,15 @@ loc_23FB0:
 		bne.s	locret_23FDE
 		eori.b	#1,$36(a0)
 		eori.b	#1,$36(a1)
-		move.w	#$D5,d0	
+		move.w	#sfx_SlidingSpike,d0	
 		jsr	(PlaySoundLocal).l
 
 locret_23FDE:				
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_23FE0:				
-		dc.w word_23FE2-Map_23FE0
-word_23FE2:	dc.w 6			
-word_23FE4:	dc.w $E005,    0,    0,$FFE8			; 0
-		dc.w $D80F,    4,    2,$FFF8			; 4
-		dc.w $F809,  $14,   $A,$FFE8			; 8
-		dc.w $F809,  $1A,   $D,	   0			; 12
-		dc.w $1005,$1000,$1000,$FFE8			; 16
-		dc.w  $80F,$1004,$1002,$FFF8			; 20
+
+		include "mappings/sprite/OOZ Sliding Spikes.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -46904,11 +46653,11 @@ loc_240BE:
 loc_240D6:				
 		not.b	d1
 		and.b	d1,ost_primary_status(a0)
-		move.l	a0,-(sp)
+		pushr.l	a0
 		movea.l	a0,a2
 		movea.l	a1,a0
 		jsrto	KillCharacter,JmpTo3_KillCharacter
-		movea.l	(sp)+,a0
+		popr.l	a0
 
 locret_240E8:				
 		rts	
@@ -46947,14 +46696,24 @@ off_2410A:	index offset(*),,2
 
 loc_24110:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2451A,ost_mappings(a0)
+		move.l	#Map_PSpring,ost_mappings(a0)
 		move.w	#tile_Nem_PushSpring+tile_pal3,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
 		move.b	ost_subtype(a0),d0
 		lsr.w	#3,d0
+    if FixBugs
+		; This bugfix is a bit of a hack: ideally, the Oil Ocean Zone Act 2
+		; object layout should be corrected to not contain instances of this
+		; object with an invalid subtype, but this will have to do.
+		andi.w	#2,d0
+  	 else
+		; Some instances of this object use an invalid subtype of $30, 
+		; which results in d0 being 6 here. Due to sheer luck, 
+		; this ends up branching to 'loc_2414A' instead of crashing the game.
 		andi.w	#$E,d0
+    endc
 		move.w	off_24146(pc,d0.w),d0
 		jmp	off_24146(pc,d0.w)
 ; ===========================================================================
@@ -47061,7 +46820,7 @@ loc_2425C:
 		move.b	#$F,$3F(a1)
 
 loc_2426E:				
-		move.w	#$CC,d0	
+		move.w	#sfx_Spring,d0	
 		jmp	(PlaySound).l
 ; ===========================================================================
 
@@ -47281,7 +47040,7 @@ loc_244A8:
 loc_244BA:				
 		bclr	#5,ost_primary_status(a1)
 		move.b	#1,ost_anim_restart(a1)
-		move.w	#$CC,d0	
+		move.w	#sfx_Spring,d0	
 		jmp	(PlaySound).l
 ; ===========================================================================
 
@@ -47303,210 +47062,9 @@ byte_244F8:
 		dc.b $13,$13,$12,$11,$10, $F, $E, $D, $C, $B, $A, $A, $A, $A, $A, $A ; 16
 		dc.b  $A,$FF					; 32
 ; ===========================================================================
-Map_2451A:				
-		dc.w word_24554-Map_2451A			; 0
-		dc.w word_2457E-Map_2451A			; 1
-		dc.w word_245A8-Map_2451A			; 2
-		dc.w word_245D2-Map_2451A			; 3
-		dc.w word_245FC-Map_2451A			; 4
-		dc.w word_24626-Map_2451A			; 5
-		dc.w word_24650-Map_2451A			; 6
-		dc.w word_2467A-Map_2451A			; 7
-		dc.w word_246A4-Map_2451A			; 8
-		dc.w word_246CE-Map_2451A			; 9
-		dc.w word_246F8-Map_2451A			; 10
-		dc.w word_24722-Map_2451A			; 11
-		dc.w word_2474C-Map_2451A			; 12
-		dc.w word_24776-Map_2451A			; 13
-		dc.w word_247A0-Map_2451A			; 14
-		dc.w word_247CA-Map_2451A			; 15
-		dc.w word_247F4-Map_2451A			; 16
-		dc.w word_2481E-Map_2451A			; 17
-		dc.w word_24848-Map_2451A			; 18
-		dc.w word_24872-Map_2451A			; 19
-		dc.w word_2489C-Map_2451A			; 20
-		dc.w word_248C6-Map_2451A			; 21
-		dc.w word_248F0-Map_2451A			; 22
-		dc.w word_2491A-Map_2451A			; 23
-		dc.w word_24944-Map_2451A			; 24
-		dc.w word_2496E-Map_2451A			; 25
-		dc.w word_24998-Map_2451A			; 26
-		dc.w word_249C2-Map_2451A			; 27
-		dc.w word_249EC-Map_2451A			; 28
-word_24554:	dc.w 5			
-		dc.w $EC0C,$3000,$3000,$FFF0			; 0
-		dc.w  $C08,$3004,$3002,$FFF4			; 4
-		dc.w  $408,$1007,$1003,$FFF4			; 8
-		dc.w $FC08,$300A,$3005,$FFF4			; 12
-		dc.w $F404,$100D,$1006,$FFF8			; 16
-word_2457E:	dc.w 5			
-		dc.w $EE0C,$3000,$3000,$FFF0			; 0
-		dc.w  $C08,$3004,$3002,$FFF4			; 4
-		dc.w  $408,$1007,$1003,$FFF4			; 8
-		dc.w $FC08,$300A,$3005,$FFF4			; 12
-		dc.w $F604,$100D,$1006,$FFF8			; 16
-word_245A8:	dc.w 5			
-		dc.w $F00C,$3000,$3000,$FFF0			; 0
-		dc.w  $C08,$3004,$3002,$FFF4			; 4
-		dc.w  $408,$1007,$1003,$FFF4			; 8
-		dc.w $FE08,$300A,$3005,$FFF4			; 12
-		dc.w $F804,$100D,$1006,$FFF8			; 16
-word_245D2:	dc.w 5			
-		dc.w $F20C,$3000,$3000,$FFF0			; 0
-		dc.w  $C08,$3004,$3002,$FFF4			; 4
-		dc.w  $608,$1007,$1003,$FFF4			; 8
-		dc.w	 8,$300A,$3005,$FFF4			; 12
-		dc.w $FA04,$100D,$1006,$FFF8			; 16
-word_245FC:	dc.w 5			
-		dc.w $F40C,$3000,$3000,$FFF0			; 0
-		dc.w  $C08,$3004,$3002,$FFF4			; 4
-		dc.w  $608,$1007,$1003,$FFF4			; 8
-		dc.w	 8,$300A,$3005,$FFF4			; 12
-		dc.w $FC04,$100D,$1006,$FFF8			; 16
-word_24626:	dc.w 5			
-		dc.w $F60C,$3000,$3000,$FFF0			; 0
-		dc.w  $C08,$3004,$3002,$FFF4			; 4
-		dc.w  $608,$1007,$1003,$FFF4			; 8
-		dc.w  $208,$300A,$3005,$FFF4			; 12
-		dc.w $FE04,$100D,$1006,$FFF8			; 16
-word_24650:	dc.w 5			
-		dc.w $F80C,$3000,$3000,$FFF0			; 0
-		dc.w  $C08,$3004,$3002,$FFF4			; 4
-		dc.w  $808,$1007,$1003,$FFF4			; 8
-		dc.w  $408,$300A,$3005,$FFF4			; 12
-		dc.w	 4,$100D,$1006,$FFF8			; 16
-word_2467A:	dc.w 5			
-		dc.w $FA0C,$3000,$3000,$FFF0			; 0
-		dc.w  $C08,$3004,$3002,$FFF4			; 4
-		dc.w  $808,$1007,$1003,$FFF4			; 8
-		dc.w  $408,$300A,$3005,$FFF4			; 12
-		dc.w  $204,$100D,$1006,$FFF8			; 16
-word_246A4:	dc.w 5			
-		dc.w $FC0C,$3000,$3000,$FFF0			; 0
-		dc.w  $C08,$3004,$3002,$FFF4			; 4
-		dc.w  $808,$1007,$1003,$FFF4			; 8
-		dc.w  $608,$300A,$3005,$FFF4			; 12
-		dc.w  $404,$100D,$1006,$FFF8			; 16
-word_246CE:	dc.w 5			
-		dc.w $FE0C,$3000,$3000,$FFF0			; 0
-		dc.w  $C08,$3004,$3002,$FFF4			; 4
-		dc.w  $A08,$1007,$1003,$FFF4			; 8
-		dc.w  $808,$300A,$3005,$FFF4			; 12
-		dc.w  $604,$100D,$1006,$FFF8			; 16
-word_246F8:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFEC			; 4
-		dc.w $F402,  $16,   $B,$FFF4			; 8
-		dc.w $F402,$2019,$200C,$FFFC			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_24722:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFED			; 4
-		dc.w $F402,  $16,   $B,$FFF5			; 8
-		dc.w $F402,$2019,$200C,$FFFD			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_2474C:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C
-		dc.w $F402,$2013,$2009,$FFEE
-		dc.w $F402,  $16,   $B,$FFF6
-		dc.w $F402,$2019,$200C,$FFFE
-		dc.w $F801,  $1C,   $E,	   4
-word_24776:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFEF			; 4
-		dc.w $F402,  $16,   $B,$FFF7			; 8
-		dc.w $F402,$2019,$200C,$FFFF			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_247A0:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFF0			; 4
-		dc.w $F402,  $16,   $B,$FFF8			; 8
-		dc.w $F402,$2019,$200C,$FFFE			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_247CA:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFF1			; 4
-		dc.w $F402,  $16,   $B,$FFF9			; 8
-		dc.w $F402,$2019,$200C,$FFFF			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_247F4:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFF2			; 4
-		dc.w $F402,  $16,   $B,$FFF8			; 8
-		dc.w $F402,$2019,$200C,$FFFE			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_2481E:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFF3			; 4
-		dc.w $F402,  $16,   $B,$FFF9			; 8
-		dc.w $F402,$2019,$200C,$FFFF			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_24848:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFF4			; 4
-		dc.w $F402,  $16,   $B,$FFFA			; 8
-		dc.w $F402,$2019,$200C,	   0			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_24872:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFF5			; 4
-		dc.w $F402,  $16,   $B,$FFFB			; 8
-		dc.w $F402,$2019,$200C,	   1			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_2489C:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFF6			; 4
-		dc.w $F402,  $16,   $B,$FFFC			; 8
-		dc.w $F402,$2019,$200C,	   0			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_248C6:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFF7			; 4
-		dc.w $F402,  $16,   $B,$FFFD			; 8
-		dc.w $F402,$2019,$200C,	   1			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_248F0:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFF8			; 4
-		dc.w $F402,  $16,   $B,$FFFC			; 8
-		dc.w $F402,$2019,$200C,	   0			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_2491A:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFF9			; 4
-		dc.w $F402,  $16,   $B,$FFFD			; 8
-		dc.w $F402,$2019,$200C,	   1			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_24944:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFFA			; 4
-		dc.w $F402,  $16,   $B,$FFFE			; 8
-		dc.w $F402,$2019,$200C,	   2			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_2496E:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFFB			; 4
-		dc.w $F402,  $16,   $B,$FFFF			; 8
-		dc.w $F402,$2019,$200C,	   3			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_24998:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFFC			; 4
-		dc.w $F402,  $16,   $B,	   0			; 8
-		dc.w $F402,$2019,$200C,	   2			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_249C2:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFFD			; 4
-		dc.w $F402,  $16,   $B,	   1			; 8
-		dc.w $F402,$2019,$200C,	   3			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
-word_249EC:	dc.w 5			
-		dc.w $F003,$200F,$2007,	  $C			; 0
-		dc.w $F402,$2013,$2009,$FFFE			; 4
-		dc.w $F402,  $16,   $B,	   0			; 8
-		dc.w $F402,$2019,$200C,	   2			; 12
-		dc.w $F801,  $1C,   $E,	   4			; 16
+
+		include "mappings/sprite/OOZ Pressure Spring.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 46 - OOZ ball on spring (unused beta leftover)
@@ -47538,7 +47096,7 @@ loc_24A48:
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#$F,ost_height(a0)
 		move.b	#$F,ost_width(a0)
-		move.l	#Map_24C52,ost_mappings(a0)
+		move.l	#Map_OOZBetaBall,ost_mappings(a0)
 		move.w	#tile_Nem_SpringBall+tile_pal4,ost_tile(a0)
 		bsr.w	JmpTo20_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -47557,7 +47115,7 @@ loc_24A48:
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$12,ost_y_pos(a1)
-		move.l	#Map_2451A,ost_mappings(a1)
+		move.l	#Map_PSpring,ost_mappings(a1)
 		move.w	#tile_Nem_PushSpring+tile_pal3,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
@@ -47722,28 +47280,9 @@ loc_24C4C:
 		move.b	d0,$1F(a0)
 		bra.s	loc_24C2A
 ; ===========================================================================
-; ===========================================================================
-Map_24C52:				
-		dc.w word_24C5A-Map_24C52			; 0
-		dc.w word_24C7C-Map_24C52			; 1
-		dc.w word_24C9E-Map_24C52			; 2
-		dc.w word_24CB0-Map_24C52			; 3
-word_24C5A:	dc.w 4			
-		dc.w $F005,    0,    0,$FFF0			; 0
-		dc.w $F005,    4,    2,	   0			; 4
-		dc.w	 5,$1804,$1802,$FFF0			; 8
-		dc.w	 5,$1004,$1002,	   0			; 12
-word_24C7C:	dc.w 4			
-		dc.w $F005,    8,    4,$FFF0			; 0
-		dc.w $F005, $808, $804,	   0			; 4
-		dc.w	 5,$1008,$1004,$FFF0			; 8
-		dc.w	 5,$1808,$1804,	   0			; 12
-word_24C9E:	dc.w 2			
-		dc.w $F00D,   $C,    6,$FFF0
-		dc.w	$D,$180C,$1806,$FFF0
-word_24CB0:	dc.w 2			
-		dc.w $F00D, $80C, $806,$FFF0			; 0
-		dc.w	$D,$100C,$1006,$FFF0			; 4
+
+		include "mappings/sprite/OOZ Beta Ball (unused).asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -47789,7 +47328,7 @@ off_24D02:	index offset(*),,2
 
 loc_24D06:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_24D96,ost_mappings(a0)
+		move.l	#Map_But,ost_mappings(a0)
 		move.w	#tile_Nem_Button,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo21_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -47836,17 +47375,9 @@ loc_24D8A:
 BranchTo_JmpTo12_DespawnObject:				
 		jmpto	DespawnObject,JmpTo12_DespawnObject
 ; ===========================================================================
-; ===========================================================================
-Map_24D96:				
-		dc.w word_24D9C-Map_24D96			; 0
-		dc.w word_24DA6-Map_24D96			; 1
-		dc.w word_24DB0-Map_24D96			; 2
-word_24D9C:	dc.w 1			
-		dc.w $F40D,    0,    0,$FFF0			; 0
-word_24DA6:	dc.w 1			
-		dc.w $F40D,    8,    4,$FFF0			; 0
-word_24DB0:	dc.w 1			
-		dc.w $F80D,    0,    0,$FFF0			; 0
+
+		include "mappings/sprite/Button.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -47884,7 +47415,7 @@ off_24DDE:	index offset(*),,2
 
 loc_24DE6:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_250BA,ost_mappings(a0)
+		move.l	#Map_LBlock,ost_mappings(a0)
 		move.w	#tile_Nem_StripedBlocksVert+tile_pal4,ost_tile(a0)
 		tst.b	ost_subtype(a0)
 		beq.s	loc_24E0A
@@ -47971,7 +47502,7 @@ loc_24EE8:
 		beq.w	loc_24E5C
 		cmpi.b	#2,$33(a0)
 		bne.w	loc_24E5C
-		lea	($FFFFB040).w,a1
+		lea	(v_ost_player2).w,a1
 		move.w	$36(a0),d1
 		bsr.s	loc_24EB8
 
@@ -48004,10 +47535,10 @@ loc_24F3C:
 ; ===========================================================================
 
 loc_24F52:				
-		lea	($FFFFB000).w,a1
+		lea	(v_ost_player1).w,a1
 		lea	$2C(a0),a4
 		bsr.s	loc_24F74
-		lea	($FFFFB040).w,a1
+		lea	(v_ost_player2).w,a1
 		lea	$36(a0),a4
 		bsr.s	loc_24F74
 		move.b	$2C(a0),d0
@@ -48107,89 +47638,28 @@ loc_25054:
 		move.l	d3,ost_y_pos(a1)
 		rts	
 ; ===========================================================================
+; piece x and y vels
 word_2507A:
-		dc.w $FC00					; 0 
-		dc.w $FC00					; 1
-		dc.w $FE00					; 2
-		dc.w $FC00					; 3
-		dc.w  $200					; 4
-		dc.w $FC00					; 5
-		dc.w  $400					; 6
-		dc.w $FC00					; 7
-		dc.w $FC40					; 8
-		dc.w $FE00					; 9
-		dc.w $FE40					; 10
-		dc.w $FE00					; 11
-		dc.w  $1C0					; 12
-		dc.w $FE00					; 13
-		dc.w  $3C0					; 14
-		dc.w $FE00					; 15
-		dc.w $FC80					; 16
-		dc.w  $200					; 17
-		dc.w $FE80					; 18
-		dc.w  $200					; 19
-		dc.w  $180					; 20
-		dc.w  $200					; 21
-		dc.w  $380					; 22
-		dc.w  $200					; 23
-		dc.w $FCC0					; 24
-		dc.w  $400					; 25
-		dc.w $FEC0					; 26
-		dc.w  $400					; 27
-		dc.w  $140					; 28
-		dc.w  $400					; 29
-		dc.w  $340					; 30
-		dc.w  $400					; 31
+		dc.w -$400,-$400 ; 0
+		dc.w -$200,-$400 ; 2
+		dc.w  $200,-$400 ; 4
+		dc.w  $400,-$400 ; 6
+		dc.w -$3C0,-$200 ; 8
+		dc.w -$1C0,-$200 ; 10
+		dc.w  $1C0,-$200 ; 12
+		dc.w  $3C0,-$200 ; 14
+		dc.w -$380, $200 ; 16
+		dc.w -$180, $200 ; 18
+		dc.w  $180, $200 ; 20
+		dc.w  $380, $200 ; 22
+		dc.w -$340, $400 ; 24
+		dc.w -$140, $400 ; 26
+		dc.w  $140, $400 ; 28
+		dc.w  $340, $400 ; 30
 ; ===========================================================================
-Map_250BA:				
-		dc.w word_250C2-Map_250BA			; 0
-		dc.w word_250E4-Map_250BA			; 1
-		dc.w word_25166-Map_250BA			; 2
-		dc.w word_25188-Map_250BA			; 3
-word_250C2:	dc.w 4			
-word_250C4:	dc.w $F003,    0,    0,$FFF0			; 0
-		dc.w $F003,    0,    0,$FFF8			; 4
-		dc.w $F003,    0,    0,	   0			; 8
-		dc.w $F003,    0,    0,	   8			; 12
-word_250E4:	dc.w $10		
-		dc.w $F000,    0,    0,$FFF0			; 0
-		dc.w $F000,    0,    0,$FFF8			; 4
-		dc.w $F000,    0,    0,	   0			; 8
-		dc.w $F000,    0,    0,	   8			; 12
-		dc.w $F800,    1,    0,$FFF0			; 16
-		dc.w $F800,    1,    0,$FFF8			; 20
-		dc.w $F800,    1,    0,	   0			; 24
-		dc.w $F800,    1,    0,	   8			; 28
-		dc.w	 0,    2,    1,$FFF0			; 32
-		dc.w	 0,    2,    1,$FFF8			; 36
-		dc.w	 0,    2,    1,	   0			; 40
-		dc.w	 0,    2,    1,	   8			; 44
-		dc.w  $800,    3,    1,$FFF0			; 48
-		dc.w  $800,    3,    1,$FFF8			; 52
-		dc.w  $800,    3,    1,	   0			; 56
-		dc.w  $800,    3,    1,	   8			; 60
-word_25166:	dc.w 4			
-		dc.w $F00C,    0,    0,$FFF0			; 0
-		dc.w $F80C,    0,    0,$FFF0			; 4
-		dc.w	$C,    0,    0,$FFF0			; 8
-		dc.w  $80C,    0,    0,$FFF0			; 12
-word_25188:	dc.w $10		
-		dc.w $F000,    0,    0,$FFF0			; 0
-		dc.w $F000,    1,    0,$FFF8			; 4
-		dc.w $F000,    2,    1,	   0			; 8
-		dc.w $F000,    3,    1,	   8			; 12
-		dc.w $F800,    0,    0,$FFF0			; 16
-		dc.w $F800,    1,    0,$FFF8			; 20
-		dc.w $F800,    2,    1,	   0			; 24
-		dc.w $F800,    3,    1,	   8			; 28
-		dc.w	 0,    0,    0,$FFF0			; 32
-		dc.w	 0,    1,    0,$FFF8			; 36
-		dc.w	 0,    2,    1,	   0			; 40
-		dc.w	 0,    3,    1,	   8			; 44
-		dc.w  $800,    0,    0,$FFF0			; 48
-		dc.w  $800,    1,    0,$FFF8			; 52
-		dc.w  $800,    2,    1,	   0			; 56
-		dc.w  $800,    3,    1,	   8			; 60
+
+		include "mappings/sprite/OOZ Launcher Block.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -48264,7 +47734,7 @@ byte_25266:	; ost_render, ost_3F
 
 loc_25276:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_254FE,ost_mappings(a0)
+		move.l	#Map_TransBall,ost_mappings(a0)
 		move.w	#tile_Nem_LaunchBall+tile_pal4,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo23_Adjust2PArtPointer
 		move.b	ost_subtype(a0),d0
@@ -48484,68 +47954,9 @@ loc_254F2:
 locret_254FC:				
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_254FE:				
-		dc.w word_2550E-Map_254FE			; 0
-		dc.w word_25550-Map_254FE			; 1
-		dc.w word_25582-Map_254FE			; 2
-		dc.w word_255A4-Map_254FE			; 3
-		dc.w word_255C6-Map_254FE			; 4
-		dc.w word_255E8-Map_254FE			; 5
-		dc.w word_2560A-Map_254FE			; 6
-		dc.w word_2563C-Map_254FE			; 7
-word_2550E:	dc.w 8			
-		dc.w $D804,    0,    0,$FFF0			; 0
-		dc.w $D804, $800, $800,	   0			; 4
-		dc.w $E004,    2,    1,$FFF0			; 8
-		dc.w $E004, $802, $801,	   0			; 12
-		dc.w $E80A,  $11,    8,$FFE8			; 16
-		dc.w $E80A, $811, $808,	   0			; 20
-		dc.w	$A,$1008,$1004,$FFE8			; 24
-		dc.w	$A,$1808,$1804,	   0			; 28
-word_25550:	dc.w 6			
-		dc.w $E004,    0,    0,$FFF0			; 0
-		dc.w $E004, $800, $800,	   0			; 4
-		dc.w $E80A,  $11,    8,$FFE8			; 8
-		dc.w $E80A, $811, $808,	   0			; 12
-		dc.w	$A,$1008,$1004,$FFE8			; 16
-		dc.w	$A,$1808,$1804,	   0			; 20
-word_25582:	dc.w 4			
-word_25584:	dc.w $E80A,  $11,    8,$FFE8			; 0
-		dc.w $E80A, $811, $808,	   0			; 4
-		dc.w	$A,$1008,$1004,$FFE8			; 8
-		dc.w	$A,$1808,$1804,	   0			; 12
-word_255A4:	dc.w 4			
-word_255A6:	dc.w $E80A,  $1A,   $D,$FFE8			; 0
-		dc.w $E80A,$1823,$1811,	   0			; 4
-		dc.w	$A,  $23,  $11,$FFE8			; 8
-		dc.w	$A,$181A,$180D,	   0			; 12
-word_255C6:	dc.w 4			
-		dc.w $E80A,$1023,$1011,$FFE8			; 0
-		dc.w $E80A, $81A, $80D,	   0			; 4
-		dc.w	$A,$101A,$100D,$FFE8			; 8
-		dc.w	$A, $823, $811,	   0			; 12
-word_255E8:	dc.w 4			
-		dc.w $E80A,    8,    4,$FFE8			; 0
-		dc.w $E80A,$102C,$1016,	   0			; 4
-		dc.w	$A,$1008,$1004,$FFE8			; 8
-		dc.w	$A,  $2C,  $16,	   0			; 12
-word_2560A:	dc.w 6			
-		dc.w $E80A,    8,    4,$FFE8			; 0
-		dc.w $E80A,$102C,$1016,	   0			; 4
-		dc.w	$A,$1008,$1004,$FFE8			; 8
-		dc.w	$A,  $2C,  $16,	   0			; 12
-		dc.w $F001,    6,    3,	 $18			; 16
-		dc.w	 1,$1006,$1003,	 $18			; 20
-word_2563C:	dc.w 8			
-		dc.w $E80A,    8,    4,$FFE8			; 0
-		dc.w $E80A,$102C,$1016,	   0			; 4
-		dc.w	$A,$1008,$1004,$FFE8			; 8
-		dc.w	$A,  $2C,  $16,	   0			; 12
-		dc.w $F001,    4,    2,	 $18			; 16
-		dc.w	 1,$1004,$1002,	 $18			; 20
-		dc.w $F001,    6,    3,	 $20			; 24
-		dc.w	 1,$1006,$1003,	 $20			; 28
+
+		include "mappings/sprite/OOZ Transporter Ball.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -48584,7 +47995,7 @@ off_256A2:	index offset(*),,2
 
 loc_256AC:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_25804,ost_mappings(a0)
+		move.l	#Map_ArrowShoot,ost_mappings(a0)
 		move.w	#tile_Nem_ArrowAndShooter,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo24_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -48611,7 +48022,7 @@ loc_25702:
 		move.b	d2,ost_anim(a0)
 
 loc_25706:				
-		lea	(off_257EE).l,a1
+		lea	(Ani_ArrowShoot).l,a1
 		jsrto	AnimateSprite,JmpTo5_AnimateSprite
 		jmpto	DespawnObject,JmpTo15_DespawnObject
 ; ===========================================================================
@@ -48647,7 +48058,7 @@ loc_2572A:
 
 loc_25768:				
 		subq.b	#2,ost_primary_routine(a0)
-		lea	(off_257EE).l,a1
+		lea	(Ani_ArrowShoot).l,a1
 		jsrto	AnimateSprite,JmpTo5_AnimateSprite
 		jmpto	DespawnObject,JmpTo15_DespawnObject
 ; ===========================================================================
@@ -48691,38 +48102,20 @@ loc_257DE:
 		bmi.w	BranchTo_JmpTo27_DeleteObject
 		jmpto	DespawnObject,JmpTo15_DespawnObject
 ; ===========================================================================
-off_257EE:	
-		dc.w byte_257F4-off_257EE			; 0 
-		dc.w byte_257F7-off_257EE			; 1
-		dc.w byte_257FB-off_257EE			; 2
+Ani_ArrowShoot:	index offset(*)
+		ptr byte_257F4			; 0 
+		ptr byte_257F7			; 1
+		ptr byte_257FB			; 2
 		
-byte_257F4:	dc.b $1F,  1,$FF				; 0 
+byte_257F4:	dc.b $1F,  1,$FF
 
-byte_257F7:	dc.b   3,  1,  2,$FF				; 0 
+byte_257F7:	dc.b   3,  1,  2,$FF
 
-byte_257FB:	dc.b   7,  3,  4,$FC,  4,  3,  1,$FD,  0	; 0 
+byte_257FB:	dc.b   7,  3,  4,$FC,  4,  3,  1,$FD,  0
 ; ===========================================================================
-Map_25804:				
-		dc.w word_2580E-Map_25804			; 0
-		dc.w word_25818-Map_25804			; 1
-		dc.w word_2582A-Map_25804			; 2
-		dc.w word_25844-Map_25804			; 3
-		dc.w word_25856-Map_25804			; 4
-word_2580E:	dc.w 1			
-		dc.w $FC0C,$2000,$2000,$FFF0			; 0
-word_25818:	dc.w 2			
-		dc.w $F809,$2004,$2002,$FFF0			; 0
-		dc.w $F801,$200B,$2005,	   8			; 4
-word_2582A:	dc.w 3			
-		dc.w $FC00,   $A,    5,$FFFC			; 0
-		dc.w $F809,$2004,$2002,$FFF0			; 4
-		dc.w $F801,$200B,$2005,	   8			; 8
-word_25844:	dc.w 2			
-		dc.w $F809,$2004,$2002,$FFF0			; 0
-		dc.w $F801,$200D,$2006,	   8			; 4
-word_25856:	dc.w 2			
-		dc.w $F809,$2004,$2002,$FFF0			; 0
-		dc.w $F801,$200F,$2007,	   8			; 4
+
+		include "mappings/sprite/ARZ Arrow Shooter.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -48760,7 +48153,7 @@ off_2589A:	index offset(*),,2
 
 loc_2589E:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_259E6,ost_mappings(a0)
+		move.l	#Map_FallPillar,ost_mappings(a0)
 		move.w	#0+tile_pal2,ost_tile(a0)		; level art
 		jsrto	Adjust2PArtPointer,JmpTo25_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -48878,27 +48271,9 @@ loc_259B8:
 locret_259E4:				
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_259E6:				
-		dc.w word_259EC-Map_259E6			; 0
-		dc.w word_25A1E-Map_259E6			; 1
-		dc.w word_25A38-Map_259E6			; 2
-word_259EC:	dc.w 6			
-word_259EE:	dc.w $E005,  $5D,  $2E,$FFE0			; 0
-		dc.w $E005, $85D, $82E,	 $10			; 4
-		dc.w $E00D,  $61,  $30,$FFF0			; 8
-		dc.w $F00D,  $69,  $34,$FFF0			; 12
-		dc.w	$D,  $69,  $34,$FFF0			; 16
-		dc.w $100D,  $71,  $38,$FFF0			; 20
-word_25A1E:	dc.w 3			
-		dc.w $F00D,  $69,  $34,$FFF0			; 0
-		dc.w	$D,  $79,  $3C,$FFF0			; 4
-		dc.w $1004,  $81,  $40,$FFF0			; 8
-word_25A38:	dc.w 4			
-		dc.w  $90D,$208B,$2045,$FFF0			; 0
-		dc.w $F00D,  $69,  $34,$FFF0			; 4
-		dc.w	$D,  $79,  $3C,$FFF0			; 8
-		dc.w $1004,  $81,  $40,$FFF0			; 12
+
+		include "mappings/sprite/ARZ Falling Pillar.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 2B - ARZ rising pillar
@@ -48918,7 +48293,7 @@ off_25A68:	index offset(*),,2
 
 loc_25A6E:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_25C6E,ost_mappings(a0)
+		move.l	#Map_RisePillar,ost_mappings(a0)
 		move.w	#0+tile_pal2,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo25_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -49100,173 +48475,13 @@ loc_25C24:
 		dbf	d1,loc_25C1C
 
 loc_25C64:				
-		move.w	#$CB,d0	
+		move.w	#sfx_Smash,d0	
 		jmp	(PlaySound).l
+
 ; ===========================================================================
-; ===========================================================================
-Map_25C6E:				
-		dc.w word_25C8A-Map_25C6E			; 0
-		dc.w word_25CBC-Map_25C6E			; 1
-		dc.w word_25CF6-Map_25C6E			; 2
-		dc.w word_25D30-Map_25C6E			; 3
-		dc.w word_25D72-Map_25C6E			; 4
-		dc.w word_25DB4-Map_25C6E			; 5
-		dc.w word_25DFE-Map_25C6E			; 6
-		dc.w word_25E48-Map_25C6E			; 7
-		dc.w word_25E8A-Map_25C6E			; 8
-		dc.w word_25EDC-Map_25C6E			; 9
-		dc.w word_25F2E-Map_25C6E			; 10
-		dc.w word_25F90-Map_25C6E			; 11
-		dc.w word_25FF2-Map_25C6E			; 12
-		dc.w word_26064-Map_25C6E			; 13
-word_25C8A:	dc.w 6			
-		dc.w $100D,$208B,$2045,$FFF0			; 0
-		dc.w $E805,  $5D,  $2E,$FFE0			; 4
-		dc.w $E805, $85D, $82E,	 $10			; 8
-		dc.w $E80D,  $61,  $30,$FFF0			; 12
-		dc.w $F80D,  $69,  $34,$FFF0			; 16
-		dc.w  $80D,  $83,  $41,$FFF0			; 20
-word_25CBC:	dc.w 7			
-		dc.w $140D,$208B,$2045,$FFF0			; 0
-		dc.w $E405,  $5D,  $2E,$FFE0			; 4
-		dc.w $E405, $85D, $82E,	 $10			; 8
-		dc.w $E40D,  $61,  $30,$FFF0			; 12
-		dc.w $F40D,  $69,  $34,$FFF0			; 16
-		dc.w $FC0D,  $69,  $34,$FFF0			; 20
-		dc.w  $C0D,  $83,  $41,$FFF0			; 24
-word_25CF6:	dc.w 7			
-		dc.w $180D,$208B,$2045,$FFF0			; 0
-		dc.w $E005,  $5D,  $2E,$FFE0			; 4
-		dc.w $E005, $85D, $82E,	 $10			; 8
-		dc.w $E00D,  $61,  $30,$FFF0			; 12
-		dc.w $F00D,  $69,  $34,$FFF0			; 16
-		dc.w	$D,  $69,  $34,$FFF0			; 20
-		dc.w $100D,  $83,  $41,$FFF0			; 24
-word_25D30:	dc.w 8			
-		dc.w $1C0D,$208B,$2045,$FFF0			; 0
-		dc.w $DC05,  $5D,  $2E,$FFE0			; 4
-		dc.w $DC05, $85D, $82E,	 $10			; 8
-		dc.w $DC0D,  $61,  $30,$FFF0			; 12
-		dc.w $EC0D,  $69,  $34,$FFF0			; 16
-		dc.w $FC0D,  $69,  $34,$FFF0			; 20
-		dc.w  $40D,  $69,  $34,$FFF0			; 24
-		dc.w $140D,  $83,  $41,$FFF0			; 28
-word_25D72:	dc.w 8			
-		dc.w $200D,$208B,$2045,$FFF0			; 0
-		dc.w $D805,  $5D,  $2E,$FFE0			; 4
-		dc.w $D805, $85D, $82E,	 $10			; 8
-		dc.w $D80D,  $61,  $30,$FFF0			; 12
-		dc.w $E80D,  $69,  $34,$FFF0			; 16
-		dc.w $F80D,  $69,  $34,$FFF0			; 20
-		dc.w  $80D,  $69,  $34,$FFF0			; 24
-		dc.w $180D,  $83,  $41,$FFF0			; 28
-word_25DB4:	dc.w 9			
-		dc.w $240D,$208B,$2045,$FFF0			; 0
-		dc.w $D405,  $5D,  $2E,$FFE0			; 4
-		dc.w $D405, $85D, $82E,	 $10			; 8
-		dc.w $D40D,  $61,  $30,$FFF0			; 12
-		dc.w $E40D,  $69,  $34,$FFF0			; 16
-		dc.w $F40D,  $69,  $34,$FFF0			; 20
-		dc.w  $40D,  $69,  $34,$FFF0			; 24
-		dc.w  $C0D,  $69,  $34,$FFF0			; 28
-		dc.w $1C0D,  $83,  $41,$FFF0			; 32
-word_25DFE:	dc.w 9			
-		dc.w $280D,$208B,$2045,$FFF0			; 0
-		dc.w $D005,  $5D,  $2E,$FFE0			; 4
-		dc.w $D005, $85D, $82E,	 $10			; 8
-		dc.w $D00D,  $61,  $30,$FFF0			; 12
-		dc.w $E00D,  $69,  $34,$FFF0			; 16
-		dc.w $F00D,  $69,  $34,$FFF0			; 20
-		dc.w	$D,  $69,  $34,$FFF0			; 24
-		dc.w $100D,  $69,  $34,$FFF0			; 28
-		dc.w $200D,  $83,  $41,$FFF0			; 32
-word_25E48:	dc.w 8			
-		dc.w $E805,  $5D,  $2E,$FFE0			; 0
-		dc.w $E805, $85D, $82E,	 $10			; 4
-		dc.w $E805,  $61,  $30,$FFF0			; 8
-		dc.w $E805,  $65,  $32,	   0			; 12
-		dc.w $F805,  $69,  $34,$FFF0			; 16
-		dc.w $F805,  $6D,  $36,	   0			; 20
-		dc.w  $805,  $83,  $41,$FFF0			; 24
-		dc.w  $805,  $87,  $43,	   0			; 28
-word_25E8A:	dc.w $A			
-		dc.w $E405,  $5D,  $2E,$FFE0			; 0
-		dc.w $E405, $85D, $82E,	 $10			; 4
-		dc.w $E405,  $61,  $30,$FFF0			; 8
-		dc.w $E405,  $65,  $32,	   0			; 12
-		dc.w $F405,  $69,  $34,$FFF0			; 16
-		dc.w $F405,  $6D,  $36,	   0			; 20
-		dc.w $FC05,  $69,  $34,$FFF0			; 24
-		dc.w $FC05,  $6D,  $36,	   0			; 28
-		dc.w  $C05,  $83,  $41,$FFF0			; 32
-		dc.w  $C05,  $87,  $43,	   0			; 36
-word_25EDC:	dc.w $A			
-		dc.w $E005,  $5D,  $2E,$FFE0			; 0
-		dc.w $E005, $85D, $82E,	 $10			; 4
-		dc.w $E005,  $61,  $30,$FFF0			; 8
-		dc.w $E005,  $65,  $32,	   0			; 12
-		dc.w $F005,  $69,  $34,$FFF0			; 16
-		dc.w $F005,  $6D,  $36,	   0			; 20
-		dc.w	 5,  $69,  $34,$FFF0			; 24
-		dc.w	 5,  $6D,  $36,	   0			; 28
-		dc.w $1005,  $83,  $41,$FFF0			; 32
-		dc.w $1005,  $87,  $43,	   0			; 36
-word_25F2E:	dc.w $C			
-		dc.w $DC05,  $5D,  $2E,$FFE0			; 0
-		dc.w $DC05, $85D, $82E,	 $10			; 4
-		dc.w $DC05,  $61,  $30,$FFF0			; 8
-		dc.w $DC05,  $65,  $32,	   0			; 12
-		dc.w $EC05,  $69,  $34,$FFF0			; 16
-		dc.w $EC05,  $6D,  $36,	   0			; 20
-		dc.w $FC05,  $69,  $34,$FFF0			; 24
-		dc.w $FC05,  $6D,  $36,	   0			; 28
-		dc.w  $405,  $69,  $34,$FFF0			; 32
-		dc.w  $405,  $6D,  $36,	   0			; 36
-		dc.w $1405,  $83,  $41,$FFF0			; 40
-		dc.w $1405,  $87,  $43,	   0			; 44
-word_25F90:	dc.w $C			
-		dc.w $D805,  $5D,  $2E,$FFE0			; 0
-		dc.w $D805, $85D, $82E,	 $10			; 4
-		dc.w $D805,  $61,  $30,$FFF0			; 8
-		dc.w $D805,  $65,  $32,	   0			; 12
-		dc.w $E805,  $69,  $34,$FFF0			; 16
-		dc.w $E805,  $6D,  $36,	   0			; 20
-		dc.w $F805,  $69,  $34,$FFF0			; 24
-		dc.w $F805,  $6D,  $36,	   0			; 28
-		dc.w  $805,  $69,  $34,$FFF0			; 32
-		dc.w  $805,  $6D,  $36,	   0			; 36
-		dc.w $1805,  $83,  $41,$FFF0			; 40
-		dc.w $1805,  $87,  $43,	   0			; 44
-word_25FF2:	dc.w $E			
-		dc.w $D405,  $5D,  $2E,$FFE0			; 0
-		dc.w $D405, $85D, $82E,	 $10			; 4
-		dc.w $D405,  $61,  $30,$FFF0			; 8
-		dc.w $D405,  $65,  $32,	   0			; 12
-		dc.w $E405,  $69,  $34,$FFF0			; 16
-		dc.w $E405,  $6D,  $36,	   0			; 20
-		dc.w $F405,  $69,  $34,$FFF0			; 24
-		dc.w $F405,  $6D,  $36,	   0			; 28
-		dc.w  $405,  $69,  $34,$FFF0			; 32
-		dc.w  $405,  $6D,  $36,	   0			; 36
-		dc.w  $C05,  $69,  $34,$FFF0			; 40
-		dc.w  $C05,  $6D,  $36,	   0			; 44
-		dc.w $1C05,  $83,  $41,$FFF0			; 48
-		dc.w $1C05,  $87,  $43,	   0			; 52
-word_26064:	dc.w $E			
-		dc.w $D005,  $5D,  $2E,$FFE0			; 0
-		dc.w $D005, $85D, $82E,	 $10			; 4
-		dc.w $D005,  $61,  $30,$FFF0			; 8
-		dc.w $D005,  $65,  $32,	   0			; 12
-		dc.w $E005,  $69,  $34,$FFF0			; 16
-		dc.w $E005,  $6D,  $36,	   0			; 20
-		dc.w $F005,  $69,  $34,$FFF0			; 24
-		dc.w $F005,  $6D,  $36,	   0			; 28
-		dc.w	 5,  $69,  $34,$FFF0			; 32
-		dc.w	 5,  $6D,  $36,	   0			; 36
-		dc.w $1005,  $69,  $34,$FFF0			; 40
-		dc.w $1005,  $6D,  $36,	   0			; 44
-		dc.w $2005,  $83,  $41,$FFF0			; 48
-		dc.w $2005,  $87,  $43,	   0			; 52
+
+		include "mappings/sprite/ARZ Rising Pillar.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -49432,17 +48647,23 @@ loc_2623A:
 		move.w	ost_y_pos(a1),$34(a1)
 		andi.b	#1,d0
 		move.b	d0,ost_frame(a1)
-		move.l	#off_2631E,ost_mappings(a1)
+		move.l	#Map_Leaves,ost_mappings(a1)
 		move.w	#tile_Nem_Leaves+tile_pal4+tile_hi,ost_tile(a1)
 		move.b	#render_rel|render_onscreen,ost_render(a1)
 		move.b	#8,ost_displaywidth(a1)
 		move.b	#1,ost_priority(a1)
 		move.b	#4,$38(a1)
-		move.b	d1,ost_angle(a0)
-
+		
+	if FixBugs=0	
+		; This line makes no sense: d1 is never set to anything, the object
+		; being written to is the parent, not the child, and angle isn't used
+		; by the parent at all.
+		move.b	d1,ost_angle(a0)	; ...what?
+	endc
+	
 loc_26278:				
 		dbf	d6,loc_261EC
-		move.w	#$E5,d0	
+		move.w	#sfx_Leaves,d0	
 		jmp	(PlaySound).l
 ; ===========================================================================
 byte_26286:	
@@ -49511,23 +48732,14 @@ loc_26312:
 		jmpto	DisplaySprite,JmpTo17_DisplaySprite
 		
     if RemoveJmpTos
-JmpTo29_DeleteObject: ; JmpTo
+JmpTo29_DeleteObject:
 		jmp	(DeleteObject).l
     endc
     		
 ; ===========================================================================
-off_2631E:	dc.w word_26326-off_2631E			; 0 
-		dc.w word_26330-off_2631E			; 1
-		dc.w word_2633A-off_2631E			; 2
-		dc.w word_26344-off_2631E			; 3
-word_26326:	dc.w 1			
-		dc.w $FC00,    0,    0,$FFFC			; 0
-word_26330:	dc.w 1			
-		dc.w $FC04,    1,    0,$FFF8			; 0
-word_2633A:	dc.w 1			
-		dc.w $FC04,    3,    1,$FFF8			; 0
-word_26344:	dc.w 1			
-		dc.w $FC04,    5,    2,$FFF8			; 0
+
+		include "mappings/sprite/ARZ Leaves.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -49557,23 +48769,27 @@ JmpTo7_CalcSine:
 Springboard:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_26382(pc,d0.w),d1
-		jsr	off_26382(pc,d1.w)
+		move.w	SprngBrd_Index(pc,d0.w),d1
+		jsr	SprngBrd_Index(pc,d1.w)
 		jmpto	DespawnObject,JmpTo17_DespawnObject
 ; ===========================================================================
-off_26382:	index offset(*),,2	
+SprngBrd_Index:	index offset(*),,2	
 		ptr loc_2638C					; 0 
 		ptr loc_263C8					; 2
 		
-word_26386:
-		dc.w $FC00					; 0
-		dc.w $F600					; 1
-		dc.w $F800					; 2
+SprngBrd_Powers:
+		; This object supports different strengths based on subtype,
+		; but only types 1 and 3 are set, and the 'andi.w #2,d0' below
+		; means that only the second of these values is ever used.
+		
+		dc.w -$400					; 0, unused
+		dc.w -$A00					; 1
+		dc.w -$800					; 2, unused
 ; ===========================================================================
 
 loc_2638C:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_265F4,ost_mappings(a0)
+		move.l	#Map_SprngBrd,ost_mappings(a0)
 		move.w	#tile_Nem_LeverSpring,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo26_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -49582,18 +48798,18 @@ loc_2638C:
 		bset	#status_broken_bit,ost_primary_status(a0)
 		move.b	ost_subtype(a0),d0
 		andi.w	#2,d0
-		move.w	word_26386(pc,d0.w),$30(a0)
+		move.w	SprngBrd_Powers(pc,d0.w),$30(a0)
 
 loc_263C8:				
-		lea	(off_265E8).l,a1			; could be PC-relative
+		lea	(Ani_SprngBrd).l,a1			; could be PC-relative
 		jsrto	AnimateSprite,JmpTo6_AnimateSprite
 		move.w	#$27,d1
 		move.w	#8,d2
 		move.w	ost_x_pos(a0),d4
-		lea	byte_26598(pc),a2
+		lea	SprngBrd_SlopeData_DiagUp(pc),a2
 		tst.b	ost_frame(a0)
 		beq.s	loc_263EC
-		lea	byte_265C0(pc),a2
+		lea	SprngBrd_SlopeData_Straight(pc),a2
 
 loc_263EC:				
 		lea	(v_ost_player1).w,a1
@@ -49660,7 +48876,7 @@ loc_2645E:
 		addi.w	#2*$1C,d0
     else
 		; This should be (2*$1C) instead of $27. As is, this makes it
-		; impossible to get as high of a launch from flipped pressure springs
+		; impossible to get as high of a launch from flipped springs
 		; as you can for unflipped ones.
 		addi.w	#$27,d0
 	endc
@@ -49739,33 +48955,27 @@ byte_26550:
 		dc.b   3,  3,  3,  3,  3,  3,  4,  4,  0,  0,  0,  0,  0,  0,  0,  0 ; 48
 		dc.b   0,  0,  0,  0,  0,  0,  0,  0		; 64
 
-byte_26598:	
+SprngBrd_SlopeData_DiagUp:	
 		dc.b   8,  8,  8,  8,  8,  8,  8,  9, $A, $B, $C, $D, $E, $F,$10,$10 ; 0			
 		dc.b $11,$12,$13,$14,$14,$15,$15,$16,$17,$18,$18,$18,$18,$18,$18,$18 ; 16
 		dc.b $18,$18,$18,$18,$18,$18,$18,$18		; 32
 
-byte_265C0:	
+SprngBrd_SlopeData_Straight:	
 		dc.b   8,  8,  8,  8,  8,  8,  8,  9, $A, $B, $C, $C, $C, $C, $D, $D ; 0			
 		dc.b  $D, $D, $D, $D, $E, $E, $F, $F,$10,$10,$10,$10, $F, $F, $E, $E ; 16
 		dc.b  $D, $D, $D, $D, $D, $D, $D, $D		; 32
 
-off_265E8:	
-		dc.w byte_265EC-off_265E8			; 0 
-		dc.w byte_265EF-off_265E8			; 1
+Ani_SprngBrd:	index offset(*)
+		ptr byte_265EC			; 0 
+		ptr byte_265EF			; 1
 		
 byte_265EC:	dc.b  $F,  0,$FF				; 0 
 byte_265EF:	dc.b   3,  1,  0,$FD,  0			; 0 
 
 ; ===========================================================================
-Map_265F4:				
-		dc.w word_265F8-Map_265F4			; 0
-		dc.w word_2660A-Map_265F4			; 1
-word_265F8:	dc.w 2			
-		dc.w $E809,    0,    0,$FFE4			; 0
-		dc.w $E80D,    6,    3,$FFFC			; 4
-word_2660A:	dc.w 2			
-		dc.w $E809,   $E,    7,$FFE4			; 0
-		dc.w $E80D,  $14,   $A,$FFFC			; 4
+
+		include "mappings/sprite/Springboard.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -49800,7 +49010,7 @@ off_26642:	index offset(*),,2
 
 loc_26648:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2686C,ost_mappings(a0)
+		move.l	#Map_SteamSpring,ost_mappings(a0)
 		move.w	#0+tile_pal4,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
@@ -49981,38 +49191,9 @@ JmpTo30_DeleteObject:
     endc
     
 ; ===========================================================================
-; ===========================================================================
-Map_2686C:				
-		dc.w word_2687C-Map_2686C			; 0
-		dc.w word_26886-Map_2686C			; 1
-		dc.w word_26890-Map_2686C			; 2
-		dc.w word_2689A-Map_2686C			; 3
-		dc.w word_268AC-Map_2686C			; 4
-		dc.w word_268BE-Map_2686C			; 5
-		dc.w word_268D8-Map_2686C			; 6
-		dc.w word_268EA-Map_2686C			; 7
-word_2687C:	dc.w 1			
-		dc.w $FF00,    0,    0,$FFE8			; 0
-word_26886:	dc.w 1			
-		dc.w $FF04,    1,    0,$FFE8			; 0
-word_26890:	dc.w 1			
-		dc.w $FC05,    3,    1,$FFEC			; 0
-word_2689A:	dc.w 2			
-		dc.w $FC05,    7,    3,$FFF8			; 0
-		dc.w $FC05,    3,    1,$FFF0			; 4
-word_268AC:	dc.w 2			
-		dc.w $FC05,$1007,$1003,	   0			; 0
-		dc.w $FC01,$100B,$1005,$FFF8			; 4
-word_268BE:	dc.w 3			
-		dc.w $FC01,   $D,    6,	  $C			; 0
-		dc.w $FC01,   $B,    5,	   4			; 4
-		dc.w $FC01,$180D,$1806,$FFFC			; 8
-word_268D8:	dc.w 2			
-		dc.w $FC01,   $D,    6,	 $10			; 0
-		dc.w $FC01,$180D,$1806,	   8			; 4
-word_268EA:	dc.w 2			
-		dc.w $F007,  $15,   $A,$FFF0			; 0
-		dc.w $F007,  $1D,   $E,	   0			; 4
+
+		include "mappings/sprite/MTZ Steam Spring.asm"
+		
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -50070,7 +49251,7 @@ loc_2693A:
 		bset	#render_useheight_bit,ost_render(a0)
 
 loc_2696A:				
-		move.l	#Map_26A5C,ost_mappings(a0)
+		move.l	#Map_Stomp,ost_mappings(a0)
 		move.w	#0+tile_pal2,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo28_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -50113,9 +49294,9 @@ loc_269D6:
 JmpTo31_DeleteObject:				
 		jmp	(DeleteObject).l
 ; ===========================================================================
-off_269F4:	
-		dc.w locret_269F8-off_269F4			; 0 
-		dc.w loc_269FA-off_269F4			; 1
+off_269F4:	index offset(*),,2
+		ptr locret_269F8		; 0 
+		ptr loc_269FA			; 2
 ; ===========================================================================
 
 locret_269F8:				
@@ -50164,26 +49345,9 @@ loc_26A50:
 		move.w	d1,ost_y_pos(a0)
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_26A5C:				
-		dc.w word_26A60-Map_26A5C			; 0
-		dc.w word_26AB2-Map_26A5C			; 1
-word_26A60:	dc.w $A			
-		dc.w $F40E,    1,    0,$FFC0			; 0
-		dc.w $F40E, $801, $800,$FFE0			; 4
-		dc.w $F40E,    1,    0,	   0			; 8
-		dc.w $F40E, $801, $800,	 $20			; 12
-		dc.w  $C07,   $D,    6,$FFD8			; 16
-		dc.w $2C07,   $D,    6,$FFD8			; 20
-		dc.w $4C07,   $D,    6,$FFD8			; 24
-		dc.w  $C07,   $D,    6,	 $18			; 28
-		dc.w $2C07,   $D,    6,	 $18			; 32
-		dc.w $4C07,   $D,    6,	 $18			; 36
-word_26AB2:	dc.w 4			
-		dc.w $E007,  $57,  $2B,$FFF0			; 0
-		dc.w $E007, $857, $82B,	   0			; 4
-		dc.w	 7,$1057,$102B,$FFF0			; 8
-		dc.w	 7,$1857,$182B,	   0			; 12
+
+		include "mappings/sprite/MTZ Stomping Pistons.asm"
+		
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -50197,10 +49361,11 @@ JmpTo9_SolidObject:
 		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 65 - MTZ long moving platform
+; Object 65 - MTZ retractable platforms, long moving platforms, and small 
+; cog rollers
 ; ----------------------------------------------------------------------------
 
-LongPlatform:				
+Platform5:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
 		move.w	off_26AEE(pc,d0.w),d1
@@ -50210,7 +49375,7 @@ off_26AEE:	index offset(*),,2
 		ptr loc_26B06					; 0 
 		ptr loc_26C1C					; 2
 		ptr loc_26EA4					; 4
-		ptr loc_26EC2					; 6
+		ptr loc_26EC2					; 6 (cog subtype)
 
 byte_26AF6:
 		dc.b $40, $C					; 0
@@ -50225,8 +49390,8 @@ byte_26AF6:
 
 loc_26B06:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_26EC8,ost_mappings(a0)
-		move.w	#0+tile_pal4,ost_tile(a0)
+		move.l	#Map_MTZPlats,ost_mappings(a0)
+		move.w	#tile_LevelArt+tile_pal4,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo29_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
@@ -50247,7 +49412,7 @@ loc_26B52:
 		cmpi.b	#2,d0
 		bne.s	loc_26B6E
 		addq.b	#4,ost_primary_routine(a0)
-		move.l	#Map_26F04,ost_mappings(a0)
+		move.l	#Map_SmallCog,ost_mappings(a0)
 		move.w	#tile_Nem_Cog+tile_pal4,ost_tile(a0)
 		bra.w	loc_26EC2
 ; ===========================================================================
@@ -50283,7 +49448,7 @@ loc_26BA4:
 		bset	#render_xflip_bit,ost_render(a1)
 
 loc_26BE0:				
-		move.l	#Map_26F04,ost_mappings(a1)
+		move.l	#Map_SmallCog,ost_mappings(a1)
 		move.w	#tile_Nem_Cog+tile_pal4,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
@@ -50601,34 +49766,10 @@ loc_26EC2:
 		move.w	(v_mtz_platform_cog_x_pos).w,d0
 		bra.s	loc_26EAC
 ; ===========================================================================
-; ===========================================================================
-Map_26EC8:				
-		dc.w word_26ED0-Map_26EC8			; 0
-		dc.w word_26EF2-Map_26EC8			; 1
-		dc.w word_26ED0-Map_26EC8			; 2
-		dc.w word_26ED0-Map_26EC8			; 3
-word_26ED0:	dc.w 4			
-		dc.w $F40E,  $4B,  $25,$FFC0			; 0
-		dc.w $F40E,  $4B,  $25,$FFE0			; 4
-		dc.w $F40E,  $4B,  $25,	   0			; 8
-		dc.w $F40E,  $4B,  $25,	 $20			; 12
-word_26EF2:	dc.w 2			
-		dc.w $F40E,  $39,  $1C,$FFE0			; 0
-		dc.w $F40E, $839, $81C,	   0			; 4
-; ===========================================================================
-Map_26F04:				
-		dc.w word_26F0A-Map_26F04			; 0
-		dc.w word_26F1C-Map_26F04			; 1
-		dc.w word_26F2E-Map_26F04			; 2
-word_26F0A:	dc.w 2			
-		dc.w $F406,    0,    0,$FFF0			; 0
-		dc.w $F406, $800, $800,	   0			; 4
-word_26F1C:	dc.w 2			
-		dc.w $F406,    6,    3,$FFF0			; 0
-		dc.w $F406,$1806,$1803,	   0			; 4
-word_26F2E:	dc.w 2			
-		dc.w $F406,$1006,$1003,$FFF0			; 0
-		dc.w $F406, $806, $803,	   0			; 4
+
+		include "mappings/sprite/MTZ Long Moving Platforms.asm"
+		include "mappings/sprite/MTZ Small Cog.asm"
+		
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -50646,6 +49787,7 @@ JmpTo10_SolidObject:
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 66 - MTZ spring walls
+; Invisible object; the yellow triangles are part of the level layout
 ; ----------------------------------------------------------------------------
 
 SpringWall:				
@@ -50661,7 +49803,7 @@ off_26F66:	index offset(*),,2
 
 loc_26F6A:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_27120,ost_mappings(a0)
+		move.l	#Map_SpringWall,ost_mappings(a0)
 		move.w	#tile_Nem_Monitors+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo30_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -50730,7 +49872,7 @@ loc_2702C:
 	if (Revision=0)|FixBugs
 		; This object was visible with debug mode in Revision 0.
 		tst.w	(v_debug_active).w
-		beq.s	.nodisplay				; rts
+		beq.s	.nodisplay
 		jsrto	DisplaySprite,JmpTo47_DisplaySprite	
 	.nodisplay:
 	endc		
@@ -50745,10 +49887,10 @@ JmpTo33_DeleteObject:
 loc_27042:	
 	if (Revision>0)|FixBugs
 		; Revision 0 didn't check if the player was hurt or dead.				
-		cmpi.b	#4,ost_primary_routine(a1)
-	endc	
+		cmpi.b	#id_Hurt,ost_primary_routine(a1)	
 		bcs.s	loc_2704C
 		rts	
+	endc	
 ; ===========================================================================
 
 loc_2704C:				
@@ -50813,16 +49955,9 @@ loc_27104:
 		move.w	#$CC,d0	
 		jmp	(PlaySound).l
 ; ===========================================================================
-; ===========================================================================
-Map_27120:				
-		dc.w word_27124-Map_27120			; 0
-		dc.w word_27136-Map_27120			; 1
-word_27124:	dc.w 2			
-		dc.w $C005,  $34,  $1A,$FFF8			; 0
-		dc.w $3005,  $34,  $1A,$FFF8			; 4
-word_27136:	dc.w 2			
-		dc.w $8005,  $34,  $1A,$FFF8			; 0
-		dc.w $7005,  $34,  $1A,$FFF8			; 4
+
+		include "mappings/sprite/MTZ Spring Walls.asm"
+		
 ; ===========================================================================
 	
 	if RemoveJmpTos=0
@@ -50844,10 +49979,10 @@ JmpTo3_SolidObject_NoRenderChk_SingleCharacter:
 		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 67 - MTZ spin tube
+; Object 67 - MTZ teleporter
 ; ----------------------------------------------------------------------------
 
-SpinTubeMetropolis:				
+Teleporter:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
 		move.w	off_27184(pc,d0.w),d1
@@ -50855,7 +49990,7 @@ SpinTubeMetropolis:
 		move.b	$2C(a0),d0
 		add.b	$36(a0),d0
 		beq.w	JmpTo4_DespawnObject3
-		lea	(byte_2752E).l,a1
+		lea	(Ani_TelPrtFlash).l,a1
 		jsrto	AnimateSprite,JmpTo7_AnimateSprite
 		jmpto	DisplaySprite,JmpTo19_DisplaySprite
 ; ===========================================================================
@@ -50866,8 +50001,8 @@ off_27184:	index offset(*),,2
 
 loc_27188:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_27548,ost_mappings(a0)
-		move.w	#tile_Nem_SpinTubeFlash+tile_pal4,ost_tile(a0)
+		move.l	#Map_TelptrFlash,ost_mappings(a0)
+		move.w	#tile_Nem_TeleportFlash+tile_pal4,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#5,ost_priority(a0)
@@ -51009,7 +50144,7 @@ loc_27310:
 		neg.b	d0
 		andi.w	#$F,d0
 		add.w	d0,d0
-		lea	(off_273F2).l,a2
+		lea	(Telport_TubeData).l,a2
 		adda.w	(a2,d0.w),a2
 		move.w	(a2)+,d0
 		subq.w	#4,d0
@@ -51028,7 +50163,7 @@ loc_27344:
 		add.w	d0,d0
 
 loc_2734A:
-		lea	(off_273F2).l,a2
+		lea	(Telport_TubeData).l,a2
 		adda.w	(a2,d0.w),a2
 		move.w	(a2)+,4(a4)
 		subq.w	#4,4(a4)
@@ -51113,68 +50248,25 @@ loc_273EC:
 		move.w	d0,2(a4)
 		rts	
 ; ===========================================================================
-off_273F2:	dc.w byte_2740C-off_273F2			; 0 
-		dc.w byte_27426-off_273F2			; 1
-		dc.w byte_27430-off_273F2			; 2
-		dc.w byte_2744A-off_273F2			; 3
-		dc.w byte_27454-off_273F2			; 4
-		dc.w byte_2745E-off_273F2			; 5
-		dc.w byte_27478-off_273F2			; 6
-		dc.w byte_27492-off_273F2			; 7
-		dc.w byte_274AC-off_273F2			; 8
-		dc.w byte_274C6-off_273F2			; 9
-		dc.w byte_274E0-off_273F2			; 10
-		dc.w byte_274FA-off_273F2			; 11
-		dc.w byte_27514-off_273F2			; 12
-byte_2740C:	dc.b   0,$18,  7,$A8,  2,$70,  7,$50,  2,$70,  7,$40,  2,$80,  7,$40 ; 0
-					
-		dc.b   3,$E0,  7,$50,  3,$F0,  7,$A8,  3,$F0	; 16
-byte_27426:	dc.b   0,  8, $C,$58,  5,$F0, $E,$28,  5,$F0	; 0	
-byte_27430:	dc.b   0,$18,$18,$28,  6,$B0,$17,$D0,  6,$B0,$17,$C0,  6,$C0,$17,$C0 ; 0
-					
-		dc.b   7,$E0,$17,$B0,  7,$F0,$17,$58,  7,$F0	; 16
-byte_2744A:	dc.b   0,  8,  5,$D8,  3,$70,  7,$80,  3,$70	; 0	
-byte_27454:	dc.b   0,  8,  5,$D8,  5,$F0,  7,  0,  5,$F0	; 0	
-byte_2745E:	dc.b   0,$18, $B,$D8,  1,$F0, $C,$30,  1,$F0, $C,$40,  1,$E0, $C,$40 ; 0
-					
-		dc.b   0,$C0, $C,$50,  0,$B0, $C,$A8,  0,$B0	; 16
-byte_27478:	dc.b   0,$18,$17,$28,  3,$30,$15,$D0,  3,$30,$15,$C0,  3,$20,$15,$C0 ; 0
-					
-		dc.b   2,$40,$15,$D0,  2,$30,$16,$28,  2,$30	; 16
-byte_27492:	dc.b   0,$18,  6,$D8,  1,$F0,  7,$30,  1,$F0,  7,$40,  1,$E0,  7,$40 ; 0
-					
-		dc.b   1,  0,  7,$50,  0,$F0,  7,$A8,  0,$F0	; 16
-byte_274AC:	dc.b   0,$18,  7,$D8,  3,$30,  8,$28,  3,$30,  8,$40,  3,$40,  8,$40 ; 0
-					
-		dc.b   4,$58,  8,$28,  4,$70,  7,$D8,  4,$70	; 16
-byte_274C6:	dc.b   0,$18, $F,$D8,  3,$B0,$10,$28,  3,$B0,$10,$40,  3,$98,$10,$40 ; 0
-					
-		dc.b   2,$C4,$10,$58,  2,$B0,$10,$A8,  2,$B0	; 16
-byte_274E0:	dc.b   0,$18					; 0 
-		dc.b  $F,$D8,  4,$B0,$10,$28,  4,$B0		; 0
-		dc.b $10,$40,  4,$C0,$10,$40,  5,$D8,$10,$58,  5,$F0,$10,$A8,  5,$F0 ; 0
-byte_274FA:	dc.b   0,$18,$20,$58,  4,$30,$20,$A8,  4,$30,$20,$C0,  4,$18,$20,$C0 ; 0
-					
-		dc.b   2,$C0,$20,$D0,  2,$B0,$21,$28,  2,$B0	; 16
-byte_27514:	dc.b   0,$18,$23,$28,  5,$B0,$22,$D0,  5,$B0,$22,$C0,  5,$A0,$22,$C0 ; 0
-					
-		dc.b   4,$C0,$22,$D0,  4,$B0,$23,$28,  4,$B0	; 16
 
-byte_2752E:	
-		dc.b   0,  4,  0,  7,$1F,  0,$FF,  1,  1,  0,  0,  0,  0,  0,  1,  0 ; 0					
-		dc.b   0,  0,  1,  0,  0,  1,  0,$FE,  2,  0	; 16
+		include "misc/MTZ Tube Locations.asm"
+
+Ani_TelprtFlash:	index offset(*)
+		ptr byte_27532	; 0
+		ptr byte_27535	; 1
+		
+byte_27532:
+		dc.b $1F,  0,$FF
+		rev02even
+		
+byte_27535:
+		dc.b   1,  1,  0,  0,  0,  0,  0,  1,  0,  0,  0,  1,  0,  0,  1,  0,$FE,  2
+		even
+
 ; ===========================================================================
-Map_27548:				
-		dc.w word_2754C-Map_27548			; 0
-		dc.w word_2754E-Map_27548			; 1
-word_2754C:	dc.w 0			
-word_2754E:	dc.w 6			
-		dc.w $E005,    0,    0,$FFEC			; 0
-		dc.w $E005,    0,    0,$FFF8			; 4
-		dc.w $F005,    0,    0,$FFEC			; 8
-		dc.w $F005,    0,    0,$FFF8			; 12
-		dc.w	 5,    0,    0,$FFEC			; 16
-		dc.w	 5,    0,    0,$FFF8			; 20
+
+		include "mappings/sprite/MTZ Teleporter Flash.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos
@@ -51195,26 +50287,31 @@ JmpTo4_DespawnObject3:
 	
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 68 - MTZ spike block
+; Object 68 - MTZ spike block (spikes emerging from each side sequentially)
 ; ----------------------------------------------------------------------------
 
 SpikeBlock:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-
-loc_2759A:
-		move.w	off_275A2(pc,d0.w),d1
-		jmp	off_275A2(pc,d1.w)
+		move.w	SpkBlk_Index(pc,d0.w),d1
+		jmp	SpkBlk_Index(pc,d1.w)
 ; ===========================================================================
-off_275A2:	index offset(*),,2	
+SpkBlk_Index:	index offset(*),,2	
 		ptr loc_275A8					; 0 
 		ptr loc_2764A					; 2
 		ptr loc_27662					; 4
+		
+		;rsobj
+;spikearoundblock_initial_x_pos =	objoff_30
+;spikearoundblock_initial_y_pos =	objoff_32
+;spikearoundblock_offset =		objoff_34 ; offset from the center
+;spikearoundblock_position =		objoff_36 ; 0 = retracted or expanding, 1 = expanded or retracting
+;spikearoundblock_waiting =		objoff_38 ; 0 = moving, 1 = waiting
 ; ===========================================================================
 
 loc_275A8:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_27750,ost_mappings(a0)
+		move.l	#Map_SpkBlk,ost_mappings(a0)
 		move.w	#tile_Nem_SpikeBlock+tile_pal4,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo31_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -51355,23 +50452,9 @@ SpkBlk_ColTypes:
 		dc.b id_col_16x4+id_col_hurt			; 1 & 3, horizontal spikes
 		endr
 ; ===========================================================================
-Map_27750:				
-		dc.w word_2775A-Map_27750			; 0
-		dc.w word_27764-Map_27750			; 1
-		dc.w word_2776E-Map_27750			; 2
-		dc.w word_27778-Map_27750			; 3
-		dc.w word_27782-Map_27750			; 4
-word_2775A:	dc.w 1			
-		dc.w $F003,$1000,$1000,$FFFC			; 0
-word_27764:	dc.w 1			
-		dc.w $FC0C,    4,    2,$FFF0			; 0
-word_2776E:	dc.w 1			
-		dc.w $F003,    0,    0,$FFFC			; 0
-word_27778:	dc.w 1			
-		dc.w $FC0C, $804, $802,$FFF0			; 0
-word_27782:	dc.w 2			
-		dc.w $F007,    0,    0,$FFF0			; 0
-		dc.w $F007, $800, $800,	   0			; 4
+
+		include "mappings/sprite/MTZ Spike Block and Floor Spike.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 6D - MTZ floor spike
@@ -51390,7 +50473,7 @@ off_277A2:	index offset(*),,2
 
 loc_277A6:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_27750,ost_mappings(a0)
+		move.l	#Map_SpkBlk,ost_mappings(a0)
 		move.w	#tile_Nem_MTZSpike+tile_pal2,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo31_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -51496,8 +50579,8 @@ ost_nut_3D:			rs.b 1
 
 loc_2789A:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_27A26,ost_mappings(a0)
-		move.w	#tile_Nem_MTZAsstBlocks+tile_pal2,ost_tile(a0)
+		move.l	#Map_Nut,ost_mappings(a0)
+		move.w	#tile_Nem_Nut+tile_pal2,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo32_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
@@ -51645,27 +50728,9 @@ loc_279FC:
 loc_27A22:				
 		bra.w	loc_278F4
 ; ===========================================================================
-; ===========================================================================
-Map_27A26:				
-		dc.w word_27A2E-Map_27A26			; 0
-		dc.w word_27A40-Map_27A26			; 1
-		dc.w word_27A5A-Map_27A26			; 2
-		dc.w word_27A74-Map_27A26			; 3
-word_27A2E:	dc.w 2			
-		dc.w $F40E,    0,    0,$FFE0			; 0
-		dc.w $F40E,   $C,    6,	   0			; 4
-word_27A40:	dc.w 3			
-		dc.w $F40A,    3,    1,$FFE0			; 0
-		dc.w $F40E,   $C,    6,$FFF8			; 4
-		dc.w $F402, $809, $804,	 $18			; 8
-word_27A5A:	dc.w 3			
-		dc.w $F406,  $24,  $12,$FFE0			; 0
-		dc.w $F40E,  $2A,  $15,$FFF0			; 4
-		dc.w $F406,  $18,   $C,	 $10			; 8
-word_27A74:	dc.w 3			
-		dc.w $F402,  $27,  $13,$FFE0			; 0
-		dc.w $F40E,  $18,   $C,$FFE8			; 4
-		dc.w $F40A, $82D, $816,	   8			; 8
+
+		include "mappings/sprite/MTZ Nut.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -51706,7 +50771,7 @@ off_27ABE:	index offset(*),,2
 
 loc_27AC4:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_26EC8,ost_mappings(a0)
+		move.l	#Map_MTZPlats,ost_mappings(a0)
 		move.w	#0+tile_pal4,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
@@ -51717,7 +50782,7 @@ loc_27AC4:
 		cmpi.b	#id_MCZ,(v_zone).w
 		bne.w	loc_27BC4
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_27D30,ost_mappings(a0)
+		move.l	#Map_Crate,ost_mappings(a0)
 		move.w	#tile_Nem_Crate+tile_pal4,ost_tile(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#$20,ost_height(a0)
@@ -51875,23 +50940,25 @@ loc_27CA2:
 locret_27CDA:				
 		rts	
 ; ===========================================================================
-byte_27CDC:	dc.b   0,  0,  4,  0,  0,$10,  4,  0,$FE,  0,  0,$20,  0,  0,  4,  0 ; 0
-					
-		dc.b   0,$10,$FC,  0,$FE,  0,  0,$20		; 16
-byte_27CF4:	dc.b   0,  0,  1,  0,  0,$40,$FF,  0,  0,  0,  0,$80,  0,  0,$FF,  0 ; 0
-					
-		dc.b   0,$40,  1,  0,  0,  0,  0,$80,  1,  0,  0,  0,  0,$40 ; 16
-byte_27D12:	dc.b   0,  0,  1,  0,  0,$40,  1,  0,  0,  0,  0,$80,  0,  0,$FF,  0 ; 0
-					
-		dc.b   0,$40,$FF,  0,  0,  0,  0,$80,$FF,  0,  0,  0,  0,$40 ; 16
+; Data describing the movement of the platforms/crates, I believe.
+
+
+byte_27CDC:	; MTZ falling platform
+		dc.b   0,  0,  4,  0,  0,$10,  4,  0,$FE,  0,  0,$20,  0,  0,  4,  0
+		dc.b   0,$10,$FC,  0,$FE,  0,  0,$20
+		
+byte_27CF4:	; MCZ crate
+		dc.b   0,  0,  1,  0,  0,$40,$FF,  0,  0,  0,  0,$80,  0,  0,$FF,  0
+		dc.b   0,$40,  1,  0,  0,  0,  0,$80,  1,  0,  0,  0,  0,$40
+		
+byte_27D12:	; MCZ crate (x-flipped)
+		dc.b   0,  0,  1,  0,  0,$40,  1,  0,  0,  0,  0,$80,  0,  0,$FF,  0
+		dc.b   0,$40,$FF,  0,  0,  0,  0,$80,$FF,  0,  0,  0,  0,$40
+		even
 ; ===========================================================================
-Map_27D30:				
-		dc.w word_27D32-Map_27D30
-word_27D32:	dc.w 4			
-		dc.w $E00F,    0,    0,$FFE0			; 0
-		dc.w $E00F,  $10,    8,	   0			; 4
-		dc.w	$F,$1810,$1808,$FFE0			; 8
-		dc.w	$F,$1800,$1800,	   0			; 12
+
+		include "mappings/sprite/MCZ Crate.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -51909,7 +50976,7 @@ JmpTo3_DespawnObject2:
 		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 6B - MTZ fixed platform
+; Object 6B - CPZ continuously moving stair platforms and MTZ fixed platform
 ; ----------------------------------------------------------------------------
 
 Platform4:				
@@ -51935,11 +51002,11 @@ byte_27D7E:
 
 loc_27D86:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_26EC8,ost_mappings(a0)
+		move.l	#Map_MTZPlats,ost_mappings(a0)
 		move.w	#tile_LevelArt+tile_pal4,ost_tile(a0)
 		cmpi.b	#id_CPZ,(v_zone).w
 		bne.s	loc_27DAE
-		move.l	#Map_2800E,ost_mappings(a0)
+		move.l	#Map_StairBlock,ost_mappings(a0)
 		move.w	#tile_Nem_StairBlock+tile_pal4,ost_tile(a0)
 
 loc_27DAE:				
@@ -52213,12 +51280,9 @@ loc_28004:
 locret_2800C:
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_2800E:				
-		dc.w word_28010-Map_2800E
-word_28010:	
-		dc.w 1			
-		dc.w $F00F,    0,    0,$FFF0			; 0
+
+		include "mappings/sprite/CPZ Stair Block.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -52240,7 +51304,8 @@ JmpTo14_SpeedToPos:
 	
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 6C - Small platform on pulleys (like at the start of MTZ2)
+; Object 6C - MTZ rope platforms (reworked from Sonic 1's SBZ spinning 
+; conveyer platforms)
 ; ----------------------------------------------------------------------------
 
 Conveyer:				
@@ -52268,8 +51333,8 @@ loc_28060:
 		move.b	ost_subtype(a0),d0
 		bmi.w	loc_28112
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Obj6C_MapUnc_28372,ost_mappings(a0)
-		move.w	#tile_Nem_LavaCup+tile_pal4,ost_tile(a0)
+		move.l	#Map_ConveyerPlat,ost_mappings(a0)
+		move.w	#tile_Nem_RopePlat+tile_pal4,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -52354,12 +51419,12 @@ loc_28160:
 ; ===========================================================================
 
 loc_28168:
-		move.w	ost_x_pos(a0),-(sp)
+		pushr.w	ost_x_pos(a0)
 		bsr.w	loc_2817E
 		moveq	#0,d1
 		move.b	ost_displaywidth(a0),d1
 		moveq	#8,d3
-		move.w	(sp)+,d4
+		popr.w	d4
 		jmpto	DetectPlatform,JmpTo5_DetectPlatform
 ; ===========================================================================
 
@@ -52496,7 +51561,9 @@ byte_28340:
 		dc.b   0,$20,  1,$86,  0,$28,  0,$20,  1,  0,  0,$28,  0,$20,  0,$7A ; 32
 		dc.b   0,$28					; 48
 ; ===========================================================================
-Obj6C_MapUnc_28372:	include "mappings/sprite/obj6C.asm"
+
+		include "mappings/sprite/MTZ Conveyer Platforms.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -52522,7 +51589,7 @@ JmpTo15_SpeedToPos:
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 6E - Large platform moving in a circle (like at the start of MTZ3)
+; Object 6E - MTZ large circling platform
 ; ----------------------------------------------------------------------------
 
 LargeRotatingPlatform:				
@@ -52545,8 +51612,8 @@ byte_283C0:
 
 loc_283C8:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Obj6E_MapUnc_2852C,ost_mappings(a0)
-		move.w	#0+tile_pal4,ost_tile(a0)
+		move.l	#Map_CirclePlat,ost_mappings(a0)
+		move.w	#tile_LevelArt+tile_pal4,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo36_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
@@ -52665,8 +51732,9 @@ loc_28514:
 loc_28526:				
 		jmp	(DeleteObject).l
 ; ===========================================================================
-; ===========================================================================
-Obj6E_MapUnc_2852C:	include "mappings/sprite/obj6E.asm"
+
+		include "mappings/sprite/MTZ Large Circling Platform.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -52681,6 +51749,8 @@ JmpTo15_SolidObject:
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 70 - MTZ giant cog
+; Only the cog teeth are part of this object; the body of the cog is part
+; of the level foreground.
 ; ----------------------------------------------------------------------------
 
 Cog:				
@@ -52712,8 +51782,8 @@ loc_285EE:
 loc_285F4:				
 		_move.b	ost_id(a0),ost_id(a1)
 		addq.b	#2,ost_primary_routine(a1)
-		move.l	#Map_28786,ost_mappings(a1)
-		move.w	#tile_Nem_Wheel+tile_pal4,ost_tile(a1)
+		move.l	#Map_CogTeeth,ost_mappings(a1)
+		move.w	#tile_Nem_GiantCog+tile_pal4,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo4_Adjust2PArtPointer2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#4,ost_priority(a1)
@@ -52819,114 +51889,48 @@ byte_28706:
 		dc.b $10,$10					; 30
 		
 byte_28726:	
-		dc.b   0,$B8,  0,$32,$CE,  4,$48,  0,  8,$32,$32, $C,  0,$48,$10,$CE ; 0		
-		dc.b $32,$14,$B8,  0,$18,$CE,$CE,$1C, $D,$B8,  1,$3F,$DA,  5,$48, $C ; 16
-		dc.b   9,$27,$3C, $D,$F3,$48,$11,$C1,$26,$15,$B8,$F4,$19,$D9,$C4,$1D ; 32
-		dc.b $19,$BC,  2,$46,$E9,  6,$46,$17, $A,$19,$44, $E,$E7,$44,$12,$BA ; 48
-		dc.b $17,$16,$BA,$E9,$1A,$E7,$BC,$1E,$27,$C4,  3,$48,$F4,  7,$3F,$26 ; 64
-		dc.b  $B, $D,$48, $F,$D9,$3C,$13,$B8, $C,$17,$C1,$DA,$1B,$F3,$B8,$1F ; 80
+		; initial positions
+		; ost_x_pos, ost_y_pos, ost_frame
+		dc.b   0,$B8,  0
+		dc.b $32,$CE,  4
+		dc.b $48,  0,  8
+		dc.b $32,$32, $C
+		dc.b   0,$48,$10
+		dc.b $CE,$32,$14
+		dc.b $B8,  0,$18
+		dc.b $CE,$CE,$1C
+
+		dc.b  $D,$B8,  1
+		dc.b $3F,$DA,  5
+		dc.b $48, $C,  9
+		dc.b $27,$3C, $D
+		dc.b $F3,$48,$11
+		dc.b $C1,$26,$15
+		dc.b $B8,$F4,$19
+		dc.b $D9,$C4,$1D
+
+		dc.b $19,$BC,  2
+		dc.b $46,$E9,  6
+		dc.b $46,$17, $A
+		dc.b $19,$44, $E
+		dc.b $E7,$44,$12
+		dc.b $BA,$17,$16
+		dc.b $BA,$E9,$1A
+		dc.b $E7,$BC,$1E
+
+		dc.b $27,$C4,  3
+		dc.b $48,$F4,  7
+		dc.b $3F,$26, $B
+		dc.b  $D,$48, $F
+		dc.b $D9,$3C,$13
+		dc.b $B8, $C,$17
+		dc.b $C1,$DA,$1B
+		dc.b $F3,$B8,$1F
+		even
 ; ===========================================================================
-Map_28786:				
-		dc.w word_287C6-Map_28786			; 0
-		dc.w word_287D8-Map_28786			; 1
-		dc.w word_287E2-Map_28786			; 2
-		dc.w word_287EC-Map_28786			; 3
-		dc.w word_287F6-Map_28786			; 4
-		dc.w word_28800-Map_28786			; 5
-		dc.w word_2880A-Map_28786			; 6
-		dc.w word_28814-Map_28786			; 7
-		dc.w word_2881E-Map_28786			; 8
-		dc.w word_28830-Map_28786			; 9
-		dc.w word_2883A-Map_28786			; 10
-		dc.w word_28844-Map_28786			; 11
-		dc.w word_2884E-Map_28786			; 12
-		dc.w word_28858-Map_28786			; 13
-		dc.w word_28862-Map_28786			; 14
-		dc.w word_2886C-Map_28786			; 15
-		dc.w word_28876-Map_28786			; 16
-		dc.w word_28888-Map_28786			; 17
-		dc.w word_28892-Map_28786			; 18
-		dc.w word_2889C-Map_28786			; 19
-		dc.w word_288A6-Map_28786			; 20
-		dc.w word_288B0-Map_28786			; 21
-		dc.w word_288BA-Map_28786			; 22
-		dc.w word_288C4-Map_28786			; 23
-		dc.w word_288CE-Map_28786			; 24
-		dc.w word_288E0-Map_28786			; 25
-		dc.w word_288EA-Map_28786			; 26
-		dc.w word_288F4-Map_28786			; 27
-		dc.w word_288FE-Map_28786			; 28
-		dc.w word_28908-Map_28786			; 29
-		dc.w word_28912-Map_28786			; 30
-		dc.w word_2891C-Map_28786			; 31
-word_287C6:	dc.w 2			
-		dc.w $F007,    0,    0,$FFF0			; 0
-		dc.w $F007, $800, $800,	   0			; 4
-word_287D8:	dc.w 1			
-		dc.w $F00B, $808, $804,$FFF4			; 0
-word_287E2:	dc.w 1			
-		dc.w $F00F, $814, $80A,$FFF0			; 0
-word_287EC:	dc.w 1			
-		dc.w $F00F, $824, $812,$FFF0			; 0
-word_287F6:	dc.w 1			
-		dc.w $F00F, $834, $81A,$FFF0			; 0
-word_28800:	dc.w 1			
-		dc.w $F00F, $844, $822,$FFF0			; 0
-word_2880A:	dc.w 1			
-		dc.w $F00F, $854, $82A,$FFF0			; 0
-word_28814:	dc.w 1			
-		dc.w $F40E, $864, $832,$FFF0			; 0
-word_2881E:	dc.w 2			
-word_28820:	dc.w $F00D, $870, $838,$FFF0			; 0
-		dc.w	$D,$1870,$1838,$FFF0			; 4
-word_28830:	dc.w 1			
-word_28832:	dc.w $F40E,$1864,$1832,$FFF0			; 0
-word_2883A:	dc.w 1			
-		dc.w $F00F,$1854,$182A,$FFF0			; 0
-word_28844:	dc.w 1			
-		dc.w $F00F,$1844,$1822,$FFF0			; 0
-word_2884E:	dc.w 1			
-		dc.w $F00F,$1834,$181A,$FFF0			; 0
-word_28858:	dc.w 1			
-		dc.w $F00F,$1824,$1812,$FFF0			; 0
-word_28862:	dc.w 1			
-		dc.w $F00F,$1814,$180A,$FFF0			; 0
-word_2886C:	dc.w 1			
-		dc.w $F00B,$1808,$1804,$FFF4			; 0
-word_28876:	dc.w 2			
-		dc.w $F007,$1000,$1000,$FFF0			; 0
-		dc.w $F007,$1800,$1800,	   0			; 4
-word_28888:	dc.w 1			
-		dc.w $F00B,$1008,$1004,$FFF4			; 0
-word_28892:	dc.w 1			
-		dc.w $F00F,$1014,$100A,$FFF0			; 0
-word_2889C:	dc.w 1			
-		dc.w $F00F,$1024,$1012,$FFF0			; 0
-word_288A6:	dc.w 1			
-		dc.w $F00F,$1034,$101A,$FFF0			; 0
-word_288B0:	dc.w 1			
-		dc.w $F00F,$1044,$1022,$FFF0			; 0
-word_288BA:	dc.w 1			
-		dc.w $F00F,$1054,$102A,$FFF0			; 0
-word_288C4:	dc.w 1			
-		dc.w $F40E,$1064,$1032,$FFF0			; 0
-word_288CE:	dc.w 2			
-		dc.w $F00D,  $70,  $38,$FFF0			; 0
-		dc.w	$D,$1070,$1038,$FFF0			; 4
-word_288E0:	dc.w 1			
-		dc.w $F40E,  $64,  $32,$FFF0			; 0
-word_288EA:	dc.w 1			
-		dc.w $F00F,  $54,  $2A,$FFF0			; 0
-word_288F4:	dc.w 1			
-		dc.w $F00F,  $44,  $22,$FFF0			; 0
-word_288FE:	dc.w 1			
-		dc.w $F00F,  $34,  $1A,$FFF0			; 0
-word_28908:	dc.w 1			
-		dc.w $F00F,  $24,  $12,$FFF0			; 0
-word_28912:	dc.w 1			
-		dc.w $F00F,  $14,   $A,$FFF0			; 0
-word_2891C:	dc.w 1			
-		dc.w $F00B,    8,    4,$FFF4			; 0
+
+		include "mappings/sprite/MTZ Giant Cog.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -52947,7 +51951,7 @@ JmpTo16_SolidObject:
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 72 - Conveyor belt from CNZ
-; Invisible object, the visible belt is actually part of the level layout.
+; Invisible object, the visible belt is actually part of the level foreground.
 ; ----------------------------------------------------------------------------
 ConveyerBelt:				
 		moveq	#0,d0
@@ -53018,7 +52022,7 @@ JmpTo5_DespawnObject3:
 
 ; ===========================================================================		
 ; ----------------------------------------------------------------------------
-; Object 73 - Solid rotating ring thing from Mystic Cave Zone
+; Object 73 - MCZ solid rotating ring thing
 ; (unused, but can be seen in debug mode)
 ; ----------------------------------------------------------------------------
 MysticCaveRotatingRings:				
@@ -53035,7 +52039,7 @@ off_289E2:	index offset(*),,2
 
 loc_289E8:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_28B9C,ost_mappings(a0)
+		move.l	#Map_MCZRotRings,ost_mappings(a0)
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo37_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -53176,11 +52180,9 @@ loc_28B7E:
 		move.w	ost_x_pos(a0),$36(a0)
 		jmpto	DisplaySprite,JmpTo21_DisplaySprite
 ; ===========================================================================
-; ===========================================================================
-Map_28B9C:				
-		dc.w word_28B9E-Map_28B9C
-word_28B9E:	dc.w 1			
-		dc.w $F805,    0,    0,$FFF8			; 0
+
+		include "mappings/sprite/MCZ Rotating Rings.asm"
+		
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -53224,7 +52226,7 @@ off_28BE8:	index offset(*),,2
 
 loc_28BEE:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_28D8A,ost_mappings(a0)
+		move.l	#Map_BrckSpkChn,ost_mappings(a0)
 		move.w	#tile_LevelArt+tile_pal2,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo38_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -53247,7 +52249,7 @@ loc_28BEE:
 		bne.s	loc_28C5E
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#4,ost_priority(a0)
-		move.b	#2,ost_frame(a0)
+		move.b	#id_Frame_Bricks,ost_frame(a0)
 		rts	
 ; ===========================================================================
 
@@ -53274,7 +52276,7 @@ loc_28CA0:
 		dbf	d1,loc_28CA0
 		move.w	d2,ost_x_pos(a1)
 		move.w	d3,ost_y_pos(a1)
-		move.b	#0,ost_mainspr_frame(a1)
+		move.b	#id_Frame_Spikeball,ost_mainspr_frame(a1)
 		move.l	a1,$3C(a0)
 		move.b	#$40,ost_mainspr_height(a1)
 		bset	#render_useheight_bit,ost_render(a1)
@@ -53354,19 +52356,9 @@ loc_28D6C:
 		jsrto	SolidObject,JmpTo18_SolidObject
 		jmpto	DespawnObject,JmpTo22_DespawnObject
 ; ===========================================================================
-; ===========================================================================
-Map_28D8A:				
-		dc.w word_28D90-Map_28D8A			; 0
-		dc.w word_28DA2-Map_28D8A			; 1
-		dc.w word_28DAC-Map_28D8A			; 2
-word_28D90:	dc.w 2			
-		dc.w $F00D,  $7A,  $3D,$FFF0			; 0
-		dc.w	$D,$187A,$183D,$FFF0			; 4
-word_28DA2:	dc.w 1			
-		dc.w $F805,$4066,$4033,$FFF8			; 0
-word_28DAC:	dc.w 2			
-		dc.w $F007,$4040,$4020,$FFF0			; 0
-		dc.w $F007,$4840,$4820,	   0			; 4
+
+		include "mappings/sprite/MCZ Spikeball on Chain.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -53420,7 +52412,7 @@ SlidSpks_InitData:
 
 loc_28E0E:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_28F3A,ost_mappings(a0)
+		move.l	#Map_SlidSpks,ost_mappings(a0)
 		move.w	#tile_LevelArt,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo39_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -53486,9 +52478,9 @@ SlidSpks_Modes:	index offset(*),,2
 ; ===========================================================================
 
 SlidSpks_ChkPlayer:				
-		lea	($FFFFB000).w,a1
+		lea	(v_ost_player1).w,a1
 		bsr.s	loc_28ED8
-		lea	($FFFFB040).w,a1
+		lea	(v_ost_player2).w,a1
 
 loc_28ED8:				
 		btst	#1,ost_primary_status(a1)
@@ -53530,16 +52522,9 @@ loc_28F34:
 locret_28F38:				
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_28F3A:				
-		dc.w word_28F3C-Map_28F3A
-word_28F3C:	dc.w 6			
-		dc.w $F005,$242C,$2216,$FFC0			; 0
-		dc.w	 5,$242C,$2216,$FFC0			; 4
-		dc.w $F007,$6040,$6020,$FFD0			; 8
-		dc.w $F00F,$6048,$6024,$FFE0			; 12
-		dc.w $F00F,$6048,$6024,	   0			; 16
-		dc.w $F00F,$6048,$6024,	 $20			; 20
+
+		include "mappings/sprite/MCZ Sliding Spike Block.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -53561,10 +52546,10 @@ JmpTo5_DespawnObject2:
 		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 77 - MCZ Bridge (opens downward in two halves)
+; Object 77 - MCZ double-leaf bridge (opens downward in two parts)
 ; ----------------------------------------------------------------------------
 
-BridgeMysticCave:				
+DoubleDrawbridge:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
 		move.w	off_28F96(pc,d0.w),d1
@@ -53577,7 +52562,7 @@ off_28F96:	index offset(*),,2
 
 loc_28F9A:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_29064,ost_mappings(a0)
+		move.l	#Map_DBridge,ost_mappings(a0)
 		move.w	#tile_Nem_DrawbridgeLogs+tile_pal4,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo40_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -53599,7 +52584,7 @@ loc_28FBC:
 		jsr	(PlaySound).l
 
 loc_28FF0:				
-		lea	(Ani_BridgeMCZ).l,a1
+		lea	(Ani_DBridge).l,a1	; could be PC relative
 		jsr	(AnimateSprite).l
 		tst.b	ost_frame(a0)
 		bne.s	loc_2901A
@@ -53635,68 +52620,20 @@ loc_2904C:
 		jmpto	DespawnObject,JmpTo23_DespawnObject
 ; ===========================================================================
 
-Ani_BridgeMCZ:	index offset(*)
-		ptr Ani_BridgeMCZ_Close				; 0 
-		ptr Ani_BridgeMCZ_Open				; 1
+Ani_DBridge:	index offset(*)
+		ptr Ani_DBridge_Close				; 0 
+		ptr Ani_DBridge_Open				; 1
 		
-Ani_BridgeMCZ_Close:	
+Ani_DBridge_Close:	
 		dc.b   3,  4,  3,  2,  1,  0,$FE,  1
 		
-Ani_BridgeMCZ_Open:
+Ani_DBridge_Open:
 		dc.b   3,  0,  1,  2,  3,  4,$FE,  1
 		
 ; ===========================================================================
-Map_29064:				
-		dc.w word_2906E-Map_29064			; 0
-		dc.w word_290B0-Map_29064			; 1
-		dc.w word_290F2-Map_29064			; 2
-		dc.w word_29134-Map_29064			; 3
-		dc.w word_29176-Map_29064			; 4
-word_2906E:	dc.w 8			
-		dc.w $F805,    0,    0,$FFC0			; 0
-		dc.w $F805,    0,    0,$FFD0			; 4
-		dc.w $F805,    0,    0,$FFE0			; 8
-		dc.w $F805,    0,    0,$FFF0			; 12
-		dc.w $F805,    0,    0,	   0			; 16
-		dc.w $F805,    0,    0,	 $10			; 20
-		dc.w $F805,    0,    0,	 $20			; 24
-		dc.w $F805,    0,    0,	 $30			; 28
-word_290B0:	dc.w 8			
-		dc.w $F805,    0,    0,$FFC0			; 0
-		dc.w $FE05,    0,    0,$FFCE			; 4
-		dc.w  $405,    0,    0,$FFDD			; 8
-		dc.w  $A05,    0,    0,$FFEC			; 12
-		dc.w  $A05,    0,    0,	   4			; 16
-		dc.w  $405,    0,    0,	 $13			; 20
-		dc.w $FE05,    0,    0,	 $22			; 24
-		dc.w $F805,    0,    0,	 $30			; 28
-word_290F2:	dc.w 8			
-		dc.w $F805,    0,    0,$FFC0			; 0
-		dc.w  $305,    0,    0,$FFCB			; 4
-		dc.w  $E05,    0,    0,$FFD6			; 8
-		dc.w $1905,    0,    0,$FFE1			; 12
-		dc.w $1905,    0,    0,	  $F			; 16
-		dc.w  $E05,    0,    0,	 $1A			; 20
-		dc.w  $305,    0,    0,	 $25			; 24
-		dc.w $F805,    0,    0,	 $30			; 28
-word_29134:	dc.w 8			
-		dc.w $F805,    0,    0,$FFC0			; 0
-		dc.w  $605,    0,    0,$FFC6			; 4
-		dc.w $1505,    0,    0,$FFCC			; 8
-		dc.w $2405,    0,    0,$FFD2			; 12
-		dc.w $2405,    0,    0,	 $1E			; 16
-		dc.w $1505,    0,    0,	 $24			; 20
-		dc.w  $605,    0,    0,	 $2A			; 24
-		dc.w $F805,    0,    0,	 $30			; 28
-word_29176:	dc.w 8			
-		dc.w $F805,    0,    0,$FFC0			; 0
-		dc.w  $805,    0,    0,$FFC0			; 4
-		dc.w $1805,    0,    0,$FFC0			; 8
-		dc.w $2805,    0,    0,$FFC0			; 12
-		dc.w $F805,    0,    0,	 $30			; 16
-		dc.w  $805,    0,    0,	 $30			; 20
-		dc.w $1805,    0,    0,	 $30			; 24
-		dc.w $2805,    0,    0,	 $30			; 28
+
+		include "mappings/sprite/MCZ Double-Leaf Drawridge.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -53709,6 +52646,7 @@ JmpTo20_SolidObject:
 		
 		align 4
 	endc	
+	
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 78 - CPZ stair blocks
@@ -53751,7 +52689,7 @@ loc_29206:
 
 loc_29214:				
 		_move.b	ost_id(a0),ost_id(a1)
-		move.l	#Map_2800E,ost_mappings(a1)
+		move.l	#Map_StairBlock,ost_mappings(a1)
 		move.w	#tile_Nem_StairBlock+tile_pal4,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo5_Adjust2PArtPointer2
 		move.b	#render_rel,ost_render(a1)
@@ -53927,10 +52865,10 @@ JmpTo6_DespawnObject2:
 TrackPlatform:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_293AE(pc,d0.w),d1
-		jmp	off_293AE(pc,d1.w)
+		move.w	TrackPlat_Index(pc,d0.w),d1
+		jmp	TrackPlat_Index(pc,d1.w)
 ; ===========================================================================
-off_293AE:	index offset(*),,2
+TrackPlat_Index:	index offset(*),,2
 		ptr loc_293CC					; 0 
 		ptr loc_2948E					; 2
 		ptr loc_294EA					; 4
@@ -53942,18 +52880,21 @@ byte_293B4:
 		dc.b $98					; 3
 		dc.b   0					; 4
 		dc.b   0					; 5
+		
 		dc.b   1					; 6
 		dc.b $A8					; 7
 		dc.b $FF					; 8
 		dc.b $50					; 9
 		dc.b   0					; 10
 		dc.b $40					; 11
+		
 		dc.b   1					; 12
 		dc.b $E8					; 13
 		dc.b $FF					; 14
 		dc.b $80					; 15
 		dc.b   0					; 16
 		dc.b $80					; 17
+		
 		dc.b   0					; 18
 		dc.b $68					; 19
 		dc.b   0					; 20
@@ -53964,7 +52905,7 @@ byte_293B4:
 
 loc_293CC:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_29564,ost_mappings(a0)
+		move.l	#Map_TrackPlat,ost_mappings(a0)
 		move.w	#tile_Nem_StairBlock+tile_pal4+tile_hi,ost_tile(a0)
 		cmpi.b	#id_MCZ,(v_zone).w
 		bne.s	loc_293F4
@@ -54115,12 +53056,9 @@ loc_2953E:
 locret_29562:				
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_29564:				
-		dc.w word_29566-Map_29564
-word_29566:	dc.w 2			
-		dc.w $F809,  $10,    8,$FFE8			; 0
-		dc.w $F809, $810, $808,	   0			; 4
+
+		include "mappings/sprite/CPZ Track Platform and MCZ Small Moving Platform.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -54144,8 +53082,8 @@ JmpTo6_DetectPlatform:
 SpinTubeLid:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_295C0(pc,d0.w),d1
-		jsr	off_295C0(pc,d1.w)
+		move.w	TubeLid_Index(pc,d0.w),d1
+		jsr	TubeLid_Index(pc,d1.w)
 		tst.w	(f_two_player).w
 		beq.s	loc_295A8
 		jmpto	DisplaySprite,JmpTo25_DisplaySprite
@@ -54164,7 +53102,7 @@ JmpTo40_DeleteObject:
 		jmp	(DeleteObject).l
     endc		
 ; ===========================================================================
-off_295C0:	index offset(*),,2
+TubeLid_Index:	index offset(*),,2
 		ptr loc_295C8					; 0 
 		ptr loc_295FE					; 2
 byte_295C4:	
@@ -54175,8 +53113,8 @@ byte_295C4:
 
 loc_295C8:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_29780,ost_mappings(a0)
-		move.w	#tile_Nem_CPZTubeSpring,ost_tile(a0)
+		move.l	#Map_TubeLid,ost_mappings(a0)
+		move.w	#tile_Nem_TubeLid,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#1,ost_priority(a0)
@@ -54249,7 +53187,7 @@ loc_29686:
 		move.b	#3,ost_anim(a0)
 
 loc_296B6:				
-		lea	(off_29768).l,a1
+		lea	(Ani_TubeLid).l,a1
 		jmpto	AnimateSprite,JmpTo8_AnimateSprite
 ; ===========================================================================
 		rts						; dead code
@@ -54302,7 +53240,7 @@ loc_2975E:
 		move.w	#sfx_Spring,d0	
 		jmp	(PlaySound).l
 ; ===========================================================================
-off_29768:	index offset(*)
+Ani_TubeLid:	index offset(*)
 		ptr byte_29770					; 0 
 		ptr byte_29773					; 1
 		ptr byte_29777					; 2
@@ -54320,22 +53258,9 @@ byte_29777:
 		dc.b   5,  1,  2,  2,  2,  4,$FD,  0
 		even
 ; ===========================================================================
-Map_29780:				
-		dc.w word_2978A-Map_29780			; 0
-		dc.w word_29794-Map_29780			; 1
-		dc.w word_297A6-Map_29780			; 2
-		dc.w word_297B8-Map_29780			; 3
-		dc.w word_29794-Map_29780			; 4
-word_2978A:	dc.w 1			
-		dc.w $F00D,    0,    0,$FFF0			; 0
-word_29794:	dc.w 2			
-		dc.w $E007,    8,    4,$FFF0			; 0
-		dc.w $E007, $808, $804,	   0			; 4
-word_297A6:	dc.w 2			
-		dc.w $E007,  $10,    8,$FFF0			; 0
-		dc.w $E007, $810, $808,	   0			; 4
-word_297B8:	dc.w 1			
-		dc.w $F00D,  $18,   $C,$FFF0			; 0
+
+		include "mappings/sprite/CPZ Spin Tube Lid.asm"
+		
 ; ===========================================================================
 
 	if Revision<2
@@ -54375,7 +53300,7 @@ off_297F2:	index offset(*),,2
 
 loc_297F6:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_29938,ost_mappings(a0)
+		move.l	#Map_VineSwitch,ost_mappings(a0)
 		move.w	#tile_Nem_VineSwitch+tile_pal4,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo43_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -54384,10 +53309,10 @@ loc_297F6:
 
 loc_2981E:				
 		lea	$30(a0),a2
-		lea	($FFFFB000).w,a1
+		lea	(v_ost_player1).w,a1
 		move.w	(v_joypad_hold_actual).w,d0
 		bsr.s	loc_2983C
-		lea	($FFFFB040).w,a1
+		lea	(v_ost_player2).w,a1
 		addq.w	#1,a2
 		move.w	(v_joypad2_hold_actual).w,d0
 		bsr.s	loc_2983C
@@ -54415,10 +53340,10 @@ loc_29860:
 		bclr	#0,(a3)
 
 loc_2987A:
-		move.b	#0,ost_frame(a0)
+		move.b	#id_Frame_VSwitch_Idle,ost_frame(a0)
 		tst.w	$30(a0)
 		beq.s	loc_2988C
-		move.b	#1,ost_frame(a0)
+		move.b	#id_Frame_VSwitch_Pulled,ost_frame(a0)
 
 loc_2988C:				
 		bra.w	locret_29936
@@ -54470,18 +53395,9 @@ loc_2989E:
 locret_29936:				
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_29938:				
-		dc.w word_2993C-Map_29938			; 0
-		dc.w word_29956-Map_29938			; 1
-word_2993C:	dc.w 3			
-		dc.w $D007,    0,    0,$FFF8			; 0
-		dc.w $F007,    0,    0,$FFF8			; 4
-		dc.w $1007,    8,    4,$FFF8			; 8
-word_29956:	dc.w 3			
-		dc.w $D407,    0,    0,$FFF8			; 0
-		dc.w $F407,    0,    0,$FFF8			; 4
-		dc.w $1407,    8,    4,$FFF8			; 8
+
+		include "mappings/sprite/MCZ Vine Switch.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -54495,22 +53411,22 @@ JmpTo43_Adjust2PArtPointer:
 		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 80 - MCZ moving vine and WFZ crane hooks
+; Object 80 - MCZ ascending/descending vines and WFZ crane hooks
 ; ----------------------------------------------------------------------------
 
-MovingVineHooks:				
+VineHook:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2998A(pc,d0.w),d1
-		jmp	off_2998A(pc,d1.w)
+		move.w	VineHook_Index(pc,d0.w),d1
+		jmp	VineHook_Index(pc,d1.w)
 ; ===========================================================================
-off_2998A:	index offset(*),,2
-		ptr loc_29990					; 0 
-		ptr loc_29A66					; 2
-		ptr loc_29BFA					; 4
+VineHook_Index:	index offset(*),,2
+		ptr VineHook_Main					; 0 
+		ptr VineHook_Vine					; 2
+		ptr VineHook_Hook					; 4
 ; ===========================================================================
 
-loc_29990:				
+VineHook_Main:				
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
@@ -54521,7 +53437,7 @@ loc_29990:
 		cmpi.b	#id_WFZ,(v_zone).w
 		bne.s	loc_29A1C
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_29DD0,ost_mappings(a0)
+		move.l	#Map_Hook,ost_mappings(a0)
 		move.w	#(tile_Nem_Hook+4)+tile_pal2,ost_tile(a0) ; +4 is workaround for bugged mappings
 		jsrto	Adjust2PArtPointer,JmpTo44_Adjust2PArtPointer
 		move.w	#$A0,$2E(a0)
@@ -54545,11 +53461,11 @@ loc_299EE:
 		move.b	d0,ost_frame(a0)
 
 loc_29A18:				
-		bra.w	loc_29BFA
+		bra.w	VineHook_Hook
 ; ===========================================================================
 
 loc_29A1C:				
-		move.l	#Map_29C64,ost_mappings(a0)
+		move.l	#Map_VinePulley,ost_mappings(a0)
 		move.w	#tile_Nem_VinePulley+tile_pal4,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo44_Adjust2PArtPointer
 		move.w	#$B0,$2E(a0)
@@ -54560,7 +53476,7 @@ loc_29A1C:
 loc_29A40:				
 		move.w	#2,$3A(a0)
 		andi.b	#$70,d0
-		beq.s	loc_29A66
+		beq.s	VineHook_Vine
 		move.w	$2E(a0),d0
 		move.w	d0,$38(a0)
 		move.b	#1,$36(a0)
@@ -54569,7 +53485,7 @@ loc_29A40:
 		addq.w	#1,d0
 		move.b	d0,ost_frame(a0)
 
-loc_29A66:
+VineHook_Vine:
 		tst.b	$36(a0)
 		beq.s	loc_29A74
 		tst.w	$30(a0)
@@ -54718,7 +53634,7 @@ locret_29BF8:
 		rts	
 ; ===========================================================================
 
-loc_29BFA:								
+VineHook_Hook:								
 		tst.b	$36(a0)
 		beq.s	loc_29C08
 		tst.w	$30(a0)
@@ -54767,154 +53683,10 @@ loc_29C42:
 		bsr.w	loc_29ACC
 		jmpto	DespawnObject,JmpTo25_DespawnObject
 ; ===========================================================================
-; ===========================================================================
-Map_29C64:				
-		dc.w word_29C72-Map_29C64			; 0
-		dc.w word_29C8C-Map_29C64			; 1
-		dc.w word_29CAE-Map_29C64			; 2
-		dc.w word_29CD8-Map_29C64			; 3
-		dc.w word_29D0A-Map_29C64			; 4
-		dc.w word_29D44-Map_29C64			; 5
-		dc.w word_29D86-Map_29C64			; 6
-word_29C72:	dc.w 3			
-		dc.w $3003,    0,    0,$FFFC			; 0
-		dc.w $5003,    0,    0,$FFFC			; 4
-		dc.w $7009,    4,    2,$FFF4			; 8
-word_29C8C:	dc.w 4			
-		dc.w $1003,    0,    0,$FFFC			; 0
-		dc.w $3003,    0,    0,$FFFC			; 4
-		dc.w $5003,    0,    0,$FFFC			; 8
-		dc.w $7009,    4,    2,$FFF4			; 12
-word_29CAE:	dc.w 5			
-		dc.w $F003,    0,    0,$FFFC			; 0
-		dc.w $1003,    0,    0,$FFFC			; 4
-		dc.w $3003,    0,    0,$FFFC			; 8
-		dc.w $5003,    0,    0,$FFFC			; 12
-		dc.w $7009,    4,    2,$FFF4			; 16
-word_29CD8:	dc.w 6			
-		dc.w $D003,    0,    0,$FFFC			; 0
-		dc.w $F003,    0,    0,$FFFC			; 4
-		dc.w $1003,    0,    0,$FFFC			; 8
-		dc.w $3003,    0,    0,$FFFC			; 12
-		dc.w $5003,    0,    0,$FFFC			; 16
-		dc.w $7009,    4,    2,$FFF4			; 20
-word_29D0A:	dc.w 7			
-		dc.w $B003,    0,    0,$FFFC			; 0
-		dc.w $D003,    0,    0,$FFFC			; 4
-		dc.w $F003,    0,    0,$FFFC			; 8
-		dc.w $1003,    0,    0,$FFFC			; 12
-		dc.w $3003,    0,    0,$FFFC			; 16
-		dc.w $5003,    0,    0,$FFFC			; 20
-		dc.w $7009,    4,    2,$FFF4			; 24
-word_29D44:	dc.w 8			
-		dc.w $9003,    0,    0,$FFFC			; 0
-		dc.w $B003,    0,    0,$FFFC			; 4
-		dc.w $D003,    0,    0,$FFFC			; 8
-		dc.w $F003,    0,    0,$FFFC			; 12
-		dc.w $1003,    0,    0,$FFFC			; 16
-		dc.w $3003,    0,    0,$FFFC			; 20
-		dc.w $5003,    0,    0,$FFFC			; 24
-		dc.w $7009,    4,    2,$FFF4			; 28
-word_29D86:	dc.w 9			
-		dc.w $8001,    2,    1,$FFFC			; 0
-		dc.w $9003,    0,    0,$FFFC			; 4
-		dc.w $B003,    0,    0,$FFFC			; 8
-		dc.w $D003,    0,    0,$FFFC			; 12
-		dc.w $F003,    0,    0,$FFFC			; 16
-		dc.w $1003,    0,    0,$FFFC			; 20
-		dc.w $3003,    0,    0,$FFFC			; 24
-		dc.w $5003,    0,    0,$FFFC			; 28
-		dc.w $7009,    4,    2,$FFF4			; 32
-; ===========================================================================
-Map_29DD0:				
-		dc.w word_29DEA-Map_29DD0			; 0
-		dc.w word_29DFC-Map_29DD0			; 1
-		dc.w word_29E0E-Map_29DD0			; 2
-		dc.w word_29E28-Map_29DD0			; 3
-		dc.w word_29E42-Map_29DD0			; 4
-		dc.w word_29E64-Map_29DD0			; 5
-		dc.w word_29E86-Map_29DD0			; 6
-		dc.w word_29EB0-Map_29DD0			; 7
-		dc.w word_29EDA-Map_29DD0			; 8
-		dc.w word_29F0C-Map_29DD0			; 9
-		dc.w word_29F3E-Map_29DD0			; 10
-		dc.w word_29F78-Map_29DD0			; 11
-		dc.w word_29FB2-Map_29DD0			; 12
-word_29DEA:	dc.w 2			
-		dc.w $5001,    0,    0,$FFFC			; 0
-		dc.w $600B,    4,    2,$FFF4			; 4
-word_29DFC:	dc.w 2			
-		dc.w $4003,    0,    0,$FFFC			; 0
-		dc.w $600B,    4,    2,$FFF4			; 4
-word_29E0E:	dc.w 3			
-		dc.w $3001,    0,    0,$FFFC			; 0
-		dc.w $4003,    0,    0,$FFFC			; 4
-		dc.w $600B,    4,    2,$FFF4			; 8
-word_29E28:	dc.w 3			
-		dc.w $2003,    0,    0,$FFFC			; 0
-		dc.w $4003,    0,    0,$FFFC			; 4
-		dc.w $600B,    4,    2,$FFF4			; 8
-word_29E42:	dc.w 4			
-		dc.w $1001,    0,    0,$FFFC			; 0
-		dc.w $2003,    0,    0,$FFFC			; 4
-		dc.w $4003,    0,    0,$FFFC			; 8
-		dc.w $600B,    4,    2,$FFF4			; 12
-word_29E64:	dc.w 4			
-		dc.w	 3,    0,    0,$FFFC			; 0
-		dc.w $2003,    0,    0,$FFFC			; 4
-		dc.w $4003,    0,    0,$FFFC			; 8
-		dc.w $600B,    4,    2,$FFF4			; 12
-word_29E86:	dc.w 5			
-		dc.w $F001,    0,    0,$FFFC			; 0
-		dc.w	 3,    0,    0,$FFFC			; 4
-		dc.w $2003,    0,    0,$FFFC			; 8
-		dc.w $4003,    0,    0,$FFFC			; 12
-		dc.w $600B,    4,    2,$FFF4			; 16
-word_29EB0:	dc.w 5			
-		dc.w $E003,    0,    0,$FFFC			; 0
-		dc.w	 3,    0,    0,$FFFC			; 4
-		dc.w $2003,    0,    0,$FFFC			; 8
-		dc.w $4003,    0,    0,$FFFC			; 12
-		dc.w $600B,    4,    2,$FFF4			; 16
-word_29EDA:	dc.w 6			
-		dc.w $D001,    0,    0,$FFFC			; 0
-		dc.w $E003,    0,    0,$FFFC			; 4
-		dc.w	 3,    0,    0,$FFFC			; 8
-		dc.w $2003,    0,    0,$FFFC			; 12
-		dc.w $4003,    0,    0,$FFFC			; 16
-		dc.w $600B,    4,    2,$FFF4			; 20
-word_29F0C:	dc.w 6			
-		dc.w $C003,    0,    0,$FFFC			; 0
-		dc.w $E003,    0,    0,$FFFC			; 4
-		dc.w	 3,    0,    0,$FFFC			; 8
-		dc.w $2003,    0,    0,$FFFC			; 12
-		dc.w $4003,    0,    0,$FFFC			; 16
-		dc.w $600B,    4,    2,$FFF4			; 20
-word_29F3E:	dc.w 7			
-		dc.w $B001,    0,    0,$FFFC			; 0
-		dc.w $C003,    0,    0,$FFFC			; 4
-		dc.w $E003,    0,    0,$FFFC			; 8
-		dc.w	 3,    0,    0,$FFFC			; 12
-		dc.w $2003,    0,    0,$FFFC			; 16
-		dc.w $4003,    0,    0,$FFFC			; 20
-		dc.w $600B,    4,    2,$FFF4			; 24
-word_29F78:	dc.w 7			
-		dc.w $A003,    0,    0,$FFFC			; 0
-		dc.w $C003,    0,    0,$FFFC			; 4
-		dc.w $E003,    0,    0,$FFFC			; 8
-		dc.w	 3,    0,    0,$FFFC			; 12
-		dc.w $2003,    0,    0,$FFFC			; 16
-		dc.w $4003,    0,    0,$FFFC			; 20
-		dc.w $600B,    4,    2,$FFF4			; 24
-word_29FB2:	dc.w 8			
-		dc.w $9001,    0,    0,$FFFC			; 0
-		dc.w $A003,    0,    0,$FFFC			; 4
-		dc.w $C003,    0,    0,$FFFC			; 8
-		dc.w $E003,    0,    0,$FFFC			; 12
-		dc.w	 3,    0,    0,$FFFC			; 16
-		dc.w $2003,    0,    0,$FFFC			; 20
-		dc.w $4003,    0,    0,$FFFC			; 24
-		dc.w $600B,    4,    2,$FFF4			; 28
+
+		include "mappings/sprite/MCZ Pulley Vines.asm"
+		include "mappings/sprite/WFZ Crane Hooks.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -54931,7 +53703,7 @@ JmpTo44_Adjust2PArtPointer:
 ; Object 81 - MCZ drawbridge gate
 ; ----------------------------------------------------------------------------
 
-Drawbridge:				
+SingleDrawbridge:				
 		btst	#render_subobjects_bit,ost_render(a0)
 		bne.w	loc_2A018
 		moveq	#0,d0
@@ -54952,7 +53724,7 @@ off_2A020:	index offset(*),,2
 
 loc_2A026:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2A24E,ost_mappings(a0)
+		move.l	#Map_SBridge,ost_mappings(a0)
 		move.w	#tile_Nem_DrawbridgeLogs+tile_pal4,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo45_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -55130,13 +53902,9 @@ loc_2A222:
 locret_2A24C:				
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_2A24E:				
-		dc.w word_2A252-Map_2A24E			; 0
-		dc.w word_2A254-Map_2A24E			; 1
-word_2A252:	dc.w 0			
-word_2A254:	dc.w	 1					; 0 
-		dc.w $F805,    0,    0,$FFF8			; 0
+
+		include "mappings/sprite/MCZ Single-Leaf Drawbridge.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -55166,42 +53934,46 @@ JmpTo22_SolidObject:
 	
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 82 - ARZ pillar platform
+; Object 82 - ARZ pillar platforms
 ; ----------------------------------------------------------------------------
 
 PillarPlatform:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2A29E(pc,d0.w),d1
-		jmp	off_2A29E(pc,d1.w)
+		move.w	PillPlat_Index(pc,d0.w),d1
+		jmp	PillPlat_Index(pc,d1.w)
 ; ===========================================================================
-off_2A29E:	index offset(*),,2
-		ptr loc_2A2AA					; 0 
+PillPlat_Index:	index offset(*),,2
+		ptr PillPlat_Main					; 0 
 		ptr loc_2A312					; 2
 		
-byte_2A2A2:
+PillPlat_Sizes:
+		; ost_displaywidth, ost_height
+		; Only the second pair is used.
 		dc.b $20					; 0
 		dc.b   8					; 1
 		dc.b $1C					; 2
 		dc.b $30					; 3
+		; Unused, and will cause a crash if used,
+		; as there is no associated mapping frame.
 		dc.b $10					; 4
 		dc.b $10					; 5
 		dc.b $10					; 6
 		dc.b $10					; 7
 ; ===========================================================================
 
-loc_2A2AA:				
+PillPlat_Main:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2A476,ost_mappings(a0)
+		move.l	#Map_PillPlat,ost_mappings(a0)
 		move.w	#tile_LevelArt,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo46_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
 		moveq	#0,d0
-		move.b	ost_subtype(a0),d0
+		move.b	ost_subtype(a0),d0			
 		lsr.w	#3,d0
 		andi.w	#$E,d0
-		lea	byte_2A2A2(pc,d0.w),a2
+		lea	PillPlat_Sizes(pc,d0.w),a2
 		move.b	(a2)+,ost_displaywidth(a0)
 		move.b	(a2),ost_height(a0)
 		lsr.w	#1,d0
@@ -55246,13 +54018,13 @@ loc_2A350:
 ; ===========================================================================
 off_2A358:	index offset(*)
 		ptr locret_2A368				; 0 
-		ptr loc_2A36A					; 1
-		ptr loc_2A392					; 2
-		ptr loc_2A36A					; 3
-		ptr loc_2A3B6					; 4
-		ptr loc_2A3D8					; 5
-		ptr loc_2A392					; 6
-		ptr loc_2A3EC					; 7
+		ptr loc_2A36A					; 2
+		ptr loc_2A392					; 4
+		ptr loc_2A36A					; 6
+		ptr loc_2A3B6					; 8
+		ptr loc_2A3D8					; $A
+		ptr loc_2A392					; $C
+		ptr loc_2A3EC					; $E
 ; ===========================================================================
 
 locret_2A368:				
@@ -55385,23 +54157,9 @@ loc_2A45A:
 locret_2A474:				
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_2A476:				
-		dc.w word_2A47A-Map_2A476			; 0
-		dc.w word_2A48C-Map_2A476			; 1
-word_2A47A:	dc.w 2			
-		dc.w $F80D,$6055,$602A,$FFE0			; 0
-		dc.w $F80D,$6055,$602A,	   0			; 4
-word_2A48C:	dc.w 9			
-		dc.w $D005,$205D,$202E,$FFE0			; 0
-		dc.w $D005,$285D,$282E,	 $10			; 4
-		dc.w $D00D,$2061,$2030,$FFF0			; 8
-		dc.w $E00D,$2069,$2034,$FFF0			; 12
-		dc.w $F00D,$2069,$2034,$FFF0			; 16
-		dc.w	$D,$2071,$2038,$FFF0			; 20
-		dc.w $100D,$2069,$2034,$FFF0			; 24
-		dc.w $200D,$2079,$203C,$FFF0			; 28
-		dc.w $3004,$2081,$2040,$FFF0			; 32
+
+		include "mappings/sprite/ARZ Pillar Platform.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -55427,7 +54185,7 @@ JmpTo16_SpeedToPos:
 		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 83 - Circling platforms (ARZ)
+; Object 83 - ARZ circling platforms
 ; ----------------------------------------------------------------------------
 
 CirclingPlatform:				
@@ -55435,15 +54193,15 @@ CirclingPlatform:
 		bne.w	loc_2A514
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2A51C(pc,d0.w),d1
-		jmp	off_2A51C(pc,d1.w)
+		move.w	Circ_Index(pc,d0.w),d1
+		jmp	Circ_Index(pc,d1.w)
 ; ===========================================================================
 
 loc_2A514:				
 		move.w	#$280,d0
 		jmpto	DisplaySprite3,JmpTo3_DisplaySprite3
 ; ===========================================================================
-off_2A51C:	index offset(*),,2
+Circ_Index:	index offset(*),,2
 		ptr loc_2A522					; 0 
 		ptr loc_2A620					; 2
 		ptr loc_2A74E					; 4
@@ -55451,7 +54209,7 @@ off_2A51C:	index offset(*),,2
 
 loc_2A522:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_Swing_Circle_ARZ,ost_mappings(a0)
+		move.l	#Map_ARZPlats,ost_mappings(a0)
 		move.w	#tile_LevelArt,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo47_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -55685,10 +54443,10 @@ JmpTo8_DespawnObject2:
 Fan:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2A7BE(pc,d0.w),d1
-		jmp	off_2A7BE(pc,d1.w)
+		move.w	Fan_Index(pc,d0.w),d1
+		jmp	Fan_Index(pc,d1.w)
 ; ===========================================================================
-off_2A7BE:	index offset(*),,2
+Fan_Index:	index offset(*),,2
 		ptr loc_2A7C4					; 0 
 		ptr loc_2A802					; 2
 		ptr loc_2A8FE					; 4
@@ -55696,7 +54454,7 @@ off_2A7BE:	index offset(*),,2
 
 loc_2A7C4:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2AA12,ost_mappings(a0)
+		move.l	#Map_HorizFan,ost_mappings(a0)
 		move.w	#tile_Nem_Fan+tile_pal4,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo48_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -55705,7 +54463,7 @@ loc_2A7C4:
 		tst.b	ost_subtype(a0)
 		bpl.s	loc_2A802
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2AAC4,ost_mappings(a0)
+		move.l	#Map_VertFan,ost_mappings(a0)
 		bra.w	loc_2A8FE
 ; ===========================================================================
 
@@ -55900,67 +54658,10 @@ loc_2A9D4:
 locret_2AA10:				
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_2AA12:				
-		dc.w word_2AA28-Map_2AA12			; 0
-		dc.w word_2AA42-Map_2AA12			; 1
-		dc.w word_2AA5C-Map_2AA12			; 2
-		dc.w word_2AA76-Map_2AA12			; 3
-		dc.w word_2AA90-Map_2AA12			; 4
-		dc.w word_2AAAA-Map_2AA12			; 5
-		dc.w word_2AA90-Map_2AA12			; 6
-		dc.w word_2AA76-Map_2AA12			; 7
-		dc.w word_2AA5C-Map_2AA12			; 8
-		dc.w word_2AA42-Map_2AA12			; 9
-		dc.w word_2AA28-Map_2AA12			; 10
-word_2AA28:	dc.w 3			
-		dc.w $F302,    0,    0,$FFF4			; 0
-		dc.w $F005,    7,    3,$FFFC			; 4
-		dc.w	 5,$1007,$1003,$FFFC			; 8
-word_2AA42:	dc.w 3			
-		dc.w $F502,$1000,$1000,$FFF4			; 0
-		dc.w $F005,    7,    3,$FFFC			; 4
-		dc.w	 5,$1007,$1003,$FFFC			; 8
-word_2AA5C:	dc.w 3			
-		dc.w $F003,    3,    1,$FFF4			; 0
-		dc.w $F005,    7,    3,$FFFC			; 4
-		dc.w	 5,$1007,$1003,$FFFC			; 8
-word_2AA76:	dc.w 3			
-		dc.w $F302,    0,    0,$FFF4			; 0
-		dc.w $F005,   $B,    5,$FFFC			; 4
-		dc.w	 5,$100B,$1005,$FFFC			; 8
-word_2AA90:	dc.w 3			
-		dc.w $F502,$1000,$1000,$FFF4			; 0
-		dc.w $F005,   $B,    5,$FFFC			; 4
-		dc.w	 5,$100B,$1005,$FFFC			; 8
-word_2AAAA:	dc.w 3			
-		dc.w $F003,    3,    1,$FFF4			; 0
-		dc.w $F005,   $B,    5,$FFFC			; 4
-		dc.w	 5,$100B,$1005,$FFFC			; 8
-Map_2AAC4:				
-		dc.w $16
-		dc.w   $30,  $4A,  $64,	 $7E			; 0
-		dc.w   $98,  $7E,  $64,	 $4A			; 4
-		dc.w   $30,  $16,    3,$F408			; 8
-		dc.w	$F,    7,$FFF3,$FC05			; 12
-		dc.w   $16,   $B,$FFF0,$FC05			; 16
-		dc.w  $816, $80B,    0,	   3			; 20
-		dc.w $F408, $80F, $807,$FFF5			; 24
-		dc.w $FC05,  $16,   $B,$FFF0			; 28
-		dc.w $FC05, $816, $80B,	   0			; 32
-		dc.w	 3,$F40C,  $12,	   9			; 36
-		dc.w $FFF0,$FC05,  $16,	  $B			; 40
-		dc.w $FFF0,$FC05, $816,	$80B			; 44
-		dc.w	 0,    3,$F408,	  $F			; 48
-		dc.w	 7,$FFF3,$FC05,	 $1A			; 52
-		dc.w	$D,$FFF0,$FC05,	$81A			; 56
-		dc.w  $80D,    0,    3,$F408			; 60
-		dc.w  $80F, $807,$FFF5,$FC05			; 64
-		dc.w   $1A,   $D,$FFF0,$FC05			; 68
-		dc.w  $81A, $80D,    0,	   3			; 72
-		dc.w $F40C,  $12,    9,$FFF0			; 76
-		dc.w $FC05,  $1A,   $D,$FFF0			; 80
-		dc.w $FC05, $81A, $80D,	   0			; 84
+
+		include "mappings/sprite/OOZ Fan (Horizontal).asm"
+		include "mappings/sprite/OOZ Fan (Vertical).asm"
+		
 ; ===========================================================================
 
 	if Revision<2
@@ -55984,8 +54685,8 @@ JmpTo48_Adjust2PArtPointer:
 PinballLauncher:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2ABCE(pc,d0.w),d1
-		jsr	off_2ABCE(pc,d1.w)
+		move.w	PLaunch_Index(pc,d0.w),d1
+		jsr	PLaunch_Index(pc,d1.w)
 		move.w	#$200,d0
 		tst.w	(f_two_player).w
 		beq.s	loc_2ABA0
@@ -56011,7 +54712,7 @@ loc_2ABB8:
 BranchTo_JmpTo43_DeleteObject:				
 		jmpto	DeleteObject,JmpTo43_DeleteObject
 ; ===========================================================================
-off_2ABCE:	index offset(*),,2
+PLaunch_Index:	index offset(*),,2
 		ptr loc_2ABD4					; 0 
 		ptr loc_2AC84					; 2
 		ptr loc_2AE56					; 4
@@ -56019,11 +54720,11 @@ off_2ABCE:	index offset(*),,2
 
 loc_2ABD4:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2B07E,ost_mappings(a0)
+		move.l	#Map_VertLauncher,ost_mappings(a0)
 		move.w	#tile_Nem_VertLauncher,ost_tile(a0)
 		tst.b	ost_subtype(a0)
 		beq.s	loc_2ABFA
-		move.l	#Map_2B0EC,ost_mappings(a0)
+		move.l	#Map_DiagLauncher,ost_mappings(a0)
 		move.w	#tile_Nem_DiagLauncher,ost_tile(a0)
 
 loc_2ABFA:				
@@ -56400,40 +55101,10 @@ loc_2B068:
 		move.w	#$E2,d0	
 		jmp	(PlaySound).l
 ; ===========================================================================
-; ===========================================================================
-Map_2B07E:				
-		dc.w word_2B08A-Map_2B07E			; 0
-		dc.w word_2B0AC-Map_2B07E			; 1
-		dc.w word_2B0B6-Map_2B07E			; 2
-		dc.w word_2B0D0-Map_2B07E			; 3
-		dc.w word_2B0E2-Map_2B07E			; 4
-		dc.w word_2B0E2-Map_2B07E			; 5
-word_2B08A:	dc.w 4			
-		dc.w $C809,    0,    0,$FFF4			; 0
-		dc.w $D809,    6,    3,$FFF4			; 4
-		dc.w $E809,    6,    3,$FFF4			; 8
-		dc.w $F809,   $C,    6,$FFF4			; 12
-word_2B0AC:	dc.w 1			
-		dc.w $E009,    0,    0,$FFF4			; 0
-word_2B0B6:	dc.w 3			
-		dc.w $D009,    6,    3,$FFF4			; 0
-		dc.w $E009,    6,    3,$FFF4			; 4
-		dc.w $F009,   $C,    6,$FFF4			; 8
-word_2B0D0:	dc.w 2			
-		dc.w $E009,    6,    3,$FFF4			; 0
-		dc.w $F009,   $C,    6,$FFF4			; 4
-word_2B0E2:	dc.w 1			
-		dc.w $E009,$2000,$2000,$FFF4			; 0
-Map_2B0EC:				
-		dc.w $C
-		dc.w   $1E,  $28,  $28,	 $32			; 0
-		dc.w   $32,    2,$F00F,	   0			; 4
-		dc.w	 0,$FFF0,   $F,	 $10			; 8
-		dc.w	 8,$FFE0,    1,$F00F			; 12
-		dc.w	 0,    0,$FFF0,	   1			; 16
-		dc.w	$F,  $10,    8,$FFE0			; 20
-		dc.w	 1,$F00F,$2000,$2000			; 24
-		dc.w $FFF0					; 28
+
+		include "mappings/sprite/CNZ Pinball Launcher (Vertical).asm"
+		include "mappings/sprite/CNZ Pinball Launcher (Diagonal).asm"
+		
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -56457,11 +55128,11 @@ JmpTo5_SolidObject_NoRenderChk_SingleCharacter:
 Flipper:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2B152(pc,d0.w),d1
-		jsr	off_2B152(pc,d1.w)
+		move.w	Flip_Index(pc,d0.w),d1
+		jsr	Flip_Index(pc,d1.w)
 		jmpto	DespawnObject,JmpTo27_DespawnObject
 ; ===========================================================================
-off_2B152:	index offset(*),,2	
+Flip_Index:	index offset(*),,2	
 		ptr loc_2B158					; 0 
 		ptr loc_2B194					; 2
 		ptr loc_2B312					; 4
@@ -56469,7 +55140,7 @@ off_2B152:	index offset(*),,2
 
 loc_2B158:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2B45A,ost_mappings(a0)
+		move.l	#Map_Flip,ost_mappings(a0)
 		move.w	#tile_Nem_Flipper+tile_pal3,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo50_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -56518,7 +55189,7 @@ loc_2B1B6:
 		bsr.w	loc_2B290
 
 loc_2B1FE:				
-		lea	(off_2B432).l,a1
+		lea	(Ani_Flip).l,a1
 		jmpto	AnimateSprite,JmpTo9_AnimateSprite
 ; ===========================================================================
 
@@ -56645,7 +55316,7 @@ loc_2B33A:
 		bsr.s	loc_2B35C
 
 loc_2B352:				
-		lea	(off_2B432).l,a1
+		lea	(Ani_Flip).l,a1
 		jmpto	AnimateSprite,JmpTo9_AnimateSprite
 ; ===========================================================================
 
@@ -56676,6 +55347,7 @@ loc_2B3BC:
 		move.w	#$E3,d0	
 		jmp	(PlaySound).l
 ; ===========================================================================
+; Fliper heightmaps
 byte_2B3C6:	
 		dc.b   7,  7,  7,  7,  7,  7,  7,  8,  9, $A, $B, $A,  9,  8,  7,  6 ; 0		
 		dc.b   5,  4,  3,  2,  1,  0,$FF,$FE,$FD,$FC,$FB,$FA,$F9,$F8,$F7,$F6 ; 16
@@ -56691,7 +55363,7 @@ byte_2B40E:
 		dc.b  $E, $E, $F, $F,$10,$10,$11,$11,$12,$12,$11,$11,$10,$10,$10,$10 ; 16
 		dc.b $10,$10,$10,$10				; 32
 		
-off_2B432:	index offset(*)
+Ani_Flip:	index offset(*)
 		ptr byte_2B43C					; 0 
 		ptr byte_2B43F					; 1
 		ptr byte_2B445					; 2
@@ -56703,37 +55375,9 @@ byte_2B445:	dc.b  $F,  4,$FF				; 0
 byte_2B448:	dc.b   0,  5,  4,  3,  3,  3,  3,$FD,  2	; 0 
 byte_2B451:	dc.b   0,  3,  4,  5,  5,  5,  5,$FD,  2	; 0 
 ; ===========================================================================
-Map_2B45A:				
-		dc.w word_2B466-Map_2B45A			; 0
-		dc.w word_2B480-Map_2B45A			; 1
-		dc.w word_2B492-Map_2B45A			; 2
-		dc.w word_2B4AC-Map_2B45A			; 3
-		dc.w word_2B4C6-Map_2B45A			; 4
-		dc.w word_2B4E8-Map_2B45A			; 5
-word_2B466:	dc.w 3			
-		dc.w $F70B,   $C,    6,$FFE7			; 0
-		dc.w $FE01,  $18,   $C,$FFFF			; 4
-		dc.w  $105,  $1A,   $D,	   7			; 8
-word_2B480:	dc.w 2			
-		dc.w $F80D,    0,    0,$FFE8			; 0
-		dc.w $F805,    8,    4,	   8			; 4
-word_2B492:	dc.w 3			
-		dc.w $E90B,$100C,$1006,$FFE7			; 0
-		dc.w $F201,$1018,$100C,$FFFF			; 4
-		dc.w $EF05,$101A,$100D,	   7			; 8
-word_2B4AC:	dc.w 3			
-		dc.w $E709,  $24,  $12,$FFF1			; 0
-		dc.w $F709,  $2A,  $15,$FFEF			; 4
-		dc.w  $705,  $30,  $18,$FFEF			; 8
-word_2B4C6:	dc.w 4			
-		dc.w $E803,  $1E,   $F,$FFF8			; 0
-		dc.w $E803, $81E, $80F,	   0			; 4
-		dc.w  $801,  $22,  $11,$FFF8			; 8
-		dc.w  $801, $822, $811,	   0			; 12
-word_2B4E8:	dc.w 3			
-word_2B4EA:	dc.w $E709, $824, $812,$FFF7			; 0
-		dc.w $F709, $82A, $815,$FFF9			; 4
-		dc.w  $705, $830, $818,	   1			; 8
+
+		include "mappings/sprite/CNZ Pinball Flipper.asm"
+		
 ; ===========================================================================
 	
 	if Revision<2
@@ -56765,17 +55409,17 @@ JmpTo2_SolidObject_Heightmap:
 SnakePlatform:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2B536(pc,d0.w),d1
-		jmp	off_2B536(pc,d1.w)
+		move.w	Snake_Index(pc,d0.w),d1
+		jmp	Snake_Index(pc,d1.w)
 ; ===========================================================================
-off_2B536:	index offset(*),,2
+Snake_Index:	index offset(*),,2
 		ptr loc_2B53A					; 0 
 		ptr loc_2B57E					; 2
 ; ===========================================================================
 
 loc_2B53A:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2B694,ost_mappings(a0)
+		move.l	#Map_Snake,ost_mappings(a0)
 		move.w	#tile_Nem_SnakePlats+tile_pal3,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo51_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -56878,79 +55522,9 @@ byte_2B654:
 		dc.b   8,$E8,$28,  8,$10,$F0,$20,$10,$18,$F8,$18,$18,$20,  0,$10,$20 ; 32
 		dc.b $28,  0,  8,$20,$28,  8,  8,$18,$28,$10,  8,$10,$28,$18,  8,  8 ; 48
 ; ===========================================================================
-Map_2B694:				
-		dc.w word_2B6B4-Map_2B694			; 0
-		dc.w word_2B6BE-Map_2B694			; 1
-		dc.w word_2B6D0-Map_2B694			; 2
-		dc.w word_2B6EA-Map_2B694			; 3
-		dc.w word_2B70C-Map_2B694			; 4
-		dc.w word_2B736-Map_2B694			; 5
-		dc.w word_2B760-Map_2B694			; 6
-		dc.w word_2B78A-Map_2B694			; 7
-		dc.w word_2B78A-Map_2B694			; 8
-		dc.w word_2B7B4-Map_2B694			; 9
-		dc.w word_2B7DE-Map_2B694			; 10
-		dc.w word_2B808-Map_2B694			; 11
-		dc.w word_2B6EA-Map_2B694			; 12
-		dc.w word_2B6D0-Map_2B694			; 13
-		dc.w word_2B6BE-Map_2B694			; 14
-		dc.w word_2B6B4-Map_2B694			; 15
-word_2B6B4:	dc.w 1			
-		dc.w $F805,    0,    0,$FFF8			; 0
-word_2B6BE:	dc.w 2			
-		dc.w $F005,    0,    0,$FFF8			; 0
-		dc.w	 5,    0,    0,$FFF8			; 4
-word_2B6D0:	dc.w 3			
-word_2B6D2:	dc.w $E805,    0,    0,$FFF8			; 0
-		dc.w $F805,    0,    0,$FFF8			; 4
-		dc.w  $805,    0,    0,$FFF8			; 8
-word_2B6EA:	dc.w 4			
-		dc.w $E005,    0,    0,$FFF8			; 0
-		dc.w $F005,    0,    0,$FFF8			; 4
-		dc.w	 5,    0,    0,$FFF8			; 8
-		dc.w $1005,    0,    0,$FFF8			; 12
-word_2B70C:	dc.w 5			
-word_2B70E:	dc.w $E005,    0,    0,	   0			; 0
-		dc.w $E005,    0,    0,$FFF0			; 4
-		dc.w $F005,    0,    0,$FFF0			; 8
-		dc.w	 5,    0,    0,$FFF0			; 12
-		dc.w $1005,    0,    0,$FFF0			; 16
-word_2B736:	dc.w 5			
-word_2B738:	dc.w $E805,    0,    0,	   8			; 0
-		dc.w $E805,    0,    0,$FFF8			; 4
-		dc.w $E805,    0,    0,$FFE8			; 8
-		dc.w $F805,    0,    0,$FFE8			; 12
-		dc.w  $805,    0,    0,$FFE8			; 16
-word_2B760:	dc.w 5			
-word_2B762:	dc.w $F005,    0,    0,	 $10			; 0
-		dc.w $F005,    0,    0,	   0			; 4
-		dc.w $F005,    0,    0,$FFF0			; 8
-		dc.w $F005,    0,    0,$FFE0			; 12
-		dc.w	 5,    0,    0,$FFE0			; 16
-word_2B78A:	dc.w 5			
-word_2B78C:	dc.w $F805,    0,    0,	 $18			; 0
-		dc.w $F805,    0,    0,	   8			; 4
-		dc.w $F805,    0,    0,$FFF8			; 8
-		dc.w $F805,    0,    0,$FFE8			; 12
-		dc.w $F805,    0,    0,$FFD8			; 16
-word_2B7B4:	dc.w 5			
-		dc.w	 5,    0,    0,	 $10			; 0
-		dc.w $F005,    0,    0,	 $10			; 4
-		dc.w $F005,    0,    0,	   0			; 8
-		dc.w $F005,    0,    0,$FFF0			; 12
-		dc.w $F005,    0,    0,$FFE0			; 16
-word_2B7DE:	dc.w 5			
-		dc.w  $805,    0,    0,	   8			; 0
-		dc.w $F805,    0,    0,	   8			; 4
-		dc.w $E805,    0,    0,	   8			; 8
-		dc.w $E805,    0,    0,$FFF8			; 12
-		dc.w $E805,    0,    0,$FFE8			; 16
-word_2B808:	dc.w 5			
-		dc.w $1005,    0,    0,	   0			; 0
-		dc.w	 5,    0,    0,	   0			; 4
-		dc.w $F005,    0,    0,	   0			; 8
-		dc.w $E005,    0,    0,	   0			; 12
-		dc.w $E005,    0,    0,$FFF0			; 16
+
+		include "mappings/sprite/CNZ Snake Platform.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -57011,6 +55585,7 @@ ost_casinobmb_player_low:		equ __rs-1		; $3F; tested to check which player to de
 		move.w	ost_casinobmb_y_pos(a0),ost_y_pos(a0)	; set new y pos of bomb
 		subq.w	#1,ost_casinobmb_display_delay(a0)	; decrement delay timer
 		bne.w	JmpTo28_DisplaySprite			; branch if time remains
+		
 		movea.l	ost_casinobmb_childcnt_ptr(a0),a1	; parent's cage's child counter
 		subq.w	#1,(a1)					; decrement child counter
 		cmpi.w	#5,(v_casinobmb_snd_delay).w		; is sound delay counter over 5?		
@@ -57622,8 +56197,7 @@ Ani_Cage_Flash:
 		
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Psuedoobject that runs the CNZ slot machines. Unlike normal objects,
-; this draws the graphics before running the code.
+; Psuedoobject that runs the CNZ slot machines.
 ; Offset constants are defined in RAM Addresses.asm.
 ; ---------------------------------------------------------------------------
 SlotMachine:				
@@ -57640,9 +56214,9 @@ SlotMachine_Index: bra_index
 		braptr	Slot_SpeedUp				; $C
 		braptr	Slot_Run				; $10
 		braptr	Slot_Finished				; $14
-		id_Slot_Null:	equ offset(*)-index_start	
-		rts						; $18
-
+		id_Slot_Null:	equ offset(*)-index_start	; $18
+		rts
+		
 		; IDs for slot faces
 		rsreset		
 id_Slot_Sonic:		rs.b 1					; 0
@@ -58294,17 +56868,17 @@ JmpTo7_SolidObject_NoRenderChk_SingleCharacter:
 HexagonalBumper:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2C456(pc,d0.w),d1
-		jmp	off_2C456(pc,d1.w)
+		move.w	HexBump_Index(pc,d0.w),d1
+		jmp	HexBump_Index(pc,d1.w)
 ; ===========================================================================
-off_2C456:	index offset(*),,2
+HexBump_Index:	index offset(*),,2
 		ptr loc_2C45A					; 0 
 		ptr loc_2C4AC					; 2
 ; ===========================================================================
 
 loc_2C45A:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2C626,ost_mappings(a0)
+		move.l	#Map_HexBump,ost_mappings(a0)
 		move.w	#tile_Nem_HexBumper+tile_pal3,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo55_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -58399,7 +56973,7 @@ loc_2C55E:
 ; ===========================================================================
 
 loc_2C57E:				
-		lea	(off_2C610).l,a1
+		lea	(Ani_HexBump).l,a1
 		jsrto	AnimateSprite,JmpTo11_AnimateSprite
 		tst.b	ost_subtype(a0)
 		beq.w	JmpTo30_DespawnObject
@@ -58463,7 +57037,7 @@ JmpTo30_DespawnObject:
 		jmp	(DespawnObject).l
     endc		
 ; ===========================================================================
-off_2C610:	index offset(*)
+Ani_HexBump:	index offset(*)
 		ptr byte_2C616					; 0 
 		ptr byte_2C619					; 1
 		ptr byte_2C61F					; 2
@@ -58478,25 +57052,7 @@ byte_2C61F:
 		dc.b   3,  2,  0,  2,$FD,  0
 		even
 ; ===========================================================================
-Map_2C626:				
-		dc.w word_2C62C-Map_2C626			; 0
-		dc.w word_2C64E-Map_2C626			; 1
-		dc.w word_2C670-Map_2C626			; 2
-word_2C62C:	dc.w 4			
-		dc.w $F009,    0,    0,$FFE8			; 0
-		dc.w $F009, $800, $800,	   0			; 4
-		dc.w	 9,$1000,$1000,$FFE8			; 8
-		dc.w	 9,$1800,$1800,	   0			; 12
-word_2C64E:	dc.w 4			
-		dc.w $F409,    0,    0,$FFE8			; 0
-		dc.w $F409, $800, $800,	   0			; 4
-		dc.w  $409,$1000,$1000,$FFE8			; 8
-		dc.w  $409,$1800,$1800,	   0			; 12
-word_2C670:	dc.w 4			
-		dc.w $F009,    0,    0,$FFEC			; 0
-		dc.w $F009, $800, $800,	   4			; 4
-		dc.w	 9,$1000,$1000,$FFEC			; 8
-		dc.w	 9,$1800,$1800,	   4			; 12
+		include "mappings/sprite/CNZ Hexagonal Bumper.asm"
 ; ===========================================================================
 
 	if Revision<2
@@ -58524,10 +57080,10 @@ JmpTo55_Adjust2PArtPointer:
 SaucerBumper:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2C6BA(pc,d0.w),d1
-		jmp	off_2C6BA(pc,d1.w)
+		move.w	SauceBump_Index(pc,d0.w),d1
+		jmp	SauceBump_Index(pc,d1.w)
 ; ===========================================================================
-off_2C6BA:	index offset(*),,2	
+SauceBump_Index:	index offset(*),,2	
 		ptr loc_2C6C0					; 0 
 		ptr loc_2C6FC					; 2
 		ptr loc_2C884					; 4
@@ -58535,7 +57091,7 @@ off_2C6BA:	index offset(*),,2
 
 loc_2C6C0:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2C8C4,ost_mappings(a0)
+		move.l	#Map_SauceBump,ost_mappings(a0)
 		move.w	#tile_Nem_SaucerBumper+tile_pal3,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo56_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -58585,7 +57141,7 @@ loc_2C73C:
 		clr.b	ost_col_property(a0)
 
 loc_2C740:				
-		lea	(off_2C89C).l,a1
+		lea	(Ani_SauceBump).l,a1
 		jsrto	AnimateSprite,JmpTo12_AnimateSprite
 		jmpto	DespawnObject,JmpTo31_DespawnObject
 ; ===========================================================================
@@ -58705,7 +57261,7 @@ loc_2C87E:
 ; ===========================================================================
 
 loc_2C884:				
-		lea	(off_2C89C).l,a1
+		lea	(Ani_SauceBump).l,a1
 		jsrto	AnimateSprite,JmpTo12_AnimateSprite
 		cmpi.b	#3,ost_anim(a0)
 		bcs.w	JmpTo46_DeleteObject
@@ -58716,7 +57272,7 @@ JmpTo46_DeleteObject:
 		jmp	(DeleteObject).l
     endc		
 ; ===========================================================================
-off_2C89C:	index offset(*)
+Ani_SauceBump:	index offset(*)
 		ptr byte_2C8A8					; 0 
 		ptr byte_2C8AB					; 1
 		ptr byte_2C8AE					; 2
@@ -58748,25 +57304,7 @@ byte_2C8BD:
 		dc.b   3,  5,  2,  5,$FD,  2,  0
 		even			
 ; ===========================================================================
-Map_2C8C4:				
-		dc.w word_2C8D0-Map_2C8C4			; 0
-		dc.w word_2C8DA-Map_2C8C4			; 1
-		dc.w word_2C8E4-Map_2C8C4			; 2
-		dc.w word_2C8EE-Map_2C8C4			; 3
-		dc.w word_2C8F8-Map_2C8C4			; 4
-		dc.w word_2C902-Map_2C8C4			; 5
-word_2C8D0:	dc.w 1			
-		dc.w $F80D,    0,    0,$FFF0			; 0
-word_2C8DA:	dc.w 1			
-		dc.w $F00B,    8,    4,$FFF4			; 0
-word_2C8E4:	dc.w 1			
-		dc.w $F007,  $14,   $A,$FFF8			; 0
-word_2C8EE:	dc.w 1			
-		dc.w $FA0D,    0,    0,$FFF0			; 0
-word_2C8F8:	dc.w 1			
-		dc.w $F20B,    8,    4,$FFF2			; 0
-word_2C902:	dc.w 1			
-		dc.w $F007,  $14,   $A,$FFF6			; 0
+		include "mappings/sprite/CNZ Saucer Bumper.asm"
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -58904,7 +57442,7 @@ loc_2CA2A:
 
 loc_2CA34:				
 		jsrto	SpeedToPos,JmpTo19_SpeedToPos
-		lea	(off_2CBDC).l,a1
+		lea	(Ani_Octus).l,a1
 		jsrto	AnimateSprite,JmpTo13_AnimateSprite
 		jmpto	DespawnObject,JmpTo32_DespawnObject
 ; ===========================================================================
@@ -58921,7 +57459,7 @@ JmpTo47_DeleteObject:
 ; ===========================================================================
 
 loc_2CA52:				
-		move.l	#Map_2CBFE,ost_mappings(a0)
+		move.l	#Map_Octus,ost_mappings(a0)
 		move.w	#tile_Nem_Octus+tile_pal2,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#id_col_16x8,ost_col_type(a0)
@@ -58951,7 +57489,7 @@ loc_2CAB8:
 		move.b	ost_secondary_routine(a0),d0
 		move.w	off_2CAD4(pc,d0.w),d1
 		jsr	off_2CAD4(pc,d1.w)
-		lea	(off_2CBDC).l,a1
+		lea	(Ani_Octus).l,a1
 		jsrto	AnimateSprite,JmpTo13_AnimateSprite
 		jmpto	DespawnObject,JmpTo32_DespawnObject
 ; ===========================================================================
@@ -59038,7 +57576,7 @@ loc_2CB70:
 		bne.s	locret_2CBDA
 		_move.b	#id_Octus,ost_id(a1)
 		move.b	#6,ost_primary_routine(a1)
-		move.l	#Map_2CBFE,ost_mappings(a1)
+		move.l	#Map_Octus,ost_mappings(a1)
 		move.w	#tile_Nem_Octus+tile_pal2,ost_tile(a1)
 		move.b	#4,ost_priority(a1)
 		move.b	#$10,ost_displaywidth(a1)
@@ -59057,7 +57595,7 @@ loc_2CB70:
 locret_2CBDA:				
 		rts	
 ; ===========================================================================
-off_2CBDC:	index offset(*)
+Ani_Octus:	index offset(*)
 		ptr byte_2CBE6					; 0 
 		ptr byte_2CBEA					; 1
 		ptr byte_2CBEF					; 2
@@ -59085,38 +57623,8 @@ byte_2CBF8:
 		even
 		
 ; ===========================================================================
-Map_2CBFE:				
-		dc.w word_2CC0C-Map_2CBFE			; 0
-		dc.w word_2CC1E-Map_2CBFE			; 1
-		dc.w word_2CC38-Map_2CBFE			; 2
-		dc.w word_2CC52-Map_2CBFE			; 3
-		dc.w word_2CC6C-Map_2CBFE			; 4
-		dc.w word_2CC8E-Map_2CBFE			; 5
-		dc.w word_2CC98-Map_2CBFE			; 6
-word_2CC0C:	dc.w 2			
-		dc.w $EB0D,    0,    0,$FFF0			; 0
-		dc.w $FB0D,    8,    4,$FFF0			; 4
-word_2CC1E:	dc.w 3			
-		dc.w $F00D,    0,    0,$FFF0			; 0
-		dc.w	 9,  $10,    8,$FFE8			; 4
-		dc.w	 9,  $16,   $B,	   0			; 8
-word_2CC38:	dc.w 3			
-		dc.w $F00D,    0,    0,$FFF0			; 0
-		dc.w	 9,  $1C,   $E,$FFE8			; 4
-		dc.w	 9,  $22,  $11,	   0			; 8
-word_2CC52:	dc.w 3			
-		dc.w $F00D,    0,    0,$FFF0			; 0
-		dc.w	 9,  $28,  $14,$FFE8			; 4
-		dc.w	 9,  $2E,  $17,	   0			; 8
-word_2CC6C:	dc.w 4			
-		dc.w $F001,  $34,  $1A,$FFF7			; 0
-		dc.w $F00D,    0,    0,$FFF0			; 4
-		dc.w	 9,  $10,    8,$FFE8			; 8
-		dc.w	 9,  $16,   $B,	   0			; 12
-word_2CC8E:	dc.w 1			
-		dc.w $F201,  $36,  $1B,$FFF0			; 0
-word_2CC98:	dc.w 1			
-		dc.w $F201,  $38,  $1C,$FFF0			; 0
+
+		include "mappings/sprite/Octus.asm"
 
 	if RemoveJmpTos=0		
 		align 4	
@@ -59160,7 +57668,7 @@ off_2CCD6:	index offset(*),,2
 
 loc_2CCDE:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2CF94,ost_mappings(a0)
+		move.l	#Map_Aquis,ost_mappings(a0)
 		move.w	#tile_Nem_Aquis+tile_pal2,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#id_col_16x8,ost_col_type(a0)
@@ -59189,7 +57697,7 @@ loc_2CCDE:
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$A,ost_x_pos(a1)
 		addi.w	#-6,ost_y_pos(a1)
-		move.l	#Map_2CF94,ost_mappings(a1)
+		move.l	#Map_Aquis,ost_mappings(a1)
 		move.w	#tile_Nem_Aquis+tile_pal2,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#3,ost_priority(a1)
@@ -59200,7 +57708,7 @@ loc_2CCDE:
 		bset	#status_underwater_bit,ost_primary_status(a0) ; pointless, as this object does not have any child sprites
 
 loc_2CDA2:
-		lea	(off_2CF6C).l,a1
+		lea	(Ani_Aquis).l,a1
 		jsrto	AnimateSprite,JmpTo14_AnimateSprite
 		moveq	#0,d0
 		move.b	ost_secondary_routine(a0),d0
@@ -59224,14 +57732,14 @@ loc_2CDCA:
 		bne.w	JmpTo48_DeleteObject
 		btst	#status_broken_bit,ost_primary_status(a1)
 		bne.w	JmpTo48_DeleteObject
-		lea	(off_2CF6C).l,a1
+		lea	(Ani_Aquis).l,a1
 		jsrto	AnimateSprite,JmpTo14_AnimateSprite
 		jmpto	DisplaySprite,JmpTo32_DisplaySprite
 ; ===========================================================================
 
 loc_2CDF4:				
 		jsrto	SpeedToPos,JmpTo20_SpeedToPos
-		lea	(off_2CF6C).l,a1
+		lea	(Ani_Aquis).l,a1
 		jsrto	AnimateSprite,JmpTo14_AnimateSprite
 		jmpto	DespawnObject,JmpTo33_DespawnObject
 ; ===========================================================================
@@ -59265,15 +57773,18 @@ loc_2CE24:
 		jsrto	GetClosestPlayer,JmpTo_GetClosestPlayer
 		tst.w	d1
 		beq.s	locret_2CEAC
-		cmpi.w	#-$10,d1
+	if FixBugs=0	
+		cmpi.w	#-$10,d1		; ...? d1 can only be 0 or 2 here
 		bcc.s	locret_2CEAC
+	endc	
+		
 		jsrto	FindFreeObj,JmpTo12_FindFreeObj
 		bne.s	locret_2CEAC
 		_move.b	#id_Aquis,ost_id(a1)
 		move.b	#6,ost_primary_routine(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		move.l	#Map_2CF94,ost_mappings(a1)
+		move.l	#Map_Aquis,ost_mappings(a1)
 		move.w	#tile_Nem_Aquis+tile_pal2,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#3,ost_priority(a1)
@@ -59372,13 +57883,13 @@ loc_2CF62:
 		add.w	d1,ost_y_pos(a1)
 		rts	
 ; ===========================================================================
-off_2CF6C:
-		dc.w byte_2CF78-off_2CF6C			; 0 
-		dc.w byte_2CF7B-off_2CF6C			; 1
-		dc.w byte_2CF83-off_2CF6C			; 2
-		dc.w byte_2CF89-off_2CF6C			; 3
-		dc.w byte_2CF8D-off_2CF6C			; 4
-		dc.w byte_2CF90-off_2CF6C			; 5
+Ani_Aquis:
+		dc.w byte_2CF78-Ani_Aquis			; 0 
+		dc.w byte_2CF7B-Ani_Aquis			; 1
+		dc.w byte_2CF83-Ani_Aquis			; 2
+		dc.w byte_2CF89-Ani_Aquis			; 3
+		dc.w byte_2CF8D-Ani_Aquis			; 4
+		dc.w byte_2CF90-Ani_Aquis			; 5
 
 byte_2CF78:	
 		dc.b  $E,  0,$FF
@@ -59405,40 +57916,7 @@ byte_2CF90:
 		even		
 		
 ; ===========================================================================
-Map_2CF94:				
-		dc.w word_2CFA6-Map_2CF94			; 0
-		dc.w word_2CFC0-Map_2CF94			; 1
-		dc.w word_2CFCA-Map_2CF94			; 2
-		dc.w word_2CFD4-Map_2CF94			; 3
-		dc.w word_2CFEE-Map_2CF94			; 4
-		dc.w word_2D008-Map_2CF94			; 5
-		dc.w word_2D012-Map_2CF94			; 6
-		dc.w word_2D01C-Map_2CF94			; 7
-		dc.w word_2D026-Map_2CF94			; 8
-word_2CFA6:	dc.w 3			
-		dc.w $E80D,    0,    0,$FFF0			; 0
-		dc.w $F809,    8,    4,$FFF8			; 4
-		dc.w  $805,   $E,    7,$FFF8			; 8
-word_2CFC0:	dc.w 1			
-		dc.w $F805,  $22,  $11,$FFF8			; 0
-word_2CFCA:	dc.w 1			
-		dc.w $F805,  $26,  $13,$FFF8			; 0
-word_2CFD4:	dc.w 3			
-		dc.w $E80D,  $12,    9,$FFF0			; 0
-		dc.w $F809,    8,    4,$FFF8			; 4
-		dc.w  $805,   $E,    7,$FFF8			; 8
-word_2CFEE:	dc.w 3			
-word_2CFF0:	dc.w $E80D,  $1A,   $D,$FFF0			; 0
-		dc.w $F809,    8,    4,$FFF8			; 4
-		dc.w  $805,   $E,    7,$FFF8			; 8
-word_2D008:	dc.w 1			
-		dc.w $F801,  $2A,  $15,$FFFC			; 0
-word_2D012:	dc.w 1			
-		dc.w $F801,  $2C,  $16,$FFFC			; 0
-word_2D01C:	dc.w 1			
-		dc.w $F801,  $2E,  $17,$FFFC			; 0
-word_2D026:	dc.w 1			
-		dc.w $F80D,  $30,  $18,$FFF0			; 0
+		include "mappings/sprite/Aquis.asm"
 ; ===========================================================================
 
 	if RemoveJmpTos
@@ -59475,24 +57953,24 @@ JmpTo20_SpeedToPos:
 Buzzer:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2D076(pc,d0.w),d1
-		jmp	off_2D076(pc,d1.w)
+		move.w	Buzz_Index(pc,d0.w),d1
+		jmp	Buzz_Index(pc,d1.w)
 ; ===========================================================================
-off_2D076:	index offset(*),,2
-		ptr loc_2D0C8					; 0 
-		ptr loc_2D174					; 2
-		ptr loc_2D090					; 4
-		ptr loc_2D07E					; 6
+Buzz_Index:	index offset(*),,2
+		ptr Buzz_Main					; 0 
+		ptr Buzz_Action					; 2
+		ptr Buzz_Flame					; 4
+		ptr Buzz_Projectile					; 6
 ; ===========================================================================
 
-loc_2D07E:				
+Buzz_Projectile:				
 		jsrto	SpeedToPos,JmpTo21_SpeedToPos
-		lea	(off_2D2CE).l,a1
+		lea	(Ani_Buzz).l,a1
 		jsrto	AnimateSprite,JmpTo15_AnimateSprite
 		jmpto	DespawnObject_P1,JmpTo_DespawnObject_P1
 ; ===========================================================================
 
-loc_2D090:				
+Buzz_Flame:				
 		movea.l	$2A(a0),a1
 	if FixBugs
 		cmpi.b	#id_Buzzer,ost_id(a1)			; is parent buzzer still loaded?
@@ -59517,13 +57995,13 @@ loc_2D0A2:
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
 		move.b	ost_primary_status(a1),ost_primary_status(a0)
 		move.b	ost_render(a1),ost_render(a0)
-		lea	(off_2D2CE).l,a1
+		lea	(Ani_Buzz).l,a1
 		jsrto	AnimateSprite,JmpTo15_AnimateSprite
 		jmpto	DespawnObject_P1,JmpTo_DespawnObject_P1
 ; ===========================================================================
 
-loc_2D0C8:				
-		move.l	#Map_2D2EA,ost_mappings(a0)
+Buzz_Main:				
+		move.l	#Map_Buzz,ost_mappings(a0)
 		move.w	#tile_Nem_Buzzer,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo57_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -59538,7 +58016,7 @@ loc_2D0C8:
 		bne.s	locret_2D172
 		_move.b	#id_Buzzer,ost_id(a1)
 		move.b	#4,ost_primary_routine(a1)
-		move.l	#Map_2D2EA,ost_mappings(a1)
+		move.l	#Map_Buzz,ost_mappings(a1)
 		move.w	#tile_Nem_Buzzer,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo7_Adjust2PArtPointer2
 		move.b	#4,ost_priority(a1)
@@ -59559,21 +58037,21 @@ locret_2D172:
 		rts	
 ; ===========================================================================
 
-loc_2D174:				
+Buzz_Action:				
 		moveq	#0,d0
 		move.b	ost_secondary_routine(a0),d0
-		move.w	off_2D190(pc,d0.w),d1
-		jsr	off_2D190(pc,d1.w)
-		lea	(off_2D2CE).l,a1
+		move.w	Buzz_Action_Index(pc,d0.w),d1
+		jsr	Buzz_Action_Index(pc,d1.w)
+		lea	(Ani_Buzz).l,a1
 		jsrto	AnimateSprite,JmpTo15_AnimateSprite
 		jmpto	DespawnObject_P1,JmpTo_DespawnObject_P1
 ; ===========================================================================
-off_2D190:	index offset(*),,2	
-		ptr loc_2D194					; 0 
-		ptr loc_2D234					; 2
+Buzz_Action_Index:	index offset(*),,2	
+		ptr Buzz_Roaming					; 0 
+		ptr Buzz_Shooting					; 2
 ; ===========================================================================
 
-loc_2D194:				
+Buzz_Roaming:				
 		bsr.w	loc_2D1D6
 		subq.w	#1,$30(a0)
 		move.w	$30(a0),d0
@@ -59639,7 +58117,7 @@ locret_2D232:
 		rts	
 ; ===========================================================================
 
-loc_2D234:				
+Buzz_Shooting:				
 		move.w	$34(a0),d0
 		subq.w	#1,d0
 		blt.s	loc_2D248
@@ -59659,7 +58137,7 @@ loc_2D24E:
 		bne.s	loc_2D2C8
 		_move.b	#id_Buzzer,ost_id(a1)
 		move.b	#6,ost_primary_routine(a1)
-		move.l	#Map_2D2EA,ost_mappings(a1)
+		move.l	#Map_Buzz,ost_mappings(a1)
 		move.w	#tile_Nem_Buzzer,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo7_Adjust2PArtPointer2
 		move.b	#4,ost_priority(a1)
@@ -59683,7 +58161,7 @@ loc_2D2C8:
 		add.w	d0,ost_x_pos(a1)
 		rts	
 ; ===========================================================================
-off_2D2CE:	index offset(*)
+Ani_Buzz:	index offset(*)
 		ptr byte_2D2D6					; 0 
 		ptr byte_2D2D9					; 1
 		ptr byte_2D2DD					; 2
@@ -59705,33 +58183,8 @@ byte_2D2E1:
 		dc.b   9,  1,  1,  1,  1,  1,$FD,  0
 		even
 ; ===========================================================================
-Map_2D2EA:				
-		dc.w word_2D2F8-Map_2D2EA			; 0
-		dc.w word_2D30A-Map_2D2EA			; 1
-		dc.w word_2D324-Map_2D2EA			; 2
-		dc.w word_2D33E-Map_2D2EA			; 3
-		dc.w word_2D348-Map_2D2EA			; 4
-		dc.w word_2D352-Map_2D2EA			; 5
-		dc.w word_2D35C-Map_2D2EA			; 6
-word_2D2F8:	dc.w 2			
-		dc.w $F809,    0,    0,$FFE8			; 0
-		dc.w $F809,    6,    3,	   0			; 4
-word_2D30A:	dc.w 3			
-		dc.w $F809,    0,    0,$FFE8			; 0
-		dc.w $F805,   $C,    6,	   0			; 4
-		dc.w  $805,  $10,    8,	   2			; 8
-word_2D324:	dc.w 3			
-		dc.w $F809,    0,    0,$FFE8			; 0
-		dc.w $F805,   $C,    6,	   0			; 4
-		dc.w  $805,  $14,   $A,	   2			; 8
-word_2D33E:	dc.w 1			
-		dc.w $F001,  $14,   $A,	   4			; 0
-word_2D348:	dc.w 1			
-		dc.w $F001,  $16,   $B,	   4			; 0
-word_2D352:	dc.w 1			
-		dc.w $F801,  $18,   $C,$FFF4			; 0
-word_2D35C:	dc.w 1			
-		dc.w $F801,  $1A,   $D,$FFF4			; 0
+
+		include "mappings/sprite/Buzzer.asm"
 
 	if RemoveJmpTos=0
 		align 4
@@ -59769,18 +58222,18 @@ JmpTo21_SpeedToPos:
 Masher:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2D3A6(pc,d0.w),d1
-		jsr	off_2D3A6(pc,d1.w)
+		move.w	Mash_Index(pc,d0.w),d1
+		jsr	Mash_Index(pc,d1.w)
 		jmpto	DespawnObject,JmpTo34_DespawnObject
 ; ===========================================================================
-off_2D3A6:	index offset(*),,2	
+Mash_Index:	index offset(*),,2	
 		ptr loc_2D3AA					; 0 
 		ptr loc_2D3E4					; 2
 ; ===========================================================================
 
 loc_2D3AA:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2D442,ost_mappings(a0)
+		move.l	#Map_Mash,ost_mappings(a0)
 		move.w	#tile_Nem_Masher,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo58_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -59791,7 +58244,7 @@ loc_2D3AA:
 		move.w	ost_y_pos(a0),$30(a0)
 
 loc_2D3E4:				
-		lea	(off_2D430).l,a1
+		lea	(Ani_Mash).l,a1
 		jsrto	AnimateSprite,JmpTo16_AnimateSprite
 		jsrto	SpeedToPos,JmpTo22_SpeedToPos
 		addi.w	#$18,ost_y_vel(a0)
@@ -59814,7 +58267,7 @@ loc_2D40C:
 locret_2D42E:				
 		rts	
 ; ===========================================================================
-off_2D430:	index offset(*)
+Ani_Mash:	index offset(*)
 		ptr byte_2D436					; 0 
 		ptr byte_2D43A					; 1
 		ptr byte_2D43E					; 2
@@ -59829,17 +58282,8 @@ byte_2D43E:
 		dc.b   7,  0,$FF
 		even
 ; ===========================================================================
-Map_2D442:				
-		dc.w word_2D446-Map_2D442			; 0
-		dc.w word_2D460-Map_2D442			; 1
-word_2D446:	dc.w 3			
-		dc.w $F005,    0,    0,$FFF4			; 0
-		dc.w $F001,    4,    2,	   4			; 4
-		dc.w	 9,   $A,    5,$FFF4			; 8
-word_2D460:	dc.w 3			
-		dc.w $F005,    0,    0,$FFF4			; 0
-		dc.w $F005,    6,    3,	   2			; 4
-		dc.w	 9,  $10,    8,$FFF4			; 8
+
+		include "mappings/sprite/Masher.asm"
 	
 	if RemoveJmpTos=0
 		align 4
@@ -59864,20 +58308,20 @@ JmpTo22_SpeedToPos:
 ; Object 58 - Boss explosion
 ; ----------------------------------------------------------------------------
 
-BossExplosion:				
+ExplosionBomb:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2D4A2(pc,d0.w),d1
-		jmp	off_2D4A2(pc,d1.w)
+		move.w	ExBom_Index(pc,d0.w),d1
+		jmp	ExBom_Index(pc,d1.w)
 ; ===========================================================================
-off_2D4A2:	index offset(*),,2	
+ExBom_Index:	index offset(*),,2	
 		ptr loc_2D4A6					; 0 
 		ptr loc_2D4EC					; 2
 ; ===========================================================================
 
 loc_2D4A6:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2D50A,ost_mappings(a0)
+		move.l	#Map_ExplodeBomb,ost_mappings(a0)
 		move.w	#tile_Nem_FieryExplosion+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo59_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -59908,31 +58352,11 @@ JmpTo50_DeleteObject:
 		jmp	(DeleteObject).l
     endif		
 ; ===========================================================================
+
+		include "mappings/sprite/Boss Explosion.asm"
+	
 ; ===========================================================================
-Map_2D50A:				
-		dc.w word_2D518-Map_2D50A			; 0
-		dc.w word_2D522-Map_2D50A			; 1
-		dc.w word_2D52C-Map_2D50A			; 2
-		dc.w word_2D536-Map_2D50A			; 3
-		dc.w word_2D540-Map_2D50A			; 4
-		dc.w word_2D54A-Map_2D50A			; 5
-		dc.w word_2D554-Map_2D50A			; 6
-word_2D518:	dc.w 1			
-		dc.w $F805,    0,    0,$FFF8			; 0
-word_2D522:	dc.w 1			
-		dc.w $F00F,    4,    2,$FFF0			; 0
-word_2D52C:	dc.w 1			
-		dc.w $F00F,  $14,   $A,$FFF0			; 0
-word_2D536:	dc.w 1			
-		dc.w $F00F,  $24,  $12,$FFF0			; 0
-word_2D540:	dc.w 1			
-		dc.w $F00F,  $34,  $1A,$FFF0			; 0
-word_2D54A:	dc.w 1			
-		dc.w $F00F,  $44,  $22,$FFF0			; 0
-word_2D554:	dc.w 1			
-		dc.w $F00F,  $54,  $2A,$FFF0			; 0
-; ===========================================================================
-		; a bit of unused/dead code here 	
+		; Unused Sonic 1 leftover: a small fragment of code from BGHZ_Update	
 		move.b	ost_boss_wobble(a0),d0
 		jsr	(CalcSine).l
 		asr.w	#6,d0
@@ -60112,13 +58536,14 @@ locret_2D6CA:
 ; ---------------------------------------------------------------------------
 ; Subroutine to load explosions when a boss is beaten
 ; ---------------------------------------------------------------------------
+
 BossExplode:				
 		move.b	(v_vblank_counter_byte).w,d0		; get byte that increments every frame
 		andi.b	#7,d0					; read bits 0-2
 		bne.s	.fail					; branch if any are set
 		jsr	(FindFreeObj).l				; find free OST slot
-		bne.s	.fail					; branch if none are found
-		_move.b	#id_BossExplosion,ost_id(a1)		; load boss explosion object every 8 frames
+		bne.s	.fail					; branch if not found
+		_move.b	#id_ExplosionBomb,ost_id(a1)		; load boss explosion object every 8 frames
 		move.w	ost_x_pos(a0),ost_x_pos(a1)		; copy position from parent boss object
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		jsr	(RandomNumber).l
@@ -60181,7 +58606,7 @@ BCPZ_Index:	index offset(*),,2
 		
 		rsobj BossChemicalPlant,$2A
 	; Some of these are only used by certain subobjects of this object,
-	; hence the overlapping. 
+	; hence the overlap. 
 ost_bcpz_timer2:			rs.w 1			; $2A
 ost_bcpz_pipe_segments:		rs.w 1				; $2C
 ost_bcpz_primary_status:	equ __rs-1			; $2D
@@ -60203,7 +58628,7 @@ ost_bcpz_hover_counter:		rs.b 1				; $3F
 ; ===========================================================================
 
 BCPZ_Main:				
-		move.l	#Map_2ED8C,ost_mappings(a0)
+		move.l	#Map_BCPZ_Eggpod,ost_mappings(a0)
 		move.w	#tile_Nem_Eggpod_CPZ+tile_pal2,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
@@ -60222,7 +58647,7 @@ BCPZ_Main:
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
 		move.l	a0,$34(a1)
 		move.l	a1,$34(a0)
-		move.l	#Map_2ED8C,ost_mappings(a1)
+		move.l	#Map_BCPZ_Eggpod,ost_mappings(a1)
 		move.w	#tile_Nem_Eggpod_CPZ,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -60239,7 +58664,7 @@ BCPZ_Main:
 		bne.w	loc_2D8AC
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#Map_2EE88,ost_mappings(a1)
+		move.l	#Map_BCPZ_EggpodJets,ost_mappings(a1)
 		move.w	#tile_Nem_EggpodJets_CPZ,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo8_Adjust2PArtPointer2
 		move.b	#1,ost_anim_time(a0)
@@ -60254,7 +58679,7 @@ BCPZ_Main:
 		bne.s	loc_2D8AC
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -60268,7 +58693,7 @@ loc_2D8AC:
 		bne.s	loc_2D908
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -60286,7 +58711,7 @@ loc_2D908:
 		bne.s	locret_2D94C
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -60305,7 +58730,7 @@ BCPZ_ShipMain:
 		move.b	ost_secondary_routine(a0),d0
 		move.w	BCPZ_Ship_Index(pc,d0.w),d1
 		jsr	BCPZ_Ship_Index(pc,d1.w)
-		lea	(off_2ED5C).l,a1
+		lea	(Ani_BCPZ_Eggman).l,a1
 		jsr	(AnimateSprite).l
 		move.b	ost_primary_status(a0),d0
 		andi.b	#3,d0
@@ -60501,7 +58926,7 @@ loc_2DB34:
 		bne.s	locret_2DB7A
 		jsr	(FindFreeObj).l
 		bne.s	locret_2DB7A
-		_move.b	#id_BossExplosion,ost_id(a1)
+		_move.b	#id_ExplosionBomb,ost_id(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		jsr	(RandomNumber).l
@@ -60523,7 +58948,7 @@ locret_2DB7A:
 loc_2DB7C:				
 		jsr	(FindFreeObj).l
 		bne.s	locret_2DB96
-		_move.b	#id_BossExplosion,ost_id(a1)
+		_move.b	#id_ExplosionBomb,ost_id(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 
@@ -60641,7 +59066,7 @@ BCPZ_Pump:
 		move.l	ost_y_pos(a1),ost_y_pos(a0)
 		move.b	ost_render(a1),ost_render(a0)
 		move.b	ost_primary_status(a1),ost_primary_status(a0)
-		movea.l	#off_2EA3C,a1
+		movea.l	#Ani_BCPZ_Pump,a1
 		jsr	(AnimateSprite).l
 		jmp	(DisplaySprite).l
 ; ===========================================================================
@@ -60666,7 +59091,7 @@ loc_2DD26:
 		jsr	(FindFreeObj).l
 		bne.w	JmpTo51_DeleteObject
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.b	d3,ost_frame(a1)
 		move.b	#$14,ost_primary_routine(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
@@ -60749,7 +59174,7 @@ BCPZ_Pipe_LoadSegment_2:
 		blt.s	loc_2DE56
 	endc	
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -60794,7 +59219,7 @@ loc_2DE7A:
 		move.b	#6,ost_primary_routine(a1)
 		move.b	#2,ost_secondary_routine(a1)
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -60846,7 +59271,7 @@ loc_2DF5A:
 		moveq	#0,d0
 		move.b	$31(a0),d0
 		add.w	d0,ost_y_pos(a0)
-		lea	(off_2EA3C).l,a1
+		lea	(Ani_BCPZ_Pump).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DisplaySprite).l
 ; ===========================================================================
@@ -60952,7 +59377,7 @@ loc_2E028:
 		bne.s	loc_2E04A
 		move.w	$38(a0),d0
 		add.w	d0,ost_y_pos(a0)
-		lea	(off_2EA3C).l,a1
+		lea	(Ani_BCPZ_Pump).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DisplaySprite).l
 ; ===========================================================================
@@ -60992,7 +59417,7 @@ off_2E092:	index offset(*),,2
 loc_2E098:				
 		addq.b	#2,ost_secondary_routine(a0)
 		_move.b	#id_BossChemicalPlant,ost_id(a0)
-		move.l	#Map_2EADC,ost_mappings(a0)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a0)
 		move.w	#tile_Nem_CPZBoss+tile_pal4,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
@@ -61020,7 +59445,7 @@ loc_2E102:
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
 		move.b	ost_primary_status(a1),ost_primary_status(a0)
 		move.b	ost_render(a1),ost_render(a0)
-		lea	(off_2EA3C).l,a1
+		lea	(Ani_BCPZ_Pump).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DisplaySprite).l
 ; ===========================================================================
@@ -61048,7 +59473,7 @@ loc_2E156:
 		addi_.w	#4,ost_x_pos(a0)
 
 loc_2E180:				
-		lea	(off_2EA3C).l,a1
+		lea	(Ani_BCPZ_Pump).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DisplaySprite).l
 ; ===========================================================================
@@ -61077,7 +59502,7 @@ loc_2E1AC:
 		bne.s	loc_2E20E
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -61093,7 +59518,7 @@ loc_2E20E:
 		bne.s	loc_2E258
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -61140,7 +59565,7 @@ loc_2E2AC:
 
 loc_2E2CA:				
 		add.w	d0,ost_x_pos(a0)
-		lea	(off_2EA3C).l,a1
+		lea	(Ani_BCPZ_Pump).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DisplaySprite).l
 ; ===========================================================================
@@ -61195,7 +59620,7 @@ loc_2E35C:
 		jsr	(FindFreeObj).l
 		bne.w	JmpTo51_DeleteObject
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.b	#$21,ost_frame(a1)
 		move.b	#$14,ost_primary_routine(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
@@ -61290,7 +59715,7 @@ loc_2E464:
 		move.l	a0,$34(a1)
 		move.b	#$10,ost_primary_routine(a1)
 		move.b	#8,ost_secondary_routine(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -61322,7 +59747,7 @@ loc_2E4DA:
 		bne.s	locret_2E550
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
 		move.l	$34(a0),$34(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -61432,7 +59857,7 @@ loc_2E638:
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
 		move.b	ost_render(a1),ost_render(a0)
 		move.b	ost_primary_status(a1),ost_primary_status(a0)
-		lea	(off_2EA3C).l,a1
+		lea	(Ani_BCPZ_Pump).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DisplaySprite).l
 ; ===========================================================================
@@ -61479,7 +59904,7 @@ loc_2E6CA:
 		bmi.s	loc_2E6F2
 		cmpi.w	#$518,ost_y_pos(a0)
 		bge.s	loc_2E728
-		lea	(off_2EA3C).l,a1
+		lea	(Ani_BCPZ_Pump).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DisplaySprite).l
 ; ===========================================================================
@@ -61523,7 +59948,7 @@ loc_2E746:
 
 loc_2E77A:				
 		jsrto	SpeedToPos,JmpTo23_SpeedToPos
-		lea	(off_2EA3C).l,a1
+		lea	(Ani_BCPZ_Pump).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DisplaySprite).l
 ; ===========================================================================
@@ -61587,7 +60012,7 @@ loc_2E834:
 		bne.w	BranchTo_JmpTo34_DisplaySprite
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#Map_2EADC,ost_mappings(a1)
+		move.l	#Map_BCPZ_Pump,ost_mappings(a1)
 		move.w	#tile_Nem_CPZBoss+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -61663,7 +60088,7 @@ loc_2E932:
 		move.b	#3,ost_anim(a0)
 
 loc_2E938:				
-		lea	(off_2ED5C).l,a1
+		lea	(Ani_BCPZ_Eggman).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DisplaySprite).l
 ; ===========================================================================
@@ -61718,7 +60143,7 @@ loc_2E9B6:
 		; This should be 'ost_primary_routine' instead of 'ost_secondary_routine'...
 		addq.b	#2,ost_secondary_routine(a0)
     endc
-		move.l	#Map_2EEA0,ost_mappings(a0)
+		move.l	#Map_BCPZ_Smoke,ost_mappings(a0)
 	if FixBugs
 		; ...and this should be 'tile_Nem_BossSmoke_CPZ+tile_pal2' instead.
 		move.w	#tile_Nem_BossSmoke_CPZ+tile_pal2,ost_tile(a0)	
@@ -61755,7 +60180,7 @@ BCPZ_Smoke:
 BranchTo2_JmpTo34_DisplaySprite:				
 		jmpto	DisplaySprite,JmpTo34_DisplaySprite
 ; ===========================================================================
-off_2EA3C:	index offset(*)	
+Ani_BCPZ_Pump:	index offset(*)	
 		ptr byte_2EA72					; 0 
 		ptr byte_2EA75					; 1
 		ptr byte_2EA78					; 2
@@ -61793,8 +60218,7 @@ byte_2EA8B:	dc.b  $F, $A,$FF				; 0
 byte_2EA8E:	dc.b  $F,$1C,$FF				; 0 
 byte_2EA91:	dc.b  $F,$1E,$FF				; 0 
 byte_2EA94:	dc.b  $F, $B,$FF				; 0 
-byte_2EA97:	dc.b   3, $C, $C, $D, $D, $D, $D, $D, $C, $C,$FD,  9 ; 0
-					
+byte_2EA97:	dc.b   3, $C, $C, $D, $D, $D, $D, $D, $C, $C,$FD,  9 ; 0			
 byte_2EAA3:	dc.b   3, $E, $E, $F, $F, $F, $F, $F, $E, $E,$FF ; 0 
 byte_2EAAE:	dc.b  $F,$10,$FF				; 0 
 byte_2EAB1:	dc.b  $F,$11,$FF				; 0 
@@ -61812,224 +60236,26 @@ byte_2EAD2:	dc.b  $F,$1C,$FF				; 0
 byte_2EAD5:	dc.b   1,$1D,$1F,$FF				; 0 
 byte_2EAD9:	dc.b  $F,$1E,$FF				; 0 
 ; ===========================================================================
-Map_2EADC:				
-		dc.w word_2EB2C-Map_2EADC			; 0
-		dc.w word_2EB46-Map_2EADC			; 1
-		dc.w word_2EB50-Map_2EADC			; 2
-		dc.w word_2EB5A-Map_2EADC			; 3
-		dc.w word_2EB64-Map_2EADC			; 4
-		dc.w word_2EB6E-Map_2EADC			; 5
-		dc.w word_2EB78-Map_2EADC			; 6
-		dc.w word_2EB82-Map_2EADC			; 7
-		dc.w word_2EB8C-Map_2EADC			; 8
-		dc.w word_2EB96-Map_2EADC			; 9
-		dc.w word_2EBA0-Map_2EADC			; 10
-		dc.w word_2EBB2-Map_2EADC			; 11
-		dc.w word_2EBBC-Map_2EADC			; 12
-		dc.w word_2EBC6-Map_2EADC			; 13
-		dc.w word_2EBD0-Map_2EADC			; 14
-		dc.w word_2EBDA-Map_2EADC			; 15
-		dc.w word_2EBE4-Map_2EADC			; 16
-		dc.w word_2EBEE-Map_2EADC			; 17
-		dc.w word_2EBF8-Map_2EADC			; 18
-		dc.w word_2EC02-Map_2EADC			; 19
-		dc.w word_2EC0C-Map_2EADC			; 20
-		dc.w word_2EC1E-Map_2EADC			; 21
-		dc.w word_2EC30-Map_2EADC			; 22
-		dc.w word_2EC42-Map_2EADC			; 23
-		dc.w word_2EC54-Map_2EADC			; 24
-		dc.w word_2EC6E-Map_2EADC			; 25
-		dc.w word_2EC88-Map_2EADC			; 26
-		dc.w word_2ECA2-Map_2EADC			; 27
-		dc.w word_2ECBC-Map_2EADC			; 28
-		dc.w word_2ECD6-Map_2EADC			; 29
-		dc.w word_2ECE0-Map_2EADC			; 30
-		dc.w word_2ED02-Map_2EADC			; 31
-		dc.w word_2ED0C-Map_2EADC			; 32
-		dc.w word_2ED16-Map_2EADC			; 33
-		dc.w word_2ED20-Map_2EADC			; 34
-		dc.w word_2ED2A-Map_2EADC			; 35
-		dc.w word_2ED34-Map_2EADC			; 36
-		dc.w word_2ED3E-Map_2EADC			; 37
-		dc.w word_2ED48-Map_2EADC			; 38
-		dc.w word_2ED52-Map_2EADC			; 39
-word_2EB2C:	dc.w 3			
-		dc.w $B80D,    0,    0,$FFF8			; 0
-		dc.w $C80A,    8,    4,	   8			; 4
-		dc.w $E005,  $11,    8,	 $10			; 8
-word_2EB46:	dc.w 1			
-		dc.w $FC00,  $24,  $12,$FFFC			; 0
-word_2EB50:	dc.w 1			
-		dc.w $FC04,  $25,  $12,$FFF5			; 0
-word_2EB5A:	dc.w 1			
-		dc.w $FC04,  $27,  $13,$FFF6			; 0
-word_2EB64:	dc.w 1			
-		dc.w $C400,  $36,  $1B,$FFFB			; 0
-word_2EB6E:	dc.w 1			
-		dc.w $C400,  $37,  $1B,$FFFB			; 0
-word_2EB78:	dc.w 1			
-		dc.w $C400,  $38,  $1C,$FFFB			; 0
-word_2EB82:	dc.w 1			
-		dc.w $C401,  $39,  $1C,$FFFB			; 0
-word_2EB8C:	dc.w 1			
-		dc.w $C401,  $3B,  $1D,$FFFB			; 0
-word_2EB96:	dc.w 1			
-		dc.w $FC00,  $3D,  $1E,$FFFC			; 0
-word_2EBA0:	dc.w 2			
-		dc.w	$E,  $15,   $A,	   0
-		dc.w  $808,  $21,  $10,	 $18
-word_2EBB2:	dc.w 1			
-		dc.w $1808,  $29,  $14,	   0			; 0
-word_2EBBC:	dc.w 1			
-		dc.w $1808,  $2C,  $16,	   0			; 0
-word_2EBC6:	dc.w 1			
-		dc.w $1808,  $2F,  $17,	   8			; 0
-word_2EBD0:	dc.w 1			
-		dc.w $1804,  $32,  $19,$FFFC			; 0
-word_2EBDA:	dc.w 1			
-		dc.w $1804,  $34,  $1A,$FFFC			; 0
-word_2EBE4:	dc.w 1			
-		dc.w $1008,  $63,  $31,	   0			; 0
-word_2EBEE:	dc.w 1			
-		dc.w $1008,  $66,  $33,	   0			; 0
-word_2EBF8:	dc.w 1			
-		dc.w $1008,  $69,  $34,	   0			; 0
-word_2EC02:	dc.w 1			
-word_2EC04:	dc.w $1008,  $6C,  $36,	   0			; 0
-word_2EC0C:	dc.w 2			
-word_2EC0E:	dc.w $1008,  $6C,  $36,	   0			; 0
-		dc.w  $808,  $63,  $31,	   0			; 4
-word_2EC1E:	dc.w 2			
-		dc.w $1008,  $6C,  $36,	   0			; 0
-		dc.w  $808,  $66,  $33,	   0			; 4
-word_2EC30:	dc.w 2			
-		dc.w $1008,  $6C,  $36,	   0			; 0
-		dc.w  $808,  $69,  $34,	   0			; 4
-word_2EC42:	dc.w 2			
-		dc.w $1008,  $6C,  $36,	   0			; 0
-		dc.w  $808,  $6C,  $36,	   0			; 4
-word_2EC54:	dc.w 3			
-		dc.w $1008,  $6C,  $36,	   0			; 0
-		dc.w  $808,  $6C,  $36,	   0			; 4
-		dc.w	 8,  $63,  $31,	   0			; 8
-word_2EC6E:	dc.w 3			
-		dc.w $1008,  $6C,  $36,	   0			; 0
-		dc.w  $808,  $6C,  $36,	   0			; 4
-		dc.w	 8,  $66,  $33,	   0			; 8
-word_2EC88:	dc.w 3			
-		dc.w $1008,  $6C,  $36,	   0			; 0
-		dc.w  $808,  $6C,  $36,	   0			; 4
-		dc.w	 8,  $69,  $34,	   0			; 8
-word_2ECA2:	dc.w 3			
-		dc.w $1008,  $6C,  $36,	   0			; 0
-		dc.w  $808,  $6C,  $36,	   0			; 4
-		dc.w	 8,  $6C,  $36,	   0			; 8
-word_2ECBC:	dc.w 3			
-		dc.w	$E,  $15,   $A,	   0			; 0
-		dc.w  $808,  $21,  $10,	 $18			; 4
-		dc.w  $808,  $21,  $10,	 $30			; 8
-word_2ECD6:	dc.w 1			
-		dc.w	$B,  $3E,  $1F,	   0			; 0
-word_2ECE0:	dc.w 4			
-		dc.w	$E,  $15,   $A,	   0			; 0
-		dc.w  $808,  $21,  $10,	 $18			; 4
-		dc.w  $808,  $21,  $10,	 $30			; 8
-		dc.w  $808,  $21,  $10,	 $48			; 12
-word_2ED02:	dc.w 1			
-word_2ED04:	dc.w	$B, $83E, $81F,	   0			; 0
-word_2ED0C:	dc.w 1			
-		dc.w	$E,  $15,   $A,	   0			; 0
-word_2ED16:	dc.w 1			
-		dc.w	 8,  $21,  $10,	   0			; 0
-word_2ED20:	dc.w 1			
-		dc.w $B80D,    0,    0,$FFF8			; 0
-word_2ED2A:	dc.w 1			
-		dc.w $C80A,    8,    4,	   8			; 0
-word_2ED34:	dc.w 1			
-		dc.w $E005,  $11,    8,	 $10			; 0
-word_2ED3E:	dc.w 1			
-		dc.w $E00A,  $4A,  $25,$FFF0			; 0
-word_2ED48:	dc.w 1			
-		dc.w $E80D,  $53,  $29,$FFF0			; 0
-word_2ED52:	dc.w 1			
-		dc.w $E80D,  $5B,  $2D,$FFF0			; 0
-off_2ED5C:	dc.w byte_2ED66-off_2ED5C			; 0 
-		dc.w byte_2ED69-off_2ED5C			; 1
-		dc.w byte_2ED6D-off_2ED5C			; 2
-		dc.w byte_2ED76-off_2ED5C			; 3
-		dc.w byte_2ED7F-off_2ED5C			; 4
+
+		include "mappings/sprite/CPZ Boss.asm"
+
+; ===========================================================================
+		
+Ani_BCPZ_Eggman:	index offset(*)
+		ptr byte_2ED66			; 0 
+		ptr byte_2ED69			; 1
+		ptr byte_2ED6D			; 2
+		ptr byte_2ED76			; 3
+		ptr byte_2ED7F			; 4
 byte_2ED66:	dc.b  $F,  0,$FF				; 0 
 byte_2ED69:	dc.b   7,  1,  2,$FF				; 0 
 byte_2ED6D:	dc.b   7,  5,  5,  5,  5,  5,  5,$FD,  1	; 0 
 byte_2ED76:	dc.b   7,  3,  4,  3,  4,  3,  4,$FD,  1	; 0 
 byte_2ED7F:	dc.b  $F,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,$FD,  1 ; 0
-					
-; ===========================================================================
-Map_2ED8C:				
-		dc.w word_2ED9A-Map_2ED8C			; 0
-		dc.w word_2EDBC-Map_2ED8C			; 1
-		dc.w word_2EDDE-Map_2ED8C			; 2
-		dc.w word_2EE00-Map_2ED8C			; 3
-		dc.w word_2EE22-Map_2ED8C			; 4
-		dc.w word_2EE44-Map_2ED8C			; 5
-		dc.w word_2EE66-Map_2ED8C			; 6
-word_2ED9A:	dc.w 4			
-		dc.w $F805,    0,    0,$FFE0			; 0
-		dc.w  $805,    4,    2,$FFE0			; 4
-		dc.w $F80F,    8,    4,$FFF0			; 8
-		dc.w $F807,  $18,   $C,	 $10			; 12
-word_2EDBC:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $30,  $18,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
-word_2EDDE:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $38,  $1C,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
-word_2EE00:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $40,  $20,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
-word_2EE22:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $48,  $24,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
-word_2EE44:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $50,  $28,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
-word_2EE66:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $58,  $2C,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
-; ===========================================================================
-Map_2EE88:				
-		dc.w word_2EE8C-Map_2EE88			; 0
-		dc.w word_2EE96-Map_2EE88			; 1
-word_2EE8C:	dc.w 1			
-		dc.w	 5,    0,    0,	 $1C			; 0
-word_2EE96:	dc.w 1			
-		dc.w	 5,    4,    2,	 $1C			; 0
-; ===========================================================================
-Map_2EEA0:				
-		dc.w word_2EEA8-Map_2EEA0			; 0
-		dc.w word_2EEB2-Map_2EEA0			; 1
-		dc.w word_2EEBC-Map_2EEA0			; 2
-		dc.w word_2EEC6-Map_2EEA0			; 3
-word_2EEA8:	dc.w 1			
-		dc.w $F805,    0,    0,$FFF8			; 0
-word_2EEB2:	dc.w 1			
-		dc.w $F805,    4,    2,$FFF8			; 0
-word_2EEBC:	dc.w 1			
-		dc.w $F805,    8,    4,$FFF8			; 0
-word_2EEC6:	dc.w 1			
-		dc.w $F805,   $C,    6,$FFF8			; 0
+; ===========================================================================					
+
+		include_CPZEggpodSmoke_Maps	; mappings/sprite/CPZ Boss.asm"
+		
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -62064,16 +60290,16 @@ JmpTo23_SpeedToPos:
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 56 - EHZ boss
-; the fuselage of Eggman's autogyro is the parent object
+; the fuselage of Eggman's helicopter is the parent object
 ; ----------------------------------------------------------------------------
 
 BossEmeraldHill:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2EF26(pc,d0.w),d1
-		jmp	off_2EF26(pc,d1.w)
+		move.w	BEHZ_Index(pc,d0.w),d1
+		jmp	BEHZ_Index(pc,d1.w)
 ; ===========================================================================
-off_2EF26:	index offset(*),,2		
+BEHZ_Index:	index offset(*),,2		
 		ptr loc_2EF36					; 0 
 		ptr loc_2F262					; 2
 		ptr loc_2F54E					; 4
@@ -62082,10 +60308,23 @@ off_2EF26:	index offset(*),,2
 		ptr loc_2F7F4					; $A
 		ptr loc_2F52A					; $C
 		ptr loc_2F8DA					; $E
+		
+; #7,status(ax) set via collision response routine (Touch_Enemy_Part2)
+; 	when after a hit collision_property(ax) = hitcount has reached zero
+; objoff_2A(ax) used as timer (countdown)
+; objoff_2C(ax) tertiary rountine counter
+; #0,objoff_2D(ax) set when Robotnik is on ground
+; #1,objoff_2D(ax) set when Robotnik is active (moving back & forth)
+; #2,objoff_2D(ax) set when Robotnik is flying off after being defeated
+; #3,objoff_2D(ax) flag to separate spike from vehicle
+; objoff_2E(ax)	y_position of wheels
+; objoff_34(ax) parent object
+; objoff_3C(ax)	timer after defeat
+		
 ; ===========================================================================
 
 loc_2EF36:				
-		move.l	#Map_2FAF8,ost_mappings(a0)
+		move.l	#Map_BEHZ_Eggman,ost_mappings(a0)
 		move.w	#tile_Nem_Eggpod_EHZ+tile_pal2,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$81,ost_subtype(a0)
@@ -62100,12 +60339,14 @@ loc_2EF36:
 		move.w	ost_x_pos(a0),$30(a0)
 		move.w	ost_y_pos(a0),$38(a0)
 		jsrto	Adjust2PArtPointer,JmpTo61_Adjust2PArtPointer
+		
 		jsr	(FindNextFreeObj).l
 		bne.w	loc_2EFE4
+		
 		_move.b	#id_BossEmeraldHill,ost_id(a1)
 		move.l	a0,$34(a1)
 		move.l	a1,$34(a0)
-		move.l	#Map_2FAF8,ost_mappings(a1)
+		move.l	#Map_BEHZ_Eggman,ost_mappings(a1)
 		move.w	#tile_Nem_Eggpod_EHZ,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -62117,19 +60358,14 @@ loc_2EF36:
 		move.b	ost_render(a0),ost_render(a1)
 
 loc_2EFE4:				
-		jsr	(FindNextFreeObj).l
-		bne.s	loc_2F032
+		jsr	(FindNextFreeObj).l		; find free OST slot after parent
+		bne.s	loc_2F032			; branch if not found
+		
 		_move.b	#id_BossEmeraldHill,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#off_2FA58,ost_mappings(a1)
-
-loc_2EFFE:
+		move.l	#Map_Drillster,ost_mappings(a1)
 		move.w	#tile_Nem_EHZBoss,ost_tile(a1)
-
-loc_2F004:
 		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
-
-loc_2F008:
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$30,ost_displaywidth(a1)
 		move.b	#$10,ost_height(a1)
@@ -62147,7 +60383,7 @@ loc_2F032:
 		bne.s	locret_2F096
 		_move.b	#id_BossEmeraldHill,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#off_2F970,ost_mappings(a1)
+		move.l	#Map_Rotor,ost_mappings(a1)
 		move.w	#tile_Nem_EggChopperBlades+tile_pal2,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
 		move.b	#render_rel,ost_render(a1)
@@ -62167,7 +60403,7 @@ loc_2F098:
 		bne.s	loc_2F110
 		_move.b	#id_BossEmeraldHill,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#off_2FA58,ost_mappings(a1)
+		move.l	#Map_Drillster,ost_mappings(a1)
 		move.w	#tile_Nem_EHZBoss+tile_pal2,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
 		move.b	#render_rel,ost_render(a1)
@@ -62190,7 +60426,7 @@ loc_2F110:
 		bne.s	loc_2F188
 		_move.b	#id_BossEmeraldHill,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#off_2FA58,ost_mappings(a1)
+		move.l	#Map_Drillster,ost_mappings(a1)
 		move.w	#tile_Nem_EHZBoss+tile_pal2,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
 		move.b	#render_rel,ost_render(a1)
@@ -62213,7 +60449,7 @@ loc_2F188:
 		bne.s	loc_2F200
 		_move.b	#id_BossEmeraldHill,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#off_2FA58,ost_mappings(a1)
+		move.l	#Map_Drillster,ost_mappings(a1)
 		move.w	#tile_Nem_EHZBoss+tile_pal2,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
 		move.b	#render_rel,ost_render(a1)
@@ -62233,14 +60469,11 @@ loc_2F188:
 
 loc_2F200:				
 		jsr	(FindNextFreeObj).l
-
-loc_2F206:
 		bne.s	locret_2F260
 
-loc_2F208:
 		_move.b	#id_BossEmeraldHill,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#off_2FA58,ost_mappings(a1)
+		move.l	#Map_Drillster,ost_mappings(a1)
 		move.w	#tile_Nem_EHZBoss+tile_pal2,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
 		move.b	#render_rel,ost_render(a1)
@@ -62388,7 +60621,7 @@ loc_2F3A2:
 		bne.w	locret_2F422
 		_move.b	#id_BossEmeraldHill,ost_id(a1)
 		move.l	a0,$34(a1)
-		move.l	#off_2F970,ost_mappings(a1)
+		move.l	#Map_Rotor,ost_mappings(a1)
 		move.w	#tile_Nem_EggChopperBlades+tile_pal2,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
 		move.b	#render_rel,ost_render(a1)
@@ -62525,7 +60758,7 @@ loc_2F52A:
 		subi_.w	#1,$2A(a0)
 		bpl.w	JmpTo35_DisplaySprite
 		move.b	#4,ost_primary_routine(a0)
-		lea	(off_2F936).l,a1
+		lea	(Ani_Rotor).l,a1
 		jsrto	AnimateSprite,JmpTo17_AnimateSprite
 		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
@@ -62567,7 +60800,7 @@ loc_2F5A0:
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
 		move.b	ost_primary_status(a1),ost_primary_status(a0)
 		move.b	ost_render(a1),ost_render(a0)
-		lea	(off_2F936).l,a1
+		lea	(Ani_Rotor).l,a1
 		jsrto	AnimateSprite,JmpTo17_AnimateSprite
 		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
@@ -62583,7 +60816,7 @@ loc_2F5C6:
 ; ===========================================================================
 
 loc_2F5E8:				
-		lea	(off_2F936).l,a1
+		lea	(Ani_Rotor).l,a1
 		jsrto	AnimateSprite,JmpTo17_AnimateSprite
 		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
@@ -62692,7 +60925,7 @@ loc_2F700:
 		move.w	#-$200,ost_x_vel(a0)
 
 loc_2F706:				
-		lea	(off_2FA44).l,a1
+		lea	(Ani_Drillster).l,a1
 		jsrto	AnimateSprite,JmpTo17_AnimateSprite
 		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
@@ -62741,7 +60974,7 @@ loc_2F77E:
 		add.w	d0,$2E(a1)
 
 loc_2F798:				
-		lea	(off_2FA44).l,a1
+		lea	(Ani_Drillster).l,a1
 		jsrto	AnimateSprite,JmpTo17_AnimateSprite
 		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
@@ -62813,7 +61046,7 @@ loc_2F824:
 
 loc_2F878:				
 		add.w	d0,ost_x_pos(a0)
-		lea	(off_2FA44).l,a1
+		lea	(Ani_Drillster).l,a1
 		jsrto	AnimateSprite,JmpTo17_AnimateSprite
 		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
@@ -62826,7 +61059,7 @@ loc_2F88A:
 
 loc_2F898:				
 		add.w	d0,ost_x_pos(a0)
-		lea	(off_2FA44).l,a1
+		lea	(Ani_Drillster).l,a1
 		jsrto	AnimateSprite,JmpTo17_AnimateSprite
 		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
@@ -62882,11 +61115,11 @@ loc_2F916:
 		move.b	#3,ost_anim(a0)
 
 loc_2F924:				
-		lea	(off_2FAC8).l,a1
+		lea	(Ani_BEHZ_Eggman).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DisplaySprite).l
 ; ===========================================================================
-off_2F936:	index offset(*)
+Ani_Rotor:	index offset(*)
 		ptr byte_2F93C					; 0 
 		ptr byte_2F940					; 1
 		ptr byte_2F956					; 2
@@ -62902,129 +61135,39 @@ byte_2F956:
 		dc.b   1,  0,  0,  0,  0,  0,  0,  0,  0,  4,  4,  4,  3,  3,  3,  2			
 		dc.b   2,  2,  1,  1,  1,  5,  6,$FE,  2,  0
 ; ===========================================================================
-off_2F970:	dc.w word_2F97E-off_2F970			; 0 
-		dc.w word_2F988-off_2F970			; 1
-		dc.w word_2F9B2-off_2F970			; 2
-		dc.w word_2F9DC-off_2F970			; 3
-		dc.w word_2F9F6-off_2F970			; 4
-		dc.w word_2FA10-off_2F970			; 5
-		dc.w word_2FA2A-off_2F970			; 6
-word_2F97E:	dc.w 1			
-		dc.w $D805,    0,    0,	   2			; 0
-word_2F988:	dc.w 5			
-		dc.w $D805,    4,    2,	   2			; 0
-		dc.w $D80D,   $C,    6,	 $12			; 4
-		dc.w $D80D,   $C,    6,	 $32			; 8
-		dc.w $D80D,   $C,    6,$FFE2			; 12
-		dc.w $D80D,   $C,    6,$FFC2			; 16
-word_2F9B2:	dc.w 5			
-		dc.w $D805,    4,    2,	   2			; 0
-		dc.w $D80D,   $C,    6,	 $12			; 4
-		dc.w $D805,    8,    4,	 $32			; 8
-		dc.w $D80D,   $C,    6,$FFE2			; 12
-		dc.w $D805,    8,    4,$FFD2			; 16
-word_2F9DC:	dc.w 3			
-		dc.w $D805,    4,    2,	   2			; 0
-		dc.w $D80D,   $C,    6,	 $12			; 4
-		dc.w $D80D,   $C,    6,$FFE2			; 8
-word_2F9F6:	dc.w 3			
-		dc.w $D805,    4,    2,	   2			; 0
-		dc.w $D805,    8,    4,	 $12			; 4
-		dc.w $D805,    8,    4,$FFF2			; 8
-word_2FA10:	dc.w 3			
-		dc.w $D805,    0,    0,	   2			; 0
-		dc.w $D80D,   $C,    6,	 $12			; 4
-		dc.w $D80D,   $C,    6,	 $32			; 8
-word_2FA2A:	dc.w 3			
-		dc.w $D805,    4,    2,	   2			; 0
-		dc.w $D80D,   $C,    6,$FFE2			; 4
-		dc.w $D80D,   $C,    6,$FFC2			; 8
-off_2FA44:	dc.w byte_2FA4A-off_2FA44			; 0 
-		dc.w byte_2FA4F-off_2FA44			; 1
-		dc.w byte_2FA53-off_2FA44			; 2
+
+		include "mappings/sprite/EHZ Boss.asm"
+
+; ===========================================================================
+			
+Ani_Drillster:	index offset(*)
+		ptr byte_2FA4A			; 0 
+		ptr byte_2FA4F			; 1
+		ptr byte_2FA53			; 2
 byte_2FA4A:	dc.b   5,  1,  2,  3,$FF			; 0 
 byte_2FA4F:	dc.b   1,  4,  5,$FF				; 0 
 byte_2FA53:	dc.b   1,  6,  7,$FF,  0			; 0 
 ; ===========================================================================
-off_2FA58:	dc.w word_2FA68-off_2FA58			; 0 
-		dc.w word_2FA82-off_2FA58			; 1
-		dc.w word_2FA8C-off_2FA58			; 2
-		dc.w word_2FA96-off_2FA58			; 3
-		dc.w word_2FAA0-off_2FA58			; 4
-		dc.w word_2FAAA-off_2FA58			; 5
-		dc.w word_2FAB4-off_2FA58			; 6
-		dc.w word_2FABE-off_2FA58			; 7
-word_2FA68:	dc.w 3			
-		dc.w $F00F,  0,	 0,$FFD0,$F00F,$10,  8,$FFF0,$F00F,$20,$10,$10 ;	0
-word_2FA82:	dc.w 1			
-		dc.w $F00F,$30,$18,$FFF0			; 0
-word_2FA8C:	dc.w 1			
-		dc.w $F00F,$40,$20,$FFF0			; 0
-word_2FA96:	dc.w 1			
-		dc.w $F00F,$50,$28,$FFF0			; 0
-word_2FAA0:	dc.w 1			
-		dc.w $F00F,$60,$30,$FFF0			; 0
-word_2FAAA:	dc.w 1			
-		dc.w $F00F,$1060,$1030,$FFF0			; 0
-word_2FAB4:	dc.w 1			
-		dc.w $F00F,$70,$38,$FFF0			; 0
-word_2FABE:	dc.w 1			
-		dc.w $F00F,$1070,$1038,$FFF0			; 0
-off_2FAC8:	dc.w byte_2FAD2-off_2FAC8			; 0 
-		dc.w byte_2FAD5-off_2FAC8			; 1
-		dc.w byte_2FAD9-off_2FAC8			; 2
-		dc.w byte_2FAE2-off_2FAC8			; 3
-		dc.w byte_2FAEB-off_2FAC8			; 4
+
+		include_EggDrillster_Maps	; mappings/sprite/EHZ Boss.asm
+
+; ===========================================================================
+	
+Ani_BEHZ_Eggman:	index offset(*)	
+		ptr byte_2FAD2			; 0 
+		ptr byte_2FAD5			; 1
+		ptr byte_2FAD9			; 2
+		ptr byte_2FAE2			; 3
+		ptr byte_2FAEB			; 4
 byte_2FAD2:	dc.b  $F,  0,$FF				; 0 
 byte_2FAD5:	dc.b   7,  1,  2,$FF				; 0 
 byte_2FAD9:	dc.b   7,  5,  5,  5,  5,  5,  5,$FD,  1	; 0 
 byte_2FAE2:	dc.b   7,  3,  4,  3,  4,  3,  4,$FD,  1	; 0 
 byte_2FAEB:	dc.b  $F,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,$FD,  1 ; 0
-					
 ; ===========================================================================
-Map_2FAF8:				
-		dc.w word_2FB06-Map_2FAF8			; 0
-		dc.w word_2FB28-Map_2FAF8			; 1
-		dc.w word_2FB4A-Map_2FAF8			; 2
-		dc.w word_2FB6C-Map_2FAF8			; 3
-		dc.w word_2FB8E-Map_2FAF8			; 4
-		dc.w word_2FBB0-Map_2FAF8			; 5
-		dc.w word_2FBD2-Map_2FAF8			; 6
-word_2FB06:	dc.w 4			
-		dc.w $F805,    0,    0,$FFE0			; 0
-		dc.w  $805,    4,    2,$FFE0			; 4
-		dc.w $F80F,    8,    4,$FFF0			; 8
-		dc.w $F807,  $18,   $C,	 $10			; 12
-word_2FB28:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $30,  $18,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
-word_2FB4A:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $38,  $1C,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
-word_2FB6C:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $40,  $20,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
-word_2FB8E:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $48,  $24,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
-word_2FBB0:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $50,  $28,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
-word_2FBD2:	dc.w 4			
-		dc.w $E805,  $28,  $14,$FFE0			; 0
-		dc.w $E80D,  $58,  $2C,$FFF0			; 4
-		dc.w $E805,  $24,  $12,	 $10			; 8
-		dc.w $D805,  $20,  $10,	   2			; 12
+
+		include_BEHZ_Eggman_Maps	; mappings/sprite/EHZ Boss.asm
+
 ; ===========================================================================
 
 	if RemoveJmpTos
@@ -63075,10 +61218,10 @@ JmpTo4_ObjectFall:
 BossHillTop:				
 		moveq	#0,d0
 		move.b	ost_boss_subtype(a0),d0
-		move.w	off_2FC5E(pc,d0.w),d1
-		jmp	off_2FC5E(pc,d1.w)
+		move.w	BHTZ_Index(pc,d0.w),d1
+		jmp	BHTZ_Index(pc,d1.w)
 ; ===========================================================================
-off_2FC5E:	index offset(*),,2	
+BHTZ_Index:	index offset(*),,2	
 		ptr loc_2FC68					; 0 
 		ptr loc_2FD00					; 2
 		ptr loc_2FEF0					; 4
@@ -63087,7 +61230,7 @@ off_2FC5E:	index offset(*),,2
 ; ===========================================================================
 
 loc_2FC68:				
-		move.l	#Map_302BC,ost_mappings(a0)
+		move.l	#Map_BHTZ_Eggpod,ost_mappings(a0)
 		move.w	#tile_Nem_Eggpod_HTZ,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$90,ost_mainspr_width(a0)		
@@ -63197,7 +61340,7 @@ loc_2FD5E:
 loc_2FDAA:				
 		bsr.w	loc_300A4
 		bsr.w	loc_2FEDE
-		lea	(off_30288).l,a1
+		lea	(Ani_BHTZ).l,a1
 		bsr.w	BossAnimate
 		jmpto	DisplaySprite,JmpTo36_DisplaySprite
 ; ===========================================================================
@@ -63314,13 +61457,13 @@ loc_2FEF0:
 		move.w	off_2FEFE(pc,d0.w),d1
 		jmp	off_2FEFE(pc,d1.w)
 ; ===========================================================================
-off_2FEFE	
-		dc.w loc_2FF02-off_2FEFE			; 0 
-		dc.w loc_2FF50-off_2FEFE			; 2
+off_2FEFE:	index offset(*),,2	
+		ptr loc_2FF02			; 0 
+		ptr loc_2FF50			; 2
 ; ===========================================================================
 
 loc_2FF02:				
-		move.l	#Map_302BC,ost_mappings(a0)
+		move.l	#Map_BHTZ_Eggpod,ost_mappings(a0)
 		move.w	#tile_Nem_HTZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
@@ -63344,7 +61487,7 @@ loc_2FF46:
 loc_2FF50:				
 		move.w	ost_x_vel(a0),d1
 		add.w	d1,ost_x_pos(a0)
-		lea	(off_30288).l,a1
+		lea	(Ani_BHTZ).l,a1
 		jsrto	AnimateSprite,JmpTo18_AnimateSprite
 		jmpto	DespawnObject,JmpTo37_DespawnObject
 ; ===========================================================================
@@ -63356,8 +61499,8 @@ loc_2FF66:
 		jmp	off_2FF74(pc,d1.w)
 ; ===========================================================================
 off_2FF74:	index offset(*),,2		
-		dc.w loc_2FF78-off_2FF74			; 0 
-		dc.w loc_30008-off_2FF74			; 2
+		ptr loc_2FF78			; 0 
+		ptr loc_30008			; 2
 ; ===========================================================================
 
 loc_2FF78:				
@@ -63376,7 +61519,7 @@ loc_2FF80:
 loc_2FF94:				
 		move.b	#id_BossHillTop,ost_id(a1)
 		move.b	#6,ost_boss_subtype(a1)
-		move.l	#Map_302BC,ost_mappings(a1)
+		move.l	#Map_BHTZ_Eggpod,ost_mappings(a1)
 		move.w	#tile_Nem_HTZBoss,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#3,ost_priority(a1)
@@ -63424,7 +61567,7 @@ loc_3000C:
 
 loc_3002E:
 		move.w	#0,ost_y_vel(a0)
-		move.l	#Map_23294,ost_mappings(a0)
+		move.l	#Map_Fireball1,ost_mappings(a0)
 		move.w	#tile_Nem_Fireball1+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo62_Adjust2PArtPointer
 		move.b	#0,ost_frame(a0)
@@ -63436,7 +61579,7 @@ loc_3002E:
 ; ===========================================================================
 
 loc_30064:				
-		lea	(off_30288).l,a1
+		lea	(Ani_BHTZ).l,a1
 		jsrto	AnimateSprite,JmpTo18_AnimateSprite
 		jmpto	DespawnObject,JmpTo37_DespawnObject
 ; ===========================================================================
@@ -63575,7 +61718,7 @@ loc_301B4:
 		bne.s	locret_3020E
 		move.b	#id_BossHillTop,ost_id(a1)
 		move.b	#8,ost_boss_subtype(a1)
-		move.l	#off_30258,ost_mappings(a1)
+		move.l	#Map_BHTZ_Smoke,ost_mappings(a1)
 		move.w	#tile_Nem_BossSmoke_HTZ,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#1,ost_priority(a1)
@@ -63616,22 +61759,12 @@ loc_3022A:
 		move.l	d3,ost_y_pos(a0)
 		jmpto	DisplaySprite,JmpTo36_DisplaySprite
 ; ===========================================================================
-; ===========================================================================
-off_30258:
-		dc.w word_30260-off_30258			; 0 
-		dc.w word_3026A-off_30258			; 1
-		dc.w word_30274-off_30258			; 2
-		dc.w word_3027E-off_30258			; 3
-word_30260:	dc.w 1			
-		dc.w $F805,$2000,$2000,$FFF8			; 0
-word_3026A:	dc.w 1			
-		dc.w $F805,$2004,$2002,$FFF8			; 0
-word_30274:	dc.w 1			
-		dc.w $F805,$2008,$2004,$FFF8			; 0
-word_3027E:	dc.w 1			
-		dc.w $F805,$200C,$2006,$FFF8			; 0
 
-off_30288:	index offset(*)	
+		include "mappings/sprite/HTZ Boss.asm"
+
+; ===========================================================================
+
+Ani_BHTZ:	index offset(*)	
 		ptr byte_30298					; 0 
 		ptr byte_3029D					; 1
 		ptr byte_302A2					; 2
@@ -63649,78 +61782,10 @@ byte_302B0:	dc.b   3, $C, $D,$FF				; 0
 byte_302B4:	dc.b  $F,  1,$FF				; 0 
 byte_302B7:	dc.b   3, $E, $F,$FF,  0			; 0 
 ; ===========================================================================
-Map_302BC:				
-		dc.w Map_302BC-Map_302BC			;	0
-		dc.w word_302DE-Map_302BC			; 1
-		dc.w word_30320-Map_302BC			; 2
-		dc.w word_3032A-Map_302BC			; 3
-		dc.w word_30334-Map_302BC			; 4
-		dc.w word_3033E-Map_302BC			; 5
-		dc.w word_30350-Map_302BC			; 6
-		dc.w word_30362-Map_302BC			; 7
-		dc.w word_3037C-Map_302BC			; 8
-		dc.w word_30396-Map_302BC			; 9
-		dc.w word_303B0-Map_302BC			; 10
-		dc.w word_303C2-Map_302BC			; 11
-		dc.w word_303CC-Map_302BC			; 12
-		dc.w word_303D6-Map_302BC			; 13
-		dc.w word_303E0-Map_302BC			; 14
-		dc.w word_303EA-Map_302BC			; 15
-		dc.w word_303F4-Map_302BC			; 16
-word_302DE:	dc.w 8			
-		dc.w  $405,$2000,$2000,$FFE0			; 0
-		dc.w $1405,$2004,$2002,$FFE0			; 4
-		dc.w  $40F,$2008,$2004,$FFF0			; 8
-		dc.w  $407,$2018,$200C,	 $10			; 12
-		dc.w $F40D,  $60,  $30,$FFE0			; 16
-		dc.w $F40D,  $68,  $34,	   0			; 20
-		dc.w $DC0A,$2070,$2038,$FFE8			; 24
-		dc.w $DC06,$2079,$203C,	   0			; 28
-word_30320:	dc.w 1			
-		dc.w $DF04,  $83,  $41,$FFD8			; 0
-word_3032A:	dc.w 1			
-		dc.w $DF04,  $85,  $42,$FFD8			; 0
-word_30334:	dc.w 1			
-		dc.w $DF08,  $87,  $43,$FFD0			; 0
-word_3033E:	dc.w 2			
-		dc.w $DF0C,  $8A,  $45,$FFC0			; 0
-		dc.w $DF00,  $8E,  $47,$FFE0			; 4
-word_30350:	dc.w 2			
-		dc.w $DF0C,  $8F,  $47,$FFB0			; 0
-		dc.w $DF08,  $93,  $49,$FFD0			; 4
-word_30362:	dc.w 3			
-		dc.w $DF0C,  $96,  $4B,$FFA0			; 0
-		dc.w $DF0C,  $9A,  $4D,$FFC0			; 4
-		dc.w $DF00,  $9E,  $4F,$FFE0			; 8
-word_3037C:	dc.w 3			
-		dc.w $DF0C,  $9F,  $4F,$FF90			; 0
-		dc.w $DF0C,  $A3,  $51,$FFB0			; 4
-		dc.w $DF08,  $A7,  $53,$FFD0			; 8
-word_30396:	dc.w 3			
-		dc.w $DF0C,  $AA,  $55,$FF88			; 0
-		dc.w $DF0C,  $AE,  $57,$FFA8			; 4
-		dc.w $DF08,  $B2,  $59,$FFC8			; 8
-word_303B0:	dc.w 2			
-		dc.w $DF0C,  $B5,  $5A,$FF88			; 0
-		dc.w $DF0C,  $B9,  $5C,$FFA8			; 4
-word_303C2:	dc.w 1			
-		dc.w $DF0C,  $BD,  $5E,$FF88			; 0
-word_303CC:	dc.w 1			
-		dc.w $FC00,  $61,  $30,$FFFC			; 0
-word_303D6:	dc.w 1			
-		dc.w $FC00,  $62,  $31,$FFFC			; 0
-word_303E0:	dc.w 1			
-		dc.w $F805,  $63,  $31,$FFF8			; 0
-word_303EA:	dc.w 1			
-		dc.w $F805,  $67,  $33,$FFF8			; 0
-word_303F4:	dc.w 7			
-		dc.w  $405,$2000,$2000,$FFE0			; 0
-		dc.w $1405,$2004,$2002,$FFE0			; 4
-		dc.w  $40F,$2008,$2004,$FFF0			; 8
-		dc.w  $407,$2018,$200C,	 $10			; 12
-		dc.w $F40D,  $60,  $30,$FFE0			; 16
-		dc.w $F40D,  $68,  $34,	   0			; 20
-		dc.w $EC0C,$207F,$203F,$FFF0			; 24
+
+		include_HTZEggpod_Maps
+
+; ===========================================================================
 
 	if RemoveJmpTos=0
 		align 4
@@ -63767,13 +61832,30 @@ JmpTo3_LoadAnimalExplosionArt:
 BossAquaticRuin:				
 		moveq	#0,d0
 		move.b	ost_boss_subtype(a0),d0
-		move.w	off_3048E(pc,d0.w),d1
-		jmp	off_3048E(pc,d1.w)
+		move.w	BARZ_Index(pc,d0.w),d1
+		jmp	BARZ_Index(pc,d1.w)
 ; ===========================================================================
-off_3048E:	index offset(*),,2
+BARZ_Index:	index offset(*),,2
 		ptr loc_30494					; 0 
 		ptr loc_30620					; 2
 		ptr loc_309A8					; 4
+		
+; OST Variables:
+; Main Vehicle
+;obj89_hammer_y_vel	= objoff_2E		; falling hammer's y velocity
+;obj89_target		= objoff_38
+;obj89_hammer_y_pos	= objoff_3A		; falling hammer's y position
+;obj89_hammer_flags	= objoff_3E
+
+; Pillars & Arrows
+;obj89_pillar_parent		= objoff_2A	; address of main vehicle
+;obj89_pillar_shake_time		= objoff_30
+;obj89_pillar_shaking		= objoff_38
+;obj89_eyes_timer		= objoff_30
+;obj89_arrow_routine		= objoff_2A
+;obj89_arrow_timer		= objoff_30
+;obj89_arrow_parent2		= objoff_34
+;obj89_arrow_parent		= objoff_38	; address of main vehicle		
 ; ===========================================================================
 
 loc_30494:				
@@ -63801,7 +61883,7 @@ loc_3049C:
 loc_304D4:				
 		move.b	#1,(f_screen_shake).w
 		move.w	#tile_Nem_ARZBoss,ost_tile(a0)
-		move.l	#Map_30E04,ost_mappings(a0)
+		move.l	#Map_BARZ_EggPod,ost_mappings(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_mainspr_width(a0)
 		move.b	#2,ost_priority(a0)
@@ -63831,7 +61913,7 @@ loc_304D4:
 		jsrto	FindFreeObj,JmpTo14_FindFreeObj
 		bne.w	loc_305F4
 		move.b	#id_BossAquaticRuin,ost_id(a1)
-		move.l	#Map_30D68,ost_mappings(a1)
+		move.l	#Map_BARZ_Pillar,ost_mappings(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.w	#tile_Nem_ARZBoss,ost_tile(a1)
 		move.b	#$10,ost_displaywidth(a1)
@@ -63903,7 +61985,7 @@ loc_3063C:
 		st.b	$38(a0)
 
 loc_3066C:				
-		lea	(off_30DC8).l,a1
+		lea	(Ani_BARZ_EggPod).l,a1
 		bsr.w	BossAnimate
 		jmpto	DisplaySprite,JmpTo37_DisplaySprite
 ; ===========================================================================
@@ -63928,7 +62010,7 @@ loc_3069E:
 		move.w	#0,(v_boss_x_vel).w
 
 loc_306AA:				
-		lea	(off_30DC8).l,a1
+		lea	(Ani_BARZ_EggPod).l,a1
 		bsr.w	BossAnimate
 		jmpto	DisplaySprite,JmpTo37_DisplaySprite
 ; ===========================================================================
@@ -63950,7 +62032,7 @@ loc_306B8:
 		jsrto	PlaySound,JmpTo8_PlaySound
 
 loc_306F8:				
-		lea	(off_30DC8).l,a1
+		lea	(Ani_BARZ_EggPod).l,a1
 		bsr.w	BossAnimate
 		jmpto	DisplaySprite,JmpTo37_DisplaySprite
 ; ===========================================================================
@@ -63979,7 +62061,7 @@ loc_30742:
 		bsr.w	BossMove
 		bsr.w	loc_3075C
 		bsr.w	loc_30824
-		lea	(off_30DC8).l,a1
+		lea	(Ani_BARZ_EggPod).l,a1
 		bsr.w	BossAnimate
 		jmpto	DisplaySprite,JmpTo37_DisplaySprite
 ; ===========================================================================
@@ -64117,7 +62199,7 @@ loc_3089C:
 loc_308D6:				
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		move.w	($FFFFF750).w,ost_x_pos(a0)
-		lea	(off_30DC8).l,a1
+		lea	(Ani_BARZ_EggPod).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_30824
 		jmpto	DisplaySprite,JmpTo37_DisplaySprite
@@ -64161,7 +62243,7 @@ loc_30936:
 		bsr.w	loc_3078E
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		move.w	($FFFFF750).w,ost_x_pos(a0)
-		lea	(off_30DC8).l,a1
+		lea	(Ani_BARZ_EggPod).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_30824
 		jmpto	DisplaySprite,JmpTo37_DisplaySprite
@@ -64185,7 +62267,7 @@ loc_3097C:
 		bsr.w	loc_3078E
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		move.w	($FFFFF750).w,ost_x_pos(a0)
-		lea	(off_30DC8).l,a1
+		lea	(Ani_BARZ_EggPod).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_30824
 		jmpto	DisplaySprite,JmpTo37_DisplaySprite
@@ -64316,7 +62398,7 @@ loc_30AB4:
 		_move.b	#id_BossAquaticRuin,ost_id(a1)
 		move.b	#4,ost_boss_subtype(a1)
 		move.b	#8,ost_secondary_routine(a1)
-		move.l	#Map_30D68,ost_mappings(a1)
+		move.l	#Map_BARZ_Pillar,ost_mappings(a1)
 		move.w	#tile_Nem_ARZBoss,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		moveq	#0,d6
@@ -64406,7 +62488,7 @@ off_30BBE:	index offset(*),,2
 ; ===========================================================================
 
 loc_30BC8:				
-		move.l	#Map_30D68,ost_mappings(a0)
+		move.l	#Map_BARZ_Pillar,ost_mappings(a0)
 		move.w	#tile_Nem_ARZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#-$70,ost_mainspr_width(a0)
@@ -64476,7 +62558,7 @@ loc_30C86:
 
 loc_30C9A:				
 		bsr.w	loc_30CCC
-		lea	(off_30D2C).l,a1
+		lea	(Ani_BARZ_Pillar).l,a1
 		jsrto	AnimateSprite,JmpTo19_AnimateSprite
 		jmpto	DisplaySprite,JmpTo37_DisplaySprite
 ; ===========================================================================
@@ -64538,7 +62620,7 @@ loc_30D1E:
 locret_30D2A:				
 		rts	
 ; ===========================================================================
-off_30D2C:	index offset(*)	
+Ani_BARZ_Pillar:	index offset(*)	
 		ptr byte_30D30					; 0 
 		ptr byte_30D47					; 1
 		
@@ -64551,33 +62633,12 @@ byte_30D47:
 		dc.b   4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,$F9 ; 16
 		dc.b   0					; 32
 ; ===========================================================================
-Map_30D68:				
-		dc.w word_30D76-Map_30D68			; 0
-		dc.w word_30DA0-Map_30D68			; 1
-		dc.w word_30DA0-Map_30D68			; 2
-		dc.w word_30DAA-Map_30D68			; 3
-		dc.w word_30DAA-Map_30D68			; 4
-		dc.w word_30DB4-Map_30D68			; 5
-		dc.w word_30DBE-Map_30D68			; 6
 
-word_30D76:
-		dc.w 5			
-		dc.w $280F,$2088,$2044,	   0			; 0
-		dc.w  $80F,$2088,$2044,	   0			; 4
-		dc.w $E80F,$2088,$2044,	   0			; 8
-		dc.w $C80F,$2088,$2044,	   0			; 12
-		dc.w $C00C,$2084,$2042,	   0			; 16
-word_30DA0:	
-		dc.w 1			
-		dc.w $FC04,$2098,$204C,$FFF8			; 0
-word_30DAA:	dc.w 1			
-		dc.w $FC0C,$209A,$204D,$FFF0			; 0
-word_30DB4:	dc.w 1			
-		dc.w $FC0C,$209E,$204F,$FFF0			; 0
-word_30DBE:	dc.w 1			
-		dc.w $FC0C,$20A2,$2051,$FFF0			; 0
+		include "mappings/sprite/ARZ Boss.asm"
+		
+; ===========================================================================
 
-off_30DC8:	index offset(*)	
+Ani_BARZ_EggPod:	index offset(*)	
 		ptr byte_30DD4					; 0 
 		ptr byte_30DEA					; 2
 		ptr byte_30DEE					; 4
@@ -64604,67 +62665,9 @@ byte_30DFD:
 byte_30E00:	
 		dc.b   7,  5,$FF,  0
 ; ===========================================================================
-Map_30E04:				
-		dc.w word_30E1C-Map_30E04			; 0
-		dc.w word_30E2E-Map_30E04			; 1
-		dc.w word_30E40-Map_30E04			; 2
-		dc.w word_30E52-Map_30E04			; 3
-		dc.w word_30E64-Map_30E04			; 4
-		dc.w word_30E76-Map_30E04			; 5
-		dc.w word_30E88-Map_30E04			; 6
-		dc.w word_30E9A-Map_30E04			; 7
-		dc.w word_30EAC-Map_30E04			; 8
-		dc.w word_30EE6-Map_30E04			; 9
-		dc.w word_30F10-Map_30E04			; 10
-		dc.w word_30F3A-Map_30E04			; 11
-word_30E1C:	dc.w 2			
-		dc.w $E80D, $150,  $A8,$FFE8			; 0
-		dc.w $E805, $148,  $A4,$FFD8			; 4
-word_30E2E:	dc.w 2			
-		dc.w $E80D, $158,  $AC,$FFE8			; 0
-		dc.w $E805, $148,  $A4,$FFD8			; 4
-word_30E40:	dc.w 2			
-		dc.w $E80D, $160,  $B0,$FFE8			; 0
-		dc.w $E805, $14C,  $A6,$FFD8			; 4
-word_30E52:	dc.w 2			
-		dc.w $E80D, $168,  $B4,$FFE8			; 0
-		dc.w $E805, $14C,  $A6,$FFD8			; 4
-word_30E64:	dc.w 2			
-		dc.w $E80D, $170,  $B8,$FFE8			; 0
-		dc.w $E805, $14C,  $A6,$FFD8			; 4
-word_30E76:	dc.w 2			
-		dc.w $E80D, $178,  $BC,$FFE8			; 0
-		dc.w $E805, $14C,  $A6,$FFD8			; 4
-word_30E88:	dc.w 2			
-		dc.w $1805,  $7E,  $3F,$FFE8			; 0
-		dc.w $1805,  $7E,  $3F,	   8			; 4
-word_30E9A:	dc.w 2			
-		dc.w $1804,  $82,  $41,$FFE8			; 0
-		dc.w $1804,  $82,  $41,	   8			; 4
-word_30EAC:	dc.w 7			
-		dc.w $D805, $140,  $A0,$FFFA			; 0
-		dc.w $E805, $144,  $A2,	   8			; 4
-		dc.w	 0,$206F,$2037,$FFD0			; 8
-		dc.w $F806,$2070,$2038,$FFD8			; 12
-		dc.w $F80F,$2128,$2094,$FFE8			; 16
-		dc.w $F807,$2076,$203B,$FFE8			; 20
-		dc.w $F807,$2076,$203B,	   8			; 24
-word_30EE6:	dc.w 5			
-		dc.w $EA0F,$2000,$2000,$FF9C			; 0
-		dc.w $D20A,$2010,$2008,$FFA4			; 4
-		dc.w $D20B,$2019,$200C,$FFBC			; 8
-		dc.w $F205,$2025,$2012,$FFBC			; 12
-		dc.w $F805,$2065,$2032,$FFC0			; 16
-word_30F10:	dc.w 5			
-		dc.w $F10F,$2029,$2014,$FF9D			; 0
-		dc.w $D90A,$2039,$201C,$FFA5			; 4
-		dc.w $D907,$2042,$2021,$FFBD			; 8
-		dc.w $F902,$204A,$2025,$FFBD			; 12
-		dc.w $F805,$2069,$2034,$FFC0			; 16
-word_30F3A:	dc.w 3			
-		dc.w $EC0F,$204D,$2026,$FFA0			; 0
-		dc.w  $C0D,$205D,$202E,$FFA0			; 4
-		dc.w	 4,$206D,$2036,$FFC0			; 8
+
+		include_ARZEggpod_Maps ; mappings/sprite/ARZ Boss.asm
+
 ; ===========================================================================
 
 		if RemoveJmpTos=0
@@ -64706,17 +62709,17 @@ JmpTo26_SolidObject:
 BossMysticCave:				
 		moveq	#0,d0
 		move.b	ost_boss_subtype(a0),d0
-		move.w	off_30FB2(pc,d0.w),d1
-		jmp	off_30FB2(pc,d1.w)
+		move.w	BMCZ_Index(pc,d0.w),d1
+		jmp	BMCZ_Index(pc,d1.w)
 ; ===========================================================================
-off_30FB2:	index offset(*),,2
+BMCZ_Index:	index offset(*),,2
 		ptr loc_30FB8					; 0 
 		ptr loc_310BE					; 2
 		ptr loc_315F2					; 4
 ; ===========================================================================
 
 loc_30FB8:				
-		move.l	#Map_316EC,ost_mappings(a0)
+		move.l	#Map_BMCZ,ost_mappings(a0)
 		move.w	#tile_Nem_MCZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 	if FixBugs=0
@@ -64780,7 +62783,7 @@ loc_310BE:
 		move.w	off_310CC(pc,d0.w),d1
 		jmp	off_310CC(pc,d1.w)
 ; ===========================================================================
-off_310CC	index offset(*),,2
+off_310CC:	index offset(*),,2
 		ptr loc_310DA					; 0 
 		ptr loc_3116E					; 2
 		ptr loc_311AA					; 4
@@ -64832,7 +62835,7 @@ loc_3114C:
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		move.w	(v_boss_x_pos).w,ost_x_pos(a0)
 		bsr.w	loc_3143A
-		lea	(off_3160A).l,a1
+		lea	(Ani_BMCZ).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_3130A
 		jmpto	DisplaySprite,JmpTo38_DisplaySprite
@@ -64850,7 +62853,7 @@ loc_31188:
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		move.w	(v_boss_x_pos).w,ost_x_pos(a0)
 		bsr.w	loc_3143A
-		lea	(off_3160A).l,a1
+		lea	(Ani_BMCZ).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_3130A
 		jmpto	DisplaySprite,JmpTo38_DisplaySprite
@@ -64889,7 +62892,7 @@ loc_31228:
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		move.w	(v_boss_x_pos).w,ost_x_pos(a0)
 		bsr.w	loc_3143A
-		lea	(off_3160A).l,a1
+		lea	(Ani_BMCZ).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_3130A
 
@@ -64949,7 +62952,7 @@ loc_312E8:
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		move.w	($FFFFF750).w,ost_x_pos(a0)
 		bsr.w	loc_3143A
-		lea	(off_3160A).l,a1
+		lea	(Ani_BMCZ).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_3130A
 		jmpto	DisplaySprite,JmpTo38_DisplaySprite
@@ -65037,7 +63040,7 @@ loc_313DA:
 		move.b	#4,ost_boss_subtype(a1)
 		move.w	d1,ost_x_pos(a1)
 		move.w	#$5F0,ost_y_pos(a1)
-		move.l	#Map_316EC,ost_mappings(a1)
+		move.l	#Map_BMCZ,ost_mappings(a1)
 		move.w	#vram_FallingRocks/sizeof_cell,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#3,ost_priority(a1)
@@ -65212,7 +63215,7 @@ loc_315C6:
 		bsr.w	loc_31452
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		move.w	(v_boss_x_pos).w,ost_x_pos(a0)
-		lea	(off_3160A).l,a1
+		lea	(Ani_BMCZ).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_3130A
 		jmpto	DisplaySprite,JmpTo38_DisplaySprite
@@ -65235,7 +63238,7 @@ loc_315F2:
 		
 		jmpto	DisplaySprite,JmpTo38_DisplaySprite
 ; ===========================================================================
-off_3160A:	index offset(*)	
+Ani_BMCZ:	index offset(*)	
 		ptr byte_31628					; 0 
 		ptr byte_3162E					; 1
 		ptr byte_31631					; 2
@@ -65322,96 +63325,9 @@ byte_316E8:
 		even
 
 ; ===========================================================================
-Map_316EC:				
-		dc.w word_31716-Map_316EC			; 0
-		dc.w word_31740-Map_316EC			; 1
-		dc.w word_3176A-Map_316EC			; 2
-		dc.w word_3177C-Map_316EC			; 3
-		dc.w word_3178E-Map_316EC			; 4
-		dc.w word_317A0-Map_316EC			; 5
-		dc.w word_317B2-Map_316EC			; 6
-		dc.w word_317C4-Map_316EC			; 7
-		dc.w word_317CE-Map_316EC			; 8
-		dc.w word_317F8-Map_316EC			; 9
-		dc.w word_3180A-Map_316EC			; 10
-		dc.w word_3181C-Map_316EC			; 11
-		dc.w word_3182E-Map_316EC			; 12
-		dc.w word_31838-Map_316EC			; 13
-		dc.w word_31842-Map_316EC			; 14
-		dc.w word_31854-Map_316EC			; 15
-		dc.w word_31866-Map_316EC			; 16
-		dc.w word_31878-Map_316EC			; 17
-		dc.w word_3188A-Map_316EC			; 18
-		dc.w word_3189C-Map_316EC			; 19
-		dc.w word_318AE-Map_316EC			; 20
-word_31716:	dc.w 5			
-		dc.w $F80F,$2148,$20A4,$FFF0			; 0
-		dc.w $F807,$2158,$20AC,	 $10			; 4
-		dc.w $E805, $164,  $B2,	 $10			; 8
-		dc.w $F80A,$2009,$2004,$FFD8			; 12
-		dc.w $D809,  $21,  $10,$FFF8			; 16
-word_31740:	dc.w 5			
-		dc.w $F80F,$2148,$20A4,$FFF0			; 0
-		dc.w $F807,$2158,$20AC,	 $10			; 4
-		dc.w $E805, $164,  $B2,	 $10			; 8
-		dc.w $F80A,$2000,$2000,$FFD8			; 12
-		dc.w $D809,  $21,  $10,$FFF8			; 16
-word_3176A:	dc.w 2			
-		dc.w $D007,$2027,$2013,	  $C			; 0
-		dc.w $F00B,$203F,$201F,	   8			; 4
-word_3177C:	dc.w 2			
-		dc.w $D007,$202F,$2017,	  $C			; 0
-		dc.w $F00B,$204B,$2025,	   8			; 4
-word_3178E:	dc.w 2			
-		dc.w $D007,$2037,$201B,	  $C			; 0
-		dc.w $F00B,$2057,$202B,	   8			; 4
-word_317A0:	dc.w 2			
-		dc.w $1208,  $12,    9,$FFF8			; 0
-		dc.w $1A08,  $15,   $A,$FFF8			; 4
-word_317B2:	dc.w 2			
-		dc.w $1208,  $12,    9,$FFF8			; 0
-		dc.w $1A0A,  $18,   $C,$FFF8			; 4
-word_317C4:	dc.w 1			
-		dc.w $1208,  $12,    9,$FFF8			; 0
-word_317CE:	dc.w 5			
-		dc.w $E009,$2063,$2031,$FFF8			; 0
-		dc.w $F001,$2069,$2034,	   0			; 4
-		dc.w $F00F,$206B,$2035,	   8			; 8
-		dc.w $F802,$207B,$203D,	 $28			; 12
-		dc.w $1004,$207E,$203F,	 $18			; 16
-word_317F8:	dc.w 2			
-		dc.w $FC0D,$2080,$2040,$FFF0			; 0
-		dc.w $F80E,$2098,$204C,	 $10			; 4
-word_3180A:	dc.w 2			
-		dc.w $FC0D,$2088,$2044,$FFF0			; 0
-		dc.w $F80E,$20A4,$2052,	 $10			; 4
-word_3181C:	dc.w 2			
-		dc.w $FC0D,$2090,$2048,$FFF0			; 0
-		dc.w $F80E,$20B0,$2058,	 $10			; 4
-word_3182E:	dc.w 1			
-		dc.w $F00F,$40BC,$405E,$FFF0			; 0
-word_31838:	dc.w 1			
-		dc.w $F805,$4000,$4000,$FFF8			; 0
-word_31842:	dc.w 2			
-		dc.w $E80D, $170,  $B8,$FFF0			; 0
-		dc.w $E805, $168,  $B4,$FFE0			; 4
-word_31854:	dc.w 2			
-		dc.w $E80D, $178,  $BC,$FFF0			; 0
-		dc.w $E805, $168,  $B4,$FFE0			; 4
-word_31866:	dc.w 2			
-		dc.w $E80D, $180,  $C0,$FFF0			; 0
-		dc.w $E805, $16C,  $B6,$FFE0			; 4
-word_31878:	dc.w 2			
-		dc.w $E80D, $188,  $C4,$FFF0			; 0
-		dc.w $E805, $16C,  $B6,$FFE0			; 4
-word_3188A:	dc.w 2			
-		dc.w $E80D, $190,  $C8,$FFF0			; 0
-		dc.w $E805, $16C,  $B6,$FFE0			; 4
-word_3189C:	dc.w 2			
-		dc.w $E80D, $198,  $CC,$FFF0			; 0
-		dc.w $E805, $16C,  $B6,$FFE0			; 4
-word_318AE:	dc.w 1			
-		dc.w $F003,$4004,$4002,$FFFC			; 0
+
+		include "mappings/sprite/MCZ Boss.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -65445,17 +63361,17 @@ JmpTo5_ObjectFall:
 BossCasinoNight:				
 		moveq	#0,d0
 		move.b	ost_boss_subtype(a0),d0
-		move.w	off_318FE(pc,d0.w),d1
-		jmp	off_318FE(pc,d1.w)
+		move.w	BCNZ_Index(pc,d0.w),d1
+		jmp	BCNZ_Index(pc,d1.w)
 ; ===========================================================================
-off_318FE:	index offset(*),,2	
+BCNZ_Index:	index offset(*),,2	
 		ptr loc_31904					; 0 
 		ptr loc_31A04					; 2
 		ptr loc_31F24					; 4
 ; ===========================================================================
 
 loc_31904:				
-		move.l	#Map_320EA,ost_mappings(a0)
+		move.l	#Map_BCNZ,ost_mappings(a0)
 		move.w	#tile_Nem_CNZBoss-$60,ost_tile(a0)	; (badly) reused mappings
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
@@ -65466,7 +63382,7 @@ loc_31904:
 	if FixBugs=0
 		; This instruction is pointless, as render_useheight_bit of 'ost_render' 
 		; is not set for this object. Also, it clashes with 'ost_boss_flash_time', 
-		; as they use the same SST slot. Consequently, on the first hit, 
+		; as they use the same OST slot. Consequently, on the first hit, 
 		; loc_31CDC behaves as if the boss is already invulnerable, leading to
 		; several incorrect behaviors: no hit sound plays, the boss is
 		; invulnerable for 128 frames instead of 48, and Eggman takes a while 
@@ -65680,7 +63596,7 @@ loc_31C08:
 		bsr.w	loc_31CDC
 		bsr.w	loc_31E76
 		bsr.w	loc_31C92
-		lea	(off_3209C).l,a1
+		lea	(Ani_BCNZ).l,a1
 		bsr.w	BossAnimate
 		
 	if RemoveJmpTos&(FixBugs=0)	
@@ -65917,7 +63833,7 @@ loc_31E4A:
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		move.w	(v_boss_x_pos).w,ost_x_pos(a0)
 		bsr.w	loc_31E76
-		lea	(off_3209C).l,a1
+		lea	(Ani_BCNZ).l,a1
 		bsr.w	BossAnimate
 	if FixBugs
 		; Multi-sprite objects cannot use 'ost_priority', so they
@@ -66010,7 +63926,7 @@ off_31F40:	index offset(*),,2
 ; ===========================================================================
 
 loc_31F48:				
-		move.l	#Map_320EA,ost_mappings(a0)
+		move.l	#Map_BCNZ,ost_mappings(a0)
 		move.w	#tile_Nem_CNZBoss-$60,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#7,ost_priority(a0)
@@ -66115,13 +64031,13 @@ locret_3207E:
 
 loc_32080:				
 		bsr.w	loc_31FF8
-		lea	(off_3209C).l,a1
+		lea	(Ani_BCNZ).l,a1
 		jsrto	AnimateSprite,JmpTo20_AnimateSprite
 		cmpi.w	#$705,ost_y_pos(a0)
 		bcs.w	JmpTo39_DisplaySprite
 		jmpto	JmpTo59_DeleteObject,JmpTo59_DeleteObject
 ; ===========================================================================
-off_3209C:	index offset(*)
+Ani_BCNZ:	index offset(*)
 		ptr byte_320B0					; 0 
 		ptr byte_320B3					; 1
 		ptr byte_320B9					; 2
@@ -66174,82 +64090,9 @@ byte_320E4:
 		even
 		
 ; ===========================================================================
-Map_320EA:				
-		dc.w Map_320EA-Map_320EA			;	0
-		dc.w word_32114-Map_320EA			; 1
-		dc.w word_3213E-Map_320EA			; 2
-		dc.w word_32148-Map_320EA			; 3
-		dc.w word_32152-Map_320EA			; 4
-		dc.w word_3215C-Map_320EA			; 5
-		dc.w word_3216E-Map_320EA			; 6
-		dc.w word_32180-Map_320EA			; 7
-		dc.w word_32192-Map_320EA			; 8
-		dc.w word_321A4-Map_320EA			; 9
-		dc.w word_321B6-Map_320EA			; 10
-		dc.w word_321C8-Map_320EA			; 11
-		dc.w word_321DA-Map_320EA			; 12
-		dc.w word_321E4-Map_320EA			; 13
-		dc.w word_321EE-Map_320EA			; 14
-		dc.w word_321F8-Map_320EA			; 15
-		dc.w word_3220A-Map_320EA			; 16
-		dc.w word_3221C-Map_320EA			; 17
-		dc.w word_3222E-Map_320EA			; 18
-		dc.w word_32238-Map_320EA			; 19
-		dc.w word_32242-Map_320EA			; 20
-word_32114:	dc.w 5			
-		dc.w $F005, $17D,  $BE,	 $10			; 0
-		dc.w $D80E,$2060,$2030,$FFF9			; 4
-		dc.w	$F,$206C,$2036,$FFD8			; 8
-		dc.w	$F,$207C,$203E,$FFF8			; 12
-		dc.w	 6,$208C,$2046,	 $18			; 16
-word_3213E:	dc.w 1			
-		dc.w $1806,$20AA,$2055,$FFE4			; 0
-word_32148:	dc.w 1			
-		dc.w $1006,$20B0,$2058,$FFDB			; 0
-word_32152:	dc.w 1			
-		dc.w $100B,$2092,$2049,	   8			; 0
-word_3215C:	dc.w 2			
-		dc.w $1009,$209E,$204F,	   8			; 0
-		dc.w $1006,$20A4,$2052,	 $20			; 4
-word_3216E:	dc.w 2			
-		dc.w $F00D, $189,  $C4,$FFF0			; 0
-		dc.w $F005, $181,  $C0,$FFE0			; 4
-word_32180:	dc.w 2			
-		dc.w $F00D, $191,  $C8,$FFF0			; 0
-		dc.w $F005, $181,  $C0,$FFE0			; 4
-word_32192:	dc.w 2			
-		dc.w $F00D, $199,  $CC,$FFF0			; 0
-		dc.w $F005, $185,  $C2,$FFE0			; 4
-word_321A4:	dc.w 2			
-		dc.w $F00D, $1A1,  $D0,$FFF0			; 0
-		dc.w $F005, $185,  $C2,$FFE0			; 4
-word_321B6:	dc.w 2			
-		dc.w $F00D, $1A9,  $D4,$FFF0			; 0
-		dc.w $F005, $185,  $C2,$FFE0			; 4
-word_321C8:	dc.w 2			
-		dc.w $F00D, $1B1,  $D8,$FFF0			; 0
-		dc.w $F005, $185,  $C2,$FFE0			; 4
-word_321DA:	dc.w 1			
-		dc.w $280C,$20B6,$205B,$FFF0			; 0
-word_321E4:	dc.w 1			
-		dc.w $280C,$20BA,$205D,$FFF0			; 0
-word_321EE:	dc.w 1			
-		dc.w $280C,$20BE,$205F,$FFF0			; 0
-word_321F8:	dc.w 2			
-		dc.w $200C,$20C2,$2061,$FFE4			; 0
-		dc.w $200C,$20C6,$2063,	   4			; 4
-word_3220A:	dc.w 2			
-		dc.w $200C,$20CA,$2065,$FFE4			; 0
-		dc.w $200C,$20CE,$2067,	   4			; 4
-word_3221C:	dc.w 2			
-		dc.w $200C,$20D2,$2069,$FFE4			; 0
-		dc.w $200C,$20D6,$206B,	   4			; 4
-word_3222E:	dc.w 1			
-		dc.w $F40A,  $DA,  $6D,$FFF4			; 0
-word_32238:	dc.w 1			
-		dc.w $FC00,  $E3,  $71,$FFFC			; 0
-word_32242:	dc.w 1			
-		dc.w $FC00,  $E4,  $72,$FFFC			; 0
+
+		include "mappings/sprite/CNZ Boss.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -66274,8 +64117,7 @@ JmpTo6_RestoreLevelMusic:
 JmpTo6_LoadAnimalExplosionArt:				
 		jmp	(LoadAnimalExplosionArt).l
 	
-		align 4
-			
+		align 4		
 	endc
 	
 ; ===========================================================================
@@ -66286,10 +64128,10 @@ JmpTo6_LoadAnimalExplosionArt:
 BossMetropolis:				
 		moveq	#0,d0
 		move.b	ost_boss_subtype(a0),d0
-		move.w	off_32296(pc,d0.w),d1
-		jmp	off_32296(pc,d1.w)
+		move.w	BMTZ_Index(pc,d0.w),d1
+		jmp	BMTZ_Index(pc,d1.w)
 ; ===========================================================================
-off_32296:	index offset(*),,2
+BMTZ_Index:	index offset(*),,2
 		ptr loc_3229E					; 0 
 		ptr loc_323BA					; 2
 		ptr loc_32CAE					; 4
@@ -66297,7 +64139,7 @@ off_32296:	index offset(*),,2
 ; ===========================================================================
 
 loc_3229E:				
-		move.l	#Map_32DC6,ost_mappings(a0)
+		move.l	#Map_BMTZ,ost_mappings(a0)
 		move.w	#$37C,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
@@ -66331,7 +64173,7 @@ loc_3229E:
 		move.b	#id_BossMetropolis,ost_id(a1)
 		move.b	#6,ost_boss_subtype(a1)
 		move.b	#$13,ost_frame(a1)
-		move.l	#Map_32DC6,ost_mappings(a1)
+		move.l	#Map_BMTZ,ost_mappings(a1)
 		move.w	#tile_Nem_MTZBoss,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#6,ost_priority(a1)
@@ -66393,7 +64235,7 @@ loc_323DC:
 
 loc_32426:				
 		bsr.w	loc_3278E
-		lea	(off_32D7A).l,a1
+		lea	(Ani_BMTZ).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_32774
 		jmpto	DisplaySprite,JmpTo40_DisplaySprite
@@ -66442,7 +64284,7 @@ loc_324BC:
 
 loc_324C6:				
 		bsr.w	loc_3278E
-		lea	(off_32D7A).l,a1
+		lea	(Ani_BMTZ).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_32774
 		jmpto	DisplaySprite,JmpTo40_DisplaySprite
@@ -66777,7 +64619,7 @@ loc_32820:
 loc_32846:				
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		move.w	($FFFFF750).w,ost_x_pos(a0)
-		lea	(off_32D7A).l,a1
+		lea	(Ani_BMTZ).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_32774
 		jmpto	DisplaySprite,JmpTo40_DisplaySprite
@@ -66807,7 +64649,7 @@ loc_32894:
 		bsr.w	loc_328C0
 		move.w	(v_boss_y_pos).w,ost_y_pos(a0)
 		move.w	($FFFFF750).w,ost_x_pos(a0)
-		lea	(off_32D7A).l,a1
+		lea	(Ani_BMTZ).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_32774
 		jmpto	DisplaySprite,JmpTo40_DisplaySprite
@@ -66898,7 +64740,7 @@ loc_32966:
 		move.b	#$20,ost_displaywidth(a1)
 		move.l	$34(a0),$34(a1)
 		move.b	#id_BossMetropolisOrb,ost_id(a1)
-		move.l	#Map_32DC6,ost_mappings(a1)
+		move.l	#Map_BMTZ,ost_mappings(a1)
 		move.w	#tile_Nem_MTZBoss,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#3,ost_priority(a1)
@@ -67109,7 +64951,7 @@ loc_32B8E:
 
 loc_32BB0:				
 		bsr.w	loc_32BC2
-		lea	(off_32D7A).l,a1
+		lea	(Ani_BMTZ).l,a1
 		jsrto	AnimateSprite,JmpTo21_AnimateSprite
 		jmpto	DisplaySprite,JmpTo40_DisplaySprite
 ; ===========================================================================
@@ -67222,7 +65064,7 @@ off_32CBC:	index offset(*),,2
 ; ===========================================================================
 
 loc_32CC0:				
-		move.l	#Map_32DC6,ost_mappings(a0)
+		move.l	#Map_BMTZ,ost_mappings(a0)
 		move.w	#tile_Nem_MTZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#5,ost_priority(a0)
@@ -67272,7 +65114,7 @@ JmpTo40_DisplaySprite:
     		
 		jmpto	DisplaySprite,JmpTo40_DisplaySprite
 ; ===========================================================================
-off_32D7A:	index offset(*)
+Ani_BMTZ:	index offset(*)
 		ptr byte_32D8A					; 0 
 		ptr byte_32D8D					; 1
 		ptr byte_32D91					; 2
@@ -67307,87 +65149,10 @@ byte_32DC3:
 		dc.b   7,$11,$FF				; 0 
 		
 ; ===========================================================================
-Map_32DC6:				
-		dc.w word_32DF0-Map_32DC6			; 0
-		dc.w word_32DFA-Map_32DC6			; 1
-		dc.w word_32E04-Map_32DC6			; 2
-		dc.w word_32E2E-Map_32DC6			; 3
-		dc.w word_32E38-Map_32DC6			; 4
-		dc.w word_32E42-Map_32DC6			; 5
-		dc.w word_32E4C-Map_32DC6			; 6
-		dc.w word_32E56-Map_32DC6			; 7
-		dc.w word_32E60-Map_32DC6			; 8
-		dc.w word_32E6A-Map_32DC6			; 9
-		dc.w word_32E74-Map_32DC6			; 10
-		dc.w word_32E7E-Map_32DC6			; 11
-		dc.w word_32EA0-Map_32DC6			; 12
-		dc.w word_32EB2-Map_32DC6			; 13
-		dc.w word_32EC4-Map_32DC6			; 14
-		dc.w word_32ED6-Map_32DC6			; 15
-		dc.w word_32EE8-Map_32DC6			; 16
-		dc.w word_32EFA-Map_32DC6			; 17
-		dc.w word_32F0C-Map_32DC6			; 18
-		dc.w word_32F1E-Map_32DC6			; 19
-		dc.w word_32F28-Map_32DC6			; 20
-word_32DF0:	dc.w 1			
-		dc.w	 5, $1E4,  $F2,	 $1C			; 0
-word_32DFA:	dc.w 1			
-		dc.w	 5, $1E8,  $F4,	 $1C			; 0
-word_32E04:	dc.w 5			
-		dc.w $D805, $1A4,  $D2,	   2			; 0
-		dc.w $E805, $1A8,  $D4,	 $10			; 4
-		dc.w $F80F,$218C,$20C6,$FFF0			; 8
-		dc.w $F807,$219C,$20CE,	 $10			; 12
-		dc.w $F802,$2003,$2001,$FFE8			; 16
-word_32E2E:	dc.w 1			
-		dc.w $F40A,$200E,$2007,$FFF4			; 0
-word_32E38:	dc.w 1			
-		dc.w $F40A,$206F,$2037,$FFF4			; 0
-word_32E42:	dc.w 1			
-		dc.w $F805,$2078,$203C,$FFF8			; 0
-word_32E4C:	dc.w 1			
-		dc.w $F406,$2017,$200B,$FFF8			; 0
-word_32E56:	dc.w 1			
-		dc.w $F809,$201D,$200E,$FFF4			; 0
-word_32E60:	dc.w 1			
-		dc.w $F406,$2023,$2011,$FFF8			; 0
-word_32E6A:	dc.w 1			
-		dc.w $F40A,  $29,  $14,$FFF4			; 0
-word_32E74:	dc.w 1			
-		dc.w $F00F,  $32,  $19,$FFF0			; 0
-word_32E7E:	dc.w 4			
-		dc.w $E80A,  $42,  $21,$FFE8			; 0
-		dc.w $E80A,  $4B,  $25,	   0			; 4
-		dc.w	$A,  $54,  $2A,$FFE8			; 8
-		dc.w	$A,  $5D,  $2E,	   0			; 12
-word_32EA0:	dc.w 2			
-		dc.w $E80D, $1B4,  $DA,$FFF0			; 0
-		dc.w $E805, $1AC,  $D6,$FFE0			; 4
-word_32EB2:	dc.w 2			
-		dc.w $E80D, $1BC,  $DE,$FFF0			; 0
-		dc.w $E805, $1AC,  $D6,$FFE0			; 4
-word_32EC4:	dc.w 2			
-		dc.w $E80D, $1C4,  $E2,$FFF0			; 0
-		dc.w $E805, $1B0,  $D8,$FFE0			; 4
-word_32ED6:	dc.w 2			
-		dc.w $E80D, $1CC,  $E6,$FFF0			; 0
-		dc.w $E805, $1B0,  $D8,$FFE0			; 4
-word_32EE8:	dc.w 2			
-		dc.w $E80D, $1D4,  $EA,$FFF0			; 0
-		dc.w $E805, $1B0,  $D8,$FFE0			; 4
-word_32EFA:	dc.w 2			
-		dc.w $E80D, $1DC,  $EE,$FFF0			; 0
-		dc.w $E805, $1B0,  $D8,$FFE0			; 4
-word_32F0C:	dc.w 2			
-		dc.w $F80D,$2006,$2003,$FFE0			; 0
-		dc.w $F80D,$2806,$2803,	   0			; 4
-word_32F1E:	dc.w 1			
-		dc.w $F802,$2000,$2000,$FFE0			; 0
-word_32F28:	dc.w 4			
-		dc.w $E80A,  $66,  $33,$FFE8
-		dc.w $E80A, $866, $833,	   0
-		dc.w	$A,$1066,$1033,$FFE8
-		dc.w	$A,$1866,$1833,	   0
+
+		include "mappings/sprite/MTZ Boss.asm"
+		
+; ===========================================================================
 	
 	if RemoveJmpTos=0
 		align 4
@@ -67430,10 +65195,10 @@ JmpTo24_SpeedToPos:
 BossOilOcean:				
 		moveq	#0,d0
 		move.b	ost_boss_subtype(a0),d0
-		move.w	off_32F9E(pc,d0.w),d1
-		jmp	off_32F9E(pc,d1.w)
+		move.w	BOOZ_Index(pc,d0.w),d1
+		jmp	BOOZ_Index(pc,d1.w)
 ; ===========================================================================
-off_32F9E:	index offset(*),,2
+BOOZ_Index:	index offset(*),,2
 		ptr loc_32FA8					; 0 
 		ptr loc_32FE6					; 2
 		ptr loc_3320A					; 4
@@ -67442,7 +65207,7 @@ off_32F9E:	index offset(*),,2
 ; ===========================================================================
 
 loc_32FA8:				
-		move.l	#Map_33756,ost_mappings(a0)
+		move.l	#Map_BOOZ,ost_mappings(a0)
 		move.w	#tile_Nem_OOZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
@@ -67568,7 +65333,7 @@ loc_3313C:
 
 loc_3315E:				
 		bsr.w	loc_33174
-		lea	(off_33712).l,a1
+		lea	(Ani_BOOZ).l,a1
 		bsr.w	BossAnimate
 		bsr.w	loc_33194
 		jmpto	DisplaySprite,JmpTo41_DisplaySprite
@@ -67997,7 +65762,7 @@ off_3357E:	index offset(*),,2
 
 loc_33586:				
 		addq.b	#2,ost_secondary_routine(a0)
-		move.l	#Map_33756,ost_mappings(a0)
+		move.l	#Map_BOOZ,ost_mappings(a0)
 		move.w	#tile_Nem_OOZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
@@ -68070,7 +65835,7 @@ loc_33640:
 		move.b	#2,ost_anim(a1)
 		move.b	#$D,ost_frame(a1)
 		move.w	#0,ost_y_vel(a1)
-		move.l	#Map_33756,ost_mappings(a1)
+		move.l	#Map_BOOZ,ost_mappings(a1)
 		move.w	#tile_Nem_OOZBoss,ost_tile(a1)
 		jsrto	Adjust2PArtPointer,JmpTo63_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a1)
@@ -68115,7 +65880,7 @@ loc_336F4:
 		jsrto	PlaySound,JmpTo11_PlaySound
 
 loc_33700:				
-		lea	(off_33712).l,a1
+		lea	(Ani_BOOZ).l,a1
 		jsrto	AnimateSprite,JmpTo22_AnimateSprite
 		jmpto	DespawnObject,JmpTo38_DespawnObject
 ; ===========================================================================
@@ -68123,7 +65888,7 @@ loc_33700:
 loc_3370E:				
 		bra.w	JmpTo62_DeleteObject
 ; ===========================================================================
-off_33712:	index offset(*)
+Ani_BOOZ:	index offset(*)
 		ptr byte_3371E					; 0 
 		ptr byte_33738					; 1
 		ptr byte_3373B					; 2
@@ -68151,77 +65916,9 @@ byte_33750:
 byte_33753:	
 		dc.b  $F,  8,$FF				; 0 
 ; ===========================================================================
-Map_33756:				
-		dc.w Map_33756-Map_33756			;	0
-		dc.w word_33782-Map_33756			; 1
-		dc.w word_337BC-Map_33756			; 2
-		dc.w word_337CE-Map_33756			; 3
-		dc.w word_337E8-Map_33756			; 4
-		dc.w word_33814-Map_33756			; 5
-		dc.w word_33826-Map_33756			; 6
-		dc.w word_33838-Map_33756			; 7
-		dc.w word_33842-Map_33756			; 8
-		dc.w word_3384C-Map_33756			; 9
-		dc.w word_33856-Map_33756			; 10
-		dc.w word_33860-Map_33756			; 11
-		dc.w word_3386A-Map_33756			; 12
-		dc.w word_33874-Map_33756			; 13
-		dc.w word_3387E-Map_33756			; 14
-		dc.w word_33888-Map_33756			; 15
-		dc.w word_33892-Map_33756			; 16
-		dc.w word_33874-Map_33756			; 17
-		dc.w word_3387E-Map_33756			; 18
-		dc.w word_33888-Map_33756			; 19
-		dc.w word_33892-Map_33756			; 20
-		dc.w word_33802-Map_33756			; 21
-word_33782:	dc.w 7			
-		dc.w $E00D,$2001,$2000,	   0			; 0
-		dc.w $E800,$2000,$2000,$FFF8			; 4
-		dc.w $F00D,$2009,$2004,$FFE8			; 8
-		dc.w $F00D,$2011,$2008,	   8			; 12
-		dc.w	$F,$2019,$200C,$FFD0			; 16
-		dc.w	$F,$2029,$2014,$FFF0			; 20
-		dc.w	$F,$2039,$201C,	 $10			; 24
-word_337BC:	dc.w 2			
-		dc.w $F80D,$2049,$2024,$FFDE			; 0
-		dc.w $F805,$2079,$203C,$FFF8			; 4
-word_337CE:	dc.w 3			
-		dc.w $E209,$2051,$2028,$FFE2			; 0
-		dc.w $F209,$2057,$202B,$FFEA			; 4
-		dc.w $F805,$2079,$203C,$FFF8			; 8
-word_337E8:	dc.w 3			
-		dc.w  $606,$2063,$2031,$FFE2			; 0
-		dc.w $FE06,$205D,$202E,$FFF2			; 4
-		dc.w $F805,$2079,$203C,$FFF8			; 8
-word_33802:	dc.w 2			
-		dc.w $DE07,$20AD,$2056,$FFF8			; 0
-		dc.w $F805,$2079,$203C,$FFF8			; 4
-word_33814:	dc.w 2			
-		dc.w $F80D,$2069,$2034,$FFE0			; 0
-		dc.w $F805,$2079,$203C,$FFF8			; 4
-word_33826:	dc.w 2			
-		dc.w $F80D,$2071,$2038,$FFE0			; 0
-		dc.w $F805,$2079,$203C,$FFF8			; 4
-word_33838:	dc.w 1			
-		dc.w $F805,$2079,$203C,$FFF8			; 0
-word_33842:	dc.w 1			
-		dc.w $F009,  $7D,  $3E,$FFF4			; 0
-word_3384C:	dc.w 1			
-		dc.w $F009,  $83,  $41,$FFF4			; 0
-word_33856:	dc.w 1			
-		dc.w $F009,  $89,  $44,$FFF4			; 0
-word_33860:	dc.w 1			
-		dc.w $F009,  $8F,  $47,$FFF4			; 0
-word_3386A:	dc.w 1			
-		dc.w $FC0C,$20A9,$2054,$FFF0			; 0
-word_33874:	dc.w 1			
-		dc.w  $804,$2095,$204A,$FFF8			; 0
-word_3387E:	dc.w 1			
-		dc.w	 5,$2097,$204B,$FFF8			; 0
-word_33888:	dc.w 1			
-		dc.w $F806,$209B,$204D,$FFF8			; 0
-word_33892:	dc.w 1			
-		dc.w $F007,$20A1,$2050,$FFF8			; 0
+
+		include "mappings/sprite/OOZ Boss.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -68299,7 +65996,7 @@ loc_3391C:
 		move.w	d1,ost_y_pos(a0)
 		move.b	#$E,ost_height(a0)
 		move.b	#7,ost_width(a0)
-		move.l	#Map_34212,ost_mappings(a0)
+		move.l	#Map_SSS,ost_mappings(a0)
 		move.w	#(vram_SpecialSonic/sizeof_cell)+tile_pal2,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
@@ -68317,7 +66014,7 @@ loc_3391C:
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$18,ost_y_pos(a1)
-		move.l	#off_34492,ost_mappings(a1)
+		move.l	#Map_ShadSpec,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHorizShadow+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#4,ost_priority(a1)
@@ -68336,7 +66033,7 @@ loc_339D6:
 		bsr.w	loc_34084
 		bsr.w	loc_33B40
 		bsr.w	loc_33EA0
-		lea	(off_341E4).l,a1
+		lea	(Ani_SSS).l,a1
 		bsr.w	loc_33F00
 		bsr.w	loc_33DFC
 		bra.w	SSS_LoadGFX
@@ -68522,7 +66219,7 @@ loc_33BAE:
 		bsr.w	loc_33DB4
 		bsr.w	loc_33E44
 		bsr.w	loc_34084
-		lea	(off_341E4).l,a1
+		lea	(Ani_SSS).l,a1
 		bsr.w	loc_33F00
 		bra.w	SSS_LoadGFX
 ; ===========================================================================
@@ -68536,7 +66233,7 @@ loc_33BD8:
 		bsr.w	loc_33E44
 		bsr.w	loc_34084
 		bsr.w	loc_33EA0
-		lea	(off_341E4).l,a1
+		lea	(Ani_SSS).l,a1
 		bsr.w	loc_33F00
 		bra.w	SSS_LoadGFX
 ; ===========================================================================
@@ -69148,7 +66845,7 @@ byte_341E2:
 		dc.b   4					; 0
 		dc.b $FC					; 1
 
-off_341E4:	index offset(*)
+Ani_SSS:	index offset(*)
 		ptr byte_341EE					; 0 
 		ptr byte_341F4					; 1
 		ptr byte_341FE					; 2
@@ -69170,463 +66867,10 @@ byte_34204:
 byte_34208:
 		dc.b   3,  0,  4, $C,  4,  0,  4, $C,  4,$FF
 ; ===========================================================================
-Map_34212:				
-		dc.w word_34236-Map_34212			; 0
-		dc.w word_34250-Map_34212			; 1
-		dc.w word_3426A-Map_34212			; 2
-		dc.w word_34284-Map_34212			; 3
-		dc.w word_3429E-Map_34212			; 4
-		dc.w word_342C0-Map_34212			; 5
-		dc.w word_342EA-Map_34212			; 6
-		dc.w word_34314-Map_34212			; 7
-		dc.w word_3433E-Map_34212			; 8
-		dc.w word_34360-Map_34212			; 9
-		dc.w word_3438A-Map_34212			; 10
-		dc.w word_343B4-Map_34212			; 11
-		dc.w word_343E6-Map_34212			; 12
-		dc.w word_34400-Map_34212			; 13
-		dc.w word_3441A-Map_34212			; 14
-		dc.w word_34434-Map_34212			; 15
-		dc.w word_3444E-Map_34212			; 16
-		dc.w word_34470-Map_34212			; 17
-word_34236:	dc.w 3			
-		dc.w $E40F,$8000,$8000,$FFF0			; 0
-		dc.w  $40A,$8010,$8008,$FFF0			; 4
-		dc.w  $401,$8019,$800C,	   8			; 8
-word_34250:	dc.w 3			
-		dc.w $E40A,$8000,$8000,$FFF2			; 0
-		dc.w $FC0D,$8009,$8004,$FFF0			; 4
-		dc.w  $C05,$8011,$8008,$FFF7			; 8
-word_3426A:	dc.w 3			
-		dc.w $E40E,$8000,$8000,$FFF0			; 0
-		dc.w $FC0D,$800C,$8006,$FFF0			; 4
-		dc.w  $C09,$8014,$800A,$FFF0			; 8
-word_34284:	dc.w 3			
-		dc.w $E40A,$8800,$8800,$FFF6			; 0
-		dc.w $FC0D,$8009,$8004,$FFF0			; 4
-		dc.w  $C09,$8011,$8008,$FFF8			; 8
-word_3429E:	dc.w 4			
-		dc.w $E40A,$8000,$8000,$FFEC			; 0
-		dc.w $E403,$8009,$8004,	   4			; 4
-		dc.w $EC01,$800D,$8006,	  $C			; 8
-		dc.w $FC0E,$800F,$8007,$FFE4			; 12
-word_342C0:	dc.w 5			
-		dc.w $E409,$8000,$8000,$FFF4			; 0
-		dc.w $EC01,$8006,$8003,	  $C			; 4
-		dc.w $F40D,$8008,$8004,$FFEC			; 8
-		dc.w  $40D,$8010,$8008,$FFE6			; 12
-		dc.w $1400,$8018,$800C,$FFEE			; 16
-word_342EA:	dc.w 5			
-		dc.w $E404,$8000,$8000,$FFFB			; 0
-		dc.w $EC0E,$8002,$8001,$FFEC			; 4
-		dc.w $EC02,$800E,$8007,	  $C			; 8
-		dc.w  $406,$8011,$8008,$FFE7			; 12
-		dc.w  $405,$8017,$800B,$FFF7			; 16
-word_34314:	dc.w 5			
-		dc.w $E404,$8000,$8000,$FFFC			; 0
-		dc.w $EC0F,$8002,$8001,$FFEC			; 4
-		dc.w $EC02,$8012,$8009,	  $C			; 8
-		dc.w  $400,$8015,$800A,$FFE4			; 12
-		dc.w  $C05,$8016,$800B,$FFEA			; 16
-word_3433E:	dc.w 4			
-		dc.w $E405,$8000,$8000,$FFFC			; 0
-		dc.w $EC03,$8004,$8002,	  $C			; 4
-		dc.w $F40E,$8008,$8004,$FFEC			; 8
-		dc.w  $C05,$8014,$800A,$FFEC			; 12
-word_34360:	dc.w 5			
-		dc.w $E405,$8000,$8000,$FFFC			; 0
-		dc.w $EC02,$8004,$8002,	  $C			; 4
-		dc.w $F40D,$8007,$8003,$FFEC			; 8
-		dc.w  $40D,$800F,$8007,$FFE8			; 12
-		dc.w $EC00,$8017,$800B,$FFF4			; 16
-word_3438A:	dc.w 5			
-		dc.w $E409,$8000,$8000,$FFFB			; 0
-		dc.w $F401,$8006,$8003,	  $E			; 4
-		dc.w $F40D,$8008,$8004,$FFEE			; 8
-		dc.w  $40D,$8010,$8008,$FFE7			; 12
-		dc.w $1400,$8018,$800C,$FFEF			; 16
-word_343B4:	dc.w 6			
-		dc.w $E400,$8000,$8000,	   2			; 0
-		dc.w $EC0D,$8001,$8000,$FFF4			; 4
-		dc.w $FC00,$8009,$8004,	  $C			; 8
-		dc.w  $401,$800A,$8005,$FFE4			; 12
-		dc.w $FC07,$800C,$8006,$FFEC			; 16
-		dc.w $FC06,$8014,$800A,$FFFC			; 20
-word_343E6:	dc.w 3			
-		dc.w $F006,$8000,$8000,$FFE8			; 0
-		dc.w  $800,$8006,$8003,$FFF0			; 4
-		dc.w $F00F,$8007,$8003,$FFF8			; 8
-word_34400:	dc.w 3			
-		dc.w $F006,$8000,$8000,$FFE8			; 0
-		dc.w $F103,$8006,$8003,$FFF8			; 4
-		dc.w $F00B,$800A,$8005,	   0			; 8
-word_3441A:	dc.w 3			
-		dc.w $F102,$8000,$8000,$FFE8			; 0
-		dc.w $F002,$8003,$8001,$FFF0			; 4
-		dc.w $F00F,$8006,$8003,$FFF8			; 8
-word_34434:	dc.w 3			
-		dc.w $F806,$8000,$8000,$FFE8			; 0
-		dc.w $EF03,$8006,$8003,$FFF8			; 4
-		dc.w $F00B,$800A,$8005,	   0			; 8
-word_3444E:	dc.w 4			
-		dc.w $EC07,$8000,$8000,$FFF0			; 0
-		dc.w  $C04,$8008,$8004,$FFF0			; 4
-		dc.w $EC07,$8800,$8800,	   0			; 8
-		dc.w  $C04,$8808,$8804,	   0			; 12
-word_34470:	dc.w 4			
-		dc.w $EC07,$8000,$8000,$FFF0			; 0
-		dc.w  $C04,$8008,$8004,$FFF0			; 4
-		dc.w $EC07,$8800,$8800,	   0			; 8
-		dc.w  $C04,$8808,$8804,	   0			; 12
-; ===========================================================================
-off_34492:
-		dc.w word_34528-off_34492			; 0 
-		dc.w word_3458C-off_34492			; 1
-		dc.w word_345F0-off_34492			; 2
-		dc.w word_3451E-off_34492			; 3
-		dc.w word_34582-off_34492			; 4
-		dc.w word_345E6-off_34492			; 5
-		dc.w word_34514-off_34492			; 6
-		dc.w word_34578-off_34492			; 7
-		dc.w word_345DC-off_34492			; 8
-		dc.w word_3450A-off_34492			; 9
-		dc.w word_3456E-off_34492			; 10
-		dc.w word_345D2-off_34492			; 11
-		dc.w word_34500-off_34492			; 12
-		dc.w word_34564-off_34492			; 13
-		dc.w word_345C8-off_34492			; 14
-		dc.w word_344F6-off_34492			; 15
-		dc.w word_3455A-off_34492			; 16
-		dc.w word_345BE-off_34492			; 17
-		dc.w word_344EC-off_34492			; 18
-		dc.w word_34550-off_34492			; 19
-		dc.w word_345B4-off_34492			; 20
-		dc.w word_344E2-off_34492			; 21
-		dc.w word_34546-off_34492			; 22
-		dc.w word_345AA-off_34492			; 23
-		dc.w word_344D8-off_34492			; 24
-		dc.w word_3453C-off_34492			; 25
-		dc.w word_345A0-off_34492			; 26
-		dc.w word_344CE-off_34492			; 27
-		dc.w word_34532-off_34492			; 28
-		dc.w word_34596-off_34492			; 29
-word_344CE:	dc.w 1			
-		dc.w $FC00,$8000,$8000,$FFFC			; 0
-word_344D8:	dc.w 1			
-		dc.w $FC00,$8001,$8000,$FFFC			; 0
-word_344E2:	dc.w 1			
-		dc.w $FC04,$8002,$8001,$FFF8			; 0
-word_344EC:	dc.w 1			
-		dc.w $FC04,$8004,$8002,$FFF8			; 0
-word_344F6:	dc.w 1			
-		dc.w $FC04,$8006,$8003,$FFF8			; 0
-word_34500:	dc.w 1			
-		dc.w $FC08,$8008,$8004,$FFF4			; 0
-word_3450A:	dc.w 1			
-		dc.w $FC08,$800B,$8005,$FFF4			; 0
-word_34514:	dc.w 1			
-		dc.w $F80D,$800E,$8007,$FFF0			; 0
-word_3451E:	dc.w 1			
-		dc.w $F80D,$8016,$800B,$FFF0			; 0
-word_34528:	dc.w 1			
-		dc.w $F80D,$801E,$800F,$FFF0			; 0
-word_34532:	dc.w 1			
-		dc.w $FC00,$8000,$8000,$FFFC			; 0
-word_3453C:	dc.w 1			
-		dc.w $FC00,$8001,$8000,$FFFC			; 0
-word_34546:	dc.w 1			
-		dc.w $FC00,$8002,$8001,$FFFC			; 0
-word_34550:	dc.w 1			
-		dc.w $F805,$8003,$8001,$FFF8			; 0
-word_3455A:	dc.w 1			
-		dc.w $F805,$8007,$8003,$FFF8			; 0
-word_34564:	dc.w 1			
-		dc.w $F405,$800B,$8005,$FFFC			; 0
-word_3456E:	dc.w 1			
-		dc.w $F40A,$800F,$8007,$FFF4			; 0
-word_34578:	dc.w 1			
-		dc.w $F40A,$8018,$800C,$FFF4			; 0
-word_34582:	dc.w 1			
-		dc.w $F00A,$8021,$8010,$FFF8			; 0
-word_3458C:	dc.w 1			
-		dc.w $F00F,$802A,$8015,$FFF0			; 0
-word_34596:	dc.w 1			
-		dc.w $FC00,$8000,$8000,$FFFC			; 0
-word_345A0:	dc.w 1			
-		dc.w $FC00,$8001,$8000,$FFFC			; 0
-word_345AA:	dc.w 1			
-		dc.w $F801,$8002,$8001,$FFFC			; 0
-word_345B4:	dc.w 1			
-		dc.w $F801,$8004,$8002,$FFFC			; 0
-word_345BE:	dc.w 1			
-		dc.w $F801,$8006,$8003,$FFFC			; 0
-word_345C8:	dc.w 1			
-		dc.w $F402,$8008,$8004,$FFFC			; 0
-word_345D2:	dc.w 1			
-		dc.w $F402,$800B,$8005,$FFFC			; 0
-word_345DC:	dc.w 1			
-		dc.w $F402,$800E,$8007,$FFFC			; 0
-word_345E6:	dc.w 1			
-		dc.w $F003,$8011,$8008,$FFFC			; 0
-word_345F0:	dc.w 1			
-		dc.w $F003,$8015,$800A,$FFFC			; 0
-		
-		
-; custom dynamic pattern loading cues for special stage Sonic, Tails and
-; Tails' tails
-; The first $12 frames are for Sonic, and the next $12 frames are for Tails.
-; The last $15 frames are for Tails' tails.
-; The first $24 frames are almost normal dplcs -- the only difference being
-; that the art tile to load is pre-shifted left by 4 bits.
-; The same applies to the last $15 frames, but they have yet another difference:
-; a small space optimization. These frames only have one dplc per frame ever,
-; hence the two-byte dplc count is removed from each frame.		
-SS_Sonic_Tails_DPLC:	index offset(*)
-		ptr word_3466C					; 0 
-		ptr word_34674					; 1
-		ptr word_3467C					; 2
-		ptr word_34684					; 3
-		ptr word_3468C					; 4
-		ptr word_34696					; 5
-		ptr word_346A2					; 6
-		ptr word_346AE					; 7
-		ptr word_346BA					; 8
-		ptr word_346C4					; 9
-		ptr word_346D0					; 10
-		ptr word_346DC					; 11
-		ptr word_346EA					; 12
-		ptr word_346F2					; 13
-		ptr word_346FA					; 14
-		ptr word_34702					; 15
-		ptr word_3470A					; 16
-		ptr word_34710					; 17
-		ptr word_34716					; 18
-		ptr word_3471E					; 19
-		ptr word_34728					; 20
-		ptr word_34732					; 21
-		ptr word_3473E					; 22
-		ptr word_34746					; 23
-		ptr word_34750					; 24
-		ptr word_3475C					; 25
-		ptr word_34766					; 26
-		ptr word_34770					; 27
-		ptr word_3477C					; 28
-		ptr word_34788					; 29
-		ptr word_34792					; 30
-		ptr word_34798					; 31
-		ptr word_347A0					; 32
-		ptr word_347A6					; 33
-		ptr word_347AE					; 34
-		ptr word_347B2					; 35
-		ptr word_347B6					; 36
-		ptr word_347B8					; 37
-		ptr word_347BA					; 38
-		ptr word_347BC					; 39
-		ptr word_347BE					; 40
-		ptr word_347C0					; 41
-		ptr word_347C2					; 42
-		ptr word_347C4					; 43
-		ptr word_347C6					; 44
-		ptr word_347C8					; 45
-		ptr word_347CA					; 46
-		ptr word_347CC					; 47
-		ptr word_347CE					; 48
-		ptr word_347D0					; 49
-		ptr word_347D2					; 50
-		ptr word_347D4					; 51
-		ptr word_347D6					; 52
-		ptr word_347D8					; 53
-		ptr word_347DA					; 54
-		ptr word_347DC					; 55
-		ptr word_347DE					; 56
-		
-word_3466C:	dc.w 3			
-		dc.w $F000					; 0
-		dc.w $8100					; 1
-		dc.w $1190					; 2
-word_34674:	dc.w 3			
-		dc.w $81B0					; 0
-		dc.w $7240					; 1
-		dc.w $32C0					; 2
-word_3467C:	dc.w 3			
-		dc.w $B300					; 0
-		dc.w $73C0					; 1
-		dc.w $5440					; 2
-word_34684:	dc.w 3			
-		dc.w $81B0					; 0
-		dc.w $74A0					; 1
-		dc.w $5520					; 2
-word_3468C:	dc.w 4			
-		dc.w $8000					; 0
-		dc.w $3090					; 1
-		dc.w $10D0					; 2
-		dc.w $B0F0					; 3
-word_34696:	dc.w 5			
-		dc.w $51B0					; 0
-		dc.w $1210					; 1
-		dc.w $7230					; 2
-		dc.w $72B0					; 3
-		dc.w  $330					; 4
-word_346A2:	dc.w 5			
-		dc.w $1340					; 0
-		dc.w $B360					; 1
-		dc.w $2420					; 2
-		dc.w $5450					; 3
-		dc.w $34B0					; 4
-word_346AE:	dc.w 5			
-		dc.w $14F0					; 0
-		dc.w $F510					; 1
-		dc.w $2610					; 2
-		dc.w  $640					; 3
-		dc.w $3650					; 4
-word_346BA:	dc.w 4			
-		dc.w $3690					; 0
-		dc.w $36D0					; 1
-		dc.w $B710					; 2
-		dc.w $37D0					; 3
-word_346C4:	dc.w 5			
-		dc.w $3810					; 0
-		dc.w $2850					; 1
-		dc.w $7880					; 2
-		dc.w $7900					; 3
-		dc.w  $980					; 4
-word_346D0:	dc.w 5			
-		dc.w $5990					; 0
-		dc.w $19F0					; 1
-		dc.w $7A10					; 2
-		dc.w $7A90					; 3
-		dc.w  $B10					; 4
-word_346DC:	dc.w 6			
-		dc.w  $B20					; 0
-		dc.w $7B30					; 1
-		dc.w  $BB0					; 2
-		dc.w $1BC0					; 3
-		dc.w $7BE0					; 4
-		dc.w $5C60					; 5
-word_346EA:	dc.w 3			
-		dc.w $5000					; 0
-		dc.w   $60					; 1
-		dc.w $F070					; 2
-word_346F2:	dc.w 3			
-		dc.w $5170					; 0
-		dc.w $31D0					; 1
-		dc.w $B210					; 2
-word_346FA:	dc.w 3			
-		dc.w $22D0					; 0
-		dc.w $2300					; 1
-		dc.w $F330					; 2
-word_34702:	dc.w 3			
-		dc.w $5430					; 0
-		dc.w $3490					; 1
-		dc.w $B210					; 2
-word_3470A:	dc.w 2			
-		dc.w $7000					; 0
-		dc.w $1080					; 1
-word_34710:	dc.w 2			
-		dc.w $70A0					; 0
-		dc.w $1080					; 1
-word_34716:	dc.w 3			
-		dc.w $8000					; 0
-		dc.w $5090					; 1
-		dc.w   $F0					; 2
-word_3471E:	dc.w 4			
-		dc.w $3100					; 0
-		dc.w $5140					; 1
-		dc.w $31A0					; 2
-		dc.w $31E0					; 3
-word_34728:	dc.w 4			
-		dc.w $3220					; 0
-		dc.w $5260					; 1
-		dc.w $32C0					; 2
-		dc.w $3300					; 3
-word_34732:	dc.w 5			
-		dc.w $3100					; 0
-		dc.w $5140					; 1
-		dc.w $3340					; 2
-		dc.w $3380					; 3
-		dc.w  $3C0					; 4
-word_3473E:	dc.w 3			
-		dc.w $3000					; 0
-		dc.w $7040					; 1
-		dc.w $70C0					; 2
-word_34746:	dc.w 4			
-		dc.w $1140					; 0
-		dc.w $7160					; 1
-		dc.w $81E0					; 2
-		dc.w $1270					; 3
-word_34750:	dc.w 5			
-		dc.w  $290					; 0
-		dc.w $22A0					; 1
-		dc.w $72D0					; 2
-		dc.w  $350					; 3
-		dc.w $5360					; 4
-word_3475C:	dc.w 4			
-		dc.w  $3C0					; 0
-		dc.w $F3D0					; 1
-		dc.w  $4D0					; 2
-		dc.w $14E0					; 3
-word_34766:	dc.w 4			
-		dc.w $3500					; 0
-		dc.w $3540					; 1
-		dc.w $7580					; 2
-		dc.w $5600					; 3
-word_34770:	dc.w 5			
-		dc.w  $660					; 0
-		dc.w $7670					; 1
-		dc.w  $6F0					; 2
-		dc.w $7700					; 3
-		dc.w $1780					; 4
-word_3477C:	dc.w 5			
-		dc.w  $7A0					; 0
-		dc.w $B7B0					; 1
-		dc.w  $870					; 2
-		dc.w $3880					; 3
-		dc.w $18C0					; 4
-word_34788:	dc.w 4			
-		dc.w  $8E0					; 0
-		dc.w $B8F0					; 1
-		dc.w  $9B0					; 2
-		dc.w $79C0					; 3
-word_34792:	dc.w 2			
-		dc.w $8000					; 0
-		dc.w $7090					; 1
-word_34798:	dc.w 3			
-		dc.w $3110					; 0
-		dc.w  $150					; 1
-		dc.w $B160					; 2
-word_347A0:	dc.w 2			
-		dc.w $1220					; 0
-		dc.w $F240					; 1
-word_347A6:	dc.w 3			
-		dc.w $2340					; 0
-		dc.w $2370					; 1
-		dc.w $B160					; 2
-word_347AE:	dc.w 1			
-		dc.w $7000
-word_347B2:	dc.w 1			
-		dc.w $7080
-		
-word_347B6:	dc.w $5000		
-word_347B8:	dc.w $8060		
-word_347BA:	dc.w $50F0		
-word_347BC:	dc.w $5150		
-word_347BE:	dc.w $71B0		
-word_347C0:	dc.w $8230		
-word_347C2:	dc.w $82C0		
-word_347C4:	dc.w $8000		
-word_347C6:	dc.w $5090		
-word_347C8:	dc.w $50F0		
-word_347CA:	dc.w $7150		
-word_347CC:	dc.w $B1D0		
-word_347CE:	dc.w $8290		
-word_347D0:	dc.w $8320		
-word_347D2:	dc.w $5000		
-word_347D4:	dc.w $8060		
-word_347D6:	dc.w $50F0		
-word_347D8:	dc.w $5150		
-word_347DA:	dc.w $71B0		
-word_347DC:	dc.w $8230		
-word_347DE:	dc.w $82C0		
+
+		include "mappings/sprite/Special Stage Sonic.asm"
+		include "mappings/sprite/Special Stage Shadows.asm"
+		include "mappings/spriteDPLC/Special Stage Sonic, Tails, & Tails' Tails.asm"		
 
 ; ===========================================================================
 
@@ -69670,7 +66914,7 @@ loc_34804:
 		move.w	d1,ost_y_pos(a0)
 		move.b	#$E,ost_height(a0)
 		move.b	#7,ost_width(a0)
-		move.l	#Map_34B3E,ost_mappings(a0)
+		move.l	#Map_TSS,ost_mappings(a0)
 		move.w	#(vram_SpecialTails/sizeof_cell)+tile_pal3,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#2,ost_priority(a0)
@@ -69692,7 +66936,7 @@ loc_34864:
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$18,ost_y_pos(a1)
-		move.l	#off_34492,ost_mappings(a1)
+		move.l	#Map_ShadSpec,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHorizShadow+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#4,ost_priority(a1)
@@ -69701,7 +66945,7 @@ loc_34864:
 		move.b	#id_TailsTailsSpecial,ost_id(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		move.l	#off_34DA8,ost_mappings(a1)
+		move.l	#Map_TTSpec,ost_mappings(a1)
 		move.w	#(vram_SpecialTails_Tails/sizeof_cell)+tile_pal3,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	ost_priority(a0),ost_priority(a1)
@@ -69738,7 +66982,7 @@ loc_34920:
 loc_34944:				
 		bsr.w	loc_33B44
 		bsr.w	loc_33EA0
-		lea	(off_34B1C).l,a1
+		lea	(Ani_TSS).l,a1
 		bsr.w	loc_33F00
 		bsr.w	loc_33DFC
 		bra.w	TSS_LoadGFX
@@ -69829,7 +67073,7 @@ loc_34A00:
 		bsr.w	loc_33E44
 		bsr.w	loc_34084
 		bsr.w	loc_33C54
-		lea	(off_34B1C).l,a1
+		lea	(Ani_TSS).l,a1
 		bsr.w	loc_33F00
 		bra.s	TSS_LoadGFX
 ; ===========================================================================
@@ -69848,7 +67092,7 @@ loc_34A32:
 		bsr.w	loc_33E44
 		bsr.w	loc_34084
 		bsr.w	loc_33EA0
-		lea	(off_34B1C).l,a1
+		lea	(Ani_TSS).l,a1
 		bsr.w	loc_33F00
 		bra.w	TSS_LoadGFX
 ; ===========================================================================
@@ -69858,7 +67102,7 @@ loc_34A32:
 
 TailsTailsSpecial:	
 
-		rsobj 	TailsTailsSpecial,$38
+		rsobj TailsTailsSpecial,$38
 ost_ttspec_parent:	rs.l 1					; $38		
 		rsobjend
 				
@@ -69873,7 +67117,7 @@ ost_ttspec_parent:	rs.l 1					; $38
 		move.b	d0,ost_priority(a0)
 		cmpi.b	#3,ost_anim(a0)
 		bcc.s	locret_34A9E
-		lea	(off_34D86).l,a1
+		lea	(Ani_TTSpec).l,a1
 		jsrto	AnimateSprite,JmpTo23_AnimateSprite
 		bra.w	TTSS_LoadGFX
 ; ===========================================================================
@@ -69932,7 +67176,7 @@ loc_34AE4:
 locret_34B1A:				
 		rts	
 ; ===========================================================================
-off_34B1C:	index offset(*)
+Ani_TSS:	index offset(*)
 		ptr byte_34B24					; 0 
 		ptr byte_34B2A					; 1
 		ptr byte_34B34					; 2
@@ -69950,110 +67194,12 @@ byte_34B34:
 byte_34B3A:	
 		dc.b   1,$10,$11,$FF
 ; ===========================================================================
-Map_34B3E:				
-		dc.w word_34B62-Map_34B3E			; 0
-		dc.w word_34B7C-Map_34B3E			; 1
-		dc.w word_34B9E-Map_34B3E			; 2
-		dc.w word_34BC0-Map_34B3E			; 3
-		dc.w word_34BEA-Map_34B3E			; 4
-		dc.w word_34C04-Map_34B3E			; 5
-		dc.w word_34C26-Map_34B3E			; 6
-		dc.w word_34C50-Map_34B3E			; 7
-		dc.w word_34C72-Map_34B3E			; 8
-		dc.w word_34C94-Map_34B3E			; 9
-		dc.w word_34CBE-Map_34B3E			; 10
-		dc.w word_34CE8-Map_34B3E			; 11
-		dc.w word_34D0A-Map_34B3E			; 12
-		dc.w word_34D1C-Map_34B3E			; 13
-		dc.w word_34D36-Map_34B3E			; 14
-		dc.w word_34D48-Map_34B3E			; 15
-		dc.w word_34D62-Map_34B3E			; 16
-		dc.w word_34D74-Map_34B3E			; 17
-word_34B62:	dc.w 3			
-		dc.w $E80A,$8000,$8000,$FFF4			; 0
-		dc.w	 9,$8009,$8004,$FFF4			; 4
-		dc.w $1000,$800F,$8007,$FFF4			; 8
-word_34B7C:	dc.w 4			
-		dc.w $E80C,$8000,$8000,$FFF0			; 0
-		dc.w $F009,$8004,$8002,$FFF3			; 4
-		dc.w	$C,$800A,$8005,$FFF0			; 8
-		dc.w  $805,$800E,$8007,$FFF8			; 12
-word_34B9E:	dc.w 4			
-		dc.w $E80C,$8000,$8000,$FFF0			; 0
-		dc.w $F009,$8004,$8002,$FFF3			; 4
-		dc.w	$C,$800A,$8005,$FFF0			; 8
-		dc.w  $805,$800E,$8007,$FFF8			; 12
-word_34BC0:	dc.w 5			
-		dc.w $E80C,$8800,$8800,$FFF0			; 0
-		dc.w $F009,$8804,$8802,$FFF5			; 4
-		dc.w	$C,$800A,$8005,$FFF0			; 8
-		dc.w  $805,$800E,$8007,$FFF8			; 12
-		dc.w $1000,$8012,$8009,	   8			; 16
-word_34BEA:	dc.w 3			
-		dc.w $E105,$8000,$8000,	   0			; 0
-		dc.w $F10D,$8004,$8002,$FFF8			; 4
-		dc.w  $10D,$800C,$8006,$FFEC			; 8
-word_34C04:	dc.w 4			
-		dc.w $E101,$8000,$8000,	   0			; 0
-		dc.w $F10D,$8002,$8001,$FFF7			; 4
-		dc.w  $10A,$800A,$8005,$FFEF			; 8
-		dc.w  $101,$8013,$8009,	   7			; 12
-word_34C26:	dc.w 5			
-		dc.w $E800,$8000,$8000,	   0			; 0
-		dc.w $EC08,$8001,$8000,$FFF8			; 4
-		dc.w $F40D,$8004,$8002,$FFF0			; 8
-		dc.w $F400,$800C,$8006,	 $10			; 12
-		dc.w  $409,$800D,$8006,$FFF0			; 16
-word_34C50:	dc.w 4			
-		dc.w $E900,$8000,$8000,	   1			; 0
-		dc.w $F10F,$8001,$8000,$FFF0			; 4
-		dc.w $F900,$8011,$8008,	 $10			; 8
-		dc.w $1104,$8012,$8009,$FFF0			; 12
-word_34C72:	dc.w 4			
-		dc.w $E205,$8000,$8000,	   0			; 0
-		dc.w $F20C,$8004,$8002,$FFF8			; 4
-		dc.w $FA07,$8008,$8004,$FFF0			; 8
-		dc.w $FA09,$8010,$8008,	   0			; 12
-word_34C94:	dc.w 5			
-		dc.w $E800,$8000,$8000,	   0			; 0
-		dc.w $F00D,$8001,$8000,$FFF0			; 4
-		dc.w $F800,$8009,$8004,	 $10			; 8
-		dc.w	$D,$800A,$8005,$FFF0			; 12
-		dc.w $1004,$8012,$8009,$FFF0			; 16
-word_34CBE:	dc.w 5			
-		dc.w $E800,$8000,$8000,	   0			; 0
-		dc.w $F00E,$8001,$8000,$FFF0			; 4
-		dc.w $F800,$800D,$8006,	 $10			; 8
-		dc.w  $80C,$800E,$8007,$FFE8			; 12
-		dc.w $1004,$8012,$8009,$FFF0			; 16
-word_34CE8:	dc.w 4			
-		dc.w $E800,$8000,$8000,	   0			; 0
-		dc.w $F00E,$8001,$8000,$FFF0			; 4
-		dc.w $F800,$800D,$8006,	 $10			; 8
-		dc.w  $80D,$800E,$8007,$FFE8			; 12
-word_34D0A:	dc.w 2			
-		dc.w $F80A,$8000,$8000,$FFEC			; 0
-		dc.w $F007,$8009,$8004,	   4			; 4
-word_34D1C:	dc.w 3			
-		dc.w $F805,$8000,$8000,$FFEC			; 0
-		dc.w  $800,$8004,$8002,$FFF4			; 4
-		dc.w $F00B,$8005,$8002,$FFFC			; 8
-word_34D36:	dc.w 2			
-		dc.w $F701,$8000,$8000,$FFEC			; 0
-		dc.w $F00F,$8002,$8001,$FFF4			; 4
-word_34D48:	dc.w 3			
-		dc.w $F802,$8000,$8000,$FFEC			; 0
-		dc.w $F002,$8003,$8001,$FFF4			; 4
-		dc.w $F00B,$8006,$8003,$FFFC			; 8
-word_34D62:	dc.w 2			
-		dc.w $F007,$8000,$8000,$FFF0			; 0
-		dc.w $F007,$8800,$8800,	   0			; 4
-word_34D74:	dc.w 2			
-		dc.w $F007,$8000,$8000,$FFF0			; 0
-		dc.w $F007,$8800,$8800,	   0			; 4
 
+		include "mappings/sprite/Special Stage Tails.asm"
+		
+; ===========================================================================
 
-off_34D86:	index offset(*)
+Ani_TTSpec:	index offset(*)
 		ptr byte_34D8C					; 0 
 		ptr byte_34D95					; 1
 		ptr byte_34D9E					; 2
@@ -70067,70 +67213,9 @@ byte_34D95:
 byte_34D9E:
 		dc.b   3, $E, $F,$10,$11,$12,$13,$14,$FF,  0
 ; ===========================================================================
-off_34DA8:
-		dc.w word_34DD2-off_34DA8			; 0 
-		dc.w word_34DDC-off_34DA8			; 1
-		dc.w word_34DE6-off_34DA8			; 2
-		dc.w word_34DF0-off_34DA8			; 3
-		dc.w word_34DFA-off_34DA8			; 4
-		dc.w word_34E04-off_34DA8			; 5
-		dc.w word_34E0E-off_34DA8			; 6
-		dc.w word_34E18-off_34DA8			; 7
-		dc.w word_34E22-off_34DA8			; 8
-		dc.w word_34E2C-off_34DA8			; 9
-		dc.w word_34E36-off_34DA8			; 10
-		dc.w word_34E40-off_34DA8			; 11
-		dc.w word_34E4A-off_34DA8			; 12
-		dc.w word_34E54-off_34DA8			; 13
-		dc.w word_34E5E-off_34DA8			; 14
-		dc.w word_34E68-off_34DA8			; 15
-		dc.w word_34E72-off_34DA8			; 16
-		dc.w word_34E7C-off_34DA8			; 17
-		dc.w word_34E86-off_34DA8			; 18
-		dc.w word_34E90-off_34DA8			; 19
-		dc.w word_34E9A-off_34DA8			; 20
-word_34DD2:	dc.w 1			
-		dc.w $FA06,$8000,$8000,$FFFA			; 0
-word_34DDC:	dc.w 1			
-		dc.w	$A,$8000,$8000,$FFF8			; 0
-word_34DE6:	dc.w 1			
-		dc.w  $809,$8000,$8000,$FFF8			; 0
-word_34DF0:	dc.w 1			
-		dc.w $FF06,$8000,$8000,$FFF7			; 0
-word_34DFA:	dc.w 1			
-		dc.w $F707,$8000,$8000,$FFF5			; 0
-word_34E04:	dc.w 1			
-		dc.w $F70A,$8000,$8000,$FFF0			; 0
-word_34E0E:	dc.w 1			
-		dc.w $F70A,$8000,$8000,$FFF0			; 0
-word_34E18:	dc.w 1			
-		dc.w	$A,$8000,$8000,$FFF4			; 0
-word_34E22:	dc.w 1			
-		dc.w  $809,$8000,$8000,$FFF3			; 0
-word_34E2C:	dc.w 1			
-		dc.w	 6,$8000,$8000,$FFF1			; 0
-word_34E36:	dc.w 1			
-		dc.w $F807,$8000,$8000,$FFF4			; 0
-word_34E40:	dc.w 1			
-		dc.w $F80B,$8000,$8000,$FFF2			; 0
-word_34E4A:	dc.w 1			
-		dc.w $F80A,$8000,$8000,$FFF3			; 0
-word_34E54:	dc.w 1			
-		dc.w $F80A,$8000,$8000,$FFF4			; 0
-word_34E5E:	dc.w 1			
-		dc.w $FC09,$8000,$8000,$FFEA			; 0
-word_34E68:	dc.w 1			
-		dc.w $F80A,$8000,$8000,$FFED			; 0
-word_34E72:	dc.w 1			
-		dc.w $F806,$8000,$8000,$FFED			; 0
-word_34E7C:	dc.w 1			
-		dc.w $F709,$8000,$8000,$FFED			; 0
-word_34E86:	dc.w 1			
-		dc.w $F50D,$8000,$8000,$FFE5			; 0
-word_34E90:	dc.w 1			
-		dc.w $F00A,$8000,$8000,$FFED			; 0
-word_34E9A:	dc.w 1			
-		dc.w $F00A,$8000,$8000,$FFED			; 0
+
+		include "mappings/sprite/Special Stage Tails' Tails.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -70152,18 +67237,18 @@ BombSpecial:
 		move.w	off_34EBE(pc,d0.w),d1
 		jmp	off_34EBE(pc,d1.w)
 ; ===========================================================================
-off_34EBE:	
-		dc.w loc_34EC6-off_34EBE			; 0 
-		dc.w loc_34F06-off_34EBE			; 1
-		dc.w loc_3533A-off_34EBE			; 2
-		dc.w loc_34F6A-off_34EBE			; 3
+off_34EBE:	index offset(*),,2
+		ptr loc_34EC6			; 0 
+		ptr loc_34F06			; 1
+		ptr loc_3533A			; 2
+		ptr loc_34F6A			; 3
 ; ===========================================================================
 
 loc_34EC6:				
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	#$7F,ost_x_pos(a0)
 		move.w	#$58,ost_y_pos(a0)
-		move.l	#Map_36508,ost_mappings(a0)
+		move.l	#Map_BombSpec,ost_mappings(a0)
 		move.w	#tile_Nem_SpecialBomb+tile_pal2,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
@@ -70176,7 +67261,7 @@ loc_34EC6:
 loc_34F06:
 		bsr.w	loc_3512A
 		bsr.w	loc_351A0
-		lea	(off_364CE).l,a1
+		lea	(Ani_BombSpec).l,a1
 		bsr.w	loc_3539E
 		tst.b	ost_render(a0)
 		bpl.s	locret_34F26
@@ -70214,7 +67299,7 @@ loc_34F6A:
 		bsr.w	loc_34F90
 		bsr.w	loc_3512A
 		bsr.w	loc_351A0
-		lea	(off_364CE).l,a1
+		lea	(Ani_BombSpec).l,a1
 		jsrto	AnimateSprite,JmpTo24_AnimateSprite
 		bra.w	JmpTo44_DisplaySprite
 ; ===========================================================================
@@ -70248,7 +67333,7 @@ loc_34FB6:
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	#$7F,ost_x_pos(a0)
 		move.w	#$58,ost_y_pos(a0)
-		move.l	#Map_3632A,ost_mappings(a0)
+		move.l	#Map_RingSpec,ost_mappings(a0)
 		move.w	#tile_Nem_SpecialRings+tile_pal4,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
@@ -70263,7 +67348,7 @@ loc_34FF0:
 		bsr.w	loc_35036
 
 loc_34FFC:
-		lea	(off_362D2).l,a1
+		lea	(Ani_RingSpecial).l,a1
 		bsr.w	loc_3539E
 		tst.b	ost_render(a0)
 		bmi.w	JmpTo44_DisplaySprite
@@ -70276,7 +67361,7 @@ loc_35010:
 		bsr.w	loc_34F90
 		bsr.w	loc_3512A
 		bsr.w	loc_351A0
-		lea	(off_362D2).l,a1
+		lea	(Ani_RingSpecial).l,a1
 		jsrto	AnimateSprite,JmpTo24_AnimateSprite
 		bra.w	JmpTo44_DisplaySprite
 ; ===========================================================================
@@ -70560,7 +67645,7 @@ loc_3529C:
 		move.l	a0,$34(a1)
 		move.b	ost_id(a0),ost_id(a1)
 		move.b	#4,ost_primary_routine(a1)
-		move.l	#off_34492,ost_mappings(a1)
+		move.l	#Map_ShadSpec,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHorizShadow+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#5,ost_priority(a1)
@@ -70802,7 +67887,7 @@ loc_35478:
 loc_3547E:				
 		move.b	#id_RingLossSpecial,ost_id(a1)
 		move.b	#2,ost_primary_routine(a1)
-		move.l	#Map_3632A,ost_mappings(a1)
+		move.l	#Map_RingSpec,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialRings+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#5,ost_priority(a1)
@@ -70836,7 +67921,7 @@ loc_354E4:
 		bcc.w	JmpTo63_DeleteObject
 		cmpi.w	#$E0,ost_y_pos(a0)
 		bgt.w	JmpTo63_DeleteObject
-		lea	(off_362D2).l,a1
+		lea	(Ani_RingSpecial).l,a1
 		jsrto	AnimateSprite,JmpTo24_AnimateSprite
 		bra.w	JmpTo44_DisplaySprite
 ; ===========================================================================
@@ -70854,13 +67939,12 @@ locret_35530:
 ; ===========================================================================
 
 loc_35534:				
-		move.w	word_35548(pc,d0.w),($FFFFFB76).w
-		move.w	word_35548+2(pc,d0.w),($FFFFFB78).w
-		move.w	word_35548+4(pc,d0.w),($FFFFFB7A).w
+		move.w	Pal_SSCheckpointRainbow(pc,d0.w),($FFFFFB76).w
+		move.w	Pal_SSCheckpointRainbow+2(pc,d0.w),($FFFFFB78).w
+		move.w	Pal_SSCheckpointRainbow+4(pc,d0.w),($FFFFFB7A).w
 		rts	
 ; ===========================================================================
-word_35548:	
-		incbin "art/palettes/Special Stage Checkpoint Rainbow.bin"
+		incfile Pal_SSCheckpointRainbow
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 5A - Special Stage checkpoints, ring requirement messages,
@@ -70907,7 +67991,7 @@ loc_3559C:
 		bne.s	loc_355D6
 		move.b	#id_MessageSpecial,ost_id(a1)
 		move.b	#2,ost_primary_routine(a1)
-		move.l	#Map_3632A,ost_mappings(a1)
+		move.l	#Map_RingSpec,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialRings+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#5,ost_priority(a1)
@@ -71038,7 +68122,7 @@ locret_356E4:
 
 loc_356E6:				
 		move.b	#id_MessageSpecial,ost_id(a1)
-		move.l	#Map_35E1E,ost_mappings(a1)
+		move.l	#Map_SSMessages,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialMessages+tile_pal3,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 	if FixBugs=0
@@ -71460,7 +68544,7 @@ loc_35AC4:
 		bne.w	locret_35B58
 		move.b	#id_MessageSpecial,ost_id(a1)
 		move.b	#6,ost_primary_routine(a1)
-		move.l	#Map_35E1E,ost_mappings(a1)
+		move.l	#Map_SSMessages,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialMessages+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#1,ost_priority(a1)
@@ -71473,7 +68557,7 @@ loc_35AC4:
 		bne.s	locret_35B58
 		move.b	#id_MessageSpecial,ost_id(a1)
 		move.b	#6,ost_primary_routine(a1)
-		move.l	#Map_35E1E,ost_mappings(a1)
+		move.l	#Map_SSMessages,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialMessages+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#0,ost_priority(a1)
@@ -71554,7 +68638,7 @@ loc_35C1C:
 		jsrto	FindNextFreeObjSpecial,JmpTo_FindNextFreeObjSpecial
 		bne.s	locret_35C60
 		move.b	d0,ost_frame(a1)
-		move.l	#Map_35E1E,ost_mappings(a1)
+		move.l	#Map_SSMessages,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialMessages+tile_pal3,ost_tile(a1)
 		move.b	#id_MessageSpecial,ost_id(a1)
 		move.b	#4,ost_primary_routine(a1)
@@ -71570,7 +68654,7 @@ loc_35C1C:
 locret_35C60:				
 		rts	
 ; ===========================================================================
-off_35C62:	index offset(*),,2
+off_35C62:	index offset(*)
 		ptr byte_35C86					; 0 
 		ptr byte_35C8A					; 2
 		ptr byte_35C90					; 4
@@ -71728,7 +68812,7 @@ byte_35DD6:
 		dc.b   0					; 7
 		;even
 		
-off_35DDE: index offset(*),,2
+off_35DDE: index offset(*)
 		ptr byte_35DF6					; 0 
 		ptr byte_35DF7					; 2
 		ptr byte_35DFA					; 4
@@ -71755,29 +68839,29 @@ byte_35E11:	dc.b $16,$18,$16,$1A,$FF			; 0
 byte_35E16:	dc.b $22, $E,$FF				; 0 
 byte_35E19:	dc.b   2,$24,$26,$1C,$FF			; 0 
 ; ===========================================================================
-Map_35E1E:				
-		dc.w word_35E4A-Map_35E1E			; 0
-		dc.w word_35E54-Map_35E1E			; 1
-		dc.w word_35E5E-Map_35E1E			; 2
-		dc.w word_35E68-Map_35E1E			; 3
-		dc.w word_35E72-Map_35E1E			; 4
-		dc.w word_35E7C-Map_35E1E			; 5
-		dc.w word_35E86-Map_35E1E			; 6
-		dc.w word_35E90-Map_35E1E			; 7
-		dc.w word_35E9A-Map_35E1E			; 8
-		dc.w word_35EA4-Map_35E1E			; 9
-		dc.w word_35EAE-Map_35E1E			; 10
-		dc.w word_35EB8-Map_35E1E			; 11
-		dc.w word_35EC2-Map_35E1E			; 12
-		dc.w word_35ECC-Map_35E1E			; 13
-		dc.w word_35ED6-Map_35E1E			; 14
-		dc.w word_35EE0-Map_35E1E			; 15
-		dc.w word_35EEA-Map_35E1E			; 16
-		dc.w word_35EF4-Map_35E1E			; 17
-		dc.w word_35EFE-Map_35E1E			; 18
-		dc.w word_35F08-Map_35E1E			; 19
-		dc.w word_35F12-Map_35E1E			; 20
-		dc.w word_35F54-Map_35E1E			; 21
+Map_SSMessages:				
+		dc.w word_35E4A-Map_SSMessages			; 0
+		dc.w word_35E54-Map_SSMessages			; 1
+		dc.w word_35E5E-Map_SSMessages			; 2
+		dc.w word_35E68-Map_SSMessages			; 3
+		dc.w word_35E72-Map_SSMessages			; 4
+		dc.w word_35E7C-Map_SSMessages			; 5
+		dc.w word_35E86-Map_SSMessages			; 6
+		dc.w word_35E90-Map_SSMessages			; 7
+		dc.w word_35E9A-Map_SSMessages			; 8
+		dc.w word_35EA4-Map_SSMessages			; 9
+		dc.w word_35EAE-Map_SSMessages			; 10
+		dc.w word_35EB8-Map_SSMessages			; 11
+		dc.w word_35EC2-Map_SSMessages			; 12
+		dc.w word_35ECC-Map_SSMessages			; 13
+		dc.w word_35ED6-Map_SSMessages			; 14
+		dc.w word_35EE0-Map_SSMessages			; 15
+		dc.w word_35EEA-Map_SSMessages			; 16
+		dc.w word_35EF4-Map_SSMessages			; 17
+		dc.w word_35EFE-Map_SSMessages			; 18
+		dc.w word_35F08-Map_SSMessages			; 19
+		dc.w word_35F12-Map_SSMessages			; 20
+		dc.w word_35F54-Map_SSMessages			; 21
 word_35E4A:	dc.w 1			
 		dc.w $F801,$8004,$8002,$FFFC			; 0
 word_35E54:	dc.w 1			
@@ -71878,7 +68962,7 @@ loc_35FEC:
 		move.b	(v_special_stage).w,d0
 		bsr.s	loc_35F76
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_3625A,ost_mappings(a0)
+		move.l	#Map_EmeraldSpec,ost_mappings(a0)
 		move.w	#tile_Nem_SpecialEmerald+tile_pal4,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
@@ -71890,7 +68974,7 @@ loc_36022:
 		bsr.w	loc_360F0
 		bsr.w	loc_3512A
 		bsr.w	loc_3603C
-		lea	(off_36228).l,a1
+		lea	(Ani_EmeraldSpec).l,a1
 		bsr.w	loc_3539E
 		bra.w	JmpTo44_DisplaySprite
 ; ===========================================================================
@@ -72091,7 +69175,7 @@ loc_3621C:
 	
 ; end of unused/dead code	
 ; ===========================================================================
-off_36228:	index offset(*)
+Ani_EmeraldSpec:	index offset(*)
 		ptr byte_3623C					; 0 
 		ptr byte_3623F					; 1
 		ptr byte_36242					; 2
@@ -72114,17 +69198,17 @@ byte_36251:	dc.b  $B,  7,$FF				; 0
 byte_36254:	dc.b  $B,  8,$FF				; 0 
 byte_36257:	dc.b  $B,  9,$FF				; 0 
 ; ===========================================================================
-Map_3625A:				
-		dc.w word_3626E-Map_3625A			; 0
-		dc.w word_36278-Map_3625A			; 1
-		dc.w word_36282-Map_3625A			; 2
-		dc.w word_3628C-Map_3625A			; 3
-		dc.w word_36296-Map_3625A			; 4
-		dc.w word_362A0-Map_3625A			; 5
-		dc.w word_362AA-Map_3625A			; 6
-		dc.w word_362B4-Map_3625A			; 7
-		dc.w word_362BE-Map_3625A			; 8
-		dc.w word_362C8-Map_3625A			; 9
+Map_EmeraldSpec:				
+		dc.w word_3626E-Map_EmeraldSpec			; 0
+		dc.w word_36278-Map_EmeraldSpec			; 1
+		dc.w word_36282-Map_EmeraldSpec			; 2
+		dc.w word_3628C-Map_EmeraldSpec			; 3
+		dc.w word_36296-Map_EmeraldSpec			; 4
+		dc.w word_362A0-Map_EmeraldSpec			; 5
+		dc.w word_362AA-Map_EmeraldSpec			; 6
+		dc.w word_362B4-Map_EmeraldSpec			; 7
+		dc.w word_362BE-Map_EmeraldSpec			; 8
+		dc.w word_362C8-Map_EmeraldSpec			; 9
 word_3626E:	dc.w 1			
 		dc.w $FC00,$8000,$8000,$FFFC			; 0
 word_36278:	dc.w 1			
@@ -72147,7 +69231,7 @@ word_362C8:	dc.w 1
 		dc.w $F40A,$8025,$8012,$FFF4			; 0
 	
 ; ===========================================================================		
-off_362D2:	index offset(*)
+Ani_RingSpecial:	index offset(*)
 		ptr byte_362E8					; 0 
 		ptr byte_362EE					; 1
 		ptr byte_362F4					; 2
@@ -72171,40 +69255,40 @@ byte_36318:	dc.b   5,  8,$12,$1C,$12,$FF			; 0
 byte_3631E:	dc.b   5,  9,$13,$1D,$13,$FF			; 0	
 byte_36324:	dc.b   1,$1E,$1F,$20,$FF,  0			; 0	
 ; ===========================================================================
-Map_3632A:				
-		dc.w word_3636C-Map_3632A			; 0
-		dc.w word_36376-Map_3632A			; 1
-		dc.w word_36380-Map_3632A			; 2
-		dc.w word_3638A-Map_3632A			; 3
-		dc.w word_36394-Map_3632A			; 4
-		dc.w word_3639E-Map_3632A			; 5
-		dc.w word_363A8-Map_3632A			; 6
-		dc.w word_363B2-Map_3632A			; 7
-		dc.w word_363BC-Map_3632A			; 8
-		dc.w word_363C6-Map_3632A			; 9
-		dc.w word_363D0-Map_3632A			; 10
-		dc.w word_363DA-Map_3632A			; 11
-		dc.w word_363E4-Map_3632A			; 12
-		dc.w word_363EE-Map_3632A			; 13
-		dc.w word_363F8-Map_3632A			; 14
-		dc.w word_36402-Map_3632A			; 15
-		dc.w word_3640C-Map_3632A			; 16
-		dc.w word_36416-Map_3632A			; 17
-		dc.w word_36420-Map_3632A			; 18
-		dc.w word_3642A-Map_3632A			; 19
-		dc.w word_36434-Map_3632A			; 20
-		dc.w word_3643E-Map_3632A			; 21
-		dc.w word_36448-Map_3632A			; 22
-		dc.w word_36452-Map_3632A			; 23
-		dc.w word_3645C-Map_3632A			; 24
-		dc.w word_36466-Map_3632A			; 25
-		dc.w word_36470-Map_3632A			; 26
-		dc.w word_3647A-Map_3632A			; 27
-		dc.w word_36484-Map_3632A			; 28
-		dc.w word_3648E-Map_3632A			; 29
-		dc.w word_36498-Map_3632A			; 30
-		dc.w word_364AA-Map_3632A			; 31
-		dc.w word_364BC-Map_3632A			; 32
+Map_RingSpec:				
+		dc.w word_3636C-Map_RingSpec			; 0
+		dc.w word_36376-Map_RingSpec			; 1
+		dc.w word_36380-Map_RingSpec			; 2
+		dc.w word_3638A-Map_RingSpec			; 3
+		dc.w word_36394-Map_RingSpec			; 4
+		dc.w word_3639E-Map_RingSpec			; 5
+		dc.w word_363A8-Map_RingSpec			; 6
+		dc.w word_363B2-Map_RingSpec			; 7
+		dc.w word_363BC-Map_RingSpec			; 8
+		dc.w word_363C6-Map_RingSpec			; 9
+		dc.w word_363D0-Map_RingSpec			; 10
+		dc.w word_363DA-Map_RingSpec			; 11
+		dc.w word_363E4-Map_RingSpec			; 12
+		dc.w word_363EE-Map_RingSpec			; 13
+		dc.w word_363F8-Map_RingSpec			; 14
+		dc.w word_36402-Map_RingSpec			; 15
+		dc.w word_3640C-Map_RingSpec			; 16
+		dc.w word_36416-Map_RingSpec			; 17
+		dc.w word_36420-Map_RingSpec			; 18
+		dc.w word_3642A-Map_RingSpec			; 19
+		dc.w word_36434-Map_RingSpec			; 20
+		dc.w word_3643E-Map_RingSpec			; 21
+		dc.w word_36448-Map_RingSpec			; 22
+		dc.w word_36452-Map_RingSpec			; 23
+		dc.w word_3645C-Map_RingSpec			; 24
+		dc.w word_36466-Map_RingSpec			; 25
+		dc.w word_36470-Map_RingSpec			; 26
+		dc.w word_3647A-Map_RingSpec			; 27
+		dc.w word_36484-Map_RingSpec			; 28
+		dc.w word_3648E-Map_RingSpec			; 29
+		dc.w word_36498-Map_RingSpec			; 30
+		dc.w word_364AA-Map_RingSpec			; 31
+		dc.w word_364BC-Map_RingSpec			; 32
 word_3636C:	dc.w 1			
 		dc.w $FC00,$8000,$8000,$FFFC			; 0
 word_36376:	dc.w 1			
@@ -72276,7 +69360,7 @@ word_364BC:	dc.w 2
 		dc.w $F80A,$801C,$800E,$FFF8			; 4
 		
 ; ===========================================================================		
-off_364CE:	index offset(*)
+Ani_BombSpec:	index offset(*)
 		ptr byte_364E4					; 0 
 		ptr byte_364E7					; 1
 		ptr byte_364EA					; 2
@@ -72301,20 +69385,20 @@ byte_364FC:	dc.b  $B,  8,$FF
 byte_364FF:	dc.b  $B,  9,$FF				; 0 
 byte_36502:	dc.b   2, $A, $B, $C,$FF,  0			; 0	
 ; ===========================================================================
-Map_36508:				
-		dc.w word_36522-Map_36508			; 0
-		dc.w word_3652C-Map_36508			; 1
-		dc.w word_36536-Map_36508			; 2
-		dc.w word_36540-Map_36508			; 3
-		dc.w word_3654A-Map_36508			; 4
-		dc.w word_36554-Map_36508			; 5
-		dc.w word_3655E-Map_36508			; 6
-		dc.w word_36568-Map_36508			; 7
-		dc.w word_36572-Map_36508			; 8
-		dc.w word_3657C-Map_36508			; 9
-		dc.w word_36586-Map_36508			; 10
-		dc.w word_36590-Map_36508			; 11
-		dc.w word_365A2-Map_36508			; 12
+Map_BombSpec:				
+		dc.w word_36522-Map_BombSpec			; 0
+		dc.w word_3652C-Map_BombSpec			; 1
+		dc.w word_36536-Map_BombSpec			; 2
+		dc.w word_36540-Map_BombSpec			; 3
+		dc.w word_3654A-Map_BombSpec			; 4
+		dc.w word_36554-Map_BombSpec			; 5
+		dc.w word_3655E-Map_BombSpec			; 6
+		dc.w word_36568-Map_BombSpec			; 7
+		dc.w word_36572-Map_BombSpec			; 8
+		dc.w word_3657C-Map_BombSpec			; 9
+		dc.w word_36586-Map_BombSpec			; 10
+		dc.w word_36590-Map_BombSpec			; 11
+		dc.w word_365A2-Map_BombSpec			; 12
 word_36522:	dc.w 1			
 		dc.w $FC00,$8000,$8000,$FFFC			; 0
 word_3652C:	dc.w 1			
@@ -72374,7 +69458,7 @@ JmpTo2_FindFreeObjSpecial:
 ; ===========================================================================	
 ; ---------------------------------------------------------------------------
 ; Subroutine to	load OST data for an object from a subtypedata declaration.
-; Requires subtype to be set by the parent object or subroutine.
+; Requires subtype to be set by the parent object.
 ; Only objects 8C and higher use this, strangely enough.
 
 ; input: 
@@ -72385,24 +69469,25 @@ JmpTo2_FindFreeObjSpecial:
 
 LoadSubtypeData:				
 		moveq	#0,d0
-		move.b	ost_subtype(a0),d0
+		move.b	ost_subtype(a0),d0	; get object's subtype
 
 LoadSubtypeData_Part2:				
 		move.w	SubtypeData_Index(pc,d0.w),d0
-		lea	SubtypeData_Index(pc,d0.w),a1
+		lea	SubtypeData_Index(pc,d0.w),a1	; a1 = data for this subtype
 
 LoadSubtypeData_Part3:				
-		move.l	(a1)+,ost_mappings(a0)
-		move.w	(a1)+,ost_tile(a0)
-		jsr	(Adjust2PArtPointer).l
+		move.l	(a1)+,ost_mappings(a0)		; mappings pointer
+		move.w	(a1)+,ost_tile(a0)			; tile base
+		jsr	(Adjust2PArtPointer).l			; adjust for two-player mode if required
 		move.b	(a1)+,d0
-		or.b	d0,ost_render(a0)
-		move.b	(a1)+,ost_priority(a0)
-		move.b	(a1)+,ost_displaywidth(a0)
-		move.b	(a1),ost_col_type(a0)
-		addq.b	#2,ost_primary_routine(a0)
+		or.b	d0,ost_render(a0)			; render setting
+		move.b	(a1)+,ost_priority(a0)		; priority
+		move.b	(a1)+,ost_displaywidth(a0)	; display width
+		move.b	(a1),ost_col_type(a0)		; collision type
+		addq.b	#2,ost_primary_routine(a0)	; advance to object's next routine
 		rts	
 ; ===========================================================================
+
 SubtypeData_Index:	index offset(*)
 		ptr off_36A3E					; 0 
 		ptr off_36CC4					; 1
@@ -72492,43 +69577,54 @@ SubtypeData_Index:	index offset(*)
 		ptr off_3D0C6					; 85
 		ptr off_3D440					; 86
 ; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	determine the closest player to an object, said player's  
+; location relative to the object, and their vertical and horizontal distance 
+; from it
 
+; input: 
+;	a0 = object
+
+; output:
+;	a1 = address of closest player
+;	d0 = 0 if player is left from object, 2 if right
+;	d1 = 0 if player is above object, 2 if below
+;	d2 = closest character's horizontal distance to object
+; 	d3 = closest character's vertical distance to object
+
+;	uses d0.l, d1.l, d2.w, d3.w, d4.w, d5.w, a0, a1, a2
+; ---------------------------------------------------------------------------
+	
 GetClosestPlayer:				
 		moveq	#0,d0
 		moveq	#0,d1
 		lea	(v_ost_player1).w,a1
-		move.w	ost_x_pos(a0),d2
-		sub.w	ost_x_pos(a1),d2
-		move.w	d2,d4
-		bpl.s	loc_366EC
-		neg.w	d4
-
-loc_366EC:				
+		move.w	ost_x_pos(a0),d2	; d2 = x pos of player 1
+		sub.w	ost_x_pos(a1),d2	; subtract x pos of object		
+		mvabs.w d2,d4				; d4 = absolute horizontal distance to player 1
+				
 		lea	(v_ost_player2).w,a2
-		move.w	ost_x_pos(a0),d3
-		sub.w	ost_x_pos(a2),d3
-		move.w	d3,d5
-		bpl.s	loc_366FE
-		neg.w	d5
-
-loc_366FE:				
+		move.w	ost_x_pos(a0),d3	; d3 = x pos of player 2
+		sub.w	ost_x_pos(a2),d3	; subtract x pos of object
+		mvabs.w	d3,d5				; d5 =  absolute horizontal distance to player 2
+			
 		cmp.w	d5,d4
-		bls.s	loc_36706
-		movea.l	a2,a1
+		bls.s	.chk_horiz			; branch if player 1 is closer
+		movea.l	a2,a1				; else, player 2 is closer
 		move.w	d3,d2
 
-loc_36706:				
+	.chk_horiz:				
 		tst.w	d2
-		bpl.s	loc_3670C
-		addq.w	#2,d0
+		bpl.s	.chk_vert			; branch if player is left of object
+		addq.w	#2,d0				; mark player as right of object
 
-loc_3670C:				
-		move.w	ost_y_pos(a0),d3
-		sub.w	ost_y_pos(a1),d3
-		bcc.s	locret_36718
-		addq.w	#2,d1
+	.chk_vert:				
+		move.w	ost_y_pos(a0),d3	; d3 = y pos of object
+		sub.w	ost_y_pos(a1),d3	; subtract player's y pos
+		bcc.s	.done				; branch if player is above object
+		addq.w	#2,d1				; mark player as below object
 
-locret_36718:				
+	.done:				
 		rts	
 ; ===========================================================================
 
@@ -72591,7 +69687,7 @@ ObjMoveStop:
 ;	uses d0.w, d1.w, d2.w, d3.w, a0, a1
 ; ---------------------------------------------------------------------------
 
-AlignChildXY:				
+AlignChild:				
 		move.w	ost_x_pos(a0),d2			; d2 = parent's x pos
 		add.w	d0,d2					; add offset to get child's x-pos
 		move.w	d2,ost_x_pos(a1)			; set child's xpos
@@ -72604,6 +69700,7 @@ AlignChildXY:
 ; ---------------------------------------------------------------------------
 ; Subroutine to adjust an object's position based on the movement of the Tornado
 ; Used by the Tornado and SCZ badniks.
+
 ; input:
 ;	a1 = object
 
@@ -72696,7 +69793,7 @@ LoadChild:
 		
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Unused subroutine to set an object's x-flip state based on its x-position
+; Unused subroutine to set an object's x-flip state based on its x-pos
 ; relative to the nearest player. Perhaps would have been used in conjunction
 ; with object-specific code to make a badnik always face the player?
 
@@ -72960,7 +70057,7 @@ loc_36A26:
 		jmp	(DespawnObject).l
 ; ===========================================================================
 off_36A3E:	
-		dc.l Map_36A4E	
+		dc.l Map_Whisp	
 		dc.w $A500
 		dc.w $404
 		dc.w $C0B
@@ -72970,12 +70067,10 @@ off_36A48:	index offset(*)
 
 byte_36A4A:	
 	dc.b   1,  0,  1,$FF
-; ------------------------------------------------------------------------
-; Unknown sprite mappings
-; ------------------------------------------------------------------------
-Map_36A4E:				
-		dc.w byte_36A52-Map_36A4E			; 0
-		dc.w byte_36A64-Map_36A4E			; 1
+
+Map_Whisp:				
+		dc.w byte_36A52-Map_Whisp			; 0
+		dc.w byte_36A64-Map_Whisp			; 1
 byte_36A52:	
 		dc.b   0,  2,$F8,  8,  0,  0,  0,  0,$FF,$F4,  0,  8,  0,  3,  0,  1 ; 0		
 		dc.b $FF,$F4					; 16
@@ -72987,7 +70082,7 @@ byte_36A64:
 ; Object 8D - Grounder in wall
 ; ----------------------------------------------------------------------------
 GrounderInWall:
-GrounderInWall_Dup:				
+GrounderInWall_Dup:		; that this exists seems to be a bug?	
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
 		move.w	off_36A84(pc,d0.w),d1
@@ -75241,7 +72336,7 @@ byte_37FF8:	dc.b   0,  1,$F8,  9,  0,  0,  0,  0,$FF,$F0	; 0
 byte_38002:	dc.b   0,  1,$F8,  5,  0,  6,  0,  3,$FF,$F8	; 0	
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 9F - Shellcraker 
+; Object 9F - Shellcracker 
 ; ----------------------------------------------------------------------------
 
 Shellcracker:				
@@ -76620,7 +73715,7 @@ loc_38E0C:
 		moveq	#0,d0
 		moveq	#$10,d1
 		movea.w	$3C(a0),a1
-		bsr.w	AlignChildXY
+		bsr.w	AlignChild
 		movea.w	$3E(a0),a1
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		movea.w	$3A(a0),a1
@@ -77582,7 +74677,7 @@ loc_3980E:
 		moveq	#0,d0
 		moveq	#0,d1
 		movea.w	$3E(a0),a1
-		bsr.w	AlignChildXY
+		bsr.w	AlignChild
 		bsr.w	loc_39D4A
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -77656,9 +74751,9 @@ loc_398C0:
 		moveq	#0,d0
 		moveq	#0,d1
 		movea.w	$3E(a0),a1
-		bsr.w	AlignChildXY
+		bsr.w	AlignChild
 		bsr.w	loc_39D4A
-		bsr.w	AlignChildXY
+		bsr.w	AlignChild
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -78119,7 +75214,7 @@ loc_39D4A:
 
 loc_39D58:				
 		movea.w	$3C(a0),a1
-		bra.w	AlignChildXY
+		bra.w	AlignChild
 ; ===========================================================================
 
 loc_39D60:				
@@ -78763,7 +75858,7 @@ Pal_SegaScreen2:
 		dc.b	$FF					; 3	; Hack to force a branch to .palette_done
 		dc.w	v_pal_dry+$10				; 4	; First target palette entry
 
-		incbin "art/palettes/Sega Screen 2.bin"
+		incfile Pal_SegaScreen2_Colors
 
 Pal_SegaScreen3:
 		; some data describing how to use the following palette
@@ -78773,7 +75868,7 @@ Pal_SegaScreen3:
 		dc.b	$FF					; 3	; Hack to force a branch to .palette_done
 		dc.w	v_pal_dry				; 4	; First target palette entry
 		
-		incbin	"art/palettes/Sega Screen 3.bin"
+		incfile Pal_SegaScreen3_Colors
 		
 		
 SonicSegaScreen_SubtypeData:
@@ -78813,7 +75908,7 @@ SegaScreen_VBlank_InitRight:
 		dma_fill	0,sizeof_vram_planetable_128x32,vram_sega_fg
 		lea	SonicSegaScreen_StreakFadeLeft(pc),a1
 		vdp_comm.l	move,(vram_sega_fg+((sizeof_vram_row_128*9)+(2*$50))),vram,write,d0 ; set VDP to VRAM write starting at $C9A0 (line 9, column $50)
-		bra.w	SegaScreen_VBlank_SetFGTable		; pointless
+		bra.w	SegaScreen_VBlank_SetFGTable		; pointless (possibly the result of copying and pasting code)
 
 SegaScreen_VBlank_SetFGTable:				
 		lea	(vdp_data_port).l,a6
@@ -78828,8 +75923,8 @@ SegaScreen_VBlank_SetFGTable:
 
 	.innerloop:				
 		move.w	(a2)+,d4				; get one name table entry
-		bclr	#$A,d4					; test and clear end-of-line flag bit
-		beq.s	.write_entry				; if end-of-line flag was not set, branch
+		bclr	#$A,d4					; test and clear end-of-line flag
+		beq.s	.write_entry				; branch if it wasn't set
 		bsr.w	.write_end_of_line			; fill rest of line with this set of pixels (could be bsr.s)
 
 	.write_entry:				
@@ -82224,7 +79319,7 @@ loc_3C982:
 
 loc_3C992:				
 		bsr.w	loc_3B7BC
-		move.b	#id_BossExplosion,ost_id(a0)
+		move.b	#id_ExplosionBomb,ost_id(a0)
 		clr.b	ost_primary_routine(a0)
 		movea.w	$3C(a0),a1
 		jsrto	DeleteChild,JmpTo6_DeleteChild
@@ -84439,7 +81534,7 @@ loc_3DF36:
 
 loc_3DF4C:				
 		move.b	#6,ost_secondary_routine(a0)
-		move.l	#Map_2D50A,ost_mappings(a0)
+		move.l	#Map_ExplodeBomb,ost_mappings(a0)
 		move.w	#tile_Nem_FieryExplosion,ost_tile(a0)
 		move.b	#1,ost_priority(a0)
 		move.b	#7,ost_anim_time(a0)
@@ -84474,7 +81569,7 @@ loc_3DFAA:
 loc_3DFBA:				
 		jsr	(FindFreeObj).l
 		bne.s	locret_3DFF6
-		_move.b	#id_BossExplosion,ost_id(a1)
+		_move.b	#id_ExplosionBomb,ost_id(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		jsr	(RandomNumber).l
@@ -89343,7 +86438,7 @@ sub_41CEC:
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Offset index of object debug lists
+; Debug mode item lists
 ; ---------------------------------------------------------------------------
 off_41D0C:	index offset(*),,1
 		ptr DbgEHZ_41D40				; 0 			
@@ -89363,6 +86458,16 @@ off_41D0C:	index offset(*),,1
 		ptr DbgDef_41D2E				; 14
 		ptr DbgARZ_42438				; 15
 		ptr DbgSCZ_42522				; 16
+		
+;dbugheader:	macro *
+;\* equ *
+;		dc.w	(sizeof_\*-2)/8
+;		endm			
+;dbug:		macro object,map,subtype,frame,vram
+;		dc.l map+(id_\object<<24)
+;		dc.b subtype,frame
+;		dc.w vram
+;		endm
 		
 DbgDef_41D2E:	dc.w 2			
 		dc.l $25000000+Map_Ring				; 0
@@ -89417,10 +86522,10 @@ DbgEHZ_41D40:	dc.w $13
 		dc.l $41000000+Map_RedSpring
 		dc.w $400A
 		dc.w $43C
-		dc.l $4B000000+Map_2D2EA
+		dc.l $4B000000+Map_Buzz
 		dc.w 0
 		dc.w $3D2
-		dc.l $5C000000+Map_2D442
+		dc.l $5C000000+Map_Mash
 		dc.w 0
 		dc.w $414
 		dc.l $9D000000+Map_37D96
@@ -89442,58 +86547,58 @@ DbgMTZ_41DDA:	dc.w $22
 		dc.l $3000000+Map_PSwitch
 		dc.w $901
 		dc.w $26BC
-		dc.l $42000000+Map_2686C
+		dc.l $42000000+Map_SteamSpring
 		dc.w $107
 		dc.w $6000
-		dc.l $64000000+Map_26A5C
+		dc.l $64000000+Map_Stomp
 		dc.w $100
 		dc.w $2000
-		dc.l $64000000+Map_26A5C
+		dc.l $64000000+Map_Stomp
 		dc.w $1101
 		dc.w $2000
-		dc.l $65000000+Map_26EC8
+		dc.l $65000000+Map_MTZPlats
 		dc.w $8000
 		dc.w $6000
-		dc.l $65000000+Map_26EC8
+		dc.l $65000000+Map_MTZPlats
 		dc.w $1301
 		dc.w $6000
-		dc.l $47000000+Map_24D96
+		dc.l $47000000+Map_But
 		dc.w 2
 		dc.w $424
 		dc.l $2D000000+Map_Barrier
 		dc.w $101
 		dc.w $6000
-		dc.l $66000000+Map_27120
+		dc.l $66000000+Map_SpringWall
 		dc.w $100
 		dc.w $8680
-		dc.l $66000000+Map_27120
+		dc.l $66000000+Map_SpringWall
 		dc.w $1101
 		dc.w $8680
-		dc.l $68000000+Map_27750
+		dc.l $68000000+Map_SpkBlk
 		dc.w 4
 		dc.w $6414
-		dc.l $69000000+Map_27A26
+		dc.l $69000000+Map_Nut
 		dc.w $400
 		dc.w $2500
-		dc.l $6A000000+Map_26EC8
+		dc.l $6A000000+Map_MTZPlats
 		dc.w 1
 		dc.w $6000
-		dc.l $6B000000+Map_26EC8
+		dc.l $6B000000+Map_MTZPlats
 		dc.w $701
 		dc.w $6000
-		dc.l $6D000000+Map_27750
+		dc.l $6D000000+Map_SpkBlk
 		dc.w 0
 		dc.w $241C
-		dc.l $6E000000+Obj6E_MapUnc_2852C
+		dc.l $6E000000+Map_CirclePlat
 		dc.w 0
 		dc.w $6000
-		dc.l $6E000000+Obj6E_MapUnc_2852C
+		dc.l $6E000000+Map_CirclePlat
 		dc.w $1001
 		dc.w $6000
-		dc.l $6E000000+Obj6E_MapUnc_2852C
+		dc.l $6E000000+Map_CirclePlat
 		dc.w $2002
 		dc.w $6000
-		dc.l $70000000+Map_28786
+		dc.l $70000000+Map_CogTeeth
 		dc.w $1000
 		dc.w $E378
 		dc.l $71000000+Map_LavaBubble
@@ -89508,7 +86613,7 @@ DbgMTZ_41DDA:	dc.w $22
 		dc.l $1C000000+Map_BoltEnd_Rope
 		dc.w $302
 		dc.w $23FD
-		dc.l $65000000+Map_26EC8
+		dc.l $65000000+Map_MTZPlats
 		dc.w $B000
 		dc.w $6000
 		dc.l $9F000000+Map_38314
@@ -89623,7 +86728,7 @@ DbgWFZ_41EEC:	dc.w $20
 		dc.l $D9000000+Map_Ring
 		dc.w 0
 		dc.w $26BC
-		dc.l $80000000+Map_29DD0
+		dc.l $80000000+Map_Hook
 		dc.w 0
 		dc.w $23FE
 		dc.l $3E000000+Map_3F436
@@ -89663,10 +86768,10 @@ DbgHTZ_41FEE:	dc.w $1F
 		dc.l $2D000000+Map_Barrier
 		dc.w 0
 		dc.w $2426
-		dc.l $2F000000+Map_236FA
+		dc.l $2F000000+Map_SmashGround
 		dc.w 0
 		dc.w $C000
-		dc.l $20000000+Map_23254
+		dc.l $20000000+Map_Fireball2
 		dc.w $4402
 		dc.w $8416
 		dc.l $41000000+Map_RedSpring
@@ -89699,7 +86804,7 @@ DbgHTZ_41FEE:	dc.w $1F
 		dc.l $1C000000+Map_TramStake
 		dc.w $801
 		dc.w $4000
-		dc.l $32000000+Map_23852
+		dc.l $32000000+Map_BreakRock
 		dc.w 0
 		dc.w $43B2
 		dc.l $31000000+Map_LTag
@@ -89733,58 +86838,58 @@ DbgOOZ_420E8:	dc.w $21
 		dc.l $79000000+Map_Starpost
 		dc.w $100
 		dc.w $47C
-		dc.l $33000000+Map_23DDC
+		dc.l $33000000+Map_BurnPlat
 		dc.w $100
 		dc.w $632C
-		dc.l $43000000+Map_23FE0
+		dc.l $43000000+Map_RailSpikes
 		dc.w 0
 		dc.w $C30C
 		dc.l $19000000+Map_Plat2
 		dc.w $2302
 		dc.w $62F4
-		dc.l $45000000+Map_2451A
+		dc.l $45000000+Map_PSpring
 		dc.w $200
 		dc.w $43C5
-		dc.l $45000000+Map_2451A
+		dc.l $45000000+Map_PSpring
 		dc.w $120A
 		dc.w $43C5
-		dc.l $46000000+Map_24C52
+		dc.l $46000000+Map_OOZBetaBall
 		dc.w 1
 		dc.w $6354
-		dc.l $47000000+Map_24D96
+		dc.l $47000000+Map_But
 		dc.w 2
 		dc.w $424
 		dc.l $15000000+Map_Swing_OOZ
 		dc.w $8801
 		dc.w $43E3
-		dc.l $3D000000+Map_250BA
+		dc.l $3D000000+Map_LBlock
 		dc.w 0
 		dc.w $6332
-		dc.l $48000000+Map_254FE
+		dc.l $48000000+Map_TransBall
 		dc.w $8000
 		dc.w $6368
-		dc.l $48000000+Map_254FE
+		dc.l $48000000+Map_TransBall
 		dc.w $8101
 		dc.w $6368
-		dc.l $48000000+Map_254FE
+		dc.l $48000000+Map_TransBall
 		dc.w $8202
 		dc.w $6368
-		dc.l $48000000+Map_254FE
+		dc.l $48000000+Map_TransBall
 		dc.w $8303
 		dc.w $6368
 		dc.l $1F000000+Map_CFlo_OOZ
 		dc.w 0
 		dc.w $639D
-		dc.l $3F000000+Map_2AA12
+		dc.l $3F000000+Map_HorizFan
 		dc.w 0
 		dc.w $6403
-		dc.l $3F000000+Map_2AAC4
+		dc.l $3F000000+Map_VertFan
 		dc.w $8000
 		dc.w $6403
-		dc.l $50000000+Map_2CF94
+		dc.l $50000000+Map_Aquis
 		dc.w 0
 		dc.w $2500
-		dc.l $4A000000+Map_2CBFE
+		dc.l $4A000000+Map_Octus
 		dc.w 0
 		dc.w $2538
 		dc.l $1C000000+Map_NarrowFallingOil
@@ -89839,10 +86944,10 @@ DbgMCZ_421F2:	dc.w $18
 		dc.l $1F000000+Map_CFlo_MCZ
 		dc.w 0
 		dc.w $63F4
-		dc.l $73000000+Map_28B9C
+		dc.l $73000000+Map_MCZRotRings
 		dc.w $F500
 		dc.w $26BC
-		dc.l $6A000000+Map_27D30
+		dc.l $6A000000+Map_Crate
 		dc.w $1800
 		dc.w $63D4
 		dc.l $2A000000+Map_Stomper
@@ -89860,28 +86965,28 @@ DbgMCZ_421F2:	dc.w $18
 		dc.l $41000000+Map_RedSpring
 		dc.w $9003
 		dc.w $470
-		dc.l $40000000+Map_265F4
+		dc.l $40000000+Map_SprngBrd
 		dc.w $100
 		dc.w $440
 		dc.l $74000000+Map_Invis
 		dc.w $1100
 		dc.w $8680
-		dc.l $75000000+Map_28D8A
+		dc.l $75000000+Map_BrckSpkChn
 		dc.w $1802
 		dc.w $2000
-		dc.l $76000000+Map_28F3A
+		dc.l $76000000+Map_SlidSpks
 		dc.w 0
 		dc.w 0
-		dc.l $77000000+Map_29064
+		dc.l $77000000+Map_DBridge
 		dc.w $100
 		dc.w $643C
-		dc.l $7F000000+Map_29938
+		dc.l $7F000000+Map_VineSwitch
 		dc.w 0
 		dc.w $640E
-		dc.l $80000000+Map_29C64
+		dc.l $80000000+Map_VinePulley
 		dc.w 0
 		dc.w $641E
-		dc.l $81000000+Map_2A24E
+		dc.l $81000000+Map_SBridge
 		dc.w 1
 		dc.w $643C
 		dc.l $7A000000+Map_Swing_Track_CPZ_MCZ
@@ -89921,19 +87026,19 @@ DbgCNZ_422B4:	dc.w $18
 		dc.l $44000000+Map_RoundBump
 		dc.w 0
 		dc.w $439A
-		dc.l $85000000+Map_2B07E
+		dc.l $85000000+Map_VertLauncher
 		dc.w 0
 		dc.w $422
-		dc.l $85000000+Map_2B0EC
+		dc.l $85000000+Map_DiagLauncher
 		dc.w $8100
 		dc.w $402
-		dc.l $86000000+Map_2B45A
+		dc.l $86000000+Map_Flip
 		dc.w 0
 		dc.w $43B2
-		dc.l $86000000+Map_2B45A
+		dc.l $86000000+Map_Flip
 		dc.w $104
 		dc.w $43B2
-		dc.l $D2000000+Map_2B694
+		dc.l $D2000000+Map_Snake
 		dc.w $100
 		dc.w $437C
 		dc.l $D3000000+Map_BombPenalty
@@ -89951,16 +87056,16 @@ DbgCNZ_422B4:	dc.w $18
 		dc.l $D6000000+Map_Cage
 		dc.w $100
 		dc.w $388
-		dc.l $D7000000+Map_2C626
+		dc.l $D7000000+Map_HexBump
 		dc.w 0
 		dc.w $4394
-		dc.l $D8000000+Map_2C8C4
+		dc.l $D8000000+Map_SauceBump
 		dc.w 0
 		dc.w $43E6
-		dc.l $D8000000+Map_2C8C4
+		dc.l $D8000000+Map_SauceBump
 		dc.w $4001
 		dc.w $43E6
-		dc.l $D8000000+Map_2C8C4
+		dc.l $D8000000+Map_SauceBump
 		dc.w $8002
 		dc.w $43E6
 		dc.l $C8000000+Map_3D450
@@ -89994,19 +87099,19 @@ DbgCPZ_42376:	dc.w $18
 		dc.l $2D000000+Map_Barrier
 		dc.w $202
 		dc.w $2394
-		dc.l $32000000+Map_23886
+		dc.l $32000000+Map_SpinTubeBlock
 		dc.w 0
 		dc.w $6430
-		dc.l $6B000000+Map_2800E
+		dc.l $6B000000+Map_StairBlock
 		dc.w $1000
 		dc.w $6418
-		dc.l $78000000+Map_2800E
+		dc.l $78000000+Map_StairBlock
 		dc.w 0
 		dc.w $6418
-		dc.l $7A000000+Map_29564
+		dc.l $7A000000+Map_TrackPlat
 		dc.w 0
 		dc.w $E418
-		dc.l $7B000000+Map_29780
+		dc.l $7B000000+Map_TubeLid
 		dc.w $200
 		dc.w $3E0
 		dc.l $3000000+Map_PSwitch
@@ -90027,7 +87132,7 @@ DbgCPZ_42376:	dc.w $18
 		dc.l $41000000+Map_RedSpring
 		dc.w $A006
 		dc.w $45C
-		dc.l $40000000+Map_265F4
+		dc.l $40000000+Map_SprngBrd
 		dc.w $100
 		dc.w $440
 		dc.l $A5000000+Map_38CCA
@@ -90052,7 +87157,7 @@ DbgARZ_42438:	dc.w $1D
 		dc.l $79000000+Map_Starpost
 		dc.w $100
 		dc.w $47C
-		dc.l $15000000+Map_Swing_Circle_ARZ
+		dc.l $15000000+Map_ARZPlats
 		dc.w $8802
 		dc.w 0
 		dc.l $18000000+Map_Plat_ARZ
@@ -90061,13 +87166,13 @@ DbgARZ_42438:	dc.w $1D
 		dc.l $18000000+Map_Plat_ARZ
 		dc.w $9A01
 		dc.w $4000
-		dc.l $22000000+Map_25804
+		dc.l $22000000+Map_ArrowShoot
 		dc.w 1
 		dc.w $417
-		dc.l $23000000+Map_259E6
+		dc.l $23000000+Map_FallPillar
 		dc.w 0
 		dc.w $2000
-		dc.l $2B000000+Map_25C6E
+		dc.l $2B000000+Map_RisePillar
 		dc.w 0
 		dc.w $2000
 		dc.l $2C000000+Map_LTag
@@ -90079,7 +87184,7 @@ DbgARZ_42438:	dc.w $1D
 		dc.l $2C000000+Map_LTag
 		dc.w $202
 		dc.w $8680
-		dc.l $40000000+Map_265F4
+		dc.l $40000000+Map_SprngBrd
 		dc.w $100
 		dc.w $440
 		dc.l $41000000+Map_RedSpring
@@ -90103,13 +87208,13 @@ DbgARZ_42438:	dc.w $1D
 		dc.l $1F000000+Map_CFlo_ARZ
 		dc.w 0
 		dc.w $4000
-		dc.l $82000000+Map_2A476
+		dc.l $82000000+Map_PillPlat
 		dc.w $300
 		dc.w 0
-		dc.l $82000000+Map_2A476
+		dc.l $82000000+Map_PillPlat
 		dc.w $1101
 		dc.w 0
-		dc.l $83000000+Map_Swing_Circle_ARZ
+		dc.l $83000000+Map_ARZPlats
 		dc.w $1001
 		dc.w 0
 		dc.l $24000000+Map_Bub_Main
@@ -90118,7 +87223,7 @@ DbgARZ_42438:	dc.w $1D
 		dc.l $91000000+Map_36EF6
 		dc.w $800
 		dc.w $253B
-		dc.l $8C000000+Map_36A4E
+		dc.l $8C000000+Map_Whisp
 		dc.w 0
 		dc.w $A500
 		dc.l $8D000000+Map_36CF0
@@ -90214,7 +87319,7 @@ lhead:	macro plc1,plc2,palette,art,map16x16,map128x128
 		
 ; LevelArtPointers:		
 LevelHeaders:	
-	
+
 		lhead id_PLC_EHZ1,		id_PLC_EHZ2,		id_Pal_EHZ,		Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   0 ; Emerald Hill
 		lhead id_PLC_Miles1Up,	id_PLC_MilesLife,	id_Pal_EHZ2,	Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   1 ; Level 1; unused	
 		lhead id_PLC_Tails1Up,	id_PLC_TailsLife,	id_Pal_WZ,		Kos_EHZ,	BM16_EHZ,	BM128_EHZ ;   2 ; Level 2; unused
@@ -90442,9 +87547,9 @@ PLC_TailsLife:	plcheader
 ; Pattern load cues - Metropolis Primary
 ;---------------------------------------------------------------------------------------
 PLC_MTZ1:		plcheader	
-		plcm	Nem_Wheel,vram_Wheel
+		plcm	Nem_GiantCog,vram_GiantCog
 		plcm	Nem_WheelIndent,vram_WheelIndent	
-		plcm	Nem_LavaCup,vram_LavaCup	
+		plcm	Nem_RopePlat,vram_RopePlat	
 		plcm	Nem_BoltEnd_Rope,vram_BoltEnd_Rope		
 		plcm	Nem_SteamSpring,vram_SteamSpring	
 		plcm	Nem_SpikeBlock,vram_SpikeBlock
@@ -90461,10 +87566,10 @@ PLC_MTZ2:		plcheader
 		plcm	Nem_Slicer,vram_Slicer
 		plcm	 Nem_VrtclSprng,vram_VrtclSprng
 		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
-		plcm	Nem_MTZAsstBlocks,vram_MTZAsstBlocks
+		plcm	Nem_Nut,vram_Nut
 		plcm	Nem_LavaBubble,vram_LavaBubble
 		plcm	Nem_Cog,vram_Cog
-		plcm	Nem_SpinTubeFlash,vram_SpinTubeFlash
+		plcm	Nem_TeleportFlash,vram_TeleportFlash
 	PLC_MTZ2_end:	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Wing Fortress Primary
@@ -90617,7 +87722,7 @@ PLC_CPZ1:	plcheader
 		plcm	Nem_Booster,vram_Booster
 		plcm	Nem_CPZElevator,vram_CPZElevator
 		plcm	Nem_CPZDumpingPipePlat,vram_CPZDumpingPipePlat
-		plcm	Nem_CPZTubeSpring,vram_CPZTubeSpring
+		plcm	Nem_TubeLid,vram_TubeLid
 		plcm 	Nem_WaterSurface1,vram_WaterSurface
 		plcm	Nem_StairBlock,vram_StairBlock
 		plcm	Nem_CPZMetalBlock,vram_CPZMetalBlock
@@ -90711,7 +87816,7 @@ PLC_CPZBoss:	plcheader
 		plcm	Nem_Eggpod,vram_CPZEggpod,CPZ
 		plcm	Nem_CPZBoss,vram_CPZBoss
 		plcm	Nem_EggpodJets,vram_CPZEggpodJets,CPZ
-		plcm	Nem_BossSmoke,vram_CPZBossSmoke,CPZ	; unused due to a pair of bugs in loc_2E9B6
+		plcm	Nem_BossSmoke,vram_CPZBossSmoke,CPZ	; unused due to a bug in loc_2E9B6; see there for a fix
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
 	PLC_CPZBoss_end:	
 ;---------------------------------------------------------------------------------------
@@ -90926,7 +88031,7 @@ PLC_ResultsTails:	plcheader
 		; second half of PLC_ResultsTails
 		plcm 	Nem_MiniTails,vram_MiniCharacter
 		plcm	Nem_Perfect,vram_Perfect
-	PLC_ResultsTails_DUP_end:
+	PLC_ResultsTails_dup_end:
 
 	elseif Revision=2
 		; half of PLC_ARZ2 and everything from there to the end of the PLC lists!
@@ -91448,7 +88553,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_ConstructionStripes			; ArtNem_827F8:
 		incfile	Nem_CPZDumpingPipePlat			; ArtNem_82864: ; ArtNem_CPZAnimatedBits
 		incfile	Nem_StairBlock				; ArtNem_82A46:
-		incfile	Nem_CPZTubeSpring			; ArtNem_82C06:
+		incfile	Nem_TubeLid			; ArtNem_82C06:
 		
 		incfile	Nem_WaterSurface2			; ArtNem_82E02:
 		incfile	Nem_Leaves				; ArtNem_82EE8:
@@ -91587,7 +88692,7 @@ BM128_HPZ:
 		incfile	Kos_CPZ
 		incfile	BM128_CPZ
 		
-		incfile	BM16_ARZ				; See warning in File Definitions.asm
+		incfile	BM16_ARZ			; See warning in File Definitions.asm
 		incfile	Kos_ARZ
 		incfile	BM128_ARZ
 
@@ -91622,10 +88727,10 @@ MapSpec_Rise17:		incbin	"mappings/special stage/Slope Up 17.bin"
 
 
 ; Straight path
-MapSpec_Straight1:		incbin	"mappings/special stage/Straight Path 1.bin"
-MapSpec_Straight2:		incbin	"mappings/special stage/Straight Path 2.bin"
-MapSpec_Straight3:		incbin	"mappings/special stage/Straight Path 3.bin"
-MapSpec_Straight4:		incbin	"mappings/special stage/Straight Path 4.bin"
+MapSpec_Straight1:	incbin	"mappings/special stage/Straight Path 1.bin"
+MapSpec_Straight2:	incbin	"mappings/special stage/Straight Path 2.bin"
+MapSpec_Straight3:	incbin	"mappings/special stage/Straight Path 3.bin"
+MapSpec_Straight4:	incbin	"mappings/special stage/Straight Path 4.bin"
 
 
 ; Exit curve & slope down
@@ -91649,20 +88754,20 @@ MapSpec_Drop17:		incbin	"mappings/special stage/Slope Down 17.bin"
 
 
 ; Curve
-MapSpec_Turning1:		incbin	"mappings/special stage/Curve 1.bin"
-MapSpec_Turning2:		incbin	"mappings/special stage/Curve 2.bin"
-MapSpec_Turning3:		incbin	"mappings/special stage/Curve 3.bin"
-MapSpec_Turning4:		incbin	"mappings/special stage/Curve 4.bin"
-MapSpec_Turning5:		incbin	"mappings/special stage/Curve 5.bin"
-MapSpec_Turning6:		incbin	"mappings/special stage/Curve 6.bin"
+MapSpec_Turning1:	incbin	"mappings/special stage/Curve 1.bin"
+MapSpec_Turning2:	incbin	"mappings/special stage/Curve 2.bin"
+MapSpec_Turning3:	incbin	"mappings/special stage/Curve 3.bin"
+MapSpec_Turning4:	incbin	"mappings/special stage/Curve 4.bin"
+MapSpec_Turning5:	incbin	"mappings/special stage/Curve 5.bin"
+MapSpec_Turning6:	incbin	"mappings/special stage/Curve 6.bin"
 
 
 ; Exit curve
-MapSpec_Unturn1:		incbin "mappings/special stage/Exit Curve 1.bin"
-MapSpec_Unturn2:		incbin "mappings/special stage/Exit Curve 2.bin"
-MapSpec_Unturn3:		incbin "mappings/special stage/Exit Curve 3.bin"
-MapSpec_Unturn4:		incbin "mappings/special stage/Exit Curve 4.bin"
-MapSpec_Unturn5:		incbin "mappings/special stage/Exit Curve 5.bin"
+MapSpec_Unturn1:	incbin "mappings/special stage/Exit Curve 1.bin"
+MapSpec_Unturn2:	incbin "mappings/special stage/Exit Curve 2.bin"
+MapSpec_Unturn3:	incbin "mappings/special stage/Exit Curve 3.bin"
+MapSpec_Unturn4:	incbin "mappings/special stage/Exit Curve 4.bin"
+MapSpec_Unturn5:	incbin "mappings/special stage/Exit Curve 5.bin"
 
 
 ; Begin curve right
@@ -92091,17 +89196,17 @@ MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		incfile	Nem_UnusedFireball
 		incfile	Nem_HTZRock
 		incfile	Nem_Sol					; ArtNem_HtzSol:
-		incfile	Nem_Wheel
+		incfile	Nem_GiantCog
 		incfile	Nem_WheelIndent
 		incfile	Nem_SpikeBlock
 		incfile	Nem_SteamSpring
 		incfile	Nem_MTZSpike
-		incfile	Nem_MTZAsstBlocks
+		incfile	Nem_Nut
 		incfile	Nem_LavaBubble
-		incfile	Nem_LavaCup
+		incfile	Nem_RopePlat
 		incfile	Nem_BoltEnd_Rope
 		incfile	Nem_Cog
-		incfile	Nem_SpinTubeFlash
+		incfile	Nem_TeleportFlash
 		incfile	Nem_Crate
 		incfile	Nem_MCZCollapsingPlat			; ArtNem_F1ABA:
 		incfile	Nem_VineSwitch				; ArtNem_F1C64:

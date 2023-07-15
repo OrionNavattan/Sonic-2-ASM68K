@@ -38,12 +38,12 @@ ObjPos_MTZ_3:
 		objpos $0690,$04C0,Asteron,$2E,rem
 		objpos $06C0,$0340,LargeRotatingPlatform,$00,xflip
 		objpos $06C0,$0340,LargeRotatingPlatform,$31
-		objpos $06D8,$01F0,SpinTubeMetropolis,$07
+		objpos $06D8,$01F0,Teleporter,$07
 		objpos $0710,$04A0,Asteron,$2E,rem
 		objpos $0738,$05B0,Slicer,$28,yflip,rem
 		objpos $0770,$03B8,Springs,$02
 		objpos $0770,$04A0,Asteron,$2E,rem
-		objpos $07D8,$0330,SpinTubeMetropolis,$08
+		objpos $07D8,$0330,Teleporter,$08
 		objpos $0800,$0680,Cog,$00
 		objpos $0840,$04FC,LavaTag,$01
 		objpos $08A0,$0794,Platform4,$07
@@ -56,7 +56,7 @@ ObjPos_MTZ_3:
 		objpos $0A80,$0200,Cog,$00,xflip
 		objpos $0A80,$0650,Spikes,$30,yflip
 		objpos $0A98,$0258,Spikes,$40
-		objpos $0AA0,$076C,LongPlatform,$13
+		objpos $0AA0,$076C,Platform5,$13
 		objpos $0AC0,$06C0,LargeRotatingPlatform,$00
 		objpos $0AC0,$06C0,LargeRotatingPlatform,$31
 		objpos $0AF0,$0031,Monitor,$04,rem
@@ -64,7 +64,7 @@ ObjPos_MTZ_3:
 		objpos $0B08,$07C0,SpringWall,$01,xflip
 		objpos $0B0C,$0520,Barrier,$01,xflip
 		objpos $0B10,$0570,Asteron,$2E,rem
-		objpos $0B20,$076C,LongPlatform,$13,xflip
+		objpos $0B20,$076C,Platform5,$13,xflip
 		objpos $0B80,$06B4,LargeRotatingPlatform,$20
 		objpos $0B90,$0471,Monitor,$04,rem
 		objpos $0B90,$0570,Asteron,$2E,rem
@@ -90,9 +90,9 @@ ObjPos_MTZ_3:
 		objpos $0E18,$0788,Asteron,$2E,rem
 		objpos $0EA0,$0174,Platform4,$04
 		objpos $0EC0,$0090,Spikes,$30,yflip
-		objpos $0F60,$0424,LongPlatform,$13,xflip
+		objpos $0F60,$0424,Platform5,$13,xflip
 		objpos $0F60,$060C,Platform4,$07
-		objpos $0FD8,$03B0,SpinTubeMetropolis,$09
+		objpos $0FD8,$03B0,Teleporter,$09
 		objpos $0FF4,$06C0,Barrier,$01
 		objpos $10A0,$0664,Asteron,$2E,rem
 		objpos $10E0,$0664,Asteron,$2E,rem
@@ -143,7 +143,7 @@ ObjPos_MTZ_3:
 		objpos $1460,$04E8,Starpost,$02,rem
 		objpos $1480,$022C,LavaTag,$02
 		objpos $1480,$06F0,Spikes,$10
-		objpos $14A0,$03CC,LongPlatform,$13
+		objpos $14A0,$03CC,Platform5,$13
 		objpos $14B0,$04F8,Springs,$00
 		objpos $14C0,$0190,ConveyerBelt,$09
 		objpos $14C0,$05AC,Invisibarrier,$71
@@ -152,13 +152,13 @@ ObjPos_MTZ_3:
 		objpos $1540,$066C,Platform4,$04
 		objpos $15E0,$05F4,Shellcracker,$24,rem
 		objpos $1610,$0438,Springs,$02
-		objpos $1620,$00CC,LongPlatform,$13
-		objpos $1620,$036C,LongPlatform,$13
+		objpos $1620,$00CC,Platform5,$13
+		objpos $1620,$036C,Platform5,$13
 		objpos $1630,$0170,SteamSpring,$01
 		objpos $1630,$05F0,SteamSpring,$01
 		objpos $1640,$04D0,Spikes,$30,yflip
-		objpos $16A0,$00CC,LongPlatform,$13,xflip
-		objpos $16A0,$036C,LongPlatform,$13,xflip
+		objpos $16A0,$00CC,Platform5,$13,xflip
+		objpos $16A0,$036C,Platform5,$13,xflip
 		objpos $16C0,$0448,Starpost,$03,rem
 		objpos $16F8,$0020,SpringWall,$01
 		objpos $16F8,$07C0,SpringWall,$01
@@ -182,44 +182,44 @@ ObjPos_MTZ_3:
 		objpos $1990,$0610,SpikeBlock,$03
 		objpos $19A0,$06B0,SpikeBlock,$00
 		objpos $19B0,$0758,Scenery2,$22
-		objpos $19C0,$03CC,LongPlatform,$85
-		objpos $19C0,$04C8,LongPlatform,$04,rem
-		objpos $19C4,$04DC,LongPlatform,$20
+		objpos $19C0,$03CC,Platform5,$85
+		objpos $19C0,$04C8,Platform5,$04,rem
+		objpos $19C4,$04DC,Platform5,$20
 		objpos $19F0,$0730,SpikeBlock,$00
 		objpos $1A00,$0180,Cog,$00
 		objpos $1A00,$077C,LavaTag,$02
-		objpos $1A04,$04DC,LongPlatform,$20
+		objpos $1A04,$04DC,Platform5,$20
 		objpos $1A10,$06D0,SpikeBlock,$02
 		objpos $1A1C,$03BC,Button,$05
 		objpos $1A40,$0758,Scenery2,$22
-		objpos $1A44,$04DC,LongPlatform,$20
+		objpos $1A44,$04DC,Platform5,$20
 		objpos $1A70,$0710,SpikeBlock,$03
-		objpos $1A84,$04DC,LongPlatform,$20
+		objpos $1A84,$04DC,Platform5,$20
 		objpos $1AC0,$0758,Scenery2,$22
 		objpos $1AC0,$077C,LavaTag,$01
-		objpos $1AC4,$04DC,LongPlatform,$20
+		objpos $1AC4,$04DC,Platform5,$20
 		objpos $1AF0,$06F0,SpikeBlock,$02
-		objpos $1B04,$04DC,LongPlatform,$20
+		objpos $1B04,$04DC,Platform5,$20
 		objpos $1B10,$03E0,Asteron,$2E,rem
 		objpos $1B10,$0448,Asteron,$2E,rem
 		objpos $1B40,$06A8,Starpost,$04,rem
-		objpos $1B44,$04DC,LongPlatform,$20
-		objpos $1B84,$04DC,LongPlatform,$20
+		objpos $1B44,$04DC,Platform5,$20
+		objpos $1B84,$04DC,Platform5,$20
 		objpos $1B90,$01F0,Asteron,$2E,rem
 		objpos $1B90,$03C0,Asteron,$2E,rem
 		objpos $1BB0,$0448,Asteron,$2E,rem
-		objpos $1BC4,$04DC,LongPlatform,$20
-		objpos $1C04,$04DC,LongPlatform,$20
+		objpos $1BC4,$04DC,Platform5,$20
+		objpos $1C04,$04DC,Platform5,$20
 		objpos $1C10,$0210,Asteron,$2E,rem
 		objpos $1C20,$03A0,Asteron,$2E,rem
 		objpos $1C40,$0170,Slicer,$28,yflip,rem
-		objpos $1C44,$04DC,LongPlatform,$20
-		objpos $1C84,$04DC,LongPlatform,$20
+		objpos $1C44,$04DC,Platform5,$20
+		objpos $1C84,$04DC,Platform5,$20
 		objpos $1C90,$0380,Asteron,$2E,rem
-		objpos $1CC4,$04DC,LongPlatform,$20
+		objpos $1CC4,$04DC,Platform5,$20
 		objpos $1CF0,$0240,Asteron,$2E,rem
 		objpos $1D10,$0360,Asteron,$2E,rem
-		objpos $1D20,$056D,LongPlatform,$13
+		objpos $1D20,$056D,Platform5,$13
 		objpos $1D58,$01B0,Slicer,$28,yflip,rem
 		objpos $1D90,$0340,Asteron,$2E,rem
 		objpos $1DEC,$0230,Slicer,$28,rem
@@ -234,10 +234,10 @@ ObjPos_MTZ_3:
 		objpos $1F70,$0571,Monitor,$04,rem
 		objpos $1F80,$05FC,LavaTag,$02
 		objpos $2000,$0434,Shellcracker,$24,rem
-		objpos $2058,$0430,SpinTubeMetropolis,$0B
+		objpos $2058,$0430,Teleporter,$0B
 		objpos $2080,$05FC,LavaTag,$02
 		objpos $22C0,$0270,Slicer,$28,yflip,rem
-		objpos $2328,$05B0,SpinTubeMetropolis,$0C,xflip
+		objpos $2328,$05B0,Teleporter,$0C,xflip
 		objpos $2360,$0660,Asteron,$2E,rem
 		objpos $2380,$02F0,Slicer,$28,rem
 		objpos $23A0,$05B0,Slicer,$28,xflip,rem
@@ -256,20 +256,20 @@ ObjPos_MTZ_3:
 		objpos $24A0,$06D0,Asteron,$2E,rem
 		objpos $24A0,$0750,Asteron,$2E,rem
 		objpos $25C0,$04A8,Starpost,$06,rem
-		objpos $260C,$04E0,LongPlatform,$20
-		objpos $2640,$04CC,LongPlatform,$04,rem
-		objpos $264C,$04E0,LongPlatform,$20
-		objpos $268C,$04E0,LongPlatform,$20
-		objpos $26CC,$04E0,LongPlatform,$20
-		objpos $270C,$04E0,LongPlatform,$20
-		objpos $274C,$04E0,LongPlatform,$20
-		objpos $278C,$04E0,LongPlatform,$20
-		objpos $27CC,$04E0,LongPlatform,$20
-		objpos $280C,$04E0,LongPlatform,$20
-		objpos $284C,$04E0,LongPlatform,$20
-		objpos $288C,$04E0,LongPlatform,$20
-		objpos $28CC,$04E0,LongPlatform,$20
-		objpos $290C,$04E0,LongPlatform,$20
-		objpos $294C,$04E0,LongPlatform,$20
+		objpos $260C,$04E0,Platform5,$20
+		objpos $2640,$04CC,Platform5,$04,rem
+		objpos $264C,$04E0,Platform5,$20
+		objpos $268C,$04E0,Platform5,$20
+		objpos $26CC,$04E0,Platform5,$20
+		objpos $270C,$04E0,Platform5,$20
+		objpos $274C,$04E0,Platform5,$20
+		objpos $278C,$04E0,Platform5,$20
+		objpos $27CC,$04E0,Platform5,$20
+		objpos $280C,$04E0,Platform5,$20
+		objpos $284C,$04E0,Platform5,$20
+		objpos $288C,$04E0,Platform5,$20
+		objpos $28CC,$04E0,Platform5,$20
+		objpos $290C,$04E0,Platform5,$20
+		objpos $294C,$04E0,Platform5,$20
 		objpos $2C90,$04A0,Prison,$00,rem
 		endobj

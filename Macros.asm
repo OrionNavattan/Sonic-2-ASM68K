@@ -251,7 +251,6 @@ jmpto:		 macro directaddr,indirectaddr
 		endc
   		endm
 
-
 ; ---------------------------------------------------------------------------
 ; Convert to absolute value (i.e., always positive)
 
@@ -282,9 +281,10 @@ absw:	macro dest						; word branch by default, can be optimized to short
    		endc
 		endm
 	
+	
 mvabs:	macro src,dest						; move absolute value from source to destination
 		move.\0	\src,\dest				; move from source to destination
-		bpl.s	.already_pos\@				; branch is already positive
+		bpl.s	.already_pos\@				; branch if already positive
 		nxg.\0	\dest					; make value positive
 	
 		.already_pos\@:
@@ -299,7 +299,6 @@ mvabs:	macro src,dest						; move absolute value from source to destination
 moveq_:		macros
  		moveq	#(\1\+-((-(\1\&(1<<(8-1))))&(1<<(8-1))))!-((-(\1\&(1<<(8-1))))&(1<<(8-1))),\2
     
-
 ; ---------------------------------------------------------------------------
 ; Align the start of RAM sections, and mark the ends for the clear_ram macro.
 ; As the clear_ram macro can handle sections divisible by bytes and words,
@@ -957,8 +956,7 @@ startbank: macro *
 		endc		
 		align	sizeof_z80_bank				; align to 32KB boundary
 		sound_bank_start: = offset(*)			; start address of sound bank
-		
-		
+			
 		
 		; Unfortunately, because the bnkswtch_vals macro requires a label
 		; on the same line, we can't invoke it here; we have no choice but

@@ -3,7 +3,7 @@
   <Images>
     <ImageFromMappings id="vineswitch">
       <ArtFile filename="../art/nemesis/MCZ Vine Pulley.nem"/>
-      <MapFile type="ASM" filename="../mappings/sprite/obj80_a.asm" frame="0" startpal="3"/>
+      <MapFile type="ASM" filename="../mappings/sprite/MCZ Pulley Vines.asm" frame="0" startpal="3"/>
     </ImageFromMappings>
   </Images>
   <Properties>

@@ -26,9 +26,9 @@
 
 
 ; ---------------------------------------------------------------------------
-; Macro to perform a bank switch; after using this,
-; the start of z_rom_window points to the start of the given 68k address,
-; rounded down to the nearest $8000 byte boundary.
+; Perform a bank switch; after using this, the start of z_rom_window points 
+; to the start of the given 68k address, rounded down to the nearest $8000 
+; byte boundary.
 
 ; The version of this macro in the AS disassembly generates ld (hl),a or ld (hl),e
 ; instructions based on the address given as input to the macro. However,
@@ -68,7 +68,7 @@ bankswitch:	macro addr68k
 	endm
 	
 ; ---------------------------------------------------------------------------		
-; Ensure that rst-targeted functions are aligned correctly  
+; Ensure that rst functions are correctly aligned to the rst vectors
 ; ---------------------------------------------------------------------------
 
 rsttarget: macro * 
@@ -657,6 +657,7 @@ FMSetFreq:
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to set the duration of a note
+
 ; input:
 ;	a = new duration value
 ; ---------------------------------------------------------------------------
@@ -697,7 +698,7 @@ FinishTrackUpdate:
 		jp	SetModulation				; apply modulation
 		
 ; ---------------------------------------------------------------------------
-; Subroutine to apply note fill
+; Subroutine to apply note fill (aka, staccato)
 ; ---------------------------------------------------------------------------
 
 NoteTimeoutUpdate:
@@ -2213,7 +2214,7 @@ SoundCmd_Stop:
 		; continue straight into ClearTrackMemory
 
 ; ---------------------------------------------------------------------------
-; Subroutine to clear all track memory
+; Subroutine to clear all track memory and reset sound hardware
 ; ---------------------------------------------------------------------------
 
 ClearTrackMemory:
@@ -2521,7 +2522,7 @@ SongCom_Pan:
 		bit	t_psgtrk_bit,(ix+ch_type)		; is this a PSG track?
 		ret	m					; if so, exit
     if FixBugs=0
-		; This check is in the wrong place. If this flag is triggered by a music track 
+		; This check is in the wrong place. If this command is triggered by a music track 
 		; while it's being overridden by SFX, it will use the old panning when the SFX ends.
 		; This is because ch_ams_fms_pan doesn't get updated.
 		bit chf_mask_bit,(ix+ch_flags)			; is this track being overridden by SFX?
@@ -2785,7 +2786,7 @@ FMSlotMask:
 
 SongCom_VolAddPSG:
 		add	a,(ix+ch_volume)			; add to channel ch_volume
-		ld	(ix+ch_volume),a			; Store updated ch_volume
+		ld	(ix+ch_volume),a			; store updated ch_volume
 		ret
 
 ; ---------------------------------------------------------------------------
@@ -2816,6 +2817,7 @@ SongCom_EndBack:
 ; input: 
 ;	a = new voice
 ; ---------------------------------------------------------------------------
+
 SongCom_Voice:
 		ld	(ix+ch_voice),a				; set new voice in track variables
 		ld	c,a					; back it up in c 
@@ -3263,6 +3265,7 @@ SongCom_Call:
 ; Unused Sonic 1 leftover. This was used in Spring Yard Zone's music to 
 ; quickly release operators 3 and 4.
 ; ---------------------------------------------------------------------------
+
 SongCom_Release34:
 
 		ld	a,ym_releaserate_sustainlevel+ym_1_4_op2 ; D1L/RR of operator 3

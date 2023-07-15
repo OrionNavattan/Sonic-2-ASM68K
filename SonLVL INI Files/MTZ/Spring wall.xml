@@ -3,11 +3,11 @@
   <Images>
     <ImageFromMappings id="small">
       <ArtFile filename="../art/nemesis/Monitors & Monitor Contents.nem" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj66.asm" frame="0" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/MTZ Spring Walls.asm" frame="0" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="large">
       <ArtFile filename="../art/nemesis/Monitors & Monitor Contents.nem" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj66.asm" frame="1" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/MTZ Spring Walls.asm" frame="1" startpal="0" />
     </ImageFromMappings>
   </Images>
   <Subtypes>

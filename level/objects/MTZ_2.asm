@@ -4,7 +4,7 @@
 ObjPos_MTZ_2:
 		objpos $0268,$063C,Button,$01
 		objpos $0290,$0411,Monitor,$04,rem
-		objpos $02C0,$064D,LongPlatform,$B1
+		objpos $02C0,$064D,Platform5,$B1
 		objpos $02D0,$0658,Scenery2,$22
 		objpos $0300,$067C,LavaTag,$02
 		objpos $0324,$0658,Scenery1,$01,xflip
@@ -28,8 +28,8 @@ ObjPos_MTZ_2:
 		objpos $05A0,$05F4,Shellcracker,$24,rem
 		objpos $05B0,$0150,Spikes,$00,yflip
 		objpos $05D0,$0150,Spikes,$00,yflip
-		objpos $05D8,$0370,SpinTubeMetropolis,$13
-		objpos $05D8,$05F0,SpinTubeMetropolis,$14
+		objpos $05D8,$0370,Teleporter,$13
+		objpos $05D8,$05F0,Teleporter,$14
 		objpos $05F0,$0150,Spikes,$00,yflip
 		objpos $0680,$0170,Invisibarrier,$71
 		objpos $0680,$0194,TwinStompers,$01,yflip
@@ -70,7 +70,7 @@ ObjPos_MTZ_2:
 		objpos $0B40,$01E8,Starpost,$01,rem
 		objpos $0B50,$03D0,FloorSpike,$28
 		objpos $0B70,$03D0,FloorSpike,$2C
-		objpos $0BD8,$01F0,SpinTubeMetropolis,$05
+		objpos $0BD8,$01F0,Teleporter,$05
 		objpos $0BE0,$058C,Platform4,$07
 		objpos $0C20,$0710,Platform4,$07
 		objpos $0CE0,$0570,Asteron,$2E,rem
@@ -100,7 +100,7 @@ ObjPos_MTZ_2:
 		objpos $0F70,$0750,Monitor,$04,rem
 		objpos $0FB0,$04DC,Button,$01
 		objpos $0FF8,$0680,SpringWall,$11
-		objpos $1000,$04EC,LongPlatform,$B1
+		objpos $1000,$04EC,Platform5,$B1
 		objpos $1010,$0788,Scenery2,$22
 		objpos $1040,$0784,Platform4,$05
 		objpos $1040,$07A8,LavaTag,$01
@@ -131,7 +131,7 @@ ObjPos_MTZ_2:
 		objpos $12C0,$0484,Scenery1,$03
 		objpos $1310,$0260,Asteron,$2E,rem
 		objpos $1310,$0310,Spikes,$00,yflip
-		objpos $1320,$074C,LongPlatform,$13
+		objpos $1320,$074C,Platform5,$13
 		objpos $1330,$07F0,SteamSpring,$01
 		objpos $1340,$02EC,Invisibarrier,$71
 		objpos $1340,$03F0,Nut,$19
@@ -139,7 +139,7 @@ ObjPos_MTZ_2:
 		objpos $1370,$0310,Spikes,$00,yflip
 		objpos $1370,$04B8,Springs,$02
 		objpos $1390,$0031,Monitor,$04,rem
-		objpos $13A0,$074C,LongPlatform,$13,xflip
+		objpos $13A0,$074C,Platform5,$13,xflip
 		objpos $13C0,$016C,Invisibarrier,$71
 		objpos $13C0,$0264,Nut,$02
 		objpos $13F0,$0034,Shellcracker,$24,xflip,rem
@@ -149,19 +149,19 @@ ObjPos_MTZ_2:
 		objpos $1440,$0204,Scenery1,$03
 		objpos $1488,$02C0,SpringWall,$01,xflip
 		objpos $1490,$0340,Invisibarrier,$17
-		objpos $14A0,$014C,LongPlatform,$13
+		objpos $14A0,$014C,Platform5,$13
 		objpos $14B0,$01F0,SteamSpring,$01
 		objpos $14C0,$0470,Invisibarrier,$71
 		objpos $14C0,$05A4,Nut,$02
 		objpos $14C0,$0640,Spiral,$80
 		objpos $14C0,$07E0,Asteron,$2E,rem
 		objpos $14E0,$00A0,Asteron,$2E,rem
-		objpos $1520,$008C,LongPlatform,$13
-		objpos $1520,$014C,LongPlatform,$13,xflip
+		objpos $1520,$008C,Platform5,$13
+		objpos $1520,$014C,Platform5,$13,xflip
 		objpos $1540,$0130,SteamSpring,$01
 		objpos $1588,$04F0,Slicer,$28,rem
 		objpos $1590,$0410,Spikes,$00,yflip
-		objpos $15A0,$008C,LongPlatform,$13,xflip
+		objpos $15A0,$008C,Platform5,$13,xflip
 		objpos $15A0,$0774,Shellcracker,$24,rem
 		objpos $15C0,$03F0,Invisibarrier,$71
 		objpos $15C0,$04E4,Nut,$02
@@ -170,12 +170,12 @@ ObjPos_MTZ_2:
 		objpos $1680,$0780,Cog,$00
 		objpos $1680,$07FC,LavaTag,$02
 		objpos $1690,$04A0,Asteron,$2E,rem
-		objpos $16C0,$060D,LongPlatform,$B0
+		objpos $16C0,$060D,Platform5,$B0
 		objpos $16E8,$0470,Slicer,$28,rem
 		objpos $16F3,$0220,Barrier,$01
 		objpos $1710,$05DC,Button,$00
 		objpos $1718,$07A0,Platform4,$04
-		objpos $1728,$0330,SpinTubeMetropolis,$06,xflip
+		objpos $1728,$0330,Teleporter,$06,xflip
 		objpos $1748,$05C8,Starpost,$03,rem
 		objpos $1770,$0700,SpikeBlock,$02
 		objpos $1778,$0640,SpringWall,$01
@@ -196,7 +196,7 @@ ObjPos_MTZ_2:
 		objpos $1980,$062C,LavaTag,$02
 		objpos $19A0,$0060,Asteron,$2E,rem
 		objpos $19A0,$052C,Platform4,$07
-		objpos $19C0,$008C,LongPlatform,$B0,xflip
+		objpos $19C0,$008C,Platform5,$B0,xflip
 		objpos $1AA0,$0308,Platform4,$04
 		objpos $1AE0,$0590,Asteron,$2E,rem
 		objpos $1AE0,$0610,Asteron,$2E,rem

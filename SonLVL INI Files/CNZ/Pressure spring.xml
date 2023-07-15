@@ -3,11 +3,11 @@
   <Images>
     <ImageFromMappings id="up">
       <ArtFile filename="../art/nemesis/CNZ Vertical Pinball Launcher.bin" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj85_a.asm" frame="0" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/CNZ Pinball Launcher (Vertical).asm" frame="0" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="diagonal">
       <ArtFile filename="../art/nemesis/CNZ Diagonal Pinball Launcher.bin" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj85_b.asm" frame="0" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/CNZ Pinball Launcher (Diagonal).asm" frame="0" startpal="0" />
     </ImageFromMappings>
   </Images>
   <Subtypes>

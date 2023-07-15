@@ -6,14 +6,14 @@ ObjPos_CPZ_2:
 		objpos $0250,$0650,TippingPipe,$70,xflip
 		objpos $0260,$0590,Platform2,$06
 		objpos $0270,$0650,TippingPipe,$72,xflip
-		objpos $0300,$0300,ChemPlantSpinTube,$24,rem
+		objpos $0300,$0300,SpinTube,$24,rem
 		objpos $0390,$0300,SmashBlock,$00,rem
 		objpos $03A8,$02C0,PlaneSwitcher,$39,xflip
-		objpos $0400,$0680,ChemPlantSpinTube,$29,rem
+		objpos $0400,$0680,SpinTube,$29,rem
 		objpos $0408,$0080,PlaneSwitcher,$22,xflip
 		objpos $0410,$0680,SmashBlock,$00,rem
 		objpos $0474,$064A,SpinyWall,$32,xflip,rem
-		objpos $0480,$0200,ChemPlantSpinTube,$2C,rem
+		objpos $0480,$0200,SpinTube,$2C,rem
 		objpos $048E,$02F1,Monitor,$04,rem
 		objpos $04D5,$00F4,Spiny,$32,rem
 		objpos $0500,$0440,PlaneSwitcher,$A8
@@ -29,14 +29,14 @@ ObjPos_CPZ_2:
 		objpos $06A0,$0470,SpeedBooster,$00,xflip
 		objpos $06F8,$0440,PlaneSwitcher,$09
 		objpos $07A0,$0148,PlaneSwitcher,$31
-		objpos $0880,$0680,ChemPlantSpinTube,$30,rem
+		objpos $0880,$0680,SpinTube,$30,rem
 		objpos $08C0,$0570,Monitor,$04,rem
 		objpos $08F8,$0540,PlaneSwitcher,$31
 		objpos $0910,$0680,SpinTubeLid,$02
 		objpos $0970,$0538,PlaneSwitcher,$0A
 		objpos $0970,$0600,PlaneSwitcher,$0A
 		objpos $09A0,$0670,SpeedBooster,$00
-		objpos $0B00,$0300,ChemPlantSpinTube,$35,rem
+		objpos $0B00,$0300,SpinTube,$35,rem
 		objpos $0B10,$0300,SpinTubeLid,$02
 		objpos $0B50,$02F1,Monitor,$04,rem
 		objpos $0B60,$04C0,PlaneSwitcher,$69
@@ -48,7 +48,7 @@ ObjPos_CPZ_2:
 		objpos $0C38,$0690,PlaneSwitcher,$6A
 		objpos $0C40,$0268,Starpost,$01,rem
 		objpos $0CC0,$057A,PlaneSwitcher,$1D
-		objpos $0D80,$0280,ChemPlantSpinTube,$38,rem
+		objpos $0D80,$0280,SpinTube,$38,rem
 		objpos $0D90,$01C0,PlaneSwitcher,$19
 		objpos $0D90,$0490,StairBlocks,$04,xflip
 		objpos $0D9C,$03CA,Springboard,$03
@@ -83,7 +83,7 @@ ObjPos_CPZ_2:
 		objpos $0FC0,$04F0,Platform4,$18,yflip
 		objpos $0FC0,$04F0,Platform4,$19
 		objpos $0FC0,$04F0,Platform4,$19,yflip
-		objpos $1000,$0200,ChemPlantSpinTube,$3D,rem
+		objpos $1000,$0200,SpinTube,$3D,rem
 		objpos $1010,$0200,SpinTubeLid,$02
 		objpos $1010,$04C0,Invisibarrier,$17
 		objpos $102D,$028E,Grabber,$36,xflip,rem

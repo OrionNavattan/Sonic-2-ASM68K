@@ -3,7 +3,7 @@
   <Images>
     <ImageFromMappings id="spring">
       <ArtFile filename="../art/nemesis/CPZ Spintube Exit Cover & Spring.nem" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj7B.asm" frame="0" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/CPZ Spin Tube Lid.asm" frame="0" startpal="0" />
     </ImageFromMappings>
   </Images>
   <Subtypes>

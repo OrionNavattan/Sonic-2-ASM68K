@@ -198,18 +198,18 @@ ArtTile_ArtUnc_MTZCylinder            = $6980
 ArtTile_ArtUnc_MTZAnimBack_1          = $6B80
 ArtTile_ArtUnc_MTZAnimBack_2          = $6C40
 vram_Asteron:           	equ $6D00
-vram_Wheel:              equ $6F00
+vram_GiantCog:              equ $6F00
 vram_WheelIndent:        equ $7E00
-vram_LavaCup:               equ $7F20
+vram_RopePlat:               equ $7F20
 vram_BoltEnd_Rope:          equ $7FA0
 vram_SteamSpring:           equ $80A0
 vram_SpikeBlock:          	equ $8280
 vram_MTZSpike:              equ $8380
 vram_Slicer:				equ $8780
-vram_MTZAsstBlocks:         equ $A000
+vram_Nut:         equ $A000
 vram_LavaBubble:         	equ $A6C0
 vram_Cog:                	equ $ABE0
-vram_SpinTubeFlash:      equ $AD60
+vram_TeleportFlash:      equ $AD60
 
 ; WFZ
 vram_Clucker:             	equ $6F20
@@ -313,7 +313,7 @@ vram_CPZConstructionStripes:	equ $7280
 vram_Booster:				equ $7380
 vram_CPZElevator:           equ $7400
 vram_CPZDumpingPipePlat:    equ $7600
-vram_CPZTubeSpring:         equ $7C00
+vram_TubeLid:         equ $7C00
 vram_StairBlock:         equ $8300
 vram_CPZMetalBlock:         equ $8600
 vram_Droplet:            equ $8780

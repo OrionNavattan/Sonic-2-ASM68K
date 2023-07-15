@@ -105,7 +105,7 @@ ym2612_d1:		equ $A04003
 console_version:	equ $A10001
 	console_region_bit:	equ 7				; 0 = Japan/Korea; 1 = overseas
 	console_speed_bit:	equ 6				; 0 = NTSC; 1 = PAL
-	console_mcd_bit:	equ 5				; 1 = Mega-CD attached (or other addon?)
+	console_mcd_bit:	equ 5				; 0 = Mega-CD attached (or other addon?), 1 = nothing attached
 	console_region:		equ 1<<console_region_bit
 	console_speed:		equ 1<<console_speed_bit
 	console_mcd:		equ 1<<console_mcd_bit

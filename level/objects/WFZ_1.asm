@@ -116,10 +116,10 @@ ObjPos_WFZ_1:
 		objpos $1ACA,$0240,Monitor,$04,rem
 		objpos $1AF0,$0360,Clucker,$44,rem
 		objpos $1AF0,$0378,CluckerBase,$42,rem
-		objpos $1B82,$0241,MovingVineHooks,$00
+		objpos $1B82,$0241,VineHook,$00
 		objpos $1BA0,$0600,PalSwitcherWingFortress,$01
 		objpos $1BD4,$050F,Catapult,$04,xflip,rem
-		objpos $1BD9,$02D0,MovingVineHooks,$00
+		objpos $1BD9,$02D0,VineHook,$00
 		objpos $1C20,$064F,Catapult,$10,rem
 		objpos $1C26,$0420,Clucker,$44,rem
 		objpos $1C26,$0438,CluckerBase,$42,rem
@@ -128,16 +128,16 @@ ObjPos_WFZ_1:
 		objpos $1D8A,$064C,WheelWingFortress,$78
 		objpos $1D90,$0271,Monitor,$04,rem
 		objpos $1DA2,$0471,Monitor,$04,rem
-		objpos $1DD0,$0460,MovingVineHooks,$10
+		objpos $1DD0,$0460,VineHook,$10
 		objpos $1DFA,$0620,ConveyerBelt,$90
-		objpos $1E3E,$0241,MovingVineHooks,$10
-		objpos $1E50,$03C0,MovingVineHooks,$10
+		objpos $1E3E,$0241,VineHook,$10
+		objpos $1E50,$03C0,VineHook,$10
 		objpos $1E75,$0614,WheelWingFortress,$78
 		objpos $1E88,$02E0,Clucker,$44,rem
 		objpos $1E88,$02F8,CluckerBase,$42,rem
-		objpos $1EBE,$02C1,MovingVineHooks,$10
+		objpos $1EBE,$02C1,VineHook,$10
 		objpos $1F54,$044F,Catapult,$20,xflip,rem
-		objpos $1F78,$040E,MovingVineHooks,$11
+		objpos $1F78,$040E,VineHook,$11
 		objpos $1F90,$0590,Platform2,$3C
 		objpos $1F90,$0590,Platform2,$3D
 		objpos $1F90,$0590,Platform2,$3E
@@ -145,9 +145,9 @@ ObjPos_WFZ_1:
 		objpos $2080,$0640,Invisibarrier,$07
 		objpos $20A1,$0531,Monitor,$04,rem
 		objpos $20D0,$068B,Platform2,$32
-		objpos $2135,$0310,MovingVineHooks,$11
-		objpos $214C,$04A0,MovingVineHooks,$10
-		objpos $22A8,$048C,MovingVineHooks,$00
+		objpos $2135,$0310,VineHook,$11
+		objpos $214C,$04A0,VineHook,$10
+		objpos $22A8,$048C,VineHook,$00
 		objpos $22CE,$04CF,Catapult,$18,xflip,rem
 		objpos $2372,$05AC,Monitor,$01,rem
 		objpos $2723,$0340,PalSwitcherWingFortress,$03,xflip

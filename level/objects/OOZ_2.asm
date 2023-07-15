@@ -141,8 +141,8 @@ ObjPos_OOZ_2:
 		objpos $1D40,$03F0,Spikes,$00
 		objpos $1DC0,$04D0,Platform2,$23
 		objpos $1DC0,$0648,SwingingPlatform,$88
-		objpos $1E34,$0230,PressureSpring,$30,xflip
-		objpos $1E34,$0350,PressureSpring,$30,xflip
+		objpos $1E34,$0230,PressureSpring,$30,xflip	; invalid subtype!
+		objpos $1E34,$0350,PressureSpring,$30,xflip	; same here
 		objpos $1E40,$0198,LauncherBall,$83
 		objpos $1E60,$0290,Octus,$00,rem
 		objpos $1E80,$04D0,CollapseFloor,$00

@@ -3,15 +3,15 @@
   <Images>
     <ImageFromMappings id="large">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj65_a.asm" frame="0" startpal="3" />
+      <MapFile type="ASM" filename="../mappings/sprite/MTZ Long Moving Platforms.asm" frame="0" startpal="3" />
     </ImageFromMappings>
     <ImageFromMappings id="small">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj65_a.asm" frame="1" startpal="3" />
+      <MapFile type="ASM" filename="../mappings/sprite/MTZ Long Moving Platforms.asm" frame="1" startpal="3" />
     </ImageFromMappings>
     <ImageFromMappings id="cog">
       <ArtFile filename="../art/nemesis/MTZ Small Cog.nem" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj65_b.asm" frame="0" startpal="3" />
+      <MapFile type="ASM" filename="../mappings/sprite/MTZ Small Cog.asm" frame="0" startpal="3" />
     </ImageFromMappings>
   </Images>
   <Subtypes>

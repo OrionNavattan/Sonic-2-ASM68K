@@ -14,7 +14,7 @@ ObjPos_MCZ_1:
 		objpos $03F0,$05F0,Flasher,$2C,unkflg,rem
 		objpos $0440,$07F0,Spikes,$30
 		objpos $0461,$07C8,CollapseFloor,$00
-		objpos $0488,$0788,Drawbridge,$00,xflip
+		objpos $0488,$0788,SingleDrawbridge,$00,xflip
 		objpos $0551,$0471,Monitor,$04,rem
 		objpos $0578,$0468,Starpost,$01,rem
 		objpos $0584,$06F8,Crawlton,$22,rem
@@ -25,7 +25,7 @@ ObjPos_MCZ_1:
 		objpos $06A0,$0770,SlidingSpikePlat,$00,xflip
 		objpos $06B0,$05B0,SlidingSpikePlat,$00
 		objpos $0720,$0710,CollapseFloor,$00,xflip
-		objpos $0758,$0620,MovingVineHooks,$10
+		objpos $0758,$0620,VineHook,$10
 		objpos $0770,$0771,Monitor,$06,rem
 		objpos $0771,$057A,Springs,$02
 		objpos $0790,$06BA,Springs,$00
@@ -36,8 +36,8 @@ ObjPos_MCZ_1:
 		objpos $0828,$07B0,Monitor,$04,rem
 		objpos $0844,$053C,Crawlton,$22,rem
 		objpos $0858,$04F1,Monitor,$04,rem
-		objpos $08C0,$0648,MovingVineHooks,$82
-		objpos $08C0,$0748,BridgeMysticCave,$02
+		objpos $08C0,$0648,VineHook,$82
+		objpos $08C0,$0748,DoubleDrawbridge,$02
 		objpos $08F0,$05B8,Flasher,$2C,unkflg,rem
 		objpos $0950,$0728,Starpost,$02,rem
 		objpos $0980,$0580,Platform3,$18,xflip
@@ -47,8 +47,8 @@ ObjPos_MCZ_1:
 		objpos $0BB0,$0630,Monitor,$04,rem
 		objpos $0BD0,$0570,Spikes,$00
 		objpos $0C38,$0654,Spikes,$21
-		objpos $0C40,$04C8,MovingVineHooks,$81
-		objpos $0C40,$0588,BridgeMysticCave,$01
+		objpos $0C40,$04C8,VineHook,$81
+		objpos $0C40,$0588,DoubleDrawbridge,$01
 		objpos $0CA0,$0774,Spikes,$10
 		objpos $0D00,$06E8,TrackPlatform,$12,rem
 		objpos $0D00,$0748,TrackPlatform,$00,rem
@@ -66,10 +66,10 @@ ObjPos_MCZ_1:
 		objpos $1050,$048C,VineSwitch,$01
 		objpos $1086,$05EE,BrickAndSpikeChain,$0F
 		objpos $10FC,$07B0,Springs,$10
-		objpos $1108,$0508,Drawbridge,$01,xflip
+		objpos $1108,$0508,SingleDrawbridge,$01,xflip
 		objpos $1108,$05FC,Stomper,$00
-		objpos $1140,$0660,BridgeMysticCave,$02
-		objpos $1144,$0590,MovingVineHooks,$82
+		objpos $1140,$0660,DoubleDrawbridge,$02
+		objpos $1144,$0590,VineHook,$82
 		objpos $1178,$0600,Flasher,$2C,unkflg,rem
 		objpos $1188,$0480,Flasher,$2C,unkflg,rem
 		objpos $11C0,$06B4,Stomper,$00
@@ -105,19 +105,19 @@ ObjPos_MCZ_1:
 		objpos $1AB0,$06B0,Spikes,$00
 		objpos $1AE0,$05F9,CollapseFloor,$00,xflip
 		objpos $1B10,$0731,Monitor,$07,rem
-		objpos $1B30,$0548,MovingVineHooks,$85
+		objpos $1B30,$0548,VineHook,$85
 		objpos $1B72,$06E0,Spikes,$40
-		objpos $1B88,$06C8,Drawbridge,$05,xflip
+		objpos $1B88,$06C8,SingleDrawbridge,$05,xflip
 		objpos $1C90,$0791,Monitor,$04,rem
 		objpos $1CAA,$06B8,Crawlton,$22,rem
 		objpos $1D05,$05C1,Crawlton,$22,rem
 		objpos $1D30,$0631,Monitor,$06,rem
 		objpos $1D88,$07B0,Springs,$10
 		objpos $1DC0,$0574,VineSwitch,$03
-		objpos $1E20,$0420,MovingVineHooks,$10
-		objpos $1E58,$05A8,Drawbridge,$03,xflip
+		objpos $1E20,$0420,VineHook,$10
+		objpos $1E58,$05A8,SingleDrawbridge,$03,xflip
 		objpos $1E66,$0728,Crawlton,$22,rem
-		objpos $1E78,$0648,Drawbridge,$02
+		objpos $1E78,$0648,SingleDrawbridge,$02
 		objpos $1EE0,$0510,Stomper,$00
 		objpos $1F00,$0678,TrackPlatform,$00,rem
 		objpos $1F30,$05A8,VineSwitch,$02

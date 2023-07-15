@@ -171,7 +171,7 @@
 		filedef Nem_ConstructionStripes,"art/nemesis/CPZ & DEZ Yellow & Black Striped Blocks",nem,unc ; 8 tiles
 		filedef Nem_CPZDumpingPipePlat,"art/nemesis/CPZ Dumping Pipe Platform",nem,unc ; 48 tiles
 		filedef Nem_StairBlock,"art/nemesis/CPZ Stair Block",nem,unc ; 24 tiles
-		filedef Nem_CPZTubeSpring,"art/nemesis/CPZ Spintube Exit Cover & Spring",nem,unc ; 32 tiles
+		filedef Nem_TubeLid,"art/nemesis/CPZ Spintube Exit Cover & Spring",nem,unc ; 32 tiles
 		filedef	Nem_WaterSurface2,"art/nemesis/ARZ Water Surface",nem,unc ; 16 tiles
 		filedef Nem_Leaves,"art/nemesis/ARZ Leaves",nem,unc ; 7 tiles
 		filedef Nem_ArrowAndShooter,"art/nemesis/ARZ Arrow Shooter & Arrow",nem,unc ; 17 tiles
@@ -269,17 +269,17 @@
 		filedef Nem_UnusedFireball,"art/nemesis/Unused Fireball",nem,unc ; 24 tiles
 		filedef Nem_HTZRock,"art/nemesis/HTZ Rock",nem,unc ; 20 tiles
 		filedef Nem_Sol,"art/nemesis/Sol",nem,unc	; 4 tiles
-		filedef Nem_Wheel,"art/nemesis/MTZ Large Spinning Wheel",nem,unc ; 120 tiles
+		filedef Nem_GiantCog,"art/nemesis/MTZ Large Spinning Wheel",nem,unc ; 120 tiles
 		filedef Nem_WheelIndent,"art/nemesis/MTZ Large Spinning Wheel Indent",nem,unc ; 9 tiles
 		filedef Nem_SpikeBlock,"art/nemesis/MTZ Spike Block",nem,unc ; 8 tiles
 		filedef Nem_SteamSpring,"art/nemesis/MTZ Steam",nem,unc ; 15 tiles
 		filedef Nem_MTZSpike,"art/nemesis/MTZ Spike",nem,unc ; 8 tiles
-		filedef Nem_MTZAsstBlocks,"art/nemesis/MTZ Misc Blocks",nem,unc ; 54 tiles
+		filedef Nem_Nut,"art/nemesis/MTZ Misc Blocks",nem,unc ; 54 tiles
 		filedef	Nem_LavaBubble,"art/nemesis/MTZ Lava Bubble",nem,unc ; 9 tiles
-		filedef Nem_LavaCup,"art/nemesis/MTZ Lava Cup",nem,unc ; 4 tiles
+		filedef Nem_RopePlat,"art/nemesis/MTZ Rope Platform",nem,unc ; 4 tiles
 		filedef Nem_BoltEnd_Rope,"art/nemesis/MTZ Bolt End & Rope",nem,unc ; 8 tiles
 		filedef Nem_Cog,"art/nemesis/MTZ Small Cog",nem,unc ; 12 tiles
-		filedef Nem_SpinTubeFlash,"art/nemesis/MTZ Spin Tube Flash",nem,unc ; 4 tiles
+		filedef Nem_TeleportFlash,"art/nemesis/MTZ Spin Tube Flash",nem,unc ; 4 tiles
 		filedef Nem_Crate,"art/nemesis/MCZ Crate",nem,unc ; 32 tiles
 		filedef Nem_MCZCollapsingPlat,"art/nemesis/MCZ Collapsing Platform",nem,unc ; 26 tiles
 		filedef Nem_VineSwitch,"art/nemesis/MCZ Vine Switch",nem,unc ; 16 tiles
@@ -405,9 +405,10 @@
 		filedef	Pal_TitleSonic,"art/palettes/Title Sonic",bin,bin
 		filedef	Pal_TitleBackground,"art/palettes/Title Background",bin,bin
 		filedef	Pal_TitleLogo,"art/palettes/Title Logo",bin,bin
+		filedef Pal_SSCheckpointRainbow,"art/palettes/Special Stage Checkpoint Rainbow",bin,bin
 		filedef	Pal_SSEmeralds,"art/palettes/Special Stage Emeralds",bin,bin
-		filedef	Pal_SegaScreen2,"art/palettes/Sega Screen 2",bin,bin ; SEGA screen (background and pre-wipe foreground; 7 frames)
-	 	filedef Pal_SegaScreen3,"art/palettes/Sega Screen 3",bin,bin ; SEGA screen (wiping and post-wipe foreground) (7 frames
+		filedef	Pal_SegaScreen2_Colors,"art/palettes/Sega Screen 2",bin,bin ; SEGA screen (background and pre-wipe foreground; 7 frames)
+	 	filedef Pal_SegaScreen3_Colors,"art/palettes/Sega Screen 3",bin,bin ; SEGA screen (wiping and post-wipe foreground) (7 frames
 
 ; ---------------------------------------------------------------------------
 ; File definitions - collision

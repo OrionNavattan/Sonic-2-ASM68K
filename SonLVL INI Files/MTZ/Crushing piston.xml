@@ -3,11 +3,11 @@
   <Images>
     <ImageFromMappings id="large">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj64.asm" frame="0" startpal="1" />
+      <MapFile type="ASM" filename="../mappings/sprite/MTZ Stomping Pistons.asm" frame="0" startpal="1" />
     </ImageFromMappings>
     <ImageFromMappings id="small">
       <ArtFile filename="LevelArt" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj64.asm" frame="1" startpal="1" />
+      <MapFile type="ASM" filename="../mappings/sprite/MTZ Stomping Pistons.asm" frame="1" startpal="1" />
     </ImageFromMappings>
   </Images>
   <Subtypes>

@@ -20,7 +20,7 @@ ObjPos_CPZ_1:
 		objpos $0600,$0240,PlaneSwitcher,$39,xflip
 		objpos $0700,$01C0,PlaneSwitcher,$59,xflip
 		objpos $0700,$0240,PlaneSwitcher,$21,xflip
-		objpos $0780,$0380,ChemPlantSpinTube,$02,rem
+		objpos $0780,$0380,SpinTube,$02,rem
 		objpos $07F8,$02C0,PlaneSwitcher,$21
 		objpos $0810,$0371,Monitor,$04,rem
 		objpos $0878,$03C0,PlaneSwitcher,$21
@@ -28,7 +28,7 @@ ObjPos_CPZ_1:
 		objpos $090A,$0374,Spiny,$32,rem
 		objpos $0952,$0374,Spiny,$32,rem
 		objpos $0A00,$0240,PlaneSwitcher,$39,xflip
-		objpos $0A00,$0600,ChemPlantSpinTube,$05,rem
+		objpos $0A00,$0600,SpinTube,$05,rem
 		objpos $0A10,$0600,SpinTubeLid,$02
 		objpos $0A49,$05F1,Monitor,$04,rem
 		objpos $0A6D,$05F1,Monitor,$04,rem
@@ -52,8 +52,8 @@ ObjPos_CPZ_1:
 		objpos $0E90,$0588,BlueBalls,$15
 		objpos $0EC0,$0431,Monitor,$04,rem
 		objpos $0F20,$0430,SpeedBooster,$00
-		objpos $0F80,$0280,ChemPlantSpinTube,$0A,rem
-		objpos $0F80,$0600,ChemPlantSpinTube,$0E,rem
+		objpos $0F80,$0280,SpinTube,$0A,rem
+		objpos $0F80,$0600,SpinTube,$0E,rem
 		objpos $1062,$0534,Spiny,$32,rem
 		objpos $1080,$03C0,PlaneSwitcher,$59
 		objpos $1080,$0460,PlaneSwitcher,$21,xflip
@@ -73,7 +73,7 @@ ObjPos_CPZ_1:
 		objpos $12F0,$0640,PlaneSwitcher,$79
 		objpos $1300,$04B0,PlaneSwitcher,$A8
 		objpos $1380,$05C0,PlaneSwitcher,$A8
-		objpos $1400,$0500,ChemPlantSpinTube,$10,rem
+		objpos $1400,$0500,SpinTube,$10,rem
 		objpos $1488,$0170,Springs,$12
 		objpos $1488,$0600,PlaneSwitcher,$09
 		objpos $1490,$0500,SpinTubeLid,$02
@@ -116,7 +116,7 @@ ObjPos_CPZ_1:
 		objpos $19DD,$04F4,Spiny,$32,rem
 		objpos $1A00,$02C0,PlaneSwitcher,$59,xflip
 		objpos $1A00,$0360,PlaneSwitcher,$21,xflip
-		objpos $1A00,$0500,ChemPlantSpinTube,$15,rem
+		objpos $1A00,$0500,SpinTube,$15,rem
 		objpos $1A10,$0500,SmashBlock,$00,rem
 		objpos $1A10,$06C8,BlueBalls,$05
 		objpos $1AE0,$0368,PlaneSwitcher,$39,xflip
@@ -130,7 +130,7 @@ ObjPos_CPZ_1:
 		objpos $1D68,$05C0,PlaneSwitcher,$31
 		objpos $1D80,$03C0,PlaneSwitcher,$A8
 		objpos $1D90,$0540,PlaneSwitcher,$29
-		objpos $1E00,$0300,ChemPlantSpinTube,$18,rem
+		objpos $1E00,$0300,SpinTube,$18,rem
 		objpos $1E5A,$0540,PlaneSwitcher,$79
 		objpos $1E90,$0300,SpinTubeLid,$02
 		objpos $1F00,$02E8,Starpost,$03,rem
@@ -148,10 +148,10 @@ ObjPos_CPZ_1:
 		objpos $2280,$04C0,PlaneSwitcher,$A8
 		objpos $2310,$0448,BlueBalls,$05
 		objpos $2320,$0500,PlaneSwitcher,$29
-		objpos $2400,$0300,ChemPlantSpinTube,$1D,rem
+		objpos $2400,$0300,SpinTube,$1D,rem
 		objpos $2410,$0300,SpinTubeLid,$02
 		objpos $246E,$02F1,Monitor,$04,rem
-		objpos $2480,$0500,ChemPlantSpinTube,$21,rem
+		objpos $2480,$0500,SpinTube,$21,rem
 		objpos $2490,$0500,SmashBlock,$00,rem
 		objpos $24B4,$04DE,SpinyWall,$32,xflip,rem
 		objpos $2840,$0428,Signpost,$00
