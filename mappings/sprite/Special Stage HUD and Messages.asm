@@ -1,4 +1,8 @@
-Map_obj5A:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Special Stage HUD and messages
+; -------------------------------------------------------------------------------
+
+Map_SSMessages:	index offset(*)
 	ptr	Map_obj5A_002C
 	ptr	Map_obj5A_0036
 	ptr	Map_obj5A_0040

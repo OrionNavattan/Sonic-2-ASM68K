@@ -15,7 +15,7 @@ ObjPos_ARZ_2:
 		objpos $0588,$05C0,PlaneSwitcher,$02
 		objpos $05C8,$0640,Springs,$12
 		objpos $05E8,$05E8,ChopChop,$08,rem
-		objpos $05EF,$03BC,GrounderInWall_Dup,$02,yflip,rem
+		objpos $05EF,$03BC,GrounderOnGround,$02,yflip,rem
 		objpos $05FE,$0649,Bubble,$81
 		objpos $0640,$0558,LeafGenerator,$01
 		objpos $0690,$052A,ChopChop,$08,rem
@@ -68,7 +68,7 @@ ObjPos_ARZ_2:
 		objpos $0CE5,$0616,PillarPlatform,$10
 		objpos $0D08,$0350,PlaneSwitcher,$12
 		objpos $0D50,$05D8,ChopChop,$08,rem
-		objpos $0D58,$075D,GrounderInWall_Dup,$02,yflip,rem
+		objpos $0D58,$075D,GrounderOnGround,$02,yflip,rem
 		objpos $0D60,$0499,Whisp,$00,rem
 		objpos $0D93,$035A,Whisp,$00,rem
 		objpos $0D9C,$0499,Whisp,$00,rem
@@ -85,11 +85,11 @@ ObjPos_ARZ_2:
 		objpos $0EA4,$0360,FallingPillar,$00
 		objpos $0EDC,$0360,FallingPillar,$00
 		objpos $0EE0,$0608,Platform1,$02
-		objpos $0F05,$02BC,GrounderInWall_Dup,$02,yflip,rem
+		objpos $0F05,$02BC,GrounderOnGround,$02,yflip,rem
 		objpos $0F30,$0488,PlaneSwitcher,$0A
 		objpos $0F32,$07AA,Bubble,$81
 		objpos $0F48,$04E0,Springs,$12
-		objpos $0F50,$02BC,GrounderInWall_Dup,$02,yflip,rem
+		objpos $0F50,$02BC,GrounderOnGround,$02,yflip,rem
 		objpos $0F6A,$0779,ChopChop,$08,rem
 		objpos $0F70,$07A2,Monitor,$04,rem
 		objpos $0FEF,$02DB,RisingPillar,$00
@@ -106,7 +106,7 @@ ObjPos_ARZ_2:
 		objpos $11D0,$0450,PlaneSwitcher,$0C
 		objpos $11E0,$04BC,GrounderInWall,$02,yflip,rem
 		objpos $1200,$03A0,PlaneSwitcher,$20
-		objpos $1230,$036E,GrounderInWall_Dup,$02,yflip,rem
+		objpos $1230,$036E,GrounderOnGround,$02,yflip,rem
 		objpos $1238,$02D8,Starpost,$02,rem
 		objpos $1320,$0300,CollapseFloor,$00
 		objpos $1338,$03F0,PlaneSwitcher,$11
@@ -138,7 +138,7 @@ ObjPos_ARZ_2:
 		objpos $15E3,$06EC,Bubble,$81
 		objpos $1638,$0520,Springs,$10,xflip
 		objpos $1682,$0648,PillarPlatform,$11
-		objpos $16E0,$06CD,GrounderInWall_Dup,$02,yflip,rem
+		objpos $16E0,$06CD,GrounderOnGround,$02,yflip,rem
 		objpos $1704,$062C,PillarPlatform,$10
 		objpos $1720,$06AC,ArrowShooter,$00
 		objpos $1720,$06BB,ArrowShooter,$00
@@ -146,7 +146,7 @@ ObjPos_ARZ_2:
 		objpos $1720,$06D9,ArrowShooter,$00
 		objpos $1760,$03DA,RisingPillar,$00
 		objpos $17A0,$03D0,ArrowShooter,$00
-		objpos $17CE,$04DC,GrounderInWall_Dup,$02,yflip,rem
+		objpos $17CE,$04DC,GrounderOnGround,$02,yflip,rem
 		objpos $17F8,$04C0,PlaneSwitcher,$11
 		objpos $1800,$02F9,RisingPillar,$00
 		objpos $1847,$0780,Springs,$12
@@ -178,10 +178,10 @@ ObjPos_ARZ_2:
 		objpos $1B99,$070C,Bubble,$81
 		objpos $1BD0,$05F4,ChopChop,$08,rem
 		objpos $1C00,$04C0,PillarPlatform,$10
-		objpos $1C1F,$06FE,GrounderInWall_Dup,$02,yflip,rem
+		objpos $1C1F,$06FE,GrounderOnGround,$02,yflip,rem
 		objpos $1C20,$0600,LeafGenerator,$00
 		objpos $1C60,$0658,PlaneSwitcher,$05
-		objpos $1CBA,$035E,GrounderInWall_Dup,$02,yflip,rem
+		objpos $1CBA,$035E,GrounderOnGround,$02,yflip,rem
 		objpos $1D20,$06A0,FallingPillar,$00
 		objpos $1D2F,$0369,Springs,$00
 		objpos $1D70,$0569,Springs,$02

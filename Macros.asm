@@ -524,7 +524,7 @@ braptr:		macro
 	
 ; ---------------------------------------------------------------------------
 ; Make a 68K instruction with a VDP command longword or word as the source 
-; This more or less replicating the vdpComm function in Sonic 2 AS.
+; This more or less replicates the vdpComm function in Sonic 2 AS.
 ; input: 68k instruction mnemonic, destination offset, destination 
 ; (vram/vsram/cram), operation (read/write/dma), destination of 68K instruction,
 ; additional adjustment to command longword (shifts, ANDs)
@@ -733,7 +733,8 @@ out_of_range:	macro exit,pos
 
 ; ---------------------------------------------------------------------------
 ; Object placement
-; input: xpos, ypos, object id, subtype
+; input: xpos, ypos, object id, subtype (objects 8B and lower) or OST data 
+; pointer index (objects 8C and higher)
 ; optional: xflip, yflip, rem (any order)
 ; ---------------------------------------------------------------------------
 
@@ -1005,9 +1006,9 @@ debug_soundbanks: equ 0
 
 finishbank: macro
 		if offset(*)>sound_bank_start+sizeof_z80_bank
-			inform 3,"SoundBank %s must fit in $8000 bytes, but it was $%h. Try moving something to another bank.",snkbnk_id,offset(*)-sound_bank_start
+			inform 3,"SoundBank %d must fit in $8000 bytes, but it was $%h. Try moving something to another bank.",snkbnk_id,offset(*)-sound_bank_start
 		elseif debug_soundbanks
-			inform 0,"SoundBank %s has $%h bytes free at end.",snkbnk_id,sizeof_z80_bank+sound_bank_start-offset(*)
+			inform 0,"SoundBank %d has $%h bytes free at end.",snkbnk_id,sizeof_z80_bank+sound_bank_start-offset(*)
 		endif
     	endm 
     	

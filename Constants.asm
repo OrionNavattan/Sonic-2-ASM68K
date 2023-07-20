@@ -548,7 +548,7 @@ ost_parent2:	equ $2C						; same as above
 ; Animation script flags
 afEnd:		equ $FF						; return to beginning of animation
 afBack:		equ $FE						; go back (specified number) bytes
-afChange:	equ $FD						; run specified animation
+afChange:	equ $FD						; run specified animation id in next byte
 afRoutine:	equ $FC						; increment primary routine counter
 afReset:	equ $FB						; reset animation and increment secondary routine counter
 af2ndRoutine:	equ $FA						; increment secondary routine counter

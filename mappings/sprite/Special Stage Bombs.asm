@@ -1,4 +1,8 @@
-Map_obj61:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Special Stage bombs
+; -------------------------------------------------------------------------------
+
+Map_BombSpec:	index offset(*)
 	ptr	Map_obj61_001A
 	ptr	Map_obj61_0024
 	ptr	Map_obj61_002E

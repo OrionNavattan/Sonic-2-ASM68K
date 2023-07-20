@@ -3,11 +3,11 @@
   <Images>
     <ImageFromMappings id="fireball">
       <ArtFile filename="../art/nemesis/Buzzer.nem" offset="29632" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj95.asm" frame="3" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/Sol.asm" frame="3" startpal="0" />
     </ImageFromMappings>
     <ImageFromMappings id="body">
       <ArtFile filename="../art/nemesis/Sol.nem" offset="31680" />
-      <MapFile type="ASM" filename="../mappings/sprite/obj95.asm" frame="0" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/Sol.asm" frame="0" startpal="0" />
     </ImageFromMappings>
   </Images>
   <DefaultImage>

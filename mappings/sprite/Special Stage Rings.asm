@@ -1,4 +1,8 @@
-Map_obj5A_5B_60:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Special Stage rings
+; -------------------------------------------------------------------------------
+
+Map_RingSpec:	index offset(*)
 	ptr	Map_obj5A_5B_60_0042
 	ptr	Map_obj5A_5B_60_004C
 	ptr	Map_obj5A_5B_60_0056

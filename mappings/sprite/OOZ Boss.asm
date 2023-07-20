@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite mappings - MTZ Eggman, Eggpod, and orbs
+; Sprite mappings - OOZ Eggman, Eggpod, and orbs
 ; -------------------------------------------------------------------------------
 
 Map_BOOZ:	index offset(*)

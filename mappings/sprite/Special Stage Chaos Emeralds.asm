@@ -1,4 +1,8 @@
-Map_obj59:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Special Stage Chaos Emeralds
+; -------------------------------------------------------------------------------
+
+Map_EmeraldSpec:	index offset(*)
 	ptr	Map_obj59_0014
 	ptr	Map_obj59_001E
 	ptr	Map_obj59_0028

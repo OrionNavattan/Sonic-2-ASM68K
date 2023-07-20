@@ -13053,14 +13053,14 @@ loc_A8AA:
 		lea	(off_3B322).l,a1
 		jsrto	LoadSubtypeData_Part3,JmpTo_LoadSubtypeData_Part3
 		move.l	#Map_TornadoHelices,ost_mappings(a0)
-		move.w	#0+tile_hi,ost_tile(a0)			; level art
+		move.w	#tile_LevelArt+tile_hi,ost_tile(a0)
 		move.b	#1,ost_priority(a0)
 		jsr	(Adjust2PArtPointer).l
 		move.b	#$C,ost_frame(a0)
 		cmpi.w	#4,($FFFFF750).w
 		bne.s	loc_A8E8
 		move.b	#$F,ost_frame(a0)
-		move.w	#0+tile_pal2+tile_hi,ost_tile(a0)
+		move.w	#tile_LevelArt+tile_pal2+tile_hi,ost_tile(a0)
 
 loc_A8E8:				
 		move.w	#$E8,d0	
@@ -22806,9 +22806,9 @@ anmldecl:	macro	*,xvel,yvel,mappings
 		dc.w \xvel,\yvel
 		dc.l \mappings
 	
-	id_\*:	equ	ptr_id
+		id_\*:	equ	ptr_id				; make id constant
 	
-	ptr_id: = ptr_id+ptr_id_inc				; increment id	
+		ptr_id: = ptr_id+ptr_id_inc		; increment id	
 		endm
 
 Anml_Variables:	
@@ -27788,7 +27788,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr PalSwitcherWingFortress
 		ptr Whisp					; $8C
 		ptr GrounderInWall
-		ptr GrounderInWall_Dup
+		ptr GrounderOnGround
 		ptr GrounderWall
 		ptr GrounderRocks				; $90
 		ptr ChopChop
@@ -32446,7 +32446,7 @@ byte_195BA:	dc.b  $F,  1,$FF,  0				; 0
 SolidObject:				
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
-		pushr.l	d1-d4					; back up input registers so we can run this routine again for sidekick
+		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
 		bsr.s	.singlecharacter			; run for main character
 		popr.l	d1-d4
 		lea	(v_ost_player2).w,a1
@@ -32490,7 +32490,7 @@ SolidObject:
 SolidObject_NoRenderChk:				
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
-		pushr.l	d1-d4					; back up input registers so we can run this routine again for sidekick
+		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
 		bsr.s	SolidObject_NoRenderChk_SingleCharacter
 		popr.l	d1-d4
 		lea	(v_ost_player2).w,a1
@@ -41414,7 +41414,7 @@ loc_1F5B4:
 ; ===========================================================================
 
 loc_1F5BE:				
-		move.b	#id_col_4x4_2+id_col_custom,ost_col_type(a0)
+		move.b	#id_col_4x4+id_col_custom,ost_col_type(a0)
 
 loc_1F5C4:				
 		cmpi.w	#$180,d1
@@ -47415,7 +47415,7 @@ off_24DDE:	index offset(*),,2
 
 loc_24DE6:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_LBlock,ost_mappings(a0)
+		move.l	#Map_LaunchBlock,ost_mappings(a0)
 		move.w	#tile_Nem_StripedBlocksVert+tile_pal4,ost_tile(a0)
 		tst.b	ost_subtype(a0)
 		beq.s	loc_24E0A
@@ -55643,17 +55643,17 @@ JmpTo44_DeleteObject:
 LargeMovingBlock:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2B8FA(pc,d0.w),d1
-		jmp	off_2B8FA(pc,d1.w)
+		move.w	LrgMovBlock_Index(pc,d0.w),d1
+		jmp	LrgMovBlock_Index(pc,d1.w)
 ; ===========================================================================
-off_2B8FA:	index offset(*),,2	
+LrgMovBlock_Index:	index offset(*),,2	
 		ptr loc_2B8FE					; 0 
 		ptr loc_2B96E					; 2
 ; ===========================================================================
 
 loc_2B8FE:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2B9CA,ost_mappings(a0)
+		move.l	#Map_LrgMovBlock,ost_mappings(a0)
 		move.w	#tile_Nem_LargeMovingBlock+tile_pal3,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo52_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -55721,14 +55721,9 @@ loc_2B9C4:
 		add.w	d1,ost_y_vel(a0)
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_2B9CA:				
-		dc.w word_2B9CC-Map_2B9CA
-word_2B9CC:	dc.w 4			
-		dc.w $E00F,    0,    0,$FFE0			; 0
-		dc.w $E00F, $800, $800,	   0			; 4
-		dc.w	$F,$1000,$1000,$FFE0			; 8
-		dc.w	$F,$1800,$1800,	   0			; 12
+
+		include "mappings/sprite/CNZ Large Moving Block.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -55766,7 +55761,7 @@ off_2BA16:	index offset(*),,2
 
 loc_2BA1A:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_2BB40,ost_mappings(a0)
+		move.l	#Map_Elevator,ost_mappings(a0)
 		move.w	#tile_Nem_CNZElevator+tile_pal3,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo53_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
@@ -55878,12 +55873,9 @@ loc_2BB16:
 locret_2BB3E:				
 		rts	
 ; ===========================================================================
-; ===========================================================================
-Map_2BB40:				
-		dc.w word_2BB42-Map_2BB40
-word_2BB42:	dc.w 2			
-		dc.w $F805,    0,    0,$FFF0			; 0
-		dc.w $F805, $800, $800,	   0			; 4
+
+		include "mappings/sprite/CNZ Elevator.asm"
+
 ; ===========================================================================
 
 	if RemoveJmpTos=0
@@ -55924,7 +55916,7 @@ ost_cage_p1_timer:		rs.w 1				; $32 ; timer for player 1
 ost_cage_p2_routine:	rs.w 1					; $34 ; player 2 secondary routine
 ost_cage_p2_timer:		rs.w 1				; $36 ; timer for player 2	
 		rsset $3E
-ost_cage_player:		rs.w 1				; $3E ; player currently in the cage
+ost_cage_player:		rs.w 1				; $3E ; player currently in the cage; used to set parent of slot reward objects
 		rsobjend
 ; ===========================================================================
 
@@ -55942,16 +55934,16 @@ Cage_Action:
 		move.w	#($20/2),d2				; height of cage/2
 		move.w	#($22/2),d3				; height of cage standing/2
 		move.w	ost_x_pos(a0),d4
-		lea	ost_cage_p1_routine(a0),a2		; (a2) = secondary routine counter for main character
+		lea	ost_cage_p1_routine(a0),a2		; (a2) = secondary routine counter for player 1
 		lea	(v_ost_player1).w,a1		
 		moveq	#status_p1_platform_bit,d6
-		pushr.l	d1-d4					; back up registers so we can use them again for the sidekick
+		pushr.l	d1-d4					; back up registers so we can use them again for player 2
 		bsr.w	.run_action				; run action for main character	(could be bsr.s)	
 		popr.l	d1-d4					; restore registers
-		lea	ost_cage_p2_routine(a0),a2		; (a2) = secondary routine counter for sidekick
+		lea	ost_cage_p2_routine(a0),a2		; (a2) = secondary routine counter for player 2
 		lea	(v_ost_player2).w,a1
 		moveq	#status_p2_platform_bit,d6
-		bsr.w	.run_action				; run action for sidekick (could be bsr.s)	
+		bsr.w	.run_action				; run action for player 2 (could be bsr.s)	
 		lea	(Ani_Cage).l,a1
 		jsrto	AnimateSprite,JmpTo10_AnimateSprite
 		jmpto	DespawnObject,JmpTo29_DespawnObject
@@ -55969,7 +55961,7 @@ Cage_ActionIndex:	index offset(*),,2
 ; ===========================================================================
 
 Cage_Detect:				
-		tst.b	ost_obj_control(a1)			; is character already in the cage?
+		tst.b	ost_obj_control(a1)			; is player already in the cage?
 		bne.w	.return					; if so, branch
 		tst.b	ost_subtype(a0)				; is it a slot machine cage?
 		beq.s	.chkcollision				; if not, branch
@@ -55979,10 +55971,10 @@ Cage_Detect:
 	.chkcollision:				
 		jsrto	SolidObject_NoRenderChk_SingleCharacter,JmpTo7_SolidObject_NoRenderChk_SingleCharacter ; check for collision even if cage is off-screen
 		tst.w	d4								
-		bpl.s	.return					; branch if character did not collide with top or bottom of cage
+		bpl.s	.return					; branch if player did not collide with top or bottom of cage
 	
 	;.catch_player:	
-		move.w	ost_x_pos(a0),ost_x_pos(a1)		; position character inside the cage
+		move.w	ost_x_pos(a0),ost_x_pos(a1)		; position player inside the cage
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.w	#0,ost_x_vel(a1)			; zero their movement
 		move.w	#0,ost_y_vel(a1)
@@ -56023,7 +56015,7 @@ Cage_GiveSlotReward:
 		btst	#0,(v_frame_counter_low).w
 		beq.w	.return					; spawn a bomb every other frame
 		cmpi.w	#$10,ost_cage_childcount(a0)			
-		bcc.w	.return					; spawn no more than 16 bombs at once
+		bcc.w	.return					; don't load more than 16 bombs at any one time
 		jsrto	FindFreeObj,JmpTo10_FindFreeObj		; find free OST slot
 		bne.w	.return					; branch if not found
 		_move.b	#id_BombPenalty,ost_id(a1)		; load bomb penalty object
@@ -56070,7 +56062,7 @@ Cage_GiveRings:
 		btst	#0,(v_frame_counter_low).w
 		beq.w	.return					; spawn a ring every other frame
 		cmpi.w	#$10,ost_cage_childcount(a0)
-		bcc.w	.return					; spawn no more than 16 rings at once
+		bcc.w	.return					; don't load more than 16 rings at any one time
 		jsrto	FindFreeObj,JmpTo10_FindFreeObj		; find free OST slot
 		bne.w	.return					; branch if not found
 		_move.b	#id_RingPrize,ost_id(a1)		; load ring prize object
@@ -56213,7 +56205,7 @@ SlotMachine_Index: bra_index
 		braptr	Slot_Start				; 8
 		braptr	Slot_SpeedUp				; $C
 		braptr	Slot_Run				; $10
-		braptr	Slot_Finished				; $14
+		braptr	Slot_Finished				; $14 (index is never set rto this)
 		id_Slot_Null:	equ offset(*)-index_start	; $18
 		rts
 		
@@ -56275,7 +56267,7 @@ Slot_Start:
 		move.b	(v_vblank_counter_byte).w,d0		; use low byte of frame counter as pseudorandom seed
 		andi.b	#7,d0					; only need lowest three bits
 		subq.b	#4,d0					; three pairs of these two instructions can be optimized to 'addi.b $2C,d0'
-		addi.b	#$30,d0					; 
+		addi.b	#$30,d0					
 		move.b	d0,slot1_speed(a4)			; start speed for slot 1
 		move.b	(v_vblank_counter_byte).w,d0		; use low byte of frame counter as pseudorandom seed
 		rol.b	#4,d0					; only need top nybble					
@@ -56419,8 +56411,8 @@ Slot_ChangeTarget:
 Slot_RunNormal:				
 		tst.b	slot_index(a4)				; is this slot 1?
 		bne.s	.not_slot_1				; if not, branch
-		tst.b	slot_timer(a4)				; has time run out (below zero)? 
-		bmi.s	.time_zero_or_prev_stopped		; if not, branch
+		tst.b	slot_timer(a4)				; has time run out (underflowed to negative)? 
+		bmi.s	.time_zero_or_prev_stopped		; if so, branch
 		rts	
 
 	.not_slot_1:				
@@ -56531,7 +56523,7 @@ Slot_Draw:
 Slot_Draw_Index:
 		bra.w	Slot_Draw1				; 0
 		bra.w	Slot_Draw2				; 4
-		; index 8 branches directly to the start of Slot_DrawSlot3
+		; index 8 branches directly to the start of Slot_Draw3
 ; ===========================================================================
 Slot_Draw3:
 		clr.b	slot_index(a4)				; go to Slot_DrawSlot1 next
@@ -57586,7 +57578,7 @@ loc_2CB70:
 		move.b	ost_render(a0),ost_render(a1)
 		move.b	ost_primary_status(a0),ost_primary_status(a1)
 		move.b	#2,ost_anim(a1)
-		move.b	#id_col_4x4_2+id_col_hurt,ost_col_type(a1)
+		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a1)
 		move.w	#-$200,ost_x_vel(a1)
 		btst	#render_xflip_bit,ost_render(a1)
 		beq.s	locret_2CBDA
@@ -57788,7 +57780,7 @@ loc_2CE24:
 		move.w	#tile_Nem_Aquis+tile_pal2,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#3,ost_priority(a1)
-		move.b	#id_col_4x4_2+id_col_hurt,ost_col_type(a1)
+		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a1)
 		move.b	#2,ost_anim(a1)
 		move.w	#$A,d0
 		move.w	#$10,d1
@@ -57980,8 +57972,7 @@ Buzz_Flame:
 		; loaded into the parent's slot before this object can check if the
 		; slot is empty. In fact, it will always be immediately occupied by
 		; the explosion object. This defect causes the flame to linger for a
-		; while after the Buzzer is destroyed. A better way to do this check
-		; would be to check if the ID is equal to 'ObjID_Buzzer'.	
+		; while after the Buzzer is destroyed.
 		tst.b	ost_id(a1)				; is parent slot empty?
 		beq.w	JmpTo49_DeleteObject			; if so, branch (but see bug description above)
 	endc		
@@ -58141,7 +58132,7 @@ loc_2D24E:
 		move.w	#tile_Nem_Buzzer,ost_tile(a1)
 		jsrto	Adjust2PArtPointer2,JmpTo7_Adjust2PArtPointer2
 		move.b	#4,ost_priority(a1)
-		move.b	#id_col_4x4_2+id_col_hurt,ost_col_type(a1)
+		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	ost_primary_status(a0),ost_primary_status(a1)
 		move.b	ost_render(a0),ost_render(a1)
@@ -61469,7 +61460,7 @@ loc_2FF02:
 		move.b	#4,ost_priority(a0)
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#5,ost_anim(a0)
-		move.b	#id_col_4x4_2+id_col_hurt,ost_col_type(a0)
+		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a0)
 		subi.w	#$1C,ost_y_pos(a0)
 		move.w	#-$70,d0
 		move.w	#-4,d1
@@ -63938,7 +63929,7 @@ loc_31F48:
 		move.b	#8,ost_height(a0)
 		move.b	#8,ost_width(a0)
 		move.b	#$12,ost_boss_wobble(a0)
-		move.b	#id_col_4x4_2+id_col_hurt,ost_col_type(a0)
+		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a0)
 		rts	
 ; ===========================================================================
 
@@ -64013,7 +64004,7 @@ loc_32030:
 		move.w	#-$100,ost_x_vel(a0)
 		move.b	#4,ost_boss_subtype(a0)
 		move.b	#6,ost_secondary_routine(a0)
-		move.b	#id_col_4x4_2+id_col_hurt,ost_col_type(a0)
+		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a0)
 		jsrto	FindNextFreeObj,JmpTo23_FindNextFreeObj
 		bne.s	locret_3207E
 		moveq	#0,d0
@@ -67348,7 +67339,7 @@ loc_34FF0:
 		bsr.w	loc_35036
 
 loc_34FFC:
-		lea	(Ani_RingSpecial).l,a1
+		lea	(Ani_RingSpec).l,a1
 		bsr.w	loc_3539E
 		tst.b	ost_render(a0)
 		bmi.w	JmpTo44_DisplaySprite
@@ -67361,7 +67352,7 @@ loc_35010:
 		bsr.w	loc_34F90
 		bsr.w	loc_3512A
 		bsr.w	loc_351A0
-		lea	(Ani_RingSpecial).l,a1
+		lea	(Ani_RingSpec).l,a1
 		jsrto	AnimateSprite,JmpTo24_AnimateSprite
 		bra.w	JmpTo44_DisplaySprite
 ; ===========================================================================
@@ -67921,7 +67912,7 @@ loc_354E4:
 		bcc.w	JmpTo63_DeleteObject
 		cmpi.w	#$E0,ost_y_pos(a0)
 		bgt.w	JmpTo63_DeleteObject
-		lea	(Ani_RingSpecial).l,a1
+		lea	(Ani_RingSpec).l,a1
 		jsrto	AnimateSprite,JmpTo24_AnimateSprite
 		bra.w	JmpTo44_DisplaySprite
 ; ===========================================================================
@@ -68839,83 +68830,9 @@ byte_35E11:	dc.b $16,$18,$16,$1A,$FF			; 0
 byte_35E16:	dc.b $22, $E,$FF				; 0 
 byte_35E19:	dc.b   2,$24,$26,$1C,$FF			; 0 
 ; ===========================================================================
-Map_SSMessages:				
-		dc.w word_35E4A-Map_SSMessages			; 0
-		dc.w word_35E54-Map_SSMessages			; 1
-		dc.w word_35E5E-Map_SSMessages			; 2
-		dc.w word_35E68-Map_SSMessages			; 3
-		dc.w word_35E72-Map_SSMessages			; 4
-		dc.w word_35E7C-Map_SSMessages			; 5
-		dc.w word_35E86-Map_SSMessages			; 6
-		dc.w word_35E90-Map_SSMessages			; 7
-		dc.w word_35E9A-Map_SSMessages			; 8
-		dc.w word_35EA4-Map_SSMessages			; 9
-		dc.w word_35EAE-Map_SSMessages			; 10
-		dc.w word_35EB8-Map_SSMessages			; 11
-		dc.w word_35EC2-Map_SSMessages			; 12
-		dc.w word_35ECC-Map_SSMessages			; 13
-		dc.w word_35ED6-Map_SSMessages			; 14
-		dc.w word_35EE0-Map_SSMessages			; 15
-		dc.w word_35EEA-Map_SSMessages			; 16
-		dc.w word_35EF4-Map_SSMessages			; 17
-		dc.w word_35EFE-Map_SSMessages			; 18
-		dc.w word_35F08-Map_SSMessages			; 19
-		dc.w word_35F12-Map_SSMessages			; 20
-		dc.w word_35F54-Map_SSMessages			; 21
-word_35E4A:	dc.w 1			
-		dc.w $F801,$8004,$8002,$FFFC			; 0
-word_35E54:	dc.w 1			
-		dc.w $F801,$8002,$8001,$FFFC			; 0
-word_35E5E:	dc.w 1			
-		dc.w $F801,$8014,$800A,$FFFC			; 0
-word_35E68:	dc.w 1			
-		dc.w $F801,$8010,$8008,$FFFC			; 0
-word_35E72:	dc.w 1			
-		dc.w $F801,$8008,$8004,$FFFC			; 0
-word_35E7C:	dc.w 1			
-		dc.w $F801,$800C,$8006,$FFFC			; 0
-word_35E86:	dc.w 1			
-		dc.w $F801,$8012,$8009,$FFFC			; 0
-word_35E90:	dc.w 1			
-		dc.w $F801,$8000,$8000,$FFFC			; 0
-word_35E9A:	dc.w 1			
-		dc.w $F801,$806A,$8035,$FFFC			; 0
-word_35EA4:	dc.w 1			
-		dc.w $F801,$800A,$8005,$FFFC			; 0
-word_35EAE:	dc.w 1			
-		dc.w $F801,$8016,$800B,$FFFC			; 0
-word_35EB8:	dc.w 1			
-		dc.w $F801,$8006,$8003,$FFFC			; 0
-word_35EC2:	dc.w 1			
-		dc.w $F801,$823D,$811E,$FFFC			; 0
-word_35ECC:	dc.w 1			
-		dc.w $F801,$823F,$811F,$FFFC			; 0
-word_35ED6:	dc.w 1			
-		dc.w $F801,$8241,$8120,$FFFC			; 0
-word_35EE0:	dc.w 1			
-		dc.w $F801,$8243,$8121,$FFFC			; 0
-word_35EEA:	dc.w 1			
-		dc.w $F801,$8245,$8122,$FFFC			; 0
-word_35EF4:	dc.w 1			
-		dc.w $F801,$8018,$800C,$FFFC			; 0
-word_35EFE:	dc.w 1			
-		dc.w $F801,$800E,$8007,$FFFC			; 0
-word_35F08:	dc.w 1			
-		dc.w $FC04,$8247,$8123,$FFF8			; 0
-word_35F12:	dc.w 8			
-		dc.w $E403,$801A,$800D,$FFD0			; 0
-		dc.w $EC0F,$801E,$800F,$FFD8			; 4
-		dc.w $EC03,$802E,$8017,$FFF8			; 8
-		dc.w  $C0D,$8032,$8019,$FFE0			; 12
-		dc.w $EC03,$882E,$8817,	   0			; 16
-		dc.w  $C0D,$8832,$8819,	   0			; 20
-		dc.w $EC0F,$881E,$880F,	   8			; 24
-		dc.w $E403,$881A,$880D,	 $28			; 28
-word_35F54:	dc.w 4			
-		dc.w $F00B,$803A,$801D,$FFE8			; 0
-		dc.w $1008,$8046,$8023,$FFE8			; 4
-		dc.w	$A,$8049,$8024,	   0			; 8
-		dc.w $E806,$8052,$8029,	   0			; 12
+
+		include "mappings/sprite/Special Stage HUD and Messages.asm"
+
 ; ===========================================================================
 
 loc_35F76:				
@@ -68937,10 +68854,10 @@ loc_35F76:
 EmeraldSpecial:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_35FCA(pc,d0.w),d1
-		jmp	off_35FCA(pc,d1.w)
+		move.w	EmeraldSpec_Index(pc,d0.w),d1
+		jmp	EmeraldSpec_Index(pc,d1.w)
 ; ===========================================================================
-off_35FCA:	index offset(*),,2
+EmeraldSpec_Index:	index offset(*),,2
 		ptr loc_35FD4					; 0 
 		ptr loc_36022					; 2
 		ptr loc_3533A					; 4
@@ -69198,40 +69115,11 @@ byte_36251:	dc.b  $B,  7,$FF				; 0
 byte_36254:	dc.b  $B,  8,$FF				; 0 
 byte_36257:	dc.b  $B,  9,$FF				; 0 
 ; ===========================================================================
-Map_EmeraldSpec:				
-		dc.w word_3626E-Map_EmeraldSpec			; 0
-		dc.w word_36278-Map_EmeraldSpec			; 1
-		dc.w word_36282-Map_EmeraldSpec			; 2
-		dc.w word_3628C-Map_EmeraldSpec			; 3
-		dc.w word_36296-Map_EmeraldSpec			; 4
-		dc.w word_362A0-Map_EmeraldSpec			; 5
-		dc.w word_362AA-Map_EmeraldSpec			; 6
-		dc.w word_362B4-Map_EmeraldSpec			; 7
-		dc.w word_362BE-Map_EmeraldSpec			; 8
-		dc.w word_362C8-Map_EmeraldSpec			; 9
-word_3626E:	dc.w 1			
-		dc.w $FC00,$8000,$8000,$FFFC			; 0
-word_36278:	dc.w 1			
-		dc.w $FC00,$8001,$8000,$FFFC			; 0
-word_36282:	dc.w 1			
-		dc.w $FC00,$8002,$8001,$FFFC			; 0
-word_3628C:	dc.w 1			
-		dc.w $F805,$8003,$8001,$FFF8			; 0
-word_36296:	dc.w 1			
-		dc.w $F805,$8007,$8003,$FFF8			; 0
-word_362A0:	dc.w 1			
-		dc.w $F805,$800B,$8005,$FFF8			; 0
-word_362AA:	dc.w 1			
-		dc.w $F805,$800F,$8007,$FFF8			; 0
-word_362B4:	dc.w 1			
-		dc.w $F40A,$8013,$8009,$FFF4			; 0
-word_362BE:	dc.w 1			
-		dc.w $F40A,$801C,$800E,$FFF4			; 0
-word_362C8:	dc.w 1			
-		dc.w $F40A,$8025,$8012,$FFF4			; 0
+
+		include "mappings/sprite/Special Stage Chaos Emeralds.asm"
 	
 ; ===========================================================================		
-Ani_RingSpecial:	index offset(*)
+Ani_RingSpec:	index offset(*)
 		ptr byte_362E8					; 0 
 		ptr byte_362EE					; 1
 		ptr byte_362F4					; 2
@@ -69255,109 +69143,8 @@ byte_36318:	dc.b   5,  8,$12,$1C,$12,$FF			; 0
 byte_3631E:	dc.b   5,  9,$13,$1D,$13,$FF			; 0	
 byte_36324:	dc.b   1,$1E,$1F,$20,$FF,  0			; 0	
 ; ===========================================================================
-Map_RingSpec:				
-		dc.w word_3636C-Map_RingSpec			; 0
-		dc.w word_36376-Map_RingSpec			; 1
-		dc.w word_36380-Map_RingSpec			; 2
-		dc.w word_3638A-Map_RingSpec			; 3
-		dc.w word_36394-Map_RingSpec			; 4
-		dc.w word_3639E-Map_RingSpec			; 5
-		dc.w word_363A8-Map_RingSpec			; 6
-		dc.w word_363B2-Map_RingSpec			; 7
-		dc.w word_363BC-Map_RingSpec			; 8
-		dc.w word_363C6-Map_RingSpec			; 9
-		dc.w word_363D0-Map_RingSpec			; 10
-		dc.w word_363DA-Map_RingSpec			; 11
-		dc.w word_363E4-Map_RingSpec			; 12
-		dc.w word_363EE-Map_RingSpec			; 13
-		dc.w word_363F8-Map_RingSpec			; 14
-		dc.w word_36402-Map_RingSpec			; 15
-		dc.w word_3640C-Map_RingSpec			; 16
-		dc.w word_36416-Map_RingSpec			; 17
-		dc.w word_36420-Map_RingSpec			; 18
-		dc.w word_3642A-Map_RingSpec			; 19
-		dc.w word_36434-Map_RingSpec			; 20
-		dc.w word_3643E-Map_RingSpec			; 21
-		dc.w word_36448-Map_RingSpec			; 22
-		dc.w word_36452-Map_RingSpec			; 23
-		dc.w word_3645C-Map_RingSpec			; 24
-		dc.w word_36466-Map_RingSpec			; 25
-		dc.w word_36470-Map_RingSpec			; 26
-		dc.w word_3647A-Map_RingSpec			; 27
-		dc.w word_36484-Map_RingSpec			; 28
-		dc.w word_3648E-Map_RingSpec			; 29
-		dc.w word_36498-Map_RingSpec			; 30
-		dc.w word_364AA-Map_RingSpec			; 31
-		dc.w word_364BC-Map_RingSpec			; 32
-word_3636C:	dc.w 1			
-		dc.w $FC00,$8000,$8000,$FFFC			; 0
-word_36376:	dc.w 1			
-		dc.w $FC00,$8001,$8000,$FFFC			; 0
-word_36380:	dc.w 1			
-		dc.w $FC00,$8002,$8001,$FFFC			; 0
-word_3638A:	dc.w 1			
-		dc.w $F805,$8003,$8001,$FFF8			; 0
-word_36394:	dc.w 1			
-		dc.w $F805,$8007,$8003,$FFF8			; 0
-word_3639E:	dc.w 1			
-		dc.w $F805,$800B,$8005,$FFF8			; 0
-word_363A8:	dc.w 1			
-		dc.w $F805,$800F,$8007,$FFF8			; 0
-word_363B2:	dc.w 1			
-		dc.w $F40A,$8013,$8009,$FFF4			; 0
-word_363BC:	dc.w 1			
-		dc.w $F40A,$801C,$800E,$FFF4			; 0
-word_363C6:	dc.w 1			
-		dc.w $F40A,$8025,$8012,$FFF4			; 0
-word_363D0:	dc.w 1			
-		dc.w $FC00,$802E,$8017,$FFFC			; 0
-word_363DA:	dc.w 1			
-		dc.w $FC00,$802F,$8017,$FFFC			; 0
-word_363E4:	dc.w 1			
-		dc.w $FC00,$8030,$8018,$FFFC			; 0
-word_363EE:	dc.w 1			
-		dc.w $F801,$8031,$8018,$FFFC			; 0
-word_363F8:	dc.w 1			
-		dc.w $F805,$8033,$8019,$FFF8			; 0
-word_36402:	dc.w 1			
-		dc.w $F805,$8037,$801B,$FFF8			; 0
-word_3640C:	dc.w 1			
-		dc.w $F805,$803B,$801D,$FFF8			; 0
-word_36416:	dc.w 1			
-		dc.w $F406,$803F,$801F,$FFF8			; 0
-word_36420:	dc.w 1			
-		dc.w $F406,$8045,$8022,$FFF8			; 0
-word_3642A:	dc.w 1			
-		dc.w $F40A,$804B,$8025,$FFF4			; 0
-word_36434:	dc.w 1			
-		dc.w $FC00,$8054,$802A,$FFFC			; 0
-word_3643E:	dc.w 1			
-		dc.w $FC00,$8055,$802A,$FFFC			; 0
-word_36448:	dc.w 1			
-		dc.w $FC00,$8056,$802B,$FFFC			; 0
-word_36452:	dc.w 1			
-		dc.w $F801,$8057,$802B,$FFFC			; 0
-word_3645C:	dc.w 1			
-		dc.w $F801,$8059,$802C,$FFFC			; 0
-word_36466:	dc.w 1			
-		dc.w $F801,$805B,$802D,$FFFC			; 0
-word_36470:	dc.w 1			
-		dc.w $F801,$805D,$802E,$FFFC			; 0
-word_3647A:	dc.w 1			
-		dc.w $F402,$805F,$802F,$FFFC			; 0
-word_36484:	dc.w 1			
-		dc.w $F402,$8062,$8031,$FFFC			; 0
-word_3648E:	dc.w 1			
-		dc.w $F402,$8065,$8032,$FFFC			; 0
-word_36498:	dc.w 2			
-		dc.w $F007,$8000,$8000,$FFF0			; 0
-		dc.w $F805,$8008,$8004,	   0			; 4
-word_364AA:	dc.w 2			
-		dc.w $F00E,$800C,$8006,$FFF0			; 0
-		dc.w  $800,$8018,$800C,$FFF8			; 4
-word_364BC:	dc.w 2			
-		dc.w $F002,$8019,$800C,$FFF0			; 0
-		dc.w $F80A,$801C,$800E,$FFF8			; 4
+
+		include "mappings/sprite/Special Stage Rings.asm"
 		
 ; ===========================================================================		
 Ani_BombSpec:	index offset(*)
@@ -69385,49 +69172,9 @@ byte_364FC:	dc.b  $B,  8,$FF
 byte_364FF:	dc.b  $B,  9,$FF				; 0 
 byte_36502:	dc.b   2, $A, $B, $C,$FF,  0			; 0	
 ; ===========================================================================
-Map_BombSpec:				
-		dc.w word_36522-Map_BombSpec			; 0
-		dc.w word_3652C-Map_BombSpec			; 1
-		dc.w word_36536-Map_BombSpec			; 2
-		dc.w word_36540-Map_BombSpec			; 3
-		dc.w word_3654A-Map_BombSpec			; 4
-		dc.w word_36554-Map_BombSpec			; 5
-		dc.w word_3655E-Map_BombSpec			; 6
-		dc.w word_36568-Map_BombSpec			; 7
-		dc.w word_36572-Map_BombSpec			; 8
-		dc.w word_3657C-Map_BombSpec			; 9
-		dc.w word_36586-Map_BombSpec			; 10
-		dc.w word_36590-Map_BombSpec			; 11
-		dc.w word_365A2-Map_BombSpec			; 12
-word_36522:	dc.w 1			
-		dc.w $FC00,$8000,$8000,$FFFC			; 0
-word_3652C:	dc.w 1			
-		dc.w $FC00,$8001,$8000,$FFFC			; 0
-word_36536:	dc.w 1			
-		dc.w $F805,$8002,$8001,$FFF8			; 0
-word_36540:	dc.w 1			
-		dc.w $F805,$8006,$8003,$FFF8			; 0
-word_3654A:	dc.w 1			
-		dc.w $F805,$800A,$8005,$FFF8			; 0
-word_36554:	dc.w 1			
-		dc.w $F40A,$800E,$8007,$FFF4			; 0
-word_3655E:	dc.w 1			
-		dc.w $F40A,$8017,$800B,$FFF4			; 0
-word_36568:	dc.w 1			
-		dc.w $F00F,$8020,$8010,$FFF0			; 0
-word_36572:	dc.w 1			
-		dc.w $F00F,$8030,$8018,$FFF0			; 0
-word_3657C:	dc.w 1			
-		dc.w $F00F,$8040,$8020,$FFF0			; 0
-word_36586:	dc.w 1			
-		dc.w $F00F,$8000,$8000,$FFF0			; 0
-word_36590:	dc.w 2			
-		dc.w $E80F,$8010,$8008,$FFE8			; 0
-		dc.w $E80F,$8010,$8008,$FFF8			; 4
-word_365A2:	dc.w 3			
-		dc.w $E00F,$8020,$8010,$FFD8			; 0
-		dc.w $D80F,$9020,$9010,$FFF0			; 4
-		dc.w $E00F,$8820,$8810,	   8			; 8
+
+		include "mappings/sprite/Special Stage Bombs.asm"
+
 ; ===========================================================================
 
 JmpTo44_DisplaySprite:				
@@ -69458,7 +69205,7 @@ JmpTo2_FindFreeObjSpecial:
 ; ===========================================================================	
 ; ---------------------------------------------------------------------------
 ; Subroutine to	load OST data for an object from a subtypedata declaration.
-; Requires subtype to be set by the parent object.
+; Requires subtype to be set beforehand.
 ; Only objects 8C and higher use this, strangely enough.
 
 ; input: 
@@ -69488,15 +69235,15 @@ LoadSubtypeData_Part3:
 		rts	
 ; ===========================================================================
 
-SubtypeData_Index:	index offset(*)
-		ptr off_36A3E					; 0 
-		ptr off_36CC4					; 1
-		ptr off_36CCE					; 2
-		ptr off_36CD8					; 3
-		ptr off_36EE6					; 4
-		ptr off_3707C					; 5
+SubtypeData_Index:	index offset(*),,2
+		ptr SubData_Whisp					; 0 
+		ptr SubData_Ground				; 2
+		ptr SubData_GWall					; 4
+		ptr SubData_GRock					; 6
+		ptr SubData_Chop					; 4
+		ptr SubData_Spiker					; 5
 		ptr Rexon					; invalid
-		ptr off_3766E					; 7
+		ptr SubData_Rex					; 7
 		ptr off_37764					; 8
 		ptr off_37888					; 9
 		ptr off_3776E					; 10
@@ -69740,15 +69487,17 @@ DeleteBehindScreen:
 ; Used only by Mecha Sonic and Grabber's legs.
 
 ; In the Sonic Classics version of Revision 2, ~(render_xflip|render_yflip)
-; and ~(status_xflip|status_yflip) were changed to ~(render_yflip) and ~(status_yflip),
-; breaking the x-flipping of the Grabbers' legs and Mecha Sonic's sparks.
+; and ~(status_xflip|status_yflip) were changed to ~(render_yflip) and 
+; ~(status_yflip), breaking the x-flipping of the Grabbers' legs and Mecha 
+; Sonic's sparks.
 
 ; input:
 ;	a0 = parent object
 ;	a1 = child object	
 
 ; 	uses d0.b, d1.b d2.b, a0, a1 	
-; ---------------------------------------------------------------------------	
+; ---------------------------------------------------------------------------
+
 InheritParentXYFlip:				
 		move.b	ost_render(a0),d0			; get child object's render flags
 		andi.b	#~(render_xflip|render_yflip),d0	; clear x and y flip bits
@@ -69763,12 +69512,7 @@ InheritParentXYFlip:
 		rts	
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Subroutine to load a child object with child object data, matching
-; the parent's x and y coordinates.
-
-; Child object data contains the offset in parent object's OST slot where 
-; pointer to child will be stored (word), the id of the child object (byte), 
-; and the subtype of the child object (byte).
+; Subroutine to spawn a child object using a childobjdata declaration.
 
 ; input:
 ;	a0 = address of parent's OST slot
@@ -69777,6 +69521,7 @@ InheritParentXYFlip:
 
 ;	uses d0.w, a0, a1, a2 
 ; ---------------------------------------------------------------------------
+
 LoadChild:				
 		jsr	(FindNextFreeObj).l			; find free OST slot after parent
 		bne.s	.fail					; branch if not found
@@ -69833,6 +69578,7 @@ LoadChild:
 
 ; uses d0.w, d1.w, d2.b, a0, a1, a2, a3
 ; ---------------------------------------------------------------------------
+
 SpawnProjectiles:				
 		moveq	#0,d1
 
@@ -69990,7 +69736,7 @@ loc_36958:
 		bmi.s	loc_36970
 
 loc_3695E:				
-		lea	(off_36A48).l,a1
+		lea	(Ani_Whisp).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DespawnObject).l
 ; ===========================================================================
@@ -70029,13 +69775,13 @@ loc_369C2:
 		move.w	d0,d1
 		bsr.w	ObjCapSpeed
 		jsr	(SpeedToPos).l
-		lea	(off_36A48).l,a1
+		lea	(Ani_Whisp).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DespawnObject).l
 ; ===========================================================================
 word_369F4:	
-		dc.w $FFF0					; 0
-		dc.w   $10					; 1
+		dc.w  -$10
+		dc.w   $10
 ; ===========================================================================
 
 loc_369F8:				
@@ -70045,153 +69791,156 @@ loc_369F8:
 		andi.b	#$1F,d0
 		move.b	d0,$2A(a0)
 		bsr.w	ObjMoveStop
-		lea	(off_36A48).l,a1
+		lea	(Ani_Whisp).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DespawnObject).l
 ; ===========================================================================
 
 loc_36A26:
 		jsr	(SpeedToPos).l
-		lea	(off_36A48).l,a1
+		lea	(Ani_Whisp).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DespawnObject).l
 ; ===========================================================================
-off_36A3E:	
-		dc.l Map_Whisp	
-		dc.w $A500
-		dc.w $404
-		dc.w $C0B
+
+SubData_Whisp:	
+		subtypedata	Map_Whisp,tile_Nem_Whisp+tile_pal2+tile_hi,render_rel,4,$C,id_col_8x8
 		
-off_36A48:	index offset(*)
-	ptr byte_36A4A 
+Ani_Whisp:	index offset(*)
+		ptr Ani_Whisp_Fly 
 
-byte_36A4A:	
-	dc.b   1,  0,  1,$FF
+Ani_Whisp_Fly:	
+		dc.b 1
+		dc.b id_Frame_Whisp_WingUp
+		dc.b id_Frame_Whisp_WingDown
+		dc.b afEnd
+; ===========================================================================
 
-Map_Whisp:				
-		dc.w byte_36A52-Map_Whisp			; 0
-		dc.w byte_36A64-Map_Whisp			; 1
-byte_36A52:	
-		dc.b   0,  2,$F8,  8,  0,  0,  0,  0,$FF,$F4,  0,  8,  0,  3,  0,  1 ; 0		
-		dc.b $FF,$F4					; 16
-byte_36A64:	
-		dc.b   0,  2,$F8,  8,  0,  6,  0,  3,$FF,$F4,  0,  8,  0,  3,  0,  1 ; 0			
-		dc.b $FF,$F4					; 16
+		include "mappings/sprite/Whisp.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 8D - Grounder in wall
+; Objects 8D and 8E - Grounder
+
+; 8D = hidden behind wall; 8E = roving on ground
 ; ----------------------------------------------------------------------------
 GrounderInWall:
-GrounderInWall_Dup:		; that this exists seems to be a bug?	
+GrounderOnGround:
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_36A84(pc,d0.w),d1
-		jmp	off_36A84(pc,d1.w)
+		move.w	Ground_Index(pc,d0.w),d1
+		jmp	Ground_Index(pc,d1.w)
 ; ===========================================================================
-off_36A84:	index offset(*),,2
-		ptr loc_36A90					; 0 
-		ptr loc_36ADC					; 2
-		ptr loc_36B00					; 4
-		ptr loc_36B0E					; 6
-		ptr loc_36B34					; 8
-		ptr loc_36B6A					; $A
+Ground_Index:	index offset(*),,2
+		ptr Ground_Init					; 0 
+		ptr Ground_Wait					; 2
+		ptr Ground_BreakOut					; 4
+		ptr Ground_StartRoam				; 6
+		ptr Ground_Roaming					; 8
+		ptr Ground_Pause					; $A
+		
+		rsobj	GrounderInWall,$2A
+ost_ground_wait:		rs.b 1 ; $2A ; time to wait before turning around			
+ost_ground_emerge:	rs.b 1 ; $2B ; flag that triggers grounder's wall to break when set
+		rsobjend
 ; ===========================================================================
 
-loc_36A90:				
-		bsr.w	LoadSubtypeData
-		bclr	#render_yflip_bit,ost_render(a0)
-		beq.s	loc_36AA8
-		bclr	#1,ost_primary_status(a0)
-		andi.w	#tile_draw,ost_tile(a0)
+Ground_Init:				
+		bsr.w	LoadSubtypeData								; go to Ground_Wait next
+		
+		; It seems this object was at one time going to use the y-flip bit in the objpos data
+		; to indicate different priority levels. If y-flip is not set, then high priority is used;
+		; otherwise it is cleared. As it stands, all instances of this object have y-flip set,
+		; meaning lower priority is always used.
+		bclr	#render_yflip_bit,ost_render(a0)			; clear y-flip render bit
+		beq.s	.no_yflip									; branch if it was already clear
+		bclr	#status_yflip_bit,ost_primary_status(a0)	; clear y-flip status bit
+		andi.w	#tile_draw,ost_tile(a0)						; clear priority bit
 
-loc_36AA8:				
+	.no_yflip:				
 		move.b	#$14,ost_height(a0)
 		move.b	#$10,ost_width(a0)
-		jsr	(FindFloorObj).l
-		tst.w	d1
-		bpl.s	loc_36AC8
-		add.w	d1,ost_y_pos(a0)
+		jsr	(FindFloorObj).l			
+		tst.w	d1						; is grounder on the floor?
+		bpl.s	.chk_wall				; if not, branch
+		add.w	d1,ost_y_pos(a0)		; align to floor
 		move.w	#0,ost_y_vel(a0)
 
-loc_36AC8:				
-		_move.b	ost_id(a0),d0
+.chk_wall:				
+		_move.b	ost_id(a0),d0			; get ID
 		subi.b	#id_GrounderInWall,d0
-		beq.w	loc_36C64
-		move.b	#6,ost_primary_routine(a0)
+		beq.w	Ground_LoadWall				; branch if this is a Grounder hiding in a wall
+		move.b	#id_Ground_StartRoam,ost_primary_routine(a0)	; if on ground, go to Ground_StartRoam next
 		rts	
 ; ===========================================================================
 
-loc_36ADC:				
-		bsr.w	GetClosestPlayer
-		tst.w	d2
-		bpl.s	loc_36AE6
-		neg.w	d2
-
-loc_36AE6:				
-		cmpi.w	#$60,d2
-		bls.s	loc_36AF0
+Ground_Wait:				
+		bsr.w	GetClosestPlayer			; get closest player
+		abs.w d2						; d2 = absolute value of horizontal distance to nearest player				
+		cmpi.w	#$60,d2					; is a player within $60 pixels horizontally?
+		bls.s	.within_60				; branch if so
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_36AF0:				
-		addq.b	#2,ost_primary_routine(a0)
-		st.b	$2B(a0)
-		bsr.w	loc_36C2C
+	.within_60:				
+		addq.b	#2,ost_primary_routine(a0)			; go to Ground_Emerge next
+		st.b	ost_ground_emerge(a0)			; signal wall to break apart
+		bsr.w	Ground_LoadRocks					; load rocks
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_36B00:				
-		lea	(off_36CEA).l,a1
+Ground_BreakOut:				
+		lea	(Ani_Grounder1).l,a1				; go to Ground_StartRoam when animation is complete
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_36B0E:				
-		addq.b	#2,ost_primary_routine(a0)
+Ground_StartRoam:				
+		addq.b	#2,ost_primary_routine(a0)		; go to Ground_Roaming next
 		bsr.w	GetClosestPlayer
-		move.w	word_36B30(pc,d0.w),ost_x_vel(a0)
-		bclr	#status_xflip_bit,ost_primary_status(a0)
+		move.w	Ground_Speeds(pc,d0.w),ost_x_vel(a0)		; set x-vel based on direction to nearest player
+		bclr	#status_xflip_bit,ost_primary_status(a0)	
 		tst.w	d0
-		beq.s	loc_36B2C
-		bset	#status_xflip_bit,ost_primary_status(a0)
+		beq.s	.no_x_flip									; branch if player is to the left
+		bset	#status_xflip_bit,ost_primary_status(a0)	; else, player is to the right	
 
-loc_36B2C:				
+	.no_x_flip:				
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-word_36B30:	
-		dc.w $FF00					; 0
-		dc.w $100					; 1
+Ground_Speeds:	
+		dc.w -$100
+		dc.w $100
 ; ===========================================================================
 
-loc_36B34:				
-		jsrto	SpeedToPos,JmpTo26_SpeedToPos
+Ground_Roaming:				
+		jsrto	SpeedToPos,JmpTo26_SpeedToPos	; update position
 		jsr	(FindFloorObj).l
 		cmpi.w	#-1,d1
-		blt.s	loc_36B5C
+		blt.s	Ground_Stop			; branch if grounder is more than 1 pixel below floor			
 		cmpi.w	#$C,d1
-		bge.s	loc_36B5C
-		add.w	d1,ost_y_pos(a0)
-		lea	(off_36CE2).l,a1
+		bge.s	Ground_Stop			; branch if grounder is more than $C pixels above floor
+		add.w	d1,ost_y_pos(a0)	; align to floor
+		lea	(Ani_Grounder2).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_36B5C:				
-		addq.b	#2,ost_primary_routine(a0)
-		move.b	#$3B,$2A(a0)
+Ground_Stop:				
+		addq.b	#2,ost_primary_routine(a0)	; go to Ground_Pause next
+		move.b	#60-1,ost_ground_wait(a0)				; wait for 60 frames
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_36B6A:				
-		subq.b	#1,$2A(a0)
-		bmi.s	loc_36B74
+Ground_Pause:				
+		subq.b	#1,ost_ground_wait(a0)			; decrement timer
+		bmi.s	.turn_around			; branch if time has run out
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_36B74:				
-		move.b	#8,ost_primary_routine(a0)
-		neg.w	ost_x_vel(a0)
-		bchg	#status_xflip_bit,ost_primary_status(a0)
+	.turn_around:				
+		move.b	#id_Ground_Roaming,ost_primary_routine(a0)	; go back to Ground_Roaming
+		neg.w	ost_x_vel(a0)									; reverse direction
+		bchg	#status_xflip_bit,ost_primary_status(a0)		; x-flip
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -70201,36 +69950,47 @@ loc_36B74:
 GrounderWall:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_36B96(pc,d0.w),d1
-		jmp	off_36B96(pc,d1.w)
+		move.w	GWall_Index(pc,d0.w),d1
+		jmp	GWall_Index(pc,d1.w)
 ; ===========================================================================
-off_36B96:	index offset(*),,2
-		ptr loc_36B9C					; 0 
-		ptr loc_36BA6					; 2
-		ptr loc_36C1C					; 4
+GWall_Index:	index offset(*),,2
+		ptr GWall_Init					; 0 
+		ptr GWall_Wait					; 2
+		ptr GWall_GRock_Fall					; 4
+		
+		rsobj GrounderWall,$2C
+ost_gwall_parent: 		rs.w 1 ; $2C ; parent grounder that spawned this object
+ost_gwall_vel_index:	rs.w 1 ; $2E ; index into velocity table
+		rsobjend
 ; ===========================================================================
 
-loc_36B9C:				
+GWall_Init:
+	if FixBugs
+		bra.w	LoadSubtypeData
+	else				
 		bsr.w	LoadSubtypeData
-		clr.w	ost_tile(a0)
+		clr.w	ost_tile(a0)		; this is unnecessary, as it is already set to 0 (tile_LevelArt) by the call to LoadSubtypeData
 		rts	
+	endc	
 ; ===========================================================================
 
-loc_36BA6:				
-		movea.w	$2C(a0),a1
-		tst.b	$2B(a1)
-		bne.s	loc_36BB4
+GWall_Wait:				
+		movea.w	ost_gwall_parent(a0),a1	; a1 = parent grounder
+		tst.b	ost_ground_emerge(a1)	; is grounder about to emerge?
+		bne.s	.break_wall				; if so, branch
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_36BB4:				
-		addq.b	#2,ost_primary_routine(a0)
-		move.w	$2E(a0),d0
-		move.b	byte_36BCC(pc,d0.w),ost_x_vel(a0)
-		move.b	byte_36BCC+1(pc,d0.w),ost_y_vel(a0)
+.break_wall:				
+		addq.b	#2,ost_primary_routine(a0)		; go to GWall_GRock_Fall next
+		move.w	ost_gwall_vel_index(a0),d0		; get velocity table index
+		move.b	Gwall_FragSpeeds(pc,d0.w),ost_x_vel(a0)		; set x vel
+		move.b	Gwall_FragSpeeds+1(pc,d0.w),ost_y_vel(a0)	; set y vel
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-byte_36BCC:	
+
+Gwall_FragSpeeds:	
+		;   ost_x_vel, ost_y_vel
 		dc.b   1,$FE					; 0
 		dc.b   1,$FF					; 2
 		dc.b $FF,$FE					; 4
@@ -70243,25 +70003,34 @@ byte_36BCC:
 GrounderRocks:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_36BE2(pc,d0.w),d1
-		jmp	off_36BE2(pc,d1.w)
+		move.w	GRock_Index(pc,d0.w),d1
+		jmp	GRock_Index(pc,d1.w)
 ; ===========================================================================
-off_36BE2:	index offset(*),,2
-		ptr loc_36BE6					; 0 
-		ptr loc_36C1C					; 2
+GRock_Index:	index offset(*),,2
+		ptr GRock_Init					; 0 
+		ptr GWall_GRock_Fall					; 2
+		
+		rsobj GrounderRocks,$2C
+ost_grock_parent: 		rs.w 1 ; $2C ; parent grounder that spawned this object
+ost_grock_vel_index:	rs.w 1 ; $2E ; index into velocity and frame tables
+		rsobjend
 ; ===========================================================================
 
-loc_36BE6:				
-		bsr.w	LoadSubtypeData
-		move.w	#tile_Nem_Grounder+tile_pal3,ost_tile(a0)
-		move.w	$2E(a0),d0
-		move.b	byte_36C12(pc,d0.w),ost_x_vel(a0)
-		move.b	byte_36C12+1(pc,d0.w),ost_y_vel(a0)
-		lsr.w	#1,d0
-		move.b	byte_36C0C(pc,d0.w),ost_frame(a0)
+GRock_Init:				
+		bsr.w	LoadSubtypeData								; go to GWall_GRock_Fall next
+	if FixBugs=0
+		; See SubData_GRock.
+		move.w	#tile_Nem_Grounder+tile_pal3,ost_tile(a0)	; why do this when you can put it in the subtype data?
+	endc	
+		move.w	ost_grock_vel_index(a0),d0					; get velocity table index
+		move.b	GRock_Speeds(pc,d0.w),ost_x_vel(a0)			; set x vel
+		move.b	GRock_Speeds+1(pc,d0.w),ost_y_vel(a0)		; set y_vel
+		lsr.w	#1,d0										; divide by 2 to get frame index
+		move.b	GRock_Frames(pc,d0.w),ost_frame(a0)			; set mapping frame
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-byte_36C0C:	
+
+GRock_Frames:	
 		dc.b   0					; 0
 		dc.b   2					; 1
 		dc.b   0					; 2
@@ -70269,7 +70038,7 @@ byte_36C0C:
 		dc.b   0					; 4
 		dc.b   0					; 5
 		
-byte_36C12:
+GRock_Speeds:
 		dc.b $FF,$FC					; 0
 		dc.b   4,$FD					; 2
 		dc.b   2,  0					; 4
@@ -70277,155 +70046,135 @@ byte_36C12:
 		dc.b $FD,$FD					; 8
 ; ===========================================================================
 
-loc_36C1C:				
-		tst.b	ost_render(a0)
-		bpl.w	JmpTo65_DeleteObject
-		jsrto	ObjectFall,JmpTo8_ObjectFall
+GWall_GRock_Fall:				
+		tst.b	ost_render(a0)						; is object still on-screen?
+		bpl.w	JmpTo65_DeleteObject				; if not, delete
+		jsrto	ObjectFall,JmpTo8_ObjectFall		; apply gravity	
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_36C2C:				
+Ground_LoadRocks:				
 		moveq	#0,d1
-		moveq	#4,d6
+		moveq	#5-1,d6
 
-loc_36C30:				
-		jsrto	FindFreeObj,JmpTo19_FindFreeObj
-		bne.s	locret_36C3E
-		bsr.w	loc_36C40
-		dbf	d6,loc_36C30
+	.loadloop:				
+		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
+		bne.s	.fail								; branch if not found
+		bsr.w	.loadrock							; load one instance of GrounderRocks object  (could be bsr.s)
+		dbf	d6,.loadloop
 
-locret_36C3E:				
+	.fail:				
 		rts	
 ; ===========================================================================
 
-loc_36C40:				
-		_move.b	#id_GrounderRocks,ost_id(a1)
-		move.b	#6,ost_subtype(a1)
-		move.w	a0,$2C(a1)
-		move.w	d1,$2E(a1)
+	.loadrock:				
+		_move.b	#id_GrounderRocks,ost_id(a1)			; load grounder's rock
+		move.b	#id_SubData_GRock,ost_subtype(a1)	; index to ost data
+		move.w	a0,ost_grock_parent(a1)					; set pointer to parent
+		move.w	d1,ost_grock_vel_index(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addq.w	#2,d1
 		rts	
 ; ===========================================================================
 
-loc_36C64:				
-		moveq	#0,d1
-		moveq	#3,d6
+Ground_LoadWall:				
+		moveq	#0,d1		; initial index into GWall_Offsets
+		moveq	#4-1,d6		; four objects to load
 
-loc_36C68:				
-		jsrto	FindFreeObj,JmpTo19_FindFreeObj
-		bne.s	locret_36C76
-		bsr.w	loc_36C78
-		dbf	d6,loc_36C68
+	.loadloop:				
+		jsrto	FindFreeObj,JmpTo19_FindFreeObj	; find free OST slot
+		bne.s	.fail							; branch if not found
+		bsr.w	.loadwall						; load one instance of GrounderWall object (could be bsr.s)
+		dbf	d6,.loadloop
 
-locret_36C76:				
+	.fail:				
 		rts	
 ; ===========================================================================
 
-loc_36C78:				
-		_move.b	#id_GrounderWall,ost_id(a1)
-		move.b	#4,ost_subtype(a1)
-		move.w	a0,$2C(a1)
-		move.w	d1,$2E(a1)
-		move.l	ost_x_pos(a0),d0
-		swap	d0
+	.loadwall:				
+		_move.b	#id_GrounderWall,ost_id(a1)	; load grounder's Wall
+		move.b	#id_SubData_GWall,ost_subtype(a1)	; index to ost data		
+		move.w	a0,ost_gwall_parent(a1)				; set pointer to parent
+		move.w	d1,ost_gwall_vel_index(a1)			; set velocity table index			
+		
+		move.l	ost_x_pos(a0),d0			; get parent grounder's x pos		
+		swap	d0							; offset is added to high word		
 		moveq	#0,d2
-		move.b	byte_36CBC(pc,d1.w),d2
+		move.b	GWall_Offsets(pc,d1.w),d2		; get x offset from array
 		ext.w	d2
-		add.w	d2,d0
-		swap	d0
-		move.l	d0,ost_x_pos(a1)
-		move.l	ost_y_pos(a0),d0
-		swap	d0
+		add.w	d2,d0						; add offset to parent x pos
+		swap	d0							; swap words back
+		move.l	d0,ost_x_pos(a1)			; store x pos
+		
+		move.l	ost_y_pos(a0),d0			; get parent grounder's x pos
+		swap	d0							; offset is added to high word
 		moveq	#0,d2
-		move.b	byte_36CBC+1(pc,d1.w),d2
+		move.b	GWall_Offsets+1(pc,d1.w),d2	; get y offset from array
 		ext.w	d2
-		add.w	d2,d0
-		swap	d0
-		move.l	d0,ost_y_pos(a1)
-		addq.w	#2,d1
+		add.w	d2,d0						; add offset to parent y pos
+		swap	d0							; swap words back
+		move.l	d0,ost_y_pos(a1)			; store pos
+		
+		addq.w	#2,d1						; next index in GWall_Offsets
 		rts	
 ; ===========================================================================
-byte_36CBC:	
-		dc.b   0,$EC					; 0
-		dc.b $10,$FC					; 2
-		dc.b   0, $C					; 4
-		dc.b $F0,$FC					; 6
 
-off_36CC4:	
-		dc.l Map_36CF0	
-		dc.w $A509
-		dc.w $405
-		dc.w $1002
+; Offsets for Grounder's wall relative to parent
+GWall_Offsets:	
+		dc.b    0,-$14
+		dc.b  $10,  -4	; 2
+		dc.b    0,  $C	; 4
+		dc.b -$10,  -4	; 6
+; ===========================================================================
 
-off_36CCE:	
-		dc.l Map_36D00	
-		dc.w 0
-		dc.w $8404
-		dc.w $1000
+SubData_Ground:
+		subtypedata	Map_Ground,tile_nem_Grounder+tile_pal2+tile_hi,render_rel,5,$10,id_col_12x20 ; tile_hi is cleared by init code
 
-off_36CD8:	
-		dc.l Map_36CFA	
-		dc.w $A509
-		dc.w $8404
-		dc.w $800
+SubData_GWall:
+		subtypedata Map_GWall,tile_LevelArt,render_rel|render_onscreen,4,$10,id_col_null
+
+SubData_GRock:
+	if FixBugs
+		; The correct tile setting for this object.
+		subtypedata	Map_GRock,tile_Nem_Grounder+tile_pal3,render_rel|render_onscreen,4,8,id_col_null
+	else
+		; The tile setting here is incorrect, and is corrected with an additional instruction
+		; in the object's code. It'd make more sense to put the correct setting here and eliminate
+		; the additional instruction.
+		subtypedata	Map_GRock,tile_nem_Grounder+tile_pal2+tile_hi,render_rel|render_onscreen,4,8,id_col_null
+	endc	
+
+; ----------------------------------------------------------------------------
+; Animation scripts
+
+; Absolutely no reason for these to be complete separate like this.
+; ----------------------------------------------------------------------------	
+	
+Ani_Grounder2:	index offset(*)
+		ptr Ground_Roam
 		
-off_36CE2:	dc.w byte_36CE4-off_36CE2 
-byte_36CE4:	dc.b   3,  2,  3,  4,$FF,  0			; 0	
-off_36CEA:	dc.w byte_36CEC-off_36CEA			; 0 
-byte_36CEC:	dc.b   7,  0,  1,$FC				; 0 
-; -----------------------------------------------------------------------------
-; Unknown sprite mappings
-; -----------------------------------------------------------------------------
-Map_36CF0:
-		dc.w word_36D02-Map_36CF0 
-		dc.w word_36D24-Map_36CF0
-		dc.w word_36D46-Map_36CF0
-		dc.w word_36D58-Map_36CF0
-		dc.w word_36D6A-Map_36CF0
-; -----------------------------------------------------------------------------
-; Unknown sprite mappings
-; -----------------------------------------------------------------------------
-Map_36CFA:				
-		dc.w word_36D7C-Map_36CFA
-		dc.w word_36D86-Map_36CFA
-		dc.w word_36D90-Map_36CFA
-; -----------------------------------------------------------------------------
-; Unknown sprite mappings
-; -----------------------------------------------------------------------------
-Map_36D00:				
-		dc.w word_36D9A-Map_36D00
-word_36D02:	dc.w 4			
-		dc.w $F400,    0,    0,$FFF8			; 0
-		dc.w $FC06,    1,    0,$FFF0			; 4
-		dc.w $F400, $800, $800,	   0			; 8
-		dc.w $FC06, $801, $800,	   0			; 12
-word_36D24:	dc.w 4			
-		dc.w $EC00,    7,    3,$FFF8			; 0
-		dc.w $F407,    8,    4,$FFF0			; 4
-		dc.w $EC00, $807, $803,	   0			; 8
-		dc.w $F407, $808, $804,	   0			; 12
-word_36D46:	dc.w 2			
-		dc.w $EC0F,  $10,    8,$FFF0			; 0
-		dc.w  $C0C,  $20,  $10,$FFF0			; 4
-word_36D58:	dc.w 2			
-		dc.w $EC0F,  $10,    8,$FFF0			; 0
-		dc.w  $C0C,  $24,  $12,$FFF0			; 4
-word_36D6A:	dc.w 2			
-word_36D6C:	dc.w $EC0F,  $10,    8,$FFF0			; 0
-		dc.w  $C0C,  $28,  $14,$FFF0			; 4
-word_36D7C:	dc.w 1			
-		dc.w $F805,  $2C,  $16,$FFF8			; 0
-word_36D86:	dc.w 1			
-word_36D88:	dc.w $FC00,  $30,  $18,$FFFC			; 0
-word_36D90:	dc.w 1			
-		dc.w $FC00,  $31,  $18,$FFFC			; 0
-word_36D9A:	dc.w 2			
-		dc.w $F805,$4093,$4049,$FFF0			; 0
-		dc.w $F805,$4097,$404B,	   0			; 4
-		
+Ground_Roam:	
+		dc.b id_Frame_Ground_Roam2
+		dc.b id_Frame_Ground_Roam1
+		dc.b id_Frame_Ground_Roam2
+		dc.b id_Frame_Ground_Roam3
+		dc.b afEnd
 		even
+
+Ani_Grounder1:	index offset(*)	
+		ptr Ground_Emerge			; 0 
+
+Ground_Emerge:	
+		dc.b 7 
+		dc.b id_Frame_Ground_Emerge1
+		dc.b id_Frame_Ground_Emerge2
+		dc.b afRoutine
+		
+; ===========================================================================		
+		
+		include "mappings/sprite/Grounder.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 91 - Chop Chop 
@@ -70434,10 +70183,10 @@ word_36D9A:	dc.w 2
 ChopChop:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_36DBA(pc,d0.w),d1
-		jmp	off_36DBA(pc,d1.w)
+		move.w	Chop_Index(pc,d0.w),d1
+		jmp	Chop_Index(pc,d1.w)
 ; ===========================================================================
-off_36DBA:	index offset(*),,2
+Chop_Index:	index offset(*),,2
 		ptr loc_36DC2					; 0 
 		ptr loc_36DE4					; 2
 		ptr loc_36E32					; 4
@@ -70520,7 +70269,7 @@ loc_36E66:
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 
 loc_36E6A:				
-		lea	(off_36EF0).l,a1
+		lea	(Ani_Chop).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -70577,27 +70326,26 @@ loc_36EE2:
 		moveq	#1,d2
 		rts	
 ; ===========================================================================
-off_36EE6:
-		dc.l Map_36EF6	
-		dc.w $253B
-		dc.w $404
-		dc.w $1002
-		
-off_36EF0:	index offset(*)
-		ptr byte_36EF2					; 0
 
-byte_36EF2:	
-	dc.b   4,  0,  1,$FF					; 0 
-; --------------------------------------------------------------------------
-; Unknown sprite mappings
-; --------------------------------------------------------------------------
-Map_36EF6:				
-		dc.w word_36EFA-Map_36EF6			; 0
-		dc.w word_36F04-Map_36EF6			; 1
-word_36EFA:	dc.w 1			
-		dc.w $F40E,    0,    0,$FFF0			; 0
-word_36F04:	dc.w 1			
-		dc.w $F40E,   $C,    6,$FFF0			; 0
+SubData_Chop:
+		subtypedata	Map_Chop,tile_nem_ChopChop+tile_pal2,render_rel,4,$10,id_col_12x20
+
+; ----------------------------------------------------------------------------
+; Animation script
+; ----------------------------------------------------------------------------	
+
+Ani_Chop:	index offset(*)
+		ptr Chop_Swim
+
+Chop_Swim:	
+		dc.b 4
+		dc.b id_Frame_Chop_Closed
+		dc.b id_Frame_Chop_Open
+		dc.b afEnd
+; ===========================================================================
+
+		include "mappings/sprite/Chop Chop.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 92 - Spiker 
@@ -70606,10 +70354,10 @@ word_36F04:	dc.w 1
 Spiker:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_36F1C(pc,d0.w),d1
-		jmp	off_36F1C(pc,d1.w)
+		move.w	Spiker_Index(pc,d0.w),d1
+		jmp	Spiker_Index(pc,d1.w)
 ; ===========================================================================
-off_36F1C:	index offset(*),,2
+Spiker_Index:	index offset(*),,2
 		ptr loc_36F24					; 0 
 		ptr loc_36F3C					; 2
 		ptr loc_36F68					; 4
@@ -70632,7 +70380,7 @@ loc_36F3C:
 
 loc_36F48:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		lea	(off_37086).l,a1
+		lea	(Ani_Spiker).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -70694,10 +70442,10 @@ loc_36FDC:
 SpikerDrill:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_36FF4(pc,d0.w),d1
-		jmp	off_36FF4(pc,d1.w)
+		move.w	SpkDrill_Index(pc,d0.w),d1
+		jmp	SpkDrill_Index(pc,d1.w)
 ; ===========================================================================
-off_36FF4:	index offset(*),,2
+SpkDrill_Index:	index offset(*),,2
 		ptr loc_36FF8					; 0 
 		ptr loc_37028					; 2
 ; ===========================================================================
@@ -70753,13 +70501,11 @@ loc_37066:
 		moveq	#1,d0
 		rts	
 ; ===========================================================================
-off_3707C:
-		dc.l Map_37092	
-		dc.w 0
-		dc.w $404
-		dc.w $1012
+
+SubData_Spiker:
+		subtypedata	Map_Spiker,tile_LevelArt,render_rel,4,$10,id_col_8x16
 		
-off_37086:	index offset(*)
+Ani_Spiker:	index offset(*)
 		ptr byte_3708A					; 0 
 		ptr byte_3708E					; 1
 		
@@ -70768,31 +70514,11 @@ byte_3708A:
 		
 byte_3708E:	
 		dc.b   9,  2,  3,$FF				; 0 
-; ---------------------------------------------------------------------------
-; Unknown sprite mappings
-; ---------------------------------------------------------------------------
-Map_37092:				
-		dc.w word_3709C-Map_37092			; 0
-		dc.w word_370B6-Map_37092			; 1
-		dc.w word_370D0-Map_37092			; 2
-		dc.w word_370E2-Map_37092			; 3
-		dc.w word_370F4-Map_37092			; 4
-word_3709C:	dc.w 3			
-		dc.w  $809, $520, $290,$FFF4			; 0
-		dc.w $E807,$252C,$2296,$FFF8			; 4
-		dc.w	 5, $3DE, $1EF,$FFF8			; 8
-word_370B6:	dc.w	 3					; 0 
-word_370B8:	dc.w  $809, $526, $293,$FFF4			; 0
-		dc.w $E807,$252C,$2296,$FFF8			; 4
-		dc.w	 5, $3DE, $1EF,$FFF8			; 8
-word_370D0:	dc.w 2			
-		dc.w  $809, $520, $290,$FFF4			; 0
-		dc.w	 5, $3DE, $1EF,$FFF8			; 4
-word_370E2:	dc.w 2			
-		dc.w  $809, $526, $293,$FFF4			; 0
-		dc.w	 5, $3DE, $1EF,$FFF8			; 4
-word_370F4:	dc.w 1			
-		dc.w $EC07,$252C,$2296,$FFF8			; 0
+
+; ===========================================================================
+
+		include "mappings/sprite/Spiker.asm"
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 95 - Sol
@@ -70801,10 +70527,10 @@ word_370F4:	dc.w 1
 Sol:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3710C(pc,d0.w),d1
-		jmp	off_3710C(pc,d1.w)
+		move.w	Sol_Index(pc,d0.w),d1
+		jmp	Sol_Index(pc,d1.w)
 ; ===========================================================================
-off_3710C:	index offset(*),,2
+Sol_Index:	index offset(*),,2
 		ptr loc_37116					; 0 
 		ptr loc_371DC					; 1
 		ptr loc_37224					; 2
@@ -70813,7 +70539,7 @@ off_3710C:	index offset(*),,2
 ; ===========================================================================
 
 loc_37116:				
-		move.l	#Map_372E6,ost_mappings(a0)
+		move.l	#Map_Sol,ost_mappings(a0)
 		move.w	#tile_LevelArt,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo64_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -70844,7 +70570,7 @@ loc_37152:
 		move.b	#4,ost_priority(a1)
 		move.b	#8,ost_displaywidth(a1)
 		move.b	#3,ost_frame(a1)
-		move.b	#id_col_4x4_2+id_col_hurt,ost_col_type(a1)
+		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a1)
 		move.b	d2,ost_angle(a1)
 		addi.b	#$40,d2
 		move.l	a0,$3C(a1)
@@ -70962,7 +70688,7 @@ byte_372D6:
 		dc.b  $F,  0,$FF,  0				; 0 
 		
 byte_372DA:	
-		dc.b  $F,  1,  2,$FE,  1,  0			; 0	
+		dc.b  $F,  1,  2,afBack,  1,  0			; 0	
 
 off_372E0:	index offset(*)
 		ptr byte_372E2
@@ -70970,59 +70696,52 @@ off_372E0:	index offset(*)
 byte_372E2:	
 		dc.b   5,  3,  4,$FF				; 0 
 ; ===========================================================================
-Map_372E6:				
-		dc.w word_372F0-Map_372E6			; 0
-		dc.w word_372FA-Map_372E6			; 1
-		dc.w word_37304-Map_372E6			; 2
-		dc.w word_3730E-Map_372E6			; 3
-		dc.w word_37318-Map_372E6			; 4
-word_372F0:	dc.w 1			
-		dc.w $F805, $3DE, $1EF,$FFF8			; 0
-word_372FA:	dc.w 1			
-		dc.w $F805, $3DE, $1EF,$FFF8			; 0
-word_37304:	dc.w 1			
-		dc.w $F805, $3DE, $1EF,$FFF8			; 0
-word_3730E:	dc.w 1			
-		dc.w $F805,$83AE,$81D7,$FFF8			; 0
-word_37318:	dc.w 1			
-		dc.w $F805,$8BAE,$89D7,$FFF8			; 0
+
+		include "mappings/sprite/Sol.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 94,96 - Rexon 
+; Objects 94 and 96 - Rexon's body
+
+; All instances in game are object ID 96.
 ; ----------------------------------------------------------------------------
 Rexon_Dup:
 Rexon:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_37330(pc,d0.w),d1
-		jmp	off_37330(pc,d1.w)
+		move.w	Rex_Index(pc,d0.w),d1
+		jmp	Rex_Index(pc,d1.w)
 ; ===========================================================================
-off_37330:	index offset(*),,2
-		ptr loc_37338					; 0 
-		ptr loc_37350					; 2
-		ptr loc_3739C					; 4
-		ptr loc_373CA					; 6
-; ===========================================================================
+Rex_Index:	index offset(*),,2
+		ptr Rex_Init					; 0 
+		ptr Rex_Wait					; 2
+		ptr Rex_Wait_Stationary			; 4 ; unused
+		ptr Rex_HeadSpawned				; 6
+		
+		rsobj Rexon,$2A
+ost_rex_turntime:	rs.b 1 ; $2A ; time until Rexon turns around
+		rsobjend
+; ==========================================================================
 
-loc_37338:				
-		bsr.w	LoadSubtypeData
-		move.b	#2,ost_frame(a0)
+Rex_Init:				
+		bsr.w	LoadSubtypeData						; go to Rex_Wait next
+		move.b	#id_Frame_Rexon_Body,ost_frame(a0)
 		move.w	#-$20,ost_x_vel(a0)
-		move.b	#-$80,$2A(a0)
+		move.b	#$80,ost_rex_turntime(a0)	; move left for 128 frames
 		rts	
 ; ===========================================================================
 
-loc_37350:				
-		bsr.w	GetClosestPlayer
+Rex_Wait:				
+		bsr.w	GetClosestPlayer		; get nearest player
 		addi.w	#$60,d2
 		cmpi.w	#$100,d2
-		bcc.s	loc_37362
-		bsr.w	loc_375AC
+		bcc.s	.no_spawn				; branch if they're not close enough yet
+		bsr.w	Rex_SpawnHead
 
-loc_37362:				
-		move.w	ost_x_pos(a0),-(sp)
-		bsr.w	loc_37380
-		move.w	#$1B,d1
+	.no_spawn:				
+		move.w	ost_x_pos(a0),-(sp)		; back up current x-pos
+		bsr.w	Rex_CheckTurnAround		
+		move.w	#$1B,d1		; all of these could be moveq
 		move.w	#8,d2
 		move.w	#$11,d3
 		move.w	(sp)+,d4
@@ -71030,40 +70749,44 @@ loc_37362:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_37380:				
-		subq.b	#1,$2A(a0)
+Rex_CheckTurnAround:				
+		subq.b	#1,ost_rex_turntime(a0)
 		bpl.s	loc_37396
-		move.b	#-$80,$2A(a0)
+		move.b	#$80,ost_rex_turntime(a0)
 		neg.w	ost_x_vel(a0)
 		bchg	#render_xflip_bit,ost_render(a0)
 
-loc_37396:				
+	loc_37396:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		rts	
 ; ===========================================================================
+; This routine appears to be completely unused. It is identical to Rex_Wait
+; except it lacks the code to move the Rexon horizontally while waiting. My
+; guess is that object ID 94 would have been used for a Rexon that did not move
+; while waiting, with code in Rex_Init to set this routine.
 
-loc_3739C:				
-		bsr.w	GetClosestPlayer
+Rex_Wait_Stationary:			
+		bsr.w	GetClosestPlayer		; get nearest player
 		addi.w	#$60,d2
 		cmpi.w	#$100,d2
-		bcc.s	loc_373AE
-		bsr.w	loc_375AC
+		bcc.s	.no_spawn				; branch if they're not close enough yet
+		bsr.w	Rex_SpawnHead
 
-loc_373AE:				
-		bsr.w	loc_373B6
+	.no_spawn:				
+		bsr.w	Rex_Solid				; run solidity checks
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_373B6:				
-		move.w	#$1B,d1
-		move.w	#8,d2
-		move.w	#8,d3
+Rex_Solid:				
+		move.w	#$36/2,d1	; width
+		move.w	#$10/2,d2	; height (jumping)
+		move.w	#$10/2,d3	; height (walking)
 		move.w	ost_x_pos(a0),d4
 		jmpto	SolidObject,JmpTo27_SolidObject
 ; ===========================================================================
 
-loc_373CA:				
-		bsr.s	loc_373B6
+Rex_HeadSpawned:				
+		bsr.s	Rex_Solid				; run solidity checks
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -71073,18 +70796,18 @@ loc_373CA:
 RexonHead:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_373DE(pc,d0.w),d1
-		jmp	off_373DE(pc,d1.w)
+		move.w	RexHead_Index(pc,d0.w),d1
+		jmp	RexHead_Index(pc,d1.w)
 ; ===========================================================================
-off_373DE:	index offset(*),,2
-		ptr loc_373E8					; 0 
-		ptr loc_37454					; 2
-		ptr loc_37488					; 4
-		ptr loc_374C2					; 6
-		ptr loc_374F4					; 8
+RexHead_Index:	index offset(*),,2
+		ptr RexHead_Init					; 0 
+		ptr RexHead_Wait					; 2
+		ptr RexHead_Raise					; 4
+		ptr RexHead_Risen					; 6
+		ptr RexHead_Defeated					; 8
 ; ===========================================================================
 
-loc_373E8:				
+RexHead_Init:				
 		bsr.w	LoadSubtypeData
 		move.b	#8,ost_displaywidth(a0)
 		moveq	#$28,d0
@@ -71092,7 +70815,7 @@ loc_373E8:
 		bne.s	loc_373FE
 		moveq	#-$18,d0
 
-loc_373FE:				
+	loc_373FE:				
 		add.w	d0,ost_x_pos(a0)
 		addi.w	#$10,ost_y_pos(a0)
 		move.b	#1,$38(a0)
@@ -71123,7 +70846,7 @@ byte_3744E:
 		dc.b   0					; 5
 ; ===========================================================================
 
-loc_37454:
+RexHead_Wait:
 	if (Revision=2)|FixBugs	
 		subq.b	#1,$2A(a0)
 		bmi.s	loc_37462
@@ -71149,7 +70872,7 @@ loc_37462:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_37488:
+RexHead_Raise:
 	if (Revision=2)|FixBugs	
 		moveq	#$10,d0
 		add.w	d0,ost_x_vel(a0)
@@ -71184,7 +70907,7 @@ byte_374BE:
 		dc.b $1A					; 3
 ; ===========================================================================
 
-loc_374C2:				
+RexHead_Risen:				
 		bsr.w	loc_3750C
 		cmpi.w	#8,$2E(a0)
 		bne.s	loc_374D8
@@ -71205,7 +70928,7 @@ loc_374F0:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_374F4:				
+RexHead_Defeated:				
 		move.w	(v_boundary_bottom).w,d0
 		addi.w	#$E0,d0	
 		cmp.w	ost_y_pos(a0),d0
@@ -71279,7 +71002,7 @@ locret_375AA:
 		rts	
 ; ===========================================================================
 
-loc_375AC:				
+Rex_SpawnHead:				
 		move.b	#6,ost_primary_routine(a0)
 		bclr	#render_xflip_bit,ost_render(a0)
 		tst.w	d0
@@ -71327,8 +71050,8 @@ loc_37604:
 		ext.w	d3
 		lsr.w	#4,d1
 		andi.w	#6,d1
-		move.w	off_37652(pc,d1.w),d1
-		jsr	off_37652(pc,d1.w)
+		move.w	RexHead_Osc_Index(pc,d1.w),d1
+		jsr	RexHead_Osc_Index(pc,d1.w)
 		move.w	ost_x_pos(a0),d4
 		add.w	d2,d4
 		move.w	d4,ost_x_pos(a1)
@@ -71339,7 +71062,7 @@ loc_37604:
 locret_37650:				
 		rts	
 ; ===========================================================================
-off_37652:	index offset(*)
+RexHead_Osc_Index:	index offset(*)
 		ptr locret_3765A				; 0 
 		ptr loc_3765C					; 1
 		ptr loc_37662					; 2
@@ -71367,59 +71090,49 @@ loc_37668:
 		neg.w	d2
 		rts	
 ; ===========================================================================
-off_3766E:
-		dc.l Map_37678	
+SubData_Rex:
+		dc.l Map_Rex	
 		dc.w $637E
 		dc.w $404
 		dc.w $1000
-; ------------------------------------------------------------------------
-; Unknown sprite mappings
-; ------------------------------------------------------------------------
-Map_37678:				
-		dc.w word_37680-Map_37678			; 0
-		dc.w word_3768A-Map_37678			; 1
-		dc.w word_37694-Map_37678			; 2
-		dc.w word_3769E-Map_37678			; 3
-word_37680:	dc.w   1					; 0 
-		dc.w $FA09,    0,    0,$FFEC			; 0
-word_3768A:	dc.w   1					; 0 
-		dc.w $F805,    6,    3,$FFF8			; 0
-word_37694:	dc.w   1					; 0 
-		dc.w $F80D,   $A,    5,$FFF0			; 0
-word_3769E:	dc.w   1					; 0 
-		dc.w $FC00,  $12,    9,$FFFC			; 0
-word_376A8:	dc.w  $F00					; 0 
-		dc.w  $FFF					; 1
-		dc.w  $FFF					; 2
-		dc.w  $FFE					; 3
-		dc.w  $FFD					; 4
-		dc.w  $FFC					; 5
-		dc.w  $EFC					; 6
-		dc.w  $EFB					; 7
-		dc.w  $EFA					; 8
-		dc.w  $EFA					; 9
-		dc.w  $DF9					; 10
-		dc.w  $DF8					; 11
-		dc.w  $CF8					; 12
-		dc.w  $CF7					; 13
-		dc.w  $CF6					; 14
-		dc.w  $BF6					; 15
-		dc.w  $BF5					; 16
-		dc.w  $AF5					; 17
-		dc.w  $AF4					; 18
-		dc.w  $9F4					; 19
-		dc.w  $8F4					; 20
-		dc.w  $8F3					; 21
-		dc.w  $7F3					; 22
-		dc.w  $6F2					; 23
-		dc.w  $6F2					; 24
-		dc.w  $5F2					; 25
-		dc.w  $4F2					; 26
-		dc.w  $4F1					; 27
-		dc.w  $3F1					; 28
-		dc.w  $2F1					; 29
-		dc.w  $1F1					; 30
-		dc.w  $1F1					; 31
+
+; ===========================================================================
+
+		include "mappings/sprite/Rexon.asm"
+		
+word_376A8:
+		dc.b $F,  0
+		dc.b $F,$FF	; 1
+		dc.b $F,$FF	; 2
+		dc.b $F,$FE	; 3
+		dc.b $F,$FD	; 4
+		dc.b $F,$FC	; 5
+		dc.b $E,$FC	; 6
+		dc.b $E,$FB	; 7
+		dc.b $E,$FA	; 8
+		dc.b $E,$FA	; 9
+		dc.b $D,$F9	; 10
+		dc.b $D,$F8	; 11
+		dc.b $C,$F8	; 12
+		dc.b $C,$F7	; 13
+		dc.b $C,$F6	; 14
+		dc.b $B,$F6	; 15
+		dc.b $B,$F5	; 16
+		dc.b $A,$F5	; 17
+		dc.b $A,$F4	; 18
+		dc.b  9,$F4	; 19
+		dc.b  8,$F4	; 20
+		dc.b  8,$F3	; 21
+		dc.b  7,$F3	; 22
+		dc.b  6,$F2	; 23
+		dc.b  6,$F2	; 24
+		dc.b  5,$F2	; 25
+		dc.b  4,$F2	; 26
+		dc.b  4,$F1	; 27
+		dc.b  3,$F1	; 28
+		dc.b  2,$F1	; 29
+		dc.b  1,$F1	; 30
+		dc.b  1,$F1	; 31
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 98 - Projectile with optional gravity
@@ -71428,10 +71141,10 @@ word_376A8:	dc.w  $F00					; 0
 Projectile:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_376F6(pc,d0.w),d1
-		jmp	off_376F6(pc,d1.w)
+		move.w	Proj_Index(pc,d0.w),d1
+		jmp	Proj_Index(pc,d1.w)
 ; ===========================================================================
-off_376F6:	index offset(*),,2
+Proj_Index:	index offset(*),,2
 		ptr loc_376FA					; 0 
 		ptr loc_376FE					; 2
 ; ===========================================================================
@@ -71484,7 +71197,7 @@ loc_37756:
 		jmpto	AnimateSprite,JmpTo25_AnimateSprite
 ; ===========================================================================
 off_37764:
-		dc.l Map_37678	
+		dc.l Map_Rex	
 		dc.w $237E
 		dc.w $8404
 		dc.w $498
@@ -71541,10 +71254,10 @@ off_377BE:
 Nebula:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_377D6(pc,d0.w),d1
-		jmp	off_377D6(pc,d1.w)
+		move.w	Nebula_Index(pc,d0.w),d1
+		jmp	Nebula_Index(pc,d1.w)
 ; ===========================================================================
-off_377D6:	index offset(*),,2
+Nebula_Index:	index offset(*),,2
 		ptr loc_377DC					; 0 
 		ptr loc_377E8					; 2
 		ptr loc_3781C					; 4
@@ -71660,10 +71373,10 @@ word_3792C:	dc.w 1
 Turtloid:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_37944(pc,d0.w),d1
-		jmp	off_37944(pc,d1.w)
+		move.w	Turtloid_Index(pc,d0.w),d1
+		jmp	Turtloid_Index(pc,d1.w)
 ; ===========================================================================
-off_37944:	index offset(*),,2
+Turtloid_Index:	index offset(*),,2
 		ptr loc_37948					; 0 
 		ptr loc_37964					; 2
 ; ===========================================================================
@@ -71748,10 +71461,10 @@ locret_37A04:
 TurtloidRider:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_37A14(pc,d0.w),d1
-		jmp	off_37A14(pc,d1.w)
+		move.w	TRider_Index(pc,d0.w),d1
+		jmp	TRider_Index(pc,d1.w)
 ; ===========================================================================
-off_37A14:	index offset(*),,2
+TRider_Index:	index offset(*),,2
 		ptr loc_37A18					; 0 
 		ptr loc_37A1C					; 2
 ; ===========================================================================
@@ -71942,10 +71655,10 @@ word_37BF0:	dc.w 1
 Coconuts:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_37C08(pc,d0.w),d1
-		jmp	off_37C08(pc,d1.w)
+		move.w	Coco_Index(pc,d0.w),d1
+		jmp	Coco_Index(pc,d1.w)
 ; ===========================================================================
-off_37C08:	index offset(*)
+Coco_Index:	index offset(*)
 		ptr loc_37C10					; 0 
 		ptr loc_37C1C					; 2
 		ptr loc_37CAE					; 4
@@ -72148,10 +71861,10 @@ byte_37E04:	dc.b   0,  2,$F8,  1,$40,$24,$40,$12,$FF,$F8,$F8,  1,$48,$24,$48,$12
 Crawlton:				
 		moveq	#0,d0
 		move.b	$3B(a0),d0
-		move.w	off_37E24(pc,d0.w),d1
-		jmp	off_37E24(pc,d1.w)
+		move.w	Crawlt_Index(pc,d0.w),d1
+		jmp	Crawlt_Index(pc,d1.w)
 ; ===========================================================================
-off_37E24:	index offset(*),,2	
+Crawlt_Index:	index offset(*),,2	
 		ptr loc_37E30					; 0 
 		ptr loc_37E42					; 2
 		ptr loc_37E98					; 4
@@ -72342,10 +72055,10 @@ byte_38002:	dc.b   0,  1,$F8,  5,  0,  6,  0,  3,$FF,$F8	; 0
 Shellcracker:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3801A(pc,d0.w),d1
-		jmp	off_3801A(pc,d1.w)
+		move.w	Shelcrk_Index(pc,d0.w),d1
+		jmp	Shelcrk_Index(pc,d1.w)
 ; ===========================================================================
-off_3801A:	index offset(*),,2
+Shelcrk_Index:	index offset(*),,2
 		ptr loc_38022					; 0 
 		ptr loc_3804E					; 2
 		ptr loc_380C4					; 4
@@ -72493,10 +72206,10 @@ loc_38146:
 ShellcrackerClaw:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3816A(pc,d0.w),d1
-		jmp	off_3816A(pc,d1.w)
+		move.w	ShelcrkClaw_Index(pc,d0.w),d1
+		jmp	ShelcrkClaw_Index(pc,d1.w)
 ; ===========================================================================
-off_3816A:	index offset(*),,2
+ShelcrkClaw_Index:	index offset(*),,2
 		ptr loc_38170					; 0 
 		ptr loc_381AC					; 2
 		ptr loc_38280					; 4
@@ -72742,10 +72455,10 @@ word_383AA:	dc.w 1
 Slicer:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_383C2(pc,d0.w),d1
-		jmp	off_383C2(pc,d1.w)
+		move.w	Slicer_Index(pc,d0.w),d1
+		jmp	Slicer_Index(pc,d1.w)
 ; ===========================================================================
-off_383C2:	index offset(*),,2
+Slicer_Index:	index offset(*),,2
 		ptr loc_383CC					; 0 
 		ptr loc_383F0					; 2
 		ptr loc_38466					; 4
@@ -73048,10 +72761,10 @@ word_3872C:	dc.w 2
 Flasher:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3874C(pc,d0.w),d1
-		jmp	off_3874C(pc,d1.w)
+		move.w	Flash_Index(pc,d0.w),d1
+		jmp	Flash_Index(pc,d1.w)
 ; ===========================================================================
-off_3874C:	index offset(*),,2
+Flash_Index:	index offset(*),,2
 		ptr loc_3875A					; 0 
 		ptr loc_38766					; 2
 		ptr loc_38794					; 4
@@ -73679,10 +73392,10 @@ byte_38D80:	dc.b $10, $A,  0,  4,  0,  4,$E8,  6,  0, $F,  0,  7,$FF,$F4,$F0,  1
 Grabber:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_38DC8(pc,d0.w),d1
-		jmp	off_38DC8(pc,d1.w)
+		move.w	Grab_Index(pc,d0.w),d1
+		jmp	Grab_Index(pc,d1.w)
 ; ===========================================================================
-off_38DC8:	index offset(*),,2	
+Grab_Index:	index offset(*),,2	
 		ptr loc_38DCC					; 0 
 		ptr loc_38E0C					; 2
 ; ===========================================================================
@@ -75077,7 +74790,7 @@ loc_39C02:
 ; ===========================================================================
 
 loc_39C0A:				
-		move.b	#id_col_4x4_2+id_col_hurt,ost_col_type(a0)
+		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a0)
 		rts	
 ; ===========================================================================
 
@@ -75674,7 +75387,7 @@ SonicSegaScreen_RunRightInit:
 	if FixBugs=0
 		; This instruction is redundant, as this bit is flipped again below. This doesn't 
 		; actually have any harmful effects due to the way AnimateSprite works, but it is 
-		; still an unnecessary instruction.	
+		; still a waste of cycles.	
 		bchg	#render_xflip_bit,ost_render(a0)
 	endc	
 		move.w	#$B,ost_sonicsega_frame_counter(a0)	; set timer to 11 frames
@@ -75957,7 +75670,7 @@ SonicSegaScreen_StreakFadeRight:
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+7+(1<<$A) ; 14 ; bit $A is used as a flag to use this entry $29 times
 
 SonicSegaScreen_StreakFadeLeft:	
-		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+7+(1<<$A) ; 0  ; bit $A is used as a flag to use this entry $29 times
+		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+7+(1<<$A) ; 0  ; same deal with bit $A
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+6	; 2
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+5	; 4
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+4	; 6
@@ -79340,7 +79053,7 @@ off_3C9B8:	index offset(*),,2
 
 loc_3C9BC:				
 		addq.b	#2,ost_secondary_routine(a0)
-		move.b	#id_col_4x4_2+id_col_hurt,ost_col_type(a0)
+		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a0)
 		rts	
 ; ===========================================================================
 
@@ -83323,7 +83036,7 @@ id_col_hurt:	equ $80						; non-enemy object that hurts Sonic/Tails when touched
 id_col_custom:	equ $C0						; 
 
 React_Sizes:	
-col_4x4:		colid    4,    4			; 0 ; unused
+col_null:		colid    4,    4			; 0 ; unused
 col_20x20:		colid  $14,  $14			; 1
 col_12x20:		colid   $C,  $14			; 2
 col_20x12:		colid  $14,   $C			; 3
@@ -83347,7 +83060,7 @@ col_64x32:		colid  $40,  $20			; $14
 col_128x32:		colid  $80,  $20			; $15
 col_32x32:		colid  $20,  $20			; $16
 col_8x8_2:		colid    8,    8			; $17
-col_4x4_2:		colid    4,    4			; $18
+col_4x4:		colid    4,    4			; $18
 col_32x8:		colid  $20,    8			; $19
 col_12x12:		colid   $C,   $C			; $1A
 col_8x4:		colid    8,    4			; $1B
@@ -83357,7 +83070,7 @@ col_4x8:		colid    4,    8			; $1E
 col_4x24:		colid    4,  $18			; $1F
 col_4x40:		colid    4,  $28			; $20
 col_4x32:		colid    4,  $10			; $21
-col_24x24_2:	colid  $18,  $18				; $22
+col_24x24_2:	colid  $18,  $18			; $22
 col_12x24:		colid   $C,  $18			; $23
 col_72x8:		colid  $48,    8			; $24
 col_24x40:		colid  $18,  $28			; $25
@@ -86816,13 +86529,13 @@ DbgHTZ_41FEE:	dc.w $1F
 		dc.l $31000000+Map_LTag
 		dc.w $202
 		dc.w $8680
-		dc.l $96000000+Map_37678
+		dc.l $96000000+Map_Rex
 		dc.w $E02
 		dc.w $637E
-		dc.l $92000000+Map_37092
+		dc.l $92000000+Map_Spiker
 		dc.w $A00
 		dc.w 0
-		dc.l $95000000+Map_372E6
+		dc.l $95000000+Map_Sol
 		dc.w 0
 		dc.w 0
 		dc.l $3E000000+Map_3F436
@@ -86862,7 +86575,7 @@ DbgOOZ_420E8:	dc.w $21
 		dc.l $15000000+Map_Swing_OOZ
 		dc.w $8801
 		dc.w $43E3
-		dc.l $3D000000+Map_LBlock
+		dc.l $3D000000+Map_LaunchBlock
 		dc.w 0
 		dc.w $6332
 		dc.l $48000000+Map_TransBall
@@ -87044,13 +86757,13 @@ DbgCNZ_422B4:	dc.w $18
 		dc.l $D3000000+Map_BombPenalty
 		dc.w 0
 		dc.w $380
-		dc.l $D4000000+Map_2B9CA
+		dc.l $D4000000+Map_LrgMovBlock
 		dc.w 0
 		dc.w $436C
-		dc.l $D4000000+Map_2B9CA
+		dc.l $D4000000+Map_LrgMovBlock
 		dc.w $200
 		dc.w $436C
-		dc.l $D5000000+Map_2BB40
+		dc.l $D5000000+Map_Elevator
 		dc.w $1800
 		dc.w $4384
 		dc.l $D6000000+Map_Cage
@@ -87220,16 +86933,16 @@ DbgARZ_42438:	dc.w $1D
 		dc.l $24000000+Map_Bub_Main
 		dc.w $810E
 		dc.w $855B
-		dc.l $91000000+Map_36EF6
+		dc.l $91000000+Map_Chop
 		dc.w $800
 		dc.w $253B
 		dc.l $8C000000+Map_Whisp
 		dc.w 0
 		dc.w $A500
-		dc.l $8D000000+Map_36CF0
+		dc.l $8D000000+Map_Ground
 		dc.w $200
 		dc.w $A509
-		dc.l $8E000000+Map_36CF0
+		dc.l $8E000000+Map_Ground
 		dc.w $200
 		dc.w $A509
 		dc.l $3E000000+Map_3F436

@@ -2,7 +2,7 @@
 ; Sprite mappings - Oil Ocean breakable launcher block
 ; -------------------------------------------------------------------------------
 
-Map_LBlock:	index offset(*)
+Map_LaunchBlock:	index offset(*)
 	ptr	Map_obj3D_0008
 	ptr	Map_obj3D_002A
 	ptr	Map_obj3D_00AC
