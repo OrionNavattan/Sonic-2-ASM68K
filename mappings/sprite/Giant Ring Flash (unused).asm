@@ -3,7 +3,7 @@
 ; (unused Sonic 1 leftover)
 ; ---------------------------------------------------------------------------
 
-Map_Flash:	index offset(*)
+Map_RingFlash:	index offset(*)
 	ptr	Map_obj37_c_0010
 	ptr	Map_obj37_c_0022
 	ptr	Map_obj37_c_0044

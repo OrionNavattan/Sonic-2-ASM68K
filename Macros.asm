@@ -364,7 +364,6 @@ ramblockend:	macros
 arraysize:	macros
 		sizeof_\1: equ	offset(*)-\1
 		
-
 ; ---------------------------------------------------------------------------
 ; Organise object RAM usage.
 ; ---------------------------------------------------------------------------
@@ -722,20 +721,16 @@ out_of_range:	macro exit,pos
 		move.w	ost_x_pos(a0),d0			; get object position
 		endc
 		andi.w	#$FF80,d0				; round down to nearest $80
-		move.w	(v_camera_x_pos).w,d1			; get screen position
-		subi.w	#128,d1
-		andi.w	#$FF80,d1
-		sub.w	d1,d0					; d0 = approx distance between object and screen (negative if object is left of screen)
+		sub.w	(v_camera_x_pos_coarse).w,d0		; get screen position; d0 = approx distance between object and screen (negative if object is left of screen)
 		cmpi.w	#128+320+192,d0
 		bhi.\0	exit					; branch if d0 is negative or higher than 640
 		endm
-
 
 ; ---------------------------------------------------------------------------
 ; Object placement
 ; input: xpos, ypos, object id, subtype (objects 8B and lower) or OST data 
 ; pointer index (objects 8C and higher)
-; optional: xflip, yflip, rem (any order)
+; optional: xflip, yflip, rem, 2pdespawn
 ; ---------------------------------------------------------------------------
 
 objpos:		macro
@@ -752,7 +747,7 @@ objpos:		macro
 		obj_rem: = 0
 		obj_unkflg: = 0
 		rept narg-4
-			if strcmp("\5","unkflg")
+			if strcmp("\5","2pdespawn")		; flag indicating this object will use the normal despawn checks in 2P mode
 				obj_unkflg: = $1000
 			elseif strcmp("\5","xflip")
 				obj_xflip: = $2000
@@ -774,7 +769,7 @@ endobj:		macros
 		
 		
 ; ---------------------------------------------------------------------------
-; Declare OST data for use with LoadSubtypeData
+; Declare OST data for use with LoadSubObjData
 ; Each set of data is $A bytes, and consists of:
 ; - the object's mappings pointer (ost_mappings, longword) 
 ; - the object's vram assignment (ost_tile, word)
@@ -784,7 +779,7 @@ endobj:		macros
 ; - the object's collision flags (ost_collision, byte)
 ; ---------------------------------------------------------------------------		
 
-subtypedata: 	macro mappings,vram,render,priority,width,collision
+subobjdata: 	macro mappings,vram,render,priority,width,collision
 
 		dc.l \mappings
 		dc.w \vram
@@ -796,13 +791,13 @@ subtypedata: 	macro mappings,vram,render,priority,width,collision
 ; Each set of data is 4 bytes, and consists of:
 ; - the offset in the parent's OST where pointer to child will be stored (word)
 ; - the child object's ID (ost_id, byte)
-; - the child object's subtype (ost_subtype, byte)
+; - pointer to the child object's subobjdata (ost_subdata_ptr, byte)
 ; ---------------------------------------------------------------------------		
 
-childobjdata:	macro	chldptroffset,id,subtype
+childobjdata:	macro	chldptroffset,id,subdataptr
 
 		dc.w \chldptroffset
-		dc.b \id,\subtype
+		dc.b \id,\subdataptr
 		endm
 		
 ; ---------------------------------------------------------------------------
@@ -822,7 +817,6 @@ sceneryobjdata:	macro	frame,mappings,vram,width,priority
 		dc.b \width,\priority
 		endm
 
-
 ; ---------------------------------------------------------------------------
 ; Declare OST data for use with SpawnProjectiles
 ; Each set of data is 6 bytes, and consists of:
@@ -833,6 +827,10 @@ sceneryobjdata:	macro	frame,mappings,vram,width,priority
 ; -	the projectile's render flags (ost_render)
 ; ---------------------------------------------------------------------------	
 
+projdata:	macro	xoff,yoff,xvel,yvel,frame,render
+
+		dc.b	\xoff,\yoff,\xvel,\yvel,\frame,\render
+		endm
 		
 ; ---------------------------------------------------------------------------
 ; Remap ASCII to the custom character sets used throughout the game

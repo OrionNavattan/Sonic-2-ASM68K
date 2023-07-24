@@ -3,19 +3,19 @@
 ; -------------------------------------------------------------------------------
 
 Telport_TubeData:	index offset(*),,2
-		ptr word_2740C				;  0
-		ptr word_27426				;  1
-		ptr word_27430				;  2
-		ptr word_2744A				;  3
-		ptr word_27454				;  4
-		ptr word_2745E				;  5
-		ptr word_27478				;  6
-		ptr word_27492				;  7
-		ptr word_274AC				;  8
-		ptr word_274C6				;  9
-		ptr word_274E0				; $A
-		ptr word_274FA				; $B
-		ptr word_27514				; $C
+		ptr word_2740C					;  0
+		ptr word_27426					;  1
+		ptr word_27430					;  2
+		ptr word_2744A					;  3
+		ptr word_27454					;  4
+		ptr word_2745E					;  5
+		ptr word_27478					;  6
+		ptr word_27492					;  7
+		ptr word_274AC					;  8
+		ptr word_274C6					;  9
+		ptr word_274E0					; $A
+		ptr word_274FA					; $B
+		ptr word_27514					; $C
 		
 word_2740C:	tubedatasize
 		dc.w	$7A8, $270

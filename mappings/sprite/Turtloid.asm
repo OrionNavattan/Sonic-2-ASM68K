@@ -1,8 +1,13 @@
-Map_obj9C:	index offset(*)
-	ptr	Map_obj9C_0014
-	ptr	Map_obj9C_002E
-	ptr	Map_obj9C_0048
-	ptr	Map_obj9C_0052
+; -------------------------------------------------------------------------------
+; Sprite mappings - Turtloid enemy (SCZ)
+; Also includes Turtloid's rider, Turtloid's projectile, and Balkiry's jet
+; -------------------------------------------------------------------------------
+
+Map_Turt:	index offset(*)
+	ptr	Frame_Turt1					; normal
+	ptr	Frame_Turt2					; firing projectile
+	ptr	Frame_TRider1
+	ptr	Frame_TRider2
 	ptr	Map_obj9C_005C
 	ptr	Map_obj9C_0066
 	ptr	Map_obj9C_0070
@@ -10,23 +15,23 @@ Map_obj9C:	index offset(*)
 	ptr	Map_obj9C_0084
 	ptr	Map_obj9C_008E
 
-Map_obj9C_0014:	spritemap
+Frame_Turt1:	spritemap
 	piece	-$1C, -$10, 3, 2, 0, 0, 0, 1, 1
 	piece	-4, -$10, 4, 4, 6, 0, 0, 1, 1
 	piece	-$1C, 0, 3, 2, $16, 0, 0, 1, 1
 	endsprite
 
-Map_obj9C_002E:	spritemap
+Frame_Turt2:	spritemap
 	piece	-$1C, -$10, 3, 2, 0, 0, 0, 1, 1
 	piece	-$1C, 0, 3, 2, $1C, 0, 0, 1, 1
 	piece	-4, -$10, 4, 4, 6, 0, 0, 1, 1
 	endsprite
 
-Map_obj9C_0048:	spritemap
+Frame_TRider1:	spritemap
 	piece	-$C, -$C, 3, 3, $22, 0, 0, 1, 1
 	endsprite
 
-Map_obj9C_0052:	spritemap
+Frame_TRider2:	spritemap
 	piece	-$C, -$C, 3, 3, $2B, 0, 0, 1, 1
 	endsprite
 

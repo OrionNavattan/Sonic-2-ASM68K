@@ -429,6 +429,7 @@ ost_secondary_routine:		rs.b 1				; $25 ; most objects; secondary routine number
 ;ost_solid:		equ ost_secondary_routine			; $25 ; solid status flag
 ost_angle:					rs.w 1		; $26 ; most objects; angle of floor or rotation - 0 = flat; $40 = vertical left; $80 = ceiling; $C0 = vertical right
 ost_subtype:				rs.w 1			; $28 ; non-player objects;  object subtype - must go last because some objects use this as a start address for a list (1 byte, but sometimes read as a word)
+ost_subdata_ptr:			equ ost_subtype		; $28 ; index to OST data for objects that use the subobject data system
 ost_used:		equ __rs-1				; bytes used by regular OST, everything after this is scratch RAM
 		popo						; restore options
 		inform	0,"0-$%h bytes of OST per object used, leaving $%h bytes of scratch RAM.",__rs-1,sizeof_ost-__rs
@@ -483,7 +484,7 @@ ost_subspr9_frame:			rs.b 1			; $3F
 ost_flip_angle:				rs.b 1			; $27 ; angle about the x axis (360 degrees = 256) (twist/tumble)
 ost_air_left:				rs.b 1			; $28 ; air left while underwater
 ost_flip_turned:			rs.b 1			; $29 ; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
-ost_obj_control:			rs.b 1			; $2A ; 1 for hanging or for resting on a flipper, $81 for going through CNZ/OOZ/MTZ tubes, stopped in CNZ cages or launcher, or flying if Tails
+ost_obj_control:			rs.b 1			; $2A ; 1 for hanging or for resting on a flipper, $81 for going through CNZ/OOZ/MTZ tubes or held by Grabbers, stopped in CNZ cages or launcher, or flying if Tails
 ost_secondary_status:		rs.b 1				; $2B ; status flags for powerups and oil slides
 	status_shield_bit:		equ	0		; set if character is equipped with a shield
 	status_invincible_bit:	equ	1			; set if character is invincible

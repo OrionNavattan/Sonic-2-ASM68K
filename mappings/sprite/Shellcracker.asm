@@ -1,4 +1,8 @@
-Map_objA0:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Shellcracker enemy (MTZ)
+; -------------------------------------------------------------------------------
+
+Map_Shelcrk:	index offset(*)
 	ptr	Map_objA0_000C
 	ptr	Map_objA0_002E
 	ptr	Map_objA0_0050

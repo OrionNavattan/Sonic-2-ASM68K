@@ -3406,7 +3406,7 @@ DACPtrTbl:
 		
 GenDacPlaylist:	macro	name,src,pitch
 	
-	ifarg \src				; if this is a duplicate with a different pitch
+	ifarg \src						; if this is a duplicate with a different pitch
 		db	d\src,\pitch
 	else
 		db	d\name,\pitch	
@@ -3414,7 +3414,7 @@ GenDacPlaylist:	macro	name,src,pitch
 	endm					
 		
 DACMasterPlaylist:
-		DefineSamples	GenDacPlaylist	; generate the DAC playlist
+		DefineSamples	GenDacPlaylist			; generate the DAC playlist
 
 ; ---------------------------------------------------------------------------
 ; Saxman Decompression algorithm 
@@ -3445,7 +3445,7 @@ SaxDec_Z80:
     	; An optimization in zSaxDec_CheckNextByte renders this unnecessary.
 		inc	bc
     endc
-		ld	(zSaxDec_CheckNextByte+1),bc			; self-modified code: set to length of song (plus 1 if optimizations are disabled)
+		ld	(zSaxDec_CheckNextByte+1),bc		; self-modified code: set to length of song (plus 1 if optimizations are disabled)
 
 SaxReadLoop:
 		exx						; swap to shadow registers
@@ -3455,7 +3455,7 @@ SaxReadLoop:
 		srl	b					; shift descriptor bit flags
 		jr	c,.skip_fetching_descriptor		; branch if we still have bits left
 
-		call	zSaxDec_CheckNextByte		; get next byte of descriptor bits
+		call	zSaxDec_CheckNextByte			; get next byte of descriptor bits
 		ld	c,a					; put it in c
 		ld	b,7Fh					; 7 new bits in c (first one will be used below)
 
@@ -3491,15 +3491,15 @@ SaxReadLoop:
 
 zSaxDec_ReadCompressed:
 		call	zSaxDec_CheckNextByte			; get low byte of target address of match
-		ld	c,a									; store in c
+		ld	c,a					; store in c
 		call	zSaxDec_CheckNextByte			; get high byte of target address and length of match
-		ld	b,a									; store in b
+		ld	b,a					; store in b
 		and	a,0Fh
 		add	a,3					; a = length of match
-		push	af				; back up a
+		push	af					; back up a
 		ld	a,b					; a = low byte of target address
 		rept 4
-		rlca					; shift to lower nybble
+		rlca						; shift to lower nybble
 		endr	
 		and	a,0Fh
 		ld	b,a					; b = adjusted low byte of target (only upper four bits of value make up part of the address)
@@ -3521,7 +3521,7 @@ zSaxDec_ReadCompressed:
 		pop	hl					; hl = previous relative pointer to destination
 		or	a					; clear carry flag
 		sbc	hl,bc					; subtract offset from relative pointer
-		jr	nc,zSaxDec_IsMatch		; branch if positive (dictionary match)
+		jr	nc,zSaxDec_IsMatch			; branch if positive (dictionary match)
 
 ;is_zeros:		
 		ex	de,hl					; hl = absolute pointer to destination
@@ -3537,10 +3537,10 @@ zSaxDec_ReadCompressed:
 ; ===========================================================================
 
 zSaxDec_IsMatch:
-		ld	hl,z_music_data			; hl = start of decompressed data
+		ld	hl,z_music_data				; hl = start of decompressed data
 		add	hl,bc					; add offset to get source of match
-		ld	c,a						; (de already contains start of destination)
-		ld	b,0						; bc = length of match	
+		ld	c,a					; (de already contains start of destination)
+		ld	b,0					; bc = length of match	
 		ldir						; copy match to destination
 		jr	SaxReadLoop
 ; ===========================================================================
@@ -3555,7 +3555,7 @@ zSaxDec_CheckNextByte:
 		jr	z,zSaxDec_End				; if hl = 0, we are done; exit the decompressor
     endc
 		dec	hl					; decrement remaining number of bytes
-		ld	(zSaxDec_CheckNextByte+1),hl			; update the count
+		ld	(zSaxDec_CheckNextByte+1),hl		; update the count
     if OptimizeSoundDriver=0
 		ld	a,h
 		or	a,l
@@ -3576,7 +3576,7 @@ zSaxDec_End:
 		ret						; exit decompressor
 ; ===========================================================================
 
-		include_global_vars		; include some global driver variables
+		include_global_vars				; include some global driver variables
 
 ; End of Z80 'ROM'
 

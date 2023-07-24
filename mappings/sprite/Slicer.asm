@@ -1,4 +1,8 @@
-Map_objA2:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Slicer enemy (MTZ)
+; -------------------------------------------------------------------------------
+
+Map_Slice:	index offset(*)
 	ptr	Map_objA2_0012
 	ptr	Map_objA2_004C
 	ptr	Map_objA2_0086

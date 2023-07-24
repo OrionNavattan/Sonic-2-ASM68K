@@ -13496,7 +13496,7 @@ dword_AD6E:
 		childobjdata $3E,id_TornadoHelicies,0	
 		
 off_AD72:	
-		subtypedata Map_Animal1,tile_Nem_Animal_2,4,2,8,0
+		subobjdata Map_Animal1,tile_Nem_Animal_2,4,2,8,0
 		
 byte_AD7C:	index offset(*)
 		ptr byte_AD7E
@@ -22773,10 +22773,10 @@ zoneanmls:	macro	first,second
 		endm	
 
 Anml_VarIndex:
-		zoneanmls	id_Squirrel,id_Flicky	; EHZ;		0, 1
-		zoneanmls	id_Squirrel,id_Flicky	; Zone 1;	2, 3
-		zoneanmls	id_Squirrel,id_Flicky	; WZ;		4, 5
-		zoneanmls	id_Squirrel,id_Flicky	; Zone 3;	6, 7
+		zoneanmls	id_Squirrel,id_Flicky		; EHZ;		0, 1
+		zoneanmls	id_Squirrel,id_Flicky		; Zone 1;	2, 3
+		zoneanmls	id_Squirrel,id_Flicky		; WZ;		4, 5
+		zoneanmls	id_Squirrel,id_Flicky		; Zone 3;	6, 7
 		zoneanmls	id_Beaver,	id_Eagle	; MTZ 1/2;	8, 9
 		zoneanmls	id_Beaver,	id_Eagle	; MTZ 3;	$A, $B
 		zoneanmls	id_Beaver,	id_Eagle	; WFZ;		$C, $D
@@ -22808,7 +22808,7 @@ anmldecl:	macro	*,xvel,yvel,mappings
 	
 		id_\*:	equ	ptr_id				; make id constant
 	
-		ptr_id: = ptr_id+ptr_id_inc		; increment id	
+		ptr_id: = ptr_id+ptr_id_inc			; increment id	
 		endm
 
 Anml_Variables:	
@@ -23633,7 +23633,7 @@ off_122D2:	index offset(*),,2
 
 loc_122D8:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_Flash,ost_mappings(a0)
+		move.l	#Map_RingFlash,ost_mappings(a0)
 		move.w	#(vram_GiantRingFlash/sizeof_cell)+tile_pal2,ost_tile(a0)
 		bsr.w	Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
@@ -27774,7 +27774,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr HiddenBonus					; unused Sonic 1 leftover
 		ptr SuperSonicStars
 		ptr VineSwitch
-		ptr VineHook				; $80
+		ptr VineHook					; $80
 		ptr SingleDrawbridge
 		ptr PillarPlatform
 		ptr CirclingPlatform
@@ -40065,10 +40065,8 @@ FindNearestTile:
 		movea.l	d1,a1
 		rts	
 ; ===========================================================================
-; ---------------------------------------------------------------------------
 ; Lookup table of 128x128 tile addresses. These were calculated on the fly 
 ; in Sonic 1.
-; ---------------------------------------------------------------------------
 FindNearestTile_Offsets:	
 		c: = 0						; start at zero	
 		rept 256		
@@ -40613,10 +40611,10 @@ loc_1EC22:
 ; ===========================================================================
 
 Player_FindFloor:				
-		move.l	#-$2A00,(v_collision_index_ptr).w
-		cmpi.b	#$C,$3E(a0)
+		move.l	#v_primary_collision,(v_collision_index_ptr).w
+		cmpi.b	#$C,ost_top_solid_bit(a0)
 		beq.s	loc_1EC66
-		move.l	#-$2700,(v_collision_index_ptr).w
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w
 
 loc_1EC66:				
 		move.b	$3E(a0),d5
@@ -43098,20 +43096,20 @@ ExplosionItem:
 ; ===========================================================================
 off_21096:	index offset(*),,2		
 		ptr loc_2109C					; 0 
-		ptr loc_210BE					; 2
+		ptr Explosion_Main				; 2
 		ptr loc_21102					; 4
 ; ===========================================================================
 
 loc_2109C:				
 		addq.b	#2,ost_primary_routine(a0)
 		jsrto	FindFreeObj,JmpTo2_FindFreeObj
-		bne.s	loc_210BE
+		bne.s	Explosion_Main
 		_move.b	#id_Animals,ost_id(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.w	$3E(a0),$3E(a1)
 
-loc_210BE:
+Explosion_Main:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_ExplodeItem,ost_mappings(a0)
 		move.w	#tile_Nem_Explosion,ost_tile(a0)
@@ -45484,9 +45482,9 @@ loc_23232:
 		jmpto	DeleteObject,JmpTo21_DeleteObject
 ; ===========================================================================
 Ani_LavaBub:	index offset(*)
-		ptr byte_2323C			; 0 
-		ptr byte_23243			; 1
-		ptr byte_23246			; 2
+		ptr byte_2323C					; 0 
+		ptr byte_23243					; 1
+		ptr byte_23246					; 2
 byte_2323C:	dc.b  $B,  2,  3,$FC,  4,$FD,  1		; 0 
 byte_23243:	dc.b $7F,  5,$FF				; 0 
 byte_23246:	dc.b   5,  4,  5,  2,  3,  0,  1,  0,  1,  2,  3,  4,  5,$FC ; 0
@@ -45533,11 +45531,11 @@ off_2330E:	index offset(*),,2
 byte_23314:	
 		;    ost_height
 		;	 ost_frame
-		dc.b $24, 0	; 0
-		dc.b $20, 2	; 2
-		dc.b $18, 4	; 4
-		dc.b $10, 6	; 6
-		dc.b   8, 8	; 8
+		dc.b $24, 0					; 0
+		dc.b $20, 2					; 2
+		dc.b $18, 4					; 4
+		dc.b $10, 6					; 6
+		dc.b   8, 8					; 8
 ; ===========================================================================
 
 loc_2331E:				
@@ -45915,9 +45913,9 @@ locret_236F0:
 ; ===========================================================================
 word_236F2:	
 		dc.w	10
-		dc.w	20	; 1
-		dc.w	50	; 2
-		dc.w   100	; 3
+		dc.w	20					; 1
+		dc.w	50					; 2
+		dc.w   100					; 3
 ; ===========================================================================
 
 		include "mappings/sprite/HTZ Smashable Ground.asm"
@@ -47640,22 +47638,22 @@ loc_25054:
 ; ===========================================================================
 ; piece x and y vels
 word_2507A:
-		dc.w -$400,-$400 ; 0
-		dc.w -$200,-$400 ; 2
-		dc.w  $200,-$400 ; 4
-		dc.w  $400,-$400 ; 6
-		dc.w -$3C0,-$200 ; 8
-		dc.w -$1C0,-$200 ; 10
-		dc.w  $1C0,-$200 ; 12
-		dc.w  $3C0,-$200 ; 14
-		dc.w -$380, $200 ; 16
-		dc.w -$180, $200 ; 18
-		dc.w  $180, $200 ; 20
-		dc.w  $380, $200 ; 22
-		dc.w -$340, $400 ; 24
-		dc.w -$140, $400 ; 26
-		dc.w  $140, $400 ; 28
-		dc.w  $340, $400 ; 30
+		dc.w -$400,-$400				; 0
+		dc.w -$200,-$400				; 2
+		dc.w  $200,-$400				; 4
+		dc.w  $400,-$400				; 6
+		dc.w -$3C0,-$200				; 8
+		dc.w -$1C0,-$200				; 10
+		dc.w  $1C0,-$200				; 12
+		dc.w  $3C0,-$200				; 14
+		dc.w -$380, $200				; 16
+		dc.w -$180, $200				; 18
+		dc.w  $180, $200				; 20
+		dc.w  $380, $200				; 22
+		dc.w -$340, $400				; 24
+		dc.w -$140, $400				; 26
+		dc.w  $140, $400				; 28
+		dc.w  $340, $400				; 30
 ; ===========================================================================
 
 		include "mappings/sprite/OOZ Launcher Block.asm"
@@ -48103,9 +48101,9 @@ loc_257DE:
 		jmpto	DespawnObject,JmpTo15_DespawnObject
 ; ===========================================================================
 Ani_ArrowShoot:	index offset(*)
-		ptr byte_257F4			; 0 
-		ptr byte_257F7			; 1
-		ptr byte_257FB			; 2
+		ptr byte_257F4					; 0 
+		ptr byte_257F7					; 1
+		ptr byte_257FB					; 2
 		
 byte_257F4:	dc.b $1F,  1,$FF
 
@@ -48658,7 +48656,7 @@ loc_2623A:
 		; This line makes no sense: d1 is never set to anything, the object
 		; being written to is the parent, not the child, and angle isn't used
 		; by the parent at all.
-		move.b	d1,ost_angle(a0)	; ...what?
+		move.b	d1,ost_angle(a0)			; ...what?
 	endc
 	
 loc_26278:				
@@ -48966,8 +48964,8 @@ SprngBrd_SlopeData_Straight:
 		dc.b  $D, $D, $D, $D, $D, $D, $D, $D		; 32
 
 Ani_SprngBrd:	index offset(*)
-		ptr byte_265EC			; 0 
-		ptr byte_265EF			; 1
+		ptr byte_265EC					; 0 
+		ptr byte_265EF					; 1
 		
 byte_265EC:	dc.b  $F,  0,$FF				; 0 
 byte_265EF:	dc.b   3,  1,  0,$FD,  0			; 0 
@@ -49295,8 +49293,8 @@ JmpTo31_DeleteObject:
 		jmp	(DeleteObject).l
 ; ===========================================================================
 off_269F4:	index offset(*),,2
-		ptr locret_269F8		; 0 
-		ptr loc_269FA			; 2
+		ptr locret_269F8				; 0 
+		ptr loc_269FA					; 2
 ; ===========================================================================
 
 locret_269F8:				
@@ -50252,8 +50250,8 @@ loc_273EC:
 		include "misc/MTZ Tube Locations.asm"
 
 Ani_TelprtFlash:	index offset(*)
-		ptr byte_27532	; 0
-		ptr byte_27535	; 1
+		ptr byte_27532					; 0
+		ptr byte_27535					; 1
 		
 byte_27532:
 		dc.b $1F,  0,$FF
@@ -52584,7 +52582,7 @@ loc_28FBC:
 		jsr	(PlaySound).l
 
 loc_28FF0:				
-		lea	(Ani_DBridge).l,a1	; could be PC relative
+		lea	(Ani_DBridge).l,a1			; could be PC relative
 		jsr	(AnimateSprite).l
 		tst.b	ost_frame(a0)
 		bne.s	loc_2901A
@@ -53421,9 +53419,9 @@ VineHook:
 		jmp	VineHook_Index(pc,d1.w)
 ; ===========================================================================
 VineHook_Index:	index offset(*),,2
-		ptr VineHook_Main					; 0 
-		ptr VineHook_Vine					; 2
-		ptr VineHook_Hook					; 4
+		ptr VineHook_Main				; 0 
+		ptr VineHook_Vine				; 2
+		ptr VineHook_Hook				; 4
 ; ===========================================================================
 
 VineHook_Main:				
@@ -53944,7 +53942,7 @@ PillarPlatform:
 		jmp	PillPlat_Index(pc,d1.w)
 ; ===========================================================================
 PillPlat_Index:	index offset(*),,2
-		ptr PillPlat_Main					; 0 
+		ptr PillPlat_Main				; 0 
 		ptr loc_2A312					; 2
 		
 PillPlat_Sizes:
@@ -57766,7 +57764,7 @@ loc_2CE24:
 		tst.w	d1
 		beq.s	locret_2CEAC
 	if FixBugs=0	
-		cmpi.w	#-$10,d1		; ...? d1 can only be 0 or 2 here
+		cmpi.w	#-$10,d1				; ...? d1 can only be 0 or 2 here
 		bcc.s	locret_2CEAC
 	endc	
 		
@@ -57816,7 +57814,7 @@ loc_2CEC8:
 		add.w	d2,ost_y_vel(a0)
 		move.w	#$100,d0
 		move.w	d0,d1
-		jsrto	ObjCapSpeed,JmpTo_ObjCapSpeed
+		jsrto	CapSpeed,JmpTo_ObjCapSpeed
 		jmpto	SpeedToPos,JmpTo20_SpeedToPos
 ; ===========================================================================
 word_2CEE6:
@@ -57827,7 +57825,7 @@ word_2CEE6:
 loc_2CEEA:				
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#$20,$3C(a0)
-		jmpto	ObjMoveStop,JmpTo_ObjMoveStop
+		jmpto	MoveStop,JmpTo_ObjMoveStop
 ; ===========================================================================
 
 loc_2CEF8:				
@@ -57928,9 +57926,9 @@ JmpTo14_AnimateSprite:
 JmpTo_GetClosestPlayer:				
 		jmp	(GetClosestPlayer).l
 JmpTo_ObjCapSpeed:				
-		jmp	(ObjCapSpeed).l
+		jmp	(CapSpeed).l
 JmpTo_ObjMoveStop:				
-		jmp	(ObjMoveStop).l
+		jmp	(MoveStop).l
 JmpTo20_SpeedToPos:				
 		jmp	(SpeedToPos).l
 
@@ -57952,7 +57950,7 @@ Buzz_Index:	index offset(*),,2
 		ptr Buzz_Main					; 0 
 		ptr Buzz_Action					; 2
 		ptr Buzz_Flame					; 4
-		ptr Buzz_Projectile					; 6
+		ptr Buzz_Projectile				; 6
 ; ===========================================================================
 
 Buzz_Projectile:				
@@ -58038,8 +58036,8 @@ Buzz_Action:
 		jmpto	DespawnObject_P1,JmpTo_DespawnObject_P1
 ; ===========================================================================
 Buzz_Action_Index:	index offset(*),,2	
-		ptr Buzz_Roaming					; 0 
-		ptr Buzz_Shooting					; 2
+		ptr Buzz_Roaming				; 0 
+		ptr Buzz_Shooting				; 2
 ; ===========================================================================
 
 Buzz_Roaming:				
@@ -60233,11 +60231,11 @@ byte_2EAD9:	dc.b  $F,$1E,$FF				; 0
 ; ===========================================================================
 		
 Ani_BCPZ_Eggman:	index offset(*)
-		ptr byte_2ED66			; 0 
-		ptr byte_2ED69			; 1
-		ptr byte_2ED6D			; 2
-		ptr byte_2ED76			; 3
-		ptr byte_2ED7F			; 4
+		ptr byte_2ED66					; 0 
+		ptr byte_2ED69					; 1
+		ptr byte_2ED6D					; 2
+		ptr byte_2ED76					; 3
+		ptr byte_2ED7F					; 4
 byte_2ED66:	dc.b  $F,  0,$FF				; 0 
 byte_2ED69:	dc.b   7,  1,  2,$FF				; 0 
 byte_2ED6D:	dc.b   7,  5,  5,  5,  5,  5,  5,$FD,  1	; 0 
@@ -60245,7 +60243,7 @@ byte_2ED76:	dc.b   7,  3,  4,  3,  4,  3,  4,$FD,  1	; 0
 byte_2ED7F:	dc.b  $F,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,$FD,  1 ; 0
 ; ===========================================================================					
 
-		include_CPZEggpodSmoke_Maps	; mappings/sprite/CPZ Boss.asm"
+		include_CPZEggpodSmoke_Maps			; mappings/sprite/CPZ Boss.asm"
 		
 ; ===========================================================================
 
@@ -60349,8 +60347,8 @@ loc_2EF36:
 		move.b	ost_render(a0),ost_render(a1)
 
 loc_2EFE4:				
-		jsr	(FindNextFreeObj).l		; find free OST slot after parent
-		bne.s	loc_2F032			; branch if not found
+		jsr	(FindNextFreeObj).l			; find free OST slot after parent
+		bne.s	loc_2F032				; branch if not found
 		
 		_move.b	#id_BossEmeraldHill,ost_id(a1)
 		move.l	a0,$34(a1)
@@ -61132,24 +61130,24 @@ byte_2F956:
 ; ===========================================================================
 			
 Ani_Drillster:	index offset(*)
-		ptr byte_2FA4A			; 0 
-		ptr byte_2FA4F			; 1
-		ptr byte_2FA53			; 2
+		ptr byte_2FA4A					; 0 
+		ptr byte_2FA4F					; 1
+		ptr byte_2FA53					; 2
 byte_2FA4A:	dc.b   5,  1,  2,  3,$FF			; 0 
 byte_2FA4F:	dc.b   1,  4,  5,$FF				; 0 
 byte_2FA53:	dc.b   1,  6,  7,$FF,  0			; 0 
 ; ===========================================================================
 
-		include_EggDrillster_Maps	; mappings/sprite/EHZ Boss.asm
+		include_EggDrillster_Maps			; mappings/sprite/EHZ Boss.asm
 
 ; ===========================================================================
 	
 Ani_BEHZ_Eggman:	index offset(*)	
-		ptr byte_2FAD2			; 0 
-		ptr byte_2FAD5			; 1
-		ptr byte_2FAD9			; 2
-		ptr byte_2FAE2			; 3
-		ptr byte_2FAEB			; 4
+		ptr byte_2FAD2					; 0 
+		ptr byte_2FAD5					; 1
+		ptr byte_2FAD9					; 2
+		ptr byte_2FAE2					; 3
+		ptr byte_2FAEB					; 4
 byte_2FAD2:	dc.b  $F,  0,$FF				; 0 
 byte_2FAD5:	dc.b   7,  1,  2,$FF				; 0 
 byte_2FAD9:	dc.b   7,  5,  5,  5,  5,  5,  5,$FD,  1	; 0 
@@ -61157,7 +61155,7 @@ byte_2FAE2:	dc.b   7,  3,  4,  3,  4,  3,  4,$FD,  1	; 0
 byte_2FAEB:	dc.b  $F,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,$FD,  1 ; 0
 ; ===========================================================================
 
-		include_BEHZ_Eggman_Maps	; mappings/sprite/EHZ Boss.asm
+		include_BEHZ_Eggman_Maps			; mappings/sprite/EHZ Boss.asm
 
 ; ===========================================================================
 
@@ -61449,8 +61447,8 @@ loc_2FEF0:
 		jmp	off_2FEFE(pc,d1.w)
 ; ===========================================================================
 off_2FEFE:	index offset(*),,2	
-		ptr loc_2FF02			; 0 
-		ptr loc_2FF50			; 2
+		ptr loc_2FF02					; 0 
+		ptr loc_2FF50					; 2
 ; ===========================================================================
 
 loc_2FF02:				
@@ -61490,8 +61488,8 @@ loc_2FF66:
 		jmp	off_2FF74(pc,d1.w)
 ; ===========================================================================
 off_2FF74:	index offset(*),,2		
-		ptr loc_2FF78			; 0 
-		ptr loc_30008			; 2
+		ptr loc_2FF78					; 0 
+		ptr loc_30008					; 2
 ; ===========================================================================
 
 loc_2FF78:				
@@ -62657,7 +62655,7 @@ byte_30E00:
 		dc.b   7,  5,$FF,  0
 ; ===========================================================================
 
-		include_ARZEggpod_Maps ; mappings/sprite/ARZ Boss.asm
+		include_ARZEggpod_Maps				; mappings/sprite/ARZ Boss.asm
 
 ; ===========================================================================
 
@@ -67229,10 +67227,10 @@ BombSpecial:
 		jmp	off_34EBE(pc,d1.w)
 ; ===========================================================================
 off_34EBE:	index offset(*),,2
-		ptr loc_34EC6			; 0 
-		ptr loc_34F06			; 1
-		ptr loc_3533A			; 2
-		ptr loc_34F6A			; 3
+		ptr loc_34EC6					; 0 
+		ptr loc_34F06					; 1
+		ptr loc_3533A					; 2
+		ptr loc_34F6A					; 3
 ; ===========================================================================
 
 loc_34EC6:				
@@ -69204,9 +69202,9 @@ JmpTo2_FindFreeObjSpecial:
 	
 ; ===========================================================================	
 ; ---------------------------------------------------------------------------
-; Subroutine to	load OST data for an object from a subtypedata declaration.
-; Requires subtype to be set beforehand.
-; Only objects 8C and higher use this, strangely enough.
+; Subroutine to	load OST data for an object from a subobjdata declaration.
+; Requires data index to be set beforehand. Part 2 assumes d0 is already set
+; to index; part 3 assume a1 already points to the data
 
 ; input: 
 ;	a0 = object's ost slot
@@ -69214,52 +69212,52 @@ JmpTo2_FindFreeObjSpecial:
 ;	uses d0.w, a0, a1
 ; ---------------------------------------------------------------------------	
 
-LoadSubtypeData:				
+LoadSubObjData:				
 		moveq	#0,d0
-		move.b	ost_subtype(a0),d0	; get object's subtype
+		move.b	ost_subdata_ptr(a0),d0			; get object's subtype
 
 LoadSubtypeData_Part2:				
-		move.w	SubtypeData_Index(pc,d0.w),d0
-		lea	SubtypeData_Index(pc,d0.w),a1	; a1 = data for this subtype
-
+		move.w	SubData_Index(pc,d0.w),d0
+		lea	SubData_Index(pc,d0.w),a1		; a1 = data for this subtype
+	
 LoadSubtypeData_Part3:				
-		move.l	(a1)+,ost_mappings(a0)		; mappings pointer
+		move.l	(a1)+,ost_mappings(a0)			; mappings pointer
 		move.w	(a1)+,ost_tile(a0)			; tile base
 		jsr	(Adjust2PArtPointer).l			; adjust for two-player mode if required
 		move.b	(a1)+,d0
 		or.b	d0,ost_render(a0)			; render setting
-		move.b	(a1)+,ost_priority(a0)		; priority
-		move.b	(a1)+,ost_displaywidth(a0)	; display width
-		move.b	(a1),ost_col_type(a0)		; collision type
-		addq.b	#2,ost_primary_routine(a0)	; advance to object's next routine
+		move.b	(a1)+,ost_priority(a0)			; priority
+		move.b	(a1)+,ost_displaywidth(a0)		; display width
+		move.b	(a1),ost_col_type(a0)			; collision type
+		addq.b	#2,ost_primary_routine(a0)		; advance to object's next routine
 		rts	
 ; ===========================================================================
 
-SubtypeData_Index:	index offset(*),,2
-		ptr SubData_Whisp					; 0 
+SubData_Index:	index offset(*),,2
+		ptr SubData_Whisp				; 0 
 		ptr SubData_Ground				; 2
-		ptr SubData_GWall					; 4
-		ptr SubData_GRock					; 6
-		ptr SubData_Chop					; 4
-		ptr SubData_Spiker					; 5
+		ptr SubData_GWall				; 4
+		ptr SubData_GRock				; 6
+		ptr SubData_Chop				; 8
+		ptr SubData_Spiker				; $A
 		ptr Rexon					; invalid
-		ptr SubData_Rex					; 7
-		ptr off_37764					; 8
-		ptr off_37888					; 9
-		ptr off_3776E					; 10
-		ptr off_37B32					; 11
-		ptr off_37B3C					; 12
-		ptr off_37B46					; 13
+		ptr SubData_Rex					; $E
+		ptr SubData_RexProj				; $10
+		ptr SubData_Neb					; $12
+		ptr off_3776E					; $14
+		ptr Subdata_Turt				; $16
+		ptr Subdata_TRider				; $18
+		ptr Subdata_BalkJet				; $1A
 		ptr off_37778					; 14
-		ptr off_37D7E					; 15
+		ptr Subdata_Coco				; 15
 		ptr off_37782					; 16
-		ptr off_37FE8					; 17
-		ptr off_382F0					; 18
-		ptr off_382FA					; 19
-		ptr off_385C0					; 20
-		ptr off_385CA					; 21
-		ptr off_388AC					; 22
-		ptr off_38A86					; 23
+		ptr Subdata_CrawlT				; 17
+		ptr Subdata_Shelcrk				; 18
+		ptr Subdata_ShelcrkClaw				; 19
+		ptr Subdata_Slice				; 20
+		ptr Subdata_SlicePinc				; 21
+		ptr Subdata_Flash				; 22
+		ptr SubData_Ast					; 23
 		ptr off_3778C					; 24
 		ptr off_38CAE					; 25
 		ptr off_37796					; 26
@@ -69274,8 +69272,8 @@ SubtypeData_Index:	index offset(*),,2
 		ptr off_377AA					; 35
 		ptr off_39DCE					; 36
 		ptr off_377B4					; 37
-		ptr SonicSegaScreen_SubtypeData			; 38
-		ptr SegaHideTM_SubtypeData			; 39
+		ptr SubData_SonicSega				; 38
+		ptr SubData_SegaHideTM				; 39
 		ptr off_3AFC8					; 40
 		ptr off_3AFC8					; 41
 		ptr off_3AFC8					; 42
@@ -69323,7 +69321,7 @@ SubtypeData_Index:	index offset(*),,2
 		ptr off_3D0BC					; 84
 		ptr off_3D0C6					; 85
 		ptr off_3D440					; 86
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to	determine the closest player to an object, said player's  
 ; location relative to the object, and their vertical and horizontal distance 
@@ -69346,79 +69344,99 @@ GetClosestPlayer:
 		moveq	#0,d0
 		moveq	#0,d1
 		lea	(v_ost_player1).w,a1
-		move.w	ost_x_pos(a0),d2	; d2 = x pos of player 1
-		sub.w	ost_x_pos(a1),d2	; subtract x pos of object		
-		mvabs.w d2,d4				; d4 = absolute horizontal distance to player 1
+		move.w	ost_x_pos(a0),d2			; d2 = x pos of player 1
+		sub.w	ost_x_pos(a1),d2			; subtract x pos of object		
+		mvabs.w d2,d4					; d4 = absolute horizontal distance to player 1
 				
 		lea	(v_ost_player2).w,a2
-		move.w	ost_x_pos(a0),d3	; d3 = x pos of player 2
-		sub.w	ost_x_pos(a2),d3	; subtract x pos of object
-		mvabs.w	d3,d5				; d5 =  absolute horizontal distance to player 2
+		move.w	ost_x_pos(a0),d3			; d3 = x pos of player 2
+		sub.w	ost_x_pos(a2),d3			; subtract x pos of object
+		mvabs.w	d3,d5					; d5 =  absolute horizontal distance to player 2
 			
 		cmp.w	d5,d4
-		bls.s	.chk_horiz			; branch if player 1 is closer
-		movea.l	a2,a1				; else, player 2 is closer
+		bls.s	.chk_horiz				; branch if player 1 is closer
+		movea.l	a2,a1					; else, player 2 is closer
 		move.w	d3,d2
 
 	.chk_horiz:				
 		tst.w	d2
-		bpl.s	.chk_vert			; branch if player is left of object
-		addq.w	#2,d0				; mark player as right of object
+		bpl.s	.chk_vert				; branch if player is left of object
+		addq.w	#2,d0					; mark player as right of object
 
 	.chk_vert:				
-		move.w	ost_y_pos(a0),d3	; d3 = y pos of object
-		sub.w	ost_y_pos(a1),d3	; subtract player's y pos
-		bcc.s	.done				; branch if player is above object
-		addq.w	#2,d1				; mark player as below object
+		move.w	ost_y_pos(a0),d3			; d3 = y pos of object
+		sub.w	ost_y_pos(a1),d3			; subtract player's y pos
+		bcc.s	.done					; branch if player is above object
+		addq.w	#2,d1					; mark player as below object
 
 	.done:				
 		rts	
-; ===========================================================================
 
-ObjCapSpeed:				
-		move.w	ost_x_vel(a0),d2
-		bpl.s	loc_3672C
-		neg.w	d0
-		cmp.w	d0,d2
-		bcc.s	loc_36732
-		move.w	d0,d2
-		bra.w	loc_36732
-; ===========================================================================
-
-loc_3672C:				
-		cmp.w	d0,d2
-		bls.s	loc_36732
-		move.w	d0,d2
-
-loc_36732:				
-		move.w	ost_y_vel(a0),d3
-		bpl.s	loc_36744
-		neg.w	d1
-		cmp.w	d1,d3
-		bcc.s	loc_3674A
-		move.w	d1,d3
-		bra.w	loc_3674A
-; ===========================================================================
-
-loc_36744:				
-		cmp.w	d1,d3
-		bls.s	loc_3674A
-		move.w	d1,d3
-
-loc_3674A:				
-		move.w	d2,ost_x_vel(a0)
-		move.w	d3,ost_y_vel(a0)
-		rts	
-; ===========================================================================
-
-ObjMoveStop:				
-		moveq	#0,d0
-		move.w	d0,ost_x_vel(a0)
-		move.w	d0,ost_y_vel(a0)
-		rts	
-; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Subroutine to align a child object to its parent with variable x and y offset.
+; Subroutine to apply a speed cap to an object
+;
+; input:
+;	d0.w = max x velocity absolute value
+;	d1.w = max y velocity absolute value
+;
+;	uses d0.w, d1.w, d2.w, d3.w
+; ---------------------------------------------------------------------------
+
+CapSpeed:				
+		move.w	ost_x_vel(a0),d2			; d2 = current x-vel
+		bpl.s	.right					; branch if object is moving right
+	
+	;.left:
+		neg.w	d0					; negate max x-vel for leftward motion
+		cmp.w	d0,d2					; is current x-vel lower than max?
+		bcc.s	.chk_y					; if so, branch
+		move.w	d0,d2					; if greater than max, apply cap
+		bra.w	.chk_y
+; ===========================================================================
+
+	.right:				
+		cmp.w	d0,d2					; is current x-vel lower than max?
+		bls.s	.chk_y					; if so, branch
+		move.w	d0,d2					; if greater than max, cap speed
+
+.chk_y:				
+		move.w	ost_y_vel(a0),d3			; d3 = current y-vel
+		bpl.s	.down					; branch if object is moving down
+		
+	;.up:	
+		neg.w	d1					; negate max y-vel for upward motion
+		cmp.w	d1,d3					; is current y-vel lower than max?			
+		bcc.s	.update_speed				; if so, branch
+		move.w	d1,d3					; if greater than max, apply cap
+		bra.w	.update_speed
+; ===========================================================================
+
+	.down:				
+		cmp.w	d1,d3					; is current y-vel lower than max?			
+		bls.s	.update_speed				; if so, branch
+		move.w	d1,d3					; if greater than max, apply cap
+
+.update_speed:				
+		move.w	d2,ost_x_vel(a0)			; set x-vel
+		move.w	d3,ost_y_vel(a0)			; set x-vel
+		rts	
+		
+; ---------------------------------------------------------------------------
+; Subroutine to stop all movement of an object
+; Would be better to just insert the three instructions directly in object's
+; code.
+;
+;	uses d0.l
+; ---------------------------------------------------------------------------
+
+MoveStop:				
+		moveq	#0,d0
+		move.w	d0,ost_x_vel(a0)			; clear x-vel
+		move.w	d0,ost_y_vel(a0)			; clear y-vel
+		rts	
+
+; ---------------------------------------------------------------------------
+; Subroutine to align a child object to its parent with variable x and y offset
 ; Used by Grabber and Mecha Sonic.
 
 ; input:
@@ -69442,11 +69460,10 @@ AlignChild:
 		add.w	d1,d3					; add offset to get child's y-pos
 		move.w	d3,ost_y_pos(a1)			; set child's y pos
 		rts	
-		
-; ===========================================================================
+			
 ; ---------------------------------------------------------------------------
-; Subroutine to adjust an object's position based on the movement of the Tornado
-; Used by the Tornado and SCZ badniks.
+; Subroutine to adjust an object's position based on the movement of the Tornado?
+; Used by the Tornado and SCZ badniks
 
 ; input:
 ;	a1 = object
@@ -69460,7 +69477,7 @@ loc_36776:
 		move.w	(v_tornado_y_vel).w,d0
 		add.w	d0,ost_y_pos(a0)
 		rts	
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to delete an object if it goes off the left side of the screen.
 ; Used by SCZ clouds and badniks.
@@ -69470,6 +69487,7 @@ loc_36776:
 ;
 ;	uses d0.w
 ; ---------------------------------------------------------------------------
+
 DeleteBehindScreen:				
 		tst.w	(f_two_player).w			; is it two-player mode? (it never will be in base game)
 		beq.s	.chkgone				; if not, branch
@@ -69481,7 +69499,7 @@ DeleteBehindScreen:
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		bmi.w	JmpTo64_DeleteObject			; if more than 80 pixels to left of screen, delete
 		jmp	(DisplaySprite).l			; else, display
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to set a child object's x and y flip based on the parent object.
 ; Used only by Mecha Sonic and Grabber's legs.
@@ -69498,7 +69516,7 @@ DeleteBehindScreen:
 ; 	uses d0.b, d1.b d2.b, a0, a1 	
 ; ---------------------------------------------------------------------------
 
-InheritParentXYFlip:				
+InheritParentFlip:				
 		move.b	ost_render(a0),d0			; get child object's render flags
 		andi.b	#~(render_xflip|render_yflip),d0	; clear x and y flip bits
 		move.b	ost_primary_status(a0),d2		; do the same with the status flags
@@ -69510,7 +69528,7 @@ InheritParentXYFlip:
 		move.b	d0,ost_render(a0)			; set merged render flags
 		move.b	d2,ost_primary_status(a0)		; set merged status flags
 		rts	
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to spawn a child object using a childobjdata declaration.
 
@@ -69528,15 +69546,14 @@ LoadChild:
 		move.w	(a2)+,d0				; offset in parent's OST where pointer to child will be stored
 		move.w	a1,(a0,d0.w)				; set pointer to child object
 		_move.b	(a2)+,ost_id(a1)			; set child's ID
-		move.b	(a2)+,ost_subtype(a1)			; set child's subtype
+		move.b	(a2)+,ost_subdata_ptr(a1)		; set child's subobjdata pointer
 		move.w	a0,ost_parent2(a1)			; set pointer to parent object
 		move.w	ost_x_pos(a0),ost_x_pos(a1)		
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 
 	.fail:				
 		rts
-		
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Unused subroutine to set an object's x-flip state based on its x-pos
 ; relative to the nearest player. Perhaps would have been used in conjunction
@@ -69557,7 +69574,7 @@ LoadChild:
 
 	.isright:				
 		rts	
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to create a specified number of moving projectiles.
 ; Used by Asteron and Mecha Sonic.
@@ -69579,19 +69596,19 @@ LoadChild:
 ; uses d0.w, d1.w, d2.b, a0, a1, a2, a3
 ; ---------------------------------------------------------------------------
 
-SpawnProjectiles:				
+LoadProjectiles:				
 		moveq	#0,d1
 
 	.loop:				
 		jsr	(FindNextFreeObj).l			; find free OST slot after parent
 		bne.s	.fail					; branch if not found
 		_move.b	#id_Projectile,ost_id(a1)		; load projectile object	
-		move.b	d2,ost_subtype(a1)			; set subtype
+		move.b	d2,ost_subdata_ptr(a1)			; set subobjdata pointer
 		move.w	ost_x_pos(a0),ost_x_pos(a1)		; align to parent object
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		lea	(SpeedToPos).l,a3			; address of movement subroutine to call
 		move.l	a3,$2A(a1)				; set movement type
-		lea	(a2,d1.w),a3				; get index in projectile data
+		lea	(a2,d1.w),a3				; get index into projectile data
 		move.b	(a3)+,d0				; x offset
 		ext.w	d0
 		add.w	d0,ost_x_pos(a1)
@@ -69682,12 +69699,12 @@ DeleteOffScreen:
 		jmp	(DisplaySprite).l
 ; ===========================================================================
 
-loc_36904:				
-		move.w	ost_x_pos(a0),d0
-		andi.w	#-$80,d0
-		sub.w	(v_camera_x_pos_coarse).w,d0
-		cmpi.w	#$280,d0
-		bhi.w	JmpTo64_DeleteObject
+loc_36904:	
+	if AllOptimizations
+		out_of_range.s JmpTo64_DeleteObject
+	else
+		out_of_range.w JmpTo64_DeleteObject		
+	endc
 		jmp	(DisplaySprite).l
 ; ===========================================================================
 
@@ -69719,7 +69736,7 @@ off_36932:	index offset(*),,2
 ; ===========================================================================
 
 loc_3693C:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#$10,$2A(a0)
 		move.b	#4,$2B(a0)
 		rts	
@@ -69773,7 +69790,7 @@ loc_369C2:
 		add.w	d2,ost_y_vel(a0)
 		move.w	#$200,d0
 		move.w	d0,d1
-		bsr.w	ObjCapSpeed
+		bsr.w	CapSpeed
 		jsr	(SpeedToPos).l
 		lea	(Ani_Whisp).l,a1
 		jsr	(AnimateSprite).l
@@ -69790,7 +69807,7 @@ loc_369F8:
 		move.l	(v_random).w,d0
 		andi.b	#$1F,d0
 		move.b	d0,$2A(a0)
-		bsr.w	ObjMoveStop
+		bsr.w	MoveStop
 		lea	(Ani_Whisp).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DespawnObject).l
@@ -69804,7 +69821,7 @@ loc_36A26:
 ; ===========================================================================
 
 SubData_Whisp:	
-		subtypedata	Map_Whisp,tile_Nem_Whisp+tile_pal2+tile_hi,render_rel,4,$C,id_col_8x8
+		subobjdata	Map_Whisp,tile_Nem_Whisp+tile_pal2+tile_hi,render_rel,4,$C,id_col_8x8
 		
 Ani_Whisp:	index offset(*)
 		ptr Ani_Whisp_Fly 
@@ -69834,63 +69851,63 @@ GrounderOnGround:
 Ground_Index:	index offset(*),,2
 		ptr Ground_Init					; 0 
 		ptr Ground_Wait					; 2
-		ptr Ground_BreakOut					; 4
+		ptr Ground_BreakOut				; 4
 		ptr Ground_StartRoam				; 6
-		ptr Ground_Roaming					; 8
-		ptr Ground_Pause					; $A
+		ptr Ground_Roaming				; 8
+		ptr Ground_Pause				; $A
 		
 		rsobj	GrounderInWall,$2A
-ost_ground_wait:		rs.b 1 ; $2A ; time to wait before turning around			
-ost_ground_emerge:	rs.b 1 ; $2B ; flag that triggers grounder's wall to break when set
+ost_ground_wait:		rs.b 1				; $2A ; time to wait before turning around			
+ost_ground_emerge:	rs.b 1					; $2B ; flag that triggers grounder's wall to break when set
 		rsobjend
 ; ===========================================================================
 
 Ground_Init:				
-		bsr.w	LoadSubtypeData								; go to Ground_Wait next
+		bsr.w	LoadSubObjData				; go to Ground_Wait next
 		
 		; It seems this object was at one time going to use the y-flip bit in the objpos data
 		; to indicate different priority levels. If y-flip is not set, then high priority is used;
 		; otherwise it is cleared. As it stands, all instances of this object have y-flip set,
 		; meaning lower priority is always used.
-		bclr	#render_yflip_bit,ost_render(a0)			; clear y-flip render bit
-		beq.s	.no_yflip									; branch if it was already clear
-		bclr	#status_yflip_bit,ost_primary_status(a0)	; clear y-flip status bit
-		andi.w	#tile_draw,ost_tile(a0)						; clear priority bit
+		bclr	#render_yflip_bit,ost_render(a0)	; clear y-flip render bit
+		beq.s	.no_yflip				; branch if it was already clear
+		bclr	#status_yflip_bit,ost_primary_status(a0) ; clear y-flip status bit
+		andi.w	#tile_draw,ost_tile(a0)			; clear priority bit
 
 	.no_yflip:				
 		move.b	#$14,ost_height(a0)
 		move.b	#$10,ost_width(a0)
 		jsr	(FindFloorObj).l			
-		tst.w	d1						; is grounder on the floor?
+		tst.w	d1					; is grounder on the floor?
 		bpl.s	.chk_wall				; if not, branch
-		add.w	d1,ost_y_pos(a0)		; align to floor
+		add.w	d1,ost_y_pos(a0)			; align to floor
 		move.w	#0,ost_y_vel(a0)
 
 .chk_wall:				
-		_move.b	ost_id(a0),d0			; get ID
+		_move.b	ost_id(a0),d0				; get ID
 		subi.b	#id_GrounderInWall,d0
 		beq.w	Ground_LoadWall				; branch if this is a Grounder hiding in a wall
-		move.b	#id_Ground_StartRoam,ost_primary_routine(a0)	; if on ground, go to Ground_StartRoam next
+		move.b	#id_Ground_StartRoam,ost_primary_routine(a0) ; if on ground, go to Ground_StartRoam next
 		rts	
 ; ===========================================================================
 
 Ground_Wait:				
 		bsr.w	GetClosestPlayer			; get closest player
-		abs.w d2						; d2 = absolute value of horizontal distance to nearest player				
+		abs.w d2					; d2 = absolute value of horizontal distance to nearest player				
 		cmpi.w	#$60,d2					; is a player within $60 pixels horizontally?
 		bls.s	.within_60				; branch if so
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
 	.within_60:				
-		addq.b	#2,ost_primary_routine(a0)			; go to Ground_Emerge next
+		addq.b	#2,ost_primary_routine(a0)		; go to Ground_Emerge next
 		st.b	ost_ground_emerge(a0)			; signal wall to break apart
-		bsr.w	Ground_LoadRocks					; load rocks
+		bsr.w	Ground_LoadRocks			; load rocks
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
 Ground_BreakOut:				
-		lea	(Ani_Grounder1).l,a1				; go to Ground_StartRoam when animation is complete
+		lea	(Ani_Grounder1).l,a1			; go to Ground_StartRoam when animation is complete
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -69898,11 +69915,11 @@ Ground_BreakOut:
 Ground_StartRoam:				
 		addq.b	#2,ost_primary_routine(a0)		; go to Ground_Roaming next
 		bsr.w	GetClosestPlayer
-		move.w	Ground_Speeds(pc,d0.w),ost_x_vel(a0)		; set x-vel based on direction to nearest player
+		move.w	Ground_Speeds(pc,d0.w),ost_x_vel(a0)	; set x-vel based on direction to nearest player
 		bclr	#status_xflip_bit,ost_primary_status(a0)	
 		tst.w	d0
-		beq.s	.no_x_flip									; branch if player is to the left
-		bset	#status_xflip_bit,ost_primary_status(a0)	; else, player is to the right	
+		beq.s	.no_x_flip				; branch if player is to the left
+		bset	#status_xflip_bit,ost_primary_status(a0) ; else, player is to the right	
 
 	.no_x_flip:				
 		jmpto	DespawnObject,JmpTo39_DespawnObject
@@ -69913,34 +69930,34 @@ Ground_Speeds:
 ; ===========================================================================
 
 Ground_Roaming:				
-		jsrto	SpeedToPos,JmpTo26_SpeedToPos	; update position
+		jsrto	SpeedToPos,JmpTo26_SpeedToPos		; update position
 		jsr	(FindFloorObj).l
 		cmpi.w	#-1,d1
-		blt.s	Ground_Stop			; branch if grounder is more than 1 pixel below floor			
+		blt.s	Ground_Stop				; branch if grounder is more than 1 pixel below floor			
 		cmpi.w	#$C,d1
-		bge.s	Ground_Stop			; branch if grounder is more than $C pixels above floor
-		add.w	d1,ost_y_pos(a0)	; align to floor
+		bge.s	Ground_Stop				; branch if grounder is more than $C pixels above floor
+		add.w	d1,ost_y_pos(a0)			; align to floor
 		lea	(Ani_Grounder2).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
 Ground_Stop:				
-		addq.b	#2,ost_primary_routine(a0)	; go to Ground_Pause next
-		move.b	#60-1,ost_ground_wait(a0)				; wait for 60 frames
+		addq.b	#2,ost_primary_routine(a0)		; go to Ground_Pause next
+		move.b	#60-1,ost_ground_wait(a0)		; wait for 60 frames
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
 Ground_Pause:				
 		subq.b	#1,ost_ground_wait(a0)			; decrement timer
-		bmi.s	.turn_around			; branch if time has run out
+		bmi.s	.turn_around				; branch if time has run out
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
 	.turn_around:				
-		move.b	#id_Ground_Roaming,ost_primary_routine(a0)	; go back to Ground_Roaming
-		neg.w	ost_x_vel(a0)									; reverse direction
-		bchg	#status_xflip_bit,ost_primary_status(a0)		; x-flip
+		move.b	#id_Ground_Roaming,ost_primary_routine(a0) ; go back to Ground_Roaming
+		neg.w	ost_x_vel(a0)				; reverse direction
+		bchg	#status_xflip_bit,ost_primary_status(a0) ; x-flip
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -69956,27 +69973,27 @@ GrounderWall:
 GWall_Index:	index offset(*),,2
 		ptr GWall_Init					; 0 
 		ptr GWall_Wait					; 2
-		ptr GWall_GRock_Fall					; 4
+		ptr GWall_GRock_Fall				; 4
 		
 		rsobj GrounderWall,$2C
-ost_gwall_parent: 		rs.w 1 ; $2C ; parent grounder that spawned this object
-ost_gwall_vel_index:	rs.w 1 ; $2E ; index into velocity table
+ost_gwall_parent: 		rs.w 1				; $2C ; parent grounder that spawned this object
+ost_gwall_vel_index:	rs.w 1					; $2E ; index into velocity table
 		rsobjend
 ; ===========================================================================
 
 GWall_Init:
 	if FixBugs
-		bra.w	LoadSubtypeData
+		bra.w	LoadSubObjData
 	else				
-		bsr.w	LoadSubtypeData
-		clr.w	ost_tile(a0)		; this is unnecessary, as it is already set to 0 (tile_LevelArt) by the call to LoadSubtypeData
+		bsr.w	LoadSubObjData
+		clr.w	ost_tile(a0)				; this is unnecessary, as it is already set to 0 (tile_LevelArt) by the call to LoadSubObjData
 		rts	
 	endc	
 ; ===========================================================================
 
 GWall_Wait:				
-		movea.w	ost_gwall_parent(a0),a1	; a1 = parent grounder
-		tst.b	ost_ground_emerge(a1)	; is grounder about to emerge?
+		movea.w	ost_gwall_parent(a0),a1			; a1 = parent grounder
+		tst.b	ost_ground_emerge(a1)			; is grounder about to emerge?
 		bne.s	.break_wall				; if so, branch
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -69984,8 +70001,8 @@ GWall_Wait:
 .break_wall:				
 		addq.b	#2,ost_primary_routine(a0)		; go to GWall_GRock_Fall next
 		move.w	ost_gwall_vel_index(a0),d0		; get velocity table index
-		move.b	Gwall_FragSpeeds(pc,d0.w),ost_x_vel(a0)		; set x vel
-		move.b	Gwall_FragSpeeds+1(pc,d0.w),ost_y_vel(a0)	; set y vel
+		move.b	Gwall_FragSpeeds(pc,d0.w),ost_x_vel(a0)	; set x vel
+		move.b	Gwall_FragSpeeds+1(pc,d0.w),ost_y_vel(a0) ; set y vel
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
@@ -70008,25 +70025,25 @@ GrounderRocks:
 ; ===========================================================================
 GRock_Index:	index offset(*),,2
 		ptr GRock_Init					; 0 
-		ptr GWall_GRock_Fall					; 2
+		ptr GWall_GRock_Fall				; 2
 		
 		rsobj GrounderRocks,$2C
-ost_grock_parent: 		rs.w 1 ; $2C ; parent grounder that spawned this object
-ost_grock_vel_index:	rs.w 1 ; $2E ; index into velocity and frame tables
+ost_grock_parent: 		rs.w 1				; $2C ; parent grounder that spawned this object
+ost_grock_vel_index:	rs.w 1					; $2E ; index into velocity and frame tables
 		rsobjend
 ; ===========================================================================
 
 GRock_Init:				
-		bsr.w	LoadSubtypeData								; go to GWall_GRock_Fall next
+		bsr.w	LoadSubObjData				; go to GWall_GRock_Fall next
 	if FixBugs=0
 		; See SubData_GRock.
-		move.w	#tile_Nem_Grounder+tile_pal3,ost_tile(a0)	; why do this when you can put it in the subtype data?
+		move.w	#tile_Nem_Grounder+tile_pal3,ost_tile(a0) ; why do this when you can put it in the subtype data?
 	endc	
-		move.w	ost_grock_vel_index(a0),d0					; get velocity table index
-		move.b	GRock_Speeds(pc,d0.w),ost_x_vel(a0)			; set x vel
-		move.b	GRock_Speeds+1(pc,d0.w),ost_y_vel(a0)		; set y_vel
-		lsr.w	#1,d0										; divide by 2 to get frame index
-		move.b	GRock_Frames(pc,d0.w),ost_frame(a0)			; set mapping frame
+		move.w	ost_grock_vel_index(a0),d0		; get velocity table index
+		move.b	GRock_Speeds(pc,d0.w),ost_x_vel(a0)	; set x vel
+		move.b	GRock_Speeds+1(pc,d0.w),ost_y_vel(a0)	; set y_vel
+		lsr.w	#1,d0					; divide by 2 to get frame index
+		move.b	GRock_Frames(pc,d0.w),ost_frame(a0)	; set mapping frame
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
@@ -70047,8 +70064,8 @@ GRock_Speeds:
 ; ===========================================================================
 
 GWall_GRock_Fall:				
-		tst.b	ost_render(a0)						; is object still on-screen?
-		bpl.w	JmpTo65_DeleteObject				; if not, delete
+		tst.b	ost_render(a0)				; is object still on-screen?
+		bpl.w	JmpTo65_DeleteObject			; if not, delete
 		jsrto	ObjectFall,JmpTo8_ObjectFall		; apply gravity	
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -70059,8 +70076,8 @@ Ground_LoadRocks:
 
 	.loadloop:				
 		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
-		bne.s	.fail								; branch if not found
-		bsr.w	.loadrock							; load one instance of GrounderRocks object  (could be bsr.s)
+		bne.s	.fail					; branch if not found
+		bsr.w	.loadrock				; load one instance of GrounderRocks object  (could be bsr.s)
 		dbf	d6,.loadloop
 
 	.fail:				
@@ -70068,9 +70085,9 @@ Ground_LoadRocks:
 ; ===========================================================================
 
 	.loadrock:				
-		_move.b	#id_GrounderRocks,ost_id(a1)			; load grounder's rock
-		move.b	#id_SubData_GRock,ost_subtype(a1)	; index to ost data
-		move.w	a0,ost_grock_parent(a1)					; set pointer to parent
+		_move.b	#id_GrounderRocks,ost_id(a1)		; load grounder's rock
+		move.b	#id_SubData_GRock,ost_subdata_ptr(a1)	; index to ost data
+		move.w	a0,ost_grock_parent(a1)			; set pointer to parent
 		move.w	d1,ost_grock_vel_index(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
@@ -70079,13 +70096,13 @@ Ground_LoadRocks:
 ; ===========================================================================
 
 Ground_LoadWall:				
-		moveq	#0,d1		; initial index into GWall_Offsets
-		moveq	#4-1,d6		; four objects to load
+		moveq	#0,d1					; initial index into GWall_Offsets
+		moveq	#4-1,d6					; four objects to load
 
 	.loadloop:				
-		jsrto	FindFreeObj,JmpTo19_FindFreeObj	; find free OST slot
-		bne.s	.fail							; branch if not found
-		bsr.w	.loadwall						; load one instance of GrounderWall object (could be bsr.s)
+		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
+		bne.s	.fail					; branch if not found
+		bsr.w	.loadwall				; load one instance of GrounderWall object (could be bsr.s)
 		dbf	d6,.loadloop
 
 	.fail:				
@@ -70093,56 +70110,56 @@ Ground_LoadWall:
 ; ===========================================================================
 
 	.loadwall:				
-		_move.b	#id_GrounderWall,ost_id(a1)	; load grounder's Wall
-		move.b	#id_SubData_GWall,ost_subtype(a1)	; index to ost data		
-		move.w	a0,ost_gwall_parent(a1)				; set pointer to parent
-		move.w	d1,ost_gwall_vel_index(a1)			; set velocity table index			
+		_move.b	#id_GrounderWall,ost_id(a1)		; load grounder's Wall
+		move.b	#id_SubData_GWall,ost_subdata_ptr(a1)	; index to ost data		
+		move.w	a0,ost_gwall_parent(a1)			; set pointer to parent
+		move.w	d1,ost_gwall_vel_index(a1)		; set velocity table index			
 		
 		move.l	ost_x_pos(a0),d0			; get parent grounder's x pos		
-		swap	d0							; offset is added to high word		
+		swap	d0					; offset is added to high word		
 		moveq	#0,d2
 		move.b	GWall_Offsets(pc,d1.w),d2		; get x offset from array
 		ext.w	d2
-		add.w	d2,d0						; add offset to parent x pos
-		swap	d0							; swap words back
+		add.w	d2,d0					; add offset to parent x pos
+		swap	d0					; swap words back
 		move.l	d0,ost_x_pos(a1)			; store x pos
 		
 		move.l	ost_y_pos(a0),d0			; get parent grounder's x pos
-		swap	d0							; offset is added to high word
+		swap	d0					; offset is added to high word
 		moveq	#0,d2
-		move.b	GWall_Offsets+1(pc,d1.w),d2	; get y offset from array
+		move.b	GWall_Offsets+1(pc,d1.w),d2		; get y offset from array
 		ext.w	d2
-		add.w	d2,d0						; add offset to parent y pos
-		swap	d0							; swap words back
+		add.w	d2,d0					; add offset to parent y pos
+		swap	d0					; swap words back
 		move.l	d0,ost_y_pos(a1)			; store pos
 		
-		addq.w	#2,d1						; next index in GWall_Offsets
+		addq.w	#2,d1					; next index in GWall_Offsets
 		rts	
 ; ===========================================================================
 
 ; Offsets for Grounder's wall relative to parent
 GWall_Offsets:	
 		dc.b    0,-$14
-		dc.b  $10,  -4	; 2
-		dc.b    0,  $C	; 4
-		dc.b -$10,  -4	; 6
+		dc.b  $10,  -4					; 2
+		dc.b    0,  $C					; 4
+		dc.b -$10,  -4					; 6
 ; ===========================================================================
 
 SubData_Ground:
-		subtypedata	Map_Ground,tile_nem_Grounder+tile_pal2+tile_hi,render_rel,5,$10,id_col_12x20 ; tile_hi is cleared by init code
+		subobjdata	Map_Ground,tile_nem_Grounder+tile_pal2+tile_hi,render_rel,5,$10,id_col_12x20 ; tile_hi is cleared by init code
 
 SubData_GWall:
-		subtypedata Map_GWall,tile_LevelArt,render_rel|render_onscreen,4,$10,id_col_null
+		subobjdata Map_GWall,tile_LevelArt,render_rel|render_onscreen,4,$10,id_col_null
 
 SubData_GRock:
 	if FixBugs
 		; The correct tile setting for this object.
-		subtypedata	Map_GRock,tile_Nem_Grounder+tile_pal3,render_rel|render_onscreen,4,8,id_col_null
+		subobjdata	Map_GRock,tile_Nem_Grounder+tile_pal3,render_rel|render_onscreen,4,8,id_col_null
 	else
 		; The tile setting here is incorrect, and is corrected with an additional instruction
 		; in the object's code. It'd make more sense to put the correct setting here and eliminate
 		; the additional instruction.
-		subtypedata	Map_GRock,tile_nem_Grounder+tile_pal2+tile_hi,render_rel|render_onscreen,4,8,id_col_null
+		subobjdata	Map_GRock,tile_nem_Grounder+tile_pal2+tile_hi,render_rel|render_onscreen,4,8,id_col_null
 	endc	
 
 ; ----------------------------------------------------------------------------
@@ -70163,7 +70180,7 @@ Ground_Roam:
 		even
 
 Ani_Grounder1:	index offset(*)	
-		ptr Ground_Emerge			; 0 
+		ptr Ground_Emerge				; 0 
 
 Ground_Emerge:	
 		dc.b 7 
@@ -70194,7 +70211,7 @@ Chop_Index:	index offset(*),,2
 ; ===========================================================================
 
 loc_36DC2:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.w	#$200,$2A(a0)
 		move.w	#$50,$2C(a0)
 		moveq	#$40,d0
@@ -70328,7 +70345,7 @@ loc_36EE2:
 ; ===========================================================================
 
 SubData_Chop:
-		subtypedata	Map_Chop,tile_nem_ChopChop+tile_pal2,render_rel,4,$10,id_col_12x20
+		subobjdata	Map_Chop,tile_nem_ChopChop+tile_pal2,render_rel,4,$10,id_col_12x20
 
 ; ----------------------------------------------------------------------------
 ; Animation script
@@ -70365,7 +70382,7 @@ Spiker_Index:	index offset(*),,2
 ; ===========================================================================
 
 loc_36F24:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#$40,$2A(a0)
 		move.w	#$80,ost_x_vel(a0)
 		bchg	#status_xflip_bit,ost_primary_status(a0)
@@ -70423,7 +70440,7 @@ loc_36FA4:
 		bne.s	loc_36FDC
 		st.b	$2B(a0)
 		_move.b	#id_SpikerDrill,ost_id(a1)
-		move.b	ost_subtype(a0),ost_subtype(a1)
+		move.b	ost_subdata_ptr(a0),ost_subdata_ptr(a1)
 		move.w	a0,$2C(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
@@ -70451,7 +70468,7 @@ SpkDrill_Index:	index offset(*),,2
 ; ===========================================================================
 
 loc_36FF8:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		ori.b	#render_onscreen,ost_render(a0)
 		ori.b	#id_col_hurt,ost_col_type(a0)
 		movea.w	$2C(a0),a1
@@ -70503,7 +70520,7 @@ loc_37066:
 ; ===========================================================================
 
 SubData_Spiker:
-		subtypedata	Map_Spiker,tile_LevelArt,render_rel,4,$10,id_col_8x16
+		subobjdata	Map_Spiker,tile_LevelArt,render_rel,4,$10,id_col_8x16
 		
 Ani_Spiker:	index offset(*)
 		ptr byte_3708A					; 0 
@@ -70715,33 +70732,39 @@ Rexon:
 Rex_Index:	index offset(*),,2
 		ptr Rex_Init					; 0 
 		ptr Rex_Wait					; 2
-		ptr Rex_Wait_Stationary			; 4 ; unused
+		ptr Rex_Wait_Stationary				; 4 ; unused
 		ptr Rex_HeadSpawned				; 6
 		
 		rsobj Rexon,$2A
-ost_rex_turntime:	rs.b 1 ; $2A ; time until Rexon turns around
+ost_rex_turntime:	rs.b 1					; $2A ; time until Rexon turns around
+					rs.b 1			; unused
+ost_rex_neck1:		rs.w 1					; $2C, pointer to bottommost next segment (does NOT oscillate)
+ost_rex_neck2:		rs.w 1					; $2E, pointer to second neck segment
+ost_rex_neck3:		rs.w 1					; $30, pointer to third neck segment	
+ost_rex_neck4:		rs.w 1					; $32, pointer to fourth neck segment	
+ost_rex_head:		rs.w 1					; $34, pointer to head					
 		rsobjend
 ; ==========================================================================
 
 Rex_Init:				
-		bsr.w	LoadSubtypeData						; go to Rex_Wait next
+		bsr.w	LoadSubObjData				; go to Rex_Wait next
 		move.b	#id_Frame_Rexon_Body,ost_frame(a0)
 		move.w	#-$20,ost_x_vel(a0)
-		move.b	#$80,ost_rex_turntime(a0)	; move left for 128 frames
+		move.b	#$80,ost_rex_turntime(a0)		; move left for 128 frames
 		rts	
 ; ===========================================================================
 
 Rex_Wait:				
-		bsr.w	GetClosestPlayer		; get nearest player
+		bsr.w	GetClosestPlayer			; get nearest player
 		addi.w	#$60,d2
 		cmpi.w	#$100,d2
 		bcc.s	.no_spawn				; branch if they're not close enough yet
 		bsr.w	Rex_SpawnHead
 
 	.no_spawn:				
-		move.w	ost_x_pos(a0),-(sp)		; back up current x-pos
+		move.w	ost_x_pos(a0),-(sp)			; back up current x-pos
 		bsr.w	Rex_CheckTurnAround		
-		move.w	#$1B,d1		; all of these could be moveq
+		move.w	#$1B,d1					; all of these could be moveq
 		move.w	#8,d2
 		move.w	#$11,d3
 		move.w	(sp)+,d4
@@ -70766,7 +70789,7 @@ Rex_CheckTurnAround:
 ; while waiting, with code in Rex_Init to set this routine.
 
 Rex_Wait_Stationary:			
-		bsr.w	GetClosestPlayer		; get nearest player
+		bsr.w	GetClosestPlayer			; get nearest player
 		addi.w	#$60,d2
 		cmpi.w	#$100,d2
 		bcc.s	.no_spawn				; branch if they're not close enough yet
@@ -70778,9 +70801,9 @@ Rex_Wait_Stationary:
 ; ===========================================================================
 
 Rex_Solid:				
-		move.w	#$36/2,d1	; width
-		move.w	#$10/2,d2	; height (jumping)
-		move.w	#$10/2,d3	; height (walking)
+		move.w	#$36/2,d1				; width
+		move.w	#$10/2,d2				; height (jumping)
+		move.w	#$10/2,d3				; height (walking)
 		move.w	ost_x_pos(a0),d4
 		jmpto	SolidObject,JmpTo27_SolidObject
 ; ===========================================================================
@@ -70790,7 +70813,7 @@ Rex_HeadSpawned:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 97 - Rexon's head
+; Object 97 - Rexon's head and neck
 ; ----------------------------------------------------------------------------
 
 RexonHead:				
@@ -70800,339 +70823,373 @@ RexonHead:
 		jmp	RexHead_Index(pc,d1.w)
 ; ===========================================================================
 RexHead_Index:	index offset(*),,2
-		ptr RexHead_Init					; 0 
-		ptr RexHead_Wait					; 2
-		ptr RexHead_Raise					; 4
-		ptr RexHead_Risen					; 6
-		ptr RexHead_Defeated					; 8
+		ptr RexHead_Init				; 0 
+		ptr RexHead_Wait				; 2
+		ptr RexHead_Raise				; 4
+		ptr RexHead_Risen				; 6
+		ptr RexHead_Defeated				; 8
+		
+		rsobj RexonHead,$2A
+ost_rexhead_timer:		rs.b 1				; $2A ; multi-use delay timer
+ost_rexhead_osc_index:	rs.b 1					; $2B ; current index into oscillating data
+ost_rexhead_parent:		rs.w 1				; $2C ; pointer to parent Rexon
+ost_rexhead_subid:		rs.w 1				; $2E ; subid of object
+ost_rexhead_nextseg:	rs.w 1					; $30 ; pointer to next neck segment above
+ost_rexhead_headptr:	rs.w 1					; $32 ; pointer to head
+		rsset $38
+ost_rexhead_osc_delta:	rs.b 1					; $38 ; current delta for changing the oscillation index
+ost_rexhead_framecount:	rs.b 1					; $39 ; counter that increments every frame, used for oscillation timing
+		rsobjend
+	
+; Sub IDs for the individual instances of this object	
+		rsreset
+id_RexHead_Neck1:	rs.w 1					; 0
+id_RexHead_Neck2:	rs.w 1					; 2
+id_RexHead_Neck3:	rs.w 1					; 4
+id_RexHead_Neck4:	rs.w 1					; 6
+id_RexHead_Head:	rs.w 1					; 8
 ; ===========================================================================
 
 RexHead_Init:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData				; go to RexHead_Wait next
 		move.b	#8,ost_displaywidth(a0)
-		moveq	#$28,d0
-		btst	#render_xflip_bit,ost_render(a0)
-		bne.s	loc_373FE
-		moveq	#-$18,d0
+		moveq	#$28,d0					; start $28 pixels to right of body if x-flipped
+		btst	#render_xflip_bit,ost_render(a0)	; head inherits x flip state of body
+		bne.s	.xflip					; branch if x-flipped
+		moveq	#-$18,d0				; start $18 pixels to left of body if not x-flipped
 
-	loc_373FE:				
-		add.w	d0,ost_x_pos(a0)
-		addi.w	#$10,ost_y_pos(a0)
-		move.b	#1,$38(a0)
-		movea.w	$2C(a0),a1
-		lea	$2E(a1),a1
-		move.b	#id_col_8x8,ost_col_type(a0)
+	.xflip:				
+		add.w	d0,ost_x_pos(a0)			; set x pos
+		addi.w	#$10,ost_y_pos(a0)			; start $10 pixels below body
+		move.b	#1,ost_rexhead_osc_delta(a0)		; initial oscillation movement is to the right
+		movea.w	ost_rexhead_parent(a0),a1		; a1 = parent Rexon
+		lea	ost_rex_neck2(a1),a1			; a1 = location of parent's pointer to second neck segment from body 			
+		move.b	#id_col_8x8,ost_col_type(a0)		; set proper collision
 		moveq	#0,d0
-		move.w	$2E(a0),d0
-		cmpi.w	#8,d0
-		beq.s	loc_3743A
-		move.b	#1,ost_frame(a0)
+		move.w	ost_rexhead_subid(a0),d0		; get sub ID
+		cmpi.w	#id_RexHead_Head,d0
+		beq.s	.is_head				; branch if this is the head
+		move.b	#id_Frame_Rexon_Neck,ost_frame(a0)
 		move.b	#id_col_8x8+id_col_hurt,ost_col_type(a0)
-		move.w	(a1,d0.w),$30(a0)
-
-loc_3743A:				
-		move.w	6(a1),$32(a0)
+		move.w	(a1,d0.w),ost_rexhead_nextseg(a0)	; set pointer to next neck segment immediately above
+		
+	.is_head:				
+		move.w	ost_rex_head-ost_rex_neck2(a1),ost_rexhead_headptr(a0) ; set pointer to head
 		lsr.w	#1,d0
-		move.b	byte_3744E(pc,d0.w),$2A(a0)
-		move.b	d0,$39(a0)
+		move.b	RexHead_Delays(pc,d0.w),ost_rexhead_timer(a0) ; time until segment emerges from lava
+		move.b	d0,ost_rexhead_framecount(a0)		; initialize frame counter with sub id / 2 to stagger oscillation
 		rts	
 ; ===========================================================================
-byte_3744E:
-		dc.b $1E					; 0
-		dc.b $18					; 1
-		dc.b $12					; 2
-		dc.b  $C					; 3
-		dc.b   6					; 4
-		dc.b   0					; 5
+; Time in frames to wait before segment emerges from lava, and time to wait 
+; before entering RexHead_Risen.
+RexHead_Delays:
+		dc.b $1E					; id_RexHead_Neck1, id_RexHead_Head
+		dc.b $18					; id_RexHead_Neck2, id_RexHead_Neck4
+		dc.b $12					; id_RexHead_Neck3 
+		dc.b  $C					; id_RexHead_Neck4, id_RexHead_Neck2
+		dc.b   6					; id_RexHead_Head,	id_RexHead_Neck1
+		even
 ; ===========================================================================
 
 RexHead_Wait:
-	if (Revision=2)|FixBugs	
-		subq.b	#1,$2A(a0)
-		bmi.s	loc_37462
-		bsr.w	loc_3750C
-	else
-		; The call to loc_3750C is in the wrong place, causing an occasional crash.		
-		bsr.w	loc_3750C
-		subq.b	#1,$2A(a0)
-		bmi.s	loc_37462
+	if	(Revision<2)&(FixBugs=0)
+		; This call is in the wrong place. If ost_rexhead_timer expires on the same frame
+		; as the Rexon is defeated, the routine will be erroneously set back to RexHead_Raise;
+		; potentially causing a crash. It should be moved to after the timer check...
+		bsr.w	RexHead_CheckAlive
+	endc
+		subq.b	#1,ost_rexhead_timer(a0)		; decrement delay timer
+		bmi.s	RexHead_StartRaise			; branch if expired
+	if (Revision=2)|FixBugs
+		; ...like so.
+		bsr.w	RexHead_CheckAlive			
 	endc	
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_37462:				
-		addq.b	#2,ost_primary_routine(a0)
+RexHead_StartRaise:				
+		addq.b	#2,ost_primary_routine(a0)		; go to RexHead_Raise next
 		move.w	#-$120,ost_x_vel(a0)
 		move.w	#-$200,ost_y_vel(a0)
-		move.w	$2E(a0),d0
-		subi_.w	#8,d0
+		move.w	ost_rexhead_subid(a0),d0		; get sub ID
+		subi_.w	#id_RexHead_Head,d0			; invert ID
 		neg.w	d0
 		lsr.w	#1,d0
-		move.b	byte_3744E(pc,d0.w),$2A(a0)
+		move.b	RexHead_Delays(pc,d0.w),ost_rexhead_timer(a0) ; time until segment advances to RexHead_Risen
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
 RexHead_Raise:
+	if	(Revision<2)&(FixBugs=0)
+		; Same bug as RexHead_Wait.
+		bsr.w	RexHead_CheckAlive
+	endc
+		moveq	#$10,d0
+		add.w	d0,ost_x_vel(a0)			; reduce x vel
+		subq.b	#1,ost_rexhead_timer(a0)		; decrement timer			
+		bmi.s	.raisedone				; branch if expired
 	if (Revision=2)|FixBugs	
-		moveq	#$10,d0
-		add.w	d0,ost_x_vel(a0)
-		subq.b	#1,$2A(a0)
-		bmi.s	loc_374A0
-		bsr.w	loc_3750C
-	else
-		; The call to loc_3750C is in the wrong place, causing an occasional crash.			
-		bsr.w	loc_3750C
-		moveq	#$10,d0
-		add.w	d0,ost_x_vel(a0)
-		subq.b	#1,$2A(a0)
-		bmi.s	loc_374A0
+		bsr.w	RexHead_CheckAlive
 	endc	
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_374A0:				
-		addq.b	#2,ost_primary_routine(a0)
-		bsr.w	ObjMoveStop
-		move.b	#$20,$2A(a0)
-		move.w	$2E(a0),d0
+.raisedone:				
+		addq.b	#2,ost_primary_routine(a0)		; go to RexHead_Risen next
+		bsr.w	MoveStop				; stop movement
+		move.b	#$20,ost_rexhead_timer(a0)		; time to wait before head fires a projectile
+		move.w	ost_rexhead_subid(a0),d0		; get sub ID
 		lsr.w	#1,d0
-		move.b	byte_374BE(pc,d0.w),$2B(a0)
+		move.b	RexHead_OscIndicies(pc,d0.w),ost_rexhead_osc_index(a0) ; set initial oscillation index
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-byte_374BE:
+
+RexHead_OscIndicies:
 		dc.b $24					; 0
 		dc.b $20					; 1
 		dc.b $1C					; 2
 		dc.b $1A					; 3
+		even
 ; ===========================================================================
 
 RexHead_Risen:				
-		bsr.w	loc_3750C
-		cmpi.w	#8,$2E(a0)
-		bne.s	loc_374D8
-		subq.b	#1,$2A(a0)
-		bpl.s	loc_374D8
-		bsr.w	loc_37532
+		bsr.w	RexHead_CheckAlive
+		cmpi.w	#id_RexHead_Head,ost_rexhead_subid(a0)
+		bne.s	.nothead				; branch if this not the head
+		subq.b	#1,ost_rexhead_timer(a0)		; decrement timer
+		bpl.s	.nothead				; branch if time remains
+		bsr.w	RexHead_FireProjectile			; fire a projectile
 
-loc_374D8:				
-		move.b	$39(a0),d0
-		addq.b	#1,d0
-		move.b	d0,$39(a0)
-		andi.b	#3,d0
-		bne.s	loc_374F0
-		bsr.w	loc_3758A
-		bsr.w	loc_37604
+	.nothead:				
+		move.b	ost_rexhead_framecount(a0),d0	
+		addq.b	#1,d0					; increment frame counter
+		move.b	d0,ost_rexhead_framecount(a0)
+		andi.b	#3,d0			
+		bne.s	.display				; only run oscillation every four frames
+		bsr.w	RexHead_UpdateOscIndex
+		bsr.w	RexHead_Oscillate
 
-loc_374F0:				
+	.display:				
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
 RexHead_Defeated:				
 		move.w	(v_boundary_bottom).w,d0
 		addi.w	#$E0,d0	
-		cmp.w	ost_y_pos(a0),d0
-		bcs.w	JmpTo65_DeleteObject
+		cmp.w	ost_y_pos(a0),d0			; has neck segment passed below bottom boundary?
+		bcs.w	JmpTo65_DeleteObject			; if so, delete
 		jsrto	ObjectFall,JmpTo8_ObjectFall
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-loc_3750C:				
-		movea.w	$32(a0),a1
-		cmpi.b	#-$69,(a1)
-		beq.s	locret_37526
-		move.b	#8,ost_primary_routine(a0)
-		move.w	$2E(a0),d0
-		move.w	word_37528(pc,d0.w),ost_x_vel(a0)
+RexHead_CheckAlive:				
+		movea.w	ost_rexhead_headptr(a0),a1		; a1 = pointer to head
+		cmpi.b	#id_RexonHead,(a1)			; is the head still loaded?
+		beq.s	.stillalive				; branch if so
+		move.b	#id_RexHead_Defeated,ost_primary_routine(a0) ; go to RexHead_Defeated next
+		move.w	ost_rexhead_subid(a0),d0
+		move.w	RexHead_DeathVels(pc,d0.w),ost_x_vel(a0) ; set initial x-vel for neck segments as they scatter
 
-locret_37526:				
+	.stillalive:				
 		rts	
 ; ===========================================================================
-word_37528:
-		dc.w   $80					; 0
-		dc.w $FF00					; 1
-		dc.w  $100					; 2
-		dc.w $FF80					; 3
-		dc.w   $80					; 4
+
+RexHead_DeathVels:
+		dc.w   $80					; id_RexHead_Neck1
+		dc.w -$100					; id_RexHead_Neck2
+		dc.w  $100					; id_RexHead_Neck3
+		dc.w  -$80					; id_RexHead_Neck4
+		dc.w   $80					; id_RexHead_Head
 ; ===========================================================================
 
-loc_37532:				
-		move.b	#$7F,$2A(a0)
-		jsrto	FindNextFreeObj,JmpTo25_FindNextFreeObj
-		bne.s	locret_37588
-		_move.b	#id_Projectile,ost_id(a1)
-		move.b	#3,ost_frame(a1)
-		move.b	#$10,ost_subtype(a1)
-		move.w	ost_x_pos(a0),ost_x_pos(a1)
+RexHead_FireProjectile:				
+		move.b	#$7F,ost_rexhead_timer(a0)		; wait 127 frames before firing next projectile
+		jsrto	FindNextFreeObj,JmpTo25_FindNextFreeObj	; find free OST slot after parent
+		bne.s	.fail					; branch if not found
+		_move.b	#id_Projectile,ost_id(a1)		; load projectile object
+		move.b	#id_Frame_Rexon_Proj,ost_frame(a1)
+		move.b	#id_SubData_RexProj,ost_subdata_ptr(a1)
+		move.w	ost_x_pos(a0),ost_x_pos(a1)		
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		lea	(SpeedToPos).l,a2
-		move.l	a2,$2A(a1)
-		moveq	#1,d0
-		moveq	#$10,d1
-		btst	#render_xflip_bit,ost_render(a0)
-		bne.s	loc_37576
-		neg.w	d0
+		lea	(SpeedToPos).l,a2			; SpeedToPos is the only code this object runs
+		move.l	a2,ost_proj_codeptr(a1)			; (these two instructions could be 'move.l #SpeedToPos,ost_proj_codeptr(a1)')
+		moveq	#1,d0					; x-vel
+		moveq	#$10,d1					; x-pos offset from parent
+		btst	#render_xflip_bit,ost_render(a0)	
+		bne.s	.xflip					; branch if Rexon is x-flipped
+		neg.w	d0					; invert x-vel and initial offset values
 		neg.w	d1
 
-loc_37576:				
-		move.b	d0,ost_x_vel(a1)
-		add.w	d1,ost_x_pos(a1)
-		addq.w	#4,ost_y_pos(a1)
-		move.b	#-$80,ost_y_vel+1(a1)
+	.xflip:				
+		move.b	d0,ost_x_vel(a1)			; set x-vel
+		add.w	d1,ost_x_pos(a1)			; apply x-pos offset
+		addq.w	#4,ost_y_pos(a1)			; apply y-pos offset
+		move.b	#$80,ost_y_vel+1(a1)			; set y-vel
 
-locret_37588:				
+	.fail:				
 		rts	
 ; ===========================================================================
 
-loc_3758A:				
-		move.b	$2B(a0),d0
-		move.b	$38(a0),d1
-		add.b	d1,d0
-		move.b	d0,$2B(a0)
+RexHead_UpdateOscIndex:				
+		move.b	ost_rexhead_osc_index(a0),d0		; get current index
+		move.b	ost_rexhead_osc_delta(a0),d1		; get current delta
+		add.b	d1,d0					; apply delta
+		move.b	d0,ost_rexhead_osc_index(a0)		; store new index
 		subi.b	#$18,d0
-		beq.s	loc_375A6
-		bcs.s	loc_375A6
+		beq.s	.change_direction			; branch if new index is $18 or lower
+		bcs.s	.change_direction				
 		cmpi.b	#$10,d0
-		bcs.s	locret_375AA
+		bcs.s	.done					; branch if new index is less than $28
 
-loc_375A6:				
-		neg.b	$38(a0)
+	.change_direction:				
+		neg.b	ost_rexhead_osc_delta(a0)		; invert delta
 
-locret_375AA:				
+	.done:				
 		rts	
-; ===========================================================================
+
+; ----------------------------------------------------------------------------
+; Subroutine to load the Rexon's head and neck
+; ----------------------------------------------------------------------------
 
 Rex_SpawnHead:				
-		move.b	#6,ost_primary_routine(a0)
-		bclr	#render_xflip_bit,ost_render(a0)
-		tst.w	d0
-		beq.s	loc_375C2
-		bset	#render_xflip_bit,ost_render(a0)
+		move.b	#id_Rex_HeadSpawned,ost_primary_routine(a0) ; go to Rex_HeadSpawned next
+		bclr	#render_xflip_bit,ost_render(a0)	; Rexon faces left 
+		tst.w	d0					; d0 = direction to nearest player
+		beq.s	.no_xflip				; branch if nearest player is to the left
+		bset	#render_xflip_bit,ost_render(a0)	; Rexon faces right
 
-loc_375C2:				
-		bsr.w	ObjMoveStop
-		lea	$2C(a0),a2
-		moveq	#0,d1
-		moveq	#4,d6
+	.no_xflip:				
+		bsr.w	MoveStop				; stop body's movement
+		lea	ost_rex_neck1(a0),a2			; a2 = first child pointer				
+		moveq	#id_RexHead_Neck1,d1			; starting with first neck segment
+		moveq	#5-1,d6					; four neck segments plus the head
 
-loc_375CE:				
-		jsrto	FindFreeObj,JmpTo19_FindFreeObj
-		bne.s	locret_37602
-		_move.b	#id_RexonHead,ost_id(a1)
-		move.b	ost_render(a0),ost_render(a1)
-		move.b	ost_subtype(a0),ost_subtype(a1)
-		move.w	a0,$2C(a1)
-		move.w	a1,(a2)+
-		move.w	d1,$2E(a1)
-		move.w	ost_x_pos(a0),ost_x_pos(a1)
+	.spawn:				
+		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
+		bne.s	.fail					; branch if not found
+		_move.b	#id_RexonHead,ost_id(a1)		; load Rexon's head	
+		move.b	ost_render(a0),ost_render(a1)		; pointless, as this is overwritten by LoadSubObjData	
+		move.b	ost_subtype(a0),ost_subdata_ptr(a1)	; index to subobjdata
+		move.w	a0,ost_rexhead_parent(a1)		; set pointer to parent
+		move.w	a1,(a2)+				; set parent's child pointer
+		move.w	d1,ost_rexhead_subid(a1)		; set sub ID
+		move.w	ost_x_pos(a0),ost_x_pos(a1)		; match parent position initially (will be adjusted later)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addq.w	#2,d1
-		dbf	d6,loc_375CE
+		dbf	d6,.spawn
 
-locret_37602:				
+	.fail:				
 		rts	
-; ===========================================================================
 
-loc_37604:				
-		move.w	$30(a0),d0
-		beq.s	locret_37650
-		movea.w	d0,a1
-		lea	word_376A8(pc),a2
+; ----------------------------------------------------------------------------
+; Subroutine to oscillate the Rexon's head and neck. Note that it actually
+; applies the oscillation to the next segment above, rather than the one
+; that called this subroutine.
+; ----------------------------------------------------------------------------
+
+RexHead_Oscillate:				
+		move.w	ost_rexhead_nextseg(a0),d0		; get ID of next segment (0 for head)
+		beq.s	.exit					; return if this is the head
+		movea.w	d0,a1					; we actually oscillate the next segment above of us
+		lea	RexHead_OscData(pc),a2			
 		moveq	#0,d0
-		move.b	$2B(a0),d0
-		andi.b	#$7F,d0
-		move.w	d0,d1
-		andi.w	#$1F,d0
+		move.b	ost_rexhead_osc_index(a0),d0		; get index
+		andi.b	#$7F,d0					; discard highest bit
+		move.w	d0,d1					; 
+		andi.w	#$1F,d0					; RexHead_OscData array has only 32 entries
 		add.w	d0,d0
-		move.b	(a2,d0.w),d2
-		ext.w	d2
-		move.b	1(a2,d0.w),d3
-		ext.w	d3
-		lsr.w	#4,d1
-		andi.w	#6,d1
-		move.w	RexHead_Osc_Index(pc,d1.w),d1
-		jsr	RexHead_Osc_Index(pc,d1.w)
-		move.w	ost_x_pos(a0),d4
-		add.w	d2,d4
-		move.w	d4,ost_x_pos(a1)
-		move.b	$D(a0),d5
+		move.b	(a2,d0.w),d2				; get first value
+		ext.w	d2					; sign extend to word length
+		move.b	1(a2,d0.w),d3				; get second value
+		ext.w	d3					; sign extend to word length
+		lsr.w	#4,d1					; divide index by 4
+		andi.w	#6,d1					; only even numbers as it's a word length index
+		move.w	.osc_adjustments(pc,d1.w),d1		; perform an adjustment
+		jsr	.osc_adjustments(pc,d1.w)
+		move.w	ost_x_pos(a0),d4			; get x pos of current segment
+		add.w	d2,d4					; add value
+		move.w	d4,ost_x_pos(a1)			; this is new x pos of next segment
+		move.b	ost_y_pos+1(a0),d5			; same with y pos, but only the low byte
 		add.b	d3,d5
-		move.b	d5,$D(a1)
+		move.b	d5,ost_y_pos+1(a1)
 
-locret_37650:				
+	.exit:				
 		rts	
 ; ===========================================================================
-RexHead_Osc_Index:	index offset(*)
-		ptr locret_3765A				; 0 
-		ptr loc_3765C					; 1
-		ptr loc_37662					; 2
-		ptr loc_37668					; 3
+.osc_adjustments:	index offset(*),,2
+		ptr .osc_null					; 0 
+		ptr .neg_y					; 2
+		ptr .neg_both					; 4
+		ptr .neg_x					; 6
 ; ===========================================================================
 
-locret_3765A:				
+.osc_null:				
 		rts	
 ; ===========================================================================
 
-loc_3765C:				
-		exg	d2,d3
+.neg_y:				
+		exg	d2,d3					; swap values
+		neg.w	d3					; flip sign of second value
+		rts	
+; ===========================================================================
+; Unused
+.neg_both:				
+		neg.w	d2					; flip signs of both values
 		neg.w	d3
 		rts	
 ; ===========================================================================
-
-loc_37662:				
-		neg.w	d2
-		neg.w	d3
+; Unused
+.neg_x:				
+		exg	d2,d3					; swap values
+		neg.w	d2					; flip sign of first value
 		rts	
 ; ===========================================================================
 
-loc_37668:				
-		exg	d2,d3
-		neg.w	d2
-		rts	
-; ===========================================================================
 SubData_Rex:
-		dc.l Map_Rex	
-		dc.w $637E
-		dc.w $404
-		dc.w $1000
-
+		subobjdata	Map_Rex,tile_Nem_Rexon+tile_pal4,render_rel,4,$10,id_col_null
 ; ===========================================================================
 
 		include "mappings/sprite/Rexon.asm"
-		
-word_376A8:
+
+; ----------------------------------------------------------------------------
+; Oscillation values for the Rexon's head and neck. 
+; Only entries $18-$28 are used.
+; ----------------------------------------------------------------------------		
+RexHead_OscData:
 		dc.b $F,  0
-		dc.b $F,$FF	; 1
-		dc.b $F,$FF	; 2
-		dc.b $F,$FE	; 3
-		dc.b $F,$FD	; 4
-		dc.b $F,$FC	; 5
-		dc.b $E,$FC	; 6
-		dc.b $E,$FB	; 7
-		dc.b $E,$FA	; 8
-		dc.b $E,$FA	; 9
-		dc.b $D,$F9	; 10
-		dc.b $D,$F8	; 11
-		dc.b $C,$F8	; 12
-		dc.b $C,$F7	; 13
-		dc.b $C,$F6	; 14
-		dc.b $B,$F6	; 15
-		dc.b $B,$F5	; 16
-		dc.b $A,$F5	; 17
-		dc.b $A,$F4	; 18
-		dc.b  9,$F4	; 19
-		dc.b  8,$F4	; 20
-		dc.b  8,$F3	; 21
-		dc.b  7,$F3	; 22
-		dc.b  6,$F2	; 23
-		dc.b  6,$F2	; 24
-		dc.b  5,$F2	; 25
-		dc.b  4,$F2	; 26
-		dc.b  4,$F1	; 27
-		dc.b  3,$F1	; 28
-		dc.b  2,$F1	; 29
-		dc.b  1,$F1	; 30
-		dc.b  1,$F1	; 31
+		dc.b $F,$FF					; 1
+		dc.b $F,$FF					; 2
+		dc.b $F,$FE					; 3
+		dc.b $F,$FD					; 4
+		dc.b $F,$FC					; 5
+		dc.b $E,$FC					; 6
+		dc.b $E,$FB					; 7
+		dc.b $E,$FA					; 8
+		dc.b $E,$FA					; 9
+		dc.b $D,$F9					; 10
+		dc.b $D,$F8					; 11
+		dc.b $C,$F8					; 12
+		dc.b $C,$F7					; 13
+		dc.b $C,$F6					; 14
+		dc.b $B,$F6					; 15
+		dc.b $B,$F5					; 16
+		dc.b $A,$F5					; 17
+		dc.b $A,$F4					; 18
+		dc.b  9,$F4					; 19
+		dc.b  8,$F4					; 20
+		dc.b  8,$F3					; 21
+		dc.b  7,$F3					; 22
+		dc.b  6,$F2					; 23
+		dc.b  6,$F2					; 24
+		dc.b  5,$F2					; 25
+		dc.b  4,$F2					; 26
+		dc.b  4,$F1					; 27
+		dc.b  3,$F1					; 28
+		dc.b  2,$F1					; 29
+		dc.b  1,$F1					; 30
+		dc.b  1,$F1					; 31
+		even
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 98 - Projectile with optional gravity
@@ -71145,19 +71202,23 @@ Projectile:
 		jmp	Proj_Index(pc,d1.w)
 ; ===========================================================================
 Proj_Index:	index offset(*),,2
-		ptr loc_376FA					; 0 
-		ptr loc_376FE					; 2
+		ptr Proj_Init					; 0 
+		ptr Proj_Run					; 2
+		
+		rsobj Projectile,$2A
+ost_proj_codeptr: rs.l 1					; $2A ; address of code to run for the object
+		rsobjend	
 ; ===========================================================================
 
-loc_376FA:				
-		bra.w	LoadSubtypeData
+Proj_Init:				
+		bra.w	LoadSubObjData				; go to Proj_Run next
 ; ===========================================================================
 
-loc_376FE:				
-		tst.b	ost_render(a0)
-		bpl.w	JmpTo65_DeleteObject
-		movea.l	$2A(a0),a1
-		jsr	(a1)
+Proj_Run:				
+		tst.b	ost_render(a0)				; is projectile onscreen?
+		bpl.w	JmpTo65_DeleteObject			; if not, delete
+		movea.l	ost_proj_codeptr(a0),a1			; get code pointer
+		jsr	(a1)					; run the projectile's code
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
@@ -71196,33 +71257,31 @@ loc_37756:
 		lea	(off_3BA40).l,a1
 		jmpto	AnimateSprite,JmpTo25_AnimateSprite
 ; ===========================================================================
-off_37764:
-		dc.l Map_Rex	
-		dc.w $237E
-		dc.w $8404
-		dc.w $498
+SubData_RexProj:
+		subobjdata	Map_Rex,tile_nem_Rexon+tile_pal2,render_rel|render_onscreen,4,4,id_col_4x4|id_col_hurt
+
 off_3776E:
-		dc.l Map_3789A	
+		dc.l Map_Neb	
 		dc.w $A36E
 		dc.w $8404
 		dc.w $88B
 off_37778:
-		dc.l Map_37B62	
+		dc.l Map_Turt	
 		dc.w $38A
 		dc.w $8404
 		dc.w $498
 off_37782:
-		dc.l Map_37D96	
+		dc.l Map_Coco	
 		dc.w $3EE
 		dc.w $8404
 		dc.w $88B
 off_3778C:
-		dc.l Map_38A96	
+		dc.l Map_Ast	
 		dc.w $8368
 		dc.w $8405
 		dc.w $498
 off_37796:	
-		dc.l Map_38CCA	
+		dc.l Map_Spiny	
 		dc.w $252D
 		dc.w $8405
 		dc.w $498
@@ -71254,17 +71313,17 @@ off_377BE:
 Nebula:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	Nebula_Index(pc,d0.w),d1
-		jmp	Nebula_Index(pc,d1.w)
+		move.w	Neb_Index(pc,d0.w),d1
+		jmp	Neb_Index(pc,d1.w)
 ; ===========================================================================
-Nebula_Index:	index offset(*),,2
+Neb_Index:	index offset(*),,2
 		ptr loc_377DC					; 0 
 		ptr loc_377E8					; 2
 		ptr loc_3781C					; 4
 ; ===========================================================================
 
 loc_377DC:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.w	#-$C0,ost_x_vel(a0)
 		rts	
 ; ===========================================================================
@@ -71280,7 +71339,7 @@ loc_377E8:
 loc_377FA:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		bsr.w	loc_36776
-		lea	(off_37892).l,a1
+		lea	(Ani_Neb).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		bra.w	DeleteBehindScreen
 ; ===========================================================================
@@ -71304,7 +71363,7 @@ loc_37834:
 		addi_.w	#1,ost_y_vel(a0)
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		bsr.w	loc_36776
-		lea	(off_37892).l,a1
+		lea	(Ani_Neb).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		bra.w	DeleteBehindScreen
 ; ===========================================================================
@@ -71315,7 +71374,7 @@ loc_37850:
 		bne.s	locret_37886
 		_move.b	#id_Projectile,ost_id(a1)
 		move.b	#4,ost_frame(a1)
-		move.b	#$14,ost_subtype(a1)
+		move.b	#$14,ost_subdata_ptr(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$18,ost_y_pos(a1)
@@ -71325,46 +71384,21 @@ loc_37850:
 locret_37886:				
 		rts	
 ; ===========================================================================
-off_37888:
-		dc.l Map_3789A	
+SubData_Neb:
+		dc.l Map_Neb	
 		dc.w $A36E
 		dc.w $404
 		dc.w $1006
 		
-off_37892:	index offset(*)
+Ani_Neb:	index offset(*)
 		ptr byte_37894 
 		
 byte_37894:	
 		dc.b   3,  0,  1,  2,  3,$FF			; 0	
 ; ===========================================================================
-Map_3789A:				
-		dc.w word_378A4-Map_3789A			; 0
-		dc.w word_378C6-Map_3789A			; 1
-		dc.w word_378E8-Map_3789A			; 2
-		dc.w word_3790A-Map_3789A			; 3
-		dc.w word_3792C-Map_3789A			; 4
-word_378A4:	dc.w 4			
-		dc.w $EC08,  $12,    9,$FFE8			; 0
-		dc.w $EC08,$1812,$1809,	   0			; 4
-		dc.w $EC04,    0,    0,$FFF8			; 8
-		dc.w $F40F,    2,    1,$FFF0			; 12
-word_378C6:	dc.w 4			
-		dc.w $EC04,  $15,   $A,$FFF0			; 0
-		dc.w $EC04,$1815,$180A,	   0			; 4
-		dc.w $EC04,    0,    0,$FFF8			; 8
-		dc.w $F40F,    2,    1,$FFF0			; 12
-word_378E8:	dc.w 4			
-		dc.w $EC00,  $17,   $B,$FFF8			; 0
-		dc.w $EC00, $817, $80B,	   0			; 4
-		dc.w $EC04,    0,    0,$FFF8			; 8
-		dc.w $F40F,    2,    1,$FFF0			; 12
-word_3790A:	dc.w 4			
-		dc.w $EC04,$1015,$100A,$FFF0			; 0
-		dc.w $EC04, $815, $80A,	   0			; 4
-		dc.w $EC04,    0,    0,$FFF8			; 8
-		dc.w $F40F,    2,    1,$FFF0			; 12
-word_3792C:	dc.w 1			
-		dc.w $F805,  $18,   $C,$FFF8			; 0
+
+		include "mappings/sprite/Nebula.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 9A - Turtloid
@@ -71373,16 +71407,16 @@ word_3792C:	dc.w 1
 Turtloid:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	Turtloid_Index(pc,d0.w),d1
-		jmp	Turtloid_Index(pc,d1.w)
+		move.w	Turt_Index(pc,d0.w),d1
+		jmp	Turt_Index(pc,d1.w)
 ; ===========================================================================
-Turtloid_Index:	index offset(*),,2
+Turt_Index:	index offset(*),,2
 		ptr loc_37948					; 0 
 		ptr loc_37964					; 2
 ; ===========================================================================
 
 loc_37948:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.w	#-$80,ost_x_vel(a0)
 		bsr.w	loc_37A4A
 		lea	(off_37B56).l,a1
@@ -71419,9 +71453,9 @@ loc_37982:
 loc_379A0:				
 		bsr.w	GetClosestPlayer
 		tst.w	d0
-		bmi.w	locret_37A48
+		bmi.w	TRider_SharedRTS
 		cmpi.w	#$80,d2	
-		bcc.w	locret_37A48
+		bcc.w	TRider_SharedRTS
 		addq.b	#2,ost_secondary_routine(a0)
 		move.w	#0,ost_x_vel(a0)
 		move.b	#4,$2A(a0)
@@ -71431,7 +71465,7 @@ loc_379A0:
 
 loc_379CA:				
 		subq.b	#1,$2A(a0)
-		bpl.w	locret_37A48
+		bpl.w	TRider_SharedRTS
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#8,$2A(a0)
 		movea.w	$2C(a0),a1
@@ -71470,7 +71504,7 @@ TRider_Index:	index offset(*),,2
 ; ===========================================================================
 
 loc_37A18:				
-		bra.w	LoadSubtypeData
+		bra.w	LoadSubObjData
 ; ===========================================================================
 
 loc_37A1C:				
@@ -71492,7 +71526,7 @@ loc_37A30:
 		move.w	(a2)+,d0
 		add.w	d0,ost_y_pos(a0)
 
-locret_37A48:							; oddly, a large number of returns in this region branch here			
+TRider_SharedRTS:						; oddly, a large number of returns in this region branch here			
 		rts	
 ; ===========================================================================
 
@@ -71501,7 +71535,7 @@ loc_37A4A:
 		bne.s	locret_37A80
 		_move.b	#id_TurtloidRider,ost_id(a1)
 		move.b	#2,ost_frame(a1)
-		move.b	#$18,ost_subtype(a1)
+		move.b	#$18,ost_subdata_ptr(a1)
 		move.w	a0,$2C(a1)
 		move.w	a1,$2C(a0)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
@@ -71519,16 +71553,16 @@ locret_37A80:
 BalkiryJet:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_37A90(pc,d0.w),d1
-		jmp	off_37A90(pc,d1.w)
+		move.w	BalkJet_Index(pc,d0.w),d1
+		jmp	BalkJet_Index(pc,d1.w)
 ; ===========================================================================
-off_37A90:	index offset(*),,2	
+BalkJet_Index:	index offset(*),,2	
 		ptr loc_37A94					; 0 
 		ptr loc_37A98					; 2
 ; ===========================================================================
 
 loc_37A94:				
-		bra.w	LoadSubtypeData
+		bra.w	LoadSubObjData
 ; ===========================================================================
 
 loc_37A98:				
@@ -71548,7 +71582,7 @@ loc_37ABE:
 		bne.s	locret_37AF0
 		_move.b	#id_BalkiryJet,ost_id(a1)
 		move.b	#6,ost_frame(a1)
-		move.b	#$1A,ost_subtype(a1)
+		move.b	#$1A,ost_subdata_ptr(a1)
 		move.w	a0,$2C(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
@@ -71564,7 +71598,7 @@ loc_37AF2:
 		bne.s	locret_37B30
 		_move.b	#id_Projectile,ost_id(a1)
 		move.b	#6,ost_frame(a1)
-		move.b	#$1C,ost_subtype(a1)
+		move.b	#$1C,ost_subdata_ptr(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		subi.w	#$14,ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
@@ -71576,20 +71610,20 @@ loc_37AF2:
 locret_37B30:				
 		rts	
 ; ===========================================================================
-off_37B32:
-		dc.l Map_37B62	
+Subdata_Turt:
+		dc.l Map_Turt	
 		dc.w $38A
 		dc.w $405
 		dc.w $1800
 		
-off_37B3C:	
-		dc.l Map_37B62	
+Subdata_TRider:	
+		dc.l Map_Turt	
 		dc.w $38A
 		dc.w $404
 		dc.w $C1A
 		
-off_37B46:
-		dc.l Map_37B62	
+Subdata_BalkJet:
+		dc.l Map_Turt	
 		dc.w $38A
 		dc.w $405
 		dc.w $800
@@ -71612,41 +71646,9 @@ off_37B5C:	index offset(*)
 byte_37B5E:	
 		dc.b   1,  8,  9,$FF
 ; ===========================================================================
-Map_37B62:
-		dc.w word_37B76-Map_37B62 
-		dc.w word_37B90-Map_37B62
-		dc.w word_37BAA-Map_37B62
-		dc.w word_37BB4-Map_37B62
-		dc.w word_37BBE-Map_37B62
-		dc.w word_37BC8-Map_37B62
-		dc.w word_37BD2-Map_37B62
-		dc.w word_37BDC-Map_37B62
-		dc.w word_37BE6-Map_37B62
-		dc.w word_37BF0-Map_37B62
-word_37B76:	dc.w 3			
-		dc.w $F009,$A000,$A000,$FFE4			; 0
-		dc.w $F00F,$A006,$A003,$FFFC			; 4
-		dc.w	 9,$A016,$A00B,$FFE4			; 8
-word_37B90:	dc.w 3			
-		dc.w $F009,$A000,$A000,$FFE4			; 0
-		dc.w	 9,$A01C,$A00E,$FFE4			; 4
-		dc.w $F00F,$A006,$A003,$FFFC			; 8
-word_37BAA:	dc.w 1			
-		dc.w $F40A,$A022,$A011,$FFF4			; 0
-word_37BB4:	dc.w 1			
-		dc.w $F40A,$A02B,$A015,$FFF4			; 0
-word_37BBE:	dc.w 1			
-		dc.w $FC00,$8034,$801A,$FFFC			; 0
-word_37BC8:	dc.w 1			
-		dc.w $FC00,$8035,$801A,$FFFC			; 0
-word_37BD2:	dc.w 1			
-		dc.w  $604,$8036,$801B,	 $1C			; 0
-word_37BDC:	dc.w 1			
-		dc.w  $600,$8038,$801C,	 $1C			; 0
-word_37BE6:	dc.w 1			
-		dc.w $FB04,$8036,$801B,	 $1B			; 0
-word_37BF0:	dc.w 1			
-		dc.w $FB00,$8038,$801C,	 $1B			; 0
+
+		include "mappings/sprite/Turtloid.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 9D - Coconuts 
@@ -71663,10 +71665,13 @@ Coco_Index:	index offset(*)
 		ptr loc_37C1C					; 2
 		ptr loc_37CAE					; 4
 		ptr loc_37CD4					; 6
+;Obj9D_timer		= objoff_2A	; byte
+;Obj9D_climb_table_index	= objoff_2C	; word
+;Obj9D_attack_timer	= objoff_2E	; byte	; time player needs to spend close to object before it attacks		
 ; ===========================================================================
 
 loc_37C10:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#$10,$2A(a0)
 		rts	
 ; ===========================================================================
@@ -71735,7 +71740,7 @@ loc_37CAE:
 		subq.b	#1,$2A(a0)
 		beq.s	loc_37CC6
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		lea	(off_37D88).l,a1
+		lea	(Ani_Coco).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -71788,8 +71793,8 @@ loc_37D22:
 		jsrto	FindFreeObj,JmpTo19_FindFreeObj
 		bne.s	locret_37D74
 		_move.b	#id_Projectile,ost_id(a1)
-		move.b	#3,ost_frame(a1)
-		move.b	#$20,ost_subtype(a1)
+		move.b	#id_Frame_Coco_Coconut,ost_frame(a1)
+		move.b	#$20,ost_subdata_ptr(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#-$D,ost_y_pos(a1)
@@ -71799,7 +71804,7 @@ loc_37D22:
 		moveq	#4,d0
 
 loc_37D58:				
-		lea	word_37D76(pc,d0.w),a2
+		lea	Coco_ThrowData(pc,d0.w),a2
 		move.w	(a2)+,d0
 		add.w	d0,ost_x_pos(a1)
 		move.w	(a2)+,ost_x_vel(a1)
@@ -71810,17 +71815,17 @@ loc_37D58:
 locret_37D74:				
 		rts	
 ; ===========================================================================
-word_37D76:
+Coco_ThrowData:
 		dc.w   -$B,  $100				; 0
 		dc.w	$B, -$100				; 4
 		
-off_37D7E:
-		dc.l Map_37D96	
+Subdata_Coco:
+		dc.l Map_Coco	
 		dc.w $3EE
 		dc.w $405
 		dc.w $C09
 		
-off_37D88:	index offset(*)
+Ani_Coco:	index offset(*)
 		ptr byte_37D8C					; 0 
 		ptr byte_37D90					; 1
 		
@@ -71830,29 +71835,10 @@ byte_37D8C:
 byte_37D90:				
 		dc.b   9,  1,  2,  1,$FF
 		even
-; ------------------------------------------------------------------------
-; Unknown sprite mappings
-; ------------------------------------------------------------------------
-Map_37D96:				
-		dc.w byte_37D9E-Map_37D96			; 0
-		dc.w byte_37DC0-Map_37D96			; 1
-		dc.w byte_37DE2-Map_37D96			; 2
-		dc.w byte_37E04-Map_37D96			; 3
-byte_37D9E:	dc.b   0,  4,  0,  5,  0,$1A,  0, $D,$FF,$FE,$F0,  9,  0,  0,  0,  0 ; 0
-					
-		dc.b $FF,$FC,  0, $D,  0,  6,  0,  3,$FF,$F4,$10,  1,  0, $E,  0,  7 ; 16
-		dc.b   0, $C					; 32
-byte_37DC0:	dc.b   0,  4,  0,  5,  0,$1E,  0, $F,$FF,$FE,$F0,  9,  0,  0,  0,  0 ; 0
-					
-		dc.b $FF,$FC,  0, $D,  0,$10,  0,  8,$FF,$F4,$10,  1,  0,$18,  0, $C ; 16
-		dc.b   0, $C					; 32
-byte_37DE2:	dc.b   0,  4,$F8,  1,  0,$22,  0,$11,  0,  7,$F0,  9,  0,  0,  0,  0 ; 0
-					
-		dc.b $FF,$FC,  0, $D,  0,$10,  0,  8,$FF,$F4,$10,  1,  0,$18,  0, $C ; 16
-		dc.b   0, $C					; 32
-byte_37E04:	dc.b   0,  2,$F8,  1,$40,$24,$40,$12,$FF,$F8,$F8,  1,$48,$24,$48,$12 ; 0
-					
-		dc.b   0,  0					; 16
+; ===========================================================================
+
+		include "mappings/sprite/Coconuts.asm"
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 9E - Crawlton 
@@ -71874,7 +71860,7 @@ Crawlt_Index:	index offset(*),,2
 ; ===========================================================================
 
 loc_37E30:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#-$80,ost_height(a0)
 		addq.b	#2,$3B(a0)
 		bra.w	loc_37F74
@@ -72033,20 +72019,15 @@ loc_37FD6:
 locret_37FE6:				
 		rts	
 ; ===========================================================================
-off_37FE8:
-		dc.l Map_37FF2	
+Subdata_CrawlT:
+		dc.l Map_CrawlT	
 		dc.w $23C0
 		dc.w $404
 		dc.w $800B
-; -------------------------------------------------------------------------------
-; Unknown sprite mappings
-; -------------------------------------------------------------------------------
-Map_37FF2:				
-		dc.w byte_37FF8-Map_37FF2			; 0
-		dc.w byte_37FF8-Map_37FF2			; 1
-		dc.w byte_38002-Map_37FF2			; 2
-byte_37FF8:	dc.b   0,  1,$F8,  9,  0,  0,  0,  0,$FF,$F0	; 0	
-byte_38002:	dc.b   0,  1,$F8,  5,  0,  6,  0,  3,$FF,$F8	; 0	
+; ===========================================================================
+		
+		include "mappings/sprite/Crawlton.asm"
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 9F - Shellcracker 
@@ -72066,7 +72047,7 @@ Shelcrk_Index:	index offset(*),,2
 ; ===========================================================================
 
 loc_38022:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	loc_38034
 		bset	#status_xflip_bit,ost_primary_status(a0)
@@ -72216,7 +72197,7 @@ ShelcrkClaw_Index:	index offset(*),,2
 ; ===========================================================================
 
 loc_38170:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		movea.w	$2C(a0),a1
 		move.b	ost_render(a1),d0
 		andi.b	#1,d0
@@ -72369,7 +72350,7 @@ loc_38296:
 		jsrto	FindNextFreeObj,JmpTo25_FindNextFreeObj
 		bne.s	locret_382EE
 		_move.b	#id_ShellcrackerClaw,ost_id(a1)
-		move.b	#$26,ost_subtype(a1)
+		move.b	#$26,ost_subdata_ptr(a1)
 		move.b	#5,ost_frame(a1)
 		move.b	#4,ost_priority(a1)
 		move.w	a0,$2C(a1)
@@ -72393,14 +72374,14 @@ loc_382D8:
 locret_382EE:				
 		rts	
 ; ===========================================================================
-off_382F0:	
-		dc.l Map_38314	
+Subdata_Shelcrk:	
+		dc.l Map_Shelcrk	
 		dc.w $31C
 		dc.w $405
 		dc.w $180A
 		
-off_382FA:	
-		dc.l Map_38314	
+Subdata_ShelcrkClaw:	
+		dc.l Map_Shelcrk	
 		dc.w $31C
 		dc.w $404
 		dc.w $C9A
@@ -72417,36 +72398,9 @@ byte_3830E:
 		dc.b  $E,  0,  2,  1,$FF
 		even
 ; ===========================================================================
-Map_38314:				
-		dc.w word_38320-Map_38314			; 0
-		dc.w word_38342-Map_38314			; 1
-		dc.w word_38364-Map_38314			; 2
-		dc.w word_38386-Map_38314			; 3
-		dc.w word_383A0-Map_38314			; 4
-		dc.w word_383AA-Map_38314			; 5
-word_38320:	dc.w 4			
-		dc.w $EC0A,  $18,   $C,$FFE0			; 0
-		dc.w $F804,  $21,  $10,	   8			; 4
-		dc.w $F40A,    0,    0,$FFE8			; 8
-		dc.w $F40A, $800, $800,	   0			; 12
-word_38342:	dc.w 4			
-		dc.w $EC0A,  $18,   $C,$FFE0			; 0
-		dc.w $F804,  $21,  $10,	   8			; 4
-		dc.w $F406, $812, $809,$FFF0			; 8
-		dc.w $F40A, $809, $804,	   0			; 12
-word_38364:	dc.w 4			
-		dc.w $EC0A,  $18,   $C,$FFE0			; 0
-		dc.w $F804,  $21,  $10,	   8			; 4
-		dc.w $F40A,    9,    4,$FFE8			; 8
-		dc.w $F406,  $12,    9,	   0			; 12
-word_38386:	dc.w 3			
-		dc.w $F804,  $21,  $10,	   8			; 0
-		dc.w $F40A,    0,    0,$FFE8			; 4
-		dc.w $F40A, $800, $800,	   0			; 8
-word_383A0:	dc.w 1			
-		dc.w $FC00,  $23,  $11,$FFFC			; 0
-word_383AA:	dc.w 1			
-		dc.w $F40A,  $18,   $C,$FFF4			; 0
+
+		include "mappings/sprite/Shellcracker.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object A1 - Slicer 
@@ -72455,10 +72409,10 @@ word_383AA:	dc.w 1
 Slicer:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	Slicer_Index(pc,d0.w),d1
-		jmp	Slicer_Index(pc,d1.w)
+		move.w	Slice_Index(pc,d0.w),d1
+		jmp	Slice_Index(pc,d1.w)
 ; ===========================================================================
-Slicer_Index:	index offset(*),,2
+Slice_Index:	index offset(*),,2
 		ptr loc_383CC					; 0 
 		ptr loc_383F0					; 2
 		ptr loc_38466					; 4
@@ -72467,7 +72421,7 @@ Slicer_Index:	index offset(*),,2
 ; ===========================================================================
 
 loc_383CC:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.w	#-$40,d0
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	loc_383DE
@@ -72506,7 +72460,7 @@ loc_3841C:
 		cmpi.w	#$C,d1
 		bge.s	loc_38444
 		add.w	d1,ost_y_pos(a0)
-		lea	(off_385D4).l,a1
+		lea	(Ani_Slice).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -72560,17 +72514,17 @@ loc_3849E:
 SlicerPincers:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_384B0(pc,d0.w),d1
-		jmp	off_384B0(pc,d1.w)
+		move.w	SlicePinc_Index(pc,d0.w),d1
+		jmp	SlicePinc_Index(pc,d1.w)
 ; ===========================================================================
-off_384B0:	index offset(*),,2
+SlicePinc_Index:	index offset(*),,2
 		ptr loc_384B6					; 0 
 		ptr loc_384BE					; 2
 		ptr loc_38524					; 4
 ; ===========================================================================
 
 loc_384B6:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
@@ -72587,7 +72541,7 @@ loc_384BE:
 		move.w	off_384F6(pc,d0.w),d1
 		jsr	off_384F6(pc,d1.w)
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		lea	(off_385DA).l,a1
+		lea	(Ani_SlicePinc).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -72603,7 +72557,7 @@ loc_384F8:
 		add.w	d2,ost_y_vel(a0)
 		move.w	#$200,d0
 		move.w	d0,d1
-		bra.w	ObjCapSpeed
+		bra.w	CapSpeed
 ; ===========================================================================
 word_38516:
 		dc.w -$10, $10
@@ -72617,7 +72571,7 @@ loc_38524:
 		subq.w	#1,$2A(a0)
 		bmi.w	JmpTo65_DeleteObject
 		jsrto	ObjectFall,JmpTo8_ObjectFall
-		lea	(off_385DA).l,a1
+		lea	(Ani_SlicePinc).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -72631,7 +72585,7 @@ loc_38546:
 		jsrto	FindNextFreeObj,JmpTo25_FindNextFreeObj
 		bne.s	locret_385BA
 		_move.b	#id_SlicerPincers,ost_id(a1)
-		move.b	#$2A,ost_subtype(a1)
+		move.b	#$2A,ost_subdata_ptr(a1)
 		move.b	ost_render(a0),ost_render(a1)
 		move.b	#5,ost_frame(a1)
 		move.b	#4,ost_priority(a1)
@@ -72670,89 +72624,35 @@ byte_385BC:
 		dc.b    6,    0
 		dc.b -$10,    0
 
-off_385C0:
-		dc.l Map_385E2	
+Subdata_Slice:
+		dc.l Map_Slice	
 		dc.w $243C
 		dc.w $405
 		dc.w $1006
-off_385CA:
-		dc.l Map_385E2	
+		
+Subdata_SlicePinc:
+		dc.l Map_Slice	
 		dc.w $243C
 		dc.w $404
 		dc.w $109A
 		
-off_385D4:	index offset(*)
+Ani_Slice:	index offset(*)
 		ptr byte_385D6 
 
 byte_385D6:
 		dc.b $13,  0,  2,$FF
 		even 
 
-off_385DA	index offset(*)
+Ani_SlicePinc:	index offset(*)
 		ptr byte_385DC
 
 byte_385DC:
 		dc.b   3,  5,  6,  7,  8,$FF
 		even
 ; ===========================================================================
-Map_385E2:				
-		dc.w word_385F4-Map_385E2			; 0
-		dc.w word_3862E-Map_385E2			; 1
-		dc.w word_38668-Map_385E2			; 2
-		dc.w word_386A2-Map_385E2			; 3
-		dc.w word_386DC-Map_385E2			; 4
-		dc.w word_386F6-Map_385E2			; 5
-		dc.w word_38708-Map_385E2			; 6
-		dc.w word_3871A-Map_385E2			; 7
-		dc.w word_3872C-Map_385E2			; 8
-word_385F4:	dc.w 7			
-		dc.w $F904,  $1A,   $D,$FFF4			; 0
-		dc.w  $100,  $1C,   $E,$FFF4			; 4
-		dc.w $F009,    0,    0,$FFF0			; 8
-		dc.w	 9,    6,    3,$FFF0			; 12
-		dc.w	 1,   $C,    6,	   8			; 16
-		dc.w $F704,  $1A,   $D,$FFE0			; 20
-		dc.w $FF00,  $1C,   $E,$FFE0			; 24
-word_3862E:	dc.w 7			
-		dc.w $F804,  $1A,   $D,$FFF4			; 0
-		dc.w	 0,  $1C,   $E,$FFF4			; 4
-		dc.w $F009,    0,    0,$FFF0			; 8
-		dc.w	 9,   $E,    7,$FFF0			; 12
-		dc.w	 1,   $C,    6,	   8			; 16
-		dc.w $F804,  $1A,   $D,$FFE0			; 20
-		dc.w	 0,  $1C,   $E,$FFE0			; 24
-word_38668:	dc.w 7			
-		dc.w $F704,  $1A,   $D,$FFF4			; 0
-		dc.w $FF00,  $1C,   $E,$FFF4			; 4
-		dc.w $F009,    0,    0,$FFF0			; 8
-		dc.w	 9,  $14,   $A,$FFF0			; 12
-		dc.w	 1,   $C,    6,	   8			; 16
-		dc.w $F904,  $1A,   $D,$FFE0			; 20
-		dc.w  $100,  $1C,   $E,$FFE0			; 24
-word_386A2:	dc.w 7			
-		dc.w $E004,$181E,$180F,$FFF4			; 0
-		dc.w $E800,$181D,$180E,$FFFC			; 4
-		dc.w $F009,    0,    0,$FFF0			; 8
-		dc.w	 9,    6,    3,$FFF0			; 12
-		dc.w	 1,   $C,    6,	   8			; 16
-		dc.w $E004,$181E,$180F,$FFE0			; 20
-		dc.w $E800,$181D,$180E,$FFE8			; 24
-word_386DC:	dc.w 3			
-		dc.w $F009,    0,    0,$FFF0			; 0
-		dc.w	 9,    6,    3,$FFF0			; 4
-		dc.w	 1,   $C,    6,	   8			; 8
-word_386F6:	dc.w 2			
-		dc.w $F004,  $1A,   $D,$FFF0			; 0
-		dc.w $F800,  $1C,   $E,$FFF0			; 4
-word_38708:	dc.w 2			
-		dc.w	 0,  $1D,   $E,$FFF0			; 0
-		dc.w  $804,  $1E,   $F,$FFF0			; 4
-word_3871A:	dc.w 2			
-		dc.w	 0,$181C,$180E,	   8
-		dc.w  $804,$181A,$180D,	   0
-word_3872C:	dc.w 2			
-		dc.w $F004,$181E,$180F,	   0			; 0
-		dc.w $F800,$181D,$180E,	   8			; 4
+
+		include "mappings/sprite/Slicer.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object A3 - Flasher 
@@ -72775,7 +72675,7 @@ Flash_Index:	index offset(*),,2
 ; ===========================================================================
 
 loc_3875A:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.w	#$40,$2A(a0)
 		rts	
 ; ===========================================================================
@@ -72875,7 +72775,7 @@ byte_38820:
 
 loc_38832:				
 		move.b	ost_primary_routine(a0),d2
-		lea	(off_388B6).l,a1
+		lea	(Ani_Flash1).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		cmp.b	ost_primary_routine(a0),d2
 		bne.s	loc_3884A
@@ -72892,7 +72792,7 @@ loc_3884A:
 loc_3885C:				
 		subq.w	#1,$30(a0)
 		bmi.s	loc_38870
-		lea	(off_388DA).l,a1
+		lea	(Ani_Flash2).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
 ; ===========================================================================
@@ -72905,7 +72805,7 @@ loc_38870:
 ; ===========================================================================
 
 loc_38880:				
-		lea	(off_388E6).l,a1
+		lea	(Ani_Flash3).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
 ; ===========================================================================
@@ -72918,13 +72818,13 @@ loc_3888E:
 		clr.w	ost_anim_time(a0)
 		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
 ; ===========================================================================
-off_388AC:
-		dc.l Map_388F0	
+Subdata_Flash:
+		dc.l Map_Flash	
 		dc.w $83A8
 		dc.w $404
 		dc.w $1006
 		
-off_388B6:	index offset(*)
+Ani_Flash1:	index offset(*)
 		ptr byte_388B8
 		
 byte_388B8:	
@@ -72933,53 +72833,24 @@ byte_388B8:
 		dc.b $FC
 		even
 
-off_388DA:	index offset(*)
+Ani_Flash2:	index offset(*)
 		ptr byte_388DC
 		
 byte_388DC:	
 		dc.b   0,  2,  0,  3,  0,  4,  0,  3,  0,$FF
 		even
 		
-off_388E6:	index offset(*)
+Ani_Flash3:	index offset(*)
 		ptr Ani_388E8
 
 Ani_388E8:				
 		dc.b   3,  4,  3,  2,  1,  0,$FC
 		even
 		
-; -------------------------------------------------------------------------------
-; Unknown sprite mappings
-; -------------------------------------------------------------------------------
-Map_388F0:				
-		dc.w word_388FA-Map_388F0			; 0
-		dc.w word_38904-Map_388F0			; 1
-		dc.w word_38916-Map_388F0			; 2
-		dc.w word_38938-Map_388F0			; 3
-		dc.w word_3896A-Map_388F0			; 4
-word_388FA:	dc.w 1			
-		dc.w $F809,    0,    0,$FFF0			; 0
-word_38904:	dc.w 2			
-		dc.w $F805,$2006,$2003,$FFF8			; 0
-		dc.w $F809,    0,    0,$FFF0			; 4
-word_38916:	dc.w 4			
-		dc.w $F801,$200A,$2005,$FFF8			; 0
-		dc.w $F801,$280A,$2805,	   0			; 4
-		dc.w $F805,$2006,$2003,$FFF8			; 8
-		dc.w $F809,    0,    0,$FFF0			; 12
-word_38938:	dc.w 6			
-		dc.w $F005,$200C,$2006,$FFF0			; 0
-		dc.w $F005,$280C,$2806,	   0			; 4
-		dc.w	 5,$300C,$3006,$FFF0			; 8
-		dc.w	 5,$380C,$3806,	   0			; 12
-		dc.w $F805,$2006,$2003,$FFF8			; 16
-		dc.w $F809,    0,    0,$FFF0			; 20
-word_3896A:	dc.w 6			
-		dc.w $F005,$2010,$2008,$FFF0			; 0
-		dc.w $F005,$2810,$2808,	   0			; 4
-		dc.w	 5,$3010,$3008,$FFF0			; 8
-		dc.w	 5,$3810,$3808,	   0			; 12
-		dc.w $F805,$2006,$2003,$FFF8			; 16
-		dc.w $F809,    0,    0,$FFF0			; 20
+; ===========================================================================		
+
+		include "mappings/sprite/Flasher.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object A4 - Asteron 
@@ -72988,10 +72859,10 @@ word_3896A:	dc.w 6
 Asteron:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_389AA(pc,d0.w),d1
-		jmp	off_389AA(pc,d1.w)
+		move.w	Ast_Index(pc,d0.w),d1
+		jmp	Ast_Index(pc,d1.w)
 ; ===========================================================================
-off_389AA:	index offset(*),,2
+Ast_Index:	index offset(*),,2
 		ptr loc_389B2					; 0 
 		ptr loc_389B6					; 2
 		ptr loc_389DA					; 4
@@ -72999,7 +72870,7 @@ off_389AA:	index offset(*),,2
 ; ===========================================================================
 
 loc_389B2:				
-		bra.w	LoadSubtypeData
+		bra.w	LoadSubObjData
 ; ===========================================================================
 
 loc_389B6:				
@@ -73065,7 +72936,7 @@ loc_38A2C:
 		subq.b	#1,$2A(a0)
 		bmi.s	loc_38A44
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		lea	(off_38A90).l,a1
+		lea	(Ani_Ast).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -73079,59 +72950,35 @@ loc_38A44:
 
 loc_38A58:				
 		move.b	#$30,d2
-		moveq	#4,d6
-		lea	(word_38A68).l,a2
-		bra.w	SpawnProjectiles
+		moveq	#(sizeof_ProjData_Ast/6)-1,d6
+		lea	(ProjData_Ast).l,a2
+		bra.w	LoadProjectiles
 ; ===========================================================================
-word_38A68:	; projectile data
-		dc.w $F8
-		dc.w $FC
-		dc.w $200
-		dc.w $8FC
-		dc.w $3FF
-		dc.w $301
-		dc.w $808
-		dc.w $303
-		dc.w $401
-		dc.w $F808
-		dc.w $FD03
-		dc.w $400
-		dc.w $F8FC
-		dc.w $FDFF
-		dc.w $300
+; Data for Asteron's projectiles, clockwise from top
+ProjData_Ast:
+		projdata  0, -8,  0, -4, id_Frame_Ast_Spike_Up,        0
+		projdata  8, -4,  3, -1, id_Frame_Ast_Spike_AngleUp,   render_xflip
+		projdata  8,  8,  3,  3, id_Frame_Ast_Spike_AngleDown, render_xflip
+		projdata -8,  8, -3,  3, id_Frame_Ast_Spike_AngleDown, 0
+		projdata -8, -4, -3, -1, id_Frame_Ast_Spike_AngleUp,   0
+		arraysize ProjData_Ast
 		
-off_38A86:
-		dc.l Map_38A96	
-		dc.w $8368
-		dc.w $404
-		dc.w $100B
+SubData_Ast:
+		subobjdata Map_Ast,tile_Nem_Asteron+tile_hi,render_rel,4,$10,id_col_8x8
 		
-off_38A90:	index offset(*)
-		ptr Ani_38A92
+Ani_Ast:	index offset(*)
+		ptr Ani_Ast_Flashing
 		
-Ani_38A92:				
-		dc.b   1,  0,  1,$FF
+Ani_Ast_Flashing:				
+		dc.b 1
+		dc.b id_Frame_Ast_EyeRed  
+		dc.b id_Frame_Ast_EyeYellow
+		dc.b afEnd
 	
 ; ===========================================================================
-Map_38A96:
-		dc.w word_38AA0-Map_38A96			; 0	
-		dc.w word_38AB2-Map_38A96			; 1
-		dc.w word_38ACC-Map_38A96			; 2
-		dc.w word_38AD6-Map_38A96			; 3
-		dc.w word_38AE0-Map_38A96			; 4
-word_38AA0:	dc.w 2			
-		dc.w $F007,    0,    0,$FFF0			; 0
-		dc.w $F007, $800, $800,	   0			; 4
-word_38AB2:	dc.w 3			
-		dc.w $FD00,$200E,$2007,$FFFC			; 0
-		dc.w $F007,    0,    0,$FFF0			; 4
-		dc.w $F007, $800, $800,	   0			; 8
-word_38ACC:	dc.w 1			
-		dc.w $F801,    8,    4,$FFFC			; 0
-word_38AD6:	dc.w 1			
-		dc.w $FC04,   $A,    5,$FFF8			; 0
-word_38AE0:	dc.w 1			
-		dc.w $F801,   $C,    6,$FFFC			; 0
+
+		include "mappings/sprite/Asteron.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object A5 - Spiny (on floor)
@@ -73150,7 +72997,7 @@ off_38AF8:	index offset(*),,2
 ; ===========================================================================
 
 loc_38AFE:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.w	#-$40,ost_x_vel(a0)
 		move.w	#$80,$2A(a0)
 		rts	
@@ -73222,7 +73069,7 @@ off_38B94:	index offset(*),,2
 ; ===========================================================================
 
 loc_38B9A:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.w	#-$40,ost_y_vel(a0)
 		move.w	#$80,$2A(a0)
 		rts	
@@ -73283,7 +73130,7 @@ loc_38C22:
 		bne.s	locret_38C6C
 		_move.b	#id_Projectile,ost_id(a1)
 		move.b	#6,ost_frame(a1)
-		move.b	#$34,ost_subtype(a1)
+		move.b	#$34,ost_subdata_ptr(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.w	#-$300,ost_y_vel(a1)
@@ -73308,7 +73155,7 @@ loc_38C6E:
 		bne.s	locret_38CAC
 		_move.b	#id_Projectile,ost_id(a1)
 		move.b	#6,ost_frame(a1)
-		move.b	#$34,ost_subtype(a1)
+		move.b	#$34,ost_subdata_ptr(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.w	#$300,d1
@@ -73325,7 +73172,7 @@ locret_38CAC:
 		rts	
 ; ===========================================================================
 off_38CAE:
-		dc.l Map_38CCA	
+		dc.l Map_Spiny	
 		dc.w $252D
 		dc.w $404
 		dc.w $80B
@@ -73347,43 +73194,14 @@ off_38CC4:	index offset(*)
 
 byte_38CC6:
 		dc.b   3,  6,  7,$FF
-; ------------------------------------------------------------------------------
-; Unknown sprite mappings
-; ------------------------------------------------------------------------------
-Map_38CCA:	dc.w byte_38CD6-byte_38CC6			; 0 ;
-		dc.w byte_38CF8-byte_38CC6			; 1
-		dc.w byte_38D1A-byte_38CC6			; 2
-		dc.w Map_38D3C-byte_38CC6			; 3
-		dc.w byte_38D5E-byte_38CC6			; 4
-		dc.w byte_38D80-byte_38CC6			; 5
-byte_38CD6:	dc.b   0,$DC,  0,$E6,  0,  4,$F4,  0,  0,  0,  0,  0,$FF,$F8,$FC,  9 ; 0
-					
-		dc.b   0,  1,  0,  0,$FF,$E8,$F4,  0,  8,  0,  8,  0,  0,  0,$FC,  9 ; 16
-		dc.b   8,  1					; 32
-byte_38CF8:	dc.b   8,  0,  0,  0,  0,  4,$F4,  0,  0,  0,  0,  0,$FF,$F8,$FC,  9 ; 0
-					
-		dc.b   0,  7,  0,  3,$FF,$E8,$F4,  0,  8,  0,  8,  0,  0,  0,$FC,  9 ; 16
-		dc.b   8,  7					; 32
-byte_38D1A:	dc.b   8,  3,  0,  0,  0,  4,$F4,  4,  0, $D,  0,  6,$FF,$F0,$FC,  9 ; 0
-					
-		dc.b   0,  1,  0,  0,$FF,$E8,$F4,  4,  8, $D,  8,  6,  0,  0,$FC,  9 ; 16
-		dc.b   8,  1					; 32
-Map_38D3C:				
-		dc.b   8,  0,  0,  0,  0,  4,$E8,  6,  0, $F,  0,  7,$FF,$F4,$F8,  0 ; 0
-		dc.b   0,$15,  0, $A,  0,  4,  0,  6,$10, $F,$10,  7,$FF,$F4,  0,  0 ; 16
-		dc.b $10,$15					; 32
-byte_38D5E:	dc.b $10, $A,  0,  4,  0,  4,$E8,  6,  0,$16,  0, $B,$FF,$F4,$F8,  0 ; 0
-					
-		dc.b   0,$15,  0, $A,  0,  4,  0,  6,$10,$16,$10, $B,$FF,$F4,  0,  0 ; 16
-		dc.b $10,$15					; 32
-byte_38D80:	dc.b $10, $A,  0,  4,  0,  4,$E8,  6,  0, $F,  0,  7,$FF,$F4,$F0,  1 ; 0
-					
-		dc.b   0,$1C,  0, $E,  0,  4,  0,  6,$10, $F,$10,  7,$FF,$F4,  0,  1 ; 16
-		dc.b $10,$1C,$10, $E,  0,  4,  0,  1,$FC,  0,  0,$1E,  0, $F,$FF,$FC ; 32
-		dc.b   0,  1,$FC,  0,  0,$1F,  0, $F,$FF,$FC	; 48
+
+; ===========================================================================
+
+		include "mappings/sprite/Spiny.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object A7 - Grabber 
+; Object A7 - Grabber's head and body
 ; A complex multi-object item like the bosses, but unlike them, the individual
 ; components are completely different objects instead of subtypes of the same
 ; object.
@@ -73396,165 +73214,194 @@ Grabber:
 		jmp	Grab_Index(pc,d1.w)
 ; ===========================================================================
 Grab_Index:	index offset(*),,2	
-		ptr loc_38DCC					; 0 
-		ptr loc_38E0C					; 2
+		ptr Grab_Init					; 0 
+		ptr Grab_Action					; 2
+		
+		rsobj Grabber,$2A
+ost_grab_timer1: 		rs.w 1				; $2A ; time in frames until an idle grabber reverses their horizontal movement, and time until Grabber changes color while holding player 
+ost_grab_colorchng_time:	equ __rs-1			; $2B ; value used to reset above timer, decrementing by 1 each time
+ost_grab_timer2:		rs.w 1				; $2C ; time in frames to wait until attack animation starts, and duration of attack movement
+ost_grab_xvel_backup:	rs.w 1					; $2E ; x-vel is stashed here when they are seeking a player
+ost_grab_playerheld:	rs.b 1					; $30 ; flag indicating that a player is being held
+ost_grab_31:			rs.b 1				; $31 ;
+ost_grab_player:		rs.w 1				; $32 ; OST address of the player currently held by the Brabber
+ost_grab_34:			rs.w 1				; $34
+ost_grab_36:			rs.b 1				; $36
+ost_grab_37:			rs.b 1				; $37
+ost_grab_38:			rs.b 1				; $38
+		rsset $3A
+ost_grab_string_ptr:	rs.w 1					; $3A ; pointer to string
+ost_grab_legs_ptr:		rs.w 1				; $3C ; pointer to legs
+ost_grab_box_ptr:		rs.w 1				; $3E ; pointer to box	
+		rsobjend	
+
+grab_attack_duration:		equ 64				; time in frames a Grabber's attack last
 ; ===========================================================================
 
-loc_38DCC:				
-		bsr.w	LoadSubtypeData
-		move.w	#-$40,d0
+Grab_Init:				
+		bsr.w	LoadSubObjData				; go to Grab_Action next
+		move.w	#-$40,d0				; move left
 		btst	#render_xflip_bit,ost_render(a0)
-		beq.s	loc_38DDE
-		neg.w	d0
+		beq.s	.no_xflip				; branch if this Grabber isn't x-flipped
+		neg.w	d0					; move right
 
-loc_38DDE:				
+	.no_xflip:				
 		move.w	d0,ost_x_vel(a0)
-		move.w	#$FF,$2A(a0)
-		move.b	#2,$2D(a0)
-		lea	(byte_391E0).l,a2
+		move.w	#255,ost_grab_timer1(a0)		; move for 255 frames
+		move.b	#2,ost_grab_timer2+1(a0)
+		lea	(ChildData_GrabBox).l,a2		; load box
 		bsr.w	LoadChild
-		lea	(byte_391E4).l,a2
+		lea	(ChildData_GrabLegs).l,a2		; load legs
 		bsr.w	LoadChild
-		lea	(byte_391E8).l,a2
+		lea	(ChildData_GrabString).l,a2		; load string
 		bra.w	LoadChild
 ; ===========================================================================
 
-loc_38E0C:				
+Grab_Action:				
 		moveq	#0,d0
 		move.b	ost_secondary_routine(a0),d0
-		move.w	off_38E46(pc,d0.w),d1
-		jsr	off_38E46(pc,d1.w)
-		jsrto	SpeedToPos,JmpTo26_SpeedToPos
+		move.w	Grab_Action_Index(pc,d0.w),d1
+		jsr	Grab_Action_Index(pc,d1.w)
+		jsrto	SpeedToPos,JmpTo26_SpeedToPos		; update position
 		moveq	#0,d0
-		moveq	#$10,d1
-		movea.w	$3C(a0),a1
-		bsr.w	AlignChild
-		movea.w	$3E(a0),a1
-		move.w	ost_x_pos(a0),ost_x_pos(a1)
-		movea.w	$3A(a0),a1
-		move.w	ost_x_pos(a0),ost_x_pos(a1)
-		lea	$3A(a0),a2
-		bra.w	loc_39182
+		moveq	#$10,d1					; y-offset of legs
+		movea.w	ost_grab_legs_ptr(a0),a1
+		bsr.w	AlignChild				; update position of legs
+		movea.w	ost_grab_box_ptr(a0),a1
+		move.w	ost_x_pos(a0),ost_x_pos(a1)		; update position of box
+		movea.w	ost_grab_string_ptr(a0),a1
+		move.w	ost_x_pos(a0),ost_x_pos(a1)		; update position of string
+		lea	ost_grab_string_ptr(a0),a2		; this could have been 'movea.w a1,a2'
+		bra.w	Grab_Display
 ; ===========================================================================
-off_38E46:	index offset(*),,2	
-		ptr loc_38E52					; 0 
-		ptr loc_38E9A					; 2
-		ptr loc_38EB4					; 4
-		ptr loc_38F3E					; 6
-		ptr loc_38F58					; 8
-		ptr loc_38F62					; $A
+Grab_Action_Index:	index offset(*),,2	
+		ptr Grab_FindPlayer				; 0 
+		ptr Grab_WaitAttack				; 2
+		ptr Grab_Attack					; 4
+		ptr Grab_AscendWithPlayer			; 6
+		ptr Grab_HoldPlayer				; 8
+		ptr BranchTo_Grab_CheckExplode			; $A
 ; ===========================================================================
 
-loc_38E52:				
-		bsr.w	GetClosestPlayer
-		addi.w	#$40,d2
-		cmpi.w	#$80,d2	
-		bcc.s	loc_38E66
-		cmpi.w	#-$80,d3
-		bhi.s	loc_38E84
+Grab_FindPlayer:				
+		bsr.w	GetClosestPlayer			; get nearest player
+		addi.w	#$40,d2				
+		cmpi.w	#$80,d2					; is player within $80 pixels of Grabber horizontally?
+		bcc.s	.notfound				; branch if not
+		cmpi.w	#-$80,d3				; is player within $80 pixels of Grabber vertically?
+		bhi.s	.playerfound
 
-loc_38E66:				
-		subq.w	#1,$2A(a0)
-		bpl.s	locret_38E82
-		move.w	#$FF,$2A(a0)
-		neg.w	ost_x_vel(a0)
-		bchg	#render_xflip_bit,ost_render(a0)
+	.notfound:				
+		subq.w	#1,$2A(a0)				; decrement timer
+		bpl.s	.return					; branch if time remains
+	
+	;.turn_around:
+		move.w	#255,ost_grab_timer1(a0)		; reset x-timer
+		neg.w	ost_x_vel(a0)				; reverse direction
+		bchg	#render_xflip_bit,ost_render(a0)	; invert x-flip state
 		bchg	#status_xflip_bit,ost_primary_status(a0)
 
-locret_38E82:				
+	.return:				
 		rts	
 ; ===========================================================================
 
-loc_38E84:				
-		addq.b	#2,ost_secondary_routine(a0)
-		move.w	ost_x_vel(a0),$2E(a0)
-		clr.w	ost_x_vel(a0)
-		move.b	#$10,$2C(a0)
+.playerfound:				
+		addq.b	#2,ost_secondary_routine(a0)		; go to Grab_Attack next
+		move.w	ost_x_vel(a0),ost_grab_xvel_backup(a0)	; save current x-vel
+		clr.w	ost_x_vel(a0)				; stop horizontal movement
+		move.b	#16,ost_grab_timer2(a0)			; wait for 16 frames before attacking
 		rts	
 ; ===========================================================================
 
-loc_38E9A:				
-		subq.b	#1,$2C(a0)
-		bmi.s	loc_38EA2
+Grab_WaitAttack:				
+		subq.b	#1,$2C(a0)				; decrement timer
+		bmi.s	.begin_attack				; branch if time remains
 		rts	
 ; ===========================================================================
 
-loc_38EA2:				
-		addq.b	#2,ost_secondary_routine(a0)
+.begin_attack:				
+		addq.b	#2,ost_secondary_routine(a0)		; go to Grab_Attack next
 		move.w	#$200,ost_y_vel(a0)
-		move.b	#$40,$2C(a0)
+		move.b	#grab_attack_duration,ost_grab_timer2(a0) ; attack lasts 64 frames
 		rts	
 ; ===========================================================================
 
-loc_38EB4:				
-		tst.b	$30(a0)
-		bne.s	loc_38EEE
-		subq.b	#1,$2C(a0)
-		beq.s	loc_38ED6
-		cmpi.b	#$20,$2C(a0)
-		bne.s	loc_38ECC
-		neg.w	ost_y_vel(a0)
+Grab_Attack:				
+		tst.b	ost_grab_playerheld(a0)			; has a player been grabbed?  (detected by the legs)
+		bne.s	Grab_GrabCharacter			; branch if so
+		subq.b	#1,ost_grab_timer2(a0)			; decrement timer
+		beq.s	.attack_done				; branch if expired
+		cmpi.b	#grab_attack_duration/2,ost_grab_timer2(a0) ; is Grabber exactly halfway through the attack?
+		bne.s	.animate				; branch if not
+		neg.w	ost_y_vel(a0)				; Grabber starts ascending
 
-loc_38ECC:				
+	.animate:				
 		lea	(off_39214).l,a1
 		jmpto	AnimateSprite,JmpTo25_AnimateSprite
 ; ===========================================================================
 
-loc_38ED6:				
-		move.b	#0,ost_secondary_routine(a0)
-		clr.w	ost_y_vel(a0)
-		move.w	$2E(a0),ost_x_vel(a0)
+.attack_done:				
+		move.b	#id_Grab_FindPlayer,ost_secondary_routine(a0) ; go to Grab_FindPlayer next
+		clr.w	ost_y_vel(a0)				; stop vertical motion
+		move.w	$2E(a0),ost_x_vel(a0)			; restore previous x_vel
 		move.b	#0,ost_frame(a0)
 		rts	
 ; ===========================================================================
 
-loc_38EEE:				
-		addq.b	#2,ost_secondary_routine(a0)
-		movea.w	$32(a0),a1
-		move.b	#-$7F,$2A(a1)
-		clr.w	ost_x_vel(a1)
+Grab_GrabCharacter:				
+		addq.b	#2,ost_secondary_routine(a0)		; go to Grab_AscendWithPlayer next
+		movea.w	ost_grab_player(a0),a1			; a1 = ost of held player
+		move.b	#$81,ost_obj_control(a1)		; lock their controls
+		clr.w	ost_x_vel(a1)				; stop their movement
 		clr.w	ost_y_vel(a1)
-		move.b	#$E,ost_anim(a1)
+		move.b	#$E,ost_anim(a1)			; use floating animation
+	if FixBugs
+		; If the player gets grabbed while charging a spindash, they won't
+		; exit their spindash state: the dust graphic will still appear,
+		; just floating in the air, and will do a drop dash when release. 
+		; To fix this, just clear the player's spindash flag, like this:	
+		clr.b ost_spindash_flag(a1)	
+	endc		
 		move.b	#1,ost_frame(a0)
-		tst.w	ost_y_vel(a0)
-		bmi.s	loc_38F2A
-		neg.w	ost_y_vel(a0)
-		move.b	$2C(a0),d0
+		tst.w	ost_y_vel(a0)				; is Grabber moving down?
+		bmi.s	loc_38F2A				; branch if not
+		neg.w	ost_y_vel(a0)				; reverse, lifting the player
+		move.b	ost_grab_timer2(a0),d0
 		subi.b	#$40,d0
 		neg.w	d0
 		addq.b	#1,d0
-		move.b	d0,$2C(a0)
+		move.b	d0,ost_grab_timer2(a0)			; adjust timer to account for the early reversal in direction
 
-loc_38F2A:				
-		move.b	#1,$2A(a0)
-		move.b	#$10,$2B(a0)
-		move.b	#$20,$37(a0)
+	loc_38F2A:				
+		move.b	#1,ost_grab_timer1(a0)	
+		move.b	#$10,ost_grab_colorchng_time(a0)	; 
+		move.b	#$20,ost_grab_37(a0)
 		rts	
 ; ===========================================================================
 
-loc_38F3E:				
-		bsr.w	loc_3913A
+Grab_AscendWithPlayer:				
+		bsr.w	Grab_SwitchColor
 		bsr.w	loc_390BC
-		subq.b	#1,$2C(a0)
-		beq.s	loc_38F4E
+		subq.b	#1,ost_grab_timer2(a0)			; decrement timer
+		beq.s	.ascent_done				; branch if time remains
 		rts	
 ; ===========================================================================
 
-loc_38F4E:				
-		addq.b	#2,ost_secondary_routine(a0)
-		clr.w	ost_y_vel(a0)
+.ascent_done:				
+		addq.b	#2,ost_secondary_routine(a0)		; go to Grab_HoldPlayer next
+		clr.w	ost_y_vel(a0)				; stop vertical movement		
 		rts	
 ; ===========================================================================
 
-loc_38F58:				
-		bsr.w	loc_3913A
+Grab_HoldPlayer:				
+		bsr.w	Grab_SwitchColor
 		bra.w	loc_390BC
 ; ===========================================================================
 		rts						; dead code
 ; ===========================================================================
 
-loc_38F62:				
-		bra.w	loc_3913A
+BranchTo_Grab_CheckExplode:				
+		bra.w	Grab_SwitchColor
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object A8 - Grabber's legs 
@@ -73574,7 +73421,7 @@ off_38F74:	index offset(*),,2
 ; ===========================================================================
 
 loc_38F7C:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#3,ost_frame(a0)
 		rts	
 ; ===========================================================================
@@ -73583,7 +73430,7 @@ loc_38F88:
 		movea.w	$2C(a0),a1
 		cmpi.b	#id_Grabber,ost_id(a1)
 		bne.w	JmpTo65_DeleteObject
-		bsr.w	InheritParentXYFlip
+		bsr.w	InheritParentFlip
 		movea.w	$2C(a0),a1
 		move.b	ost_frame(a1),d0
 		addq.b	#3,d0
@@ -73660,7 +73507,7 @@ off_39040:	index offset(*),,2
 ; ===========================================================================
 
 loc_39044:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#2,ost_frame(a0)
 		subi.w	#$C,ost_y_pos(a0)
 		rts	
@@ -73688,7 +73535,7 @@ off_39074:	index offset(*),,2
 ; ===========================================================================
 
 loc_39078:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		subq.w	#8,ost_y_pos(a0)
 		rts	
 ; ===========================================================================
@@ -73722,7 +73569,7 @@ off_390B0:	index offset(*),,2
 ; ===========================================================================
 
 loc_390B4:				
-		bra.w	LoadSubtypeData
+		bra.w	LoadSubObjData
 ; ===========================================================================
 
 loc_390B8:				
@@ -73730,19 +73577,19 @@ loc_390B8:
 ; ===========================================================================
 
 loc_390BC:				
-		movea.w	$34(a0),a1
+		movea.w	ost_grab_34(a0),a1
 		move.w	(a1),d0
-		tst.b	$31(a0)
+		tst.b	ost_grab_31(a0)
 		beq.s	loc_390E6
-		subq.b	#1,$37(a0)
+		subq.b	#1,ost_grab_37(a0)
 		beq.s	loc_390FA
-		move.b	$36(a0),d1
+		move.b	ost_grab_36(a0),d1
 		andi.b	#$C,d0
 		beq.s	locret_390E4
 		cmp.b	d1,d0
 		beq.s	locret_390E4
-		move.b	d0,$36(a0)
-		addq.b	#1,$38(a0)
+		move.b	d0,ost_grab_36(a0)
+		addq.b	#1,ost_grab_38(a0)
 
 locret_390E4:				
 		rts	
@@ -73752,7 +73599,7 @@ loc_390E6:
 		andi.b	#$C,d0
 		beq.s	locret_390E4
 		nop	
-		st.b	$31(a0)
+		st.b	ost_grab_31(a0)
 		move.b	d0,$36(a0)
 		nop	
 		rts	
@@ -73777,54 +73624,56 @@ loc_3912A:
 		rts	
 ; ===========================================================================
 
-loc_3913A:				
-		subq.b	#1,$2A(a0)
-		bne.s	locret_39152
-		move.b	$2B(a0),$2A(a0)
-		subq.b	#1,$2B(a0)
-		beq.s	loc_39154
-		bchg	#tile_pal12_bit,ost_tile(a0)
+Grab_SwitchColor:				
+		subq.b	#1,ost_grab_timer1(a0)			; decrement timer
+		bne.s	.no_colorchng				; branch if time remains
+		
+	;.change_color:	
+		move.b	ost_grab_colorchng_time(a0),ost_grab_timer1(a0) ; reset timer 
+		subq.b	#1,ost_grab_colorchng_time(a0)		; decrement the reset value
+		beq.s	Grab_SelfDestruct			; branch if it's reached 0
+		bchg	#tile_pal12_bit,ost_tile(a0)		; switch Grabber's stripes between yellow and red	
 
-locret_39152:				
+	.no_colorchng:				
 		rts	
 ; ===========================================================================
 
-loc_39154:				
-		_move.b	#id_ExplosionItem,ost_id(a0)
-		move.b	#2,ost_primary_routine(a0)
+Grab_SelfDestruct:				
+		_move.b	#id_ExplosionItem,ost_id(a0)		; transform into an explosion
+		move.b	#id_Explosion_Main,ost_primary_routine(a0)	
 		bset	#tile_pal12_bit,ost_tile(a0)
-		move.w	$32(a0),d0
-		beq.s	locret_39180
-		movea.w	d0,a2
-		move.b	#0,$2A(a2)
-		bset	#1,ost_primary_status(a2)
-		move.b	#id_col_8x8,ost_col_type(a0)
+		move.w	ost_grab_player(a0),d0			; was a player being held by the Grabber?
+		beq.s	.done					; branch if not
+		movea.w	d0,a2					; a2 = player
+		move.b	#0,osT_obj_control(a2)			; release their control
+		bset	#status_air_bit,ost_primary_status(a2)	; drop them
+		move.b	#id_col_8x8,ost_col_type(a0)		; set collision type so explosion hurts player
 
-locret_39180:				
+	.done:				
 		rts	
 ; ===========================================================================
 
-loc_39182:				
-		tst.w	(f_two_player).w
-		beq.s	loc_3918C
+Grab_Display:				
+		tst.w	(f_two_player).w			; is it 2P mode?
+		beq.s	.chkdel					; branch if not
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 
-loc_3918C:				
-		move.w	ost_x_pos(a0),d0
-		andi.w	#-$80,d0
-		sub.w	(v_camera_x_pos_coarse).w,d0
-		cmpi.w	#$280,d0
-		bhi.w	loc_391A4
+.chkdel:
+	if AllOptimizations
+		out_of_range.s .delete				; branch if out of range		
+	else
+		out_of_range.w .delete				; branch if out of range	
+	endc	
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 
-loc_391A4:				
+.delete:				
 		lea	(v_respawn_list).w,a3
 		moveq	#0,d0
-		move.b	ost_respawn(a0),d0
+		move.b	ost_respawn(a0),d0			; get respawn index
 		beq.s	loc_391B6
-		bclr	#7,2(a3,d0.w)
+		bclr	#7,v_respawn_data-v_respawn_list(a3,d0.w)
 
 loc_391B6:				
 		tst.b	$30(a0)
@@ -73843,17 +73692,17 @@ loc_391D2:
 		dbf	d6,loc_391D2
 		bra.w	JmpTo65_DeleteObject
 ; ===========================================================================
-byte_391E0:
+ChildData_GrabBox:
 		dc.w $3E
 		dc.b id_GrabberBox
 		dc.b $3A
 		
-byte_391E4: 
+ChildData_GrabLegs: 
 		dc.w $3C
 		dc.b id_GrabberLegs
 		dc.b $38
 		
-byte_391E8:
+ChildData_GrabString:
 		dc.w $3A
 		dc.b id_GrabberString	
 		dc.b $3C
@@ -73981,7 +73830,7 @@ off_39388:	index offset(*),,2
 ; ===========================================================================
 
 loc_3938C:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#1,ost_frame(a0)
 		move.w	#-$300,ost_x_vel(a0)
 		bclr	#render_yflip_bit,ost_render(a0)
@@ -74036,7 +73885,7 @@ off_3942A:	index offset(*),,2
 ; ===========================================================================
 
 loc_3942E:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#$C,ost_frame(a0)
 		rts	
 ; ===========================================================================
@@ -74070,7 +73919,7 @@ off_39460:	index offset(*)
 ; ===========================================================================
 
 loc_3946E:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#$15,ost_frame(a0)
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	locret_39486
@@ -74151,7 +74000,7 @@ loc_39526:
 		bne.s	locret_39574
 		_move.b	#id_Projectile,ost_id(a1)
 		move.b	#$D,ost_frame(a1)
-		move.b	#$46,ost_subtype(a1)
+		move.b	#$46,ost_subdata_ptr(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$B,ost_y_pos(a1)
@@ -74325,7 +74174,7 @@ off_3973A:	index offset(*),,2
 ; ===========================================================================
 
 loc_3975E:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#$1B,ost_height(a0)
 		move.b	#$10,ost_width(a0)
 		move.b	#0,ost_col_type(a0)
@@ -74757,7 +74606,7 @@ loc_39BA4:
 ; ===========================================================================
 
 loc_39BBA:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#8,ost_displaywidth(a0)
 		move.b	#0,ost_col_type(a0)
 		rts	
@@ -74765,7 +74614,7 @@ loc_39BBA:
 
 loc_39BCC:				
 		movea.w	$2C(a0),a1
-		bsr.w	InheritParentXYFlip
+		bsr.w	InheritParentFlip
 		lea	(off_39E30).l,a1
 		bsr.w	AnimateSprite2
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
@@ -74777,7 +74626,7 @@ loc_39BE2:
 ; ===========================================================================
 
 loc_39BEA:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#8,ost_displaywidth(a0)
 		move.b	#$B,ost_frame(a0)
 		move.b	#3,ost_priority(a0)
@@ -74795,7 +74644,7 @@ loc_39C0A:
 ; ===========================================================================
 
 loc_39C12:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#4,ost_frame(a0)
 		move.w	#$2C0,ost_x_pos(a0)
 		move.w	#$139,ost_y_pos(a0)
@@ -74899,7 +74748,7 @@ loc_39CF0:
 
 loc_39D1C:				
 		tst.b	ost_col_type(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 
 loc_39D24:				
 		move.b	ost_frame(a0),d0
@@ -74956,7 +74805,7 @@ loc_39D82:
 		move.b	#$4A,d2
 		moveq	#7,d6
 		lea	(byte_39D92).l,a2
-		bra.w	SpawnProjectiles
+		bra.w	LoadProjectiles
 ; ===========================================================================
 byte_39D92:							; projectile data
 		dc.b   0,$E8,  0,$FD, $F,  0,$F0,$F0,$FE,$FE,$10,  0,$E8,  0,$FD,  0 ; 0		
@@ -75244,7 +75093,7 @@ ost_sonicsega_streakcounter:		rs.b 1			; number of times the streak palette has 
 ; ===========================================================================
 
 SonicSegaScreen_Init:				
-		bsr.w	LoadSubtypeData				; load mapping and tile data, go to SonicSegaScreen_RunLeft next	
+		bsr.w	LoadSubObjData				; load mapping and tile data, go to SonicSegaScreen_RunLeft next	
 		move.w	#screen_right+40,ost_x_screen(a0)
 		move.w	#screen_top+112,ost_y_screen(a0)
 		move.w	#$B,ost_sonicsega_frame_counter(a0)	; set timer to 11 frames
@@ -75475,7 +75324,7 @@ SegaHideTM_Index:	index offset(*),,2
 ; ===========================================================================
 
 SegaHideTM_Init:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#id_Frame_HideTM,ost_frame(a0)
 		move.w	#screen_left+244,ost_x_screen(a0)
 		move.w	#screen_top+88,ost_y_screen(a0)
@@ -75584,11 +75433,11 @@ Pal_SegaScreen3:
 		incfile Pal_SegaScreen3_Colors
 		
 		
-SonicSegaScreen_SubtypeData:
-		subtypedata	Map_SegaScreenSonic,(vram_Giant_Sonic/sizeof_cell)+tile_pal3+tile_hi,0,1,$10,0
+SubData_SonicSega:
+		subobjdata	Map_SegaScreenSonic,(vram_Giant_Sonic/sizeof_cell)+tile_pal3+tile_hi,0,1,$10,0
 
-SegaHideTM_SubtypeData:	
-		subtypedata	Map_SegaScreenSonic,(vram_SEGA/sizeof_cell)+2,0,2,8,0
+SubData_SegaHideTM:	
+		subobjdata	Map_SegaScreenSonic,(vram_SEGA/sizeof_cell)+2,0,2,8,0
 	
 Ani_SonicSegaScreen:	index offset(*)
 		ptr Ani_SonicSega_0 
@@ -75600,7 +75449,7 @@ Ani_SonicSega_0:	dc.b   0,  0,  1,  2,  3,$FF		; 0
 
 SegaScreen_VBlank:				
 		move.w	(v_segascr_vblank_sub).w,d0		; get VBlank subroutine
-		beq.w	locret_37A48				; if it's 0, nothing to do
+		beq.w	TRider_SharedRTS			; if it's 0, nothing to do
 		clr.w	(v_segascr_vblank_sub).w
 		move.w	SegaScreen_VBlank_Index-2(pc,d0.w),d0
 		jmp	SegaScreen_VBlank_Index(pc,d0.w)
@@ -75741,7 +75590,7 @@ off_3A79E:	index offset(*),,2
 ; ===========================================================================
 
 loc_3A7AE:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		subi.b	#$4E,d0
@@ -75883,7 +75732,7 @@ loc_3A92A:
 loc_3A930:				
 		bsr.w	loc_3AD8C
 		subq.w	#1,$32(a0)
-		bne.w	locret_37A48
+		bne.w	TRider_SharedRTS
 		move.w	#$E,$32(a0)
 		bra.w	loc_3AF34
 ; ===========================================================================
@@ -76236,7 +76085,7 @@ off_3AD1A:	index offset(*),,2
 
 loc_3AD1C:				
 		bchg	#status_jump_bit,ost_primary_status(a0)
-		bne.w	locret_37A48
+		bne.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -76713,7 +76562,7 @@ off_3B2EC:	index offset(*),,2
 ; ===========================================================================
 
 loc_3B2F0:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		subi.b	#$5E,d0
@@ -76771,7 +76620,7 @@ off_3B378:	index offset(*),,2
 ; ===========================================================================
 
 loc_3B37C:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		bclr	#render_yflip_bit,ost_render(a0)
 		beq.s	locret_3B38C
 		clr.b	ost_col_type(a0)
@@ -76836,7 +76685,7 @@ off_3B408:	index offset(*),,2
 ; ===========================================================================
 
 loc_3B40E:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#4,ost_anim(a0)
 		move.b	ost_subtype(a0),d0
 		subi.b	#$64,d0
@@ -77304,7 +77153,7 @@ off_3B8B4:	index offset(*),,2
 ; ===========================================================================
 
 loc_3B8B8:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#$20,$2A(a0)
 		rts	
 ; ===========================================================================
@@ -77313,7 +77162,7 @@ loc_3B8C4:
 		subq.b	#1,$2A(a0)
 		beq.w	JmpTo65_DeleteObject
 		bchg	#0,$2B(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 off_3B8DA:	
@@ -77354,7 +77203,7 @@ off_3B976:	index offset(*),,2
 ; ===========================================================================
 
 loc_3B97C:				
-		bra.w	LoadSubtypeData
+		bra.w	LoadSubObjData
 ; ===========================================================================
 
 loc_3B980:				
@@ -77492,7 +77341,7 @@ off_3BAC8:	index offset(*),,2
 ; ===========================================================================
 
 loc_3BACE:				
-		bra.w	LoadSubtypeData
+		bra.w	LoadSubObjData
 ; ===========================================================================
 
 loc_3BAD2:				
@@ -77553,7 +77402,7 @@ off_3BB5A:	index offset(*),,2
 ; ===========================================================================
 
 loc_3BB5E:				
-		bra.w	LoadSubtypeData
+		bra.w	LoadSubObjData
 ; ===========================================================================
 
 loc_3BB62:				
@@ -77586,7 +77435,7 @@ off_3BB8A:	index offset(*),,2
 ; ===========================================================================
 
 loc_3BB8E:				
-		bra.w	LoadSubtypeData
+		bra.w	LoadSubObjData
 ; ===========================================================================
 
 loc_3BB92:				
@@ -77621,7 +77470,7 @@ off_3BBCA:	index offset(*),,2
 ; ===========================================================================
 
 loc_3BBCE:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.w	ost_x_pos(a0),$2C(a0)
 		rts	
 ; ===========================================================================
@@ -77634,7 +77483,7 @@ loc_3BBDA:
 		add.w	d1,d0
 		move.w	d0,ost_x_pos(a0)
 		bchg	#0,$2A(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3BBFE:	
@@ -77697,7 +77546,7 @@ off_3BC62:	index offset(*),,2
 ; ===========================================================================
 
 loc_3BC6C:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#2,ost_frame(a0)
 		subq.b	#2,ost_primary_routine(a0)
 		addq.b	#2,ost_secondary_routine(a0)
@@ -77715,7 +77564,7 @@ loc_3BC92:
 		rts	
 ; ===========================================================================
 word_3BCA8:	
-	dc.w $FF00						; 0
+		dc.w $FF00					; 0
 		dc.w  $100					; 1
 ; ===========================================================================
 
@@ -77936,7 +77785,7 @@ off_3BEB8:	index offset(*),,2
 ; ===========================================================================
 
 loc_3BEBC:				
-		bra.w	LoadSubtypeData
+		bra.w	LoadSubObjData
 ; ===========================================================================
 
 loc_3BEC0:				
@@ -78390,7 +78239,7 @@ off_3C336:	index offset(*),,2
 ; ===========================================================================
 
 loc_3C33A:				
-		bra.w	LoadSubtypeData
+		bra.w	LoadSubObjData
 ; ===========================================================================
 
 loc_3C33E:				
@@ -78454,7 +78303,7 @@ off_3C3E4:	index offset(*),,2
 ; ===========================================================================
 
 loc_3C3E8:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	#7,ost_anim_time(a0)
 		jsrto	RandomNumber,JmpTo6_RandomNumber
 		move.w	(v_random).w,d0
@@ -78509,7 +78358,7 @@ off_3C450:	index offset(*),,2
 ; ===========================================================================
 
 loc_3C464:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	ost_subtype(a0),d0
 		subi.b	#-$70,d0
 		move.b	d0,ost_primary_routine(a0)
@@ -78806,7 +78655,7 @@ loc_3C748:
 		move.w	off_3C772(pc,d0.w),d1
 		jsr	off_3C772(pc,d1.w)
 		tst.b	(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		move.w	ost_x_pos(a0),-(sp)
 		move.w	#$13,d1
 		move.w	#$40,d2
@@ -78831,7 +78680,7 @@ loc_3C786:
 		btst	#5,ost_primary_status(a1)
 		bne.s	loc_3C7A0
 		bchg	#0,$2F(a0)
-		bne.w	locret_37A48
+		bne.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -78843,7 +78692,7 @@ loc_3C7A0:
 
 loc_3C7AE:				
 		subq.b	#1,ost_anim_time(a0)
-		bpl.w	locret_37A48
+		bpl.w	TRider_SharedRTS
 		move.b	ost_anim_time(a0),d0
 		move.b	ost_anim_frame(a0),d1
 		addq.b	#2,d0
@@ -78961,7 +78810,7 @@ loc_3C8C8:
 		lea	(off_3CCB2).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		tst.b	(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3C8EA:	index offset(*),,2	
@@ -79111,7 +78960,7 @@ loc_3CA3C:
 		move.w	off_3CA66(pc,d0.w),d1
 		jsr	off_3CA66(pc,d1.w)
 		bchg	#0,$2F(a0)
-		bne.w	locret_37A48
+		bne.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3CA66:	index offset(*),,2
@@ -79522,7 +79371,7 @@ off_3CEDE:	index offset(*),,2
 ; ===========================================================================
 
 loc_3CEE6:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.b	ost_subtype(a0),d0
 		subi.b	#-$5C,d0
 		move.b	d0,ost_primary_routine(a0)
@@ -79827,7 +79676,7 @@ off_3D24C:	index offset(*),,2
 ; ===========================================================================
 
 loc_3D254:				
-		bsr.w	LoadSubtypeData
+		bsr.w	LoadSubObjData
 		move.w	#$200,$2A(a0)
 		moveq	#$20,d0
 		btst	#render_xflip_bit,ost_render(a0)
@@ -80641,7 +80490,7 @@ loc_3DA14:
 		lea	byte_3DA38(pc),a1
 		bsr.w	loc_3E282
 		tst.b	ost_id(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DA34:	index offset(*),,2
@@ -80672,7 +80521,7 @@ loc_3DA4A:
 		move.w	off_3DA62(pc,d0.w),d1
 		jsr	off_3DA62(pc,d1.w)
 		tst.b	ost_id(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DA62:	index offset(*),,2	
@@ -80696,9 +80545,9 @@ loc_3DA74:
 		move.w	off_3DA96(pc,d0.w),d1
 		jsr	off_3DA96(pc,d1.w)
 		tst.b	ost_id(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		btst	#status_underwater_bit,ost_primary_status(a0)
-		bne.w	locret_37A48
+		bne.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DA96:	index offset(*),,2	
@@ -80813,7 +80662,7 @@ loc_3DB74:
 		move.w	off_3DB8C(pc,d0.w),d1
 		jsr	off_3DB8C(pc,d1.w)
 		tst.b	ost_id(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DB8C:	index offset(*),,2	
@@ -80837,7 +80686,7 @@ loc_3DB9E:
 		move.w	off_3DBB6(pc,d0.w),d1
 		jsr	off_3DBB6(pc,d1.w)
 		tst.b	ost_id(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DBB6:	index offset(*),,2	
@@ -80863,7 +80712,7 @@ loc_3DBC8:
 		lea	byte_3DBF2(pc),a1
 		bsr.w	loc_3E282
 		tst.b	ost_id(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DBE8:	index offset(*),,2	
@@ -80971,7 +80820,7 @@ loc_3DC9C:
 		move.w	off_3DCB4(pc,d0.w),d1
 		jsr	off_3DCB4(pc,d1.w)
 		tst.b	ost_id(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DCB4:	index offset(*),,2	
@@ -80996,7 +80845,7 @@ loc_3DCCC:
 		move.w	off_3DCE4(pc,d0.w),d1
 		jsr	off_3DCE4(pc,d1.w)
 		tst.b	ost_id(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DCE4:	index offset(*),,2
@@ -81034,7 +80883,7 @@ loc_3DD20:
 		move.w	off_3DD38(pc,d0.w),d1
 		jsr	off_3DD38(pc,d1.w)
 		tst.b	ost_id(a0)
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DD38:	index offset(*),,2	
@@ -81484,7 +81333,7 @@ loc_3E168:
 
 loc_3E176:				
 		move.b	(a1)+,d1
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		movea.w	(a0,d1.w),a2
 		move.b	ost_render(a2),d2
 		andi.b	#-2,d2
@@ -82134,7 +81983,7 @@ Scale_2x:
 		swap	d3
 		bsr.w	loc_3E8CA
 		btst	#1,d0
-		beq.w	locret_37A48
+		beq.w	TRider_SharedRTS
 		btst	#1,d1
 		bne.s	loc_3E8C8
 		movea.l	a3,a5
@@ -83070,7 +82919,7 @@ col_4x8:		colid    4,    8			; $1E
 col_4x24:		colid    4,  $18			; $1F
 col_4x40:		colid    4,  $28			; $20
 col_4x32:		colid    4,  $10			; $21
-col_24x24_2:	colid  $18,  $18			; $22
+col_24x24_2:	colid  $18,  $18				; $22
 col_12x24:		colid   $C,  $18			; $23
 col_72x8:		colid  $48,    8			; $24
 col_24x40:		colid  $18,  $28			; $25
@@ -86241,7 +86090,7 @@ DbgEHZ_41D40:	dc.w $13
 		dc.l $5C000000+Map_Mash
 		dc.w 0
 		dc.w $414
-		dc.l $9D000000+Map_37D96
+		dc.l $9D000000+Map_Coco
 		dc.w $1E00
 		dc.w $3EE
 		dc.l $3E000000+Map_3F436
@@ -86329,13 +86178,13 @@ DbgMTZ_41DDA:	dc.w $22
 		dc.l $65000000+Map_MTZPlats
 		dc.w $B000
 		dc.w $6000
-		dc.l $9F000000+Map_38314
+		dc.l $9F000000+Map_Shelcrk
 		dc.w $2400
 		dc.w $31C
-		dc.l $A4000000+Map_38A96
+		dc.l $A4000000+Map_Ast
 		dc.w $2E00
 		dc.w $8368
-		dc.l $A1000000+Map_385E2
+		dc.l $A1000000+Map_Slice
 		dc.w $2800
 		dc.w $243C
 		dc.l $31000000+Map_LTag
@@ -86705,10 +86554,10 @@ DbgMCZ_421F2:	dc.w $18
 		dc.l $7A000000+Map_Swing_Track_CPZ_MCZ
 		dc.w $1200
 		dc.w 0
-		dc.l $A3000000+Map_388F0
+		dc.l $A3000000+Map_Flash
 		dc.w $2C00
 		dc.w $83A8
-		dc.l $9E000000+Map_37FF2
+		dc.l $9E000000+Map_CrawlT
 		dc.w $2200
 		dc.w $23C0
 		dc.l $3E000000+Map_3F436
@@ -86848,10 +86697,10 @@ DbgCPZ_42376:	dc.w $18
 		dc.l $40000000+Map_SprngBrd
 		dc.w $100
 		dc.w $440
-		dc.l $A5000000+Map_38CCA
+		dc.l $A5000000+Map_Spiny
 		dc.w $3200
 		dc.w $252D
-		dc.l $A6000000+Map_38CCA
+		dc.l $A6000000+Map_Spiny
 		dc.w $3203
 		dc.w $252D
 		dc.l $A7000000+Map_3921A
@@ -86976,13 +86825,13 @@ DbgSCZ_42522:	dc.w $D
 		dc.l $B5000000+Map_3B548
 		dc.w $6800
 		dc.w $A3CD
-		dc.l $9A000000+Map_37B62
+		dc.l $9A000000+Map_Turt
 		dc.w $1600
 		dc.w $38A
 		dc.l $AC000000+Map_393CC
 		dc.w $4000
 		dc.w $565
-		dc.l $99000000+Map_3789A
+		dc.l $99000000+Map_Neb
 		dc.w $1200
 		dc.w $A36E
 		dc.l $3E000000+Map_3F436
@@ -88266,7 +88115,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_ConstructionStripes			; ArtNem_827F8:
 		incfile	Nem_CPZDumpingPipePlat			; ArtNem_82864: ; ArtNem_CPZAnimatedBits
 		incfile	Nem_StairBlock				; ArtNem_82A46:
-		incfile	Nem_TubeLid			; ArtNem_82C06:
+		incfile	Nem_TubeLid				; ArtNem_82C06:
 		
 		incfile	Nem_WaterSurface2			; ArtNem_82E02:
 		incfile	Nem_Leaves				; ArtNem_82EE8:
@@ -88405,7 +88254,7 @@ BM128_HPZ:
 		incfile	Kos_CPZ
 		incfile	BM128_CPZ
 		
-		incfile	BM16_ARZ			; See warning in File Definitions.asm
+		incfile	BM16_ARZ				; See warning in File Definitions.asm
 		incfile	Kos_ARZ
 		incfile	BM128_ARZ
 
