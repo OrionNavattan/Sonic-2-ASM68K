@@ -4,7 +4,7 @@
 ObjPos_EHZ_1:
 		objpos $0227,$0228,Coconuts,$1E,rem
 		objpos $0320,$0247,Platform1,$01
-		objpos $0330,$01F8,Buzzer,$00,2pdespawn,rem
+		objpos $0330,$01F8,Buzzer,$00,2ploaddynamic,rem
 		objpos $03C0,$0236,Monitor,$06,rem
 		objpos $0427,$01D8,Coconuts,$1E,rem
 		objpos $0538,$027C,Scenery1,$02
@@ -19,7 +19,7 @@ ObjPos_EHZ_1:
 		objpos $0810,$02D0,Spikes,$00,yflip
 		objpos $0830,$02D0,Spikes,$00,yflip
 		objpos $08AC,$0238,Springs,$03
-		objpos $08B0,$01E0,Buzzer,$00,2pdespawn,rem
+		objpos $08B0,$01E0,Buzzer,$00,2ploaddynamic,rem
 		objpos $0900,$0278,Platform1,$02
 		objpos $0A40,$0340,Spikes,$00,yflip
 		objpos $0A70,$0350,Spikes,$00,yflip
@@ -47,9 +47,9 @@ ObjPos_EHZ_1:
 		objpos $0DF0,$00AA,Starpost,$01,rem
 		objpos $0E40,$0374,Monitor,$04,rem
 		objpos $0EF4,$01B8,Springs,$03
-		objpos $0F10,$0300,Buzzer,$00,2pdespawn,rem
+		objpos $0F10,$0300,Buzzer,$00,2ploaddynamic,rem
 		objpos $0FA8,$0194,Platform1,$02
-		objpos $1040,$0318,Buzzer,$00,2pdespawn,rem
+		objpos $1040,$0318,Buzzer,$00,2ploaddynamic,rem
 		objpos $1080,$01D0,PlaneSwitcher,$91
 		objpos $10C0,$0175,Monitor,$07,rem
 		objpos $1110,$0240,PlaneSwitcher,$11
@@ -81,13 +81,13 @@ ObjPos_EHZ_1:
 		objpos $1827,$0258,Coconuts,$1E,rem
 		objpos $1844,$0174,Monitor,$04,rem
 		objpos $1868,$0174,Monitor,$04,rem
-		objpos $1880,$0128,Buzzer,$00,2pdespawn,rem
+		objpos $1880,$0128,Buzzer,$00,2ploaddynamic,rem
 		objpos $18C0,$02A8,Starpost,$02,rem
 		objpos $1948,$02D0,Springs,$12
 		objpos $19B8,$0258,PlaneSwitcher,$02
-		objpos $19E8,$015C,Buzzer,$00,2pdespawn,rem
+		objpos $19E8,$015C,Buzzer,$00,2ploaddynamic,rem
 		objpos $1A80,$0250,PlaneSwitcher,$91
-		objpos $1B00,$01C0,Buzzer,$00,2pdespawn,rem
+		objpos $1B00,$01C0,Buzzer,$00,2ploaddynamic,rem
 		objpos $1B08,$0280,PlaneSwitcher,$12
 		objpos $1C00,$02D0,PlaneSwitcher,$91
 		objpos $1C78,$0210,PlaneSwitcher,$0A
@@ -114,18 +114,18 @@ ObjPos_EHZ_1:
 		objpos $20C8,$03BC,Scenery1,$02
 		objpos $2100,$0190,Platform1,$01
 		objpos $2108,$023C,Scenery1,$02
-		objpos $2140,$01D0,Buzzer,$00,2pdespawn,rem
+		objpos $2140,$01D0,Buzzer,$00,2ploaddynamic,rem
 		objpos $2150,$03B0,Spikes,$00
 		objpos $21C0,$03B0,Spikes,$00
 		objpos $21D7,$0170,Coconuts,$1E,rem
-		objpos $21F0,$01F0,Buzzer,$00,2pdespawn,rem
+		objpos $21F0,$01F0,Buzzer,$00,2ploaddynamic,rem
 		objpos $2280,$016C,Starpost,$03,rem
 		objpos $2280,$01D0,PlaneSwitcher,$91
 		objpos $22C0,$0375,Monitor,$04,rem
 		objpos $2308,$0240,PlaneSwitcher,$11
 		objpos $2310,$01A0,Springs,$32
-		objpos $2390,$0338,Buzzer,$00,2pdespawn,rem
-		objpos $23E0,$0320,Buzzer,$00,2pdespawn,rem
+		objpos $2390,$0338,Buzzer,$00,2ploaddynamic,rem
+		objpos $23E0,$0320,Buzzer,$00,2ploaddynamic,rem
 		objpos $24C0,$0280,Spiral,$00
 		objpos $24F8,$0338,Scenery1,$02
 		objpos $2538,$0390,Masher,$00,rem

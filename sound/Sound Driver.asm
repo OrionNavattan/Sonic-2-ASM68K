@@ -1,18 +1,18 @@
-; Sonic the Hedgehog 2 disassembled Z80 sound driver
+; ===========================================================================
+; Sonic the Hedgehog 2 Z80 sound driver
+; Z80 port of Sonic 1's variant of SMPS 68k Type 1
 
 ; Disassembled by Xenowhirl for AS 2007
 ; Additional disassembly work by RAS Oct 2008
 ; RAS' work merged into SVN by Flamewing
 ; Ported to AXM68K by OrionNavattan October 2022
-; Styling overhauled by OrionNavattan May 2023
+; Labels and styling overhauled by OrionNavattan May 2023
 
 ; This code is compressed in the ROM, but you can edit it here as uncompressed
 ; and it will automatically be assembled and compressed into the correct place
-; during the build process.
-;
-; This Z80 code can use labels and equates defined in the 68k code,
-; and the 68k code can use the labels and equates defined in here.
-; This is fortunate, as they contain references to each other's addresses.
+; during the build process. It can use labels and equates defined in the 68k code,
+; and the 68k code can likewise use the labels and equates defined in here.
+; This is essential, as they contain references to each other's addresses.
 ;
 ; if you want to add significant amounts of extra code to this driver,
 ; try putting your code as far down as possible, after the function zSaxDec_End.

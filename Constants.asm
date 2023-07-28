@@ -14,7 +14,11 @@ countof_ost_dynamic:    equ $70					; dynamic OSTs, used for level objects
 countof_ost:			equ countof_ost_reserved+countof_ost_dynamic ; $80; total OSTs in RAM, excluding level only objects
 sizeof_ost_all:		equ sizeof_ost*countof_ost		; size of regular OSTs
 
-countof_ost_dynamic_2P:	equ $28
+countof_ost_dynamic_2P:		equ $28
+countof_ost_per_2pblock:	equ $C ; number of OSTs in 2P mode blocks
+countof_ost_2p_blocks:		equ 6	; number of 2P mode OST blocks
+sizeof_ost_2p_block:	equ	sizeof_ost*countof_ost_per_2pblock	; size of each 2p mode block
+
 countof_ost_level_only: equ $10					; additional reserved object ram for objects attached to players, run only when in level 
 sizeof_ost_level_only:	equ sizeof_ost*countof_ost_level_only 
                 
@@ -291,6 +295,17 @@ bonus_points_per_ring:		equ 100/10			; points given per ring at the end of a lev
 points_for_life:		equ 50000/10			; points needed for extra life (awarded every 50000 points without cap)
 countof_emeralds:		equ 7				; number of chaos emeralds
 
+; Object position data structure
+		rsreset
+objpos_x_pos:					rs.b 2 ; 0 ; object x-pos
+objpos_respawn_flip_y_pos_hi:	rs.b 1 ; 2 ; object remember state, x and y flip flags, 2P load dynamic flag, and bits 8-11 of y-pos
+	load_dyn_bit: 		equ 4 ; if set, this object is always loaded into a regular OST slot, even in 2P mode
+objpos_y_pos_lo:				rs.b 1 ; 3 ; bits 0-7 of y-pos
+objpos_id:						rs.b 1 ; 4 ; object id
+objpos_subtype:					rs.b 1 ; 5 ; object subtype or subobject data index
+sizeof_objpos:					equ __rs	; size of one objpos entry
+
+respawn_bit:					equ 7 ; bit set in respawn table to indicate this object should remember its state
 
 ; ----------------------------------------------------------------------------
 ; This macro is used to keep Sonic and Tails' primary routine IDs synchronized,

@@ -3,10 +3,12 @@
 ;  =========================================================================
 
 ; originally created by Nemesis in 2004
-; sound driver disassembly by Xenowhirl in 2007
+; sound driver disassembly by Xenowhirl in 2007, with further work by RAS 2008
 
 ; ported to AXM68K/Z80 Macros by Orion Navattan, including documentation
 ; from Sonic Retro AS and Sonic 1 Hivebrain 2022
+
+; Thank you to Hivebrain, Clownacy, and MoDule
 		
 ;  =========================================================================
 
@@ -1832,7 +1834,6 @@ NemBCT_ShortCode_Loop:
 		dbf	d5,NemBCT_ShortCode_Loop		; repeat for required number of entries
 		bra.s	NemBCT_Loop
 
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; WARNING: AddPLC and NewPLC do not check for buffer overruns, and a bug 
 ; in ProcessPLC_Finish leaves the $10th and final slot unsafe to use. Assuming
@@ -1849,7 +1850,7 @@ NemBCT_ShortCode_Loop:
 
 ; usage:
 ;		moveq	#id_PLC_Explode,d0
-;		jsr	AddPLC	; may be optimized to bsr.w if possible
+;		jsr	AddPLC	; may be optimized to absolute short or bsr.w if possible
 ; ---------------------------------------------------------------------------
 ; sub_161E: PLCLoad: LoadPLC:
 AddPLC:	
@@ -1953,11 +1954,12 @@ RunPLC:
     if FixBugs=0
 		; This is done too early. This variable is also used as a flag to indicate
 		; there are PLCs to process, which means that as soon as this
-		; variable is set, PLC processing will occur. If an interrupt
-		; occurs between here and the end of this function, then
-		; the PLC processor will begin despite it not being fully
-		; initialized, causing a crash (as can happen in Sonic 1 at the end of LZ1 & 2). 
-		; S3K fixes this bug by moving this instruction to the end of the function.		
+		; variable is set, PLC processing will occur during VBlank or HBlank. 
+		; If an interrupt occurs between here and the end of this function, then
+		; the PLC processor will begin despite it not being fully initialized, 
+		; causing a crash (as can happen in Sonic 1 at the end of LZ1 & 2). 
+		; This bug is also present in Sonic CD; S3K fixes it by moving this 
+		; instruction to the end of the function.		
 		move.w	d2,(v_nem_tile_count).w			; load tile count
 	endc	
 		bsr.w	NemDec_BuildCodeTable
@@ -2044,10 +2046,11 @@ ProcessPLC_Decompress:
 
 ProcessPLC_Exit:
 		rts	
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to	shift the PLC buffer contents after an entry is processed
 ; ---------------------------------------------------------------------------
+
 ProcessPLC_Finish:
 		lea	(v_plc_buffer).w,a0
 		
@@ -2076,10 +2079,9 @@ ProcessPLC_Finish:
 		; Consequently, only $58 bytes are shifted; the final word
 		; (the VRAM offset of the $10th and final cue) is skipped.
 		; Additionally, that $10th cue is not cleared, with the result that
-		; if it is used, the part that isn't broken will get copied over 
+		; if it is used, the part that isn't broken will get copied over and over
 		; until it fills the entire buffer, causing the PLC processor to get stuck 
 		; in an infinite loop.
-		
 		moveq	#((sizeof_plc_buffer-sizeof_plc)/4)-1,d0 ; $15
 
 	.loop:
@@ -2088,8 +2090,6 @@ ProcessPLC_Finish:
 	endc
 		rts
 
-
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Subroutine to	decompress graphics listed in a pattern load cue in a single
 ; frame
@@ -5202,10 +5202,10 @@ OilSlides:
 		btst	#status_air_bit,ost_primary_status(a1)	; is character in the air?
 		bne.s	.character_in_air			; if so, branch				
 		move.w	ost_y_pos(a1),d0
-		add.w	d0,d0					; multiply y-pos by 2
+		add.w	d0,d0					; multiply y pos by 2
 		andi.w	#$F00,d0				; only high byte
 		move.w	ost_x_pos(a1),d1
-		lsr.w	#7,d1					; multiply x-pos by 128				
+		lsr.w	#7,d1					; multiply x pos by 128				
 		andi.w	#$7F,d1					; only high byte
 		add.w	d1,d0					; combine for position within layout			
 		lea	(v_level_layout).w,a2
@@ -24244,8 +24244,8 @@ loc_12AC8:
 		move.b	#-1,(v_sonic_last_frame_id).w
 		move.b	#-1,(v_tails_last_frame_id).w
 		move.b	#-1,(v_tailstails_last_frame_id).w
-		lea	(v_opl_loaded_object_blocks_p1).w,a1
-		lea	(v_opl_loaded_object_blocks_p2).w,a2
+		lea	(v_opl_loaded_blocks_p1).w,a1
+		lea	(v_opl_loaded_blocks_p2).w,a2
 		moveq	#2,d1
 
 loc_12B0A:				
@@ -24497,8 +24497,8 @@ TitlIntr_Sonic_Index:		index offset(*),,2
 TitlIntr_Sonic_Main:				
 		addq.b	#2,ost_secondary_routine(a0)		; go to TitlIntr_Sonic_FadeInAndPlayMusic next
 		move.b	#id_Frame_IntroSonic_0,ost_frame(a0)	; initial frame of Sonic's animation
-		move.w	#screen_left+144,ost_x_screen(a0)	; set x-pos
-		move.w	#screen_top+96,ost_y_screen(a0)		; set y-pos
+		move.w	#screen_left+144,ost_x_screen(a0)	; set x pos
+		move.w	#screen_top+96,ost_y_screen(a0)		; set y pos
 		
 		lea	(v_title_flashing_star).w,a1		; load flashing star object
 		move.b	#id_TitleIntro,ost_id(a1)
@@ -30035,28 +30035,31 @@ loc_17358:
 		align 4
 	endc		
 
-; ===========================================================================
 
-; loc_173BC:
+; ---------------------------------------------------------------------------
+; Psuedoobject that runs the special bumpers in Casino Night Zone
+; These are the bumpers whose graphics are part of the level art (that is,
+; everything other than the round and hexagonal ones).
+; ---------------------------------------------------------------------------
 SpecialCNZBumpers:					
 		moveq	#0,d0
 		move.b	(v_cnz_bumper_routine).w,d0
-		move.w	off_173CA(pc,d0.w),d0
-		jmp	off_173CA(pc,d0.w)
+		move.w	SpecBump_Index(pc,d0.w),d0
+		jmp	SpecBump_Index(pc,d0.w)
 ; ===========================================================================
-off_173CA:	index offset(*),,2
-		ptr loc_173CE					; 0 
-		ptr loc_17422					; 2
+SpecBump_Index:	index offset(*),,2
+		ptr SpecBump_Init					; 0 
+		ptr SpecBump_Main					; 2
 ; ===========================================================================
 
-loc_173CE:				
-		addq.b	#2,(v_cnz_bumper_routine).w
-		lea	(byte_1781A).l,a1
+SpecBump_Init:				
+		addq.b	#2,(v_cnz_bumper_routine).w	; go to SpecBump_Main next
+		lea	(SpecBumps_CNZ1).l,a1			; special bumper layout for act 1
 		tst.b	(v_act).w
-		beq.s	loc_173E4
-		lea	(byte_1795E).l,a1
+		beq.s	.is_act1					; branch if it is act 1
+		lea	(SpecBumps_CNZ2).l,a1			; special bumper layout for act 2
 
-loc_173E4:				
+	.is_act1:				
 		move.w	(v_camera_x_pos).w,d4
 		subq.w	#8,d4
 		bhi.s	loc_173F4
@@ -30088,7 +30091,7 @@ loc_1740C:
 		rts	
 ; ===========================================================================
 
-loc_17422:				
+SpecBump_Main:				
 		movea.l	(v_cnz_visible_bumpers_start).w,a1
 		move.w	(v_camera_x_pos).w,d4
 		subq.w	#8,d4
@@ -30567,7 +30570,7 @@ loc_177FA:
 		move.w	#$D9,d0	
 		jmp	(PlaySound).l
 ; ===========================================================================
-byte_1781A:	
+SpecBumps_CNZ1:	
     if FixBugs
 		; Sonic Team forgot to start this file with a boundary marker,
 		; meaning the game could potentially read past the start of the file
@@ -30576,7 +30579,7 @@ byte_1781A:
    	endc	
 		incbin	"level/objects/CNZ 1 Bumpers.bin"
 
-byte_1795E:		
+SpecBumps_CNZ2:		
 		incbin	"level/objects/CNZ 2 Bumpers.bin"
 ; ===========================================================================
 
@@ -30585,23 +30588,10 @@ byte_1795E:
 	endc
 
 
-
-; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Objects Manager
-; Subroutine that keeps track of any objects that need to remember
-; their state, such as monitors or enemies.
-;
-; input variables:
-;  -none-
-;
-; writes:
-;  d0, d1
-;  d2 = respawn index of object to load
-;  d6 = camera position
-;
-;  a0 = address in object placement list
-;  a2 = respawn table
+; Subroutine to	load a level's objects
+
+;	uses d0.l, d1.w, d2.l, d6.l, a0, a1, a2
 ; ---------------------------------------------------------------------------
 
 ; loc_17AA4: ObjectsManager:
@@ -30614,34 +30604,34 @@ ObjPosLoad:
 ; ObjectsManager_States:
 OPL_Index:	index offset(*),,2
 		ptr OPL_Init					; 0 
-		ptr loc_17B84					; 2
-		ptr loc_17CCC					; 4
+		ptr OPL_Main					; 2
+		ptr OPL_2P_Main					; 4
 ; ===========================================================================
 ; loc_17AB8: ObjectsManager_Init:
 OPL_Init:				
-		addq.b	#2,(v_opl_routine).w
-		move.w	(v_zone).w,d0
+		addq.b	#2,(v_opl_routine).w			; goto OPL_Main next
+		move.w	(v_zone).w,d0				; get zone/act numbers
 		ror.b	#1,d0
-		lsr.w	#6,d0
+		lsr.w	#6,d0					; combine zone/act into single number
 		lea	(ObjPos_Index).l,a0
-		movea.l	a0,a1
-		adda.w	(a0,d0.w),a0
+		movea.l	a0,a1					; copy index pointer to a1
+		adda.w	(a0,d0.w),a0			; jump to objpos list for specified zone/act	
 		tst.w	(f_two_player).w
-		beq.s	loc_17AF0
+		beq.s	.not2P					; branch if not 2p mode
 		cmpi.b	#id_CNZ,(v_zone).w
-		bne.s	loc_17AF0
-		lea	(ObjPos_CNZ_1_2P).l,a0
-		tst.b	(v_act).w
-		beq.s	loc_17AF0
-		lea	(ObjPos_CNZ_2_2P).l,a0
+		bne.s	.not2P					; branch if not CNZ
+		lea	(ObjPos_CNZ_1_2P).l,a0		; modified layout for CNZ 1 in 2P mode
+		tst.b	(v_act).w				
+		beq.s	.not2P					; branch if act 2
+		lea	(ObjPos_CNZ_2_2P).l,a0		; modified layout for CNZ 2 in 2P mode
 
-loc_17AF0:				
-		move.l	a0,(v_opl_ptr_right).w
+.not2P:				
+		move.l	a0,(v_opl_ptr_right).w		; copy objpos list address
 		move.l	a0,(v_opl_ptr_left).w
 		move.l	a0,(v_opl_ptr_right_p2).w
 		move.l	a0,(v_opl_ptr_left_p2).w
 		lea	(v_respawn_list).w,a2
-		move.w	#$101,(a2)+
+		move.w	#$101,(a2)+			; start respawn counters at 1
 	
 	if FixBugs
 		move.w	#(sizeof_v_respawn_data/4)-1,d0	
@@ -30651,9 +30641,9 @@ loc_17AF0:
 		move.w	#(sizeof_v_respawn_data/2)-1,d0
 	endc
 	
-	loc_17B0C:				
+	.clear_respawn_list:				
 		clr.l	(a2)+
-		dbf	d0,loc_17B0C
+		dbf	d0,.clear_respawn_list			; clear object respawn list
 		
     if FixBugs
 		; Clear the last word, since the above loop only does longwords.
@@ -30665,594 +30655,689 @@ loc_17AF0:
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d2
 		move.w	(v_camera_x_pos).w,d6
-		subi.w	#$80,d6	
-		bcc.s	loc_17B24
-		moveq	#0,d6
+		subi.w	#128,d6					; d6 = 128px to left of screen
+		bcc.s	.use_screen_x				; branch if camera is > 128px from left boundary
+		moveq	#0,d6					; assume 0 if camera is close to left boundary
 
-loc_17B24:				
-		andi.w	#-$80,d6
-		movea.l	(v_opl_ptr_right).w,a0
+	.use_screen_x:				
+		andi.w	#-$80,d6				; round down to nearest $80
+		movea.l	(v_opl_ptr_right).w,a0			; get objpos data pointer
 
-loc_17B2C:				
-		cmp.w	(a0),d6
-		bls.s	loc_17B3E
-		tst.b	2(a0)
-		bpl.s	loc_17B3A
-		move.b	(a2),d2
-		addq.b	#1,(a2)
+.loop_find_right_init:				
+		cmp.w	objpos_x_pos(a0),d6				; (a0) = x pos of object; d6 = edge of spawn window
+		bls.s	.found_right				; branch if object is right of edge (1st object outside spawn window)
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; 2(a0) = object id and remember state flag
+		bpl.s	.no_respawn				; branch if no remember flag found
+		move.b	respawn_count_1(a2),d2					; d2 = index to respawn table entry
+		addq.b	#1,respawn_count_1(a2)					; increment first respawn index
 
-loc_17B3A:				
-		addq.w	#6,a0
-		bra.s	loc_17B2C
+	.no_respawn:				
+		addq.w	#sizeof_objpos,a0		; go to next object in objpos list
+		bra.s	.loop_find_right_init			; loop until object is found within window
 ; ===========================================================================
 
-loc_17B3E:				
-		move.l	a0,(v_opl_ptr_right).w
-		move.l	a0,(v_opl_ptr_right_p2).w
-		movea.l	(v_opl_ptr_left).w,a0
-		subi.w	#$80,d6	
-		bcs.s	loc_17B62
+.found_right:				
+		move.l	a0,(v_opl_ptr_right).w			; save pointer for objpos, 128px left of screen
+		move.l	a0,(v_opl_ptr_right_p2).w			; same for player 2
+		movea.l	(v_opl_ptr_left).w,a0			; get first objpos in list again
+		subi.w	#128,d6					; d6 = 256px to left of screen
+		bcs.s	.found_left
 
-loc_17B50:				
-		cmp.w	(a0),d6
-		bls.s	loc_17B62
-		tst.b	2(a0)
-		bpl.s	loc_17B5E
-		addq.b	#1,1(a2)
+.loop_find_left_init:				
+		cmp.w	objpos_x_pos(a0),d6					; (a0) = x pos of object; d6 = edge of spawn window
+		bls.s	.found_left				; branch if object is right of edge (1st object inside spawn window)
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn2				; branch if not
+		addq.b	#1,respawn_count_2(a2)				; increment second respawn index
 
-loc_17B5E:				
-		addq.w	#6,a0
-		bra.s	loc_17B50
+	.no_respawn2:				
+		addq.w	#sizeof_objpos,a0		; go to next object in objpos list
+		bra.s	.loop_find_left_init			; loop until object is found within window
 ; ===========================================================================
 
-loc_17B62:				
-		move.l	a0,(v_opl_ptr_left).w
-		move.l	a0,(v_opl_ptr_left_p2).w
-		move.w	#-1,(v_opl_screen_x_pos).w
-		move.w	#-1,(v_opl_screen_x_pos_p2).w
+.found_left:				
+		move.l	a0,(v_opl_ptr_left).w			; save pointer for objpos, 256px left of screen
+		move.l	a0,(v_opl_ptr_left_p2).w		; same for player 2
+		move.w	#-1,(v_opl_screen_x_pos).w		; start screen at -1 so OPL_Main thinks it's moving right
+		move.w	#-1,(v_opl_screen_x_pos_p2).w	; same for player 2
 		tst.w	(f_two_player).w
-		beq.s	loc_17B84
-		addq.b	#2,(v_opl_routine).w
-		bra.w	loc_17C50
+		beq.s	OPL_Main						; branch if not 2P mode
+		addq.b	#2,(v_opl_routine).w			; if we're in 2P mode, go to OPL_2P_Main next
+		bra.w	OPL_2P_Init						; continue to 2P mode-specific init routine
 ; ===========================================================================
 
-loc_17B84:
-		move.w	(v_camera_x_pos).w,d1
-		subi.w	#$80,d1	
-		andi.w	#-$80,d1
-		move.w	d1,(v_camera_x_pos_coarse).w
+OPL_Main:
+		move.w	(v_camera_x_pos).w,d1	; get camera x pos
+		subi.w	#$80,d1					; minus $80
+		andi.w	#-$80,d1				; round down to nearest $80
+		move.w	d1,(v_camera_x_pos_coarse).w	; used for despawn checks (this was calculated at every check in Sonic 1)
+		
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d2
 		move.w	(v_camera_x_pos).w,d6
-		andi.w	#-$80,d6
-		cmp.w	(v_opl_screen_x_pos).w,d6
-		beq.w	locret_17C4E
-		bge.s	loc_17C0A
-		move.w	d6,(v_opl_screen_x_pos).w
-		movea.l	(v_opl_ptr_left).w,a0
-		subi.w	#$80,d6	
-		bcs.s	loc_17BE6
+		andi.w	#-$80,d6				; d6 = camera x pos rounded down to nearest $80
+		cmp.w	(v_opl_screen_x_pos).w,d6		; compare to previous screen position
+		beq.w	OPL_NoMove				; branch if screen hasn't moved
+		bge.s	OPL_MovedRight; branch if screen is right of previous position (or if level just started)
+		
+;OPL_MovedLeft:		
+		move.w	d6,(v_opl_screen_x_pos).w		; update screen position
+		movea.l	(v_opl_ptr_left).w,a0			; jump to objpos on left side of window
+		subi.w	#$80,d6					; d6 = 128px to left of screen
+		bcs.s	.found_left				; branch if camera is close to left boundary
 
-loc_17BBA:				
-		cmp.w	-6(a0),d6
-		bge.s	loc_17BE6
-		subq.w	#6,a0
-		tst.b	2(a0)
-		bpl.s	loc_17BD0
-		subq.b	#1,1(a2)
-		move.b	1(a2),d2
+.loop_find_left:				
+		cmp.w	-sizeof_objpos+objpos_x_pos(a0),d6				; read objpos backwards
+		bge.s	.found_left							; branch if object is outside spawn window
+		subq.w	#sizeof_objpos,a0					; update pointer
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn							; branch if not
+		subq.b	#1,respawn_count_2(a2)				; decrement second respawn index
+		move.b	respawn_count_2(a2),d2				; d2 = index to respawn table entry
 
-loc_17BD0:				
-		bsr.w	loc_17F36
-		bne.s	loc_17BDA
-		subq.w	#6,a0
-		bra.s	loc_17BBA
+	.no_respawn:				
+		bsr.w	OPL_SpawnObj				; check respawn flag and spawn object
+		bne.s	.fail					; branch if spawn failed (no free OST slots left)
+		subq.w	#sizeof_objpos,a0		; go to previous object in objpos list
+		bra.s	.loop_find_left				; loop until object is found outside window
 ; ===========================================================================
 
-loc_17BDA:				
-		tst.b	2(a0)
-		bpl.s	loc_17BE4
-		addq.b	#1,1(a2)
+.fail:				
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn2							; branch if not
+		addq.b	#1,respawn_count_2(a2)				; undo the decrement of the respawn counter
 
-loc_17BE4:				
-		addq.w	#6,a0
+	.no_respawn2:				
+		addq.w	#sizeof_objpos,a0
 
-loc_17BE6:				
-		move.l	a0,(v_opl_ptr_left).w
-		movea.l	(v_opl_ptr_right).w,a0
-		addi.w	#$300,d6
+.found_left:				
+		move.l	a0,(v_opl_ptr_left).w			; save pointer for objpos
+		movea.l	(v_opl_ptr_right).w,a0			; jump to previous objpos on right side of window
+		addi.w	#128+screen_width+320,d6		; d6 = 320px to right of screen
 
-loc_17BF2:				
-		cmp.w	-6(a0),d6
-		bgt.s	loc_17C04
-		tst.b	-4(a0)
-		bpl.s	loc_17C00
-		subq.b	#1,(a2)
+.loop_find_right:				
+		cmp.w	-sizeof_objpos+objpos_x_pos(a0),d6			; read objpos backwards
+		bgt.s	.found_right					; branch if object is within spawn window
+		tst.b	-sizeof_objpos+objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn3					; branch if not
+		subq.b	#1,respawn_count_1(a2)			; decrement first respawn index
 
-loc_17C00:				
-		subq.w	#6,a0
-		bra.s	loc_17BF2
+.no_respawn3:				
+		subq.w	#sizeof_objpos,a0		; go to previous object in objpos list
+		bra.s	.loop_find_right		; loop until object is found within window
 ; ===========================================================================
 
-loc_17C04:				
-		move.l	a0,(v_opl_ptr_right).w
+.found_right:				
+		move.l	a0,(v_opl_ptr_right).w			; save pointer for objpos
 		rts	
 ; ===========================================================================
 
-loc_17C0A:				
-		move.w	d6,(v_opl_screen_x_pos).w
-		movea.l	(v_opl_ptr_right).w,a0
-		addi.w	#$280,d6
+OPL_MovedRight:				
+		move.w	d6,(v_opl_screen_x_pos).w		; update screen position
+		movea.l	(v_opl_ptr_right).w,a0			; jump to objpos on right side of window
+		addi.w	#screen_width+320,d6			; d6 = 320px to right of screen
 
-loc_17C16:				
-		cmp.w	(a0),d6
-		bls.s	loc_17C2A
-		tst.b	2(a0)
-		bpl.s	loc_17C24
-		move.b	(a2),d2
-		addq.b	#1,(a2)
+.loop_find_right:				
+		cmp.w	objpos_x_pos(a0),d6					; (a0) = x pos of object; d6 = right edge of spawn window
+		bls.s	.found_right						; branch if object is outside spawn window
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn							; branch if not
+		move.b	respawn_count_1(a2),d2						; d2 = index to respawn table entry
+		addq.b	#1,respawn_count_1(a2)						; increment respawn list counter
 
-loc_17C24:				
-		bsr.w	loc_17F36
-		beq.s	loc_17C16
+	.no_respawn:				
+		bsr.w	OPL_SpawnObj				; check respawn flag and spawn object
+		beq.s	.loop_find_right			; branch if it spawned successfully or was skipped because it was broken (looping until object is found outside window)
 
-loc_17C2A:				
-		move.l	a0,(v_opl_ptr_right).w
-		movea.l	(v_opl_ptr_left).w,a0
-		subi.w	#$300,d6
-		bcs.s	loc_17C4A
+	.found_right:				
+		move.l	a0,(v_opl_ptr_right).w			; save pointer for objpos
+		movea.l	(v_opl_ptr_left).w,a0			; jump to objpos on left side of window
+		subi.w	#128+screen_width+320,d6
+		bcs.s	.found_left						; branch if camera is close to left boundary
 
-loc_17C38:				
-		cmp.w	(a0),d6
-		bls.s	loc_17C4A
-		tst.b	2(a0)
-		bpl.s	loc_17C46
-		addq.b	#1,1(a2)
+.loop_find_left:				
+		cmp.w	objpos_x_pos(a0),d6					; (a0) = x pos of object; d6 = left edge of spawn window
+		bls.s	.found_left							; branch if object is within spawn window
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn2						; branch if not
+		addq.b	#1,respawn_count_2(a2)				; increment first respawn index
 
-loc_17C46:				
-		addq.w	#6,a0
-		bra.s	loc_17C38
+.no_respawn2:				
+		addq.w	#sizeof_objpos,a0			; go to next object in objpos list
+		bra.s	.loop_find_left				; loop until object is found within window
 ; ===========================================================================
 
-loc_17C4A:				
-		move.l	a0,(v_opl_ptr_left).w
+.found_left:				
+		move.l	a0,(v_opl_ptr_left).w		; save pointer for objpos
 
-locret_17C4E:				
+OPL_NoMove:				
 		rts	
-; ===========================================================================
 
-loc_17C50:				
-		moveq	#-1,d0					; Reset all of the 2P object manager variables to $FF.
-		move.l	d0,(v_opl_ram_block_indices).w
-		move.l	d0,(v_opl_ram_block_indices+4).w
-		move.l	d0,(v_opl_ram_block_indices+8).w
-		move.l	d0,(v_opl_screen_x_pos_p2).w
+; ---------------------------------------------------------------------------
+; In two player mode, objects are managed by grouping them into blocks that
+; represent 256 pixel wide vertical strips (that is, two level chunks), three
+; blocks per player (the one the player is in, one ahead, and one behind), 
+; for a total of 6 blocks, with up to 12 objects per block. The x pos checks 
+; for spawning objects are rounded to multiples of 256, with objects being 
+; spawned and deleted en mass when a new block is loaded or unloaded.
+
+; Note that this only applies to objects within the object layouts; objects 
+; loaded by other objects, e.g., projectiles, will still use ordinary
+; dynamic OST slots. Additionally, objects can exempt themselves from this 
+; system by having bit 4 of the render flags/respawn flag/y pos high byte
+; of their objpos entry set, in which case they will be loaded in a dynamic
+; OST slot instead. The only objects that do this are the Buzzer and Flasher 
+; badniks, presumably because they can potentially wander beyond the block 
+; boundaries.
+
+; (Thank you to MoDule for the excellent explanation.)
+; ---------------------------------------------------------------------------
+
+OPL_2P_Init:				
+		moveq	#-1,d0					; fill all of the 2P object manager variables with 1s
+
+		; Generate an unrolled loop of instructions which fill
+		; the 2P object manager variables with 1s.
+		c: = 0
+  		rept sizeof_object_manager_2p/4
+		move.l	d0,(v_opl_block_indices+c).w
+		c: = c+4
+		endr
+
+		if (sizeof_object_manager_2p)&2
+		move.w	d0,(v_opl_block_indices+c).w
+		c: = c+2
+    	endc
+
+		if (sizeof_object_manager_2p)&1
+		move.b	d0,(v_opl_block_indices+c).w
+   		endc		
+	
 		move.w	#0,(v_opl_screen_x_pos).w
-		move.w	#0,(v_opl_screen_x_pos_p2).w
+		move.w	#0,(v_opl_screen_x_pos_p2).w	
 		lea	(v_respawn_list).w,a2
-		move.w	(a2),(v_respawn_list_p2).w
+		move.w	(a2),(v_respawn_list_p2).w		; start respawn counters at 1
 		moveq	#0,d2
-		lea	(v_respawn_list).w,a5
+		
+		; Initialize Player 1's blocks.
+		lea	(v_respawn_list).w,a5			; load player 1's data
+		lea	(v_opl_ptr_right).w,a4			
+		lea	(v_opl_loaded_blocks_p1).w,a1		
+		lea	(v_opl_loaded_blocks_p2).w,a6
+		moveq	#-2,d6						; do block 0
+		bsr.w	OPL_2P_MovedRight
+		lea	(v_opl_loaded_blocks_p1).w,a1
+		moveq	#-1,d6						; do block 1
+		bsr.w	OPL_2P_MovedRight
+		lea	(v_opl_loaded_blocks_p1).w,a1
+		moveq	#0,d6						; do block 2
+		bsr.w	OPL_2P_MovedRight
+
+		; Initialize Player 2's blocks.
+		lea	(v_respawn_list_p2).w,a5		; load player 2's data
+		lea	(v_opl_ptr_right_p2).w,a4
+		lea	(v_opl_loaded_blocks_p2).w,a1
+		lea	(v_opl_loaded_blocks_p1).w,a6
+		moveq	#-2,d6						; do block 0
+		bsr.w	OPL_2P_MovedRight
+		lea	(v_opl_loaded_blocks_p2).w,a1
+		moveq	#-1,d6						; do block 1
+		bsr.w	OPL_2P_MovedRight
+		lea	(v_opl_loaded_blocks_p2).w,a1
+		moveq	#0,d6						; do block 2
+		bsr.w	OPL_2P_MovedRight
+
+OPL_2P_Main:				
+		move.w	(v_camera_x_pos).w,d1		; get player 1's camera x pos
+		andi.w	#-$100,d1					; round down to nearest $100
+		move.w	d1,(v_camera_x_pos_coarse).w	; used for player 1's despawn checks 	
+		move.w	(v_camera_x_pos_p2).w,d1	; get player 1's camera x pos
+		andi.w	#-$100,d1					; round down to nearest $100
+		move.w	d1,(v_camera_x_pos_coarse_p2).w	; used for player 2's despawn checks 	
+		
+	;.doplayer1:	
+		move.b	(v_camera_x_pos).w,d6		; get high byte of player 1's camera x pos	
+		andi.w	#$FF,d6						; d6 = block id and x range
+		move.w	(v_opl_screen_x_pos).w,d0	; back up current x range (used for checking left or right later)
+		cmp.w	(v_opl_screen_x_pos).w,d6	; compare to previous x range
+		beq.s	.doplayer2					; branch if x range hasn't changed
+		move.w	d6,(v_opl_screen_x_pos).w	; save new x range
+		lea	(v_respawn_list).w,a5			; load player 1's data
 		lea	(v_opl_ptr_right).w,a4
-		lea	(v_opl_loaded_object_blocks_p1).w,a1
-		lea	(v_opl_loaded_object_blocks_p2).w,a6
-		moveq	#-2,d6
-		bsr.w	loc_17DE4
-		lea	(v_opl_loaded_object_blocks_p1).w,a1
-		moveq	#-1,d6
-		bsr.w	loc_17DE4
-		lea	(v_opl_loaded_object_blocks_p1).w,a1
-		moveq	#0,d6
-		bsr.w	loc_17DE4
+		lea	(v_opl_loaded_blocks_p1).w,a1
+		lea	(v_opl_loaded_blocks_p2).w,a6
+		bsr.s	OPL_2P_Run					; run OPL for player 1
+
+	.doplayer2:				
+		move.b	(v_camera_x_pos_p2).w,d6		; get high byte of player 1's camera x pos
+		andi.w	#$FF,d6							; d6 = block id and x range
+		move.w	(v_opl_screen_x_pos_p2).w,d0	; back up current x range (used for checking left or right later)
+		cmp.w	(v_opl_screen_x_pos_p2).w,d6		; compare to previous x range	
+		beq.s	.done							; branch if x range hasn't changed
+		move.w	d6,(v_opl_screen_x_pos_p2).w	; save new x range
 		lea	(v_respawn_list_p2).w,a5
 		lea	(v_opl_ptr_right_p2).w,a4
-		lea	(v_opl_loaded_object_blocks_p2).w,a1
-		lea	(v_opl_loaded_object_blocks_p1).w,a6
-		moveq	#-2,d6
-		bsr.w	loc_17DE4
-		lea	(v_opl_loaded_object_blocks_p2).w,a1
-		moveq	#-1,d6
-		bsr.w	loc_17DE4
-		lea	(v_opl_loaded_object_blocks_p2).w,a1
-		moveq	#0,d6
-		bsr.w	loc_17DE4
+		lea	(v_opl_loaded_blocks_p2).w,a1
+		lea	(v_opl_loaded_blocks_p1).w,a6
+		bsr.s	OPL_2P_Run					; run OPL for player 2
 
-loc_17CCC:				
-		move.w	(v_camera_x_pos).w,d1
-		andi.w	#-$100,d1
-		move.w	d1,(v_camera_x_pos_coarse).w
-		move.w	(v_camera_x_pos_p2).w,d1
-		andi.w	#-$100,d1
-		move.w	d1,(v_camera_x_pos_coarse_p2).w
-		move.b	(v_camera_x_pos).w,d6
-		andi.w	#$FF,d6
-		move.w	(v_opl_screen_x_pos).w,d0
-		cmp.w	(v_opl_screen_x_pos).w,d6
-		beq.s	loc_17D0C
-		move.w	d6,(v_opl_screen_x_pos).w
-		lea	(v_respawn_list).w,a5
-		lea	(v_opl_ptr_right).w,a4
-		lea	(v_opl_loaded_object_blocks_p1).w,a1
-		lea	(v_opl_loaded_object_blocks_p2).w,a6
-		bsr.s	loc_17D36
-
-loc_17D0C:				
-		move.b	(v_camera_x_pos_p2).w,d6
-		andi.w	#$FF,d6
-		move.w	(v_opl_screen_x_pos_p2).w,d0
-		cmp.w	(v_opl_screen_x_pos_p2).w,d6
-		beq.s	locret_17D34
-		move.w	d6,(v_opl_screen_x_pos_p2).w
-		lea	(v_respawn_list_p2).w,a5
-		lea	(v_opl_ptr_right_p2).w,a4
-		lea	(v_opl_loaded_object_blocks_p2).w,a1
-		lea	(v_opl_loaded_object_blocks_p1).w,a6
-		bsr.s	loc_17D36
-
-locret_17D34:				
+	.done:				
 		rts	
 ; ===========================================================================
 
-loc_17D36:				
+OPL_2P_Run:				
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d2
-		cmp.w	d0,d6
-		beq.w	locret_17C4E
-		bge.w	loc_17DE4
-		move.b	2(a1),d2
-		move.b	1(a1),2(a1)
-		move.b	(a1),1(a1)
-		move.b	d6,(a1)
-		cmp.b	(a6),d2
-		beq.s	loc_17D6C
-		cmp.b	1(a6),d2
-		beq.s	loc_17D6C
-		cmp.b	2(a6),d2
-		beq.s	loc_17D6C
-		bsr.w	loc_17EC6
-		bra.s	loc_17D70
+		cmp.w	d0,d6			
+		beq.w	OPL_NoMove			; branch if screen hasn't moved (will never be taken as this was already checked for)
+		bge.w	OPL_2P_MovedRight	; branch if screen is right of previous position 
+
+;OPL_2P_MovedLeft:
+		; Shift the object block indices to the right, loading the new one at the left,
+		; and unloading the rightmost one if it's not in use.	
+		move.b	opl_2p_block3(a1),d2; d2 = object block to be unloaded
+		move.b	opl_2p_block2(a1),opl_2p_block3(a1)	; shift blocks to the right
+		move.b	opl_2p_block1(a1),opl_2p_block2(a1)
+		move.b	d6,(a1)				; load new block at the left
+		
+		cmp.b	opl_2p_block1(a6),d2		; does other player have the to-be-unloaded block loaded?
+		beq.s	.skip_unload				; branch if so (we can't unload it)
+		cmp.b	opl_2p_block2(a6),d2		; (check all three of their blocks)
+		beq.s	.skip_unload
+		cmp.b	opl_2p_block3(a6),d2
+		beq.s	.skip_unload
+		
+		bsr.w	OPL_2P_UnloadBlock		; unload block if it's not in use by other player
+		bra.s	.got_free_block
 ; ===========================================================================
 
-loc_17D6C:				
-		bsr.w	loc_17E8A
+.skip_unload:				
+		bsr.w	OPL_2P_FindFreeBlock	; find free OST block
 
-loc_17D70:				
-		bsr.w	loc_17E66
-		bne.s	loc_17D94
-		movea.l	4(a4),a0
+.got_free_block:				
+		bsr.w	OPL_2P_CheckBlockLoad	; check if the new block is already loaded
+		bne.s	.loadblock				; branch if it's not
 
-loc_17D7A:				
-		cmp.b	-6(a0),d6
-		bne.s	loc_17D8E
-		tst.b	-4(a0)
-		bpl.s	loc_17D8A
-		subq.b	#1,1(a5)
+;.already_loaded:
+		movea.l	v_opl_ptr_left-v_opl_ptr_right(a4),a0	; jump to objpos on left side of window		
 
-loc_17D8A:				
-		subq.w	#6,a0
-		bra.s	loc_17D7A
+.loop_find_left:				
+		cmp.b	-sizeof_objpos+objpos_x_pos(a0),d6			; read objpos backward; doing this as a byte operation effectively rounds the x pos to next lowest 256
+		bne.s	.found_left									; branch if object is outside current x range
+		tst.b	-sizeof_objpos+objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn							; branch if not
+		subq.b	#1,respawn_count_2(a5)				; decrement second respawn index
+
+.no_respawn:				
+		subq.w	#sizeof_objpos,a0			; go to previous object in objpos list
+		bra.s	.loop_find_left				; loop until object is found outside window
 ; ===========================================================================
 
-loc_17D8E:				
-		move.l	a0,4(a4)
-		bra.s	loc_17DCA
+.found_left:				
+		move.l	a0,v_opl_ptr_left-v_opl_ptr_right(a4)			; save pointer for objpos
+		bra.s	.unload_right
 ; ===========================================================================
 
-loc_17D94:				
-		movea.l	4(a4),a0
-		move.b	d6,(a1)
+.loadblock:				
+		movea.l	v_opl_ptr_left-v_opl_ptr_right(a4),a0	; jump to objpos on left side of window
+		move.b	d6,(a1)									; mark this block as loaded
 
-loc_17D9A:				
-		cmp.b	-6(a0),d6
-		bne.s	loc_17DC6
-		subq.w	#6,a0
-		tst.b	2(a0)
-		bpl.s	loc_17DB0
-		subq.b	#1,1(a5)
-		move.b	1(a5),d2
+.loop_find_left2:				
+		cmp.b	-sizeof_objpos+objpos_x_pos(a0),d6			; read objpos backwards; doing this as a byte operation effectively rounds the x pos to next lowest 256
+		bne.s	.found_left2								; branch if object is outside current x range
+		subq.w	#sizeof_objpos,a0					; previous object in objpos list
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn2						; branch if not
+		subq.b	#1,respawn_count_2(a5)			; decrement respawn index
+		move.b	respawn_count_2(a5),d2			; d2 = respawn state
 
-loc_17DB0:				
-		bsr.w	loc_17F80
-		bne.s	loc_17DBA
-		subq.w	#6,a0
-		bra.s	loc_17D9A
+.no_respawn2:				
+		bsr.w	OPL_2P_SpawnObj				; check respawn flag and spawn object
+		bne.s	.fail						; branch if spawn failed (no free OST slots left)
+		subq.w	#sizeof_objpos,a0			; go to previous object in objpos list
+		bra.s	.loop_find_left2			; loop until object is found outside x range
 ; ===========================================================================
 
-loc_17DBA:				
-		tst.b	2(a0)
-		bpl.s	loc_17DC4
-		addq.b	#1,1(a5)
+.fail:				
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn3						; branch if not
+		addq.b	#1,respawn_count_2(a5)				; undo last decrement of respawn index
 
-loc_17DC4:				
-		addq.w	#6,a0
+	.no_respawn3:				
+		addq.w	#sizeof_objpos,a0					; undo last decrement of objpos pointer
 
-loc_17DC6:				
-		move.l	a0,4(a4)
+	.found_left2:				
+		move.l	a0,v_opl_ptr_left-v_opl_ptr_right(a4)	; save new left pointer
 
-loc_17DCA:				
-		movea.l	(a4),a0
-		addq.w	#3,d6
+.unload_right:				
+		movea.l	(a4),a0			; get previous right pointer
+		addq.w	#3,d6			; forward to the block that was just unloaded
 
-loc_17DCE:				
-		cmp.b	-6(a0),d6
-		bne.s	loc_17DE0
-		tst.b	-4(a0)
-		bpl.s	loc_17DDC
-		subq.b	#1,(a5)
+	.loop_unload_right:				
+		cmp.b	-sizeof_objpos+objpos_x_pos(a0),d6	; read objpos backwards; doing this as a byte operation effectively rounds the x pos to next lowest 256		
+		bne.s	.found_right							; branch if object is outside current x range (and within current spawn window)
+		tst.b	-sizeof_objpos+objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn4							; branch if not
+		subq.b	#1,respawn_count_1(a5)				; decrement respawn index
 
-loc_17DDC:				
-		subq.w	#6,a0
-		bra.s	loc_17DCE
+	.no_respawn4:				
+		subq.w	#sizeof_objpos,a0					; go to previous object in objpos list
+		bra.s	.loop_unload_right; loop until object is found outside x range (and within current spawn window)
 ; ===========================================================================
 
-loc_17DE0:				
-		move.l	a0,(a4)
+.found_right:				
+		move.l	a0,(a4)		; save new right pointer
 		rts	
 ; ===========================================================================
 
-loc_17DE4:				
-		addq.w	#2,d6
-		move.b	(a1),d2
-		move.b	1(a1),(a1)
-		move.b	2(a1),1(a1)
-		move.b	d6,2(a1)
-		cmp.b	(a6),d2
-		beq.s	loc_17E0C
-		cmp.b	1(a6),d2
-		beq.s	loc_17E0C
-		cmp.b	2(a6),d2
-		beq.s	loc_17E0C
-		bsr.w	loc_17EC6
-		bra.s	loc_17E10
+OPL_2P_MovedRight:				
+		addq.w	#2,d6				; d6 = new block to load
+		
+		; Shift the object block indices to the left, loading the new one at the right,
+		; and unloading the leftmost one if it's not in use.
+		move.b	opl_2p_block1(a1),d2	; d2 = object block to be unloaded
+		move.b	opl_2p_block2(a1),opl_2p_block1(a1)	; shift blocks to the left
+		move.b	opl_2p_block3(a1),opl_2p_block2(a1)
+		move.b	d6,opl_2p_block3(a1)				; load new block at right
+		
+		cmp.b	opl_2p_block1(a6),d2		; does other player have the to-be-unloaded block loaded?
+		beq.s	.skip_unload				; branch if so (we can't unload it)
+		cmp.b	opl_2p_block2(a6),d2		; (check all three of their blocks)
+		beq.s	.skip_unload
+		cmp.b	opl_2p_block3(a6),d2
+		beq.s	.skip_unload
+		
+		bsr.w	OPL_2P_UnloadBlock		; unload block if it's not in use by other player
+		bra.s	.got_free_block
 ; ===========================================================================
 
-loc_17E0C:				
-		bsr.w	loc_17E8A
+.skip_unload:				
+		bsr.w	OPL_2P_FindFreeBlock	; find free OST block
 
-loc_17E10:				
-		bsr.w	loc_17E66
-		bne.s	loc_17E2C
-		movea.l	(a4),a0
+.got_free_block:				
+		bsr.w	OPL_2P_CheckBlockLoad	; check if the new block is already loaded
+		bne.s	.loadblock				; branch if it's not
+		
+;.already_loaded:	
+		; If already loaded, update the pointer and respawn index, but don't load anything.
+		movea.l	(a4),a0				; (a0) = previous right edge of spawn window
 
-loc_17E18:				
-		cmp.b	(a0),d6
-		bne.s	loc_17E28
-		tst.b	2(a0)
-		bpl.s	loc_17E24
-		addq.b	#1,(a5)
+.loop_find_right:				
+		cmp.b	objpos_x_pos(a0),d6			; doing this as a byte operation effectively rounds the x pos to next lowest 256
+		bne.s	.found_right					; branch if object is outside current x range
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn						; branch if not
+		addq.b	#1,respawn_count_1(a5)		; increment respawn index
 
-loc_17E24:				
-		addq.w	#6,a0
-		bra.s	loc_17E18
+.no_respawn:				
+		addq.w	#sizeof_objpos,a0		; go to next object in objpos list
+		bra.s	.loop_find_right		; loop until object is found outside x range
 ; ===========================================================================
 
-loc_17E28:				
-		move.l	a0,(a4)
-		bra.s	loc_17E46
+.found_right:				
+		move.l	a0,(a4)				; save pointer for objpos
+		bra.s	.unload_left
 ; ===========================================================================
 
-loc_17E2C:				
-		movea.l	(a4),a0
-		move.b	d6,(a1)
+.loadblock:				
+		movea.l	(a4),a0		; jump to objpos on right side of window
+		move.b	d6,(a1)		; mark this block as loaded
 
-loc_17E30:				
-		cmp.b	(a0),d6
-		bne.s	loc_17E44
-		tst.b	2(a0)
-		bpl.s	loc_17E3E
-		move.b	(a5),d2
-		addq.b	#1,(a5)
+.loop_find_right2:				
+		cmp.b	objpos_x_pos(a0),d6			; doing this as a byte operation effectively rounds the x pos to next lowest 256
+		bne.s	.found_right2				; branch if object is outside spawn window
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn2				; branch if not
+		move.b	(a5),d2						; d2 = respawn state
+		addq.b	#1,respawn_count_1(a5)		; increment respawn index			
 
-loc_17E3E:				
-		bsr.w	loc_17F80
-		beq.s	loc_17E30
+	.no_respawn2:				
+		bsr.w	OPL_2P_SpawnObj				; check respawn flag and spawn object		
+		beq.s	.loop_find_right2			; loop until object is found outside x range
 
-loc_17E44:				
-		move.l	a0,(a4)
+	.found_right2:				
+		move.l	a0,(a4)					; save new right pointer
 
-loc_17E46:				
-		movea.l	4(a4),a0
-		subq.w	#3,d6
-		bcs.s	loc_17E60
+.unload_left:		
+		movea.l	v_opl_ptr_left-v_opl_ptr_right(a4),a0	; jump to previous objpos on left side of window
+		subq.w	#3,d6									; back to the block that was just unloaded
+		bcs.s	.done						; branch if beyond level's left boundary
 
-loc_17E4E:				
-		cmp.b	(a0),d6
-		bne.s	loc_17E60
-		tst.b	2(a0)
-		bpl.s	loc_17E5C
-		addq.b	#1,1(a5)
+	.loop_unload_left:				
+		cmp.b	objpos_x_pos(a0),d6			; doing this as a byte operation effectively rounds the x pos to next lowest 256
+		bne.s	.done						; branch if object is outside x range (and within the current spawn window of three blocks)
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.no_respawn3				; branch if not
+		addq.b	#1,respawn_count_2(a5)		; increment respawn index
 
-loc_17E5C:				
-		addq.w	#6,a0
-		bra.s	loc_17E4E
+	.no_respawn3:				
+		addq.w	#sizeof_objpos,a0			; go to next object in objpos list		
+		bra.s	.loop_unload_left			; loop until object is found outside x range (and within current spawn window)
 ; ===========================================================================
 
-loc_17E60:				
-		move.l	a0,4(a4)
+.done:				
+		move.l	a0,v_opl_ptr_left-v_opl_ptr_right(a4)	; save new left pointer
 		rts	
-; ===========================================================================
 
-loc_17E66:				
-		move.l	a1,-(sp)
-		lea	(v_opl_ram_block_indices).w,a1
-		cmp.b	(a1)+,d6
-		beq.s	loc_17E86
-		cmp.b	(a1)+,d6
-		beq.s	loc_17E86
-		cmp.b	(a1)+,d6
-		beq.s	loc_17E86
-		cmp.b	(a1)+,d6
-		beq.s	loc_17E86
-		cmp.b	(a1)+,d6
-		beq.s	loc_17E86
-		cmp.b	(a1)+,d6
-		beq.s	loc_17E86
-		moveq	#1,d0
+; ---------------------------------------------------------------------------
+; Subroutine to	check if a 2P object block is already loaded
 
-loc_17E86:				
-		movea.l	(sp)+,a1
+; input:
+;	d6.w = index of block to check
+
+; output:
+;	d0.l = 1 is block is not already loaded
+
+;	uses d0.l
+; ---------------------------------------------------------------------------
+
+OPL_2P_CheckBlockLoad:				
+		pushr.l	a1		; back up a1		
+		lea	(v_opl_block_indices).w,a1	; a1 = indices of loaded blocks 
+
+		rept countof_ost_2p_blocks				; check all six indices (three per player)
+		cmp.b	(a1)+,d6		; get index
+		beq.s	.already_loaded	; branch if it matches (block is already loaded)
+		endr
+		
+		moveq	#1,d0		
+
+	.already_loaded:				
+		popr.l	a1	; restore a1
 		rts	
-; ===========================================================================
 
-loc_17E8A:				
-		lea	(v_opl_ram_block_indices).w,a1
-		lea	($FFFFBE00).w,a3
-		tst.b	(a1)+
-		bmi.s	loc_17EC2
-		lea	($FFFFC100).w,a3
-		tst.b	(a1)+
-		bmi.s	loc_17EC2
-		lea	($FFFFC400).w,a3
-		tst.b	(a1)+
-		bmi.s	loc_17EC2
-		lea	($FFFFC700).w,a3
-		tst.b	(a1)+
-		bmi.s	loc_17EC2
-		lea	($FFFFCA00).w,a3
-		tst.b	(a1)+
-		bmi.s	loc_17EC2
-		lea	($FFFFCD00).w,a3
-		tst.b	(a1)+
-		bmi.s	loc_17EC2
-		nop	
+; ---------------------------------------------------------------------------
+; Subroutine to	find an empty 2P object block
+
+; output:
+;	a1 = index of empty block
+;	a3 = start of empty block
+
+;	uses a1, a3
+; ---------------------------------------------------------------------------
+
+OPL_2P_FindFreeBlock:				
+		lea	(v_opl_block_indices).w,a1
+		
+		c: = v_ost_2P_blocks		; address of first block
+		rept countof_ost_2p_blocks	; repeat until found
+		lea	(c).w,a3				; a3 = start of block
+		tst.b	(a1)+			; is this block empty?
+		bmi.s	.gotblock		; branch if so
+		c: = c+(sizeof_ost*12)	; address of next block
+		endr
+		
+		nop					; this should never be reached
 		nop	
 
-loc_17EC2:				
-		subq.w	#1,a1
+	.gotblock:				
+		subq.w	#1,a1	; undo post-increment so a1 points to the index of empty block
 		rts	
-; ===========================================================================
 
-loc_17EC6:				
-		lea	(v_opl_ram_block_indices).w,a1
-		lea	($FFFFBE00).w,a3
-		cmp.b	(a1)+,d2
-		beq.s	loc_17EFE
-		lea	($FFFFC100).w,a3
-		cmp.b	(a1)+,d2
-		beq.s	loc_17EFE
-		lea	($FFFFC400).w,a3
-		cmp.b	(a1)+,d2
-		beq.s	loc_17EFE
-		lea	($FFFFC700).w,a3
-		cmp.b	(a1)+,d2
-		beq.s	loc_17EFE
-		lea	($FFFFCA00).w,a3
-		cmp.b	(a1)+,d2
-		beq.s	loc_17EFE
-		lea	($FFFFCD00).w,a3
-		cmp.b	(a1)+,d2
-		beq.s	loc_17EFE
-		nop	
+; ---------------------------------------------------------------------------
+; Subroutine to	find the block matching an index and unload it (set respawn
+; entries and delete all objects in the block)
+
+; This replaces the functionality of DespawnObject in 2P mode.
+
+; input:
+;	d2 = index of block to unload
+;	a2 = v_respawn_list
+
+;	uses d0.l, d1.l, d2.l, a1, a3
+; ---------------------------------------------------------------------------
+
+OPL_2P_UnloadBlock:				
+		lea	(v_opl_block_indices).w,a1
+		
+		c: = v_ost_2P_blocks		; address of first block
+		rept countof_ost_2p_blocks	; repeat until found
+		lea	(c).w,a3				; load block
+		cmp.b	(a1)+,d2		; is this the block to unload?
+		beq.s	.gotblock		; branch if so
+		c: = c+(sizeof_ost*12)	; address of next block
+		endr
+		
+		nop					; this should not be reached
 		nop	
 
-loc_17EFE:				
-		move.b	#-1,-(a1)
-		movem.l	a1/a3,-(sp)
+	.gotblock:				
+		move.b	#-1,-(a1)	; mark block as empty and back up so a1 points to 1
+		pushr.l	a1/a3		; back up a1 and a3
 		moveq	#0,d1
-		moveq	#$B,d2
+		moveq	#countof_ost_per_2pblock-1,d2
 
-loc_17F0A:				
-		tst.b	(a3)
-		beq.s	loc_17F26
-		movea.l	a3,a1
+.despawn_loop:				
+		tst.b	(a3)	
+		beq.s	.skip	; branch if this slot is empty
+		movea.l	a3,a1		; a1 = object
+		
 		moveq	#0,d0
-		move.b	ost_respawn(a1),d0
-		beq.s	loc_17F1E
-		bclr	#7,2(a2,d0.w)
+		move.b	ost_respawn(a1),d0		; get respawn id
+		beq.s	.delete					; branch if not set
+		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w)	; clear high bit of respawn entry (i.e. object was despawned not broken)
 
-loc_17F1E:				
-		moveq	#$F,d0
+	.delete:
+		; Essentially an inlined call to DeleteChild.				
+		moveq	#(sizeof_ost/4)-1,d0
 
-loc_17F20:				
-		move.l	d1,(a1)+
-		dbf	d0,loc_17F20
+	.clearloop:				
+		move.l	d1,(a1)+				; clear	the object RAM
+		dbf	d0,.clearloop				; repeat for length of object RAM
 
-loc_17F26:				
-		lea	$40(a3),a3
-		dbf	d2,loc_17F0A
-		moveq	#0,d2
-		movem.l	(sp)+,a1/a3
+	.skip:				
+		lea	sizeof_ost(a3),a3			; next OST slot
+		dbf	d2,.despawn_loop			; repeat for all objects in block
+		
+		moveq	#0,d2					; clear block index
+		popr.l	a1/a3				; restore a1 and a3
+		rts	
+
+; ---------------------------------------------------------------------------
+; Subroutine to	load an object
+
+; input:
+;	d2.w = position in respawn list
+;	a0 = pointer to specific object in objpos list
+;	a2 = v_respawn_list
+
+; output:
+;	d0.l = 0 if object is spawned (or skipped because it was broken)
+;	a1 = address of OST of spawned object
+
+;	uses d1.w, a0
+; ---------------------------------------------------------------------------
+
+OPL_SpawnObj:	
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)				; is remember respawn flag set?
+		bpl.s	OPL_MakeItem									; if not, branch
+		bset	#respawn_bit,v_respawn_data-v_respawn_list(a2,d2.w)		; set flag so it isn't loaded more than once
+		beq.s	OPL_MakeItem									; branch if object hasn't already been destroyed
+		addq.w	#sizeof_objpos,a0							; go to next object in objpos list
+		moveq	#0,d0										; mark operation as successful
 		rts	
 ; ===========================================================================
 
-loc_17F36:				
-		tst.b	2(a0)
-		bpl.s	loc_17F4A
-		bset	#7,2(a2,d2.w)
-		beq.s	loc_17F4A
-		addq.w	#6,a0
-		moveq	#0,d0
-		rts	
-; ===========================================================================
+OPL_MakeItem:				
+		bsr.w	FindFreeObj			; find free OST slot
+		bne.s	.fail				; branch if not found
+		move.w	(a0)+,ost_x_pos(a1)	; set x pos
+		move.w	(a0)+,d0			; get respawn flag, x/y flip flags, and y pos
+		bpl.s	.no_respawn_bit				; branch if remember respawn bit is not set
+		move.b	d2,ost_respawn(a1)			; give object its place in the respawn table
 
-loc_17F4A:				
-		bsr.w	FindFreeObj
-		bne.s	locret_17F7E
-		move.w	(a0)+,ost_x_pos(a1)
-		move.w	(a0)+,d0
-		bpl.s	loc_17F5C
-		move.b	d2,ost_respawn(a1)
-
-loc_17F5C:				
-		move.w	d0,d1
-		andi.w	#$FFF,d0
-		move.w	d0,ost_y_pos(a1)
-		rol.w	#3,d1
-		andi.b	#3,d1
-		move.b	d1,ost_render(a1)
+	.no_respawn_bit:				
+		move.w	d0,d1				; copy for setting x/y flip flags later
+		andi.w	#$FFF,d0			; lower three nybbles are y pos
+		move.w	d0,ost_y_pos(a1)	; set y pos
+		rol.w	#3,d1							; adjust x/y flip bits to correct position
+		andi.b	#render_xflip+render_yflip,d1		
+		move.b	d1,ost_render(a1)				; apply x/y flip
 		move.b	d1,ost_primary_status(a1)
-		_move.b	(a0)+,ost_id(a1)
-		move.b	(a0)+,ost_subtype(a1)
-		moveq	#0,d0
+		_move.b	(a0)+,ost_id(a1)				; load object
+		move.b	(a0)+,ost_subtype(a1)			; set subtype
+		moveq	#0,d0							; mark operation as successful			
 
-locret_17F7E:				
+	.fail:				
+		rts	
+
+; ---------------------------------------------------------------------------
+; Subroutine to	load an object in 2P mode
+
+; input:
+;	d2.w = position in respawn list
+;	a0 = pointer to specific object in objpos list
+;	a2 = v_respawn_list
+
+; output:
+;	d0.l = 0 if object is spawned (or skipped because it was broken)
+;	a1 = address of OST of spawned object
+
+;	uses d1.w, a0
+; ---------------------------------------------------------------------------
+OPL_2P_SpawnObj:				
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)				; is remember respawn flag set?
+		bpl.s	OPL_2P_MakeItem									; if not, branch
+		bset	#respawn_bit,v_respawn_data-v_respawn_list(a2,d2.w)		; set flag so it isn't loaded more than once
+		beq.s	OPL_2P_MakeItem									; branch if object hasn't already been destroyed
+		addq.w	#sizeof_objpos,a0							; go to next object in objpos list
+		moveq	#0,d0										; mark operation as successful
 		rts	
 ; ===========================================================================
 
-loc_17F80:				
-		tst.b	2(a0)
-		bpl.s	loc_17F94
-		bset	#7,2(a2,d2.w)
-		beq.s	loc_17F94
-		addq.w	#6,a0
-		moveq	#0,d0
-		rts	
+OPL_2P_MakeItem:				
+		btst	#load_dyn_bit,objpos_respawn_flip_y_pos_hi(a0)	; is this object to be loaded in a normal OST slot rather than the special blocks? (EHZ Buzzer and MCZ Flasher are the only ones)
+		beq.s	.load_in_block		; branch if not
+		bsr.w	FindFreeObj			; find free OST slot (within the dynamic OST)
+		bne.s	.fail				; branch if not found	
+		bra.s	.load_objdata
 ; ===========================================================================
 
-loc_17F94:				
-		btst	#4,2(a0)
-		beq.s	loc_17FA4
-		bsr.w	FindFreeObj
-		bne.s	locret_17FD8
-		bra.s	loc_17FAA
-; ===========================================================================
+.load_in_block:				
+		bsr.w	FindFreeObjInBlock		; find free OST slot within the current block
+		bne.s	.fail					; branch if not found
 
-loc_17FA4:				
-		bsr.w	FindFreeObjWithin12
-		bne.s	locret_17FD8
+.load_objdata:				
+		move.w	(a0)+,ost_x_pos(a1)	; set x pos
+		move.w	(a0)+,d0			; get respawn flag, x/y flip flags, and y pos
+		bpl.s	.no_respawn_bit				; branch if remember respawn bit is not set
+		move.b	d2,ost_respawn(a1)			; give object its place in the respawn table
 
-loc_17FAA:				
-		move.w	(a0)+,ost_x_pos(a1)
-		move.w	(a0)+,d0
-		bpl.s	loc_17FB6
-		move.b	d2,ost_respawn(a1)
-
-loc_17FB6:				
-		move.w	d0,d1
-		andi.w	#$FFF,d0
-		move.w	d0,ost_y_pos(a1)
-		rol.w	#3,d1
-		andi.b	#3,d1
-		move.b	d1,ost_render(a1)
+	.no_respawn_bit:				
+		move.w	d0,d1				; copy for setting x/y flip flags later
+		andi.w	#$FFF,d0			; lower three nybbles are y pos
+		move.w	d0,ost_y_pos(a1)	; set y pos
+		rol.w	#3,d1							; adjust x/y flip bits to correct position
+		andi.b	#render_xflip+render_yflip,d1		
+		move.b	d1,ost_render(a1)				; apply x/y flip
 		move.b	d1,ost_primary_status(a1)
-		_move.b	(a0)+,ost_id(a1)
-		move.b	(a0)+,ost_subtype(a1)
-		moveq	#0,d0
+		_move.b	(a0)+,ost_id(a1)				; load object
+		move.b	(a0)+,ost_subtype(a1)			; set subtype
+		moveq	#0,d0							; mark operation as successful	
 
-locret_17FD8:				
+	.fail:				
 		rts	
 		
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Subroutine to find a free OST
 
@@ -31264,7 +31349,7 @@ locret_17FD8:
 ; usage:
 ;		bsr.w	FindFreeObj
 ;		bne.s	.fail					; branch if empty slot isn't found
-;		move.b	#id_Crabmeat,ost_id(a1)			; load Crabmeat object
+;		move.b	#id_Buzzer,ost_id(a1)			; load Buzzer object
 ; ---------------------------------------------------------------------------
 ; loc_17FDA: ; allocObject:
 FindFreeObj:				
@@ -31272,7 +31357,7 @@ FindFreeObj:
 		move.w	#countof_ost_dynamic-1,d0		; search to end of table
 		tst.w	(f_two_player).w			; is it two-player mode?
 		beq.s	.loop					; if not, branch
-		move.w	#countof_ost_dynamic_2P-1,d0		; search to $BE00 exclusive
+		move.w	#countof_ost_dynamic_2P-1,d0		; only search to $BE00
 
 	.loop:				
 		tst.b	ost_id(a1)				; is OST slot slot empty?
@@ -31319,10 +31404,10 @@ FindNextFreeObj:
 		rts	
 		
 ; ---------------------------------------------------------------------------
-; Subroutine to find a free OST within 12 slots AFTER the current one
+; Subroutine to find a free OST within the current 2P mode OST block
 
 ; input:
-;	a3 = address of current ost slot
+;	a3 = current 2P OST block
 
 ; output:
 ;	a1 = address of next free OST slot
@@ -31330,16 +31415,16 @@ FindNextFreeObj:
 ;	uses d0.w
 ; ---------------------------------------------------------------------------
 ; loc_18016:
-FindFreeObjWithin12:				
-		movea.l	a3,a1
-		move.w	#12-1,d0
+FindFreeObjInBlock:				
+		movea.l	a3,a1		; a1 = current OST block
+		move.w	#countof_ost_per_2pblock-1,d0	; 12 slots per block
 
 	.loop:				
-		tst.b	ost_id(a1)
-		beq.s	.found
-		lea	sizeof_ost(a1),a1
-		dbf	d0,.loop
-
+		tst.b	ost_id(a1)		; is OST slot empty?
+		beq.s	.found			; if yes, branch
+		lea	sizeof_ost(a1),a1			; go to next OST
+		dbf	d0,.loop				; repeat until end
+		
 	.found:				
 		rts	
 		
@@ -31368,7 +31453,6 @@ FindFreeObjWithin12:
 		include	"level/objects/CNZ_2_2P.asm"
 	endc
 
-; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 41 - Spring
 ; ----------------------------------------------------------------------------
@@ -57814,7 +57898,7 @@ loc_2CEC8:
 		add.w	d2,ost_y_vel(a0)
 		move.w	#$100,d0
 		move.w	d0,d1
-		jsrto	CapSpeed,JmpTo_ObjCapSpeed
+		jsrto	CapSpeed,JmpTo_CapSpeed
 		jmpto	SpeedToPos,JmpTo20_SpeedToPos
 ; ===========================================================================
 word_2CEE6:
@@ -57825,7 +57909,7 @@ word_2CEE6:
 loc_2CEEA:				
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#$20,$3C(a0)
-		jmpto	MoveStop,JmpTo_ObjMoveStop
+		jmpto	MoveStop,JmpTo_MoveStop
 ; ===========================================================================
 
 loc_2CEF8:				
@@ -57925,9 +58009,9 @@ JmpTo14_AnimateSprite:
 		jmp	(AnimateSprite).l
 JmpTo_GetClosestPlayer:				
 		jmp	(GetClosestPlayer).l
-JmpTo_ObjCapSpeed:				
+JmpTo_CapSpeed:				
 		jmp	(CapSpeed).l
-JmpTo_ObjMoveStop:				
+JmpTo_MoveStop:				
 		jmp	(MoveStop).l
 JmpTo20_SpeedToPos:				
 		jmp	(SpeedToPos).l
@@ -69383,42 +69467,42 @@ GetClosestPlayer:
 ; ---------------------------------------------------------------------------
 
 CapSpeed:				
-		move.w	ost_x_vel(a0),d2			; d2 = current x-vel
+		move.w	ost_x_vel(a0),d2			; d2 = current x vel
 		bpl.s	.right					; branch if object is moving right
 	
 	;.left:
-		neg.w	d0					; negate max x-vel for leftward motion
-		cmp.w	d0,d2					; is current x-vel lower than max?
+		neg.w	d0					; negate max x vel for leftward motion
+		cmp.w	d0,d2					; is current x vel lower than max?
 		bcc.s	.chk_y					; if so, branch
 		move.w	d0,d2					; if greater than max, apply cap
 		bra.w	.chk_y
 ; ===========================================================================
 
 	.right:				
-		cmp.w	d0,d2					; is current x-vel lower than max?
+		cmp.w	d0,d2					; is current x vel lower than max?
 		bls.s	.chk_y					; if so, branch
 		move.w	d0,d2					; if greater than max, cap speed
 
 .chk_y:				
-		move.w	ost_y_vel(a0),d3			; d3 = current y-vel
+		move.w	ost_y_vel(a0),d3			; d3 = current y vel
 		bpl.s	.down					; branch if object is moving down
 		
 	;.up:	
-		neg.w	d1					; negate max y-vel for upward motion
-		cmp.w	d1,d3					; is current y-vel lower than max?			
+		neg.w	d1					; negate max y vel for upward motion
+		cmp.w	d1,d3					; is current y vel lower than max?			
 		bcc.s	.update_speed				; if so, branch
 		move.w	d1,d3					; if greater than max, apply cap
 		bra.w	.update_speed
 ; ===========================================================================
 
 	.down:				
-		cmp.w	d1,d3					; is current y-vel lower than max?			
+		cmp.w	d1,d3					; is current y vel lower than max?			
 		bls.s	.update_speed				; if so, branch
 		move.w	d1,d3					; if greater than max, apply cap
 
 .update_speed:				
-		move.w	d2,ost_x_vel(a0)			; set x-vel
-		move.w	d3,ost_y_vel(a0)			; set x-vel
+		move.w	d2,ost_x_vel(a0)			; set x vel
+		move.w	d3,ost_y_vel(a0)			; set x vel
 		rts	
 		
 ; ---------------------------------------------------------------------------
@@ -69431,8 +69515,8 @@ CapSpeed:
 
 MoveStop:				
 		moveq	#0,d0
-		move.w	d0,ost_x_vel(a0)			; clear x-vel
-		move.w	d0,ost_y_vel(a0)			; clear y-vel
+		move.w	d0,ost_x_vel(a0)			; clear x vel
+		move.w	d0,ost_y_vel(a0)			; clear y vel
 		rts	
 
 ; ---------------------------------------------------------------------------
@@ -69454,10 +69538,10 @@ MoveStop:
 
 AlignChild:				
 		move.w	ost_x_pos(a0),d2			; d2 = parent's x pos
-		add.w	d0,d2					; add offset to get child's x-pos
+		add.w	d0,d2					; add offset to get child's x pos
 		move.w	d2,ost_x_pos(a1)			; set child's xpos
 		move.w	ost_y_pos(a0),d3			; d3 = parent's y pos	
-		add.w	d1,d3					; add offset to get child's y-pos
+		add.w	d1,d3					; add offset to get child's y pos
 		move.w	d3,ost_y_pos(a1)			; set child's y pos
 		rts	
 			
@@ -69555,7 +69639,7 @@ LoadChild:
 		rts
 
 ; ---------------------------------------------------------------------------
-; Unused subroutine to set an object's x-flip state based on its x-pos
+; Unused subroutine to set an object's x-flip state based on its x pos
 ; relative to the nearest player. Perhaps would have been used in conjunction
 ; with object-specific code to make a badnik always face the player?
 
@@ -69915,7 +69999,7 @@ Ground_BreakOut:
 Ground_StartRoam:				
 		addq.b	#2,ost_primary_routine(a0)		; go to Ground_Roaming next
 		bsr.w	GetClosestPlayer
-		move.w	Ground_Speeds(pc,d0.w),ost_x_vel(a0)	; set x-vel based on direction to nearest player
+		move.w	Ground_Speeds(pc,d0.w),ost_x_vel(a0)	; set x vel based on direction to nearest player
 		bclr	#status_xflip_bit,ost_primary_status(a0)	
 		tst.w	d0
 		beq.s	.no_x_flip				; branch if player is to the left
@@ -70762,7 +70846,7 @@ Rex_Wait:
 		bsr.w	Rex_SpawnHead
 
 	.no_spawn:				
-		move.w	ost_x_pos(a0),-(sp)			; back up current x-pos
+		move.w	ost_x_pos(a0),-(sp)			; back up current x pos
 		bsr.w	Rex_CheckTurnAround		
 		move.w	#$1B,d1					; all of these could be moveq
 		move.w	#8,d2
@@ -70989,7 +71073,7 @@ RexHead_CheckAlive:
 		beq.s	.stillalive				; branch if so
 		move.b	#id_RexHead_Defeated,ost_primary_routine(a0) ; go to RexHead_Defeated next
 		move.w	ost_rexhead_subid(a0),d0
-		move.w	RexHead_DeathVels(pc,d0.w),ost_x_vel(a0) ; set initial x-vel for neck segments as they scatter
+		move.w	RexHead_DeathVels(pc,d0.w),ost_x_vel(a0) ; set initial x vel for neck segments as they scatter
 
 	.stillalive:				
 		rts	
@@ -71014,18 +71098,18 @@ RexHead_FireProjectile:
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		lea	(SpeedToPos).l,a2			; SpeedToPos is the only code this object runs
 		move.l	a2,ost_proj_codeptr(a1)			; (these two instructions could be 'move.l #SpeedToPos,ost_proj_codeptr(a1)')
-		moveq	#1,d0					; x-vel
-		moveq	#$10,d1					; x-pos offset from parent
+		moveq	#1,d0					; x vel
+		moveq	#$10,d1					; x pos offset from parent
 		btst	#render_xflip_bit,ost_render(a0)	
 		bne.s	.xflip					; branch if Rexon is x-flipped
-		neg.w	d0					; invert x-vel and initial offset values
+		neg.w	d0					; invert x vel and initial offset values
 		neg.w	d1
 
 	.xflip:				
-		move.b	d0,ost_x_vel(a1)			; set x-vel
-		add.w	d1,ost_x_pos(a1)			; apply x-pos offset
-		addq.w	#4,ost_y_pos(a1)			; apply y-pos offset
-		move.b	#$80,ost_y_vel+1(a1)			; set y-vel
+		move.b	d0,ost_x_vel(a1)			; set x vel
+		add.w	d1,ost_x_pos(a1)			; apply x pos offset
+		addq.w	#4,ost_y_pos(a1)			; apply y pos offset
+		move.b	#$80,ost_y_vel+1(a1)			; set y vel
 
 	.fail:				
 		rts	
@@ -71076,7 +71160,7 @@ Rex_SpawnHead:
 		move.w	d1,ost_rexhead_subid(a1)		; set sub ID
 		move.w	ost_x_pos(a0),ost_x_pos(a1)		; match parent position initially (will be adjusted later)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		addq.w	#2,d1
+		addq.w	#2,d1							; next sub ID
 		dbf	d6,.spawn
 
 	.fail:				
@@ -73221,7 +73305,7 @@ Grab_Index:	index offset(*),,2
 ost_grab_timer1: 		rs.w 1				; $2A ; time in frames until an idle grabber reverses their horizontal movement, and time until Grabber changes color while holding player 
 ost_grab_colorchng_time:	equ __rs-1			; $2B ; value used to reset above timer, decrementing by 1 each time
 ost_grab_timer2:		rs.w 1				; $2C ; time in frames to wait until attack animation starts, and duration of attack movement
-ost_grab_xvel_backup:	rs.w 1					; $2E ; x-vel is stashed here when they are seeking a player
+ost_grab_xvel_backup:	rs.w 1					; $2E ; x vel is stashed here when they are seeking a player
 ost_grab_playerheld:	rs.b 1					; $30 ; flag indicating that a player is being held
 ost_grab_31:			rs.b 1				; $31 ;
 ost_grab_player:		rs.w 1				; $32 ; OST address of the player currently held by the Brabber
@@ -73307,7 +73391,7 @@ Grab_FindPlayer:
 
 .playerfound:				
 		addq.b	#2,ost_secondary_routine(a0)		; go to Grab_Attack next
-		move.w	ost_x_vel(a0),ost_grab_xvel_backup(a0)	; save current x-vel
+		move.w	ost_x_vel(a0),ost_grab_xvel_backup(a0)	; save current x vel
 		clr.w	ost_x_vel(a0)				; stop horizontal movement
 		move.b	#16,ost_grab_timer2(a0)			; wait for 16 frames before attacking
 		rts	
@@ -83048,8 +83132,8 @@ React_Monitor:
 
 	;.knock_down
 	; knock down the monitor if they jumped into the bottom of it
-		neg.w	ost_y_vel(a0)				; reverse the character's y-vel
-		move.w	#-$180,ost_y_vel(a1)			; set monitor's y-vel
+		neg.w	ost_y_vel(a0)				; reverse the character's y vel
+		move.w	#-$180,ost_y_vel(a1)			; set monitor's y vel
 		tst.b	ost_secondary_routine(a1)
 		bne.s	.donothing
 		move.b	#4,ost_secondary_routine(a1)

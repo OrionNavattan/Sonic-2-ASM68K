@@ -316,6 +316,17 @@ rsblock:	macro
 rsblockend:	macros						; Adapted to Sonic 2's macro-based RAM clearing
 		\1\_end:	equ __rs			; generate symbol for end
 
+
+; ---------------------------------------------------------------------------
+; Back up and restore the current rs counter, allowing for nested RS lists.
+; ---------------------------------------------------------------------------
+
+pushrs:		macros
+		rsstack: = __rs
+
+poprs:		macros	
+		rsset rsstack
+		
 ; ---------------------------------------------------------------------------
 ; Mark the start and end of a RAM block without alignment, and generate size 
 ; constants.
@@ -720,7 +731,7 @@ out_of_range:	macro exit,pos
 		else
 		move.w	ost_x_pos(a0),d0			; get object position
 		endc
-		andi.w	#$FF80,d0				; round down to nearest $80
+		andi.w	#-$80,d0				; round down to nearest $80
 		sub.w	(v_camera_x_pos_coarse).w,d0		; get screen position; d0 = approx distance between object and screen (negative if object is left of screen)
 		cmpi.w	#128+320+192,d0
 		bhi.\0	exit					; branch if d0 is negative or higher than 640
@@ -730,7 +741,7 @@ out_of_range:	macro exit,pos
 ; Object placement
 ; input: xpos, ypos, object id, subtype (objects 8B and lower) or OST data 
 ; pointer index (objects 8C and higher)
-; optional: xflip, yflip, rem, 2pdespawn
+; optional: xflip, yflip, rem, 2ploaddynamic
 ; ---------------------------------------------------------------------------
 
 objpos:		macro
@@ -747,7 +758,7 @@ objpos:		macro
 		obj_rem: = 0
 		obj_unkflg: = 0
 		rept narg-4
-			if strcmp("\5","2pdespawn")		; flag indicating this object will use the normal despawn checks in 2P mode
+			if strcmp("\5","2ploaddynamic")	; flag indicating this object will be loaded in a normal dynamic OST slot in 2P mode
 				obj_unkflg: = $1000
 			elseif strcmp("\5","xflip")
 				obj_xflip: = $2000

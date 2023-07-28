@@ -35,7 +35,7 @@ ObjPos_MCZ_2:
 		objpos $07F4,$0684,Spikes,$00,yflip
 		objpos $0810,$0673,Spikes,$00,yflip
 		objpos $0830,$0664,Spikes,$00,yflip
-		objpos $0880,$0658,Flasher,$2C,2pdespawn,rem
+		objpos $0880,$0658,Flasher,$2C,2ploaddynamic,rem
 		objpos $08D0,$02F1,Monitor,$05,rem
 		objpos $0990,$0288,VineSwitch,$03
 		objpos $099C,$06F0,Spikes,$10
@@ -59,16 +59,16 @@ ObjPos_MCZ_2:
 		objpos $0CE1,$06F0,CollapseFloor,$00
 		objpos $0D30,$03F0,BrickAndSpikeChain,$16,xflip
 		objpos $0D30,$03F0,BrickAndSpikeChain,$0F
-		objpos $0D60,$0748,Flasher,$2C,2pdespawn,rem
-		objpos $0E00,$0460,Flasher,$2C,2pdespawn,rem
-		objpos $0E00,$0498,Flasher,$2C,2pdespawn,rem
+		objpos $0D60,$0748,Flasher,$2C,2ploaddynamic,rem
+		objpos $0E00,$0460,Flasher,$2C,2ploaddynamic,rem
+		objpos $0E00,$0498,Flasher,$2C,2ploaddynamic,rem
 		objpos $0E08,$06C8,SingleDrawbridge,$04,xflip
 		objpos $0E10,$0570,Monitor,$04,rem
 		objpos $0E10,$05F1,Monitor,$07,rem
 		objpos $0E68,$0668,VineSwitch,$04
 		objpos $0EA0,$05A0,Platform3,$18,xflip
 		objpos $0F50,$0428,VineHook,$80
-		objpos $0F68,$02F0,Flasher,$2C,2pdespawn,rem
+		objpos $0F68,$02F0,Flasher,$2C,2ploaddynamic,rem
 		objpos $0F78,$0570,Spikes,$00
 		objpos $1023,$0765,Spikes,$00,yflip
 		objpos $1054,$074F,Spikes,$00,yflip
@@ -85,17 +85,17 @@ ObjPos_MCZ_2:
 		objpos $11FA,$0628,BrickAndSpikeChain,$0F
 		objpos $11FC,$0778,Springs,$02
 		objpos $11FC,$0790,BrickAndSpikeChain,$0F
-		objpos $1200,$0340,Flasher,$2C,2pdespawn,rem
+		objpos $1200,$0340,Flasher,$2C,2ploaddynamic,rem
 		objpos $1208,$0478,SingleDrawbridge,$05,xflip,yflip
 		objpos $1230,$06C8,Stomper,$00
-		objpos $1260,$0378,Flasher,$2C,2pdespawn,rem
+		objpos $1260,$0378,Flasher,$2C,2ploaddynamic,rem
 		objpos $12C0,$0520,Crawlton,$22,rem
-		objpos $12E8,$06AA,Flasher,$2C,2pdespawn,rem
+		objpos $12E8,$06AA,Flasher,$2C,2ploaddynamic,rem
 		objpos $1381,$0520,Crawlton,$22,rem
-		objpos $1388,$06FC,Flasher,$2C,2pdespawn,rem
-		objpos $1440,$0650,Flasher,$2C,2pdespawn,rem
+		objpos $1388,$06FC,Flasher,$2C,2ploaddynamic,rem
+		objpos $1440,$0650,Flasher,$2C,2ploaddynamic,rem
 		objpos $14A0,$0410,CollapseFloor,$00,xflip
-		objpos $14B0,$0678,Flasher,$2C,2pdespawn,rem
+		objpos $14B0,$0678,Flasher,$2C,2ploaddynamic,rem
 		objpos $14C0,$04F0,BrickAndSpikeChain,$16
 		objpos $14C0,$04F0,BrickAndSpikeChain,$0F
 		objpos $14E0,$03D0,CollapseFloor,$00
@@ -124,13 +124,13 @@ ObjPos_MCZ_2:
 		objpos $1800,$0478,Springs,$03
 		objpos $1800,$0490,BrickAndSpikeChain,$0F
 		objpos $1810,$0531,Monitor,$06,rem
-		objpos $1860,$04D8,Flasher,$2C,2pdespawn,rem
+		objpos $1860,$04D8,Flasher,$2C,2ploaddynamic,rem
 		objpos $1940,$04B8,VineHook,$10
 		objpos $1961,$03C4,CollapseFloor,$00
 		objpos $1974,$0638,Springs,$03
 		objpos $1A50,$0420,Stomper,$00
-		objpos $1A68,$04D0,Flasher,$2C,2pdespawn,rem
-		objpos $1B20,$0450,Flasher,$2C,2pdespawn,rem
+		objpos $1A68,$04D0,Flasher,$2C,2ploaddynamic,rem
+		objpos $1B20,$0450,Flasher,$2C,2ploaddynamic,rem
 		objpos $1B30,$04D1,Monitor,$04,rem
 		objpos $1B40,$0628,Starpost,$04,rem
 		objpos $1B90,$0578,Stomper,$00

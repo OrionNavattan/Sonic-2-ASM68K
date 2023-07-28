@@ -424,9 +424,9 @@ Obj_load_addr_left:		equ v_opl_ptr_left
 Obj_load_addr_right_P2:		equ v_opl_ptr_right_p2
 Obj_load_addr_left_P2:		equ v_opl_ptr_left_p2
 
-Object_RAM_block_indices:		equ	v_opl_ram_block_indices
-Player_1_loaded_object_blocks:	equ	v_opl_loaded_object_blocks_p1
-Player_2_loaded_object_blocks:	equ	v_opl_loaded_object_blocks_p2
+Object_RAM_block_indices:		equ	v_opl_block_indices
+Player_1_loaded_object_blocks:	equ	v_opl_loaded_blocks_p1
+Player_2_loaded_object_blocks:	equ	v_opl_loaded_blocks_p2
 
 Camera_X_pos_last_P2:	equ	v_opl_screen_x_pos_p2
 
