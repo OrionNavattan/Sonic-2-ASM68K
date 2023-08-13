@@ -1065,6 +1065,19 @@ incpal: macro lbl,lbl2
 		endm		
 
 ; ---------------------------------------------------------------------------
+; Set the destination for an afBack flag, and generate the declaration
+; usage: backdest id_Frame_Sonic_Laying1
+; ---------------------------------------------------------------------------
+
+backdest:	macro	dest
+		afbackdest:	= offset(*)	; set location to return to
+		dc.b \dest				; include the current frame in ROM
+		endm
+		
+afBack:		macros
+		dc.b	afBackFlag,offset(*)-afbackdest	; include flag and automatically generate the count of bytes to jump back
+		
+; ---------------------------------------------------------------------------
 ; Declares a blank object
 ; input: label
 ; ---------------------------------------------------------------------------

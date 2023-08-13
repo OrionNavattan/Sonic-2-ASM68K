@@ -135,7 +135,7 @@ palfade_all:		equ (countof_color*4)-1
 cBlack:		equ $000					; color black
 cWhite:		equ $EEE					; color white
 cBlue:		equ $E00					; color blue
-cGreen:		equ $0E0					; colur green
+cGreen:		equ $0E0					; color green
 cRed:		equ $00E					; color red
 cYellow:	equ cGreen+cRed					; color yellow
 cAqua:		equ cGreen+cBlue				; color aqua
@@ -307,6 +307,12 @@ sizeof_objpos:					equ __rs	; size of one objpos entry
 
 respawn_bit:					equ 7 ; bit set in respawn table to indicate this object should remember its state
 
+; Special CNZ bumper data structure
+		rsreset
+specbump_type:		rs.w 1 ; 0 ; type of bumper
+specbump_xpos:		rs.w 1 ; 2 ; x pos of bumper
+specbump_ypos:		rs.w 1 ; 4 ; y pos of bumper
+sizeof_specbump:	equ __rs	; size of each bumper entry
 ; ----------------------------------------------------------------------------
 ; This macro is used to keep Sonic and Tails' primary routine IDs synchronized,
 ; as much of the code depends on them being the same.
@@ -563,7 +569,7 @@ ost_parent2:	equ $2C						; same as above
 
 ; Animation script flags
 afEnd:		equ $FF						; return to beginning of animation
-afBack:		equ $FE						; go back (specified number) bytes
+afBackFlag:	equ $FE						; go back (specified number) bytes
 afChange:	equ $FD						; run specified animation id in next byte
 afRoutine:	equ $FC						; increment primary routine counter
 afReset:	equ $FB						; reset animation and increment secondary routine counter

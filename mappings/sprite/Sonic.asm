@@ -1,3 +1,7 @@
+; -------------------------------------------------------------------------------
+; Sprite mappings - Sonic
+; -------------------------------------------------------------------------------
+
 Map_Sonic:	index offset(*)
 	ptr	Frame_Sonic_Blank
 	ptr	Frame_Sonic_Stand
@@ -7,7 +11,7 @@ Map_Sonic:	index offset(*)
 	ptr	Frame_Sonic_Wait3
 	ptr	Frame_Sonic_Wait4
 	ptr	Frame_Sonic_LayDown
-	ptr	Frame_Sonic_Laying1				; $8
+	ptr	Frame_Sonic_Laying1				; 8
 	ptr	Frame_Sonic_Laying2
 	ptr	Frame_Sonic_GetUp
 	ptr	Frame_Sonic_LookUp1
@@ -113,106 +117,106 @@ Map_Sonic:	index offset(*)
 	ptr	Frame_SuperSonic_Transform3			; bug: Sonic's left fist is 1 pixel higher than it should be
 	ptr	Frame_SuperSonic_Transform4			; $70
 	ptr	Frame_SuperSonic_Transform5
-	ptr	Map_Sonic_0C90
-	ptr	Map_Sonic_0CA2
-	ptr	Map_Sonic_0CB4
-	ptr	Map_Sonic_0CC6
-	ptr	Map_Sonic_0CE0
-	ptr	Map_Sonic_0D02
-	ptr	Map_Sonic_0D1C
-	ptr	Map_Sonic_0D2E
-	ptr	Map_Sonic_0D48
-	ptr	Map_Sonic_0D6A
-	ptr	Map_Sonic_0D84
-	ptr	Map_Sonic_0D96
-	ptr	Map_Sonic_0DB8
-	ptr	Map_Sonic_0DE2
-	ptr	Map_Sonic_0E0C
-	ptr	Map_Sonic_0E36
-	ptr	Map_Sonic_0E68
-	ptr	Map_Sonic_0E9A
-	ptr	Map_Sonic_0EC4
-	ptr	Map_Sonic_0EEE
-	ptr	Map_Sonic_0F08
-	ptr	Map_Sonic_0F22
-	ptr	Map_Sonic_0F3C
-	ptr	Map_Sonic_0F4E
-	ptr	Map_Sonic_0F68
-	ptr	Map_Sonic_0F82
-	ptr	Map_Sonic_0F9C
-	ptr	Map_Sonic_0FAE
-	ptr	Map_Sonic_0FD0
-	ptr	Map_Sonic_0FFA
-	ptr	Map_Sonic_101C
-	ptr	Map_Sonic_103E
-	ptr	Map_Sonic_1060
-	ptr	Map_Sonic_108A
-	ptr	Map_Sonic_10AC
-	ptr	Map_Sonic_10CE
-	ptr	Map_Sonic_10E8
-	ptr	Map_Sonic_110A
-	ptr	Map_Sonic_1124
-	ptr	Map_Sonic_1136
-	ptr	Map_Sonic_1150
-	ptr	Map_Sonic_1172
-	ptr	Map_Sonic_118C
-	ptr	Map_Sonic_119E
-	ptr	Map_Sonic_11C8
-	ptr	Map_Sonic_11FA
-	ptr	Map_Sonic_1224
-	ptr	Map_Sonic_124E
-	ptr	Map_Sonic_1280
-	ptr	Map_Sonic_12B2
-	ptr	Map_Sonic_12DC
-	ptr	Map_Sonic_130E
-	ptr	Map_Sonic_1328
-	ptr	Map_Sonic_1342
-	ptr	Map_Sonic_135C
-	ptr	Map_Sonic_136E
-	ptr	Map_Sonic_1388
-	ptr	Map_Sonic_13A2
-	ptr	Map_Sonic_13BC
-	ptr	Map_Sonic_13CE
-	ptr	Map_Sonic_13F0
-	ptr	Map_Sonic_141A
-	ptr	Map_Sonic_1444
-	ptr	Map_Sonic_1466
-	ptr	Map_Sonic_1488
-	ptr	Map_Sonic_14B2
-	ptr	Map_Sonic_14DC
-	ptr	Map_Sonic_1506
-	ptr	Map_Sonic_1528
-	ptr	Map_Sonic_154A
-	ptr	Map_Sonic_156C
-	ptr	Map_Sonic_1596
-	ptr	Map_Sonic_15B8
-	ptr	Map_Sonic_15DA
-	ptr	Map_Sonic_15FC
-	ptr	Map_Sonic_1626
-	ptr	Map_Sonic_1648
-	ptr	Map_Sonic_166A
-	ptr	Map_Sonic_168C
-	ptr	Map_Sonic_16AE
-	ptr	Map_Sonic_16C0
-	ptr	Map_Sonic_16DA
-	ptr	Map_Sonic_16F4
-	ptr	Map_Sonic_170E
-	ptr	Map_Sonic_1728
-	ptr	Map_Sonic_1742
-	ptr	Map_Sonic_175C
-	ptr	Map_Sonic_1776
-	ptr	Map_Sonic_1790
-	ptr	Map_Sonic_17AA
-	ptr	Map_Sonic_17D4
-	ptr	Map_Sonic_17F6
-	ptr	Map_Sonic_1818
-	ptr	Map_Sonic_183A
-	ptr	Map_Sonic_1854
-	ptr	Map_Sonic_186E
-	ptr	Map_Sonic_1888
-	ptr	Map_Sonic_18AA
-	ptr	Map_Sonic_18CC
-	ptr	Map_Sonic_18EE
+	ptr	Frame_SuperSonic_Stand1
+	ptr	Frame_SuperSonic_Stand2
+	ptr	Frame_SuperSonic_Stand3				; $74
+	ptr	Frame_SuperSonic_Walk11
+	ptr	Frame_SuperSonic_Walk12
+	ptr	Frame_SuperSonic_Walk13
+	ptr	Frame_SuperSonic_Walk14	; $78
+	ptr	Frame_SuperSonic_Walk15
+	ptr	Frame_SuperSonic_Walk16
+	ptr	Frame_SuperSonic_Walk17
+	ptr	Frame_SuperSonic_Walk18	; $7C
+	ptr	Frame_SuperSonic_Walk21
+	ptr	Frame_SuperSonic_Walk22
+	ptr	Frame_SuperSonic_Walk23
+	ptr	Frame_SuperSonic_Walk24	; $80
+	ptr	Frame_SuperSonic_Walk25
+	ptr	Frame_SuperSonic_Walk26
+	ptr	Frame_SuperSonic_Walk27
+	ptr	Frame_SuperSonic_Walk28	; $84
+	ptr	Frame_SuperSonic_Walk31
+	ptr	Frame_SuperSonic_Walk32
+	ptr	Frame_SuperSonic_Walk33
+	ptr	Frame_SuperSonic_Walk34	; $88
+	ptr	Frame_SuperSonic_Walk35
+	ptr	Frame_SuperSonic_Walk36
+	ptr	Frame_SuperSonic_Walk37
+	ptr	Frame_SuperSonic_Walk38	; $8C
+	ptr	Frame_SuperSonic_Walk41
+	ptr	Frame_SuperSonic_Walk42
+	ptr	Frame_SuperSonic_Walk43
+	ptr	Frame_SuperSonic_Walk44	; $90
+	ptr	Frame_SuperSonic_Walk45
+	ptr	Frame_SuperSonic_Walk46
+	ptr	Frame_SuperSonic_Walk47
+	ptr	Frame_SuperSonic_Walk48	; $94
+	ptr	Frame_SuperSonic_Walk11_QuillUp
+	ptr	Frame_SuperSonic_Walk12_QuillUp
+	ptr	Frame_SuperSonic_Walk13_QuillUp
+	ptr	Frame_SuperSonic_Walk14_QuillUp	; $98
+	ptr	Frame_SuperSonic_Walk15_QuillUp
+	ptr	Frame_SuperSonic_Walk16_QuillUp
+	ptr	Frame_SuperSonic_Walk17_QuillUp
+	ptr	Frame_SuperSonic_Walk18_QuillUp	; $9C
+	ptr	Frame_SuperSonic_Walk21_QuillUp
+	ptr	Frame_SuperSonic_Walk22_QuillUp
+	ptr	Frame_SuperSonic_Walk23_QuillUp
+	ptr	Frame_SuperSonic_Walk24_QuillUp ; $A0
+	ptr	Frame_SuperSonic_Walk25_QuillUp
+	ptr	Frame_SuperSonic_Walk26_QuillUp
+	ptr	Frame_SuperSonic_Walk27_QuillUp
+	ptr	Frame_SuperSonic_Walk28_QuillUp ; $A4
+	ptr	Frame_SuperSonic_Walk31_QuillUp
+	ptr	Frame_SuperSonic_Walk32_QuillUp
+	ptr	Frame_SuperSonic_Walk33_QuillUp
+	ptr	Frame_SuperSonic_Walk34_QuillUp	; $A8
+	ptr	Frame_SuperSonic_Walk35_QuillUp
+	ptr	Frame_SuperSonic_Walk36_QuillUp
+	ptr	Frame_SuperSonic_Walk37_QuillUp
+	ptr	Frame_SuperSonic_Walk38_QuillUp	; $AC
+	ptr	Frame_SuperSonic_Walk41_QuillUp
+	ptr	Frame_SuperSonic_Walk42_QuillUp
+	ptr	Frame_SuperSonic_Walk43_QuillUp
+	ptr	Frame_SuperSonic_Walk44_QuillUp	; $B0
+	ptr	Frame_SuperSonic_Walk45_QuillUp
+	ptr	Frame_SuperSonic_Walk46_QuillUp
+	ptr	Frame_SuperSonic_Walk47_QuillUp
+	ptr	Frame_SuperSonic_Walk48_QuillUp	; $B4	
+	ptr	Frame_SuperSonic_Run1
+	ptr	Frame_SuperSonic_Run2
+	ptr	Frame_SuperSonic_Run3
+	ptr	Frame_SuperSonic_Run4			; $B8
+	ptr	Frame_SuperSonic_Run1_QuillUp
+	ptr	Frame_SuperSonic_Run2_QuillUp
+	ptr	Frame_SuperSonic_Run3_QuillUp
+	ptr	Frame_SuperSonic_Run4_QuillUp	; $BC	
+	ptr	Frame_SuperSonic_Push1
+	ptr	Frame_SuperSonic_Push2
+	ptr	Frame_SuperSonic_Push3
+	ptr	Frame_SuperSonic_Push4		; $C0
+	ptr	Frame_SuperSonic_Duck	
+	ptr	Frame_SuperSonic_Balance1
+	ptr	Frame_SuperSonic_Balance2
+	ptr	Frame_SuperSonic_Balance3	; $C4
+	ptr	Frame_SuperSonic_Balance4
+	ptr	Frame_SuperSonic_Balance5
+	ptr	Frame_SuperSonic_Balance6
+	ptr	Frame_Sonic_Balance11 	; $C8
+	ptr	Frame_Sonic_Balance12
+	ptr	Frame_Sonic_Balance13
+	ptr	Frame_Sonic_Balance14
+	ptr	Frame_Sonic_Balance21	; $CC
+	ptr	Frame_Sonic_Balance22
+	ptr	Frame_Sonic_Balance23
+	ptr	Frame_Sonic_LoseFooting
+	ptr	Frame_Sonic_Balance31	; $D0
+	ptr	Frame_Sonic_Balance32
+	ptr	Frame_Sonic_Stop1
+	ptr	Frame_Sonic_Stop2
+	ptr	Frame_Sonic_Stop3		; $D4
+	ptr	Frame_Sonic_TurnAround
 
 Frame_Sonic_Blank:	spritemap 
 	endsprite 
@@ -876,77 +880,77 @@ Frame_SuperSonic_Transform5:	spritemap
 	piece	8, -3, 1, 1, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0C90:	spritemap 
+Frame_SuperSonic_Stand1:	spritemap 
 	piece	-$F, -$19, 3, 3, 0, 0, 0, 0, 0
 	piece	-$D, -1, 3, 3, 9, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0CA2:	spritemap 
+Frame_SuperSonic_Stand2:	spritemap 
 	piece	-$F, -$19, 3, 3, 0, 0, 0, 0, 0
 	piece	-$D, -1, 3, 3, 9, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0CB4:	spritemap 
+Frame_SuperSonic_Stand3:	spritemap 
 	piece	-$F, -$19, 3, 3, 0, 0, 0, 0, 0
 	piece	-$D, -1, 3, 3, 9, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0CC6:	spritemap 
+Frame_SuperSonic_Walk11:	spritemap 
 	piece	-$12, -$1D, 4, 3, 0, 0, 0, 0, 0
 	piece	-$14, 3, 1, 2, $C, 0, 0, 0, 0
 	piece	-$C, -5, 4, 4, $E, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0CE0:	spritemap 
+Frame_SuperSonic_Walk12:	spritemap 
 	piece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
 	piece	-$14, 4, 1, 2, $C, 0, 0, 0, 0
 	piece	-$C, -4, 3, 4, $E, 0, 0, 0, 0
 	piece	$C, 4, 1, 2, $1A, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0D02:	spritemap 
+Frame_SuperSonic_Walk13:	spritemap 
 	piece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
 	piece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
 	piece	-9, $D, 2, 2, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0D1C:	spritemap 
+Frame_SuperSonic_Walk14:	spritemap 
 	piece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
 	piece	-$12, -4, 4, 4, 9, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0D2E:	spritemap 
+Frame_SuperSonic_Walk15:	spritemap 
 	piece	-$C, -$1D, 3, 3, 0, 0, 0, 0, 0
 	piece	-$12, -5, 4, 4, 9, 0, 0, 0, 0
 	piece	$E, -5, 1, 2, $19, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0D48:	spritemap 
+Frame_SuperSonic_Walk16:	spritemap 
 	piece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
 	piece	-$14, 4, 1, 2, 9, 0, 0, 0, 0
 	piece	-$C, -4, 3, 4, $B, 0, 0, 0, 0
 	piece	$C, 4, 1, 2, $17, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0D6A:	spritemap 
+Frame_SuperSonic_Walk17:	spritemap 
 	piece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
 	piece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
 	piece	-9, $D, 2, 2, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0D84:	spritemap 
+Frame_SuperSonic_Walk18:	spritemap 
 	piece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
 	piece	-$D, -4, 3, 4, $C, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0D96:	spritemap 
+Frame_SuperSonic_Walk21:	spritemap 
 	piece	-$1E, -$15, 4, 2, 0, 0, 0, 0, 0
 	piece	2, -$D, 2, 2, 8, 0, 0, 0, 0
 	piece	-$16, -5, 3, 2, $C, 0, 0, 0, 0
 	piece	-6, $B, 1, 2, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0DB8:	spritemap 
+Frame_SuperSonic_Walk22:	spritemap 
 	piece	-$1D, -$14, 4, 2, 0, 0, 0, 0, 0
 	piece	3, -$14, 1, 2, 8, 0, 0, 0, 0
 	piece	-$15, -4, 4, 2, $A, 0, 0, 0, 0
@@ -954,7 +958,7 @@ Map_Sonic_0DB8:	spritemap
 	piece	-5, $C, 1, 2, $16, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0DE2:	spritemap 
+Frame_SuperSonic_Walk23:	spritemap 
 	piece	-$1C, -$13, 3, 3, 0, 0, 0, 0, 0
 	piece	-4, -$13, 1, 4, 9, 0, 0, 0, 0
 	piece	-$C, 5, 1, 1, $D, 0, 0, 0, 0
@@ -962,7 +966,7 @@ Map_Sonic_0DE2:	spritemap
 	piece	4, 5, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0E0C:	spritemap 
+Frame_SuperSonic_Walk24:	spritemap 
 	piece	-$F, -$1C, 1, 1, 0, 0, 0, 0, 0
 	piece	-$1D, -$14, 4, 2, 1, 0, 0, 0, 0
 	piece	3, -$14, 1, 2, 9, 0, 0, 0, 0
@@ -970,7 +974,7 @@ Map_Sonic_0E0C:	spritemap
 	piece	-5, -4, 3, 4, $F, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0E36:	spritemap 
+Frame_SuperSonic_Walk25:	spritemap 
 	piece	-$10, -$1D, 1, 1, 0, 0, 0, 0, 0
 	piece	-$1E, -$15, 4, 2, 1, 0, 0, 0, 0
 	piece	2, -$15, 1, 2, 9, 0, 0, 0, 0
@@ -979,7 +983,7 @@ Map_Sonic_0E36:	spritemap
 	piece	-$E, $B, 2, 2, $15, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0E68:	spritemap 
+Frame_SuperSonic_Walk26:	spritemap 
 	piece	-$F, -$1C, 1, 1, 0, 0, 0, 0, 0
 	piece	-$1D, -$14, 4, 2, 1, 0, 0, 0, 0
 	piece	3, -$14, 1, 2, 9, 0, 0, 0, 0
@@ -988,7 +992,7 @@ Map_Sonic_0E68:	spritemap
 	piece	-5, $C, 1, 2, $17, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0E9A:	spritemap 
+Frame_SuperSonic_Walk27:	spritemap 
 	piece	-$1C, -$13, 3, 3, 0, 0, 0, 0, 0
 	piece	-4, -$13, 1, 4, 9, 0, 0, 0, 0
 	piece	-$C, 5, 1, 1, $D, 0, 0, 0, 0
@@ -996,7 +1000,7 @@ Map_Sonic_0E9A:	spritemap
 	piece	4, 5, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0EC4:	spritemap 
+Frame_SuperSonic_Walk28:	spritemap 
 	piece	-$1D, -$14, 4, 2, 0, 0, 0, 0, 0
 	piece	3, -$C, 1, 2, 8, 0, 0, 0, 0
 	piece	-$15, -4, 3, 2, $A, 0, 0, 0, 0
@@ -1004,60 +1008,60 @@ Map_Sonic_0EC4:	spritemap
 	piece	3, 4, 2, 2, $11, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0EEE:	spritemap 
+Frame_SuperSonic_Walk31:	spritemap 
 	piece	-$1D, -$E, 3, 4, 0, 0, 0, 0, 0
 	piece	-5, -$14, 3, 4, $C, 0, 0, 0, 0
 	piece	3, $C, 2, 2, $18, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0F08:	spritemap 
+Frame_SuperSonic_Walk32:	spritemap 
 	piece	-$1C, -$E, 3, 4, 0, 0, 0, 0, 0
 	piece	-4, -$14, 3, 4, $C, 0, 0, 0, 0
 	piece	4, $C, 2, 2, $18, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0F22:	spritemap 
+Frame_SuperSonic_Walk33:	spritemap 
 	piece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
 	piece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
 	piece	5, -7, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0F3C:	spritemap 
+Frame_SuperSonic_Walk34:	spritemap 
 	piece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
 	piece	-4, -$E, 3, 4, 9, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0F4E:	spritemap 
+Frame_SuperSonic_Walk35:	spritemap 
 	piece	-$1D, -$C, 3, 3, 0, 0, 0, 0, 0
 	piece	-5, -$1D, 2, 2, 9, 0, 0, 0, 0
 	piece	-5, -$D, 3, 4, $D, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0F68:	spritemap 
+Frame_SuperSonic_Walk36:	spritemap 
 	piece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
 	piece	-4, -$14, 3, 4, 9, 0, 0, 0, 0
 	piece	4, $C, 2, 2, $15, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0F82:	spritemap 
+Frame_SuperSonic_Walk37:	spritemap 
 	piece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
 	piece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
 	piece	5, -7, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0F9C:	spritemap 
+Frame_SuperSonic_Walk38:	spritemap 
 	piece	-$1C, -$C, 3, 4, 0, 0, 0, 0, 0
 	piece	-4, -$E, 3, 4, $C, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0FAE:	spritemap 
+Frame_SuperSonic_Walk41:	spritemap 
 	piece	-$D, -$12, 2, 2, 0, 0, 0, 0, 0
 	piece	-$15, -2, 2, 4, 4, 0, 0, 0, 0
 	piece	-5, -2, 4, 2, $C, 0, 0, 0, 0
 	piece	-5, $E, 1, 1, $14, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0FD0:	spritemap 
+Frame_SuperSonic_Walk42:	spritemap 
 	piece	-4, -$23, 2, 2, 0, 0, 0, 0, 0
 	piece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
 	piece	-$14, -3, 2, 4, $A, 0, 0, 0, 0
@@ -1065,28 +1069,28 @@ Map_Sonic_0FD0:	spritemap
 	piece	-4, $D, 1, 1, $1A, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_0FFA:	spritemap 
+Frame_SuperSonic_Walk43:	spritemap 
 	piece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
 	piece	-$13, -4, 2, 4, 8, 0, 0, 0, 0
 	piece	-3, -4, 2, 2, $10, 0, 0, 0, 0
 	piece	-3, $C, 1, 2, $14, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_101C:	spritemap 
+Frame_SuperSonic_Walk44:	spritemap 
 	piece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
 	piece	-$1C, -3, 3, 4, 8, 0, 0, 0, 0
 	piece	-4, -3, 3, 2, $14, 0, 0, 0, 0
 	piece	-4, $D, 1, 1, $1A, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_103E:	spritemap 
+Frame_SuperSonic_Walk45:	spritemap 
 	piece	-$D, -$12, 3, 2, 0, 0, 0, 0, 0
 	piece	-$1D, -2, 3, 4, 6, 0, 0, 0, 0
 	piece	-5, -2, 4, 2, $12, 0, 0, 0, 0
 	piece	-5, $E, 1, 1, $1A, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1060:	spritemap 
+Frame_SuperSonic_Walk46:	spritemap 
 	piece	-6, -$23, 2, 2, 0, 0, 0, 0, 0
 	piece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
 	piece	-$1C, -3, 3, 4, $A, 0, 0, 0, 0
@@ -1094,69 +1098,69 @@ Map_Sonic_1060:	spritemap
 	piece	-4, $D, 1, 1, $1E, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_108A:	spritemap 
+Frame_SuperSonic_Walk47:	spritemap 
 	piece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
 	piece	-$13, -4, 2, 4, 8, 0, 0, 0, 0
 	piece	-3, -4, 2, 2, $10, 0, 0, 0, 0
 	piece	-3, $C, 1, 2, $14, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_10AC:	spritemap 
+Frame_SuperSonic_Walk48:	spritemap 
 	piece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
 	piece	-$14, -3, 2, 4, 8, 0, 0, 0, 0
 	piece	-4, -3, 3, 2, $10, 0, 0, 0, 0
 	piece	-4, $D, 1, 1, $16, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_10CE:	spritemap 
+Frame_SuperSonic_Walk11_QuillUp:	spritemap 
 	piece	-$12, -$1D, 4, 3, 0, 0, 0, 0, 0
 	piece	-$14, 3, 1, 2, $C, 0, 0, 0, 0
 	piece	-$C, -5, 4, 4, $E, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_10E8:	spritemap 
+Frame_SuperSonic_Walk12_QuillUp:	spritemap 
 	piece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
 	piece	-$14, 4, 1, 2, $C, 0, 0, 0, 0
 	piece	-$C, -4, 3, 4, $E, 0, 0, 0, 0
 	piece	$C, 4, 1, 2, $1A, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_110A:	spritemap 
+Frame_SuperSonic_Walk13_QuillUp:	spritemap 
 	piece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
 	piece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
 	piece	-9, $D, 2, 2, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1124:	spritemap 
+Frame_SuperSonic_Walk14_QuillUp:	spritemap 
 	piece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
 	piece	-$12, -4, 4, 4, 9, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1136:	spritemap 
+Frame_SuperSonic_Walk15_QuillUp:	spritemap 
 	piece	-$C, -$1D, 3, 3, 0, 0, 0, 0, 0
 	piece	-$12, -5, 4, 4, 9, 0, 0, 0, 0
 	piece	$E, -5, 1, 2, $19, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1150:	spritemap 
+Frame_SuperSonic_Walk16_QuillUp:	spritemap 
 	piece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
 	piece	-$14, 4, 1, 2, 9, 0, 0, 0, 0
 	piece	-$C, -4, 3, 4, $B, 0, 0, 0, 0
 	piece	$C, 4, 1, 2, $17, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1172:	spritemap 
+Frame_SuperSonic_Walk17_QuillUp:	spritemap 
 	piece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
 	piece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
 	piece	-9, $D, 2, 2, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_118C:	spritemap 
+Frame_SuperSonic_Walk18_QuillUp:	spritemap 
 	piece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
 	piece	-$D, -4, 3, 4, $C, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_119E:	spritemap 
+Frame_SuperSonic_Walk21_QuillUp:	spritemap 
 	piece	-$16, -$1D, 2, 1, 0, 0, 0, 0, 0
 	piece	-$1E, -$15, 4, 2, 2, 0, 0, 0, 0
 	piece	-$16, -5, 3, 2, $A, 0, 0, 0, 0
@@ -1164,7 +1168,7 @@ Map_Sonic_119E:	spritemap
 	piece	-6, $B, 1, 2, $14, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_11C8:	spritemap 
+Frame_SuperSonic_Walk22_QuillUp:	spritemap 
 	piece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
 	piece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
 	piece	3, -$14, 1, 2, $A, 0, 0, 0, 0
@@ -1173,7 +1177,7 @@ Map_Sonic_11C8:	spritemap
 	piece	-5, $C, 1, 2, $18, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_11FA:	spritemap 
+Frame_SuperSonic_Walk23_QuillUp:	spritemap 
 	piece	-$1C, -$15, 3, 2, 0, 0, 0, 0, 0
 	piece	-$14, -5, 2, 2, 6, 0, 0, 0, 0
 	piece	-4, -$13, 1, 4, $A, 0, 0, 0, 0
@@ -1181,7 +1185,7 @@ Map_Sonic_11FA:	spritemap
 	piece	4, 5, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1224:	spritemap 
+Frame_SuperSonic_Walk24_QuillUp:	spritemap 
 	piece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
 	piece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
 	piece	3, -$14, 1, 2, $A, 0, 0, 0, 0
@@ -1189,7 +1193,7 @@ Map_Sonic_1224:	spritemap
 	piece	-5, -4, 3, 4, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_124E:	spritemap 
+Frame_SuperSonic_Walk25_QuillUp:	spritemap 
 	piece	-$16, -$1D, 2, 1, 0, 0, 0, 0, 0
 	piece	-$1E, -$15, 4, 2, 2, 0, 0, 0, 0
 	piece	2, -$15, 1, 2, $A, 0, 0, 0, 0
@@ -1198,7 +1202,7 @@ Map_Sonic_124E:	spritemap
 	piece	-$E, $B, 2, 2, $16, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1280:	spritemap 
+Frame_SuperSonic_Walk26_QuillUp:	spritemap 
 	piece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
 	piece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
 	piece	3, -$14, 1, 2, $A, 0, 0, 0, 0
@@ -1207,7 +1211,7 @@ Map_Sonic_1280:	spritemap
 	piece	-5, $C, 1, 2, $18, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_12B2:	spritemap 
+Frame_SuperSonic_Walk27_QuillUp:	spritemap 
 	piece	-$1C, -$15, 3, 2, 0, 0, 0, 0, 0
 	piece	-$14, -5, 2, 2, 6, 0, 0, 0, 0
 	piece	-4, -$13, 1, 4, $A, 0, 0, 0, 0
@@ -1215,7 +1219,7 @@ Map_Sonic_12B2:	spritemap
 	piece	4, 5, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_12DC:	spritemap 
+Frame_SuperSonic_Walk28_QuillUp:	spritemap 
 	piece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
 	piece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
 	piece	-$15, -4, 3, 2, $A, 0, 0, 0, 0
@@ -1224,60 +1228,60 @@ Map_Sonic_12DC:	spritemap
 	piece	-5, $C, 1, 2, $16, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_130E:	spritemap 
+Frame_SuperSonic_Walk31_QuillUp:	spritemap 
 	piece	-$1D, -$E, 3, 4, 0, 0, 0, 0, 0
 	piece	-5, -$14, 3, 4, $C, 0, 0, 0, 0
 	piece	3, $C, 2, 2, $18, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1328:	spritemap 
+Frame_SuperSonic_Walk32_QuillUp:	spritemap 
 	piece	-$1C, -$E, 3, 4, 0, 0, 0, 0, 0
 	piece	-4, -$14, 3, 4, $C, 0, 0, 0, 0
 	piece	4, $C, 2, 2, $18, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1342:	spritemap 
+Frame_SuperSonic_Walk33_QuillUp:	spritemap 
 	piece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
 	piece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
 	piece	5, -7, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_135C:	spritemap 
+Frame_SuperSonic_Walk34_QuillUp:	spritemap 
 	piece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
 	piece	-4, -$E, 3, 4, 9, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_136E:	spritemap 
+Frame_SuperSonic_Walk35_QuillUp:	spritemap 
 	piece	-$1D, -$C, 3, 3, 0, 0, 0, 0, 0
 	piece	-5, -$1D, 2, 2, 9, 0, 0, 0, 0
 	piece	-5, -$D, 3, 4, $D, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1388:	spritemap 
+Frame_SuperSonic_Walk36_QuillUp:	spritemap 
 	piece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
 	piece	-4, -$14, 3, 4, 9, 0, 0, 0, 0
 	piece	4, $C, 2, 2, $15, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_13A2:	spritemap 
+Frame_SuperSonic_Walk37_QuillUp:	spritemap 
 	piece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
 	piece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
 	piece	5, -7, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_13BC:	spritemap 
+Frame_SuperSonic_Walk38_QuillUp:	spritemap 
 	piece	-$1C, -$E, 3, 4, 0, 0, 0, 0, 0
 	piece	-4, -$C, 3, 4, $C, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_13CE:	spritemap 
+Frame_SuperSonic_Walk41_QuillUp:	spritemap 
 	piece	-$D, -$12, 2, 2, 0, 0, 0, 0, 0
 	piece	-$1D, -2, 3, 4, 4, 0, 0, 0, 0
 	piece	-5, -2, 4, 2, $10, 0, 0, 0, 0
 	piece	-5, $E, 1, 1, $18, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_13F0:	spritemap 
+Frame_SuperSonic_Walk42_QuillUp:	spritemap 
 	piece	-4, -$23, 2, 2, 0, 0, 0, 0, 0
 	piece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
 	piece	-$1C, -3, 3, 4, $A, 0, 0, 0, 0
@@ -1285,7 +1289,7 @@ Map_Sonic_13F0:	spritemap
 	piece	-4, $D, 1, 1, $1E, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_141A:	spritemap 
+Frame_SuperSonic_Walk43_QuillUp:	spritemap 
 	piece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
 	piece	-$1B, 4, 1, 2, 8, 0, 0, 0, 0
 	piece	-$13, -4, 2, 4, $A, 0, 0, 0, 0
@@ -1293,21 +1297,21 @@ Map_Sonic_141A:	spritemap
 	piece	-3, $C, 1, 1, $16, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1444:	spritemap 
+Frame_SuperSonic_Walk44_QuillUp:	spritemap 
 	piece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
 	piece	-$1C, -3, 3, 4, 8, 0, 0, 0, 0
 	piece	-4, -3, 3, 2, $14, 0, 0, 0, 0
 	piece	-4, $D, 1, 1, $1A, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1466:	spritemap 
+Frame_SuperSonic_Walk45_QuillUp:	spritemap 
 	piece	-$D, -$12, 3, 2, 0, 0, 0, 0, 0
 	piece	-$1D, -2, 3, 4, 6, 0, 0, 0, 0
 	piece	-5, -2, 4, 2, $12, 0, 0, 0, 0
 	piece	-5, $E, 1, 1, $1A, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1488:	spritemap 
+Frame_SuperSonic_Walk46_QuillUp:	spritemap 
 	piece	-6, -$23, 2, 2, 0, 0, 0, 0, 0
 	piece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
 	piece	-$1C, -3, 3, 4, $A, 0, 0, 0, 0
@@ -1315,7 +1319,7 @@ Map_Sonic_1488:	spritemap
 	piece	-4, $D, 1, 1, $1E, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_14B2:	spritemap 
+Frame_SuperSonic_Walk47_QuillUp:	spritemap 
 	piece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
 	piece	-$1B, 4, 1, 2, 8, 0, 0, 0, 0
 	piece	-$13, -4, 2, 4, $A, 0, 0, 0, 0
@@ -1323,7 +1327,7 @@ Map_Sonic_14B2:	spritemap
 	piece	-3, $C, 1, 1, $16, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_14DC:	spritemap 
+Frame_SuperSonic_Walk48_QuillUp:	spritemap 
 	piece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
 	piece	-$1C, 5, 1, 2, 8, 0, 0, 0, 0
 	piece	-$14, -3, 2, 4, $A, 0, 0, 0, 0
@@ -1331,28 +1335,28 @@ Map_Sonic_14DC:	spritemap
 	piece	-4, $D, 1, 1, $18, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1506:	spritemap 
+Frame_SuperSonic_Run1:	spritemap 
 	piece	-4, -$10, 3, 1, 0, 0, 0, 0, 0
 	piece	-4, -8, 1, 1, 3, 0, 0, 0, 0
 	piece	4, -8, 2, 2, 4, 0, 0, 0, 0
 	piece	-$14, 0, 3, 2, 8, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1528:	spritemap 
+Frame_SuperSonic_Run2:	spritemap 
 	piece	-6, -$1A, 2, 1, 0, 0, 0, 0, 0
 	piece	-$E, -$12, 3, 4, 2, 0, 0, 0, 0
 	piece	$A, -$12, 1, 3, $E, 0, 0, 0, 0
 	piece	-6, $E, 2, 1, $11, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_154A:	spritemap 
+Frame_SuperSonic_Run3:	spritemap 
 	piece	-$10, -$14, 1, 3, 0, 0, 0, 0, 0
 	piece	-8, -$14, 2, 2, 3, 0, 0, 0, 0
 	piece	-8, -4, 3, 1, 7, 0, 0, 0, 0
 	piece	0, 4, 2, 2, $A, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_156C:	spritemap 
+Frame_SuperSonic_Run4:	spritemap 
 	piece	-$12, -$12, 3, 1, 0, 0, 0, 0, 0
 	piece	-$1A, -$A, 4, 2, 3, 0, 0, 0, 0
 	piece	6, -$A, 2, 2, $B, 0, 0, 0, 0
@@ -1360,28 +1364,28 @@ Map_Sonic_156C:	spritemap
 	piece	6, 6, 1, 1, $11, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1596:	spritemap 
+Frame_SuperSonic_Run1_QuillUp:	spritemap 
 	piece	-4, -$18, 3, 2, 0, 0, 0, 0, 0
 	piece	-4, -8, 1, 1, 6, 0, 0, 0, 0
 	piece	4, -8, 2, 2, 7, 0, 0, 0, 0
 	piece	-$14, 0, 3, 2, $B, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_15B8:	spritemap 
+Frame_SuperSonic_Run2_QuillUp:	spritemap 
 	piece	-6, -$1A, 2, 1, 0, 0, 0, 0, 0
 	piece	-$E, -$12, 3, 4, 2, 0, 0, 0, 0
 	piece	$A, -$12, 1, 3, $E, 0, 0, 0, 0
 	piece	-6, $E, 1, 1, $11, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_15DA:	spritemap 
+Frame_SuperSonic_Run3_QuillUp:	spritemap 
 	piece	-$18, -$14, 2, 3, 0, 0, 0, 0, 0
 	piece	-8, -$14, 2, 2, 6, 0, 0, 0, 0
 	piece	-8, -4, 1, 1, $A, 0, 0, 0, 0
 	piece	0, -4, 2, 3, $B, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_15FC:	spritemap 
+Frame_SuperSonic_Run4_QuillUp:	spritemap 
 	piece	-$12, -$12, 3, 1, 0, 0, 0, 0, 0
 	piece	-$1A, -$A, 4, 2, 3, 0, 0, 0, 0
 	piece	6, -$A, 2, 2, $B, 0, 0, 0, 0
@@ -1389,94 +1393,94 @@ Map_Sonic_15FC:	spritemap
 	piece	6, 6, 1, 1, $11, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1626:	spritemap 
+Frame_SuperSonic_Push1:	spritemap 
 	piece	-$12, -$1B, 3, 2, 0, 0, 0, 0, 0
 	piece	-$15, -$B, 2, 2, 6, 0, 0, 0, 0
 	piece	-5, -$B, 2, 2, $A, 0, 0, 0, 0
 	piece	-$15, 5, 4, 2, $E, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1648:	spritemap 
+Frame_SuperSonic_Push2:	spritemap 
 	piece	-$12, -$1C, 3, 2, 0, 0, 0, 0, 0
 	piece	-$15, -$C, 2, 2, 6, 0, 0, 0, 0
 	piece	-5, -$C, 2, 2, $A, 0, 0, 0, 0
 	piece	-$15, 4, 4, 2, $E, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_166A:	spritemap 
+Frame_SuperSonic_Push3:	spritemap 
 	piece	-$12, -$1B, 3, 2, 0, 0, 0, 0, 0
 	piece	-$15, -$B, 2, 2, 6, 0, 0, 0, 0
 	piece	-5, -$B, 2, 2, $A, 0, 0, 0, 0
 	piece	-$15, 5, 4, 2, $E, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_168C:	spritemap 
+Frame_SuperSonic_Push4:	spritemap 
 	piece	-$12, -$1C, 3, 2, 0, 0, 0, 0, 0
 	piece	-$15, -$C, 2, 2, 6, 0, 0, 0, 0
 	piece	-5, -$C, 2, 2, $A, 0, 0, 0, 0
 	piece	-$15, 4, 4, 2, $E, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_16AE:	spritemap 
+Frame_SuperSonic_Duck:	spritemap 
 	piece	-$10, -4, 1, 3, 0, 0, 0, 0, 0
 	piece	-8, -$C, 3, 4, 3, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_16C0:	spritemap 
+Frame_SuperSonic_Balance1:	spritemap 
 	piece	-$14, -$1C, 3, 3, 0, 0, 0, 0, 0
 	piece	-$14, -4, 3, 1, 9, 0, 0, 0, 0
 	piece	-$F, 4, 2, 2, $C, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_16DA:	spritemap 
+Frame_SuperSonic_Balance2:	spritemap 
 	piece	-$14, -$1C, 3, 3, 0, 0, 0, 0, 0
 	piece	-$14, -4, 3, 1, 9, 0, 0, 0, 0
 	piece	-$F, 4, 2, 2, $C, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_16F4:	spritemap 
+Frame_SuperSonic_Balance3:	spritemap 
 	piece	-$14, -$1C, 3, 3, 0, 0, 0, 0, 0
 	piece	-$14, -4, 3, 1, 9, 0, 0, 0, 0
 	piece	-$F, 4, 2, 2, $C, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_170E:	spritemap 
+Frame_SuperSonic_Balance4:	spritemap 
 	piece	-$13, -$1B, 3, 3, 0, 0, 0, 0, 0
 	piece	-$13, -3, 3, 1, 9, 0, 0, 0, 0
 	piece	-$F, 5, 2, 2, $C, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1728:	spritemap 
+Frame_SuperSonic_Balance5:	spritemap 
 	piece	-$13, -$1B, 3, 3, 0, 0, 0, 0, 0
 	piece	-$13, -3, 3, 1, 9, 0, 0, 0, 0
 	piece	-$F, 5, 2, 2, $C, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1742:	spritemap 
+Frame_SuperSonic_Balance6:	spritemap 
 	piece	-$13, -$1B, 3, 3, 0, 0, 0, 0, 0
 	piece	-$13, -3, 3, 1, 9, 0, 0, 0, 0
 	piece	-$F, 5, 2, 2, $C, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_175C:	spritemap 
+Frame_Sonic_Balance11:	spritemap 
 	piece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
 	piece	8, -$14, 1, 4, $C, 0, 0, 0, 0
 	piece	-$F, $C, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1776:	spritemap 
+Frame_Sonic_Balance12:	spritemap 
 	piece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
 	piece	8, -$14, 1, 4, $C, 0, 0, 0, 0
 	piece	-$F, $C, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1790:	spritemap 
+Frame_Sonic_Balance13:	spritemap 
 	piece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
 	piece	8, -$14, 1, 4, $C, 0, 0, 0, 0
 	piece	-$F, $C, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_17AA:	spritemap 
+Frame_Sonic_Balance14:	spritemap 
 	piece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
 	piece	8, -$14, 1, 2, $C, 0, 0, 0, 0
 	piece	$10, -$14, 1, 2, $E, 0, 0, 0, 0
@@ -1484,67 +1488,67 @@ Map_Sonic_17AA:	spritemap
 	piece	-$F, $C, 2, 2, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_17D4:	spritemap 
+Frame_Sonic_Balance21:	spritemap 
 	piece	-$15, -$14, 2, 4, 0, 0, 0, 0, 0
 	piece	-5, -$14, 3, 2, 8, 0, 0, 0, 0
 	piece	-5, -4, 2, 2, $E, 0, 0, 0, 0
 	piece	-$12, $C, 3, 2, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_17F6:	spritemap 
+Frame_Sonic_Balance22:	spritemap 
 	piece	-$14, -$14, 2, 4, 0, 0, 0, 0, 0
 	piece	-4, -$14, 3, 2, 8, 0, 0, 0, 0
 	piece	-4, -4, 2, 2, $E, 0, 0, 0, 0
 	piece	-$11, $C, 3, 2, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1818:	spritemap 
+Frame_Sonic_Balance23:	spritemap 
 	piece	-$14, -$14, 2, 4, 0, 0, 0, 0, 0
 	piece	-4, -$14, 3, 2, 8, 0, 0, 0, 0
 	piece	-4, -4, 3, 2, $E, 0, 0, 0, 0
 	piece	-$10, $C, 3, 2, $14, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_183A:	spritemap 
+Frame_Sonic_LoseFooting:	spritemap 
 	piece	-$18, -$C, 1, 4, 0, 0, 0, 0, 0
 	piece	-$10, -$14, 3, 4, 4, 0, 0, 0, 0
 	piece	-$10, $C, 2, 2, $10, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1854:	spritemap 
+Frame_Sonic_Balance31:	spritemap 
 	piece	$C, -$C, 1, 4, 0, 1, 0, 0, 0
 	piece	-$C, -$14, 3, 4, 4, 1, 0, 0, 0
 	piece	-4, $C, 2, 2, $10, 1, 0, 0, 0
 	endsprite 
 
-Map_Sonic_186E:	spritemap 
+Frame_Sonic_Balance32:	spritemap 
 	piece	$C, -$C, 1, 4, 0, 1, 0, 0, 0
 	piece	-$C, -$14, 3, 4, 4, 1, 0, 0, 0
 	piece	-4, $C, 2, 2, $10, 1, 0, 0, 0
 	endsprite 
 
-Map_Sonic_1888:	spritemap 
+Frame_Sonic_Stop1:	spritemap 
 	piece	-$13, -$14, 4, 2, 0, 0, 0, 0, 0
 	piece	-$11, -4, 4, 2, 8, 0, 0, 0, 0
 	piece	$F, -4, 1, 2, $10, 0, 0, 0, 0
 	piece	1, $C, 2, 2, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_18AA:	spritemap 
+Frame_Sonic_Stop2:	spritemap 
 	piece	-$12, -$14, 4, 2, 0, 0, 0, 0, 0
 	piece	-$11, -4, 4, 2, 8, 0, 0, 0, 0
 	piece	$F, -4, 1, 2, $10, 0, 0, 0, 0
 	piece	1, $C, 2, 2, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_18CC:	spritemap 
+Frame_Sonic_Stop3:	spritemap 
 	piece	-$11, -$14, 4, 2, 0, 0, 0, 0, 0
 	piece	-$11, -4, 4, 2, 8, 0, 0, 0, 0
 	piece	$F, -4, 1, 2, $10, 0, 0, 0, 0
 	piece	1, $C, 2, 2, $12, 0, 0, 0, 0
 	endsprite 
 
-Map_Sonic_18EE:	spritemap 
+Frame_Sonic_TurnAround:	spritemap 
 	piece	-$C, -$14, 3, 2, 0, 0, 0, 0, 0
 	piece	-9, -4, 3, 4, 6, 0, 0, 0, 0
 	endsprite 

@@ -1,11 +1,13 @@
 		opt	l.					; . is the local label symbol
 		opt	ae-					; automatic evens disabled by default
-		opt an+						; allow -h suffix for hexadecimal (used in the Z80 code)	
+		opt an+					; allow Intel/Zilog-style number suffixes (used in the Z80 code and definitions)	
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
 ;		opt	m+					; do not expand macros - if enabled, this can break assembling
 
-Header: group word,org($1380)
+		include "sound/Sound Equates.asm"
+
+Header: group word,org(z_music_data)
 		section _Header,Header
 
 ifarg:		macros
@@ -22,7 +24,7 @@ z80_ptr: macros	; make a z80 pointer for use with compressed music (that is, NOT
 inc_music:	macro songname
 		pushs
 
-Music\@:	section	org($1380),file("sound/music/compressed/\songname\.unc"),over(Header) ; output each music track to its own file
+Music\@:	section	org(z_music_data),file("sound/music/compressed/\songname\.unc"),over(Header) ; output each music track to its own file
 		include "sound/music/\songname\.asm"		; include the actual music file for assembly
 		
 		if offset(*)>7C0h				; size of Z80 decompression buffer

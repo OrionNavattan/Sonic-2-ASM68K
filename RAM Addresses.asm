@@ -406,7 +406,7 @@ v_ring_end_p2:			rs.w 1				; $FFFFF718
 				rsblockend ring_manager_pointers_p2
 
 v_cnz_bumper_routine:		rs.b 1				; $FFFFF71A ; routine counter for the CNZ bumper manager psuedo-object
-f_unused_cnz_bumper:		rs.b 1				; $FFFFF71B ; set by the CNZ bumper psuedo-object, never used again
+f_unused_cnz_bumper:		rs.b 1				; $FFFFF71B ; set by the CNZ bumper psuedo-object's init routine, never used again
 
 				rsblock bumper_manager_pointers
 v_cnz_visible_bumpers_start:		rs.l 1			; $FFFFF71C

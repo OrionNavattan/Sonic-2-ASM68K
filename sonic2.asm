@@ -30037,10 +30037,12 @@ loc_17358:
 
 
 ; ---------------------------------------------------------------------------
-; Psuedoobject that runs the special bumpers in Casino Night Zone
-; These are the bumpers whose graphics are part of the level art (that is,
-; everything other than the round and hexagonal ones).
+; Psuedoobject that initialize, runs, and handles collision with the special 
+; bumpers in Casino Night Zone. These are the bumpers whose graphics are part 
+; of the level art (that is, everything other than the round and hexagonal 
+; ones).
 ; ---------------------------------------------------------------------------
+
 SpecialCNZBumpers:					
 		moveq	#0,d0
 		move.b	(v_cnz_bumper_routine).w,d0
@@ -30060,61 +30062,63 @@ SpecBump_Init:
 		lea	(SpecBumps_CNZ2).l,a1			; special bumper layout for act 2
 
 	.is_act1:				
-		move.w	(v_camera_x_pos).w,d4
-		subq.w	#8,d4
-		bhi.s	loc_173F4
-		moveq	#1,d4
-		bra.s	loc_173F4
+		move.w	(v_camera_x_pos).w,d4		; get camera x pos
+		subq.w	#8,d4						; subtract 8
+		bhi.s	.find_left_init				; branch if result is less than 8 (we're starting in the middle of a level)
+		moveq	#1,d4					; otherwise, start from left boundary of level
+		bra.s	.find_left_init
 ; ===========================================================================
 
-loc_173F0:				
-		lea	6(a1),a1
+.loop_find_left_init:				
+		lea	sizeof_specbump(a1),a1		; go to next bumper in list
 
-loc_173F4:				
-		cmp.w	2(a1),d4
-		bhi.s	loc_173F0
-		move.l	a1,(v_cnz_visible_bumpers_start).w
+.find_left_init:				
+		cmp.w	specbump_xpos(a1),d4			; d4 = left limit of visible bumpers
+		bhi.s	.loop_find_left_init			; branch if bumper is offscreen
+		
+	;found_left:	
+		move.l	a1,(v_cnz_visible_bumpers_start).w		; set pointer to first visible bumper
 		move.l	a1,(v_cnz_visible_bumpers_start_p2).w
-		addi.w	#$150,d4
-		bra.s	loc_1740C
+		addi.w	#$150,d4				; jump ahead 336 pixels			
+		bra.s	.find_right_init
 ; ===========================================================================
 
-loc_17408:				
-		lea	6(a1),a1
+.loop_find_right_init:				
+		lea	sizeof_specbump(a1),a1		; go to next bumper in list
 
-loc_1740C:				
-		cmp.w	2(a1),d4
-		bhi.s	loc_17408
-		move.l	a1,(v_cnz_visible_bumpers_end).w
+	.find_right_init:		
+		cmp.w	specbump_xpos(a1),d4			; d4 = left limit of visible bumpers
+		bhi.s	.loop_find_right_init			; branch if bumper is onscreen
+		move.l	a1,(v_cnz_visible_bumpers_end).w		; set pointer to last visible bumper
 		move.l	a1,(v_cnz_visible_bumpers_end_p2).w
-		move.b	#1,(f_unused_cnz_bumper).w
+		move.b	#1,(f_unused_cnz_bumper).w			; set unused flag
 		rts	
 ; ===========================================================================
 
 SpecBump_Main:				
-		movea.l	(v_cnz_visible_bumpers_start).w,a1
-		move.w	(v_camera_x_pos).w,d4
-		subq.w	#8,d4
-		bhi.s	loc_17436
-		moveq	#1,d4
-		bra.s	loc_17436
+		movea.l	(v_cnz_visible_bumpers_start).w,a1	; a1 = pointer to first visible bumper in layout list
+		move.w	(v_camera_x_pos).w,d4				; get camera x pos
+		subq.w	#8,d4						; subtract 8
+		bhi.s	.find_left1				; branch if result is less than 8 (we're in the middle of a level)
+		moveq	#1,d4					; otherwise, start from left boundary of level
+		bra.s	.find_left1
 ; ===========================================================================
 
-loc_17432:				
-		lea	6(a1),a1
+.loop_find_left1:				
+		lea	sizeof_specbump(a1),a1		; go to next bumper in list
 
-loc_17436:				
-		cmp.w	2(a1),d4
-		bhi.s	loc_17432
-		bra.s	loc_17440
+	.find_left1:				
+		cmp.w	specbump_xpos(a1),d4	; d4 = left limit of visible bumpers
+		bhi.s	.loop_find_left1			; branch if bumper is offscreen
+		bra.s	.find_left2
 ; ===========================================================================
 
-loc_1743E:				
-		subq.w	#6,a1
+.loop_find_left2:				
+		subq.w	#sizeof_specbump,a1		
 
-loc_17440:				
-		cmp.w	-4(a1),d4
-		bls.s	loc_1743E
+.find_left2:				
+		cmp.w	-sizeof_specbump+specbump_xpos(a1),d4
+		bls.s	.loop_find_left2
 		move.l	a1,(v_cnz_visible_bumpers_start).w
 		movea.l	(v_cnz_visible_bumpers_end).w,a2
 		addi.w	#$150,d4
@@ -30783,12 +30787,22 @@ OPL_MovedRight:
 		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
 		bpl.s	.no_respawn							; branch if not
 		move.b	respawn_count_1(a2),d2						; d2 = index to respawn table entry
-		addq.b	#1,respawn_count_1(a2)						; increment respawn list counter
+		addq.b	#1,respawn_count_1(a2)						; increment respawn list index
 
 	.no_respawn:				
 		bsr.w	OPL_SpawnObj				; check respawn flag and spawn object
 		beq.s	.loop_find_right			; branch if it spawned successfully or was skipped because it was broken (looping until object is found outside window)
 
+	if FixBugs
+		; The game forgets to do this if the right edge is "found" as of result of running
+		; out of OST slots. This can lead to destroyed objects reappearing and vice versa
+		; due to the respawn indices desyncing. 
+	;.fail:
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.found_right						; if not, branch
+		subq.b	#1,respawn_count_1(a2)				; undo increment of respawn index	
+	endc
+	
 	.found_right:				
 		move.l	a0,(v_opl_ptr_right).w			; save pointer for objpos
 		movea.l	(v_opl_ptr_left).w,a0			; jump to objpos on left side of window
@@ -31095,6 +31109,14 @@ OPL_2P_MovedRight:
 		bsr.w	OPL_2P_SpawnObj				; check respawn flag and spawn object		
 		beq.s	.loop_find_right2			; loop until object is found outside x range
 
+	if FixBugs
+		; Same bug as in OPL_MovedRight.no_respawn, but for 2P mode.
+	;.fail:
+		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember flag set?
+		bpl.s	.found_right						; if not, branch
+		subq.b	#1,respawn_count_1(a2)				; undo increment of respawn index	
+	endc
+
 	.found_right2:				
 		move.l	a0,(a4)					; save new right pointer
 
@@ -31251,7 +31273,13 @@ OPL_2P_UnloadBlock:
 OPL_SpawnObj:	
 		tst.b	objpos_respawn_flip_y_pos_hi(a0)				; is remember respawn flag set?
 		bpl.s	OPL_MakeItem									; if not, branch
+	if FixBugs
+		; Part of the bugfix in OPL_MovedRight.no_respawn. This should not be set here;
+		; it will not be undone if the spawn fails due to running out of OST slots.
+		btst	#respawn_bit,v_respawn_data-v_respawn_list(a2,d2.w)		; check respawn flag
+	else
 		bset	#respawn_bit,v_respawn_data-v_respawn_list(a2,d2.w)		; set flag so it isn't loaded more than once
+	endc
 		beq.s	OPL_MakeItem									; branch if object hasn't already been destroyed
 		addq.w	#sizeof_objpos,a0							; go to next object in objpos list
 		moveq	#0,d0										; mark operation as successful
@@ -31264,6 +31292,10 @@ OPL_MakeItem:
 		move.w	(a0)+,ost_x_pos(a1)	; set x pos
 		move.w	(a0)+,d0			; get respawn flag, x/y flip flags, and y pos
 		bpl.s	.no_respawn_bit				; branch if remember respawn bit is not set
+	if FixBugs
+		; The respawn flag should only be set if the object is successfully spawned.
+		bset	#respawn_bit,v_respawn_data-v_respawn_list(a2,d2.w)		; set flag so it isn't loaded more than once
+	endc		
 		move.b	d2,ost_respawn(a1)			; give object its place in the respawn table
 
 	.no_respawn_bit:				
@@ -31295,10 +31327,18 @@ OPL_MakeItem:
 
 ;	uses d1.w, a0
 ; ---------------------------------------------------------------------------
+
 OPL_2P_SpawnObj:				
 		tst.b	objpos_respawn_flip_y_pos_hi(a0)				; is remember respawn flag set?
 		bpl.s	OPL_2P_MakeItem									; if not, branch
+		
+	if FixBugs
+		; Same fix as in OPL_SpawnObj.
+		btst	#respawn_bit,v_respawn_data-v_respawn_list(a2,d2.w)		; check respawn flag
+	else
 		bset	#respawn_bit,v_respawn_data-v_respawn_list(a2,d2.w)		; set flag so it isn't loaded more than once
+	endc
+
 		beq.s	OPL_2P_MakeItem									; branch if object hasn't already been destroyed
 		addq.w	#sizeof_objpos,a0							; go to next object in objpos list
 		moveq	#0,d0										; mark operation as successful
@@ -31321,6 +31361,10 @@ OPL_2P_MakeItem:
 		move.w	(a0)+,ost_x_pos(a1)	; set x pos
 		move.w	(a0)+,d0			; get respawn flag, x/y flip flags, and y pos
 		bpl.s	.no_respawn_bit				; branch if remember respawn bit is not set
+	if FixBugs
+		; Same fix as in OPL_MakeItem.
+		bset	#respawn_bit,v_respawn_data-v_respawn_list(a2,d2.w)		; set flag so it isn't loaded more than once
+	endc			
 		move.b	d2,ost_respawn(a1)			; give object its place in the respawn table
 
 	.no_respawn_bit:				
@@ -35493,10 +35537,10 @@ loc_1B448:
 loc_1B452:				
 		tst.b	(f_super).w
 		bne.s	loc_1B4AE
-		lea	(byte_1B666).l,a1
+		lea	(Ani_Son_Run).l,a1
 		cmpi.w	#$600,d2
 		bcc.s	loc_1B46C
-		lea	(byte_1B65C).l,a1
+		lea	(Ani_Son_Walk).l,a1
 		add.b	d0,d0
 
 loc_1B46C:				
@@ -35530,12 +35574,12 @@ locret_1B4AC:
 ; ===========================================================================
 
 loc_1B4AE:				
-		lea	(byte_1B810).l,a1
+		lea	(Ani_SupSon_Run).l,a1
 
 loc_1B4B4:
 		cmpi.w	#$800,d2
 		bcc.s	loc_1B4C6
-		lea	(byte_1B806).l,a1
+		lea	(Ani_SupSon_Walk).l,a1
 		add.b	d0,d0
 		add.b	d0,d0
 		bra.s	loc_1B4C8
@@ -35634,10 +35678,10 @@ loc_1B586:
 		neg.w	d2
 
 loc_1B59A:				
-		lea	(byte_1B67A).l,a1
+		lea	(Ani_Son_Roll2).l,a1
 		cmpi.w	#$600,d2
 		bcc.s	loc_1B5AC
-		lea	(byte_1B670).l,a1
+		lea	(Ani_Son_Roll).l,a1
 
 loc_1B5AC:				
 		neg.w	d2
@@ -35670,10 +35714,10 @@ loc_1B5E2:
 loc_1B5EA:				
 		lsr.w	#6,d2
 		move.b	d2,ost_anim_time(a0)
-		lea	(byte_1B684).l,a1
+		lea	(Ani_Son_Pushing).l,a1
 		tst.b	(f_super).w
 		beq.s	loc_1B602
-		lea	(byte_1B81A).l,a1
+		lea	(Ani_SupSon_Push).l,a1
 
 loc_1B602:				
 		move.b	ost_primary_status(a0),d1
@@ -35683,42 +35727,42 @@ loc_1B602:
 		bra.w	loc_1B3AA
 ; ===========================================================================
 Ani_Sonic:	index offset(*)
-		ptr byte_1B65C					; 0 
-		ptr byte_1B666					; 1
-		ptr byte_1B670					; 2
-		ptr byte_1B67A					; 3
-		ptr byte_1B684					; 4
-		ptr byte_1B68E					; 5
-		ptr byte_1B744					; 6
-		ptr byte_1B74A					; 7
-		ptr byte_1B74F					; 8
-		ptr byte_1B754					; 9
-		ptr byte_1B760					; 10
-		ptr byte_1B764					; 11
-		ptr byte_1B768					; 12
-		ptr byte_1B76E					; 13
-		ptr byte_1B775					; 14
-		ptr byte_1B779					; 15
-		ptr byte_1B780					; 16
-		ptr byte_1B784					; 17
-		ptr byte_1B788					; 18
-		ptr byte_1B78E					; 19
-		ptr byte_1B793					; 20
-		ptr byte_1B797					; 21
-		ptr byte_1B79E					; 22
-		ptr byte_1B7A1					; 23
-		ptr byte_1B7A4					; 24
-		ptr byte_1B7A7					; 25
-		ptr byte_1B7A7					; 26
-		ptr byte_1B7AA					; 27
-		ptr byte_1B7AE					; 28
-		ptr byte_1B7B2					; 29
-		ptr byte_1B7B6					; 30
-		ptr byte_1B837					; 31
-		ptr byte_1B7BE					; 32
-		ptr byte_1B7C2					; 33
+		ptr Ani_Son_Walk					; 0 
+		ptr Ani_Son_Run						; 1
+		ptr Ani_Son_Roll					; 2
+		ptr Ani_Son_Roll2					; 3
+		ptr Ani_Son_Pushing					; 4
+		ptr Ani_Son_Wait					; 5
+		ptr Ani_Son_Balance1				; 6
+		ptr Ani_Son_LookUp					; 7
+		ptr Ani_Son_Duck					; 8
+		ptr Ani_Son_Spindash				; 9
+		ptr Ani_Son_Blink					; 10
+		ptr Ani_Son_GetUp					; 11
+		ptr Ani_Son_Balance2				; 12
+		ptr Ani_Son_Stop					; 13
+		ptr Ani_Son_Float1					; 14
+		ptr Ani_Son_Float2					; 15
+		ptr Ani_Son_Spring					; 16
+		ptr Ani_Son_Hang1					; 17
+		ptr Ani_Son_Spindash2				; 18
+		ptr Ani_Son_Spindash3				; 19
+		ptr Ani_Son_Hang2					; 20
+		ptr Ani_Son_Bubble					; 21
+		ptr Ani_Son_Burnt					; 22
+		ptr Ani_Son_Drown					; 23
+		ptr Ani_Son_Death					; 24
+		ptr Ani_Son_Hurt					; 25
+		ptr Ani_Son_Hurt					; 26
+		ptr Ani_Son_OilSlide				; 27
+		ptr Ani_Son_Blank					; 28
+		ptr Ani_Son_Balance3				; 29
+		ptr Ani_Son_Balance4				; 30
+		ptr Ani_SupSon_Transform			; 31
+		ptr Ani_Son_Lying					; 32
+		ptr Ani_Son_LieDown					; 33
 		
-byte_1B65C:	
+Ani_Son_Walk:	
 		dc.b $FF
 		dc.b id_Frame_Sonic_Walk13
 		dc.b id_Frame_Sonic_Walk14
@@ -35730,201 +35774,432 @@ byte_1B65C:
 		dc.b id_Frame_Sonic_Walk12
 		dc.b afEnd
 
-byte_1B666:	
-		dc.b $FF,$2D,$2E,$2F,$30,$FF,$FF,$FF,$FF,$FF	; 0	
+Ani_Son_Run:	
+		dc.b $FF
+		dc.b id_Frame_Sonic_Run11
+		dc.b id_Frame_Sonic_Run12
+		dc.b id_Frame_Sonic_Run13
+		dc.b id_Frame_Sonic_Run14
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
 		rev02even
 		
-byte_1B670:	
-		dc.b $FE,$3D,$41,$3E,$41,$3F,$41,$40,$41,$FF	; 0	
+Ani_Son_Roll:	
+		dc.b $FE
+		dc.b id_Frame_Sonic_Roll1
+		dc.b id_Frame_Sonic_Roll5
+		dc.b id_Frame_Sonic_Roll2
+		dc.b id_Frame_Sonic_Roll5
+		dc.b id_Frame_Sonic_Roll3
+		dc.b id_Frame_Sonic_Roll5
+		dc.b id_Frame_Sonic_Roll4
+		dc.b id_Frame_Sonic_Roll5
+		dc.b afEnd
 		rev02even
 		
-byte_1B67A:	
-		dc.b $FE,$3D,$41,$3E,$41,$3F,$41,$40,$41,$FF	; 0	
+Ani_Son_Roll2:	
+		dc.b $FE
+		dc.b id_Frame_Sonic_Roll1
+		dc.b id_Frame_Sonic_Roll5
+		dc.b id_Frame_Sonic_Roll2
+		dc.b id_Frame_Sonic_Roll5
+		dc.b id_Frame_Sonic_Roll3
+		dc.b id_Frame_Sonic_Roll5
+		dc.b id_Frame_Sonic_Roll4
+		dc.b id_Frame_Sonic_Roll5
+		dc.b afEnd
 		rev02even
 		
-byte_1B684:
-		dc.b $FD,$48,$49,$4A,$4B,$FF,$FF,$FF,$FF,$FF	; 0	
+Ani_Son_Pushing:
+		dc.b $FD
+		dc.b id_Frame_Sonic_Push1
+		dc.b id_Frame_Sonic_Push2
+		dc.b id_Frame_Sonic_Push3
+		dc.b id_Frame_Sonic_Push4
+		dc.b afEnd
+		
+		; Pointless beyond here.
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
 		rev02even
 		
-byte_1B68E:	
-		dc.b   5,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1 ; 0		
-		dc.b   1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  2 ; 16
-		dc.b   3,  3,  3,  3,  3,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5 ; 32
-		dc.b   5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  6,  6,  6 ; 48
-		dc.b   6,  6,  6,  6,  6,  6,  6,  4,  4,  4,  5,  5,  5,  4,  4,  4 ; 64
-		dc.b   5,  5,  5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  6 ; 80
-		dc.b   6,  6,  6,  6,  6,  6,  6,  6,  6,  4,  4,  4,  5,  5,  5,  4 ; 96
-		dc.b   4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5 ; 112
-		dc.b   5,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  4,  4,  4,  5,  5 ; 128
-		dc.b   5,  4,  4,  4,  5,  5,  5,  4,  4,  4,  5,  5,  5,  4,  4,  4 ; 144
-		dc.b   5,  5,  5,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  7,  8,  8 ; 160
-		dc.b   8,  9,  9,  9,$FE,  6			; 176
+Ani_Son_Wait:	
+		dc.b 5	
+		rept 30
+		; Standing
+		dc.b id_Frame_Sonic_Stand
+		endr	
+		dc.b id_Frame_Sonic_Blink
+		dc.b id_Frame_Sonic_Wait1
+		dc.b id_Frame_Sonic_Wait1
+		dc.b id_Frame_Sonic_Wait1
+		dc.b id_Frame_Sonic_Wait1
+		dc.b id_Frame_Sonic_Wait1
+		rept 4
+		; Looking at player and at watch
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait2
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait3
+		dc.b id_Frame_Sonic_Wait4
+		dc.b id_Frame_Sonic_Wait4
+		dc.b id_Frame_Sonic_Wait4
+		dc.b id_Frame_Sonic_Wait4
+		dc.b id_Frame_Sonic_Wait4
+		dc.b id_Frame_Sonic_Wait4
+		dc.b id_Frame_Sonic_Wait4
+		dc.b id_Frame_Sonic_Wait4
+		dc.b id_Frame_Sonic_Wait4
+		dc.b id_Frame_Sonic_Wait4
+		endr
+		; Laying down
+		dc.b id_Frame_Sonic_LayDown
+		backdest id_Frame_Sonic_Laying1
+		dc.b id_Frame_Sonic_Laying1
+		dc.b id_Frame_Sonic_Laying1
+		dc.b id_Frame_Sonic_Laying2
+		dc.b id_Frame_Sonic_Laying2
+		dc.b id_Frame_Sonic_Laying2
+		afBack	
 		rev02even
 		
-byte_1B744:	
-		dc.b   9,$CC,$CD,$CE,$CD,$FF			; 0	
+Ani_Son_Balance1:	
+		dc.b 9
+		dc.b id_Frame_Sonic_Balance21
+		dc.b id_Frame_Sonic_Balance22
+		dc.b id_Frame_Sonic_Balance23
+		dc.b id_Frame_Sonic_Balance22
+		dc.b afEnd		
 		rev02even
 		
-byte_1B74A:	
-		dc.b   5, $B, $C,$FE,  1			; 0 
+Ani_Son_LookUp:	
+		dc.b 5
+		dc.b id_Frame_Sonic_LookUp1
+		backdest id_Frame_Sonic_LookUp2
+		afBack
 		rev02even
 		
-byte_1B74F:	
-		dc.b   5,$4C,$4D,$FE,  1			; 0 
+Ani_Son_Duck:	
+		dc.b 5
+		dc.b id_Frame_Sonic_Duck1
+		backdest id_Frame_Sonic_Duck2
+		afBack
 		rev02even
 		
-byte_1B754:
-		dc.b   0,$42,$43,$42,$44,$42,$45,$42,$46,$42,$47,$FF ; 0	
+Ani_Son_Spindash:
+		dc.b 0
+		dc.b id_Frame_Sonic_Spindash1
+		dc.b id_Frame_Sonic_Spindash2
+		dc.b id_Frame_Sonic_Spindash1
+		dc.b id_Frame_Sonic_Spindash3
+		dc.b id_Frame_Sonic_Spindash1
+		dc.b id_Frame_Sonic_Spindash4
+		dc.b id_Frame_Sonic_Spindash1
+		dc.b id_Frame_Sonic_Spindash5
+		dc.b id_Frame_Sonic_Spindash1
+		dc.b id_Frame_Sonic_Spindash6
+		dc.b afEnd
 		rev02even
 		
-byte_1B760:	
-		dc.b   1,  2,$FD,  0				; 0 
+Ani_Son_Blink:	
+		dc.b 1
+		dc.b id_Frame_Sonic_Blink
+		dc.b afChange,id_Ani_Son_Walk	
 		rev02even
 		
-byte_1B764:
-		dc.b   3, $A,$FD,  0				; 0 
+Ani_Son_GetUp:
+		dc.b 3
+		dc.b id_Frame_Sonic_GetUp
+		dc.b afChange,id_Ani_Son_Walk
 		rev02even
 		
-byte_1B768:
-		dc.b   3,$C8,$C9,$CA,$CB,$FF			; 0	
+Ani_Son_Balance2:
+		dc.b 3
+		dc.b id_Frame_Sonic_Balance11
+		dc.b id_Frame_Sonic_Balance12
+		dc.b id_Frame_Sonic_Balance13
+		dc.b id_Frame_Sonic_Balance14
+		dc.b afEnd
 		rev02even
 		
-byte_1B76E:
-		dc.b   5,$D2,$D3,$D4,$D5,$FD,  0		; 0 
+Ani_Son_Stop:
+		dc.b 5
+		dc.b id_Frame_Sonic_Stop1
+		dc.b id_Frame_Sonic_Stop2
+		dc.b id_Frame_Sonic_Stop3
+		dc.b id_Frame_Sonic_TurnAround
+		dc.b afChange,id_Ani_Son_Walk	
 		rev02even
 		
-byte_1B775:
-		dc.b   7,$54,$59,$FF				; 0 
+Ani_Son_Float1: 
+		dc.b 7
+		dc.b id_Frame_Sonic_Float1
+		dc.b id_Frame_Sonic_Float6
+		dc.b afEnd
+		
 		rev02even
 		
-byte_1B779:
-		dc.b   7,$54,$55,$56,$57,$58,$FF		; 0 
+Ani_Son_Float2:
+		dc.b 7
+		dc.b id_Frame_Sonic_Float1
+		dc.b id_Frame_Sonic_Float2
+		dc.b id_Frame_Sonic_Float3
+		dc.b id_Frame_Sonic_Float4
+		dc.b id_Frame_Sonic_Float5
+		dc.b afEnd	
 		rev02even
 		
-byte_1B780:
-		dc.b $2F,$5B,$FD,  0				; 0 
+Ani_Son_Spring: 
+		dc.b $2F
+		dc.b id_Frame_Sonic_Spring
+		dc.b afChange,id_Ani_Son_Walk
 		rev02even
 		
-byte_1B784:
-		dc.b   1,$50,$51,$FF				; 0 
+Ani_Son_Hang1:
+		dc.b 1
+		dc.b id_Frame_Sonic_Hang11
+		dc.b id_Frame_Sonic_Hang12
+		dc.b afEnd
 		rev02even
 		
-byte_1B788:
-		dc.b  $F,$43,$43,$43,$FE,  1			; 0	
+Ani_Son_Spindash2:
+		dc.b $F
+		dc.b id_Frame_Sonic_Spindash2
+		dc.b id_Frame_Sonic_Spindash2
+		backdest id_Frame_Sonic_Spindash2
+		afBack
 		rev02even
 		
-byte_1B78E:
-		dc.b  $F,$43,$44,$FE,  1			; 0 
+Ani_Son_Spindash3:
+		dc.b $F
+		dc.b id_Frame_Sonic_Spindash2
+		backdest id_Frame_Sonic_Spindash3
+		afBack
 		rev02even
 		
-byte_1B793:
-		dc.b $13,$6B,$6C,$FF				; 0 
+Ani_Son_Hang2:
+		dc.b $13
+		dc.b id_Frame_Sonic_Vine1
+		dc.b id_Frame_Sonic_Vine2
+		dc.b afEnd	
 		rev02even
 		
-byte_1B797:
-		dc.b  $B,$5A,$5A,$11,$12,$FD,  0		; 0 
+Ani_Son_Bubble:
+		dc.b $B
+		dc.b id_Frame_Sonic_GetAir
+		dc.b id_Frame_Sonic_GetAir
+		dc.b id_Frame_Sonic_Walk15
+		dc.b id_Frame_Sonic_Walk16
+		dc.b afChange,id_Ani_Son_Walk		
 		rev02even
 		
-byte_1B79E:
-		dc.b $20,$5E,$FF				; 0 
+Ani_Son_Burnt:
+		dc.b $20
+		dc.b id_Frame_Sonic_Burnt
+		dc.b afEnd		
 		rev02even
 		
-byte_1B7A1:
-		dc.b $20,$5D,$FF				; 0 
+Ani_Son_Drown:
+		dc.b $20
+		dc.b id_Frame_Sonic_Drown
+		dc.b afEnd		
 		rev02even
 		
-byte_1B7A4:
-		dc.b $20,$5C,$FF				; 0 
+Ani_Son_Death:
+		dc.b $20
+		dc.b id_Frame_Sonic_Death
+		dc.b afEnd		
 		rev02even
 		
-byte_1B7A7:
-		dc.b $40,$4E,$FF				; 0 
+Ani_Son_Hurt:
+		dc.b $40
+		dc.b id_Frame_Sonic_Injury
+		dc.b afEnd
 		rev02even
 		
-byte_1B7AA:
-		dc.b   9,$4E,$4F,$FF				; 0 
+Ani_Son_OilSlide:
+		dc.b 9
+		dc.b id_Frame_Sonic_Injury
+		dc.b id_Frame_Sonic_OilSlide
+		dc.b afEnd
 		rev02even
 		
-byte_1B7AE:
-		dc.b $77,  0,$FD,  0				; 0 
+Ani_Son_Blank:
+		dc.b $77
+		dc.b id_Frame_Sonic_Blank
+		dc.b afChange,id_Ani_Son_Walk	
 		rev02even
 		
-byte_1B7B2:
-		dc.b $13,$D0,$D1,$FF				; 0 
+Ani_Son_Balance3:
+		dc.b $13
+		dc.b id_Frame_Sonic_Balance31
+		dc.b id_Frame_Sonic_Balance32
+		dc.b afEnd
 		rev02even
 		
-byte_1B7B6:
-		dc.b   3,$CF,$C8,$C9,$CA,$CB,$FE,  4		; 0	
+Ani_Son_Balance4:
+		dc.b 3
+		dc.b id_Frame_Sonic_LoseFooting
+		backdest id_Frame_Sonic_Balance11
+		dc.b id_Frame_Sonic_Balance12
+		dc.b id_Frame_Sonic_Balance13
+		dc.b id_Frame_Sonic_Balance14
+		afBack	
 		rev02even
 		
-byte_1B7BE:
-		dc.b   9,  8,  9,$FF				; 0 
+Ani_Son_Lying:
+		dc.b 9
+		dc.b id_Frame_Sonic_Laying1
+		dc.b id_Frame_Sonic_Laying2
+		dc.b afEnd
 		rev02even
 		
-byte_1B7C2:	
-		dc.b   3,  7,$FD,  0				; 0 
+Ani_Son_LieDown:	
+		dc.b 3
+		dc.b id_Frame_Sonic_LayDown
+		dc.b afChange,id_Ani_Son_Walk	
 		rev02even
 		
-Ani_SuperSonic:	
-		dc.w byte_1B806-Ani_SuperSonic 
-		dc.w byte_1B810-Ani_SuperSonic
-		dc.w $FEAA
-		dc.w $FEB4
-		dc.w byte_1B81A-Ani_SuperSonic
-		dc.w byte_1B824-Ani_SuperSonic
-		dc.w byte_1B82A-Ani_SuperSonic
-		dc.w $FF84
-		dc.w byte_1B834-Ani_SuperSonic
-		dc.w $FF8E					; 0
-		dc.w $FF9A					; 1
-		dc.w $FF9E					; 2
-		dc.w $FFA2					; 3
-		dc.w $FFA8					; 4
-		dc.w $FFAF					; 5
-		dc.w $FFB3					; 6
-		dc.w $FFBA					; 7
-		dc.w $FFBE					; 8
-		dc.w $FFC2					; 9
-		dc.w $FFC8					; 10
-		dc.w $FFCD					; 11
-		dc.w $FFD1					; 12
-		dc.w $FFD8					; 13
-		dc.w $FFDB					; 14
-		dc.w $FFDE					; 15
-		dc.w $FFE1					; 16
-		dc.w $FFE1					; 17
-		dc.w $FFE4					; 18
-		dc.w $FFE8					; 19
-		dc.w $FFEC					; 20
-		dc.w $FFF0					; 21
-		dc.w byte_1B837-Ani_SuperSonic
+		
+Ani_SuperSonic:	index offset(*)
+		ptr Ani_SupSon_Walk		; 0
+		ptr Ani_SupSon_Run		; 1
+		ptr Ani_Son_Roll		; 2
+		ptr Ani_Son_Roll2		; 3
+		ptr Ani_SupSon_Push		; 4
+		ptr Ani_SupSon_Stand	; 5
+		ptr Ani_SupSon_Balance	; 6
+		ptr Ani_Son_LookUp		; 7
+		ptr Ani_SupSon_Duck		; 8
+		ptr Ani_Son_Spindash	; 9
+		ptr Ani_Son_Blink		; $A
+		ptr Ani_Son_GetUp		; $B
+		ptr Ani_Son_Balance2	; $C
+		ptr Ani_Son_Stop		; $D
+		ptr Ani_Son_Float1		; $E
+		ptr Ani_Son_Float2		; $F
+		ptr Ani_Son_Spring		; $10
+		ptr Ani_Son_Hang1		; $11
+		ptr Ani_Son_Spindash2	; $12
+		ptr Ani_Son_Spindash3	; $13
+		ptr Ani_Son_Hang2		; $14
+		ptr Ani_Son_Bubble		; $15
+		ptr Ani_Son_Burnt		; $16
+		ptr Ani_Son_Drown		; $17
+		ptr Ani_Son_Death		; $18
+		ptr Ani_Son_Hurt		; $19
+		ptr Ani_Son_Hurt		; $1A
+		ptr Ani_Son_OilSlide	; $1B
+		ptr Ani_Son_Blank		; $1C
+		ptr Ani_Son_Balance3	; $1D
+		ptr Ani_Son_Balance4	; $1E
+		ptr Ani_SupSon_Transform	; $1F
 
-byte_1B806:	
-		dc.b $FF,$77,$78,$79,$7A,$7B,$7C,$75,$76,$FF	; 0	
+Ani_SupSon_Walk:	
+		dc.b $FF
+		dc.b id_Frame_SuperSonic_Walk13
+		dc.b id_Frame_SuperSonic_Walk14
+		dc.b id_Frame_SuperSonic_Walk15
+		dc.b id_Frame_SuperSonic_Walk16
+		dc.b id_Frame_SuperSonic_Walk17
+		dc.b id_Frame_SuperSonic_Walk18
+		dc.b id_Frame_SuperSonic_Walk11
+		dc.b id_Frame_SuperSonic_Walk12
+		dc.b afEnd		
 		rev02even
 		
-byte_1B810:	
-		dc.b $FF,$B5,$B9,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; 0	
+Ani_SupSon_Run:	
+		dc.b $FF
+		dc.b id_Frame_SuperSonic_Run1
+		dc.b id_Frame_SuperSonic_Run1_QuillUp
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd		
 		rev02even
 		
-byte_1B81A:	
-		dc.b $FD,$BD,$BE,$BF,$C0,$FF,$FF,$FF,$FF,$FF	; 0	
+Ani_SupSon_Push:	
+		dc.b $FD
+		dc.b id_Frame_SuperSonic_Push1
+		dc.b id_Frame_SuperSonic_Push2
+		dc.b id_Frame_SuperSonic_Push3
+		dc.b id_Frame_SuperSonic_Push4
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd		
 		rev02even
 		
-byte_1B824:	
-		dc.b   7,$72,$73,$74,$73,$FF			; 0	
+Ani_SupSon_Stand:	
+		dc.b 7
+		dc.b id_Frame_SuperSonic_Stand1
+		dc.b id_Frame_SuperSonic_Stand2
+		dc.b id_Frame_SuperSonic_Stand3
+		dc.b id_Frame_SuperSonic_Stand2
+		dc.b afEnd	
 		rev02even
 				
-byte_1B82A:	
-		dc.b   9,$C2,$C3,$C4,$C3,$C5,$C6,$C7,$C6,$FF	; 0	
+Ani_SupSon_Balance:	
+		dc.b 9
+		dc.b id_Frame_SuperSonic_Balance1
+		dc.b id_Frame_SuperSonic_Balance2
+		dc.b id_Frame_SuperSonic_Balance3
+		dc.b id_Frame_SuperSonic_Balance2
+		dc.b id_Frame_SuperSonic_Balance4
+		dc.b id_Frame_SuperSonic_Balance5
+		dc.b id_Frame_SuperSonic_Balance6
+		dc.b id_Frame_SuperSonic_Balance5
+		dc.b afEnd		
 		rev02even
 		
-byte_1B834:	
-		dc.b   5,$C1,$FF				; 0 
+Ani_SupSon_Duck:	
+		dc.b 5
+		dc.b id_Frame_SuperSonic_Duck
+		dc.b afEnd		
 		rev02even
 		
-byte_1B837:	
-		dc.b   2,$6D,$6D,$6E,$6E,$6F,$70,$71,$70,$71,$70,$71,$70,$71,$FD
+Ani_SupSon_Transform:	
+		dc.b 2
+		dc.b id_Frame_SuperSonic_Transform1
+		dc.b id_Frame_SuperSonic_Transform1
+		dc.b id_Frame_SuperSonic_Transform2
+		dc.b id_Frame_SuperSonic_Transform2
+		dc.b id_Frame_SuperSonic_Transform3
+		rept 4
+		dc.b id_Frame_SuperSonic_Transform4
+		dc.b id_Frame_SuperSonic_Transform5
+		endr
+		dc.b afChange,id_Ani_SupSon_Walk		
+		
 		even
 		
 		align 4
@@ -70789,7 +71064,7 @@ byte_372D6:
 		dc.b  $F,  0,$FF,  0				; 0 
 		
 byte_372DA:	
-		dc.b  $F,  1,  2,afBack,  1,  0			; 0	
+		dc.b  $F,  1,  2,$FE,  1,  0			; 0	
 
 off_372E0:	index offset(*)
 		ptr byte_372E2
@@ -75254,10 +75529,10 @@ SonicSegaScreen_Init:
 		rts	
 ; ===========================================================================
 SonicSegaScreen_DPLCPointers:	
-		dc.l DPLC_Sonic_033A				; 0 
-		dc.l DPLC_Sonic_0340				; 1
-		dc.l DPLC_Sonic_0346				; 2
-		dc.l DPLC_Sonic_034C				; 3
+		dc.l DPLC_Sonic_Run11				; 0 
+		dc.l DPLC_Sonic_Run12				; 1
+		dc.l DPLC_Sonic_Run13				; 2
+		dc.l DPLC_Sonic_Run14				; 3
 		arraysize	SonicSegaScreen_DPLCPointers
 
 upscaledata: macro width,height
