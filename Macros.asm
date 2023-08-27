@@ -533,8 +533,8 @@ braptr:		macro
 		endm
 	
 ; ---------------------------------------------------------------------------
-; Make a 68K instruction with a VDP command longword or word as the source 
-; This more or less replicates the vdpComm function in Sonic 2 AS.
+; Make a 68K instruction or dc constant with a VDP command longword or word 
+; as the source. ore or less replicates the vdpComm function in Sonic 2 AS.
 ; input: 68k instruction mnemonic, destination offset, destination 
 ; (vram/vsram/cram), operation (read/write/dma), destination of 68K instruction,
 ; additional adjustment to command longword (shifts, ANDs)

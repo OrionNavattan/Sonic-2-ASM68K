@@ -1211,7 +1211,7 @@ JoypadInit:
 ; output:
 ;	d0 = actual joypad input (SACBRLDU)
 ;	d1 = actual joypad input, new since last frame only (SACBRLDU)
-;	a1 = port_1_data ($A10003)
+;	a1 = port_2_data ($A10005)
 ;	uses a0
 ; ---------------------------------------------------------------------------
 
@@ -1228,12 +1228,12 @@ ReadJoypads:
 		nop	
 		move.b	(a1),d0					; d0 = 00SA00DU
 		lsl.b	#2,d0					; d0 = SA00DU00
-		andi.b	#$C0,d0					; d0 = SA000000
+		andi.b	#btnStart|btnA,d0		; d0 = SA000000
 		move.b	#$40,(a1)				; set port to read 00CBRLDU
 		nop	
 		nop	
 		move.b	(a1),d1					; d1 = 00CBRLDU
-		andi.b	#$3F,d1					; d1 = 00CBRLDU
+		andi.b	#btnDir|btnB|btnC,d1	; d1 = 00CBRLDU
 		or.b	d1,d0					; d0 = SACBRLDU
 		not.b	d0					; invert bits, so that 1 = pressed
 		move.b	(a0),d1					; d1 = previous joypad state
@@ -1279,28 +1279,28 @@ VDPSetupGame:
 		dma_fill	0,$100000,vram_start		; clear entire VRAM
 		move.l	(sp)+,d1
 		rts	
-
 ; ===========================================================================
+
 VDPSetupArray:	
 		dc.w vdp_md_color				; $8004 ; normal color mode, horizontal interrupts disabled
-		dc.w vdp_enable_vint|vdp_enable_dma|vdp_ntsc_display|vdp_md_display ; $8134, Mode 5, DMA and vertical interrupts enabled 
-		dc.w vdp_fg_nametable+(vram_fg>>10)		; FG nametable at $C000
-		dc.w vdp_window_nametable+(vram_window>>10)	; window nametable at $A000 (unused)
-		dc.w vdp_bg_nametable+(vram_bg>>13)		; BG nametable at $E000
-		dc.w vdp_sprite_table+(vram_sprites>>9)		; sprite attribute table at $F800
-		dc.w vdp_sprite_table2				; unused
-		dc.w vdp_bg_color+0				; VDP BG color (palete line 0 color 0)
-		dc.w vdp_sms_hscroll				; unused
-		dc.w vdp_sms_vscroll				; unused
-		dc.w vdp_hint_counter				; default horizontal interrupt register
+		dc.w vdp_enable_vint|vdp_enable_dma|vdp_ntsc_display|vdp_md_display ; $8134 ; Mode 5, NTSC, DMA and vertical interrupts enabled 
+		dc.w vdp_fg_nametable+(vram_fg>>10)		; $8230 ; FG nametable at $C000
+		dc.w vdp_window_nametable+(vram_window>>10)	; $8328 ; window nametable at $A000 (unused)
+		dc.w vdp_bg_nametable+(vram_bg>>13)		; $8407 ; BG nametable at $E000
+		dc.w vdp_sprite_table+(vram_sprites>>9)		; $857C ; sprite attribute table at $F800
+		dc.w vdp_sprite_table2				; $8600; unused (high bit of sprite attribute table address for 128KB VRAM)
+		dc.w vdp_bg_color+0				; $8700 ; VDP BG color (palete line 0 color 0)
+		dc.w vdp_sms_hscroll				; $8800; unused (mode 4 Hscroll register)
+		dc.w vdp_sms_vscroll				; $8900; unused (mode 4 Vscroll register)
+		dc.w vdp_hint_counter				; $8A00 ; default horizontal interrupt register
 		dc.w vdp_full_vscroll|vdp_full_hscroll		; $8B00 ; full-screen vertical/horizontal scrolling
 		dc.w vdp_320px_screen_width			; $8C81 ; 40-cell display mode
-		dc.w vdp_hscroll_table+(vram_hscroll/$400)	; HScroll table at $FC00
-		dc.w vdp_nametable_hi				; unused
-		dc.w vdp_auto_inc+2				; set VDP increment size
+		dc.w vdp_hscroll_table+(vram_hscroll/$400)	; $8D3F ;  HScroll table at $FC00
+		dc.w vdp_nametable_hi				; $8E00 : unused (high bits of fg and bg nametable addresses for 128KB VRAM)
+		dc.w vdp_auto_inc+2				; $8F02 ; set VDP increment size to 2
 		dc.w vdp_plane_width_64|vdp_plane_height_32	; $9001 ; 64x32 cell plane size
-		dc.w vdp_window_x_pos				; window horizontal position
-		dc.w vdp_window_y_pos				; window horizontal position
+		dc.w vdp_window_x_pos				; $9100 ; window horizontal position
+		dc.w vdp_window_y_pos				; $9200 ; window vertical position
 		arraysize	VDPSetupArray
 ; ===========================================================================
 
@@ -1333,8 +1333,6 @@ ClearScreen:
 	endc
 		startZ80
 		rts	
-
-
 ; ===========================================================================
 
 JmpTo_SoundDriverLoad:				
@@ -1591,7 +1589,7 @@ AddDMA:
 ; output:
 ;	a5 = vdp_control_port
 
-;  uses d0.w, a1, a5
+; 	uses d0.w, a1, a5
 ; ---------------------------------------------------------------------------
 ; sub_14AC: CopyToVRAM: IssueVDPCommands: Process_DMA: Process_DMA_Queue: ; ProcessDMAQueue:
 ProcessDMA:							
@@ -6045,16 +6043,11 @@ GM_SpecialStage:
 		clear_ram	ost,ost_end
 		
     if FixBugs
-		; However, the '+4' after 'ss_shared_ram_end' is very useful, as it resets the
-		; DMA queue, avoiding graphical glitches in the Special Stage.
-		; In fact, without resetting the DMA queue, Tails sprite DPLCs and other
-		; level DPLCs that are still in the queue overwrite the Special Stage graphics the next
-		; time 'ProcessDMA' is called.
-		; This '+4' doesn't seem to be intentional, because of the other useless '+4' above,
-		; and because a '+2' is enough to reset the DMA queue and fix this bug.
-		; This is a fortunate accident!
-		; Note that this is not a clean way to reset the DMA queue because
-		; v_dma_queue_slot should be updated as well.
+	; The DMA queue needs to be reset here, to prevent the remaining queued DMA transfers from
+	; overwriting the special stage's graphics.
+	; In a bizarre twist of luck, the above bug actually nullifies this bug: the excessive
+	; ss_shared_ram clear sets v_dma_queue to 0, just like the below code.
+	; - Clownacy
 		reset_dma_queue
     endc
 		
@@ -87944,7 +87937,6 @@ PLC_ResultsTails:	plcheader
 		plcm	Nem_Perfect,vram_Perfect
 	PLC_ResultsTails_end:	
 
-	
 ;---------------------------------------------------------------------------------------
 ; Unused duplicates of some of the PLC lists found only in Revisions 0 and 2
 ;---------------------------------------------------------------------------------------		
@@ -88242,44 +88234,43 @@ PLC_ResultsTails_dup:	plcheader
 ; Level layout pointers
 ; Two entries per act, pointing to the level layouts for acts 1 and 2 of each level
 ; respectively.
-; TODO: Figure out which ones are unused and note them accordingly
 ;---------------------------------------------------------------------------------------
 LevelIndex:		index offset(*)
 		
-		ptr Level_EHZ1					; 0 					
-		ptr Level_EHZ2					; 1
-		ptr Level_EHZ1					; 2
-		ptr Level_EHZ1					; 3
-		ptr Level_EHZ1					; 4
-		ptr Level_EHZ1					; 5
-		ptr Level_EHZ1					; 6
-		ptr Level_EHZ1					; 7
-		ptr Level_MTZ1					; 8
-		ptr Level_MTZ2					; 9
-		ptr Level_MTZ3					; $A
-		ptr Level_MTZ3					; $B
-		ptr Level_WFZ					; $C
-		ptr Level_WFZ					; $D
-		ptr Level_HTZ1					; $E
-		ptr Level_HTZ2					; $F
-		ptr Level_OOZ1					; $10
-		ptr Level_OOZ1					; $11
-		ptr Level_EHZ1					; $12
-		ptr Level_EHZ1					; $13
-		ptr Level_OOZ1					; $14
-		ptr Level_OOZ2					; $15
-		ptr Level_MCZ1					; $16
-		ptr Level_MCZ2					; $17
-		ptr Level_CNZ1					; $18
-		ptr Level_CNZ2					; $19
-		ptr Level_CPZ1					; $1A
-		ptr Level_CPZ2					; $1B
-		ptr Level_DEZ					; $1C
-		ptr Level_DEZ					; $1D
-		ptr Level_ARZ1					; $1E
-		ptr Level_ARZ2					; $1F
-		ptr Level_SCZ					; $20
-		ptr Level_SCZ					; $21
+		ptr Level_EHZ1					; EHZ 1					
+		ptr Level_EHZ2					; EHZ 2
+		ptr Level_EHZ1					; unused
+		ptr Level_EHZ1					; unused
+		ptr Level_EHZ1					; unused
+		ptr Level_EHZ1					; unused
+		ptr Level_EHZ1					; unused
+		ptr Level_EHZ1					; unused
+		ptr Level_MTZ1					; MTZ 1
+		ptr Level_MTZ2					; MTZ 2
+		ptr Level_MTZ3					; MTZ 3
+		ptr Level_MTZ3					; unused
+		ptr Level_WFZ					; WFZ
+		ptr Level_WFZ					; unused
+		ptr Level_HTZ1					; HTZ 1
+		ptr Level_HTZ2					; HTZ 2
+		ptr Level_OOZ1					; unused (HPZ 1)
+		ptr Level_OOZ1					; unused (HPZ 2)
+		ptr Level_EHZ1					; unused
+		ptr Level_EHZ1					; unused
+		ptr Level_OOZ1					; OOZ 1
+		ptr Level_OOZ2					; OOZ 2
+		ptr Level_MCZ1					; MCZ 1
+		ptr Level_MCZ2					; MCZ 2
+		ptr Level_CNZ1					; CNZ 1
+		ptr Level_CNZ2					; CNZ 2
+		ptr Level_CPZ1					; CPZ 1
+		ptr Level_CPZ2					; CPZ 2
+		ptr Level_DEZ					; DEZ
+		ptr Level_DEZ					; unused
+		ptr Level_ARZ1					; ARZ 1
+		ptr Level_ARZ2					; ARZ 2
+		ptr Level_SCZ					; SCZ
+		ptr Level_SCZ					; unused
 
 ; ---------------------------------------------------------------------------
 ; Level	layouts (Kosinski Compression)
@@ -88307,7 +88298,7 @@ LevelIndex:		index offset(*)
 		incfile	Level_SCZ
 
 ;---------------------------------------------------------------------------------------
-; Animated level graphics
+; Animated level art
 ;---------------------------------------------------------------------------------------
 
 		incfile	Art_Flowers1				; ArtUnc_49714:
@@ -88334,7 +88325,7 @@ LevelIndex:		index offset(*)
 		incfile	Art_Waterfall3
 		
 ;---------------------------------------------------------------------------------------
-; Graphics and mappings - Sonic & Tails
+; Player art and mappings
 ;---------------------------------------------------------------------------------------	
 
 		align $20	
@@ -88357,12 +88348,17 @@ LevelIndex:		index offset(*)
 		even
 
 ;---------------------------------------------------------------------------------------
-; Graphics and mappings - Sega and Title screen 
+; Sega screen
 ;---------------------------------------------------------------------------------------	
 
 		incfile	Nem_SEGA				; ArtNem_74876:	
 		incfile Nem_IntroTrails				; ArtNem_74CF6:
 		incfile Eni_SEGA				; MapEng_74D0E:
+		
+;---------------------------------------------------------------------------------------
+; Title screen
+;---------------------------------------------------------------------------------------
+		
 		incfile Eni_TitleScreen				; ArtNem_74DC6:
 		incfile Eni_TitleBack				; MapEng_74E86:
 		incfile	Eni_TitleLogo
@@ -88371,7 +88367,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_MenuJunk				; ArtNem_78CBC:
 		
 ;---------------------------------------------------------------------------------------
-; Graphics - global level objects, HUD, title cards, text, and menus
+; Global level objects and HUD
 ;---------------------------------------------------------------------------------------			
 		
 		incfile	Nem_Button				; ArtNem_78DAC:
@@ -88402,6 +88398,10 @@ LevelIndex:		index offset(*)
 		incfile	Nem_TailsLife				; ArtNem_7C20C:
 		incfile	Nem_MiniTails				; ArtNem_7C2F2:
 		
+;---------------------------------------------------------------------------------------
+; Menu, stage result, and title cards
+;---------------------------------------------------------------------------------------		
+		
 		incfile	Nem_StandardFont			; ArtNem_7C43A:
 		incfile	Nem_1P2PWins				; ArtNem_7C9AE:
 		incfile	Eni_MenuBack				; MapEng_7CB80:
@@ -88415,7 +88415,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_Perfect				; ArtNem_7EEBE:
 		
 ;---------------------------------------------------------------------------------------
-; Graphics - Animals
+; Small animals
 ;---------------------------------------------------------------------------------------		
 		
 		incfile	Nem_Flicky				; ArtNem_7EF60: ; ArtNem_Bird:
@@ -88432,11 +88432,15 @@ LevelIndex:		index offset(*)
 		incfile	Nem_Rabbit				; ArtNem_7FDD2:
 		
 ;---------------------------------------------------------------------------------------
-; Graphics - level objects
+; WFZ objects
 ;---------------------------------------------------------------------------------------
 		
 		incfile	Nem_WFZSwitch				; ArtNem_7FF2A:
 		incfile	Nem_BreakPanels				; ArtNem_7FF98:
+
+;---------------------------------------------------------------------------------------
+; OOZ objects
+;---------------------------------------------------------------------------------------
 		
 		incfile	Nem_SlidingSpikes			; ArtNem_8007C:
 		incfile	Nem_BurnerLid				; ArtNem_80274:
@@ -88452,6 +88456,10 @@ LevelIndex:		index offset(*)
 		incfile	Nem_OOZElevator				; ArtNem_810B8:
 		incfile	Nem_Fan					; ArtNem_81254:
 		incfile	Nem_Burner				; ArtNem_81514:
+
+;---------------------------------------------------------------------------------------
+; CNZ objects
+;---------------------------------------------------------------------------------------
 		
 		incfile	Nem_SnakePlats				; ArtNem_81600: ; ArtNem_CNZSnake:
 		incfile	Nem_BombPenalty				; ArtNem_81668:
@@ -88464,6 +88472,10 @@ LevelIndex:		index offset(*)
 		incfile	Nem_VertLauncher			; ArtNem_81C96:
 		incfile	Nem_SaucerBumper			; ArtNem_81DCC: ; ArtNem_CNZMiniBumper
 		incfile	Nem_Flipper				; ArtNem_81EF2:
+
+;---------------------------------------------------------------------------------------
+; CPZ object art
+;---------------------------------------------------------------------------------------
 		
 		incfile	Nem_CPZElevator				; ArtNem_82216:
 		incfile	Nem_WaterSurface1			; ArtNem_82364:
@@ -88475,15 +88487,38 @@ LevelIndex:		index offset(*)
 		incfile	Nem_CPZDumpingPipePlat			; ArtNem_82864: ; ArtNem_CPZAnimatedBits
 		incfile	Nem_StairBlock				; ArtNem_82A46:
 		incfile	Nem_TubeLid				; ArtNem_82C06:
+
+;---------------------------------------------------------------------------------------
+; ARZ objects
+;---------------------------------------------------------------------------------------
 		
 		incfile	Nem_WaterSurface2			; ArtNem_82E02:
 		incfile	Nem_Leaves				; ArtNem_82EE8:
 		incfile	Nem_ArrowAndShooter			; ArtNem_82F74:
 		incfile	Nem_ARZBarrier				; ArtNem_830D2: ; ArtNem_ARZBarrierThing
+
+;---------------------------------------------------------------------------------------
+; One EHZ badnik (why is it separate?)
+;---------------------------------------------------------------------------------------
+
 		incfile	Nem_Buzzer				; ArtNem_8316A:
+
+;---------------------------------------------------------------------------------------
+; OOZ badniks
+;---------------------------------------------------------------------------------------		
+		
 		incfile	Nem_Octus				; ArtNem_8336A:
 		incfile	Nem_Aquis				; ArtNem_8368A:
+		
+;---------------------------------------------------------------------------------------
+; Another EHZ badnik (why?)
+;---------------------------------------------------------------------------------------
+		
 		incfile	Nem_Masher				; ArtNem_839EA:	ArtNem_Pirahna:
+		
+;---------------------------------------------------------------------------------------
+; Bosses
+;---------------------------------------------------------------------------------------
 		
 		incfile	Nem_Eggpod				; ArtNem_83BF6:
 		incfile	Nem_CPZBoss				; ArtNem_84332:
@@ -88498,23 +88533,61 @@ LevelIndex:		index offset(*)
 		incfile	Nem_CNZBoss				; ArtNem_87AAC:
 		incfile	Nem_OOZBoss				; ArtNem_882D6:
 		incfile	Nem_MTZBoss				; ArtNem_88DA6:
-		
 		incfile	Art_FallingRocks			; Art_FallingRocks:
+		
+;---------------------------------------------------------------------------------------
+; ARZ badniks
+;---------------------------------------------------------------------------------------		
+		
 		incfile	Nem_Whisp				; ArtNem_895E4:
 		incfile	Nem_Grounder				; ArtNem_8970E:
 		incfile	Nem_ChopChop				; ArtNem_89B9A:
+;---------------------------------------------------------------------------------------
+; HTZ badniks
+;---------------------------------------------------------------------------------------		
+		
 		incfile	Nem_Rexon				;	ArtNem_89DEC: ArtNem_HtzRexxon:
 		incfile	Nem_Spiker				;	ArtNem_89FAA:	ArtNem_HtzDriller:
+
+;---------------------------------------------------------------------------------------
+; SCZ badniks
+;---------------------------------------------------------------------------------------		
+		
 		incfile	Nem_Nebula				; ArtNem_8A142:
 		incfile	Nem_Turtloid				; ArtNem_8A362:
+		
+;---------------------------------------------------------------------------------------
+; ANOTHER EHZ badnik (WHY?)
+;---------------------------------------------------------------------------------------
+		
 		incfile	Nem_Coconuts
+		
+;---------------------------------------------------------------------------------------
+; MCZ badniks
+;---------------------------------------------------------------------------------------
+		
 		incfile	Nem_Crawlton				; ArtNem_8AB36:
 		incfile	Nem_Flasher				; ArtNem_8AC5E:
+		
+;---------------------------------------------------------------------------------------
+; MTZ badniks
+;---------------------------------------------------------------------------------------
+		
 		incfile	Nem_Slicer				; ArtNem_8AD80: ; ArtNem_MtzMantis
 		incfile	Nem_Shellcracker			; ArtNem_8B058:
 		incfile	Nem_Asteron				; ArtNem_8B300: ArtNem_MtzSupernova
+
+;---------------------------------------------------------------------------------------
+; CPZ badniks
+;---------------------------------------------------------------------------------------		
+		
 		incfile	Nem_Spiny				; ArtNem_8B430:
 		incfile	Nem_Grabber				; ArtNem_8B6B4:
+
+;---------------------------------------------------------------------------------------
+; A haphazard mess of SCZ, WFZ, and DEZ objects and badniks
+;---------------------------------------------------------------------------------------		
+		
 		incfile	Nem_Clucker				; ArtNem_8B9DC:
 		incfile	Nem_Balkiry				; ArtNem_8BC16:
 		
@@ -88545,11 +88618,9 @@ LevelIndex:		index offset(*)
 		incfile	Nem_DEZBoss
 		incfile	Nem_Crawl
 		incfile	Nem_TornadoThruster
-		
-; More level object graphics are stored in one of the sound banks.
-		
+			
 ;---------------------------------------------------------------------------------------
-; Graphics and mappings - Ending
+; Ending
 ;---------------------------------------------------------------------------------------		
 
 		incfile	Eni_Ending1				; MapEng_906E0:
@@ -88573,7 +88644,6 @@ LevelIndex:		index offset(*)
 		incfile	Nem_EndingSuperSonic			; ArtNem_EndingSuperSonic:
 		incfile	Nem_EndingTails				; ArtNem_93F3C:
 		incfile	Nem_EndingLogo				; ArtNem_94B28:
-
 
 ; ----------------------------------------------------------------------------------
 ; Level art and block mappings
@@ -88622,7 +88692,6 @@ BM128_HPZ:
 		incfile	Kos_WFZ
 		incfile	BM128_WFZ
 
-
 ; ----------------------------------------------------------------------------------
 ; Special Stage track mappings
 ; ----------------------------------------------------------------------------------
@@ -88646,13 +88715,11 @@ MapSpec_Rise15:		incbin	"mappings/special stage/Slope Up 15.bin"
 MapSpec_Rise16:		incbin	"mappings/special stage/Slope Up 16.bin"
 MapSpec_Rise17:		incbin	"mappings/special stage/Slope Up 17.bin"
 
-
 ; Straight path
 MapSpec_Straight1:	incbin	"mappings/special stage/Straight Path 1.bin"
 MapSpec_Straight2:	incbin	"mappings/special stage/Straight Path 2.bin"
 MapSpec_Straight3:	incbin	"mappings/special stage/Straight Path 3.bin"
 MapSpec_Straight4:	incbin	"mappings/special stage/Straight Path 4.bin"
-
 
 ; Exit curve & slope down
 MapSpec_Drop1:		incbin	"mappings/special stage/Slope Down 1.bin"
@@ -88673,7 +88740,6 @@ MapSpec_Drop15:		incbin	"mappings/special stage/Slope Down 15.bin"
 MapSpec_Drop16:		incbin	"mappings/special stage/Slope Down 16.bin"
 MapSpec_Drop17:		incbin	"mappings/special stage/Slope Down 17.bin"
 
-
 ; Curve
 MapSpec_Turning1:	incbin	"mappings/special stage/Curve 1.bin"
 MapSpec_Turning2:	incbin	"mappings/special stage/Curve 2.bin"
@@ -88682,14 +88748,12 @@ MapSpec_Turning4:	incbin	"mappings/special stage/Curve 4.bin"
 MapSpec_Turning5:	incbin	"mappings/special stage/Curve 5.bin"
 MapSpec_Turning6:	incbin	"mappings/special stage/Curve 6.bin"
 
-
 ; Exit curve
 MapSpec_Unturn1:	incbin "mappings/special stage/Exit Curve 1.bin"
 MapSpec_Unturn2:	incbin "mappings/special stage/Exit Curve 2.bin"
 MapSpec_Unturn3:	incbin "mappings/special stage/Exit Curve 3.bin"
 MapSpec_Unturn4:	incbin "mappings/special stage/Exit Curve 4.bin"
 MapSpec_Unturn5:	incbin "mappings/special stage/Exit Curve 5.bin"
-
 
 ; Begin curve right
 MapSpec_Turn1:		incbin "mappings/special stage/Curve Right 1.bin"
@@ -88726,12 +88790,14 @@ MapSpec_Turn7:		incbin "mappings/special stage/Curve Right 7.bin"
 		incfile	Nem_SpecialLevelLayouts
 		incfile	Koz_SpecialObjectLocations		; MiscKoz_SpecialObjectLocations:
 		
-
 		align $100					; (unnecessary; could be replaced with "even")
 
 ; --------------------------------------------------------------------------------------
 ; Ring position index
 ; --------------------------------------------------------------------------------------
+
+levringnull:	macros
+		dc.w $FFFF
 
 RingPos_Index:	index offset(*)
 
@@ -88772,22 +88838,22 @@ RingPos_Index:	index offset(*)
 		
 Rings_EHZ_1:	incbin	"level/rings/EHZ 1.bin"
 Rings_EHZ_2:	incbin	"level/rings/EHZ 2.bin"
-Rings_Lev1_1:	incbin	"level/rings/01 1.bin"			; null
-Rings_Lev1_2:	incbin	"level/rings/01 2.bin"			; null
-Rings_Lev2_1:	incbin	"level/rings/02 1.bin"			; null
-Rings_Lev2_2:	incbin	"level/rings/02 2.bin"			; null
-Rings_Lev3_1:	incbin	"level/rings/03 1.bin"			; null
-Rings_Lev3_2:	incbin	"level/rings/03 2.bin"			; null
+Rings_Lev1_1:	levringnull			; null
+Rings_Lev1_2:	levringnull			; null
+Rings_Lev2_1:	levringnull			; null
+Rings_Lev2_2:	levringnull			; null
+Rings_Lev3_1:	levringnull			; null
+Rings_Lev3_2:	levringnull			; null
 Rings_MTZ_1:	incbin	"level/rings/MTZ 1.bin"
 Rings_MTZ_2:	incbin	"level/rings/MTZ 2.bin"
 Rings_MTZ_3:	incbin	"level/rings/MTZ 3.bin"
-Rings_MTZ_4:	incbin	"level/rings/MTZ 4.bin"			; null
+Rings_MTZ_4:	levringnull			; null
 Rings_HTZ_1:	incbin	"level/rings/HTZ 1.bin"
 Rings_HTZ_2:	incbin	"level/rings/HTZ 2.bin"
 Rings_HPZ_1:	incbin	"level/rings/HPZ 1.bin"
-Rings_HPZ_2:	incbin	"level/rings/HPZ 2.bin"			; null
-Rings_Lev9_1:	incbin	"level/rings/09 1.bin"			; null
-Rings_Lev9_2:	incbin	"level/rings/09 2.bin"			; null
+Rings_HPZ_2:	levringnull			; null
+Rings_Lev9_1:	levringnull			; null
+Rings_Lev9_2:	levringnull			; null
 Rings_OOZ_1:	incbin	"level/rings/OOZ 1.bin"
 Rings_OOZ_2:	incbin	"level/rings/OOZ 2.bin"
 Rings_MCZ_1:	incbin	"level/rings/MCZ 1.bin"
@@ -88796,20 +88862,21 @@ Rings_CNZ_1:	incbin	"level/rings/CNZ 1.bin"
 Rings_CNZ_2:	incbin	"level/rings/CNZ 2.bin"
 Rings_CPZ_1:	incbin	"level/rings/CPZ 1.bin"
 Rings_CPZ_2:	incbin	"level/rings/CPZ 2.bin"
-Rings_DEZ_1:	incbin	"level/rings/DEZ 1.bin"			; null
-Rings_DEZ_2:	incbin	"level/rings/DEZ 2.bin"			; null
+Rings_DEZ_1:	levringnull			; null
+Rings_DEZ_2:	levringnull			; null
 Rings_WFZ_1:	incbin	"level/rings/WFZ 1.bin"
 Rings_WFZ_2:	incbin	"level/rings/WFZ 2.bin"
 Rings_ARZ_1:	incbin	"level/rings/ARZ 1.bin"
 Rings_ARZ_2:	incbin	"level/rings/ARZ 2.bin"
 Rings_SCZ_1:	incbin	"level/rings/SCZ 1.bin"
-Rings_SCZ_2:	incbin	"level/rings/SCZ 2.bin"			; null
+Rings_SCZ_2:	levringnull			; null
 
 		align $200					; (unnecessary; could be replaced with "even")
 
 ; --------------------------------------------------------------------------------------
 ; Object position index
 ; --------------------------------------------------------------------------------------
+
 ObjPos_Index:	index offset(*)
 
 		ptr ObjPos_EHZ_1				;	0 			
