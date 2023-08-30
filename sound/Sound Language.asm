@@ -219,7 +219,7 @@ smpsHeaderChan macro fm,psg
 
 ; Header - Set up Tempo
 smpsHeaderTempo macro div,mod
-	dc.b	div
+	dc.b	\div
 	convertMainTempoMod \mod
 	endm
 

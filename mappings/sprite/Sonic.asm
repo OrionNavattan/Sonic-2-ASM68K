@@ -123,99 +123,99 @@ Map_Sonic:	index offset(*)
 	ptr	Frame_SuperSonic_Walk11
 	ptr	Frame_SuperSonic_Walk12
 	ptr	Frame_SuperSonic_Walk13
-	ptr	Frame_SuperSonic_Walk14	; $78
+	ptr	Frame_SuperSonic_Walk14				; $78
 	ptr	Frame_SuperSonic_Walk15
 	ptr	Frame_SuperSonic_Walk16
 	ptr	Frame_SuperSonic_Walk17
-	ptr	Frame_SuperSonic_Walk18	; $7C
+	ptr	Frame_SuperSonic_Walk18				; $7C
 	ptr	Frame_SuperSonic_Walk21
 	ptr	Frame_SuperSonic_Walk22
 	ptr	Frame_SuperSonic_Walk23
-	ptr	Frame_SuperSonic_Walk24	; $80
+	ptr	Frame_SuperSonic_Walk24				; $80
 	ptr	Frame_SuperSonic_Walk25
 	ptr	Frame_SuperSonic_Walk26
 	ptr	Frame_SuperSonic_Walk27
-	ptr	Frame_SuperSonic_Walk28	; $84
+	ptr	Frame_SuperSonic_Walk28				; $84
 	ptr	Frame_SuperSonic_Walk31
 	ptr	Frame_SuperSonic_Walk32
 	ptr	Frame_SuperSonic_Walk33
-	ptr	Frame_SuperSonic_Walk34	; $88
+	ptr	Frame_SuperSonic_Walk34				; $88
 	ptr	Frame_SuperSonic_Walk35
 	ptr	Frame_SuperSonic_Walk36
 	ptr	Frame_SuperSonic_Walk37
-	ptr	Frame_SuperSonic_Walk38	; $8C
+	ptr	Frame_SuperSonic_Walk38				; $8C
 	ptr	Frame_SuperSonic_Walk41
 	ptr	Frame_SuperSonic_Walk42
 	ptr	Frame_SuperSonic_Walk43
-	ptr	Frame_SuperSonic_Walk44	; $90
+	ptr	Frame_SuperSonic_Walk44				; $90
 	ptr	Frame_SuperSonic_Walk45
 	ptr	Frame_SuperSonic_Walk46
 	ptr	Frame_SuperSonic_Walk47
-	ptr	Frame_SuperSonic_Walk48	; $94
+	ptr	Frame_SuperSonic_Walk48				; $94
 	ptr	Frame_SuperSonic_Walk11_QuillUp
 	ptr	Frame_SuperSonic_Walk12_QuillUp
 	ptr	Frame_SuperSonic_Walk13_QuillUp
-	ptr	Frame_SuperSonic_Walk14_QuillUp	; $98
+	ptr	Frame_SuperSonic_Walk14_QuillUp			; $98
 	ptr	Frame_SuperSonic_Walk15_QuillUp
 	ptr	Frame_SuperSonic_Walk16_QuillUp
 	ptr	Frame_SuperSonic_Walk17_QuillUp
-	ptr	Frame_SuperSonic_Walk18_QuillUp	; $9C
+	ptr	Frame_SuperSonic_Walk18_QuillUp			; $9C
 	ptr	Frame_SuperSonic_Walk21_QuillUp
 	ptr	Frame_SuperSonic_Walk22_QuillUp
 	ptr	Frame_SuperSonic_Walk23_QuillUp
-	ptr	Frame_SuperSonic_Walk24_QuillUp ; $A0
+	ptr	Frame_SuperSonic_Walk24_QuillUp			; $A0
 	ptr	Frame_SuperSonic_Walk25_QuillUp
 	ptr	Frame_SuperSonic_Walk26_QuillUp
 	ptr	Frame_SuperSonic_Walk27_QuillUp
-	ptr	Frame_SuperSonic_Walk28_QuillUp ; $A4
+	ptr	Frame_SuperSonic_Walk28_QuillUp			; $A4
 	ptr	Frame_SuperSonic_Walk31_QuillUp
 	ptr	Frame_SuperSonic_Walk32_QuillUp
 	ptr	Frame_SuperSonic_Walk33_QuillUp
-	ptr	Frame_SuperSonic_Walk34_QuillUp	; $A8
+	ptr	Frame_SuperSonic_Walk34_QuillUp			; $A8
 	ptr	Frame_SuperSonic_Walk35_QuillUp
 	ptr	Frame_SuperSonic_Walk36_QuillUp
 	ptr	Frame_SuperSonic_Walk37_QuillUp
-	ptr	Frame_SuperSonic_Walk38_QuillUp	; $AC
+	ptr	Frame_SuperSonic_Walk38_QuillUp			; $AC
 	ptr	Frame_SuperSonic_Walk41_QuillUp
 	ptr	Frame_SuperSonic_Walk42_QuillUp
 	ptr	Frame_SuperSonic_Walk43_QuillUp
-	ptr	Frame_SuperSonic_Walk44_QuillUp	; $B0
+	ptr	Frame_SuperSonic_Walk44_QuillUp			; $B0
 	ptr	Frame_SuperSonic_Walk45_QuillUp
 	ptr	Frame_SuperSonic_Walk46_QuillUp
 	ptr	Frame_SuperSonic_Walk47_QuillUp
-	ptr	Frame_SuperSonic_Walk48_QuillUp	; $B4	
+	ptr	Frame_SuperSonic_Walk48_QuillUp			; $B4	
 	ptr	Frame_SuperSonic_Run1
 	ptr	Frame_SuperSonic_Run2
 	ptr	Frame_SuperSonic_Run3
-	ptr	Frame_SuperSonic_Run4			; $B8
+	ptr	Frame_SuperSonic_Run4				; $B8
 	ptr	Frame_SuperSonic_Run1_QuillUp
 	ptr	Frame_SuperSonic_Run2_QuillUp
 	ptr	Frame_SuperSonic_Run3_QuillUp
-	ptr	Frame_SuperSonic_Run4_QuillUp	; $BC	
+	ptr	Frame_SuperSonic_Run4_QuillUp			; $BC	
 	ptr	Frame_SuperSonic_Push1
 	ptr	Frame_SuperSonic_Push2
 	ptr	Frame_SuperSonic_Push3
-	ptr	Frame_SuperSonic_Push4		; $C0
+	ptr	Frame_SuperSonic_Push4				; $C0
 	ptr	Frame_SuperSonic_Duck	
 	ptr	Frame_SuperSonic_Balance1
 	ptr	Frame_SuperSonic_Balance2
-	ptr	Frame_SuperSonic_Balance3	; $C4
+	ptr	Frame_SuperSonic_Balance3			; $C4
 	ptr	Frame_SuperSonic_Balance4
 	ptr	Frame_SuperSonic_Balance5
 	ptr	Frame_SuperSonic_Balance6
-	ptr	Frame_Sonic_Balance11 	; $C8
+	ptr	Frame_Sonic_Balance11				; $C8
 	ptr	Frame_Sonic_Balance12
 	ptr	Frame_Sonic_Balance13
 	ptr	Frame_Sonic_Balance14
-	ptr	Frame_Sonic_Balance21	; $CC
+	ptr	Frame_Sonic_Balance21				; $CC
 	ptr	Frame_Sonic_Balance22
 	ptr	Frame_Sonic_Balance23
 	ptr	Frame_Sonic_LoseFooting
-	ptr	Frame_Sonic_Balance31	; $D0
+	ptr	Frame_Sonic_Balance31				; $D0
 	ptr	Frame_Sonic_Balance32
 	ptr	Frame_Sonic_Stop1
 	ptr	Frame_Sonic_Stop2
-	ptr	Frame_Sonic_Stop3		; $D4
+	ptr	Frame_Sonic_Stop3				; $D4
 	ptr	Frame_Sonic_TurnAround
 
 Frame_Sonic_Blank:	spritemap 

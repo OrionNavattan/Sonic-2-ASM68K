@@ -1524,7 +1524,7 @@ Sound_PlayBGM:
 		; Unnecessary if the bugfix in InitMusicPlayback is applied.
 		push	de					; back up FMDACInitBytes pointer
     endc
-		push	bc					; back up channel count and tempo divider (bc is used by the ld' or ldir instructions coming up)
+		push	bc					; back up channel count and tempo divider (bc is used by the ld or ldir instructions coming up)
 		ld	a,iyl					; a = current track pointer low byte
 		add	a,ch_dataptr_low			; we are copying data to track memory starting with the track address
 		ld	e,a
@@ -2858,7 +2858,7 @@ SetVoice:
 
 		ld	b,25
 
-.voicemultiply:
+	.voicemultiply:
 		add	hl,de					; add de to hl
 		djnz	.voicemultiply				; repeat 25 times
     else
@@ -2907,7 +2907,7 @@ SetVoice:
 		add	a,ym_attack_scaling-ym_total_level	; skip over the TL registers for now
 		ld	b,(ym_ssg_eg-ym_attack_scaling)/countof_operators ; 16 writes total (all per-operator registers up to but not including ym_ssg_eg)
 
-.registerloop:
+	.registerloop:
 		ld	c,(hl)					; get next reg data value
 		inc	hl					; next voice byte
 		rst	WriteFMIorII				; write to FM
@@ -2921,7 +2921,7 @@ SetVoice:
 		ld	(ix+ch_tl_ptr_low),l			; save current position
 		ld	(ix+ch_tl_ptr_high),h
 
-.a_backup:
+	.a_backup:
 		ld	a,0					; self-modified code: 'a' will actually be set to the feedback/algorithm byte
 		and	a,ym_algo				; only need algorithm bits
 		add	a,FMSlotMask&0FFh			; add offset to FMSlotMask table (low byte only)
@@ -2964,12 +2964,12 @@ SetFMTLs:
 		jp	p,.belowmax				; branch if attenuation overflowed
 		ld	a,ym_tl_silence				; limit attenuation to 7Fh
 
-.belowmax:
+	.belowmax:
     endc
 		ld	c,a					; c = modified TL value
 		pop	af					; restore 'a'
 
-.write:
+	.write:
 		rst	WriteFMIorII				; write TL value
 		add	a,next_operator				; advance to next TL reg
 		djnz	.loop					; repeat for all operators
@@ -2989,7 +2989,7 @@ SendVoiceTL:
 		ld	e,(ix+ch_vol_tl_mask)			; get slot mask
 		ld	a,(ix+ch_type)				; get voice control byte
 		and	a,t_fm_assignment			; only need channel assignment
-		add	a,ym_total_level			; add 40h to get TL register for channe;
+		add	a,ym_total_level			; add 40h to get TL register for channel
 		ld	d,(ix+ch_volume)			; get track volume
 		bit	7,d	
 		ret	nz					; exit if it's negative

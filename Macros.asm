@@ -758,7 +758,7 @@ objpos:		macro
 		obj_rem: = 0
 		obj_unkflg: = 0
 		rept narg-4
-			if strcmp("\5","2ploaddynamic")	; flag indicating this object will be loaded in a normal dynamic OST slot in 2P mode
+			if strcmp("\5","2ploaddynamic")		; flag indicating this object will be loaded in a normal dynamic OST slot in 2P mode
 				obj_unkflg: = $1000
 			elseif strcmp("\5","xflip")
 				obj_xflip: = $2000
@@ -1070,12 +1070,12 @@ incpal: macro lbl,lbl2
 ; ---------------------------------------------------------------------------
 
 backdest:	macro	dest
-		afbackdest:	= offset(*)	; set location to return to
-		dc.b \dest				; include the current frame in ROM
+		afbackdest:	= offset(*)			; set location to return to
+		dc.b \dest					; include the current frame in ROM
 		endm
 		
 afBack:		macros
-		dc.b	afBackFlag,offset(*)-afbackdest	; include flag and automatically generate the count of bytes to jump back
+		dc.b	afBackFlag,offset(*)-afbackdest		; include flag and automatically generate the count of bytes to jump back
 		
 ; ---------------------------------------------------------------------------
 ; Declares a blank object

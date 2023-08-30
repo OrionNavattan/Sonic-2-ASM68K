@@ -1,6 +1,6 @@
 		opt	l.					; . is the local label symbol
 		opt	ae-					; automatic evens disabled by default
-		opt an+					; allow Intel/Zilog-style number suffixes (used in the Z80 code and definitions)	
+		opt an+						; allow Intel/Zilog-style number suffixes (used in the Z80 code and definitions)	
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
 ;		opt	m+					; do not expand macros - if enabled, this can break assembling

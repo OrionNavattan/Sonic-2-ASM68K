@@ -45,7 +45,7 @@ v_ost_all:          rs.b sizeof_ost_all				; $FFFFB000 ; object variable space (
 			
 v_ost_dynamic:         equ v_ost_all+(sizeof_ost*$10)		;  $FFFFB400
  ;   v_ost_dynamic_2P_end:	equ v_ost_dynamic_end-($C*6)*sizeof_ost ;  $FFFFBE00 2P mode reserves 6 blocks of 12 OST slots at the end
-    v_ost_dynamic_end:	equ v_ost_all+(sizeof_ost*countof_ost) ; $FFFFD000
+    v_ost_dynamic_end:	equ v_ost_all+(sizeof_ost*countof_ost)	; $FFFFD000
     v_ost_2p_blocks:		equ v_ost_dynamic_end-($C*6)*sizeof_ost ;  $FFFFBE00 2P mode reserves 6 blocks of 12 OST slots at the end	
                 rsblockend ost
 
@@ -479,9 +479,9 @@ v_opl_ptr_left_p2:			rs.l 1			; $FFFFF77C
 				rsblockend 		object_manager_addresses_p2
 
 				rsblock object_manager_2p	; The next 16 bytes belong to this.
-v_opl_block_indices:		rs.b 6			; $FFFFF780 ; currently loaded 2p object block IDs 
-v_opl_loaded_blocks_p1:	rs.b 3				; $FFFFF786
-v_opl_loaded_blocks_p2:	rs.b 3				; $FFFFF789
+v_opl_block_indices:		rs.b 6				; $FFFFF780 ; currently loaded 2p object block IDs 
+v_opl_loaded_blocks_p1:	rs.b 3					; $FFFFF786
+v_opl_loaded_blocks_p2:	rs.b 3					; $FFFFF789
 	opl_2p_block1:		equ 0
 	opl_2p_block2:		equ 1
 	opl_2p_block3:		equ 2
@@ -561,7 +561,7 @@ v_respawn_list:				rs.b 2			; $FFFFFC00 ; respawn table indices of the next obje
 	respawn_count_1:		equ 0			; $FFFFFC00
 	respawn_count_2:		equ 1			; $FFFFFC01
 
-	ramblocksize	v_respawn_list			; required for teleport table
+	ramblocksize	v_respawn_list				; required for teleport table
 
 v_respawn_data:				rs.b $BE		; $FFFFFC02	; For stock S2, $80 is enough
 	ramblocksize	v_respawn_data

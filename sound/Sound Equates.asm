@@ -88,7 +88,7 @@ ym_dac_test:	equ 2Ch						; undocumented; when bit 5 is set, FM output is disabl
 
 ; Constants for per-operator registers: add these to the register base constant
 ; to get the register for the desired operator, e.g. 'ym_total_level+ym_1_4_op4' 
-; would produce the register for setting TL on operator 4 of channels 1 or 4.
+; will select the register for setting TL on operator 4 of channels 1 or 4.
 
 countof_operators:	equ 4					; four operators per channel
 next_operator:		equ 4
@@ -315,7 +315,7 @@ sizeof_trackvars:  		equ __rs			; 2Ah;	length of each set of track variables
 ; ---------------------------------------------------------------------------
 ; Sound Driver RAM Addresses
 ; ---------------------------------------------------------------------------
-			rsset 1380h				; WARNING: if you change this, you MUST change the start location of the Music section in Compressed Music Header.asm to match
+			rsset 1380h
 z_music_data: 	rs.b 800h					; 1380h ; Z80 decompression buffer (only 7C0h in size, remaining 40h is the Z80 stack)
 z_music_data_end:	equ __rs-40h				; 1B40h ; boundary between decompression buffer and Z80 stack
 z_stack_pointer: 		equ	__rs			; 1B80h ; Z80 initial stack pointer value

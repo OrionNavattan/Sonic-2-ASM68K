@@ -513,7 +513,7 @@ TrackCommand:	macro	func
 		\func	TransAdd,ChangeTransposition		; Transposition add
 		\func	TempoSet,SetTempoMod			; Set tempo (affected by tick multiplier!)
 		\func	SongTick,SetTempoDiv			; Set tick multiplier for song
-		\func	VolAddPSG,mPSGAlterVol			; PSG volume add
+		\func	VolAddPSG,PSGAlterVol			; PSG volume add
 		\func	ClearPush,NullCmd1			; unused, was Sonic 1's ClearPush
 		\func	EndBack,NullCmd2			; unused, was Sonic 1's StopSpecial
 		\func	Voice,FMvoice				; Load FM voice
