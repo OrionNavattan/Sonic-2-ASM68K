@@ -3268,7 +3268,7 @@ SongCom_Call:
 
 SongCom_Release34:
 
-		ld	a,ym_releaserate_sustainlevel+ym_1_4_op2 ; D1L/RR of operator 3
+		ld	a,ym_releaserate_sustainlevel+ym_1_4_op3 ; D1L/RR of operator 3
 		ld	c,0Fh					; loaded with fixed value (max RR, 1TL)
 		rst	WriteFMI				; written to part I
 		ld	a,ym_releaserate_sustainlevel+ym_1_4_op4 ; D1L/RR of Operator 4

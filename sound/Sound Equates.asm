@@ -20,7 +20,7 @@ psg_channel_bit1:	equ 5					; two bits for PSG channel number
 psg_channel_bit2:	equ 6
 psg_latch_bit:		equ 7					; specifies whether this is a latch/data or a pure data byte
 psg_set_vol:		equ 1<<tone_volume_bit	
-psg_silence:		equ 1Fh					; maximum attenuation value	(silence)
+psg_silence:		equ psg_set_vol|0Fh					; maximum attenuation value	(silence)
 
 ; ---------------------------------------------------------------------------
 ; YM2612/YM3438 registers
@@ -93,16 +93,16 @@ ym_dac_test:	equ 2Ch						; undocumented; when bit 5 is set, FM output is disabl
 countof_operators:	equ 4					; four operators per channel
 next_operator:		equ 4
 ym_1_4_op1:	equ 0
-ym_1_4_op2:	equ 8
-ym_1_4_op3:	equ 4
+ym_1_4_op2:	equ 4
+ym_1_4_op3:	equ 8
 ym_1_4_op4:	equ 0Ch
 ym_2_5_op1:	equ 1
-ym_2_5_op2: equ 9
-ym_2_5_op3: equ 5
+ym_2_5_op2: equ 5
+ym_2_5_op3: equ 9
 ym_2_5_op4: equ 0Dh
 ym_3_6_op1: equ 2
-ym_3_6_op2: equ 0Ah
-ym_3_6_op3: equ 6
+ym_3_6_op2: equ 6
+ym_3_6_op3: equ 0Ah
 ym_3_6_op4: equ 0Eh
 
 ; Per operator register bases:
