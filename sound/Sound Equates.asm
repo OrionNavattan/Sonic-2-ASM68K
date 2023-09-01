@@ -108,7 +108,7 @@ ym_3_6_op4: equ 0Eh
 ; Per operator register bases:
 ym_mult_detune:				equ 30h			; bits 0-3 set base frequency multiplier; bits 4-6 set frequency detune
 ym_total_level:				equ 40h			; bits 0-6 set volume
-	ym_tl_silence:				equ 7Fh		; silence value
+	tl_silence:				equ 7Fh		; silence value
 ym_attack_scaling:			equ 50h			; bits 0-4 set attack rate; bits 6-7 set rate scaling
 ym_decay_am:				equ 60h			; bits 0-4 set decay rate, bit 7 enables AMS for this operator
 ym_sustainrate:					equ 70h		; bits 0-4 set sustain rate
@@ -118,24 +118,26 @@ ym_ssg_eg:					equ 90h		; bits 0-2 set envelope shape; bit 3 enables use of modi
 countof_peroperatorregs:    equ ym_ssg_eg-ym_mult_detune
 
 ; Per-channel register bases:	
-ym_frequency:	equ 0A0h					; set frequency of each channel, or per operator for channel 3 in special mode
+ym_frequency_low:	equ 0A0h					; set frequency of each channel, or per operator for channel 3 in special mode
+ym_frequency_high:	equ 0A4h
+
 	; All bits of lo register and bits 0-2 of hi register set base frequency, bits 3-5 of hi set octave
-	ym_freq_1_4_lo:	equ ym_frequency			; 0B0h
-	ym_freq_1_4_hi:	equ ym_frequency+4			; 0B4h
-	ym_freq_2_5_lo:	equ ym_frequency+1			; 0B1h
-	ym_freq_2_5_hi:	equ ym_frequency+5			; 0B5h
-	ym_freq_3_6_lo:	equ ym_frequency+2			; 0B2h
-	ym_freq_3_6_hi:	equ	ym_frequency+6			; 0B6h
+	ym_freq_1_4_lo:	equ ym_frequency_low			; 0A0h
+	ym_freq_1_4_hi:	equ ym_frequency_high			; 0A4h
+	ym_freq_2_5_lo:	equ ym_frequency_low+1			; 0A1h
+	ym_freq_2_5_hi:	equ ym_frequency_high+1			; 0A5h
+	ym_freq_3_6_lo:	equ ym_frequency_low+2			; 0A2h
+	ym_freq_3_6_hi:	equ	ym_frequency_high+2			; 0A6h
 
 	; Per operator frequency settings for channel 3 special mode
-	ym_freq_s1_lo:	equ ym_frequency+9			; 0B9h
-	ym_freq_s1_hi:	equ ym_frequency+0Dh			; 0BDh
-	ym_freq_s2_lo:	equ ym_frequency+0Ah			; 0BAh
-	ym_freq_s2_hi:	equ ym_frequency+0Eh			; 0BEh
-	ym_freq_s3_lo:	equ ym_frequency+8			; 0B8h
-	ym_freq_s3_hi:	equ ym_frequency+0Ch			; 0BCh
-	ym_freq_s4_lo:	equ ym_frequency+2			; 0B2h
-	ym_freq_s4_hi:	equ ym_frequency+6			; 0B6h
+	ym_freq_s1_lo:	equ ym_frequency_low+9			; 0A9h
+	ym_freq_s1_hi:	equ ym_frequency_high+9			; 0ADh
+	ym_freq_s2_lo:	equ ym_frequency_low+0Ah			; 0AAh
+	ym_freq_s2_hi:	equ ym_frequency_high+0Ah			; 0AEh
+	ym_freq_s3_lo:	equ ym_frequency_low+8			; 0A8h
+	ym_freq_s3_hi:	equ ym_frequency_high+8			; 0ACh
+	ym_freq_s4_lo:	equ ym_frequency_low+2			; 0A2h
+	ym_freq_s4_hi:	equ ym_frequency_high+2			; 0A6h
 	
 ym_algorithm_feedback:	equ 0B0h				; bits 0-2 set algorithm; bits 3-5 set feedback on operator 1	
 	ym_algo_feed_1_4:	equ ym_algorithm_feedback	; 0B0h
@@ -152,22 +154,13 @@ ym_ams_fms_pan:			equ 0B4h			; bits 0-2 set frequency sensitivity; bits 4-5 set 
 	ym_ams_fms_pan_2_5:	equ ym_ams_fms_pan+1		; 0B5h
 	ym_ams_fms_pan_3_6:	equ ym_ams_fms_pan+2		; 0B6h
 
-	fms_1_bit:			equ 0
-	fms_2_bit:			equ 1
-	fms_3_bit:			equ 2
-	ams_1_bit:			equ 4
-	ams_2_bit:			equ 5
 	pan_right_bit:		equ 6
 	pan_left_bit:		equ 7
-	fms_1:				equ 1<<fms_1_bit
-	fms_2:				equ 1<<fms_2_bit
-	fms_3:				equ 1<<fms_3_bit
-	ams_1:				equ 1<<ams_1_bit
-	ams_2:				equ 1<<ams_2_bit
 	pan_right:			equ 1<<pan_right_bit	
 	pan_left:			equ 1<<pan_left_bit
-	fms_settings:		equ fms_1|fms_2|fms_3
-	ams_fms_settings:	equ fms_1|fms_2|fms_3|ams_1|ams_2
+	fms_settings:		equ 7
+	ams_settings:		equ $30
+	
 	
 ; ---------------------------------------------------------------------------
 ; SMPS header offsets

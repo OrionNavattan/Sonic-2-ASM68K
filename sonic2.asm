@@ -89079,11 +89079,11 @@ SaxDec_ReadCompressed:
 		add.w	d0,d4					; add offset in d4
 		cmp.w	d4,d5					; is result greater than offset in d5?
 		bcc.s	SaxDec_IsMatch				; if not, d4 is index to the match
-		subi.w	#$1000,d4				; else, subtract 1000
-		bcc.s	SaxDec_IsMatch				; if result is negative, this is a zero-fill match; else d4 is index to match
+		subi.w	#$1000,d4				; else, subtract $1000
+		bcc.s	SaxDec_IsMatch				; if result is negative, this is a zero-fill match, otherwise d4 is index to match
 		
 ;is_zeros:		
-		add.w	d3,d5					; add length of zero-fill match to offset pointer (d3 + 1)
+		add.w	d3,d5					; add length of zero-fill match to offset pointer (d3+1)
 		addq.w	#1,d5
 
 	.fillzeros:				
@@ -89171,7 +89171,7 @@ MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		align $20
 				
 ;---------------------------------------------------------------------------------------
-; Graphics - more level objects (making use of the rest of an otherwise empty bank)
+; EHZ & HTZ objects/badniks
 ;---------------------------------------------------------------------------------------		
 		
 		incfile	Nem_Fireball1
@@ -89184,6 +89184,11 @@ MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		incfile	Nem_UnusedFireball
 		incfile	Nem_HTZRock
 		incfile	Nem_Sol					; ArtNem_HtzSol:
+
+;---------------------------------------------------------------------------------------
+; MTZ objects
+;---------------------------------------------------------------------------------------			
+		
 		incfile	Nem_GiantCog
 		incfile	Nem_WheelIndent
 		incfile	Nem_SpikeBlock
@@ -89195,6 +89200,11 @@ MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		incfile	Nem_BoltEnd_Rope
 		incfile	Nem_Cog
 		incfile	Nem_TeleportFlash
+
+;---------------------------------------------------------------------------------------
+; MCZ objects
+;---------------------------------------------------------------------------------------			
+		
 		incfile	Nem_Crate
 		incfile	Nem_MCZCollapsingPlat			; ArtNem_F1ABA:
 		incfile	Nem_VineSwitch				; ArtNem_F1C64:
@@ -89205,12 +89215,13 @@ MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 ; Sega Sound
 ; 8-bit	unsigned PCM at 16Khz
 ; -------------------------------------------------------------------------------
+
 		align_to_end	sizeof_SegaPCM			; replaces cnop -$6714,$8000
 SegaPCM:	bnkswtch_vals	
 		incbin	"sound/PCM/SEGA.pcm"
 
 ; ------------------------------------------------------------------------------
-; Music	
+; Music
 ; ------------------------------------------------------------------------------		
 		
 MusicPoint2:		startbank

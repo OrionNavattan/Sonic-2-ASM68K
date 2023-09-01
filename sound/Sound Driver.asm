@@ -831,10 +831,10 @@ FMUpdateFreq:
 		ld	c,h					; upper 6 bits of frequency
 		ld	a,(ix+ch_type)				; get channel assignment
 		and	a,t_fm_assignment			; only need assignment bits
-		add	a,ym_freq_1_4_hi			; register for upper 6 bits (channel assignment bits will adjust to correct register)
+		add	a,ym_frequency_high			; register for upper 6 bits (channel assignment bits will adjust to correct register)
 		rst	WriteFMIorII				; write it!
 		ld	c,l					; lower 8 bits of frequency
-		sub	a,ym_freq_1_4_hi-ym_freq_1_4_lo		; A0h+ register
+		sub	a,ym_frequency_high-ym_frequency_low		; register for lower 8 bits
 		rst	WriteFMIorII				; write it!
 		ret
 
@@ -1572,7 +1572,7 @@ Sound_PlayBGM:
     if FixBugs=0
 		; The added FMSilenceChannel does this, already
 		ld	a,ym_total_level+ym_3_6_op1		; starting with FM6 operator 1
-		ld	c,ym_tl_silence+80h			; silence value (that +80h is unnecessary)
+		ld	c,tl_silence+80h			; silence value (that +80h is unnecessary)
 		ld	b,countof_operators			; write to all four FM6 operators
 
 	.silencefm6loop:
@@ -1740,7 +1740,7 @@ FMSilenceChannel:
 		ld	a,(ix+ch_type)				; get voice control byte
 		and	a,t_fm_assignment			; only need assignment bits
 		add	a,ym_total_level			; YM TL registers
-		ld	c,ym_tl_silence				; set to minimum envelope amplitude
+		ld	c,tl_silence				; set to minimum envelope amplitude
 		call	.fm_op_writeloop
 		jp	FMNoteOff
 ; ===========================================================================
@@ -2530,7 +2530,7 @@ SongCom_Pan:
     endc
 		ld	c,a					; c = new pan value
 		ld	a,(ix+ch_ams_fms_pan)			; get current AMS/FMS/panning
-		and	a,ams_fms_settings			; retain AMS and FMS bits
+		and	a,ams_settings|fms_settings			; retain AMS and FMS bits
 		or	a,c					; mask in new pan value
 		ld	(ix+ch_ams_fms_pan),a			; store value
     if FixBugs
@@ -2962,7 +2962,7 @@ SetFMTLs:
     if FixBugs
 		; Prevent attenuation overflow (otherwise known as volume underflow)
 		jp	p,.belowmax				; branch if attenuation overflowed
-		ld	a,ym_tl_silence				; limit attenuation to 7Fh
+		ld	a,tl_silence				; limit attenuation to 7Fh
 
 	.belowmax:
     endc
@@ -3267,7 +3267,6 @@ SongCom_Call:
 ; ---------------------------------------------------------------------------
 
 SongCom_Release34:
-
 		ld	a,ym_releaserate_sustainlevel+ym_1_4_op3 ; D1L/RR of operator 3
 		ld	c,0Fh					; loaded with fixed value (max RR, 1TL)
 		rst	WriteFMI				; written to part I
