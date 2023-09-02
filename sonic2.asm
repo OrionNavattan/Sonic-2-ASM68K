@@ -27795,7 +27795,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr Nebula
 		ptr Turtloid
 		ptr TurtloidRider
-		ptr BalkiryJet					; $9C
+		ptr BalkTurtJet					; $9C
 		ptr Coconuts
 		ptr Crawlton
 		ptr Shellcracker
@@ -28123,7 +28123,7 @@ DisplaySprite3:
 ;	uses d0.l, d1.l
 
 ; usage:
-;		lea	(Ani_Sonic).l,a1
+;		lea	Ani_Sonic(pc),a1
 ;		bsr.w	AnimateSprite
 ; ---------------------------------------------------------------------------
 
@@ -50974,9 +50974,9 @@ loc_2791A:
 		jmp	off_27926(pc,d0.w)
 ; ===========================================================================
 off_27926:	index offset(*),,2	
-		dc.w loc_2792C-off_27926			; 0 
-		dc.w loc_2794C-off_27926			; 1
-		dc.w loc_2796E-off_27926			; 2
+		ptr loc_2792C					; 0 
+		ptr loc_2794C					; 2
+		ptr loc_2796E					; 4
 ; ===========================================================================
 
 loc_2792C:				
@@ -52906,8 +52906,8 @@ DoubleDrawbridge:
 		jmp	off_28F96(pc,d1.w)
 ; ===========================================================================
 off_28F96:	index offset(*),,2	
-		dc.w loc_28F9A-off_28F96			; 0 
-		dc.w loc_28FBC-off_28F96			; 1
+		ptr loc_28F9A					; 0 
+		ptr loc_28FBC					; 2
 ; ===========================================================================
 
 loc_28F9A:				
@@ -58112,7 +58112,7 @@ loc_2CE24:
 		tst.b	$2D(a0)
 		bne.w	locret_2CEAC
 		st.b	$2D(a0)
-		jsrto	GetClosestPlayer,JmpTo_GetClosestPlayer
+		jsrto	FindNearestPlayer,JmpTo_FindNearestPlayer
 		tst.w	d1
 		beq.s	locret_2CEAC
 	if FixBugs=0	
@@ -58153,7 +58153,7 @@ locret_2CEAC:
 loc_2CEAE:				
 		subq.b	#1,$3C(a0)
 		bmi.s	loc_2CEEA
-		jsrto	GetClosestPlayer,JmpTo_GetClosestPlayer
+		jsrto	FindNearestPlayer,JmpTo_FindNearestPlayer
 		bclr	#status_xflip_bit,ost_primary_status(a0)
 		tst.w	d0
 		beq.s	loc_2CEC8
@@ -58275,8 +58275,8 @@ JmpTo33_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo14_AnimateSprite:				
 		jmp	(AnimateSprite).l
-JmpTo_GetClosestPlayer:				
-		jmp	(GetClosestPlayer).l
+JmpTo_FindNearestPlayer:				
+		jmp	(FindNearestPlayer).l
 JmpTo_CapSpeed:				
 		jmp	(CapSpeed).l
 JmpTo_MoveStop:				
@@ -69597,18 +69597,18 @@ SubData_Index:	index offset(*),,2
 		ptr SubData_RexProj				; $10
 		ptr SubData_Neb					; $12
 		ptr off_3776E					; $14
-		ptr Subdata_Turt				; $16
-		ptr Subdata_TRider				; $18
-		ptr Subdata_BalkJet				; $1A
-		ptr off_37778					; 14
-		ptr Subdata_Coco				; 15
-		ptr off_37782					; 16
-		ptr Subdata_CrawlT				; 17
-		ptr Subdata_Shelcrk				; 18
-		ptr Subdata_ShelcrkClaw				; 19
-		ptr Subdata_Slice				; 20
-		ptr Subdata_SlicePinc				; 21
-		ptr Subdata_Flash				; 22
+		ptr SubData_Turt				; $16
+		ptr SubData_TRider				; $18
+		ptr SubData_BTJet				; $1A
+		ptr SubData_TurtProj				; $1C
+		ptr SubData_Coco				; $1E
+		ptr off_37782					; $20
+		ptr SubData_CrawlT				; 17
+		ptr SubData_Shelcrk				; 18
+		ptr SubData_ShelcrkClaw				; 19
+		ptr SubData_Slice				; 20
+		ptr SubData_SlicePinc				; 21
+		ptr SubData_Flash				; 22
 		ptr SubData_Ast					; 23
 		ptr off_3778C					; 24
 		ptr off_38CAE					; 25
@@ -69618,7 +69618,7 @@ SubData_Index:	index offset(*),,2
 		ptr off_39200					; 29
 		ptr off_3920A					; 30
 		ptr off_377A0					; 31
-		ptr off_393C2					; 32
+		ptr SubData_Balkiry				; 32
 		ptr off_39576					; 33
 		ptr off_39580					; 34
 		ptr off_377AA					; 35
@@ -69675,7 +69675,7 @@ SubData_Index:	index offset(*),,2
 		ptr off_3D440					; 86
 
 ; ---------------------------------------------------------------------------
-; Subroutine to	determine the closest player to an object, said player's  
+; Subroutine to determine the nearest player to an object, said player's  
 ; location relative to the object, and their vertical and horizontal distance 
 ; from it
 
@@ -69683,7 +69683,7 @@ SubData_Index:	index offset(*),,2
 ;	a0 = object
 
 ; output:
-;	a1 = address of closest player
+;	a1 = address of nearest player
 ;	d0 = 0 if player is left from object, 2 if right
 ;	d1 = 0 if player is above object, 2 if below
 ;	d2 = closest character's horizontal distance to object
@@ -69692,7 +69692,7 @@ SubData_Index:	index offset(*),,2
 ;	uses d0.l, d1.l, d2.w, d3.w, d4.w, d5.w, a0, a1, a2
 ; ---------------------------------------------------------------------------
 	
-GetClosestPlayer:				
+FindNearestPlayer:				
 		moveq	#0,d0
 		moveq	#0,d1
 		lea	(v_ost_player1).w,a1
@@ -69814,17 +69814,18 @@ AlignChild:
 		rts	
 			
 ; ---------------------------------------------------------------------------
-; Subroutine to adjust an object's position based on the movement of the Tornado?
+; Subroutine to adjust an object's position based on the movement of the
+; camera in SCZ.
 ; Used by the Tornado and SCZ badniks
 
 ; input:
-;	a1 = object
+;	a0 = object
 
 ;	uses d0.w, a0
 ; ---------------------------------------------------------------------------
 
-loc_36776:				
-		move.w	(v_tornado_x_vel).w,d0
+AdjustPosSCZ:				
+		move.w	(v_tornado_x_vel).w,d0	
 		add.w	d0,ost_x_pos(a0)		
 		move.w	(v_tornado_y_vel).w,d0
 		add.w	d0,ost_y_pos(a0)
@@ -69882,7 +69883,7 @@ InheritParentFlip:
 		rts	
 
 ; ---------------------------------------------------------------------------
-; Subroutine to spawn a child object using a childobjdata declaration.
+; Subroutine to spawn a child object using a childobjdata declaration
 
 ; input:
 ;	a0 = address of parent's OST slot
@@ -69913,10 +69914,10 @@ LoadChild:
 
 ; input:
 ;	a0 = object
-;	d0 = 0 if player is left from object, 2 if right (set by GetClosestPlayer)
+;	d0 = 0 if player is left from object, 2 if right (set by FindNearestPlayer)
 ; ---------------------------------------------------------------------------
 
-		bsr.w	GetClosestPlayer			; get nearest player
+		bsr.w	FindNearestPlayer			; get nearest player
 		bclr	#render_xflip_bit,ost_render(a0)	; clear x-flip bits
 		bclr	#status_xflip_bit,ost_primary_status(a0)
 		tst.w	d0					; is object to right of nearest player?
@@ -69954,12 +69955,13 @@ LoadProjectiles:
 	.loop:				
 		jsr	(FindNextFreeObj).l			; find free OST slot after parent
 		bne.s	.fail					; branch if not found
-		_move.b	#id_Projectile,ost_id(a1)		; load projectile object	
+		_move.b	#id_Projectile,ost_id(a1)		; load projectile	
 		move.b	d2,ost_subdata_ptr(a1)			; set subobjdata pointer
 		move.w	ost_x_pos(a0),ost_x_pos(a1)		; align to parent object
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		lea	(SpeedToPos).l,a3			; address of movement subroutine to call
-		move.l	a3,$2A(a1)				; set movement type
+		move.l	a3,ost_proj_codeptr(a1)			; set movement type
+;		move.l	#SpeedtoPos,ost_proj_codeptr(a1)	; above two instruction could be this		
 		lea	(a2,d1.w),a3				; get index into projectile data
 		move.b	(a3)+,d0				; x offset
 		ext.w	d0
@@ -70129,7 +70131,7 @@ loc_36996:
 loc_369A8:				
 		subq.b	#1,$2A(a0)
 		bmi.s	loc_369F8
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		bclr	#status_xflip_bit,ost_primary_status(a0)
 		tst.w	d0
 		beq.s	loc_369C2
@@ -70244,7 +70246,7 @@ Ground_Init:
 ; ===========================================================================
 
 Ground_Wait:				
-		bsr.w	GetClosestPlayer			; get closest player
+		bsr.w	FindNearestPlayer			; get nearest player
 		abs.w d2					; d2 = absolute value of horizontal distance to nearest player				
 		cmpi.w	#$60,d2					; is a player within $60 pixels horizontally?
 		bls.s	.within_60				; branch if so
@@ -70266,7 +70268,7 @@ Ground_BreakOut:
 
 Ground_StartRoam:				
 		addq.b	#2,ost_primary_routine(a0)		; go to Ground_Roaming next
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		move.w	Ground_Speeds(pc,d0.w),ost_x_vel(a0)	; set x vel based on direction to nearest player
 		bclr	#status_xflip_bit,ost_primary_status(a0)	
 		tst.w	d0
@@ -70591,7 +70593,7 @@ loc_36DEE:
 
 loc_36E0A:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		move.w	d2,d4
 		move.w	d3,d5
 		bsr.w	loc_36EB2
@@ -70614,7 +70616,7 @@ loc_36E32:
 
 loc_36E3C:				
 		addq.b	#2,ost_primary_routine(a0)
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		lsr.w	#1,d0
 		move.b	byte_36E62(pc,d0.w),ost_x_vel(a0)
 		addi.w	#$10,d3
@@ -70850,7 +70852,7 @@ loc_3703E:
 		bne.s	loc_37062
 		tst.b	ost_render(a0)
 		bpl.s	loc_37062
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		addi.w	#$20,d2
 		cmpi.w	#$40,d2
 		bcc.s	loc_37062
@@ -71107,7 +71109,7 @@ Rex_Init:
 ; ===========================================================================
 
 Rex_Wait:				
-		bsr.w	GetClosestPlayer			; get nearest player
+		bsr.w	FindNearestPlayer			; get nearest player
 		addi.w	#$60,d2
 		cmpi.w	#$100,d2
 		bcc.s	.no_spawn				; branch if they're not close enough yet
@@ -71141,7 +71143,7 @@ Rex_CheckTurnAround:
 ; while waiting, with code in Rex_Init to set this routine.
 
 Rex_Wait_Stationary:			
-		bsr.w	GetClosestPlayer			; get nearest player
+		bsr.w	FindNearestPlayer			; get nearest player
 		addi.w	#$60,d2
 		cmpi.w	#$100,d2
 		bcc.s	.no_spawn				; branch if they're not close enough yet
@@ -71200,6 +71202,9 @@ id_RexHead_Neck2:	rs.w 1					; 2
 id_RexHead_Neck3:	rs.w 1					; 4
 id_RexHead_Neck4:	rs.w 1					; 6
 id_RexHead_Head:	rs.w 1					; 8
+
+countof_rexnecksegs:	equ 4
+
 ; ===========================================================================
 
 RexHead_Init:				
@@ -71359,7 +71364,7 @@ RexHead_FireProjectile:
 		move.b	#$7F,ost_rexhead_timer(a0)		; wait 127 frames before firing next projectile
 		jsrto	FindNextFreeObj,JmpTo25_FindNextFreeObj	; find free OST slot after parent
 		bne.s	.fail					; branch if not found
-		_move.b	#id_Projectile,ost_id(a1)		; load projectile object
+		_move.b	#id_Projectile,ost_id(a1)		; load projectile
 		move.b	#id_Frame_Rexon_Proj,ost_frame(a1)
 		move.b	#id_SubData_RexProj,ost_subdata_ptr(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)		
@@ -71415,7 +71420,7 @@ Rex_SpawnHead:
 		bsr.w	MoveStop				; stop body's movement
 		lea	ost_rex_neck1(a0),a2			; a2 = first child pointer				
 		moveq	#id_RexHead_Neck1,d1			; starting with first neck segment
-		moveq	#5-1,d6					; four neck segments plus the head
+		moveq	#(countof_rexnecksegs+1)-1,d6		; four neck segments plus the head
 
 	.spawn:				
 		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
@@ -71429,7 +71434,7 @@ Rex_SpawnHead:
 		move.w	ost_x_pos(a0),ost_x_pos(a1)		; match parent position initially (will be adjusted later)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addq.w	#2,d1					; next sub ID
-		dbf	d6,.spawn
+		dbf	d6,.spawn				; repeat for all segments plus head
 
 	.fail:				
 		rts	
@@ -71579,9 +71584,9 @@ loc_37710:
 		jmpto	ObjectFall, JmpTo8_ObjectFall
 ; ===========================================================================
 
-loc_3771A:				
+TurtProj_Run:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		lea	(off_37B50).l,a1
+		lea	(Ani_TurtProj).l,a1
 		jmpto	AnimateSprite,JmpTo25_AnimateSprite
 ; ===========================================================================
 
@@ -71617,11 +71622,10 @@ off_3776E:
 		dc.w $A36E
 		dc.w $8404
 		dc.w $88B
-off_37778:
-		dc.l Map_Turt	
-		dc.w $38A
-		dc.w $8404
-		dc.w $498
+		
+SubData_TurtProj:
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel|render_onscreen,4,4,id_col_4x4|id_col_hurt
+
 off_37782:
 		dc.l Map_Coco	
 		dc.w $3EE
@@ -71681,7 +71685,7 @@ loc_377DC:
 ; ===========================================================================
 
 loc_377E8:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		tst.w	d0
 		bne.s	loc_377FA
 		cmpi.w	#$80,d2	
@@ -71690,7 +71694,7 @@ loc_377E8:
 
 loc_377FA:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		bsr.w	loc_36776
+		bsr.w	AdjustPosSCZ
 		lea	(Ani_Neb).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		bra.w	DeleteBehindScreen
@@ -71705,7 +71709,7 @@ loc_37810:
 loc_3781C:				
 		tst.b	$2A(a0)
 		bne.s	loc_37834
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		addi_.w	#8,d2
 		cmpi.w	#$10,d2
 		bcc.s	loc_37834
@@ -71714,7 +71718,7 @@ loc_3781C:
 loc_37834:				
 		addi_.w	#1,ost_y_vel(a0)
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		bsr.w	loc_36776
+		bsr.w	AdjustPosSCZ
 		lea	(Ani_Neb).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		bra.w	DeleteBehindScreen
@@ -71731,7 +71735,7 @@ loc_37850:
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$18,ost_y_pos(a1)
 		lea_	loc_37710,a2
-		move.l	a2,$2A(a1)
+		move.l	a2,ost_proj_codeptr(a1)
 
 locret_37886:				
 		rts	
@@ -71763,82 +71767,99 @@ Turtloid:
 		jmp	Turt_Index(pc,d1.w)
 ; ===========================================================================
 Turt_Index:	index offset(*),,2
-		ptr loc_37948					; 0 
-		ptr loc_37964					; 2
+		ptr Turt_Init					; 0 
+		ptr Turt_Main					; 2
+		
+		rsobj	Turtloid,$2A
+ost_turt_delay:		rs.b 1					; $2A; time to wait before firing projectile or resuming flight after firing
+					rs.b 1			; unused
+ost_turt_riderptr:	rs.w 1					; $2C; pointer to this Turtloid's rider
+ost_turt_jetani:	rs.l 1					; $2E; pointer to animation script for jet; used when loading jet object
+		rsobjend
 ; ===========================================================================
 
-loc_37948:				
-		bsr.w	LoadSubObjData
-		move.w	#-$80,ost_x_vel(a0)
-		bsr.w	loc_37A4A
-		lea	(off_37B56).l,a1
-		move.l	a1,$2E(a0)
-		bra.w	loc_37ABE
+Turt_Init:				
+		bsr.w	LoadSubObjData				; go to Turt_Main next
+		move.w	#-$80,ost_x_vel(a0)			; 
+		bsr.w	Turt_LoadRider
+		lea	(Ani_TurtJet).l,a1			; set animation script for jet
+		move.l	a1,ost_turt_jetani(a0)
+; 		move.l	#Ani_TurtJet,ost_turt_jetani(a0) ; above two instructions could be optimized to this
+		bra.w	BTJet_Load
 ; ===========================================================================
 
-loc_37964:				
+Turt_Main:				
 		moveq	#0,d0
 		move.b	ost_secondary_routine(a0),d0
-		move.w	off_3797A(pc,d0.w),d1
-		jsr	off_3797A(pc,d1.w)
-		bsr.w	loc_37982
-		bra.w	DeleteBehindScreen
+		move.w	.index(pc,d0.w),d1
+		jsr	.index(pc,d1.w)
+		bsr.w	Turt_Platform				; update position and handle platform collision (could be bsr.s or inlined)
+		bra.w	DeleteBehindScreen			; delete once off left edge of screen
 ; ===========================================================================
-off_3797A:	index offset(*),,2
-		ptr loc_379A0					; 0 
-		ptr loc_379CA					; 1
-		ptr loc_379EA					; 2
-		ptr locret_37A04				; 3
+.index:	index offset(*),,2
+		ptr Turt_ChkDist				; 0 
+		ptr Turt_Fire					; 2
+		ptr Turt_ResumeFlight				; 4
+		ptr Turt_Null					; 6
 ; ===========================================================================
 
-loc_37982:				
-		move.w	ost_x_pos(a0),-(sp)
-		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		bsr.w	loc_36776
+Turt_Platform:				
+		pushr.w	ost_x_pos(a0)				; back up current x pos for later
+		jsrto	SpeedToPos,JmpTo26_SpeedToPos		; update position
+		bsr.w	AdjustPosSCZ				; adjust to camera motion
 		move.w	#$18,d1
 		move.w	#8,d2
-		move.w	#$E,d3
-		move.w	(sp)+,d4
-		jmpto	DetectPlatform,JmpTo9_DetectPlatform
+		move.w	#$1C/2,d3
+		popr.w	d4
+		jmpto	DetectPlatform,JmpTo9_DetectPlatform	; handle platform collision
 ; ===========================================================================
 
-loc_379A0:				
-		bsr.w	GetClosestPlayer
-		tst.w	d0
-		bmi.w	TRider_SharedRTS
+Turt_ChkDist:				
+		bsr.w	FindNearestPlayer
+	if FixBugs	
+		tst.w	d2					; d2 = horizontal distance to nearest player		
+	else
+		; This will never trigger the branch below, as d0 is only ever 0 or 2 after a call
+		; to FindNearestPlayer. My guess is that this was supposed to branch if the player
+		; was to the right of the Turtloid, in which case d2 should have been tested, as in
+		; above fix. (Changing the branch condition to bne is another way to do this.)
+		tst.w	d0					; d0 = direction to nearest player	
+	endc	
+		bmi.w	TRider_SharedRTS			; supposed to branch if player is to right, but never does
 		cmpi.w	#$80,d2	
-		bcc.w	TRider_SharedRTS
-		addq.b	#2,ost_secondary_routine(a0)
-		move.w	#0,ost_x_vel(a0)
-		move.b	#4,$2A(a0)
-		move.b	#1,ost_frame(a0)
+		bcc.w	TRider_SharedRTS			; branch if player is more than $80 pixels away	
+		addq.b	#2,ost_secondary_routine(a0)		; go to Turt_Fire next
+		move.w	#0,ost_x_vel(a0)			; stop Turtloid until after projectile is fired
+		move.b	#4,ost_turt_delay(a0)			; wait for 4 frames
+		move.b	#id_Frame_Turt_FireProj,ost_frame(a0)
 		rts	
 ; ===========================================================================
 
-loc_379CA:				
-		subq.b	#1,$2A(a0)
-		bpl.w	TRider_SharedRTS
-		addq.b	#2,ost_secondary_routine(a0)
-		move.b	#8,$2A(a0)
-		movea.w	$2C(a0),a1
-		move.b	#3,ost_frame(a1)
-		bra.w	loc_37AF2
+Turt_Fire:				
+		subq.b	#1,ost_turt_delay(a0)			; decrement timer
+		bpl.w	TRider_SharedRTS			; branch if time remains
+		addq.b	#2,ost_secondary_routine(a0)		; go to Turt_ResumeFlight next
+		move.b	#8,ost_turt_delay(a0)			; wait for 8 frames		
+		movea.w	ost_turt_riderptr(a0),a1		; a1 = Turtloid's rider
+		move.b	#id_Frame_TRider_FireProj,ost_frame(a1)	; set rider's fire frame
+		bra.w	Turt_LoadProjectile
 ; ===========================================================================
 
-loc_379EA:				
-		subq.b	#1,$2A(a0)
-		bpl.s	locret_37A02
-		addq.b	#2,ost_secondary_routine(a0)
-		move.w	#-$80,ost_x_vel(a0)
-		clr.b	ost_frame(a0)
-		movea.w	$2C(a0),a1
+Turt_ResumeFlight:				
+		subq.b	#1,ost_turt_delay(a0)			; decrement timer
+		bpl.s	.exit					; branch if time remains
+		addq.b	#2,ost_secondary_routine(a0)		; go to Turt_Null next	
+		move.w	#-$80,ost_x_vel(a0)			; resume flight
+		clr.b	ost_frame(a0)				; frame = id_Frame_Turt_Normal
+		movea.w	ost_turt_riderptr(a0),a1		; pointless
 
-locret_37A02:				
+	.exit:				
 		rts	
 ; ===========================================================================
 
-locret_37A04:				
+Turt_Null:				
 		rts	
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 9B - Turtloid rider 
@@ -71851,152 +71872,172 @@ TurtloidRider:
 		jmp	TRider_Index(pc,d1.w)
 ; ===========================================================================
 TRider_Index:	index offset(*),,2
-		ptr loc_37A18					; 0 
-		ptr loc_37A1C					; 2
+		ptr TRider_Init					; 0 
+		ptr TRider_Display				; 2
+
+		rsobj	TurtloidRider,$2C
+ost_trider_turtptr:	rs.w 1					; pointer to parent Turtloid
+		rsobjend	
 ; ===========================================================================
 
-loc_37A18:				
+TRider_Init:				
 		bra.w	LoadSubObjData
 ; ===========================================================================
 
-loc_37A1C:				
-		movea.w	$2C(a0),a1
-		lea	word_37A2C(pc),a2
-		bsr.w	loc_37A30
+TRider_Display:				
+		movea.w	ost_trider_turtptr(a0),a1		; a1 = parent turtloid
+		lea	TRider_Offsets(pc),a2
+		bsr.w	TRider_Align				; could be bsr.s or inlined
 		bra.w	DeleteBehindScreen
 ; ===========================================================================
-word_37A2C:
-		dc.w	 4					; 0 
-		dc.w $FFE8					; 1
+TRider_Offsets:
+		dc.w	4					; x offset
+		dc.w	-$18					; y offset
 ; ===========================================================================
 
-loc_37A30:				
-		move.l	ost_x_pos(a1),ost_x_pos(a0)
-		move.l	ost_y_pos(a1),ost_y_pos(a0)
+TRider_Align:
+		; This subroutine is essentially AlignChild, but with the child object
+		; performing the alignment rather than the parent.				
+		move.l	ost_x_pos(a1),ost_x_pos(a0)		; get parent x pos
+		move.l	ost_y_pos(a1),ost_y_pos(a0)		; get parent y pos
 		move.w	(a2)+,d0
-		add.w	d0,ost_x_pos(a0)
+		add.w	d0,ost_x_pos(a0)			; apply offset to x pos
 		move.w	(a2)+,d0
-		add.w	d0,ost_y_pos(a0)
+		add.w	d0,ost_y_pos(a0)			; same with y pos
 
-TRider_SharedRTS:						; oddly, a large number of returns in this region branch here			
+TRider_SharedRTS:						; oddly, a large number of returns in this file branch here			
 		rts	
 ; ===========================================================================
 
-loc_37A4A:				
-		jsrto	FindNextFreeObj,JmpTo25_FindNextFreeObj
-		bne.s	locret_37A80
-		_move.b	#id_TurtloidRider,ost_id(a1)
-		move.b	#2,ost_frame(a1)
-		move.b	#$18,ost_subdata_ptr(a1)
-		move.w	a0,$2C(a1)
-		move.w	a1,$2C(a0)
+Turt_LoadRider:				
+		jsrto	FindNextFreeObj,JmpTo25_FindNextFreeObj	; find free OST slot after parent
+		bne.s	.fail					; branch if not found
+		_move.b	#id_TurtloidRider,ost_id(a1)		; load Turtloid rider
+		move.b	#id_Frame_TRider_Normal,ost_frame(a1)					
+		move.b	#id_SubData_TRider,ost_subdata_ptr(a1)
+		move.w	a0,ost_trider_turtptr(a1)		; set rider's pointer to parent...
+		move.w	a1,ost_turt_riderptr(a0)		; ... and parent's pointer to child
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
-		addq.w	#4,ost_x_pos(a1)
+		addq.w	#4,ost_x_pos(a1)			; spawn 4 pixels to right of parent
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		subi.w	#$18,ost_y_pos(a1)
+		subi.w	#$18,ost_y_pos(a1)			; spawn $18 pixels above parent
 
-locret_37A80:				
+	.fail:				
 		rts	
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 9C - Balkiry's jet
+; Object 9C - Balkiry and Turloid jet exhaust
 ; ----------------------------------------------------------------------------
 
-BalkiryJet:				
+BalkTurtJet:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	BalkJet_Index(pc,d0.w),d1
-		jmp	BalkJet_Index(pc,d1.w)
+		move.w	BTJet_Index(pc,d0.w),d1
+		jmp	BTJet_Index(pc,d1.w)
 ; ===========================================================================
-BalkJet_Index:	index offset(*),,2	
-		ptr loc_37A94					; 0 
-		ptr loc_37A98					; 2
+BTJet_Index:	index offset(*),,2	
+		ptr BTJet_Init					; 0 
+		ptr BTJet_Display				; 2
+		
+		rsobj	BalkTurtJet,$2C
+ost_btjet_parent:	rs.w 1					; $2C; parent Balkiry or Turtloid
+ost_btjet_animptr:	rs.l 1					; $2E; pointer to animation script
+ost_btjet_type:		rs.b 1					; $32; id of parent object
+		rsobjend
 ; ===========================================================================
 
-loc_37A94:				
+BTJet_Init:				
 		bra.w	LoadSubObjData
 ; ===========================================================================
 
-loc_37A98:				
-		movea.w	$2C(a0),a1
-		move.b	$32(a0),d0
+BTJet_Display:				
+		movea.w	ost_btjet_parent(a0),a1			; a1 = parent Turtloid or Balkiry
+		move.b	ost_btjet_type(a0),d0			; id of parent object
 		cmp.b	ost_id(a1),d0
-		bne.w	JmpTo65_DeleteObject
-		move.l	ost_x_pos(a1),ost_x_pos(a0)
-		move.l	ost_y_pos(a1),ost_y_pos(a0)
-		movea.l	$2E(a0),a1
+		bne.w	JmpTo65_DeleteObject			; delete if parent has been destroyed
+		move.l	ost_x_pos(a1),ost_x_pos(a0)		; update position
+		move.l	ost_y_pos(a1),ost_y_pos(a0)	
+		movea.l	ost_btjet_animptr(a0),a1		; get animation script
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		bra.w	DeleteBehindScreen
 ; ===========================================================================
 
-loc_37ABE:				
-		jsrto	FindNextFreeObj,JmpTo25_FindNextFreeObj
-		bne.s	locret_37AF0
-		_move.b	#id_BalkiryJet,ost_id(a1)
-		move.b	#6,ost_frame(a1)
-		move.b	#$1A,ost_subdata_ptr(a1)
-		move.w	a0,$2C(a1)
+BTJet_Load:				
+		jsrto	FindNextFreeObj,JmpTo25_FindNextFreeObj	; find free OST slot after parent
+		bne.s	.fail					; branch if not found
+		_move.b	#id_BalkTurtJet,ost_id(a1)		; load Balkiry and Turtloid jet object
+	if FixBugs=0
+		; Completely unnecessary due to the use of AnimateSprite by this object.		
+		move.b	#id_Frame_TurtJet1,ost_frame(a1)
+	endc				
+		move.b	#id_SubData_BTJet,ost_subdata_ptr(a1)
+		move.w	a0,ost_btjet_parent(a1)			; set pointer to parent
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		move.l	$2E(a0),$2E(a1)
-		move.b	ost_id(a0),$32(a1)
+		move.l	ost_turt_jetani(a0),ost_btjet_animptr(a1) ; set animation script pointer
+		move.b	ost_id(a0),ost_btjet_type(a1)
 
-locret_37AF0:				
+	.fail:				
 		rts	
 ; ===========================================================================
 
-loc_37AF2:				
-		jsrto	FindFreeObj,JmpTo19_FindFreeObj
-		bne.s	locret_37B30
-		_move.b	#id_Projectile,ost_id(a1)
-		move.b	#6,ost_frame(a1)
-		move.b	#$1C,ost_subdata_ptr(a1)
+Turt_LoadProjectile:				
+		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
+		bne.s	.fail					; branch if not found
+		_move.b	#id_Projectile,ost_id(a1)		; load projectile
+	if FixBugs=0
+		; Defintely the wrong frame, and not necessary at all due to the use of AnimateSprite
+		; by this instance of the projectile object.
+		move.b	#id_Frame_TurtJet1,ost_frame(a1)
+	endc	
+		move.b	#id_SubData_TurtProj,ost_subdata_ptr(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
-		subi.w	#$14,ost_x_pos(a1)
+		subi.w	#$14,ost_x_pos(a1)			; spawn $14 pixels to left of Turtloid
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		addi.w	#$A,ost_y_pos(a1)
-		move.w	#-$100,ost_x_vel(a1)
-		lea_	loc_3771A,a2
-		move.l	a2,$2A(a1)
+		addi.w	#$A,ost_y_pos(a1)			; spawn $A pixels below Turtloid
+		move.w	#-$100,ost_x_vel(a1)			; move to left
+		lea_	TurtProj_Run,a2				; set projectile movement routine
+		move.l	a2,ost_proj_codeptr(a1)
+;		move.l	#TurtProj_Run,ost_proj_codeptr(a1)	; above two instruction could be this
 
-locret_37B30:				
+	.fail:				
 		rts	
 ; ===========================================================================
-Subdata_Turt:
-		dc.l Map_Turt	
-		dc.w $38A
-		dc.w $405
-		dc.w $1800
+SubData_Turt:
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,$18,id_col_null
 		
-Subdata_TRider:	
-		dc.l Map_Turt	
-		dc.w $38A
-		dc.w $404
-		dc.w $C1A
+SubData_TRider:
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,4,$C,id_col_12x12
 		
-Subdata_BalkJet:
-		dc.l Map_Turt	
-		dc.w $38A
-		dc.w $405
-		dc.w $800
+SubData_BTJet:
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,8,id_col_null
 		
-off_37B50:	index offset(*)
-		ptr byte_37B52
+Ani_TurtProj:	index offset(*)
+		ptr TurtProj_Flicker
 
-byte_37B52:
-		dc.b   1,  4,  5,$FF 
+	TurtProj_Flicker:
+		dc.b 1
+		dc.b id_Frame_Turt_Proj1
+		dc.b id_Frame_Turt_Proj2
+		dc.b afEnd 
 		
-off_37B56:	index offset(*)
-		ptr byte_37B58 
+Ani_TurtJet:	index offset(*)
+		ptr TurtJet_Flicker 
 
-byte_37B58:	
-		dc.b   1,  6,  7,$FF
+	TurtJet_Flicker:	
+		dc.b 1 
+		dc.b id_Frame_TurtJet1
+		dc.b id_Frame_TurtJet2
+		dc.b afEnd
 
-off_37B5C:	index offset(*)	
-		ptr byte_37B5E 
+Ani_BalkJet:	index offset(*)	
+		ptr BalkJet_Flicker 
 		
-byte_37B5E:	
-		dc.b   1,  8,  9,$FF
+	BalkJet_Flicker:	
+		dc.b 1
+		dc.b id_Frame_BalkJet1
+		dc.b id_Frame_BalkJet2
+		dc.b afEnd
 ; ===========================================================================
 
 		include "mappings/sprite/Turtloid.asm"
@@ -72029,7 +72070,7 @@ loc_37C10:
 ; ===========================================================================
 
 loc_37C1C:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		bclr	#render_xflip_bit,ost_render(a0)
 		bclr	#status_xflip_bit,ost_primary_status(a0)
 		tst.w	d0
@@ -72162,7 +72203,7 @@ loc_37D58:
 		move.w	(a2)+,ost_x_vel(a1)
 		move.w	#-$100,ost_y_vel(a1)
 		lea_	loc_37728,a2
-		move.l	a2,$2A(a1)
+		move.l	a2,ost_proj_codeptr(a1)
 
 locret_37D74:				
 		rts	
@@ -72171,7 +72212,7 @@ Coco_ThrowData:
 		dc.w   -$B,  $100				; 0
 		dc.w	$B, -$100				; 4
 		
-Subdata_Coco:
+SubData_Coco:
 		dc.l Map_Coco	
 		dc.w $3EE
 		dc.w $405
@@ -72219,7 +72260,7 @@ loc_37E30:
 ; ===========================================================================
 
 loc_37E42:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		move.w	d2,d4
 		move.w	d3,d5
 		addi.w	#$80,d2	
@@ -72371,7 +72412,7 @@ loc_37FD6:
 locret_37FE6:				
 		rts	
 ; ===========================================================================
-Subdata_CrawlT:
+SubData_CrawlT:
 		dc.l Map_CrawlT	
 		dc.w $23C0
 		dc.w $404
@@ -72413,7 +72454,7 @@ loc_38034:
 ; ===========================================================================
 
 loc_3804E:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		tst.w	d0
 		beq.s	loc_3805E
 		btst	#render_xflip_bit,ost_render(a0)
@@ -72459,7 +72500,7 @@ loc_380AE:
 loc_380C4:				
 		tst.b	ost_render(a0)
 		bpl.s	loc_380E4
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		tst.w	d0
 		beq.s	loc_380DA
 		btst	#render_xflip_bit,ost_render(a0)
@@ -72726,13 +72767,13 @@ loc_382D8:
 locret_382EE:				
 		rts	
 ; ===========================================================================
-Subdata_Shelcrk:	
+SubData_Shelcrk:	
 		dc.l Map_Shelcrk	
 		dc.w $31C
 		dc.w $405
 		dc.w $180A
 		
-Subdata_ShelcrkClaw:	
+SubData_ShelcrkClaw:	
 		dc.l Map_Shelcrk	
 		dc.w $31C
 		dc.w $404
@@ -72789,7 +72830,7 @@ loc_383DE:
 loc_383F0:				
 		tst.b	ost_render(a0)
 		bpl.s	loc_3841C
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	loc_38404
 		subq.w	#2,d0
@@ -72902,7 +72943,7 @@ off_384F6:	index offset(*),,2
 ; ===========================================================================
 
 loc_384F8:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		move.w	word_38516(pc,d0.w),d2
 		add.w	d2,ost_x_vel(a0)
 		move.w	word_38516(pc,d1.w),d2
@@ -72976,13 +73017,13 @@ byte_385BC:
 		dc.b    6,    0
 		dc.b -$10,    0
 
-Subdata_Slice:
+SubData_Slice:
 		dc.l Map_Slice	
 		dc.w $243C
 		dc.w $405
 		dc.w $1006
 		
-Subdata_SlicePinc:
+SubData_SlicePinc:
 		dc.l Map_Slice	
 		dc.w $243C
 		dc.w $404
@@ -73170,7 +73211,7 @@ loc_3888E:
 		clr.w	ost_anim_time(a0)
 		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
 ; ===========================================================================
-Subdata_Flash:
+SubData_Flash:
 		dc.l Map_Flash	
 		dc.w $83A8
 		dc.w $404
@@ -73226,7 +73267,7 @@ loc_389B2:
 ; ===========================================================================
 
 loc_389B6:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		addi.w	#$60,d2
 		cmpi.w	#$C0,d2	
 		bcc.s	loc_389CE
@@ -73244,7 +73285,7 @@ loc_389D2:
 ; ===========================================================================
 
 loc_389DA:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		tst.w	d2
 		bpl.s	loc_389E4
 		neg.w	d2
@@ -73363,7 +73404,7 @@ loc_38B10:
 ; ===========================================================================
 
 loc_38B1E:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		addi.w	#$60,d2
 		cmpi.w	#$C0,d2	
 		bcs.s	loc_38B4E
@@ -73435,7 +73476,7 @@ loc_38BAC:
 ; ===========================================================================
 
 loc_38BBA:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		addi.w	#$60,d2
 		cmpi.w	#$C0,d2	
 		bcs.s	loc_38BEA
@@ -73496,7 +73537,7 @@ loc_38C22:
 loc_38C60:				
 		move.w	d1,ost_x_vel(a1)
 		lea_	loc_37742,a2
-		move.l	a2,$2A(a1)
+		move.l	a2,ost_proj_codeptr(a1)
 
 locret_38C6C:				
 		rts	
@@ -73518,7 +73559,7 @@ loc_38C6E:
 loc_38CA0:				
 		move.w	d1,ost_x_vel(a1)
 		lea_	loc_37742,a2
-		move.l	a2,$2A(a1)
+		move.l	a2,ost_proj_codeptr(a1)
 
 locret_38CAC:				
 		rts	
@@ -73636,7 +73677,7 @@ Grab_Action_Index:	index offset(*),,2
 ; ===========================================================================
 
 Grab_FindPlayer:				
-		bsr.w	GetClosestPlayer			; get nearest player
+		bsr.w	FindNearestPlayer			; get nearest player
 		addi.w	#$40,d2				
 		cmpi.w	#$80,d2					; is player within $80 pixels of Grabber horizontally?
 		bcc.s	.notfound				; branch if not
@@ -74078,7 +74119,7 @@ off_39200:
 		dc.w $400
 		
 off_3920A:
-		dc.l Map_39228	
+		dc.l Map_Grab	
 		dc.w $A500
 		dc.w $405
 		dc.w $400
@@ -74100,7 +74141,7 @@ Map_3921A:	index offset(*)
 ; -------------------------------------------------------------------------------
 ; Unknown sprite mappings
 ; -------------------------------------------------------------------------------
-Map_39228:		index offset(*)				
+Map_Grab:		index offset(*)				
 		ptr word_392A0					; 0
 		ptr word_392AA					; 1
 		ptr word_392B4					; 2
@@ -74190,17 +74231,17 @@ loc_3938C:
 		move.w	#-$500,ost_x_vel(a0)
 
 loc_393AA:				
-		lea_	off_37B5C,a1
+		lea_	Ani_BalkJet,a1
 		move.l	a1,$2E(a0)
-		bra.w	loc_37ABE
+		bra.w	BTJet_Load
 ; ===========================================================================
 
 loc_393B6:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		bsr.w	loc_36776
+		bsr.w	AdjustPosSCZ
 		bra.w	DeleteBehindScreen
 ; ===========================================================================
-off_393C2:
+SubData_Balkiry:
 		dc.l Map_393CC	
 		dc.w $565
 		dc.w $404
@@ -74282,7 +74323,7 @@ locret_39486:
 ; ===========================================================================
 
 loc_39488:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		addi.w	#$80,d2	
 		cmpi.w	#$100,d2
 		bcs.s	loc_3949A
@@ -74367,7 +74408,7 @@ loc_39564:
 		move.w	d0,ost_x_vel(a1)
 		add.w	d1,ost_x_pos(a1)
 		lea_	loc_37734,a2
-		move.l	a2,$2A(a1)
+		move.l	a2,ost_proj_codeptr(a1)
 
 locret_39574:				
 		rts	
@@ -76052,7 +76093,7 @@ loc_3A8D4:
 		bmi.s	loc_3A8FC
 		move.w	ost_x_pos(a0),-(sp)
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		bsr.w	loc_36776
+		bsr.w	AdjustPosSCZ
 		move.w	#$1B,d1
 		move.w	#8,d2
 		move.w	#9,d3
@@ -76447,8 +76488,8 @@ loc_3AD2A:
 		move.w	off_3AD38(pc,d0.w),d1
 		jmp	off_3AD38(pc,d1.w)
 ; ===========================================================================
-off_3AD38:	
-		dc.w loc_3AD3A-off_3AD38
+off_3AD38:	index offset(*),,2
+		ptr loc_3AD3A
 ; ===========================================================================
 
 loc_3AD3A:				
@@ -76493,7 +76534,7 @@ loc_3AD6E:
 loc_3AD8C:				
 		move.w	ost_x_pos(a0),-(sp)
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		bsr.w	loc_36776
+		bsr.w	AdjustPosSCZ
 		move.w	#$1B,d1
 		move.w	#8,d2
 		move.w	#9,d3
@@ -76508,13 +76549,13 @@ loc_3ADAA:
 		bsr.w	loc_3ADF6
 		bsr.w	loc_3AF0C
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		bra.w	loc_36776
+		bra.w	AdjustPosSCZ
 ; ===========================================================================
 
 loc_3ADC6:				
 		tst.b	$2E(a0)
 		beq.s	loc_3ADD4
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		move.w	d2,$38(a0)
 
 loc_3ADD4:				
@@ -76532,7 +76573,7 @@ loc_3ADE8:
 		move.w	ost_x_pos(a1),d1
 		add.w	d3,d1
 		move.w	d1,ost_x_pos(a0)
-		bra.w	loc_36776
+		bra.w	AdjustPosSCZ
 ; ===========================================================================
 
 loc_3ADF6:				
@@ -76587,7 +76628,7 @@ loc_3AE66:
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 
 loc_3AE72:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		moveq	#$10,d3
 		add.w	d3,d2
 		cmpi.w	#$20,d2
@@ -76644,7 +76685,7 @@ loc_3AEDE:
 ; ===========================================================================
 
 loc_3AEEC:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		moveq	#$10,d3
 		add.w	d3,d2
 		cmpi.w	#$20,d2
@@ -77331,7 +77372,7 @@ loc_3B70A:
 
 loc_3B70E:
 		move.b	#0,ost_anim(a0)
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 
 loc_3B718:
 		bclr	#status_xflip_bit,ost_primary_status(a0)
@@ -77561,7 +77602,7 @@ loc_3B97C:
 loc_3B980:				
 		tst.b	ost_render(a0)
 		bpl.s	loc_3B998
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		tst.w	d1
 		beq.s	loc_3B998
 		addi.w	#$60,d2
@@ -77579,7 +77620,7 @@ loc_3B99C:
 ; ===========================================================================
 
 loc_3B9AA:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		moveq	#0,d6
 		addi.w	#$20,d2
 		cmpi.w	#$40,d2
@@ -77608,7 +77649,7 @@ loc_3B9D8:
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		lea_	loc_37756,a2
-		move.l	a2,$2A(a1)
+		move.l	a2,ost_proj_codeptr(a1)
 		moveq	#0,d0
 		move.b	ost_frame(a0),d0
 		lsl.w	#2,d0
@@ -78759,7 +78800,7 @@ loc_3C4A8:
 ; ===========================================================================
 
 loc_3C4DC:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		addi.w	#$20,d2
 		cmpi.w	#$40,d2
 		bcs.s	loc_3C4EE
@@ -78818,7 +78859,7 @@ loc_3C57E:
 
 loc_3C58A:
 		addq.b	#2,ost_secondary_routine(a0)
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		move.w	#$100,d1
 		tst.w	d0
 		bne.s	loc_3C59C
@@ -78914,7 +78955,7 @@ loc_3C65C:
 loc_3C66C:				
 		addq.b	#2,ost_secondary_routine(a0)
 		move.w	#$80,$2A(a0)
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		move.w	#$80,d1	
 		tst.w	d0
 		bne.s	loc_3C684
@@ -79755,7 +79796,7 @@ loc_3CF10:
 ; ===========================================================================
 
 loc_3CF32:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		addi.w	#$5C,d2
 		cmpi.w	#$B8,d2	
 		bcs.s	loc_3CF44
@@ -79786,7 +79827,7 @@ loc_3CF62:
 loc_3CF7C:				
 		cmpi.w	#$810,ost_x_pos(a0)
 		bcc.s	loc_3CFC0
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		addi.w	#$50,d2
 		cmpi.w	#$A0,d2	
 		bcc.s	loc_3CF9E
@@ -80076,7 +80117,7 @@ loc_3D2B4:
 
 loc_3D2D4:				
 		move.b	#id_col_8x8_2+id_col_custom,ost_col_type(a0)
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		move.w	d2,d4
 		addi.w	#$40,d2
 		cmpi.w	#$80,d2	
@@ -80094,7 +80135,7 @@ loc_3D2D4:
 		bne.s	loc_3D36C
 		btst	#1,ost_primary_status(a1)
 		bne.s	loc_3D332
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	loc_3D32E
 		subq.w	#2,d0
@@ -80114,7 +80155,7 @@ loc_3D334:
 		bne.s	loc_3D36C
 		btst	#1,ost_primary_status(a1)
 		bne.s	loc_3D362
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	loc_3D35E
 		subq.w	#2,d0
@@ -80193,7 +80234,7 @@ loc_3D404:
 ; ===========================================================================
 
 loc_3D416:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		addi.w	#$40,d2
 		cmpi.w	#$80,d2	
 		bcc.s	locret_3D43E
@@ -80598,7 +80639,7 @@ loc_3D7FE:
 
 loc_3D804:
 		bsr.w	loc_3E2A8
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	loc_3D816
 		subq.w	#2,d0
@@ -80651,7 +80692,7 @@ loc_3D856:
 ; ===========================================================================
 
 loc_3D86A:				
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	loc_3D878
 		subq.w	#2,d0
@@ -80940,7 +80981,7 @@ loc_3DACC:
 loc_3DADC:				
 		addq.b	#2,ost_secondary_routine(a0)
 		move.w	#$20,$2A(a0)
-		bsr.w	GetClosestPlayer
+		bsr.w	FindNearestPlayer
 		tst.w	d2
 		bpl.s	loc_3DAF0
 		neg.w	d2

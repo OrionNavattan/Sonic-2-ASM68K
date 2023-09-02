@@ -20,7 +20,7 @@ psg_channel_bit1:	equ 5					; two bits for PSG channel number
 psg_channel_bit2:	equ 6
 psg_latch_bit:		equ 7					; specifies whether this is a latch/data or a pure data byte
 psg_set_vol:		equ 1<<tone_volume_bit	
-psg_silence:		equ psg_set_vol|0Fh					; maximum attenuation value	(silence)
+psg_silence:		equ psg_set_vol|0Fh			; maximum attenuation value	(silence)
 
 ; ---------------------------------------------------------------------------
 ; YM2612/YM3438 registers
@@ -118,7 +118,7 @@ ym_ssg_eg:					equ 90h		; bits 0-2 set envelope shape; bit 3 enables use of modi
 countof_peroperatorregs:    equ ym_ssg_eg-ym_mult_detune
 
 ; Per-channel register bases:	
-ym_frequency_low:	equ 0A0h					; set frequency of each channel, or per operator for channel 3 in special mode
+ym_frequency_low:	equ 0A0h				; set frequency of each channel, or per operator for channel 3 in special mode
 ym_frequency_high:	equ 0A4h
 
 	; All bits of lo register and bits 0-2 of hi register set base frequency, bits 3-5 of hi set octave
@@ -127,13 +127,13 @@ ym_frequency_high:	equ 0A4h
 	ym_freq_2_5_lo:	equ ym_frequency_low+1			; 0A1h
 	ym_freq_2_5_hi:	equ ym_frequency_high+1			; 0A5h
 	ym_freq_3_6_lo:	equ ym_frequency_low+2			; 0A2h
-	ym_freq_3_6_hi:	equ	ym_frequency_high+2			; 0A6h
+	ym_freq_3_6_hi:	equ	ym_frequency_high+2		; 0A6h
 
 	; Per operator frequency settings for channel 3 special mode
 	ym_freq_s1_lo:	equ ym_frequency_low+9			; 0A9h
 	ym_freq_s1_hi:	equ ym_frequency_high+9			; 0ADh
-	ym_freq_s2_lo:	equ ym_frequency_low+0Ah			; 0AAh
-	ym_freq_s2_hi:	equ ym_frequency_high+0Ah			; 0AEh
+	ym_freq_s2_lo:	equ ym_frequency_low+0Ah		; 0AAh
+	ym_freq_s2_hi:	equ ym_frequency_high+0Ah		; 0AEh
 	ym_freq_s3_lo:	equ ym_frequency_low+8			; 0A8h
 	ym_freq_s3_hi:	equ ym_frequency_high+8			; 0ACh
 	ym_freq_s4_lo:	equ ym_frequency_low+2			; 0A2h

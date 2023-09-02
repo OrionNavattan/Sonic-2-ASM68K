@@ -834,7 +834,7 @@ FMUpdateFreq:
 		add	a,ym_frequency_high			; register for upper 6 bits (channel assignment bits will adjust to correct register)
 		rst	WriteFMIorII				; write it!
 		ld	c,l					; lower 8 bits of frequency
-		sub	a,ym_frequency_high-ym_frequency_low		; register for lower 8 bits
+		sub	a,ym_frequency_high-ym_frequency_low	; register for lower 8 bits
 		rst	WriteFMIorII				; write it!
 		ret
 
@@ -2530,7 +2530,7 @@ SongCom_Pan:
     endc
 		ld	c,a					; c = new pan value
 		ld	a,(ix+ch_ams_fms_pan)			; get current AMS/FMS/panning
-		and	a,ams_settings|fms_settings			; retain AMS and FMS bits
+		and	a,ams_settings|fms_settings		; retain AMS and FMS bits
 		or	a,c					; mask in new pan value
 		ld	(ix+ch_ams_fms_pan),a			; store value
     if FixBugs
