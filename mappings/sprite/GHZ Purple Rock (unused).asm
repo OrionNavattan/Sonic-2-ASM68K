@@ -3,12 +3,12 @@
 ; ---------------------------------------------------------------------------
 
 Map_PRock:	index offset(*)
-	ptr	Map_obj3B_0002
+		ptr	Map_obj3B_0002
 
 Map_obj3B_0002:	spritemap
-	piece	-$18, -$10, 3, 4, 0, 0, 0, 0, 0
-	piece	0, -$10, 3, 4, $C, 0, 0, 0, 0
-	endsprite
+		piece	-$18, -$10, 3, 4, 0, 0, 0, 0, 0
+		piece	0, -$10, 3, 4, $C, 0, 0, 0, 0
+		endsprite
 
-	dc.w 0
-	even
+		dc.w 0
+		even

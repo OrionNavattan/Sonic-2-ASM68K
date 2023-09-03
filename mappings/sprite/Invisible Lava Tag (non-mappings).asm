@@ -4,11 +4,11 @@
 ; -------------------------------------------------------------------------------
 
 NonMap_LTag:	index offset(*)
-	ptr	Map_obj31_a_0006
-	ptr	Map_obj31_a_0006
-	ptr	Map_obj31_a_0006
+		ptr	Map_obj31_a_0006
+		ptr	Map_obj31_a_0006
+		ptr	Map_obj31_a_0006
 
 Map_obj31_a_0006:	spritemap
-	endsprite
+		endsprite
 
-	even
+		even

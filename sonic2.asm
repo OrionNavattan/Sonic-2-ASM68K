@@ -12614,7 +12614,7 @@ EndingTrigger:
 loc_A3DA:
 		ori.b	#$7C,d4
 		lea	(off_3AFC8).l,a1
-		jsrto	LoadSubtypeData_Part3,JmpTo_LoadSubtypeData_Part3
+		jsrto	LoadSubObjData_Part3,JmpTo_LoadSubObjData_Part3
 		cmpi.w	#tails_alone,(v_player_mode).w
 		bne.s	loc_A3FC
 		move.b	#4,ost_frame(a0)
@@ -13043,8 +13043,8 @@ off_A8A2:	index offset(*),,2
 ; ===========================================================================
 
 loc_A8AA:				
-		lea	(off_3B322).l,a1
-		jsrto	LoadSubtypeData_Part3,JmpTo_LoadSubtypeData_Part3
+		lea	(SubData_Cloud).l,a1
+		jsrto	LoadSubObjData_Part3,JmpTo_LoadSubObjData_Part3
 		move.l	#Map_TornadoHelices,ost_mappings(a0)
 		move.w	#tile_LevelArt+tile_hi,ost_tile(a0)
 		move.b	#1,ost_priority(a0)
@@ -13146,8 +13146,8 @@ off_A996:	index offset(*),,2
 ; ===========================================================================
 
 loc_A99A:				
-		lea	(off_3B322).l,a1
-		jsrto	LoadSubtypeData_Part3,JmpTo_LoadSubtypeData_Part3
+		lea	(SubData_Cloud).l,a1
+		jsrto	LoadSubObjData_Part3,JmpTo_LoadSubObjData_Part3
 		move.l	#Map_TornadoHelices,ost_mappings(a0)
 		move.w	#tile_hi,ost_tile(a0)
 		move.b	#3,ost_priority(a0)
@@ -13185,8 +13185,8 @@ off_AA00:	index offset(*),,2
 ; ===========================================================================
 
 loc_AA06:				
-		lea	(off_3B322).l,a1
-		jsrto	LoadSubtypeData_Part3,JmpTo_LoadSubtypeData_Part3
+		lea	(SubData_Cloud).l,a1
+		jsrto	LoadSubObjData_Part3,JmpTo_LoadSubObjData_Part3
 		move.w	ost_tile(a0),d0
 		andi.w	#$1FFF,d0
 		ori.w	#$6000,d0
@@ -13265,7 +13265,7 @@ off_AABC:	index offset(*),,2
 
 loc_AAC0:				
 		lea	(off_AD72).l,a1
-		jsrto	LoadSubtypeData_Part3,JmpTo_LoadSubtypeData_Part3
+		jsrto	LoadSubObjData_Part3,JmpTo_LoadSubObjData_Part3
 		move.l	(v_random).w,d0
 		ror.l	#3,d0
 		move.l	d0,(v_random).w
@@ -13489,7 +13489,7 @@ dword_AD6E:
 		childobjdata $3E,id_TornadoHelicies,0	
 		
 off_AD72:	
-		subobjdata Map_Animal1,tile_Nem_Animal_2,4,2,8,0
+		subobjdata Map_Animal1,tile_Nem_Animal_2,render_rel,2,8,id_col_null
 		
 byte_AD7C:	index offset(*)
 		ptr byte_AD7E
@@ -14198,8 +14198,8 @@ JmpTo2_SpeedToPos:
 		jmp	(SpeedToPos).l
 JmpTo_PaletteCycle:				
 		jmp	(PaletteCycle).l		
-JmpTo_LoadSubtypeData_Part3:
-		jmp	(LoadSubtypeData_Part3).l
+JmpTo_LoadSubObjData_Part3:
+		jmp	(LoadSubObjData_Part3).l
 		
 		align 4
 	endc
@@ -69556,7 +69556,7 @@ JmpTo2_FindFreeObjSpecial:
 ; ---------------------------------------------------------------------------
 ; Subroutine to	load OST data for an object from a subobjdata declaration.
 ; Requires data index to be set beforehand. Part 2 assumes d0 is already set
-; to index; part 3 assume a1 already points to the data
+; to index; part 3 assumes a1 already points to the data.
 
 ; input: 
 ;	a0 = object's ost slot
@@ -69568,11 +69568,11 @@ LoadSubObjData:
 		moveq	#0,d0
 		move.b	ost_subdata_ptr(a0),d0			; get object's subtype
 
-LoadSubtypeData_Part2:				
+LoadSubObjData_Part2:				
 		move.w	SubData_Index(pc,d0.w),d0
 		lea	SubData_Index(pc,d0.w),a1		; a1 = data for this subtype
 	
-LoadSubtypeData_Part3:				
+LoadSubObjData_Part3:				
 		move.l	(a1)+,ost_mappings(a0)			; mappings pointer
 		move.w	(a1)+,ost_tile(a0)			; tile base
 		jsr	(Adjust2PArtPointer).l			; adjust for two-player mode if required
@@ -69613,10 +69613,10 @@ SubData_Index:	index offset(*),,2
 		ptr off_3778C					; 24
 		ptr off_38CAE					; 25
 		ptr off_37796					; 26
-		ptr off_391EC					; 27
-		ptr off_391F6					; 28
-		ptr off_39200					; 29
-		ptr off_3920A					; 30
+		ptr SubData_Grabber					; 27
+		ptr SubData_GrabLegs					; 28
+		ptr SubData_GrabBox					; 29
+		ptr SubData_GrabString					; 30
 		ptr off_377A0					; 31
 		ptr SubData_Balkiry				; 32
 		ptr off_39576					; 33
@@ -69631,11 +69631,11 @@ SubData_Index:	index offset(*),,2
 		ptr off_3AFC8					; 42
 		ptr off_3BBFE					; 43
 		ptr off_3BBFE					; 44
-		ptr off_3B322					; 45
+		ptr SubData_Cloud					; 45
 		ptr off_3AFD2					; 46
-		ptr off_3B322					; 47
-		ptr off_3B322					; 48
-		ptr off_3B322					; 49
+		ptr SubData_Cloud					; 47
+		ptr SubData_Cloud					; 48
+		ptr SubData_Cloud					; 49
 		ptr off_3B3AC					; 50
 		ptr off_3B4DE					; 51
 		ptr off_3B4DE					; 52
@@ -69961,7 +69961,7 @@ LoadProjectiles:
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		lea	(SpeedToPos).l,a3			; address of movement subroutine to call
 		move.l	a3,ost_proj_codeptr(a1)			; set movement type
-;		move.l	#SpeedtoPos,ost_proj_codeptr(a1)	; above two instruction could be this		
+;		move.l	#SpeedtoPos,ost_proj_codeptr(a1)	; above two instructions could be this		
 		lea	(a2,d1.w),a3				; get index into projectile data
 		move.b	(a3)+,d0				; x offset
 		ext.w	d0
@@ -70069,7 +70069,7 @@ JmpTo65_DeleteObject:
 JmpTo64_DeleteObject:				
 		jmp	(DeleteObject).l
 		
-		
+	
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 8C - Whisp
@@ -70175,7 +70175,7 @@ loc_36A26:
 ; ===========================================================================
 
 SubData_Whisp:	
-		subobjdata	Map_Whisp,tile_Nem_Whisp+tile_pal2+tile_hi,render_rel,4,$C,id_col_8x8
+		subobjdata	Map_Whisp,tile_Nem_Whisp+tile_pal2+tile_hi,render_rel,4,$18/2,id_col_8x8
 		
 Ani_Whisp:	index offset(*)
 		ptr Ani_Whisp_Fly 
@@ -70500,20 +70500,20 @@ GWall_Offsets:
 ; ===========================================================================
 
 SubData_Ground:
-		subobjdata	Map_Ground,tile_nem_Grounder+tile_pal2+tile_hi,render_rel,5,$10,id_col_12x20 ; tile_hi is cleared by init code
+		subobjdata	Map_Ground,tile_nem_Grounder+tile_pal2+tile_hi,render_rel,5,$20/2,id_col_12x20 ; tile_hi is cleared by init code
 
 SubData_GWall:
-		subobjdata Map_GWall,tile_LevelArt,render_rel|render_onscreen,4,$10,id_col_null
+		subobjdata	Map_GWall,tile_LevelArt,render_rel|render_onscreen,4,$20/2,id_col_null
 
 SubData_GRock:
 	if FixBugs
 		; The correct tile setting for this object.
-		subobjdata	Map_GRock,tile_Nem_Grounder+tile_pal3,render_rel|render_onscreen,4,8,id_col_null
+		subobjdata	Map_GRock,tile_Nem_Grounder+tile_pal3,render_rel|render_onscreen,4,$10/2,id_col_null
 	else
 		; The tile setting here is incorrect, and is corrected with an additional instruction
 		; in the object's code. It'd make more sense to put the correct setting here and eliminate
 		; the additional instruction.
-		subobjdata	Map_GRock,tile_nem_Grounder+tile_pal2+tile_hi,render_rel|render_onscreen,4,8,id_col_null
+		subobjdata	Map_GRock,tile_nem_Grounder+tile_pal2+tile_hi,render_rel|render_onscreen,4,$10/2,id_col_null
 	endc	
 
 ; ----------------------------------------------------------------------------
@@ -70699,7 +70699,7 @@ loc_36EE2:
 ; ===========================================================================
 
 SubData_Chop:
-		subobjdata	Map_Chop,tile_nem_ChopChop+tile_pal2,render_rel,4,$10,id_col_12x20
+		subobjdata	Map_Chop,tile_nem_ChopChop+tile_pal2,render_rel,4,$20/2,id_col_12x20
 
 ; ----------------------------------------------------------------------------
 ; Animation script
@@ -70874,7 +70874,7 @@ loc_37066:
 ; ===========================================================================
 
 SubData_Spiker:
-		subobjdata	Map_Spiker,tile_LevelArt,render_rel,4,$10,id_col_8x16
+		subobjdata	Map_Spiker,tile_LevelArt,render_rel,4,$20/2,id_col_8x16
 		
 Ani_Spiker:	index offset(*)
 		ptr byte_3708A					; 0 
@@ -71504,7 +71504,7 @@ RexHead_Oscillate:
 ; ===========================================================================
 
 SubData_Rex:
-		subobjdata	Map_Rex,tile_Nem_Rexon+tile_pal4,render_rel,4,$10,id_col_null
+		subobjdata	Map_Rex,tile_Nem_Rexon+tile_pal4,render_rel,4,$20/2,id_col_null
 ; ===========================================================================
 
 		include "mappings/sprite/Rexon.asm"
@@ -71615,7 +71615,7 @@ loc_37756:
 		jmpto	AnimateSprite,JmpTo25_AnimateSprite
 ; ===========================================================================
 SubData_RexProj:
-		subobjdata	Map_Rex,tile_nem_Rexon+tile_pal2,render_rel|render_onscreen,4,4,id_col_4x4|id_col_hurt
+		subobjdata	Map_Rex,tile_nem_Rexon+tile_pal2,render_rel|render_onscreen,4,8/2,id_col_4x4|id_col_hurt
 
 off_3776E:
 		dc.l Map_Neb	
@@ -71624,7 +71624,7 @@ off_3776E:
 		dc.w $88B
 		
 SubData_TurtProj:
-		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel|render_onscreen,4,4,id_col_4x4|id_col_hurt
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel|render_onscreen,4,8/2,id_col_4x4|id_col_hurt
 
 off_37782:
 		dc.l Map_Coco	
@@ -71642,17 +71642,17 @@ off_37796:
 		dc.w $8405
 		dc.w $498
 off_377A0:	
-		dc.l Map_3921A	
+		dc.l Map_Grab	
 		dc.w $A500
 		dc.w $8404
 		dc.w $498
 off_377AA:
-		dc.l Map_395B4	
+		dc.l Map_Clucker	
 		dc.w $379
 		dc.w $8405
 		dc.w $498
 off_377B4:	
-		dc.l Map_39E68	
+		dc.l Map_MechSon	
 		dc.w $2380
 		dc.w $8405
 		dc.w $498
@@ -71768,7 +71768,7 @@ Turtloid:
 ; ===========================================================================
 Turt_Index:	index offset(*),,2
 		ptr Turt_Init					; 0 
-		ptr Turt_Main					; 2
+		ptr Turt_Action					; 2
 		
 		rsobj	Turtloid,$2A
 ost_turt_delay:		rs.b 1					; $2A; time to wait before firing projectile or resuming flight after firing
@@ -71779,7 +71779,7 @@ ost_turt_jetani:	rs.l 1					; $2E; pointer to animation script for jet; used whe
 ; ===========================================================================
 
 Turt_Init:				
-		bsr.w	LoadSubObjData				; go to Turt_Main next
+		bsr.w	LoadSubObjData				; go to Turt_Action next
 		move.w	#-$80,ost_x_vel(a0)			; 
 		bsr.w	Turt_LoadRider
 		lea	(Ani_TurtJet).l,a1			; set animation script for jet
@@ -71788,15 +71788,16 @@ Turt_Init:
 		bra.w	BTJet_Load
 ; ===========================================================================
 
-Turt_Main:				
+Turt_Action:				
 		moveq	#0,d0
 		move.b	ost_secondary_routine(a0),d0
-		move.w	.index(pc,d0.w),d1
-		jsr	.index(pc,d1.w)
+		move.w	Turt_Action_Index(pc,d0.w),d1
+		jsr	Turt_Action_Index(pc,d1.w)
 		bsr.w	Turt_Platform				; update position and handle platform collision (could be bsr.s or inlined)
 		bra.w	DeleteBehindScreen			; delete once off left edge of screen
 ; ===========================================================================
-.index:	index offset(*),,2
+
+Turt_Action_Index:	index offset(*),,2
 		ptr Turt_ChkDist				; 0 
 		ptr Turt_Fire					; 2
 		ptr Turt_ResumeFlight				; 4
@@ -71858,7 +71859,7 @@ Turt_ResumeFlight:
 ; ===========================================================================
 
 Turt_Null:				
-		rts	
+		rts	; after Turtloid has fired shot, do nothing
 		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -71907,7 +71908,10 @@ TRider_Align:
 
 TRider_SharedRTS:						; oddly, a large number of returns in this file branch here			
 		rts	
-; ===========================================================================
+
+; ----------------------------------------------------------------------------
+; Subroutine to load the Turtloid's rider
+; ----------------------------------------------------------------------------
 
 Turt_LoadRider:				
 		jsrto	FindNextFreeObj,JmpTo25_FindNextFreeObj	; find free OST slot after parent
@@ -71924,7 +71928,7 @@ Turt_LoadRider:
 
 	.fail:				
 		rts	
-; ===========================================================================
+
 ; ----------------------------------------------------------------------------
 ; Object 9C - Balkiry and Turloid jet exhaust
 ; ----------------------------------------------------------------------------
@@ -71960,7 +71964,10 @@ BTJet_Display:
 		movea.l	ost_btjet_animptr(a0),a1		; get animation script
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		bra.w	DeleteBehindScreen
-; ===========================================================================
+
+; ----------------------------------------------------------------------------
+; Subroutine to load Turtloid and Balkirys' jet exhaust
+; ----------------------------------------------------------------------------
 
 BTJet_Load:				
 		jsrto	FindNextFreeObj,JmpTo25_FindNextFreeObj	; find free OST slot after parent
@@ -71979,7 +71986,10 @@ BTJet_Load:
 
 	.fail:				
 		rts	
-; ===========================================================================
+
+; ----------------------------------------------------------------------------
+; Subroutine to load the Turtloid's projectile
+; ----------------------------------------------------------------------------
 
 Turt_LoadProjectile:				
 		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
@@ -71998,19 +72008,25 @@ Turt_LoadProjectile:
 		move.w	#-$100,ost_x_vel(a1)			; move to left
 		lea_	TurtProj_Run,a2				; set projectile movement routine
 		move.l	a2,ost_proj_codeptr(a1)
-;		move.l	#TurtProj_Run,ost_proj_codeptr(a1)	; above two instruction could be this
+;		move.l	#TurtProj_Run,ost_proj_codeptr(a1)	; above two instructions could be this
 
 	.fail:				
 		rts	
 ; ===========================================================================
 SubData_Turt:
-		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,$18,id_col_null
+	if FixBugs
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,$38/2,id_col_null
+	else
+		; This is too narrow, and causes the Turtloid to appear abruptly at the right
+		; edge of the screen.
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,$30/2,id_col_null
+	endc	
 		
 SubData_TRider:
-		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,4,$C,id_col_12x12
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,4,$18/2,id_col_12x12
 		
 SubData_BTJet:
-		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,8,id_col_null
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,$10/2,id_col_null
 		
 Ani_TurtProj:	index offset(*)
 		ptr TurtProj_Flicker
@@ -73357,7 +73373,7 @@ ProjData_Ast:
 		arraysize ProjData_Ast
 		
 SubData_Ast:
-		subobjdata Map_Ast,tile_Nem_Asteron+tile_hi,render_rel,4,$10,id_col_8x8
+		subobjdata Map_Ast,tile_Nem_Asteron+tile_hi,render_rel,4,$20/2,id_col_8x8
 		
 Ani_Ast:	index offset(*)
 		ptr Ani_Ast_Flashing
@@ -73623,9 +73639,9 @@ ost_grab_36:			rs.b 1				; $36
 ost_grab_37:			rs.b 1				; $37
 ost_grab_38:			rs.b 1				; $38
 		rsset $3A
-ost_grab_string_ptr:	rs.w 1					; $3A ; pointer to string
-ost_grab_legs_ptr:		rs.w 1				; $3C ; pointer to legs
-ost_grab_box_ptr:		rs.w 1				; $3E ; pointer to box	
+ost_grab_stringptr:	rs.w 1					; $3A ; pointer to string
+ost_grab_legsptr:		rs.w 1				; $3C ; pointer to legs
+ost_grab_boxptr:		rs.w 1				; $3E ; pointer to box	
 		rsobjend	
 
 grab_attack_duration:		equ 64				; time in frames a Grabber's attack last
@@ -73658,15 +73674,16 @@ Grab_Action:
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos		; update position
 		moveq	#0,d0
 		moveq	#$10,d1					; y-offset of legs
-		movea.w	ost_grab_legs_ptr(a0),a1
+		movea.w	ost_grab_legsptr(a0),a1
 		bsr.w	AlignChild				; update position of legs
-		movea.w	ost_grab_box_ptr(a0),a1
+		movea.w	ost_grab_boxptr(a0),a1
 		move.w	ost_x_pos(a0),ost_x_pos(a1)		; update position of box
-		movea.w	ost_grab_string_ptr(a0),a1
+		movea.w	ost_grab_stringptr(a0),a1
 		move.w	ost_x_pos(a0),ost_x_pos(a1)		; update position of string
-		lea	ost_grab_string_ptr(a0),a2		; this could have been 'movea.w a1,a2'
+		lea	ost_grab_stringptr(a0),a2		; this could have been 'movea.w a1,a2'
 		bra.w	Grab_Display
 ; ===========================================================================
+
 Grab_Action_Index:	index offset(*),,2	
 		ptr Grab_FindPlayer				; 0 
 		ptr Grab_WaitAttack				; 2
@@ -73682,10 +73699,10 @@ Grab_FindPlayer:
 		cmpi.w	#$80,d2					; is player within $80 pixels of Grabber horizontally?
 		bcc.s	.notfound				; branch if not
 		cmpi.w	#-$80,d3				; is player within $80 pixels of Grabber vertically?
-		bhi.s	.playerfound
+		bhi.s	.playerfound			; branch if so
 
 	.notfound:				
-		subq.w	#1,$2A(a0)				; decrement timer
+		subq.w	#1,ost_grab_timer1(a0)				; decrement timer
 		bpl.s	.return					; branch if time remains
 	
 	;.turn_around:
@@ -73707,7 +73724,7 @@ Grab_FindPlayer:
 ; ===========================================================================
 
 Grab_WaitAttack:				
-		subq.b	#1,$2C(a0)				; decrement timer
+		subq.b	#1,ost_grab_timer2(a0)				; decrement timer
 		bmi.s	.begin_attack				; branch if time remains
 		rts	
 ; ===========================================================================
@@ -73729,7 +73746,7 @@ Grab_Attack:
 		neg.w	ost_y_vel(a0)				; Grabber starts ascending
 
 	.animate:				
-		lea	(off_39214).l,a1
+		lea	(Ani_Grab).l,a1
 		jmpto	AnimateSprite,JmpTo25_AnimateSprite
 ; ===========================================================================
 
@@ -73756,8 +73773,8 @@ Grab_GrabCharacter:
 		clr.b ost_spindash_flag(a1)	
 	endc		
 		move.b	#1,ost_frame(a0)
-		tst.w	ost_y_vel(a0)				; is Grabber moving down?
-		bmi.s	loc_38F2A				; branch if not
+		tst.w	ost_y_vel(a0)				; is Grabber moving up?
+		bmi.s	.movingup				; branch if not
 		neg.w	ost_y_vel(a0)				; reverse, lifting the player
 		move.b	ost_grab_timer2(a0),d0
 		subi.b	#$40,d0
@@ -73765,9 +73782,9 @@ Grab_GrabCharacter:
 		addq.b	#1,d0
 		move.b	d0,ost_grab_timer2(a0)			; adjust timer to account for the early reversal in direction
 
-	loc_38F2A:				
-		move.b	#1,ost_grab_timer1(a0)	
-		move.b	#$10,ost_grab_colorchng_time(a0)	; 
+	.movingup:				
+		move.b	#1,ost_grab_timer1(a0)			
+		move.b	#$10,ost_grab_colorchng_time(a0)	; time to wait before changing color
 		move.b	#$20,ost_grab_37(a0)
 		rts	
 ; ===========================================================================
@@ -74038,7 +74055,7 @@ Grab_SelfDestruct:
 		move.w	ost_grab_player(a0),d0			; was a player being held by the Grabber?
 		beq.s	.done					; branch if not
 		movea.w	d0,a2					; a2 = player
-		move.b	#0,osT_obj_control(a2)			; release their control
+		move.b	#0,ost_obj_control(a2)			; release their control
 		bset	#status_air_bit,ost_primary_status(a2)	; drop them
 		move.b	#id_col_8x8,ost_col_type(a0)		; set collision type so explosion hurts player
 
@@ -74086,126 +74103,45 @@ loc_391D2:
 		bra.w	JmpTo65_DeleteObject
 ; ===========================================================================
 ChildData_GrabBox:
-		dc.w $3E
-		dc.b id_GrabberBox
-		dc.b $3A
+		childobjdata ost_grab_boxptr,id_GrabberBox,id_SubData_GrabBox
 		
 ChildData_GrabLegs: 
-		dc.w $3C
-		dc.b id_GrabberLegs
-		dc.b $38
+		childobjdata ost_grab_legsptr,id_GrabberLegs,id_SubData_GrabLegs
 		
 ChildData_GrabString:
-		dc.w $3A
-		dc.b id_GrabberString	
-		dc.b $3C
+		childobjdata ost_grab_stringptr,id_GrabberString,id_SubData_GrabString
 		
-off_391EC:	
-		dc.l Map_3921A
-		dc.w $A500
-		dc.w $404
-		dc.w $100B
+SubData_Grabber:
+	if FixBugs
+		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,4,$2C/2,id_col_8x8
+		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,4,$2C/2,id_col_8x8
+	else 
+		; The Grabber disappears a bit too early off the edges of the screen. This is 
+		; because the width set here is too narrow.
+		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,4,$20/2,id_col_8x8	
+	endc	
+	
+SubData_GrabLegs:
+		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,1,$20/2,id_col_8x8_2|id_col_custom
+
+SubData_GrabBox:
+		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,4,8/2,id_col_null
 		
-off_391F6:
-		dc.l Map_3921A	
-		dc.w $A500
-		dc.w $401
-		dc.w $10D7
+SubData_GrabString:
+		subobjdata Map_GrabString,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,5,8/2,id_col_null
 		
-off_39200:
-		dc.l Map_3921A	
-		dc.w $A500
-		dc.w $404
-		dc.w $400
+Ani_Grab:	index offset(*)
+		ptr Ani_Grab_Attack
 		
-off_3920A:
-		dc.l Map_Grab	
-		dc.w $A500
-		dc.w $405
-		dc.w $400
-		
-off_39214:	index offset(*)
-		ptr byte_39216
-		
-byte_39216:	
-		dc.b   7,  0,  1,$FF
+	Ani_Grab_Attack:	
+		dc.b 7
+		dc.b 0
+		dc.b 1
+		dc.b afEnd
 ; ===========================================================================
-Map_3921A:	index offset(*)			
-		ptr word_3923A					; 0
-		ptr word_39254					; 1
-		ptr word_3926E					; 2
-		ptr word_39278					; 3
-		ptr word_39282					; 4
-		ptr word_3928C					; 5
-		ptr word_39296					; 6
-; -------------------------------------------------------------------------------
-; Unknown sprite mappings
-; -------------------------------------------------------------------------------
-Map_Grab:		index offset(*)				
-		ptr word_392A0					; 0
-		ptr word_392AA					; 1
-		ptr word_392B4					; 2
-		ptr word_392C6					; 3
-		ptr word_392D8					; 4
-		; Mappings below here are unused, as the Grabbers never
-		; descend far enough for them to be used.
-		ptr word_3930C					; 5
-		ptr word_392F2					; 6
-		ptr word_3932E					; 7
-		ptr word_3932E					; 8
+
+		include "mappings/sprite/Grabber.asm"
 		
-word_3923A:	dc.w 3			
-		dc.w $F801,    0,    0,$FFE5			; 0
-		dc.w $F80D,    2,    1,$FFED			; 4
-		dc.w  $809,  $1D,   $E,$FFF1			; 8
-word_39254:	dc.w 3			
-		dc.w $F801,    0,    0,$FFE5			; 0
-		dc.w $F80D,    2,    1,$FFED			; 4
-		dc.w  $80D,  $23,  $11,$FFF1			; 8
-word_3926E:	dc.w 1			
-		dc.w $FC00,   $A,    5,$FFFC			; 0
-word_39278:	dc.w 1			
-		dc.w $F809,   $F,    7,$FFF9			; 0
-word_39282:	dc.w 1			
-		dc.w $F80D,  $15,   $A,$FFF9			; 0
-word_3928C:	dc.w 1			
-		dc.w $FC00,  $2B,  $15,$FFFC			; 0
-word_39296:	dc.w 1			
-		dc.w $FC00,  $2C,  $16,$FFFC			; 0
-word_392A0:	dc.w 1			
-		dc.w	 1,   $B,    5,$FFFC			; 0
-word_392AA:	dc.w 1						; 0 
-		dc.w	 3,   $B,    5,$FFFC			; 0
-word_392B4:	dc.w 2						; 0 
-		dc.w	 1,   $B,    5,$FFFC			; 0
-		dc.w $1003,   $B,    5,$FFFC			; 4
-word_392C6:	dc.w 2			
-		dc.w	 3,   $B,    5,$FFFC			; 0
-		dc.w $2003,   $B,    5,$FFFC			; 4
-word_392D8:	dc.w 3						; 0 
-		dc.w	 1,   $B,    5,$FFFC			; 0
-		dc.w $1003,   $B,    5,$FFFC			; 4
-		dc.w $3003,   $B,    5,$FFFC			; 8
-word_392F2:	dc.w 3			
-		dc.w	 3,   $B,    5,$FFFC			; 0
-		dc.w $2003,   $B,    5,$FFFC			; 4
-		dc.w $4003,   $B,    5,$FFFC			; 8
-word_3930C:	dc.w 4			
-		dc.w	 1,   $B,    5,$FFFC			; 0
-		dc.w $1003,   $B,    5,$FFFC			; 4
-		dc.w $3003,   $B,    5,$FFFC			; 8
-		dc.w $5003,   $B,    5,$FFFC			; 12
-word_3932E:	dc.w 4			
-		dc.w	 3,   $B,    5,$FFFC			; 0
-		dc.w $2003,   $B,    5,$FFFC			; 4
-		dc.w $4003,   $B,    5,$FFFC			; 8
-		dc.w $6003,   $B,    5,$FFFC			; 12
-		dc.w 5
-		dc.w	 1,   $B,    5,$FFFC			; 0
-		dc.w $1003,   $B,    5,$FFFC			; 4
-		dc.w $3003,   $B,    5,$FFFC			; 8
-		dc.w $5003,   $B,    5,$FFFC			; 12
-		dc.w $7003,   $B,    5,$FFFC			; 16
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object AC - Balkiry 
@@ -74242,25 +74178,14 @@ loc_393B6:
 		bra.w	DeleteBehindScreen
 ; ===========================================================================
 SubData_Balkiry:
-		dc.l Map_393CC	
+		dc.l Map_Balkiry	
 		dc.w $565
 		dc.w $404
 		dc.w $2008
 ; ===========================================================================
-Map_393CC:				
-		dc.w word_393D0-Map_393CC			; 0
-		dc.w word_393F2-Map_393CC			; 1
-word_393D0:	dc.w 4			
-		dc.w $F40D,$8000,$8000,$FFDC			; 0
-		dc.w $EC04,$8008,$8004,	  $C			; 4
-		dc.w $F40D,$800A,$8005,$FFFC			; 8
-		dc.w  $408,$8012,$8009,$FFFC			; 12
-word_393F2:	dc.w 5			
-		dc.w $F40D,$8000,$8000,$FFDC			; 0
-		dc.w $EC04,$8008,$8004,	  $C			; 4
-		dc.w $F40D,$800A,$8005,$FFFC			; 8
-		dc.w  $408,$8015,$800A,	  $C			; 12
-		dc.w  $C00,$8018,$800C,	 $1C			; 16
+
+		include "mappings/sprite/Balkiry.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object AD - Clucker's base 
@@ -74414,13 +74339,13 @@ locret_39574:
 		rts	
 ; ===========================================================================
 off_39576:	
-		dc.l Map_395B4	
+		dc.l Map_Clucker	
 		dc.w $379
 		dc.w $404
 		dc.w $1800
 
 off_39580:
-		dc.l Map_395B4	
+		dc.l Map_Clucker	
 		dc.w $379
 		dc.w $405
 		dc.w $1000
@@ -74453,87 +74378,9 @@ byte_395AA:
 		dc.b   3, $D, $E, $F,$10,$11,$12,$13,$14,$FF
 		even	
 ; ===========================================================================
-Map_395B4:				
-		dc.w word_395E0-Map_395B4			; 0
-		dc.w word_395EA-Map_395B4			; 1
-		dc.w word_395F4-Map_395B4			; 2
-		dc.w word_395FE-Map_395B4			; 3
-		dc.w word_39610-Map_395B4			; 4
-		dc.w word_39622-Map_395B4			; 5
-		dc.w word_39634-Map_395B4			; 6
-		dc.w word_39646-Map_395B4			; 7
-		dc.w word_39658-Map_395B4			; 8
-		dc.w word_39672-Map_395B4			; 9
-		dc.w word_3968C-Map_395B4			; 10
-		dc.w word_396A6-Map_395B4			; 11
-		dc.w word_396C0-Map_395B4			; 12
-		dc.w word_396D2-Map_395B4			; 13
-		dc.w word_396DC-Map_395B4			; 14
-		dc.w word_396E6-Map_395B4			; 15
-		dc.w word_396F0-Map_395B4			; 16
-		dc.w word_396FA-Map_395B4			; 17
-		dc.w word_39704-Map_395B4			; 18
-		dc.w word_3970E-Map_395B4			; 19
-		dc.w word_39718-Map_395B4			; 20
-		dc.w word_39722-Map_395B4			; 21
-word_395E0:	dc.w 1			
-		dc.w  $C0D,$2000,$2000,$FFF0			; 0
-word_395EA:	dc.w 1			
-		dc.w  $80D,$2000,$2000,$FFF0			; 0
-word_395F4:	dc.w 1			
-		dc.w  $40D,$2000,$2000,$FFF0			; 0
-word_395FE:	dc.w 2			
-		dc.w	$D,$2000,$2000,$FFF0			; 0
-		dc.w $100D,$2008,$2004,$FFF0			; 4
-word_39610:	dc.w 2			
-		dc.w $FC0D,$2000,$2000,$FFF0			; 0
-		dc.w  $C0D,$2008,$2004,$FFF0			; 4
-word_39622:	dc.w 2			
-		dc.w $F80D,$2000,$2000,$FFF0			; 0
-		dc.w  $80D,$2008,$2004,$FFF0			; 4
-word_39634:	dc.w 2			
-		dc.w $F40D,$2000,$2000,$FFF0			; 0
-		dc.w  $40D,$2008,$2004,$FFF0			; 4
-word_39646:	dc.w 2			
-		dc.w $F00D,$2000,$2000,$FFF0			; 0
-		dc.w	$D,$2008,$2004,$FFF0			; 4
-word_39658:	dc.w 3			
-		dc.w $F00D,$2000,$2000,$FFF0			; 0
-		dc.w	$D,$2008,$2004,$FFF0			; 4
-		dc.w  $700,$2010,$2008,$FFEE			; 8
-word_39672:	dc.w 3			
-		dc.w $F00D,$2000,$2000,$FFF0			; 0
-		dc.w	$D,$2008,$2004,$FFF0			; 4
-		dc.w  $700,$2010,$2008,$FFEC			; 8
-word_3968C:	dc.w 3			
-		dc.w $F00D,$2000,$2000,$FFF0			; 0
-		dc.w	$D,$2008,$2004,$FFF0			; 4
-		dc.w  $700,$2010,$2008,$FFEA			; 8
-word_396A6:	dc.w 3			
-		dc.w $F00D,$2000,$2000,$FFF0			; 0
-		dc.w	$D,$2008,$2004,$FFF0			; 4
-		dc.w  $700,$2010,$2008,$FFE8			; 8
-word_396C0:	dc.w 2			
-		dc.w $F809,$6011,$6008,$FFE8			; 0
-		dc.w $F809,$6811,$6808,	   0			; 4
-word_396D2:	dc.w 1			
-		dc.w $FC00,  $17,   $B,$FFFC			; 0
-word_396DC:	dc.w 1			
-		dc.w $FC00,  $18,   $C,$FFFC			; 0
-word_396E6:	dc.w 1			
-		dc.w $FC00,  $19,   $C,$FFFC			; 0
-word_396F0:	dc.w 1			
-		dc.w $FC00,$1018,$100C,$FFFC			; 0
-word_396FA:	dc.w 1			
-		dc.w $FC00,$1017,$100B,$FFFC			; 0
-word_39704:	dc.w 1			
-		dc.w $FC00,$1818,$180C,$FFFC			; 0
-word_3970E:	dc.w 1			
-		dc.w $FC00, $819, $80C,$FFFC			; 0
-word_39718:	dc.w 1			
-		dc.w $FC00, $818, $80C,$FFFC			; 0
-word_39722:	dc.w 1			
-		dc.w $100D,$2000,$2000,$FFF0			; 0
+
+		include "mappings/sprite/Clucker.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object AF - Mecha Sonic 
@@ -75105,7 +74952,7 @@ loc_39CAE:
 		tst.b	$30(a0)
 		bne.s	loc_39CD0
 		move.b	#$20,$30(a0)
-		move.w	#$AC,d0	
+		move.w	#sfx_BossHit,d0	
 		jsr	(PlaySound).l
 
 loc_39CD0:				
@@ -75205,23 +75052,32 @@ byte_39D92:							; projectile data
 		dc.b $11,  0,$F0,$10,$FE,  2,$12,  0,  0,$18,  0,  3,$13,  0,$10,$10 ; 16
 		dc.b   2,  2,$14,  0,$18,  0,  3,  0,$15,  0,$10,$F0,  2,$FE,$16,  0 ; 32
 
-byte_39DC2:	dc.b   0					; 0 
+byte_39DC2:	
+		dc.b   0					; 0 
 		dc.b $3E					; 1
 		dc.b $AF					; 2
 		dc.b $48					; 3
-byte_39DC6:	dc.b   0					; 0 
+		
+byte_39DC6:	
+		dc.b   0					; 0 
 		dc.b $3C					; 1
 		dc.b $AF					; 2
 		dc.b $48					; 3
-byte_39DCA:	dc.b   0					; 0 
+		
+byte_39DCA:
+		dc.b   0					; 0 
 		dc.b $3A					; 1
 		dc.b $AF					; 2
 		dc.b $A4					; 3
-off_39DCE:	dc.l Map_39E68	
+
+off_39DCE:	
+		dc.l Map_MechSon	
 		dc.w $2380
 		dc.w $404
 		dc.w $101A
-off_39DD8:	dc.l Map_3A08C	
+		
+off_39DD8:	
+		dc.l Map_EggmanWindow	
 		dc.w $378
 		dc.w $406
 		dc.w $1000
@@ -75299,166 +75155,10 @@ byte_39E64:
 		even
 		
 ; ===========================================================================
-Map_39E68:				
-		dc.w word_39E96-Map_39E68			; 0
-		dc.w word_39EC0-Map_39E68			; 1
-		dc.w word_39EEA-Map_39E68			; 2
-		dc.w word_39F14-Map_39E68			; 3
-		dc.w word_39F36-Map_39E68			; 4
-		dc.w word_39F58-Map_39E68			; 5
-		dc.w word_39F7A-Map_39E68			; 6
-		dc.w word_39F9C-Map_39E68			; 7
-		dc.w word_39FBE-Map_39E68			; 8
-		dc.w word_39FE0-Map_39E68			; 9
-		dc.w word_39FF2-Map_39E68			; 10
-		dc.w word_3A004-Map_39E68			; 11
-		dc.w word_3A016-Map_39E68			; 12
-		dc.w word_3A028-Map_39E68			; 13
-		dc.w word_3A032-Map_39E68			; 14
-		dc.w word_3A03C-Map_39E68			; 15
-		dc.w word_3A046-Map_39E68			; 16
-		dc.w word_3A050-Map_39E68			; 17
-		dc.w word_3A05A-Map_39E68			; 18
-		dc.w word_3A064-Map_39E68			; 19
-		dc.w word_3A06E-Map_39E68			; 20
-		dc.w word_3A078-Map_39E68			; 21
-		dc.w word_3A082-Map_39E68			; 22
-word_39E96:	dc.w 5			
-		dc.w $E409,    0,    0,$FFF3			; 0
-		dc.w $F40F,    6,    3,$FFEF			; 4
-		dc.w $140C,  $16,   $B,$FFEC			; 8
-		dc.w $E404,  $6F,  $37,$FFF4			; 12
-		dc.w $E407,  $71,  $38,	   4			; 16
-word_39EC0:	dc.w 5			
-		dc.w $E409,    0,    0,$FFF3			; 0
-		dc.w $F40F,    6,    3,$FFEF			; 4
-		dc.w $140C,  $16,   $B,$FFEC			; 8
-		dc.w $E404,  $79,  $3C,$FFF4			; 12
-		dc.w $E407,  $7B,  $3D,	   4			; 16
-word_39EEA:	dc.w 5			
-		dc.w $E409,    0,    0,$FFF3			; 0
-		dc.w $F40F,    6,    3,$FFEF			; 4
-		dc.w $140C,  $16,   $B,$FFEC			; 8
-		dc.w $E404,  $83,  $41,$FFF4			; 12
-		dc.w $E407,  $85,  $42,	   4			; 16
-word_39F14:	dc.w 4			
-		dc.w $E40F,  $1A,   $D,$FFEC			; 0
-		dc.w $E403,  $2A,  $15,	  $C			; 4
-		dc.w  $40E,  $2E,  $17,$FFF4			; 8
-		dc.w $1400,  $3A,  $1D,$FFEC			; 12
-word_39F36:	dc.w 4			
-		dc.w $E40E,  $3B,  $1D,$FFF0			; 0
-		dc.w  $401,  $47,  $23,$FFE8			; 4
-		dc.w $FC0F,  $49,  $24,$FFF0			; 8
-		dc.w $FC03,  $59,  $2C,	 $10			; 12
-word_39F58:	dc.w 4			
-		dc.w $E406,  $5D,  $2E,$FFF0			; 0
-		dc.w $E406, $85D, $82E,	   0			; 4
-		dc.w $FC0B,  $63,  $31,$FFE8			; 8
-		dc.w $FC0B, $863, $831,	   0			; 12
-word_39F7A:	dc.w 4			
-		dc.w $EE0A,  $8D,  $46,$FFE8			; 0
-		dc.w $EE0A,  $96,  $4B,	   0			; 4
-		dc.w  $60A,$1896,$184B,$FFE8			; 8
-		dc.w  $60A,$188D,$1846,	   0			; 12
-word_39F9C:	dc.w 4			
-		dc.w $EE0A,  $9F,  $4F,$FFE8			; 0
-		dc.w $EE0A,  $A8,  $54,	   0			; 4
-		dc.w  $60A,$18A8,$1854,$FFE8			; 8
-		dc.w  $60A,$189F,$184F,	   0			; 12
-word_39FBE:	dc.w 4			
-		dc.w $EE0A,  $B1,  $58,$FFE8			; 0
-		dc.w $EE0A,  $BA,  $5D,	   0			; 4
-		dc.w  $60A,$18BA,$185D,$FFE8			; 8
-		dc.w  $60A,$18B1,$1858,	   0			; 12
-word_39FE0:	dc.w 2			
-		dc.w  $400,  $C3,  $61,	  $E			; 0
-		dc.w $1408,  $CB,  $65,	 $12			; 4
-word_39FF2:	dc.w 2			
-		dc.w  $408,  $C4,  $62,	  $E			; 0
-		dc.w $1408,  $CE,  $67,	 $12			; 4
-word_3A004:	dc.w 2			
-		dc.w $1C00,  $C7,  $63,$FFF4			; 0
-		dc.w $1C00,  $C7,  $63,$FFFC			; 4
-word_3A016:	dc.w 2			
-		dc.w $1C02,  $C8,  $64,$FFF4			; 0
-		dc.w $1C02,  $C8,  $64,$FFFC			; 4
-word_3A028:	dc.w 1			
-		dc.w $1408,  $CB,  $65,	 $12			; 0
-word_3A032:	dc.w 1			
-		dc.w $1408,  $CE,  $67,	 $12			; 0
-word_3A03C:	dc.w 1			
-		dc.w $F801,  $D1,  $68,$FFFC			; 0
-word_3A046:	dc.w 1			
-		dc.w $F805,  $D3,  $69,$FFF8			; 0
-word_3A050:	dc.w 1			
-		dc.w $FC04,  $D7,  $6B,$FFF8			; 0
-word_3A05A:	dc.w 1			
-		dc.w $F805,$10D3,$1069,$FFF8			; 0
-word_3A064:	dc.w 1			
-		dc.w $F801,$10D1,$1068,$FFFC			; 0
-word_3A06E:	dc.w 1			
-		dc.w $F805,$18D3,$1869,$FFF8			; 0
-word_3A078:	dc.w 1			
-		dc.w $FC04, $8D7, $86B,$FFF8			; 0
-word_3A082:	dc.w 1			
-		dc.w $F805, $8D3, $869,$FFF8			; 0
-; ===========================================================================
-Map_3A08C:				
-		dc.w word_3A09C-Map_3A08C			; 0
-		dc.w word_3A0C6-Map_3A08C			; 1
-		dc.w word_3A0F0-Map_3A08C			; 2
-		dc.w word_3A11A-Map_3A08C			; 3
-		dc.w word_3A154-Map_3A08C			; 4
-		dc.w word_3A18E-Map_3A08C			; 5
-		dc.w word_3A1A8-Map_3A08C			; 6
-		dc.w word_3A1C2-Map_3A08C			; 7
-word_3A09C:	dc.w 5			
-		dc.w $F406,$2000,$2000,$FFF0			; 0
-		dc.w $F406,$2800,$2800,	   0			; 4
-		dc.w  $404,$2006,$2003,$FFF0			; 8
-		dc.w  $404,$2006,$2003,	   0			; 12
-		dc.w $F80D, $190,  $C8,$FFF0			; 16
-word_3A0C6:	dc.w 5			
-		dc.w $F406,$2000,$2000,$FFF0			; 0
-		dc.w $F406,$2800,$2800,	   0			; 4
-		dc.w	 4,$2006,$2003,$FFF0			; 8
-		dc.w	 4,$2006,$2003,	   0			; 12
-		dc.w $F80D, $190,  $C8,$FFF0			; 16
-word_3A0F0:	dc.w 5			
-		dc.w $F406,$2000,$2000,$FFF0			; 0
-		dc.w $F406,$2800,$2800,	   0			; 4
-		dc.w $FC04,$2006,$2003,$FFF0			; 8
-		dc.w $FC04,$2006,$2003,	   0			; 12
-		dc.w $F80D, $190,  $C8,$FFF0			; 16
-word_3A11A:	dc.w 7			
-		dc.w $F406,$2000,$2000,$FFF0			; 0
-		dc.w $F406,$2800,$2800,	   0			; 4
-		dc.w $F804,$2006,$2003,$FFF0			; 8
-		dc.w $F804,$2006,$2003,	   0			; 12
-		dc.w	 4,$2006,$2003,$FFF0			; 16
-		dc.w	 4,$2006,$2003,	   0			; 20
-		dc.w $F80D, $190,  $C8,$FFF0			; 24
-word_3A154:	dc.w 7			
-		dc.w $F406,$2000,$2000,$FFF0			; 0
-		dc.w $F406,$2800,$2800,	   0			; 4
-		dc.w $F404,$2006,$2003,$FFF0			; 8
-		dc.w $F404,$2006,$2003,	   0			; 12
-		dc.w $FC04,$2006,$2003,$FFF0			; 16
-		dc.w $FC04,$2006,$2003,	   0			; 20
-		dc.w $F80D, $190,  $C8,$FFF0			; 24
-word_3A18E:	dc.w 3			
-		dc.w $F406,$2000,$2000,$FFF0			; 0
-		dc.w $F406,$2800,$2800,	   0			; 4
-		dc.w $F80D, $190,  $C8,$FFF0			; 8
-word_3A1A8:	dc.w 3			
-		dc.w $F406,$2000,$2000,$FFF0			; 0
-		dc.w $F406,$2800,$2800,	   0			; 4
-		dc.w $F90D, $190,  $C8,$FFF0			; 8
-word_3A1C2:	dc.w 3			
-		dc.w $F406,$2000,$2000,$FFF0			; 0
-		dc.w $F406,$2800,$2800,	   0			; 4
-		dc.w $F80D, $198,  $CC,$FFF0			; 8
+
+		include "mappings/sprite/Mecha Sonic.asm"
+		include "mappings/sprite/DEZ Eggman's Window.asm"
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object B0 - Sonic on the Sega screen
@@ -75749,7 +75449,7 @@ SonicSegaScreen_MoveStreaksRight:
 		addq.w	#8,a1					; advance to next offset
 		dbf	d6,.loop
 		rts	
-; ===========================================================================
+
 ; ----------------------------------------------------------------------------
 ; Subroutine to update the palette for the blue streaks.
 
@@ -75827,10 +75527,10 @@ Pal_SegaScreen3:
 		
 		
 SubData_SonicSega:
-		subobjdata	Map_SegaScreenSonic,(vram_Giant_Sonic/sizeof_cell)+tile_pal3+tile_hi,0,1,$10,0
+		subobjdata	Map_SegaScreenSonic,(vram_Giant_Sonic/sizeof_cell)+tile_pal3+tile_hi,0,1,$20/2,id_col_null
 
 SubData_SegaHideTM:	
-		subobjdata	Map_SegaScreenSonic,(vram_SEGA/sizeof_cell)+2,0,2,8,0
+		subobjdata	Map_SegaScreenSonic,(vram_SEGA/sizeof_cell)+2,0,2,$10/2,id_col_null
 	
 Ani_SonicSegaScreen:	index offset(*)
 		ptr Ani_SonicSega_0 
@@ -75897,7 +75597,7 @@ SegaScreen_VBlank_SetFGTable:
 		move.w	d4,(a6)					; write this entry $29 times
 		dbf	d5,.loop
 		rts	
-; ===========================================================================
+
 ; ----------------------------------------------------------------------------
 ; FG nametable entries for the blue streaks
 ; ----------------------------------------------------------------------------
@@ -76826,13 +76526,13 @@ word_3AFC0:
 		dc.b $5A
 		
 off_3AFC8:
-		dc.l Map_3AFF2	
+		dc.l Map_Tornado	
 		dc.w $8500
 		dc.w $404
 		dc.w $6000
 		
 off_3AFD2:
-		dc.l Map_3B292	
+		dc.l Map_TornadoBooster	
 		dc.w $561
 		dc.w $403
 		dc.w $4000
@@ -76855,89 +76555,12 @@ Ani_3AFEC:	index offset(*)
 byte_3AFEE:
 		dc.b   0,  1,  2,$FF
 		even
-; -----------------------------------------------------------------------------
-; Unknown sprite mappings
-; -----------------------------------------------------------------------------
-Map_3AFF2:				
-		dc.w byte_3AFFE-byte_3AFEE			; 0
-		dc.w byte_3B050-byte_3AFEE			; 1
-		dc.w byte_3B0A2-byte_3AFEE			; 2
-		dc.w byte_3B0F4-byte_3AFEE			; 3
-		dc.w byte_3B146-byte_3AFEE			; 4
-		dc.w byte_3B198-byte_3AFEE			; 5
-byte_3AFFE:	dc.b   1,$FC,  2,$4E,  0, $A,$F0, $B,  0,  0,  0,  0,$FF,$A0,$10,  8 ; 0
-					
-		dc.b   0, $C,  0,  6,$FF,$A0,  3, $A,  0, $F,  0,  7,$FF,$B8,$F8,  9 ; 16
-		dc.b   2,$A0,  1,$50,$FF,$D0,  8, $E,  0,$1E,  0, $F,$FF,$D0,$F8, $D ; 32
-		dc.b   0,$2A,  0,$15,$FF,$E8,$F8,  0,  0,$32,  0,$19,  0,  8,  8, $E ; 48
-		dc.b   0,$33,  0,$19,$FF,$F0,  8,  2,  0,$3F,  0,$1F,  0,$10,$20,  5 ; 64
-		dc.b   0,$42					; 80
-byte_3B050:	dc.b   0,$21,$FF,$F4,  0, $A,$F0, $B,  0,  0,  0,  0,$FF,$A0,$10,  8 ; 0
-					
-		dc.b   0, $C,  0,  6,$FF,$A0,  3, $A,  0, $F,  0,  7,$FF,$B8,$F8,  9 ; 16
-		dc.b   2,$A0,  1,$50,$FF,$D0,  8, $E,  0,$1E,  0, $F,$FF,$D0,$F8, $D ; 32
-		dc.b   0,$2A,  0,$15,$FF,$E8,$F8,  0,  0,$32,  0,$19,  0,  8,  8, $E ; 48
-		dc.b   0,$33,  0,$19,$FF,$F0,  8,  2,  0,$46,  0,$23,  0,$10,$20,  5 ; 64
-		dc.b   0,$42					; 80
-byte_3B0A2:	dc.b   0,$21,$FF,$F4,  0, $A,$F0, $B,  0,  0,  0,  0,$FF,$A0,$10,  8 ; 0
-					
-		dc.b   0, $C,  0,  6,$FF,$A0,  3, $A,  0, $F,  0,  7,$FF,$B8,$F8,  9 ; 16
-		dc.b   2,$A0,  1,$50,$FF,$D0,  8, $E,  0,$1E,  0, $F,$FF,$D0,$F8, $D ; 32
-		dc.b   0,$2A,  0,$15,$FF,$E8,$F8,  0,  0,$32,  0,$19,  0,  8,  8, $E ; 48
-		dc.b   0,$33,  0,$19,$FF,$F0,  8,  2,  0,$49,  0,$24,  0,$10,$20,  5 ; 64
-		dc.b   0,$42					; 80
-byte_3B0F4:	dc.b   0,$21,$FF,$F4,  0, $A,$F0, $B,  0,  0,  0,  0,$FF,$A0,$10,  8 ; 0
-					
-		dc.b   0, $C,  0,  6,$FF,$A0,  3, $A,  0, $F,  0,  7,$FF,$B8,$F8,  9 ; 16
-		dc.b   2,$A0,  1,$50,$FF,$D0,  8, $E,  0,$1E,  0, $F,$FF,$D0,$F8, $D ; 32
-		dc.b   0,$2A,  0,$15,$FF,$E8,$F8,  0,  0,$32,  0,$19,  0,  8,  8, $E ; 48
-		dc.b   0,$33,  0,$19,$FF,$F0,  8,  2,  0,$4C,  0,$26,  0,$10,$20,  5 ; 64
-		dc.b   0,$42					; 80
-byte_3B146:	dc.b   0,$21,$FF,$F4,  0, $A,$F0, $B,  0,  0,  0,  0,$FF,$A0,$10,  8 ; 0
-					
-		dc.b   0, $C,  0,  6,$FF,$A0,  3, $A,  0, $F,  0,  7,$FF,$B8,$F8,  9 ; 16
-		dc.b   2,$80,  1,$40,$FF,$CE,  8, $E,  0,$1E,  0, $F,$FF,$D0,$F8, $D ; 32
-		dc.b   0,$2A,  0,$15,$FF,$E8,$F8,  0,  0,$32,  0,$19,  0,  8,  8, $E ; 48
-		dc.b   0,$33,  0,$19,$FF,$F0,  8,  2,  0,$3F,  0,$1F,  0,$10,$20,  5 ; 64
-		dc.b   0,$42					; 80
-byte_3B198:	dc.b   0,$21,$FF,$F4,  0, $A,$F0, $B,  0,  0,  0,  0,$FF,$A0,$10,  8 ; 0
-					
-		dc.b   0, $C,  0,  6,$FF,$A0,  3, $A,  0, $F,  0,  7,$FF,$B8,$F8,  9 ; 16
-		dc.b   2,$80,  1,$40,$FF,$CE,  8, $E,  0,$1E,  0, $F,$FF,$D0,$F8, $D ; 32
-		dc.b   0,$2A,  0,$15,$FF,$E8,$F8,  0,  0,$32,  0,$19,  0,  8,  8, $E ; 48
-		dc.b   0,$33,  0,$19,$FF,$F0,  8,  2,  0,$46,  0,$23,  0,$10,$20,  5 ; 64
-		dc.b   0,$42					; 80
-		dc.b   0,$21,$FF,$F4,  0, $A,$F0, $B,  0,  0,  0,  0,$FF,$A0,$10,  8 ; 0
-		dc.b   0, $C,  0,  6,$FF,$A0,  3, $A,  0, $F,  0,  7,$FF,$B8,$F8,  9 ; 16
-		dc.b   2,$80,  1,$40,$FF,$CE,  8, $E,  0,$1E,  0, $F,$FF,$D0,$F8, $D ; 32
-		dc.b   0,$2A,  0,$15,$FF,$E8,$F8,  0,  0,$32,  0,$19,  0,  8,  8, $E ; 48
-		dc.b   0,$33,  0,$19,$FF,$F0,  8,  2,  0,$49,  0,$24,  0,$10,$20,  5 ; 64
-		dc.b   0,$42					; 80
-		dc.b   0,$21,$FF,$F4,  0, $A,$F0, $B,  0,  0,  0,  0,$FF,$A0,$10,  8 ; 0
-		dc.b   0, $C,  0,  6,$FF,$A0,  3, $A,  0, $F,  0,  7,$FF,$B8,$F8,  9 ; 16
-		dc.b   2,$80,  1,$40,$FF,$CE,  8, $E,  0,$1E,  0, $F,$FF,$D0,$F8, $D ; 32
-		dc.b   0,$2A,  0,$15,$FF,$E8,$F8,  0,  0,$32,  0,$19,  0,  8,  8, $E ; 48
-		dc.b   0,$33,  0,$19,$FF,$F0,  8,  2,  0,$4C,  0,$26,  0,$10,$20,  5 ; 64
-		dc.b   0,$42					; 80
-		dc.b   0,$21,$FF,$F4				; 0
-; -----------------------------------------------------------------------------
-; Unknown sprite mappings
-; -----------------------------------------------------------------------------
-Map_3B292:				
-		dc.w word_3B298-Map_3B292			; 0
-		dc.w word_3B2AA-Map_3B292			; 1
-		dc.w word_3B2C4-Map_3B292			; 2
-word_3B298:	dc.w 2			
-		dc.w $F809,$2000,$2000,$FFE4			; 0
-		dc.w $F80D,$2006,$2003,$FFFC			; 4
-word_3B2AA:	dc.w 3			
-		dc.w $F809,$2000,$2000,$FFE4			; 0
-		dc.w $F80D,$2006,$2003,$FFFC			; 4
-		dc.w $F80D,$400E,$4007,$FFC4			; 8
-word_3B2C4:	dc.w 3			
-		dc.w $F809,$2000,$2000,$FFE4			; 0
-		dc.w $F80D,$2006,$2003,$FFFC			; 4
-		dc.w $F805,$4016,$400B,$FFD4			; 8
+
+; ===========================================================================
+
+		include "mappings/sprite/Tornado.asm"
+		include "mappings/sprite/Tornado Booster.asm"
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object B3 - Clouds (placeable object) in SCZ
@@ -76978,24 +76601,15 @@ loc_3B312:
 		add.w	d0,ost_x_pos(a0)
 		bra.w	DeleteBehindScreen
 ; ===========================================================================
-off_3B322:	
-		dc.l Map_3B32C				
+SubData_Cloud:	
+		dc.l Map_Cloud				
 		dc.w $454F
 		dc.w $406
 		dc.w $3000
 		
-Map_3B32C:				
-		dc.w byte_3B334-Map_3B32C			; 0
-		dc.w byte_3B34E-Map_3B32C			; 1
-		dc.w byte_3B360-Map_3B32C			; 2
-		dc.w byte_3B334-Map_3B32C			; 3
-byte_3B334:	dc.b   0,  3,$FC, $C,  0,  0,  0,  0,$FF,$D8,$FC, $C,  0,  4,  0,  2 ; 0
-					
-		dc.b $FF,$F8,$FC,  4,  0,  8,  0,  4,  0,$18	; 16
-byte_3B34E:	dc.b   0,  2,$FC, $C,  0, $A,  0,  5,$FF,$E8,$FC,  4,  0, $E,  0,  7 ; 0
-					
-		dc.b   0,  8					; 16
-byte_3B360:	dc.b   0,  1,$FC,  4,  0,$10,  0,  8,$FF,$F8	; 0	
+
+		include "mappings/sprite/SCZ Clouds.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object B4 - WFZ vertical propeller
@@ -77035,7 +76649,7 @@ loc_3B3A8:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 off_3B3AC:
-		dc.l Map_3B3BE	
+		dc.l Map_VertProp	
 		dc.w $A561
 		dc.w $404
 		dc.w $4A8
@@ -77047,10 +76661,11 @@ byte_3B3B8:
 		dc.b   1,  0,  1,  2,$FF
 		even	
 ; ===========================================================================
-Map_3B3BE:				
-		dc.w word_3B3C4-Map_3B3BE			; 0
-		dc.w word_3B3D6-Map_3B3BE			; 1
-		dc.w word_3B3E8-Map_3B3BE			; 2
+
+Map_VertProp:				
+		dc.w word_3B3C4-Map_VertProp			; 0
+		dc.w word_3B3D6-Map_VertProp			; 1
+		dc.w word_3B3E8-Map_VertProp			; 2
 word_3B3C4:	dc.w 2			
 		dc.w $C003,    0,    0,$FFFC			; 0
 		dc.w $E003,$1000,$1000,$FFFC			; 4
@@ -77154,7 +76769,7 @@ locret_3B4DC:
 		rts	
 ; ===========================================================================
 off_3B4DE:
-		dc.l Map_3B548	
+		dc.l Map_HorizProp	
 		dc.w $A3CD
 		dc.w $404
 		dc.w $4000
@@ -77182,13 +76797,13 @@ byte_3B532:	dc.b   4,  4,  3,  2,  1,  0,$FD,  8		; 0
 byte_3B53A:	dc.b   7,  5,  4,  3,  2,  1,  0,$FD,  9,  0	; 0	
 byte_3B544:	dc.b $7E,  0,$FF,  0				; 0 
 ; ===========================================================================
-Map_3B548:				
-		dc.w word_3B554-Map_3B548			; 0
-		dc.w word_3B576-Map_3B548			; 1
-		dc.w word_3B588-Map_3B548			; 2
-		dc.w word_3B59A-Map_3B548			; 3
-		dc.w word_3B5AC-Map_3B548			; 4
-		dc.w word_3B5BE-Map_3B548			; 5
+Map_HorizProp:				
+		dc.w word_3B554-Map_HorizProp			; 0
+		dc.w word_3B576-Map_HorizProp			; 1
+		dc.w word_3B588-Map_HorizProp			; 2
+		dc.w word_3B59A-Map_HorizProp			; 3
+		dc.w word_3B5AC-Map_HorizProp			; 4
+		dc.w word_3B5BE-Map_HorizProp			; 5
 word_3B554:	dc.w 4			
 		dc.w $FC0C,    0,    0,$FFC0			; 0
 		dc.w $FC08,    4,    2,$FFE0			; 4
@@ -77231,7 +76846,7 @@ off_3B5DE:	index offset(*),,2
 loc_3B5E8:				
 		moveq	#0,d0
 		move.b	#$6A,d0
-		bsr.w	LoadSubtypeData_Part2
+		bsr.w	LoadSubObjData_Part2
 		move.b	ost_subtype(a0),d0
 		andi.b	#6,d0
 		addq.b	#2,d0
@@ -78065,7 +77680,7 @@ off_3BD88:	index offset(*),,2
 loc_3BD94:				
 		moveq	#0,d0
 		move.b	#-$7E,d0
-		bsr.w	LoadSubtypeData_Part2
+		bsr.w	LoadSubObjData_Part2
 		bra.w	loc_3B77E
 ; ===========================================================================
 
@@ -78226,7 +77841,7 @@ off_3BF12:	index offset(*),,2
 
 loc_3BF16:				
 		move.w	#$86,d0	
-		bsr.w	LoadSubtypeData_Part2
+		bsr.w	LoadSubObjData_Part2
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		lsl.w	#4,d0
@@ -78418,7 +78033,7 @@ off_3C0BA:	index offset(*),,2
 
 loc_3C0C0:				
 		move.w	#$88,d0	
-		bsr.w	LoadSubtypeData_Part2
+		bsr.w	LoadSubObjData_Part2
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		mulu.w	#$3C,d0
@@ -80316,7 +79931,7 @@ off_3D4D6:	index offset(*),,2
 
 loc_3D4F8:				
 		lea	off_3E590(pc),a1
-		bsr.w	LoadSubtypeData_Part3
+		bsr.w	LoadSubObjData_Part3
 		move.b	ost_subtype(a0),ost_primary_routine(a0)
 		rts	
 ; ===========================================================================
@@ -82339,7 +81954,7 @@ word_3E85C:	dc.w 8
 		dc.w $E800,$2944,$28A2,	 $10			; 20
 		dc.w $1000,$3144,$30A2,$FFE8			; 24
 		dc.w $1000,$3944,$38A2,	 $10			; 28
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to upscale graphics by a factor of 2x, based on given mappings
 ; data for correct positioning of tiles.
@@ -86605,28 +86220,28 @@ DbgWFZ_41EEC:	dc.w $20
 		dc.l $79000000+Map_Starpost
 		dc.w $100
 		dc.w $47C
-		dc.l $B3000000+Map_3B32C
+		dc.l $B3000000+Map_Cloud
 		dc.w $5E00
 		dc.w $454F
-		dc.l $B3000000+Map_3B32C
+		dc.l $B3000000+Map_Cloud
 		dc.w $6001
 		dc.w $454F
-		dc.l $B3000000+Map_3B32C
+		dc.l $B3000000+Map_Cloud
 		dc.w $6202
 		dc.w $454F
-		dc.l $B4000000+Map_3B3BE
+		dc.l $B4000000+Map_VertProp
 		dc.w $6400
 		dc.w $A561
-		dc.l $B5000000+Map_3B548
+		dc.l $B5000000+Map_HorizProp
 		dc.w $6600
 		dc.w $A3CD
-		dc.l $B5000000+Map_3B548
+		dc.l $B5000000+Map_HorizProp
 		dc.w $6800
 		dc.w $A3CD
-		dc.l $AD000000+Map_395B4
+		dc.l $AD000000+Map_Clucker
 		dc.w $420C
 		dc.w $379
-		dc.l $AE000000+Map_395B4
+		dc.l $AE000000+Map_Clucker
 		dc.w $440B
 		dc.w $379
 		dc.l $B6000000+Map_3B856
@@ -87096,7 +86711,7 @@ DbgCPZ_42376:	dc.w $18
 		dc.l $A6000000+Map_Spiny
 		dc.w $3203
 		dc.w $252D
-		dc.l $A7000000+Map_3921A
+		dc.l $A7000000+Map_Grab
 		dc.w $3600
 		dc.w $A500
 		dc.l $3E000000+Map_3F436
@@ -87200,28 +86815,28 @@ DbgSCZ_42522:	dc.w $D
 		dc.l $8B000000+Map_PSwitch
 		dc.w 0
 		dc.w $6BC
-		dc.l $B3000000+Map_3B32C
+		dc.l $B3000000+Map_Cloud
 		dc.w $5E00
 		dc.w $454F
-		dc.l $B3000000+Map_3B32C
+		dc.l $B3000000+Map_Cloud
 		dc.w $6001
 		dc.w $454F
-		dc.l $B3000000+Map_3B32C
+		dc.l $B3000000+Map_Cloud
 		dc.w $6202
 		dc.w $454F
-		dc.l $B4000000+Map_3B3BE
+		dc.l $B4000000+Map_VertProp
 		dc.w $6400
 		dc.w $A561
-		dc.l $B5000000+Map_3B548
+		dc.l $B5000000+Map_HorizProp
 		dc.w $6600
 		dc.w $A3CD
-		dc.l $B5000000+Map_3B548
+		dc.l $B5000000+Map_HorizProp
 		dc.w $6800
 		dc.w $A3CD
 		dc.l $9A000000+Map_Turt
 		dc.w $1600
 		dc.w $38A
-		dc.l $AC000000+Map_393CC
+		dc.l $AC000000+Map_Balkiry
 		dc.w $4000
 		dc.w $565
 		dc.l $99000000+Map_Neb

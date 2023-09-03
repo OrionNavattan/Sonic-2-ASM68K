@@ -786,7 +786,7 @@ endobj:		macros
 ; - the object's vram assignment (ost_tile, word)
 ; - the object render flags (ost_render, byte)
 ; - the object's priority (ost_priority, byte)
-; - the object's width (ost_width, byte)
+; - the object's display width (ost_displaywidth, byte)
 ; - the object's collision flags (ost_collision, byte)
 ; ---------------------------------------------------------------------------		
 

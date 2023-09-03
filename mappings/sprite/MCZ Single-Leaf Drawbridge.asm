@@ -3,14 +3,14 @@
 ; -------------------------------------------------------------------------------
 
 Map_SBridge:	index offset(*)
-	ptr	Frame_SBridge_Blank
-	ptr	Frame_SBridge_Log
+		ptr	Frame_SBridge_Blank
+		ptr	Frame_SBridge_Log
 
 Frame_SBridge_Blank:	spritemap
-	endsprite
+		endsprite
 
 Frame_SBridge_Log:	spritemap
-	piece	-8, -8, 2, 2, 0, 0, 0, 0, 0
-	endsprite
+		piece	-8, -8, 2, 2, 0, 0, 0, 0, 0
+		endsprite
 
-	even
+		even

@@ -3,7 +3,7 @@
   <Images>
     <ImageFromMappings id="img">
       <ArtFile filename="../art/nemesis/Balkiry.nem" />
-      <MapFile type="ASM" filename="../mappings/sprite/objAC.asm" frame="1" startpal="0" />
+      <MapFile type="ASM" filename="../mappings/sprite/Grabber.asm" frame="1" startpal="0" />
     </ImageFromMappings>
   </Images>
   <Subtypes>

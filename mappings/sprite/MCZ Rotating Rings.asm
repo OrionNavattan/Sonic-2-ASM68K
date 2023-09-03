@@ -3,10 +3,10 @@
 ; -------------------------------------------------------------------------------
 
 Map_MCZRotRings:	index offset(*)
-	ptr	Frame_MCZRotRings
+		ptr	Frame_MCZRotRings
 
 Frame_MCZRotRings:	spritemap
-	piece	-8, -8, 2, 2, 0, 0, 0, 0, 0
-	endsprite
+		piece	-8, -8, 2, 2, 0, 0, 0, 0, 0
+		endsprite
 
-	even
+		even
