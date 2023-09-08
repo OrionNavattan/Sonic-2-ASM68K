@@ -125,14 +125,14 @@ ObjPos_WFZ_1:
 		objpos $1C26,$0438,CluckerBase,$42,rem
 		objpos $1C98,$0371,Monitor,$06,rem
 		objpos $1CE0,$03B1,Monitor,$07,rem
-		objpos $1D8A,$064C,WheelWingFortress,$78
+		objpos $1D8A,$064C,ConveyerPulley,$78
 		objpos $1D90,$0271,Monitor,$04,rem
 		objpos $1DA2,$0471,Monitor,$04,rem
 		objpos $1DD0,$0460,VineHook,$10
 		objpos $1DFA,$0620,ConveyerBelt,$90
 		objpos $1E3E,$0241,VineHook,$10
 		objpos $1E50,$03C0,VineHook,$10
-		objpos $1E75,$0614,WheelWingFortress,$78
+		objpos $1E75,$0614,ConveyerPulley,$78
 		objpos $1E88,$02E0,Clucker,$44,rem
 		objpos $1E88,$02F8,CluckerBase,$42,rem
 		objpos $1EBE,$02C1,VineHook,$10

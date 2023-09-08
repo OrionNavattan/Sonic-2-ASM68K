@@ -1,4 +1,8 @@
-Map_objB9:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Wing Fortress giant horizontal laser
+; -------------------------------------------------------------------------------
+
+Map_HorizLaser:	index offset(*)
 		ptr	Map_objB9_0002
 
 Map_objB9_0002:	spritemap

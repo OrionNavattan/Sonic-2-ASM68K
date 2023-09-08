@@ -16,7 +16,7 @@ sizeof_ost_all:		equ sizeof_ost*countof_ost		; size of regular OSTs
 
 countof_ost_dynamic_2P:		equ $28
 countof_ost_per_2pblock:	equ $C				; number of OSTs in 2P mode blocks
-countof_ost_2p_blocks:		equ 6				; number of 2P mode OST blocks
+countof_ost_2p_blocks:		equ 6				; number of 2P mode OST blocks; 3 per player
 sizeof_ost_2p_block:	equ	sizeof_ost*countof_ost_per_2pblock ; size of each 2p mode block
 
 countof_ost_level_only: equ $10					; additional reserved object ram for objects attached to players, run only when in level 

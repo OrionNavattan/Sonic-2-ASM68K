@@ -1,4 +1,8 @@
-Map_objB7:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Wing Fortress giant vertical laser (unused)
+; -------------------------------------------------------------------------------
+
+Map_VertLaser:	index offset(*)
 		ptr	Map_objB7_0002
 
 Map_objB7_0002:	spritemap

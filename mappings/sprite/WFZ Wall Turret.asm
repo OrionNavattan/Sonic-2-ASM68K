@@ -1,4 +1,8 @@
-Map_objB8:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Wing Fortress wall turret
+; -------------------------------------------------------------------------------
+
+Map_WallTurr:	index offset(*)
 		ptr	Map_objB8_000A
 		ptr	Map_objB8_002C
 		ptr	Map_objB8_0046

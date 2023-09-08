@@ -46,7 +46,7 @@ v_ost_all:          rs.b sizeof_ost_all				; $FFFFB000 ; object variable space (
 v_ost_dynamic:         equ v_ost_all+(sizeof_ost*$10)		;  $FFFFB400
  ;   v_ost_dynamic_2P_end:	equ v_ost_dynamic_end-($C*6)*sizeof_ost ;  $FFFFBE00 2P mode reserves 6 blocks of 12 OST slots at the end
     v_ost_dynamic_end:	equ v_ost_all+(sizeof_ost*countof_ost)	; $FFFFD000
-    v_ost_2p_blocks:		equ v_ost_dynamic_end-($C*6)*sizeof_ost ;  $FFFFBE00 2P mode reserves 6 blocks of 12 OST slots at the end	
+    v_ost_2p_blocks:	equ v_ost_dynamic_end-($C*6)*sizeof_ost ; $FFFFBE00 ; 2P mode reserves 6 blocks of 12 OST slots at the end	
                 rsblockend ost
 
                 rsblock ost_level_only
@@ -641,7 +641,7 @@ v_oscillating_0_to_20:		equ v_oscillating_table
 ;v_oscillating_0_to_40:		equ v_oscillating_table+8
 ;v_oscillating_0_to_60:		equ v_oscillating_table+$C
 ;v_oscillating_0_to_40_fast:	equ v_oscillating_table+$10
-;v_oscillating_0_to_10:		equ v_oscillating_table+$14
+v_oscillating_0_to_10:		equ v_oscillating_table+$14
 ;v_oscillating_0_to_80_fast:	equ v_oscillating_table+$18
 ;v_oscillating_0_to_80:		equ v_oscillating_table+$1C
 ;v_oscillating_0_to_A0:		equ v_oscillating_table+$20

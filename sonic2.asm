@@ -1318,16 +1318,16 @@ ClearScreen:
 
 		dma_fill	0,sizeof_vram_planetable_64x32,vram_fg_2p ; clear player 2's foreground nametable
 
-.not2P:				
+	.not2P:				
 		clr.l	(v_fg_y_pos_vsram).w			; clear VSRAM buffer
 		clr.l	(v_unused_ss).w
 
-; clear the sprite and hscroll buffers
+	; clear the sprite and hscroll buffers
 	if FixBugs
 		clear_ram	v_sprite_buffer,v_sprite_buffer_end
 		clear_ram	hscroll,hscroll_end
 	else
-; These '+4's shouldn't be here; clearRAM accidentally clears an additional 4 bytes
+		; These '+4's shouldn't be here; clearRAM accidentally clears an additional 4 bytes
 		clear_ram	v_sprite_buffer,v_sprite_buffer_end+4
 		clear_ram	hscroll,hscroll_end+4
 	endc
@@ -26935,7 +26935,7 @@ loc_15714:
 		beq.s	loc_15758
 		lea	(v_camera_x_pos_p2).w,a3
 		lea	(v_level_layout).w,a4
-		vdp_comm.w	move,vram_fg_2p,vram,write,d2,>>16,d0
+		vdp_comm.w	move,vram_fg_2p,vram,write,d2,>>16
 		moveq	#1,d6
 
 loc_15736:				
@@ -27825,7 +27825,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr VerticalLaser				; unused
 		ptr WallTurret					; $B8
 		ptr HorizontalLaser				; laser that shoots down the Tornado at the start of WFZ
-		ptr WheelWingFortress				; WFZ conveyer wheel
+		ptr ConveyerPulley				; WFZ conveyer wheel
 		ptr Unknown2					; unused, unknown
 		ptr ShipExhaust					; $BC ; exhaust from Eggman's getaway ship in the WFZ/DEZ transition
 		ptr ConveyerPlatforms				; WFZ conveyer platforms
@@ -30947,12 +30947,12 @@ OPL_2P_Run:
 		move.b	opl_2p_block1(a1),opl_2p_block2(a1)
 		move.b	d6,(a1)					; load new block at the left
 		
-		cmp.b	opl_2p_block1(a6),d2			; does other player have the to-be-unloaded block loaded?
+		c: = opl_2p_block1
+		rept countof_ost_2p_blocks/2	; check all three blocks assigned to other player
+		cmp.b	c(a6),d2			; does other player have the to-be-unloaded block loaded?
 		beq.s	.skip_unload				; branch if so (we can't unload it)
-		cmp.b	opl_2p_block2(a6),d2			; (check all three of their blocks)
-		beq.s	.skip_unload
-		cmp.b	opl_2p_block3(a6),d2
-		beq.s	.skip_unload
+		c: = c+1					; check next block
+		endr
 		
 		bsr.w	OPL_2P_UnloadBlock			; unload block if it's not in use by other player
 		bra.s	.got_free_block
@@ -31267,10 +31267,11 @@ OPL_SpawnObj:
 		tst.b	objpos_respawn_flip_y_pos_hi(a0)	; is remember respawn flag set?
 		bpl.s	OPL_MakeItem				; if not, branch
 	if FixBugs
-		; Part of the bugfix in OPL_MovedRight.no_respawn. This should not be set here;
-		; it will not be undone if the spawn fails due to running out of OST slots.
+		; Part of the bugfix in OPL_MovedRight.no_respawn.
 		btst	#respawn_bit,v_respawn_data-v_respawn_list(a2,d2.w) ; check respawn flag
 	else
+		; This should not be set here; it will not be undone if the spawn fails due to 
+		; running out of OST slots.
 		bset	#respawn_bit,v_respawn_data-v_respawn_list(a2,d2.w) ; set flag so it isn't loaded more than once
 	endc
 		beq.s	OPL_MakeItem				; branch if object hasn't already been destroyed
@@ -31507,8 +31508,7 @@ Spring_Index:	index offset(*),,2
 		ptr Spring_LR					; 4
 		ptr Spring_Dwn					; 6
 		ptr Spring_DiagUp				; 8
-		ptr Spring_DiagDwn				; $A
-		
+		ptr Spring_DiagDwn				; $A		
 ; ===========================================================================
 
 Spring_Main:				
@@ -31554,17 +31554,17 @@ Spring_Init_Subtype:	index offset(*),,2
 		move.b	#7,ost_frame(a0)
 		move.w	#tile_Nem_DignlSprng,ost_tile(a0)
 		bra.s	.init_common
-		;bra.s	.init_diag_common
+;		bra.s	.init_diag_common
 ; ===========================================================================
 
 .init_diag_dwn:				
 		move.b	#id_Spring_DiagDwn,ost_primary_routine(a0)
 		move.b	#4,ost_anim(a0)
 		move.b	#$A,ost_frame(a0)
-		move.w	#tile_Nem_DignlSprng,ost_tile(a0)
+		move.w	#tile_Nem_DignlSprng,ost_tile(a0) ; could be moved below for common diag init
 		bset	#1,ost_primary_status(a0)
 
-;	.init_diag_common:
+;.init_diag_common:
 ;		move.w	#tile_Nem_DignlSprng,ost_tile(a0)
 
 .init_common:
@@ -31591,17 +31591,17 @@ Spring_Up:
 		move.w	#8,d2
 		move.w	#$10,d3
 		move.w	ost_x_pos(a0),d4
-		lea	($FFFFB000).w,a1
+		lea	(v_ost_player1).w,a1
 		moveq	#3,d6
-		movem.l	d1-d4,-(sp)
+		pushr.l	d1-d4
 		bsr.w	SolidObject_NoRenderChk_SingleCharacter
 		btst	#3,ost_primary_status(a0)
 		beq.s	loc_189A8
 		bsr.s	loc_189CA
 
 loc_189A8:				
-		movem.l	(sp)+,d1-d4
-		lea	($FFFFB040).w,a1
+		popr.l	d1-d4
+		lea	(v_ost_player2).w,a1
 		moveq	#4,d6
 		bsr.w	SolidObject_NoRenderChk_SingleCharacter
 		btst	#4,ost_primary_status(a0)
@@ -31666,7 +31666,7 @@ Spring_LR:
 		move.w	#$E,d2
 		move.w	#$F,d3
 		move.w	ost_x_pos(a0),d4
-		lea	($FFFFB000).w,a1
+		lea	(v_ost_player1).w,a1
 		moveq	#3,d6
 		movem.l	d1-d4,-(sp)
 		bsr.w	SolidObject_NoRenderChk_SingleCharacter
@@ -31685,7 +31685,7 @@ loc_18AA8:
 
 loc_18AB0:				
 		movem.l	(sp)+,d1-d4
-		lea	($FFFFB040).w,a1
+		lea	(v_ost_player2).w,a1
 		moveq	#4,d6
 		bsr.w	SolidObject_NoRenderChk_SingleCharacter
 		btst	#status_underwater_bit,ost_primary_status(a0)
@@ -40416,9 +40416,12 @@ FindNearestTile:
 		add.w	d4,d1					; add to base address
 		movea.l	d1,a1
 		rts	
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
 ; Lookup table of 128x128 tile addresses. These were calculated on the fly 
 ; in Sonic 1.
+; ---------------------------------------------------------------------------
+
 FindNearestTile_Offsets:	
 		c: = 0						; start at zero	
 		rept 256		
@@ -52300,16 +52303,16 @@ JmpTo16_SolidObject:
 	
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 72 - Conveyor belt from CNZ
+; Object 72 - CNZ and WFZ conveyor belts
 ; Invisible object, the visible belt is actually part of the level foreground.
 ; ----------------------------------------------------------------------------
 ConveyerBelt:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2894A(pc,d0.w),d1
-		jmp	off_2894A(pc,d1.w)
+		move.w	Conv_Index(pc,d0.w),d1
+		jmp	Conv_Index(pc,d1.w)
 ; ===========================================================================
-off_2894A:	index offset(*),,2
+Conv_Index:	index offset(*),,2
 		ptr loc_2894E					; 0 
 		ptr loc_28980					; 2
 ; ===========================================================================
@@ -55913,7 +55916,6 @@ ost_casinobmb_machine_y_pos:	rs.w 1				; $3A; Y position of the slot machine cag
 ost_casinobmb_display_delay:	rs.w 1				; $3C; number of frames that bomb is displated			
 ost_casinobmb_player:			rs.w 1			; $3E; character this bomb is being 'awarded' to
 ost_casinobmb_player_low:		equ __rs-1		; $3F; tested to check which player to deduct rings from
-
 		rsobjend
 		
 		; Make bomb move toward the cage each frame.	
@@ -55962,7 +55964,7 @@ ost_casinobmb_player_low:		equ __rs-1		; $3F; tested to check which player to de
 		subq.w	#1,(v_rings).w				; decrement player 1's ring counter
 		ori.b	#$81,(v_hud_rings_update).w		; set flag to update their HUD
 
-.delete:				
+	.delete:				
 		jmpto	DeleteObject,JmpTo44_DeleteObject
 		
 	if RemoveJmpTos
@@ -56304,6 +56306,7 @@ Cage_Action:
 		move.w	Cage_ActionIndex(pc,d0.w),d0
 		jmp	Cage_ActionIndex(pc,d0.w)
 ; ===========================================================================
+
 Cage_ActionIndex:	index offset(*),,2
 		ptr Cage_Detect					; 0 
 		ptr Cage_Active					; 2
@@ -56358,6 +56361,9 @@ Cage_GiveSlotReward:
 		bpl.s	Cage_GivePenalty			; branch if flag is not set
 		move.w	#100,ost_cage_bombcount(a0)		; pelt character with 100 bombs
 
+; ----------------------------------------------------------------------------
+; Subroutine to spawn bomb penalties
+; ----------------------------------------------------------------------------
 
 	Cage_GivePenalty:				
 		tst.w	ost_cage_bombcount(a0)
@@ -56403,9 +56409,10 @@ Cage_GiveSlotReward:
 	.return:				
 		addq.w	#1,(v_casinobmb_snd_delay).w		; increment sound delay counter 
 		rts	
-; ===========================================================================
 
-
+; ----------------------------------------------------------------------------
+; Subroutine to spawn prize rings
+; ----------------------------------------------------------------------------
 		
 Cage_GiveRings:				
 		beq.w	.chkringcount				; branch if there are no more rings to spawn
@@ -56555,7 +56562,7 @@ SlotMachine_Index: bra_index
 		braptr	Slot_Start				; 8
 		braptr	Slot_SpeedUp				; $C
 		braptr	Slot_Run				; $10
-		braptr	Slot_Finished				; $14 (index is never set rto this)
+		braptr	Slot_Finished				; $14 (index is never set to this)
 		id_Slot_Null:	equ offset(*)-index_start	; $18
 		rts
 		
@@ -56567,11 +56574,12 @@ id_Slot_Robotnik:	rs.b 1					; 2
 id_Slot_Jackpot:	rs.b 1					; 3
 id_Slot_Ring:		rs.b 1					; 4
 id_Slot_Bar:		rs.b 1					; 5		
-; ===========================================================================
+
 ; ------------------------------------------------------------------------------
 ; Subroutine to initialize the slot machine and load the initial faces
 ; during level load
 ; ------------------------------------------------------------------------------
+
 Slot_Init:				
 		movea.l	a4,a1			
 		moveq	#(sizeof_slot_machine_vars/2)-1,d0	; $12 bytes
@@ -56604,6 +56612,7 @@ Slot_Ready:
 		tst.b	slot_timer(a4)				; are we still rolling?
 		beq.s	.done					; if not, branch
 		rts	
+; ===========================================================================
 
 	.done:				
 		_move.b	#id_Slot_Null,slot_primary_routine(a4)	; set null routine
@@ -56645,6 +56654,7 @@ Slot_Start:
 		bcs.s	.islower				; branch if difference is lower than array value
 		addq.w	#3,a2					; otherwise, advance 3 bytes..
 		bra.s	.loop					; ...and loop
+; ===========================================================================
 
 	.islower:				
 		cmpi.b	#-1,(a2)				; was the previous value -1?
@@ -56653,10 +56663,11 @@ Slot_Start:
 		move.b	2(a2),slot_targ23(a4)
 		rts	
 ; ===========================================================================
+
 .end_of_array:	
 		; Select two bytes at random from the TargetValues array			
 		move.b	d0,d1					; copy seed value
-		andi.w	#7,d1					; lowest three bits are index for slot 1
+		andi.w	#7,d1					; lowest three bits are index for slot 1 (but see below)
 		lea	(SlotSequence1).l,a1
 	if FixBugs
 		move.b	(a1,d1.w),slot_targ1(a4)		; set slot 1 target
@@ -56683,6 +56694,7 @@ Slot_SpeedUp:
 		tst.b	slot_timer(a4)				; has timer reached zero?
 		beq.s	.timeleft				; if so, branch
 		rts	
+; ===========================================================================
 
 	.timeleft:				
 		addi.b	#$30,slot1_speed(a4)			; increase all slot speeds
@@ -56737,6 +56749,7 @@ Slot_GetSlotTarget:
 		cmpi.b	#id_Slot_Bar,d1				; have we gone above bar?
 		bgt.s	.wrap_slot				; if so, branch
 		rts	
+; ===========================================================================
 
 	.wrap_slot:				
 		subq.b	#2,d1					; wrap back to ring or bar
@@ -56764,6 +56777,7 @@ Slot_RunNormal:
 		tst.b	slot_timer(a4)				; has time run out (underflowed to negative)? 
 		bmi.s	.time_zero_or_prev_stopped		; if so, branch
 		rts	
+; ===========================================================================
 
 	.not_slot_1:				
 		cmpi.b	#id_Slot_AtTarget,slot1_rout-slot2_index(a1) ; has previous slot stopped?
@@ -56781,6 +56795,7 @@ Slot_RunNormal:
 		cmp.b	d1,d0					; are we close to target?
 		beq.s	.near_target				; if so, branch
 		rts	
+; ===========================================================================
 
 	.near_target:			
 		addq.b	#4,slot_subroutine(a1)			; go to Slot_NearTarget next
@@ -56805,11 +56820,13 @@ Slot_NearTarget:
 		cmpi.b	#$18,slot_speed(a1)			; is slot speed $18 or less?
 		bgt.s	.chkoffset				; if not, branch
 		rts	
+; ===========================================================================
 
 	.chkoffset:				
 		cmpi.b	#$80,slot_offset(a1)			; is offset $80 or lesS?
 		bls.s	.reduce_speed				; if so, branch
 		rts	
+; ===========================================================================
 
 	.reduce_speed:				
 		subq.b	#2,slot_speed(a1)			; decrease slot speed
@@ -56836,6 +56853,7 @@ Slot_AtTarget:
 		tst.b	slot_offset(a1)				; is offset 0?
 		beq.s	.stop_slot				; if so, branch
 		rts	
+; ===========================================================================
 
 	.stop_slot:				
 		clr.b	slot_speed(a1)				; stop slot
@@ -56855,10 +56873,11 @@ Slot_Finished:
 		bsr.w	Slot_ChooseReward			; determine the winnings
 		_move.b	#id_Slot_Null,slot_primary_routine(a4)	; we are done until next time		
 		rts	
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to draw the slot machine faces
 ; ---------------------------------------------------------------------------
+
 Slot_Draw:				
 		moveq	#0,d0
 		move.b	slot_index(a4),d0			; d0 = index of slot to draw	
@@ -56904,7 +56923,7 @@ Slot_DrawChk:
 		cmp.w	d0,d3					; are they equal?
 		bne.s	.update_slot_art			; if not, branch
 		rts	
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to update slot machine art in the 16x16 block table, and queue
 ; a DMA transfer to update the copy in VRAM
@@ -56915,7 +56934,6 @@ Slot_DrawChk:
 		lea	(v_16x16_tiles+$1000).w,a1		; destination	
 		
 		move.w	#(16*2)-1,d1				; each slot pic is 4 16x16 blocks, so 32 pixel rows to update
-
 
 	.pixel_row_loop:
 		; a2 = current pixel row in Art_CNZSlotPics				
@@ -56979,11 +56997,11 @@ Slot_ChooseReward:
 		jmp	Slot_RewardIndex(pc,d0.w)
 ; ===========================================================================
 
-Slot_RewardIndex:
-		bra.w	Slot_Unmatched1				; 0
-		bra.w	Slot_Match12				; 4
-		bra.w	Slot_Match13				; 8
-		; index $C goes straight to Slot_TripleMatch
+Slot_RewardIndex:	bra_index
+		braptr	Slot_Unmatched1				; 0
+		braptr	Slot_Match12				; 4
+		braptr	Slot_Match13				; 8
+		id_Slot_TripleMatch:	equ offset(*)-index_start	; $C
 
 Slot_TripleMatch:
 		move.w	d2,d0
@@ -57000,6 +57018,7 @@ Slot_Match13:
 		bsr.w	Slot_QuadrupleReward
 		move.w	d0,slot_targs(a4)
 		rts	
+; ===========================================================================
 
 	.notjackpot:				
 		cmpi.b	#id_Slot_Jackpot,d2			; is slot 2 a jackpot?
@@ -57019,6 +57038,7 @@ Slot_Match12:
 		bsr.w	Slot_QuadrupleReward
 		move.w	d0,slot_targs(a4)			; store reward
 		rts	
+; ===========================================================================
 
 	.notjackpot:				
 		cmpi.b	#id_Slot_Jackpot,d3
@@ -57040,6 +57060,7 @@ Slot_Unmatched1:
 		bsr.w	Slot_DoubleReward
 		move.w	d0,slot_targs(a4)			; store reward
 		rts	
+; ===========================================================================
 
 	.notjackpot:				
 		cmpi.b	#id_Slot_Jackpot,d2			; is slot 1 a jackpot?
@@ -57076,7 +57097,6 @@ Slot_CheckBars:
 		; For bars, the code past this line is useless. There should be an rts here.
 		rts
 	endc
-
 ; ===========================================================================	
 
 Slot_GetReward:				
@@ -57084,7 +57104,7 @@ Slot_GetReward:
 		lea	(Slot_RingRewards).l,a2			; ring reward array (could be PC-relative)
 		move.w	(a2,d0.w),d0				; get ring reward
 		rts	
-; ===========================================================================
+
 ; ----------------------------------------------------------------------------
 ; One-instruction subroutines to double and quadruple ring rewards. 
 ; It would be much faster to simply place these instructions in-line instead 
@@ -57094,11 +57114,12 @@ Slot_GetReward:
 Slot_QuadrupleReward:				
 		asl.w	#2,d0
 		rts	
+; ===========================================================================
 
 Slot_DoubleReward:				
 		add.w	d0,d0
 		rts	
-; ===========================================================================
+		
 ; ----------------------------------------------------------------------------
 ; Slot machine ring rewards
 ; -1 is a flag indicating player will receive a bomb penalty instead.
@@ -66441,10 +66462,10 @@ byte_33A92:
 		dc.b  $C,  1					; 14
 		
 dword_33AA2:	
-		dc.l   $FF0000					; 0 
-		dc.l   $FF0B00					; 1
-		dc.l   $FF2480					; 2
-		dc.l   $FF2E20					; 3
+		dc.l   v_ss_character_art&$FFFFFF						; 0 
+		dc.l   (v_ss_character_art&$FFFFFF)+($58*sizeof_cell)	; 1
+		dc.l   (v_ss_character_art&$FFFFFF)+($124*sizeof_cell)	; 2
+		dc.l   (v_ss_character_art&$FFFFFF)+($171*sizeof_cell)	; 3
 ; ===========================================================================
 
 SSS_LoadGFX:				
@@ -66542,7 +66563,7 @@ loc_33B44:
 		bne.s	loc_33BA2
 
 loc_33B9E:				
-		not.b	($FFFFF742).w
+		not.b	(f_ss_swap_positions).w
 
 loc_33BA2:				
 		move.w	#$A0,d0	
@@ -67376,10 +67397,10 @@ loc_349AE:
 		rts	
 ; ===========================================================================
 dword_349B8:	
-		dc.l   $FF3060					; 0 
-		dc.l   $FF3800					; 1
-		dc.l   $FF4C80					; 2
-		dc.l   $FF53C0					; 3
+		dc.l   (v_ss_character_art&$FFFFFF)+($183*sizeof_cell)				; 0 
+		dc.l   (v_ss_character_art&$FFFFFF)+($1C0*sizeof_cell)					; 1
+		dc.l   (v_ss_character_art&$FFFFFF)+($264*sizeof_cell)					; 2
+		dc.l   (v_ss_character_art&$FFFFFF)+($29E*sizeof_cell)					; 3
 ; ===========================================================================
 
 TSS_LoadGFX:				
@@ -67467,9 +67488,9 @@ locret_34A9E:
 		rts	
 ; ===========================================================================
 dword_34AA0:	
-		dc.l	(v_ss_character_art&$FFFFFF)+$55C0
-		dc.l	(v_ss_character_art&$FFFFFF)+$5C60
-		dc.l	(v_ss_character_art&$FFFFFF)+$63C0
+		dc.l	(v_ss_character_art&$FFFFFF)+($2AE*sizeof_cell)
+		dc.l	(v_ss_character_art&$FFFFFF)+($2E3*sizeof_cell)
+		dc.l	(v_ss_character_art&$FFFFFF)+($31E*sizeof_cell)
 ; ===========================================================================
 
 TTSS_LoadGFX:				
@@ -69636,17 +69657,17 @@ SubData_Index:	index offset(*),,2
 		ptr SubData_Cloud					; 47
 		ptr SubData_Cloud					; 48
 		ptr SubData_Cloud					; 49
-		ptr off_3B3AC					; 50
-		ptr off_3B4DE					; 51
-		ptr off_3B4DE					; 52
+		ptr SubData_VertProp					; 50
+		ptr SubData_HorizProp,SubData_HorizProp_WFZ					; $66, WFZ subtype
+		ptr SubData_HorizProp,SubData_HorizProp_SCZ					; $68, SCZ subtype
 		ptr off_3B818					; 53
 		ptr off_3B818					; 54
 		ptr off_3B818					; 55
 		ptr off_3B818					; 56
 		ptr off_3B8DA					; 57
 		ptr off_3BA36					; 58
-		ptr off_3BB0E					; 59
-		ptr off_3BB66					; 60
+		ptr SubData_HorizLaser					; 59
+		ptr SubData_ConvPulley					; 60
 		ptr off_3BB96					; 61
 		ptr off_3BBFE					; 62
 		ptr off_3BD24					; 63
@@ -70431,7 +70452,7 @@ Ground_LoadRocks:
 	.loadloop:				
 		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
 		bne.s	.fail					; branch if not found
-		bsr.w	.loadrock				; load one instance of GrounderRocks object  (could be bsr.s)
+		bsr.w	.loadrock				; load one instance of GrounderRocks object  (could be bsr.s or inlined)
 		dbf	d6,.loadloop
 
 	.fail:				
@@ -70456,7 +70477,7 @@ Ground_LoadWall:
 	.loadloop:				
 		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
 		bne.s	.fail					; branch if not found
-		bsr.w	.loadwall				; load one instance of GrounderWall object (could be bsr.s)
+		bsr.w	.loadwall				; load one instance of GrounderWall object (could be bsr.s or inlined)
 		dbf	d6,.loadloop
 
 	.fail:				
@@ -71118,22 +71139,22 @@ Rex_Wait:
 	.no_spawn:				
 		move.w	ost_x_pos(a0),-(sp)			; back up current x pos
 		bsr.w	Rex_CheckTurnAround		
-		move.w	#$1B,d1					; all of these could be moveq
-		move.w	#8,d2
-		move.w	#$11,d3
+		move.w	#$36/2,d1					; all of these could be moveq
+		move.w	#$10/2,d2
+		move.w	#$22/2,d3
 		move.w	(sp)+,d4
 		jsrto	SolidObject,JmpTo27_SolidObject
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
 Rex_CheckTurnAround:				
-		subq.b	#1,ost_rex_turntime(a0)
-		bpl.s	loc_37396
-		move.b	#$80,ost_rex_turntime(a0)
-		neg.w	ost_x_vel(a0)
-		bchg	#render_xflip_bit,ost_render(a0)
+		subq.b	#1,ost_rex_turntime(a0)		; decrement timer
+		bpl.s	.no_turn					; branch if time remains
+		move.b	#$80,ost_rex_turntime(a0)	; reset timer
+		neg.w	ost_x_vel(a0)					; reverse direction
+		bchg	#render_xflip_bit,ost_render(a0)	; invert x flip state
 
-	loc_37396:				
+	.no_turn:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		rts	
 ; ===========================================================================
@@ -71143,7 +71164,7 @@ Rex_CheckTurnAround:
 ; while waiting, with code in Rex_Init to set this routine.
 
 Rex_Wait_Stationary:			
-		bsr.w	FindNearestPlayer			; get nearest player
+		bsr.w	FindNearestPlayer			; find nearest player
 		addi.w	#$60,d2
 		cmpi.w	#$100,d2
 		bcc.s	.no_spawn				; branch if they're not close enough yet
@@ -71427,7 +71448,7 @@ Rex_SpawnHead:
 		bne.s	.fail					; branch if not found
 		_move.b	#id_RexonHead,ost_id(a1)		; load Rexon's head	
 		move.b	ost_render(a0),ost_render(a1)		; pointless, as this is overwritten by LoadSubObjData	
-		move.b	ost_subtype(a0),ost_subdata_ptr(a1)	; index to subobjdata
+		move.b	ost_subdata_ptr(a0),ost_subdata_ptr(a1)	; index to subobjdata
 		move.w	a0,ost_rexhead_parent(a1)		; set pointer to parent
 		move.w	a1,(a2)+				; set parent's child pointer
 		move.w	d1,ost_rexhead_subid(a1)		; set sub ID
@@ -71657,7 +71678,7 @@ off_377B4:
 		dc.w $8405
 		dc.w $498
 off_377BE:
-		dc.l Map_3BA46	
+		dc.l Map_WallTurr	
 		dc.w $3AB
 		dc.w $8403
 		dc.w $498
@@ -72017,7 +72038,7 @@ SubData_Turt:
 	if FixBugs
 		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,$38/2,id_col_null
 	else
-		; This is too narrow, and causes the Turtloid to appear abruptly at the right
+		; This is too narrow, and causes the Turtloid to 'pop in' at the right
 		; edge of the screen.
 		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,$30/2,id_col_null
 	endc	
@@ -75215,7 +75236,7 @@ SonicSegaScreen_Init:
 	.loop_frame:				
 		movea.l	(a1)+,a2				; DPLC of current frame
 		move.w	(a2)+,d6				; number of pieces in this frame
-		subq.w	#1,d6
+		subq.w	#1,d6					; minus 1 for loop counter
 
 	.loop_piece:				
 		move.w	(a2)+,d0				; offset of art for current frame
@@ -75227,17 +75248,17 @@ SonicSegaScreen_Init:
 		; the enlarged Sonic. The following code fixes this:
 		andi.l	#$FFF,d0
 		lsl.l	#5,d0
-		lea	(a3,d0.l),a4				; ROM address of tiles to copy
+		lea	(a3,d0.l),a4				; a4 = ROM address of tiles to copy
 	else	
 		andi.w	#$FFF,d0
 		lsl.w	#5,d0
-		lea	(a3,d0.w),a4				; ROM address of tiles to copy
+		lea	(a3,d0.w),a4				; a4 = ROM address of tiles to copy
 	endc	
 		andi.w	#$F000,d1				; abcd000000000000
 		rol.w	#4,d1					; (this calculation can be done smaller and faster
-		addq.w	#1,d1					; by doing rol.w #7,d1 addq.w #7,d1
+		addq.w	#1,d1					; by doing rol.w #7,d1; addq.w #7,d1
 		lsl.w	#3,d1					; instead of these 4 lines)
-		subq.w	#1,d1					; 000000000abcd111 ; number of dwords to copy minus 1
+		subq.w	#1,d1					; 000000000abcd111 ; number of longwords to copy minus 1
 
 	.loop_pixel:				
 		move.l	(a4)+,(a5)+				; copy a longword of art data to buffer
@@ -75257,7 +75278,7 @@ SonicSegaScreen_Init:
 		movea.l	(a6)+,a2				; destination in RAM of enlarged graphics
 		move.b	(a6)+,d0				; width of the sprite piece to enlarge (minus 1)
 		move.b	(a6)+,d1				; height of the sprite piece to enlarge (minus 1)
-		bsr.w	Scale_2x
+		bsr.w	Scale_2x				; upscale the piece
 		dbf	d7,.loop_upscale			; repeat for every piece
 		popr.w	d7
 		rts	
@@ -75290,7 +75311,7 @@ SonicSegaScreen_ScaledSpriteDataEnd	= copydst
 sizeof_SonicSegaScreen_ScaledSpriteData: equ	SonicSegaScreen_ScaledSpriteDataEnd-SonicSegaScreen_ScaledSpriteDataStart
 
 		if copysrc>SonicSegaScreen_ScaledSpriteDataStart
-			inform 3,"Scale copy source overran allocated size. Try changing the initial value of copydst to v_128x128_tiles+$%h.",copysrc-v_128x128_tiles
+			inform 3,"The scale copy source overran the allocated size. Try changing the initial value of copydst to v_128x128_tiles+$%h.",copysrc-v_128x128_tiles
 		endc	
 ; ===========================================================================
 
@@ -75457,6 +75478,7 @@ SonicSegaScreen_MoveStreaksRight:
 ;	a1 = start of palette info
 ;	uses d0.b, d1.b, d2.b, a1, a2, a3
 ; ----------------------------------------------------------------------------
+
 SonicSegaScreen_UpdateStreakPals:		
 		subq.b	#1,ost_sonicsega_wait_time(a0)		; decrement frame counter
 		bne.s	.do_nothing				; if not zero, branch
@@ -75535,7 +75557,13 @@ SubData_SegaHideTM:
 Ani_SonicSegaScreen:	index offset(*)
 		ptr Ani_SonicSega_0 
 
-Ani_SonicSega_0:	dc.b   0,  0,  1,  2,  3,$FF		; 0	
+Ani_SonicSega_0:
+		dc.b 0 
+		dc.b id_Frame_Sonic_Run11-id_Frame_Sonic_Run11	; 0
+		dc.b id_Frame_Sonic_Run12-id_Frame_Sonic_Run11	; 1
+		dc.b id_Frame_Sonic_Run13-id_Frame_Sonic_Run11	; 2
+		dc.b id_Frame_Sonic_Run14-id_Frame_Sonic_Run11	; 3
+		dc.b afEnd
 
  		include "mappings/sprite/SegaScreenSonic.asm"
 ; ===========================================================================
@@ -75601,6 +75629,7 @@ SegaScreen_VBlank_SetFGTable:
 ; ----------------------------------------------------------------------------
 ; FG nametable entries for the blue streaks
 ; ----------------------------------------------------------------------------
+
 SonicSegaScreen_StreakFadeRight:	
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi	; 0 
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+1	; 2
@@ -75609,7 +75638,7 @@ SonicSegaScreen_StreakFadeRight:
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+4	; 8
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+5	; 10
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+6	; 12
-		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+7+(1<<$A) ; 14 ; bit $A is used as a flag to use this entry $29 times
+		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+7+(1<<$A) ; 14 ; bit $A is a flag to use this entry $29 times
 
 SonicSegaScreen_StreakFadeLeft:	
 		dc.w tile_Nem_IntroTrails+tile_pal2+tile_hi+7+(1<<$A) ; 0  ; same deal with bit $A
@@ -76569,10 +76598,10 @@ byte_3AFEE:
 Cloud:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3B2EC(pc,d0.w),d1
-		jmp	off_3B2EC(pc,d1.w)
+		move.w	Cloud_Index(pc,d0.w),d1
+		jmp	Cloud_Index(pc,d1.w)
 ; ===========================================================================
-off_3B2EC:	index offset(*),,2
+Cloud_Index:	index offset(*),,2
 		ptr loc_3B2F0					; 0 
 		ptr loc_3B312					; 2
 ; ===========================================================================
@@ -76618,63 +76647,54 @@ SubData_Cloud:
 VerticalPropeller:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3B378(pc,d0.w),d1
-		jmp	off_3B378(pc,d1.w)
+		move.w	VertProp_Index(pc,d0.w),d1
+		jmp	VertProp_Index(pc,d1.w)
 ; ===========================================================================
-off_3B378:	index offset(*),,2
-		ptr loc_3B37C					; 0 
-		ptr loc_3B38E					; 2
+VertProp_Index:	index offset(*),,2
+		ptr VertProp_Init					; 0 
+		ptr VertProp_Main					; 2
 ; ===========================================================================
 
-loc_3B37C:				
-		bsr.w	LoadSubObjData
-		bclr	#render_yflip_bit,ost_render(a0)
-		beq.s	locret_3B38C
-		clr.b	ost_col_type(a0)
+VertProp_Init:				
+		bsr.w	LoadSubObjData		; go to VertProp_Main next
+		bclr	#render_yflip_bit,ost_render(a0)	; y-flip bit indicates whether or not collision should be enabled
+		beq.s	.collision_enabled					; branch if y-flip bit is not set
+		clr.b	ost_col_type(a0)		; clear collision
 
-locret_3B38C:				
+	.collision_enabled:				
 		rts	
 ; ===========================================================================
 
-loc_3B38E:				
-		lea	(off_3B3B6).l,a1
+VertProp_Main:				
+		lea	(Ani_VertProp).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
-		move.b	(v_vblank_counter_byte).w,d0
+		move.b	(v_vblank_counter_byte).w,d0		; get byte that increments every frame
 		andi.b	#$1F,d0
-		bne.s	loc_3B3A8
-		moveq	#-$22,d0
+		bne.s	.skip_sound				; branch if current frame is not multiple of 32
+		moveq_	sfx_Helicopter,d0		; play helicopter SFX every 32nd frame		
 		jsrto	PlaySoundLocal,JmpTo_PlaySoundLocal
 
-loc_3B3A8:				
+	.skip_sound:				
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3B3AC:
-		dc.l Map_VertProp	
-		dc.w $A561
-		dc.w $404
-		dc.w $4A8
-		
-off_3B3B6:	index offset(*)
-		ptr byte_3B3B8
 
-byte_3B3B8:	
-		dc.b   1,  0,  1,  2,$FF
+SubData_VertProp:
+		subobjdata	Map_VertProp,tile_Nem_VertProp+tile_pal2+tile_hi,render_rel,4,8/2,id_col_4x64|id_col_hurt
+		
+Ani_VertProp:	index offset(*)
+		ptr Ani_VertProp_Spin
+
+Ani_VertProp_Spin:	
+		dc.b 1
+		dc.b id_Frame_VertProp1
+		dc.b id_Frame_VertProp2
+		dc.b id_Frame_VertProp3
+		dc.b afEnd
 		even	
 ; ===========================================================================
-
-Map_VertProp:				
-		dc.w word_3B3C4-Map_VertProp			; 0
-		dc.w word_3B3D6-Map_VertProp			; 1
-		dc.w word_3B3E8-Map_VertProp			; 2
-word_3B3C4:	dc.w 2			
-		dc.w $C003,    0,    0,$FFFC			; 0
-		dc.w $E003,$1000,$1000,$FFFC			; 4
-word_3B3D6:	dc.w 2			
-		dc.w $E003,    0,    0,$FFFC			; 0
-		dc.w	 3,$1000,$1000,$FFFC			; 4
-word_3B3E8:	dc.w 2			
-		dc.w	 3,    0,    0,$FFFC			; 0
-		dc.w $2003,$1000,$1000,$FFFC			; 4
+		
+		include "mappings/sprite/SCZ & WFZ Vertical Propellers.asm"
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object B5 - WFZ horizontal propeller 
@@ -76683,34 +76703,35 @@ word_3B3E8:	dc.w 2
 HorizontalPropeller:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3B408(pc,d0.w),d1
-		jmp	off_3B408(pc,d1.w)
+		move.w	HorizProp_Index(pc,d0.w),d1
+		jmp	HorizProp_Index(pc,d1.w)
 ; ===========================================================================
-off_3B408:	index offset(*),,2
-		ptr loc_3B40E					; 0 
-		ptr loc_3B426					; 2
-		ptr loc_3B448					; 4
+HorizProp_Index:	index offset(*),,2
+		ptr HorizProp_Init					; 0 
+		ptr HorizProp_WFZ					; 2
+		ptr HorizProp_SCZ					; 4
 ; ===========================================================================
 
-loc_3B40E:				
+HorizProp_Init:				
 		bsr.w	LoadSubObjData
 		move.b	#4,ost_anim(a0)
-		move.b	ost_subtype(a0),d0
-		subi.b	#$64,d0
-		move.b	d0,ost_primary_routine(a0)
+		move.b	ost_subdata_ptr(a0),d0			; subdata pointer indicates subtype
+		subi.b	#id_SubData_HorizProp_WFZ-2,d0	; minus $64 to get routine for subtype
+		move.b	d0,ost_primary_routine(a0)		; set routine
 		rts	
 ; ===========================================================================
 
-loc_3B426:				
+HorizProp_WFZ:				
 		moveq	#0,d0
-		move.b	ost_secondary_routine(a0),d0
-		move.w	off_3B442(pc,d0.w),d1
-		jsr	off_3B442(pc,d1.w)
-		lea	(off_3B4E8).l,a1
+		move.b	ost_secondary_routine(a0),d0	; this is always 0
+		move.w	.index(pc,d0.w),d1
+		jsr	.index(pc,d1.w)
+		lea	(Ani_HorizProp).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3B442:	index offset(*),,2
+
+.index:	index offset(*),,2
 		ptr loc_3B444
 ; ===========================================================================
 
@@ -76718,8 +76739,8 @@ loc_3B444:
 		bra.w	loc_3B456
 ; ===========================================================================
 
-loc_3B448:				
-		lea	(off_3B4E8).l,a1
+HorizProp_SCZ:				
+		lea	(Ani_HorizProp).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -76727,9 +76748,9 @@ loc_3B448:
 loc_3B456:				
 		cmpi.b	#4,ost_anim(a0)
 		bne.s	locret_3B4DC
-		lea	($FFFFB000).w,a1
+		lea	(v_ost_player1).w,a1
 		bsr.w	loc_3B46A
-		lea	($FFFFB040).w,a1
+		lea	(v_ost_player2).w,a1
 
 loc_3B46A:				
 		move.w	ost_x_pos(a1),d0
@@ -76738,7 +76759,7 @@ loc_3B46A:
 		cmpi.w	#$80,d0	
 		bcc.s	locret_3B4DC
 		moveq	#0,d1
-		move.b	($FFFFFE74).w,d1
+		move.b	(v_oscillating_0_to_10).w,d1
 		add.w	ost_y_pos(a1),d1
 		addi.w	#$60,d1
 		sub.w	ost_y_pos(a0),d1
@@ -76768,13 +76789,13 @@ loc_3B4A0:
 locret_3B4DC:				
 		rts	
 ; ===========================================================================
-off_3B4DE:
+SubData_HorizProp:
 		dc.l Map_HorizProp	
 		dc.w $A3CD
 		dc.w $404
 		dc.w $4000
 		
-off_3B4E8:	index offset(*)
+Ani_HorizProp:	index offset(*)
 		ptr byte_3B4FC					; 0 
 		ptr byte_3B506					; 1
 		ptr byte_3B50E					; 2
@@ -76797,33 +76818,9 @@ byte_3B532:	dc.b   4,  4,  3,  2,  1,  0,$FD,  8		; 0
 byte_3B53A:	dc.b   7,  5,  4,  3,  2,  1,  0,$FD,  9,  0	; 0	
 byte_3B544:	dc.b $7E,  0,$FF,  0				; 0 
 ; ===========================================================================
-Map_HorizProp:				
-		dc.w word_3B554-Map_HorizProp			; 0
-		dc.w word_3B576-Map_HorizProp			; 1
-		dc.w word_3B588-Map_HorizProp			; 2
-		dc.w word_3B59A-Map_HorizProp			; 3
-		dc.w word_3B5AC-Map_HorizProp			; 4
-		dc.w word_3B5BE-Map_HorizProp			; 5
-word_3B554:	dc.w 4			
-		dc.w $FC0C,    0,    0,$FFC0			; 0
-		dc.w $FC08,    4,    2,$FFE0			; 4
-		dc.w $FC08,    7,    3,	   8			; 8
-		dc.w $FC0C,   $A,    5,	 $20			; 12
-word_3B576:	dc.w 2			
-		dc.w $FC0C,   $E,    7,$FFD8			; 0
-		dc.w $FC0C,  $12,    9,	   8			; 4
-word_3B588:	dc.w 2			
-		dc.w $FC08,  $16,   $B,$FFE8			; 0
-		dc.w $FC04,  $19,   $C,	   8			; 4
-word_3B59A:	dc.w 2			
-		dc.w $FC04,  $1B,   $D,$FFF0			; 0
-		dc.w $FC04, $81B, $80D,	   0			; 4
-word_3B5AC:	dc.w 2			
-		dc.w $FC04, $819, $80C,$FFE8			; 0
-		dc.w $FC08, $816, $80B,	   0			; 4
-word_3B5BE:	dc.w 2			
-		dc.w $FC0C, $812, $809,$FFD8			; 0
-		dc.w $FC0C, $80E, $807,	   8			; 4
+
+		include	"mappings/sprite/SCZ & WFZ Horizontal Propellers.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object B6 - WFZ tilting platform
@@ -76832,10 +76829,10 @@ word_3B5BE:	dc.w 2
 TiltingPlatform:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3B5DE(pc,d0.w),d1
-		jmp	off_3B5DE(pc,d1.w)
+		move.w	TiltPlat_Index(pc,d0.w),d1
+		jmp	TiltPlat_Index(pc,d1.w)
 ; ===========================================================================
-off_3B5DE:	index offset(*),,2
+TiltPlat_Index:	index offset(*),,2
 		ptr loc_3B5E8					; 0 
 		ptr loc_3B602					; 2
 		ptr loc_3B65C					; 4
@@ -77072,18 +77069,25 @@ loc_3B7A6:
 
 loc_3B7BC:				
 		move.b	ost_primary_status(a0),d0
-		andi.b	#$18,d0
+	if (Revision<2)|FixBugs	
+		andi.b	#status_standing_both,d0
+	else
+		; I don't know what this change was meant to do, but it causes
+		; Sonic/Tails to not fall off WFZ's ascending platforms when they retract,
+		; making him hover.		
+		andi.b	#status_air,d0
+	endc	
 		beq.s	locret_3B7F6
 		bclr	#3,ost_primary_status(a0)
 		beq.s	loc_3B7DE
-		lea	($FFFFB000).w,a1
+		lea	(v_ost_player1).w,a1
 		bclr	#3,ost_primary_status(a1)
 		bset	#1,ost_primary_status(a1)
 
 loc_3B7DE:				
 		bclr	#4,ost_primary_status(a0)
 		beq.s	locret_3B7F6
-		lea	($FFFFB040).w,a1
+		lea	(v_ost_player2).w,a1
 		bclr	#4,ost_primary_status(a1)
 		bset	#1,ost_primary_status(a1)
 
@@ -77105,7 +77109,7 @@ locret_3B816:
 		rts	
 ; ===========================================================================
 off_3B818:
-		dc.l Map_3B856	
+		dc.l Map_TiltPlat	
 		dc.w $A393
 		dc.w $404
 		dc.w $1000
@@ -77119,31 +77123,59 @@ off_3B822:	index offset(*)
 		ptr byte_3B84C					; 5
 		ptr byte_3B850					; 6
 		
-byte_3B830:	dc.b   3,  1,  2,$FD,  1,  0			; 0	
-byte_3B836:	dc.b $3F,  2,$FD,  2				; 0 
-byte_3B83A:	dc.b   3,  2,  1,  0,$FA,  0			; 0	
-byte_3B840:	dc.b   1,  0,  1,  2,  3,$FF			; 0	
-byte_3B846:	dc.b   3,  1,  0,$FD,  5,  0			; 0	
-byte_3B84C:	dc.b $3F,  0,$FD,  6				; 0 
-byte_3B850:	dc.b   3,  0,  1,  2,$FA,  0			; 0	
+byte_3B830:
+		dc.b 3
+		dc.b id_Frame_TlitPlat_RightDown
+		dc.b id_Frame_TlitPlat_Vert
+		dc.b afChange,1
+		even
+
+
+byte_3B836:	
+		dc.b $3F
+		dc.b id_Frame_TlitPlat_Vert
+		dc.b afChange,2
+		even
+
+byte_3B83A:
+		dc.b 3
+		dc.b id_Frame_TlitPlat_Vert
+		dc.b id_Frame_TlitPlat_RightDown
+		dc.b id_Frame_TlitPlat_Horiz
+		dc.b af2ndRoutine
+		even
+	
+byte_3B840:
+		dc.b 1
+		dc.b id_Frame_TlitPlat_Horiz
+		dc.b id_Frame_TlitPlat_RightDown
+		dc.b id_Frame_TlitPlat_Vert
+		dc.b id_Frame_TlitPlat_LeftDown
+		dc.b afEnd
+
+byte_3B846:	
+		dc.b 3
+		dc.b id_Frame_TlitPlat_RightDown
+		dc.b id_Frame_TlitPlat_Horiz
+		dc.b afChange,5
+		even
+
+byte_3B84C:
+		dc.b $3F
+		dc.b id_Frame_TlitPlat_Horiz
+		dc.b afchange,6
+
+byte_3B850:
+		dc.b 3
+		dc.b id_Frame_TlitPlat_Horiz
+		dc.b id_Frame_TlitPlat_RightDown
+		dc.b id_Frame_TlitPlat_Vert
+		dc.b af2ndRoutine
+		even
 ; ===========================================================================
-Map_3B856:				
-		dc.w word_3B85E-Map_3B856			; 0
-		dc.w word_3B870-Map_3B856			; 1
-		dc.w word_3B882-Map_3B856			; 2
-		dc.w word_3B894-Map_3B856			; 3
-word_3B85E:	dc.w 2			
-		dc.w $FC08,    0,    0,$FFE8			; 0
-		dc.w $FC08, $800, $800,	   0			; 4
-word_3B870:	dc.w 2			
-		dc.w $EC06,    3,    1,$FFF0			; 0
-		dc.w $FC06,$1803,$1801,	   0			; 4
-word_3B882:	dc.w 2			
-		dc.w $E802,    9,    4,$FFFC			; 0
-		dc.w	 2,$1009,$1004,$FFFC			; 4
-word_3B894:	dc.w 2			
-		dc.w $EC06, $803, $801,	   0			; 0
-		dc.w $FC06,$1003,$1001,$FFF0			; 4
+
+		include "mappings/sprite/WFZ Tilting Platform.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object B7 - WFZ giant vertical laser  (unused)
@@ -77174,25 +77206,15 @@ loc_3B8C4:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 off_3B8DA:	
-		dc.l Map_3B8E4	
+		dc.l Map_VertLaser	
 		dc.w $C39F
 		dc.w $404
 		dc.w $18A9
+		
+; ===========================================================================
 
-Map_3B8E4:	index offset(*)				
-		ptr byte_3B8E6
+		include "mappings/sprite/WFZ Giant Vertical Laser (unused).asm"
 
-byte_3B8E6:	
-		dc.b   0,$10,$90, $B,  0,  0,  0,  0,$FF,$E8,$90, $B,  8,  0,  8,  0 ; 0		
-		dc.b   0,  0,$B0, $B,  0,  0,  0,  0,$FF,$E8,$B0, $B,  8,  0,  8,  0 ; 16
-		dc.b   0,  0,$D0, $B,  0,  0,  0,  0,$FF,$E8,$D0, $B,  8,  0,  8,  0 ; 32
-		dc.b   0,  0,$F0, $B,  0,  0,  0,  0,$FF,$E8,$F0, $B,  8,  0,  8,  0 ; 48
-		dc.b   0,  0,$10, $B,  0,  0,  0,  0,$FF,$E8,$10, $B,  8,  0,  8,  0 ; 64
-		dc.b   0,  0,$30, $B,  0,  0,  0,  0,$FF,$E8,$30, $B,  8,  0,  8,  0 ; 80
-		dc.b   0,  0,$50, $B,  0,  0,  0,  0,$FF,$E8,$50, $B,  8,  0,  8,  0 ; 96
-		dc.b   0,  0,$70, $B,  0,  0,  0,  0,$FF,$E8,$70, $B,  8,  0,  8,  0 ; 112
-		dc.b   0					;  
-		dc.b   0					;  
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object B8 - WFZ wall turret 
@@ -77201,10 +77223,10 @@ byte_3B8E6:
 WallTurret:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3B976(pc,d0.w),d1
-		jmp	off_3B976(pc,d1.w)
+		move.w	WallTurr_Index(pc,d0.w),d1
+		jmp	WallTurr_Index(pc,d1.w)
 ; ===========================================================================
-off_3B976:	index offset(*),,2
+WallTurr_Index:	index offset(*),,2
 		ptr loc_3B97C					; 0 
 		ptr loc_3B980					; 2
 		ptr loc_3B9AA					; 4
@@ -77281,6 +77303,7 @@ loc_3B9D8:
 locret_3BA28:				
 		rts	
 ; ===========================================================================
+
 byte_3BA2A:	
 		dc.b   0					; 0
 		dc.b $18					; 1
@@ -77296,7 +77319,7 @@ byte_3BA2A:
 		dc.b   1					; 11
 		
 off_3BA36:
-		dc.l Map_3BA46	
+		dc.l Map_WallTurr	
 		dc.w $3AB
 		dc.w $404
 		dc.w $1000
@@ -77308,41 +77331,21 @@ byte_3BA42:
 		dc.b   2,  3,  4,$FF
 		even
 ; ===========================================================================
-Map_3BA46:				
-		dc.w word_3BA50-Map_3BA46			; 0
-		dc.w word_3BA72-Map_3BA46			; 1
-		dc.w word_3BA8C-Map_3BA46			; 2
-		dc.w word_3BAA6-Map_3BA46			; 3
-		dc.w word_3BAB0-Map_3BA46			; 4
-word_3BA50:	dc.w 4			
-		dc.w $F007,$E000,$E000,$FFF0			; 0
-		dc.w $F007,$E008,$E004,	   0			; 4
-		dc.w  $E00,$E010,$E008,$FFF8			; 8
-		dc.w  $E00,$E011,$E008,	   0			; 12
-word_3BA72:	dc.w 3			
-		dc.w $F007,$E000,$E000,$FFF0			; 0
-		dc.w $F007,$E008,$E004,	   0			; 4
-		dc.w  $405,$E012,$E009,$FFEB			; 8
-word_3BA8C:	dc.w 3			
-		dc.w $F007,$E000,$E000,$FFF0			; 0
-		dc.w $F007,$E008,$E004,	   0			; 4
-		dc.w  $405,$E812,$E809,	   5			; 8
-word_3BAA6:	dc.w 1			
-		dc.w $FC00,$8016,$800B,$FFFC			; 0
-word_3BAB0:	dc.w 1			
-		dc.w $FC00,$8017,$800B,$FFFC			; 0
+
+		include "mappings/sprite/WFZ Wall Turret.asm"
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object B9 - Horizontal Laser that shoots down the Tornado in WFZ
+; Object B9 - Horizontal laser that shoots down the Tornado in WFZ
 ; ----------------------------------------------------------------------------
 
 HorizontalLaser:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3BAC8(pc,d0.w),d1
-		jmp	off_3BAC8(pc,d1.w)
+		move.w	HorizLaser_Index(pc,d0.w),d1
+		jmp	HorizLaser_Index(pc,d1.w)
 ; ===========================================================================
-off_3BAC8:	index offset(*),,2
+HorizLaser_Index:	index offset(*),,2
 		ptr loc_3BACE					; 0 
 		ptr loc_3BAD2					; 2
 		ptr loc_3BAF0					; 4
@@ -77368,7 +77371,7 @@ loc_3BADC:
 
 loc_3BAF0:				
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		bra.w	*+4
+		bra.w	loc_3BAF8		; pointless
 
 loc_3BAF8:				
 		move.w	ost_x_pos(a0),d0
@@ -77378,33 +77381,27 @@ loc_3BAF8:
 		blt.w	JmpTo65_DeleteObject
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3BB0E:
-		dc.l Map_3BB18
+SubData_HorizLaser:
+		dc.l Map_HorizLaser
 		dc.w $C3C3
 		dc.w $401
 		dc.w $6000
 ; ===========================================================================
-Map_3BB18:				
-		dc.w word_3BB1A-Map_3BB18
-word_3BB1A:	dc.w 6			
-		dc.w $F801,    0,    0,$FFB8			; 0
-		dc.w $F80D,    2,    1,$FFC0			; 4
-		dc.w $F80D,    2,    1,$FFE0			; 8
-		dc.w $F80D,    2,    1,	   0			; 12
-		dc.w $F80D,    2,    1,	 $20			; 16
-		dc.w $F801, $800, $800,	 $40			; 20
+
+		include "mappings/sprite/WFZ Giant Horizontal Laser.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object BA - Wheel from WFZ
+; Object BA - WFZ conveyer belt pulley
 ; ----------------------------------------------------------------------------
 
-WheelWingFortress:				
+ConveyerPulley:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3BB5A(pc,d0.w),d1
-		jmp	off_3BB5A(pc,d1.w)
+		move.w	ConvPulley_Index(pc,d0.w),d1
+		jmp	ConvPulley_Index(pc,d1.w)
 ; ===========================================================================
-off_3BB5A:	index offset(*),,2
+ConvPulley_Index:	index offset(*),,2
 		ptr loc_3BB5E					; 0 
 		ptr loc_3BB62					; 2
 ; ===========================================================================
@@ -77416,16 +77413,16 @@ loc_3BB5E:
 loc_3BB62:				
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3BB66:
-		dc.l Map_3BB70	
+
+SubData_ConvPulley:
+		dc.l Map_ConvPulley	
 		dc.w $C3EA
 		dc.w $404
 		dc.w $1000
 ; ===========================================================================
-Map_3BB70:				
-		dc.w word_3BB72-Map_3BB70
-word_3BB72:	dc.w 1			
-		dc.w $F00F,    0,    0,$FFF0			; 0
+
+		include "mappings/sprite/WFZ Conveyer Belt Pulley.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object BB - Removed object (unknown, unused)
@@ -82265,7 +82262,7 @@ loc_3EADA:
 loc_3EB48:				
 		jmp	(DisplaySprite).l
 ; ===========================================================================
-; ===========================================================================
+
 Map_3EB4E:				
 		dc.w word_3EB64-Map_3EB4E			; 0
 		dc.w word_3EBD6-Map_3EB4E			; 1
@@ -86244,28 +86241,28 @@ DbgWFZ_41EEC:	dc.w $20
 		dc.l $AE000000+Map_Clucker
 		dc.w $440B
 		dc.w $379
-		dc.l $B6000000+Map_3B856
+		dc.l $B6000000+Map_TiltPlat
 		dc.w $6A00
 		dc.w $A393
-		dc.l $B6000000+Map_3B856
+		dc.l $B6000000+Map_TiltPlat
 		dc.w $6C00
 		dc.w $A393
-		dc.l $B6000000+Map_3B856
+		dc.l $B6000000+Map_TiltPlat
 		dc.w $6E00
 		dc.w $A393
-		dc.l $B6000000+Map_3B856
+		dc.l $B6000000+Map_TiltPlat
 		dc.w $7000
 		dc.w $A393
-		dc.l $B7000000+Map_3B8E4
+		dc.l $B7000000+Map_VertLaser
 		dc.w $7200
 		dc.w $C39F
-		dc.l $B8000000+Map_3BA46
+		dc.l $B8000000+Map_WallTurr
 		dc.w $7400
 		dc.w $3AB
-		dc.l $B9000000+Map_3BB18
+		dc.l $B9000000+Map_HorizLaser
 		dc.w $7600
 		dc.w $C3C3
-		dc.l $BA000000+Map_3BB70
+		dc.l $BA000000+Map_ConvPulley
 		dc.w $7800
 		dc.w $C3EA
 		dc.l $BC000000+Map_3BC08
@@ -87147,8 +87144,8 @@ PLC_MTZ2:		plcheader
 PLC_WFZ1:		plcheader			
 		plcm	Nem_Tornado,vram_Tornado
 		plcm	Nem_Clouds,vram_Clouds
-		plcm	Nem_WFZVrtclPrpllr,vram_WFZVrtclPrpllr
-		plcm	Nem_WFZHrzntlPrpllr,vram_WFZHrzntlPrpllr
+		plcm	Nem_VertProp,vram_VertProp
+		plcm	Nem_HorizProp,vram_HorizProp
 		plcm	Nem_Balkiry,vram_Balkriy
 		plcm	Nem_BreakPanels,vram_BreakPanels
 		plcm	Nem_Clucker,vram_Clucker
@@ -87162,12 +87159,12 @@ PLC_WFZ1:		plcheader
 ;---------------------------------------------------------------------------------------
 PLC_WFZ2:	plcheader	
 		; Redundant: these first two are also loaded by the first cue.	
-		plcm	Nem_WFZVrtclPrpllr,vram_WFZVrtclPrpllr
-		plcm	Nem_WFZHrzntlPrpllr,vram_WFZHrzntlPrpllr
+		plcm	Nem_VertProp,vram_VertProp
+		plcm	Nem_HorizProp,vram_HorizProp
 		plcm	Nem_WFZVrtclLaser,vram_WFZVrtclLaser
 		plcm	Nem_WFZWallTurret,vram_WFZWallTurret
 		plcm	Nem_WFZHrzntlLaser,vram_WFZHrzntlLaser
-		plcm	Nem_WFZConveyorBeltWheel,vram_WFZConveyorBeltWheel
+		plcm	Nem_ConvPulley,vram_ConvPulley
 		plcm	Nem_Hook,vram_Hook
 		plcm	Nem_WFZThrust,vram_WFZThrust
 		plcm	Nem_WFZBeltPlatform,vram_WFZBeltPlatform
@@ -87358,8 +87355,8 @@ PLC_SCZ1:	plcheader
 ;---------------------------------------------------------------------------------------
 PLC_SCZ2:	plcheader			
 		plcm	Nem_Clouds,vram_Clouds
-		plcm	Nem_WFZVrtclPrpllr,vram_WFZVrtclPrpllr
-		plcm	Nem_WFZHrzntlPrpllr,vram_WFZHrzntlPrpllr
+		plcm	Nem_VertProp,vram_VertProp
+		plcm	Nem_HorizProp,vram_HorizProp
 		plcm	Nem_Balkiry,vram_Balkriy
 		plcm	Nem_Turtloid,vram_Turtloid
 		plcm	Nem_Nebula,vram_Nebula
@@ -87622,8 +87619,8 @@ PLC_SCZ1_dup:	plcheader
 ;---------------------------------------------------------------------------------------
 PLC_SCZ2_dup:	plcheader			
 		plcm	Nem_Clouds,vram_Clouds
-		plcm	Nem_WFZVrtclPrpllr,vram_WFZVrtclPrpllr
-		plcm	Nem_WFZHrzntlPrpllr,vram_WFZHrzntlPrpllr
+		plcm	Nem_VertProp,vram_VertProp
+		plcm	Nem_HorizProp,vram_HorizProp
 		plcm	Nem_Balkiry,vram_Balkriy
 		plcm	Nem_Turtloid,vram_Turtloid
 		plcm	Nem_Nebula,vram_Nebula
@@ -88253,7 +88250,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_WFZWallTurret			; ArtNem_8D1A0:
 		incfile	Nem_Hook				; ArtNem_8D388:
 		incfile	Nem_WFZGunPlatform			; ArtNem_8D540:
-		incfile	Nem_WFZConveyorBeltWheel		; ArtNem_8D7D8:
+		incfile	Nem_ConvPulley		; ArtNem_8D7D8:
 		incfile	Nem_WFZFloatingPlatform	
 		incfile	Nem_WFZVrtclLaser			; ArtNem_8DA6E:
 		incfile	Nem_Clouds				; ArtNem_8DAFC:
@@ -88261,8 +88258,8 @@ LevelIndex:		index offset(*)
 		incfile	Nem_WFZLaunchCatapult			; ArtNem_8DCA2:
 		incfile	Nem_WFZBeltPlatform			; ArtNem_8DD0C:
 		incfile	Nem_WFZUnusedBadnik			; ArtNem_8DDF6:
-		incfile	Nem_WFZVrtclPrpllr			; ArtNem_8DEB8:
-		incfile	Nem_WFZHrzntlPrpllr			; ArtNem_8DEE8:
+		incfile	Nem_VertProp			; ArtNem_8DEB8:
+		incfile	Nem_HorizProp			; ArtNem_8DEE8:
 		incfile	Nem_WFZTiltPlatforms			; ArtNem_8E010:
 		incfile	Nem_WFZThrust				; ArtNem_8E0C4:
 		incfile	Nem_WFZBoss

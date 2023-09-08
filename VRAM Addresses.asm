@@ -175,9 +175,9 @@ vram_SuperSonic_stars:       equ $BE40
 vram_Buzzer:                 	equ $7A40
 
 ; WFZ, SCZ
-vram_WFZHrzntlPrpllr:        	equ $79A0
+vram_HorizProp:        	equ $79A0
 vram_Clouds:                	equ $A9E0
-vram_WFZVrtclPrpllr:         	equ $AC20
+vram_VertProp:         	equ $AC20
 vram_Balkriy:					equ $ACA0
 
 
@@ -217,7 +217,7 @@ vram_WFZTiltPlatforms:		equ $7260
 vram_WFZVrtclLaser:         equ $73E0
 vram_WFZWallTurret:         equ $7560
 vram_WFZHrzntlLaser:        equ $7860
-vram_WFZConveyorBeltWheel:  equ $7D40
+vram_ConvPulley:  equ $7D40
 vram_Hook:              	equ $7F40			; mappings for this object are bugged, this is worked around by adding 4 to the tile setting
 vram_WFZBeltPlatform:       equ $81C0
 vram_WFZGunPlatform:        equ $8340

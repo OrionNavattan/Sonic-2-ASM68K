@@ -215,7 +215,7 @@
 		filedef Nem_WFZWallTurret,"art/nemesis/WFZ Wall Turret",nem,unc ; 24 tiles
 		filedef Nem_Hook,"art/nemesis/WFZ Hook & Chain",nem,unc ; 20 tiles
 		filedef Nem_WFZGunPlatform,"art/nemesis/WFZ Gun Platform",nem,unc ; 54 tiles
-		filedef Nem_WFZConveyorBeltWheel,"art/nemesis/WFZ Conveyer Belt Wheel",nem,unc ; 16 tiles
+		filedef Nem_ConvPulley,"art/nemesis/WFZ Conveyer Belt Wheel",nem,unc ; 16 tiles
 		filedef Nem_WFZFloatingPlatform,"art/nemesis/WFZ Floating Platform",nem,unc ; 12 tiles
 		filedef Nem_WFZVrtclLaser,"art/nemesis/WFZ Vertical Laser",nem,unc ; 12 tiles
 		filedef Nem_Clouds,"art/nemesis/SCZ, WFZ, and Ending Clouds",nem,unc ; 18 tiles
@@ -223,8 +223,8 @@
 		filedef Nem_WFZLaunchCatapult,"art/nemesis/WFZ Catapult",nem,unc ; 5 tiles
 		filedef Nem_WFZBeltPlatform,"art/nemesis/WFZ Belt Platform",nem,unc ; 12 tiles
 		filedef Nem_WFZUnusedBadnik,"art/nemesis/WFZ Unused Badnik",nem,unc ; 12 tiles
-		filedef Nem_WFZVrtclPrpllr,"art/nemesis/WFZ Vertical Propeller",nem,unc ; 4 tiles
-		filedef Nem_WFZHrzntlPrpllr,"art/nemesis/WFZ Horizontal Propeller",nem,unc ; 29 tiles
+		filedef Nem_VertProp,"art/nemesis/WFZ Vertical Propeller",nem,unc ; 4 tiles
+		filedef Nem_HorizProp,"art/nemesis/WFZ Horizontal Propeller",nem,unc ; 29 tiles
 		filedef Nem_WFZTiltPlatforms,"art/nemesis/WFZ Tilting Platforms",nem,unc ; 12 tiles
 		filedef Nem_WFZThrust,"art/nemesis/WFZ Getaway Ship Thrust",nem,unc ; 8 tiles
 		filedef Nem_WFZBoss,"art/nemesis/WFZ Boss",nem,unc ; 117 tiles
