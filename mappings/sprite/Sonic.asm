@@ -2,221 +2,226 @@
 ; Sprite mappings - Sonic
 ; -------------------------------------------------------------------------------
 
-Map_Sonic:	index offset(*)
-		ptr	Frame_Sonic_Blank
-		ptr	Frame_Sonic_Stand
-		ptr	Frame_Sonic_Blink
-		ptr	Frame_Sonic_Wait1
-		ptr	Frame_Sonic_Wait2				; 4
-		ptr	Frame_Sonic_Wait3
-		ptr	Frame_Sonic_Wait4
-		ptr	Frame_Sonic_LayDown
-		ptr	Frame_Sonic_Laying1				; 8
-		ptr	Frame_Sonic_Laying2
-		ptr	Frame_Sonic_GetUp
-		ptr	Frame_Sonic_LookUp1
-		ptr	Frame_Sonic_LookUp2				; $C
-		ptr	Frame_Sonic_Walk11
-		ptr	Frame_Sonic_Walk12
-		ptr	Frame_Sonic_Walk13
-		ptr	Frame_Sonic_Walk14				; $10
-		ptr	Frame_Sonic_Walk15
-		ptr	Frame_Sonic_Walk16
-		ptr	Frame_Sonic_Walk17
-		ptr	Frame_Sonic_Walk18				; $14
-		ptr	Frame_Sonic_Walk21
-		ptr	Frame_Sonic_Walk22
-		ptr	Frame_Sonic_Walk23
-		ptr	Frame_Sonic_Walk24				; $18
-		ptr	Frame_Sonic_Walk25
-		ptr	Frame_Sonic_Walk26
-		ptr	Frame_Sonic_Walk27
-		ptr	Frame_Sonic_Walk28				; $1C
-		ptr	Frame_Sonic_Walk31
-		ptr	Frame_Sonic_Walk32
-		ptr	Frame_Sonic_Walk33
-		ptr	Frame_Sonic_Walk34				; $20
-		ptr	Frame_Sonic_Walk35
-		ptr	Frame_Sonic_Walk36
-		ptr	Frame_Sonic_Walk37
-		ptr	Frame_Sonic_Walk38				; $24
-		ptr	Frame_Sonic_Walk41
-		ptr	Frame_Sonic_Walk42
-		ptr	Frame_Sonic_Walk43
-		ptr	Frame_Sonic_Walk44				; $28
-		ptr	Frame_Sonic_Walk45
-		ptr	Frame_Sonic_Walk46
-		ptr	Frame_Sonic_Walk47
-		ptr	Frame_Sonic_Walk48				; $2C
-		ptr	Frame_Sonic_Run11
-		ptr	Frame_Sonic_Run12
-		ptr	Frame_Sonic_Run13
-		ptr	Frame_Sonic_Run14				; $30
-		ptr	Frame_Sonic_Run21
-		ptr	Frame_Sonic_Run22
-		ptr	Frame_Sonic_Run23
-		ptr	Frame_Sonic_Run24				; $34
-		ptr	Frame_Sonic_Run31
-		ptr	Frame_Sonic_Run32
-		ptr	Frame_Sonic_Run33
-		ptr	Frame_Sonic_Run34				; $38
-		ptr	Frame_Sonic_Run41
-		ptr	Frame_Sonic_Run42
-		ptr	Frame_Sonic_Run43
-		ptr	Frame_Sonic_Run44				; $3C
-		ptr	Frame_Sonic_Roll1
-		ptr	Frame_Sonic_Roll2
-		ptr	Frame_Sonic_Roll3
-		ptr	Frame_Sonic_Roll4				; $40
-		ptr	Frame_Sonic_Roll5
-		ptr	Frame_Sonic_Spindash1
-		ptr	Frame_Sonic_Spindash2
-		ptr	Frame_Sonic_Spindash3				; $44
-		ptr	Frame_Sonic_Spindash4
-		ptr	Frame_Sonic_Spindash5
-		ptr	Frame_Sonic_Spindash6
-		ptr	Frame_Sonic_Push1				; $48
-		ptr	Frame_Sonic_Push2
-		ptr	Frame_Sonic_Push3
-		ptr	Frame_Sonic_Push4
-		ptr	Frame_Sonic_Duck1				; $4C
-		ptr	Frame_Sonic_Duck2
-		ptr	Frame_Sonic_Injury
-		ptr	Frame_Sonic_OilSlide
-		ptr	Frame_Sonic_Hang11				; $50
-		ptr	Frame_Sonic_Hang12
-		ptr	Frame_Sonic_Hang21
-		ptr	Frame_Sonic_Hang22
-		ptr	Frame_Sonic_Float1				; $54
-		ptr	Frame_Sonic_Float2
-		ptr	Frame_Sonic_Float3
-		ptr	Frame_Sonic_Float4
-		ptr	Frame_Sonic_Float5				; $58
-		ptr	Frame_Sonic_Float6
-		ptr	Frame_Sonic_GetAir
-		ptr	Frame_Sonic_Spring
-		ptr	Frame_Sonic_Death				; $5C
-		ptr	Frame_Sonic_Drown
-		ptr	Frame_Sonic_Burnt
-		ptr	Frame_Sonic_Tumble1
-		ptr	Frame_Sonic_Tumble2				; $60
-		ptr	Frame_Sonic_Tumble3
-		ptr	Frame_Sonic_Tumble4
-		ptr	Frame_Sonic_Tumble5
-		ptr	Frame_Sonic_Tumble6				; $64
-		ptr	Frame_Sonic_Tumble7
-		ptr	Frame_Sonic_Tumble8
-		ptr	Frame_Sonic_Tumble9
-		ptr	Frame_Sonic_Tumble10				; $68
-		ptr	Frame_Sonic_Tumble11
-		ptr	Frame_Sonic_Tumble12
-		ptr	Frame_Sonic_Vine1
-		ptr	Frame_Sonic_Vine2				; $6C
-		ptr	Frame_SuperSonic_Transform1
-		ptr	Frame_SuperSonic_Transform2
-		ptr	Frame_SuperSonic_Transform3			; bug: Sonic's left fist is 1 pixel higher than it should be
-		ptr	Frame_SuperSonic_Transform4			; $70
-		ptr	Frame_SuperSonic_Transform5
-		ptr	Frame_SuperSonic_Stand1
-		ptr	Frame_SuperSonic_Stand2
-		ptr	Frame_SuperSonic_Stand3				; $74
-		ptr	Frame_SuperSonic_Walk11
-		ptr	Frame_SuperSonic_Walk12
-		ptr	Frame_SuperSonic_Walk13
-		ptr	Frame_SuperSonic_Walk14				; $78
-		ptr	Frame_SuperSonic_Walk15
-		ptr	Frame_SuperSonic_Walk16
-		ptr	Frame_SuperSonic_Walk17
-		ptr	Frame_SuperSonic_Walk18				; $7C
-		ptr	Frame_SuperSonic_Walk21
-		ptr	Frame_SuperSonic_Walk22
-		ptr	Frame_SuperSonic_Walk23
-		ptr	Frame_SuperSonic_Walk24				; $80
-		ptr	Frame_SuperSonic_Walk25
-		ptr	Frame_SuperSonic_Walk26
-		ptr	Frame_SuperSonic_Walk27
-		ptr	Frame_SuperSonic_Walk28				; $84
-		ptr	Frame_SuperSonic_Walk31
-		ptr	Frame_SuperSonic_Walk32
-		ptr	Frame_SuperSonic_Walk33
-		ptr	Frame_SuperSonic_Walk34				; $88
-		ptr	Frame_SuperSonic_Walk35
-		ptr	Frame_SuperSonic_Walk36
-		ptr	Frame_SuperSonic_Walk37
-		ptr	Frame_SuperSonic_Walk38				; $8C
-		ptr	Frame_SuperSonic_Walk41
-		ptr	Frame_SuperSonic_Walk42
-		ptr	Frame_SuperSonic_Walk43
-		ptr	Frame_SuperSonic_Walk44				; $90
-		ptr	Frame_SuperSonic_Walk45
-		ptr	Frame_SuperSonic_Walk46
-		ptr	Frame_SuperSonic_Walk47
-		ptr	Frame_SuperSonic_Walk48				; $94
-		ptr	Frame_SuperSonic_Walk11_QuillUp
-		ptr	Frame_SuperSonic_Walk12_QuillUp
-		ptr	Frame_SuperSonic_Walk13_QuillUp
-		ptr	Frame_SuperSonic_Walk14_QuillUp			; $98
-		ptr	Frame_SuperSonic_Walk15_QuillUp
-		ptr	Frame_SuperSonic_Walk16_QuillUp
-		ptr	Frame_SuperSonic_Walk17_QuillUp
-		ptr	Frame_SuperSonic_Walk18_QuillUp			; $9C
-		ptr	Frame_SuperSonic_Walk21_QuillUp
-		ptr	Frame_SuperSonic_Walk22_QuillUp
-		ptr	Frame_SuperSonic_Walk23_QuillUp
-		ptr	Frame_SuperSonic_Walk24_QuillUp			; $A0
-		ptr	Frame_SuperSonic_Walk25_QuillUp
-		ptr	Frame_SuperSonic_Walk26_QuillUp
-		ptr	Frame_SuperSonic_Walk27_QuillUp
-		ptr	Frame_SuperSonic_Walk28_QuillUp			; $A4
-		ptr	Frame_SuperSonic_Walk31_QuillUp
-		ptr	Frame_SuperSonic_Walk32_QuillUp
-		ptr	Frame_SuperSonic_Walk33_QuillUp
-		ptr	Frame_SuperSonic_Walk34_QuillUp			; $A8
-		ptr	Frame_SuperSonic_Walk35_QuillUp
-		ptr	Frame_SuperSonic_Walk36_QuillUp
-		ptr	Frame_SuperSonic_Walk37_QuillUp
-		ptr	Frame_SuperSonic_Walk38_QuillUp			; $AC
-		ptr	Frame_SuperSonic_Walk41_QuillUp
-		ptr	Frame_SuperSonic_Walk42_QuillUp
-		ptr	Frame_SuperSonic_Walk43_QuillUp
-		ptr	Frame_SuperSonic_Walk44_QuillUp			; $B0
-		ptr	Frame_SuperSonic_Walk45_QuillUp
-		ptr	Frame_SuperSonic_Walk46_QuillUp
-		ptr	Frame_SuperSonic_Walk47_QuillUp
-		ptr	Frame_SuperSonic_Walk48_QuillUp			; $B4	
-		ptr	Frame_SuperSonic_Run1
-		ptr	Frame_SuperSonic_Run2
-		ptr	Frame_SuperSonic_Run3
-		ptr	Frame_SuperSonic_Run4				; $B8
-		ptr	Frame_SuperSonic_Run1_QuillUp
-		ptr	Frame_SuperSonic_Run2_QuillUp
-		ptr	Frame_SuperSonic_Run3_QuillUp
-		ptr	Frame_SuperSonic_Run4_QuillUp			; $BC	
-		ptr	Frame_SuperSonic_Push1
-		ptr	Frame_SuperSonic_Push2
-		ptr	Frame_SuperSonic_Push3
-		ptr	Frame_SuperSonic_Push4				; $C0
-		ptr	Frame_SuperSonic_Duck	
-		ptr	Frame_SuperSonic_Balance1
-		ptr	Frame_SuperSonic_Balance2
-		ptr	Frame_SuperSonic_Balance3			; $C4
-		ptr	Frame_SuperSonic_Balance4
-		ptr	Frame_SuperSonic_Balance5
-		ptr	Frame_SuperSonic_Balance6
-		ptr	Frame_Sonic_Balance11				; $C8
-		ptr	Frame_Sonic_Balance12
-		ptr	Frame_Sonic_Balance13
-		ptr	Frame_Sonic_Balance14
-		ptr	Frame_Sonic_Balance21				; $CC
-		ptr	Frame_Sonic_Balance22
-		ptr	Frame_Sonic_Balance23
-		ptr	Frame_Sonic_LoseFooting
-		ptr	Frame_Sonic_Balance31				; $D0
-		ptr	Frame_Sonic_Balance32
-		ptr	Frame_Sonic_Stop1
-		ptr	Frame_Sonic_Stop2
-		ptr	Frame_Sonic_Stop3				; $D4
-		ptr	Frame_Sonic_TurnAround
+Sonic_Sprites:	macro
+		index offset(*)
+		ptr	\1_Sonic_Blank
+		ptr	\1_Sonic_Stand
+		ptr	\1_Sonic_Blink
+		ptr	\1_Sonic_Wait1
+		ptr	\1_Sonic_Wait2				; 4
+		ptr	\1_Sonic_Wait3
+		ptr	\1_Sonic_Wait4
+		ptr	\1_Sonic_LayDown
+		ptr	\1_Sonic_Laying1				; 8
+		ptr	\1_Sonic_Laying2
+		ptr	\1_Sonic_GetUp
+		ptr	\1_Sonic_LookUp1
+		ptr	\1_Sonic_LookUp2				; $C
+		ptr	\1_Sonic_Walk11
+		ptr	\1_Sonic_Walk12
+		ptr	\1_Sonic_Walk13
+		ptr	\1_Sonic_Walk14				; $10
+		ptr	\1_Sonic_Walk15
+		ptr	\1_Sonic_Walk16
+		ptr	\1_Sonic_Walk17
+		ptr	\1_Sonic_Walk18				; $14
+		ptr	\1_Sonic_Walk21
+		ptr	\1_Sonic_Walk22
+		ptr	\1_Sonic_Walk23
+		ptr	\1_Sonic_Walk24				; $18
+		ptr	\1_Sonic_Walk25
+		ptr	\1_Sonic_Walk26
+		ptr	\1_Sonic_Walk27
+		ptr	\1_Sonic_Walk28				; $1C
+		ptr	\1_Sonic_Walk31
+		ptr	\1_Sonic_Walk32
+		ptr	\1_Sonic_Walk33
+		ptr	\1_Sonic_Walk34				; $20
+		ptr	\1_Sonic_Walk35
+		ptr	\1_Sonic_Walk36
+		ptr	\1_Sonic_Walk37
+		ptr	\1_Sonic_Walk38				; $24
+		ptr	\1_Sonic_Walk41
+		ptr	\1_Sonic_Walk42
+		ptr	\1_Sonic_Walk43
+		ptr	\1_Sonic_Walk44				; $28
+		ptr	\1_Sonic_Walk45
+		ptr	\1_Sonic_Walk46
+		ptr	\1_Sonic_Walk47
+		ptr	\1_Sonic_Walk48				; $2C
+		ptr	\1_Sonic_Run11
+		ptr	\1_Sonic_Run12
+		ptr	\1_Sonic_Run13
+		ptr	\1_Sonic_Run14				; $30
+		ptr	\1_Sonic_Run21
+		ptr	\1_Sonic_Run22
+		ptr	\1_Sonic_Run23
+		ptr	\1_Sonic_Run24				; $34
+		ptr	\1_Sonic_Run31
+		ptr	\1_Sonic_Run32
+		ptr	\1_Sonic_Run33
+		ptr	\1_Sonic_Run34				; $38
+		ptr	\1_Sonic_Run41
+		ptr	\1_Sonic_Run42
+		ptr	\1_Sonic_Run43
+		ptr	\1_Sonic_Run44				; $3C
+		ptr	\1_Sonic_Roll1
+		ptr	\1_Sonic_Roll2
+		ptr	\1_Sonic_Roll3
+		ptr	\1_Sonic_Roll4				; $40
+		ptr	\1_Sonic_Roll5
+		ptr	\1_Sonic_Spindash1
+		ptr	\1_Sonic_Spindash2
+		ptr	\1_Sonic_Spindash3				; $44
+		ptr	\1_Sonic_Spindash4
+		ptr	\1_Sonic_Spindash5
+		ptr	\1_Sonic_Spindash6
+		ptr	\1_Sonic_Push1				; $48
+		ptr	\1_Sonic_Push2
+		ptr	\1_Sonic_Push3
+		ptr	\1_Sonic_Push4
+		ptr	\1_Sonic_Duck1				; $4C
+		ptr	\1_Sonic_Duck2
+		ptr	\1_Sonic_Injury
+		ptr	\1_Sonic_OilSlide
+		ptr	\1_Sonic_Hang11				; $50
+		ptr	\1_Sonic_Hang12
+		ptr	\1_Sonic_Hang21
+		ptr	\1_Sonic_Hang22
+		ptr	\1_Sonic_Float1				; $54
+		ptr	\1_Sonic_Float2
+		ptr	\1_Sonic_Float3
+		ptr	\1_Sonic_Float4
+		ptr	\1_Sonic_Float5				; $58
+		ptr	\1_Sonic_Float6
+		ptr	\1_Sonic_GetAir
+		ptr	\1_Sonic_Spring
+		ptr	\1_Sonic_Death				; $5C
+		ptr	\1_Sonic_Drown
+		ptr	\1_Sonic_Burnt
+		ptr	\1_Sonic_Tumble1
+		ptr	\1_Sonic_Tumble2				; $60
+		ptr	\1_Sonic_Tumble3
+		ptr	\1_Sonic_Tumble4
+		ptr	\1_Sonic_Tumble5
+		ptr	\1_Sonic_Tumble6				; $64
+		ptr	\1_Sonic_Tumble7
+		ptr	\1_Sonic_Tumble8
+		ptr	\1_Sonic_Tumble9
+		ptr	\1_Sonic_Tumble10				; $68
+		ptr	\1_Sonic_Tumble11
+		ptr	\1_Sonic_Tumble12
+		ptr	\1_Sonic_Vine1
+		ptr	\1_Sonic_Vine2				; $6C
+		ptr	\1_SuperSonic_Transform1
+		ptr	\1_SuperSonic_Transform2
+		ptr	\1_SuperSonic_Transform3			; bug: Sonic's left fist is 1 pixel higher than it should be
+		ptr	\1_SuperSonic_Transform4			; $70
+		ptr	\1_SuperSonic_Transform5
+		ptr	\1_SuperSonic_Stand1
+		ptr	\1_SuperSonic_Stand2
+		ptr	\1_SuperSonic_Stand3				; $74
+		ptr	\1_SuperSonic_Walk11
+		ptr	\1_SuperSonic_Walk12
+		ptr	\1_SuperSonic_Walk13
+		ptr	\1_SuperSonic_Walk14				; $78
+		ptr	\1_SuperSonic_Walk15
+		ptr	\1_SuperSonic_Walk16
+		ptr	\1_SuperSonic_Walk17
+		ptr	\1_SuperSonic_Walk18				; $7C
+		ptr	\1_SuperSonic_Walk21
+		ptr	\1_SuperSonic_Walk22
+		ptr	\1_SuperSonic_Walk23
+		ptr	\1_SuperSonic_Walk24				; $80
+		ptr	\1_SuperSonic_Walk25
+		ptr	\1_SuperSonic_Walk26
+		ptr	\1_SuperSonic_Walk27
+		ptr	\1_SuperSonic_Walk28				; $84
+		ptr	\1_SuperSonic_Walk31
+		ptr	\1_SuperSonic_Walk32
+		ptr	\1_SuperSonic_Walk33
+		ptr	\1_SuperSonic_Walk34				; $88
+		ptr	\1_SuperSonic_Walk35
+		ptr	\1_SuperSonic_Walk36
+		ptr	\1_SuperSonic_Walk37
+		ptr	\1_SuperSonic_Walk38				; $8C
+		ptr	\1_SuperSonic_Walk41
+		ptr	\1_SuperSonic_Walk42
+		ptr	\1_SuperSonic_Walk43
+		ptr	\1_SuperSonic_Walk44				; $90
+		ptr	\1_SuperSonic_Walk45
+		ptr	\1_SuperSonic_Walk46
+		ptr	\1_SuperSonic_Walk47
+		ptr	\1_SuperSonic_Walk48				; $94
+		ptr	\1_SuperSonic_Walk11_QuillUp
+		ptr	\1_SuperSonic_Walk12_QuillUp
+		ptr	\1_SuperSonic_Walk13_QuillUp
+		ptr	\1_SuperSonic_Walk14_QuillUp			; $98
+		ptr	\1_SuperSonic_Walk15_QuillUp
+		ptr	\1_SuperSonic_Walk16_QuillUp
+		ptr	\1_SuperSonic_Walk17_QuillUp
+		ptr	\1_SuperSonic_Walk18_QuillUp			; $9C
+		ptr	\1_SuperSonic_Walk21_QuillUp
+		ptr	\1_SuperSonic_Walk22_QuillUp
+		ptr	\1_SuperSonic_Walk23_QuillUp
+		ptr	\1_SuperSonic_Walk24_QuillUp			; $A0
+		ptr	\1_SuperSonic_Walk25_QuillUp
+		ptr	\1_SuperSonic_Walk26_QuillUp
+		ptr	\1_SuperSonic_Walk27_QuillUp
+		ptr	\1_SuperSonic_Walk28_QuillUp			; $A4
+		ptr	\1_SuperSonic_Walk31_QuillUp
+		ptr	\1_SuperSonic_Walk32_QuillUp
+		ptr	\1_SuperSonic_Walk33_QuillUp
+		ptr	\1_SuperSonic_Walk34_QuillUp			; $A8
+		ptr	\1_SuperSonic_Walk35_QuillUp
+		ptr	\1_SuperSonic_Walk36_QuillUp
+		ptr	\1_SuperSonic_Walk37_QuillUp
+		ptr	\1_SuperSonic_Walk38_QuillUp			; $AC
+		ptr	\1_SuperSonic_Walk41_QuillUp
+		ptr	\1_SuperSonic_Walk42_QuillUp
+		ptr	\1_SuperSonic_Walk43_QuillUp
+		ptr	\1_SuperSonic_Walk44_QuillUp			; $B0
+		ptr	\1_SuperSonic_Walk45_QuillUp
+		ptr	\1_SuperSonic_Walk46_QuillUp
+		ptr	\1_SuperSonic_Walk47_QuillUp
+		ptr	\1_SuperSonic_Walk48_QuillUp			; $B4	
+		ptr	\1_SuperSonic_Run1
+		ptr	\1_SuperSonic_Run2
+		ptr	\1_SuperSonic_Run3
+		ptr	\1_SuperSonic_Run4				; $B8
+		ptr	\1_SuperSonic_Run1_QuillUp
+		ptr	\1_SuperSonic_Run2_QuillUp
+		ptr	\1_SuperSonic_Run3_QuillUp
+		ptr	\1_SuperSonic_Run4_QuillUp			; $BC	
+		ptr	\1_SuperSonic_Push1
+		ptr	\1_SuperSonic_Push2
+		ptr	\1_SuperSonic_Push3
+		ptr	\1_SuperSonic_Push4				; $C0
+		ptr	\1_SuperSonic_Duck	
+		ptr	\1_SuperSonic_Balance1
+		ptr	\1_SuperSonic_Balance2
+		ptr	\1_SuperSonic_Balance3			; $C4
+		ptr	\1_SuperSonic_Balance4
+		ptr	\1_SuperSonic_Balance5
+		ptr	\1_SuperSonic_Balance6
+		ptr	\1_Sonic_Balance11				; $C8
+		ptr	\1_Sonic_Balance12
+		ptr	\1_Sonic_Balance13
+		ptr	\1_Sonic_Balance14
+		ptr	\1_Sonic_Balance21				; $CC
+		ptr	\1_Sonic_Balance22
+		ptr	\1_Sonic_Balance23
+		ptr	\1_Sonic_LoseFooting
+		ptr	\1_Sonic_Balance31				; $D0
+		ptr	\1_Sonic_Balance32
+		ptr	\1_Sonic_Stop1
+		ptr	\1_Sonic_Stop2
+		ptr	\1_Sonic_Stop3				; $D4
+		ptr	\1_Sonic_TurnAround
+		endm
+
+Map_Sonic:
+		Sonic_Sprites	Frame	; generate the pointer index
 
 Frame_Sonic_Blank:	spritemap 
 		endsprite 
