@@ -13,7 +13,7 @@ v_level_layout:         rs.b sizeof_level			; $FFFF8000 ; level and background l
 v_16x16_tiles:          rs.w sizeof_16x16_all			; $FFFF9000 ; 16x16 tile mappings ($C00 bytes)
 v_bgscroll_buffer:      rs.b $200				; $FFFFA800 ; used by some layer deformation routines
 v_nem_gfx_buffer:       rs.b $200				; $FFFFAA00 ; ; Nemesis graphics decompression buffer
-v_sprite_queue:         rs.b sizeof_priority*8			; $FFFFAC00 ; sprite display queue, first section is highest priority ($400 bytes; 8 sections of $80 bytes)
+v_sprite_queue:         rs.b sizeof_priority*countof_priority	; $FFFFAC00 ; sprite display queue, first section is highest priority ($400 bytes; 8 sections of $80 bytes)
 v_sprite_queue_end:		equ __rs
 
                 rsblock ost					; $B000-$D400 
@@ -46,7 +46,7 @@ v_ost_all:          rs.b sizeof_ost_all				; $FFFFB000 ; object variable space (
 v_ost_dynamic:         equ v_ost_all+(sizeof_ost*$10)		;  $FFFFB400
  ;   v_ost_dynamic_2P_end:	equ v_ost_dynamic_end-($C*6)*sizeof_ost ;  $FFFFBE00 2P mode reserves 6 blocks of 12 OST slots at the end
     v_ost_dynamic_end:	equ v_ost_all+(sizeof_ost*countof_ost)	; $FFFFD000
-    v_ost_2p_blocks:	equ v_ost_dynamic_end-($C*6)*sizeof_ost ; $FFFFBE00 ; 2P mode reserves 6 blocks of 12 OST slots at the end	
+    v_ost_2p_blocks:	equ v_ost_dynamic_end-($C*6)*sizeof_ost	; $FFFFBE00 ; 2P mode reserves 6 blocks of 12 OST slots at the end	
                 rsblockend ost
 
                 rsblock ost_level_only
@@ -795,8 +795,8 @@ v_game_over_2p:					rs.w 1		; $FFFFFF98
 								rs.b 6 ; $FFFFFF9A-$FFFFFF9F ; unused					
 v_ss_2p_ring_buffer:			rs.w 6			; $FFFFFFA0
 								rs.b 4 ; $FFFFFFAC-$FFFFFFAF ; unused
-f_got_emerald:					rs.b 1		; $FFFFFFB0 ; flag set on Chaos Emerald get
-v_emeralds:						rs.b 1	; $FFFFFFB1 ; number of Chaos Emeralds held by player
+f_got_emerald:					rs.w 1		; $FFFFFFB0 ; flag set on Chaos Emerald get (also written as word to write next variable)
+v_emeralds:						equ __rs-1 ; $FFFFFFB1 ; number of Chaos Emeralds held by player
 v_emerald_list:					rs.l 2		; $FFFFFFB2 ; which individual Emeralds the player has, 1 byte per emerald. Technically only 7 bytes long, but an 8th is also cleared		
 								rs.b 6 ; $FFFFFFBA-$FFFFFFBF ; unused			
 v_score_next_life:				rs.l 1		; $FFFFFFC0 ; points required for next extra life

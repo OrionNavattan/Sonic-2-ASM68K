@@ -5,8 +5,8 @@
 ; -------------------------------------------------------------------------------
 
 Map_Turt:	index offset(*)
-		ptr	Frame_Turt_Normal				; normal
-		ptr	Frame_Turt_FireProj				; firing projectile
+		ptr	Frame_Turt_Normal			; normal
+		ptr	Frame_Turt_FireProj			; firing projectile
 		ptr	Frame_TRider_Normal
 		ptr	Frame_TRider_FireProj
 		ptr	Frame_Turt_Proj1

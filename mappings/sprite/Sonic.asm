@@ -12,11 +12,11 @@ Sonic_Sprites:	macro
 		ptr	\1_Sonic_Wait3
 		ptr	\1_Sonic_Wait4
 		ptr	\1_Sonic_LayDown
-		ptr	\1_Sonic_Laying1				; 8
+		ptr	\1_Sonic_Laying1			; 8
 		ptr	\1_Sonic_Laying2
 		ptr	\1_Sonic_GetUp
 		ptr	\1_Sonic_LookUp1
-		ptr	\1_Sonic_LookUp2				; $C
+		ptr	\1_Sonic_LookUp2			; $C
 		ptr	\1_Sonic_Walk11
 		ptr	\1_Sonic_Walk12
 		ptr	\1_Sonic_Walk13
@@ -72,7 +72,7 @@ Sonic_Sprites:	macro
 		ptr	\1_Sonic_Roll5
 		ptr	\1_Sonic_Spindash1
 		ptr	\1_Sonic_Spindash2
-		ptr	\1_Sonic_Spindash3				; $44
+		ptr	\1_Sonic_Spindash3			; $44
 		ptr	\1_Sonic_Spindash4
 		ptr	\1_Sonic_Spindash5
 		ptr	\1_Sonic_Spindash6
@@ -100,103 +100,103 @@ Sonic_Sprites:	macro
 		ptr	\1_Sonic_Drown
 		ptr	\1_Sonic_Burnt
 		ptr	\1_Sonic_Tumble1
-		ptr	\1_Sonic_Tumble2				; $60
+		ptr	\1_Sonic_Tumble2			; $60
 		ptr	\1_Sonic_Tumble3
 		ptr	\1_Sonic_Tumble4
 		ptr	\1_Sonic_Tumble5
-		ptr	\1_Sonic_Tumble6				; $64
+		ptr	\1_Sonic_Tumble6			; $64
 		ptr	\1_Sonic_Tumble7
 		ptr	\1_Sonic_Tumble8
 		ptr	\1_Sonic_Tumble9
-		ptr	\1_Sonic_Tumble10				; $68
+		ptr	\1_Sonic_Tumble10			; $68
 		ptr	\1_Sonic_Tumble11
 		ptr	\1_Sonic_Tumble12
 		ptr	\1_Sonic_Vine1
 		ptr	\1_Sonic_Vine2				; $6C
 		ptr	\1_SuperSonic_Transform1
 		ptr	\1_SuperSonic_Transform2
-		ptr	\1_SuperSonic_Transform3			; bug: Sonic's left fist is 1 pixel higher than it should be
-		ptr	\1_SuperSonic_Transform4			; $70
+		ptr	\1_SuperSonic_Transform3		; bug: Sonic's left fist is 1 pixel higher than it should be
+		ptr	\1_SuperSonic_Transform4		; $70
 		ptr	\1_SuperSonic_Transform5
 		ptr	\1_SuperSonic_Stand1
 		ptr	\1_SuperSonic_Stand2
-		ptr	\1_SuperSonic_Stand3				; $74
+		ptr	\1_SuperSonic_Stand3			; $74
 		ptr	\1_SuperSonic_Walk11
 		ptr	\1_SuperSonic_Walk12
 		ptr	\1_SuperSonic_Walk13
-		ptr	\1_SuperSonic_Walk14				; $78
+		ptr	\1_SuperSonic_Walk14			; $78
 		ptr	\1_SuperSonic_Walk15
 		ptr	\1_SuperSonic_Walk16
 		ptr	\1_SuperSonic_Walk17
-		ptr	\1_SuperSonic_Walk18				; $7C
+		ptr	\1_SuperSonic_Walk18			; $7C
 		ptr	\1_SuperSonic_Walk21
 		ptr	\1_SuperSonic_Walk22
 		ptr	\1_SuperSonic_Walk23
-		ptr	\1_SuperSonic_Walk24				; $80
+		ptr	\1_SuperSonic_Walk24			; $80
 		ptr	\1_SuperSonic_Walk25
 		ptr	\1_SuperSonic_Walk26
 		ptr	\1_SuperSonic_Walk27
-		ptr	\1_SuperSonic_Walk28				; $84
+		ptr	\1_SuperSonic_Walk28			; $84
 		ptr	\1_SuperSonic_Walk31
 		ptr	\1_SuperSonic_Walk32
 		ptr	\1_SuperSonic_Walk33
-		ptr	\1_SuperSonic_Walk34				; $88
+		ptr	\1_SuperSonic_Walk34			; $88
 		ptr	\1_SuperSonic_Walk35
 		ptr	\1_SuperSonic_Walk36
 		ptr	\1_SuperSonic_Walk37
-		ptr	\1_SuperSonic_Walk38				; $8C
+		ptr	\1_SuperSonic_Walk38			; $8C
 		ptr	\1_SuperSonic_Walk41
 		ptr	\1_SuperSonic_Walk42
 		ptr	\1_SuperSonic_Walk43
-		ptr	\1_SuperSonic_Walk44				; $90
+		ptr	\1_SuperSonic_Walk44			; $90
 		ptr	\1_SuperSonic_Walk45
 		ptr	\1_SuperSonic_Walk46
 		ptr	\1_SuperSonic_Walk47
-		ptr	\1_SuperSonic_Walk48				; $94
+		ptr	\1_SuperSonic_Walk48			; $94
 		ptr	\1_SuperSonic_Walk11_QuillUp
 		ptr	\1_SuperSonic_Walk12_QuillUp
 		ptr	\1_SuperSonic_Walk13_QuillUp
-		ptr	\1_SuperSonic_Walk14_QuillUp			; $98
+		ptr	\1_SuperSonic_Walk14_QuillUp		; $98
 		ptr	\1_SuperSonic_Walk15_QuillUp
 		ptr	\1_SuperSonic_Walk16_QuillUp
 		ptr	\1_SuperSonic_Walk17_QuillUp
-		ptr	\1_SuperSonic_Walk18_QuillUp			; $9C
+		ptr	\1_SuperSonic_Walk18_QuillUp		; $9C
 		ptr	\1_SuperSonic_Walk21_QuillUp
 		ptr	\1_SuperSonic_Walk22_QuillUp
 		ptr	\1_SuperSonic_Walk23_QuillUp
-		ptr	\1_SuperSonic_Walk24_QuillUp			; $A0
+		ptr	\1_SuperSonic_Walk24_QuillUp		; $A0
 		ptr	\1_SuperSonic_Walk25_QuillUp
 		ptr	\1_SuperSonic_Walk26_QuillUp
 		ptr	\1_SuperSonic_Walk27_QuillUp
-		ptr	\1_SuperSonic_Walk28_QuillUp			; $A4
+		ptr	\1_SuperSonic_Walk28_QuillUp		; $A4
 		ptr	\1_SuperSonic_Walk31_QuillUp
 		ptr	\1_SuperSonic_Walk32_QuillUp
 		ptr	\1_SuperSonic_Walk33_QuillUp
-		ptr	\1_SuperSonic_Walk34_QuillUp			; $A8
+		ptr	\1_SuperSonic_Walk34_QuillUp		; $A8
 		ptr	\1_SuperSonic_Walk35_QuillUp
 		ptr	\1_SuperSonic_Walk36_QuillUp
 		ptr	\1_SuperSonic_Walk37_QuillUp
-		ptr	\1_SuperSonic_Walk38_QuillUp			; $AC
+		ptr	\1_SuperSonic_Walk38_QuillUp		; $AC
 		ptr	\1_SuperSonic_Walk41_QuillUp
 		ptr	\1_SuperSonic_Walk42_QuillUp
 		ptr	\1_SuperSonic_Walk43_QuillUp
-		ptr	\1_SuperSonic_Walk44_QuillUp			; $B0
+		ptr	\1_SuperSonic_Walk44_QuillUp		; $B0
 		ptr	\1_SuperSonic_Walk45_QuillUp
 		ptr	\1_SuperSonic_Walk46_QuillUp
 		ptr	\1_SuperSonic_Walk47_QuillUp
-		ptr	\1_SuperSonic_Walk48_QuillUp			; $B4	
+		ptr	\1_SuperSonic_Walk48_QuillUp		; $B4	
 		ptr	\1_SuperSonic_Run1
 		ptr	\1_SuperSonic_Run2
 		ptr	\1_SuperSonic_Run3
-		ptr	\1_SuperSonic_Run4				; $B8
+		ptr	\1_SuperSonic_Run4			; $B8
 		ptr	\1_SuperSonic_Run1_QuillUp
 		ptr	\1_SuperSonic_Run2_QuillUp
 		ptr	\1_SuperSonic_Run3_QuillUp
-		ptr	\1_SuperSonic_Run4_QuillUp			; $BC	
+		ptr	\1_SuperSonic_Run4_QuillUp		; $BC	
 		ptr	\1_SuperSonic_Push1
 		ptr	\1_SuperSonic_Push2
 		ptr	\1_SuperSonic_Push3
-		ptr	\1_SuperSonic_Push4				; $C0
+		ptr	\1_SuperSonic_Push4			; $C0
 		ptr	\1_SuperSonic_Duck	
 		ptr	\1_SuperSonic_Balance1
 		ptr	\1_SuperSonic_Balance2
@@ -204,15 +204,15 @@ Sonic_Sprites:	macro
 		ptr	\1_SuperSonic_Balance4
 		ptr	\1_SuperSonic_Balance5
 		ptr	\1_SuperSonic_Balance6
-		ptr	\1_Sonic_Balance11				; $C8
+		ptr	\1_Sonic_Balance11			; $C8
 		ptr	\1_Sonic_Balance12
 		ptr	\1_Sonic_Balance13
 		ptr	\1_Sonic_Balance14
-		ptr	\1_Sonic_Balance21				; $CC
+		ptr	\1_Sonic_Balance21			; $CC
 		ptr	\1_Sonic_Balance22
 		ptr	\1_Sonic_Balance23
 		ptr	\1_Sonic_LoseFooting
-		ptr	\1_Sonic_Balance31				; $D0
+		ptr	\1_Sonic_Balance31			; $D0
 		ptr	\1_Sonic_Balance32
 		ptr	\1_Sonic_Stop1
 		ptr	\1_Sonic_Stop2
@@ -221,7 +221,7 @@ Sonic_Sprites:	macro
 		endm
 
 Map_Sonic:
-		Sonic_Sprites	Frame	; generate the pointer index
+		Sonic_Sprites	Frame				; generate the pointer index
 
 Frame_Sonic_Blank:	spritemap 
 		endsprite 

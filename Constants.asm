@@ -25,7 +25,11 @@ sizeof_ost_level_only:	equ sizeof_ost*countof_ost_level_only
 sizeof_plc:			equ 6				; size of one pattern load cue
 countof_plc:		equ $10					; number of slots in the pattern load cue buffer
 sizeof_plc_buffer:	equ sizeof_plc*countof_plc		; total size of the PLC buffer, $60 by default
-sizeof_priority:	equ $80					; size of one priority section in sprite queue
+
+priority_size_bits:	equ 7
+sizeof_priority:	equ 1<<priority_size_bits		; $80; size of one priority section in sprite queue
+priority_count_bits:	equ 3
+countof_priority:		equ 1<<priority_count_bits	; 8; the number of priority sections in sprite queue
 
 sizeof_dma:			equ $E				; size of one DMA command
 countof_dma:		equ $12					; number of slots in DMA queue
@@ -70,7 +74,7 @@ vram_start:				 equ $0000
 vram_sprites:			equ $F800			; sprite attribute table ($280 bytes)
 sizeof_vram_sprites:	equ $280				
 vram_hscroll:			equ $FC00			; horizontal scroll table ($380 bytes); extends until $FF7F
-sizeof_vram_hscroll:	equ $380				; 224 lines * 2 bytes per entry * 2 plane nametables
+sizeof_vram_hscroll:	equ 224*2*2				; $380; 224 lines * 2 bytes per entry * 2 plane nametables
 
 ; VRAM regions for main game
 ; Plane dimensions 64x32

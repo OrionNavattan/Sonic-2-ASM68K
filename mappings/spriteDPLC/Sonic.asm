@@ -3,7 +3,7 @@
 ; -------------------------------------------------------------------------------
 
 DPLC_Sonic:	
-		Sonic_Sprites	DPLC	; generate the pointer table
+		Sonic_Sprites	DPLC				; generate the pointer table
 
 DPLC_Sonic_Blank:	dplcheader
 DPLC_Sonic_Blank_End

@@ -490,6 +490,9 @@ Current_ZoneAndAct:	equ v_zone
 Current_Zone:		equ v_zone
 Current_Act:		equ v_act
 Life_count:			equ v_lives
+Current_Special_StageAndAct:	equ v_special_stage
+Current_Special_Stage:		equ v_special_stage
+Current_Special_Act:		equ v_special_act
 Continue_count:		equ v_continues
 Super_Sonic_flag:	equ f_super
 Time_Over_flag:		equ f_time_over
