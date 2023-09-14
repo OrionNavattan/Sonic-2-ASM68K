@@ -787,8 +787,8 @@ DoModulation:
 
 		ensure1byteoffset 8Ch
 
-GenNotePSG:	macro	const, psgfq, fmfq
-		if strlen("\psgfq")>0
+GenNotePSG:	macro	const,psgfq,fmfq
+		ifarg \psgfq
 			dw \psgfq				; add PSG note value into ROM
 		endc
 		endm		
@@ -1077,13 +1077,13 @@ PSGNoteOff:
 		ensure1byteoffset 0C0h
     endc
 
-GenNoteFM:	macro	const, psgfq, fmfq, firstoctave
+GenNoteFM:	macro	const,psgfq,fmfq,firstoctave
 		if OptimizeSoundDriver
 			if strlen("\fmfq")>0&strlen("\firstoctave")>0 ; only include values for the first octave; the rest will be calculated on the fly to save space
 			dw \fmfq				; add FM note value into ROM
 			endc
 		else
-			if strlen("\fmfq")>0
+			ifarg \fmfq
 			dw \fmfq				; add FM note value into ROM
 			endc
 		endc	
@@ -1137,12 +1137,14 @@ PauseMusic:
 		ld	(f_sfx),a				; set SFX update flag
 		ld	ix,z_sfx_fm_start			; ix = start of SFX track RAM
 		ld	b,countof_sfx_fm_tracks			; 3 FM
+
+	if OptimizeSoundDriver=0
+		; None of this is necessary; we can just fall through to .resume_track instead	
 		call	.resume_track				; resume SFX tracks
 		xor	a					; a = 0
 		ld	(f_sfx),a				; clear SFX updating flag
-    if OptimizeSoundDriver=0
 		call	BankSwitchToMusic			; bankswitch to music (pointless, as music isn't updated until the next frame)
-		pop	ix					; restore ix (necessary, as nothing uses it beyond this point...)
+		pop	ix					; restore ix (unnecessary, as nothing uses it beyond this point...)
     endc
 		ret
 ; ===========================================================================
@@ -1267,7 +1269,7 @@ PlaySoundID:
 		jr	*
 ; ===========================================================================
 
-GenSoundCmds:	macro	name, realcmd
+GenSoundCmds:	macro	name,realcmd
 		ifarg \realcmd
 		jp	SoundCmd_\name				; generate a jump for every real command
 		
@@ -1379,6 +1381,12 @@ Sound_PlayBGM:
 		res	chf_enable_bit,(ix+ch_flags)		; clear 'track is playing' bit (ch_Flags)
 		add	ix,de					; advance to next track
 		djnz	.cleartrackplayloop			; repeat for all tracks
+	
+	if FixBugs
+		; This was in Sonic 1's driver, but this driver foolishly removed it.
+		xor	a
+		(z_abs_vars+v_priority),a		; clear SFX priority
+	endc
 
 		; Back up all global variables and music track memory so the music can resume after the 1-up music
 		; completes.
@@ -1389,8 +1397,16 @@ Sound_PlayBGM:
 	
 		ld	a,80h
 		ld	(z_abs_vars+f_has_backup),a		; set 1-up playing flag
+		
+	if FixBugs=0
+		; This is done in the wrong place: it should have been done before
+		; the variables are backed-up. Because of this, SFXPriorityVal will
+		; be set back to a non-zero value when the 1-up jingle is over,
+		; preventing lower-priority sounds from being able to play until a
+		; high-priority sound is played.	
 		xor	a
 		ld	(z_abs_vars+v_priority),a		; clear SFX priority
+	endc	
 		jr	.bgm_loadmusic	
 ; ===========================================================================
 
@@ -3280,7 +3296,7 @@ SongCom_Release34:
 ; Priority table
 ; ---------------------------------------------------------------------------
 
-GenPriority:	macro	name, priority
+GenPriority:	macro	name,priority
 		db \priority
 		endm
 		
@@ -3358,7 +3374,10 @@ EnvData_0C:
 
 EnvData_0D:
 		db	0Eh,0Dh,0Ch,0Bh,0Ah,9,8,7,6,5,4,3,2,1,0,80h
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Master playlist
+; ---------------------------------------------------------------------------
 
 MasterPlaylist: macro  name,tempo,flag
 		
@@ -3374,7 +3393,10 @@ MasterPlaylist: macro  name,tempo,flag
 
 MusicIndex:		
 		MusicFiles	MasterPlaylist			; generate playlist entries and Z80 constants
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Speed shoes tempo table
+; ---------------------------------------------------------------------------
 
 GenSpeedup:	macro	name,tempo,flag
 		db \tempo
@@ -3382,7 +3404,10 @@ GenSpeedup:	macro	name,tempo,flag
 		
 SpeedUpIndex:
 		MusicFiles	GenSpeedup			; generate the speed shoes tempo list	
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; DAC sample metadata
+; ---------------------------------------------------------------------------
 		
 		ensure1byteoffset 1Ch
 
@@ -3399,7 +3424,10 @@ DACPtrTbl:
 		zsample	DAC_Timpani			
 		zsample DAC_Tom			
 		zsample	DAC_VLowClap			
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; DAC sample playlist
+; ---------------------------------------------------------------------------
 
 		ensure1byteoffset 22h
 		
