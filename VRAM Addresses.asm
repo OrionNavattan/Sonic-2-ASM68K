@@ -199,17 +199,17 @@ ArtTile_ArtUnc_MTZAnimBack_1          = $6B80
 ArtTile_ArtUnc_MTZAnimBack_2          = $6C40
 vram_Asteron:           	equ $6D00
 vram_GiantCog:              equ $6F00
-vram_WheelIndent:        equ $7E00
-vram_RopePlat:               equ $7F20
+vram_WheelIndent:        	equ $7E00
+vram_RopePlat:              equ $7F20
 vram_BoltEnd_Rope:          equ $7FA0
 vram_SteamSpring:           equ $80A0
 vram_SpikeBlock:          	equ $8280
 vram_MTZSpike:              equ $8380
 vram_Slicer:				equ $8780
-vram_Nut:         equ $A000
+vram_Nut:         			equ $A000
 vram_LavaBubble:         	equ $A6C0
 vram_Cog:                	equ $ABE0
-vram_TeleportFlash:      equ $AD60
+vram_TeleportFlash:     	equ $AD60
 
 ; WFZ
 vram_Clucker:             	equ $6F20
@@ -217,7 +217,7 @@ vram_WFZTiltPlatforms:		equ $7260
 vram_WFZVrtclLaser:         equ $73E0
 vram_WFZWallTurret:         equ $7560
 vram_WFZHrzntlLaser:        equ $7860
-vram_ConvPulley:  equ $7D40
+vram_ConvPulley:  			equ $7D40
 vram_Hook:              	equ $7F40			; mappings for this object are bugged, this is worked around by adding 4 to the tile setting
 vram_WFZBeltPlatform:       equ $81C0
 vram_WFZGunPlatform:        equ $8340
@@ -238,7 +238,7 @@ vram_HTZFireball1:          equ $73C0
 vram_HTZRock:               equ $7640
 vram_SeeSaw:             	equ $78C0
 vram_Sol:                   equ $7BC0
-vram_Tram:            equ $7CC0
+vram_Tram:           		equ $7CC0
 vram_HTZFireball2:          equ $82C0
 vram_HTZOneWayBarrier:      equ $84C0
 ArtTile_ArtUnc_HTZMountains:        = $0500

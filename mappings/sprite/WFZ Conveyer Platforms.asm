@@ -1,4 +1,8 @@
-Map_objBD:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Wing Fortress conveyer platforms
+; -------------------------------------------------------------------------------
+
+Map_ConvPlat:	index offset(*)
 		ptr	Map_objBD_0006
 		ptr	Map_objBD_0018
 		ptr	Map_objBD_002A

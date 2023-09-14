@@ -27908,11 +27908,11 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr WallTurret					; $B8
 		ptr HorizontalLaser				; laser that shoots down the Tornado at the start of WFZ
 		ptr ConveyerPulley				; WFZ conveyer wheel
-		ptr Unknown2					; unused, unknown
+		ptr StaticHook					; unused, unknown
 		ptr ShipExhaust					; $BC ; exhaust from Eggman's getaway ship in the WFZ/DEZ transition
 		ptr ConveyerPlatforms				; WFZ conveyer platforms
 		ptr LateralCannon
-		ptr Stick
+		ptr PropellerShaft
 		ptr Catapult					; $C0
 		ptr BreakablePlating
 		ptr Rivet
@@ -69757,8 +69757,8 @@ SubData_Index:	index offset(*),,2
 		ptr off_3AFC8					; 40
 		ptr off_3AFC8					; 41
 		ptr off_3AFC8					; 42
-		ptr off_3BBFE					; 43
-		ptr off_3BBFE					; 44
+		ptr SubData_ShipExh				; 43
+		ptr SubData_ShipExh				; 44
 		ptr SubData_Cloud				; 45
 		ptr off_3AFD2					; 46
 		ptr SubData_Cloud				; 47
@@ -69775,18 +69775,18 @@ SubData_Index:	index offset(*),,2
 		ptr off_3BA36					; 58
 		ptr SubData_HorizLaser				; 59
 		ptr SubData_ConvPulley				; 60
-		ptr off_3BB96					; 61
-		ptr off_3BBFE					; 62
-		ptr off_3BD24					; 63
-		ptr off_3BD24					; 64
-		ptr off_3BE2C					; 65
-		ptr off_3BECE					; 66
-		ptr off_3C08E					; 67
-		ptr off_3C276					; 68
-		ptr off_3C3B8					; 69
+		ptr SubData_StatHook				; 61
+		ptr SubData_ShipExh				; 62
+		ptr SubData_ConvPlat				; 63
+		ptr SubData_ConvPlat				; 64
+		ptr SubData_LatCan				; 65
+		ptr SubData_PropShaft				; 66
+		ptr SubData_CPult				; 67
+		ptr SubData_BreakPlate				; 68
+		ptr SubData_Rivet				; 69
 		ptr TornadoSmoke				; invalid
 		ptr off_377BE					; 71
-		ptr off_3C438					; 72
+		ptr SubData_TorSmoke				; 72
 		ptr off_3CC80					; 73
 		ptr off_3CC8A					; 74
 		ptr off_3CC94					; 75
@@ -71951,7 +71951,7 @@ Turt_ChkDist:
 		; This will never trigger the branch below, as d0 is only ever 0 or 2 after a call
 		; to FindNearestPlayer. My guess is that this was supposed to branch if the player
 		; was to the right of the Turtloid, in which case d2 should have been tested, as in
-		; above fix. (Changing the branch condition to bne is another way to do this.)
+		; above fix. (Changing the branch condition to bne is another way to fix this.)
 		tst.w	d0					; d0 = direction to nearest player	
 	endc	
 		bmi.w	TRider_SharedRTS			; supposed to branch if player is to right, but never does
@@ -74241,7 +74241,6 @@ ChildData_GrabString:
 		
 SubData_Grabber:
 	if FixBugs
-		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,4,$2C/2,id_col_8x8
 		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,4,$2C/2,id_col_8x8
 	else 
 		; The Grabber disappears a bit too early off the edges of the screen. This is 
@@ -76737,12 +76736,13 @@ loc_3B312:
 		add.w	d0,ost_x_pos(a0)
 		bra.w	DeleteBehindScreen
 ; ===========================================================================
+
 SubData_Cloud:	
 		dc.l Map_Cloud				
 		dc.w $454F
 		dc.w $406
 		dc.w $3000
-		
+; ===========================================================================		
 
 		include "mappings/sprite/SCZ Clouds.asm"
 
@@ -77237,7 +77237,6 @@ byte_3B830:
 		dc.b afChange,1
 		even
 
-
 byte_3B836:	
 		dc.b $3F
 		dc.b id_Frame_TlitPlat_Vert
@@ -77532,39 +77531,34 @@ SubData_ConvPulley:
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object BB - Removed object (unknown, unused)
+; Object BB - WFZ stationary hook (unused)
 ; ----------------------------------------------------------------------------
 
-Unknown2:				
+StaticHook:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3BB8A(pc,d0.w),d1
-		jmp	off_3BB8A(pc,d1.w)
+		move.w	StatHook_Index(pc,d0.w),d1
+		jmp	StatHook_Index(pc,d1.w)
 ; ===========================================================================
-off_3BB8A:	index offset(*),,2
-		ptr loc_3BB8E					; 0 
-		ptr loc_3BB92					; 2
-; ===========================================================================
-
-loc_3BB8E:				
-		bra.w	LoadSubObjData
+StatHook_Index:	index offset(*),,2
+		ptr StatHook_Init				; 0 
+		ptr StatHook_Display				; 2
 ; ===========================================================================
 
-loc_3BB92:				
+StatHook_Init:				
+		bra.w	LoadSubObjData				; goto StatHook_Display next
+; ===========================================================================
+
+StatHook_Display:				
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3BB96:	
-		dc.l Map_3BBA0	
-		dc.w $23FA
-		dc.w $404
-		dc.w $C09
+
+SubData_StatHook:
+		subobjdata	Map_StatHook,tile_Nem_Hook+tile_pal2,render_rel,4,$18/2,id_col_12x16
 ; ===========================================================================
-Map_3BBA0:				
-		dc.w word_3BBA2-Map_3BBA0
-word_3BBA2:	dc.w 3			
-		dc.w $C005,    0,    0,$FFF4			; 0
-		dc.w $D003,    4,    2,$FFFC			; 4
-		dc.w $F00B,    8,    4,$FFF4			; 8
+
+		include "mappings/sprite/WFZ Stationary Hook (unused).asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object BC - Exhaust from Robotnik's getaway ship in WFZ
@@ -77573,21 +77567,21 @@ word_3BBA2:	dc.w 3
 ShipExhaust:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3BBCA(pc,d0.w),d1
-		jmp	off_3BBCA(pc,d1.w)
+		move.w	ShipExh_Index(pc,d0.w),d1
+		jmp	ShipExh_Index(pc,d1.w)
 ; ===========================================================================
-off_3BBCA:	index offset(*),,2
-		ptr loc_3BBCE					; 0 
-		ptr loc_3BBDA					; 2
+ShipExh_Index:	index offset(*),,2
+		ptr ShipExh_Init				; 0 
+		ptr ShipExh_Main				; 2
 ; ===========================================================================
 
-loc_3BBCE:				
+ShipExh_Init:				
 		bsr.w	LoadSubObjData
 		move.w	ost_x_pos(a0),$2C(a0)
 		rts	
 ; ===========================================================================
 
-loc_3BBDA:				
+ShipExh_Main:				
 		move.w	$2C(a0),d0
 		move.w	(v_camera_x_pos_offset).w,d1
 		cmpi.w	#$380,d1
@@ -77598,17 +77592,15 @@ loc_3BBDA:
 		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3BBFE:	
-		dc.l Map_3BC08	
+SubData_ShipExh:	
+		dc.l Map_ShipExh	
 		dc.w $4465
 		dc.w $404
 		dc.w $1000
 ; ===========================================================================
-Map_3BC08:				
-		dc.w word_3BC0A-Map_3BC08
-word_3BC0A:	dc.w 2			
-		dc.w $F00D,    0,    0,$FFF0			; 0
-		dc.w	$D,$1000,$1000,$FFF0			; 4
+
+		include "mappings/sprite/WFZ Ship Exhaust.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object BD - WFZ ascending/descending metal platforms
@@ -77617,10 +77609,10 @@ word_3BC0A:	dc.w 2
 ConveyerPlatforms:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3BC2A(pc,d0.w),d1
-		jmp	off_3BC2A(pc,d1.w)
+		move.w	ConvPlat_Index(pc,d0.w),d1
+		jmp	ConvPlat_Index(pc,d1.w)
 ; ===========================================================================
-off_3BC2A:	index offset(*),,2
+ConvPlat_Index:	index offset(*),,2
 		ptr loc_3BC30					; 0 
 		ptr loc_3BC3C					; 2
 		ptr loc_3BC50					; 4
@@ -77681,7 +77673,7 @@ word_3BCA8:
 ; ===========================================================================
 
 loc_3BCAC:				
-		lea	(off_3BD2E).l,a1
+		lea	(Ani_ConvPlat).l,a1
 		jmpto	AnimateSprite,JmpTo25_AnimateSprite
 ; ===========================================================================
 
@@ -77698,7 +77690,7 @@ loc_3BCC0:
 ; ===========================================================================
 
 loc_3BCCC:				
-		lea	(off_3BD2E).l,a1
+		lea	(Ani_ConvPlat).l,a1
 		jmpto	AnimateSprite,JmpTo25_AnimateSprite
 ; ===========================================================================
 
@@ -77730,13 +77722,13 @@ loc_3BCF8:
 locret_3BD22:				
 		rts	
 ; ===========================================================================
-off_3BD24:	
-		dc.l Map_3BD3E	
+SubData_ConvPlat:	
+		dc.l Map_ConvPlat	
 		dc.w $E40E
 		dc.w $404
 		dc.w $1800
 		
-off_3BD2E:	index offset(*)
+Ani_ConvPlat:	index offset(*)
 		ptr byte_3BD32					; 0 
 		ptr byte_3BD38					; 1
 		
@@ -77748,19 +77740,9 @@ byte_3BD38:
 		dc.b   1,  0,  1,  2,$FA
 		even
 ; ===========================================================================
-Map_3BD3E:				
-		dc.w word_3BD44-Map_3BD3E			; 0
-		dc.w word_3BD56-Map_3BD3E			; 1
-		dc.w word_3BD68-Map_3BD3E			; 2
-word_3BD44:	dc.w 2			
-		dc.w $FC08,    0,    0,$FFE8			; 0
-		dc.w $FC08,    3,    1,	   0			; 4
-word_3BD56:	dc.w 2			
-		dc.w $FC08,    6,    3,$FFE8			; 0
-		dc.w $FC08, $806, $803,	   0			; 4
-word_3BD68:	dc.w 2			
-		dc.w $FC08,    9,    4,$FFE8			; 0
-		dc.w $FC08, $809, $804,	   0			; 4
+
+		include "mappings/sprite/WFZ Conveyer Platforms.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object BE - WFZ lateral cannon (temporary platform that pops in/out)
@@ -77769,10 +77751,10 @@ word_3BD68:	dc.w 2
 LateralCannon:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3BD88(pc,d0.w),d1
-		jmp	off_3BD88(pc,d1.w)
+		move.w	LatCan_Index(pc,d0.w),d1
+		jmp	LatCan_Index(pc,d1.w)
 ; ===========================================================================
-off_3BD88:	index offset(*),,2
+LatCan_Index:	index offset(*),,2
 		ptr loc_3BD94					; 0 
 		ptr loc_3BDA2					; 2
 		ptr loc_3BDC6					; 4
@@ -77804,7 +77786,7 @@ loc_3BDB4:
 ; ===========================================================================
 
 loc_3BDC6:				
-		lea	(off_3BE36).l,a1
+		lea	(Ani_LatCan).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -77844,13 +77826,13 @@ loc_3BE16:
 		move.w	(sp)+,d4
 		jmpto	DetectPlatform,JmpTo9_DetectPlatform
 ; ===========================================================================
-off_3BE2C:
-		dc.l Map_3BE46	
+SubData_LatCan:
+		dc.l Map_LatCan	
 		dc.w $E41A
 		dc.w $404
 		dc.w $1800
 		
-off_3BE36:	index offset(*)	
+Ani_LatCan:	index offset(*)	
 		ptr byte_3BE3A					; 0 
 		ptr byte_3BE40					; 1
 byte_3BE3A:
@@ -77859,12 +77841,12 @@ byte_3BE3A:
 byte_3BE40:
 		dc.b   5,  3,  2,  1,  0,$FC
 ; ===========================================================================
-Map_3BE46:				
-		dc.w word_3BE50-Map_3BE46			; 0
-		dc.w word_3BE62-Map_3BE46			; 1
-		dc.w word_3BE74-Map_3BE46			; 2
-		dc.w word_3BE86-Map_3BE46			; 3
-		dc.w word_3BE98-Map_3BE46			; 4
+Map_LatCan:				
+		dc.w word_3BE50-Map_LatCan			; 0
+		dc.w word_3BE62-Map_LatCan			; 1
+		dc.w word_3BE74-Map_LatCan			; 2
+		dc.w word_3BE86-Map_LatCan			; 3
+		dc.w word_3BE98-Map_LatCan			; 4
 word_3BE50:	dc.w 2			
 		dc.w $E809,    0,    0,$FFE8			; 0
 		dc.w $E809,    6,    3,	   0			; 4
@@ -77882,16 +77864,16 @@ word_3BE98:	dc.w 2
 		dc.w $E80E, $82A, $815,	   0			; 4
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object BF - Stick (rotaty-stick badnik in WFZ)
+; Object BF - WFZ propeller shaft (unused)
 ; ----------------------------------------------------------------------------
 
-Stick:				
+PropellerShaft:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3BEB8(pc,d0.w),d1
-		jmp	off_3BEB8(pc,d1.w)
+		move.w	PropShaft_Index(pc,d0.w),d1
+		jmp	PropShaft_Index(pc,d1.w)
 ; ===========================================================================
-off_3BEB8:	index offset(*),,2
+PropShaft_Index:	index offset(*),,2
 		ptr loc_3BEBC					; 0 
 		ptr loc_3BEC0					; 2
 ; ===========================================================================
@@ -77901,26 +77883,26 @@ loc_3BEBC:
 ; ===========================================================================
 
 loc_3BEC0:				
-		lea	(off_3BED8).l,a1
+		lea	(Ani_PropShaft).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3BECE:
-		dc.l Map_3BEE0	
+SubData_PropShaft:
+		dc.l Map_PropShaft	
 		dc.w $E450
 		dc.w $404
 		dc.w $404
 		
-off_3BED8:	index offset(*)
+Ani_PropShaft:	index offset(*)
 		ptr byte_3BEDA
 byte_3BEDA:	
 		dc.b   1,  0,  1,  2,$FF
 		even
 
-Map_3BEE0:				
-		dc.w word_3BEE6-Map_3BEE0			; 0
-		dc.w word_3BEF0-Map_3BEE0			; 1
-		dc.w word_3BEFA-Map_3BEE0			; 2
+Map_PropShaft:				
+		dc.w word_3BEE6-Map_PropShaft			; 0
+		dc.w word_3BEF0-Map_PropShaft			; 1
+		dc.w word_3BEFA-Map_PropShaft			; 2
 word_3BEE6:	dc.w 1			
 		dc.w $F003,    0,    0,$FFFC			; 0
 word_3BEF0:	dc.w 1			
@@ -77935,10 +77917,10 @@ word_3BEFA:	dc.w 1
 Catapult:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3BF12(pc,d0.w),d1
-		jmp	off_3BF12(pc,d1.w)
+		move.w	CPult_Index(pc,d0.w),d1
+		jmp	CPult_Index(pc,d1.w)
 ; ===========================================================================
-off_3BF12:	index offset(*),,2
+CPult_Index:	index offset(*),,2
 		ptr loc_3BF16					; 0 
 		ptr loc_3BF3E					; 2
 ; ===========================================================================
@@ -78104,14 +78086,14 @@ loc_3C088:
 		move.w	d0,ost_x_pos(a0)
 		rts	
 ; ===========================================================================
-off_3C08E:
-		dc.l Map_3C098	
+SubData_CPult:
+		dc.l Map_CPult	
 		dc.w $245C
 		dc.w $404
 		dc.w $1000
 ; ===========================================================================
-Map_3C098:				
-		dc.w word_3C09A-Map_3C098
+Map_CPult:				
+		dc.w word_3C09A-Map_CPult
 		
 word_3C09A:	
 		dc.w 2			
@@ -78126,10 +78108,10 @@ word_3C09A:
 BreakablePlating:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3C0BA(pc,d0.w),d1
-		jmp	off_3C0BA(pc,d1.w)
+		move.w	BreakPlate_Index(pc,d0.w),d1
+		jmp	BreakPlate_Index(pc,d1.w)
 ; ===========================================================================
-off_3C0BA:	index offset(*),,2
+BreakPlate_Index:	index offset(*),,2
 		ptr loc_3C0C0					; 0 
 		ptr loc_3C0D6					; 2
 		ptr loc_3C1AA					; 4
@@ -78297,19 +78279,19 @@ loc_3C26C:
 		move.w	#$CB,d0	
 		jmp	(PlaySound).l
 ; ===========================================================================
-off_3C276:	
-		dc.l Map_3C280	
+SubData_BreakPlate:	
+		dc.l Map_BreakPlate	
 		dc.w $E48C
 		dc.w $404
 		dc.w $40E1
 ; ===========================================================================
-Map_3C280:				
-		dc.w word_3C28C-Map_3C280			; 0
-		dc.w word_3C2CE-Map_3C280			; 1
-		dc.w word_3C2E0-Map_3C280			; 2
-		dc.w word_3C2F2-Map_3C280			; 3
-		dc.w word_3C304-Map_3C280			; 4
-		dc.w word_3C316-Map_3C280			; 5
+Map_BreakPlate:				
+		dc.w word_3C28C-Map_BreakPlate			; 0
+		dc.w word_3C2CE-Map_BreakPlate			; 1
+		dc.w word_3C2E0-Map_BreakPlate			; 2
+		dc.w word_3C2F2-Map_BreakPlate			; 3
+		dc.w word_3C304-Map_BreakPlate			; 4
+		dc.w word_3C316-Map_BreakPlate			; 5
 word_3C28C:	dc.w 8			
 		dc.w $E007,    0,    0,$FFE0			; 0
 		dc.w $E007, $800, $800,$FFF0			; 4
@@ -78342,10 +78324,10 @@ word_3C316:	dc.w 2
 Rivet:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3C336(pc,d0.w),d1
-		jmp	off_3C336(pc,d1.w)
+		move.w	Rivet_Index(pc,d0.w),d1
+		jmp	Rivet_Index(pc,d1.w)
 ; ===========================================================================
-off_3C336:	index offset(*),,2
+Rivet_Index:	index offset(*),,2
 		ptr loc_3C33A					; 0 
 		ptr loc_3C33E					; 2
 ; ===========================================================================
@@ -78387,14 +78369,14 @@ loc_3C366:
 loc_3C3B4:				
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3C3B8:	
-		dc.l Map_3C3C2	
+SubData_Rivet:	
+		dc.l Map_Rivet	
 		dc.w $A461
 		dc.w $404
 		dc.w $1000
 ; ===========================================================================
-Map_3C3C2:				
-		dc.w word_3C3C4-Map_3C3C2
+Map_Rivet:				
+		dc.w word_3C3C4-Map_Rivet
 word_3C3C4:	dc.w 2			
 		dc.w $F805,    0,    0,$FFF0			; 0
 		dc.w $F805, $800, $800,	   0			; 4
@@ -78406,10 +78388,10 @@ word_3C3C4:	dc.w 2
 TornadoSmoke:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3C3E4(pc,d0.w),d1
-		jmp	off_3C3E4(pc,d1.w)
+		move.w	TorSmoke_Index(pc,d0.w),d1
+		jmp	TorSmoke_Index(pc,d1.w)
 ; ===========================================================================
-off_3C3E4:	index offset(*),,2
+TorSmoke_Index:	index offset(*),,2
 		ptr loc_3C3E8					; 0 
 		ptr loc_3C416					; 2
 ; ===========================================================================
@@ -78439,7 +78421,7 @@ loc_3C416:
 loc_3C434:				
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
-off_3C438:
+SubData_TorSmoke:
 		dc.l Map_ExplodeItem	
 		dc.w $5A4
 		dc.w $405
@@ -86372,28 +86354,28 @@ DbgWFZ_41EEC:	dc.w $20
 		dc.l $BA000000+Map_ConvPulley
 		dc.w $7800
 		dc.w $C3EA
-		dc.l $BC000000+Map_3BC08
+		dc.l $BC000000+Map_ShipExh
 		dc.w $7C00
 		dc.w $4465
-		dc.l $BD000000+Map_3BD3E
+		dc.l $BD000000+Map_ConvPlat
 		dc.w $7E00
 		dc.w $E40E
-		dc.l $BD000000+Map_3BD3E
+		dc.l $BD000000+Map_ConvPlat
 		dc.w $8000
 		dc.w $E40E
-		dc.l $BE000000+Map_3BE46
+		dc.l $BE000000+Map_LatCan
 		dc.w $8200
 		dc.w $E41A
-		dc.l $BF000000+Map_3BEE0
+		dc.l $BF000000+Map_PropShaft
 		dc.w $8400
 		dc.w $E450
-		dc.l $C0000000+Map_3C098
+		dc.l $C0000000+Map_CPult
 		dc.w $800
 		dc.w $245C
-		dc.l $C1000000+Map_3C280
+		dc.l $C1000000+Map_BreakPlate
 		dc.w $8800
 		dc.w $E48C
-		dc.l $C2000000+Map_3C3C2
+		dc.l $C2000000+Map_Rivet
 		dc.w $8A00
 		dc.w $A461
 		dc.l $19000000+Map_Plat2
