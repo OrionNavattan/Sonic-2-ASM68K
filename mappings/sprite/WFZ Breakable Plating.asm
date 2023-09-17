@@ -1,4 +1,8 @@
-Map_objC1:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Wing Fortress breakable plating
+; -------------------------------------------------------------------------------
+
+Map_BreakPlate:	index offset(*)
 		ptr	Map_objC1_000C
 		ptr	Map_objC1_004E
 		ptr	Map_objC1_0060

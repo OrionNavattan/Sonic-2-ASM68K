@@ -1,4 +1,8 @@
-Map_objC8:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Crawl enemy (CNobjc8\.asmZ)
+; -------------------------------------------------------------------------------
+
+Map_Crawl:	index offset(*)
 		ptr	Map_objC8_0008
 		ptr	Map_objC8_0022
 		ptr	Map_objC8_003C

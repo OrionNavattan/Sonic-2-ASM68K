@@ -1,4 +1,8 @@
-Map_objBF:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Wing Fortress vertical propeller shaft (unused)
+; -------------------------------------------------------------------------------
+
+Map_PropShaft:	index offset(*)
 		ptr	Map_objBF_0006
 		ptr	Map_objBF_0010
 		ptr	Map_objBF_001A

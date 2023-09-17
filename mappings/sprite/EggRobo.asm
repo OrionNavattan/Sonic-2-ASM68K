@@ -1,4 +1,8 @@
-Map_objC7:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - EggRobo (final boss)
+; -------------------------------------------------------------------------------
+
+Map_EggRobo:	index offset(*)
 		ptr	Map_objC7_002E
 		ptr	Map_objC7_0038
 		ptr	Map_objC7_0052

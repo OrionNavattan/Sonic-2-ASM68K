@@ -128,16 +128,27 @@ tile_Tails_Tails:			equ vram_Tails_Tails/sizeof_cell
 ; because you need the VRAM for something else), you will probably
 ; have to edit the mappings (or move the power-ups and HUD as a
 ; single block unit).
+; ---------------------------------------------------------------------------
 
-;ArtTile_HUD_Score_E                   = vram_HUD + $18
-;ArtTile_HUD_Score                     = ArtTile_HUD_Score_E + 2
-;ArtTile_HUD_Rings                     = vram_HUD + $30
-;ArtTile_HUD_Minutes                   = vram_HUD + $28
-;ArtTile_HUD_Seconds                   = ArtTile_HUD_Minutes + 4
-vram_Miles_Tails_1UP:        equ vram_HUD+$540			; $DE80
-;ArtTile_ArtUnc_2p_life_counter_lives  = ArtTile_ArtUnc_2p_life_counter + 9
-vram_lifecounter:				equ vram_HUD+$2140 ; $FA80
-;vram_life_counter_lives     = vram_life_counter + 9
+			rsset	vram_HUD+$300	
+vram_HUD_Score_E:		rs.b $20	; $DC40
+vram_HUD_Score:     rs.b $40	; $DC80
+			rsset 	vram_HUD+$500
+vram_HUD_Minutes:	rs.b $80	; $DE40
+vram_HUD_Seconds:	rs.b $80	; $DEC0
+vram_HUD_Rings:		equ __rs	; $DF40	
+			
+			rsset vram_HUD+$540
+vram_Miles_Tails_1UP:   rs.b $120	; $DE80
+vram_Miles_Tails_Lives: equ __rs 	; $DFA0
+
+			rsset vram_HUD+$2140
+vram_lifecounter:			rs.b $120	; $FA80
+vram_life_counter_lives:    equ __rs	; $FBA0
+
+; Preadjusted for 2P mode
+tile_Nem_HUD2P_Text:		equ (vram_HUD/sizeof_cell)>>1
+tile_Nem_HUD2P_Numbers:		equ (vram_HUD_Score_E/sizeof_cell)>>1
 
 ; Shared objects and badniks
 
@@ -152,14 +163,6 @@ vram_LeverSpring:            equ $8800
 vram_VrtclSprng:             equ $8B80
 vram_HrzntlSprng:            equ $8E00
 
-;		rsset	$8580
-;vram_HorizSpike:             rs.b sizeof_Nem_HorizSpike
-;vram_Spikes:                 rs.b sizeof_Nem_Spikes
-;vram_DignlSprng:             rs.b sizeof_Nem_DignlSprng
-;		rsset	$8800
-;vram_LeverSpring:            rs.b sizeof_Nem_LeverSpring
-;vram_VrtclSprng:             rs.b sizeof_Nem_VrtclSprng
-;vram_HrzntlSprng:            rs.b sizeof_Nem_HrzntlSprng
 
 ; Some common objects loaded on all aquatic levels
 vram_Explosion:              equ $B480

@@ -95,17 +95,17 @@ ObjPos_WFZ_1:
 		objpos $13D0,$0420,PalSwitcherWingFortress,$00,xflip
 		objpos $13D0,$0480,PalSwitcherWingFortress,$01,xflip
 		objpos $13E8,$059C,ConveyerPlatforms,$80
-		objpos $1464,$0657,LateralCannon,$00
+		objpos $1464,$0657,GunPlatform,$00
 		objpos $14E0,$04A0,Barrier,$00,xflip
-		objpos $14E3,$0627,LateralCannon,$30
-		objpos $1563,$0657,LateralCannon,$60
-		objpos $15E5,$0655,LateralCannon,$90
+		objpos $14E3,$0627,GunPlatform,$30
+		objpos $1563,$0657,GunPlatform,$60
+		objpos $15E5,$0655,GunPlatform,$90
 		objpos $1600,$04A0,BreakablePlating,$02
-		objpos $1665,$0630,LateralCannon,$C0
+		objpos $1665,$0630,GunPlatform,$C0
 		objpos $16C0,$04E0,BreakablePlating,$02
-		objpos $16E3,$0630,LateralCannon,$F0
+		objpos $16E3,$0630,GunPlatform,$F0
 		objpos $1720,$0670,PalSwitcherWingFortress,$03,xflip
-		objpos $1764,$0650,LateralCannon,$20
+		objpos $1764,$0650,GunPlatform,$20
 		objpos $17C0,$04A0,BreakablePlating,$02
 		objpos $17F1,$062C,Starpost,$02
 		objpos $1820,$02F1,Monitor,$04,rem

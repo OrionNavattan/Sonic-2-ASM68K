@@ -1,4 +1,11 @@
-Map_obj3E:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - Prison capsule
+
+; The second and third pieces have their total sprite piece values set too 
+; low, causing the last piece to not be displayed.
+; ---------------------------------------------------------------------------
+
+Map_Pri:	index offset(*)
 		ptr	Map_obj3E_000C
 		ptr	Map_obj3E_0046
 		ptr	Map_obj3E_0088
@@ -24,8 +31,13 @@ Map_obj3E_0046:	spritemap
 		piece	-8, -$18, 2, 3, $11, 0, 0, 0, 0
 		piece	-$20, -8, 3, 3, 8, 0, 0, 0, 0
 		piece	8, -8, 3, 3, 8, 1, 0, 0, 0
+	if FixBugs=0	
 		endsprite
+	endc	
 		piece	-8, -$10, 2, 3, $23, 0, 0, 0, 0
+	if FixBugs
+		endsprite
+	endc		
 
 Map_obj3E_0088:	spritemap
 		piece	-$20, -$20, 4, 2, 0, 0, 0, 0, 0
@@ -35,8 +47,13 @@ Map_obj3E_0088:	spritemap
 		piece	-8, -$20, 2, 3, $11, 0, 0, 0, 0
 		piece	-$20, 0, 3, 3, 8, 0, 0, 0, 0
 		piece	8, 0, 3, 3, 8, 1, 0, 0, 0
+	if FixBugs=0	
 		endsprite
+	endc	
 		piece	-8, -$10, 2, 3, $23, 0, 0, 0, 0
+	if FixBugs
+		endsprite
+	endc		
 
 Map_obj3E_00CA:	spritemap
 		piece	-$20, -$20, 4, 2, 0, 0, 0, 0, 0

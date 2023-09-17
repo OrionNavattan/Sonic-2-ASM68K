@@ -1,4 +1,9 @@
-Map_obj8A:	index offset(*)
+; ---------------------------------------------------------------------------
+; Sprite mappings - "SONIC TEAM	PRESENTS" and credits 
+; (unused Sonic 1 leftover)
+; ---------------------------------------------------------------------------
+
+Map_S1Cred:	index offset(*)
 		ptr	Map_obj8A_0016
 		ptr	Map_obj8A_0088
 		ptr	Map_obj8A_010A

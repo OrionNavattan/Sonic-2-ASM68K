@@ -8848,10 +8848,10 @@ byte_706C:	dc.b   2,$80,  0,  2				; 0
 StartBannerSpecial:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	SS_StartBanner_Index(pc,d0.w),d1
-		jmp	SS_StartBanner_Index(pc,d1.w)
+		move.w	SS_StartBan_Index(pc,d0.w),d1
+		jmp	SS_StartBan_Index(pc,d1.w)
 ; ===========================================================================
-SS_StartBanner_Index:	index offset(*),,2
+SS_StartBan_Index:	index offset(*),,2
 		ptr loc_714A					; 0 				
 		ptr loc_718A					; 2
 		ptr loc_71B4					; 4
@@ -8894,7 +8894,7 @@ loc_7158:
 		move.w	#$80,ost_x_pos(a0)
 		move.w	#-$40,ost_y_pos(a0)
 		move.w	#$100,ost_y_vel(a0)
-		move.l	#Map_obj5F_a,ost_mappings(a0)
+		move.l	#Map_SpecStartBan,ost_mappings(a0)
 		move.w	#tile_Nem_SpecialStart,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#1,ost_priority(a0)
@@ -8919,7 +8919,7 @@ loc_71B4:
 		bne.w	JmpTo_DisplaySprite
 	endc
 		moveq	#6,d6
-		lea	(Map_obj5F_a_004C).l,a2			; could be PC-relative
+		lea	(Frame_SpecStartBan_FlagLeft).l,a2			; could be PC-relative
 		moveq	#2,d3
 		move.w	#8,$14(a0)
 		move.b	#6,ost_primary_routine(a0)
@@ -8983,8 +8983,8 @@ locret_723E:
 		rts	
 ; ===========================================================================
 
-		include "mappings/sprite/obj5F_a.asm"
-		include "mappings/sprite/obj5F_b.asm"
+		include "mappings/sprite/Special Stage Start Banner.asm"
+		include "mappings/sprite/Special Stage Numbers.asm"
 		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -9009,7 +9009,7 @@ off_7364:	index offset(*),,2
 
 loc_736C:				
 		move.b	#2,ost_rcs_routine(a0)
-		move.l	#Map_obj5F_b,ost_mappings(a0)
+		move.l	#Map_SpecialNum,ost_mappings(a0)
 		move.w	#tile_Nem_SpecialHUD+tile_pal3,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		bset	#render_subobjects_bit,ost_render(a0)	; these two instructions could instead be "move.b render_rel|render_subobjects,ost_render(a0)
@@ -9041,7 +9041,7 @@ loc_73E0:
 		bne.s	locret_7428
 		move.b	#id_RingCountSpecial,ost_id(a1)
 		move.b	#4,ost_rcs_routine(a1)
-		move.l	#Map_obj5F_b,ost_mappings(a1)
+		move.l	#Map_SpecialNum,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHUD+tile_pal3,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		bset	#render_subobjects_bit,ost_render(a1)	; these two instructions could instead be "move.b render_rel|render_subobjects,ost_render(a0)
@@ -9062,7 +9062,7 @@ loc_742A:
 		bne.s	locret_7428
 		move.b	#id_RingCountSpecial,ost_id(a1)
 		move.b	#6,ost_rcs_routine(a1)
-		move.l	#Map_obj5F_b,ost_mappings(a1)
+		move.l	#Map_SpecialNum,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHUD+tile_pal3,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		bset	#render_subobjects_bit,ost_render(a1)	; these two instructions could instead be "move.b render_rel|render_subobjects,ost_render(a0)
@@ -27911,7 +27911,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr StaticHook					; unused, unknown
 		ptr ShipExhaust					; $BC ; exhaust from Eggman's getaway ship in the WFZ/DEZ transition
 		ptr ConveyerPlatforms				; WFZ conveyer platforms
-		ptr LateralCannon
+		ptr GunPlatform
 		ptr PropellerShaft
 		ptr Catapult					; $C0
 		ptr BreakablePlating
@@ -68519,7 +68519,7 @@ loc_3561E:
 		st.b	(f_ss_trigger_ringstogo).w
 		jsrto	FindFreeObjSpecial,JmpTo2_FindFreeObjSpecial
 		bne.w	locret_356E4
-		move.l	#Map_obj5F_b,ost_mappings(a1)
+		move.l	#Map_SpecialNum,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHUD+tile_pal3,ost_tile(a1)
 		move.b	#id_MessageSpecial,ost_id(a1)
 		move.b	#render_rel,ost_render(a1)
@@ -69083,7 +69083,7 @@ loc_35BD6:
 		jsrto	FindNextFreeObjSpecial,JmpTo_FindNextFreeObjSpecial
 		bne.s	locret_35C12
 		move.b	d0,ost_frame(a1)
-		move.l	#Map_obj5F_b,ost_mappings(a1)
+		move.l	#Map_SpecialNum,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHUD+tile_pal3,ost_tile(a1)
 		move.b	#id_MessageSpecial,ost_id(a1)
 		move.b	#4,ost_primary_routine(a1)
@@ -69779,7 +69779,7 @@ SubData_Index:	index offset(*),,2
 		ptr SubData_ShipExh				; 62
 		ptr SubData_ConvPlat				; 63
 		ptr SubData_ConvPlat				; 64
-		ptr SubData_LatCan				; 65
+		ptr SubData_GunPlat				; 65
 		ptr SubData_PropShaft				; 66
 		ptr SubData_CPult				; 67
 		ptr SubData_BreakPlate				; 68
@@ -69800,7 +69800,7 @@ SubData_Index:	index offset(*),,2
 		ptr off_3D0B2					; 83
 		ptr off_3D0BC					; 84
 		ptr off_3D0C6					; 85
-		ptr off_3D440					; 86
+		ptr SubData_Crawl					; 86
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to determine the nearest player to an object, said player's  
@@ -77748,13 +77748,13 @@ byte_3BD38:
 ; Object BE - WFZ lateral cannon (temporary platform that pops in/out)
 ; ----------------------------------------------------------------------------
 
-LateralCannon:				
+GunPlatform:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	LatCan_Index(pc,d0.w),d1
-		jmp	LatCan_Index(pc,d1.w)
+		move.w	GunPlat_Index(pc,d0.w),d1
+		jmp	GunPlat_Index(pc,d1.w)
 ; ===========================================================================
-LatCan_Index:	index offset(*),,2
+GunPlat_Index:	index offset(*),,2
 		ptr loc_3BD94					; 0 
 		ptr loc_3BDA2					; 2
 		ptr loc_3BDC6					; 4
@@ -77786,7 +77786,7 @@ loc_3BDB4:
 ; ===========================================================================
 
 loc_3BDC6:				
-		lea	(Ani_LatCan).l,a1
+		lea	(Ani_GunPlat).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -77826,13 +77826,13 @@ loc_3BE16:
 		move.w	(sp)+,d4
 		jmpto	DetectPlatform,JmpTo9_DetectPlatform
 ; ===========================================================================
-SubData_LatCan:
-		dc.l Map_LatCan	
+SubData_GunPlat:
+		dc.l Map_GunPlat	
 		dc.w $E41A
 		dc.w $404
 		dc.w $1800
 		
-Ani_LatCan:	index offset(*)	
+Ani_GunPlat:	index offset(*)	
 		ptr byte_3BE3A					; 0 
 		ptr byte_3BE40					; 1
 byte_3BE3A:
@@ -77841,27 +77841,9 @@ byte_3BE3A:
 byte_3BE40:
 		dc.b   5,  3,  2,  1,  0,$FC
 ; ===========================================================================
-Map_LatCan:				
-		dc.w word_3BE50-Map_LatCan			; 0
-		dc.w word_3BE62-Map_LatCan			; 1
-		dc.w word_3BE74-Map_LatCan			; 2
-		dc.w word_3BE86-Map_LatCan			; 3
-		dc.w word_3BE98-Map_LatCan			; 4
-word_3BE50:	dc.w 2			
-		dc.w $E809,    0,    0,$FFE8			; 0
-		dc.w $E809,    6,    3,	   0			; 4
-word_3BE62:	dc.w 2			
-		dc.w $E809,   $C,    6,$FFE8			; 0
-		dc.w $E809,  $12,    9,	   0			; 4
-word_3BE74:	dc.w 2			
-		dc.w $E809,  $18,   $C,$FFE8			; 0
-		dc.w $E809, $818, $80C,	   0			; 4
-word_3BE86:	dc.w 2			
-		dc.w $E80E,  $1E,   $F,$FFE0			; 0
-		dc.w $E80E, $81E, $80F,	   0			; 4
-word_3BE98:	dc.w 2			
-		dc.w $E80E,  $2A,  $15,$FFE0			; 0
-		dc.w $E80E, $82A, $815,	   0			; 4
+
+		include "mappings/sprite/WFZ Gun Platform.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object BF - WFZ propeller shaft (unused)
@@ -77899,16 +77881,10 @@ byte_3BEDA:
 		dc.b   1,  0,  1,  2,$FF
 		even
 
-Map_PropShaft:				
-		dc.w word_3BEE6-Map_PropShaft			; 0
-		dc.w word_3BEF0-Map_PropShaft			; 1
-		dc.w word_3BEFA-Map_PropShaft			; 2
-word_3BEE6:	dc.w 1			
-		dc.w $F003,    0,    0,$FFFC			; 0
-word_3BEF0:	dc.w 1			
-		dc.w $F003,    4,    2,$FFFC			; 0
-word_3BEFA:	dc.w 1			
-		dc.w $F003,    8,    4,$FFFC			; 0
+; ===========================================================================
+
+		include "mappings/sprite/WFZ Vertical Propeller Shaft (unused).asm"
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object C0 - WFZ catapult
@@ -78092,13 +78068,9 @@ SubData_CPult:
 		dc.w $404
 		dc.w $1000
 ; ===========================================================================
-Map_CPult:				
-		dc.w word_3C09A-Map_CPult
-		
-word_3C09A:	
-		dc.w 2			
-		dc.w $E908,    0,    0,$FFF0			; 0
-		dc.w $E101,    3,    1,	   8			; 4
+
+		include "mappings/sprite/WFZ Catapult.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object C1 - WFZ breakable plating
@@ -78118,7 +78090,7 @@ BreakPlate_Index:	index offset(*),,2
 ; ===========================================================================
 
 loc_3C0C0:				
-		move.w	#$88,d0	
+		move.w	#id_SubData_BreakPlate,d0	
 		bsr.w	LoadSubObjData_Part2
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
@@ -78134,7 +78106,7 @@ loc_3C0D6:
 		beq.s	loc_3C12E
 
 loc_3C0E8:				
-		lea	($FFFFB000).w,a1
+		lea	(v_ost_player1).w,a1
 		move.w	ost_y_pos(a0),d0
 		subi.w	#$18,d0
 		btst	#0,(v_joypad_hold_actual).w
@@ -78169,7 +78141,7 @@ loc_3C12E:
 loc_3C140:				
 		tst.b	ost_col_property(a0)
 		beq.s	loc_3C196
-		lea	($FFFFB000).w,a1
+		lea	(v_ost_player1).w,a1
 		move.w	ost_x_pos(a0),d0
 		subi.w	#$14,d0
 		cmp.w	ost_x_pos(a1),d0
@@ -78285,37 +78257,9 @@ SubData_BreakPlate:
 		dc.w $404
 		dc.w $40E1
 ; ===========================================================================
-Map_BreakPlate:				
-		dc.w word_3C28C-Map_BreakPlate			; 0
-		dc.w word_3C2CE-Map_BreakPlate			; 1
-		dc.w word_3C2E0-Map_BreakPlate			; 2
-		dc.w word_3C2F2-Map_BreakPlate			; 3
-		dc.w word_3C304-Map_BreakPlate			; 4
-		dc.w word_3C316-Map_BreakPlate			; 5
-word_3C28C:	dc.w 8			
-		dc.w $E007,    0,    0,$FFE0			; 0
-		dc.w $E007, $800, $800,$FFF0			; 4
-		dc.w	 7,    0,    0,$FFE0			; 8
-		dc.w	 7, $800, $800,$FFF0			; 12
-		dc.w $E007,    0,    0,$FFC0			; 16
-		dc.w $E007, $800, $800,$FFD0			; 20
-		dc.w	 7,    0,    0,$FFC0			; 24
-		dc.w	 7, $800, $800,$FFD0			; 28
-word_3C2CE:	dc.w 2			
-		dc.w $F007,    0,    0,$FFF0			; 0
-		dc.w $F007, $800, $800,	   0			; 4
-word_3C2E0:	dc.w 2			
-		dc.w $F005,    8,    4,$FFF8			; 0
-		dc.w	 5,$1008,$1004,$FFF8			; 4
-word_3C2F2:	dc.w 2			
-		dc.w $F001,   $C,    6,$FFFC			; 0
-		dc.w	 1,$100C,$1006,$FFFC			; 4
-word_3C304:	dc.w 2			
-		dc.w $F001, $80C, $806,$FFFC			; 0
-		dc.w	 1,$180C,$1806,$FFFC			; 4
-word_3C316:	dc.w 2			
-		dc.w $F005, $808, $804,$FFF8			; 0
-		dc.w	 5,$1808,$1804,$FFF8			; 4
+
+		include "mappings/sprite/WFZ Breakable Plating.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object C2 - Rivet (the thing player destroys to access the boss chamber in WFZ)
@@ -78338,11 +78282,11 @@ loc_3C33A:
 
 loc_3C33E:				
 		move.b	($FFFFB01C).w,$30(a0)
-		move.w	ost_x_pos(a0),-(sp)
+		pushr.w	ost_x_pos(a0)
 		move.w	#$1B,d1
 		move.w	#8,d2
 		move.w	#9,d3
-		move.w	(sp)+,d4
+		popr.w	d4		; why not 'move.w	ost_x_pos(a0),d4'?
 		jsrto	SolidObject,JmpTo27_SolidObject
 		btst	#3,ost_primary_status(a0)
 		bne.s	loc_3C366
@@ -78358,11 +78302,11 @@ loc_3C366:
 		move.b	#2,ost_primary_routine(a0)
 		bset	#1,(v_ost_player1+ost_primary_status).w
 		bclr	#3,(v_ost_player1+ost_primary_status).w
-		lea	(v_level_layout+(sizeof_levelrow*8)+80).w,a1 ; modify level layout (Row 8, Column 80)
-		move.l	#$8A707172,(a1)+
+		lea	(v_level_layout+(sizeof_levelrow*8)+80).w,a1	; modify level layout (Row 8, Column 80)
+		move.l	#($8A70<<16)|$7172,(a1)+					; new 128x128 tile IDs
 		move.w	#$7374,(a1)+
-		lea	(v_level_layout+(sizeof_levelrow*9)+80).w,a1 ; modify level layout (Row 9, Column 80)
-		move.l	#$6E787978,(a1)+
+		lea	(v_level_layout+(sizeof_levelrow*9)+80).w,a1	; modify level layout (Row 9, Column 80)
+		move.l	#($6E78<<16)|$7978,(a1)+					; new 128x128 tile IDs
 		move.w	#$787A,(a1)+
 		move.b	#1,(f_screen_redraw).w
 
@@ -78375,11 +78319,9 @@ SubData_Rivet:
 		dc.w $404
 		dc.w $1000
 ; ===========================================================================
-Map_Rivet:				
-		dc.w word_3C3C4-Map_Rivet
-word_3C3C4:	dc.w 2			
-		dc.w $F805,    0,    0,$FFF0			; 0
-		dc.w $F805, $800, $800,	   0			; 4
+
+		include "mappings/sprite/WFZ Rivet.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object C3,C4 - Tornado's smoke at start of WFZ
@@ -79302,27 +79244,27 @@ byte_3CC7C:
 		dc.b $A2
 		
 off_3CC80:
-		dc.l Map_3CCD8	
+		dc.l Map_BWFZ	
 		dc.w $379
 		dc.w $404
 		dc.w $2000
 off_3CC8A:
-		dc.l Map_3CCD8	
+		dc.l Map_BWFZ	
 		dc.w $379
 		dc.w $401
 		dc.w $800
 off_3CC94:
-		dc.l Map_3CCD8	
+		dc.l Map_BWFZ	
 		dc.w $379
 		dc.w $405
 		dc.w $1000
 off_3CC9E:
-		dc.l Map_3D0EE	
+		dc.l Map_Eggman	
 		dc.w 0
 		dc.w $405
 		dc.w $2000
 off_3CCA8:
-		dc.l Map_3CEBC	
+		dc.l Map_BWFZ_EggPlat	
 		dc.w $A46D
 		dc.w $405
 		dc.w $2000
@@ -79348,104 +79290,10 @@ byte_3CCD0:
 		dc.b   3,  7,  8,  9, $A, $B,$FF
 		even
 ; ===========================================================================
-Map_3CCD8:				
-		dc.w word_3CCFE-Map_3CCD8			; 0
-		dc.w word_3CD20-Map_3CCD8			; 1
-		dc.w word_3CD42-Map_3CCD8			; 2
-		dc.w word_3CD64-Map_3CCD8			; 3
-		dc.w word_3CD86-Map_3CCD8			; 4
-		dc.w word_3CD98-Map_3CCD8			; 5
-		dc.w word_3CDAA-Map_3CCD8			; 6
-		dc.w word_3CDB4-Map_3CCD8			; 7
-		dc.w word_3CDBE-Map_3CCD8			; 8
-		dc.w word_3CDC8-Map_3CCD8			; 9
-		dc.w word_3CDD2-Map_3CCD8			; 10
-		dc.w word_3CDDC-Map_3CCD8			; 11
-		dc.w word_3CDE6-Map_3CCD8			; 12
-		dc.w word_3CE08-Map_3CCD8			; 13
-		dc.w word_3CE12-Map_3CCD8			; 14
-		dc.w word_3CE24-Map_3CCD8			; 15
-		dc.w word_3CE3E-Map_3CCD8			; 16
-		dc.w word_3CE60-Map_3CCD8			; 17
-		dc.w word_3CE8A-Map_3CCD8			; 18
-word_3CCFE:	dc.w 4			
-		dc.w $F80C,$2000,$2000,$FFE0			; 0
-		dc.w $F80C,$2004,$2002,	   0			; 4
-		dc.w	 9,$2008,$2004,$FFE8			; 8
-		dc.w	 9,$2808,$2804,	   0			; 12
-word_3CD20:	dc.w 4			
-		dc.w $F80C,$2000,$2000,$FFE0			; 0
-		dc.w $F80C,$2800,$2800,	   0			; 4
-		dc.w	 9,$200E,$2007,$FFE8			; 8
-		dc.w	 9,$280E,$2807,	   0			; 12
-word_3CD42:	dc.w 4			
-		dc.w $F80C,$2000,$2000,$FFE0			; 0
-		dc.w $F80C,$2800,$2800,	   0			; 4
-		dc.w	 9,$2014,$200A,$FFE8			; 8
-		dc.w	 9,$2814,$280A,	   0			; 12
-word_3CD64:	dc.w 4			
-		dc.w $F80C,$2000,$2000,$FFE0			; 0
-		dc.w $F80C,$2800,$2800,	   0			; 4
-		dc.w	 8,$201A,$200D,$FFE8			; 8
-		dc.w	 8,$281A,$280D,	   0			; 12
-word_3CD86:	dc.w 2			
-		dc.w $F805,$401D,$400E,$FFF0			; 0
-		dc.w $F805,$481D,$480E,	   0			; 4
-word_3CD98:	dc.w 2			
-		dc.w $F80D,$2021,$2010,$FFE0			; 0
-		dc.w $F80D,$2821,$2810,	   0			; 4
-word_3CDAA:	dc.w 1			
-		dc.w $F80E,$2029,$2014,$FFF0			; 0
-word_3CDB4:	dc.w 1			
-		dc.w $F80E,$2035,$201A,$FFF0			; 0
-word_3CDBE:	dc.w 1			
-		dc.w $F80E,$2041,$2020,$FFF0			; 0
-word_3CDC8:	dc.w 1			
-		dc.w $F80E,$204D,$2026,$FFF0			; 0
-word_3CDD2:	dc.w 1			
-		dc.w $F80E,$2841,$2820,$FFF0			; 0
-word_3CDDC:	dc.w 1			
-		dc.w $F80E,$2835,$281A,$FFF0			; 0
-word_3CDE6:	dc.w 4			
-		dc.w $C007,$2059,$202C,$FFF8			; 0
-		dc.w $E007,$2059,$202C,$FFF8			; 4
-		dc.w	 7,$2059,$202C,$FFF8			; 8
-		dc.w $2007,$2059,$202C,$FFF8			; 12
-word_3CE08:	dc.w 1			
-		dc.w	$C,$4071,$4038,$FFF0			; 0
-word_3CE12:	dc.w 2			
-		dc.w $F00F,$4061,$4030,$FFF0			; 0
-		dc.w $100C,$4071,$4038,$FFF0			; 4
-word_3CE24:	dc.w 3			
-		dc.w $E00F,$4061,$4030,$FFF0			; 0
-		dc.w	$F,$4061,$4030,$FFF0			; 4
-		dc.w $200C,$4071,$4038,$FFF0			; 8
-word_3CE3E:	dc.w 4			
-		dc.w $D00F,$4061,$4030,$FFF0			; 0
-		dc.w $F00F,$4061,$4030,$FFF0			; 4
-		dc.w $100F,$4061,$4030,$FFF0			; 8
-		dc.w $300C,$4071,$4038,$FFF0			; 12
-word_3CE60:	dc.w 5			
-		dc.w $C00F,$4061,$4030,$FFF0			; 0
-		dc.w $E00F,$4061,$4030,$FFF0			; 4
-		dc.w	$F,$4061,$4030,$FFF0			; 8
-		dc.w $200F,$4061,$4030,$FFF0			; 12
-		dc.w $400C,$4071,$4038,$FFF0			; 16
-word_3CE8A:	dc.w 6			
-		dc.w $B00F,$4061,$4030,$FFF0			; 0
-		dc.w $D00F,$4061,$4030,$FFF0			; 4
-		dc.w $F00F,$4061,$4030,$FFF0			; 8
-		dc.w $100F,$4061,$4030,$FFF0			; 12
-		dc.w $300F,$4061,$4030,$FFF0			; 16
-		dc.w $500C,$4071,$4038,$FFF0			; 20
-; ===========================================================================
-Map_3CEBC:				
-		dc.w word_3CEBE-Map_3CEBC
 
-word_3CEBE:
-		dc.w 2			
-		dc.w $F40E,    0,    0,$FFE0			; 0
-		dc.w $F40E, $800, $800,	   0			; 4
+		include "mappings/sprite/WFZ Boss.asm"
+		include "mappings/sprite/WFZ Eggman's Platform.asm"
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object C6 - Eggman
@@ -79645,17 +79493,17 @@ loc_3D09C:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 off_3D0B2:
-		dc.l Map_3D0EE	
+		dc.l Map_Eggman	
 		dc.w 0
 		dc.w $405
 		dc.w $1800
 off_3D0BC:
-		dc.l Map_3D1DE	
+		dc.l Map_DEZBarrier	
 		dc.w $2328
 		dc.w $401
 		dc.w $800
 off_3D0C6:
-		dc.l Map_3D0EE	
+		dc.l Map_Eggman	
 		dc.w 0
 		dc.w $405
 		dc.w $400
@@ -79688,69 +79536,10 @@ off_3D0E6:	index offset(*)
 byte_3D0E8:
 		dc.b   1,  0,  1,  2,  3,$FA
 ; ===========================================================================
-Map_3D0EE:				
-		dc.w word_3D0FE-Map_3D0EE			; 0
-		dc.w word_3D118-Map_3D0EE			; 1
-		dc.w word_3D132-Map_3D0EE			; 2
-		dc.w word_3D15C-Map_3D0EE			; 3
-		dc.w word_3D17E-Map_3D0EE			; 4
-		dc.w word_3D1A0-Map_3D0EE			; 5
-		dc.w word_3D1AA-Map_3D0EE			; 6
-		dc.w word_3D1C4-Map_3D0EE			; 7
-word_3D0FE:	dc.w 3			
-		dc.w $E60D, $500, $280,$FFF0			; 0
-		dc.w $F60E, $564, $2B2,$FFF0			; 4
-		dc.w  $E0D, $570, $2B8,$FFF0			; 8
-word_3D118:	dc.w 3			
-		dc.w $E60D, $510, $288,$FFF0			; 0
-		dc.w $F60E, $564, $2B2,$FFF0			; 4
-		dc.w  $E0D, $570, $2B8,$FFF0			; 8
-word_3D132:	dc.w 5			
-		dc.w $EC04, $518, $28C,$FFE0			; 0
-		dc.w $E40D, $51A, $28D,$FFF0			; 4
-		dc.w $F40E, $522, $291,$FFF0			; 8
-		dc.w  $401, $52E, $297,$FFE8			; 12
-		dc.w  $405, $530, $298,	 $10			; 16
-word_3D15C:	dc.w 4			
-		dc.w $EC04, $518, $28C,$FFE0			; 0
-		dc.w $E40D, $51A, $28D,$FFF0			; 4
-		dc.w $F40E, $534, $29A,$FFF0			; 8
-		dc.w  $C05, $540, $2A0,$FFF8			; 12
-word_3D17E:	dc.w 4			
-		dc.w $EC04, $518, $28C,$FFE0			; 0
-		dc.w $E40E, $544, $2A2,$FFF0			; 4
-		dc.w $FC0F, $550, $2A8,$FFF0			; 8
-		dc.w  $C01, $560, $2B0,	 $10			; 12
-word_3D1A0:	dc.w 1			
-		dc.w $FC04, $562, $2B1,$FFF8			; 0
-word_3D1AA:	dc.w 3			
-		dc.w $E60D, $508, $284,$FFF0			; 0
-		dc.w $F60E, $564, $2B2,$FFF0			; 4
-		dc.w  $E0D, $570, $2B8,$FFF0			; 8
-word_3D1C4:	dc.w 3			
-		dc.w $E70D, $508, $284,$FFF0			; 0
-		dc.w $F70E, $564, $2B2,$FFF0			; 4
-		dc.w  $F0D, $578, $2BC,$FFF0			; 8
-; ===========================================================================
-Map_3D1DE:				
-		dc.w word_3D1E6-Map_3D1DE			; 0
-		dc.w word_3D208-Map_3D1DE			; 1
-		dc.w word_3D222-Map_3D1DE			; 2
-		dc.w word_3D234-Map_3D1DE			; 3
-word_3D1E6:	dc.w 4			
-		dc.w $E005,    0,    0,$FFF8			; 0
-		dc.w $F005,    0,    0,$FFF8			; 4
-		dc.w	 5,    0,    0,$FFF8			; 8
-		dc.w $1005,    0,    0,$FFF8			; 12
-word_3D208:	dc.w 3			
-		dc.w $E005,    0,    0,$FFF8			; 0
-		dc.w $F005,    0,    0,$FFF8			; 4
-		dc.w	 5,    0,    0,$FFF8			; 8
-word_3D222:	dc.w 2			
-		dc.w $E005,    0,    0,$FFF8			; 0
-		dc.w $F005,    0,    0,$FFF8			; 4
-word_3D234:	dc.w 1			
-		dc.w $E005,    0,    0,$FFF8			; 0
+
+		include "mappings/sprite/DEZ Eggman.asm"
+		include "mappings/sprite/DEZ One-Way Barrier.asm"
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object C8 - Crawl (CNZ shield badnik)
@@ -79789,7 +79578,7 @@ loc_3D27C:
 		beq.s	loc_3D298
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		bsr.w	loc_3D416
-		lea	(off_3D44A).l,a1
+		lea	(Ani_Crawl).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -79949,41 +79738,22 @@ loc_3D416:
 locret_3D43E:				
 		rts	
 ; ===========================================================================
-off_3D440:	
-		dc.l Map_3D450	
+SubData_Crawl:	
+		dc.l Map_Crawl	
 		dc.w $8340
 		dc.w $403
 		dc.w $10D7
 
-off_3D44A:	index offset(*)
+Ani_Crawl:	index offset(*)
 		ptr byte_3D44C
 		
 byte_3D44C:
 		dc.b $13,  0,  1,$FF
 		even
 ; ===========================================================================
-Map_3D450:				
-		dc.w word_3D458-Map_3D450			; 0
-		dc.w word_3D472-Map_3D450			; 1
-		dc.w word_3D48C-Map_3D450			; 2
-		dc.w word_3D4A6-Map_3D450			; 3
-word_3D458:	dc.w 3			
-		dc.w $F00B,$2010,$2008,	   0			; 0
-		dc.w $F00F,$2000,$2000,$FFF0			; 4
-		dc.w	 9,$2024,$2012,$FFE8			; 8
-word_3D472:	dc.w 3			
-		dc.w $F00B,$2010,$2008,	   4			; 0
-		dc.w $F00F,$2000,$2000,$FFF0			; 4
-		dc.w	 9,$2024,$2012,$FFE0			; 8
-word_3D48C:	dc.w 3			
-		dc.w $F00B,$2010,$2008,$FFE8			; 0
-		dc.w	 9,$2024,$2012,$FFF0			; 4
-		dc.w $F00F,$2000,$2000,$FFF0			; 8
-word_3D4A6:	dc.w 4			
-		dc.w $F00D,$201C,$200E,$FFF0			; 0
-		dc.w	 9,$2024,$2012,$FFF8			; 4
-		dc.w	 9,$2824,$2812,$FFE0			; 8
-		dc.w $F00F,$2000,$2000,$FFF0			; 12
+
+		include "mappings/sprite/Crawl.asm"
+
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object C7 - Eggrobo (final boss)
@@ -81922,124 +81692,7 @@ byte_3E5F0:
 		dc.b   3,$13,$12,$11,$10,$16,$FF
 		even
 
-Map_EggRobo:				
-		dc.w word_3E626-Map_EggRobo			; 0
-		dc.w word_3E630-Map_EggRobo			; 1
-		dc.w word_3E64A-Map_EggRobo			; 2
-		dc.w word_3E664-Map_EggRobo			; 3
-		dc.w word_3E6B6-Map_EggRobo			; 4
-		dc.w word_3E6C0-Map_EggRobo			; 5
-		dc.w word_3E6CA-Map_EggRobo			; 6
-		dc.w word_3E6DC-Map_EggRobo			; 7
-		dc.w word_3E6DC-Map_EggRobo			; 8
-		dc.w word_3E6DC-Map_EggRobo			; 9
-		dc.w word_3E6DC-Map_EggRobo			; 10
-		dc.w word_3E6E6-Map_EggRobo			; 11
-		dc.w word_3E718-Map_EggRobo			; 12
-		dc.w word_3E722-Map_EggRobo			; 13
-		dc.w word_3E72C-Map_EggRobo			; 14
-		dc.w word_3E736-Map_EggRobo			; 15
-		dc.w word_3E740-Map_EggRobo			; 16
-		dc.w word_3E782-Map_EggRobo			; 17
-		dc.w word_3E7C4-Map_EggRobo			; 18
-		dc.w word_3E806-Map_EggRobo			; 19
-		dc.w word_3E848-Map_EggRobo			; 20
-		dc.w word_3E852-Map_EggRobo			; 21
-		dc.w word_3E85C-Map_EggRobo			; 22
-word_3E626:	dc.w 1			
-		dc.w $F00B,    0,    0,	  $C			; 0
-word_3E630:	dc.w 3			
-		dc.w $F00D,   $C,    6,$FFEC			; 0
-		dc.w	 9,  $14,   $A,$FFF4			; 4
-		dc.w $F80A,  $1A,   $D,	  $C			; 8
-word_3E64A:	dc.w 3			
-		dc.w  $800,  $23,  $11,$FFDC			; 0
-		dc.w $F80E,  $24,  $12,$FFE4			; 4
-		dc.w $F80E,  $30,  $18,	   4			; 8
-word_3E664:	dc.w $A			
-		dc.w $DC0F,$203C,$201E,$FFD4			; 0
-		dc.w $DC0F,$204C,$2026,$FFF4			; 4
-		dc.w $DC0B,$205C,$202E,	 $14			; 8
-		dc.w $DC0B,$2068,$2034,	 $2C			; 12
-		dc.w $FC0F,$2074,$203A,$FFD4			; 16
-		dc.w $FC0F,$2084,$2042,$FFF4			; 20
-		dc.w $FC0B,$2094,$204A,	 $14			; 24
-		dc.w $FC09,$20A0,$2050,	 $2C			; 28
-		dc.w $1C0C,$20A6,$2053,$FFE4			; 32
-		dc.w $1C0C,$20AA,$2055,	   4			; 36
-word_3E6B6:	dc.w 1			
-		dc.w $F00F,$20AE,$2057,$FFF0			; 0
-word_3E6C0:	dc.w 1			
-		dc.w $F40A,$20BE,$205F,$FFF4			; 0
-word_3E6CA:	dc.w 2			
-		dc.w $F40E,$20C7,$2063,	   0			; 0
-		dc.w $F40E,$20D3,$2069,$FFE0			; 4
-word_3E6DC:	dc.w 1			
-		dc.w $F00F,$20E2,$2071,$FFF0			; 0
-word_3E6E6:	dc.w 6			
-word_3E6E8:	dc.w $E006,$20F2,$2079,$FFEB			; 0
-		dc.w $E809,$20F8,$207C,$FFFB			; 4
-		dc.w $F806,$20FE,$207F,$FFEE			; 8
-		dc.w $100D,$2104,$2082,$FFE0			; 12
-		dc.w $F80E,$210C,$2086,$FFFE			; 16
-		dc.w $100D,$2118,$208C,	   0			; 20
-word_3E718:	dc.w 1			
-		dc.w $F406,$2120,$2090,$FFF8			; 0
-word_3E722:	dc.w 1			
-		dc.w $F405,$2126,$2093,$FFF8			; 0
-word_3E72C:	dc.w 1			
-		dc.w $F00F, $12B,  $95,$FFF0			; 0
-word_3E736:	dc.w 1			
-		dc.w $FC00, $13B,  $9D,$FFFC			; 0
-word_3E740:	dc.w 8			
-		dc.w $F005,$213C,$209E,$FFF0			; 0
-		dc.w $F005,$293C,$289E,	   0			; 4
-		dc.w	 5,$313C,$309E,$FFF0			; 8
-		dc.w	 5,$393C,$389E,	   0			; 12
-		dc.w $E000,$2144,$20A2,$FFE0			; 16
-		dc.w $E000,$2944,$28A2,	 $18			; 20
-		dc.w $1800,$3144,$30A2,$FFE0			; 24
-		dc.w $1800,$3944,$38A2,	 $18			; 28
-word_3E782:	dc.w 8			
-		dc.w $F005,$213C,$209E,$FFF0			; 0
-		dc.w $F005,$293C,$289E,	   0			; 4
-		dc.w	 5,$313C,$309E,$FFF0			; 8
-		dc.w	 5,$393C,$389E,	   0			; 12
-		dc.w $D800,$2145,$20A2,$FFD8			; 16
-		dc.w $D800,$2945,$28A2,	 $20			; 20
-		dc.w $2000,$3145,$30A2,$FFD8			; 24
-		dc.w $2000,$3945,$38A2,	 $20			; 28
-word_3E7C4:	dc.w 8			
-		dc.w $F005,$213C,$209E,$FFF0			; 0
-		dc.w $F005,$293C,$289E,	   0			; 4
-		dc.w	 5,$313C,$309E,$FFF0			; 8
-		dc.w	 5,$393C,$389E,	   0			; 12
-		dc.w $D000,$2146,$20A3,$FFD0			; 16
-		dc.w $D000,$2946,$28A3,	 $28			; 20
-		dc.w $2800,$3146,$30A3,$FFD0			; 24
-		dc.w $2800,$3946,$38A3,	 $28			; 28
-word_3E806:	dc.w 8			
-word_3E808:	dc.w $F005,$213C,$209E,$FFF0			; 0
-		dc.w $F005,$293C,$289E,	   0			; 4
-		dc.w	 5,$313C,$309E,$FFF0			; 8
-		dc.w	 5,$393C,$389E,	   0			; 12
-		dc.w $C800,$212A,$2095,$FFC8			; 16
-		dc.w $C800,$292A,$2895,	 $30			; 20
-		dc.w $3000,$312A,$3095,$FFC8			; 24
-		dc.w $3000,$392A,$3895,	 $30			; 28
-word_3E848:	dc.w 1			
-		dc.w $F805, $140,  $A0,$FFF8			; 0
-word_3E852:	dc.w 1			
-		dc.w	 0,    4,    2,	   0			; 0
-word_3E85C:	dc.w 8			
-		dc.w $F005,$213C,$209E,$FFF0			; 0
-		dc.w $F005,$293C,$289E,	   0			; 4
-		dc.w	 5,$313C,$309E,$FFF0			; 8
-		dc.w	 5,$393C,$389E,	   0			; 12
-		dc.w $E800,$2144,$20A2,$FFE8			; 16
-		dc.w $E800,$2944,$28A2,	 $10			; 20
-		dc.w $1000,$3144,$30A2,$FFE8			; 24
-		dc.w $1000,$3944,$38A2,	 $10			; 28
+		include "mappings/sprite/EggRobo.asm"
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to upscale graphics by a factor of 2x, based on given mappings
@@ -82315,10 +81968,10 @@ JmpTo26_SpeedToPos:
 S1_STP_Credits:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3EAD6(pc,d0.w),d1
-		jmp	off_3EAD6(pc,d1.w)
+		move.w	S1Cred_Index(pc,d0.w),d1
+		jmp	S1Cred_Index(pc,d1.w)
 ; ===========================================================================
-off_3EAD6:index offset(*),,2
+S1Cred_Index:index offset(*),,2
 		ptr loc_3EADA					; 0 
 		ptr loc_3EB48					; 2
 ; ===========================================================================
@@ -82327,7 +81980,7 @@ loc_3EADA:
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	#screen_left+160,ost_x_screen(a0)
 		move.w	#screen_top+112,ost_y_screen(a0)
-		move.l	#Map_3EB4E,ost_mappings(a0)
+		move.l	#Map_S1Cred,ost_mappings(a0)
 		move.w	#vram_S1Credits/sizeof_cell,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo65_Adjust2PArtPointer
 		move.w	(v_s1_ending_demo_num).w,d0
@@ -82352,233 +82005,8 @@ loc_3EB48:
 		jmp	(DisplaySprite).l
 ; ===========================================================================
 
-Map_3EB4E:				
-		dc.w word_3EB64-Map_3EB4E			; 0
-		dc.w word_3EBD6-Map_3EB4E			; 1
-		dc.w word_3EC58-Map_3EB4E			; 2
-		dc.w word_3ECAA-Map_3EB4E			; 3
-		dc.w word_3ED6C-Map_3EB4E			; 4
-		dc.w word_3EE0E-Map_3EB4E			; 5
-		dc.w word_3EEE0-Map_3EB4E			; 6
-		dc.w word_3EF9A-Map_3EB4E			; 7
-		dc.w word_3F094-Map_3EB4E			; 8
-		dc.w word_3F10E-Map_3EB4E			; 9
-		dc.w word_3F150-Map_3EB4E			; 10
-word_3EB64:	dc.w $E			
-		dc.w $F805,  $2E,  $17,$FF88			; 0
-		dc.w $F805,  $26,  $13,$FF98			; 4
-		dc.w $F805,  $1A,   $D,$FFA8			; 8
-		dc.w $F801,  $46,  $23,$FFB8			; 12
-		dc.w $F805,  $1E,   $F,$FFC0			; 16
-		dc.w $F805,  $3E,  $1F,$FFD8			; 20
-		dc.w $F805,   $E,    7,$FFE8			; 24
-		dc.w $F805,    4,    2,$FFF8			; 28
-		dc.w $F809,    8,    4,	   8			; 32
-		dc.w $F805,  $2E,  $17,	 $28			; 36
-		dc.w $F805,  $3E,  $1F,	 $38			; 40
-		dc.w $F805,    4,    2,	 $48			; 44
-		dc.w $F805,  $5C,  $2E,	 $58			; 48
-		dc.w $F805,  $5C,  $2E,	 $68			; 52
-word_3EBD6:	dc.w $10		
-word_3EBD8:	dc.w $D805,    0,    0,$FF80			; 0
-		dc.w $D805,    4,    2,$FF90			; 4
-		dc.w $D809,    8,    4,$FFA0			; 8
-		dc.w $D805,   $E,    7,$FFB4			; 12
-		dc.w $D805,  $12,    9,$FFD0			; 16
-		dc.w $D805,  $16,   $B,$FFE0			; 20
-		dc.w $D805,    4,    2,$FFF0			; 24
-		dc.w $D805,  $1A,   $D,	   0			; 28
-		dc.w  $805,  $1E,   $F,$FFC8			; 32
-		dc.w  $805,    4,    2,$FFD8			; 36
-		dc.w  $805,  $22,  $11,$FFE8			; 40
-		dc.w  $805,  $26,  $13,$FFF8			; 44
-		dc.w  $805,  $16,   $B,	   8			; 48
-		dc.w  $805,  $2A,  $15,	 $20			; 52
-		dc.w  $805,    4,    2,	 $30			; 56
-		dc.w  $805,  $2E,  $17,	 $44			; 60
-word_3EC58:	dc.w $A			
-		dc.w $D805,  $12,    9,$FF80			; 0
-		dc.w $D805,  $22,  $11,$FF90			; 4
-		dc.w $D805,  $26,  $13,$FFA0			; 8
-		dc.w $D805,    0,    0,$FFB0			; 12
-		dc.w $D805,  $22,  $11,$FFC0			; 16
-		dc.w $D805,    4,    2,$FFD0			; 20
-		dc.w $D809,    8,    4,$FFE0			; 24
-		dc.w  $805,  $2A,  $15,$FFE8			; 28
-		dc.w  $805,  $32,  $19,$FFF8			; 32
-		dc.w  $805,  $36,  $1B,	   8			; 36
-word_3ECAA:	dc.w $18		
-word_3ECAC:	dc.w $D805,  $1E,   $F,$FF88			; 0
-		dc.w $D805,  $3A,  $1D,$FF98			; 4
-		dc.w $D805,    4,    2,$FFA8			; 8
-		dc.w $D805,  $22,  $11,$FFB8			; 12
-		dc.w $D805,    4,    2,$FFC8			; 16
-		dc.w $D805,  $1E,   $F,$FFD8			; 20
-		dc.w $D805,  $3E,  $1F,$FFE8			; 24
-		dc.w $D805,   $E,    7,$FFF8			; 28
-		dc.w $D805,  $22,  $11,	   8			; 32
-		dc.w $D805,  $42,  $21,	 $20			; 36
-		dc.w $D805,   $E,    7,	 $30			; 40
-		dc.w $D805,  $2E,  $17,	 $40			; 44
-		dc.w $D801,  $46,  $23,	 $50			; 48
-		dc.w $D805,    0,    0,	 $58			; 52
-		dc.w $D805,  $1A,   $D,	 $68			; 56
-		dc.w  $805,  $48,  $24,$FFC0			; 60
-		dc.w  $801,  $46,  $23,$FFD0			; 64
-		dc.w  $805,    0,    0,$FFD8			; 68
-		dc.w  $801,  $46,  $23,$FFE8			; 72
-		dc.w  $805,  $2E,  $17,$FFF0			; 76
-		dc.w  $805,  $16,   $B,	   0			; 80
-		dc.w  $805,    4,    2,	 $10			; 84
-		dc.w  $805,  $1A,   $D,	 $20			; 88
-		dc.w  $805,  $42,  $21,	 $30			; 92
-word_3ED6C:	dc.w $14		
-		dc.w $D005,  $42,  $21,$FFA0			; 0
-		dc.w $D005,   $E,    7,$FFB0			; 4
-		dc.w $D005,  $2E,  $17,$FFC0			; 8
-		dc.w $D001,  $46,  $23,$FFD0			; 12
-		dc.w $D005,    0,    0,$FFD8			; 16
-		dc.w $D005,  $1A,   $D,$FFE8			; 20
-		dc.w	 5,  $4C,  $26,$FFE8			; 24
-		dc.w	 1,  $46,  $23,$FFF8			; 28
-		dc.w	 5,  $1A,   $D,	   4			; 32
-		dc.w	 5,  $2A,  $15,	 $14			; 36
-		dc.w	 5,    4,    2,	 $24			; 40
-		dc.w $2005,  $12,    9,$FFD0			; 44
-		dc.w $2005,  $3A,  $1D,$FFE0			; 48
-		dc.w $2005,   $E,    7,$FFF0			; 52
-		dc.w $2005,  $1A,   $D,	   0			; 56
-		dc.w $2001,  $46,  $23,	 $10			; 60
-		dc.w $2005,  $50,  $28,	 $18			; 64
-		dc.w $2005,  $22,  $11,	 $30			; 68
-		dc.w $2001,  $46,  $23,	 $40			; 72
-		dc.w $2005,   $E,    7,	 $48			; 76
-word_3EE0E:	dc.w $1A		
-		dc.w $D805,  $2E,  $17,$FF98			; 0
-		dc.w $D805,  $26,  $13,$FFA8			; 4
-		dc.w $D805,  $32,  $19,$FFB8			; 8
-		dc.w $D805,  $1A,   $D,$FFC8			; 12
-		dc.w $D805,  $54,  $2A,$FFD8			; 16
-		dc.w $D805,  $12,    9,$FFF8			; 20
-		dc.w $D805,  $22,  $11,	   8			; 24
-		dc.w $D805,  $26,  $13,	 $18			; 28
-		dc.w $D805,  $42,  $21,	 $28			; 32
-		dc.w $D805,  $32,  $19,	 $38			; 36
-		dc.w $D805,  $1E,   $F,	 $48			; 40
-		dc.w $D805,   $E,    7,	 $58			; 44
-		dc.w  $809,    8,    4,$FF88			; 48
-		dc.w  $805,    4,    2,$FF9C			; 52
-		dc.w  $805,  $2E,  $17,$FFAC			; 56
-		dc.w  $805,    4,    2,$FFBC			; 60
-		dc.w  $805,  $3E,  $1F,$FFCC			; 64
-		dc.w  $805,  $26,  $13,$FFDC			; 68
-		dc.w  $805,  $1A,   $D,$FFF8			; 72
-		dc.w  $805,    4,    2,	   8			; 76
-		dc.w  $805,  $58,  $2C,	 $18			; 80
-		dc.w  $805,    4,    2,	 $28			; 84
-		dc.w  $809,    8,    4,	 $38			; 88
-		dc.w  $805,  $32,  $19,	 $4C			; 92
-		dc.w  $805,  $22,  $11,	 $5C			; 96
-		dc.w  $805,    4,    2,	 $6C			; 100
-word_3EEE0:	dc.w $17		
-		dc.w $D005,  $2E,  $17,$FF98			; 0
-		dc.w $D005,  $26,  $13,$FFA8			; 4
-		dc.w $D005,  $32,  $19,$FFB8			; 8
-		dc.w $D005,  $1A,   $D,$FFC8			; 12
-		dc.w $D005,  $54,  $2A,$FFD8			; 16
-		dc.w $D005,  $12,    9,$FFF8			; 20
-		dc.w $D005,  $22,  $11,	   8			; 24
-		dc.w $D005,  $26,  $13,	 $18			; 28
-		dc.w $D005,    0,    0,	 $28			; 32
-		dc.w $D005,  $22,  $11,	 $38			; 36
-		dc.w $D005,    4,    2,	 $48			; 40
-		dc.w $D009,    8,    4,	 $58			; 44
-		dc.w	 5,  $4C,  $26,$FFD0			; 48
-		dc.w	 1,  $46,  $23,$FFE0			; 52
-		dc.w	 9,    8,    4,$FFE8			; 56
-		dc.w	 1,  $46,  $23,$FFFC			; 60
-		dc.w	 5,  $3E,  $1F,	   4			; 64
-		dc.w	 5,    4,    2,	 $14			; 68
-		dc.w $2009,    8,    4,$FFD0			; 72
-		dc.w $2005,    4,    2,$FFE4			; 76
-		dc.w $2005,  $1E,   $F,$FFF4			; 80
-		dc.w $2005,  $58,  $2C,	   4			; 84
-		dc.w $2005,  $2A,  $15,	 $14			; 88
-word_3EF9A:	dc.w $1F		
-word_3EF9C:	dc.w $D805,  $2E,  $17,$FF80			; 0
-		dc.w $D805,  $12,    9,$FF90			; 4
-		dc.w $D805,   $E,    7,$FFA0			; 8
-		dc.w $D805,  $1E,   $F,$FFB0			; 12
-		dc.w $D801,  $46,  $23,$FFC0			; 16
-		dc.w $D805,    4,    2,$FFC8			; 20
-		dc.w $D805,  $16,   $B,$FFD8			; 24
-		dc.w $D805,  $3E,  $1F,$FFF8			; 28
-		dc.w $D805,  $3A,  $1D,	   8			; 32
-		dc.w $D805,    4,    2,	 $18			; 36
-		dc.w $D805,  $1A,   $D,	 $28			; 40
-		dc.w $D805,  $58,  $2C,	 $38			; 44
-		dc.w $D805,  $2E,  $17,	 $48			; 48
-		dc.w	 5,  $5C,  $2E,$FFB0			; 52
-		dc.w	 5,  $32,  $19,$FFC0			; 56
-		dc.w	 5,  $4C,  $26,$FFD0			; 60
-		dc.w	 1,  $46,  $23,$FFE0			; 64
-		dc.w	 5,  $26,  $13,$FFE8			; 68
-		dc.w	 9,    8,    4,	   0			; 72
-		dc.w	 1,  $46,  $23,	 $14			; 76
-		dc.w	 5,  $1A,   $D,	 $1C			; 80
-		dc.w	 5,   $E,    7,	 $2C			; 84
-		dc.w	 5,    0,    0,	 $3C			; 88
-		dc.w	 1,  $46,  $23,	 $4C			; 92
-		dc.w	 5,  $2E,  $17,	 $54			; 96
-		dc.w	 5,  $3A,  $1D,	 $64			; 100
-		dc.w	 1,  $46,  $23,	 $74			; 104
-		dc.w $2005,  $12,    9,$FFF8			; 108
-		dc.w $2005,    4,    2,	   8			; 112
-		dc.w $2005,  $12,    9,	 $18			; 116
-		dc.w $2005,    4,    2,	 $28			; 120
-word_3F094:	dc.w $F			
-		dc.w $F805,  $12,    9,$FF80			; 0
-		dc.w $F805,  $22,  $11,$FF90			; 4
-		dc.w $F805,   $E,    7,$FFA0			; 8
-		dc.w $F805,  $2E,  $17,$FFB0			; 12
-		dc.w $F805,   $E,    7,$FFC0			; 16
-		dc.w $F805,  $1A,   $D,$FFD0			; 20
-		dc.w $F805,  $3E,  $1F,$FFE0			; 24
-		dc.w $F805,   $E,    7,$FFF0			; 28
-		dc.w $F805,  $42,  $21,	   0			; 32
-		dc.w $F805,  $48,  $24,	 $18			; 36
-		dc.w $F805,  $2A,  $15,	 $28			; 40
-		dc.w $F805,  $2E,  $17,	 $40			; 44
-		dc.w $F805,   $E,    7,	 $50			; 48
-		dc.w $F805,    0,    0,	 $60			; 52
-		dc.w $F805,    4,    2,	 $70			; 56
-word_3F10E:	dc.w 8			
-		dc.w $3005,  $3E,  $1F,$FFC0			; 0
-		dc.w $3005,  $22,  $11,$FFD0			; 4
-		dc.w $3005,  $2A,  $15,$FFE0			; 8
-		dc.w $3005,    4,    2,$FFF8			; 12
-		dc.w $3005,    0,    0,	   8			; 16
-		dc.w $3005,    4,    2,	 $18			; 20
-		dc.w $3001,  $46,  $23,	 $28			; 24
-		dc.w $3005,  $1A,   $D,	 $30			; 28
-word_3F150:	dc.w $11		
-		dc.w $E805,  $2E,  $17,$FFB4			; 0
-		dc.w $E805,  $26,  $13,$FFC4			; 4
-		dc.w $E805,  $1A,   $D,$FFD4			; 8
-		dc.w $E801,  $46,  $23,$FFE4			; 12
-		dc.w $E805,  $1E,   $F,$FFEC			; 16
-		dc.w $E805,  $3E,  $1F,	   4			; 20
-		dc.w $E805,   $E,    7,	 $14			; 24
-		dc.w $E805,    4,    2,	 $24			; 28
-		dc.w $E809,    8,    4,	 $34			; 32
-		dc.w	 5,  $12,    9,$FFC0			; 36
-		dc.w	 5,  $22,  $11,$FFD0			; 40
-		dc.w	 5,   $E,    7,$FFE0			; 44
-		dc.w	 5,  $2E,  $17,$FFF0			; 48
-		dc.w	 5,   $E,    7,	   0			; 52
-		dc.w	 5,  $1A,   $D,	 $10			; 56
-		dc.w	 5,  $3E,  $1F,	 $20			; 60
-		dc.w	 5,  $2E,  $17,	 $30			; 64
+		include "mappings/sprite/S1 Credits & Sonic Team Presents (unused).asm"
+
 ; ===========================================================================
 
 	if Revision<2	
@@ -82600,10 +82028,10 @@ JmpTo65_Adjust2PArtPointer:
 Prison:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3F1F2(pc,d0.w),d1
-		jmp	off_3F1F2(pc,d1.w)
+		move.w	Pri_Index(pc,d0.w),d1
+		jmp	Pri_Index(pc,d1.w)
 ; ===========================================================================
-off_3F1F2:	index offset(*),,2
+Pri_Index:	index offset(*),,2
 		ptr loc_3F212					; 0 
 		ptr loc_3F278					; 2
 		ptr loc_3F354					; 4
@@ -82637,7 +82065,7 @@ loc_3F228:
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.w	ost_y_pos(a0),$30(a1)
-		move.l	#Map_3F436,ost_mappings(a1)
+		move.l	#Map_Pri,ost_mappings(a1)
 		move.w	#tile_Nem_Capsule+tile_pal2,ost_tile(a1)
 		move.b	#render_rel|render_onscreen,ost_render(a1)
 		moveq	#0,d0
@@ -82830,50 +82258,9 @@ byte_3F42F:
 		dc.b   3,  0,  1,  2,  3,$FE,  1
 		even
 ; ===========================================================================
-Map_3F436:				
-		dc.w word_3F442-Map_3F436			; 0
-		dc.w word_3F47C-Map_3F436			; 1
-		dc.w word_3F4BE-Map_3F436			; 2
-		dc.w word_3F500-Map_3F436			; 3
-		dc.w word_3F52A-Map_3F436			; 4
-		dc.w word_3F53C-Map_3F436			; 5
-word_3F442:	dc.w 7			
-		dc.w $E00D,    0,    0,$FFE0			; 0
-		dc.w $E00D, $800, $800,	   0			; 4
-		dc.w $F00A,    8,    4,$FFE0			; 8
-		dc.w $F006,  $11,    8,$FFF8			; 12
-		dc.w $F00A, $808, $804,	   8			; 16
-		dc.w  $80E,  $17,   $B,$FFE0			; 20
-		dc.w  $80E, $817, $80B,	   0			; 24
-word_3F47C:	dc.w 7			
-		dc.w $E00D,    0,    0,$FFE0			; 0
-		dc.w $E00D, $800, $800,	   0			; 4
-		dc.w  $80E,  $17,   $B,$FFE0			; 8
-		dc.w  $80E, $817, $80B,	   0			; 12
-		dc.w $E806,  $11,    8,$FFF8			; 16
-		dc.w $F80A,    8,    4,$FFE0			; 20
-		dc.w $F80A, $808, $804,	   8			; 24
-		dc.w $F006,  $23,  $11,$FFF8			; 28
-word_3F4BE:	dc.w 7			
-word_3F4C0:	dc.w $E00D,    0,    0,$FFE0			; 0
-		dc.w $E00D, $800, $800,	   0			; 4
-		dc.w  $80E,  $17,   $B,$FFE0			; 8
-		dc.w  $80E, $817, $80B,	   0			; 12
-		dc.w $E006,  $11,    8,$FFF8			; 16
-		dc.w	$A,    8,    4,$FFE0			; 20
-		dc.w	$A, $808, $804,	   8			; 24
-		dc.w $F006,  $23,  $11,$FFF8			; 28
-word_3F500:	dc.w 5			
-word_3F502:	dc.w $E00D,    0,    0,$FFE0			; 0
-		dc.w $E00D, $800, $800,	   0			; 4
-		dc.w $F006,  $23,  $11,$FFF8			; 8
-		dc.w  $80E,  $17,   $B,$FFE0			; 12
-		dc.w  $80E, $817, $80B,	   0			; 16
-word_3F52A:	dc.w 2			
-		dc.w $F805,  $29,  $14,$FFF0			; 0
-		dc.w $F805, $829, $814,	   0			; 4
-word_3F53C:	dc.w 1			
-		dc.w $F805,  $2D,  $16,$FFF8			; 0
+
+		include "mappings/sprite/Prison Capsule.asm"
+
 ; ===========================================================================
 
 	if Revision<2
@@ -84729,97 +84116,101 @@ JmpTo2_NemDecToRAM:
 		align 4
 	endc
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to draw the HUD in one-player mode
+; ---------------------------------------------------------------------------
 
 BuildHUD:				
 		tst.w	(v_rings).w
-		beq.s	loc_40820
-		moveq	#0,d1
-		btst	#3,(v_frame_counter_low).w
-		bne.s	loc_4081E
-		cmpi.b	#9,(v_time_min).w
-		bne.s	loc_4081E
-		addq.w	#2,d1
+		beq.s	.no_rings				; branch if player has no rings
+		moveq	#id_Frame_HUD1_AllYellow,d1	; frame if neither 'RINGS' nor 'TIME' are red	
+		btst	#3,(v_frame_counter_low).w	; check bit that changes every 8 frames
+		bne.s	.notimeflash				; branch if set (only flash HUD every 8 frames)
+		cmpi.b	#9,(v_time_min).w			; have 9 minutes elapsed?
+		bne.s	.notimeflash			; branch if not
+		addq.w	#id_Frame_HUD1_TimeRed-id_Frame_HUD1_AllYellow,d1		; 'TIME' is red
 
-loc_4081E:				
-		bra.s	loc_40836
+	.notimeflash:				
+		bra.s	.display
 ; ===========================================================================
 
-loc_40820:				
-		moveq	#0,d1
-		btst	#3,(v_frame_counter_low).w
-		bne.s	loc_40836
-		addq.w	#1,d1
-		cmpi.b	#9,(v_time_min).w
-		bne.s	loc_40836
-		addq.w	#2,d1
+	.no_rings:				
+		moveq	#id_Frame_HUD1_AllYellow,d1	; frame if neither 'RINGS' nor 'TIME' are red
+		btst	#3,(v_frame_counter_low).w	; check bit that changes every 8 frames
+		bne.s	.display				; branch if set (only flash HUD every 8 frames)
+		addq.w	#id_Frame_HUD1_RingRed-id_Frame_HUD1_AllYellow,d1	; 'RINGS' is red
+		cmpi.b	#9,(v_time_min).w			; have 9 minutes elapsed?
+		bne.s	.display			; branch if not
+		addq.w	#id_Frame_HUD1_AllRed-id_Frame_HUD1_RingRed,d1	; both 'RINGS' and 'TIME' are red	
 
-loc_40836:				
-		move.w	#$90,d3	
-		move.w	#$108,d2
-		lea	(off_40A9A).l,a1
-		movea.w	#-$7936,a3
+	.display:				
+		move.w	#screen_left+16,d3	; set x pos
+		move.w	#screen_top+136,d2	; set y pos
+		lea	(Map_HUD1).l,a1
+		movea.w	#tile_Nem_HUD+tile_hi,a3	; set art tile
 		add.w	d1,d1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		bmi.s	locret_40858
-		jsrto	BuildSpr_DrawLoop,JmpTo_BuildSpr_DrawLoop
+		adda.w	(a1,d1.w),a1	; a1 = mappings for current HUD frame
+		move.w	(a1)+,d1		; d1 = total sprite pieces
+		subq.w	#1,d1			; adjust for loop counter
+		bmi.s	.skipdraw	; branch if it underflows for some reason
+		jsrto	BuildSpr_DrawLoop,JmpTo_BuildSpr_DrawLoop	; draw the HUD (could be jmpto)
 
-locret_40858:				
+	.skipdraw:				
 		rts	
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to draw player 1's HUD in two-player mode
+; ---------------------------------------------------------------------------
 
 BuildHUD_P1:				
 		tst.w	(v_rings).w
-		beq.s	loc_40876
-		moveq	#0,d1
-		btst	#3,(v_frame_counter_low).w
-		bne.s	loc_40874
-		cmpi.b	#9,(v_time_min).w
-		bne.s	loc_40874
-		addq.w	#2,d1
+		beq.s	.no_rings				; branch if player has no rings
+		moveq	#id_Frame_HUD2_AllYellow,d1	; frame if neither 'RINGS' nor 'TIME' are red	
+		btst	#3,(v_frame_counter_low).w	; check bit that changes every 8 frames
+		bne.s	.notimeflash				; branch if set (only flash HUD every 8 frames)
+		cmpi.b	#9,(v_time_min).w			; have 9 minutes elapsed?
+		bne.s	.notimeflash			; branch if not
+		addq.w	#id_Frame_HUD2_TimeRed-id_Frame_HUD2_AllYellow,d1		; 'TIME' is red
 
-loc_40874:
-		bra.s	loc_4088C
+.notimeflash:
+		bra.s	.display
 ; ===========================================================================
 
-loc_40876:				
-		moveq	#0,d1
-		btst	#3,(v_frame_counter_low).w
-		bne.s	loc_4088C
-		addq.w	#1,d1
-		cmpi.b	#9,(v_time_min).w
-		bne.s	loc_4088C
-		addq.w	#2,d1
+	.no_rings:				
+		moveq	#id_Frame_HUD2_AllYellow,d1	; frame if neither 'RINGS' nor 'TIME' are red
+		btst	#3,(v_frame_counter_low).w	; check bit that changes every 8 frames
+		bne.s	.display				; branch if set (only flash HUD every 8 frames)
+		addq.w	#id_Frame_HUD2_RingRed-id_Frame_HUD2_AllYellow,d1	; 'RINGS' is red
+		cmpi.b	#9,(v_time_min).w			; have 9 minutes elapsed?
+		bne.s	.display			; branch if not
+		addq.w	#id_Frame_HUD2_AllRed-id_Frame_HUD2_RingRed,d1	; both 'RINGS' and 'TIME' are red	
 
-loc_4088C:
-		move.w	#$90,d3	
-		move.w	#$188,d2
-		lea	(off_40BEA).l,a1
-		movea.w	#$8365,a3	
+.display:
+		move.w	#screen_left+16,d3	; set x pos
+		move.w	#screen_top+264,d2	; set y pos
+		lea	(Map_HUD2).l,a1
+		movea.w	#tile_Nem_HUD2P_Text+tile_hi,a3	; set art tile
 		add.w	d1,d1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P
-		move.w	#$B8,d3	
-		move.w	#$108,d2
-		movea.w	#-$7C8F,a3
+		adda.w	(a1,d1.w),a1	; a1 = mappings for current HUD frame
+		move.w	(a1)+,d1		; d1 = total sprite pieces
+		subq.w	#1,d1			; adjust for loop counter
+		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P	; draw the 'RINGS' and 'TIME' text
+
+		move.w	#screen_left+56,d3	; set x pos
+		move.w	#screen_top+136,d2	; set y pos
+		movea.w	#tile_Nem_HUD2P_Numbers+tile_hi,a3	; set art tile
 		moveq	#0,d7
-		move.b	(v_time_min).w,d7
-		bsr.w	sub_4092E
-		bsr.w	sub_4096A
+		move.b	(v_time_min).w,d7	; get minutes elapsed
+		bsr.w	HUD_2P_DrawMinutes	; draw the minute digit
+		bsr.w	HUD_2P_DrawColon	; draw the colon
 		moveq	#0,d7
-		move.b	(v_time_sec).w,d7
-		bsr.w	loc_40938
+		move.b	(v_time_sec).w,d7	; get seconds elapsed
+		bsr.w	HUD_2P_DrawSeconds	; draw the seconds
+		
 		move.w	#$C0,d3	
 		move.w	#$118,d2
 		movea.w	#-$7C8F,a3
 		moveq	#0,d7
-
-loc_408DE:
 		move.w	(v_rings).w,d7
 		bsr.w	sub_40984
 		tst.b	(f_hud_time_update_p2).w
@@ -84831,7 +84222,7 @@ loc_408DE:
 		movea.w	#-$7C8F,a3
 		moveq	#0,d7
 		move.b	(v_loser_time_left).w,d7
-		bsr.w	loc_40938
+		bsr.w	HUD_2P_DrawSeconds
 
 loc_40908:
 		moveq	#4,d1
@@ -84839,7 +84230,7 @@ loc_40908:
 loc_4090A:
 		move.w	#$90,d3	
 		move.w	#$188,d2
-		lea	(off_40BEA).l,a1
+		lea	(Map_HUD2).l,a1
 		movea.w	#-$7C9B,a3
 		add.w	d1,d1
 		adda.w	(a1,d1.w),a1
@@ -84851,47 +84242,44 @@ loc_4090A:
 
 ; ===========================================================================
 
-
-sub_4092E:
-		lea	(byte_41210).l,a4
-		moveq	#0,d6
-		bra.s	loc_40940
+HUD_2P_DrawMinutes:
+		lea	(HUD_1).l,a4
+		moveq	#1-1,d6		; only one digit to draw
+		bra.s	HUD_2P_DrawDigits
 ; ===========================================================================
 
-loc_40938:
-		lea	(byte_4120C).l,a4
-		moveq	#1,d6
+HUD_2P_DrawSeconds:
+		lea	(HUD_10).l,a4
+		moveq	#2-1,d6
 
-loc_40940:
-		moveq	#0,d1
+HUD_2P_DrawDigits:
+		moveq	#id_Frame_HUD3_0,d1	; first frame of HUD_3 mappings
 		move.l	(a4)+,d4
 
-loc_40944:				
+	.find_loop:				
 		sub.l	d4,d7
-		bcs.s	loc_4094C
+		bcs.s	.draw
 		addq.w	#1,d1
-		bra.s	loc_40944
+		bra.s	.find_loop
 ; ===========================================================================
 
-loc_4094C:				
+	.draw:				
 		add.l	d4,d7
-		lea	(off_40C82).l,a1
+		lea	(Map_HUD3).l,a1
 		add.w	d1,d1
 		adda.w	(a1,d1.w),a1
 		move.w	(a1)+,d1
 		subq.w	#1,d1
 		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P
 		addq.w	#8,d3
-		dbf	d6,loc_40940
+		dbf	d6,HUD_2P_DrawDigits
 		rts	
-
 
 ; ===========================================================================
 
-
-sub_4096A:
-		moveq	#$A,d1
-		lea	(off_40C82).l,a1
+HUD_2P_DrawColon:
+		moveq	#id_Frame_HUD3_Colon,d1
+		lea	(Map_HUD3).l,a1
 		add.w	d1,d1
 		adda.w	(a1,d1.w),a1
 		move.w	(a1)+,d1
@@ -84904,7 +84292,7 @@ sub_4096A:
 
 
 sub_40984:
-		lea	(byte_41208).l,a4
+		lea	(HUD_100).l,a4
 		moveq	#2,d6
 
 loc_4098C:				
@@ -84931,7 +84319,7 @@ loc_409A6:
 		bpl.s	loc_409BE
 
 loc_409AA:				
-		lea	(off_40C82).l,a1
+		lea	(Map_HUD3).l,a1
 		add.w	d1,d1
 		adda.w	(a1,d1.w),a1
 		move.w	(a1)+,d1
@@ -84971,7 +84359,7 @@ loc_409E2:
 loc_409F8:
 		move.w	#$90,d3	
 		move.w	#$268,d2
-		lea	(off_40BEA).l,a1
+		lea	(Map_HUD2).l,a1
 		movea.w	#-$7C9B,a3
 		add.w	d1,d1
 		adda.w	(a1,d1.w),a1
@@ -84983,11 +84371,11 @@ loc_409F8:
 		movea.w	#-$7C8F,a3
 		moveq	#0,d7
 		move.b	(v_time_min_p2).w,d7
-		bsr.w	sub_4092E
-		bsr.w	sub_4096A
+		bsr.w	HUD_2P_DrawMinutes
+		bsr.w	HUD_2P_DrawColon
 		moveq	#0,d7
 		move.b	(v_time_sec_p2).w,d7
-		bsr.w	loc_40938
+		bsr.w	HUD_2P_DrawSeconds
 		move.w	#$C0,d3	
 		move.w	#$1F8,d2
 		movea.w	#-$7C8F,a3
@@ -85003,13 +84391,13 @@ loc_409F8:
 		movea.w	#-$7C8F,a3
 		moveq	#0,d7
 		move.b	(v_loser_time_left).w,d7
-		bsr.w	loc_40938
+		bsr.w	HUD_2P_DrawSeconds
 
 loc_40A74:
 		moveq	#5,d1
 		move.w	#$90,d3	
 		move.w	#$268,d2
-		lea	(off_40BEA).l,a1
+		lea	(Map_HUD2).l,a1
 		movea.w	#-$7CC0,a3
 		add.w	d1,d1
 		adda.w	(a1,d1.w),a1
@@ -85019,87 +84407,8 @@ loc_40A74:
 		moveq	#0,d4
 		rts	
 ; ===========================================================================
-off_40A9A:	dc.w word_40AA2-off_40A9A			; 0 
-					
-		dc.w word_40AF4-off_40A9A			; 1
-		dc.w word_40B46-off_40A9A			; 2
-		dc.w word_40B98-off_40A9A			; 3
-word_40AA2:	dc.w	$A,$800D,$2000,$2000,	 0,$800D,$2018,$200C ; 0
-					
-		dc.w   $20,$800D,$2020,$2010,  $40,$900D,$2010,$2008 ; 8
-		dc.w	 0,$900D,$2028,$2014,  $28,$A00D,$2008,$2004 ; 16
-		dc.w	 0,$A001,$2000,$2000,  $20,$A009,$2030,$2018 ; 24
-		dc.w   $30,$4005, $10A,	 $85,	 0,$400D,$210E,$2087 ; 32
-		dc.w   $10					; 40
-word_40AF4:	dc.w	$A,$800D,$2000,$2000,	 0,$800D,$2018,$200C ; 0
-					
-		dc.w   $20,$800D,$2020,$2010,  $40,$900D,$2010,$2008 ; 8
-		dc.w	 0,$900D,$2028,$2014,  $28,$A00D,    8,	   4 ; 16
-		dc.w	 0,$A001,    0,	   0,  $20,$A009,$2030,$2018 ; 24
-		dc.w   $30,$4005, $10A,	 $85,	 0,$400D,$210E,$2087 ; 32
-		dc.w   $10					; 40
-word_40B46:	dc.w	$A,$800D,$2000,$2000,	 0,$800D,$2018,$200C ; 0
-					
-		dc.w   $20,$800D,$2020,$2010,  $40,$900D,  $10,	   8 ; 8
-		dc.w	 0,$900D,$2028,$2014,  $28,$A00D,$2008,$2004 ; 16
-		dc.w	 0,$A001,$2000,$2000,  $20,$A009,$2030,$2018 ; 24
-		dc.w   $30,$4005, $10A,	 $85,	 0,$400D,$210E,$2087 ; 32
-		dc.w   $10					; 40
-word_40B98:	dc.w	$A,$800D,$2000,$2000,	 0,$800D,$2018,$200C ; 0
-					
-		dc.w   $20,$800D,$2020,$2010,  $40,$900D,  $10,	   8 ; 8
-		dc.w	 0,$900D,$2028,$2014,  $28,$A00D,    8,	   4 ; 16
-		dc.w	 0,$A001,    0,	   0,  $20,$A009,$2030,$2018 ; 24
-		dc.w   $30,$4005, $10A,	 $85,	 0,$400D,$210E,$2087 ; 32
-		dc.w   $10					; 40
-off_40BEA:	dc.w word_40BF6-off_40BEA			; 0 
-					
-		dc.w word_40C10-off_40BEA			; 1
-		dc.w word_40C2A-off_40BEA			; 2
-		dc.w word_40C44-off_40BEA			; 3
-		dc.w word_40C5E-off_40BEA			; 4
-		dc.w word_40C70-off_40BEA			; 5
-word_40BF6:	dc.w	 3,$800D,$2010,$2008,	 0,$900D,$2008,$2004 ; 0
-					
-		dc.w	 0,$9001,$2000,$2000,  $20		; 8
-word_40C10:	dc.w	 3,$800D,$2010,$2008,	 0,$900D,    8,	   4 ; 0
-					
-		dc.w	 0,$9001,    0,	   0,  $20		; 8
-word_40C2A:	dc.w	 3,$800D,  $10,	   8,	 0,$900D,$2008,$2004 ; 0
-					
-		dc.w	 0,$9001,$2000,$2000,  $20		; 8
-word_40C44:	dc.w	 3,$800D,  $10,	   8,	 0,$900D,    8,	   4 ; 0
-					
-		dc.w	 0,$9001,    0,	   0,  $20		; 8
-word_40C5E:	dc.w	 2,$4005, $10A,	 $85,	 0,$400D,$210E,$2087 ; 0
-					
-		dc.w   $10					; 8
-word_40C70:	dc.w	 2,$4005,  $1C,	  $E,	 0,$400D,$2078,$203C ; 0
-					
-		dc.w   $10					; 8
-off_40C82:	dc.w byte_40C98-off_40C82			; 0 
-					
-		dc.w byte_40CA2-off_40C82			; 1
-		dc.w byte_40CAC-off_40C82			; 2
-		dc.w byte_40CB6-off_40C82			; 3
-		dc.w byte_40CC0-off_40C82			; 4
-		dc.w byte_40CCA-off_40C82			; 5
-		dc.w byte_40CD4-off_40C82			; 6
-		dc.w byte_40CDE-off_40C82			; 7
-		dc.w byte_40CE8-off_40C82			; 8
-		dc.w byte_40CF2-off_40C82			; 9
-		dc.w byte_40CFC-off_40C82			; 10
-byte_40C98:	dc.b   0,  1,  0,  1,$20,  0,$20,  0,  0,  0	; 0	
-byte_40CA2:	dc.b   0,  1,  0,  1,$20,  2,$20,  1,  0,  0	; 0	
-byte_40CAC:	dc.b   0,  1,  0,  1,$20,  4,$20,  2,  0,  0	; 0	
-byte_40CB6:	dc.b   0,  1,  0,  1,$20,  6,$20,  3,  0,  0	; 0	
-byte_40CC0:	dc.b   0,  1,  0,  1,$20,  8,$20,  4,  0,  0	; 0	
-byte_40CCA:	dc.b   0,  1,  0,  1,$20, $A,$20,  5,  0,  0	; 0	
-byte_40CD4:	dc.b   0,  1,  0,  1,$20, $C,$20,  6,  0,  0	; 0	
-byte_40CDE:	dc.b   0,  1,  0,  1,$20, $E,$20,  7,  0,  0	; 0	
-byte_40CE8:	dc.b   0,  1,  0,  1,$20,$10,$20,  8,  0,  0	; 0	
-byte_40CF2:	dc.b   0,  1,  0,  1,$20,$12,$20,  9,  0,  0	; 0	
-byte_40CFC:	dc.b   0,  1,  0,  1,$20,$14,$20, $A,  0,  0	; 0	
+
+		include "mappings/sprite/HUD.asm"
 
 ; ===========================================================================
 
@@ -85545,7 +84854,7 @@ loc_4111E:
 
 
 sub_4113C:
-		lea	(byte_41208).l,a2
+		lea	(HUD_100).l,a2
 		moveq	#2,d6
 		bra.s	loc_4114E
 
@@ -85553,7 +84862,7 @@ sub_4113C:
 
 
 sub_41146:				
-		lea	(byte_411FC).l,a2
+		lea	(HUD_100000).l,a2
 		moveq	#5,d6
 
 loc_4114E:				
@@ -85598,7 +84907,7 @@ loc_41198:
 sub_411A4:
 		move.l	#$5F800003,(vdp_control_port).l
 		lea	(vdp_data_port).l,a6
-		lea	(byte_4120C).l,a2			; could be PC-relative
+		lea	(HUD_10).l,a2			; could be PC-relative
 		moveq	#1,d6
 		moveq	#0,d4
 		lea	Art_HUD(pc),a1
@@ -85625,51 +84934,34 @@ loc_411CE:
 		rts	
 
 ; ===========================================================================
-byte_411FC:	
-		dc.b   0					; 0 
-		dc.b   1					; 1
-		dc.b $86					; 2
-		dc.b $A0					; 3
-		dc.b   0					; 4
-		dc.b   0					; 5
-		dc.b $27					; 6
-		dc.b $10					; 7
+HUD_100000:	
+		dc.l 100000
 		
-byte_41204:
-		dc.b   0					; 0 
-		dc.b   0					; 1
-		dc.b   3					; 2
-		dc.b $E8					; 3
+		dc.l 10000	; unused
+
+HUD_1000:
+		dc.l 1000
 		
-byte_41208:	
-		dc.b   0					; 0 
-		dc.b   0					; 1
-		dc.b   0					; 2
-		dc.b $64					; 3
+HUD_100:	
+		dc.l 100
 		
-byte_4120C:	
-		dc.b   0					; 0 			
-		dc.b   0					; 1
-		dc.b   0					; 2
-		dc.b  $A					; 3
+HUD_10:	
+		dc.l 10
 		
-byte_41210:	
-		dc.b   0					; 0 
-		dc.b   0					; 1
-		dc.b   0					; 2
-		dc.b   1					; 3
+HUD_1:	
+		dc.l 1
 
 ; ===========================================================================
 
 
 sub_41214:				
-		lea_	byte_41210,a2
+		lea_	HUD_1,a2
 		moveq	#0,d6
 		bra.s	loc_41222
 ; ===========================================================================
 
 loc_4121C:
-		lea_	byte_4120C,a2
+		lea_	HUD_10,a2
 		moveq	#1,d6
 
 loc_41222:				
@@ -85708,7 +85000,7 @@ loc_4123E:
 ; ===========================================================================
 
 loc_41274:								
-		lea_	byte_41204,a2
+		lea_	HUD_1000,a2
 		moveq	#3,d6
 		moveq	#0,d4
 		lea	Art_HUD(pc),a1
@@ -85771,7 +85063,7 @@ sub_412E2:
 		move.b	(v_lives).w,d1
 
 loc_412EE:				
-		lea_	byte_4120C,a2
+		lea_	HUD_10,a2
 		moveq	#1,d6
 		moveq	#0,d4
 		lea	Art_LivesNums(pc),a1
@@ -86187,7 +85479,7 @@ DbgEHZ_41D40:	dc.w $13
 		dc.l $9D000000+Map_Coco
 		dc.w $1E00
 		dc.w $3EE
-		dc.l $3E000000+Map_3F436
+		dc.l $3E000000+Map_Pri
 		dc.w 0
 		dc.w $2680
 DbgMTZ_41DDA:	dc.w $22		
@@ -86290,7 +85582,7 @@ DbgMTZ_41DDA:	dc.w $22
 		dc.l $31000000+Map_LTag
 		dc.w $202
 		dc.w $8680
-		dc.l $3E000000+Map_3F436
+		dc.l $3E000000+Map_Pri
 		dc.w 0
 		dc.w $2680
 DbgWFZ_41EEC:	dc.w $20		
@@ -86363,7 +85655,7 @@ DbgWFZ_41EEC:	dc.w $20
 		dc.l $BD000000+Map_ConvPlat
 		dc.w $8000
 		dc.w $E40E
-		dc.l $BE000000+Map_LatCan
+		dc.l $BE000000+Map_GunPlat
 		dc.w $8200
 		dc.w $E41A
 		dc.l $BF000000+Map_PropShaft
@@ -86387,7 +85679,7 @@ DbgWFZ_41EEC:	dc.w $20
 		dc.l $80000000+Map_Hook
 		dc.w 0
 		dc.w $23FE
-		dc.l $3E000000+Map_3F436
+		dc.l $3E000000+Map_Pri
 		dc.w 0
 		dc.w $2680
 DbgHTZ_41FEE:	dc.w $1F		
@@ -86481,7 +85773,7 @@ DbgHTZ_41FEE:	dc.w $1F
 		dc.l $95000000+Map_Sol
 		dc.w 0
 		dc.w 0
-		dc.l $3E000000+Map_3F436
+		dc.l $3E000000+Map_Pri
 		dc.w 0
 		dc.w $2680
 DbgOOZ_420E8:	dc.w $21		
@@ -86581,7 +85873,7 @@ DbgOOZ_420E8:	dc.w $21
 		dc.l $1C000000+Map_WideFallingOil
 		dc.w $1404
 		dc.w $4346
-		dc.l $3E000000+Map_3F436
+		dc.l $3E000000+Map_Pri
 		dc.w 0
 		dc.w $2680
 DbgMCZ_421F2:	dc.w $18		
@@ -86654,7 +85946,7 @@ DbgMCZ_421F2:	dc.w $18
 		dc.l $9E000000+Map_CrawlT
 		dc.w $2200
 		dc.w $23C0
-		dc.l $3E000000+Map_3F436
+		dc.l $3E000000+Map_Pri
 		dc.w 0
 		dc.w $2680
 DbgCNZ_422B4:	dc.w $18		
@@ -86724,10 +86016,10 @@ DbgCNZ_422B4:	dc.w $18
 		dc.l $D8000000+Map_SauceBump
 		dc.w $8002
 		dc.w $43E6
-		dc.l $C8000000+Map_3D450
+		dc.l $C8000000+Map_Crawl
 		dc.w $AC00
 		dc.w $8340
-		dc.l $3E000000+Map_3F436
+		dc.l $3E000000+Map_Pri
 		dc.w 0
 		dc.w $2680
 DbgCPZ_42376:	dc.w $18		
@@ -86800,7 +86092,7 @@ DbgCPZ_42376:	dc.w $18
 		dc.l $A7000000+Map_Grab
 		dc.w $3600
 		dc.w $A500
-		dc.l $3E000000+Map_3F436
+		dc.l $3E000000+Map_Pri
 		dc.w 0
 		dc.w $2680
 DbgARZ_42438:	dc.w $1D		
@@ -86888,7 +86180,7 @@ DbgARZ_42438:	dc.w $1D
 		dc.l $8E000000+Map_Ground
 		dc.w $200
 		dc.w $A509
-		dc.l $3E000000+Map_3F436
+		dc.l $3E000000+Map_Pri
 		dc.w 0
 		dc.w $2680
 DbgSCZ_42522:	dc.w $D			
@@ -86928,7 +86220,7 @@ DbgSCZ_42522:	dc.w $D
 		dc.l $99000000+Map_Neb
 		dc.w $1200
 		dc.w $A36E
-		dc.l $3E000000+Map_3F436
+		dc.l $3E000000+Map_Pri
 		dc.w 0
 		dc.w $2680
 

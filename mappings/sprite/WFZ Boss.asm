@@ -1,4 +1,9 @@
-Map_objC5_a:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Wing Fortress boss (laser, laser case, laser barriers, 
+; platforms, and platform releaser)
+; -------------------------------------------------------------------------------
+
+Map_BWFZ:	index offset(*)
 		ptr	Map_objC5_a_0026
 		ptr	Map_objC5_a_0048
 		ptr	Map_objC5_a_006A

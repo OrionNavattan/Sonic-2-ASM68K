@@ -1,4 +1,8 @@
-Map_objC6_a:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - DEZ Eggman
+; -------------------------------------------------------------------------------
+
+Map_Eggman:	index offset(*)
 		ptr	Map_objC6_a_0010
 		ptr	Map_objC6_a_002A
 		ptr	Map_objC6_a_0044

@@ -1,5 +1,5 @@
 ; -------------------------------------------------------------------------------
-; Sprite mappings - Eggman's windows in Mecha Sonic boss arena
+; Sprite mappings - Eggman's window in Mecha Sonic boss arena
 ; -------------------------------------------------------------------------------
 
 Map_EggmanWindow:	index offset(*)

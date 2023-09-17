@@ -1,4 +1,8 @@
-Map_objBE:	index offset(*)
+; -------------------------------------------------------------------------------
+; Sprite mappings - Wing Fortress gun platform
+; -------------------------------------------------------------------------------
+
+Map_GunPlat:	index offset(*)
 		ptr	Map_objBE_000A
 		ptr	Map_objBE_001C
 		ptr	Map_objBE_002E
