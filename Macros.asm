@@ -1034,10 +1034,10 @@ debug_soundbanks: equ 0
 
 finishbank: macro
 		if offset(*)>sound_bank_start+sizeof_z80_bank
-			inform 3,"SoundBank %d must fit in $8000 bytes, but it was $%h. Try moving something to another bank.",snkbnk_id,offset(*)-sound_bank_start
+			inform 3,"SoundBank %d must fit in $8000 bytes, but it was $%h. Try moving something to another bank.",sndbnk_id,offset(*)-sound_bank_start
 		elseif debug_soundbanks
-			inform 0,"SoundBank %d has $%h bytes free at end.",snkbnk_id,sizeof_z80_bank+sound_bank_start-offset(*)
-		endif
+			inform 0,"SoundBank %d has $%h bytes free at end.",sndbnk_id,sizeof_z80_bank+sound_bank_start-offset(*)
+		endc
     	endm 
     	
 ; ---------------------------------------------------------------------------
@@ -1094,7 +1094,7 @@ backdest:	macro	dest
 		endm
 		
 afBack:		macros
-		dc.b	afBackFlag,offset(*)-afbackdest		; include flag and automatically generate the count of bytes to jump back
+		dc.b	afBackFlag,offset(*)-afbackdest		; include flag and generate the count of bytes to jump back
 		
 ; ---------------------------------------------------------------------------
 ; Declares a blank object

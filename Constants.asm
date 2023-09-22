@@ -47,8 +47,8 @@ screen_left:		equ 128					; x coordinate of left edge of screen for sprites
 screen_bottom:		equ screen_top+screen_height
 screen_right:		equ screen_left+screen_width
 
-countof_ntsc_fps:	equ 60	; 60 frames per second in NTSC
-countof_pal_fps:	equ 50	; 50 frames per second in PAL
+countof_ntsc_fps:	equ 60					; 60 frames per second in NTSC
+countof_pal_fps:	equ 50					; 50 frames per second in PAL
 ; ---------------------------------------------------------------------------
 ; VRAM constants and regions
 ; VRAM addresses for individual items are defined in VRAM Addresses.asm

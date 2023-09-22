@@ -56445,7 +56445,7 @@ Cage_Detect:
 		move.b	#2,ost_anim(a1)				; use rolling animation
 		move.b	#id_Ani_Cage_Flash,ost_anim(a0)		; make cage flash
 		addq.w	#2,(a2)+				; go to Cage_Active next
-		move.w	#(countof_ntsc_fps*2),(a2)				; player stays in cage for 2 seconds; (a2) = player's timer
+		move.w	#(countof_ntsc_fps*2),(a2)		; player stays in cage for 2 seconds; (a2) = player's timer
 		move.w	a1,ost_cage_player(a0)			; player is now parent of this object
 		tst.b	ost_subtype(a0)				; is it a slot machine cage?
 		beq.s	.return					; if not, exit
@@ -88317,7 +88317,7 @@ MusicPoint1:		startbank
 MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		finishbank
 		align $20
-				
+		
 ;---------------------------------------------------------------------------------------
 ; EHZ & HTZ objects/badniks
 ;---------------------------------------------------------------------------------------		
