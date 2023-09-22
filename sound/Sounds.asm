@@ -73,7 +73,7 @@ SFXFiles:	macro	func
 		\func	SpikeSwitch,	70h			; used by Mecha Sonic
 		\func	Death,			70h
 		\func	Skid,			70h
-		\func	BlockPush,		70h
+		\func	MissileDissolve,70h			; unused Sonic 1 leftover, missile dissolve sound
 		\func	SpikeHit,		70h		; spike impalement
 		\func	Sparkle,		70h
 		\func	Beep,			70h

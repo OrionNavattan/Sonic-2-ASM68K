@@ -1,18 +1,18 @@
-Sound25_BlockPush_Header:
+Sound25_MissileDissolve_Header:
 	smpsHeaderStartSong 2
-	smpsHeaderVoice     Sound25_BlockPush_Voices
+	smpsHeaderVoice     Sound25_MissileDissolve_Voices
 	smpsHeaderTempoSFX  $01
 	smpsHeaderChanSFX   $01
 
-	smpsHeaderSFXChannel cFM5, Sound25_BlockPush_FM5,	$00, $00
+	smpsHeaderSFXChannel cFM5, Sound25_MissileDissolve_FM5,	$00, $00
 
 ; FM5 Data
-Sound25_BlockPush_FM5:
+Sound25_MissileDissolve_FM5:
 	smpsSetvoice        $00
 	dc.b	nRst, $01, nBb0, $0A, nRst, $02
 	smpsStop
 
-Sound25_BlockPush_Voices:
+Sound25_MissileDissolve_Voices:
 ;	Voice $00
 ;	$FA
 ;	$21, $30, $10, $32, 	$2F, $1F, $2F, $2F, 	$05, $08, $09, $02
