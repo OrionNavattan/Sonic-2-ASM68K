@@ -47,7 +47,8 @@ screen_left:		equ 128					; x coordinate of left edge of screen for sprites
 screen_bottom:		equ screen_top+screen_height
 screen_right:		equ screen_left+screen_width
 
-
+countof_ntsc_fps:	equ 60	; 60 frames per second in NTSC
+countof_pal_fps:	equ 50	; 50 frames per second in PAL
 ; ---------------------------------------------------------------------------
 ; VRAM constants and regions
 ; VRAM addresses for individual items are defined in VRAM Addresses.asm
@@ -280,6 +281,7 @@ air_ding2:			equ 20
 air_ding3:			equ 15
 air_alert:			equ 12				; time in seconds remaining when music changes to drowning alert
 debug_move_delay:		equ 12				; time in frames between holding the d-pad in debug mode and the object moving
+time_warning_2P:	equ 12					; time in second remaining when music changes to countdown alert in 2P mode
 
 ; Object physics
 bumper_power:			equ $700

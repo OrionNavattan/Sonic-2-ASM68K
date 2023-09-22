@@ -845,7 +845,7 @@ projdata:	macro	xoff,yoff,xvel,yvel,frame,render
 		
 ; ---------------------------------------------------------------------------
 ; Remap ASCII to the custom character sets used throughout the game
-; input: character set to use, text to display
+; input: character set to use, input text
 ; ---------------------------------------------------------------------------
 
 charset:	macro	charset,txt
@@ -904,7 +904,26 @@ charset:	macro	charset,txt
 			inform 2,"Invalid character in title screen copyright text (must be uppercase letter, numeral, '*', '@', ' ;', or '.')."
 		endc
 		endr
+		
+		elseif stricmp("\charset","hud")
+		
+		rept strlen(\txt)				; repeat for length of string
+		chr:	substr ,1,"\str"			; get current character
+		str:	substr 2,,"\str"			; advance to next character in string
+		
+		if strcmp(" ","\chr")
+			dc.b 	$FF
+		elseif	instr("0123456789","\chr")
+			dc.b	("\chr"-$30)*2
+		elseif	instr(":","\chr")
+			dc.b	$14
+		elseif	instr("E","\chr")	
+			dc.b	$16
+		else
+			inform 2,"Invalid character in HUD base text (must be numeral, 'E', ' ;', or ' ')."
 		endc
+		endr
+		endc			
 		endm
 	
 

@@ -1385,7 +1385,7 @@ Sound_PlayBGM:
 	if FixBugs
 		; This was in Sonic 1's driver, but this driver foolishly removed it.
 		xor	a
-		(z_abs_vars+v_priority),a		; clear SFX priority
+		(z_abs_vars+v_priority),a			; clear SFX priority
 	endc
 
 		; Back up all global variables and music track memory so the music can resume after the 1-up music

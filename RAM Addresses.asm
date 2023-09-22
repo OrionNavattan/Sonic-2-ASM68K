@@ -706,7 +706,7 @@ v_rings_collected_p1:		rs.w 1				; $FFFFFEF0 ; number of rings collected by play
 v_rings_collected_p2:		rs.w 1				; $FFFFFEF2 ; same as above, but for player 2
 v_monitors_broken_p1:		rs.w 1				; $FFFFFEF4 ; number of monitors broken by player 1 during an act in two player mode
 v_monitors_broken_p2:		rs.w 1				; $FFFFFEF6 ; same as above, but for player 2
-v_loser_time_left:			rs.w 1			; $FFFFFEF8 ; high byte is seconds, low byte is frames						
+v_loser_time_left:			rs.w 1			; $FFFFFEF8 ; high byte is seconds, low byte is frames remaining in current second						
 							rs.b $16 ; $FFFFFEFA-$FFFFFF0F ; unused
 v_results_screen_2p:		rs.w 1				; $FFFFFF10 ; 0 = act, 1 = zone, 2 = game, 3 = SS, 4 = SS all			
 							rs.b $E	; $FFFFFF12-$FFFFFF1F ; unused	

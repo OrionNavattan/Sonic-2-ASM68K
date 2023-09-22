@@ -3289,7 +3289,7 @@ WhiteIn_DecColor:
 		subi.w	#$200,d1				; decrease blue	value
 		bcs.s	.degreen				; branch if already 0
 		cmp.w	d2,d1
-		blo.s	.degreen				; branch if blue already matched
+		bcs.s	.degreen				; branch if blue already matched
 		move.w	d1,(a0)+				; update blue
 		rts	
 ; ===========================================================================
@@ -3299,7 +3299,7 @@ WhiteIn_DecColor:
 		subi.w	#$20,d1					; decrease green value
 		bcs.s	.dered					; branch if already 0
 		cmp.w	d2,d1
-		blo.s	.dered					; branch if green already matched
+		bcs.s	.dered					; branch if green already matched
 		move.w	d1,(a0)+				; update green
 		rts	
 ; ===========================================================================
@@ -3460,7 +3460,7 @@ PalCycle_Sega_Full:
 		move.w	(v_palcycle_num).w,d0
 		addi.w	#($C/2)*2,d0				; next batch of colours ($C)
 		cmpi.w	#($C/2)*2*4,d0				; $30
-		blo.s	.update					; branch if animation is incomplete
+		bcs.s	.update					; branch if animation is incomplete
 		moveq	#0,d0					; set flag when animation is complete
 		rts	
 ; ===========================================================================
@@ -4352,17 +4352,15 @@ TailsNameCheat:
 		rts	
 
 TailsNameCode:	
-		dc.b	btnUp,btnDn,btnDn,btnDn,btnUp,0	
+		dc.b	btnUp,btnDn,btnDn,btnDn,btnUp,0
 		even
 		
 ; ===========================================================================		
 
 		incfile	Nem_Player1VS2				; ArtNem_3DF4:
-	
-
-		
+			
 CopyrightText:	
-		charset	copyright,"@ 1992 SEGA"
+		charset	copyright,"@ 1992 SEGA"			; @ = copyright symbol
 		arraysize CopyrightText
 ; ===========================================================================
 
@@ -4629,7 +4627,7 @@ Level_TtlCardLoop:
 		bne.s	Level_TtlCardLoop			; if yes, branch
 		move.b	#id_VBlank_TitleCard,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
-		jsr	(HUD_Base).l				; load HUD graphics
+		jsr	(HUD_Base).l				; load HUD 'E', 0, and colon graphics
 
 	Level_Skip_TtlCard:				
 		moveq	#id_Pal_Sonic_Miles_BG1,d0
@@ -8919,7 +8917,7 @@ loc_71B4:
 		bne.w	JmpTo_DisplaySprite
 	endc
 		moveq	#6,d6
-		lea	(Frame_SpecStartBan_FlagLeft).l,a2			; could be PC-relative
+		lea	(Frame_SpecStartBan_FlagLeft).l,a2	; could be PC-relative
 		moveq	#2,d3
 		move.w	#8,$14(a0)
 		move.b	#6,ost_primary_routine(a0)
@@ -9598,7 +9596,7 @@ GM_Continue:
 loc_78DE:				
 		bsr.w	NemDec
 		moveq	#$A,d1
-		jsr	(sub_411A4).l
+		jsr	(ContScrCounter).l
 		moveq	#$1B,d0
 		bsr.w	PalLoad_Next
 		move.w	#0,(v_pal_dry_next).w
@@ -9630,7 +9628,7 @@ loc_7960:
 		move.w	(v_countdown).w,d1
 		divu.w	#$3C,d1
 		andi.l	#$F,d1
-		jsr	(sub_411A4).l
+		jsr	(ContScrCounter).l
 		enable_ints
 
 loc_798E:				
@@ -20953,8 +20951,9 @@ byte_FA98:
 		dc.b   2,  4,  6,  8, $A, $C, $E, $E, $C, $A,  8,  6,  4,  2,  0,  0 ; 96
 		dc.b   2,  4,  6,  8, $A, $C, $E,$10, $E, $C, $A,  8,  6,  4,  2,  0 ; 112
 		dc.b   2,  4,  6,  8, $A, $C, $E,$10,$10, $E, $C, $A,  8,  6,  4,  2 ; 128
-byte_FB28:	dc.b $FF,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 ; 0
-					
+
+byte_FB28:	
+		dc.b $FF,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 ; 0		
 		dc.b $B5,$FF,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 ; 16
 		dc.b $7E,$DB,$FF,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 ; 32
 		dc.b $61,$B5,$EC,$FF,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 ; 48
@@ -28424,7 +28423,7 @@ BuildSprites:
 		addi.w	#screen_top,d2
 		andi.w	#$7FF,d2
 		cmpi.w	#screen_top-32,d2			; assume Y radius to be 32 pixels
-		blo.s	BuildSprites_NextObject			; branch if > 32px outside top side of screen
+		bcs.s	BuildSprites_NextObject			; branch if > 32px outside top side of screen
 		cmpi.w	#screen_bottom+32,d2
 		bhs.s	BuildSprites_NextObject			; branch if > 32px outside bottom side of screen
 
@@ -28533,7 +28532,7 @@ BuildSprites_MultiDraw:
 		addi.w	#screen_top,d2
 		andi.w	#$7FF,d2
 		cmpi.w	#screen_top-32,d2
-		blo.s	.next_object
+		bcs.s	.next_object
 		cmpi.w	#screen_bottom+32,d2
 		bhs.s	.next_object
 
@@ -28596,7 +28595,7 @@ BuildSprites_MultiDraw:
 		; This check has been moved, so it is redundant.
 		; See the bugfix under 'BuildSpr_DrawLoop'.
 		cmpi.b	#countof_max_sprites,d5			; has the sprite limit been reached?
-		blo.s	BuildSpr_Cont				; if it hasn't, branch
+		bcs.s	BuildSpr_Cont				; if it hasn't, branch
 		rts						; otherwise, return
     endc
 
@@ -32326,7 +32325,7 @@ loc_1922C:
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
-		move.w	#$3C3C,(v_loser_time_left).w
+		move.w	#(60<<8)|countof_ntsc_fps,(v_loser_time_left).w ; 60 seconds, 60 frames per second
 
 loc_1924C:				
 		tst.b	(f_hud_time_update).w
@@ -32344,7 +32343,7 @@ loc_1924C:
 		move.w	#0,$30(a0)
 		move.w	(v_boundary_right_next).w,(v_boundary_left_next).w
 		move.b	#2,ost_secondary_routine(a0)
-		cmpi.b	#$C,(v_loser_time_left).w
+		cmpi.b	#time_warning_2P,(v_loser_time_left).w
 		bhi.s	loc_192A0
 
 loc_19296:
@@ -32362,7 +32361,7 @@ loc_192A0:
 loc_192BC:				
 		tst.w	(f_two_player).w
 		beq.w	loc_19350
-		move.w	#$3C3C,(v_loser_time_left).w
+		move.w	#(60<<8)|countof_ntsc_fps,(v_loser_time_left).w ; 60 seconds, 60 frames per second
 		move.w	#$D3,d0	
 		jsr	(PlaySound).l
 		bra.s	loc_19350
@@ -32386,7 +32385,7 @@ loc_192D6:
 		move.w	#0,$30(a0)
 		move.w	(v_boundary_right_next_p2).w,(v_boundary_left_next_p2).w
 		move.b	#2,ost_secondary_routine(a0)
-		cmpi.b	#$C,(v_loser_time_left).w
+		cmpi.b	#time_warning_2P,(v_loser_time_left).w
 		bhi.s	loc_1932E
 		move.w	(v_level_music).w,d0
 		jsr	(PlayMusic).l
@@ -32397,7 +32396,7 @@ loc_1932E:
 		move.b	#4,$36(a0)
 		tst.w	(f_two_player).w
 		beq.s	loc_19350
-		move.w	#$3C3C,(v_loser_time_left).w
+		move.w	#(60<<8)|countof_ntsc_fps,(v_loser_time_left).w ; 60 seconds, 60 frames per second
 		move.w	#$D3,d0	
 		jsr	(PlaySound).l
 
@@ -56059,7 +56058,7 @@ ost_casinobmb_player_low:		equ __rs-1		; $3F; tested to check which player to de
 		tst.w	(v_rings_p2).w					
 		beq.s	.chk2P					; branch if player 2 doesn't have any rings
 		subq.w	#1,(v_rings_p2).w			; decrement player 2's ring counter
-		ori.b	#$81,(v_hud_rings_update_p2).w		; set flag to update their HUD
+		ori.b	#$81,(v_hud_rings_update_p2).w		; set flag to reset ring counter to 0
 
 	.chk2P:				
 		tst.w	(f_two_player).w			; is it two-player mode?
@@ -56069,7 +56068,7 @@ ost_casinobmb_player_low:		equ __rs-1		; $3F; tested to check which player to de
 		tst.w	(v_rings).w					
 		beq.s	.delete					; branch if player 1 doesn't have any rings
 		subq.w	#1,(v_rings).w				; decrement player 1's ring counter
-		ori.b	#$81,(v_hud_rings_update).w		; set flag to update their HUD
+		ori.b	#$81,(v_hud_rings_update).w		; set flag to reset ring counter to 0
 
 	.delete:				
 		jmpto	DeleteObject,JmpTo44_DeleteObject
@@ -56446,7 +56445,7 @@ Cage_Detect:
 		move.b	#2,ost_anim(a1)				; use rolling animation
 		move.b	#id_Ani_Cage_Flash,ost_anim(a0)		; make cage flash
 		addq.w	#2,(a2)+				; go to Cage_Active next
-		move.w	#(60*2),(a2)				; player stays in cage for 2 seconds; (a2) = player's timer
+		move.w	#(countof_ntsc_fps*2),(a2)				; player stays in cage for 2 seconds; (a2) = player's timer
 		move.w	a1,ost_cage_player(a0)			; player is now parent of this object
 		tst.b	ost_subtype(a0)				; is it a slot machine cage?
 		beq.s	.return					; if not, exit
@@ -56472,7 +56471,7 @@ Cage_GiveSlotReward:
 ; Subroutine to spawn bomb penalties
 ; ----------------------------------------------------------------------------
 
-	Cage_GivePenalty:				
+Cage_GivePenalty:				
 		tst.w	ost_cage_bombcount(a0)
 		beq.w	.chkbombcount				; branch if there are no more bombs to spawn
 		btst	#0,(v_frame_counter_low).w
@@ -56584,7 +56583,7 @@ Cage_Active:
 ; ===========================================================================
 
 .chkpoints:				
-		subq.w	#1,2(a2)				; decrement timer
+		subq.w	#1,ost_cage_p1_timer-ost_cage_p1_routine(a2) ; decrement timer
 		bpl.s	Cage_GivePoints				; branch if time remains
 
 Cage_ReleasePlayer:				
@@ -56601,7 +56600,7 @@ Cage_ReleasePlayer:
 ; ===========================================================================
 
 Cage_GivePoints:				
-		move.w	2(a2),d0				; get timer
+		move.w	ost_cage_p1_timer-ost_cage_p1_routine(a2),d0 ; get timer
 		andi.w	#$F,d0
 		bne.s	.return					; play 'ding' sound and give 100 points every 16th frame
 		move.w	#sfx_SlotMachine,d0	
@@ -69800,7 +69799,7 @@ SubData_Index:	index offset(*),,2
 		ptr off_3D0B2					; 83
 		ptr off_3D0BC					; 84
 		ptr off_3D0C6					; 85
-		ptr SubData_Crawl					; 86
+		ptr SubData_Crawl				; 86
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to determine the nearest player to an object, said player's  
@@ -78286,7 +78285,7 @@ loc_3C33E:
 		move.w	#$1B,d1
 		move.w	#8,d2
 		move.w	#9,d3
-		popr.w	d4		; why not 'move.w	ost_x_pos(a0),d4'?
+		popr.w	d4					; why not 'move.w	ost_x_pos(a0),d4'?
 		jsrto	SolidObject,JmpTo27_SolidObject
 		btst	#3,ost_primary_status(a0)
 		bne.s	loc_3C366
@@ -78302,11 +78301,11 @@ loc_3C366:
 		move.b	#2,ost_primary_routine(a0)
 		bset	#1,(v_ost_player1+ost_primary_status).w
 		bclr	#3,(v_ost_player1+ost_primary_status).w
-		lea	(v_level_layout+(sizeof_levelrow*8)+80).w,a1	; modify level layout (Row 8, Column 80)
-		move.l	#($8A70<<16)|$7172,(a1)+					; new 128x128 tile IDs
+		lea	(v_level_layout+(sizeof_levelrow*8)+80).w,a1 ; modify level layout (Row 8, Column 80)
+		move.l	#($8A70<<16)|$7172,(a1)+		; new 128x128 tile IDs
 		move.w	#$7374,(a1)+
-		lea	(v_level_layout+(sizeof_levelrow*9)+80).w,a1	; modify level layout (Row 9, Column 80)
-		move.l	#($6E78<<16)|$7978,(a1)+					; new 128x128 tile IDs
+		lea	(v_level_layout+(sizeof_levelrow*9)+80).w,a1 ; modify level layout (Row 9, Column 80)
+		move.l	#($6E78<<16)|$7978,(a1)+		; new 128x128 tile IDs
 		move.w	#$787A,(a1)+
 		move.b	#1,(f_screen_redraw).w
 
@@ -84122,38 +84121,38 @@ JmpTo2_NemDecToRAM:
 
 BuildHUD:				
 		tst.w	(v_rings).w
-		beq.s	.no_rings				; branch if player has no rings
-		moveq	#id_Frame_HUD1_AllYellow,d1	; frame if neither 'RINGS' nor 'TIME' are red	
-		btst	#3,(v_frame_counter_low).w	; check bit that changes every 8 frames
+		beq.s	.norings				; branch if player has no rings
+		moveq	#id_Frame_HUD1_AllYellow,d1		; frame if neither 'RINGS' nor 'TIME' are red	
+		btst	#3,(v_frame_counter_low).w		; check bit that changes every 8 frames
 		bne.s	.notimeflash				; branch if set (only flash HUD every 8 frames)
 		cmpi.b	#9,(v_time_min).w			; have 9 minutes elapsed?
-		bne.s	.notimeflash			; branch if not
-		addq.w	#id_Frame_HUD1_TimeRed-id_Frame_HUD1_AllYellow,d1		; 'TIME' is red
+		bne.s	.notimeflash				; branch if not
+		addq.w	#id_Frame_HUD1_TimeRed-id_Frame_HUD1_AllYellow,d1 ; 'TIME' is red
 
 	.notimeflash:				
 		bra.s	.display
 ; ===========================================================================
 
-	.no_rings:				
-		moveq	#id_Frame_HUD1_AllYellow,d1	; frame if neither 'RINGS' nor 'TIME' are red
-		btst	#3,(v_frame_counter_low).w	; check bit that changes every 8 frames
+	.norings:				
+		moveq	#id_Frame_HUD1_AllYellow,d1		; frame if neither 'RINGS' nor 'TIME' are red
+		btst	#3,(v_frame_counter_low).w		; check bit that changes every 8 frames
 		bne.s	.display				; branch if set (only flash HUD every 8 frames)
-		addq.w	#id_Frame_HUD1_RingRed-id_Frame_HUD1_AllYellow,d1	; 'RINGS' is red
+		addq.w	#id_Frame_HUD1_RingRed-id_Frame_HUD1_AllYellow,d1 ; 'RINGS' is red
 		cmpi.b	#9,(v_time_min).w			; have 9 minutes elapsed?
-		bne.s	.display			; branch if not
-		addq.w	#id_Frame_HUD1_AllRed-id_Frame_HUD1_RingRed,d1	; both 'RINGS' and 'TIME' are red	
+		bne.s	.display				; branch if not
+		addq.w	#id_Frame_HUD1_AllRed-id_Frame_HUD1_RingRed,d1 ; both 'RINGS' and 'TIME' are red	
 
 	.display:				
-		move.w	#screen_left+16,d3	; set x pos
-		move.w	#screen_top+136,d2	; set y pos
+		move.w	#screen_left+16,d3			; set x pos
+		move.w	#screen_top+136,d2			; set y pos
 		lea	(Map_HUD1).l,a1
-		movea.w	#tile_Nem_HUD+tile_hi,a3	; set art tile
+		movea.w	#tile_Nem_HUD+tile_hi,a3		; set art tile
 		add.w	d1,d1
-		adda.w	(a1,d1.w),a1	; a1 = mappings for current HUD frame
-		move.w	(a1)+,d1		; d1 = total sprite pieces
-		subq.w	#1,d1			; adjust for loop counter
-		bmi.s	.skipdraw	; branch if it underflows for some reason
-		jsrto	BuildSpr_DrawLoop,JmpTo_BuildSpr_DrawLoop	; draw the HUD (could be jmpto)
+		adda.w	(a1,d1.w),a1				; a1 = mappings for current HUD frame
+		move.w	(a1)+,d1				; d1 = total sprite pieces
+		subq.w	#1,d1					; adjust for loop counter
+		bmi.s	.skipdraw				; branch if it underflows for some reason
+		jsrto	BuildSpr_DrawLoop,JmpTo_BuildSpr_DrawLoop ; draw the HUD (could be jmpto)
 
 	.skipdraw:				
 		rts	
@@ -84164,954 +84163,1069 @@ BuildHUD:
 
 BuildHUD_P1:				
 		tst.w	(v_rings).w
-		beq.s	.no_rings				; branch if player has no rings
-		moveq	#id_Frame_HUD2_AllYellow,d1	; frame if neither 'RINGS' nor 'TIME' are red	
-		btst	#3,(v_frame_counter_low).w	; check bit that changes every 8 frames
-		bne.s	.notimeflash				; branch if set (only flash HUD every 8 frames)
+		beq.s	.norings				; branch if player has no rings
+		moveq	#id_Frame_HUD2_AllYellow,d1		; frame if neither 'RINGS' nor 'TIME' are red	
+		btst	#3,(v_frame_counter_low).w		; check bit that changes every 8 frames
+		bne.s	.noflash				; branch if set (only flash HUD every 8 frames)
 		cmpi.b	#9,(v_time_min).w			; have 9 minutes elapsed?
-		bne.s	.notimeflash			; branch if not
-		addq.w	#id_Frame_HUD2_TimeRed-id_Frame_HUD2_AllYellow,d1		; 'TIME' is red
+		bne.s	.noflash				; branch if not
+		addq.w	#id_Frame_HUD2_TimeRed-id_Frame_HUD2_AllYellow,d1 ; 'TIME' is red
 
-.notimeflash:
-		bra.s	.display
+	.noflash:
+		bra.s	.drawlabels
 ; ===========================================================================
 
-	.no_rings:				
-		moveq	#id_Frame_HUD2_AllYellow,d1	; frame if neither 'RINGS' nor 'TIME' are red
-		btst	#3,(v_frame_counter_low).w	; check bit that changes every 8 frames
-		bne.s	.display				; branch if set (only flash HUD every 8 frames)
-		addq.w	#id_Frame_HUD2_RingRed-id_Frame_HUD2_AllYellow,d1	; 'RINGS' is red
+	.norings:				
+		moveq	#id_Frame_HUD2_AllYellow,d1		; frame if neither 'RINGS' nor 'TIME' are red
+		btst	#3,(v_frame_counter_low).w		; check bit that changes every 8 frames
+		bne.s	.drawlabels				; branch if set (only flash HUD every 8 frames)
+		addq.w	#id_Frame_HUD2_RingRed-id_Frame_HUD2_AllYellow,d1 ; 'RINGS' is red
 		cmpi.b	#9,(v_time_min).w			; have 9 minutes elapsed?
-		bne.s	.display			; branch if not
-		addq.w	#id_Frame_HUD2_AllRed-id_Frame_HUD2_RingRed,d1	; both 'RINGS' and 'TIME' are red	
+		bne.s	.drawlabels				; branch if not
+		addq.w	#id_Frame_HUD2_AllRed-id_Frame_HUD2_RingRed,d1 ; both 'RINGS' and 'TIME' are red	
 
-.display:
-		move.w	#screen_left+16,d3	; set x pos
-		move.w	#screen_top+264,d2	; set y pos
+	.drawlabels:
+		move.w	#screen_left+16,d3			; set x pos
+		move.w	#screen_top+264,d2			; set y pos
 		lea	(Map_HUD2).l,a1
-		movea.w	#tile_Nem_HUD2P_Text+tile_hi,a3	; set art tile
+		movea.w	#(vram_HUD/sizeof_cell)>>1+tile_hi,a3	; set art tile
 		add.w	d1,d1
-		adda.w	(a1,d1.w),a1	; a1 = mappings for current HUD frame
-		move.w	(a1)+,d1		; d1 = total sprite pieces
-		subq.w	#1,d1			; adjust for loop counter
-		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P	; draw the 'RINGS' and 'TIME' text
+		adda.w	(a1,d1.w),a1				; a1 = mappings for current HUD frame
+		move.w	(a1)+,d1				; d1 = total sprite pieces
+		subq.w	#1,d1					; adjust for loop counter
+		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P ; draw the 'RINGS' and 'TIME' text
 
-		move.w	#screen_left+56,d3	; set x pos
-		move.w	#screen_top+136,d2	; set y pos
-		movea.w	#tile_Nem_HUD2P_Numbers+tile_hi,a3	; set art tile
+	;.drawtime:
+		move.w	#screen_left+56,d3			; set x pos of time
+		move.w	#screen_top+136,d2			; same for y pos
+		movea.w	#((vram_HUD2P_Numbers/sizeof_cell)>>1)+tile_hi,a3 ; set art tile
 		moveq	#0,d7
-		move.b	(v_time_min).w,d7	; get minutes elapsed
-		bsr.w	HUD_2P_DrawMinutes	; draw the minute digit
-		bsr.w	HUD_2P_DrawColon	; draw the colon
+		move.b	(v_time_min).w,d7			; get minutes elapsed
+		bsr.w	HUD_2P_Mins				; draw the minute digit
+		bsr.w	HUD_2P_Colon				; draw the colon
 		moveq	#0,d7
-		move.b	(v_time_sec).w,d7	; get seconds elapsed
-		bsr.w	HUD_2P_DrawSeconds	; draw the seconds
+		move.b	(v_time_sec).w,d7			; get seconds elapsed
+		bsr.w	HUD_2P_Secs				; draw the seconds
 		
-		move.w	#$C0,d3	
-		move.w	#$118,d2
-		movea.w	#-$7C8F,a3
+	;.drawrings:
+		move.w	#screen_left+64,d3			; set x pos of ring count
+		move.w	#screen_top+152,d2			; same for y pos
+		movea.w	#((vram_HUD2P_Numbers/sizeof_cell)>>1)+tile_hi,a3 ; set art tile
 		moveq	#0,d7
-		move.w	(v_rings).w,d7
-		bsr.w	sub_40984
+		move.w	(v_rings).w,d7				; get player 1's ring count
+		bsr.w	HUD_2P_Rings				; draw the ring count
+		
+	;.draw_loser_time:
 		tst.b	(f_hud_time_update_p2).w
-		bne.s	loc_40908
+		bne.s	.drawlives				; branch if player 2 isn't finished
 		tst.b	(f_hud_time_update).w
-		beq.s	loc_40908
-		move.w	#$110,d3
-		move.w	#$1B8,d2
-		movea.w	#-$7C8F,a3
+		beq.s	.drawlives				; branch if player 1 is finished
+		move.w	#screen_left+144,d3			; set x pos
+		move.w	#screen_top+312,d2			; set y pos
+		movea.w	#((vram_HUD2P_Numbers/sizeof_cell)>>1)+tile_hi,a3 ; set art tile
 		moveq	#0,d7
-		move.b	(v_loser_time_left).w,d7
-		bsr.w	HUD_2P_DrawSeconds
+		move.b	(v_loser_time_left).w,d7		; get time remaining
+		bsr.w	HUD_2P_Secs				; draw loser time remaining
 
-loc_40908:
-		moveq	#4,d1
-
-loc_4090A:
-		move.w	#$90,d3	
-		move.w	#$188,d2
+	.drawlives:
+		moveq	#id_Frame_HUD2_SonicLives,d1		; Sonic life counter 
+		move.w	#screen_left+16,d3			; set x pos
+		move.w	#screen_top+264,d2			; set y pos
 		lea	(Map_HUD2).l,a1
-		movea.w	#-$7C9B,a3
-		add.w	d1,d1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P
-		moveq	#0,d4
+		movea.w	#((vram_HUD2P_Text/sizeof_cell)>>1)+tile_hi,a3 ; set art tile
+		add.w	d1,d1					; d1 = index
+		adda.w	(a1,d1.w),a1				; a1 = mappings for current HUD frame
+		move.w	(a1)+,d1				; d1 = total sprite pieces
+		subq.w	#1,d1					; adjust for loop counter
+		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P ; draw player 1's life counter
+		moveq	#0,d4					; no clue what this is for
 		rts	
 
+; ---------------------------------------------------------------------------
+; Subroutine to	draw time numbers in 2P mode
+
+; input:
+; 	d7.w = number on time counter
+
+;	uses d1.l, d3.w, d4.l, d6.l, a1, a4
+; ---------------------------------------------------------------------------
+
+HUD_2P_Mins:
+		lea	(HUD_1).l,a4				; multiples of 1
+		moveq	#1-1,d6					; number of digits
+		bra.s	HUD_2P_DrawDigit
 ; ===========================================================================
 
-HUD_2P_DrawMinutes:
-		lea	(HUD_1).l,a4
-		moveq	#1-1,d6		; only one digit to draw
-		bra.s	HUD_2P_DrawDigits
-; ===========================================================================
+HUD_2P_Secs:
+		lea	(HUD_10).l,a4				; multiples of 10
+		moveq	#2-1,d6					; number of digits
 
-HUD_2P_DrawSeconds:
-		lea	(HUD_10).l,a4
-		moveq	#2-1,d6
+HUD_2P_DrawDigit:
+		moveq	#id_Frame_HUD3_0,d1			; first frame of HUD_3 mappings
+		move.l	(a4)+,d4				; d4 = subtrahend for finding digit (10 or 1)
 
-HUD_2P_DrawDigits:
-		moveq	#id_Frame_HUD3_0,d1	; first frame of HUD_3 mappings
-		move.l	(a4)+,d4
-
-	.find_loop:				
+	.find_digit:				
 		sub.l	d4,d7
-		bcs.s	.draw
-		addq.w	#1,d1
-		bra.s	.find_loop
+		bcs.s	.digit_found				; branch if time is less than the value in d3
+		addq.w	#1,d1					; increment frame ID
+		bra.s	.find_digit				; loop until digit is found
 ; ===========================================================================
 
-	.draw:				
-		add.l	d4,d7
-		lea	(Map_HUD3).l,a1
-		add.w	d1,d1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P
-		addq.w	#8,d3
-		dbf	d6,HUD_2P_DrawDigits
+.digit_found:				
+		add.l	d4,d7					; undo previous subtraction
+		lea	(Map_HUD3).l,a1	
+		add.w	d1,d1					; d1 = index
+		adda.w	(a1,d1.w),a1				; a1 = mappings for digit
+		move.w	(a1)+,d1				; d1 = total sprite pieces
+		subq.w	#1,d1					; adjust for loop counter
+		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P ; draw the digit
+		addq.w	#8,d3					; advance x pos
+		dbf	d6,HUD_2P_DrawDigit			; repeat for number of digits
 		rts	
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	draw the time colon in 2P mode
 
-HUD_2P_DrawColon:
-		moveq	#id_Frame_HUD3_Colon,d1
+;	uses d1.l, d3.w, a1
+; ---------------------------------------------------------------------------
+
+HUD_2P_Colon:
+		moveq	#id_Frame_HUD3_Colon,d1			; frame ID for colon
 		lea	(Map_HUD3).l,a1
-		add.w	d1,d1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P
-		addq.w	#8,d3
+		add.w	d1,d1					; d1 = index
+		adda.w	(a1,d1.w),a1				; a1 = mappings for digit
+		move.w	(a1)+,d1				; d1 = total sprite pieces
+		subq.w	#1,d1					; adjust for loop counter
+		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P ; draw the colon
+		addq.w	#8,d3					; advance x pos
 		rts	
 
+; ---------------------------------------------------------------------------
+; Subroutine to	draw the ring count in 2P mode
+
+; input:
+; 	d7.w = number of rings
+
+;	uses d1.l, d3.w, d4.l, d6.l, a1, a4
+; ---------------------------------------------------------------------------
+
+HUD_2P_Rings:
+		lea	(HUD_100).l,a4				; multiples of 100
+		moveq	#3-1,d6					; 3 digits to draw
+
+.loop:				
+		moveq	#id_Frame_HUD3_0,d1			; first frame of HUD_3 mappings
+		move.l	(a4)+,d4				; d4 = multiples of 100, 10, and 1 for each successive loop
+
+	.find_digit:				
+		sub.l	d4,d7		
+		bcs.s	.digit_found				; branch if ring count is less than the value in d3
+		addq.w	#1,d1					; increment frame ID
+		bra.s	.find_digit				; loop until digit is found	
 ; ===========================================================================
 
-
-sub_40984:
-		lea	(HUD_100).l,a4
-		moveq	#2,d6
-
-loc_4098C:				
-		moveq	#0,d1
-		move.l	(a4)+,d4
-
-loc_40990:				
-		sub.l	d4,d7
-		bcs.s	loc_40998
-		addq.w	#1,d1
-		bra.s	loc_40990
-; ===========================================================================
-
-loc_40998:				
-		add.l	d4,d7
+.digit_found:				
+		add.l	d4,d7					; undo previous subtraction
 		tst.w	d6
-		beq.s	loc_409AA
-		tst.w	d1
-		beq.s	loc_409A6
-		bset	#$1F,d6
+		beq.s	.draw_digit				; branch if this is the ones digit (always drawn even if 0)
+		tst.w	d1				
+		beq.s	.digit_0				; branch if this digit is 0
+		bset	#$1F,d6					; set flag to draw digits
 
-loc_409A6:				
-		tst.l	d6
-		bpl.s	loc_409BE
+	.digit_0:				
+		tst.l	d6				
+		bpl.s	.skip_digit				; branch if digit is not to be drawn
 
-loc_409AA:				
+	.draw_digit:				
 		lea	(Map_HUD3).l,a1
-		add.w	d1,d1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P
+		add.w	d1,d1					; d1 = index
+		adda.w	(a1,d1.w),a1				; a1 = mappings for digit
+		move.w	(a1)+,d1				; d1 = total sprite pieces
+		subq.w	#1,d1					; adjust for loop counter
+		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P ; draw the digit
 
-loc_409BE:				
-		addq.w	#8,d3
-		dbf	d6,loc_4098C
+	.skip_digit:				
+		addq.w	#8,d3					; advance x pos
+		dbf	d6,.loop				; repeat for all digits
 		rts	
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to draw player 2's HUD in two-player mode
+
+; Almost identical to player 1's version except for different y coordinates
+; and using player 2's ring and timer variables.
+; ---------------------------------------------------------------------------
 
 BuildHUD_P2:				
 		tst.w	(v_rings_p2).w
-		beq.s	loc_409E2
-		moveq	#0,d1
-		btst	#3,(v_frame_counter_low).w
-		bne.s	loc_409E0
-		cmpi.b	#9,(v_time_min_p2).w
-		bne.s	loc_409E0
-		addq.w	#2,d1
+		beq.s	.norings				; branch if player has no rings
+		moveq	#id_Frame_HUD2_AllYellow,d1		; frame if neither 'RINGS' nor 'TIME' are red	
+		btst	#3,(v_frame_counter_low).w		; check bit that changes every 8 frames
+		bne.s	.noflash				; branch if set (only flash HUD every 8 frames)
+		cmpi.b	#9,(v_time_min_p2).w			; have 9 minutes elapsed?
+		bne.s	.noflash				; branch if not
+		addq.w	#id_Frame_HUD2_TimeRed-id_Frame_HUD2_AllYellow,d1 ; 'TIME' is red
 
-loc_409E0:
-		bra.s	loc_409F8
+	.noflash:
+		bra.s	.drawlabels
 ; ===========================================================================
 
-loc_409E2:				
-		moveq	#0,d1
-		btst	#3,(v_frame_counter_low).w
-		bne.s	loc_409F8
-		addq.w	#1,d1
-		cmpi.b	#9,(v_time_min_p2).w
-		bne.s	loc_409F8
-		addq.w	#2,d1
+	.norings:				
+		moveq	#id_Frame_HUD2_AllYellow,d1		; frame if neither 'RINGS' nor 'TIME' are red
+		btst	#3,(v_frame_counter_low).w		; check bit that changes every 8 frames
+		bne.s	.drawlabels				; branch if set (only flash HUD every 8 frames)
+		addq.w	#id_Frame_HUD2_RingRed-id_Frame_HUD2_AllYellow,d1 ; 'RINGS' is red
+		cmpi.b	#9,(v_time_min_p2).w			; have 9 minutes elapsed?
+		bne.s	.drawlabels				; branch if not
+		addq.w	#id_Frame_HUD2_AllRed-id_Frame_HUD2_RingRed,d1 ; both 'RINGS' and 'TIME' are red	
 
-loc_409F8:
-		move.w	#$90,d3	
-		move.w	#$268,d2
+	.drawlabels:
+		move.w	#screen_left+16,d3			; set x pos
+		move.w	#screen_top+488,d2			; set y pos
 		lea	(Map_HUD2).l,a1
-		movea.w	#-$7C9B,a3
+		movea.w	#((vram_HUD2P_Text/sizeof_cell)>>1)+tile_hi,a3 ; set art tile
 		add.w	d1,d1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P
-		move.w	#$B8,d3	
-		move.w	#$1E8,d2
-		movea.w	#-$7C8F,a3
+		adda.w	(a1,d1.w),a1				; a1 = mappings for current HUD frame
+		move.w	(a1)+,d1				; d1 = total sprite pieces
+		subq.w	#1,d1					; adjust for loop counter
+		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P ; draw the 'RINGS' and 'TIME' text
+		
+	;.drawtime:
+		move.w	#screen_left+56,d3			; set x pos of time
+		move.w	#screen_top+360,d2			; same for y pos
+		movea.w	#((vram_HUD2P_Numbers/sizeof_cell)>>1)+tile_hi,a3 ; set art tile
 		moveq	#0,d7
-		move.b	(v_time_min_p2).w,d7
-		bsr.w	HUD_2P_DrawMinutes
-		bsr.w	HUD_2P_DrawColon
+		move.b	(v_time_min_p2).w,d7			; get minutes elapsed
+		bsr.w	HUD_2P_Mins				; draw the minute digit
+		bsr.w	HUD_2P_Colon				; draw the colon
 		moveq	#0,d7
-		move.b	(v_time_sec_p2).w,d7
-		bsr.w	HUD_2P_DrawSeconds
-		move.w	#$C0,d3	
-		move.w	#$1F8,d2
-		movea.w	#-$7C8F,a3
+		move.b	(v_time_sec_p2).w,d7			; get seconds elapsed
+		bsr.w	HUD_2P_Secs				; draw the seconds
+		
+	;.drawrings:
+		move.w	#screen_left+64,d3			; set x pos of ring count
+		move.w	#screen_top+376,d2			; same for y pos
+		movea.w	#((vram_HUD2P_Numbers/sizeof_cell)>>1)+tile_hi,a3 ; set art tile
 		moveq	#0,d7
-		move.w	(v_rings_p2).w,d7
-		bsr.w	sub_40984
+		move.w	(v_rings_p2).w,d7			; get player 1's ring count
+		bsr.w	HUD_2P_Rings				; draw the ring count
+		
+	;.draw_loser_time:
 		tst.b	(f_hud_time_update).w
-		bne.s	loc_40A74
+		bne.s	.drawlives				; branch if player 1 isn't finished
 		tst.b	(f_hud_time_update_p2).w
-		beq.s	loc_40A74
-		move.w	#$110,d3
-		move.w	#$298,d2
-		movea.w	#-$7C8F,a3
+		beq.s	.drawlives				; branch if player 2 is finished
+		move.w	#screen_left+144,d3			; set x pos
+		move.w	#screen_top+536,d2			; set y pos
+		movea.w	#((vram_HUD2P_Numbers/sizeof_cell)>>1)+tile_hi,a3 ; set art tile
 		moveq	#0,d7
-		move.b	(v_loser_time_left).w,d7
-		bsr.w	HUD_2P_DrawSeconds
+		move.b	(v_loser_time_left).w,d7		; get time remaining
+		bsr.w	HUD_2P_Secs				; draw loser time remaining
 
-loc_40A74:
-		moveq	#5,d1
-		move.w	#$90,d3	
-		move.w	#$268,d2
+	.drawlives:
+		moveq	#id_Frame_HUD2_TailsLives,d1
+		move.w	#screen_left+16,d3			; set x pos
+		move.w	#screen_top+488,d2			; set y pos
 		lea	(Map_HUD2).l,a1
-		movea.w	#-$7CC0,a3
-		add.w	d1,d1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P
-		moveq	#0,d4
+		movea.w	#((vram_Monitors/sizeof_cell)>>1)+tile_hi,a3 ; set art tile
+		add.w	d1,d1					; d1 = index
+		adda.w	(a1,d1.w),a1				; a1 = mappings for current HUD frame
+		move.w	(a1)+,d1				; d1 = total sprite pieces
+		subq.w	#1,d1					; adjust for loop counter
+		jsrto	BuildSpr_DrawLoop_2P,JmpTo_BuildSpr_DrawLoop_2P ; draw player 1's life counter
+		moveq	#0,d4					; no clue what this is for
 		rts	
 ; ===========================================================================
 
 		include "mappings/sprite/HUD.asm"
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to add points to player 1's score
+;
+; input:
+;	d0.l = points to add (appears as *10 larger on the HUD)
 
+; output:
+;	d0.l = score
+;	(a3).l = score
+
+;	uses d1.l
+
+; usage:
+;		moveq	#100,d0
+;		bsr.w	AddPoints				; give 1000 points
+; ---------------------------------------------------------------------------
 
 AddPoints:
-		move.b	#1,(f_hud_score_update).w
+		move.b	#1,(f_hud_score_update).w		; set score counter to update
 		lea	(v_score).w,a3
-		add.l	d0,(a3)
+		add.l	d0,(a3)					; add d0*10 to the score
 		move.l	#999999,d1
-		cmp.l	(a3),d1
-		bhi.s	loc_40D1E
-		move.l	d1,(a3)
-
-loc_40D1E:				
+		cmp.l   (a3),d1					; is score below 999999?
+		bhi.s   .belowmax				; if yes, branch
+		move.l  d1,(a3)					; reset score to 999999
+		
+	.belowmax:				
 		move.l	(a3),d0
-		cmp.l	(v_score_next_life).w,d0
-		bcs.s	locret_40D40
-		addi.l	#$1388,(v_score_next_life).w
-		addq.b	#1,(v_lives).w
-		addq.b	#1,(f_hud_lives_update).w
-		move.w	#$98,d0	
-		jmp	(PlayMusic).l
-; ===========================================================================
+		cmp.l   (v_score_next_life).w,d0		; has player got 50000+ points?
+		bcs.s   .noextralife				; if not, branch
+		
+		addi.l	#points_for_life,(v_score_next_life).w	; increase requirement by 50000
+		addq.b  #1,(v_lives).w				; give extra life
+		addq.b  #1,(f_hud_lives_update).w		; set life counter in HUD to update
+		move.w	#mus_ExtraLife,d0	
+		jmp	(PlayMusic).l				; play extra life music
 
-locret_40D40:				
+	.noextralife:				
 		rts	
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to add points to player 1's score
+; Used by objects in 2P mode; goes to AddPoints to add to Player 1's score 
+; instead if this is not Player 2
+;
+; input:
+;	d0.l = points to add (appears as *10 larger on the HUD)
 
+; output:
+;	d0.l = score
+;	(a3).l = score
+
+;	uses d1.l
+
+; usage:
+;		moveq	#100,d0
+;		bsr.w	AddPoints2				; give 1000 points
+; ---------------------------------------------------------------------------
 
 AddPoints2:				
 		tst.w	(f_two_player).w
-		beq.s	AddPoints
-		cmpa.w	#-$5000,a3
-		beq.s	AddPoints
-		move.b	#1,(f_hud_score_update_p2).w
+		beq.s	AddPoints				; branch if we're in 1P mode
+		cmpa.w	#v_ost_player1,a3
+		beq.s	AddPoints				; branch if points are for player 1
+		move.b	#1,(f_hud_score_update_p2).w		; set score counter to update
 		lea	(v_score_p2).w,a3
 		add.l	d0,(a3)
 		move.l	#999999,d1
-		cmp.l	(a3),d1
-		bhi.s	loc_40D66
-		move.l	d1,(a3)
+		cmp.l   (a3),d1					; is score below 999999?
+		bhi.s   .belowmax				; if yes, branch
+		move.l  d1,(a3)					; reset score to 999999
 
-loc_40D66:				
+	.belowmax:				
 		move.l	(a3),d0
-		cmp.l	(v_score_next_life_p2).w,d0
-		bcs.s	locret_40D88
-		addi.l	#$1388,(v_score_next_life_p2).w
-		addq.b	#1,(v_lives_p2).w
-		addq.b	#1,(f_hud_lives_update_p2).w
-		move.w	#$98,d0	
-		jmp	(PlayMusic).l
-; ===========================================================================
+		cmp.l   (v_score_next_life_p2).w,d0		; has player got 50000+ points?
+		bcs.s   .noextralife				; if not, branch
+		addi.l	#points_for_life,(v_score_next_life_p2).w ; increase requirement by 50000
+		addq.b  #1,(v_lives_p2).w			; give extra life
+		addq.b  #1,(f_hud_lives_update_p2).w		; set life counter in HUD to update
+		move.w	#mus_ExtraLife,d0	
+		jmp	(PlayMusic).l				; play extra life music
 
-locret_40D88:				
+.noextralife:				
 		rts	
 
+; ---------------------------------------------------------------------------
+; Subroutine to	update the 1P mode HUD and end-of-level bonus counters
 
-; ===========================================================================
-
+;	uses d0.l, d1.l, d2.l, d3.l, d4.l, d6.l, a0, a1, a2, a3, a6
+; ---------------------------------------------------------------------------
 
 HUD_Update:				
 		nop	
 		lea	(vdp_data_port).l,a6
 		tst.w	(f_two_player).w
-		bne.w	loc_40F50
+		bne.w	HUD_Update_2P				; branch if we're in 2P mode
 		tst.w	(f_debug_enable).w
-		bne.w	loc_40E9A
+		bne.w	HUD_Debug				; branch if debug mode is enabled	
 		tst.b	(f_hud_score_update).w
-		beq.s	loc_40DBA
+		beq.s	.chkrings				; branch if we don't need to update the score
 		clr.b	(f_hud_score_update).w
-		move.l	#$5C800003,d0
-		move.l	(v_score).w,d1
-		bsr.w	sub_41146
+		vdp_comm.l	move,vram_HUD_Score,vram,write,d0 ; set VRAM address
+		move.l	(v_score).w,d1				; load score
+		bsr.w	HUD_Score
 
-loc_40DBA:				
+	.chkrings:				
 		tst.b	(v_hud_rings_update).w
-		beq.s	loc_40DDA
-		bpl.s	loc_40DC6
-		bsr.w	sub_4105A
+		beq.s	.chktime				; branch if we don't need to update the ring counter
+		bpl.s	.drawrings				; branch if ring count doesn't need to be reset to 0
+		bsr.w	HUD_InitRings				; reset ring count
 
-loc_40DC6:				
+	.drawrings:				
 		clr.b	(v_hud_rings_update).w
-		move.l	#$5F400003,d0
+		vdp_comm.l	move,vram_HUD_Rings,vram,write,d0 ; set VRAM address
 		moveq	#0,d1
-		move.w	(v_rings).w,d1
-		bsr.w	sub_4113C
+		move.w	(v_rings).w,d1				; load number of rings
+		bsr.w	HUD_Rings
 
-loc_40DDA:				
+	.chktime:				
 		tst.b	(f_hud_time_update).w
-		beq.s	loc_40E38
+		beq.s	.chklives				; branch if we don't need to update time
 		tst.w	(f_pause).w
-		bne.s	loc_40E38
+		bne.s	.chklives				; branch if the game is paused
 		lea	(v_time).w,a1
-		cmpi.l	#$93B3B,(a1)+
-		beq.w	loc_40E84
-		addq.b	#1,-(a1)
-		cmpi.b	#$3C,(a1)
-		bcs.s	loc_40E38
+		cmpi.l	#(9*$10000)+(59*$100)+59,(a1)+		; is the time 9:59:99?
+		beq.w	TimeOver				; branch if so
+		
+		addq.b	#1,-(a1)				; increment 1/60s counter
+		cmpi.b	#60,(a1)				; check if passed 60
+		bcs.s	.chklives
 		move.b	#0,(a1)
-		addq.b	#1,-(a1)
-		cmpi.b	#$3C,(a1)
-		bcs.s	loc_40E18
+		addq.b	#1,-(a1)				; increment second counter
+		cmpi.b	#60,(a1)				; check if passed 60
+		bcs.s	.updatetime
 		move.b	#0,(a1)
-		addq.b	#1,-(a1)
-		cmpi.b	#9,(a1)
-		bcs.s	loc_40E18
-		move.b	#9,(a1)
+		addq.b	#1,-(a1)				; increment minute counter
+		cmpi.b	#9,(a1)					; check if passed 9
+		bcs.s	.updatetime
+		move.b	#9,(a1)					; keep as 9
 
-loc_40E18:
-		move.l	#$5E400003,d0
+	.updatetime:
+		vdp_comm.l	move,vram_HUD_Minutes,vram,write,d0 ; set VRAM address
 		moveq	#0,d1
-		move.b	(v_time_min).w,d1
-		bsr.w	sub_41214
-		move.l	#$5EC00003,d0
+		move.b	(v_time_min).w,d1			; load	minutes
+		bsr.w	HUD_Mins
+		vdp_comm.l	move,vram_HUD_Seconds,vram,write,d0 ; set VRAM address	
 		moveq	#0,d1
-		move.b	(v_time_sec).w,d1
-		bsr.w	loc_4121C
+		move.b	(v_time_sec).w,d1			; load	seconds
+		bsr.w	HUD_Secs
 
-loc_40E38:
+	.chklives:
 		tst.b	(f_hud_lives_update).w
-		beq.s	loc_40E46
+		beq.s	.chkbonus				; branch if we don't need to update the life counter
 		clr.b	(f_hud_lives_update).w
-		bsr.w	sub_412E2
+		bsr.w	HUD_Lives
 
-loc_40E46:				
+	.chkbonus:				
 		tst.b	(f_pass_bonus_update).w
-		beq.s	locret_40E82
+		beq.s	.finish					; branch if time/ring bonus countdowns don't need updating
 		clr.b	(f_pass_bonus_update).w
-		move.l	#$64000002,(vdp_control_port).l
+		vdp_comm.l	move,vram_Bonus_Score,vram,write,(vdp_control_port).l ; set VRAM address
 		moveq	#0,d1
-		move.w	(v_total_bonus_countdown).w,d1
-		bsr.w	loc_41274
+		move.w	(v_total_bonus_countdown).w,d1	
+		bsr.w	HUD_Bonus
 		moveq	#0,d1
 		move.w	(v_bonus_count_1).w,d1
-		bsr.w	loc_41274
+		bsr.w	HUD_Bonus
 		moveq	#0,d1
 		move.w	(v_bonus_count_2).w,d1
-		bsr.w	loc_41274
+		bsr.w	HUD_Bonus
 		moveq	#0,d1
 		move.w	(v_bonus_count_3).w,d1
-		bsr.w	loc_41274
+		bsr.w	HUD_Bonus
 
-locret_40E82:				
+	.finish:				
 		rts	
 ; ===========================================================================
 
-loc_40E84:				
-		clr.b	(f_hud_time_update).w
-		lea	($FFFFB000).w,a0
-		movea.l	a0,a2
-		bsr.w	KillCharacter
-		move.b	#1,(f_time_over).w
-		rts	
-; ===========================================================================
-
-loc_40E9A:				
-		bsr.w	sub_410E4
-		tst.b	(v_hud_rings_update).w
-		beq.s	loc_40EBE
-		bpl.s	loc_40EAA
-		bsr.w	sub_4105A
-
-loc_40EAA:				
-		clr.b	(v_hud_rings_update).w
-		move.l	#$5F400003,d0
-		moveq	#0,d1
-		move.w	(v_rings).w,d1
-		bsr.w	sub_4113C
-
-loc_40EBE:				
-		move.l	#$5EC00003,d0
-		moveq	#0,d1
-		move.b	(v_spritecount).w,d1
-		bsr.w	loc_4121C
-		tst.b	(f_hud_lives_update).w
-		beq.s	loc_40EDC
-		clr.b	(f_hud_lives_update).w
-		bsr.w	sub_412E2
-
-loc_40EDC:				
-		tst.b	(f_pass_bonus_update).w
-		beq.s	loc_40F18
-		clr.b	(f_pass_bonus_update).w
-		move.l	#$64000002,(vdp_control_port).l
-		moveq	#0,d1
-		move.w	(v_total_bonus_countdown).w,d1
-		bsr.w	loc_41274
-		moveq	#0,d1
-		move.w	(v_bonus_count_1).w,d1
-		bsr.w	loc_41274
-		moveq	#0,d1
-		move.w	(v_bonus_count_2).w,d1
-		bsr.w	loc_41274
-		moveq	#0,d1
-		move.w	(v_bonus_count_3).w,d1
-		bsr.w	loc_41274
-
-loc_40F18:				
-		tst.w	(f_pause).w
-		bne.s	locret_40F4E
-		lea	(v_time).w,a1
-		cmpi.l	#604987,(a1)+
-		nop	
-		addq.b	#1,-(a1)
-		cmpi.b	#$3C,(a1)
-		bcs.s	locret_40F4E
-		move.b	#0,(a1)
-		addq.b	#1,-(a1)
-		cmpi.b	#$3C,(a1)
-		bcs.s	locret_40F4E
-		move.b	#0,(a1)
-		addq.b	#1,-(a1)
-		cmpi.b	#9,(a1)
-		bcs.s	locret_40F4E
-		move.b	#9,(a1)
-
-locret_40F4E:
-		rts	
-; ===========================================================================
-
-loc_40F50:				
-		tst.w	(f_pause).w
-		bne.w	locret_4101A
-		tst.b	(f_hud_time_update).w
-		beq.s	loc_40F90
-		lea	(v_time).w,a1
-		cmpi.l	#$93B3B,(a1)+
-		beq.w	TimeOver
-		addq.b	#1,-(a1)
-		cmpi.b	#$3C,(a1)
-		bcs.s	loc_40F90
-		move.b	#0,(a1)
-		addq.b	#1,-(a1)
-		cmpi.b	#$3C,(a1)
-		bcs.s	loc_40F90
-		move.b	#0,(a1)
-		addq.b	#1,-(a1)
-		cmpi.b	#9,(a1)
-		bcs.s	loc_40F90
-		move.b	#9,(a1)
-
-loc_40F90:
-		tst.b	(f_hud_time_update_p2).w
-		beq.s	loc_40FC8
-		lea	(v_time_p2).w,a1
-		cmpi.l	#$93B3B,(a1)+
-		beq.w	TimeOver2
-		addq.b	#1,-(a1)
-		cmpi.b	#$3C,(a1)
-		bcs.s	loc_40FC8
-		move.b	#0,(a1)
-		addq.b	#1,-(a1)
-		cmpi.b	#$3C,(a1)
-		bcs.s	loc_40FC8
-		move.b	#0,(a1)
-		addq.b	#1,-(a1)
-		cmpi.b	#9,(a1)
-		bcs.s	loc_40FC8
-		move.b	#9,(a1)
-
-loc_40FC8:
-		tst.b	(f_hud_lives_update).w
-		beq.s	loc_40FD6
-		clr.b	(f_hud_lives_update).w
-		bsr.w	sub_412E2
-
-loc_40FD6:				
-		tst.b	(f_hud_lives_update_p2).w
-		beq.s	loc_40FE4
-		clr.b	(f_hud_lives_update_p2).w
-		bsr.w	sub_412D4
-
-loc_40FE4:				
-		move.b	(f_hud_time_update).w,d0
-		or.b	(f_hud_time_update_p2).w,d0
-		beq.s	locret_4101A
-		lea	(v_loser_time_left).w,a1
-		tst.w	(a1)+
-		beq.s	locret_4101A
-		subq.b	#1,-(a1)
-		bhi.s	locret_4101A
-		move.b	#$3C,(a1)
-
-loc_40FFE:
-		cmpi.b	#$C,-1(a1)
-		bne.s	loc_41010
-		move.w	#$9F,d0	
-
-loc_4100A:
-		jsr	(PlayMusic).l
-
-loc_41010:				
-		subq.b	#1,-(a1)
-		bcc.s	locret_4101A
-		move.w	#0,(a1)
-		bsr.s	TimeOver0
-
-locret_4101A:							
-		rts	
-
-
-; ===========================================================================
-
-
-TimeOver0:				
-		tst.b	(f_hud_time_update).w
-		bne.s	TimeOver
-		tst.b	(f_hud_time_update_p2).w
-		bne.s	TimeOver2
-		rts	
-; ===========================================================================
-
-TimeOver:							
+TimeOver:				
 		clr.b	(f_hud_time_update).w
 		lea	(v_ost_player1).w,a0
-		movea.l	a0,a2
-		bsr.w	KillCharacter
-		move.b	#1,(f_time_over).w
-		tst.b	(f_hud_time_update_p2).w
-		beq.s	locret_41058
+		movea.l	a0,a2					; the player is killing themselves
+		bsr.w	KillCharacter				; kill the player
+		move.b	#1,(f_time_over).w			; flag for GAME OVER / TIME OVER object to use correct frame
+		rts	
+; ===========================================================================
 
-TimeOver2:
-		clr.b	(f_hud_time_update_p2).w
-		lea	(v_ost_player2).w,a0
-		movea.l	a0,a2
-		bsr.w	KillCharacter
-		move.b	#1,(f_time_over_p2).w
+HUD_Debug:				
+		bsr.w	HUD_DebugXY				; draw x and y coordinates of player and camera
+		tst.b	(v_hud_rings_update).w
+		beq.s	.spritecounter				; branch if ring counter doens't need updating
+		bpl.s	.notzero				; branch if does not need to be reset to 0
+		bsr.w	HUD_InitRings				; reset rings to 0 if required
 
-locret_41058:				
+	.notzero:				
+		clr.b	(v_hud_rings_update).w
+		vdp_comm.l	move,vram_HUD_Rings,vram,write,d0 ; set VRAM address
+		moveq	#0,d1
+		move.w	(v_rings).w,d1				; load number of rings
+		bsr.w	HUD_Rings
+
+	.spritecounter:			
+		vdp_comm.l	move,vram_HUD_Seconds,vram,write,d0 ; drawn in place of the seconds counter
+		moveq	#0,d1
+		move.b	(v_spritecount).w,d1			; load count of sprites rendered on current frame
+		bsr.w	HUD_Secs
+		
+		tst.b	(f_hud_lives_update).w
+		beq.s	.chkbonus				; branch if lives counter doesn't need updating
+		clr.b	(f_hud_lives_update).w
+		bsr.w	HUD_Lives
+
+	.chkbonus:				
+		tst.b	(f_pass_bonus_update).w			; do time/ring bonus counters need updating?
+		beq.s	.chktime				; branch if not
+		clr.b	(f_pass_bonus_update).w
+		vdp_comm.l	move,vram_Bonus_Score,vram,write,(vdp_control_port).l ; set VRAM address
+		moveq	#0,d1
+		move.w	(v_total_bonus_countdown).w,d1
+		bsr.w	HUD_Bonus
+		moveq	#0,d1
+		move.w	(v_bonus_count_1).w,d1
+		bsr.w	HUD_Bonus
+		moveq	#0,d1
+		move.w	(v_bonus_count_2).w,d1
+		bsr.w	HUD_Bonus
+		moveq	#0,d1
+		move.w	(v_bonus_count_3).w,d1
+		bsr.w	HUD_Bonus
+
+	.chktime:	
+		; Unlike Sonic 1, Sonic 2 continues to run the timer in debug mode.			
+		tst.w	(f_pause).w
+		bne.s	.finish					; branch if the game is paused
+		lea	(v_time).w,a1
+		cmpi.l	#(9*$10000)+(59*$100)+59,(a1)+		; is the time 9:59:99? (could be deleted along with below instruction)
+		nop						; (no time overs in debug mode)
+		addq.b	#1,-(a1)				; increment 1/60s counter
+		cmpi.b	#60,(a1)				; check if passed 60
+		bcs.s	.finish
+		move.b	#0,(a1)
+		addq.b	#1,-(a1)				; increment second counter
+		cmpi.b	#60,(a1)				; check if passed 60
+		bcs.s	.finish
+		move.b	#0,(a1)
+		addq.b	#1,-(a1)				; increment minute counter
+		cmpi.b	#9,(a1)					; check if passed 9
+		bcs.s	.finish
+		move.b	#9,(a1)					; keep as 9
+
+
+	.finish:
 		rts	
 
+; ---------------------------------------------------------------------------
+; Subroutine to	update the 2P mode HUDs
+
+;	uses d0.l, d1.l, d2.l, d3.l, d4.l, d6.l, a0, a1, a2, a3, a6
+; ---------------------------------------------------------------------------
+
+HUD_Update_2P:				
+		tst.w	(f_pause).w
+		bne.w	.finish					; branch if game is paused
+		
+	;.chktime_p1:	
+		tst.b	(f_hud_time_update).w
+		beq.s	.chktime_p2				; branch if we don't need to update player 1's time
+		lea	(v_time).w,a1
+		cmpi.l	#(9*$10000)+(59*$100)+59,(a1)+		; is the time 9:59:59?
+		beq.w	TimeOver_P1				; branch if so
+		
+		addq.b	#1,-(a1)				; increment 1/60s counter
+		cmpi.b	#60,(a1)				; check if passed 60
+		bcs.s	.chktime_p2
+		move.b	#0,(a1)
+		addq.b	#1,-(a1)				; increment second counter
+		cmpi.b	#60,(a1)				; check if passed 60
+		bcs.s	.chktime_p2
+		move.b	#0,(a1)
+		addq.b	#1,-(a1)				; increment minute counter
+		cmpi.b	#9,(a1)					; check if passed 9
+		bcs.s	.chktime_p2
+		move.b	#9,(a1)					; keep as 9
+		
+	.chktime_p2:
+		tst.b	(f_hud_time_update_p2).w
+		beq.s	.chklives_p1				; branch if we don't need to update player 2's time	
+		lea	(v_time_p2).w,a1
+		cmpi.l	#(9*$10000)+(59*$100)+59,(a1)+		; is the time 9:59:59?
+		beq.w	TimeOver_P2				; branch if so
+		
+		addq.b	#1,-(a1)				; increment 1/60s counter
+		cmpi.b	#60,(a1)				; check if passed 60
+		bcs.s	.chklives_p1
+		move.b	#0,(a1)
+		addq.b	#1,-(a1)				; increment second counter
+		cmpi.b	#60,(a1)				; check if passed 60
+		bcs.s	.chklives_p1
+		move.b	#0,(a1)
+		addq.b	#1,-(a1)				; increment minute counter
+		cmpi.b	#9,(a1)					; check if passed 9
+		bcs.s	.chklives_p1
+		move.b	#9,(a1)					; keep as 9
+		
+	.chklives_p1:
+		tst.b	(f_hud_lives_update).w
+		beq.s	.chklives_p2				; branch if we don't need to update player 1's life counter
+		clr.b	(f_hud_lives_update).w
+		bsr.w	HUD_Lives
+
+	.chklives_p2:				
+		tst.b	(f_hud_lives_update_p2).w
+		beq.s	.chklosertime				; branch if we don't need to update player 2's life counter
+		clr.b	(f_hud_lives_update_p2).w
+		bsr.w	HUD_Lives_P2
+
+	.chklosertime:				
+		move.b	(f_hud_time_update).w,d0
+		or.b	(f_hud_time_update_p2).w,d0
+		beq.s	.finish					; branch if both players are finished
+		lea	(v_loser_time_left).w,a1		; get loser timer (will be nonzero if at least one player has finished)
+		tst.w	(a1)+
+		beq.s	.finish					; branch if neither player has finished
+		subq.b	#1,-(a1)				; decrement frame counter
+		bhi.s	.finish					; branch if time remains
+		move.b	#60,(a1)				; reset frame counter
+		cmpi.b	#time_warning_2P,-1(a1)			; has seconds timer reached 12?
+		bne.s	.skipmusic				; branch if not
+		move.w	#mus_Drowning,d0	
+		jsr	(PlayMusic).l				; play drowning music
+
+	.skipmusic:				
+		subq.b	#1,-(a1)				; decrement seconds timer
+		bcc.s	.finish					; branch if time remains
+		move.w	#0,(a1)					; clear loser time
+		bsr.s	TimeOver_2P
+
+	.finish:							
+		rts	
 
 ; ===========================================================================
 
-
-sub_4105A:
-		move.l	#$5F400003,(vdp_control_port).l
-		lea	byte_410E0(pc),a2
-		move.w	#2,d2
-		bra.s	loc_41090
+TimeOver_2P:				
+		tst.b	(f_hud_time_update).w
+		bne.s	TimeOver_P1				; branch if player 1 ran out of time
+		tst.b	(f_hud_time_update_p2).w
+		bne.s	TimeOver_P2				; branch if player 2 ran out of time
+		rts	
 ; ===========================================================================
+
+TimeOver_P1:							
+		clr.b	(f_hud_time_update).w
+		lea	(v_ost_player1).w,a0
+		movea.l	a0,a2					; the player is killing themselves
+		bsr.w	KillCharacter				; kill the player
+		move.b	#1,(f_time_over).w			; flag for GAME OVER / TIME OVER object to use correct frame
+		tst.b	(f_hud_time_update_p2).w
+		beq.s	TimeOver_2P_Done			; branch if player 2 has time left
+
+TimeOver_P2:
+		clr.b	(f_hud_time_update_p2).w
+		lea	(v_ost_player2).w,a0
+		movea.l	a0,a2					; the player is killing themselves
+		bsr.w	KillCharacter				; kill the player
+		move.b	#1,(f_time_over_p2).w			; flag for GAME OVER / TIME OVER object to use correct frame
+		
+TimeOver_2P_Done:				
+		rts	
+
+; ---------------------------------------------------------------------------
+; Subroutine to	set rings counter to 0 on HUD
+
+; input:
+;	a6 = vdp_data_port
+
+;	uses d0.w, d1.w, d2.w, a1, a2, a3
+; ---------------------------------------------------------------------------
+
+HUD_InitRings:
+		vdp_comm.l	move,vram_HUD_Rings,vram,write,(vdp_control_port).l ; rings counter VRAM address	
+		lea	HUD_TilesRings(pc),a2			; tile list
+		move.w	#sizeof_HUD_TilesRings-1,d2		; number of characters
+		bra.s	HUD_Base_Load
+		
+; ---------------------------------------------------------------------------
+; Subroutine to	load uncompressed HUD patterns ("E", "0", colon)
+
+; output:
+;	a6 = vdp_data_port ($C00000)
+
+;	uses d0.l, d1.l, d2.l, d3.l, d4.l, d5.l, d6.l, a1, a2, a3
+; ---------------------------------------------------------------------------
 
 HUD_Base:				
 		lea	(vdp_data_port).l,a6
-		bsr.w	sub_412E2
+		bsr.w	HUD_Lives				; initialize lives counter
 		tst.w	(f_two_player).w
-		bne.s	loc_410BC
-		move.l	#$5C400003,(vdp_control_port).l
-		lea	byte_410D4(pc),a2
-		move.w	#$E,d2
+		bne.s	HUD_Base_2P				; branch if we're in 2P mode
+		vdp_comm.l	move,vram_HUD_Score_E,vram,write,(vdp_control_port).l ; VRAM address
+		lea	HUD_TilesBase(pc),a2			; tile list
+		move.w	#sizeof_HUD_TilesBase-1,d2		; number of characters
 
-loc_41090:				
-		lea	Art_HUD(pc),a1
+HUD_Base_Load:				
+		lea	Art_HUD(pc),a1				; address of HUD GFx	
 
-loc_41094:				
-		move.w	#$F,d1
-		move.b	(a2)+,d0
-		bmi.s	loc_410B0
+.loop_chars:				
+		move.w	#((sizeof_cell/4)*2)-1,d1		; each character consist of 2 cells
+		move.b	(a2)+,d0				; get tile ID
+		bmi.s	.blank_char				; branch if $FF
 		ext.w	d0
-		lsl.w	#5,d0
-		lea	(a1,d0.w),a3
+		lsl.w	#5,d0					; multiply ID by 20
+		lea	(a1,d0.w),a3				; jump to relevant GFX
 
-loc_410A4:				
-		move.l	(a3)+,(a6)
-		dbf	d1,loc_410A4
+	.loop_gfx:				
+		move.l	(a3)+,(a6)				; copy two tiles to VRAM
+		dbf	d1,.loop_gfx
 
-loc_410AA:				
-		dbf	d2,loc_41094
+.next_char:				
+		dbf	d2,.loop_chars				; repeat for all characters
 		rts	
 ; ===========================================================================
 
-loc_410B0:
-		move.l	#0,(a6)
-		dbf	d1,loc_410B0
-		bra.s	loc_410AA
+.blank_char:
+		move.l	#0,(a6)					; erase character
+		dbf	d1,.blank_char
+		
+		bra.s	.next_char		
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; In 2P mode, we simply DMA these graphics to VRAM.
+; ---------------------------------------------------------------------------
 
-loc_410BC:				
-		bsr.w	sub_412D4
-		move.l	#Art_HUD,d1
-		move.w	#$DC40,d2
-		move.w	#$160,d3
+HUD_Base_2P:				
+		bsr.w	HUD_Lives_P2				; initialize player 2's life counter
+		move.l	#Art_HUD,d1				; DMA source
+		move.w	#vram_HUD_Score_E,d2			; VRAM destination	
+		move.w	#(sizeof_Art_HUD-(sizeof_cell*2))/2,d3	; DMA everything except the 'E' (the final two tiles)
 		jmp	(AddDMA).l
 ; ===========================================================================
-byte_410D4:	
-		dc.b $16					; 0 
-		dc.b $FF					; 1
-		dc.b $FF					; 2
-		dc.b $FF					; 3
-		dc.b $FF					; 4
-		dc.b $FF					; 5
-		dc.b $FF					; 6
-		dc.b   0					; 7
-		dc.b   0					; 8
-		dc.b $14					; 9
-		dc.b   0					; 10
-		dc.b   0					; 11
-byte_410E0:	
-		dc.b $FF					; 0 
-		dc.b $FF					; 1
-		dc.b   0					; 2
-		dc.b   0					; 3
 
-; ===========================================================================
+HUD_TilesBase:	
+		charset	hud,"E      0"
+		charset	hud,"0:00"
+		
+HUD_TilesRings:	
+		charset hud,"  0"
+		arraysize	HUD_TilesBase
+		arraysize 	HUD_TilesRings
+		even
 
+; ---------------------------------------------------------------------------
+; Subroutine to	load debug mode	numbers	patterns
 
-sub_410E4:				
-		move.l	#$5C400003,(vdp_control_port).l
+; input:
+;	a6 = vdp_data_port
+
+;	uses d1.l, d2.w, d6.l, a1, a3
+; ---------------------------------------------------------------------------
+
+HUD_DebugXY:				
+		vdp_comm.l	move,vram_HUD_Score_E,vram,write,(vdp_control_port).l ; VRAM address, starts at "E" in score
 		move.w	(v_camera_x_pos).w,d1
-		swap	d1
-		move.w	($FFFFB008).w,d1
-		bsr.s	loc_41104
+		swap	d1					; camera x pos in high word
+		move.w	(v_ost_player1+ost_x_pos).w,d1		; player x pos in low word
+		bsr.s	.draw
 		move.w	(v_camera_y_pos).w,d1
-		swap	d1
-		move.w	($FFFFB00C).w,d1
+		swap	d1					; camera y pos in high word
+		move.w	(v_ost_player1+ost_y_pos).w,d1		; player y pos in low word
+		
+.draw:				
+		moveq	#8-1,d6					; number of digits
+		lea	(Art_HUDText).l,a1			; debug number gfx
 
-loc_41104:				
-		moveq	#7,d6
-		lea	(Art_HUDText).l,a1
-
-loc_4110C:				
+	.loop:				
 		rol.w	#4,d1
-		move.w	d1,d2
+		move.w	d1,d2					; copy nybble to d2
 		andi.w	#$F,d2
 		cmpi.w	#$A,d2
-		bcs.s	loc_4111E
-		addi_.w	#7,d2
+		bcs.s	.is_0to9				; branch if 0-9
+		addi_.w	#7,d2					; use later tile for A-F
 
-loc_4111E:				
-		lsl.w	#5,d2
-		lea	(a1,d2.w),a3
-		rept 8
-		move.l	(a3)+,(a6)
-		endr
+	.is_0to9:				
+		lsl.w	#5,d2					; multiply by $20
+		lea	(a1,d2.w),a3				; jump to relevant tile in gfx
+		rept sizeof_cell/4
+		move.l	(a3)+,(a6)				; copy tile to VRAM
+		endr	
 		swap	d1
-		dbf	d6,loc_4110C
-		rts	
+		dbf	d6,.loop				; repeat for all digits stored in d1
 
+		rts
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	load rings numbers patterns
 
+; input:
+;	d0.l = VDP instruction for VRAM address
+;	d1.l = number of rings
+;	a6 = vdp_data_port ($C00000)
 
-sub_4113C:
-		lea	(HUD_100).l,a2
-		moveq	#2,d6
-		bra.s	loc_4114E
+;	uses d1.l, d2.l, d3.l, d4.l, d6.l, a1, a2, a3
+; ---------------------------------------------------------------------------
 
-; ===========================================================================
+HUD_Rings:
+		lea	(HUD_100).l,a2				; multiples of 100
+		moveq	#3-1,d6					; number of digits
+		bra.s	HUD_LoadArt
 
+; ---------------------------------------------------------------------------
+; As above, but for the score
+; ---------------------------------------------------------------------------
 
-sub_41146:				
-		lea	(HUD_100000).l,a2
-		moveq	#5,d6
+HUD_Score:				
+		lea	(HUD_100000).l,a2			; multiples of 100000
+		moveq	#6-1,d6					; number of digits
 
-loc_4114E:				
-		moveq	#0,d4
-		lea	Art_HUD(pc),a1
+HUD_LoadArt:				
+		moveq	#0,d4		
+		lea	Art_HUD(pc),a1				; address of HUD number gfx
 
-loc_41154:				
-		moveq	#0,d2
-		move.l	(a2)+,d3
+.loop:				
+		moveq	#0,d2					; digits start a 0
+		move.l	(a2)+,d3				; d3 = multiple of 10
 
-loc_41158:				
+	.find_digit:
 		sub.l	d3,d1
-		bcs.s	loc_41160
-		addq.w	#1,d2
-		bra.s	loc_41158
+		bcs.s	.digit_found				; branch if score is less than the value in d3
+		addq.w	#1,d2					; increment digit counter
+		bra.s	.find_digit				; repeat until d2 = digit
 ; ===========================================================================
 
-loc_41160:				
+.digit_found:
 		add.l	d3,d1
 		tst.w	d2
-		beq.s	loc_4116A
-		move.w	#1,d4
+		beq.s	.digit_0				; branch if digit is 0
+		move.w	#1,d4					; set flag to load gfx for digit
 
-loc_4116A:				
+	.digit_0:
 		tst.w	d4
-		beq.s	loc_41198
-		lsl.w	#6,d2
-		move.l	d0,vdp_control_port-vdp_data_port(a6)
-		lea	(a1,d2.w),a3
-		rept 16
-		move.l	(a3)+,(a6)
+		beq.s	.skip_digit				; branch if digit was 0
+		lsl.w	#6,d2					; multiply by $40 (size of 2 tiles per digit)
+		move.l	d0,vdp_control_port-vdp_data_port(a6)	; set target VRAM address
+		lea	(a1,d2.w),a3				; jump to relevant gfx source
+		rept (sizeof_cell/4)*2
+		move.l	(a3)+,(a6)				; copy 2 tiles to VRAM
 		endr
 
-loc_41198:				
-		addi.l	#$400000,d0
-		dbf	d6,loc_41154
-		rts	
+	.skip_digit:
+		addi.l	#(sizeof_cell*2)<<16,d0			; next VRAM address, 2 tiles ahead
+		dbf	d6,.loop				; repeat for number of digits
 
+		rts
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	load countdown numbers on the continue screen
 
-sub_411A4:
-		move.l	#$5F800003,(vdp_control_port).l
+; input:
+;	d1.l = number on countdown
+
+; output:
+;	a6 = vdp_data_port ($C00000)
+
+;	uses d1.l, d2.l, d3.l, d6.l, a1, a2, a3
+; ---------------------------------------------------------------------------
+
+ContScrCounter:
+		vdp_comm.l	move,vram_ContinueCountdown,vram,write,(vdp_control_port).l
 		lea	(vdp_data_port).l,a6
-		lea	(HUD_10).l,a2			; could be PC-relative
-		moveq	#1,d6
-		moveq	#0,d4
-		lea	Art_HUD(pc),a1
+		lea	(HUD_10).l,a2
+		moveq	#2-1,d6					; number of digits
+		moveq	#0,d4					; pointless
+		lea	Art_Hud(pc),a1				; address of number gfx
 
-loc_411C2:				
+.loop:
 		moveq	#0,d2
-		move.l	(a2)+,d3
+		move.l	(a2)+,d3				; d3 = current multiple to search for
 
-loc_411C6:				
+	.find_digit:
 		sub.l	d3,d1
-		bcs.s	loc_411CE
-		addq.w	#1,d2
-		bra.s	loc_411C6
+		blo.s	.digit_found				; branch if number is less than the value in d3
+		addq.w	#1,d2					; increment digit counter
+		bra.s	.find_digit				; repeat until d2 = digit
 ; ===========================================================================
 
-loc_411CE:				
+.digit_found:
 		add.l	d3,d1
-		lsl.w	#6,d2
-		lea	(a1,d2.w),a3
-		rept 16
-		move.l	(a3)+,(a6)
+		lsl.w	#6,d2					; multiply by $40 (size of 2 tiles per digit)
+		lea	(a1,d2.w),a3				; jump to relevant gfx source
+		rept (sizeof_cell/4)*2
+		move.l	(a3)+,(a6)				; copy 2 tiles to VRAM
 		endr
-		dbf	d6,loc_411C2
-		rts	
+		dbf	d6,.loop				; repeat 1 more	time
 
-; ===========================================================================
-HUD_100000:	
-		dc.l 100000
+		rts
 		
-		dc.l 10000	; unused
+; ---------------------------------------------------------------------------
+; HUD counter sizes
+; ---------------------------------------------------------------------------
 
-HUD_1000:
-		dc.l 1000
-		
-HUD_100:	
-		dc.l 100
-		
-HUD_10:	
-		dc.l 10
-		
-HUD_1:	
-		dc.l 1
+HUD_100000:	dc.l 100000
+			dc.l 10000				; unused
+HUD_1000:	dc.l 1000		
+HUD_100:	dc.l 100		
+HUD_10:		dc.l 10	
+HUD_1:		dc.l 1
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	load time numbers patterns
 
+; input:
+;	d0.l = VDP instruction for VRAM address
+;	d1.l = number on time counter
+;	a6 = vdp_data_port ($C00000)
 
-sub_41214:				
-		lea_	HUD_1,a2
-		moveq	#0,d6
-		bra.s	loc_41222
-; ===========================================================================
+;	uses d1.l, d2.l, d3.l, d4.l, d6.l, a1, a2, a3
+; ---------------------------------------------------------------------------
 
-loc_4121C:
-		lea_	HUD_10,a2
-		moveq	#1,d6
+HUD_Mins:				
+		lea_	HUD_1,a2				; multiples of 1
+		moveq	#1-1,d6					; number of digits
+		bra.s	HUD_Time_Load
 
-loc_41222:				
+HUD_Secs:
+		lea_	HUD_10,a2				; multiples of 10
+		moveq	#2-1,d6					; number of digits
+
+HUD_Time_Load:				
 		moveq	#0,d4
-		lea	Art_HUD(pc),a1
+		lea	Art_HUD(pc),a1				; address of HUD number gfx
 
-loc_41228:				
+.loop:				
 		moveq	#0,d2
-		move.l	(a2)+,d3
+		move.l	(a2)+,d3				; d3 = current multiple to search for
 
-loc_4122C:				
+	.find_digit:				
 		sub.l	d3,d1
-		bcs.s	loc_41234
-		addq.w	#1,d2
-		bra.s	loc_4122C
+		bcs.s	.digit_found				; branch if time is less than the value in d3
+		addq.w	#1,d2					; increment digit counter
+		bra.s	.find_digit				; repeat until d2 = digit
 ; ===========================================================================
 
-loc_41234:				
+.digit_found:
 		add.l	d3,d1
 		tst.w	d2
-		beq.s	loc_4123E
-		move.w	#1,d4
+		beq.s	.digit_0				; branch if digit is 0
+		move.w	#1,d4					; unused flag
 
-loc_4123E:				
-		lsl.w	#6,d2
-		move.l	d0,vdp_control_port-vdp_data_port(a6)
-		lea	(a1,d2.w),a3
-		rept 16
-		move.l	(a3)+,(a6)
+	.digit_0:
+		lsl.w	#6,d2					; multiply by $40 (size of 2 tiles per digit)
+		move.l	d0,vdp_control_port-vdp_data_port(a6)	; set target VRAM address
+		lea	(a1,d2.w),a3				; jump to relevant gfx source
+		rept (sizeof_cell/4)*2
+		move.l	(a3)+,(a6)				; copy 2 tiles to VRAM
 		endr
-		addi.l	#$400000,d0
-		dbf	d6,loc_41228
-		rts	
+		addi.l	#(sizeof_cell*2)<<16,d0			; next VRAM address, 2 tiles ahead
+		dbf	d6,.loop				; repeat for number of digits
 
+		rts
+		
+; ---------------------------------------------------------------------------
+; Subroutine to	load time/ring bonus numbers patterns
 
-; ===========================================================================
+; input:
+;	d0.l = VDP instruction for VRAM address
+;	d1.l = number on bonus counter
+;	a6 = vdp_data_port
 
-loc_41274:								
-		lea_	HUD_1000,a2
-		moveq	#3,d6
+;	uses d1.l, d2.l, d3.l, d4.l, d5.l, d6.l, a1, a2, a3
+; ---------------------------------------------------------------------------
+
+HUD_Bonus:								
+		lea_	HUD_1000,a2				; multiples of 1000
+		moveq	#4-1,d6					; number of digits
 		moveq	#0,d4
-		lea	Art_HUD(pc),a1
+		lea	Art_HUD(pc),a1				; address of HUD number gfx	
 
-loc_41280:				
+.loop:				
 		moveq	#0,d2
-		move.l	(a2)+,d3
+		move.l	(a2)+,d3				; d3 = multiple of 10
 
-loc_41284:				
+	.find_digit:
 		sub.l	d3,d1
-		bcs.s	loc_4128C
-		addq.w	#1,d2
-		bra.s	loc_41284
+		bcs.s	.digit_found				; branch if bonus is less than the value in d3
+		addq.w	#1,d2					; increment digit counter
+		bra.s	.find_digit				; repeat until d2 = digit
 ; ===========================================================================
 
-loc_4128C:				
+.digit_found:				
 		add.l	d3,d1
 		tst.w	d2
-		beq.s	loc_41296
-		move.w	#1,d4
+		beq.s	.digit_0				; branch if digit is 0
+		move.w	#1,d4					; set flag to load gfx for digit
 
-loc_41296:				
+	.digit_0:
 		tst.w	d4
-		beq.s	loc_412C6
-		lsl.w	#6,d2
-		lea	(a1,d2.w),a3
-		rept 16
-		move.l	(a3)+,(a6)
+		beq.s	.skip_digit				; branch if digit was 0
+		lsl.w	#6,d2					; multiply by $40 (size of 2 tiles per digit)
+		lea	(a1,d2.w),a3				; jump to relevant gfx source
+		rept (sizeof_cell/4)*2
+		move.l	(a3)+,(a6)				; copy 2 tiles to VRAM
 		endr
 
-loc_412C0:				
-		dbf	d6,loc_41280
+.next:
+		dbf	d6,.loop				; repeat for number of digits
 		rts	
 ; ===========================================================================
 
-loc_412C6:				
-		moveq	#$F,d5
+.skip_digit:
+		moveq	#((sizeof_cell/4)*2)-1,d5
 
-loc_412C8:				
-		move.l	#0,(a6)
-		dbf	d5,loc_412C8
-		bra.s	loc_412C0
+	.loop_erase:
+		move.l	#0,(a6)					; write blank digit to VRAM
+		dbf	d5,.loop_erase
 
-; ===========================================================================
+		bra.s	.next
 
+; ---------------------------------------------------------------------------
+; Subroutine to	load uncompressed lives	counter	patterns
 
-sub_412D4:
-		move.l	#$5FA00003,d0
+; input:
+;	a6 = vdp_data_port ($C00000)
+
+;	uses d0.l, d1.l, d2.l, d3.l, d4.l, d5.l, d6.l, a1, a2, a3
+; ---------------------------------------------------------------------------
+
+HUD_Lives_P2:
+		vdp_comm.l	move,vram_LifeCounter2_Lives,vram,write,d0 ; VRAM address of lives counter
 		moveq	#0,d1
-		move.b	(v_lives_p2).w,d1
-		bra.s	loc_412EE
+		move.b	(v_lives_p2).w,d1			; load number of lives
+		bra.s	HUD_Lives_Load
 
-
-; ===========================================================================
-
-
-sub_412E2:							
-		move.l	#$7BA00003,d0
+HUD_Lives:							
+		vdp_comm.l	move,vram_LifeCounter_Lives,vram,write,d0
 		moveq	#0,d1
-		move.b	(v_lives).w,d1
+		move.b	(v_lives).w,d1				; load number of lives
 
-loc_412EE:				
-		lea_	HUD_10,a2
-		moveq	#1,d6
+HUD_Lives_Load:				
+		lea_	HUD_10,a2				; multiples of 10
+		moveq	#2-1,d6					; number of digits
 		moveq	#0,d4
-		lea	Art_LivesNums(pc),a1
+		lea	Art_LivesNums(pc),a1			; address of lives counter GFX
 
-loc_412FA:				
-		move.l	d0,vdp_control_port-vdp_data_port(a6)
+.loop:				
+		move.l	d0,vdp_control_port-vdp_data_port(a6)	; set VRAM address
 		moveq	#0,d2
-		move.l	(a2)+,d3
+		move.l	(a2)+,d3				; d3 = multiples of 10 or 1
 
-loc_41302:				
+	.find_digit:				
 		sub.l	d3,d1
-		bcs.s	loc_4130A
-		addq.w	#1,d2
-		bra.s	loc_41302
+		bcs.s	.digit_found				; branch if lives is less than the value in d3
+		addq.w	#1,d2					; increment digit counter
+		bra.s	.find_digit				; repeat until d2 = digit
 ; ===========================================================================
 
-loc_4130A:				
+.digit_found:				
 		add.l	d3,d1
 		tst.w	d2
-		beq.s	loc_41314
-		move.w	#1,d4
+		beq.s	.digit_0				; branch if digit is 0
+		move.w	#1,d4					; set flag to load gfx for digit
 
-loc_41314:				
+	.digit_0:				
 		tst.w	d4
-		beq.s	loc_4133A
+		beq.s	.skip_digit				; branch if digit was 0
 
-loc_41318:				
-		lsl.w	#5,d2
-		lea	(a1,d2.w),a3
-		rept 8
-		move.l	(a3)+,(a6)
+.show_digit:
+		lsl.w	#5,d2					; multiply by $20 (size of cell)
+		lea	(a1,d2.w),a3				; jump to relevant gfx source
+		rept sizeof_cell/4
+		move.l	(a3)+,(a6)				; copy tile to VRAM
 		endr
 
-loc_4132E:				
-		addi.l	#$400000,d0
-		dbf	d6,loc_412FA
+.next:
+		addi.l	#(sizeof_cell*2)<<16,d0			; next VRAM address, 2 tiles ahead (1st & 2nd digits are not adjacent)
+		dbf	d6,.loop				; repeat 1 more time
+
 		rts	
 ; ===========================================================================
 
-loc_4133A:				
+.skip_digit:				
 		tst.w	d6
-		beq.s	loc_41318
-		moveq	#7,d5
+		beq.s	.show_digit				; branch if this is the 2nd digit
+		moveq	#(sizeof_cell/4)-1,d5
 
-loc_41340:				
-		move.l	#0,(a6)
-		dbf	d5,loc_41340
-		bra.s	loc_4132E
+	.loop_erase:
+		move.l	#0,(a6)					; write blank digit to VRAM
+		dbf	d5,.loop_erase
+		bra.s	.next
 
 ; ===========================================================================
 
@@ -85130,7 +85244,6 @@ JmpTo_BuildSpr_DrawLoop:
 		align 4
 	endc
 	
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Psuedoobject that runs debug placement mode
 ; ---------------------------------------------------------------------------
@@ -85142,9 +85255,9 @@ DebugMode:
 		jmp	Debug_Index(pc,d1.w)
 ; ===========================================================================
 ; off_41A86:
-Debug_Index:
-		dc.w loc_41A8A-Debug_Index			; 0 		
-		dc.w loc_41B0C-Debug_Index			; 2
+Debug_Index:	index offset(*),,2
+		ptr loc_41A8A					; 0 		
+		ptr loc_41B0C					; 2
 ; ===========================================================================
 
 loc_41A8A:				
@@ -86263,7 +86376,7 @@ lhead:	macro plc1,plc2,palette,art,map16x16,map128x128
 		dc.l (plc1<<24)+art
 		dc.l (plc2<<24)+map16x16
 		dc.l (palette<<24)|map128x128
-	endm
+		endm
 		
 ; LevelArtPointers:		
 LevelHeaders:	
@@ -86420,7 +86533,7 @@ plcheader:	macro *
 ;---------------------------------------------------------------------------------------
 PLC_Main:	plcheader
 		plcm 	Nem_HUD,vram_HUD
-		plcm 	Nem_Sonic_Life_Counter,vram_lifecounter
+		plcm 	Nem_Sonic_Life_Counter,vram_LifeCounter
 		plcm	Nem_Ring,vram_Ring
 		plcm	Nem_Numbers,vram_Numbers
 	PLC_Main_end:
@@ -86471,25 +86584,25 @@ PLC_EHZ2:		plcheader
 ; Pattern load cue - Miles 1-UP patch
 ;---------------------------------------------------------------------------------------
 PLC_Miles1Up:		plcheader			
-		plcm	Nem_MilesLife,vram_Miles_Tails_1UP
+		plcm	Nem_MilesLife,vram_LifeCounter2
 	PLC_Miles1Up_end:
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Miles life counter
 ;---------------------------------------------------------------------------------------
 PLC_MilesLife:	plcheader			
-		plcm	Nem_MilesLife,vram_lifecounter
+		plcm	Nem_MilesLife,vram_LifeCounter
 	PLC_MilesLife_end:	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Tails 1-UP patch
 ;---------------------------------------------------------------------------------------
 PLC_Tails1Up:		plcheader			
-		plcm	Nem_TailsLife,vram_Miles_Tails_1UP
+		plcm	Nem_TailsLife,vram_LifeCounter2
 	PLC_Tails1Up_end:
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Tails life counter
 ;---------------------------------------------------------------------------------------
 PLC_TailsLife:	plcheader			
-		plcm	Nem_TailsLife,vram_lifecounter
+		plcm	Nem_TailsLife,vram_LifeCounter
 	PLC_TailsLife_end:		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Metropolis Primary
@@ -86973,6 +87086,7 @@ PLC_ResultsTails:	plcheader
 
 ;---------------------------------------------------------------------------------------
 ; Unused duplicates of some of the PLC lists found only in Revisions 0 and 2
+; (possibly used as padding?)
 ;---------------------------------------------------------------------------------------		
 	if Revision=0
 		; second half of PLC_ResultsTails

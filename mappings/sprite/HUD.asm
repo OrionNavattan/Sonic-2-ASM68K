@@ -71,8 +71,8 @@ Map_HUD2:	index offset(*)
 		ptr	Frame_HUD2_RingRed
 		ptr	Frame_HUD2_TimeRed
 		ptr	Frame_HUD2_AllRed
-		ptr	Map_hud_b_0074
-		ptr	Map_hud_b_0086
+		ptr	Frame_HUD2_SonicLives
+		ptr	Frame_HUD2_TailsLives
 
 Frame_HUD2_AllYellow:	spritemap
 		piece	0, -$80, 4, 2, $10, 0, 0, 1, 0
@@ -98,12 +98,12 @@ Frame_HUD2_AllRed:	spritemap
 		piece	$20, -$70, 1, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Map_hud_b_0074:	spritemap
+Frame_HUD2_SonicLives:	spritemap
 		piece	0, $40, 2, 2, $10A, 0, 0, 0, 0
 		piece	$10, $40, 4, 2, $10E, 0, 0, 1, 0
 		endsprite
 
-Map_hud_b_0086:	spritemap
+Frame_HUD2_TailsLives:	spritemap
 		piece	0, $40, 2, 2, $1C, 0, 0, 0, 0
 		piece	$10, $40, 4, 2, $78, 0, 0, 1, 0
 		endsprite

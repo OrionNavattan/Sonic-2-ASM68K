@@ -89,7 +89,7 @@ vram_LevelName:				equ $BBC0
 
 ; End of level.
 vram_Signpost:              equ $8680
-ArtTile_HUD_Bonus_Score               = $0520
+vram_Bonus_Score:           equ $A400
 vram_Perfect:               equ $A800
 vram_ResultsText:           equ $B600
 ArtTile_ArtUnc_Signpost               = $05E8
@@ -131,24 +131,26 @@ tile_Tails_Tails:			equ vram_Tails_Tails/sizeof_cell
 ; ---------------------------------------------------------------------------
 
 			rsset	vram_HUD+$300	
-vram_HUD_Score_E:		rs.b $20	; $DC40
-vram_HUD_Score:     rs.b $40	; $DC80
+vram_HUD_Score_E:	rs.b $40				; $DC40
+vram_HUD_Score:     equ	__rs					; $DC80
+
 			rsset 	vram_HUD+$500
-vram_HUD_Minutes:	rs.b $80	; $DE40
-vram_HUD_Seconds:	rs.b $80	; $DEC0
-vram_HUD_Rings:		equ __rs	; $DF40	
+vram_HUD_Minutes:	rs.b $80				; $DE40
+vram_HUD_Seconds:	rs.b $80				; $DEC0
+vram_HUD_Rings:		equ __rs				; $DF40	
 			
 			rsset vram_HUD+$540
-vram_Miles_Tails_1UP:   rs.b $120	; $DE80
-vram_Miles_Tails_Lives: equ __rs 	; $DFA0
+vram_LifeCounter2:   rs.b $120					; $DE80
+vram_LifeCounter2_Lives: equ __rs				; $DFA0
 
 			rsset vram_HUD+$2140
-vram_lifecounter:			rs.b $120	; $FA80
-vram_life_counter_lives:    equ __rs	; $FBA0
+vram_LifeCounter:			rs.b $120		; $FA80
+vram_LifeCounter_Lives:    equ __rs				; $FBA0
 
-; Preadjusted for 2P mode
-tile_Nem_HUD2P_Text:		equ (vram_HUD/sizeof_cell)>>1
-tile_Nem_HUD2P_Numbers:		equ (vram_HUD_Score_E/sizeof_cell)>>1
+; 2P mode HUD elements
+vram_HUD2P_Text:			equ vram_HUD
+vram_HUD2P_Numbers:			equ vram_HUD_Score_E
+
 
 ; Shared objects and badniks
 
