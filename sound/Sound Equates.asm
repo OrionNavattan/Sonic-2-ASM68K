@@ -309,9 +309,11 @@ sizeof_trackvars:  		equ __rs			; 2Ah;	length of each set of track variables
 ; Sound Driver RAM Addresses
 ; ---------------------------------------------------------------------------
 			rsset 1380h
-z_music_data: 	rs.b 800h					; 1380h ; Z80 decompression buffer (only 7C0h in size, remaining 40h is the Z80 stack)
-z_music_data_end:	equ __rs-40h				; 1B40h ; boundary between decompression buffer and Z80 stack
-z_stack_pointer: 		equ	__rs			; 1B80h ; Z80 initial stack pointer value
+z_music_data: 	rs.b 7C0h					; 1380h ; Z80 decompression buffer (only 7C0h in size, remaining 40h is the Z80 stack)
+	ramblocksize	z_music_data
+z_stack:		rs.b 40h
+
+z_stack_pointer: 	equ	__rs				; 1B80h ; Z80 initial stack pointer value
 
 
 z_abs_vars:			rs.b sizeof_soundvars		; 1B80h ; all variables from v_priority to f_adjust_pal

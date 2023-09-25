@@ -287,7 +287,7 @@ evcHold:		equ 80h					; terminator for PSG envelope lists
 ; This special macro is used to generate constants and jump tables
 ;
 ; line format: \func	name, name of original sample if this is simply 
-; a pitch alias, sample pitch
+; a pitch alias, sample rate
 ; ---------------------------------------------------------------------------
 
 DefineSamples:	macro	func
@@ -307,23 +307,23 @@ DefineSamples:	macro	func
 		
 ;	elseif SonicDriverVer=2
 	
-		\func Kick,			,			17h ; Kick Sample
-		\func Snare,		,			1 ; Snare sample
-		\func Clap,			,			6 ; Clap sample
-		\func Scratch,		,			8 ; Record scratch sample	
-		\func Timpani,		,			1Bh ; Timpani sample (DO NOT USE DIRECTLY)	
-		\func HiTom,		,			0Ah ; High tom sample
-		\func VLowClap,		,			1Bh ; Very low clap sample, apparently unused directly?
-		\func HiTimpani,	Timpani,	12h	; Timpani high pitch
-		\func MidTimpani,	Timpani,	15h	; Timpani middle pitch
-		\func LowTimpani,	Timpani,	1Ch	; Timpani low pitch
-		\func VLowTimpani,	Timpani,	1Dh	; Timpani very low pitch	
-		\func MidTom,		HiTom,		2	; Middle tom sample
-		\func LowTom,		HiTom,		5	; Low tom sample
-		\func FloorTom,		HiTom,		8	; Very low tom sample
-		\func HiClap,		VLowClap,	8	; High clap
-		\func MidClap,		VLowClap,	0Bh	; Mid clap
-		\func LowClap,		VLowClap,	12h	; Low clap
+		\func Kick,			,			8250 ; Kick Sample
+		\func Snare,		,			24000 ; Snare sample
+		\func Clap,			,			17000 ; Clap sample
+		\func Scratch,		,			15000 ; Record scratch sample	
+		\func Timpani,		,			7500 ; Timpani sample (DO NOT USE DIRECTLY)	
+		\func HiTom,		,			14000 ; High tom sample
+		\func VLowClap,		,			7500 ; Very low clap sample, apparently unused directly?
+		\func HiTimpani,	Timpani,	9750	; Timpani high pitch
+		\func MidTimpani,	Timpani,	8750	; Timpani middle pitch
+		\func LowTimpani,	Timpani,	7250	; Timpani low pitch
+		\func VLowTimpani,	Timpani,	7000	; Timpani very low pitch	
+		\func MidTom,		HiTom,		23000	; Middle tom sample
+		\func LowTom,		HiTom,		18000	; Low tom sample
+		\func FloorTom,		HiTom,		15000	; Very low tom sample
+		\func HiClap,		VLowClap,	15000	; High clap
+		\func MidClap,		VLowClap,	13000	; Mid clap
+		\func LowClap,		VLowClap,	9750	; Low clap
 		
 ;	else;if SonicDriverVer>=3
 ;		if use_s3_samples|use_sk_samples|use_s3d_samples

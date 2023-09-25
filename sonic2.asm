@@ -88151,7 +88151,7 @@ SoundDriverLoad:
 		bne.s	.waitforZ80
 		
 		jsr	DecompressSoundDriver(pc)		; could be bsr.s
-		btst	#video_mode_bit,(vdp_control_port+1).l	; check video mode (why do it this way)
+		btst	#video_mode_bit,(vdp_control_port+1).l	; check video mode (why do it this way?)
 		sne	(z80_ram+f_pal).l			; set if PAL
 		move.w	d2,(a2)					; assert Z80 reset
 		move.w	d2,(a3)					; start the Z80

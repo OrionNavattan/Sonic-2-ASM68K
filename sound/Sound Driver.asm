@@ -18,13 +18,12 @@
 ; try putting your code as far down as possible, after the function zSaxDec_End.
 ; That will make you less likely to run into space shortages from dislocated data alignment.
 
-; Note that the Z80 syntax used here is slightly non-standard as of result of how AXM68k works:
-; * is used to invoke the current program counter rather than $ in jump instructions,
-; offset(*) must be used to invoke the program counter in macro parameters due to the use 
-; of ASM68K's section and group functionality, and shadow registers are not indicated 
-; with an apostrophe; e.g., ex af,af' is simply written as ex af,af.
-
-
+; Note that the Z80 syntax used here is slightly non-standard as of result of how AXM68k 
+; works: * is used to invoke the current program counter rather than $, offset(*) must be 
+; used to invoke the program counter in macro parameters due to the use of ASM68K's section 
+; and group functionality, and shadow registers are not indicated  with an apostrophe; e.g., 
+; ex af,af' is simply written as ex af,af.
+; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Perform a bank switch; after using this, the start of z_rom_window points 
 ; to the start of the given 68k address, rounded down to the nearest $8000 
@@ -1183,8 +1182,12 @@ CycleSoundQueue:
 		cp	com_Null				; is driver processing a previous sound, or has music been queued?
 		ret	nz					; if so, exit
 		ld	hl,z_abs_vars+z_queue_0			; hl = first queue slot
+	if OptimizeSoundDriver
+		ld	c,(ix+v_priority)	
+	else
 		ld	a,(z_abs_vars+v_priority)
 		ld	c,a					; c = priority of currently playing SFX
+	endc
 		ld	b,sizeof_z_queue			; 3, for z_queue_0, z_queue_1, and z_queue_2
 
 	.inputloop:
@@ -1223,8 +1226,12 @@ CycleSoundQueue:
 ; ===========================================================================
 
 .queuesound:
+	if OptimizeSoundDriver
+		ld	(ix+v_sound_id),e			; set it as the next item to play
+	else	
 		ld	a,e					; restore a to be the last queue item read
-		ld	(z_abs_vars+v_sound_id),a		; set it it as the next item to play
+		ld	(z_abs_vars+v_sound_id),a		; set it as the next item to play
+	endc
 		ret
 	
 ; ---------------------------------------------------------------------------
@@ -1256,6 +1263,7 @@ PlaySoundID:
 	;.is_command:
 		sub	a,_firstCmd				; convert index 78-7D to a lookup into the following jump table
 	if OptimizeSoundDriver
+		; See below.
 		ld  c,a
 		add a,a
   	  	add a,c
@@ -1313,7 +1321,7 @@ SoundCmd_Sega:
 		ld	(ym_reg_d0),a				; send to DAC
 		inc	hl					; advance pointer
 		nop
-		ld	b,0Ch					; Sega PCM pitch
+		ld	b,(1+(53693175/15/(16500)-(146/2)+(13/2))/13) ; 146 Z80 cycles for every two bytes of PCM data
 		
 		djnz	*					; delay loop
 
@@ -1325,7 +1333,7 @@ SoundCmd_Sega:
 		ld	(ym_reg_d0),a				; send to DAC
 		inc	hl					; Advance pointer
 		nop
-		ld	b,0Ch					; Sega PCM pitch
+		ld	b,(1+(53693175/15/(16500)-(146/2)+(13/2))/13) ; 146 Z80 cycles for every two bytes of PCM data
 	
 		djnz	*					; delay loop
 
@@ -1337,8 +1345,12 @@ SoundCmd_Sega:
 
 	.stop:
 		call	BankSwitchToMusic			; bankswitch back to music
-		ld	a,(z_abs_vars+f_dac_enabled)		; DAC status
+	if OptimizeSoundDriver
+		ld	c,(ix+f_dac_enabled)			; c = DAC status
+	else	
+		ld	a,(z_abs_vars+f_dac_enabled)		; c = DAC status
 		ld	c,a					; c = DAC status
+	endc	
 		ld	a,ym_dac_enable				; restore previous DAC setting
 		rst	WriteFMI
 		ret
@@ -1385,7 +1397,7 @@ Sound_PlayBGM:
 	if FixBugs
 		; This was in Sonic 1's driver, but this driver foolishly removed it.
 		xor	a
-		(z_abs_vars+v_priority),a			; clear SFX priority
+		ld	(z_abs_vars+v_priority),a		; clear SFX priority
 	endc
 
 		; Back up all global variables and music track memory so the music can resume after the 1-up music
@@ -1415,7 +1427,6 @@ Sound_PlayBGM:
 		ld	(z_abs_vars+f_has_backup),a		; clear 1-up playing flag
 		ld	(z_abs_vars+v_fadein_counter),a		; clear fade-in frame count
 		ld	(z_abs_vars+v_fadeout_counter),a	; clear fade-out frame count
-
 
 .bgm_loadmusic:
 		call	InitMusicPlayback			; clear track memory and silence all channels
@@ -1709,13 +1720,12 @@ Sound_PlayBGM:
 		add	a,SFX_BGMChannelRAM&0FFh		; get offset of music track that is SFX track is overriding
 		ld	(.trackstore+1),a			; store into the following instruction (self-modifying code)
 
-	; zloc_8F6
 	.trackstore:
 		ld	hl,(SFX_BGMChannelRAM+0)		; +0 replaced with offset to music track
     if FixBugs
 		set chf_mask_bit,(hl)				; set "SFX override" bit
     else
-		res chf_mask_bit,(hl)				; clear "SFX override" bit (but Why? According to S1's driver, this should be a 'set')
+		res chf_mask_bit,(hl)				; clear "SFX override" bit (but why? According to S1's driver, this should be a 'set')
     endc
 
 	.sfxnext:
@@ -2023,7 +2033,6 @@ SoundCmd_StopSFX:
 		ld	ix,z_tracks_sfx_start			; ix = start of SFX track memory
 		ld	b,countof_sfx_tracks			; 3 FM + 3 PSG tracks (SFX)
 
-
 	.trackloop:
 		push	bc					; back up loop counter
 		bit	chf_enable_bit,(ix+ch_flags)		; was this track playing?
@@ -2109,9 +2118,14 @@ SoundCmd_StopSFX:
 ; ---------------------------------------------------------------------------
 
 SoundCmd_Fade:
+	if OptimizeSoundDriver
+		ld	(ix+v_fadeout_delay),3
+		ld	(ix+v_fadeout_counter),28h
+	else
 		ld	a,3
 		ld	(z_abs_vars+v_fadeout_delay),a		; set fadeout delay to 3
 		ld	a,28h
+	endc	
 		ld	(z_abs_vars+v_fadeout_counter),a	; set fadeout counter
 		xor	a
 		ld	(z_song_dac+ch_flags),a			; stop DAC track (can't fade it)
@@ -2306,9 +2320,13 @@ InitMusicPlayback:
 		pop	bc
 		ld	(ix+v_priority),b
 		ld	(ix+f_has_backup),c
+	if OptimizeSoundDriver
+		ld	(ix+v_sound_id),com_Null
+	else		
 		ld	a,com_Null
 		ld	(z_abs_vars+v_sound_id),a		; set music to $80 (silence)
-
+	endc
+	
     if FixBugs
 		; If a music file's header doesn't define each and every channel, they
 		; won't be silenced by Sound_PlayBGM.sfxnext, because their tracks aren't
@@ -2334,6 +2352,38 @@ InitMusicPlayback:
 		jp	PSGSilenceAll
     endc
 
+	if OptimizeSoundDriver
+	
+; ---------------------------------------------------------------------------
+; Speed	up music
+; ---------------------------------------------------------------------------
+
+SoundCmd_Speedup:
+		ld	b,80h
+		ld	c,(ix+v_tempo_speed)
+		jr	SetTempo
+
+; ---------------------------------------------------------------------------
+; Change music back to normal speed
+; ---------------------------------------------------------------------------
+
+SoundCmd_Slowdown:
+		ld	b,0
+		ld	c,(ix+v_tempo_main)
+
+SetTempo:
+		ld	a,(z_abs_vars+f_has_backup)
+		or	a					; is 1-up music playing?
+		jr	z,.set					; branch if not
+		ld	ix,z_savevar				; set in saved variables instead
+	
+	.set:
+		ld	(ix+v_current_tempo),c			; store new tempo value
+		ld	(ix+f_speedup),b			; set or clear speed-up flag
+		ret
+
+	else
+	
 ; ---------------------------------------------------------------------------
 ; Speed	up music
 ; ---------------------------------------------------------------------------
@@ -2371,7 +2421,7 @@ SetTempo_1Up:
 		ld	a,b
 		ld	(z_savevar+f_speedup),a			; set or clear speed-up flag in backed-up variables
 		ret
-
+	endc
 ; ---------------------------------------------------------------------------
 ; Subroutine to fade in music
 ; ---------------------------------------------------------------------------
@@ -2971,16 +3021,15 @@ SetFMTLs:
 		; the ones which are "slots" (output operators).
 		push	af					; save 'a'
     if FixBugs
-		res	7,c
+		set	7,c
     endc
 		ld	a,d					; d = channel volume
 		add	a,c					; add it to the TL value
     if FixBugs
 		; Prevent attenuation overflow (otherwise known as volume underflow)
-		jp	p,.belowmax				; branch if attenuation overflowed
-		ld	a,tl_silence				; limit attenuation to 7Fh
-
-	.belowmax:
+		ld	c,a
+		sbc	a,a
+		or	c
     endc
 		ld	c,a					; c = modified TL value
 		pop	af					; restore 'a'
@@ -3131,10 +3180,9 @@ SongCom_End:
 
 .getpsgptr:
 		push	ix					; save ix
+		rept 4
 		rra						; shift right by 4 to get PSG index
-		rra
-		rra
-		rra	
+		endr	
 		and	a,0Fh
 		add	a,SFX_BGMChannelRAM&0FFh		; add low byte of SFX_BGMChannelRAM start address
 		ld	(.gotchannelptr+2),a			; store into the instruction after .gotchannelptr (self-modifying code)
@@ -3155,7 +3203,6 @@ SongCom_End:
 .stopmusic:
 		pop	bc					; do not return to coord flag loop
 
-; zloc_F76
 .stopdac:
 		pop	bc					; do not return to FMUpdateTrack, PSGUpdateTrack (anything other than DAC) or to coord flag loop (if DAC)
 		ret
@@ -3406,7 +3453,7 @@ SpeedUpIndex:
 		MusicFiles	GenSpeedup			; generate the speed shoes tempo list	
 
 ; ---------------------------------------------------------------------------
-; DAC sample metadata
+; DAC sample pointers
 ; ---------------------------------------------------------------------------
 		
 		ensure1byteoffset 1Ch
@@ -3431,15 +3478,15 @@ DACPtrTbl:
 
 		ensure1byteoffset 22h
 		
-GenDacPlaylist:	macro	name,src,pitch
+GenDacPlaylist:	macro	name,src,samplerate
 	
 	ifarg \src						; if this is a duplicate with a different pitch
-		db	d\src,\pitch
+		db	d\src,(1+(53693175/15/(\samplerate)-(289/2)+(13/2))/13) ; 289 Z80 cycles for every two bytes of PCM data
 	else
-		db	d\name,\pitch	
+		db	d\name,(1+(53693175/15/(\samplerate)-(289/2)+(13/2))/13) ; 289 Z80 cycles for every two bytes of PCM data
 	endc	
 	endm					
-		
+			
 DACMasterPlaylist:
 		DefineSamples	GenDacPlaylist			; generate the DAC playlist
 
