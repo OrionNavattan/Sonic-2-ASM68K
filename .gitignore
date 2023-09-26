@@ -5,6 +5,7 @@ sound/errors 2.txt
 sound/errors 3.txt
 errors.txt
 *.lst
+*.kos
 sound/music/compressed/ARZ.sax
 sound/music/compressed/arz.unc
 sound/music/compressed/Boss.sax
