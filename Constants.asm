@@ -2,8 +2,8 @@
 ; Global size and count constants
 ; ---------------------------------------------------------------------------
 
-sizeof_128x128:     equ $80
-countof_128x128:    equ $100
+sizeof_128x128:     equ $80					; size of one 128x128 tile
+countof_128x128:    equ $100					; max number of 128x128 tiles
 sizeof_128x128_all: equ sizeof_128x128*countof_128x128		; ($8000 bytes)
 sizeof_16x16:		equ 8					; size of one 16x16 tile
 countof_16x16:		equ $180				; max number of 16x16 tiles
@@ -49,6 +49,7 @@ screen_right:		equ screen_left+screen_width
 
 countof_ntsc_fps:	equ 60					; 60 frames per second in NTSC
 countof_pal_fps:	equ 50					; 50 frames per second in PAL
+
 ; ---------------------------------------------------------------------------
 ; VRAM constants and regions
 ; VRAM addresses for individual items are defined in VRAM Addresses.asm
@@ -604,8 +605,10 @@ tilemap_xflip_bit:	equ $B
 tilemap_yflip_bit:	equ $C
 tilemap_solid_top_bit:	equ $D
 tilemap_solid_lrb_bit:	equ $E
+tilemap_priority_bit:	equ $F
 tilemap_xflip:		equ 1<<tilemap_xflip_bit		; $800
 tilemap_yflip:		equ 1<<tilemap_yflip_bit		; $1000
 tilemap_solid_top:	equ 1<<tilemap_solid_top_bit		; $2000
 tilemap_solid_lrb:	equ 1<<tilemap_solid_lrb_bit		; $4000
 tilemap_solid_all:	equ tilemap_solid_top+tilemap_solid_lrb	; $6000
+tilemap_hi:			equ 1<<tilemap_priority_bit

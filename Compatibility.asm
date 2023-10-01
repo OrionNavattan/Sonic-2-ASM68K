@@ -227,13 +227,13 @@ Camera_Y_pos_diff_P2:	equ	v_camera_y_diff_p2
 
 Screen_Shaking_Flag_HTZ:	equ	f_screen_shake_htz
 Screen_Shaking_Flag:		equ	f_screen_shake
-Scroll_lock:				equ	f_disable_horiz_scroll
-Scroll_lock_P2:				equ	f_disable_horiz_scroll_p2
+Scroll_lock:				equ	f_disable_scroll_p1
+Scroll_lock_P2:				equ	f_disable_scroll_p2
 
 Camera_Max_Y_pos:		equ v_boundary_bottom_next
-Camera_Min_X_pos:		equ v_boundary_left_next
-Camera_Max_X_pos:		equ v_boundary_right_next
-Camera_Min_Y_pos:		equ v_boundary_top_next
+Camera_Min_X_pos:		equ v_boundary_left
+Camera_Max_X_pos:		equ v_boundary_right
+Camera_Min_Y_pos:		equ v_boundary_top
 Camera_Max_Y_pos_now:	equ v_boundary_bottom
 
 Horiz_scroll_delay_val:	equ	v_hscroll_delay_val
@@ -257,10 +257,10 @@ Vscroll_Factor_P2_HInt:	equ	v_hblank_fg_y_pos_vsram_p2
 Camera_X_pos_copy:		equ	v_camera_x_pos_copy
 Camera_Y_pos_copy:		equ	v_camera_y_pos_copy
 
-Tails_Min_X_pos:	equ	v_boundary_left_next_p2
-Tails_Max_X_pos:	equ	v_boundary_right_next_p2
-Tails_Min_Y_pos:	equ	v_boundary_top_next_p2
-Tails_Max_Y_pos:	equ	v_boundary_bottom_next_p2
+Tails_Min_X_pos:	equ	v_boundary_left_p2
+Tails_Max_X_pos:	equ	v_boundary_right_p2
+Tails_Min_Y_pos:	equ	v_boundary_top_p2
+Tails_Max_Y_pos:	equ	v_boundary_bottom_p2
 
 Block_cache:			equ v_block_cache
 Ring_consumption_table:	equ	v_ring_consumption_table
@@ -297,7 +297,7 @@ Vscroll_Factor_P2_FG:	equ	v_fg_y_pos_vsram_p2
 Vscroll_Factor_P2_BG:	equ	v_bg_y_pos_vsram_p2
 
 Teleport_timer:			equ	v_teleport_timer
-Teleport_flag:			equ	f_teleport_flag
+Teleport_flag:			equ	f_teleport
 Hint_counter_reserve:	equ	v_vdp_hint_counter
 
 Palette_fade_range:	equ v_palfade_start

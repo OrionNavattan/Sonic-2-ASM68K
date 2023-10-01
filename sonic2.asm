@@ -628,7 +628,7 @@ VBlank_Level:
 		bne.w	.finish					; if so, branch
 		subq.b	#1,(v_teleport_timer).w			; subtract one from teleport timer
 		bne.s	.notdone				; if time remains, branch
-		move.b	#0,(f_teleport_flag).w			; clear teleport flag
+		move.b	#0,(f_teleport).w			; clear teleport flag
 
 	.notdone:				
 		cmpi.b	#$10,(v_teleport_timer).w		; 16 frames or fewer left in teleport?
@@ -4694,7 +4694,7 @@ Level_TtlCardLoop:
 
 		move.w	d0,(f_restart).w			; clear restart flag
 		move.b	d0,(v_teleport_timer).w			; clear teleport timer
-		move.b	d0,(f_teleport_flag).w			; clear teleport flag
+		move.b	d0,(f_teleport).w			; clear teleport flag
 		move.w	d0,(v_rings_collected_p1).w		; clear 2P mode ring and monitor tallies
 		move.w	d0,(v_rings_collected_p2).w
 		move.w	d0,(v_monitors_broken_p1).w
@@ -5814,15 +5814,15 @@ SignpostArtLoad:
 		tst.w	(v_debug_active).w
 		bne.s	locret_4CA6
 		move.w	(v_camera_x_pos).w,d0
-		move.w	(v_boundary_right_next).w,d1
+		move.w	(v_boundary_right).w,d1
 		subi.w	#$100,d1
 		cmp.w	d1,d0
 		blt.s	loc_4C80
 		tst.b	(f_hud_time_update).w
 		beq.s	loc_4C80
-		cmp.w	(v_boundary_left_next).w,d1
+		cmp.w	(v_boundary_left).w,d1
 		beq.s	loc_4C80
-		move.w	d1,(v_boundary_left_next).w
+		move.w	d1,(v_boundary_left).w
 		tst.w	(f_two_player).w
 		bne.s	locret_4CA6
 		moveq	#$27,d0
@@ -5833,15 +5833,15 @@ loc_4C80:
 		tst.w	(f_two_player).w
 		beq.s	locret_4CA6
 		move.w	(v_camera_x_pos_p2).w,d0
-		move.w	(v_boundary_right_next_p2).w,d1
+		move.w	(v_boundary_right_p2).w,d1
 		subi.w	#$100,d1
 		cmp.w	d1,d0
 		blt.s	locret_4CA6
 		tst.b	(f_hud_time_update_p2).w
 		beq.s	locret_4CA6
-		cmp.w	(v_boundary_left_next_p2).w,d1
+		cmp.w	(v_boundary_left_p2).w,d1
 		beq.s	locret_4CA6
-		move.w	d1,(v_boundary_left_next_p2).w
+		move.w	d1,(v_boundary_left_p2).w
 
 locret_4CA6:				
 		rts	
@@ -14307,8 +14307,8 @@ LevelParameterLoad:
 		clr.b	(f_disable_scrolling).w	
 		clr.b	(f_screen_shake_htz).w				
 		clr.b	(f_screen_shake).w
-		clr.b	(f_disable_horiz_scroll).w
-		clr.b	(f_disable_horiz_scroll_p2).w
+		clr.b	(f_disable_scroll_p1).w
+		clr.b	(f_disable_scroll_p2).w
 		moveq	#0,d0
 		move.b	d0,(v_dle_routine).w			; clear DynamicLevelEvents routine counter
 	if Revision=2
@@ -14323,13 +14323,13 @@ LevelParameterLoad:
 		lsr.w	#4,d0					; move both into low byte
 		lea	LevelBoundaryList(pc,d0.w),a0		; load level boundaries
 		move.l	(a0)+,d0				; get x boundaries 
-		move.l	d0,(v_boundary_left_next).w		; set x boundaries (including unused variable)
+		move.l	d0,(v_boundary_left).w			; set x boundaries (including unused variable)
 		move.l	d0,(v_boundary_unused1).w		; x boundaries are also written to this unused variable
-		move.l	d0,(v_boundary_left_next_p2).w
+		move.l	d0,(v_boundary_left_p2).w
 		move.l	(a0)+,d0				; get y boundaries
-		move.l	d0,(v_boundary_top_next).w		; set y-boundaries
+		move.l	d0,(v_boundary_top).w			; set y-boundaries
 		move.l	d0,(v_boundary_unused2).w		; (this also writes v_boundary_bottom_next)
-		move.l	d0,(v_boundary_top_next_p2).w
+		move.l	d0,(v_boundary_top_p2).w
 		move.w	#$1010,(v_fg_x_redraw_flag).w		; set fg redraw flag
 		move.w	#camera_y_shift_default,(v_camera_y_shift).w ; default camera shift = $60 (changes when Sonic or Tails look up/down)	
 		move.w	#camera_y_shift_default,(v_camera_y_shift_p2).w
@@ -14405,7 +14405,7 @@ loc_C196:
 		moveq	#0,d1
 
 loc_C19E:				
-		move.w	(v_boundary_right_next).w,d2
+		move.w	(v_boundary_right).w,d2
 		cmp.w	d2,d1
 		bcs.s	loc_C1A8
 		move.w	d2,d1
@@ -14645,8 +14645,12 @@ loc_C3C6:
 		clr.l	(v_bg1_y_pos).w
 		rts	
 
-; ===========================================================================
 
+; ---------------------------------------------------------------------------
+; Background layer deformation and camera movement subroutines
+
+;	uses d0.l, d1.l, d2.l, d3.l, d4.l, d5.l, d6.l, a1, a2, a3
+; ---------------------------------------------------------------------------
 
 DeformLayers:				
 		tst.b	(f_disable_scrolling).w			; is scrolling disabled?
@@ -14655,8 +14659,8 @@ DeformLayers:
 ; ===========================================================================
 
 	.bg_scroll:				
-		clr.w	(v_fg_redraw_direction).w
-		clr.w	(v_bg1_redraw_direction).w
+		clr.w	(v_fg_redraw_direction).w		; clear all redraw flags and camera differences
+		clr.w	(v_bg1_redraw_direction).w		; (could be faster by using a data register to clear them)
 		clr.w	(v_bg2_redraw_direction).w
 		clr.w	(v_bg3_redraw_direction).w
 		clr.w	(v_fg_redraw_direction_p2).w
@@ -14667,289 +14671,313 @@ DeformLayers:
 		clr.w	(v_camera_y_diff).w
 		clr.w	(v_camera_x_diff_p2).w
 		clr.w	(v_camera_y_diff_p2).w
-		cmpi.b	#$10,(v_zone).w
-		bne.w	loc_C41A
-		tst.w	(v_debug_active).w
-		beq.w	loc_C4D0
+		
+		cmpi.b	#id_SCZ,(v_zone).w			; is it SCZ?
+		bne.w	.notSCZ					; branch if not
+		tst.w	(v_debug_active).w			; is debug placement mode active?
+		beq.w	.skip_2P				; branch if not
 
-loc_C41A:				
-		tst.b	(f_disable_horiz_scroll).w
-		bne.s	loc_C480
-		lea	($FFFFB000).w,a0
+	.notSCZ:				
+		tst.b	(f_disable_scroll_p1).w
+		bne.s	.chk_2P					; branch if horizontal scrolling is disabled for player 1
+		
+		lea	(v_ost_player1).w,a0			; load all variables used for updating player 1's camera x pos and horiz redraw flags
 		lea	(v_camera_x_pos).w,a1
-		lea	(v_boundary_left_next).w,a2
+		lea	(v_boundary_left).w,a2
 		lea	(v_fg_redraw_direction).w,a3
 		lea	(v_camera_x_diff).w,a4
 		lea	(v_hscroll_delay_val).w,a5
 		lea	(v_sonic_pos_tracker).w,a6
-		cmpi.w	#tails_alone,(v_player_mode).w
-		bne.s	loc_C44C
-		lea	(v_hscroll_delay_val_p2).w,a5
+		
+		cmpi.w	#tails_alone,(v_player_mode).w		; is is a Tails alone game?
+		bne.s	.not_tails_alone_X			; branch if not
+		lea	(v_hscroll_delay_val_p2).w,a5		; use the hscroll delay and pos tracker variables for Tails
 		lea	(v_tails_pos_tracker).w,a6
 
-loc_C44C:				
-		bsr.w	sub_D704
+	.not_tails_alone_X:				
+		bsr.w	UpdateCamera_X				; update camera x pos
 		lea	(v_fg_x_redraw_flag).w,a2
-		bsr.w	sub_D6E2
-		lea	(v_camera_y_pos).w,a1
-		lea	(v_boundary_left_next).w,a2
+		bsr.w	UpdateHScrollFlags			; update horizontal redraw flags
+		
+		lea	(v_camera_y_pos).w,a1			; load all variables used for updating player 1's camera y pos and vert redraw flags
+		lea	(v_boundary_left).w,a2
 		lea	(v_camera_y_diff).w,a4
 		move.w	(v_camera_y_shift).w,d3
-		cmpi.w	#tails_alone,(v_player_mode).w
-		bne.s	loc_C474
-		move.w	(v_camera_y_shift_p2).w,d3
+		cmpi.w	#tails_alone,(v_player_mode).w		; is is a Tails alone game?
+		bne.s	.not_tails_alone_Y			; branch if not
+		move.w	(v_camera_y_shift_p2).w,d3		; use Tail's y shift value
 
-loc_C474:				
-		bsr.w	sub_D77A
+	.not_tails_alone_Y:				
+		bsr.w	UpdateCamera_Y				; update camera y pos
 		lea	(v_fg_y_redraw_flag).w,a2
-		bsr.w	sub_D878
+		bsr.w	UpdateVScrollFlags			; update vertical redraw flags
 
-loc_C480:				
+	.chk_2P:				
 		tst.w	(f_two_player).w
-		beq.s	loc_C4D0
-		tst.b	(f_disable_horiz_scroll_p2).w
-		bne.s	loc_C4D0
-		lea	($FFFFB040).w,a0
+		beq.s	.skip_2P				; branch if it's not 2P mode
+		tst.b	(f_disable_scroll_p2).w
+		bne.s	.skip_2P				; branch if horizontal scrolling is disabled for player 2
+		lea	(v_ost_player2).w,a0			; load all variables used for updating player 2's camera x pos and horiz redraw flags	
 		lea	(v_camera_x_pos_p2).w,a1
-		lea	(v_boundary_left_next_p2).w,a2
+		lea	(v_boundary_left_p2).w,a2
 		lea	(v_fg_redraw_direction_p2).w,a3
 		lea	(v_camera_x_diff_p2).w,a4
 		lea	(v_hscroll_delay_val_p2).w,a5
 		lea	(v_tails_pos_tracker).w,a6
-		bsr.w	sub_D704
+		bsr.w	UpdateCamera_X				; update camera x pos
 		lea	(v_fg_x_redraw_flag_p2).w,a2
-		bsr.w	sub_D6E2
-		lea	(v_camera_y_pos_p2).w,a1
-		lea	(v_boundary_left_next_p2).w,a2
+		bsr.w	UpdateHScrollFlags			; update horizontal redraw flags
+		
+		lea	(v_camera_y_pos_p2).w,a1		; load all variables used for updating player 1's camera y pos and vert redraw flags
+		lea	(v_boundary_left_p2).w,a2
 		lea	(v_camera_y_diff_p2).w,a4
 		move.w	(v_camera_y_shift_p2).w,d3
-		bsr.w	sub_D77A
+		bsr.w	UpdateCamera_Y				; update camera y pos
 		lea	(v_fg_y_redraw_flag_p2).w,a2
-		bsr.w	sub_D878
+		bsr.w	UpdateVScrollFlags			; update vertical redraw flags
 
-loc_C4D0:				
-		bsr.w	DynamicLevelEvents
-		move.w	(v_camera_y_pos).w,(v_fg_y_pos_vsram).w
+.skip_2P:				
+		bsr.w	DynamicLevelEvents			; run DLE (updating level boundaries, loading bosses, and running CNZ's slot machines)
+		move.w	(v_camera_y_pos).w,(v_fg_y_pos_vsram).w	; update VSRAM buffer
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
-		move.l	(v_camera_x_pos).w,(v_camera_x_pos_copy).w
+		move.l	(v_camera_x_pos).w,(v_camera_x_pos_copy).w ; update camera position copies
 		move.l	(v_camera_y_pos).w,(v_camera_y_pos_copy).w
+		
 		moveq	#0,d0
-		move.b	(v_zone).w,d0
-		add.w	d0,d0
+		move.b	(v_zone).w,d0				; get zone ID
+		add.w	d0,d0					; make index
 		move.w	Deform_Index(pc,d0.w),d0
-		jmp	Deform_Index(pc,d0.w)
+		jmp	Deform_Index(pc,d0.w)			; run level-specific deformation code
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Offset index for background layer deformation	code
+; ---------------------------------------------------------------------------
 
 Deform_Index:	index offset(*)
-		ptr Deform_EHZ					; 0 		
-		ptr Deform_Minimal				; 1
-		ptr Deform_Lev2					; 2
-		ptr Deform_Minimal				; 3
-		ptr Deform_MTZ					; 4
-		ptr Deform_MTZ					; 5
-		ptr Deform_WFZ					; 6
-		ptr Deform_HTZ					; 7
-		ptr Deform_HPZ					; 8
-		ptr Deform_Minimal				; 9
-		ptr Deform_OOZ					; 10
-		ptr Deform_MCZ					; 11
-		ptr Deform_CNZ					; 12
-		ptr Deform_CPZ					; 13
-		ptr Deform_DEZ					; 14
-		ptr Deform_ARZ					; 15
-		ptr Deform_SCZ					; 16
+		ptr Deform_EHZ					; EHZ 		
+		ptr Deform_Minimal				; unused
+		ptr Deform_Lev2					; unused
+		ptr Deform_Minimal				; unused
+		ptr Deform_MTZ					; MTZ 1 & 2
+		ptr Deform_MTZ					; MTZ 3
+		ptr Deform_WFZ					; WFZ
+		ptr Deform_HTZ					; HTZ
+		ptr Deform_HPZ					; unused
+		ptr Deform_Minimal				; unused
+		ptr Deform_OOZ					; OOZ
+		ptr Deform_MCZ					; MCZ
+		ptr Deform_CNZ					; CNZ
+		ptr Deform_CPZ					; CPZ
+		ptr Deform_DEZ					; DEZ
+		ptr Deform_ARZ					; ARZ
+		ptr Deform_SCZ					; SCZ
 		zonewarning Deform_Index,2
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Title screen background layer scrolling/deformation routine
+; ---------------------------------------------------------------------------
 
 Deform_TitleScreen:				
-		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
-		addq.w	#1,(v_camera_x_pos).w
+		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w	; update background 
+		addq.w	#1,(v_camera_x_pos).w			; autoscroll 1 pixel to right each frame
 		move.w	(v_camera_x_pos).w,d2
-		neg.w	d2
-		asr.w	#2,d2
+		neg.w	d2					; negate camera x pos to make base scroll value
+		asr.w	#2,d2					; divide by 4 to get background x pos
+		
 		lea	(v_hscroll_buffer).w,a1
+
 		moveq	#0,d0
-		move.w	#$9F,d1	
-
-loc_C53A:				
+		move.w	#160-1,d1				; 160 lines of blue sky
+	.lines_1_160:				
 		move.l	d0,(a1)+
-		dbf	d1,loc_C53A
-		move.w	d2,d0
-		move.w	#$1F,d1
+		dbf	d1,	.lines_1_160
 
-loc_C546:				
-		move.l	d0,(a1)+
-		dbf	d1,loc_C546
+		move.w	d2,d0					; d0 = background x pos
+		move.w	#32-1,d1				; 32 lines of background island that scroll with camera
+	.lines_161_193:				
+		move.l	d0,(a1)+	
+		dbf	d1,.lines_161_193
+		
 		move.w	d0,d3
-		move.b	(v_vblank_counter_byte).w,d1
+		move.b	(v_vblank_counter_byte).w,d1		; get byte that increments every frame
 		andi.w	#7,d1
-		bne.s	loc_C55C
-		subq.w	#1,(v_bgscroll_buffer).w
+		bne.s	.skipripple				; if not a multiple of 8, branch
+		subq.w	#1,(v_bgscroll_buffer).w		; animate the 'ripple' every 8 frames
 
-loc_C55C:				
+	.skipripple:				
 		move.w	(v_bgscroll_buffer).w,d1
-		andi.w	#$1F,d1
-		lea	Deform_Ripple_Data(pc),a2
-		lea	(a2,d1.w),a2
-		move.w	#$F,d1
-
-loc_C570:				
-		move.b	(a2)+,d0
-		ext.w	d0
-		add.w	d3,d0
-		move.l	d0,(a1)+
-		dbf	d1,loc_C570
+		andi.w	#$1F,d1					; d1 = index
+		lea	Deform_Ripple_Data(pc),a2	
+		lea	(a2,d1.w),a2				; a2 = start location in ripple data
+		move.w	#16-1,d1				; 16 lines that scroll with camera and 'ripple'
+	.lines_194_208:				
+		move.b	(a2)+,d0				; get offset value from ripple data
+		ext.w	d0					; extend to word
+		add.w	d3,d0					; add base scroll value
+		move.l	d0,(a1)+				; write to buffer
+		dbf	d1,.lines_194_208
 		rts	
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Emerald Hill Zone background layer scrolling/deformation routine
+; (All of the loop counter loads here could use moveq)
+; ---------------------------------------------------------------------------
 
 Deform_EHZ:				
 		tst.w	(f_two_player).w			; is it 2P mode?
-		bne.w	Deform_EHZ_2P				; if so, use its deformation routine insread
+		bne.w	Deform_EHZ_2P				; if so, use its deformation routine instead
 
-		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w	; update background's vertical scrolling		
+		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w	; update VSRAM buffer		
 		
-		; Update the background's (and foreground's) horizontal scrolling.
-		; This creates an elaborate parallax effect.
 		lea	(v_hscroll_buffer).w,a1
-		move.w	(v_camera_x_pos).w,d0
-		neg.w	d0
+		move.w	(v_camera_x_pos).w,d0			; get camera x pos
+		neg.w	d0					; negate it to make base scroll offset
 		move.w	d0,d2
 		swap	d0
-		move.w	#0,d0
+		move.w	#0,d0					; foreground value in high word, background value in low word
 		
-		move.w	#22-1,d1				; 22 lines
-	.loop22:				
+		move.w	#22-1,d1				; 22 lines of blue sky
+	.lines_1_22:				
 		move.l	d0,(a1)+
-		dbf	d1,.loop22
+		dbf	d1,.lines_1_22
 		
-		move.w	d2,d0
-		asr.w	#6,d0
+		move.w	d2,d0					; d0 = negated camera x pos in both words
+		asr.w	#6,d0					; divide low word by 64 to get scroll values for clouds
 		
-		move.w	#58-1,d1				; 58 lines.
-	.loop58:				
+		move.w	#58-1,d1				; 58 lines of clouds on the horizon
+	.lines_23_80:				
 		move.l	d0,(a1)+
-		dbf	d1,.loop58
+		dbf	d1,.lines_23_80
 		
-		move.w	d0,d3
-	
+		move.w	d0,d3					; back up scroll values in d3
 		move.b	(v_vblank_counter_byte).w,d1		; get current frame number
 		andi.w	#7,d1				
 		bne.s	.skipripple				; if not a multiple of 8, branch
 		subq.w	#1,(v_bgscroll_buffer).w		; animate the 'ripple' every 8 frames
 
 	.skipripple:				
-		move.w	(v_bgscroll_buffer).w,d1
-		andi.w	#$1F,d1
+		move.w	(v_bgscroll_buffer).w,d1	
+		andi.w	#$1F,d1					; d1 = index
 		lea	(Deform_Ripple_Data).l,a2
-		lea	(a2,d1.w),a2
-		
-		move.w	#21-1,d1				; 21 lines
-	.loop21:				
-		move.b	(a2)+,d0
-		ext.w	d0
-		add.w	d3,d0
-		move.l	d0,(a1)+
-		dbf	d1,.loop21
+		lea	(a2,d1.w),a2				; a2 = start location in ripple data
+		move.w	#21-1,d1				; 21 lines of rippling cloud reflections on the ocean
+	.lines_81_101:				
+		move.b	(a2)+,d0				; get offset value from ripple data
+		ext.w	d0					; extend to word
+		add.w	d3,d0					; add base scroll value
+		move.l	d0,(a1)+				; write to buffer
+		dbf	d1,.lines_81_101
 		
 		move.w	#0,d0
+		move.w	#11-1,d1				; 11 lines of ocean with no reflections
+	.lines_101_112:				
+		move.l	d0,(a1)+
+		dbf	d1,.lines_101_112
+		
+		move.w	d2,d0					; get base scroll value
+		asr.w	#4,d0					; divide by 16 to get scroll value for distant hills
 
-		move.w	#11-1,d1				; 11 lines
-	.loop11:				
+		move.w	#16-1,d1				; 16 lines of distant hills
+	.lines_113_128:				
 		move.l	d0,(a1)+
-		dbf	d1,.loop11
+		dbf	d1,.lines_113_128
 		
-		move.w	d2,d0
-		asr.w	#4,d0
-
-		move.w	#16-1,d1				; 16 lines
-	.loop16_1:				
+		move.w	d2,d0					; get base scroll value
+		asr.w	#4,d0					; divide by 16 (these two lines are unnecessary as d0 hasn't changed)
+		
+		move.w	d0,d1								
+		asr.w	#1,d1					; divide scroll value by 2
+		add.w	d1,d0					; add to previous value, increasing by it by a factor of 1.66
+		
+		move.w	#16-1,d1				; 16 lines of slightly closer hills
+	.lines_129_144:				
 		move.l	d0,(a1)+
-		dbf	d1,.loop16_1
+		dbf	d1,.lines_129_144
 		
-		move.w	d2,d0
-		asr.w	#4,d0
-		move.w	d0,d1
-		asr.w	#1,d1
-		add.w	d1,d0
+		move.l	d0,d4			
+		swap	d4					; d4 = foreground value; next set of values are done as word writes
+		move.w	d2,d0					; get base scroll value
 		
-		move.w	#16-1,d1				; 16 lines
-	.loop16_2:				
-		move.l	d0,(a1)+
-		dbf	d1,.loop16_2
-		
-		move.l	d0,d4
-		swap	d4
-		move.w	d2,d0
-		asr.w	#1,d0
-		move.w	d2,d1
-		asr.w	#3,d1
-		sub.w	d1,d0
-		ext.l	d0
-		asl.l	#8,d0
-		divs.w	#$30,d0
-		ext.l	d0
-		asl.l	#8,d0
-		moveq	#0,d3
-		move.w	d2,d3
-		asr.w	#3,d3
+		; The next 9 lines effectively divide the base scroll value by $80, with the quotient
+		; placed in the high word of d0.
+		asr.w	#1,d0					; divide by 2
+		move.w	d2,d1					; get base scroll value again
+		asr.w	#3,d1					; divide by 8
+		sub.w	d1,d0					; (base/2) - (base/8)
+		ext.l	d0					; sign extend difference
+		asl.l	#8,d0					; multiply by 256
+		divs.w	#$30,d0					; divide by 48
+		ext.l	d0					; only need the quotient
+		asl.l	#8,d0					; multiply by 256; high word contains the delta per scanline for the meadow
 	
-		move.w	#15-1,d1				; 15 lines
-	.loop15:				
-		move.w	d4,(a1)+
-		move.w	d3,(a1)+
-		swap	d3
-		add.l	d0,d3
-		swap	d3
-		dbf	d1,.loop15
+		moveq	#0,d3
+		move.w	d2,d3					; get base scroll value again
+		asr.w	#3,d3					; divide by 8
+	
+		move.w	#15-1,d1				; 15 lines of meadow, each line faster than the one before it
+	.lines_145_159:				
+		move.w	d4,(a1)+				; foreground value
+		move.w	d3,(a1)+				; background value
+		swap	d3					; swap to high word
+		add.l	d0,d3					; add delta
+		swap	d3					; swap new value to low word
+		dbf	d1,.lines_145_159
 			
-		move.w	#18/2-1,d1				; 18 lines
-	.loop18:				
-		move.w	d4,(a1)+
-		move.w	d3,(a1)+
-		move.w	d4,(a1)+
-		move.w	d3,(a1)+
-		swap	d3
-		add.l	d0,d3
-		add.l	d0,d3
-		swap	d3
-		dbf	d1,.loop18
-			
-		move.w	#45/3-1,d1				; 45 lines
-	.loop45:
-		rept 3				
-		move.w	d4,(a1)+
-		move.w	d3,(a1)+
+		move.w	#18/2-1,d1				; 18 lines of meadow, two lines each at same speed
+	.lines_160_177:
+		rept 2				
+		move.w	d4,(a1)+				; foreground value	
+		move.w	d3,(a1)+				; background value
 		endr
-		swap	d3
+		swap	d3					; swap to high word
+		add.l	d0,d3					; add delta*2
 		add.l	d0,d3
+		swap	d3					; swap new value to low word
+		dbf	d1,.lines_160_177
+			
+		move.w	#45/3-1,d1				; 45 lines of meadow, three lines each at same speed
+	.lines_178_222:
+		rept 3				
+		move.w	d4,(a1)+				; foreground value	
+		move.w	d3,(a1)+				; background value
+		endr
+		swap	d3					; swap to high word
+		add.l	d0,d3					; add delta*3
 		add.l	d0,d3
-		add.l	d0,d3
-		swap	d3
-		dbf	d1,.loop45
+		add.l	d0,d3				
+		swap	d3					; swap new value to low word
+		dbf	d1,.lines_178_222
 		
 
 	; 22+58+21+11+16+16+15+18+45=222.
 	; Only 222 out of 224 lines have been processed.
 
     if FixBugs
-		; The bottom two lines haven't had their H-scroll values set.
+		; The bottom two lines haven't had their HScroll values set!
+		; The resulting graphical defect is often difficult to see 
+		; on NTSC CRTs, but is extremely obvious on PAL CRTs, modern LCDs
+		; that do not crop overscan, and in emulation.
 		; Knuckles in Sonic 2 fixes this with the following code:
-		move.w	d4,(a1)+
+	;.lines_223_224:
+		rept 2	
+		move.w	d4,(a1)+				; 2 remaining lines of meadow
 		move.w	d3,(a1)+
-		move.w	d4,(a1)+
-		move.w	d3,(a1)+
+		endr
     endc
 		rts	
-; ===========================================================================
-; horizontal offsets for the water rippling effect
-; byte_C682:
+
+; ---------------------------------------------------------------------------
+; Horizontal offsets for the water rippling effect on title screen and EHZ
+; Also used by CPZ, ARZ, CNZ, and HTZ and DEZ screen shaking
+; ---------------------------------------------------------------------------
+
 Deform_Ripple_Data:
-		dc.b   1,  2,  1,  3,  1,  2,  2,  1,  2,  3,  1,  2,  1,  2,  0,  0 ; 16	
-		dc.b   2,  0,  3,  2,  2,  3,  2,  2,  1,  3,  0,  0,  1,  0,  1,  3 ; 32
-		dc.b   1,  2,  1,  3,  1,  2,  2,  1,  2,  3,  1,  2,  1,  2,  0,  0 ; 48
-		dc.b   2,  0,  3,  2,  2,  3,  2,  2,  1,  3,  0,  0,  1,  0,  1,  3 ; 64
-		dc.b   1,  2					; 66
+		dc.b   1,  2,  1,  3,  1,  2,  2,  1,  2,  3,  1,  2,  1,  2,  0,  0	
+		dc.b   2,  0,  3,  2,  2,  3,  2,  2,  1,  3,  0,  0,  1,  0,  1,  3
+		dc.b   1,  2,  1,  3,  1,  2,  2,  1,  2,  3,  1,  2,  1,  2,  0,  0
+		dc.b   2,  0,  3,  2,  2,  3,  2,  2,  1,  3,  0,  0,  1,  0,  1,  3
+		dc.b   1,  2
+		even
 ; ===========================================================================
 
 Deform_EHZ_2P:
@@ -15127,7 +15155,7 @@ Deform_MTZ:
 		bsr.w	UpdateBG_XY
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
 		lea	(v_hscroll_buffer).w,a1
-		move.w	#$DF,d1	
+		move.w	#screen_height-1,d1	
 		move.w	(v_camera_x_pos).w,d0
 		neg.w	d0
 		swap	d0
@@ -16787,7 +16815,7 @@ Deform_SCZ:
 		move.w	d0,(a1)
 		move.w	d1,(a4)
 		lea	(v_fg_x_redraw_flag).w,a2
-		bsr.w	sub_D6E2
+		bsr.w	UpdateHScrollFlags
 		lea	(v_camera_y_pos).w,a1
 		lea	(v_camera_y_diff).w,a4
 		move.w	(v_tornado_y_vel).w,d0
@@ -16799,7 +16827,7 @@ Deform_SCZ:
 		move.w	d0,(a1)
 		move.w	d1,(a4)
 		lea	(v_fg_y_redraw_flag).w,a2
-		bsr.w	sub_D878
+		bsr.w	UpdateVScrollFlags
 		move.w	(v_camera_x_diff).w,d4
 		beq.s	loc_D638
 		move.w	#$100,d4
@@ -16869,261 +16897,326 @@ loc_D6BC:
 		dbf	d1,loc_D6BA
 		rts	
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to set horizontal scroll flags
 
+; inputs (exact variables will change based on if it's player 1 or 2):
+;	a1 = v_camera_x_pos
+; 	a2 = v_fg_x_redraw_flag
+;	a3 = v_fg_redraw_direction
+;	d4 = previous camera x pos
 
-sub_D6E2:				
-		move.w	(a1),d0
-		andi.w	#$10,d0
+;	uses d0, d1
+; ---------------------------------------------------------------------------
+
+UpdateHScrollFlags:				
+		move.w	(a1),d0					; d0 = camera x pos
+		andi.w	#$10,d0		
 		move.b	(a2),d1
 		eor.b	d1,d0
-		bne.s	locret_D702
+		bne.s	.return
 		eori.b	#$10,(a2)
 		move.w	(a1),d0
-		sub.w	d4,d0
-		bpl.s	loc_D6FE
-		bset	#2,(a3)
+		sub.w	d4,d0					; compare new with old screen position
+		bpl.s	.scrollright				; branch if screen has moved forward
+		
+		bset	#redraw_left_bit,(a3)			; screen moves forward
 		rts	
 ; ===========================================================================
 
-loc_D6FE:				
-		bset	#3,(a3)
+	.scrollright:				
+		bset	#redraw_right_bit,(a3)			; screen moves backward
 
-locret_D702:				
+	.return:				
 		rts	
 
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	update camera as player moves horizontally
 
+; inputs (exact variables will change based on if it's player 1 or 2):
+;	a0 = ost of player
+;	a1 = v_camera_x_pos
+;	a2 = v_boundary_left
+;	a4 = v_camera_x_diff
+;	a5 = v_hscroll_delay_val
+;	a5 = player's position tracking array
 
-sub_D704:				
-		move.w	(a1),d4
-		tst.b	(f_teleport_flag).w
-		bne.s	locret_D742
-		move.w	(a5),d1
-		beq.s	loc_D72E
-		subi.w	#$100,d1
+;	uses d0, d1, d4
+; ---------------------------------------------------------------------------
+
+UpdateCamera_X:				
+		move.w	(a1),d4					; save old screen position
+		tst.b	(f_teleport).w				; is a teleport in progress?
+		bne.s	UCX_NoChange				; if so, exit
+	
+	if FixBugs
+		; To prevent the bug that is described below, this caps the position
+		; array index offset so that it does not access position data from
+		; before the spin dash was performed. Note that this requires
+		; modifications to 'Sonic_UpdateSpindash' and 'Tails_UpdateSpindash'.
+		move.w	(a5),d1					; should scrolling be delayed?
+		beq.s	UCX_Camera				; branch if not
+		lsl.b	#2,d1					; multiply by 4, the size of a position buffer entry
+		subq.b	#1,(a5)					; reduce delay value
+		move.b	v_sonic_pos_tracker_num+1-v_hscroll_delay_val(a5),d0 ; get low byte of index value for position tracking data
+		sub.b	1(a5),d0				; subtract low byte of delay value
+		cmp.b	d0,d1					; is this index from before the spindash was performed?
+		bcs.b	.nocap					; branch if not
+		move.b	d0,d1					; cap the index
+	.nocap:	
+	else
+		; The intent of this code is to make the camera briefly lag behind the
+		; player right after releasing a spin dash, however it does this by
+		; simply making the camera use position data from previous frames. This
+		; means that if the camera had been moving recently enough, then
+		; releasing a spin dash will cause the camera to jerk around instead of
+		; remain still. This can be encountered by running into a wall, and
+		; quickly turning around and spin dashing away. Sonic 3 would have had
+		; this same issue with the Fire Shield's dash abiliity, but it shoddily
+		; works around the issue by resetting the old position values to the
+		; current position (see 'Reset_Player_Position_Array').		
+		move.w	(a5),d1					; should scrolling be delayed?
+		beq.s	UCX_Camera				; branch if not
+		subi.w	#$100,d1				; reduce delay value
 		move.w	d1,(a5)
-		moveq	#0,d1
-		move.b	(a5),d1
-		lsl.b	#2,d1
-		addq.b	#4,d1
-		move.w	2(a5),d0
-		sub.b	d1,d0
-		move.w	(a6,d0.w),d0
+		moveq	#0,d1	
+		move.b	(a5),d1					; get delay value as a byte
+		lsl.b	#2,d1					; multiply by 4, the size of a position buffer entry
+		addq.b	#4,d1					; add 4
+	endc	
+		move.w	v_sonic_pos_tracker_num-v_hscroll_delay_val(a5),d0 ; get current index value for position tracking data
+		sub.b	d1,d0			
+		move.w	(a6,d0.w),d0				; get player's positon from a few frames back
 		andi.w	#$3FFF,d0
-		bra.s	loc_D732
+		bra.s	UCX_Camera_Spindash			; use that value for calculating camera pos and hscroll
 ; ===========================================================================
 
-loc_D72E:				
+UCX_Camera:				
 		move.w	ost_x_pos(a0),d0
 
-loc_D732:				
-		sub.w	(a1),d0
-		subi.w	#$90,d0	
-		blt.s	loc_D744
-		subi.w	#$10,d0
-		bge.s	loc_D758
-		clr.w	(a4)
+UCX_Camera_Spindash:				
+		sub.w	(a1),d0					; (a1) = camera x pos; d0 = player's distance from left edge of screen
+		subi.w	#(screen_width/2)-16,d0			; is distance less than 144px?
+		blt.s	UCX_BehindMid				; branch if so
+		subi.w	#16,d0					; is distance more than 160px?
+		bge.s	UCX_AheadOfMid				; branch if so
+		clr.w	(a4)					; no camera movement
 
-locret_D742:				
+UCX_NoChange:				
 		rts	
 ; ===========================================================================
 
-loc_D744:				
-		cmpi.w	#-$10,d0
-		bgt.s	loc_D74E
-		move.w	#-$10,d0
+UCX_BehindMid:				
+		cmpi.w	#-16,d0					; is player within 16px of middle area?
+		bgt.s	.within_16				; branch if so
+		move.w	#-16,d0					; set to 16 if greater
 
-loc_D74E:				
-		add.w	(a1),d0
-		cmp.w	(a2),d0
-		bgt.s	loc_D76E
-		move.w	(a2),d0
-		bra.s	loc_D76E
+	.within_16:				
+		add.w	(a1),d0					; d0 = new camera x pos
+		cmp.w	(a2),d0					; is camera within boundary?
+		bgt.s	UCX_SetScreen				; branch if so
+		move.w	(a2),d0					; stop camera moving outside boundary
+		bra.s	UCX_SetScreen
 ; ===========================================================================
 
-loc_D758:				
-		cmpi.w	#$10,d0
-		bcs.s	loc_D762
-		move.w	#$10,d0
+UCX_AheadOfMid:				
+		cmpi.w	#16,d0					; is player within 16px of middle area?
+		bcs.s	.within_16				; branch if so
+		move.w	#16,d0					; set to 16 if greater
 
-loc_D762:				
-		add.w	(a1),d0
-		cmp.w	v_boundary_right_next-v_boundary_left_next(a2),d0
-		blt.s	loc_D76E
-		move.w	v_boundary_right_next-v_boundary_left_next(a2),d0
+	.within_16:				
+		add.w	(a1),d0					; d0 = new camera x pos
+		cmp.w	v_boundary_right-v_boundary_left(a2),d0	; is camera within boundary?
+		blt.s	UCX_SetScreen				; branch if so
+		move.w	v_boundary_right-v_boundary_left(a2),d0	; stop camera moving outside boundary
 
-loc_D76E:				
+UCX_SetScreen:				
 		move.w	d0,d1
-		sub.w	(a1),d1
-		asl.w	#8,d1
-		move.w	d0,(a1)
-		move.w	d1,(a4)
+		sub.w	(a1),d1					; d1 = difference since last camera x pos
+		asl.w	#8,d1					; move into high byte (multiply by $100)		
+		move.w	d0,(a1)					; set new screen position
+		move.w	d1,(a4)					; set distance for camera movement
 		rts	
-
 
 ; ===========================================================================
 
 
-sub_D77A:				
+UpdateCamera_Y:				
 		moveq	#0,d1
 		move.w	ost_y_pos(a0),d0
-		sub.w	(a1),d0
-		cmpi.w	#-$100,(v_boundary_top_next).w
-		bne.s	loc_D78E
+		sub.w	(a1),d0					; d0 = player's distance from top of screen
+		cmpi.w	#-$100,(v_boundary_top).w		; does the level wrap vertically?
+		bne.s	.nowrap					; branch if not
 		andi.w	#$7FF,d0
 
-loc_D78E:				
-		btst	#status_jump_bit,ost_primary_status(a0)
-		beq.s	loc_D798
-		subq.w	#5,d0
+	.nowrap:				
+		btst	#status_jump_bit,ost_primary_status(a0)	; is player jumping/rolling?
+		beq.s	.not_rolling
+		subq.w	#5,d0					; subtract difference between standing and rolling heights
 
-loc_D798:				
-		btst	#1,ost_primary_status(a0)
-		beq.s	loc_D7B6
-		addi.w	#$20,d0
-		sub.w	d3,d0
-		bcs.s	loc_D7FC
-		subi.w	#$40,d0
-		bcc.s	loc_D7FC
-		tst.b	(f_boundary_bottom_change).w
-		bne.s	loc_D80E
-		bra.s	loc_D7C0
+	if FixBugs	
+		; Tails is shorter than Sonic, so the above subtraction actually
+		; causes the camera to jolt slightly when he goes from standing to
+		; rolling, and vice versa. Not even Sonic 3 & Knuckles fixed this.
+		; To fix this, just adjust the subtraction to suit Tails (who is four
+		; pixels shorter).
+		cmpi.b	#id_Tails,ost_id(a0)			; is the player Tails?
+		bne.s	.not_rolling				; branch if not
+		addq.w	#4,d0					; adjust difference to suit Tails
+	endc
+	
+	.not_rolling:				
+		btst	#status_air_bit,ost_primary_status(a0)	; is player in the air?
+		beq.s	.ground					; branch if not
+		
+		addi.w	#32,d0					; pretend player is 32px lower
+		sub.w	d3,d0					; is player within 96px of top of screen? (or other value if looked up/down recenly)
+		bcs.s	UCY_OutsideMid_Air			; branch if so
+		subi.w	#64,d0					; is distance more than 160px?
+		bcc.s	UCY_OutsideMid_Air			; branch if so
+		tst.b	(f_boundary_bottom_change).w		; is bottom level boundary set to change?
+		bne.s	UCY_BoundaryChange			; branch if so
+		bra.s	.no_change
 ; ===========================================================================
 
-loc_D7B6:				
-		sub.w	d3,d0
-		bne.s	loc_D7C4
-		tst.b	(f_boundary_bottom_change).w
-		bne.s	loc_D80E
+.ground:				
+		sub.w	d3,d0					; is Sonic exactly 96px from top of screen?
+		bne.s	UCY_OutsideMid_Ground			; branch if not
+		tst.b	(f_boundary_bottom_change).w		; is bottom level boundary set to change?
+		bne.s	UCY_BoundaryChange			; branch if so
 
-loc_D7C0:				
-		clr.w	(a4)
+.no_change:				
+		clr.w	(a4)					; no camera movement
 		rts	
 ; ===========================================================================
 
-loc_D7C4:				
-		cmpi.w	#$60,d3
-		bne.s	loc_D7EA
-		move.w	ost_inertia(a0),d1
-		bpl.s	loc_D7D2
-		neg.w	d1
-
-loc_D7D2:				
+UCY_OutsideMid_Ground:				
+		cmpi.w	#camera_y_shift_default,d3		; has player looked up/down recently? (default y shift is 96)
+		bne.s	.y_shift_different			; branch if so
+		mvabs.w	ost_inertia(a0),d1			; get player's absolute inertia		
 		cmpi.w	#$800,d1
-		bcc.s	loc_D7FC
-		move.w	#$600,d1
-		cmpi.w	#6,d0
-		bgt.s	loc_D84A
-		cmpi.w	#-6,d0
-		blt.s	loc_D824
-		bra.s	loc_D814
+		bcc.s	UCY_OutsideMid_Air			; branch if inertia >= $800
+		move.w	#6<<8,d1				; cap camera movement at 6px per frame
+		cmpi.w	#6,d0					; is player more than 6px below middle area?
+		bgt.s	UCY_BelowMid				; branch if so
+		cmpi.w	#-6,d0					; is player more than 6px above middle area?
+		blt.s	UCY_AboveMid				; branch if so
+		bra.s	UCY_InsideMid
 ; ===========================================================================
 
-loc_D7EA:				
-		move.w	#$200,d1
-		cmpi.w	#2,d0
-		bgt.s	loc_D84A
-		cmpi.w	#-2,d0
-		blt.s	loc_D824
-		bra.s	loc_D814
+.y_shift_different:				
+		move.w	#2<<8,d1				; cap camera movement at 2px per frame
+		cmpi.w	#2,d0					; is player more than 2px below middle area?
+		bgt.s	UCY_BelowMid				; branch if so
+		cmpi.w	#-2,d0					; is player more than 2px above middle area?
+		blt.s	UCY_AboveMid				; branch if so
+		bra.s	UCY_InsideMid
 ; ===========================================================================
 
-loc_D7FC:				
-		move.w	#$1000,d1
-		cmpi.w	#$10,d0
-		bgt.s	loc_D84A
-		cmpi.w	#-$10,d0
-		blt.s	loc_D824
-		bra.s	loc_D814
+UCY_OutsideMid_Air:				
+		move.w	#16<<8,d1				; cap camera movement at 16px per frame 
+		cmpi.w	#16,d0					; is player more than 16px below middle area?
+		bgt.s	UCY_BelowMid				; if yes, branch
+		cmpi.w	#-16,d0					; is player more than 16px above middle area?
+		blt.s	UCY_AboveMid				; if yes, branch
+		bra.s	UCY_InsideMid
 ; ===========================================================================
 
-loc_D80E:				
+UCY_BoundaryChange:				
 		moveq	#0,d0
-		move.b	d0,(f_boundary_bottom_change).w
+		move.b	d0,(f_boundary_bottom_change).w		; clear boundary change flag
 
-loc_D814:				
+UCY_InsideMid:				
 		moveq	#0,d1
-		move.w	d0,d1
-		add.w	(a1),d1
-		tst.w	d0
-		bpl.w	loc_D852
-		bra.w	loc_D82E
+		move.w	d0,d1					; d0/d1 = player's distance from middle area
+		add.w	(a1),d1					; add camera y pos to d1
+		tst.w	d0					; is player below middle?
+		bpl.w	UCY_BelowMid_Short			; branch if so
+		bra.w	UCY_AboveMid_Short
 ; ===========================================================================
 
-loc_D824:				
-		neg.w	d1
+UCY_AboveMid:				
+		neg.w	d1					; d1 = -$200/-$600/-$1000
 		ext.l	d1
-		asl.l	#8,d1
-		add.l	(a1),d1
-		swap	d1
-
-loc_D82E:				
-		cmp.w	v_boundary_top_next-v_boundary_left_next(a2),d1
-		bgt.s	loc_D868
-		cmpi.w	#-$100,d1
-		bgt.s	loc_D844
-		andi.w	#$7FF,d1
+		asl.l	#8,d1					; d1 = -$20000/-$60000/-$100000
+		add.l	(a1),d1					; add v_camera_y_pos
+		swap	d1					; d1 = v_camera_y_pos minus 2/6/$10 in low word
+		
+UCY_AboveMid_Short:				
+		cmp.w	v_boundary_top-v_boundary_left(a2),d1	; is camera within top boundary?
+		bgt.s	UCY_SetScreen
+		cmpi.w	#-$100,d1				; is camera no more than 255px outside boundary?
+		bgt.s	.just_outside				; branch if so
+		
+		andi.w	#$7FF,d1				; clear high bits for levels that wrap vertically
 		andi.w	#$7FF,(a1)
-		bra.s	loc_D868
+		bra.s	UCY_SetScreen
 ; ===========================================================================
 
-loc_D844:				
-		move.w	v_boundary_top_next-v_boundary_left_next(a2),d1
-		bra.s	loc_D868
+.just_outside:				
+		move.w	v_boundary_top-v_boundary_left(a2),d1	; prevent camera from going any further up
+		bra.s	UCY_SetScreen
 ; ===========================================================================
 
-loc_D84A:				
+UCY_BelowMid:				
 		ext.l	d1
-		asl.l	#8,d1
-		add.l	(a1),d1
-		swap	d1
+		asl.l	#8,d1					; d1 = $20000/$60000/$100000
+		add.l	(a1),d1					; add v_camera_y_pos
+		swap	d1					; d1 = v_camera_y_pos plus 2/6/$10 in low word
 
-loc_D852:				
-		cmp.w	v_boundary_bottom-v_boundary_left_next(a2),d1
-		blt.s	loc_D868
-		subi.w	#$800,d1
-		bcs.s	loc_D864
-		subi.w	#$800,(a1)
-		bra.s	loc_D868
+UCY_BelowMid_Short:				
+		cmp.w	v_boundary_bottom-v_boundary_left(a2),d1 ; is camera within bottom boundary?
+		blt.s	UCY_SetScreen				; branch if so
+		subi.w	#$800,d1				; is camera no more than 255px outside boundary?
+		bcs.s	.just_outside				; branch if so
+		subi.w	#$800,(a1)				; wrap vertically
+		bra.s	UCY_SetScreen
 ; ===========================================================================
 
-loc_D864:				
-		move.w	v_boundary_bottom-v_boundary_left_next(a2),d1
+.just_outside:				
+		move.w	v_boundary_bottom-v_boundary_left(a2),d1 ; prevent camera from going any further down
 
-loc_D868:				
-		move.w	(a1),d4
+UCY_SetScreen:				
+		move.w	(a1),d4					; save old screen position
 		swap	d1
 		move.l	d1,d3
-		sub.l	(a1),d3
+		sub.l	(a1),d3					; d3 = difference since last camera y pos
 		ror.l	#8,d3
-		move.w	d3,(a4)
-		move.l	d1,(a1)
+		move.w	d3,(a4)					; set distance for camera movement
+		move.l	d1,(a1)					; set new screen position
 		rts	
 
+; ---------------------------------------------------------------------------
+; Subroutine to set vertical scroll flags
 
-; ===========================================================================
+; inputs (exact variables will change based on if it's player 1 or 2):
+;	a1 = v_camera_y_pos
+; 	a2 = v_fg_y_redraw_flag
+;	a3 = v_fg_redraw_direction
+;	d4 = previous camera y pos
 
+;	uses d0, d1
+; ---------------------------------------------------------------------------
 
-sub_D878:				
+UpdateVScrollFlags:				
 		move.w	(a1),d0
 		andi.w	#$10,d0
 		move.b	(a2),d1
 		eor.b	d1,d0
-		bne.s	locret_D898
+		bne.s	.return
 		eori.b	#$10,(a2)
 		move.w	(a1),d0
-		sub.w	d4,d0
-		bpl.s	loc_D894
-		bset	#0,(a3)
+		sub.w	d4,d0					; compare new with old screen position
+		bpl.s	.scroll_down				; branch if screen has moved down
+		bset	#redraw_top_bit,(a3)			; screen moves down	
 		rts	
 ; ===========================================================================
 
-loc_D894:				
-		bset	#1,(a3)
+	.scroll_down:				
+		bset	#redraw_bottom_bit,(a3)			; screen moves up
 
-locret_D898:				
+	.return:				
 		rts	
 
 
@@ -18892,10 +18985,10 @@ loc_E676:
 		bne.s	loc_E6A2
 		cmpi.w	#$2780,(v_camera_x_pos).w
 		bcs.s	locret_E6A0
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$390,(v_boundary_bottom_next).w
-		move.w	#$390,(v_boundary_bottom_next_p2).w
+		move.w	#$390,(v_boundary_bottom_p2).w
 		addq.b	#2,(v_dle_routine).w
 
 locret_E6A0:				
@@ -18903,18 +18996,18 @@ locret_E6A0:
 ; ===========================================================================
 
 loc_E6A2:				
-		move.w	#$2920,(v_boundary_right_next).w
-		move.w	#$2920,(v_boundary_right_next_p2).w
+		move.w	#$2920,(v_boundary_right).w
+		move.w	#$2920,(v_boundary_right_p2).w
 		rts	
 ; ===========================================================================
 
 loc_E6B0:				
 		cmpi.w	#$28F0,(v_camera_x_pos).w
 		bcs.s	locret_E6EC
-		move.w	#$28F0,(v_boundary_left_next).w
-		move.w	#$2940,(v_boundary_right_next).w
-		move.w	#$28F0,(v_boundary_left_next_p2).w
-		move.w	#$2940,(v_boundary_right_next_p2).w
+		move.w	#$28F0,(v_boundary_left).w
+		move.w	#$2940,(v_boundary_right).w
+		move.w	#$28F0,(v_boundary_left_p2).w
+		move.w	#$2940,(v_boundary_right_p2).w
 		addq.b	#2,(v_dle_routine).w
 		move.w	#$F9,d0	
 		jsrto	PlayMusic,JmpTo3_PlayMusic
@@ -18930,8 +19023,8 @@ locret_E6EC:
 loc_E6EE:				
 		cmpi.w	#$388,(v_camera_y_pos).w
 		bcs.s	loc_E702
-		move.w	#$388,(v_boundary_top_next).w
-		move.w	#$388,(v_boundary_top_next_p2).w
+		move.w	#$388,(v_boundary_top).w
+		move.w	#$388,(v_boundary_top_p2).w
 
 loc_E702:				
 		addq.b	#1,(v_boss_spawn_delay).w
@@ -18956,9 +19049,9 @@ locret_E736:
 loc_E738:				
 		tst.b	(v_boss_status).w
 		beq.s	locret_E750
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_boundary_right_next).w,(v_boundary_right_next_p2).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 
 locret_E750:				
 		rts	
@@ -18999,7 +19092,7 @@ loc_E772:
 		bcs.s	locret_E790
 		move.w	#$500,(v_boundary_bottom).w
 		move.w	#$450,(v_boundary_bottom_next).w
-		move.w	#$450,(v_boundary_bottom_next_p2).w
+		move.w	#$450,(v_boundary_bottom_p2).w
 		addq.b	#2,(v_dle_routine).w
 
 locret_E790:				
@@ -19009,10 +19102,10 @@ locret_E790:
 loc_E792:				
 		cmpi.w	#$2980,(v_camera_x_pos).w
 		bcs.s	locret_E7B6
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$400,(v_boundary_bottom_next).w
-		move.w	#$400,(v_boundary_bottom_next_p2).w
+		move.w	#$400,(v_boundary_bottom_p2).w
 		addq.b	#2,(v_dle_routine).w
 
 locret_E7B6:				
@@ -19022,10 +19115,10 @@ locret_E7B6:
 loc_E7B8:				
 		cmpi.w	#$2A80,(v_camera_x_pos).w
 		bcs.s	locret_E7F4
-		move.w	#$2AB0,(v_boundary_left_next).w
-		move.w	#$2AB0,(v_boundary_right_next).w
-		move.w	#$2AB0,(v_boundary_left_next_p2).w
-		move.w	#$2AB0,(v_boundary_right_next_p2).w
+		move.w	#$2AB0,(v_boundary_left).w
+		move.w	#$2AB0,(v_boundary_right).w
+		move.w	#$2AB0,(v_boundary_left_p2).w
+		move.w	#$2AB0,(v_boundary_right_p2).w
 		addq.b	#2,(v_dle_routine).w
 		move.w	#$F9,d0	
 		jsrto	PlayMusic,JmpTo3_PlayMusic
@@ -19041,8 +19134,8 @@ locret_E7F4:
 loc_E7F6:				
 		cmpi.w	#$400,(v_camera_y_pos).w
 		bcs.s	loc_E80A
-		move.w	#$400,(v_boundary_top_next).w
-		move.w	#$400,(v_boundary_top_next_p2).w
+		move.w	#$400,(v_boundary_top).w
+		move.w	#$400,(v_boundary_top_p2).w
 
 loc_E80A:				
 		addq.b	#1,(v_boss_spawn_delay).w
@@ -19062,9 +19155,9 @@ locret_E82C:
 ; ===========================================================================
 
 loc_E82E:				
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_boundary_right_next).w,(v_boundary_right_next_p2).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		rts	
 ; ===========================================================================
 
@@ -19178,7 +19271,7 @@ loc_E94A:
 		addq.w	#2,($FFFFF660).w
 		moveq	#$3E,d0
 		jsrto	AddPLC,JmpTo2_AddPLC
-		move.w	#$2880,(v_boundary_left_next).w
+		move.w	#$2880,(v_boundary_left).w
 
 locret_E96A:
 		rts	
@@ -19736,10 +19829,10 @@ locret_EF82:
 loc_EF84:				
 		cmpi.w	#$2C50,(v_camera_x_pos).w
 		bcs.s	locret_EFA8
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$480,(v_boundary_bottom_next).w
-		move.w	#$480,(v_boundary_bottom_next_p2).w
+		move.w	#$480,(v_boundary_bottom_p2).w
 		addq.b	#2,(v_dle_routine).w
 
 locret_EFA8:				
@@ -19749,10 +19842,10 @@ locret_EFA8:
 loc_EFAA:				
 		cmpi.w	#$2EDF,(v_camera_x_pos).w
 		bcs.s	locret_EFE6
-		move.w	#$2EE0,(v_boundary_left_next).w
-		move.w	#$2F5E,(v_boundary_right_next).w
-		move.w	#$2EE0,(v_boundary_left_next_p2).w
-		move.w	#$2F5E,(v_boundary_right_next_p2).w
+		move.w	#$2EE0,(v_boundary_left).w
+		move.w	#$2F5E,(v_boundary_right).w
+		move.w	#$2EE0,(v_boundary_left_p2).w
+		move.w	#$2F5E,(v_boundary_right_p2).w
 		addq.b	#2,(v_dle_routine).w
 		move.w	#$F9,d0	
 		jsrto	PlayMusic,JmpTo3_PlayMusic
@@ -19769,8 +19862,8 @@ locret_EFE6:
 loc_EFE8:				
 		cmpi.w	#$478,(v_camera_y_pos).w
 		bcs.s	loc_EFFC
-		move.w	#$478,(v_boundary_top_next).w
-		move.w	#$478,(v_boundary_top_next_p2).w
+		move.w	#$478,(v_boundary_top).w
+		move.w	#$478,(v_boundary_top_p2).w
 
 loc_EFFC:				
 		addq.b	#1,(v_boss_spawn_delay).w
@@ -19794,14 +19887,14 @@ locret_F01E:
 loc_F020:				
 		tst.b	(v_boss_status).w
 		beq.s	locret_F058
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_boundary_right_next).w,(v_boundary_right_next_p2).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		cmpi.w	#$30E0,(v_camera_x_pos).w
 		bcs.s	locret_F058
-		cmpi.w	#$428,(v_boundary_top_next).w
+		cmpi.w	#$428,(v_boundary_top).w
 		bcs.s	loc_F04C
-		subq.w	#2,(v_boundary_top_next).w
+		subq.w	#2,(v_boundary_top).w
 
 loc_F04C:				
 		cmpi.w	#$430,(v_boundary_bottom_next).w
@@ -19842,11 +19935,11 @@ off_F074:	index offset(*),,2
 loc_F07C:				
 		cmpi.w	#$2668,(v_camera_x_pos).w
 		bcs.s	locret_F0A6
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$2D8,($FFFFB38C).w
 		move.w	#$1E0,(v_boundary_bottom_next).w
-		move.w	#$1E0,(v_boundary_bottom_next_p2).w
+		move.w	#$1E0,(v_boundary_bottom_p2).w
 		addq.b	#2,(v_dle_routine).w
 
 locret_F0A6:				
@@ -19856,10 +19949,10 @@ locret_F0A6:
 loc_F0A8:				
 		cmpi.w	#$2880,(v_camera_x_pos).w
 		bcs.s	locret_F0EA
-		move.w	#$2880,(v_boundary_left_next).w
-		move.w	#$28C0,(v_boundary_right_next).w
-		move.w	#$2880,(v_boundary_left_next_p2).w
-		move.w	#$28C0,(v_boundary_right_next_p2).w
+		move.w	#$2880,(v_boundary_left).w
+		move.w	#$28C0,(v_boundary_right).w
+		move.w	#$2880,(v_boundary_left_p2).w
+		move.w	#$28C0,(v_boundary_right_p2).w
 		addq.b	#2,(v_dle_routine).w
 		move.w	#$F9,d0	
 		jsrto	PlayMusic,JmpTo3_PlayMusic
@@ -19877,8 +19970,8 @@ locret_F0EA:
 loc_F0EC:				
 		cmpi.w	#$1D8,(v_camera_y_pos).w
 		bcs.s	loc_F100
-		move.w	#$1D8,(v_boundary_top_next).w
-		move.w	#$1D8,(v_boundary_top_next_p2).w
+		move.w	#$1D8,(v_boundary_top).w
+		move.w	#$1D8,(v_boundary_top_p2).w
 
 loc_F100:				
 		addq.b	#1,(v_boss_spawn_delay).w
@@ -19900,9 +19993,9 @@ locret_F122:
 loc_F124:				
 		tst.b	(v_boss_status).w
 		beq.s	locret_F13C
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_boundary_right_next).w,(v_boundary_right_next_p2).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 
 locret_F13C:				
 		rts	
@@ -19932,10 +20025,10 @@ loc_F15C:
 		bne.s	loc_F188
 		cmpi.w	#$2080,(v_camera_x_pos).w
 		bcs.s	locret_F186
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$5D0,(v_boundary_bottom_next).w
-		move.w	#$5D0,(v_boundary_bottom_next_p2).w
+		move.w	#$5D0,(v_boundary_bottom_p2).w
 		addq.b	#2,(v_dle_routine).w
 
 locret_F186:				
@@ -19943,18 +20036,18 @@ locret_F186:
 ; ===========================================================================
 
 loc_F188:				
-		move.w	#$2100,(v_boundary_right_next).w
-		move.w	#$2100,(v_boundary_right_next_p2).w
+		move.w	#$2100,(v_boundary_right).w
+		move.w	#$2100,(v_boundary_right_p2).w
 		rts	
 ; ===========================================================================
 
 loc_F196:				
 		cmpi.w	#$20F0,(v_camera_x_pos).w
 		bcs.s	locret_F204
-		move.w	#$20F0,(v_boundary_right_next).w
-		move.w	#$20F0,(v_boundary_left_next).w
-		move.w	#$20F0,(v_boundary_right_next_p2).w
-		move.w	#$20F0,(v_boundary_left_next_p2).w
+		move.w	#$20F0,(v_boundary_right).w
+		move.w	#$20F0,(v_boundary_left).w
+		move.w	#$20F0,(v_boundary_right_p2).w
+		move.w	#$20F0,(v_boundary_left_p2).w
 		addq.b	#2,(v_dle_routine).w
 		move.w	#$F9,d0	
 		jsrto	PlayMusic,JmpTo3_PlayMusic
@@ -19983,8 +20076,8 @@ locret_F204:
 loc_F206:				
 		cmpi.w	#$5C8,(v_camera_y_pos).w
 		bcs.s	loc_F21A
-		move.w	#$5C8,(v_boundary_top_next).w
-		move.w	#$5C8,(v_boundary_top_next_p2).w
+		move.w	#$5C8,(v_boundary_top).w
+		move.w	#$5C8,(v_boundary_top_p2).w
 
 loc_F21A:				
 		addq.b	#1,(v_boss_spawn_delay).w
@@ -20013,9 +20106,9 @@ loc_F23E:
 		jsrto	PlaySound,JmpTo3_PlaySound
 
 loc_F256:
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_boundary_right_next).w,(v_boundary_right_next_p2).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		rts	
 ; ===========================================================================
 
@@ -20044,10 +20137,10 @@ loc_F28E:
 		bne.s	loc_F2C0
 		cmpi.w	#$27C0,(v_camera_x_pos).w
 		bcs.s	locret_F2BE
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$62E,(v_boundary_bottom_next).w
-		move.w	#$62E,(v_boundary_bottom_next_p2).w
+		move.w	#$62E,(v_boundary_bottom_p2).w
 		move.b	#-7,($FFFF8C54).w
 		addq.b	#2,(v_dle_routine).w
 
@@ -20056,8 +20149,8 @@ locret_F2BE:
 ; ===========================================================================
 
 loc_F2C0:				
-		move.w	#$26A0,(v_boundary_right_next).w
-		move.w	#$26A0,(v_boundary_right_next_p2).w
+		move.w	#$26A0,(v_boundary_right).w
+		move.w	#$26A0,(v_boundary_right_p2).w
 		rts	
 ; ===========================================================================
 
@@ -20065,10 +20158,10 @@ loc_F2CE:
 		cmpi.w	#$2890,(v_camera_x_pos).w
 		bcs.s	locret_F316
 		move.b	#-7,($FFFF8C50).w
-		move.w	#$2860,(v_boundary_left_next).w
-		move.w	#$28E0,(v_boundary_right_next).w
-		move.w	#$2860,(v_boundary_left_next_p2).w
-		move.w	#$28E0,(v_boundary_right_next_p2).w
+		move.w	#$2860,(v_boundary_left).w
+		move.w	#$28E0,(v_boundary_right).w
+		move.w	#$2860,(v_boundary_left_p2).w
+		move.w	#$28E0,(v_boundary_right_p2).w
 		addq.b	#2,(v_dle_routine).w
 		move.w	#$F9,d0	
 		jsrto	PlayMusic,JmpTo3_PlayMusic
@@ -20086,8 +20179,8 @@ locret_F316:
 loc_F318:				
 		cmpi.w	#$4E0,(v_camera_y_pos).w
 		bcs.s	loc_F32C
-		move.w	#$4E0,(v_boundary_top_next).w
-		move.w	#$4E0,(v_boundary_top_next_p2).w
+		move.w	#$4E0,(v_boundary_top).w
+		move.w	#$4E0,(v_boundary_top_p2).w
 
 loc_F32C:				
 		addq.b	#1,(v_boss_spawn_delay).w
@@ -20110,10 +20203,10 @@ loc_F350:
 		cmpi.w	#$2A00,(v_camera_x_pos).w
 		bcs.s	locret_F376
 		move.w	#$5D0,(v_boundary_bottom_next).w
-		move.w	#$5D0,(v_boundary_bottom_next_p2).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_boundary_right_next).w,(v_boundary_right_next_p2).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	#$5D0,(v_boundary_bottom_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 
 locret_F376:				
 		rts	
@@ -20141,10 +20234,10 @@ off_F38E:	index offset(*),,2
 loc_F396:				
 		cmpi.w	#$2680,(v_camera_x_pos).w
 		bcs.s	locret_F3BA
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$450,(v_boundary_bottom_next).w
-		move.w	#$450,(v_boundary_bottom_next_p2).w
+		move.w	#$450,(v_boundary_bottom_p2).w
 		addq.b	#2,(v_dle_routine).w
 
 locret_F3BA:				
@@ -20154,10 +20247,10 @@ locret_F3BA:
 loc_F3BC:				
 		cmpi.w	#$2A20,(v_camera_x_pos).w
 		bcs.s	locret_F3F8
-		move.w	#$2A20,(v_boundary_left_next).w
-		move.w	#$2A20,(v_boundary_right_next).w
-		move.w	#$2A20,(v_boundary_left_next_p2).w
-		move.w	#$2A20,(v_boundary_right_next_p2).w
+		move.w	#$2A20,(v_boundary_left).w
+		move.w	#$2A20,(v_boundary_right).w
+		move.w	#$2A20,(v_boundary_left_p2).w
+		move.w	#$2A20,(v_boundary_right_p2).w
 		addq.b	#2,(v_dle_routine).w
 		move.w	#$F9,d0	
 		jsrto	PlayMusic,JmpTo3_PlayMusic
@@ -20174,8 +20267,8 @@ locret_F3F8:
 loc_F3FA:				
 		cmpi.w	#$448,(v_camera_y_pos).w
 		bcs.s	loc_F40E
-		move.w	#$448,(v_boundary_top_next).w
-		move.w	#$448,(v_boundary_top_next_p2).w
+		move.w	#$448,(v_boundary_top).w
+		move.w	#$448,(v_boundary_top_p2).w
 
 loc_F40E:				
 		addq.b	#1,(v_boss_spawn_delay).w
@@ -20195,9 +20288,9 @@ locret_F430:
 ; ===========================================================================
 
 loc_F432:				
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_boundary_right_next).w,(v_boundary_right_next_p2).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		rts	
 ; ===========================================================================
 
@@ -20239,7 +20332,7 @@ locret_F490:
 ; ===========================================================================
 
 loc_F492:				
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		cmpi.w	#$300,(v_camera_x_pos).w
 		bcs.s	locret_F4AA
 		addq.b	#2,(v_dle_routine).w
@@ -20252,14 +20345,14 @@ locret_F4AA:
 ; ===========================================================================
 
 loc_F4AC:				
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	#$680,d0
 		cmp.w	(v_camera_x_pos).w,d0
 		bhi.s	locret_F4CC
 		addq.b	#2,(v_dle_routine).w
-		move.w	d0,(v_boundary_left_next).w
+		move.w	d0,(v_boundary_left).w
 		addi.w	#$C0,d0	
-		move.w	d0,(v_boundary_right_next).w
+		move.w	d0,(v_boundary_right).w
 
 locret_F4CC:				
 		rts	
@@ -20291,10 +20384,10 @@ off_F4E6:	index offset(*),,2
 loc_F4EE:				
 		cmpi.w	#$2810,(v_camera_x_pos).w
 		bcs.s	locret_F51E
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$400,(v_boundary_bottom_next).w
-		move.w	#$400,(v_boundary_bottom_next_p2).w
+		move.w	#$400,(v_boundary_bottom_p2).w
 		addq.b	#2,(v_dle_routine).w
 		move.b	#4,(v_current_boss).w
 		moveq	#$2B,d0
@@ -20307,10 +20400,10 @@ locret_F51E:
 loc_F520:				
 		cmpi.w	#$2A40,(v_camera_x_pos).w
 		bcs.s	locret_F55A
-		move.w	#$2A40,(v_boundary_right_next).w
-		move.w	#$2A40,(v_boundary_left_next).w
-		move.w	#$2A40,(v_boundary_right_next_p2).w
-		move.w	#$2A40,(v_boundary_left_next_p2).w
+		move.w	#$2A40,(v_boundary_right).w
+		move.w	#$2A40,(v_boundary_left).w
+		move.w	#$2A40,(v_boundary_right_p2).w
+		move.w	#$2A40,(v_boundary_left_p2).w
 		addq.b	#2,(v_dle_routine).w
 		move.w	#$F9,d0	
 		jsrto	PlayMusic,JmpTo3_PlayMusic
@@ -20326,8 +20419,8 @@ locret_F55A:
 loc_F55C:				
 		cmpi.w	#$3F8,(v_camera_y_pos).w
 		bcs.s	loc_F570
-		move.w	#$3F8,(v_boundary_top_next).w
-		move.w	#$3F8,(v_boundary_top_next_p2).w
+		move.w	#$3F8,(v_boundary_top).w
+		move.w	#$3F8,(v_boundary_top_p2).w
 
 loc_F570:				
 		addq.b	#1,(v_boss_spawn_delay).w
@@ -20342,9 +20435,9 @@ locret_F588:
 ; ===========================================================================
 
 loc_F58A:				
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next).w
-		move.w	(v_boundary_right_next).w,(v_boundary_right_next_p2).w
-		move.w	(v_camera_x_pos).w,(v_boundary_left_next_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
+		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		rts	
 ; ===========================================================================
 
@@ -22423,7 +22516,7 @@ Scenery1_ObjData:
 		sceneryobjdata	1,Map_Tram,tile_Nem_Tram+tile_pal3,$20,1
 		sceneryobjdata	0,Map_TramStake,tile_LevelArt+tile_pal3,8,1
 		sceneryobjdata	1,Map_TramStake,tile_LevelArt+tile_pal3,8,1
-		sceneryobjdata	0,Map_ARZUnusedScenery,tile_Waterfall3+tile_pal3,4,4 ; unused, appears to be a small slice of ground
+		sceneryobjdata	0,Map_ARZUnusedScenery,tile_Art_Waterfall3+tile_pal3,4,4 ; unused, appears to be a small slice of ground
 		sceneryobjdata	0,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,4
 		sceneryobjdata	1,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,4
 		sceneryobjdata	2,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,4
@@ -24419,7 +24512,7 @@ loc_12C18:
 
 loc_12C3C:				
 		move.b	#$40,(v_teleport_timer).w
-		move.b	#1,(f_teleport_flag).w
+		move.b	#1,(f_teleport).w
 		move.w	#$EC,d0	
 		jmp	(PlayMusic).l
 ; ===========================================================================
@@ -27623,7 +27716,7 @@ word_15EAC:
 
 ; sub_15F9C: ObjectsLoad: RunObjects:
 ExecuteObjects:				
-		tst.b	(f_teleport_flag).w			; is a teleport in progress?
+		tst.b	(f_teleport).w				; is a teleport in progress?
 		bne.s	.teleport				; if so, exit
 		
 		lea	(v_ost_all).w,a0			; set address for object RAM
@@ -29039,7 +29132,7 @@ loc_16B64:
 		subq.w	#2,(sp)
 		bne.w	loc_16AA6
 		addq.w	#2,sp
-		tst.b	(f_teleport_flag).w
+		tst.b	(f_teleport).w
 		bne.s	loc_16B78
 		move.w	#0,(a4)
 
@@ -32341,7 +32434,7 @@ loc_1924C:
 		clr.b	(f_hud_time_update).w
 		move.w	#1,ost_anim(a0)
 		move.w	#0,$30(a0)
-		move.w	(v_boundary_right_next).w,(v_boundary_left_next).w
+		move.w	(v_boundary_right).w,(v_boundary_left).w
 		move.b	#2,ost_secondary_routine(a0)
 		cmpi.b	#time_warning_2P,(v_loser_time_left).w
 		bhi.s	loc_192A0
@@ -32383,7 +32476,7 @@ loc_192D6:
 		clr.b	(f_hud_time_update_p2).w
 		move.w	#1,ost_anim(a0)
 		move.w	#0,$30(a0)
-		move.w	(v_boundary_right_next_p2).w,(v_boundary_left_next_p2).w
+		move.w	(v_boundary_right_p2).w,(v_boundary_left_p2).w
 		move.b	#2,ost_secondary_routine(a0)
 		cmpi.b	#time_warning_2P,(v_loser_time_left).w
 		bhi.s	loc_1932E
@@ -32492,7 +32585,7 @@ loc_19434:
 		tst.b	($FFFFB000).w
 		beq.s	loc_1944C
 		move.w	($FFFFB008).w,d0
-		move.w	(v_boundary_right_next).w,d1
+		move.w	(v_boundary_right).w,d1
 		addi.w	#$128,d1
 		cmp.w	d1,d0
 		bcs.w	locret_194D0
@@ -33678,7 +33771,7 @@ loc_1A056:
 		jsr	Sonic_Modes(pc,d1.w)
 
 loc_1A070:				
-		cmpi.w	#-$100,(v_boundary_top_next).w
+		cmpi.w	#-$100,(v_boundary_top).w
 		bne.s	loc_1A07E
 		andi.w	#$7FF,ost_y_pos(a0)
 
@@ -34569,11 +34662,11 @@ loc_1A974:
 		asl.l	#8,d0
 		add.l	d0,d1
 		swap	d1
-		move.w	(v_boundary_left_next).w,d0
+		move.w	(v_boundary_left).w,d0
 		addi.w	#$10,d0
 		cmp.w	d1,d0
 		bhi.s	loc_1A9BA
-		move.w	(v_boundary_right_next).w,d0
+		move.w	(v_boundary_right).w,d0
 		addi.w	#$128,d0
 		tst.b	(v_current_boss).w
 		bne.s	loc_1A9A2
@@ -35343,7 +35436,7 @@ loc_1B13A:
 		subi.w	#$20,ost_y_vel(a0)
 
 loc_1B15C:				
-		cmpi.w	#-$100,(v_boundary_top_next).w
+		cmpi.w	#-$100,(v_boundary_top).w
 		bne.s	loc_1B16A
 		andi.w	#$7FF,ost_y_pos(a0)
 
@@ -35407,7 +35500,7 @@ loc_1B200:
 ; ===========================================================================
 
 loc_1B21C:				
-		move.b	#1,(f_disable_horiz_scroll).w
+		move.b	#1,(f_disable_scroll_p1).w
 		move.b	#0,$39(a0)
 		move.w	(v_boundary_bottom).w,d0
 		addi.w	#$100,d0
@@ -35450,7 +35543,7 @@ Sonic_RestartLevel:
 loc_1B2B8:				
 		tst.w	(f_two_player).w
 		beq.s	locret_1B31A
-		move.b	#0,(f_disable_horiz_scroll).w
+		move.b	#0,(f_disable_scroll_p1).w
 		move.b	#$A,ost_primary_routine(a0)
 		move.w	(v_x_pos_lampcopy).w,ost_x_pos(a0)
 		move.w	(v_y_pos_lampcopy).w,ost_y_pos(a0)
@@ -36355,9 +36448,9 @@ JmpTo_KillCharacter:
 Tails:				
 		cmpi.w	#tails_alone,(v_player_mode).w
 		bne.s	loc_1B8BE
-		move.w	(v_boundary_left_next).w,(v_boundary_left_next_p2).w
-		move.w	(v_boundary_right_next).w,(v_boundary_right_next_p2).w
-		move.w	(v_boundary_bottom).w,(v_boundary_bottom_next_p2).w
+		move.w	(v_boundary_left).w,(v_boundary_left_p2).w
+		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
+		move.w	(v_boundary_bottom).w,(v_boundary_bottom_p2).w
 
 loc_1B8BE:				
 		moveq	#0,d0
@@ -36452,7 +36545,7 @@ loc_1B9EA:
 		jsr	Tails_Modes(pc,d1.w)
 
 loc_1BA04:				
-		cmpi.w	#-$100,(v_boundary_top_next).w
+		cmpi.w	#-$100,(v_boundary_top).w
 		bne.s	loc_1BA12
 		andi.w	#$7FF,ost_y_pos(a0)
 
@@ -37597,11 +37690,11 @@ loc_1C55A:
 		asl.l	#8,d0
 		add.l	d0,d1
 		swap	d1
-		move.w	(v_boundary_left_next_p2).w,d0
+		move.w	(v_boundary_left_p2).w,d0
 		addi.w	#$10,d0
 		cmp.w	d1,d0
 		bhi.s	loc_1C5A0
-		move.w	(v_boundary_right_next_p2).w,d0
+		move.w	(v_boundary_right_p2).w,d0
 		addi.w	#$128,d0
 		tst.b	(v_current_boss).w
 		bne.s	loc_1C588
@@ -37612,7 +37705,7 @@ loc_1C588:
 		bls.s	loc_1C5A0
 
 loc_1C58C:				
-		move.w	(v_boundary_bottom_next_p2).w,d0
+		move.w	(v_boundary_bottom_p2).w,d0
 		addi.w	#$E0,d0	
 		cmp.w	ost_y_pos(a0),d0
 		blt.s	loc_1C59C
@@ -38247,7 +38340,7 @@ Tails_Hurt:
 		subi.w	#$20,ost_y_vel(a0)
 
 loc_1CBE0:				
-		cmpi.w	#-$100,(v_boundary_top_next).w
+		cmpi.w	#-$100,(v_boundary_top).w
 		bne.s	loc_1CBEE
 		andi.w	#$7FF,ost_y_pos(a0)
 
@@ -38261,7 +38354,7 @@ loc_1CBEE:
 ; ===========================================================================
 
 loc_1CC08:				
-		move.w	(v_boundary_bottom_next_p2).w,d0
+		move.w	(v_boundary_bottom_p2).w,d0
 		addi.w	#$E0,d0	
 		cmp.w	ost_y_pos(a0),d0
 		blt.w	JmpTo2_KillCharacter
@@ -38294,9 +38387,9 @@ Tails_Death:
 loc_1CC6C:				
 		cmpi.w	#tails_alone,(v_player_mode).w
 		beq.w	loc_1B21C
-		move.b	#1,(f_disable_horiz_scroll_p2).w
+		move.b	#1,(f_disable_scroll_p2).w
 		move.b	#0,$39(a0)
-		move.w	(v_boundary_bottom_next_p2).w,d0
+		move.w	(v_boundary_bottom_p2).w,d0
 		addi.w	#$100,d0
 		cmp.w	ost_y_pos(a0),d0
 		bge.w	locret_1CD8E
@@ -38356,7 +38449,7 @@ Tails_RestartLevel:
 ; ===========================================================================
 
 	Tails_RestartLevel_3:				
-		move.b	#0,(f_disable_horiz_scroll_p2).w
+		move.b	#0,(f_disable_scroll_p2).w
 		move.b	#$A,ost_primary_routine(a0)
 		move.w	(v_x_pos_p2_lampcopy).w,ost_x_pos(a0)
 		move.w	(v_y_pos_p2_lampcopy).w,ost_y_pos(a0)
@@ -41747,7 +41840,7 @@ loc_1F404:
 		bpl.s	locret_1F412
 		move.w	(v_x_pos_lampcopy).w,d0
 		subi.w	#$A0,d0	
-		move.w	d0,(v_boundary_left_next).w
+		move.w	d0,(v_boundary_left).w
 
 locret_1F412:				
 		rts	
@@ -57003,19 +57096,19 @@ Slot_Draw_Index:
 Slot_Draw3:
 		clr.b	slot_index(a4)				; go to Slot_DrawSlot1 next
 		subq.b	#1,slot_timer(a4)			; decrement timer
-		move.w	#vram_SlotPics_3,d2			; DMA destination
+		move.w	#vram_SlotPics3,d2			; DMA destination
 		bra.s	Slot_DrawChk
 ; ===========================================================================
 
 Slot_Draw1:				
 		addq.b	#4,slot_index(a4)			; go to Slot_DrawSlot2 next
-		move.w	#vram_SlotPics_1,d2			; DMA destination
+		move.w	#vram_SlotPics1,d2			; DMA destination
 		bra.w	Slot_DrawChk				; could be optimized to bra.s
 ; ===========================================================================
 
 Slot_Draw2:				
 		addq.b	#4,slot_index(a4)			; go to Slot_DrawSlot3 next
-		move.w	#vram_SlotPics_2,d2			; DMA destination
+		move.w	#vram_SlotPics2,d2			; DMA destination
 		; continue directly into Slot_DrawChk
 
 Slot_DrawChk: 			
@@ -57059,7 +57152,7 @@ Slot_DrawChk:
 		move.l	#(v_16x16_tiles+$1000)&$FFFFFF,d1	; DMA source
 		tst.w	(f_two_player).w			; is it two-player mode?
 		beq.s	.not2P					; if not, branch
-		addi.w	#vram_SlotPics_1_2p-vram_SlotPics_1,d2	; adjust DMA destination
+		addi.w	#vram_SlotPics1_2p-vram_SlotPics1,d2	; adjust DMA destination
 
 	.not2P:				
 		move.w	#sizeof_SlotPic/2,d3			; DMA length in words
@@ -59286,9 +59379,9 @@ loc_2DA22:
 		bset	#6,$2E(a0)
 		move.w	#$400,ost_x_vel(a0)
 		move.w	#-$40,ost_y_vel(a0)
-		cmpi.w	#$2C30,(v_boundary_right_next).w
+		cmpi.w	#$2C30,(v_boundary_right).w
 		bcc.s	loc_2DA42
-		addq.w	#2,(v_boundary_right_next).w
+		addq.w	#2,(v_boundary_right).w
 		bra.s	loc_2DA48
 ; ===========================================================================
 
@@ -61137,9 +61230,9 @@ loc_2F45C:
 		subq.w	#1,ost_y_pos(a0)
 
 loc_2F460:				
-		cmpi.w	#$2AB0,(v_boundary_right_next).w
+		cmpi.w	#$2AB0,(v_boundary_right).w
 		bcc.s	loc_2F46E
-		addq.w	#2,(v_boundary_right_next).w
+		addq.w	#2,(v_boundary_right).w
 		bra.s	locret_2F482
 ; ===========================================================================
 
@@ -61292,7 +61385,7 @@ loc_2F5E8:
 loc_2F5F6:				
 		tst.b	ost_secondary_routine(a0)
 		bne.s	loc_2F626
-		cmpi.w	#$28F0,(v_boundary_left_next).w
+		cmpi.w	#$28F0,(v_boundary_left).w
 		bcs.w	JmpTo35_DisplaySprite
 		cmpi.w	#$29D0,ost_x_pos(a0)
 		ble.s	loc_2F618
@@ -61336,7 +61429,7 @@ off_2F672:	index offset(*),,2
 ; ===========================================================================
 
 loc_2F67C:				
-		cmpi.w	#$28F0,(v_boundary_left_next).w
+		cmpi.w	#$28F0,(v_boundary_left).w
 		bcs.w	JmpTo35_DisplaySprite
 		move.w	#$100,ost_y_vel(a0)
 		cmpi.b	#1,ost_subtype(a0)
@@ -61476,7 +61569,7 @@ loc_2F7F0:
 loc_2F7F4:				
 		tst.b	ost_secondary_routine(a0)
 		bne.s	loc_2F824
-		cmpi.w	#$28F0,(v_boundary_left_next).w
+		cmpi.w	#$28F0,(v_boundary_left).w
 
 loc_2F800:
 		bcs.w	JmpTo35_DisplaySprite
@@ -62147,9 +62240,9 @@ loc_30152:
 
 loc_30170:				
 		addq.w	#2,ost_y_pos(a0)
-		cmpi.w	#$3160,(v_boundary_right_next).w
+		cmpi.w	#$3160,(v_boundary_right).w
 		bcc.s	loc_30182
-		addq.w	#2,(v_boundary_right_next).w
+		addq.w	#2,(v_boundary_right).w
 		bra.s	loc_301A6
 ; ===========================================================================
 
@@ -62172,7 +62265,7 @@ loc_301A6:
 ; ===========================================================================
 
 loc_301AA:				
-		move.w	#$3160,(v_boundary_right_next).w
+		move.w	#$3160,(v_boundary_right).w
 		
     if RemoveJmpTos
 JmpTo53_DeleteObject:
@@ -62720,9 +62813,9 @@ loc_30936:
 loc_3095C:				
 		move.w	#$400,(v_boss_x_vel).w
 		move.w	#-$40,(v_boss_y_vel).w
-		cmpi.w	#$2C00,(v_boundary_right_next).w
+		cmpi.w	#$2C00,(v_boundary_right).w
 		bcc.s	loc_30976
-		addq.w	#2,(v_boundary_right_next).w
+		addq.w	#2,(v_boundary_right).w
 		bra.s	loc_3097C
 ; ===========================================================================
 
@@ -63668,9 +63761,9 @@ loc_3158A:
 loc_315A6:				
 		move.w	#$400,(v_boss_x_vel).w
 		move.w	#-$40,(v_boss_y_vel).w
-		cmpi.w	#$2240,(v_boundary_right_next).w
+		cmpi.w	#$2240,(v_boundary_right).w
 		beq.s	loc_315C0
-		addq.w	#2,(v_boundary_right_next).w
+		addq.w	#2,(v_boundary_right).w
 		bra.s	loc_315C6
 ; ===========================================================================
 
@@ -64285,9 +64378,9 @@ loc_31E0E:
 loc_31E2A:				
 		move.w	#$400,(v_boss_x_vel).w
 		move.w	#-$40,(v_boss_y_vel).w
-		cmpi.w	#$2B20,(v_boundary_right_next).w
+		cmpi.w	#$2B20,(v_boundary_right).w
 		beq.s	loc_31E44
-		addq.w	#2,(v_boundary_right_next).w
+		addq.w	#2,(v_boundary_right).w
 		bra.s	loc_31E4A
 ; ===========================================================================
 
@@ -65096,9 +65189,9 @@ loc_32846:
 loc_32864:				
 		move.w	#$400,(v_boss_x_vel).w
 		move.w	#-$40,(v_boss_y_vel).w
-		cmpi.w	#$2BF0,(v_boundary_right_next).w
+		cmpi.w	#$2BF0,(v_boundary_right).w
 		bcc.s	loc_3287E
-		addq.w	#2,(v_boundary_right_next).w
+		addq.w	#2,(v_boundary_right).w
 		bra.s	loc_32884
 ; ===========================================================================
 
@@ -65851,14 +65944,14 @@ loc_331CA:
 		move.b	#1,(v_boss_status).w
 
 loc_331DE:				
-		cmpi.w	#$2A20,(v_boundary_right_next).w
+		cmpi.w	#$2A20,(v_boundary_right).w
 		bcc.s	loc_331EC
-		addq.w	#2,(v_boundary_right_next).w
+		addq.w	#2,(v_boundary_right).w
 		bra.s	loc_331FA
 ; ===========================================================================
 
 loc_331EC:				
-		move.w	#$2A20,(v_boundary_right_next).w
+		move.w	#$2A20,(v_boundary_right).w
 		cmpi.w	#$2D0,ost_y_pos(a0)
 		bcc.s	BranchTo_JmpTo62_DeleteObject
 
@@ -74569,8 +74662,8 @@ loc_397BA:
 		move.w	#$3C,$2A(a0)
 		move.w	#$100,ost_y_vel(a0)
 		move.w	#$224,d0
-		move.w	d0,(v_boundary_left_next).w
-		move.w	d0,(v_boundary_right_next).w
+		move.w	d0,(v_boundary_left).w
+		move.w	d0,(v_boundary_right).w
 		move.b	#9,(v_current_boss).w
 		moveq	#-7,d0
 		jsrto	PlaySound,JmpTo12_PlaySound
@@ -74956,7 +75049,7 @@ loc_39B92:
 ; ===========================================================================
 
 loc_39BA4:				
-		move.w	#$1000,(v_boundary_right_next).w
+		move.w	#$1000,(v_boundary_right).w
 		addq.b	#2,(v_dle_routine).w
 	if FixBugs
 		move.w	(v_level_music).w,d0	
@@ -75862,7 +75955,7 @@ loc_3A7DE:
 		lea	($FFFFB000).w,a1
 		move.w	ost_x_pos(a1),d1
 		move.w	(v_camera_x_pos).w,d0
-		move.w	d0,(v_boundary_left_next).w
+		move.w	d0,(v_boundary_left).w
 		move.w	d0,d2
 		addi.w	#$11,d2
 		cmp.w	d2,d1
@@ -75884,7 +75977,7 @@ loc_3A878:
 		subi.w	#$40,d0
 
 loc_3A87C:				
-		move.w	d0,(v_boundary_right_next).w
+		move.w	d0,(v_boundary_right).w
 
 loc_3A880:				
 		lea	(Ani_3AFDC).l,a1
@@ -78295,7 +78388,7 @@ loc_3C33E:
 loc_3C366:				
 		cmpi.b	#2,$30(a0)
 		bne.s	loc_3C3B4
-		move.w	#$2880,(v_boundary_left_next).w
+		move.w	#$2880,(v_boundary_left).w
 		bclr	#3,ost_primary_status(a0)
 		_move.b	#id_ExplosionItem,ost_id(a0)
 		move.b	#2,ost_primary_routine(a0)
@@ -80256,7 +80349,7 @@ loc_3D922:
 loc_3D92C:				
 		addq.b	#2,ost_anim(a0)
 		st.b	(f_lock_controls).w
-		move.w	#$1000,(v_boundary_right_next).w
+		move.w	#$1000,(v_boundary_right).w
 		rts	
 ; ===========================================================================
 
@@ -83183,7 +83276,6 @@ JmpTo_Touch_Rings:
 		align 4
 	endc 
 	
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Subroutine to	load uncompressed gfx for and animate level animations
 ; (e.g., EHZ flowers, HTZ lava)
@@ -83195,12 +83287,13 @@ AnimateLevelGFX:
 		add.w	d0,d0
 		add.w	d0,d0
 		move.w	AniArt_Index+2(pc,d0.w),d1
-		lea	AniArt_Index(pc,d1.w),a2
+		lea	AniArt_Index(pc,d1.w),a2		; a2 = pointer to dynamic reload script
 		move.w	AniArt_Index(pc,d0.w),d0
 		jmp	AniArt_Index(pc,d0.w)
 ; ===========================================================================
+
 		rts						; dead code
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Dynamic and Animated pattern load cue
 ;
@@ -83265,101 +83358,130 @@ Dynamic_Null:
 		rts	
 ; ===========================================================================
 
-Dynamic_HTZ:				
-		tst.w	(f_two_player).w
-		bne.w	Dynamic_Normal
-		lea	(v_anim_counters).w,a3
+Dynamic_HTZ:
+		; Update the mountains in HTZ's background (but only on one-player mode).
+		; The graphics are stashed in main RAM within the 128x128 maps. 				
+		tst.w	(f_two_player).w	
+		bne.w	Dynamic_Normal				; branch if we're in two-player mode
+		lea	(v_anim_counters).w,a3	
 		moveq	#0,d0
 		move.w	(v_camera_x_pos).w,d1
 		neg.w	d1
-		asr.w	#3,d1
+		asr.w	#3,d1					; d1 = negated camera x pos / 8
 		move.w	(v_camera_x_pos).w,d0
-		lsr.w	#4,d0
-		add.w	d1,d0
-		subi.w	#$10,d0
-		divu.w	#$30,d0
-		swap	d0
-		cmp.b	1(a3),d0
-		beq.s	loc_3FD98
-		move.b	d0,1(a3)
+		
+		; for $2500, 
+		
+	if FixBugs
 		move.w	d0,d2
-		andi.w	#7,d0
-		add.w	d0,d0
-		add.w	d0,d0
-		add.w	d0,d0
-		move.w	d0,d1
-		add.w	d0,d0
+		andi.w	#$F,d2					; is the lower nibble zero?
+		seq.b	d2					; if so, set low byte of d2 to $FF
+		ext.w	d2					; low word of d2 = -1
+		lsr.w	#4,d0					; d0 = camera x pos / 16
+		add.w	d1,d0	
+		add.w	d2,d0					; add $FFFF to correct the value			
+	else	
+		; This produces the wrong result if Camera_X_pos is a multiple of $10, specifically 
+		; producing a value 1 higher than intended. This off-by-one causes the mountains in 
+		; HTZ's background to occasionally scroll one pixel in the wrong direction, before 
+		; jumping two pixels back to "catch up." 	
+		lsr.w	#4,d0					; d0 = camera x pos / 16
 		add.w	d1,d0
-		andi.w	#$38,d2
-		lsr.w	#2,d2
-		add.w	d2,d0
-		lea	word_3FD9C(pc,d0.w),a4
-		moveq	#6-1,d5
-		move.w	#-$6000,d4
+	endc	
+		subi.w	#$10,d0					; minus 16
+		divu.w	#$30,d0					; divide by 48
+		swap	d0					; swap remainder into lower word
+		cmp.b	1(a3),d0
+		beq.s	.skip_mountains				; branch if second counter is same as remainder 
 
-loc_3FD7C:				
+		move.b	d0,1(a3)				; store new remainder
+		move.w	d0,d2		
+		andi.w	#7,d0					; only lowest three bits
+		add.w	d0,d0
+		add.w	d0,d0
+		add.w	d0,d0
+		move.w	d0,d1	
+		add.w	d0,d0
+		add.w	d1,d0					; multiply by 24
+		andi.w	#$38,d2					; only bits 3-5
+		lsr.w	#2,d2					; divide by 4
+		add.w	d2,d0					; d0 = index
+		lea	HTZ_CliffTiles(pc,d0.w),a4		; a4 = address of first set of tiles in RAM
+		moveq	#6-1,d5					; six DMAs to perform
+		move.w	#vram_HTZMountains,d4			; destination in VRAM
+
+	.loop:				
 		moveq	#-1,d1
-		move.w	(a4)+,d1
-		andi.l	#$FFFFFF,d1
-		move.w	d4,d2
-		moveq	#$40,d3
-		jsr	(AddDMA).l
-		addi.w	#$80,d4	
-		dbf	d5,loc_3FD7C
+		move.w	(a4)+,d1				; get offset of tiles
+		andi.l	#$FFFFFF,d1				; source address
+		move.w	d4,d2					; set destination
+		moveq	#(sizeof_cell*4)/2,d3			; 4 tiles to copy
+		jsr	(AddDMA).l				; queue the DMA
+		addi.w	#sizeof_cell*4,d4			; next destination address
+		dbf	d5,.loop
 
-loc_3FD98:				
-		bra.w	loc_3FE5C
-; ===========================================================================
-word_3FD9C:
-		dc.w   $80, $180, $280, $580, $600, $700	; 6
-		dc.w   $80, $180, $280, $580, $600, $700	; 12
-		dc.w  $980, $A80, $B80, $C80, $D00, $D80	; 18
-		dc.w  $980, $A80, $B80, $C80, $D00, $D80	; 24
-		dc.w  $E80,$1180,$1200,$1280,$1300,$1380	; 30
-		dc.w  $E80,$1180,$1200,$1280,$1300,$1380	; 36
-		dc.w $1400,$1480,$1500,$1580,$1600,$1900	; 42
-		dc.w $1400,$1480,$1500,$1580,$1600,$1900	; 48
-		dc.w $1D00,$1D80,$1E00,$1F80,$2400,$2580	; 54
-		dc.w $1D00,$1D80,$1E00,$1F80,$2400,$2580	; 60
-		dc.w $2600,$2680,$2780,$2B00,$2F00,$3280	; 66
-		dc.w $2600,$2680,$2780,$2B00,$2F00,$3280	; 72
-		dc.w $3600,$3680,$3780,$3C80,$3D00,$3F00	; 78
-		dc.w $3600,$3680,$3780,$3C80,$3D00,$3F00	; 84
-		dc.w $3F80,$4080,$4480,$4580,$4880,$4900	; 90
-		dc.w $3F80,$4080,$4480,$4580,$4880,$4900	; 96
+	.skip_mountains:				
+		bra.w	Dynamic_HTZ_Clouds
+ 
+; ---------------------------------------------------------------------------		
+; Offsets to locations within v_128x128_tiles where HTZ's distant background
+; cliff art is stored.
+
+; Expressed in terms of size of 128x128 tiles to show which tile IDs are 
+; replaced with graphics.
+; ---------------------------------------------------------------------------
+
+HTZ_CliffTiles:
+		dc.w sizeof_128x128*1,		sizeof_128x128*3, 	sizeof_128x128*5,	sizeof_128x128*$B, 	sizeof_128x128*$C, 	sizeof_128x128*$E
+		dc.w sizeof_128x128*1, 		sizeof_128x128*3, 	sizeof_128x128*5, 	sizeof_128x128*$B, 	sizeof_128x128*$C, 	sizeof_128x128*$E
+		dc.w sizeof_128x128*$13,	sizeof_128x128*$15, sizeof_128x128*$17, sizeof_128x128*$19, sizeof_128x128*$1A, sizeof_128x128*$1B
+		dc.w sizeof_128x128*$13,	sizeof_128x128*$15, sizeof_128x128*$17, sizeof_128x128*$19, sizeof_128x128*$1A, sizeof_128x128*$1B
+		dc.w sizeof_128x128*$1D,	sizeof_128x128*$23,	sizeof_128x128*$24,	sizeof_128x128*$25,	sizeof_128x128*$26,	sizeof_128x128*$27
+		dc.w sizeof_128x128*$1D,	sizeof_128x128*$23,	sizeof_128x128*$24,	sizeof_128x128*$25,	sizeof_128x128*$26,	sizeof_128x128*$27
+		dc.w sizeof_128x128*$28,	sizeof_128x128*$29,	sizeof_128x128*$2A,	sizeof_128x128*$2B,	sizeof_128x128*$2C,	sizeof_128x128*$32
+		dc.w sizeof_128x128*$28,	sizeof_128x128*$29,	sizeof_128x128*$2A,	sizeof_128x128*$2B,	sizeof_128x128*$2C,	sizeof_128x128*$32
+		dc.w sizeof_128x128*$3A,	sizeof_128x128*$3B,	sizeof_128x128*$3C,	sizeof_128x128*$3F,	sizeof_128x128*$48,	sizeof_128x128*$4B
+		dc.w sizeof_128x128*$3A,	sizeof_128x128*$3B,	sizeof_128x128*$3C,	sizeof_128x128*$3F,	sizeof_128x128*$48,	sizeof_128x128*$4B
+		dc.w sizeof_128x128*$4C,	sizeof_128x128*$4D,	sizeof_128x128*$4F,	sizeof_128x128*$56,	sizeof_128x128*$5E,	sizeof_128x128*$65
+		dc.w sizeof_128x128*$4C,	sizeof_128x128*$4D,	sizeof_128x128*$4F,	sizeof_128x128*$56,	sizeof_128x128*$5E,	sizeof_128x128*$65
+		dc.w sizeof_128x128*$6C,	sizeof_128x128*$6D,	sizeof_128x128*$6F,	sizeof_128x128*$79,	sizeof_128x128*$7A,	sizeof_128x128*$7E
+		dc.w sizeof_128x128*$6C,	sizeof_128x128*$6D,	sizeof_128x128*$6F,	sizeof_128x128*$79,	sizeof_128x128*$7A,	sizeof_128x128*$7E
+		dc.w sizeof_128x128*$7F,	sizeof_128x128*$81,	sizeof_128x128*$89,	sizeof_128x128*$8B,	sizeof_128x128*$91,	sizeof_128x128*$92
+		dc.w sizeof_128x128*$7F,	sizeof_128x128*$81,	sizeof_128x128*$89,	sizeof_128x128*$8B,	sizeof_128x128*$91,	sizeof_128x128*$92
+		arraysize	HTZ_CliffTiles
 ; ===========================================================================
 
-loc_3FE5C:				
+Dynamic_HTZ_Clouds:				
 		lea	(v_bgscroll_buffer).w,a1
-		move.w	(v_camera_x_pos).w,d2
-		neg.w	d2
-		asr.w	#3,d2
-		move.l	a2,-(sp)
-		lea	(Art_HTZClouds).l,a0
-		lea	($FFFF7C00).l,a2
-		moveq	#$F,d1
+		move.w	(v_camera_x_pos).w,d2			; get camera x pos
+		neg.w	d2					; invert sign
+		asr.w	#3,d2					; divide by 8
+		pushr.l	a2					; back up dynamic script pointer
+		lea	(Art_HTZClouds).l,a0			; uncompressed cloud graphics
+		lea	(v_128x128_tiles+(sizeof_128x128*$F8)).l,a2 ; buffer for cloud GFX
+		moveq	#16-1,d1
 
 loc_3FE78:				
-		move.w	(a1)+,d0
-		neg.w	d0
-		add.w	d2,d0
-		andi.w	#$1F,d0
-		lsr.w	#1,d0
-		bcc.s	loc_3FE8A
+		move.w	(a1)+,d0		
+		neg.w	d0					; reverse
+		add.w	d2,d0					; add transformed x pos
+		andi.w	#$1F,d0					; only first five bits
+		lsr.w	#1,d0					; divide by 2
+		bcc.s	loc_3FE8A				; branch if bit shifted out was set
 		addi.w	#$200,d0
 
 loc_3FE8A:				
-		lea	(a0,d0.w),a4
-		lsr.w	#1,d0
-		bcs.s	loc_3FEB4
+		lea	(a0,d0.w),a4				; a4 = location in uncompressed tiles to start copy
+		lsr.w	#1,d0			
+		bcs.s	loc_3FEB4				; branch if start location is odd
 		
 		rept 3
-		move.l	(a4)+,(a2)+
-		adda.w	#$3C,a2
+		move.l	(a4)+,(a2)+				; copy one line of tile (8 pixels)
+		adda.w	#(sizeof_cell*2)-4,a2			; skip to next tile
 		endr
 
-		move.l	(a4)+,(a2)+
-		suba.w	#$C0,a2	
+		move.l	(a4)+,(a2)+				; copy one line of tile
+		suba.w	#$C0,a2		
 		adda.w	#$20,a0
 		dbf	d1,loc_3FE78
 		bra.s	loc_3FEEC
@@ -83368,13 +83490,13 @@ loc_3FE8A:
 loc_3FEB4:	
 		rept 3		
 		rept 4	
-		move.b	(a4)+,(a2)+
-		endr
-		adda.w	#$3C,a2
+		move.b	(a4)+,(a2)+				; copy two pixels
+		endr						; repeat until full line is copied
+		adda.w	#(sizeof_cell*2)-4,a2			; skip to next tile
 		endr
 		rept 4
-		move.b	(a4)+,(a2)+
-		endr
+		move.b	(a4)+,(a2)+				; copy two pixels
+		endr						; repeat until full line is copied
 		suba.w	#$C0,a2	
 		adda.w	#$20,a0
 		dbf	d1,loc_3FE78
@@ -83855,253 +83977,705 @@ Animated_ARZ:
 		dc.b   4					; 1
 ; ===========================================================================
 
-Animated_Null:				
-		cmpi.b	#id_CPZ,(v_zone).w
-		beq.s	loc_4020A
+Animated_Null:	
+		; It'd be safer to have an rts here.
 
-locret_40208:				
+; ---------------------------------------------------------------------------
+; Unused custom background animation routine for CPZ
+
+; In CPZ, if the camera x pos is within the range of $1940-$1F80 (exactly two
+; screen widths wide), rotate 128x128 tiles $EA-$ED and $FA-$FD to the left 
+; by shifting all 16x16 block indicies to the left by one, moving the first
+; index of each line into the end of the corresponding line in the previous
+; chunk, and shifting the first index of the first tile to the very end,
+; ---------------------------------------------------------------------------
+
+Unused_CPZAnim:
+		cmpi.b	#id_CPZ,(v_zone).w	
+		beq.s	.doanim					; branch if it's CPZ
+
+	.noanim:				
 		rts	
 ; ===========================================================================
 
-loc_4020A:				
-		move.w	(v_camera_x_pos).w,d0
-		cmpi.w	#$1940,d0
-		bcs.s	locret_40208
+.doanim:				
+		move.w	(v_camera_x_pos).w,d0			; d0 - camera x pos
+		cmpi.w	#$1940,d0			
+		bcs.s	.noanim					; branch if camera is left of $1940
 		cmpi.w	#$1F80,d0
-		bcc.s	locret_40208
-		subq.b	#1,(v_unused_cpz_scroll_timer).w
-		bpl.s	locret_40208
-		move.b	#7,(v_unused_cpz_scroll_timer).w
-		move.b	#1,(f_screen_redraw).w
-		lea	(v_128x128_tiles+$7500).l,a1
-		bsr.s	loc_4023A
-		lea	(v_128x128_tiles+$7D00).l,a1
+		bcc.s	.noanim					; branch if camera is right of $1F80
+		subq.b	#1,(v_unused_cpz_scroll_timer).w	; decrement timer
+		bpl.s	.noanim					; branch if time remains
+		move.b	#7,(v_unused_cpz_scroll_timer).w	; reset timer
+		move.b	#1,(f_screen_redraw).w			; force redraw of entire screen
+		lea	(v_128x128_tiles+(sizeof_128x128*$EA)).l,a1 ; 128x128 tiles $EA-$ED	
+		bsr.s	.chunkshift
+		lea	(v_128x128_tiles+(sizeof_128x128*$FA)).l,a1 ; 128x128 tiles $FA-$FD	
 
-loc_4023A:				
-		move.w	#7,d1
+.chunkshift:				
+		move.w	#8-1,d1					; 8 lines per tile
 
-loc_4023E:	
-		move.w	(a1),d0			
-    	rept 3							; do this for 3 chunks
-     	rept 7
-		move.w	2(a1),(a1)+				; shift 1st line of chunk by 1 block to the left (+3*14 bytes)
+	.loop:	
+		move.w	(a1),d0					; first word of first line will be shifted into end
+				
+    	rept 3
+    	
+     	rept 7							; 7 blocks to shift within tile
+		move.w	2(a1),(a1)+				; shift one line of 128x128 tile by 1 block to the left
       	endr
-		move.w	$72(a1),(a1)+				; first block of next chunk to the left into previous chunk (+3*2 bytes)
-		adda.w	#$70,a1					; go to next chunk (+336 bytes)
-   		endr
+      	
+		move.w	sizeof_128x128-$E(a1),(a1)+		; shift first 16x16 index of corresponding line in next 128x128 tile to the left into end of previous tile 
+		adda.w	#sizeof_128x128-$10,a1			; advance to corresponding line of next tile
+   		endr						; repeat for first three tiles
    		
-     	rept 7							; now do it for the 4th chunk
-		move.w	2(a1),(a1)+				; shift 1st line of chunk by 1 block to the left (+14 bytes)
+     	rept 7							; 7 blocks to shift within chunk
+		move.w	2(a1),(a1)+				; shift line of fourth and final 128x128 tile by 1 block to the left 
       	endr
 		
-		move.w	d0,(a1)+
-		suba.w	#$180,a1
-		dbf	d1,loc_4023E
+		move.w	d0,(a1)+				; shift first word of line in first tile to the end
+		suba.w	#sizeof_128x128*3,a1			; advance to next line in all tile
+		dbf	d1,.loop				; repeat for all lines of each tile
 		rts	
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Subroutine to load animated blocks
+; ---------------------------------------------------------------------------
 
 AnimatedBlocksLoad:				
-		cmpi.b	#id_HTZ,(v_zone).w
-		bne.s	loc_402EC
-		bsr.w	loc_407C0
-		move.b	#-1,($FFFFF7F1).w
-		move.w	#-1,($FFFFA820).w
+		cmpi.b	#id_HTZ,(v_zone).w			; is it HTZ?
+		bne.s	.notHTZ					; branch if not
+		bsr.w	LoadHTZCliffArt				; load art for HTZ's distant background cliffs
+		move.b	#-1,(v_anim_counters+1).w
+		move.w	#-1,(v_bgscroll_buffer+$20).w
 
-loc_402EC:				
-		cmpi.b	#id_CPZ,(v_zone).w
-		bne.s	loc_402FA
-		move.b	#-1,($FFFFF7F1).w
+	.notHTZ:				
+		cmpi.b	#id_CPZ,(v_zone).w			; is it CPZ?
+		bne.s	.notCPZ					; branch if not
+		move.b	#-1,(v_anim_counters+1).w
 
-loc_402FA:				
+	.notCPZ:				
 		moveq	#0,d0
 		move.b	(v_zone).w,d0
-		add.w	d0,d0
-
-loc_40302:
-		move.w	off_40350(pc,d0.w),d0
-		lea	off_40350(pc,d0.w),a0
-		tst.w	(f_two_player).w
-		beq.s	loc_4031E
+		add.w	d0,d0					; zone ID is index
+		move.w	AniPatMap_Index(pc,d0.w),d0
+		lea	AniPatMap_Index(pc,d0.w),a0		; a0 = animated block list for current zone
+		tst.w	(f_two_player).w	
+		beq.s	.notCNZ2P				; branch if we're not in 2P mode
 		cmpi.b	#id_CNZ,(v_zone).w
-		bne.s	loc_4031E
-		lea	(byte_406BE).l,a0
+		bne.s	.notCNZ2P				; branch if it's not CNZ
+		lea	(APM_CNZ_2P).l,a0			; use the 2P-mode specific list for CNZ
 
-loc_4031E:				
+	.notCNZ2P:				
 		tst.w	(a0)
-		beq.s	locret_40336
+		beq.s	.done					; branch if no animated blocks are defined for current zone
 		lea	(v_16x16_tiles).w,a1
-		adda.w	(a0)+,a1
-		move.w	(a0)+,d1
-		tst.w	(f_two_player).w
-		bne.s	loc_40338
+		adda.w	(a0)+,a1				; a1 = start of animated blocks in v_16x16_tiles
+		move.w	(a0)+,d1				; d1 = loop counter
+		tst.w	(f_two_player).w			; is it 2P mode?
+		bne.s	.loop_2P				; if so,  use the 2p-mode specific copy code
 
-loc_40330:				
-		move.w	(a0)+,(a1)+
-		dbf	d1,loc_40330
+	.loop:				
+		move.w	(a0)+,(a1)+				; copy to block table
+		dbf	d1,.loop
 
-locret_40336:				
+	.done:				
 		rts	
-; ===========================================================================
-
-loc_40338:				
-		move.w	(a0)+,d0
-		move.w	d0,d1
-		andi.w	#-$800,d0
-		andi.w	#$7FF,d1
-		lsr.w	#1,d1
-		or.w	d1,d0
-		move.w	d0,(a1)+
-		dbf	d1,loc_40338
-		rts	
-; ===========================================================================
-off_40350:	index offset(*),,1
-		ptr byte_40372					; 0 
-		ptr byte_407BE					; 1
-		ptr byte_407BE					; 2
-		ptr byte_407BE					; 3
-		ptr byte_403EE					; 4
-		ptr byte_403EE					; 5
-		ptr byte_407BE					; 6
-		ptr byte_40372					; 7
-		ptr byte_404C2					; 8
-		ptr byte_407BE					; 9
-		ptr byte_405B6					; 10
-		ptr byte_407BE					; 11
-		ptr byte_4061A					; 12
-		ptr byte_40762					; 13
-		ptr byte_4076E					; 14
-		ptr byte_4077A					; 15
-		ptr byte_407BE					; 16
-		;zonewarning
-
-;anipat_header:	macro *
-
-;\* equ *
-;		dc.w $1800-sizeof_\*\_Blocks
-;		dc.w (sizeof_\*\_blocks/2)-1
-;	\*\_Blocks:	
-;		endm
 		
-byte_40372:	
-		dc.b $17,$88,  0,$3B,$45,  0,$45,  4,$45,  1,$45,  5,$45,  8,$45, $C ; 0		
-		dc.b $45,  9,$45, $D,$45,$10,$45,$14,$45,$11,$45,$15,$45,  2,$45,  6 ; 16
-		dc.b $45,  3,$45,  7,$45, $A,$45, $E,$45, $B,$45, $F,$45,$12,$45,$16 ; 32
-		dc.b $45,$13,$45,$17,$65,$18,$65,$1A,$65,$19,$65,$1B,$65,$1C,$65,$1E ; 48
-		dc.b $65,$1D,$65,$1F,$43,$9C,$4B,$9C,$43,$9D,$4B,$9D,$41,$58,$43,$9C ; 64
-		dc.b $41,$59,$43,$9D,$4B,$9C,$49,$58,$4B,$9D,$49,$59,$63,$94,$6B,$94 ; 80
-		dc.b $63,$95,$6B,$95,$E3,$96,$EB,$96,$E3,$97,$EB,$97,$63,$98,$6B,$98 ; 96
-		dc.b $63,$99,$6B,$99,$E3,$9A,$EB,$9A,$E3,$9B,$EB,$9B ; 112
+; ---------------------------------------------------------------------------
+; Same as above, but adjusts the tile offset for 2P mode
+; ---------------------------------------------------------------------------
 
-byte_403EE:	
-		dc.b $17,$30,  0,$67,$23,$5C,$2B,$5C,$23,$5D,$2B,$5D,$23,$5E,$2B,$5E ; 0		
-		dc.b $23,$5F,$2B,$5F,$63,$5A,$63,$5A,$63,$5B,$63,$5B,$63,$58,$63,$58 ; 16
-		dc.b $63,$59,$63,$59,$63,$56,$63,$56,$63,$57,$63,$57,$63,$54,$63,$54 ; 32
-		dc.b $63,$55,$63,$55,$63,$52,$63,$52,$63,$53,$63,$53,$63,$50,$63,$50 ; 48
-		dc.b $63,$51,$63,$51,$63,$4E,$63,$4E,$63,$4F,$63,$4F,$63,$4C,$63,$4C ; 64
-		dc.b $63,$4D,$63,$4D,$23,$60,$2B,$60,$23,$61,$2B,$61,$23,$62,$2B,$62 ; 80
-		dc.b $23,$63,$2B,$63,$23,$64,$2B,$64,$23,$65,$2B,$65,$23,$66,$2B,$66 ; 96
-		dc.b $23,$67,$2B,$67,$C0,  0,$C0,  0,$C3,$40,$C3,$41,$C0,  0,$C0,  0 ; 112
-		dc.b $C3,$42,$C3,$43,$C3,$44,$C3,$45,$C3,$48,$C3,$49,$C3,$46,$C3,$47 ; 128
-		dc.b $C3,$4A,$C3,$4B,$E3,$5A,$E3,$5A,$E3,$5B,$E3,$5B,$E3,$58,$E3,$58 ; 144
-		dc.b $E3,$59,$E3,$59,$E3,$56,$E3,$56,$E3,$57,$E3,$57,$E3,$54,$E3,$54 ; 160
-		dc.b $E3,$55,$E3,$55,$E3,$52,$E3,$52,$E3,$53,$E3,$53,$E3,$50,$E3,$50 ; 176
-		dc.b $E3,$51,$E3,$51,$E3,$4E,$E3,$4E,$E3,$4F,$E3,$4F,$E3,$4C,$E3,$4C ; 192
-		dc.b $E3,$4D,$E3,$4D				; 208
-
-byte_404C2:	
-		dc.b $17,$10,  0,$77,$62,$E8,$62,$E9,$62,$EA,$62,$EB,$62,$EC,$62,$ED ; 0				
-		dc.b $62,$EE,$62,$EF,$62,$F0,$62,$F1,$62,$F2,$62,$F3,$62,$F4,$62,$F5 ; 16
-		dc.b $62,$F6,$62,$F7,$62,$F8,$62,$F9,$62,$FA,$62,$FB,$62,$FC,$62,$FD ; 32
-		dc.b $62,$FE,$62,$FF,$42,$E8,$42,$E9,$42,$EA,$42,$EB,$42,$EC,$42,$ED ; 48
-		dc.b $42,$EE,$42,$EF,$42,$F0,$42,$F1,$42,$F2,$42,$F3,$42,$F4,$42,$F5 ; 64
-		dc.b $42,$F6,$42,$F7,$42,$F8,$42,$F9,$42,$FA,$42,$FB,$42,$FC,$42,$FD ; 80
-		dc.b $42,$FE,$42,$FF,  0,  0,$62,$E8,  0,  0,$62,$EA,$62,$E9,$62,$EC ; 96
-		dc.b $62,$EB,$62,$EE,$62,$ED,  0,  0,$62,$EF,  0,  0,  0,  0,$62,$F0 ; 112
-		dc.b   0,  0,$62,$F2,$62,$F1,$62,$F4,$62,$F3,$62,$F6,$62,$F5,  0,  0 ; 128
-		dc.b $62,$F7,  0,  0,  0,  0,$62,$F8,  0,  0,$62,$FA,$62,$F9,$62,$FC ; 144
-		dc.b $62,$FB,$62,$FE,$62,$FD,  0,  0,$62,$FF,  0,  0,  0,  0,$42,$E8 ; 160
-		dc.b   0,  0,$42,$EA,$42,$E9,$42,$EC,$42,$EB,$42,$EE,$42,$ED,  0,  0 ; 176
-		dc.b $42,$EF,  0,  0,  0,  0,$42,$F0,  0,  0,$42,$F2,$42,$F1,$42,$F4 ; 192
-		dc.b $42,$F3,$42,$F6,$42,$F5,  0,  0,$42,$F7,  0,  0,  0,  0,$42,$F8 ; 208
-		dc.b   0,  0,$42,$FA,$42,$F9,$42,$FC,$42,$FB,$42,$FE,$42,$FD,  0,  0 ; 224
-		dc.b $42,$FF,  0,  0				; 240
-
-byte_405B6:	
-		dc.b $17,$A0,  0,$2F,$82,$B6,$82,$B8,$82,$B7,$82,$B9,$E2,$BA,$E2,$BB ; 0		
-		dc.b $E2,$BC,$E2,$BD,  0,  0,$62,$BE,  0,  0,$62,$C0,$62,$BF,  0,  0 ; 16
-		dc.b $62,$C1,  0,  0,$C2,$C2,$C2,$C3,$C2,$CA,$C2,$CB,$C2,$C4,$C2,$C5 ; 32
-		dc.b $C2,$CC,$C2,$CD,$C2,$C6,$C2,$C7,$C2,$CE,$C2,$CF,$C2,$C8,$C2,$C9 ; 48
-		dc.b $C2,$D0,$C2,$D1,$C2,$D2,$C2,$D3,$C2,$DA,$C2,$DB,$C2,$D4,$C2,$D5 ; 64
-		dc.b $C2,$DC,$C2,$DD,$C2,$D6,$C2,$D7,$C2,$DE,$C2,$DF,$C2,$D8,$C2,$D9 ; 80
-		dc.b $C2,$E0,$C2,$E1				; 96
-
-byte_4061A:	
-		dc.b $17,$60,  0,$4F,  5,$50,  5,$54,  5,$51,  5,$55,  5,$58,  5,$5C ; 0	
-		dc.b   5,$59,  5,$5D,  5,$52,  5,$56,  5,$53,  5,$57,  5,$5A,  5,$5E ; 16
-		dc.b   5,$5B,  5,$5F,  5,$60,  5,$64,  5,$61,  5,$65,  5,$68,  5,$6C ; 32
-		dc.b   5,$69,  5,$6D,  5,$62,  5,$66,  5,$63,  5,$67,  5,$6A,  5,$6E ; 48
-		dc.b   5,$6B,  5,$6F,  5,$70,  5,$74,  5,$71,  5,$75,  5,$78,  5,$7C ; 64
-		dc.b   5,$79,  5,$7D,  5,$72,  5,$76,  5,$73,  5,$77,  5,$7A,  5,$7E ; 80
-		dc.b   5,$7B,  5,$7F,$E5,$40,$E5,$44,$E5,$41,$E5,$45,$E5,$48,$E5,$4C ; 96
-		dc.b $E5,$49,$E5,$4D,$E5,$42,$E5,$46,$E5,$43,$E5,$47,$E5,$4A,$E5,$4E ; 112
-		dc.b $E5,$4B,$E5,$4F,$E3,$30,$E3,$34,$E3,$31,$E3,$35,$E3,$38,$E3,$3C ; 128
-		dc.b $E3,$39,$E3,$3D,$E3,$32,$E3,$36,$E3,$33,$E3,$37,$E3,$3A,$E3,$3E ; 144
-		dc.b $E3,$3B,$E3,$3F				; 160
-
-byte_406BE:	
-		dc.b $17,$60,  0,$4F,  7,$50,  7,$54,  7,$51,  7,$55,  7,$58,  7,$5C		
-		dc.b   7,$59,  7,$5D,  7,$52,  7,$56,  7,$53,  7,$57,  7,$5A,  7,$5E
-		dc.b   7,$5B,  7,$5F,  7,$60,  7,$64,  7,$61,  7,$65,  7,$68,  7,$6C
-		dc.b   7,$69,  7,$6D,  7,$62,  7,$66,  7,$63,  7,$67,  7,$6A,  7,$6E
-		dc.b   7,$6B,  7,$6F,  7,$70,  7,$74,  7,$71,  7,$75,  7,$78,  7,$7C
-		dc.b   7,$79,  7,$7D,  7,$72,  7,$76,  7,$73,  7,$77,  7,$7A,  7,$7E
-		dc.b   7,$7B,  7,$7F,$E7,$40,$E7,$44,$E7,$41,$E7,$45,$E7,$48,$E7,$4C
-		dc.b $E7,$49,$E7,$4D,$E7,$42,$E7,$46,$E7,$43,$E7,$47,$E7,$4A,$E7,$4E
-		dc.b $E7,$4B,$E7,$4F,$E3,$30,$E3,$34,$E3,$31,$E3,$35,$E3,$38,$E3,$3C
-		dc.b $E3,$39,$E3,$3D,$E3,$32,$E3,$36,$E3,$33,$E3,$37,$E3,$3A,$E3,$3E
-		dc.b $E3,$3B,$E3,$3F
-
-byte_40762:	
-		dc.b $17,$F8,  0,  3,$43,$70,$43,$71,$43,$70,$43,$71 ; 0
-					
-
-byte_4076E:
-		dc.b $17,$F8,  0,  3,$43,$26,$43,$27,$43,$26,$43,$27 ; 0
-					
-byte_4077A:	
-		dc.b $17,$C0,  0,$1F,$C4,$28,$C4,$29,$C4,$2A,$C4,$2B,$C4,$2C,$C4,$2D ; 0		
-		dc.b $C4,$2E,$C4,$2F,$C4,$30,$C4,$31,$C4,$32,$C4,$33,$C5,$63,$C5,$64 ; 16
-		dc.b $C5,$65,$C5,$66,$44,$28,$44,$29,$44,$2A,$44,$2B,$44,$2C,$44,$2D ; 32
-		dc.b $44,$2E,$44,$2F,$44,$30,$44,$31,$44,$32,$44,$33,$45,$63,$45,$64 ; 48
-		dc.b $45,$65,$45,$66				; 64
-byte_407BE:	dc.b   0,  0					; 0 
+.loop_2P:				
+		move.w	(a0)+,d0				; get tile word
+	
+	if FixBugs
+		move.w	d0,d2					; should be using a different register
+		andi.w	#tile_settings,d0			; strip tile index
+		andi.w	#tile_vram,d2				; strip tile settings
+		lsr.w	#1,d2					; adjust tile index for 2P mode
+		or.w	d2,d0					; or them back together	
+	else
+		; This overwrites the loop counter with VRAM data!
+		move.w	d0,d1					; should be using a different register
+		andi.w	#tile_settings,d0			; strip tile index
+		andi.w	#tile_vram,d1				; strip tile settings
+		lsr.w	#1,d1					; adjust tile index for 2P mode
+		or.w	d1,d0					; or them back together
+	endc	
+	
+		move.w	d0,(a1)+				; write to block table
+		dbf	d1,.loop_2P
+		rts	
 ; ===========================================================================
 
-loc_407C0:				
+AniPatMap_Index:	index offset(*),,1
+		ptr APM_EHZ_HTZ					; EHZ
+		ptr APM_Null					; unused
+		ptr APM_Null					; unused
+		ptr APM_Null					; unused
+		ptr APM_MTZ					; MTZ 1 and 2
+		ptr APM_MTZ					; MTZ 3
+		ptr APM_Null					; unused
+		ptr APM_EHZ_HTZ					; HTZ
+		ptr APM_HPZ					; HPZ (unused beta leftover)
+		ptr APM_Null					; unused
+		ptr APM_OOZ					; OOZ
+		ptr APM_Null					; unused
+		ptr APM_CNZ					; CNZ
+		ptr APM_CPZ					; CPZ
+		ptr APM_DEZ					; DEZ
+		ptr APM_ARZ					; ARZ
+		ptr APM_Null					; unused
+		zonewarning	AniPatMap_Index,2
+
+anipat:	macro *
+\* equ *
+current_anipat:	equs "\*"
+		dc.w ((sizeof_16x16_all*2)-sizeof_\*_Blocks)	; start offset of animated blocks in v_16x16_tiles
+		dc.w (sizeof_\*_Blocks/2)-1			; loops to copy blocks in word-length moves
+\*_Blocks:	
+		endm
+
+anipat_end:	macros	
+		arraysize	\current_anipat\_Blocks
+		
+APM_EHZ_HTZ:	anipat	
+		dc.w tile_Art_EHZMountains+tile_pal3,		tile_Art_EHZMountains+4+tile_pal3
+		dc.w tile_Art_EHZMountains+1+tile_pal3,		tile_Art_EHZMountains+5+tile_pal3
+
+		dc.w tile_Art_EHZMountains+8+tile_pal3,		tile_Art_EHZMountains+$C+tile_pal3
+		dc.w tile_Art_EHZMountains+9+tile_pal3,		tile_Art_EHZMountains+$D+tile_pal3
+		
+		dc.w tile_Art_EHZMountains+$10+tile_pal3,	tile_Art_EHZMountains+$14+tile_pal3
+		dc.w tile_Art_EHZMountains+$11+tile_pal3,	tile_Art_EHZMountains+$15+tile_pal3
+		
+		dc.w tile_Art_EHZMountains+2+tile_pal3,		tile_Art_EHZMountains+6+tile_pal3
+		dc.w tile_Art_EHZMountains+3+tile_pal3,		tile_Art_EHZMountains+7+tile_pal3
+				
+		dc.w tile_Art_EHZMountains+$A+tile_pal3,	tile_Art_EHZMountains+$E+tile_pal3
+		dc.w tile_Art_EHZMountains+$B+tile_pal3,	tile_Art_EHZMountains+$F+tile_pal3
+	
+		dc.w tile_Art_EHZMountains+$12+tile_pal3,	tile_Art_EHZMountains+$16+tile_pal3
+		dc.w tile_Art_EHZMountains+$13+tile_pal3,	tile_Art_EHZMountains+$17+tile_pal3		
+		
+		dc.w tile_Art_EHZMountains+$18+tile_pal4,	tile_Art_EHZMountains+$1A+tile_pal4
+		dc.w tile_Art_EHZMountains+$19+tile_pal4,	tile_Art_EHZMountains+$1B+tile_pal4		
+		
+		dc.w tile_Art_EHZMountains+$1C+tile_pal4,	tile_Art_EHZMountains+$1E+tile_pal4
+		dc.w tile_Art_EHZMountains+$1D+tile_pal4,	tile_Art_EHZMountains+$1F+tile_pal4		
+		
+		dc.w tile_Art_EHZPulseBall+tile_pal3,		tile_Art_EHZPulseBall+tilemap_xflip+tile_pal3
+		dc.w tile_Art_EHZPulseBall+1+tile_pal3,		tile_Art_EHZPulseBall+1+tilemap_xflip+tile_pal3
+		
+		dc.w tile_Kos_Checkers+tile_pal3,			tile_Art_EHZPulseBall+tile_pal3
+		dc.w tile_Kos_Checkers+1+tile_pal3,			tile_Art_EHZPulseBall+1+tile_pal3
+		
+		dc.w tile_Art_EHZPulseBall+tilemap_xflip+tile_pal3,		tile_Kos_Checkers+tilemap_xflip+tile_pal3
+		dc.w tile_Art_EHZPulseBall+1+tilemap_xflip+tile_pal3,	tile_Kos_Checkers+1+tilemap_xflip+tile_pal3
+		
+		dc.w tile_Art_Flowers1+tile_pal4,						tile_Art_Flowers1+tilemap_xflip+tile_pal4
+		dc.w tile_Art_Flowers1+1+tile_pal4,						tile_Art_Flowers1+1+tilemap_xflip+tile_pal4
+		
+		dc.w tile_Art_Flowers2+tile_pal4+tilemap_hi,			tile_Art_Flowers2+tilemap_xflip+tile_pal4+tilemap_hi
+		dc.w tile_Art_Flowers2+1+tile_pal4+tilemap_hi,			tile_Art_Flowers2+1+tilemap_xflip+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_Flowers3+tile_pal4,						tile_Art_Flowers3+tilemap_xflip+tile_pal4
+		dc.w tile_Art_Flowers3+1+tile_pal4,						tile_Art_Flowers3+1+tilemap_xflip+tile_pal4
+
+		dc.w tile_Art_Flowers4+tile_pal4+tilemap_hi,			tile_Art_Flowers4+tilemap_xflip+tile_pal4+tilemap_hi
+		dc.w tile_Art_Flowers4+1+tile_pal4+tilemap_hi,			tile_Art_Flowers4+1+tilemap_xflip+tile_pal4+tilemap_hi
+		anipat_end		
+; ===========================================================================
+		
+APM_MTZ:	anipat
+		dc.w tile_Art_MTZAnimBack1+tile_pal2,		tile_Art_MTZAnimBack1+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+1+tile_pal2,		tile_Art_MTZAnimBack1+1+tilemap_xflip+tile_pal2		
+	
+		dc.w tile_Art_MTZAnimBack1+2+tile_pal2,		tile_Art_MTZAnimBack1+2+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+3+tile_pal2,		tile_Art_MTZAnimBack1+3+tilemap_xflip+tile_pal2		
+		
+		dc.w tile_Art_MTZCylinder+$E+tile_pal4,		tile_Art_MTZCylinder+$E+tile_pal4
+		dc.w tile_Art_MTZCylinder+$F+tile_pal4,		tile_Art_MTZCylinder+$F+tile_pal4
+		
+		dc.w tile_Art_MTZCylinder+$C+tile_pal4,		tile_Art_MTZCylinder+$C+tile_pal4
+		dc.w tile_Art_MTZCylinder+$D+tile_pal4,		tile_Art_MTZCylinder+$D+tile_pal4
+		
+		dc.w tile_Art_MTZCylinder+$A+tile_pal4,		tile_Art_MTZCylinder+$A+tile_pal4
+		dc.w tile_Art_MTZCylinder+$B+tile_pal4,		tile_Art_MTZCylinder+$B+tile_pal4
+		
+		dc.w tile_Art_MTZCylinder+8+tile_pal4,		tile_Art_MTZCylinder+8+tile_pal4
+		dc.w tile_Art_MTZCylinder+9+tile_pal4,		tile_Art_MTZCylinder+9+tile_pal4
+		
+		dc.w tile_Art_MTZCylinder+6+tile_pal4,		tile_Art_MTZCylinder+6+tile_pal4
+		dc.w tile_Art_MTZCylinder+7+tile_pal4,		tile_Art_MTZCylinder+7+tile_pal4
+		
+		dc.w tile_Art_MTZCylinder+4+tile_pal4,		tile_Art_MTZCylinder+4+tile_pal4
+		dc.w tile_Art_MTZCylinder+5+tile_pal4,		tile_Art_MTZCylinder+5+tile_pal4
+		
+		dc.w tile_Art_MTZCylinder+2+tile_pal4,		tile_Art_MTZCylinder+2+tile_pal4
+		dc.w tile_Art_MTZCylinder+3+tile_pal4,		tile_Art_MTZCylinder+3+tile_pal4
+		
+		dc.w tile_Art_MTZCylinder+tile_pal4,		tile_Art_MTZCylinder+tile_pal4
+		dc.w tile_Art_MTZCylinder+1+tile_pal4,		tile_Art_MTZCylinder+1+tile_pal4
+		
+		dc.w tile_Art_MTZAnimBack1+4+tile_pal2,		tile_Art_MTZAnimBack1+4+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+5+tile_pal2,		tile_Art_MTZAnimBack1+5+tilemap_xflip+tile_pal2		
+		
+		dc.w tile_Art_MTZAnimBack2+tile_pal2,		tile_Art_MTZAnimBack2+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+1+tile_pal2,		tile_Art_MTZAnimBack2+1+tilemap_xflip+tile_pal2		
+		
+		dc.w tile_Art_MTZAnimBack2+2+tile_pal2,		tile_Art_MTZAnimBack2+2+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+3+tile_pal2,		tile_Art_MTZAnimBack2+3+tilemap_xflip+tile_pal2	
+		
+		dc.w tile_Art_MTZAnimBack2+4+tile_pal2,		tile_Art_MTZAnimBack2+4+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+5+tile_pal2,		tile_Art_MTZAnimBack2+5+tilemap_xflip+tile_pal2	
+		
+		dc.w tile_LevelArt+tile_pal3+tilemap_hi,	tile_LevelArt+tile_pal3+tilemap_hi
+		dc.w tile_Art_Lava+tile_pal3+tilemap_hi,	tile_Art_Lava+1+tile_pal3+tilemap_hi
+		
+		dc.w tile_LevelArt+tile_pal3+tilemap_hi,	tile_LevelArt+tile_pal3+tilemap_hi
+		dc.w tile_Art_Lava+2+tile_pal3+tilemap_hi,	tile_Art_Lava+3+tile_pal3+tilemap_hi
+		
+		dc.w tile_Art_Lava+4+tile_pal3+tilemap_hi,	tile_Art_Lava+5+tile_pal3+tilemap_hi
+		dc.w tile_Art_Lava+8+tile_pal3+tilemap_hi,	tile_Art_Lava+9+tile_pal3+tilemap_hi
+		
+		dc.w tile_Art_Lava+6+tile_pal3+tilemap_hi,	tile_Art_Lava+7+tile_pal3+tilemap_hi
+		dc.w tile_Art_Lava+$A+tile_pal3+tilemap_hi,	tile_Art_Lava+$B+tile_pal3+tilemap_hi
+		
+		dc.w tile_Art_MTZCylinder+$E+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$E+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+$F+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$F+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_MTZCylinder+$C+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$C+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+$D+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$D+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_MTZCylinder+$A+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$A+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+$B+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$B+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_MTZCylinder+8+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+8+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+9+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+9+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_MTZCylinder+6+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+6+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+7+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+7+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_MTZCylinder+4+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+4+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+5+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+5+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_MTZCylinder+2+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+2+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+3+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+3+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_MTZCylinder+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+1+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+1+tile_pal4+tilemap_hi
+		anipat_end
+; ===========================================================================
+
+APM_HPZ:	anipat
+		dc.w tile_Art_HPZPulseOrb1+tile_pal4,	tile_Art_HPZPulseOrb1+1+tile_pal4
+		dc.w tile_Art_HPZPulseOrb1+2+tile_pal4,	tile_Art_HPZPulseOrb1+3+tile_pal4
+		
+		dc.w tile_Art_HPZPulseOrb1+4+tile_pal4,	tile_Art_HPZPulseOrb1+5+tile_pal4
+		dc.w tile_Art_HPZPulseOrb1+6+tile_pal4,	tile_Art_HPZPulseOrb1+7+tile_pal4
+		
+		dc.w tile_Art_HPZPulseOrb2+tile_pal4,	tile_Art_HPZPulseOrb2+1+tile_pal4
+		dc.w tile_Art_HPZPulseOrb2+2+tile_pal4,	tile_Art_HPZPulseOrb2+3+tile_pal4
+		
+		dc.w tile_Art_HPZPulseOrb2+4+tile_pal4,	tile_Art_HPZPulseOrb2+5+tile_pal4
+		dc.w tile_Art_HPZPulseOrb2+6+tile_pal4,	tile_Art_HPZPulseOrb2+7+tile_pal4
+		
+		dc.w tile_Art_HPZPulseOrb3+tile_pal4,	tile_Art_HPZPulseOrb3+1+tile_pal4
+		dc.w tile_Art_HPZPulseOrb3+2+tile_pal4,	tile_Art_HPZPulseOrb3+3+tile_pal4
+		
+		dc.w tile_Art_HPZPulseOrb3+4+tile_pal4,	tile_Art_HPZPulseOrb3+5+tile_pal4
+		dc.w tile_Art_HPZPulseOrb3+6+tile_pal4,	tile_Art_HPZPulseOrb3+7+tile_pal4
+		
+		dc.w tile_Art_HPZPulseOrb1+tile_pal3,	tile_Art_HPZPulseOrb1+1+tile_pal3
+		dc.w tile_Art_HPZPulseOrb1+2+tile_pal3,	tile_Art_HPZPulseOrb1+3+tile_pal3
+		
+		dc.w tile_Art_HPZPulseOrb1+4+tile_pal3,	tile_Art_HPZPulseOrb1+5+tile_pal3
+		dc.w tile_Art_HPZPulseOrb1+6+tile_pal3,	tile_Art_HPZPulseOrb1+7+tile_pal3
+		
+		dc.w tile_Art_HPZPulseOrb2+tile_pal3,	tile_Art_HPZPulseOrb2+1+tile_pal3
+		dc.w tile_Art_HPZPulseOrb2+2+tile_pal3,	tile_Art_HPZPulseOrb2+3+tile_pal3
+		
+		dc.w tile_Art_HPZPulseOrb2+4+tile_pal3,	tile_Art_HPZPulseOrb2+5+tile_pal3
+		dc.w tile_Art_HPZPulseOrb2+6+tile_pal3,	tile_Art_HPZPulseOrb2+7+tile_pal3
+		
+		dc.w tile_Art_HPZPulseOrb3+tile_pal3,	tile_Art_HPZPulseOrb3+1+tile_pal3
+		dc.w tile_Art_HPZPulseOrb3+2+tile_pal3,	tile_Art_HPZPulseOrb3+3+tile_pal3
+		
+		dc.w tile_Art_HPZPulseOrb3+4+tile_pal3,	tile_Art_HPZPulseOrb3+5+tile_pal3
+		dc.w tile_Art_HPZPulseOrb3+6+tile_pal3,	tile_Art_HPZPulseOrb3+7+tile_pal3
+		
+	if Revision=2
+		; In Revision 2,the palette lines of HPZ's blank tiles were, for some reason,
+		; changed to line 4. This is consistent with MTZ's blank tiles. Notably, the new 
+		; palette lines' first entry always happens to match the current VDP background
+		; color.
+		dc.w tile_LevelArt+tile_pal4, 			tile_Art_HPZPulseOrb1+tile_pal4
+		dc.w tile_LevelArt+tile_pal4, 			tile_Art_HPZPulseOrb1+2+tile_pal4	
+	else	
+		dc.w tile_LevelArt, 					tile_Art_HPZPulseOrb1+tile_pal4
+		dc.w tile_LevelArt, 					tile_Art_HPZPulseOrb1+2+tile_pal4
+	endc	
+		
+		dc.w tile_Art_HPZPulseOrb1+1+tile_pal4, tile_Art_HPZPulseOrb1+4+tile_pal4
+		dc.w tile_Art_HPZPulseOrb1+3+tile_pal4, tile_Art_HPZPulseOrb1+6+tile_pal4
+		
+	if Revision=2
+		dc.w tile_Art_HPZPulseOrb1+5+tile_pal4, tile_LevelArt+tile_pal4
+		dc.w tile_Art_HPZPulseOrb1+7+tile_pal4, tile_LevelArt+tile_pal4
+		
+		dc.w tile_LevelArt+tile_pal4,			tile_Art_HPZPulseOrb2+tile_pal4
+		dc.w tile_LevelArt+tile_pal4, 			tile_Art_HPZPulseOrb2+2+tile_pal4	
+	else		
+		dc.w tile_Art_HPZPulseOrb1+5+tile_pal4, tile_LevelArt
+		dc.w tile_Art_HPZPulseOrb1+7+tile_pal4, tile_LevelArt
+		
+		dc.w tile_LevelArt, 					tile_Art_HPZPulseOrb2+tile_pal4
+		dc.w tile_LevelArt, 					tile_Art_HPZPulseOrb2+2+tile_pal4
+	endc		
+	
+		dc.w tile_Art_HPZPulseOrb2+1+tile_pal4, tile_Art_HPZPulseOrb2+4+tile_pal4
+		dc.w tile_Art_HPZPulseOrb2+3+tile_pal4, tile_Art_HPZPulseOrb2+6+tile_pal4
+		
+	if Revision=2
+		dc.w tile_Art_HPZPulseOrb2+5+tile_pal4, tile_LevelArt+tile_pal4
+		dc.w tile_Art_HPZPulseOrb2+7+tile_pal4, tile_LevelArt+tile_pal4
+		
+		dc.w tile_LevelArt+tile_pal4,			tile_Art_HPZPulseOrb3+tile_pal4
+		dc.w tile_LevelArt+tile_pal4,			tile_Art_HPZPulseOrb3+2+tile_pal4	
+	else		
+		dc.w tile_Art_HPZPulseOrb2+5+tile_pal4, tile_LevelArt
+		dc.w tile_Art_HPZPulseOrb2+7+tile_pal4, tile_LevelArt
+		
+		dc.w tile_LevelArt,						tile_Art_HPZPulseOrb3+tile_pal4
+		dc.w tile_LevelArt,						tile_Art_HPZPulseOrb3+2+tile_pal4
+	endc
+		
+		dc.w tile_Art_HPZPulseOrb3+1+tile_pal4, tile_Art_HPZPulseOrb3+4+tile_pal4
+		dc.w tile_Art_HPZPulseOrb3+3+tile_pal4, tile_Art_HPZPulseOrb3+6+tile_pal4
+	
+	if Revision=2
+		dc.w tile_Art_HPZPulseOrb3+5+tile_pal4, tile_LevelArt+tile_pal4
+		dc.w tile_Art_HPZPulseOrb3+7+tile_pal4, tile_LevelArt+tile_pal4
+		
+		dc.w tile_LevelArt+tile_pal4,			tile_Art_HPZPulseOrb1+tile_pal3
+		dc.w tile_LevelArt+tile_pal4, 			tile_Art_HPZPulseOrb1+2+tile_pal3	
+	else		
+		dc.w tile_Art_HPZPulseOrb3+5+tile_pal4, tile_LevelArt
+		dc.w tile_Art_HPZPulseOrb3+7+tile_pal4, tile_LevelArt
+		
+		dc.w tile_LevelArt,						tile_Art_HPZPulseOrb1+tile_pal3
+		dc.w tile_LevelArt, 					tile_Art_HPZPulseOrb1+2+tile_pal3
+	endc
+		
+		dc.w tile_Art_HPZPulseOrb1+1+tile_pal3, tile_Art_HPZPulseOrb1+4+tile_pal3
+		dc.w tile_Art_HPZPulseOrb1+3+tile_pal3, tile_Art_HPZPulseOrb1+6+tile_pal3
+	
+	if Revision=2
+		dc.w tile_Art_HPZPulseOrb1+5+tile_pal3, tile_LevelArt+tile_pal4
+		dc.w tile_Art_HPZPulseOrb1+7+tile_pal3, tile_LevelArt+tile_pal4
+		
+		dc.w tile_LevelArt+tile_pal4,			tile_Art_HPZPulseOrb2+tile_pal3
+		dc.w tile_LevelArt+tile_pal4,			tile_Art_HPZPulseOrb2+2+tile_pal3	
+	else		
+		dc.w tile_Art_HPZPulseOrb1+5+tile_pal3,	tile_LevelArt
+		dc.w tile_Art_HPZPulseOrb1+7+tile_pal3, tile_LevelArt
+		
+		dc.w tile_LevelArt,						tile_Art_HPZPulseOrb2+tile_pal3
+		dc.w tile_LevelArt,						tile_Art_HPZPulseOrb2+2+tile_pal3
+	endc
+		
+		dc.w tile_Art_HPZPulseOrb2+1+tile_pal3, tile_Art_HPZPulseOrb2+4+tile_pal3
+		dc.w tile_Art_HPZPulseOrb2+3+tile_pal3, tile_Art_HPZPulseOrb2+6+tile_pal3
+
+	if Revision=2
+		dc.w tile_Art_HPZPulseOrb2+5+tile_pal3, tile_LevelArt+tile_pal4
+		dc.w tile_Art_HPZPulseOrb2+7+tile_pal3, tile_LevelArt+tile_pal4
+		
+		dc.w tile_LevelArt+tile_pal4,			tile_Art_HPZPulseOrb3+tile_pal3
+		dc.w tile_LevelArt+tile_pal4,			tile_Art_HPZPulseOrb3+2+tile_pal3	
+	else		
+		dc.w tile_Art_HPZPulseOrb2+5+tile_pal3, tile_LevelArt
+		dc.w tile_Art_HPZPulseOrb2+7+tile_pal3, tile_LevelArt
+		
+		dc.w tile_LevelArt,						tile_Art_HPZPulseOrb3+tile_pal3
+		dc.w tile_LevelArt,						tile_Art_HPZPulseOrb3+2+tile_pal3
+	endc
+		
+		dc.w tile_Art_HPZPulseOrb3+1+tile_pal3, tile_Art_HPZPulseOrb3+4+tile_pal3
+		dc.w tile_Art_HPZPulseOrb3+3+tile_pal3, tile_Art_HPZPulseOrb3+6+tile_pal3
+		
+	if Revision=2
+		dc.w tile_Art_HPZPulseOrb3+5+tile_pal3, tile_LevelArt+tile_pal4
+		dc.w tile_Art_HPZPulseOrb3+7+tile_pal3, tile_LevelArt+tile_pal4	
+	else		
+		dc.w tile_Art_HPZPulseOrb3+5+tile_pal3, tile_LevelArt
+		dc.w tile_Art_HPZPulseOrb3+7+tile_pal3, tile_LevelArt
+	endc	
+		anipat_end
+; ===========================================================================
+
+APM_OOZ:	anipat	
+		dc.w tile_Art_OOZPulseBall+tilemap_hi, 					tile_Art_OOZPulseBall+2+tilemap_hi
+		dc.w tile_Art_OOZPulseBall+1+tilemap_hi, 				tile_Art_OOZPulseBall+3+tilemap_hi
+		
+		dc.w tile_Art_OOZSquareBall1+tile_pal4+tilemap_hi,		tile_Art_OOZSquareBall1+1+tile_pal4+tilemap_hi
+		dc.w tile_Art_OOZSquareBall1+2+tile_pal4+tilemap_hi, 	tile_Art_OOZSquareBall1+3+tile_pal4+tilemap_hi
+
+	if Revision=2
+		; Same deal as with HPZ's blocks, except they were changed to use palette line 3.
+		dc.w tile_LevelArt+tile_pal3, 					tile_Art_OOZSquareBall2+tile_pal4
+		dc.w tile_LevelArt+tile_pal3, 					tile_Art_OOZSquareBall2+2+tile_pal4
+		
+		dc.w tile_Art_OOZSquareBall2+1+tile_pal4,		tile_LevelArt+tile_pal3
+		dc.w tile_Art_OOZSquareBall2+3+tile_pal4,		tile_LevelArt+tile_pal3
+	else		
+		dc.w tile_LevelArt,								tile_Art_OOZSquareBall2+tile_pal4
+		dc.w tile_LevelArt,								tile_Art_OOZSquareBall2+2+tile_pal4
+		
+		dc.w tile_Art_OOZSquareBall2+1+tile_pal4,		tile_LevelArt
+		dc.w tile_Art_OOZSquareBall2+3+tile_pal4,		tile_LevelArt
+	endc	
+		
+		dc.w tile_Art_Oil1+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+1+tilemap_hi
+		dc.w tile_Art_Oil1+8+tile_pal3+tilemap_hi, 		tile_Art_Oil1+tile_pal3+9+tilemap_hi
+		
+		dc.w tile_Art_Oil1+2+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+3+tilemap_hi
+		dc.w tile_Art_Oil1+$A+tile_pal3+tilemap_hi, 	tile_Art_Oil1+tile_pal3+$B+tilemap_hi
+		
+		dc.w tile_Art_Oil1+4+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+5+tilemap_hi
+		dc.w tile_Art_Oil1+$C+tile_pal3+tilemap_hi, 	tile_Art_Oil1+tile_pal3+$D+tilemap_hi
+		
+		dc.w tile_Art_Oil1+6+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+7+tilemap_hi
+		dc.w tile_Art_Oil1+$E+tile_pal3+tilemap_hi, 	tile_Art_Oil1+tile_pal3+$F+tilemap_hi
+		
+		dc.w tile_Art_Oil2+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+1+tilemap_hi
+		dc.w tile_Art_Oil2+8+tile_pal3+tilemap_hi, 		tile_Art_Oil2+tile_pal3+9+tilemap_hi
+		
+		dc.w tile_Art_Oil2+2+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+3+tilemap_hi
+		dc.w tile_Art_Oil2+$A+tile_pal3+tilemap_hi, 	tile_Art_Oil2+tile_pal3+$B+tilemap_hi
+		
+		dc.w tile_Art_Oil2+4+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+5+tilemap_hi
+		dc.w tile_Art_Oil2+$C+tile_pal3+tilemap_hi, 	tile_Art_Oil2+tile_pal3+$D+tilemap_hi
+		
+		dc.w tile_Art_Oil2+6+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+7+tilemap_hi
+		dc.w tile_Art_Oil2+$E+tile_pal3+tilemap_hi, 	tile_Art_Oil2+tile_pal3+$F+tilemap_hi	
+		anipat_end
+; ===========================================================================
+
+APM_CNZ:	anipat
+		dc.w tile_Art_SlotPics1,	tile_Art_SlotPics1+4
+		dc.w tile_Art_SlotPics1+1,	tile_Art_SlotPics1+5
+
+		dc.w tile_Art_SlotPics1+8,	tile_Art_SlotPics1+$C
+		dc.w tile_Art_SlotPics1+9,	tile_Art_SlotPics1+$D
+		
+		dc.w tile_Art_SlotPics1+2,	tile_Art_SlotPics1+6
+		dc.w tile_Art_SlotPics1+3,	tile_Art_SlotPics1+7		
+
+		dc.w tile_Art_SlotPics1+$A,	tile_Art_SlotPics1+$E
+		dc.w tile_Art_SlotPics1+$B,	tile_Art_SlotPics1+$F			
+		
+		dc.w tile_Art_SlotPics2,	tile_Art_SlotPics2+4
+		dc.w tile_Art_SlotPics2+1,	tile_Art_SlotPics2+5
+
+		dc.w tile_Art_SlotPics2+8,	tile_Art_SlotPics2+$C
+		dc.w tile_Art_SlotPics2+9,	tile_Art_SlotPics2+$D
+		
+		dc.w tile_Art_SlotPics2+2,	tile_Art_SlotPics2+6
+		dc.w tile_Art_SlotPics2+3,	tile_Art_SlotPics2+7		
+
+		dc.w tile_Art_SlotPics2+$A,	tile_Art_SlotPics2+$E
+		dc.w tile_Art_SlotPics2+$B,	tile_Art_SlotPics2+$F	
+		
+		dc.w tile_Art_SlotPics3,	tile_Art_SlotPics3+4
+		dc.w tile_Art_SlotPics3+1,	tile_Art_SlotPics3+5
+
+		dc.w tile_Art_SlotPics3+8,	tile_Art_SlotPics3+$C
+		dc.w tile_Art_SlotPics3+9,	tile_Art_SlotPics3+$D
+		
+		dc.w tile_Art_SlotPics3+2,	tile_Art_SlotPics3+6
+		dc.w tile_Art_SlotPics3+3,	tile_Art_SlotPics3+7		
+
+		dc.w tile_Art_SlotPics3+$A,	tile_Art_SlotPics3+$E
+		dc.w tile_Art_SlotPics3+$B,	tile_Art_SlotPics3+$F
+		
+		dc.w tile_Art_CNZFlipPanels2+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2+4+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+1+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+5+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels2+8+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$C+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+9+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$D+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels2+2+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+6+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+3+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+7+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels2+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$E+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$F+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels1+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1+4+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+1+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+5+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels1+8+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$C+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+9+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$D+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels1+2+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+6+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+3+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+7+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels1+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$E+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$F+tile_pal4+tilemap_hi
+		anipat_end	
+; ===========================================================================
+
+APM_CNZ_2P:	anipat
+		dc.w tile_Art_SlotPics1_2p,	tile_Art_SlotPics1_2p+4
+		dc.w tile_Art_SlotPics1_2p+1,	tile_Art_SlotPics1_2p+5
+
+		dc.w tile_Art_SlotPics1_2p+8,	tile_Art_SlotPics1_2p+$C
+		dc.w tile_Art_SlotPics1_2p+9,	tile_Art_SlotPics1_2p+$D
+		
+		dc.w tile_Art_SlotPics1_2p+2,	tile_Art_SlotPics1_2p+6
+		dc.w tile_Art_SlotPics1_2p+3,	tile_Art_SlotPics1_2p+7		
+
+		dc.w tile_Art_SlotPics1_2p+$A,	tile_Art_SlotPics1_2p+$E
+		dc.w tile_Art_SlotPics1_2p+$B,	tile_Art_SlotPics1_2p+$F			
+		
+		dc.w tile_Art_SlotPics2_2p,	tile_Art_SlotPics2_2p+4
+		dc.w tile_Art_SlotPics2_2p+1,	tile_Art_SlotPics2_2p+5
+
+		dc.w tile_Art_SlotPics2_2p+8,	tile_Art_SlotPics2_2p+$C
+		dc.w tile_Art_SlotPics2_2p+9,	tile_Art_SlotPics2_2p+$D
+		
+		dc.w tile_Art_SlotPics2_2p+2,	tile_Art_SlotPics2_2p+6
+		dc.w tile_Art_SlotPics2_2p+3,	tile_Art_SlotPics2_2p+7		
+
+		dc.w tile_Art_SlotPics2_2p+$A,	tile_Art_SlotPics2_2p+$E
+		dc.w tile_Art_SlotPics2_2p+$B,	tile_Art_SlotPics2_2p+$F	
+		
+		dc.w tile_Art_SlotPics3_2p,	tile_Art_SlotPics3_2p+4
+		dc.w tile_Art_SlotPics3_2p+1,	tile_Art_SlotPics3_2p+5
+
+		dc.w tile_Art_SlotPics3_2p+8,	tile_Art_SlotPics3_2p+$C
+		dc.w tile_Art_SlotPics3_2p+9,	tile_Art_SlotPics3_2p+$D
+		
+		dc.w tile_Art_SlotPics3_2p+2,	tile_Art_SlotPics3_2p+6
+		dc.w tile_Art_SlotPics3_2p+3,	tile_Art_SlotPics3_2p+7		
+
+		dc.w tile_Art_SlotPics3_2p+$A,	tile_Art_SlotPics3_2p+$E
+		dc.w tile_Art_SlotPics3_2p+$B,	tile_Art_SlotPics3_2p+$F
+		
+		dc.w tile_Art_CNZFlipPanels2_2p+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+4+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+1+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+5+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels2_2p+8+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+$C+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+9+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+$D+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels2_2p+2+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+6+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+3+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+7+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels2_2p+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2_2p+$E+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2_2p+$F+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels1_2p+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+4+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+1+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+5+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels1_2p+8+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+$C+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+9+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+$D+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels1_2p+2+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+6+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+3+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+7+tile_pal4+tilemap_hi
+		
+		dc.w tile_Art_CNZFlipPanels1_2p+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1_2p+$E+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1_2p+$F+tile_pal4+tilemap_hi
+		anipat_end
+; ===========================================================================
+
+APM_CPZ:	anipat
+		dc.w tile_Art_CPZAnimBack+tile_pal3, tile_Art_CPZAnimBack+1+tile_pal3
+		dc.w tile_Art_CPZAnimBack+tile_pal3, tile_Art_CPZAnimBack+1+tile_pal3
+		anipat_end				
+; ===========================================================================
+
+APM_DEZ:	anipat
+		dc.w tile_Art_DEZAnimBack+tile_pal3, tile_Art_DEZAnimBack+1+tile_pal3
+		dc.w tile_Art_DEZAnimBack+tile_pal3, tile_Art_DEZAnimBack+1+tile_pal3
+		anipat_end		
+; ===========================================================================
+					
+APM_ARZ:	anipat
+		dc.w tile_Art_Waterfall3+tile_pal3+tilemap_hi,		tile_Art_Waterfall3+1+tile_pal3+tilemap_hi
+		dc.w tile_Art_Waterfall3+2+tile_pal3+tilemap_hi,	tile_Art_Waterfall3+3+tile_pal3+tilemap_hi
+		
+		dc.w tile_Art_Waterfall2+tile_pal3+tilemap_hi,		tile_Art_Waterfall2+1+tile_pal3+tilemap_hi
+		dc.w tile_Art_Waterfall2+2+tile_pal3+tilemap_hi,	tile_Art_Waterfall2+3+tile_pal3+tilemap_hi
+		
+		dc.w tile_Art_Waterfall1_1+tile_pal3+tilemap_hi,	tile_Art_Waterfall1_1+1+tile_pal3+tilemap_hi
+		dc.w tile_Art_Waterfall1_1+2+tile_pal3+tilemap_hi,	tile_Art_Waterfall1_1+3+tile_pal3+tilemap_hi
+		
+	if FixBugs
+		dc.w tile_Art_Waterfall1_2+tile_pal3+tilemap_hi,		tile_Art_Waterfall1_2+1+tile_pal3+tilemap_hi
+		dc.w tile_Art_Waterfall1_2+2+tile_pal3+tilemap_hi,		tile_Art_Waterfall1_2+3+tile_pal3+tilemap_hi	
+	else
+		; Those '+$C's shouldn't be here; these are invalid animation entries for waterfalls.
+		dc.w tile_Art_Waterfall1_2+tile_pal3+tilemap_hi+$C,		tile_Art_Waterfall1_2+1+tile_pal3+tilemap_hi+$C
+		dc.w tile_Art_Waterfall1_2+2+tile_pal3+tilemap_hi+$C,	tile_Art_Waterfall1_2+3+tile_pal3+tilemap_hi+$C
+	endc
+		
+		dc.w tile_Art_Waterfall3+tile_pal3,			tile_Art_Waterfall3+1+tile_pal3
+		dc.w tile_Art_Waterfall3+2+tile_pal3,		tile_Art_Waterfall3+3+tile_pal3
+		
+		dc.w tile_Art_Waterfall2+tile_pal3,			tile_Art_Waterfall2+1+tile_pal3
+		dc.w tile_Art_Waterfall2+2+tile_pal3,		tile_Art_Waterfall2+3+tile_pal3
+		
+		dc.w tile_Art_Waterfall1_1+tile_pal3,		tile_Art_Waterfall1_1+1+tile_pal3
+		dc.w tile_Art_Waterfall1_1+2+tile_pal3,		tile_Art_Waterfall1_1+3+tile_pal3
+		
+	if FixBugs
+		dc.w tile_Art_Waterfall1_2+tile_pal3,		tile_Art_Waterfall1_2+1+tile_pal3
+		dc.w tile_Art_Waterfall1_2+2+tile_pal3,		tile_Art_Waterfall1_2+3+tile_pal3	
+	else
+		; Those '+$C's shouldn't be here; these are invalid animation entries for waterfalls.
+		dc.w tile_Art_Waterfall1_2+tile_pal3+$C,	tile_Art_Waterfall1_2+1+tile_pal3+$C
+		dc.w tile_Art_Waterfall1_2+2+tile_pal3+$C,	tile_Art_Waterfall1_2+3+tile_pal3+$C
+	endc
+		
+		anipat_end
+; ===========================================================================
+		
+APM_Null:
+		dc.w   0
+
+; ---------------------------------------------------------------------------
+; Subroutine to load the tiles for HTZ's distant blue background cliffs
+
+; These tiles are loaded in RAM in groups of four within HTZ's 128x128 maps,
+; replacing unused 128x128 tiles.
+; ---------------------------------------------------------------------------
+
+LoadHTZCliffArt:				
 		lea	(Nem_HTZCliffs).l,a0
-		lea	($FFFFB800).w,a4
-		jsrto	NemDecToRAM,JmpTo2_NemDecToRAM
-		lea	($FFFFB800).w,a1
-		lea_	word_3FD9C,a4
+		lea	(v_ost_dynamic_end-$1800).w,a4		; part of the OST is used as a decompression buffer
+		jsrto	NemDecToRAM,JmpTo2_NemDecToRAM	
+		lea	(v_ost_dynamic_end-$1800).w,a1
+		lea_	HTZ_CliffTiles,a4			; table of addresses within 128x128 chunk maps where tiles are copied
 		moveq	#0,d2
-		moveq	#7,d4
+		moveq	#(sizeof_HTZ_CliffTiles/(2*6*2))-1,d4	; 8 unique rows in table; 2 as each row is duplicated, 6 for number of entries in each row, 2 as each entry is a word
 
-loc_407DA:				
-		moveq	#5,d3
+	.loop1:				
+		moveq	#6-1,d3					; six entries in each row of table
 
-loc_407DC:				
-		moveq	#-1,d0
-		move.w	(a4)+,d0
-		movea.l	d0,a2
-		moveq	#$1F,d1
+	.loop2:				
+		moveq	#-1,d0					; $FFFF in high word
+		move.w	(a4)+,d0				; move offset from table into low word to make destination address
+		movea.l	d0,a2		
+		moveq	#(sizeof_cell*4)/4-1,d1			; copy 4 tiles
 
-loc_407E4:				
-		move.l	(a1),(a2)+
-		move.l	d2,(a1)+
-		dbf	d1,loc_407E4
-		dbf	d3,loc_407DC
-		adda.w	#$C,a4
-		dbf	d4,loc_407DA
+	.loop3:				
+		move.l	(a1),(a2)+				; copy 8 pixels
+		move.l	d2,(a1)+				; clear OST RAM that was used as decomp buffer
+		dbf	d1,.loop3				; repeat for four tile
+		dbf	d3,.loop2				; repeat for entire row of table
+		adda.w	#6*2,a4					; skip duplicated row in HTZ_CliffTiles
+		dbf	d4,.loop1				; repeat for entire table
 		rts	
 ; ===========================================================================
 
@@ -85262,18 +85836,18 @@ Debug_Index:	index offset(*),,2
 
 loc_41A8A:				
 		addq.b	#2,(v_debug_active).w
-		move.w	(v_boundary_top_next).w,(v_boundary_top_next_debug).w
+		move.w	(v_boundary_top).w,(v_boundary_top_next_debug).w
 		move.w	(v_boundary_bottom_next).w,(v_boundary_bottom_next_debug).w
 		cmpi.b	#id_SCZ,(v_zone).w
 		bne.s	loc_41AAE
-		move.w	#0,(v_boundary_left_next).w
-		move.w	#$3FFF,(v_boundary_right_next).w
+		move.w	#0,(v_boundary_left).w
+		move.w	#$3FFF,(v_boundary_right).w
 
 	loc_41AAE:				
 		andi.w	#$7FF,(v_ost_player1+ost_y_pos).w
 		andi.w	#$7FF,(v_camera_y_pos).w
 		andi.w	#$7FF,(v_bg1_y_pos).w
-		clr.b	(f_disable_horiz_scroll).w
+		clr.b	(f_disable_scroll_p1).w
 		move.b	#0,ost_frame(a0)
 		move.b	#0,ost_anim(a0)
 		cmpi.b	#$10,(v_gamemode).w
@@ -85355,7 +85929,7 @@ loc_41B7A:
 		beq.s	loc_41BA4
 		sub.l	d1,d2
 		moveq	#0,d0
-		move.w	(v_boundary_top_next).w,d0
+		move.w	(v_boundary_top).w,d0
 		swap	d0
 		cmp.l	d0,d2
 		bge.s	loc_41BA4
@@ -85453,7 +86027,7 @@ loc_41C82:
 		bsr.s	sub_41CB8
 		move.b	#$13,ost_height(a1)
 		move.b	#9,ost_width(a1)
-		move.w	(v_boundary_top_next_debug).w,(v_boundary_top_next).w
+		move.w	(v_boundary_top_next_debug).w,(v_boundary_top).w
 		move.w	(v_boundary_bottom_next_debug).w,(v_boundary_bottom_next).w
 		
 		; Following four lines are unused Sonic 1 leftover, used when exiting debug mode

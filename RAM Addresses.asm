@@ -203,8 +203,8 @@ v_camera_y_diff_p2:		rs.w 1				; $FFFFEEBA ; (new X pos - old X pos) * 256
 
 f_screen_shake_htz:		rs.b 1				; $FFFFEEBC ; flag to activate screen shaking code in HTZ's layer deformation routine
 f_screen_shake: 			rs.b 1			; $FFFFEEBD ; flag to activate screen shaking code (if existent) in layer deformation routine
-f_disable_horiz_scroll:			rs.b 1			; $FFFFEEBE ; flag to disable horizontal scrolling for entire screen in 1P or top half in 2P
-f_disable_horiz_scroll_p2:		rs.b 1			; $FFFFEEBF ; flag to disable horizontal scrolling for bottom half of screen in 2P 
+f_disable_scroll_p1:			rs.b 1			; $FFFFEEBE ; flag to disable horizontal scrolling for entire screen in 1P or top half in 2P
+f_disable_scroll_p2:		rs.b 1				; $FFFFEEBF ; flag to disable horizontal scrolling for bottom half of screen in 2P 
 
 v_boundary_unused1:				rs.l 1		; $FFFFEEC0 ; unused Sonic 1 leftover: these were that game's 'v_boundary_left' and 'v_boundary right'
 v_boundary_unused2:				rs.w 1		; $FFFFEEC4 ; unused Sonic 1 leftover: was 'v_boundary_top.' Written to as a longword to populate the still-used variable below
@@ -212,9 +212,9 @@ v_boundary_unused2:				rs.w 1		; $FFFFEEC4 ; unused Sonic 1 leftover: was 'v_bou
 v_boundary_bottom_next: 	rs.w 1				; $FFFFEEC6 ; bottom level boundary, next
 
 				ramblock camera_boundaries	; required for teleport swap table
-v_boundary_left_next:		rs.w 1				; $FFFFEEC8 ; left level boundary, next (actual boundary shifts to match this)
-v_boundary_right_next:		rs.w 1				; $FFFFEECA ; right level boundary, next
-v_boundary_top_next:		rs.w 1				; $FFFFEECC ; top level boundary, next
+v_boundary_left:		rs.w 1				; $FFFFEEC8 ; left level boundary
+v_boundary_right:		rs.w 1				; $FFFFEECA ; right level boundary
+v_boundary_top:		rs.w 1					; $FFFFEECC ; top level boundary
 v_boundary_bottom:			rs.w 1			; $FFFFEECE ; bottom level boundary, was "Camera_max_scroll_spd"...
 				ramblocksize camera_boundaries
 
@@ -249,10 +249,10 @@ v_camera_x_pos_copy:			rs.l 1			; $FFFFEEF0
 v_camera_y_pos_copy:			rs.l 1			; $FFFFEEF4
 
 				ramblock camera_boundaries_p2	; required for teleport swap table
-v_boundary_left_next_p2:		rs.w 1			; $FFFFEEF8
-v_boundary_right_next_p2:		rs.w 1			; $FFFFEEFA
-v_boundary_top_next_p2:			rs.w 1			; $FFFFEEFC ; seems not actually implemented (only written to)
-v_boundary_bottom_next_p2:		rs.w 1			; $FFFFEEFE 
+v_boundary_left_p2:		rs.w 1				; $FFFFEEF8
+v_boundary_right_p2:		rs.w 1				; $FFFFEEFA
+v_boundary_top_p2:			rs.w 1			; $FFFFEEFC ; seems not actually implemented (only written to)
+v_boundary_bottom_p2:		rs.w 1				; $FFFFEEFE 
 				ramblocksize camera_boundaries_p2
 				rsblockend camera_ram
 
@@ -293,7 +293,7 @@ v_unused_ss:				rs.l 1			; $FFFFF61A ; cleared by VDPSetupGame, ClearScreen, spe
 v_fg_y_pos_vsram_p2:		rs.w 1				; $FFFFF61E ; foreground y position for player 2
 v_bg_y_pos_vsram_p2:		rs.w 1				; $FFFFF620 ; background y position for player 2
 v_teleport_timer:			rs.b 1			; $FFFFF622 ; timer for teleport effect
-f_teleport_flag:			rs.b 1			; $FFFFF623 ; flag indicating a teleport is in progress
+f_teleport:			rs.b 1				; $FFFFF623 ; flag indicating a teleport is in progress
 v_vdp_hint_counter:			rs.w 1			; $FFFFF624 ; VDP register $8A buffer 
 v_vdp_hint_line:			equ __rs-1		; $FFFFF625 ; scanline where HBlank will trigger
 v_palfade_start:			rs.b 1			; $FFFFF626 ; palette fading - start position in bytes

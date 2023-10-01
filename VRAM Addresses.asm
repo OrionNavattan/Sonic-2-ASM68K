@@ -72,13 +72,15 @@ vram_ContinueCountdown:             equ $DF80
 ; ---------------------------------------------------------------------------
 ; Universal locations.
 
-tile_LevelArt:				equ $0000
+vram_LevelArt:				equ 0
+tile_LevelArt:				equ 0
 
 ; Animals.
 vram_animal_1:              equ $B000
-tile_Nem_Animal_1:				equ vram_animal_1/sizeof_cell
 vram_animal_2:              equ $B280
-tile_Nem_Animal_2:				equ vram_animal_2/sizeof_cell
+
+tile_Nem_Animal_1:			equ vram_animal_1/sizeof_cell
+tile_Nem_Animal_2:			equ vram_animal_2/sizeof_cell
 
 ; Game over.
 vram_Game_Over:             equ $9BC0
@@ -156,52 +158,61 @@ vram_HUD2P_Numbers:			equ vram_HUD_Score_E
 
 ; Objects that use the same art tiles on all levels in which
 ; they are loaded, even if not all levels load them.
-vram_WaterSurface:           equ $8000
-vram_Button:                 equ $8480
-vram_HorizSpike:             equ $8580
-vram_Spikes:                 equ $8680
-vram_DignlSprng:             equ $8780
-vram_LeverSpring:            equ $8800
-vram_VrtclSprng:             equ $8B80
-vram_HrzntlSprng:            equ $8E00
-
+vram_WaterSurface:          equ $8000
+vram_Button:                equ $8480
+vram_HorizSpike:            equ $8580
+vram_Spikes:                equ $8680
+vram_DignlSprng:            equ $8780
+vram_LeverSpring:           equ $8800
+vram_VrtclSprng:            equ $8B80
+vram_HrzntlSprng:           equ $8E00
 
 ; Some common objects loaded on all aquatic levels
-vram_Explosion:              equ $B480
-vram_Bubbles:                equ $BD00
-vram_SuperSonic_stars:       equ $BE40
+vram_Explosion:             equ $B480
+vram_Bubbles:               equ $BD00
+vram_SuperSonic_stars:      equ $BE40
 
-; EHZ, HTZ
-;ArtTile_ArtKos_Checkers:               = ArtTile_ArtKos_LevelArt+$0158
-;ArtTile_ArtUnc_Flowers1:               = $7280
-;ArtTile_ArtUnc_Flowers2:               = $72C0
-;ArtTile_ArtUnc_Flowers3:               = $7300
-;ArtTile_ArtUnc_Flowers4:               = $7340
+; Shared between EHZ and HTZ
+vram_Checkers:				equ vram_LevelArt+$2B00           
+vram_Flowers1:              equ $7280
+vram_Flowers2:              equ $72C0
+vram_Flowers3:   			equ $7300
+vram_Flowers4:              equ $7340
+
+tile_Kos_Checkers:			equ vram_Checkers/sizeof_cell
+tile_Art_Flowers1:			equ vram_Flowers1/sizeof_cell
+tile_Art_Flowers2:			equ vram_Flowers2/sizeof_cell
+tile_Art_Flowers3:			equ vram_Flowers3/sizeof_cell
+tile_Art_Flowers4:			equ vram_Flowers4/sizeof_cell
+
 vram_Buzzer:                 	equ $7A40
 
-; WFZ, SCZ
+; Shared between SCZ and WFZ 
 vram_HorizProp:        	equ $79A0
-vram_Clouds:                	equ $A9E0
+vram_Clouds:            equ $A9E0
 vram_VertProp:         	equ $AC20
-vram_Balkriy:					equ $ACA0
+vram_Balkriy:			equ $ACA0
 
 
 ; Level-specific objects and badniks.
 ; EHZ
-vram_EHZPulseBall:				= $7380		; uncompressed
+vram_EHZPulseBall:				equ $7380	; uncompressed
 vram_Waterfall: 				equ $73C0
 vram_Bridge:					equ $76C0
 vram_Buzzer_Fireball:       	equ $77C0			; actually unused
 vram_Coconuts:            		equ $7DC0
 vram_Masher:               		equ $8280
-ArtTile_ArtUnc_EHZMountains:	=	$A000			; uncompressed
+vram_EHZMountains:				equ	$A000	; uncompressed
+
+tile_Art_EHZPulseBall:			equ vram_EHZPulseBall/sizeof_cell
+tile_Art_EHZMountains:			equ vram_EHZMountains/sizeof_cell
 
 ; MTZ
 vram_Shellcracker:          equ $6380
-ArtTile_ArtUnc_Lava                   = $6800
-ArtTile_ArtUnc_MTZCylinder            = $6980
-ArtTile_ArtUnc_MTZAnimBack_1          = $6B80
-ArtTile_ArtUnc_MTZAnimBack_2          = $6C40
+vram_Lava                   equ $6800
+vram_MTZCylinder:           equ $6980
+vram_MTZAnimBack1:        	equ $6B80
+vram_MTZAnimBack2:      	equ $6C40
 vram_Asteron:           	equ $6D00
 vram_GiantCog:              equ $6F00
 vram_WheelIndent:        	equ $7E00
@@ -215,6 +226,11 @@ vram_Nut:         			equ $A000
 vram_LavaBubble:         	equ $A6C0
 vram_Cog:                	equ $ABE0
 vram_TeleportFlash:     	equ $AD60
+
+tile_Art_Lava:				equ vram_Lava/sizeof_Cell
+tile_Art_MTZCylinder:		equ vram_MTZCylinder/sizeof_cell
+tile_Art_MTZAnimBack1:		equ vram_MTZAnimBack1/sizeof_cell
+tile_Art_MTZAnimBack2:		equ vram_MTZAnimBack2/sizeof_cell
 
 ; WFZ
 vram_Clucker:             	equ $6F20
@@ -246,16 +262,18 @@ vram_Sol:                   equ $7BC0
 vram_Tram:           		equ $7CC0
 vram_HTZFireball2:          equ $82C0
 vram_HTZOneWayBarrier:      equ $84C0
-ArtTile_ArtUnc_HTZMountains:        = $0500
-ArtTile_ArtUnc_HTZClouds:              = ArtTile_ArtUnc_HTZMountains + $18
+vram_HTZMountains:       	equ $A000
+;ArtTile_ArtUnc_HTZClouds:              = ArtTile_ArtUnc_HTZMountains + $18
+vram_HTZClouds:				equ $A300
 vram_Spiker:                equ $A400
 
 ; OOZ
-ArtTile_ArtUnc_OOZPulseBall           = $02B6
-ArtTile_ArtUnc_OOZSquareBall1         = $02BA
-ArtTile_ArtUnc_OOZSquareBall2         = $02BE
-ArtTile_ArtUnc_Oil1                   = $02C2
-ArtTile_ArtUnc_Oil2                   = $02D2
+vram_OOZPulseBall:          equ $56C0
+vram_OOZSquareBall1:        equ $5740
+vram_OOZSquareBall2:        equ $57C0
+vram_Oil1:                  equ $5840
+vram_Oil2:                  equ $5A40
+
 vram_Burner:                equ $5C40
 vram_OOZElevator:           equ $5E80
 vram_SlidingSpikes:         equ $6180
@@ -272,6 +290,12 @@ vram_StripedBlocksHoriz:    equ $7FE0
 vram_Fan:           		equ $8060
 vram_Aquis:                 equ $A000
 vram_Octus:                 equ $A700
+
+tile_Art_OOZPulseBall:		equ vram_OOZPulseBall/sizeof_cell
+tile_Art_OOZSquareBall1:	equ vram_OOZSquareBall1/sizeof_cell
+tile_Art_OOZSquareBall2:	equ vram_OOZSquareBall2/sizeof_cell
+tile_Art_Oil1:				equ vram_Oil1/sizeof_cell
+tile_Art_Oil2:				equ vram_Oil2/sizeof_cell
 
 ; MCZ
 vram_Flasher:               equ $7500
@@ -297,51 +321,71 @@ vram_DiagLauncher:       	equ $8040
 vram_VertLauncher:       	equ $8440
 
 ; Specific to 1p CNZ
-ArtTile_ArtUnc_CNZFlipTiles_1         = $0330
-ArtTile_ArtUnc_CNZFlipTiles_2         = $0540
-vram_SlotPics_1:         	equ $AA00
-vram_SlotPics_2:          	equ $AC00
-vram_SlotPics_3:         	equ $AE00
-sizeof_SlotPic:				equ sizeof_art_cnzslotpics/6 ; size of each individual slot pic in bytes
+vram_CNZFlipPanels1:        equ $6600
+vram_CNZFlipPanels2:        equ $A800
+vram_SlotPics1:         	equ $AA00
+vram_SlotPics2:          	equ $AC00
+vram_SlotPics3:         	equ $AE00
+
+tile_Art_SlotPics1:         equ vram_SlotPics1/sizeof_cell
+tile_Art_SlotPics2:         equ vram_SlotPics2/sizeof_cell
+tile_Art_SlotPics3:         equ vram_SlotPics3/sizeof_cell
+sizeof_SlotPic:				equ sizeof_Art_CNZSlotPics/6 ; size of each individual slot pic in bytes
+tile_Art_CNZFlipPanels1:	equ vram_CNZFlipPanels1/sizeof_cell
+tile_Art_CNZFlipPanels2:	equ vram_CNZFlipPanels2/sizeof_cell
 
 ; Specific to 2p CNZ
-ArtTile_ArtUnc_CNZFlipTiles_1_2p      = $0330
-ArtTile_ArtUnc_CNZFlipTiles_2_2p      = $0740
-vram_SlotPics_1_2p:       	equ $EA00
-vram_SlotPics_2_2p:      	equ $EC00
-vram_SlotPics_3_2p:       	equ $EE00
+vram_CNZFlipPanels1_2p:     equ $6600
+vram_CNZFlipPanels2_2p:     equ $E800
+vram_SlotPics1_2p:       	equ $EA00
+vram_SlotPics2_2p:      	equ $EC00
+vram_SlotPics3_2p:       	equ $EE00
+
+tile_Art_CNZFlipPanels1_2p:     equ vram_CNZFlipPanels1_2p/sizeof_cell
+tile_Art_CNZFlipPanels2_2p:     equ vram_CNZFlipPanels2_2p/sizeof_cell
+tile_Art_SlotPics1_2p:       	equ vram_SlotPics1_2p/sizeof_cell
+tile_Art_SlotPics2_2p:      	equ vram_SlotPics2_2p/sizeof_cell
+tile_Art_SlotPics3_2p:       	equ vram_SlotPics3_2p/sizeof_cell
 
 ; CPZ
-ArtTile_ArtUnc_CPZAnimBack            = $0370
+vram_CPZAnimBack:           equ $6E00
 vram_Pylon:         		equ $6E60
 vram_CPZConstructionStripes:	equ $7280
 vram_Booster:				equ $7380
 vram_CPZElevator:           equ $7400
-vram_CPZDumpingPipePlat:    equ $7600
-vram_TubeLid:         equ $7C00
-vram_StairBlock:         equ $8300
-vram_CPZMetalBlock:         equ $8600
-vram_Droplet:            equ $8780
+vram_CPZDumpingPipePlat:	equ $7600
+vram_TubeLid:				equ $7C00
+vram_StairBlock:			equ $8300
+vram_CPZMetalBlock:			equ $8600
+vram_Droplet:				equ $8780
 vram_Grabber:               equ $A000
 vram_Spiny:                 equ $A5A0
 
+tile_Art_CPZAnimBack:	equ vram_CPZAnimBack/sizeof_cell
+
 ; DEZ
-ArtTile_ArtUnc_DEZAnimBack            = $0326
-vram_DEZConstructionStripes:  equ $6500
+vram_DEZAnimBack:  				equ $64C0
+vram_DEZConstructionStripes: 	equ $6500
+
+tile_Art_DEZAnimBack:			equ vram_DEZAnimBack/sizeof_cell
 
 ; ARZ
 vram_ARZBarrier:        	equ $7F00
 vram_Leaves:                equ $8200
 vram_ArrowAndShooter:       equ $82E0
 vram_Waterfall3:			equ	$8500
-tile_Waterfall3:			equ	vram_Waterfall3/sizeof_cell
-ArtTile_ArtUnc_Waterfall2:             = $042C
-ArtTile_ArtUnc_Waterfall1_1:           = $0430
+vram_Waterfall2:            equ $8580
+vram_Waterfall1_1:          equ $8600
+vram_Waterfall1_2:          equ $AAE0
 vram_Whisp:                 equ $A000
 vram_Grounder:              equ $A120
 vram_ChopChop:              equ $A760
-ArtTile_ArtUnc_Waterfall1_2:           = $AAE0
 vram_BubbleGenerator:       equ $AB60
+
+tile_Art_Waterfall3:		equ	vram_Waterfall3/sizeof_cell
+tile_Art_Waterfall2:		equ	vram_Waterfall2/sizeof_cell
+tile_Art_Waterfall1_1:		equ	vram_Waterfall1_1/sizeof_cell
+tile_Art_Waterfall1_2:		equ	vram_Waterfall1_2/sizeof_cell
 
 ; ---------------------------------------------------------------------------
 ; Bosses
@@ -399,17 +443,16 @@ vram_DEZWindow:   			equ $6F00
 vram_MechaSonic:            equ $7000
 
 ; Tile addresses for patching HTZ and WFZ
-
 tile_HTZ_Patch:      		equ $3F80			; until this address, equal to EHZ tiles
-tile_WFZ_Patch:				equ $60E0		; Until this address, equal to SCZ tiles
+tile_WFZ_Patch:				equ $60E0		; until this address, equal to SCZ tiles
 
 ; ---------------------------------------------------------------------------
 ; Unused beta leftovers
 ; ---------------------------------------------------------------------------
 
-vram_HPZPulseOrb_1:       			equ $5D00
-vram_HPZPulseOrb_2:      			equ $5E00
-vram_HPZPulseOrb_3:       			equ $5F00
+vram_HPZPulseOrb1:       			equ $5D00
+vram_HPZPulseOrb2:      			equ $5E00
+vram_HPZPulseOrb3:       			equ $5F00
 vram_HiddenPalaceBridge:			equ $6000
 vram_HPZWaterfall:       			equ $62A0
 vram_HPZPlatform:           		equ $6940
@@ -418,6 +461,9 @@ vram_HPZEmerald:         			equ $7240
 vram_Unknown:             			equ $7F40
 vram_FloatPlatform:       			equ $8300
 
+tile_Art_HPZPulseOrb1:				equ vram_HPZPulseOrb1/sizeof_Cell
+tile_Art_HPZPulseOrb2:				equ vram_HPZPulseOrb2/sizeof_Cell
+tile_Art_HPZPulseOrb3:				equ vram_HPZPulseOrb3/sizeof_Cell
 
 ; ---------------------------------------------------------------------------
 ; Unused Sonic 1 leftovers
