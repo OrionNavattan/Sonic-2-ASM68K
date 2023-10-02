@@ -14860,6 +14860,7 @@ Deform_EHZ:
 		andi.w	#$1F,d1					; d1 = index
 		lea	(Deform_Ripple_Data).l,a2
 		lea	(a2,d1.w),a2				; a2 = start location in ripple data
+		
 		move.w	#21-1,d1				; 21 lines of rippling cloud reflections on the ocean
 	.lines_81_101:				
 		move.b	(a2)+,d0				; get offset value from ripple data
@@ -14948,9 +14949,8 @@ Deform_EHZ:
 		swap	d3					; swap new value to low word
 		dbf	d1,.lines_178_222
 		
-
-	; 22+58+21+11+16+16+15+18+45=222.
-	; Only 222 out of 224 lines have been processed.
+		; 22+58+21+11+16+16+15+18+45=(screen_height-2)
+		; Only 222 out of 224 lines have been processed.
 
     if FixBugs
 		; The bottom two lines haven't had their HScroll values set!
@@ -83370,8 +83370,6 @@ Dynamic_HTZ:
 		asr.w	#3,d1					; d1 = negated camera x pos / 8
 		move.w	(v_camera_x_pos).w,d0
 		
-		; for $2500, 
-		
 	if FixBugs
 		move.w	d0,d2
 		andi.w	#$F,d2					; is the lower nibble zero?
@@ -83381,7 +83379,7 @@ Dynamic_HTZ:
 		add.w	d1,d0	
 		add.w	d2,d0					; add $FFFF to correct the value			
 	else	
-		; This produces the wrong result if Camera_X_pos is a multiple of $10, specifically 
+		; This produces the wrong result if the camera x pos is a multiple of $10, specifically, 
 		; producing a value 1 higher than intended. This off-by-one causes the mountains in 
 		; HTZ's background to occasionally scroll one pixel in the wrong direction, before 
 		; jumping two pixels back to "catch up." 	
@@ -86987,18 +86985,21 @@ plcp:	macro plcaddress,altid,alias1,alias2
 		opt	m-
 		
 		dc.\index_width \plcaddress-index_start		; make pointer
+		
 		ifarg \altid
 			\prefix_id\\altid: equ ptr_id		; generate an alternate ID constant for duplicate pointers
 		else
 			\prefix_id\\plcaddress:	equ ptr_id	; generate ID constant
 		endc	
+		
 		ifarg \alias1
 			\prefix_id\\alias1:	equ ptr_id	; make aliased ID constant
 		endc
+		
 		ifarg \alias2
 			\prefix_id\\alias2:	equ ptr_id	; make aliased ID constant
 		endc			
-			ptr_id: = ptr_id+ptr_id_inc		; increment ptr_id
+		ptr_id: = ptr_id+ptr_id_inc		; increment ptr_id
 		
 		popo
 		list
@@ -87074,9 +87075,7 @@ PatternLoadCues:
 		plcp	PLC_Capsule				; 64
 		plcp	PLC_Explosion				; 65
 		plcp	PLC_ResultsTails			; 66
-
-		
-		
+	
 plcm:		macro gfx,vram,suffix
 		dc.l gfx
 		ifarg \vram
@@ -87095,48 +87094,56 @@ plcm:		macro gfx,vram,suffix
 		endc
 		endm
 
-
 plcheader:	macro *
 		\*: equ *
-		plc_count\@: equ (\*_end-\*-2)/sizeof_plc
+		plc_count\@: equ (sizeof_\*-2)/sizeof_plc
 		dc.w plc_count\@-1
-		endm		
+		endm				
 		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - standard block 1
 ;---------------------------------------------------------------------------------------
+
 PLC_Main:	plcheader
 		plcm 	Nem_HUD,vram_HUD
 		plcm 	Nem_Sonic_Life_Counter,vram_LifeCounter
 		plcm	Nem_Ring,vram_Ring
 		plcm	Nem_Numbers,vram_Numbers
-	PLC_Main_end:
+		arraysize PLC_Main
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - standard block 2
 ;---------------------------------------------------------------------------------------
+
 PLC_Main2:	plcheader		
 		plcm	Nem_Checkpoint,vram_Checkpoint
 		plcm	Nem_Monitors,vram_Monitors
 		plcm 	Nem_Shield, vram_Shield
 		plcm	Nem_Invinciblity_Stars,vram_Invinciblity_Stars
-	PLC_Main2_end:
+		arraysize PLC_Main2
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - water level standard block
 ;---------------------------------------------------------------------------------------
+
 PLC_Water:		plcheader			
 		plcm	Nem_Explosion,vram_Explosion
 		plcm	Nem_SuperSonic_Stars,vram_SuperSonic_stars
 		plcm	Nem_Bubbles,vram_Bubbles
-	PLC_Water_end:
+		arraysize PLC_Water
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Game/Time over
 ;---------------------------------------------------------------------------------------
+
 PLC_GameOver:	plcheader		
 		plcm Nem_Game_Over,vram_Game_Over
-	PLC_GameOver_end:
+		arraysize PLC_GameOver
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Emerald Hill Primary
 ;---------------------------------------------------------------------------------------
+
 PLC_EHZ1:		plcheader	
 		plcm	Nem_Waterfall,vram_Waterfall
 		plcm	Nem_EHZBridge,vram_Bridge
@@ -87144,43 +87151,55 @@ PLC_EHZ1:		plcheader
 		plcm	Nem_Buzzer,vram_Buzzer
 		plcm	Nem_Coconuts,vram_Coconuts
 		plcm	Nem_Masher,vram_Masher
-	PLC_EHZ1_end:	
+		arraysize PLC_EHZ1
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Emerald Hill Secondary
 ;---------------------------------------------------------------------------------------
+
 PLC_EHZ2:		plcheader
 		plcm	Nem_Spikes,vram_Spikes
 		plcm	Nem_DignlSprng,vram_DignlSprng
 		plcm	Nem_VrtclSprng,vram_VrtclSprng
 		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
-	PLC_EHZ2_end:
+		arraysize PLC_EHZ2
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Miles 1-UP patch
 ;---------------------------------------------------------------------------------------
-PLC_Miles1Up:		plcheader			
+
+PLC_Miles1Up:	plcheader			
 		plcm	Nem_MilesLife,vram_LifeCounter2
-	PLC_Miles1Up_end:
+		arraysize PLC_Miles1Up
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Miles life counter
 ;---------------------------------------------------------------------------------------
+
 PLC_MilesLife:	plcheader			
 		plcm	Nem_MilesLife,vram_LifeCounter
-	PLC_MilesLife_end:	
+		arraysize PLC_MilesLife	
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Tails 1-UP patch
 ;---------------------------------------------------------------------------------------
-PLC_Tails1Up:		plcheader			
+
+PLC_Tails1Up:	plcheader			
 		plcm	Nem_TailsLife,vram_LifeCounter2
-	PLC_Tails1Up_end:
+		arraysize PLC_Tails1Up
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Tails life counter
 ;---------------------------------------------------------------------------------------
+
 PLC_TailsLife:	plcheader			
 		plcm	Nem_TailsLife,vram_LifeCounter
-	PLC_TailsLife_end:		
+		arraysize PLC_TailsLife
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Metropolis Primary
 ;---------------------------------------------------------------------------------------
+
 PLC_MTZ1:		plcheader	
 		plcm	Nem_GiantCog,vram_GiantCog
 		plcm	Nem_WheelIndent,vram_WheelIndent	
@@ -87191,10 +87210,12 @@ PLC_MTZ1:		plcheader
 		plcm	Nem_MTZSpike,vram_MTZSpike
 		plcm	Nem_Shellcracker,vram_Shellcracker		
 		plcm	Nem_Asteron,vram_Asteron
-	PLC_MTZ1_end:	
+		arraysize PLC_MTZ1
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Metropolis Secondary
 ;---------------------------------------------------------------------------------------
+
 PLC_MTZ2:		plcheader			
 		plcm	Nem_Button,vram_Button
 		plcm	Nem_Spikes,vram_Spikes
@@ -87205,10 +87226,12 @@ PLC_MTZ2:		plcheader
 		plcm	Nem_LavaBubble,vram_LavaBubble
 		plcm	Nem_Cog,vram_Cog
 		plcm	Nem_TeleportFlash,vram_TeleportFlash
-	PLC_MTZ2_end:	
+		arraysize PLC_MTZ2
+			
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Wing Fortress Primary
 ;---------------------------------------------------------------------------------------
+
 PLC_WFZ1:		plcheader			
 		plcm	Nem_Tornado,vram_Tornado
 		plcm	Nem_Clouds,vram_Clouds
@@ -87221,10 +87244,12 @@ PLC_WFZ1:		plcheader
 		; Redundant entries.
 		plcm	Nem_Tornado,vram_Tornado
 		plcm	Nem_Clouds,vram_Clouds
-	PLC_WFZ1_end:	
+		arraysize PLC_WFZ1
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Wing Fortress Secondary
 ;---------------------------------------------------------------------------------------
+
 PLC_WFZ2:	plcheader	
 		; Redundant: these first two are also loaded by the first cue.	
 		plcm	Nem_VertProp,vram_VertProp
@@ -87241,7 +87266,8 @@ PLC_WFZ2:	plcheader
 		plcm	Nem_WFZLaunchCatapult,vram_WFZLaunchCatapult
 		plcm	Nem_WFZSwitch,vram_WFZSwitch
 		plcm	Nem_WFZFloatingPlatform,vram_WFZFloatingPlatform
-	PLC_WFZ2_end:		
+		arraysize PLC_WFZ2
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Hill Top Primary
 ;---------------------------------------------------------------------------------------
@@ -87256,7 +87282,8 @@ PLC_HTZ1:	plcheader
 		plcm	Nem_DignlSprng,vram_DignlSprng
 		plcm	Nem_VrtclSprng,vram_VrtclSprng
 		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
-	PLC_HTZ1_end:	
+		arraysize PLC_HTZ1
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Hill Top Secondary
 ;---------------------------------------------------------------------------------------
@@ -87264,14 +87291,15 @@ PLC_HTZ2:	plcheader
 		plcm	Nem_Tram,vram_Tram
 		plcm	Nem_HTZFireball2,vram_HTZFireball2
 		plcm	Nem_HTZOneWayBarrier,vram_HTZOneWayBarrier
-	PLC_HTZ2_end:		
-		
+		arraysize PLC_HTZ2		
+			
+;---------------------------------------------------------------------------------------
+; Pattern load cues - Oil Ocean Primary (also pointed to by unused HPZ entries)
+;---------------------------------------------------------------------------------------
+
 PLC_HPZ1:		
-PLC_HPZ2:		
-		
-;---------------------------------------------------------------------------------------
-; Pattern load cues - Oil Ocean Primary
-;---------------------------------------------------------------------------------------
+PLC_HPZ2:
+
 PLC_OOZ1:	plcheader			
 		plcm	Nem_Burner,vram_Burner
 		plcm	Nem_OOZElevator,vram_OOZElevator
@@ -87282,10 +87310,12 @@ PLC_OOZ1:	plcheader
 		plcm	Nem_Oilfall2,vram_Oilfall2
 		plcm	Nem_SpringBall,vram_SpringBall
 		plcm	Nem_LaunchBall,vram_LaunchBall
-	PLC_OOZ1_end:	
+		arraysize PLC_OOZ1	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Oil Ocean Secondary
 ;---------------------------------------------------------------------------------------
+
 PLC_OOZ2:	plcheader		
 		plcm	Nem_OOZPlatform,vram_OOZPlatform
 		plcm	Nem_PushSpring,vram_PushSpring
@@ -87299,10 +87329,12 @@ PLC_OOZ2:	plcheader
 		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
 		plcm	Nem_Aquis,vram_Aquis
 		plcm	Nem_Octus,vram_Octus
-	PLC_OOZ2_end:
+		arraysize PLC_OOZ2
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Mystic Cave Primary
 ;---------------------------------------------------------------------------------------
+
 PLC_MCZ1:	plcheader		
 		plcm	Nem_Crate,vram_Crate
 		plcm	Nem_MCZCollapsingPlat,vram_MCZCollapsingPlat
@@ -87310,10 +87342,12 @@ PLC_MCZ1:	plcheader
 		plcm	Nem_VinePulley,vram_VinePulley
 		plcm 	Nem_Flasher,vram_Flasher
 		plcm 	Nem_Crawlton,vram_Crawlton
-	PLC_MCZ1_end:	
+		arraysize PLC_MCZ1	
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Mystic Cave Secondary
 ;---------------------------------------------------------------------------------------
+
 PLC_MCZ2:	plcheader			
 		plcm	Nem_HorizSpike,vram_HorizSpike
 		plcm	Nem_Spikes,vram_Spikes
@@ -87321,10 +87355,12 @@ PLC_MCZ2:	plcheader
 		plcm	Nem_LeverSpring,vram_LeverSpring
 		plcm	Nem_VrtclSprng,vram_VrtclSprng
 		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
-	PLC_MCZ2_end:		
+		arraysize PLC_MCZ2
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Casino Night Primary
 ;---------------------------------------------------------------------------------------
+
 PLC_CNZ1:	plcheader			
 		plcm 	Nem_Crawl,vram_Crawl
 		plcm	Nem_LargeMovingBlock,vram_LargeMovingBlock
@@ -87336,10 +87372,12 @@ PLC_CNZ1:	plcheader
 		plcm	Nem_RoundBumper,vram_RoundBumper
 		plcm 	Nem_Flipper,vram_Flipper
 		plcm	Nem_SaucerBumper,vram_SaucerBumper
-	PLC_CNZ1_end:	
+		arraysize PLC_CNZ1
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Casino Night Secondary
 ;---------------------------------------------------------------------------------------
+
 PLC_CNZ2:	plcheader		
 		plcm	Nem_DiagLauncher,vram_DiagLauncher
 		plcm	Nem_VertLauncher,vram_VertLauncher
@@ -87347,10 +87385,12 @@ PLC_CNZ2:	plcheader
 		plcm	Nem_DignlSprng,vram_DignlSprng
 		plcm	Nem_VrtclSprng,vram_VrtclSprng
 		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
-	PLC_CNZ2_end:	
+		arraysize PLC_CNZ2
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Chemical Plant Primary
 ;---------------------------------------------------------------------------------------
+
 PLC_CPZ1:	plcheader		
 		plcm	Nem_Pylon,vram_Pylon
 		plcm	Nem_ConstructionStripes,vram_CPZConstructionStripes,CPZ
@@ -87361,10 +87401,12 @@ PLC_CPZ1:	plcheader
 		plcm 	Nem_WaterSurface1,vram_WaterSurface
 		plcm	Nem_StairBlock,vram_StairBlock
 		plcm	Nem_CPZMetalBlock,vram_CPZMetalBlock
-	PLC_CPZ1_end:	
+		arraysize PLC_CPZ1	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Chemical Plant Secondary
 ;---------------------------------------------------------------------------------------
+
 PLC_CPZ2:	plcheader			
 		plcm	Nem_Grabber,vram_Grabber
 		plcm	Nem_Spiny,vram_Spiny
@@ -87373,35 +87415,43 @@ PLC_CPZ2:	plcheader
 		plcm	Nem_LeverSpring,vram_LeverSpring
 		plcm	Nem_VrtclSprng,vram_VrtclSprng
 		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
-	PLC_CPZ2_end:	
+		arraysize PLC_CPZ2	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Death Egg Primary
 ;---------------------------------------------------------------------------------------
+
 PLC_DEZ1:	plcheader			
 		plcm	Nem_ConstructionStripes,vram_DEZConstructionStripes,DEZ
-	PLC_DEZ1_end:	
+		arraysize PLC_DEZ1
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Death Egg Secondary
 ;---------------------------------------------------------------------------------------
+
 PLC_DEZ2:	plcheader		
 		plcm 	Nem_MechaSonic,vram_MechaSonic
 		plcm	Nem_DEZWindow,vram_DEZWindow
 		plcm	Nem_RobotnikRunning,vram_RobotnikRunning
 		plcm	Nem_RobotnikUpper,vram_RobotnikUpper
 		plcm	Nem_RobotnikLower,vram_RobotnikLower
-	PLC_DEZ2_end:	
+		arraysize PLC_DEZ2
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Aquatic Ruin Primary
 ;---------------------------------------------------------------------------------------
+
 PLC_ARZ1:	plcheader		
 		plcm 	Nem_ARZBarrier,vram_ARZBarrier
 		plcm 	Nem_WaterSurface2,vram_WaterSurface
 		plcm 	Nem_Leaves,vram_Leaves
 		plcm	Nem_ArrowAndShooter,vram_ArrowAndShooter
-	PLC_ARZ1_end:	
+		arraysize PLC_ARZ1
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Aquatic Ruin Secondary
 ;---------------------------------------------------------------------------------------
+
 PLC_ARZ2:	plcheader		
 		plcm	Nem_ChopChop,vram_ChopChop
 		plcm	Nem_Whisp,vram_Whisp
@@ -87411,16 +87461,20 @@ PLC_ARZ2:	plcheader
 		plcm 	Nem_LeverSpring,vram_LeverSpring
 		plcm	Nem_VrtclSprng,vram_VrtclSprng
 		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
-	PLC_ARZ2_end:	
+		arraysize PLC_ARZ2	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Sky Chase Primary
 ;---------------------------------------------------------------------------------------
+
 PLC_SCZ1:	plcheader			
 		plcm	Nem_Tornado,vram_Tornado
-	PLC_SCZ1_end:	
+		arraysize PLC_SCZ1	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Sky Chase Secondary
 ;---------------------------------------------------------------------------------------
+
 PLC_SCZ2:	plcheader			
 		plcm	Nem_Clouds,vram_Clouds
 		plcm	Nem_VertProp,vram_VertProp
@@ -87428,175 +87482,221 @@ PLC_SCZ2:	plcheader
 		plcm	Nem_Balkiry,vram_Balkriy
 		plcm	Nem_Turtloid,vram_Turtloid
 		plcm	Nem_Nebula,vram_Nebula
-	PLC_SCZ2_end:	
+		arraysize PLC_SCZ2	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Sonic end of level results screen
 ;---------------------------------------------------------------------------------------
+
 PLC_ResultsSonic:	plcheader		
 		plcm	Nem_TitleCard,vram_TitleCard
 		plcm	Nem_ResultsText,vram_ResultsText
 		plcm 	Nem_MiniSonic,vram_MiniCharacter
 		plcm 	Nem_Perfect,vram_Perfect
-	PLC_ResultsSonic_end:	
+		arraysize PLC_ResultsSonic	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - End of	level signpost
 ;---------------------------------------------------------------------------------------
+
 PLC_Signpost:	plcheader	
 		plcm	Nem_Signpost,vram_Signpost
-	PLC_Signpost_end:	
+		arraysize PLC_Signpost	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Chemical Plant Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_CPZBoss:	plcheader		
 		plcm	Nem_Eggpod,vram_CPZEggpod,CPZ
 		plcm	Nem_CPZBoss,vram_CPZBoss
 		plcm	Nem_EggpodJets,vram_CPZEggpodJets,CPZ
 		plcm	Nem_BossSmoke,vram_CPZBossSmoke,CPZ	; unused due to a bug in loc_2E9B6; see there for a fix
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_CPZBoss_end:	
+		arraysize PLC_CPZBoss	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Emerald Hill Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_EHZBoss:	plcheader			
 		plcm	Nem_Eggpod,vram_EHZEggpod,EHZ
 		plcm	Nem_EHZBoss,vram_EHZBoss
 		plcm	Nem_EggChopperBlades,vram_EggChopperBlades
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_EHZBoss_end:
+		arraysize PLC_EHZBoss
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Hill Top Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_HTZBoss:	plcheader			
 		plcm	Nem_Eggpod,vram_HTZEggpod,HTZ
 		plcm	Nem_HTZBoss,vram_HTZBoss
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
 		plcm	Nem_BossSmoke,vram_HTZBossSmoke,HTZ
-	PLC_HTZBoss_end:	
+		arraysize PLC_HTZBoss	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Aquatic Ruin Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_ARZBoss:	plcheader			
 		plcm	Nem_Eggpod,vram_Eggpod_common
 		plcm	Nem_ARZBoss,vram_ARZBoss
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_ARZBoss_end:	
+		arraysize PLC_ARZBoss	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Mystic Cave Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_MCZBoss:	plcheader			
 		plcm	Nem_Eggpod,vram_Eggpod_common
 		plcm	Nem_MCZBoss,vram_MCZBoss
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_MCZBoss_end:	
+		arraysize PLC_MCZBoss	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Casino Night Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_CNZBoss:	plcheader				
 		plcm	Nem_Eggpod,vram_Eggpod_common
 		plcm	Nem_CNZBoss,vram_CNZBoss
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_CNZBoss_end:	
+		arraysize PLC_CNZBoss	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Metropolis Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_MTZBoss:	plcheader			
 		plcm	Nem_Eggpod,vram_Eggpod_common
 		plcm	Nem_MTZBoss,vram_MTZBoss
 		plcm	Nem_EggpodJets,vram_MTZEggpodJets
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_MTZBoss_end:	
+		arraysize PLC_MTZBoss	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - Oil Ocean Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_OOZBoss:	plcheader				
 		plcm	Nem_OOZBoss,vram_OOZBoss
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_OOZBoss_end:	
+		arraysize PLC_OOZBoss	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Fiery Explosion
 ;---------------------------------------------------------------------------------------
+
 PLC_FieryExplosion:	plcheader			
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_FieryExplosion_end:	
+		arraysize PLC_FieryExplosion	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue - Final Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_DEZBoss:	plcheader			
 		plcm	Nem_DEZBoss,vram_DEZBoss
-	PLC_DEZBoss_end:
+		arraysize PLC_DEZBoss
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues - EHZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_EHZAnimals:		plcheader			
 		plcm	Nem_Squirrel,vram_animal_1
 		plcm	Nem_Flicky,vram_animal_2
-	PLC_EHZAnimals_end:		
+		arraysize PLC_EHZAnimals	
+			
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - MCZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_MCZAnimals:		plcheader			
 		plcm	Nem_Mouse,vram_animal_1
 		plcm	Nem_Chicken,vram_animal_2
-	PLC_MCZAnimals_end:		
+		arraysize PLC_MCZAnimals
+				
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - HTZ/MTZ/WFZ animals
 ;---------------------------------------------------------------------------------------
+
 PLC_WFZAnimals:		plcheader			
 		plcm Nem_Beaver,vram_animal_1
 		plcm Nem_Eagle,vram_animal_2
-	PLC_WFZAnimals_end:	
+		arraysize PLC_WFZAnimals	
+		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - DEZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_DEZAnimals:		plcheader			
 		plcm Nem_Pig,vram_animal_1
 		plcm Nem_Chicken,vram_animal_2
-	PLC_DEZAnimals_end:	
+		arraysize PLC_DEZAnimals	
+		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - HPZ animals
 ;---------------------------------------------------------------------------------------
+
 PLC_HPZAnimals:		plcheader			
 		plcm Nem_Mouse,vram_animal_1
 		plcm Nem_Seal,vram_animal_2
-	PLC_HPZAnimals_end:	
+		arraysize PLC_HPZAnimals	
+		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - OOZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_OOZAnimals:		plcheader			
 		plcm Nem_Penguin,vram_animal_1
 		plcm Nem_Seal,vram_animal_2
-	PLC_OOZAnimals_end:	
+		arraysize PLC_OOZAnimals	
+		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - SCZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_SCZAnimals:		plcheader			
 		plcm Nem_Turtle,vram_animal_1
 		plcm Nem_Chicken,vram_animal_2
-	PLC_SCZAnimals_end:		
+		arraysize PLC_SCZAnimals		
+		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - CNZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_CNZAnimals:		plcheader			
 		plcm Nem_Bear,vram_animal_1
 		plcm Nem_Flicky,vram_animal_2
-	PLC_CNZAnimals_end:	
+		arraysize PLC_CNZAnimals	
+		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - CPZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_CPZAnimals:		plcheader			
 		plcm Nem_Rabbit,vram_animal_1
 		plcm Nem_Eagle,vram_animal_2
-	PLC_CPZAnimals_end:	
+		arraysize PLC_CPZAnimals	
+		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - ARZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_ARZAnimals:		plcheader			
 		plcm Nem_Penguin,vram_animal_1
 		plcm Nem_Flicky,vram_animal_2
-	PLC_ARZAnimals_end:	
+		arraysize PLC_ARZAnimals	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - Special Stage
 ;---------------------------------------------------------------------------------------
+
 PLC_SpecialStage:	plcheader		
 		plcm	Nem_SpecialEmerald,vram_SpecialEmerald
 		plcm	Nem_SpecialMessages,vram_SpecialMessages
@@ -87611,62 +87711,75 @@ PLC_SpecialStage:	plcheader
 		plcm	Nem_SpecialBack,vram_SpecialBack
 		plcm	Nem_SpecialStars,vram_SpecialStars
 		plcm	Nem_SpecialTailsText,vram_SpecialTailsText
-	PLC_SpecialStage_end:	
+		arraysize PLC_SpecialStage	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue - Special Stage Bombs
 ;---------------------------------------------------------------------------------------
+
 PLC_SpecialStageBombs:	plcheader		
 		plcm	Nem_SpecialBomb,vram_SpecialBomb
-	PLC_SpecialStageBombs_end:	
+		arraysize PLC_SpecialStageBombs	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - WFZ Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_WFZBoss:	plcheader			
 		plcm	Nem_WFZBoss,vram_WFZBoss
 		plcm	Nem_RobotnikRunning,vram_RobotnikRunning
 		plcm	Nem_RobotnikUpper,vram_RobotnikUpper
 		plcm	Nem_RobotnikLower,vram_RobotnikLower
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_WFZBoss_end:	
+		arraysize PLC_WFZBoss	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues - Tornado
 ;---------------------------------------------------------------------------------------
+
 PLC_Tornado:	plcheader		
 		plcm	Nem_Tornado,vram_Tornado
 		plcm	Nem_TornadoThruster,vram_TornadoThruster
 		plcm	Nem_Clouds,vram_Clouds
-	PLC_Tornado_end:	
+		arraysize PLC_Tornado	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue - Egg Prison
 ;---------------------------------------------------------------------------------------
+
 PLC_Capsule:	plcheader		
 		plcm 	Nem_Capsule,vram_Capsule
-	PLC_Capsule_end:
+		arraysize PLC_Capsule
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue - Explosion
 ;---------------------------------------------------------------------------------------
+
 PLC_Explosion:	plcheader			
 		plcm 	Nem_Explosion,vram_Explosion
-	PLC_Explosion_end:	
+		arraysize PLC_Explosion	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue - Tails end of level results screen
 ;---------------------------------------------------------------------------------------
+
 PLC_ResultsTails:	plcheader			
 		plcm	Nem_TitleCard,vram_TitleCard
 		plcm 	Nem_ResultsText,vram_ResultsText
 		plcm 	Nem_MiniTails,vram_MiniCharacter
 		plcm	Nem_Perfect,vram_Perfect
-	PLC_ResultsTails_end:	
+		arraysize PLC_ResultsTails	
 
 ;---------------------------------------------------------------------------------------
 ; Unused duplicates of some of the PLC lists found only in Revisions 0 and 2
 ; (possibly used as padding?)
-;---------------------------------------------------------------------------------------		
+;---------------------------------------------------------------------------------------
+	
 	if Revision=0
 		; second half of PLC_ResultsTails
 		plcm 	Nem_MiniTails,vram_MiniCharacter
 		plcm	Nem_Perfect,vram_Perfect
-	PLC_ResultsTails_dup_end:
+		arraysize PLC_ResultsTails_dup
 
 	elseif Revision=2
 		; half of PLC_ARZ2 and everything from there to the end of the PLC lists!
@@ -87676,16 +87789,20 @@ PLC_ResultsTails:	plcheader
 		plcm 	Nem_LeverSpring,vram_LeverSpring
 		plcm	Nem_VrtclSprng,vram_VrtclSprng
 		plcm	Nem_HrzntlSprng,vram_HrzntlSprng
-	PLC_ARZ2_dup_end:	
+		arraysize PLC_ARZ2_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue (duplicate) - Sky Chase Primary
 ;---------------------------------------------------------------------------------------
+
 PLC_SCZ1_dup:	plcheader			
 		plcm	Nem_Tornado,vram_Tornado
-	PLC_SCZ1_dup_end:	
+		arraysize PLC_SCZ1_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues (duplicate) - Sky Chase Secondary
 ;---------------------------------------------------------------------------------------
+
 PLC_SCZ2_dup:	plcheader			
 		plcm	Nem_Clouds,vram_Clouds
 		plcm	Nem_VertProp,vram_VertProp
@@ -87693,172 +87810,217 @@ PLC_SCZ2_dup:	plcheader
 		plcm	Nem_Balkiry,vram_Balkriy
 		plcm	Nem_Turtloid,vram_Turtloid
 		plcm	Nem_Nebula,vram_Nebula
-	PLC_SCZ2_dup_end:	
+		arraysize PLC_SCZ2_dup
+		
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues (duplicate) - Sonic end of level results screen
 ;---------------------------------------------------------------------------------------
+
 PLC_ResultsSonic_dup:	plcheader		
 		plcm	Nem_TitleCard,vram_TitleCard
 		plcm	Nem_ResultsText,vram_ResultsText
 		plcm 	Nem_MiniSonic,vram_MiniCharacter
 		plcm 	Nem_Perfect,vram_Perfect
-	PLC_ResultsSonic_dup_end:	
+		arraysize PLC_ResultsSonic_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue (duplicate) - End of	level signpost
 ;---------------------------------------------------------------------------------------
+
 PLC_Signpost_dup:	plcheader	
 		plcm	Nem_Signpost,vram_Signpost
-	PLC_Signpost_dup_end:	
+		arraysize PLC_Signpost_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues (duplicate) - Chemical Plant Boss
 ;---------------------------------------------------------------------------------------
 PLC_CPZBoss_dup:	plcheader		
+
 		plcm	Nem_Eggpod,vram_CPZEggpod
 		plcm	Nem_CPZBoss,vram_CPZBoss
 		plcm	Nem_EggpodJets,vram_CPZEggpodJets
 		plcm	Nem_BossSmoke,vram_CPZBossSmoke
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_CPZBoss_dup_end:	
+		arraysize PLC_CPZBoss_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues (duplicate) - Emerald Hill Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_EHZBoss_dup:	plcheader			
 		plcm	Nem_Eggpod,vram_EHZEggpod
 		plcm	Nem_EHZBoss,vram_EHZBoss
 		plcm	Nem_EggChopperBlades,vram_EggChopperBlades
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_EHZBoss_dup_end:
+		arraysize PLC_EHZBoss_dup
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues (duplicate) - Hill Top Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_HTZBoss_dup:	plcheader			
 		plcm	Nem_Eggpod,vram_HTZEggpod
 		plcm	Nem_HTZBoss,vram_HTZBoss
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
 		plcm	Nem_BossSmoke,vram_HTZBossSmoke
-	PLC_HTZBoss_dup_end:	
+		arraysize PLC_HTZBoss_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues (duplicate) - Aquatic Ruin Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_ARZBoss_dup:	plcheader			
 		plcm	Nem_Eggpod,vram_Eggpod_common
 		plcm	Nem_ARZBoss,vram_ARZBoss
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_ARZBoss_dup_end:	
+		arraysize PLC_ARZBoss_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues (duplicate) - Mystic Cave Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_MCZBoss_dup:	plcheader			
 		plcm	Nem_Eggpod,vram_Eggpod_common
 		plcm	Nem_MCZBoss,vram_MCZBoss
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_MCZBoss_dup_end:	
+		arraysize PLC_MCZBoss_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues (duplicate) - Casino Night Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_CNZBoss_dup:	plcheader				
 		plcm	Nem_Eggpod,vram_Eggpod_common
 		plcm	Nem_CNZBoss,vram_CNZBoss
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_CNZBoss_dup_end:	
+		arraysize PLC_CNZBoss_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues (duplicate) - Metropolis Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_MTZBoss_dup:	plcheader			
 		plcm	Nem_Eggpod,vram_Eggpod_common
 		plcm	Nem_MTZBoss,vram_MTZBoss
 		plcm	Nem_EggpodJets,vram_MTZEggpodJets
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_MTZBoss_dup_end:	
+		arraysize PLC_MTZBoss_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues (duplicate) - Oil Ocean Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_OOZBoss_dup:	plcheader				
 		plcm	Nem_OOZBoss,vram_OOZBoss
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_OOZBoss_dup_end:	
+		arraysize PLC_OOZBoss_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue (duplicate) - Fiery Explosion
 ;---------------------------------------------------------------------------------------
+
 PLC_FieryExplosion_dup:	plcheader			
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_FieryExplosion_dup_end:	
+		arraysize PLC_FieryExplosion_dup	
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cue (duplicate) - Final Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_DEZBoss_dup:	plcheader			
 		plcm	Nem_DEZBoss,vram_DEZBoss
-	PLC_DEZBoss_dup_end:
+		arraysize PLC_DEZBoss_dup
+	
 ;---------------------------------------------------------------------------------------
 ; Pattern load cues (duplicate) - EHZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_EHZAnimals_dup:		plcheader			
 		plcm	Nem_Squirrel,vram_animal_1
 		plcm	Nem_Flicky,vram_animal_2
-	PLC_EHZAnimals_dup_end:		
+		arraysize PLC_EHZAnimals_dup		
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - MCZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_MCZAnimals_dup:		plcheader			
 		plcm	Nem_Mouse,vram_animal_1
 		plcm	Nem_Chicken,vram_animal_2
-	PLC_MCZAnimals_dup_end:		
+		arraysize PLC_MCZAnimals_dup	
+		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - HTZ/MTZ/WFZ animals
 ;---------------------------------------------------------------------------------------
+
 PLC_WFZAnimals_dup:		plcheader			
 		plcm Nem_Beaver,vram_animal_1
 		plcm Nem_Eagle,vram_animal_2
-	PLC_WFZAnimals_dup_end:	
+		arraysize PLC_WFZAnimals_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - DEZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_DEZAnimals_dup:		plcheader			
 		plcm Nem_Pig,vram_animal_1
 		plcm Nem_Chicken,vram_animal_2
-	PLC_DEZAnimals_dup_end:	
+		arraysize PLC_DEZAnimals_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - HPZ animals
 ;---------------------------------------------------------------------------------------
+
 PLC_HPZAnimals_dup:		plcheader			
 		plcm Nem_Mouse,vram_animal_1
 		plcm Nem_Seal,vram_animal_2
-	PLC_HPZAnimals_dup_end:	
+		arraysize PLC_HPZAnimals_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - OOZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_OOZAnimals_dup:		plcheader			
 		plcm Nem_Penguin,vram_animal_1
 		plcm Nem_Seal,vram_animal_2
-	PLC_OOZAnimals_dup_end:	
+		arraysize PLC_OOZAnimals_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - SCZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_SCZAnimals_dup:		plcheader			
 		plcm Nem_Turtle,vram_animal_1
 		plcm Nem_Chicken,vram_animal_2
-	PLC_SCZAnimals_dup_end:		
+		arraysize PLC_SCZAnimals_dup	
+		
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - CNZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_CNZAnimals_dup:		plcheader			
 		plcm Nem_Bear,vram_animal_1
 		plcm Nem_Flicky,vram_animal_2
-	PLC_CNZAnimals_dup_end:	
+		arraysize PLC_CNZAnimals_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - CPZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_CPZAnimals_dup:		plcheader			
 		plcm Nem_Rabbit,vram_animal_1
 		plcm Nem_Eagle,vram_animal_2
-	PLC_CPZAnimals_dup_end:	
+		arraysize PLC_CPZAnimals_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - ARZ Animals
 ;---------------------------------------------------------------------------------------
+
 PLC_ARZAnimals_dup:		plcheader			
 		plcm Nem_Penguin,vram_animal_1
 		plcm Nem_Flicky,vram_animal_2
-	PLC_ARZAnimals_dup_end:	
+		arraysize PLC_ARZAnimals_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - Special Stage
 ;---------------------------------------------------------------------------------------
@@ -87876,52 +88038,64 @@ PLC_SpecialStage_dup:	plcheader
 		plcm	Nem_SpecialBack,vram_SpecialBack
 		plcm	Nem_SpecialStars,vram_SpecialStars
 		plcm	Nem_SpecialTailsText,vram_SpecialTailsText
-	PLC_SpecialStage_dup_end:	
+		arraysize PLC_SpecialStage_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue (duplicate) - Special Stage Bombs
 ;---------------------------------------------------------------------------------------
+
 PLC_SpecialStageBombs_dup:	plcheader		
 		plcm	Nem_SpecialBomb,vram_SpecialBomb
-	PLC_SpecialStageBombs_dup_end:	
+		arraysize PLC_SpecialStageBombs_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - WFZ Boss
 ;---------------------------------------------------------------------------------------
+
 PLC_WFZBoss_dup:	plcheader			
 		plcm	Nem_WFZBoss,vram_WFZBoss
 		plcm	Nem_RobotnikRunning,vram_RobotnikRunning
 		plcm	Nem_RobotnikUpper,vram_RobotnikUpper
 		plcm	Nem_RobotnikLower,vram_RobotnikLower
 		plcm	Nem_FieryExplosion,vram_FieryExplosion
-	PLC_WFZBoss_dup_end:	
+		arraysize PLC_WFZBoss_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cues (duplicate) - Tornado
 ;---------------------------------------------------------------------------------------
+
 PLC_Tornado_dup:	plcheader		
 		plcm	Nem_Tornado,vram_Tornado
 		plcm	Nem_TornadoThruster,vram_TornadoThruster
 		plcm	Nem_Clouds,vram_Clouds
-	PLC_Tornado_dup_end:	
+		arraysize PLC_Tornado_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue (duplicate) - Egg Prison
 ;---------------------------------------------------------------------------------------
+
 PLC_Capsule_dup:	plcheader		
 		plcm 	Nem_Capsule,vram_Capsule
-	PLC_Capsule_dup_end:
+		arraysize PLC_Capsule_dup
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue (duplicate) - Explosion
 ;---------------------------------------------------------------------------------------
+
 PLC_Explosion_dup:	plcheader			
 		plcm 	Nem_Explosion,vram_Explosion
-	PLC_Explosion_dup_end:	
+		arraysize PLC_Explosion_dup	
+	
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue (duplicate) - Tails end of level results screen
 ;---------------------------------------------------------------------------------------
+
 PLC_ResultsTails_dup:	plcheader			
 		plcm	Nem_TitleCard,vram_TitleCard
 		plcm 	Nem_ResultsText,vram_ResultsText
 		plcm 	Nem_MiniTails,vram_MiniCharacter
 		plcm	Nem_Perfect,vram_Perfect
-	PLC_ResultsTails_dup_end:	
+		arraysize PLC_ResultsTails_dup	
 	endc
 	
 ;---------------------------------------------------------------------------------------
