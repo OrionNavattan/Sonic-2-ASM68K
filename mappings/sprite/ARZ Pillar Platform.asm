@@ -7,7 +7,7 @@ Map_PillPlat:	index offset(*)
 		ptr	Frame_PillPlat
 
 Frame_PillPlat_Unused:	spriteHeader
-		spritePiece	-$20, -8, 4, 2, $55, 0, 0, 3, 0
+		piece	-$20, -8, 4x2, $55, pal4
 		spritePiece	0, -8, 4, 2, $55, 0, 0, 3, 0
 		endsprite
 
