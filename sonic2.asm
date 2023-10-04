@@ -28746,7 +28746,7 @@ BuildSpr_DrawLoop:
     	; Hey look, it's the bug that Ashura the Hedgehog and Surge the Tenrec
     	; owe their existence to. In a rather overzealous optimization, 
     	; the game doesn't check if the sprite limit has been reached after
-    	; processing each sprite piece. This means that a multisprite object may be
+    	; processing each sprite spritePiece. This means that a multisprite object may be
     	; processed even if there is not enough room left in 'v_sprite_buffer', leading
     	; to a buffer overflow. To prevent this from causing harm, the developers placed 
     	; an $80 byte buffer after 'v_sprite_buffer' to 'catch' the overflow.
@@ -48218,7 +48218,7 @@ loc_25054:
 		move.l	d3,ost_y_pos(a1)
 		rts	
 ; ===========================================================================
-; piece x and y vels
+; spritePiece x and y vels
 word_2507A:
 		dc.w -$400,-$400				; 0
 		dc.w -$200,-$400				; 2
@@ -75488,8 +75488,8 @@ SonicSegaScreen_Init:
 
 	.loop_pixel:				
 		move.l	(a4)+,(a5)+				; copy a longword of art data to buffer
-		dbf	d1,.loop_pixel				; repeat for all pixels in this piece
-		dbf	d6,.loop_piece				; repeat for every piece in the frame
+		dbf	d1,.loop_pixel				; repeat for all pixels in this spritePiece
+		dbf	d6,.loop_piece				; repeat for every spritePiece in the frame
 		dbf	d5,.loop_frame				; repeat until all frames have been copied
 
 ;SonicSegaScreen_UpscaleSprites:		
@@ -75502,10 +75502,10 @@ SonicSegaScreen_Init:
 	.loop_upscale:				
 		movea.l	(a6)+,a1				; source in RAM of tile graphics to enlarge
 		movea.l	(a6)+,a2				; destination in RAM of enlarged graphics
-		move.b	(a6)+,d0				; width of the sprite piece to enlarge (minus 1)
-		move.b	(a6)+,d1				; height of the sprite piece to enlarge (minus 1)
-		bsr.w	Scale_2x				; upscale the piece
-		dbf	d7,.loop_upscale			; repeat for every piece
+		move.b	(a6)+,d0				; width of the sprite spritePiece to enlarge (minus 1)
+		move.b	(a6)+,d1				; height of the sprite spritePiece to enlarge (minus 1)
+		bsr.w	Scale_2x				; upscale the spritePiece
+		dbf	d7,.loop_upscale			; repeat for every spritePiece
 		popr.w	d7
 		rts	
 ; ===========================================================================
@@ -75519,7 +75519,7 @@ SonicSegaScreen_DPLCPointers:
 upscaledata: macro width,height
 
 	dc.l copysrc,copydst					; source of data to upscale, destination where upscaled data will be written
-	dc.b \width-1,\height-1					; the width and height of the piece to enlarge minus 1
+	dc.b \width-1,\height-1					; the width and height of the spritePiece to enlarge minus 1
 
 	copysrc: = copysrc+(((\width*\height)&$7FF)<<5)		; increment source
 	copydst: = copydst+(((\width*\height)&$7FF)<<5)*2*2	; increment destination
@@ -75530,8 +75530,8 @@ copysrc:	= v_128x128_tiles
 copydst:	= v_128x128_tiles+$B00
 SonicSegaScreen_ScaledSpriteDataStart = copydst
 		rept 4						; repeat 4 times since there are 4 frames to scale up
-		upscaledata 3,2					; piece 1 of each frame (the smaller top piece):
-		upscaledata 4,4					; piece 2 of each frame (the larger bottom piece):
+		upscaledata 3,2					; spritePiece 1 of each frame (the smaller top spritePiece):
+		upscaledata 4,4					; spritePiece 2 of each frame (the larger bottom spritePiece):
 		endr
 SonicSegaScreen_ScaledSpriteDataEnd	= copydst
 sizeof_SonicSegaScreen_ScaledSpriteData: equ	SonicSegaScreen_ScaledSpriteDataEnd-SonicSegaScreen_ScaledSpriteDataStart
@@ -81818,21 +81818,21 @@ byte_3E5F0:
 ; Subroutine to upscale graphics by a factor of 2x, based on given mappings
 ; data for correct positioning of tiles.
 
-; This code is awfully structured and planned: whenever a 3-column sprite piece
-; is scaled, it scales the next tiles that were copied to RAM as if the piece
-; had 4 columns; this will then be promptly overwritten by the next piece. If
+; This code is awfully structured and planned: whenever a 3-column sprite spritePiece
+; is scaled, it scales the next tiles that were copied to RAM as if the spritePiece
+; had 4 columns; this will then be promptly overwritten by the next spritePiece. If
 ; this happens near the end of the buffer, you will get a buffer overrun.
-; Moreover, when the number of rows in the sprite piece is also 3 or 4, the code
+; Moreover, when the number of rows in the sprite spritePiece is also 3 or 4, the code
 ; will make an incorrect computation for the output of the next subpiece, which
 ; causes the output to overwrite art from the previous subpiece. Thus, this code
-; fails if there is a 3x3 or a 3x4 sprite piece in the source mappings. Sadly,
+; fails if there is a 3x3 or a 3x4 sprite spritePiece in the source mappings. Sadly,
 ; this issue is basically unfixable without rewriting the code entirely.
 
 ; input:
 ; 	a1 = location of tiles to be enlarged
 ; 	a2 = destination buffer for enlarged tiles
-; 	d0 = width-1 of sprite piece
-; 	d1 = height-1 of sprite piece
+; 	d0 = width-1 of sprite spritePiece
+; 	d1 = height-1 of sprite spritePiece
 
 ;	uses d0.w, d1.w, d2.w, d3.w, d4.w, d5.w, a1, a2, a3, a4, a5
 ; ---------------------------------------------------------------------------

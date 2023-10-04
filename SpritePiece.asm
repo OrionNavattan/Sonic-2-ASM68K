@@ -6,7 +6,7 @@
 ; replaced by the index and ptr macros.
 ; ---------------------------------------------------------------------------		
 
-spritemap:	macro
+spriteHeader:	macro
 	if ~def(current_sprite)
 	current_sprite: = 1
 	endc
@@ -19,7 +19,7 @@ endsprite:	macro
 	current_sprite: = current_sprite+1
 	endm
 
-piece: macro xpos,ypos,width,height,tile,xflip,yflip,pal,pri
+spritePiece: macro xpos,ypos,width,height,tile,xflip,yflip,pal,pri
 	dc.w	((ypos&$FF)<<8)|(((width-1)&3)<<2)|((height-1)&3)
 	dc.w	((pri&1)<<15)|((pal&3)<<13)|((yflip&1)<<12)|((xflip&1)<<11)|(tile&$7FF)
 	dc.w	((pri&1)<<15)|((pal&3)<<13)|((yflip&1)<<12)|((xflip&1)<<11)|((tile>>1)&$7FF)

@@ -19,7 +19,7 @@
     </ImageFromMappings>
   </Images>
   <Subtypes>
-    <Subtype id="00" name="Edge piece" image="edge" />
+    <Subtype id="00" name="Edge spritePiece" image="edge" />
     <Subtype id="10" name="Connector" image="connector" />
     <Subtype id="20" name="Central platform" image="center" />
     <Subtype id="31" name="Indent" image="indent" />
