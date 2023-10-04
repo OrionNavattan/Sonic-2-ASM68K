@@ -12100,8 +12100,8 @@ TextOptScr_AllKindsItems:	charset	menu,"ALL KINDS ITEMS"
 TextOptScr_TeleportOnly:	charset	menu,"TELEPORT ONLY  "					
 TextOptScr_SoundTest:		charset	menu,"*  SOUND TEST   *"
 TextOptScr_0:				charset	menu,"      00       "
-	
-					
+; ===========================================================================
+				
 		incfile	Pal_LevelSelectIcons			; byte_9880:  Pal_LevelIcons:
 		incfile	Eni_LevelSelect2P			; byte_9A60: MapEng_LevSel2P:
 		incfile	Eni_Options				; byte_9AB2: MapEng_Options:
@@ -15321,144 +15321,149 @@ Deform_WFZ_Normal_Array:
 
 Deform_HTZ:				
 		tst.w	(f_two_player).w
-		bne.w	Deform_HTZ_2P
+		bne.w	Deform_HTZ_2P				; branch if by miracle it's 2P mode
+		
 		tst.b	(f_screen_shake_htz).w
-		bne.w	HTZ_Screen_Shake
-		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
+		bne.w	HTZ_Screen_Shake			; branch if the screen is shaking due to an earthquake
+		
+		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w	; update VSRAM buffer
 		lea	(v_hscroll_buffer).w,a1
-		move.w	(v_camera_x_pos).w,d0
-		neg.w	d0
+		move.w	(v_camera_x_pos).w,d0			; get camera x pos
+		neg.w	d0					; negate to make base scroll offset
 		move.w	d0,d2
 		swap	d0
-		move.w	d2,d0
-		asr.w	#3,d0
-		move.w	#$7F,d1
-
-loc_C990:				
+		move.w	d2,d0					; foreground value in high word, background value in low word
+		asr.w	#3,d0					; divide background value by 8
+		
+		move.w	#128-1,d1				; 128 lines of cliffs and mountains (the distant blue mountains are also animated via dynamic reloading)
+	.lines_1_128:				
 		move.l	d0,(a1)+
-		dbf	d1,loc_C990
-		move.l	d0,d4
-		move.w	($FFFFA822).w,d0
-		addq.w	#4,($FFFFA822).w
-		sub.w	d0,d2
-		move.w	d2,d0
+		dbf	d1,.lines_1_128
+		
+		move.l	d0,d4					; back up foreground value for later
+		
+		; Update the values in v_bgscroll_buffer used to dynamically load the cloud art.
+		move.w	(v_bgscroll_buffer+$22).w,d0		; get seed value
+		addq.w	#4,(v_bgscroll_buffer+$22).w		; increment for next frame
+		sub.w	d0,d2					; subtract seed from base scroll value
+		move.w	d2,d0	
 		move.w	d0,d1
-		asr.w	#1,d0
-		asr.w	#4,d1
-		sub.w	d1,d0
+		asr.w	#1,d0					; divide by 2
+		asr.w	#4,d1					; divide by 16 to get initial value
+		sub.w	d1,d0					; (base-seed)/16 - (base-seed)/2
 		ext.l	d0
-		asl.l	#8,d0
-		divs.w	#$70,d0
+		asl.l	#8,d0					; multiply by 256
+		divs.w	#$70,d0					; divide by 112
 		ext.l	d0
-		asl.l	#8,d0
+		asl.l	#8,d0					; multiply by 256 to make delta
+		
 		lea	(v_bgscroll_buffer).w,a2
 		moveq	#0,d3
-		move.w	d1,d3
+		move.w	d1,d3					; d3 = 0 in high word, initial value in low word
+		
+		rept 3
 		swap	d3
-		add.l	d0,d3
+		add.l	d0,d3					; add delta to full register
 		swap	d3
-		move.w	d3,(a2)+
-		swap	d3
-		add.l	d0,d3
-		swap	d3
-		move.w	d3,(a2)+
-		swap	d3
-		add.l	d0,d3
-		swap	d3
-		move.w	d3,(a2)+
-		move.w	d3,(a2)+
-		swap	d3
-		add.l	d0,d3
-		add.l	d0,d3
-		swap	d3
-		moveq	#3,d1
+		move.w	d3,(a2)+				; write to bg scroll buffer
+		endr
 
-loc_C9E4:				
 		move.w	d3,(a2)+
+		swap	d3
+		add.l	d0,d3					; add delta*2
+		add.l	d0,d3
+		swap	d3
+		
+		moveq	#4-1,d1
+	.bufferloop:				
+		move.w	d3,(a2)+				; write three times
 		move.w	d3,(a2)+
 		move.w	d3,(a2)+
 		swap	d3
+		add.l	d0,d3					; add delta*3
 		add.l	d0,d3
 		add.l	d0,d3
-		add.l	d0,d3
-		swap	d3
-		dbf	d1,loc_C9E4
-		add.l	d0,d0
-		add.l	d0,d0
-		move.w	d3,d4
-		move.l	d4,(a1)+
-		move.l	d4,(a1)+
-		move.l	d4,(a1)+
-		swap	d3
-		add.l	d0,d3
-		swap	d3
-		move.w	d3,d4
-		move.l	d4,(a1)+
-		move.l	d4,(a1)+
-		move.l	d4,(a1)+
+		swap	d3					; swap back
+		dbf	d1,.bufferloop
+		
+		; Rest of the screen is the background clouds.
+		add.l	d0,d0		
+		add.l	d0,d0					; multiply delta by 4
+		move.w	d3,d4					; combine new background value with foreground value
+		move.l	d4,(a1)+				; 3 lines (129-131)
 		move.l	d4,(a1)+
 		move.l	d4,(a1)+
 		swap	d3
-		add.l	d0,d3
+		add.l	d0,d3					; add delta
 		swap	d3
 		move.w	d3,d4
-		move.w	#6,d1
+		move.l	d4,(a1)+				; 5 lines (132-136)
+		move.l	d4,(a1)+
+		move.l	d4,(a1)+
+		move.l	d4,(a1)+
+		move.l	d4,(a1)+
+		swap	d3
+		add.l	d0,d3					; add delta
+		swap	d3
+		move.w	d3,d4
+		
+		move.w	#7-1,d1					; 7 lines (137-143; could be moveq)
+	.lines_137_143:				
+		move.l	d4,(a1)+
+		dbf	d1,.lines_137_143
+		
+		swap	d3
+		add.l	d0,d3					; add delta*2
+		add.l	d0,d3
+		swap	d3
+		move.w	d3,d4
+	
+		move.w	#8-1,d1					; 8 lines (144-151)
+	.lines_144_151:				
+		move.l	d4,(a1)+
+		dbf	d1,.lines_144_151
+		swap	d3
+		add.l	d0,d3					; add delta*2
+		add.l	d0,d3
+		swap	d3
+		move.w	d3,d4
+		
+		move.w	#10-1,d1				; 10 lines (152-161)
+	.lines_152_161:				
+		move.l	d4,(a1)+
+		dbf	d1,.lines_152_161
+		swap	d3
+		add.l	d0,d3					; add delta*3
+		add.l	d0,d3
+		add.l	d0,d3
+		swap	d3
+		move.w	d3,d4
+		
+		move.w	#15-1,d1				; 15 lines (162-176)
+	.lines_162_176:				
+		move.l	d4,(a1)+
+		dbf	d1,.lines_162_176
+		swap	d3
+		add.l	d0,d3					; add delta*3
+		add.l	d0,d3
+		add.l	d0,d3
+		swap	d3
+		
+		move.w	#(48/16)-1,d2				; 48 lines total (177-224)
+	.lines_176_224:				
+		move.w	d3,d4
+		move.w	#16-1,d1				; 16 lines between value changes
 
-loc_CA22:				
-		move.l	d4,(a1)+
-		dbf	d1,loc_CA22
-		swap	d3
-		add.l	d0,d3
-		add.l	d0,d3
-		swap	d3
-		move.w	d3,d4
-		move.w	#7,d1
-
-loc_CA36:				
-		move.l	d4,(a1)+
-		dbf	d1,loc_CA36
-		swap	d3
-		add.l	d0,d3
-		add.l	d0,d3
-		swap	d3
-		move.w	d3,d4
-		move.w	#9,d1
-
-loc_CA4A:				
-		move.l	d4,(a1)+
-		dbf	d1,loc_CA4A
-		swap	d3
+	.write:				
+		move.l	d4,(a1)+				; write 16 lines
+		dbf	d1,.write
+		swap	d3			
+		add.l	d0,d3					; add delta*4
 		add.l	d0,d3
 		add.l	d0,d3
 		add.l	d0,d3
 		swap	d3
-		move.w	d3,d4
-		move.w	#$E,d1
-
-loc_CA60:				
-		move.l	d4,(a1)+
-		dbf	d1,loc_CA60
-		swap	d3
-		add.l	d0,d3
-		add.l	d0,d3
-		add.l	d0,d3
-		swap	d3
-		move.w	#2,d2
-
-loc_CA74:				
-		move.w	d3,d4
-		move.w	#$F,d1
-
-loc_CA7A:				
-		move.l	d4,(a1)+
-		dbf	d1,loc_CA7A
-		swap	d3
-		add.l	d0,d3
-		add.l	d0,d3
-		add.l	d0,d3
-		add.l	d0,d3
-		swap	d3
-		dbf	d2,loc_CA74
+		dbf	d2,.lines_176_224
 		rts	
 ; ===========================================================================
 
@@ -16518,10 +16523,14 @@ Deform_DEZ:
 		ext.l	d5
 		asl.l	#8,d5
 		bsr.w	UpdateBG_XY
+		
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
+		
 		move.w	(v_camera_x_pos).w,d4
 		lea	(v_bgscroll_buffer).w,a2
+		
 		move.w	d4,(a2)+
+		
 		addq.w	#3,(a2)+
 		addq.w	#2,(a2)+
 		addq.w	#4,(a2)+
@@ -16546,54 +16555,65 @@ Deform_DEZ:
 		addq.w	#4,(a2)+
 		addq.w	#2,(a2)+
 		addq.w	#1,(a2)
+		
 		move.w	(a2)+,d0
 		moveq	#0,d1
 		move.w	d0,d1
 		lsr.w	#1,d0
 		move.w	d0,(a2)+
+		
 		addq.w	#3,(a2)+
 		addq.w	#2,(a2)+
 		addq.w	#4,(a2)+
+		
 		swap	d1
 		move.l	d1,d0
 		lsr.l	#3,d1
 		sub.l	d1,d0
 		swap	d0
 		move.w	d0,4(a2)
+		
 		swap	d0
 		sub.l	d1,d0
 		swap	d0
 		move.w	d0,2(a2)
+		
 		swap	d0
 		sub.l	d1,d0
 		swap	d0
 		move.w	d0,(a2)+
-		addq.w	#4,a2
+		
+		addq.w	#2*2,a2
+		
 		addq.w	#1,(a2)+
+		
 		move.w	d4,(a2)+
 		move.w	d4,(a2)+
 		move.w	d4,(a2)+
+		
 		lea	(byte_D48A).l,a3
 		lea	(v_bgscroll_buffer).w,a2
 		lea	(v_hscroll_buffer).w,a1
 		move.w	(v_bg1_y_pos).w,d1
+
 		moveq	#0,d0
 
-loc_D424:				
+	loc_D424:				
 		move.b	(a3)+,d0
 		addq.w	#2,a2
 		sub.w	d0,d1
 		bcc.s	loc_D424
+		
 		neg.w	d1
 		subq.w	#2,a2
-		move.w	#$DF,d2	
+		move.w	#screen_height-1,d2	
 		move.w	(v_camera_x_pos).w,d0
 		neg.w	d0
 		swap	d0
 		move.w	(a2)+,d0
 		neg.w	d0
 
-loc_D440:				
+	loc_D440:				
 		move.l	d0,(a1)+
 		subq.w	#1,d1
 		bne.s	loc_D44C
@@ -16601,16 +16621,16 @@ loc_D440:
 		move.w	(a2)+,d0
 		neg.w	d0
 
-loc_D44C:				
+	loc_D44C:				
 		dbf	d2,loc_D440
 		moveq	#0,d2
 		tst.b	(f_screen_shake).w
 		beq.s	locret_D488
-		subq.w	#1,($FFFFF660).w
+		subq.w	#1,(v_dez_shake_timer).w
 		bpl.s	loc_D462
 		clr.b	(f_screen_shake).w
 
-loc_D462:				
+	loc_D462:				
 		move.w	(v_frame_counter).w,d0
 		andi.w	#$3F,d0
 		lea_	Deform_Ripple_Data,a1
@@ -16623,11 +16643,11 @@ loc_D462:
 		move.b	(a1)+,d2
 		add.w	d2,(v_camera_x_pos_copy).w
 
-locret_D488:				
+	locret_D488:				
 		rts	
 ; ===========================================================================
 byte_D48A:	
-		dc.b $80					; 0 
+		dc.b 128					; 0 
 		dc.b   8					; 1
 		dc.b   8					; 2
 		dc.b   8					; 3
@@ -16659,10 +16679,11 @@ byte_D48A:
 		dc.b   3					; 29
 		dc.b   5					; 30
 		dc.b   8					; 31
-		dc.b $10					; 32
-		dc.b $80					; 33
-		dc.b $80					; 34
-		dc.b $80					; 35
+		dc.b  16					; 32
+		dc.b 128					; 33
+		dc.b 128					; 34
+		dc.b 128					; 35
+		even
 ; ===========================================================================
 
 Deform_ARZ:				
@@ -16782,22 +16803,24 @@ loc_D5C8:
 		dbf	d2,loc_D5BC
 		rts	
 ; ===========================================================================
-byte_D5CE:	dc.b $B0					; 0 
-		dc.b $70					; 1
-		dc.b $30					; 2
-		dc.b $60					; 3
-		dc.b $15					; 4
-		dc.b  $C					; 5
-		dc.b  $E					; 6
+byte_D5CE:	
+		dc.b 176
+		dc.b 112					; 1
+		dc.b  48					; 2
+		dc.b  96					; 3
+		dc.b  21					; 4
+		dc.b  12					; 5
+		dc.b  14					; 6
 		dc.b   6					; 7
-		dc.b  $C					; 8
-		dc.b $1F					; 9
-		dc.b $30					; 10
-		dc.b $C0					; 11
-		dc.b $F0					; 12
-		dc.b $F0					; 13
-		dc.b $F0					; 14
-		dc.b $F0					; 15
+		dc.b  12					; 8
+		dc.b  31					; 9
+		dc.b  48					; 10
+		dc.b 192					; 11
+		dc.b 240					; 12
+		dc.b 240					; 13
+		dc.b 240					; 14
+		dc.b 240					; 15
+		even
 ; ===========================================================================
 
 Deform_SCZ:				
@@ -29980,9 +30003,14 @@ BuildRings:
 		rts	
 ; ===========================================================================
 
-loc_17186:				
+loc_17186:
+	if FixBugs
+		; This fixes screen shaking not being applied to rings.
+		lea	(v_camera_x_pos_copy).w,a3
+	else			
 		lea	(v_camera_x_pos).w,a3
-
+	endc
+	
 loc_1718A:				
 		tst.w	(a0)
 		bmi.w	loc_171EC
@@ -83045,7 +83073,7 @@ loc_3FAFE:
 		cmpi.b	#1,(v_boss_collision_routine).w
 		blt.s	loc_3FB46
 	if FixBugs	
-		; The below call to 'Boss_DoCollision' clobbers 'a1', so back it up
+		; The below call to 'Boss_DoCollision' clobbers a1, so back it up
 		; here. This fixes Eggman not laughing when he hurts Sonic/Tails AND causes them
 		; to drop rings.
 		pushr.w	d7/a1
@@ -83301,66 +83329,69 @@ AnimateLevelGFX:
 ; use for the level. Second points to the Dynamic reload script.
 ; ---------------------------------------------------------------------------
 AniArt_Index:	index offset(*),,2		
-		ptr Dynamic_Normal
+		ptr Dynamic_Normal				; EHZ
 		ptr Animated_EHZ
 		
-		ptr Dynamic_Null
+		ptr Dynamic_Null				; unused
 		ptr Animated_Null
 		
-		ptr Dynamic_Null
+		ptr Dynamic_Null				; unused
 		ptr Animated_Null
 		
-		ptr Dynamic_Null
+		ptr Dynamic_Null				; unused
 		ptr Animated_Null
 		
-		ptr Dynamic_Normal
+		ptr Dynamic_Normal				; MTZ 1 & 2
 		ptr Animated_MTZ
 		
-		ptr Dynamic_Normal
+		ptr Dynamic_Normal				; MTZ 3
 		ptr Animated_MTZ
 		
-		ptr Dynamic_Null
+		ptr Dynamic_Null				; WFZ; unused
 		ptr Animated_Null
 		
-		ptr Dynamic_HTZ
-		ptr Animated_HTZ
+		ptr Dynamic_HTZ					; HTZ
+		ptr Animated_HTZ				; custom animation routines for distant blue background mountains and clouds
 		
-		ptr Dynamic_Normal
+		ptr Dynamic_Normal				; HPZ; unused beta leftover
 		ptr Animated_HPZ
 		
-		ptr Dynamic_Null
+		ptr Dynamic_Null				; unused
 		ptr Animated_Null
 		
-		ptr Dynamic_Normal
+		ptr Dynamic_Normal				; OOZ
 		ptr Animated_OOZ
 		
-		ptr Dynamic_Null
+		ptr Dynamic_Null				; MCZ; unused
 		ptr Animated_Null
 		
-		ptr Dynamic_CNZ	
-		ptr Animated_CNZ
+		ptr Dynamic_CNZ					; CNZ
+		ptr Animated_CNZ				; skip if in boss fight; use different scripts for 2P mode
 		
-		ptr Dynamic_Normal
+		ptr Dynamic_Normal				; CPZ
 		ptr Animated_CPZ
 		
-		ptr Dynamic_Normal
+		ptr Dynamic_Normal				; DEZ
 		ptr Animated_DEZ
 		
-		ptr Dynamic_ARZ
-		ptr Animated_ARZ
+		ptr Dynamic_ARZ					; ARZ
+		ptr Animated_ARZ				; skip if in boss fight
 
-		ptr Dynamic_Null
+		ptr Dynamic_Null				; SCZ; unused
 		ptr Animated_Null
 		zonewarning	AniArt_Index,4
 ; ===========================================================================
 
 Dynamic_Null:				
 		rts	
-; ===========================================================================
 
-Dynamic_HTZ:
-		; Update the mountains in HTZ's background (but only on one-player mode).
-		; The graphics are stashed in main RAM within the 128x128 maps. 				
+; ---------------------------------------------------------------------------
+; Update the distant blue mountains in HTZ's background.
+; The graphics are stashed in main RAM within the 128x128 maps, replacing
+; various unused tiles.
+; ---------------------------------------------------------------------------
+
+Dynamic_HTZ:			
 		tst.w	(f_two_player).w	
 		bne.w	Dynamic_Normal				; branch if we're in two-player mode
 		lea	(v_anim_counters).w,a3	
@@ -83380,9 +83411,9 @@ Dynamic_HTZ:
 		add.w	d2,d0					; add $FFFF to correct the value			
 	else	
 		; This produces the wrong result if the camera x pos is a multiple of $10, specifically, 
-		; producing a value 1 higher than intended. This off-by-one causes the mountains in 
-		; HTZ's background to occasionally scroll one pixel in the wrong direction, before 
-		; jumping two pixels back to "catch up." 	
+		; producing a value 1 higher than intended. This off-by-one causes the mountains to 
+		; occasionally scroll one pixel in the wrong direction, before jumping two pixels 
+		; back to "catch up." 	
 		lsr.w	#4,d0					; d0 = camera x pos / 16
 		add.w	d1,d0
 	endc	
@@ -83447,536 +83478,568 @@ HTZ_CliffTiles:
 		dc.w sizeof_128x128*$7F,	sizeof_128x128*$81,	sizeof_128x128*$89,	sizeof_128x128*$8B,	sizeof_128x128*$91,	sizeof_128x128*$92
 		dc.w sizeof_128x128*$7F,	sizeof_128x128*$81,	sizeof_128x128*$89,	sizeof_128x128*$8B,	sizeof_128x128*$91,	sizeof_128x128*$92
 		arraysize	HTZ_CliffTiles
-; ===========================================================================
+		
+; ---------------------------------------------------------------------------	
+; Builds the HTZ clouds from individual 1*8 pixel primitives
+; ---------------------------------------------------------------------------	
 
 Dynamic_HTZ_Clouds:				
 		lea	(v_bgscroll_buffer).w,a1
 		move.w	(v_camera_x_pos).w,d2			; get camera x pos
-		neg.w	d2					; invert sign
+		neg.w	d2					; negate
 		asr.w	#3,d2					; divide by 8
 		pushr.l	a2					; back up dynamic script pointer
-		lea	(Art_HTZClouds).l,a0			; uncompressed cloud graphics
+		lea	(Art_HTZClouds).l,a0			; uncompressed cloud graphics (set of 1x8 pixel primitives)
 		lea	(v_128x128_tiles+(sizeof_128x128*$F8)).l,a2 ; buffer for cloud GFX
-		moveq	#16-1,d1
+		moveq	#(8*2)-1,d1				; build 16 tiles total; first 8 loops build 4, next 8 remaining 4
 
-loc_3FE78:				
-		move.w	(a1)+,d0		
-		neg.w	d0					; reverse
-		add.w	d2,d0					; add transformed x pos
+	.cloud_loop:				
+		move.w	(a1)+,d0				; get value generated by Deform_HTZ
+		neg.w	d0					; negate
+		add.w	d2,d0					; add negated x pos (overflows to positive)
 		andi.w	#$1F,d0					; only first five bits
 		lsr.w	#1,d0					; divide by 2
-		bcc.s	loc_3FE8A				; branch if bit shifted out was set
-		addi.w	#$200,d0
+		bcc.s	.even					; branch if index is even
+		addi.w	#$200,d0				; adjust index
 
-loc_3FE8A:				
+	.even:				
 		lea	(a0,d0.w),a4				; a4 = location in uncompressed tiles to start copy
 		lsr.w	#1,d0			
-		bcs.s	loc_3FEB4				; branch if start location is odd
+		bcs.s	.odd					; branch if start location is odd
 		
 		rept 3
 		move.l	(a4)+,(a2)+				; copy one line of tile (8 pixels)
-		adda.w	#(sizeof_cell*2)-4,a2			; skip to next tile
+		adda.w	#(sizeof_cell*2)-4,a2			; skip ahead two tiles 
 		endr
 
 		move.l	(a4)+,(a2)+				; copy one line of tile
-		suba.w	#$C0,a2		
-		adda.w	#$20,a0
-		dbf	d1,loc_3FE78
-		bra.s	loc_3FEEC
+		suba.w	#sizeof_cell*6,a2			; start building next line of each tile	
+		adda.w	#sizeof_cell,a0				; increment base address for calculating copy start by one tile
+		dbf	d1,.cloud_loop
+		bra.s	.add_dma
 ; ===========================================================================
 
-loc_3FEB4:	
+	.odd:	
 		rept 3		
 		rept 4	
 		move.b	(a4)+,(a2)+				; copy two pixels
-		endr						; repeat until full line is copied
-		adda.w	#(sizeof_cell*2)-4,a2			; skip to next tile
+		endr						; repeat until full line of tile is copied (note that they could have used a word move bracketed by two byte moves)
+		adda.w	#(sizeof_cell*2)-4,a2			; skip ahead two tiles
 		endr
 		rept 4
 		move.b	(a4)+,(a2)+				; copy two pixels
 		endr						; repeat until full line is copied
-		suba.w	#$C0,a2	
-		adda.w	#$20,a0
-		dbf	d1,loc_3FE78
+		suba.w	#sizeof_cell*6,a2			; start building next line of each tile	
+		adda.w	#sizeof_cell,a0				; increment base address for calculating copy start by one tile
+		dbf	d1,.cloud_loop
 
-loc_3FEEC:				
-		move.l	#(v_128x128_tiles+$7C00)&$FFFFFF,d1
-		move.w	#-$5D00,d2
-		move.w	#$80,d3	
+	.add_dma:				
+		move.l	#(v_128x128_tiles+(sizeof_128x128*$F8))&$FFFFFF,d1 ; DMA source
+		move.w	#vram_HTZClouds,d2			; DMA destination
+		move.w	#(sizeof_cell*8)/2,d3			; DMA length
 		jsr	(AddDMA).l
-		movea.l	(sp)+,a2
-		addq.w	#2,a3
-		bra.w	loc_3FF30
+		popr.l	a2					; back up dynamic script pointer	
+		addq.w	#2,a3					; a3 = animation frame counters for HTZ's standard scripts
+		bra.w	Dynamic_Normal2				; all done with custom animations; run HTZ's standard dynamic scripts
 ; ===========================================================================
 
 Dynamic_CNZ:				
-		tst.b	(v_current_boss).w
-		beq.s	loc_3FF10
+		tst.b	(v_current_boss).w	
+		beq.s	.chk_2p					; skip animations if boss fight is in progress	
 		rts	
 ; ===========================================================================
 
-loc_3FF10:				
-		lea	(Animated_CNZ).l,a2
-		tst.w	(f_two_player).w
-		beq.s	Dynamic_Normal
-		lea	(word_40160).l,a2
+	.chk_2p:				
+		lea	(Animated_CNZ).l,a2			; unnecessary as a2 already points to this
+		tst.w	(f_two_player).w	
+		beq.s	Dynamic_Normal				; branch if we're not in 2P mode
+		lea	(Animated_CNZ_2P).l,a2			; use 2p-mode specific scripts
 		bra.s	Dynamic_Normal
 ; ===========================================================================
 
 Dynamic_ARZ:				
 		tst.b	(v_current_boss).w
-		beq.s	Dynamic_Normal
+		beq.s	Dynamic_Normal				; skip animations if boss fight is in progress	
 		rts	
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Script header structure
+; ---------------------------------------------------------------------------
+		rsreset
+aniscrpt_globaldur:	rs.l 1					; 0; global duration value in highest byte
+aniscrpt_source:	equ aniscrpt_globaldur			; 0; source address in lower three bytes
+aniscrpt_dest:		rs.w 1					; 4; VRAM destination
+aniscrpt_size:		rs.b 1					; 6; count of individual elements in script
+aniscrpt_tilecnt:	rs.b 1					; 7; count of tiles to copy in this script
+aniscrpt_start:		rs.b 1					; 8; start of actual script
+aniscrpt_tileid:	equ aniscrpt_start			; 8; ID of first tile in source to copy 
+aniscrpt_perframedur: rs.b 1					; 9; per frame duration if applicable
+
+; ---------------------------------------------------------------------------
+; Subroutine to process dynamic zone animation scripts
+
+; input:
+;	a2 = pointer to script list
+
+; uses d0.l, d1.l, d2.w, d3.w, d6.w, a3
+; ---------------------------------------------------------------------------
 
 Dynamic_Normal:
-		lea	(v_anim_counters).w,a3
+		lea	(v_anim_counters).w,a3			; a3 = animation frame counters
 
-loc_3FF30:				
-		move.w	(a2)+,d6
-
-loc_3FF32:				
-		subq.b	#1,(a3)
-		bcc.s	loc_3FF78
+Dynamic_Normal2:			
+		move.w	(a2)+,d6				; get count of scripts in list
+		
+	.loop:				
+		subq.b	#1,(a3)					; decrement frame counter
+		bcc.s	.nextscript				; skip to next script if frames remains
+		
+	;.next_frame:	
+		moveq	#0,d0		
+		move.b	1(a3),d0				; get current frame
+		cmp.b	aniscrpt_size(a2),d0			; have we processed the last frame in the script?
+		bcs.s	.not_last_frame				; branch if not
 		moveq	#0,d0
-		move.b	1(a3),d0
-		cmp.b	6(a2),d0
-		bcs.s	loc_3FF48
-		moveq	#0,d0
-		move.b	d0,1(a3)
+		move.b	d0,1(a3)				; reset to first frame
 
-loc_3FF48:				
-		addq.b	#1,1(a3)
-		move.b	(a2),(a3)
-		bpl.s	loc_3FF56
-		add.w	d0,d0
-		move.b	9(a2,d0.w),(a3)
+	.not_last_frame:				
+		addq.b	#1,1(a3)				; set to next frame
+		move.b	aniscrpt_globaldur(a2),(a3)		; get global duration value
+		bpl.s	.global_duration			; branch if we're using a global duration
+		add.w	d0,d0					; double frame id since scripts are two bytes with per-frame durations
+		move.b	aniscrpt_perframedur(a2,d0.w),(a3)	; get per-frame duration
 
-loc_3FF56:				
-		move.b	8(a2,d0.w),d0
-		lsl.w	#5,d0
-		move.w	4(a2),d2
-		move.l	(a2),d1
-		andi.l	#$FFFFFF,d1
-		add.l	d0,d1
+	.global_duration:				
+		move.b	aniscrpt_tileid(a2,d0.w),d0		; get tile id
+		lsl.w	#5,d0					; turn into offset within uncompressed source
+		move.w	aniscrpt_dest(a2),d2			; get VRAM destination
+		move.l	aniscrpt_source(a2),d1			; get start address of uncompressed source	
+		andi.l	#$FFFFFF,d1				; remove global duration in high byte
+		add.l	d0,d1					; add offset to make source address
 		moveq	#0,d3
-		move.b	7(a2),d3
-		lsl.w	#4,d3
+		move.b	aniscrpt_tilecnt(a2),d3			; get count of tiles to copy
+		lsl.w	#4,d3					; make into DMA length
 		jsr	(AddDMA).l
 
-loc_3FF78:				
-		move.b	6(a2),d0
-		tst.b	(a2)
-		bpl.s	loc_3FF82
-		add.b	d0,d0
+	.nextscript:				
+		move.b	aniscrpt_size(a2),d0			; get total size of script
+		tst.b	aniscrpt_globaldur(a2)	
+		bpl.s	.global_duration2			; branch if we're using a global duration
+		add.b	d0,d0					; double size to account for additional duration byte in each script
 
-loc_3FF82:				
+	.global_duration2:				
 		addq.b	#1,d0
-		andi.w	#$FE,d0	
-		lea	8(a2,d0.w),a2
-		addq.w	#2,a3
-		dbf	d6,loc_3FF32
+		andi.w	#$FE,d0					; round to even address
+		lea	aniscrpt_start(a2,d0.w),a2		; advance to next script in list
+		addq.w	#2,a3					; advance to next script's counter
+		dbf	d6,.loop				; repeat for all scripts
 		rts	
+
+; ---------------------------------------------------------------------------
+; Start an animation script list
+; ---------------------------------------------------------------------------
+
+zoneanimstart: macro *
+		\*: equ *
+		zoneanimcount: = 0				; initialize counter
+		zoneanimcur: equs "\*"
+		dc.w zoneanimcount_\*				; count of scripts-1
+   		endm
+
+; ---------------------------------------------------------------------------
+; Terminate an animation script list
+; ---------------------------------------------------------------------------
+
+zoneanimend: macro
+		zoneanimcount_\zoneanimcur: equ zoneanimcount-1	; count of scripts-1
+    	endm  	
+
+; ---------------------------------------------------------------------------
+; Start an animation script
+
+; input: global frame duration, or -1 if per-frame durations are used, source
+; art address, destination VRAM address, count of tiles to update each frame
+; ---------------------------------------------------------------------------
+
+zoneanimdecl: macro *,duration,artaddr,vramaddr,numvramtiles
+		\*: equ *
+		zoneanimcurdecl:	equs "\*_ani"		; label used to calculate size of script
+		
+		dc.l (\duration&$FF)<<24|\artaddr		; global script duration and source art address
+		dc.w \vramaddr					; destination VRAM address
+		
+	if \duration=-1
+		dc.b sizeof_\zoneanimcurdecl/2			; size of script with custom durations
+	else
+		dc.b sizeof_\zoneanimcurdecl			; size of script without custom durations
+	endc	
+				
+		dc.b \numvramtiles				; number of tiles to load for each frame
+		zoneanimcount: = zoneanimcount+1		; increment counter
+		
+	\zoneanimcurdecl:					; start of script proper	
+    	endm
+ 
+; ---------------------------------------------------------------------------
+; Terminate an animation script
+; ---------------------------------------------------------------------------
+ 	 
+zoneanimdeclend:	macro
+		arraysize	\zoneanimcurdecl		; make size constant for script
+		even						; align to even address
+		endm 		
+
+; ---------------------------------------------------------------------------
+; Dynamic reloading scripts for background and foreground animations.
+
+; First byte of each script element is the index of the first tile in the
+; source art to transfer; second byte, if present, is a custom duration for
+; the frame.
+; ---------------------------------------------------------------------------
+
+Animated_EHZ:	zoneanimstart	
+Animated_EHZ_Flowers1:	zoneanimdecl -1,Art_Flowers1,vram_Flowers1,2
+		dc.b   0,$7F
+		dc.b   2,$13
+		dc.b   0,  7
+		dc.b   2,  7
+		dc.b   0,  7
+		dc.b   2,  7
+		zoneanimdeclend
+		
+Animated_EHZ_Flowers2:	zoneanimdecl -1,Art_Flowers2,vram_Flowers2,2		
+		dc.b   2,$7F
+		dc.b   0, $B
+		dc.b   2, $B
+		dc.b   0, $B
+		dc.b   2,  5
+		dc.b   0,  5
+		dc.b   2,  5
+		dc.b   0,  5
+		zoneanimdeclend
+				
+Animated_EHZ_Flowers3:	zoneanimdecl 7,Art_Flowers3,vram_Flowers3,2		
+		dc.b   0
+		dc.b   2
+		zoneanimdeclend		
+		
+Animated_EHZ_Flowers4:	zoneanimdecl -1,Art_Flowers4,vram_Flowers4,2			
+		dc.b   0,$7F
+		dc.b   2,  7
+		dc.b   0,  7
+		dc.b   2,  7
+		dc.b   0,  7
+		dc.b   2, $B
+		dc.b   0, $B
+		dc.b   2, $B
+		zoneanimdeclend
+
+Animated_EHZ_PulseBall: zoneanimdecl -1,Art_EHZPulseBall,vram_EHZPulseBall,2	
+		dc.b   0,$17
+		dc.b   2,  9
+		dc.b   4, $B
+		dc.b   6,$17
+		dc.b   4, $B
+		dc.b   2,  9
+		zoneanimdeclend
+		zoneanimend
 ; ===========================================================================
-Animated_EHZ:				
-		dc.w 4
-; Flowers
-		dc.l $FF000000+Art_Flowers1
-		dc.w $7280
-		dc.b 6
-		dc.b 2
-		dc.b   0,$7F					; 0
-		dc.b   2,$13					; 2
-		dc.b   0,  7					; 4
-		dc.b   2,  7					; 6
-		dc.b   0,  7					; 8
-		dc.b   2,  7					; 10
-; Flowers
-		dc.l $FF000000+Art_Flowers2
-		dc.w $72C0
-		dc.b 8
-		dc.b 2
-		dc.b   2,$7F					; 0
-		dc.b   0, $B					; 2
-		dc.b   2, $B					; 4
-		dc.b   0, $B					; 6
-		dc.b   2,  5					; 8
-		dc.b   0,  5					; 10
-		dc.b   2,  5					; 12
-		dc.b   0,  5					; 14
-; Flowers
-		dc.l $7000000+Art_Flowers3
-		dc.w $7300
-		dc.b 2
-		dc.b 2
-		dc.b   0					; 0
-		dc.b   2					; 1
-; Flowers
-		dc.l $FF000000+Art_Flowers4
-		dc.w $7340
-		dc.b 8
-		dc.b 2
-		dc.b   0,$7F					; 0
-		dc.b   2,  7					; 2
-		dc.b   0,  7					; 4
-		dc.b   2,  7					; 6
-		dc.b   0,  7					; 8
-		dc.b   2, $B					; 10
-		dc.b   0, $B					; 12
-		dc.b   2, $B					; 14
-; Pulsing thing	against	checkered background
-		dc.l $FF000000+Art_EHZPulseBall
-		dc.w $7380
-		dc.b 6
-		dc.b 2
-		dc.b   0,$17					; 0
-		dc.b   2,  9					; 2
-		dc.b   4, $B					; 4
-		dc.b   6,$17					; 6
-		dc.b   4, $B					; 8
-		dc.b   2,  9					; 10
-Animated_MTZ:				
-		dc.w 3
-; Spinning metal cylinder
-		dc.l $00000000+Art_MTZCylinder
-		dc.w $6980
-		dc.b 8
+		
+Animated_MTZ:	zoneanimstart			
+Animated_MTZ_Cylinder:	zoneanimdecl 0,Art_MTZCylinder,vram_MTZCylinder,$10
+		dc.b   0
 		dc.b $10
-byte_40002:	dc.b   0					; 0
-		dc.b $10					; 1
-		dc.b $20					; 2
-		dc.b $30					; 3
-		dc.b $40					; 4
-		dc.b $50					; 5
-		dc.b $60					; 6
-		dc.b $70					; 7
-; lava
-		dc.l $D000000+Art_Lava
-		dc.w $6800
-		dc.b 6
-		dc.b $C
-		dc.b   0					; 0
-		dc.b  $C					; 1
-		dc.b $18					; 2
-		dc.b $24					; 3
-		dc.b $18					; 4
-		dc.b  $C					; 5
-; MTZ background animated section
-		dc.l $FF000000+Art_MTZAnimBack
-		dc.w $6B80
-		dc.b 4
-		dc.b 6
-		dc.b   0,$13					; 0
-		dc.b   6,  7					; 2
-		dc.b  $C,$13					; 4
-		dc.b   6,  7					; 6
-; MTZ background animated section
-		dc.l $FF000000+Art_MTZAnimBack
-		dc.w $6C40
-		dc.b 4
-		dc.b 6
-		dc.b  $C,$13					; 0
-		dc.b   6,  7					; 2
-		dc.b   0,$13					; 4
-		dc.b   6,  7					; 6
-Animated_HTZ:				
-		dc.w 4
-; Flowers
-		dc.l $FF000000+Art_Flowers1
-		dc.w $7280
-		dc.b 6
-		dc.b 2
-		dc.b   0,$7F					; 0
-		dc.b   2,$13					; 2
-		dc.b   0,  7					; 4
-		dc.b   2,  7					; 6
-		dc.b   0,  7					; 8
-		dc.b   2,  7					; 10
-; Flowers
-		dc.l $FF000000+Art_Flowers2
-		dc.w $72C0
-		dc.b 8
-		dc.b 2
-		dc.b   2,$7F					; 0
-		dc.b   0, $B					; 2
-		dc.b   2, $B					; 4
-		dc.b   0, $B					; 6
-		dc.b   2,  5					; 8
-		dc.b   0,  5					; 10
-		dc.b   2,  5					; 12
-		dc.b   0,  5					; 14
-; Flowers
-		dc.l $7000000+Art_Flowers3
-		dc.w $7300
-		dc.b 2
-		dc.b 2
-		dc.b   0					; 0
-		dc.b   2					; 1
-; Flowers
-		dc.l $FF000000+Art_Flowers4
-		dc.w $7340
-		dc.b 8
-		dc.b 2
-		dc.b   0,$7F					; 0
-		dc.b   2,  7					; 2
-		dc.b   0,  7					; 4
-		dc.b   2,  7					; 6
-		dc.b   0,  7					; 8
-		dc.b   2, $B					; 10
-		dc.b   0, $B					; 12
-		dc.b   2, $B					; 14
-; Pulsing thing	against	checkered background
-		dc.l $FF000000+Art_EHZPulseBall
-		dc.w $7380
-		dc.b 6
-		dc.b 2
-		dc.b   0,$17					; 0
-		dc.b   2,  9					; 2
-		dc.b   4, $B					; 4
-		dc.b   6,$17					; 6
-		dc.b   4, $B					; 8
-		dc.b   2,  9					; 10
-Animated_HPZ:				
-		dc.w 2
-; Pulsing ball from OOZ
-		dc.l $8000000+Art_OOZPulseBall
-		dc.w $5D00
-		dc.b 6
-		dc.b 8
-		dc.b   0					; 0
-		dc.b   0					; 1
-		dc.b   8					; 2
-		dc.b $10					; 3
-		dc.b $10					; 4
-		dc.b   8					; 5
-; Pulsing ball from OOZ
-		dc.l $8000000+Art_OOZPulseBall
-		dc.w $5E00
-		dc.b 6
-		dc.b 8
-		dc.b   8					; 0
-		dc.b $10					; 1
-		dc.b $10					; 2
-		dc.b   8					; 3
-		dc.b   0					; 4
-		dc.b   0					; 5
-; Pulsing ball from OOZ
-		dc.l $8000000+Art_OOZPulseBall
-		dc.w $5F00
-		dc.b 6
-		dc.b 8
-		dc.b $10					; 0
-		dc.b   8					; 1
-		dc.b   0					; 2
-		dc.b   0					; 3
-		dc.b   8					; 4
-		dc.b $10					; 5
-Animated_OOZ:				
-		dc.w 4
-; Pusling ball from OOZ
-		dc.l $FF000000+Art_OOZPulseBall
-		dc.w $56C0
-		dc.b 4
-		dc.b 4
-		dc.b   0					; 0
-		dc.b  $B					; 1
-		dc.b   4					; 2
-		dc.b   5					; 3
-		dc.b   8					; 4
-		dc.b   9					; 5
-		dc.b   4					; 6
-		dc.b   3					; 7
-; Square rotating around ball in OOZ
-		dc.l $6000000+Art_OOZSquareBall1
-		dc.w $5740
-		dc.b 4
-		dc.b 4
-		dc.b   0					; 0
-		dc.b   4					; 1
-		dc.b   8					; 2
-		dc.b  $C					; 3
-; Square rotating around ball
-		dc.l $6000000+Art_OOZSquareBall2
-		dc.w $57C0
-		dc.b 4
-		dc.b 4
-		dc.b   0					; 0
-		dc.b   4					; 1
-		dc.b   8					; 2
-		dc.b  $C					; 3
-; Oil
-		dc.l $11000000+Art_Oil1
-		dc.w $5840
-		dc.b 6
-		dc.b $10
-		dc.b   0					; 0
-		dc.b $10					; 1
-		dc.b $20					; 2
-		dc.b $30					; 3
-		dc.b $20					; 4
-		dc.b $10					; 5
-; Oil
-		dc.l $11000000+Art_Oil2
-		dc.w $5A40
-		dc.b 6
-		dc.b $10
-		dc.b   0					; 0
-		dc.b $10					; 1
-		dc.b $20					; 2
-		dc.b $30					; 3
-		dc.b $20					; 4
-		dc.b $10					; 5
-Animated_CNZ:				
-		dc.w 1
-; Flipping foreground section in CNZ
-		dc.l $FF000000+Art_CNZFlipTiles
-		dc.w $A800
-		dc.b $10
-		dc.b $10
-		dc.b   0,$C7					; 0
-		dc.b $10,  5					; 2
-		dc.b $20,  5					; 4
-		dc.b $30,  5					; 6
-		dc.b $40,$C7					; 8
-		dc.b $50,  5					; 10
-		dc.b $20,  5					; 12
-		dc.b $60,  5					; 14
-		dc.b   0,  5					; 16
-		dc.b $10,  5					; 18
-		dc.b $20,  5					; 20
-		dc.b $30,  5					; 22
-		dc.b $40,  5					; 24
-		dc.b $50,  5					; 26
-		dc.b $20,  5					; 28
-		dc.b $60,  5					; 30
-; Flipping foreground section in CNZ
-		dc.l $FF000000+Art_CNZFlipTiles
-		dc.w $6600
-		dc.b $10
-		dc.b $10
-		dc.b $70,  5					; 0
-		dc.b $80,  5					; 2
-		dc.b $20,  5					; 4
-		dc.b $90,  5					; 6
-		dc.b $A0,  5					; 8
-		dc.b $B0,  5					; 10
-		dc.b $20,  5					; 12
-		dc.b $C0,  5					; 14
-		dc.b $70,$C7					; 16
-		dc.b $80,  5					; 18
-		dc.b $20,  5					; 20
-		dc.b $90,  5					; 22
-		dc.b $A0,$C7					; 24
-		dc.b $B0,  5					; 26
-		dc.b $20,  5					; 28
-		dc.b $C0,  5					; 30
-word_40160:	dc.w 1			
-; Flipping foreground section in CNZ
-		dc.l $FF000000+Art_CNZFlipTiles
-		dc.w $E800
-		dc.b $10
-		dc.b $10
-		dc.b   0,$C7					; 0
-		dc.b $10,  5					; 2
-		dc.b $20,  5					; 4
-		dc.b $30,  5					; 6
-		dc.b $40,$C7					; 8
-		dc.b $50,  5					; 10
-		dc.b $20,  5					; 12
-		dc.b $60,  5					; 14
-		dc.b   0,  5					; 16
-		dc.b $10,  5					; 18
-		dc.b $20,  5					; 20
-		dc.b $30,  5					; 22
-		dc.b $40,  5					; 24
-		dc.b $50,  5					; 26
-		dc.b $20,  5					; 28
-		dc.b $60,  5					; 30
-; Flipping foreground section in CNZ
-		dc.l $FF000000+Art_CNZFlipTiles
-		dc.w $6600
-		dc.b $10
-		dc.b $10
-		dc.b $70,  5					; 0
-		dc.b $80,  5					; 2
-		dc.b $20,  5					; 4
-		dc.b $90,  5					; 6
-		dc.b $A0,  5					; 8
-		dc.b $B0,  5					; 10
-		dc.b $20,  5					; 12
-		dc.b $C0,  5					; 14
-		dc.b $70,$C7					; 16
-		dc.b $80,  5					; 18
-		dc.b $20,  5					; 20
-		dc.b $90,  5					; 22
-		dc.b $A0,$C7					; 24
-		dc.b $B0,  5					; 26
-		dc.b $20,  5					; 28
-		dc.b $C0,  5					; 30
-Animated_CPZ:				
-		dc.w 0
-; Animated background section in CPZ and DEZ
-		dc.l $4000000+Art_CPZAnimBack			; 0
-		dc.w $6E00
-		dc.b 8
-		dc.b 2
-		dc.b   0					; 0
-		dc.b   2					; 1
-		dc.b   4					; 2
-		dc.b   6					; 3
-		dc.b   8					; 4
-		dc.b  $A					; 5
-		dc.b  $C					; 6
-		dc.b  $E					; 7
-Animated_DEZ:				
-		dc.w 0
-; Animated background section in CPZ and DEZ
-		dc.l $4000000+Art_CPZAnimBack
-		dc.w $64C0
-		dc.b 8
-		dc.b 2
-		dc.b   0					; 0
-		dc.b   2					; 1
-		dc.b   4					; 2
-		dc.b   6					; 3
-		dc.b   8					; 4
-		dc.b  $A					; 5
-		dc.b  $C					; 6
-		dc.b  $E					; 7
-Animated_ARZ:				
-		dc.w 3
-; Waterfall patterns
-		dc.l $5000000+Art_Waterfall1
-		dc.w $AAE0
-		dc.b 2
-		dc.b 4
-		dc.b   0					; 0
-		dc.b   4					; 1
-; Waterfall patterns
-		dc.l $5000000+Art_Waterfall1
-		dc.w $8600
-		dc.b 2
-		dc.b 4
-		dc.b   4					; 0
-		dc.b   0					; 1
-; Waterfall patterns
-		dc.l $5000000+Art_Waterfall2
-		dc.w $8580
-		dc.b 2
-		dc.b 4
-		dc.b   0					; 0
-		dc.b   4					; 1
-; Waterfall patterns
-		dc.l $5000000+Art_Waterfall3
-		dc.w $8500
-		dc.b 2
-		dc.b 4
-		dc.b   0					; 0
-		dc.b   4					; 1
+		dc.b $20
+		dc.b $30
+		dc.b $40
+		dc.b $50
+		dc.b $60
+		dc.b $70
+		zoneanimdeclend
+		
+Animated_MTZ_Lava:	zoneanimdecl $D,Art_Lava,vram_Lava,$C
+		dc.b   0
+		dc.b  $C
+		dc.b $18
+		dc.b $24
+		dc.b $18
+		dc.b  $C
+		zoneanimdeclend
+		
+Animated_MTZ_AnimBack1:	zoneanimdecl -1,Art_MTZAnimBack,vram_MTZAnimBack1,6
+		dc.b   0,$13
+		dc.b   6,  7
+		dc.b  $C,$13
+		dc.b   6,  7
+		zoneanimdeclend
+		
+Animated_MTZ_AnimBack2:	zoneanimdecl -1,Art_MTZAnimBack,vram_MTZAnimBack2,6
+		dc.b  $C,$13
+		dc.b   6,  7
+		dc.b   0,$13
+		dc.b   6,  7
+		zoneanimdeclend
+		zoneanimend
+; ===========================================================================
+		
+Animated_HTZ:	zoneanimstart
+Animated_HTZ_Flowers1:	zoneanimdecl -1,Art_Flowers1,vram_Flowers1,2
+		dc.b   0,$7F
+		dc.b   2,$13
+		dc.b   0,  7
+		dc.b   2,  7
+		dc.b   0,  7
+		dc.b   2,  7
+		zoneanimdeclend
+				
+Animated_HTZ_Flowers2:	zoneanimdecl -1,Art_Flowers2,vram_Flowers2,2
+		dc.b   2,$7F
+		dc.b   0, $B
+		dc.b   2, $B
+		dc.b   0, $B
+		dc.b   2,  5
+		dc.b   0,  5
+		dc.b   2,  5
+		dc.b   0,  5
+		zoneanimdeclend
+				
+Animated_HTZ_Flowers3:	zoneanimdecl 7,Art_Flowers3,vram_Flowers3,2
+		dc.b   0
+		dc.b   2
+		zoneanimdeclend
+				
+Animated_HTZ_Flowers4:	zoneanimdecl -1,Art_Flowers4,vram_Flowers4,2
+		dc.b   0,$7F
+		dc.b   2,  7
+		dc.b   0,  7
+		dc.b   2,  7
+		dc.b   0,  7
+		dc.b   2, $B
+		dc.b   0, $B
+		dc.b   2, $B
+		zoneanimdeclend
+		
+Animated_HTZ_PulseBall:	zoneanimdecl -1,Art_EHZPulseBall,vram_EHZPulseBall,2
+		dc.b   0,$17
+		dc.b   2,  9
+		dc.b   4, $B
+		dc.b   6,$17
+		dc.b   4, $B
+		dc.b   2,  9
+		zoneanimdeclend
+		zoneanimend
+; ===========================================================================
+		
+Animated_HPZ:	zoneanimstart
+Animated_HPZ_PulseBall1: zoneanimdecl 8,Art_OOZPulseBall,vram_HPZPulseOrb1,8
+		dc.b   0
+		dc.b   0
+		dc.b   8					
+		dc.b $10					
+		dc.b $10					
+		dc.b   8					
+		zoneanimdeclend
+				
+Animated_HPZ_PulseBall2: zoneanimdecl 8,Art_OOZPulseBall,vram_HPZPulseOrb2,8
+		dc.b   8					
+		dc.b $10					
+		dc.b $10					
+		dc.b   8					
+		dc.b   0					
+		dc.b   0					
+		zoneanimdeclend
+				
+Animated_HPZ_PulseBall3: zoneanimdecl 8,Art_OOZPulseBall,vram_HPZPulseOrb3,8
+		dc.b $10					
+		dc.b   8					
+		dc.b   0					
+		dc.b   0					
+		dc.b   8					
+		dc.b $10					
+		zoneanimdeclend
+		zoneanimend		
+; ===========================================================================
+		
+Animated_OOZ:	zoneanimstart
+Animated_OOZ_PulseBall:	zoneanimdecl	-1,Art_OOZPulseBall,vram_OOZPulseBall,4	
+		dc.b   0					
+		dc.b  $B					
+		dc.b   4					
+		dc.b   5					
+		dc.b   8					
+		dc.b   9					
+		dc.b   4					
+		dc.b   3					
+		zoneanimdeclend
+				
+Animated_OOZ_SquareBall1:	zoneanimdecl 6,Art_OOZSquareBall1,vram_OOZSquareBall1,4
+		dc.b   0					
+		dc.b   4					
+		dc.b   8					
+		dc.b  $C					
+		zoneanimdeclend
+				
+Animated_OOZ_SquareBall2:	zoneanimdecl 6,Art_OOZSquareBall2,vram_OOZSquareBall2,4
+		dc.b   0					
+		dc.b   4					
+		dc.b   8					
+		dc.b  $C					
+		zoneanimdeclend
+		
+Animated_OOZ_Oil1:	zoneanimdecl $11,Art_Oil1,vram_Oil1,$10
+		dc.b   0					
+		dc.b $10					
+		dc.b $20					
+		dc.b $30					
+		dc.b $20					
+		dc.b $10					
+		zoneanimdeclend
+		
+Animated_OOZ_Oil2:	zoneanimdecl $11,Art_Oil2,vram_Oil2,$10
+		dc.b   0					
+		dc.b $10					
+		dc.b $20					
+		dc.b $30					
+		dc.b $20					
+		dc.b $10					
+		zoneanimdeclend
+		zoneanimend		
+; ===========================================================================
+		
+Animated_CNZ:	zoneanimstart
+Animated_CNZ_FlipTiles2:	zoneanimdecl -1,Art_CNZFlipPanels,vram_CNZFlipPanels2,$10
+		dc.b   0,$C7					
+		dc.b $10,  5					
+		dc.b $20,  5					
+		dc.b $30,  5					
+		dc.b $40,$C7					
+		dc.b $50,  5					
+		dc.b $20,  5					
+		dc.b $60,  5					
+		dc.b   0,  5					
+		dc.b $10,  5					
+		dc.b $20,  5					
+		dc.b $30,  5					
+		dc.b $40,  5					
+		dc.b $50,  5					
+		dc.b $20,  5					
+		dc.b $60,  5					
+		zoneanimdeclend
+				
+Animated_CNZ_FlipTiles1:	zoneanimdecl -1,Art_CNZFlipPanels,vram_CNZFlipPanels1,$10
+		dc.b $70,  5					
+		dc.b $80,  5					
+		dc.b $20,  5					
+		dc.b $90,  5					
+		dc.b $A0,  5					
+		dc.b $B0,  5					
+		dc.b $20,  5					
+		dc.b $C0,  5					
+		dc.b $70,$C7					
+		dc.b $80,  5					
+		dc.b $20,  5					
+		dc.b $90,  5					
+		dc.b $A0,$C7					
+		dc.b $B0,  5					
+		dc.b $20,  5					
+		dc.b $C0,  5					
+		zoneanimdeclend
+		zoneanimend		
+; ===========================================================================
+		
+Animated_CNZ_2P:	zoneanimstart		
+Animated_CNZ_2P_FlipTiles2:	zoneanimdecl -1,Art_CNZFlipPanels,vram_CNZFlipPanels2_2p,$10
+		dc.b   0,$C7					
+		dc.b $10,  5					
+		dc.b $20,  5					
+		dc.b $30,  5					
+		dc.b $40,$C7					
+		dc.b $50,  5					
+		dc.b $20,  5					
+		dc.b $60,  5					
+		dc.b   0,  5					
+		dc.b $10,  5					
+		dc.b $20,  5					
+		dc.b $30,  5					
+		dc.b $40,  5					
+		dc.b $50,  5					
+		dc.b $20,  5					
+		dc.b $60,  5					
+		zoneanimdeclend		
+		
+Animated_CNZ_2P_FlipTiles1:	zoneanimdecl -1,Art_CNZFlipPanels,vram_CNZFlipPanels1_2p,$10
+		dc.b $70,  5					
+		dc.b $80,  5					
+		dc.b $20,  5					
+		dc.b $90,  5					
+		dc.b $A0,  5					
+		dc.b $B0,  5					
+		dc.b $20,  5					
+		dc.b $C0,  5					
+		dc.b $70,$C7					
+		dc.b $80,  5					
+		dc.b $20,  5					
+		dc.b $90,  5					
+		dc.b $A0,$C7					
+		dc.b $B0,  5					
+		dc.b $20,  5					
+		dc.b $C0,  5					
+		zoneanimdeclend
+		zoneanimend		
+; ===========================================================================
+		
+Animated_CPZ:	zoneanimstart
+Animated_CPZ_AniBack:	zoneanimdecl 4,Art_CPZAnimBack,vram_CPZAnimBack,2
+		dc.b   0
+		dc.b   2
+		dc.b   4
+		dc.b   6
+		dc.b   8
+		dc.b  $A
+		dc.b  $C
+		dc.b  $E
+		zoneanimdeclend
+		zoneanimend		
+; ===========================================================================
+
+Animated_DEZ:	zoneanimstart			
+Animated_DEZ_Aniback:	zoneanimdecl	4,Art_CPZAnimBack,vram_DEZAnimBack,2
+		dc.b   0
+		dc.b   2
+		dc.b   4
+		dc.b   6
+		dc.b   8
+		dc.b  $A
+		dc.b  $C
+		dc.b  $E
+		zoneanimdeclend
+		zoneanimend
+; ===========================================================================
+		
+Animated_ARZ:	zoneanimstart
+Animated_ARZ_WaterFall1_2:	zoneanimdecl 5,Art_Waterfall1,vram_WaterFall1_2,4
+		dc.b   0
+		dc.b   4
+		zoneanimdeclend
+		
+Animated_ARZ_WaterFall1_1:	zoneanimdecl 5,Art_Waterfall1,vram_WaterFall1_1,4
+		dc.b   4
+		dc.b   0
+		zoneanimdeclend
+		
+Animated_ARZ_WaterFall2:	zoneanimdecl 5,Art_Waterfall2,vram_WaterFall2,4	
+		dc.b   0
+		dc.b   4
+		zoneanimdeclend
+				
+Animated_ARZ_WaterFall3:	zoneanimdecl 5,Art_Waterfall3,vram_WaterFall3,4
+		dc.b   0
+		dc.b   4
+		zoneanimdeclend
+		zoneanimend		
 ; ===========================================================================
 
 Animated_Null:	
-		; It'd be safer to have an rts here.
 
 ; ---------------------------------------------------------------------------
 ; Unused custom background animation routine for CPZ
@@ -83985,7 +84048,7 @@ Animated_Null:
 ; screen widths wide), rotate 128x128 tiles $EA-$ED and $FA-$FD to the left 
 ; by shifting all 16x16 block indicies to the left by one, moving the first
 ; index of each line into the end of the corresponding line in the previous
-; chunk, and shifting the first index of the first tile to the very end,
+; chunk, and shifting the first index of the first tile to the very end.
 ; ---------------------------------------------------------------------------
 
 Unused_CPZAnim:
@@ -84044,7 +84107,7 @@ AnimatedBlocksLoad:
 		bne.s	.notHTZ					; branch if not
 		bsr.w	LoadHTZCliffArt				; load art for HTZ's distant background cliffs
 		move.b	#-1,(v_anim_counters+1).w
-		move.w	#-1,(v_bgscroll_buffer+$20).w
+		move.w	#-1,(v_bgscroll_buffer+$20).w		; set otherwise unused flag in BG scroll buffer 
 
 	.notHTZ:				
 		cmpi.b	#id_CPZ,(v_zone).w			; is it CPZ?
@@ -84127,11 +84190,11 @@ AniPatMap_Index:	index offset(*),,1
 		zonewarning	AniPatMap_Index,2
 
 anipat:	macro *
-\* equ *
-current_anipat:	equs "\*"
+		\*: equ *
+		current_anipat:	equs "\*"
 		dc.w ((sizeof_16x16_all*2)-sizeof_\*_Blocks)	; start offset of animated blocks in v_16x16_tiles
 		dc.w (sizeof_\*_Blocks/2)-1			; loops to copy blocks in word-length moves
-\*_Blocks:	
+	\*_Blocks:	
 		endm
 
 anipat_end:	macros	
@@ -86926,18 +86989,18 @@ JmpTo66_Adjust2PArtPointer:
 ; a particular zone. Each zone gets three longwords, in which it stores three
 ; pointers (in the lower 24 bits) and three jump table indeces (in the upper eight
 ; bits). The assembled data looks something like this:
-;
+
 ; aaBBBBBB
 ; ccDDDDDD
 ; eeFFFFFF
-;
+
 ; aa = index for primary pattern load request list
 ; BBBBBB = pointer to level art
 ; cc = index for secondary pattern load request list
 ; DDDDDD = pointer to 16x16 block mappings
 ; ee = index for palette
 ; FFFFFF = pointer to 128x128 block mappings
-;
+
 ; Nemesis refers to this as the "main level load block". However, that name implies
 ; that this is code (obviously, it isn't), or at least that it points to the level's
 ; collision, object and ring placement arrays (it only points to art...
@@ -86971,8 +87034,6 @@ LevelHeaders:
 		lhead id_PLC_ARZ1,		id_PLC_ARZ2,		id_Pal_ARZ,		Kos_ARZ,	BM16_ARZ,	BM128_ARZ ;  $F ; Aquatic Ruin
 		lhead id_PLC_SCZ1,		id_PLC_SCZ2,		id_Pal_SCZ,		Kos_SCZ,	BM16_WFZ,	BM128_WFZ ; $10 ; Sky Chase
 		
-		
-
 ;---------------------------------------------------------------------------------------
 ; Macro to make PLC pointers and generate symbolic constants
 ; (modification of standard ptr macro)
@@ -86999,7 +87060,7 @@ plcp:	macro plcaddress,altid,alias1,alias2
 		ifarg \alias2
 			\prefix_id\\alias2:	equ ptr_id	; make aliased ID constant
 		endc			
-		ptr_id: = ptr_id+ptr_id_inc		; increment ptr_id
+		ptr_id: = ptr_id+ptr_id_inc			; increment ptr_id
 		
 		popo
 		list
@@ -87007,7 +87068,6 @@ plcp:	macro plcaddress,altid,alias1,alias2
 	
 PatternLoadCues:	
 		index offset(*)
-
 		plcp 	PLC_Main				; 0
 		plcp 	PLC_Main2				; 1
 		plcp	PLC_Water				; 2
@@ -88213,7 +88273,7 @@ LevelIndex:		index offset(*)
 		incfile	Art_OOZSquareBall2			; ArtUnc_4C2FE:
 		incfile	Art_Oil1				; ArtUnc_4C4FE:
 		incfile	Art_Oil2				; ArtUnc_4CCFE:
-		incfile	Art_CNZFlipTiles			; ArtUnc_4D4FE:
+		incfile	Art_CNZFlipPanels			; ArtUnc_4D4FE:
 		incfile	Art_CNZSlotPics				; ArtUnc_4EEFE:
 		incfile	Art_CPZAnimBack				; ArtUnc_4FAFE:
 		incfile	Art_Waterfall1				; ArtUnc_4FAFE:

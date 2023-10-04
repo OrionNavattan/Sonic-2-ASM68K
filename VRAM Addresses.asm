@@ -263,7 +263,6 @@ vram_Tram:           		equ $7CC0
 vram_HTZFireball2:          equ $82C0
 vram_HTZOneWayBarrier:      equ $84C0
 vram_HTZMountains:       	equ $A000
-;ArtTile_ArtUnc_HTZClouds:              = ArtTile_ArtUnc_HTZMountains + $18
 vram_HTZClouds:				equ $A300
 vram_Spiker:                equ $A400
 

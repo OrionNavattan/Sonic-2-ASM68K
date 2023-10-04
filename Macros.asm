@@ -341,7 +341,7 @@ ramblockend:	macros
 ; ---------------------------------------------------------------------------	
 
 arraysize:	macros
-		sizeof_\1: equ	offset(*)-\1
+		sizeof_\1: equ	offset(*)-offset(\1)
 		
 ; ---------------------------------------------------------------------------
 ; Organise object RAM usage.
