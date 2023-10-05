@@ -10,11 +10,11 @@ Map_ARZUnusedScenery:	index offset(*)
 		ptr	Frame_ARZSceneryGround
 
 Frame_ARZSceneryGrass:	spritemap
-		spritePiece	-4, -8, 1, 2, 0, 0, 0, 0, 0
+		piece	-4, -8, 1x2, 0
 		endsprite
 
 Frame_ARZSceneryGround:	spritemap
-		spritePiece	-4, -8, 1, 2, 2, 0, 0, 0, 0
+		piece	-4, -8, 1x2, 2
 		endsprite
 
 		even

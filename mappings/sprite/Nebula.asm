@@ -10,35 +10,35 @@ Map_Neb:	index offset(*)
 		ptr	Map_obj99_0092
 
 Map_obj99_000A:	spritemap
-		spritePiece	-$18, -$14, 3, 1, $12, 0, 0, 0, 0
-		spritePiece	0, -$14, 3, 1, $12, 1, 1, 0, 0
-		spritePiece	-8, -$14, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 4, 4, 2, 0, 0, 0, 0
+		piece	-$18, -$14, 3x1, $12
+		piece	0, -$14, 3x1, $12, xflip, yflip
+		piece	-8, -$14, 2x1, 0
+		piece	-$10, -$C, 4x4, 2
 		endsprite
 
 Map_obj99_002C:	spritemap
-		spritePiece	-$10, -$14, 2, 1, $15, 0, 0, 0, 0
-		spritePiece	0, -$14, 2, 1, $15, 1, 1, 0, 0
-		spritePiece	-8, -$14, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 4, 4, 2, 0, 0, 0, 0
+		piece	-$10, -$14, 2x1, $15
+		piece	0, -$14, 2x1, $15, xflip, yflip
+		piece	-8, -$14, 2x1, 0
+		piece	-$10, -$C, 4x4, 2
 		endsprite
 
 Map_obj99_004E:	spritemap
-		spritePiece	-8, -$14, 1, 1, $17, 0, 0, 0, 0
-		spritePiece	0, -$14, 1, 1, $17, 1, 0, 0, 0
-		spritePiece	-8, -$14, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 4, 4, 2, 0, 0, 0, 0
+		piece	-8, -$14, 1x1, $17
+		piece	0, -$14, 1x1, $17, xflip
+		piece	-8, -$14, 2x1, 0
+		piece	-$10, -$C, 4x4, 2
 		endsprite
 
 Map_obj99_0070:	spritemap
-		spritePiece	-$10, -$14, 2, 1, $15, 0, 1, 0, 0
-		spritePiece	0, -$14, 2, 1, $15, 1, 0, 0, 0
-		spritePiece	-8, -$14, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 4, 4, 2, 0, 0, 0, 0
+		piece	-$10, -$14, 2x1, $15, yflip
+		piece	0, -$14, 2x1, $15, xflip
+		piece	-8, -$14, 2x1, 0
+		piece	-$10, -$C, 4x4, 2
 		endsprite
 
 Map_obj99_0092:	spritemap
-		spritePiece	-8, -8, 2, 2, $18, 0, 0, 0, 0
+		piece	-8, -8, 2x2, $18
 		endsprite
 
 		even

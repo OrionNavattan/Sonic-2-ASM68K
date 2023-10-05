@@ -10,31 +10,31 @@ Map_Starpost:	index offset(*)
 		ptr	Map_obj79_a_005A
 
 Map_obj79_a_000A:	spritemap
-		spritePiece	-4, -$18, 1, 2, 4, 0, 0, 1, 0
-		spritePiece	-8, -8, 1, 4, 6, 0, 0, 1, 0
-		spritePiece	0, -8, 1, 4, 6, 1, 0, 1, 0
-		spritePiece	-8, -$28, 2, 2, 0, 0, 0, 0, 0
+		piece	-4, -$18, 1x2, 4, pal2
+		piece	-8, -8, 1x4, 6, pal2
+		piece	0, -8, 1x4, 6, xflip, pal2
+		piece	-8, -$28, 2x2, 0
 		endsprite
 
 Map_obj79_a_002C:	spritemap
-		spritePiece	-4, -$18, 1, 2, 4, 0, 0, 1, 0
-		spritePiece	-8, -8, 1, 4, 6, 0, 0, 1, 0
-		spritePiece	0, -8, 1, 4, 6, 1, 0, 1, 0
+		piece	-4, -$18, 1x2, 4, pal2
+		piece	-8, -8, 1x4, 6, pal2
+		piece	0, -8, 1x4, 6, xflip, pal2
 		endsprite
 
 Map_obj79_a_0046:	spritemap
-		spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 0
 		endsprite
 
 Map_obj79_a_0050:	spritemap
-		spritePiece	-8, -8, 2, 2, 0, 0, 0, 1, 0
+		piece	-8, -8, 2x2, 0, pal2
 		endsprite
 
 Map_obj79_a_005A:	spritemap
-		spritePiece	-4, -$18, 1, 2, 4, 0, 0, 1, 0
-		spritePiece	-8, -8, 1, 4, 6, 0, 0, 1, 0
-		spritePiece	0, -8, 1, 4, 6, 1, 0, 1, 0
-		spritePiece	-8, -$28, 2, 2, 0, 0, 0, 1, 0
+		piece	-4, -$18, 1x2, 4, pal2
+		piece	-8, -8, 1x4, 6, pal2
+		piece	0, -8, 1x4, 6, xflip, pal2
+		piece	-8, -$28, 2x2, 0, pal2
 		endsprite
 
 		even

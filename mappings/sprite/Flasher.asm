@@ -10,37 +10,37 @@ Map_Flash:	index offset(*)
 		ptr	Frame_Flash_Flash4
 
 Frame_Flash_Fly:	spritemap
-		spritePiece	-$10, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$10, -8, 3x2, 0
 		endsprite
 
 Frame_Flash_Flash1:	spritemap
-		spritePiece	-8, -8, 2, 2, 6, 0, 0, 1, 0
-		spritePiece	-$10, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 6, pal2
+		piece	-$10, -8, 3x2, 0
 		endsprite
 
 Frame_Flash_Flash2:	spritemap
-		spritePiece	-8, -8, 1, 2, $A, 0, 0, 1, 0
-		spritePiece	0, -8, 1, 2, $A, 1, 0, 1, 0
-		spritePiece	-8, -8, 2, 2, 6, 0, 0, 1, 0
-		spritePiece	-$10, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-8, -8, 1x2, $A, pal2
+		piece	0, -8, 1x2, $A, xflip, pal2
+		piece	-8, -8, 2x2, 6, pal2
+		piece	-$10, -8, 3x2, 0
 		endsprite
 
 Frame_Flash_Flash3:	spritemap
-		spritePiece	-$10, -$10, 2, 2, $C, 0, 0, 1, 0
-		spritePiece	0, -$10, 2, 2, $C, 1, 0, 1, 0
-		spritePiece	-$10, 0, 2, 2, $C, 0, 1, 1, 0
-		spritePiece	0, 0, 2, 2, $C, 1, 1, 1, 0
-		spritePiece	-8, -8, 2, 2, 6, 0, 0, 1, 0
-		spritePiece	-$10, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 2x2, $C, pal2
+		piece	0, -$10, 2x2, $C, xflip, pal2
+		piece	-$10, 0, 2x2, $C, yflip, pal2
+		piece	0, 0, 2x2, $C, xflip, yflip, pal2
+		piece	-8, -8, 2x2, 6, pal2
+		piece	-$10, -8, 3x2, 0
 		endsprite
 
 Frame_Flash_Flash4:	spritemap
-		spritePiece	-$10, -$10, 2, 2, $10, 0, 0, 1, 0
-		spritePiece	0, -$10, 2, 2, $10, 1, 0, 1, 0
-		spritePiece	-$10, 0, 2, 2, $10, 0, 1, 1, 0
-		spritePiece	0, 0, 2, 2, $10, 1, 1, 1, 0
-		spritePiece	-8, -8, 2, 2, 6, 0, 0, 1, 0
-		spritePiece	-$10, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 2x2, $10, pal2
+		piece	0, -$10, 2x2, $10, xflip, pal2
+		piece	-$10, 0, 2x2, $10, yflip, pal2
+		piece	0, 0, 2x2, $10, xflip, yflip, pal2
+		piece	-8, -8, 2x2, 6, pal2
+		piece	-$10, -8, 3x2, 0
 		endsprite
 
 		even

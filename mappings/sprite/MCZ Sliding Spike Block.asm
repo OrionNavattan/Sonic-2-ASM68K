@@ -6,12 +6,12 @@ Map_SlidSpks:	index offset(*)
 		ptr	Frame_SlidSpks
 
 Frame_SlidSpks:	spritemap
-		spritePiece	-$40, -$10, 2, 2, $42C, 0, 0, 1, 0
-		spritePiece	-$40, 0, 2, 2, $42C, 0, 0, 1, 0
-		spritePiece	-$30, -$10, 2, 4, $40, 0, 0, 3, 0
-		spritePiece	-$20, -$10, 4, 4, $48, 0, 0, 3, 0
-		spritePiece	0, -$10, 4, 4, $48, 0, 0, 3, 0
-		spritePiece	$20, -$10, 4, 4, $48, 0, 0, 3, 0
+		piece	-$40, -$10, 2x2, $42C, pal2
+		piece	-$40, 0, 2x2, $42C, pal2
+		piece	-$30, -$10, 2x4, $40, pal4
+		piece	-$20, -$10, 4x4, $48, pal4
+		piece	0, -$10, 4x4, $48, pal4
+		piece	$20, -$10, 4x4, $48, pal4
 		endsprite
 
 		even

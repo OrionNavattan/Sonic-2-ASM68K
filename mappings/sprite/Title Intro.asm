@@ -26,206 +26,206 @@ Map_TitleIntro:	index offset(*)
 		ptr	Frame_IntroTails_Hand			; $13
 
 Frame_IntroTails_0:	spritemap
-		spritePiece	$30, $10, 4, 1, 0, 0, 0, 1, 1
-		spritePiece	$18, $18, 4, 4, 4, 0, 0, 1, 1
-		spritePiece	$38, $18, 3, 4, $14, 0, 0, 1, 1
-		spritePiece	$20, $38, 2, 1, $20, 0, 0, 1, 1
-		spritePiece	$28, $40, 1, 1, $22, 0, 0, 1, 1
-		spritePiece	$30, $38, 4, 3, $23, 0, 0, 1, 1
+		piece	$30, $10, 4x1, 0, pal2, hi
+		piece	$18, $18, 4x4, 4, pal2, hi
+		piece	$38, $18, 3x4, $14, pal2, hi
+		piece	$20, $38, 2x1, $20, pal2, hi
+		piece	$28, $40, 1x1, $22, pal2, hi
+		piece	$30, $38, 4x3, $23, pal2, hi
 		endsprite
 
 Frame_IntroTails_1:	spritemap
-		spritePiece	$48, $10, 2, 1, $2F, 0, 0, 1, 1
-		spritePiece	$20, $18, 4, 4, $31, 0, 0, 1, 1
-		spritePiece	$40, $18, 3, 4, $41, 0, 0, 1, 1
-		spritePiece	$58, $18, 1, 2, $4D, 0, 0, 1, 1
-		spritePiece	0, $38, 1, 2, $4F, 0, 0, 1, 1
-		spritePiece	8, $38, 4, 3, $51, 0, 0, 1, 1
-		spritePiece	$28, $38, 3, 3, $5D, 0, 0, 1, 1
-		spritePiece	$40, $38, 2, 2, $66, 0, 0, 1, 1
-		spritePiece	$50, $38, 1, 1, $6A, 0, 0, 1, 1
+		piece	$48, $10, 2x1, $2F, pal2, hi
+		piece	$20, $18, 4x4, $31, pal2, hi
+		piece	$40, $18, 3x4, $41, pal2, hi
+		piece	$58, $18, 1x2, $4D, pal2, hi
+		piece	0, $38, 1x2, $4F, pal2, hi
+		piece	8, $38, 4x3, $51, pal2, hi
+		piece	$28, $38, 3x3, $5D, pal2, hi
+		piece	$40, $38, 2x2, $66, pal2, hi
+		piece	$50, $38, 1x1, $6A, pal2, hi
 		endsprite
 
 Frame_IntroTails_2:	spritemap
-		spritePiece	$28, $10, 3, 3, $6B, 0, 0, 1, 1
-		spritePiece	$40, $18, 4, 2, $74, 0, 0, 1, 1
-		spritePiece	8, $28, 4, 4, $7C, 0, 0, 1, 1
-		spritePiece	$28, $28, 4, 4, $8C, 0, 0, 1, 1
-		spritePiece	$48, $28, 2, 4, $9C, 0, 0, 1, 1
-		spritePiece	$58, $28, 1, 2, $A4, 0, 0, 1, 1
-		spritePiece	$10, $48, 4, 1, $A6, 0, 0, 1, 1
-		spritePiece	$30, $48, 2, 1, $AA, 0, 0, 1, 1
+		piece	$28, $10, 3x3, $6B, pal2, hi
+		piece	$40, $18, 4x2, $74, pal2, hi
+		piece	8, $28, 4x4, $7C, pal2, hi
+		piece	$28, $28, 4x4, $8C, pal2, hi
+		piece	$48, $28, 2x4, $9C, pal2, hi
+		piece	$58, $28, 1x2, $A4, pal2, hi
+		piece	$10, $48, 4x1, $A6, pal2, hi
+		piece	$30, $48, 2x1, $AA, pal2, hi
 		endsprite
 
 Frame_IntroTails_3:	spritemap
-		spritePiece	$20, $10, 1, 1, $AC, 0, 0, 1, 1
-		spritePiece	$28, $10, 4, 3, $AD, 0, 0, 1, 1
-		spritePiece	$48, $10, 1, 1, $B9, 0, 0, 1, 1
-		spritePiece	$48, $18, 3, 2, $BA, 0, 0, 1, 1
-		spritePiece	$10, $20, 2, 1, $C0, 0, 0, 1, 1
-		spritePiece	0, $38, 1, 1, $C2, 0, 0, 1, 1
-		spritePiece	8, $28, 4, 3, $C3, 0, 0, 1, 1
-		spritePiece	$28, $28, 4, 3, $CF, 0, 0, 1, 1
-		spritePiece	$48, $28, 2, 3, $DB, 0, 0, 1, 1
-		spritePiece	$58, $28, 1, 1, $E1, 0, 0, 1, 1
-		spritePiece	$10, $40, 4, 2, $E2, 0, 0, 1, 1
-		spritePiece	$30, $40, 2, 2, $EA, 0, 0, 1, 1
-		spritePiece	$40, $40, 3, 1, $EE, 0, 0, 1, 1
+		piece	$20, $10, 1x1, $AC, pal2, hi
+		piece	$28, $10, 4x3, $AD, pal2, hi
+		piece	$48, $10, 1x1, $B9, pal2, hi
+		piece	$48, $18, 3x2, $BA, pal2, hi
+		piece	$10, $20, 2x1, $C0, pal2, hi
+		piece	0, $38, 1x1, $C2, pal2, hi
+		piece	8, $28, 4x3, $C3, pal2, hi
+		piece	$28, $28, 4x3, $CF, pal2, hi
+		piece	$48, $28, 2x3, $DB, pal2, hi
+		piece	$58, $28, 1x1, $E1, pal2, hi
+		piece	$10, $40, 4x2, $E2, pal2, hi
+		piece	$30, $40, 2x2, $EA, pal2, hi
+		piece	$40, $40, 3x1, $EE, pal2, hi
 		endsprite
 
 Frame_IntroTails_4:	spritemap
-		spritePiece	$40, 8, 2, 1, $F1, 0, 0, 1, 1
-		spritePiece	$18, $10, 1, 1, $AC, 0, 1, 1, 1
-		spritePiece	$20, $10, 4, 3, $F3, 0, 0, 1, 1
-		spritePiece	$40, $10, 4, 2, $FF, 0, 0, 1, 1
-		spritePiece	$58, $20, 1, 1, $107, 0, 0, 1, 1
-		spritePiece	$40, $20, 2, 1, $108, 0, 0, 1, 1
-		spritePiece	8, $28, 1, 1, $10A, 0, 0, 1, 1
-		spritePiece	$10, $28, 4, 4, $10B, 0, 0, 1, 1
-		spritePiece	0, $38, 2, 2, $11B, 0, 0, 1, 1
-		spritePiece	$30, $28, 4, 4, $11F, 0, 0, 1, 1
-		spritePiece	$50, $28, 1, 2, $12F, 0, 0, 1, 1
-		spritePiece	$10, $48, 4, 1, $131, 0, 0, 1, 1
-		spritePiece	$30, $48, 2, 1, $135, 0, 0, 1, 1
+		piece	$40, 8, 2x1, $F1, pal2, hi
+		piece	$18, $10, 1x1, $AC, yflip, pal2, hi
+		piece	$20, $10, 4x3, $F3, pal2, hi
+		piece	$40, $10, 4x2, $FF, pal2, hi
+		piece	$58, $20, 1x1, $107, pal2, hi
+		piece	$40, $20, 2x1, $108, pal2, hi
+		piece	8, $28, 1x1, $10A, pal2, hi
+		piece	$10, $28, 4x4, $10B, pal2, hi
+		piece	0, $38, 2x2, $11B, pal2, hi
+		piece	$30, $28, 4x4, $11F, pal2, hi
+		piece	$50, $28, 1x2, $12F, pal2, hi
+		piece	$10, $48, 4x1, $131, pal2, hi
+		piece	$30, $48, 2x1, $135, pal2, hi
 		endsprite
 
 Frame_IntroSonic_0:	spritemap
-		spritePiece	$20, 8, 4, 1, $137, 0, 0, 0, 1
-		spritePiece	$40, $10, 1, 1, $13B, 0, 0, 0, 1
-		spritePiece	8, $10, 4, 4, $13C, 0, 0, 0, 1
-		spritePiece	0, $30, 4, 2, $14C, 0, 0, 0, 1
-		spritePiece	0, $18, 1, 3, $154, 0, 0, 0, 1
-		spritePiece	$28, $10, 3, 4, $157, 0, 0, 0, 1
-		spritePiece	$40, $28, 1, 1, $163, 0, 0, 0, 1
-		spritePiece	$48, $30, 1, 1, $164, 0, 0, 0, 1
-		spritePiece	$20, $30, 4, 2, $165, 0, 0, 0, 1
-		spritePiece	8, $40, 1, 1, $16D, 0, 0, 0, 1
-		spritePiece	$10, $40, 4, 2, $16E, 0, 0, 0, 1
-		spritePiece	$30, $40, 2, 2, $176, 0, 0, 0, 1
-		spritePiece	$40, $30, 1, 3, $17A, 0, 0, 0, 1
+		piece	$20, 8, 4x1, $137, hi
+		piece	$40, $10, 1x1, $13B, hi
+		piece	8, $10, 4x4, $13C, hi
+		piece	0, $30, 4x2, $14C, hi
+		piece	0, $18, 1x3, $154, hi
+		piece	$28, $10, 3x4, $157, hi
+		piece	$40, $28, 1x1, $163, hi
+		piece	$48, $30, 1x1, $164, hi
+		piece	$20, $30, 4x2, $165, hi
+		piece	8, $40, 1x1, $16D, hi
+		piece	$10, $40, 4x2, $16E, hi
+		piece	$30, $40, 2x2, $176, hi
+		piece	$40, $30, 1x3, $17A, hi
 		endsprite
 
 Frame_IntroSonic_1:	spritemap
-		spritePiece	$18, 8, 4, 1, $17D, 0, 0, 0, 1
-		spritePiece	$38, 8, 2, 4, $181, 0, 0, 0, 1
-		spritePiece	$48, $10, 1, 1, $189, 0, 0, 0, 1
-		spritePiece	0, $20, 4, 4, $18A, 0, 0, 0, 1
-		spritePiece	8, $18, 1, 1, $19A, 0, 0, 0, 1
-		spritePiece	$10, $10, 2, 2, $19B, 0, 0, 0, 1
-		spritePiece	$20, $10, 3, 3, $19F, 0, 0, 0, 1
-		spritePiece	$20, $28, 4, 4, $1A8, 0, 0, 0, 1
-		spritePiece	$40, $28, 2, 4, $1B8, 0, 0, 0, 1
-		spritePiece	8, $40, 3, 1, $1C0, 0, 0, 0, 1
-		spritePiece	8, $50, 1, 2, $1C3, 0, 0, 0, 1
-		spritePiece	$10, $48, 3, 3, $1C5, 0, 0, 0, 1
-		spritePiece	$28, $48, 4, 2, $1CE, 0, 0, 0, 1
+		piece	$18, 8, 4x1, $17D, hi
+		piece	$38, 8, 2x4, $181, hi
+		piece	$48, $10, 1x1, $189, hi
+		piece	0, $20, 4x4, $18A, hi
+		piece	8, $18, 1x1, $19A, hi
+		piece	$10, $10, 2x2, $19B, hi
+		piece	$20, $10, 3x3, $19F, hi
+		piece	$20, $28, 4x4, $1A8, hi
+		piece	$40, $28, 2x4, $1B8, hi
+		piece	8, $40, 3x1, $1C0, hi
+		piece	8, $50, 1x2, $1C3, hi
+		piece	$10, $48, 3x3, $1C5, hi
+		piece	$28, $48, 4x2, $1CE, hi
 		endsprite
 
 Frame_IntroSonic_2:	spritemap
-		spritePiece	$28, 8, 4, 1, $1D6, 0, 0, 0, 1
-		spritePiece	$48, 8, 1, 1, $1DA, 0, 0, 0, 1
-		spritePiece	$10, $18, 1, 4, $1DB, 0, 0, 0, 1
-		spritePiece	$18, $10, 4, 4, $1DF, 0, 0, 0, 1
-		spritePiece	$38, $10, 4, 4, $1EF, 0, 0, 0, 1
-		spritePiece	$58, $10, 1, 1, $1FF, 0, 0, 0, 1
-		spritePiece	$58, $28, 1, 1, $200, 0, 0, 0, 1
-		spritePiece	$10, $38, 1, 1, $201, 0, 0, 0, 1
-		spritePiece	$18, $30, 4, 2, $202, 0, 0, 0, 1
-		spritePiece	$38, $30, 4, 2, $20A, 0, 0, 0, 1
-		spritePiece	$20, $40, 1, 1, $212, 0, 0, 0, 1
-		spritePiece	$28, $40, 1, 2, $213, 0, 0, 0, 1
-		spritePiece	$30, $40, 4, 3, $215, 0, 0, 0, 1
-		spritePiece	$50, $40, 1, 3, $221, 0, 0, 0, 1
-		spritePiece	$58, $38, 1, 2, $224, 0, 0, 0, 1
+		piece	$28, 8, 4x1, $1D6, hi
+		piece	$48, 8, 1x1, $1DA, hi
+		piece	$10, $18, 1x4, $1DB, hi
+		piece	$18, $10, 4x4, $1DF, hi
+		piece	$38, $10, 4x4, $1EF, hi
+		piece	$58, $10, 1x1, $1FF, hi
+		piece	$58, $28, 1x1, $200, hi
+		piece	$10, $38, 1x1, $201, hi
+		piece	$18, $30, 4x2, $202, hi
+		piece	$38, $30, 4x2, $20A, hi
+		piece	$20, $40, 1x1, $212, hi
+		piece	$28, $40, 1x2, $213, hi
+		piece	$30, $40, 4x3, $215, hi
+		piece	$50, $40, 1x3, $221, hi
+		piece	$58, $38, 1x2, $224, hi
 		endsprite
 
 Frame_IntroSonic_BetaLeftover:	spritemap
-		spritePiece	$28, 8, 4, 4, $226, 0, 0, 0, 1
-		spritePiece	$20, $10, 1, 1, $236, 0, 0, 0, 1
-		spritePiece	$18, $18, 2, 4, $237, 0, 0, 0, 1
-		spritePiece	$48, 8, 2, 4, $23F, 0, 0, 0, 1
-		spritePiece	$58, $10, 1, 1, $247, 0, 0, 0, 1
-		spritePiece	$18, $38, 2, 1, $248, 0, 0, 0, 1
-		spritePiece	$28, $28, 4, 4, $24A, 0, 0, 0, 1
-		spritePiece	$48, $28, 3, 2, $25A, 0, 0, 0, 1
-		spritePiece	$48, $38, 2, 2, $260, 0, 0, 0, 1
-		spritePiece	$58, $40, 1, 2, $264, 0, 0, 0, 1
-		spritePiece	$28, $48, 2, 1, $266, 0, 0, 0, 1
-		spritePiece	$30, $50, 1, 1, $268, 0, 0, 0, 1
-		spritePiece	$38, $48, 4, 2, $269, 0, 0, 0, 1
+		piece	$28, 8, 4x4, $226, hi
+		piece	$20, $10, 1x1, $236, hi
+		piece	$18, $18, 2x4, $237, hi
+		piece	$48, 8, 2x4, $23F, hi
+		piece	$58, $10, 1x1, $247, hi
+		piece	$18, $38, 2x1, $248, hi
+		piece	$28, $28, 4x4, $24A, hi
+		piece	$48, $28, 3x2, $25A, hi
+		piece	$48, $38, 2x2, $260, hi
+		piece	$58, $40, 1x2, $264, hi
+		piece	$28, $48, 2x1, $266, hi
+		piece	$30, $50, 1x1, $268, hi
+		piece	$38, $48, 4x2, $269, hi
 		endsprite
 
 Frame_IntroSonic_Hand:	spritemap
-		spritePiece	8, 0, 4, 2, $271, 0, 0, 0, 1
-		spritePiece	8, $10, 3, 2, $279, 0, 0, 0, 1
-		spritePiece	$10, $20, 2, 2, $27F, 0, 0, 0, 1
+		piece	8, 0, 4x2, $271, hi
+		piece	8, $10, 3x2, $279, hi
+		piece	$10, $20, 2x2, $27F, hi
 		endsprite
 
 Frame_LogoTop_NoTM:	spritemap
-		spritePiece	-$50, 0, 4, 1, $283, 0, 0, 3, 1
-		spritePiece	-$30, 0, 3, 1, $287, 0, 0, 3, 1
-		spritePiece	$18, 0, 3, 1, $28A, 0, 0, 3, 1
-		spritePiece	$30, 0, 4, 1, $28D, 0, 0, 3, 1
-		spritePiece	-$18, 0, 4, 1, $10, 0, 0, 0, 0
-		spritePiece	8, 0, 2, 1, $10, 0, 0, 0, 0
+		piece	-$50, 0, 4x1, $283, pal4, hi
+		piece	-$30, 0, 3x1, $287, pal4, hi
+		piece	$18, 0, 3x1, $28A, pal4, hi
+		piece	$30, 0, 4x1, $28D, pal4, hi
+		piece	-$18, 0, 4x1, $10
+		piece	8, 0, 2x1, $10
 		endsprite
 
 Frame_LogoTop_TM:	spritemap
-		spritePiece	-$50, 0, 4, 1, $283, 0, 0, 3, 1
-		spritePiece	-$30, 0, 3, 1, $287, 0, 0, 3, 1
-		spritePiece	$18, 0, 3, 1, $28A, 0, 0, 3, 1
-		spritePiece	$30, 0, 4, 1, $28D, 0, 0, 3, 1
-		spritePiece	-$18, 0, 4, 1, $10, 0, 0, 0, 0
-		spritePiece	8, 0, 2, 1, $10, 0, 0, 0, 0
-		spritePiece	$58, 8, 2, 1, $2A0, 0, 0, 3, 1
+		piece	-$50, 0, 4x1, $283, pal4, hi
+		piece	-$30, 0, 3x1, $287, pal4, hi
+		piece	$18, 0, 3x1, $28A, pal4, hi
+		piece	$30, 0, 4x1, $28D, pal4, hi
+		piece	-$18, 0, 4x1, $10
+		piece	8, 0, 2x1, $10
+		piece	$58, 8, 2x1, $2A0, pal4, hi
 		endsprite
 
 Frame_IntroStar_0:	spritemap
-		spritePiece	-4, -4, 1, 1, $291, 0, 0, 1, 0
+		piece	-4, -4, 1x1, $291, pal2
 		endsprite
 
 Frame_IntroStar_1:	spritemap
-		spritePiece	-8, -8, 2, 2, $292, 0, 0, 1, 0
+		piece	-8, -8, 2x2, $292, pal2
 		endsprite
 
 Frame_IntroStar_2:	spritemap
-		spritePiece	-$C, -$C, 3, 3, $296, 0, 0, 1, 0
+		piece	-$C, -$C, 3x3, $296, pal2
 		endsprite
 
 Frame_IntroStar_3:	spritemap
-		spritePiece	-4, -4, 1, 1, $29F, 0, 0, 1, 0
+		piece	-4, -4, 1x1, $29F, pal2
 		endsprite
 
 Frame_IntroTM:	spritemap
-		spritePiece	-8, -4, 2, 1, $2A0, 0, 0, 0, 1
+		piece	-8, -4, 2x1, $2A0, hi
 		endsprite
 
 Frame_MaskingSprite:	spritemap
-		spritePiece	8, 0, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	0, 0, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	8, $20, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	0, $20, 1, 4, 0, 0, 0, 0, 0
+		piece	8, 0, 1x4, 0
+		piece	0, 0, 1x4, 0
+		piece	8, $20, 1x4, 0
+		piece	0, $20, 1x4, 0
 		endsprite
 
 Frame_IntroSonic_NoArm:	spritemap
-		spritePiece	$28, 8, 4, 4, $226, 0, 0, 0, 1
-		spritePiece	$20, $10, 1, 1, $236, 0, 0, 0, 1
-		spritePiece	$18, $18, 2, 4, $237, 0, 0, 0, 1
-		spritePiece	$48, 8, 2, 4, $23F, 0, 0, 0, 1
-		spritePiece	$58, $10, 1, 1, $247, 0, 0, 0, 1
-		spritePiece	$18, $38, 2, 1, $248, 0, 0, 0, 1
-		spritePiece	$28, $28, 4, 4, $24A, 0, 0, 0, 1
-		spritePiece	$48, $28, 3, 2, $25A, 0, 0, 0, 1
-		spritePiece	$48, $38, 2, 2, $260, 0, 0, 0, 1
-		spritePiece	$58, $40, 1, 2, $264, 0, 0, 0, 1
-		spritePiece	$28, $48, 2, 1, $266, 0, 0, 0, 1
-		spritePiece	$30, $50, 1, 1, $268, 0, 0, 0, 1
-		spritePiece	$38, $48, 4, 2, $269, 0, 0, 0, 1
-		spritePiece	$20, $48, 2, 1, $2A2, 0, 0, 0, 1
+		piece	$28, 8, 4x4, $226, hi
+		piece	$20, $10, 1x1, $236, hi
+		piece	$18, $18, 2x4, $237, hi
+		piece	$48, 8, 2x4, $23F, hi
+		piece	$58, $10, 1x1, $247, hi
+		piece	$18, $38, 2x1, $248, hi
+		piece	$28, $28, 4x4, $24A, hi
+		piece	$48, $28, 3x2, $25A, hi
+		piece	$48, $38, 2x2, $260, hi
+		piece	$58, $40, 1x2, $264, hi
+		piece	$28, $48, 2x1, $266, hi
+		piece	$30, $50, 1x1, $268, hi
+		piece	$38, $48, 4x2, $269, hi
+		piece	$20, $48, 2x1, $2A2, hi
 		endsprite
 
 Frame_IntroTails_Hand:	spritemap
-		spritePiece	8, 0, 2, 3, $2A4, 0, 0, 1, 1
+		piece	8, 0, 2x3, $2A4, pal2, hi
 		endsprite
 
 		even

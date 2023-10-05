@@ -6,7 +6,7 @@ Map_MCZRotRings:	index offset(*)
 		ptr	Frame_MCZRotRings
 
 Frame_MCZRotRings:	spritemap
-		spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 0
 		endsprite
 
 		even

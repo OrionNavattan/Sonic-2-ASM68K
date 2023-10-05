@@ -8,17 +8,17 @@ Map_BrckSpkChn:	index offset(*)
 		ptr	Frame_Bricks
 
 Frame_Spikeball:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $7A, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, $7A, 1, 1, 0, 0
+		piece	-$10, -$10, 4x2, $7A
+		piece	-$10, 0, 4x2, $7A, xflip, yflip
 		endsprite
 
 Frame_Link:	spritemap
-		spritePiece	-8, -8, 2, 2, $66, 0, 0, 2, 0
+		piece	-8, -8, 2x2, $66, pal3
 		endsprite
 
 Frame_Bricks:	spritemap
-		spritePiece	-$10, -$10, 2, 4, $40, 0, 0, 2, 0
-		spritePiece	0, -$10, 2, 4, $40, 1, 0, 2, 0
+		piece	-$10, -$10, 2x4, $40, pal3
+		piece	0, -$10, 2x4, $40, xflip, pal3
 		endsprite
 
 		even

@@ -10,7 +10,7 @@ Frame_SBridge_Blank:	spritemap
 		endsprite
 
 Frame_SBridge_Log:	spritemap
-		spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 0
 		endsprite
 
 		even

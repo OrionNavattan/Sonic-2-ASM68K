@@ -8,11 +8,11 @@ Map_CrawlT:	index offset(*)
 		ptr	Frame_CrawlT_Body
 
 Frame_CrawlT_Head:	spritemap
-		spritePiece	-$10, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$10, -8, 3x2, 0
 		endsprite
 
 Frame_CrawlT_Body:	spritemap
-		spritePiece	-8, -8, 2, 2, 6, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 6
 		endsprite
 
 		even

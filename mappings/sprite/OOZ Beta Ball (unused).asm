@@ -9,27 +9,27 @@ Map_OOZBetaBall:	index offset(*)
 		ptr	Map_obj46_005E
 
 Map_obj46_0008:	spritemap
-		spritePiece	-$10, -$10, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, 4, 1, 1, 0, 0
-		spritePiece	0, 0, 2, 2, 4, 0, 1, 0, 0
+		piece	-$10, -$10, 2x2, 0
+		piece	0, -$10, 2x2, 4
+		piece	-$10, 0, 2x2, 4, xflip, yflip
+		piece	0, 0, 2x2, 4, yflip
 		endsprite
 
 Map_obj46_002A:	spritemap
-		spritePiece	-$10, -$10, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 2, 8, 1, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, 8, 0, 1, 0, 0
-		spritePiece	0, 0, 2, 2, 8, 1, 1, 0, 0
+		piece	-$10, -$10, 2x2, 8
+		piece	0, -$10, 2x2, 8, xflip
+		piece	-$10, 0, 2x2, 8, yflip
+		piece	0, 0, 2x2, 8, xflip, yflip
 		endsprite
 
 Map_obj46_004C:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $C, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, $C, 1, 1, 0, 0
+		piece	-$10, -$10, 4x2, $C
+		piece	-$10, 0, 4x2, $C, xflip, yflip
 		endsprite
 
 Map_obj46_005E:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $C, 1, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, $C, 0, 1, 0, 0
+		piece	-$10, -$10, 4x2, $C, xflip
+		piece	-$10, 0, 4x2, $C, yflip
 		endsprite
 
 		even

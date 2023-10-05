@@ -7,11 +7,11 @@ Map_Chop:	index offset(*)
 		ptr	Frame_Chop_Open
 
 Frame_Chop_Closed:	spritemap
-		spritePiece	-$10, -$C, 4, 3, 0, 0, 0, 0, 0
+		piece	-$10, -$C, 4x3, 0
 		endsprite
 
 Frame_Chop_Open:	spritemap
-		spritePiece	-$10, -$C, 4, 3, $C, 0, 0, 0, 0
+		piece	-$10, -$C, 4x3, $C
 		endsprite
 
 		even

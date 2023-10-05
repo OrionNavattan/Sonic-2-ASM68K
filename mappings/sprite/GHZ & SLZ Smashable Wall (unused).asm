@@ -8,36 +8,36 @@ Map_Smash:	index offset(*)
 		ptr	Map_obj3C_008A
 
 Map_obj3C_0006:	spritemap
-		spritePiece	-$10, -$20, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, $10, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	0, -$20, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	0, 0, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	0, $10, 2, 2, 4, 0, 0, 0, 0
+		piece	-$10, -$20, 2x2, 0
+		piece	-$10, -$10, 2x2, 0
+		piece	-$10, 0, 2x2, 0
+		piece	-$10, $10, 2x2, 0
+		piece	0, -$20, 2x2, 4
+		piece	0, -$10, 2x2, 4
+		piece	0, 0, 2x2, 4
+		piece	0, $10, 2x2, 4
 		endsprite
 
 Map_obj3C_0048:	spritemap
-		spritePiece	-$10, -$20, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-$10, $10, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	0, -$20, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	0, 0, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	0, $10, 2, 2, 4, 0, 0, 0, 0
+		piece	-$10, -$20, 2x2, 4
+		piece	-$10, -$10, 2x2, 4
+		piece	-$10, 0, 2x2, 4
+		piece	-$10, $10, 2x2, 4
+		piece	0, -$20, 2x2, 4
+		piece	0, -$10, 2x2, 4
+		piece	0, 0, 2x2, 4
+		piece	0, $10, 2x2, 4
 		endsprite
 
 Map_obj3C_008A:	spritemap
-		spritePiece	-$10, -$20, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-$10, $10, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	0, -$20, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	0, 0, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	0, $10, 2, 2, 8, 0, 0, 0, 0
+		piece	-$10, -$20, 2x2, 4
+		piece	-$10, -$10, 2x2, 4
+		piece	-$10, 0, 2x2, 4
+		piece	-$10, $10, 2x2, 4
+		piece	0, -$20, 2x2, 8
+		piece	0, -$10, 2x2, 8
+		piece	0, 0, 2x2, 8
+		piece	0, $10, 2x2, 8
 		endsprite
 
 		even

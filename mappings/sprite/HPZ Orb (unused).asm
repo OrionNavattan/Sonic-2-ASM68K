@@ -9,21 +9,21 @@ Map_HiddenPalaceOrb:	index offset(*)
 		ptr	Map_obj71_a_002E
 
 Map_obj71_a_0008:	spritemap
-		spritePiece	-$C, -$C, 3, 3, 0, 0, 0, 0, 0
+		piece	-$C, -$C, 3x3, 0
 		endsprite
 
 Map_obj71_a_0012:	spritemap
-		spritePiece	-$C, -$C, 3, 3, 9, 0, 0, 0, 0
+		piece	-$C, -$C, 3x3, 9
 		endsprite
 
 Map_obj71_a_001C:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $12, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, $12, 1, 1, 0, 0
+		piece	-$10, -$10, 4x2, $12
+		piece	-$10, 0, 4x2, $12, xflip, yflip
 		endsprite
 
 Map_obj71_a_002E:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $1A, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, $1A, 1, 1, 0, 0
+		piece	-$10, -$10, 4x2, $1A
+		piece	-$10, 0, 4x2, $1A, xflip, yflip
 		endsprite
 
 		even

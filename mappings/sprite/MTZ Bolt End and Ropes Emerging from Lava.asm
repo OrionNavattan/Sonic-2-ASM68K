@@ -8,15 +8,15 @@ Map_BoltEnd_Rope:	index offset(*)
 		ptr	Frame_BoltEnd
 
 Frame_Rope1:	spritemap
-		spritePiece	-4, -8, 1, 2, 4, 0, 0, 0, 0
+		piece	-4, -8, 1x2, 4
 		endsprite
 
 Frame_Rope2:	spritemap
-		spritePiece	-4, -8, 1, 2, 6, 0, 0, 0, 0
+		piece	-4, -8, 1x2, 6
 		endsprite
 
 Frame_BoltEnd:	spritemap
-		spritePiece	-$10, -4, 4, 1, 0, 0, 0, 0, 0
+		piece	-$10, -4, 4x1, 0
 		endsprite
 
 		even

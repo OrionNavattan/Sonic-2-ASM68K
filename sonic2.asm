@@ -73,7 +73,6 @@ RelativeLea: equ 0|(Revision<>2|AllOptimizations)
 		include "Mega Drive.asm"
 		include "Macros.asm"
 		include "File List.asm"
-		include "SpritePiece.asm"
 		include "Constants.asm"
 		include "RAM Addresses.asm"
 		
@@ -39073,10 +39072,10 @@ ost_drown_parent_lo:	equ __rs-1				; $3F ; tst.b'd to check if manager object is
 
 Drown_Main:				
 		addq.b	#2,ost_primary_routine(a0)		; go to Drown_Animate next
-		move.l	#Map_Bub_Main,ost_mappings(a0)
+		move.l	#Map_Bub_Player1,ost_mappings(a0)
 		tst.b	ost_drown_parent_lo(a0)			; did the main character spawn this object?
 		beq.s	.notsidekick				; if so, branch
-		move.l	#Map_Bub_Sidekick,ost_mappings(a0)	; use different mappings for Tails
+		move.l	#Map_Bub_Player2,ost_mappings(a0)	; use different mappings for Tails
 
 	.notsidekick:				
 		move.w	#tile_Nem_BubbleGenerator+tile_hi,ost_tile(a0)
@@ -42299,7 +42298,7 @@ Bub_Index:	index offset(*),,2
 
 loc_1F8C2:				
 		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_Bub_Main,ost_mappings(a0)
+		move.l	#Map_Bub_Player1,ost_mappings(a0)
 		move.w	#tile_Nem_BubbleGenerator+tile_hi,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo6_Adjust2PArtPointer
 		move.b	#render_rel|render_onscreen,ost_render(a0)
@@ -86913,7 +86912,7 @@ DbgARZ_42438:	dc.w $1D
 		dc.l $83000000+Map_ARZPlats
 		dc.w $1001
 		dc.w 0
-		dc.l $24000000+Map_Bub_Main
+		dc.l $24000000+Map_Bub_Player1
 		dc.w $810E
 		dc.w $855B
 		dc.l $91000000+Map_Chop

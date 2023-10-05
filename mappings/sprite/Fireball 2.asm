@@ -11,23 +11,23 @@ Map_FireBall2:	index offset(*)
 		ptr	Map_obj20_a_003E
 
 Map_obj20_a_000C:	spritemap
-		spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 0
 		endsprite
 
 Map_obj20_a_0016:	spritemap
-		spritePiece	-8, -8, 2, 2, 4, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 4
 		endsprite
 
 Map_obj20_a_0020:	spritemap
-		spritePiece	-8, -7, 2, 2, 8, 0, 0, 0, 0
+		piece	-8, -7, 2x2, 8
 		endsprite
 
 Map_obj20_a_002A:	spritemap
-		spritePiece	-8, -$A, 2, 2, 8, 0, 0, 0, 0
+		piece	-8, -$A, 2x2, 8
 		endsprite
 
 Map_obj20_a_0034:	spritemap
-		spritePiece	-8, -$A, 2, 2, $C, 0, 0, 0, 0
+		piece	-8, -$A, 2x2, $C
 		endsprite
 
 Map_obj20_a_003E:	spritemap

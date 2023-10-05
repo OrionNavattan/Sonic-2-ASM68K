@@ -8,24 +8,24 @@ Map_Invis:	index offset(*)
 		ptr	Map_obj74_004A
 
 Map_obj74_0006:	spritemap
-		spritePiece	-$10, -$10, 2, 2, $1C, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 2, $1C, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 0, 0
-		spritePiece	0, 0, 2, 2, $1C, 0, 0, 0, 0
+		piece	-$10, -$10, 2x2, $1C
+		piece	0, -$10, 2x2, $1C
+		piece	-$10, 0, 2x2, $1C
+		piece	0, 0, 2x2, $1C
 		endsprite
 
 Map_obj74_0028:	spritemap
-		spritePiece	-$40, -$20, 2, 2, $1C, 0, 0, 0, 0
-		spritePiece	$30, -$20, 2, 2, $1C, 0, 0, 0, 0
-		spritePiece	-$40, $10, 2, 2, $1C, 0, 0, 0, 0
-		spritePiece	$30, $10, 2, 2, $1C, 0, 0, 0, 0
+		piece	-$40, -$20, 2x2, $1C
+		piece	$30, -$20, 2x2, $1C
+		piece	-$40, $10, 2x2, $1C
+		piece	$30, $10, 2x2, $1C
 		endsprite
 
 Map_obj74_004A:	spritemap
-		spritePiece	-$80, -$20, 2, 2, $1C, 0, 0, 0, 0
-		spritePiece	$70, -$20, 2, 2, $1C, 0, 0, 0, 0
-		spritePiece	-$80, $10, 2, 2, $1C, 0, 0, 0, 0
-		spritePiece	$70, $10, 2, 2, $1C, 0, 0, 0, 0
+		piece	-$80, -$20, 2x2, $1C
+		piece	$70, -$20, 2x2, $1C
+		piece	-$80, $10, 2x2, $1C
+		piece	$70, $10, 2x2, $1C
 		endsprite
 
 		even

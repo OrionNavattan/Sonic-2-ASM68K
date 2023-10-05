@@ -8,13 +8,13 @@ Map_CFlo_OOZ:	index offset(*)
 		ptr	Map_obj1F_b_0006
 
 Map_obj1F_b_0006:	spritemap
-		spritePiece	-$40, -$10, 4, 4, $10, 1, 0, 0, 0
-		spritePiece	-$20, -$10, 4, 4, $10, 1, 0, 0, 0
-		spritePiece	0, -$10, 4, 4, $10, 1, 0, 0, 0
-		spritePiece	$20, -$10, 4, 4, 0, 1, 0, 0, 0
-		spritePiece	-$40, $10, 4, 2, $20, 1, 0, 0, 0
-		spritePiece	-$20, $10, 4, 2, $20, 1, 0, 0, 0
-		spritePiece	0, $10, 4, 2, $20, 1, 0, 0, 0
+		piece	-$40, -$10, 4x4, $10, xflip
+		piece	-$20, -$10, 4x4, $10, xflip
+		piece	0, -$10, 4x4, $10, xflip
+		piece	$20, -$10, 4x4, 0, xflip
+		piece	-$40, $10, 4x2, $20, xflip
+		piece	-$20, $10, 4x2, $20, xflip
+		piece	0, $10, 4x2, $20, xflip
 		endsprite
 
 		even

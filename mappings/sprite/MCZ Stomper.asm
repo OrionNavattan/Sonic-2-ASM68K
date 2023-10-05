@@ -6,12 +6,12 @@ Map_Stomper:	index offset(*)
 		ptr	Frame_Stomper
 
 Frame_Stomper:	spritemap
-		spritePiece	-$10, -$50, 3, 2, $1A, 0, 0, 0, 0
-		spritePiece	-$10, -$40, 4, 4, $20, 0, 0, 0, 0
-		spritePiece	-$10, -$20, 4, 4, $30, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 4, $30, 0, 1, 0, 0
-		spritePiece	-$10, $20, 4, 4, $20, 0, 1, 0, 0
-		spritePiece	-$10, $40, 3, 2, $1A, 0, 1, 0, 0
+		piece	-$10, -$50, 3x2, $1A
+		piece	-$10, -$40, 4x4, $20
+		piece	-$10, -$20, 4x4, $30
+		piece	-$10, 0, 4x4, $30, yflip
+		piece	-$10, $20, 4x4, $20, yflip
+		piece	-$10, $40, 3x2, $1A, yflip
 		endsprite
 
 		even

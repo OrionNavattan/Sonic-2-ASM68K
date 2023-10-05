@@ -9,23 +9,23 @@ Map_Over:	index offset(*)
 		ptr	Frame_GameOver_Over2
 
 Frame_GameOver_Game:	spritemap
-		spritePiece	-$48, -8, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$28, -8, 4, 2, 8, 0, 0, 0, 0
+		piece	-$48, -8, 4x2, 0
+		piece	-$28, -8, 4x2, 8
 		endsprite
 
 Frame_GameOver_Over:	spritemap
-		spritePiece	8, -8, 4, 2, $14, 0, 0, 0, 0
-		spritePiece	$28, -8, 4, 2, $C, 0, 0, 0, 0
+		piece	8, -8, 4x2, $14
+		piece	$28, -8, 4x2, $C
 		endsprite
 
 Frame_GameOver_Time:	spritemap
-		spritePiece	-$3C, -8, 3, 2, $1C, 0, 0, 0, 0
-		spritePiece	-$24, -8, 4, 2, 8, 0, 0, 0, 0
+		piece	-$3C, -8, 3x2, $1C
+		piece	-$24, -8, 4x2, 8
 		endsprite
 
 Frame_GameOver_Over2:	spritemap
-		spritePiece	$C, -8, 4, 2, $14, 0, 0, 0, 0
-		spritePiece	$2C, -8, 4, 2, $C, 0, 0, 0, 0
+		piece	$C, -8, 4x2, $14
+		piece	$2C, -8, 4x2, $C
 		endsprite
 
 		even

@@ -12,66 +12,66 @@ Map_VinePulley:	index offset(*)
 		ptr	Map_obj80_a_0122
 
 Map_obj80_a_000E:	spritemap
-		spritePiece	-4, $30, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $50, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
+		piece	-4, $30, 1x4, 0
+		piece	-4, $50, 1x4, 0
+		piece	-$C, $70, 3x2, 4
 		endsprite
 
 Map_obj80_a_0028:	spritemap
-		spritePiece	-4, $10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $30, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $50, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
+		piece	-4, $10, 1x4, 0
+		piece	-4, $30, 1x4, 0
+		piece	-4, $50, 1x4, 0
+		piece	-$C, $70, 3x2, 4
 		endsprite
 
 Map_obj80_a_004A:	spritemap
-		spritePiece	-4, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $30, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $50, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
+		piece	-4, -$10, 1x4, 0
+		piece	-4, $10, 1x4, 0
+		piece	-4, $30, 1x4, 0
+		piece	-4, $50, 1x4, 0
+		piece	-$C, $70, 3x2, 4
 		endsprite
 
 Map_obj80_a_0074:	spritemap
-		spritePiece	-4, -$30, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $30, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $50, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
+		piece	-4, -$30, 1x4, 0
+		piece	-4, -$10, 1x4, 0
+		piece	-4, $10, 1x4, 0
+		piece	-4, $30, 1x4, 0
+		piece	-4, $50, 1x4, 0
+		piece	-$C, $70, 3x2, 4
 		endsprite
 
 Map_obj80_a_00A6:	spritemap
-		spritePiece	-4, -$50, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$30, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $30, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $50, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
+		piece	-4, -$50, 1x4, 0
+		piece	-4, -$30, 1x4, 0
+		piece	-4, -$10, 1x4, 0
+		piece	-4, $10, 1x4, 0
+		piece	-4, $30, 1x4, 0
+		piece	-4, $50, 1x4, 0
+		piece	-$C, $70, 3x2, 4
 		endsprite
 
 Map_obj80_a_00E0:	spritemap
-		spritePiece	-4, -$70, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$50, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$30, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $30, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $50, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
+		piece	-4, -$70, 1x4, 0
+		piece	-4, -$50, 1x4, 0
+		piece	-4, -$30, 1x4, 0
+		piece	-4, -$10, 1x4, 0
+		piece	-4, $10, 1x4, 0
+		piece	-4, $30, 1x4, 0
+		piece	-4, $50, 1x4, 0
+		piece	-$C, $70, 3x2, 4
 		endsprite
 
 Map_obj80_a_0122:	spritemap
-		spritePiece	-4, -$80, 1, 2, 2, 0, 0, 0, 0
-		spritePiece	-4, -$70, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$50, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$30, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $30, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $50, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
+		piece	-4, -$80, 1x2, 2
+		piece	-4, -$70, 1x4, 0
+		piece	-4, -$50, 1x4, 0
+		piece	-4, -$30, 1x4, 0
+		piece	-4, -$10, 1x4, 0
+		piece	-4, $10, 1x4, 0
+		piece	-4, $30, 1x4, 0
+		piece	-4, $50, 1x4, 0
+		piece	-$C, $70, 3x2, 4
 		endsprite
 
 		even

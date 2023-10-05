@@ -10,23 +10,23 @@ Map_ExplodeItem:	index offset(*)
 		ptr	Map_obj27_0032
 
 Map_obj27_000A:	spritemap
-		spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 0
 		endsprite
 
 Map_obj27_0014:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 4, 0, 0, 1, 0
+		piece	-$10, -$10, 4x4, 4, pal2
 		endsprite
 
 Map_obj27_001E:	spritemap
-		spritePiece	-$10, -$10, 4, 4, $14, 0, 0, 1, 0
+		piece	-$10, -$10, 4x4, $14, pal2
 		endsprite
 
 Map_obj27_0028:	spritemap
-		spritePiece	-$10, -$10, 4, 4, $24, 0, 0, 1, 0
+		piece	-$10, -$10, 4x4, $24, pal2
 		endsprite
 
 Map_obj27_0032:	spritemap
-		spritePiece	-$10, -$10, 4, 4, $34, 0, 0, 1, 0
+		piece	-$10, -$10, 4x4, $34, pal2
 		endsprite
 
 		even

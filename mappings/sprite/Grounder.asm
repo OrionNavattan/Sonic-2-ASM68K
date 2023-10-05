@@ -18,49 +18,49 @@ Map_GWall:	index offset(*)
 		ptr	Frame_GWall
 
 Frame_Ground_Emerge1:	spritemap
-		spritePiece	-8, -$C, 1, 1, 0, 0, 0, 0, 0
-		spritePiece	-$10, -4, 2, 3, 1, 0, 0, 0, 0
-		spritePiece	0, -$C, 1, 1, 0, 1, 0, 0, 0
-		spritePiece	0, -4, 2, 3, 1, 1, 0, 0, 0
+		piece	-8, -$C, 1x1, 0
+		piece	-$10, -4, 2x3, 1
+		piece	0, -$C, 1x1, 0, xflip
+		piece	0, -4, 2x3, 1, xflip
 		endsprite
 
 Frame_Ground_Emerge2:	spritemap
-		spritePiece	-8, -$14, 1, 1, 7, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	0, -$14, 1, 1, 7, 1, 0, 0, 0
-		spritePiece	0, -$C, 2, 4, 8, 1, 0, 0, 0
+		piece	-8, -$14, 1x1, 7
+		piece	-$10, -$C, 2x4, 8
+		piece	0, -$14, 1x1, 7, xflip
+		piece	0, -$C, 2x4, 8, xflip
 		endsprite
 
 Frame_Ground_Roam1:	spritemap
-		spritePiece	-$10, -$14, 4, 4, $10, 0, 0, 0, 0
-		spritePiece	-$10, $C, 4, 1, $20, 0, 0, 0, 0
+		piece	-$10, -$14, 4x4, $10
+		piece	-$10, $C, 4x1, $20
 		endsprite
 
 Frame_Ground_Roam2:	spritemap
-		spritePiece	-$10, -$14, 4, 4, $10, 0, 0, 0, 0
-		spritePiece	-$10, $C, 4, 1, $24, 0, 0, 0, 0
+		piece	-$10, -$14, 4x4, $10
+		piece	-$10, $C, 4x1, $24
 		endsprite
 
 Frame_Ground_Roam3:	spritemap
-		spritePiece	-$10, -$14, 4, 4, $10, 0, 0, 0, 0
-		spritePiece	-$10, $C, 4, 1, $28, 0, 0, 0, 0
+		piece	-$10, -$14, 4x4, $10
+		piece	-$10, $C, 4x1, $28
 		endsprite
 
 Frame_GRock_Large:	spritemap
-		spritePiece	-8, -8, 2, 2, $2C, 0, 0, 0, 0
+		piece	-8, -8, 2x2, $2C
 		endsprite
 
 Frame_GRock_Medium:	spritemap
-		spritePiece	-4, -4, 1, 1, $30, 0, 0, 0, 0
+		piece	-4, -4, 1x1, $30
 		endsprite
 
 Frame_GRock_Small:	spritemap
-		spritePiece	-4, -4, 1, 1, $31, 0, 0, 0, 0
+		piece	-4, -4, 1x1, $31
 		endsprite
 
 Frame_GWall:	spritemap
-		spritePiece	-$10, -8, 2, 2, $93, 0, 0, 2, 0
-		spritePiece	0, -8, 2, 2, $97, 0, 0, 2, 0
+		piece	-$10, -8, 2x2, $93, pal3
+		piece	0, -8, 2x2, $97, pal3
 		endsprite
 
 		even

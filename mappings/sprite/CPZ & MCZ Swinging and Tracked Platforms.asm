@@ -9,30 +9,30 @@ Map_Swing_Track_CPZ_MCZ:	index offset(*)
 		ptr	Map_obj7A_a_0036
 
 Map_obj7A_a_0008:	spritemap
-		spritePiece	-$18, -8, 3, 2, $60, 0, 0, 3, 0
-		spritePiece	0, -8, 3, 2, $60, 1, 0, 3, 0
+		piece	-$18, -8, 3x2, $60, pal4
+		piece	0, -8, 3x2, $60, xflip, pal4
 		endsprite
 
 Map_obj7A_a_001A:	spritemap
-		spritePiece	-8, -8, 2, 2, $66, 0, 0, 3, 0
+		piece	-8, -8, 2x2, $66, pal4
 		endsprite
 
 Map_obj7A_a_0024:	spritemap
-		spritePiece	-$C, -$18, 2, 2, $6A, 0, 0, 2, 0
-		spritePiece	-$C, -8, 3, 4, $6E, 0, 0, 2, 0
+		piece	-$C, -$18, 2x2, $6A, pal3
+		piece	-$C, -8, 3x4, $6E, pal3
 		endsprite
 
 Map_obj7A_a_0036:	spritemap
-		spritePiece	-$C, -$58, 2, 2, $6A, 0, 0, 2, 0
-		spritePiece	-$C, -$48, 3, 4, $6E, 0, 0, 2, 0
-		spritePiece	-8, -$38, 2, 2, $66, 0, 0, 3, 0
-		spritePiece	-8, -$28, 2, 2, $66, 0, 0, 3, 0
-		spritePiece	-8, -$18, 2, 2, $66, 0, 0, 3, 0
-		spritePiece	-8, -8, 2, 2, $66, 0, 0, 3, 0
-		spritePiece	-8, 8, 2, 2, $66, 0, 0, 3, 0
-		spritePiece	-8, $18, 2, 2, $66, 0, 0, 3, 0
-		spritePiece	-8, $28, 2, 2, $66, 0, 0, 3, 0
-		spritePiece	-8, $38, 2, 2, $66, 0, 0, 3, 0
+		piece	-$C, -$58, 2x2, $6A, pal3
+		piece	-$C, -$48, 3x4, $6E, pal3
+		piece	-8, -$38, 2x2, $66, pal4
+		piece	-8, -$28, 2x2, $66, pal4
+		piece	-8, -$18, 2x2, $66, pal4
+		piece	-8, -8, 2x2, $66, pal4
+		piece	-8, 8, 2x2, $66, pal4
+		piece	-8, $18, 2x2, $66, pal4
+		piece	-8, $28, 2x2, $66, pal4
+		piece	-8, $38, 2x2, $66, pal4
 		endsprite
 
 		even

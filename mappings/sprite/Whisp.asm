@@ -7,13 +7,13 @@ Map_Whisp:	index offset(*)
 		ptr	Frame_Whisp_WingDown
 
 Frame_Whisp_WingUp:	spritemap
-		spritePiece	-$C, -8, 3, 1, 0, 0, 0, 0, 0
-		spritePiece	-$C, 0, 3, 1, 3, 0, 0, 0, 0
+		piece	-$C, -8, 3x1, 0
+		piece	-$C, 0, 3x1, 3
 		endsprite
 
 Frame_Whisp_WingDown:	spritemap
-		spritePiece	-$C, -8, 3, 1, 6, 0, 0, 0, 0
-		spritePiece	-$C, 0, 3, 1, 3, 0, 0, 0, 0
+		piece	-$C, -8, 3x1, 6
+		piece	-$C, 0, 3x1, 3
 		endsprite
 
 		even

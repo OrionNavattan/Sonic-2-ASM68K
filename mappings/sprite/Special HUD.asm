@@ -9,29 +9,29 @@ Map_SpecialHUD:	index offset(*)
 		ptr	Map_obj5E_006E
 
 Map_obj5E_0008:	spritemap
-		spritePiece	-$60, $10, 4, 1, 0, 0, 0, 1, 1
-		spritePiece	-$40, $10, 1, 1, 4, 0, 0, 1, 1
-		spritePiece	-$68, $18, 4, 2, $A, 0, 0, 2, 1
-		spritePiece	-$48, $18, 1, 2, $3C, 0, 0, 2, 1
+		piece	-$60, $10, 4x1, 0, pal2, hi
+		piece	-$40, $10, 1x1, 4, pal2, hi
+		piece	-$68, $18, 4x2, $A, pal3, hi
+		piece	-$48, $18, 1x2, $3C, pal3, hi
 		endsprite
 
 Map_obj5E_002A:	spritemap
-		spritePiece	$38, $10, 4, 1, 5, 0, 0, 2, 1
-		spritePiece	$58, $10, 1, 1, 9, 0, 0, 2, 1
-		spritePiece	$30, $18, 4, 2, $A, 0, 0, 2, 1
-		spritePiece	$50, $18, 1, 2, $3C, 0, 0, 2, 1
+		piece	$38, $10, 4x1, 5, pal3, hi
+		piece	$58, $10, 1x1, 9, pal3, hi
+		piece	$30, $18, 4x2, $A, pal3, hi
+		piece	$50, $18, 1x2, $3C, pal3, hi
 		endsprite
 
 Map_obj5E_004C:	spritemap
-		spritePiece	$38, $10, 4, 1, $5AA, 0, 0, 2, 1
-		spritePiece	$58, $10, 1, 1, $5AE, 0, 0, 2, 1
-		spritePiece	$30, $18, 4, 2, $A, 0, 0, 2, 1
-		spritePiece	$50, $18, 1, 2, $3C, 0, 0, 2, 1
+		piece	$38, $10, 4x1, $5AA, pal3, hi
+		piece	$58, $10, 1x1, $5AE, pal3, hi
+		piece	$30, $18, 4x2, $A, pal3, hi
+		piece	$50, $18, 1x2, $3C, pal3, hi
 		endsprite
 
 Map_obj5E_006E:	spritemap
-		spritePiece	-$14, $10, 4, 4, $26, 0, 0, 2, 1
-		spritePiece	$C, $10, 1, 4, $36, 0, 0, 2, 1
+		piece	-$14, $10, 4x4, $26, pal3, hi
+		piece	$C, $10, 1x4, $36, pal3, hi
 		endsprite
 
 		even

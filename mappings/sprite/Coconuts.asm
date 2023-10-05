@@ -9,29 +9,29 @@ Map_Coco:	index offset(*)
 		ptr	Frame_Coco_Coconut
 
 Frame_Coco_Climb1:	spritemap
-		spritePiece	-2, 0, 2, 2, $1A, 0, 0, 0, 0
-		spritePiece	-4, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, 0, 4, 2, 6, 0, 0, 0, 0
-		spritePiece	$C, $10, 1, 2, $E, 0, 0, 0, 0
+		piece	-2, 0, 2x2, $1A
+		piece	-4, -$10, 3x2, 0
+		piece	-$C, 0, 4x2, 6
+		piece	$C, $10, 1x2, $E
 		endsprite
 
 Frame_Coco_Climb2:	spritemap
-		spritePiece	-2, 0, 2, 2, $1E, 0, 0, 0, 0
-		spritePiece	-4, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, 0, 4, 2, $10, 0, 0, 0, 0
-		spritePiece	$C, $10, 1, 2, $18, 0, 0, 0, 0
+		piece	-2, 0, 2x2, $1E
+		piece	-4, -$10, 3x2, 0
+		piece	-$C, 0, 4x2, $10
+		piece	$C, $10, 1x2, $18
 		endsprite
 
 Frame_Coco_Throw:	spritemap
-		spritePiece	7, -8, 1, 2, $22, 0, 0, 0, 0
-		spritePiece	-4, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, 0, 4, 2, $10, 0, 0, 0, 0
-		spritePiece	$C, $10, 1, 2, $18, 0, 0, 0, 0
+		piece	7, -8, 1x2, $22
+		piece	-4, -$10, 3x2, 0
+		piece	-$C, 0, 4x2, $10
+		piece	$C, $10, 1x2, $18
 		endsprite
 
 Frame_Coco_Coconut:	spritemap
-		spritePiece	-8, -8, 1, 2, $24, 0, 0, 2, 0
-		spritePiece	0, -8, 1, 2, $24, 1, 0, 2, 0
+		piece	-8, -8, 1x2, $24, pal3
+		piece	0, -8, 1x2, $24, xflip, pal3
 		endsprite
 
 		even

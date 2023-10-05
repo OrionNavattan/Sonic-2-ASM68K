@@ -11,48 +11,48 @@ Map_Surf1:	index offset(*)
 		ptr	Map_obj04_a_00BE
 
 Map_obj04_a_000C:	spritemap
-		spritePiece	-$60, -8, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$20, -8, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	$20, -8, 4, 2, 0, 0, 0, 0, 0
+		piece	-$60, -8, 4x2, 0
+		piece	-$20, -8, 4x2, 0
+		piece	$20, -8, 4x2, 0
 		endsprite
 
 Map_obj04_a_0026:	spritemap
-		spritePiece	-$60, -8, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	-$20, -8, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	$20, -8, 4, 2, 8, 0, 0, 0, 0
+		piece	-$60, -8, 4x2, 8
+		piece	-$20, -8, 4x2, 8
+		piece	$20, -8, 4x2, 8
 		endsprite
 
 Map_obj04_a_0040:	spritemap
-		spritePiece	-$60, -8, 4, 2, $10, 0, 0, 0, 0
-		spritePiece	-$20, -8, 4, 2, $10, 0, 0, 0, 0
-		spritePiece	$20, -8, 4, 2, $10, 0, 0, 0, 0
+		piece	-$60, -8, 4x2, $10
+		piece	-$20, -8, 4x2, $10
+		piece	$20, -8, 4x2, $10
 		endsprite
 
 Map_obj04_a_005A:	spritemap
-		spritePiece	-$60, -8, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$40, -8, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	-$20, -8, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	0, -8, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	$20, -8, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	$40, -8, 4, 2, 8, 0, 0, 0, 0
+		piece	-$60, -8, 4x2, 0
+		piece	-$40, -8, 4x2, 8
+		piece	-$20, -8, 4x2, 0
+		piece	0, -8, 4x2, 8
+		piece	$20, -8, 4x2, 0
+		piece	$40, -8, 4x2, 8
 		endsprite
 
 Map_obj04_a_008C:	spritemap
-		spritePiece	-$60, -8, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	-$40, -8, 4, 2, $10, 0, 0, 0, 0
-		spritePiece	-$20, -8, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	0, -8, 4, 2, $10, 0, 0, 0, 0
-		spritePiece	$20, -8, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	$40, -8, 4, 2, $10, 0, 0, 0, 0
+		piece	-$60, -8, 4x2, 8
+		piece	-$40, -8, 4x2, $10
+		piece	-$20, -8, 4x2, 8
+		piece	0, -8, 4x2, $10
+		piece	$20, -8, 4x2, 8
+		piece	$40, -8, 4x2, $10
 		endsprite
 
 Map_obj04_a_00BE:	spritemap
-		spritePiece	-$60, -8, 4, 2, $10, 0, 0, 0, 0
-		spritePiece	-$40, -8, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	-$20, -8, 4, 2, $10, 0, 0, 0, 0
-		spritePiece	0, -8, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	$20, -8, 4, 2, $10, 0, 0, 0, 0
-		spritePiece	$40, -8, 4, 2, 8, 0, 0, 0, 0
+		piece	-$60, -8, 4x2, $10
+		piece	-$40, -8, 4x2, 8
+		piece	-$20, -8, 4x2, $10
+		piece	0, -8, 4x2, 8
+		piece	$20, -8, 4x2, $10
+		piece	$40, -8, 4x2, 8
 		endsprite
 
 		even

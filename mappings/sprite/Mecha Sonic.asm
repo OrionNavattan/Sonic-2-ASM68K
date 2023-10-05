@@ -28,129 +28,129 @@ Map_MechSon:	index offset(*)
 		ptr	Map_objAF_a_021A
 
 Map_objAF_a_002E:	spritemap
-		spritePiece	-$D, -$1C, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$11, -$C, 4, 4, 6, 0, 0, 0, 0
-		spritePiece	-$14, $14, 4, 1, $16, 0, 0, 0, 0
-		spritePiece	-$C, -$1C, 2, 1, $6F, 0, 0, 0, 0
-		spritePiece	4, -$1C, 2, 4, $71, 0, 0, 0, 0
+		piece	-$D, -$1C, 3x2, 0
+		piece	-$11, -$C, 4x4, 6
+		piece	-$14, $14, 4x1, $16
+		piece	-$C, -$1C, 2x1, $6F
+		piece	4, -$1C, 2x4, $71
 		endsprite
 
 Map_objAF_a_0058:	spritemap
-		spritePiece	-$D, -$1C, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$11, -$C, 4, 4, 6, 0, 0, 0, 0
-		spritePiece	-$14, $14, 4, 1, $16, 0, 0, 0, 0
-		spritePiece	-$C, -$1C, 2, 1, $79, 0, 0, 0, 0
-		spritePiece	4, -$1C, 2, 4, $7B, 0, 0, 0, 0
+		piece	-$D, -$1C, 3x2, 0
+		piece	-$11, -$C, 4x4, 6
+		piece	-$14, $14, 4x1, $16
+		piece	-$C, -$1C, 2x1, $79
+		piece	4, -$1C, 2x4, $7B
 		endsprite
 
 Map_objAF_a_0082:	spritemap
-		spritePiece	-$D, -$1C, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$11, -$C, 4, 4, 6, 0, 0, 0, 0
-		spritePiece	-$14, $14, 4, 1, $16, 0, 0, 0, 0
-		spritePiece	-$C, -$1C, 2, 1, $83, 0, 0, 0, 0
-		spritePiece	4, -$1C, 2, 4, $85, 0, 0, 0, 0
+		piece	-$D, -$1C, 3x2, 0
+		piece	-$11, -$C, 4x4, 6
+		piece	-$14, $14, 4x1, $16
+		piece	-$C, -$1C, 2x1, $83
+		piece	4, -$1C, 2x4, $85
 		endsprite
 
 Map_objAF_a_00AC:	spritemap
-		spritePiece	-$14, -$1C, 4, 4, $1A, 0, 0, 0, 0
-		spritePiece	$C, -$1C, 1, 4, $2A, 0, 0, 0, 0
-		spritePiece	-$C, 4, 4, 3, $2E, 0, 0, 0, 0
-		spritePiece	-$14, $14, 1, 1, $3A, 0, 0, 0, 0
+		piece	-$14, -$1C, 4x4, $1A
+		piece	$C, -$1C, 1x4, $2A
+		piece	-$C, 4, 4x3, $2E
+		piece	-$14, $14, 1x1, $3A
 		endsprite
 
 Map_objAF_a_00CE:	spritemap
-		spritePiece	-$10, -$1C, 4, 3, $3B, 0, 0, 0, 0
-		spritePiece	-$18, 4, 1, 2, $47, 0, 0, 0, 0
-		spritePiece	-$10, -4, 4, 4, $49, 0, 0, 0, 0
-		spritePiece	$10, -4, 1, 4, $59, 0, 0, 0, 0
+		piece	-$10, -$1C, 4x3, $3B
+		piece	-$18, 4, 1x2, $47
+		piece	-$10, -4, 4x4, $49
+		piece	$10, -4, 1x4, $59
 		endsprite
 
 Map_objAF_a_00F0:	spritemap
-		spritePiece	-$10, -$1C, 2, 3, $5D, 0, 0, 0, 0
-		spritePiece	0, -$1C, 2, 3, $5D, 1, 0, 0, 0
-		spritePiece	-$18, -4, 3, 4, $63, 0, 0, 0, 0
-		spritePiece	0, -4, 3, 4, $63, 1, 0, 0, 0
+		piece	-$10, -$1C, 2x3, $5D
+		piece	0, -$1C, 2x3, $5D, xflip
+		piece	-$18, -4, 3x4, $63
+		piece	0, -4, 3x4, $63, xflip
 		endsprite
 
 Map_objAF_a_0112:	spritemap
-		spritePiece	-$18, -$12, 3, 3, $8D, 0, 0, 0, 0
-		spritePiece	0, -$12, 3, 3, $96, 0, 0, 0, 0
-		spritePiece	-$18, 6, 3, 3, $96, 1, 1, 0, 0
-		spritePiece	0, 6, 3, 3, $8D, 1, 1, 0, 0
+		piece	-$18, -$12, 3x3, $8D
+		piece	0, -$12, 3x3, $96
+		piece	-$18, 6, 3x3, $96, xflip, yflip
+		piece	0, 6, 3x3, $8D, xflip, yflip
 		endsprite
 
 Map_objAF_a_0134:	spritemap
-		spritePiece	-$18, -$12, 3, 3, $9F, 0, 0, 0, 0
-		spritePiece	0, -$12, 3, 3, $A8, 0, 0, 0, 0
-		spritePiece	-$18, 6, 3, 3, $A8, 1, 1, 0, 0
-		spritePiece	0, 6, 3, 3, $9F, 1, 1, 0, 0
+		piece	-$18, -$12, 3x3, $9F
+		piece	0, -$12, 3x3, $A8
+		piece	-$18, 6, 3x3, $A8, xflip, yflip
+		piece	0, 6, 3x3, $9F, xflip, yflip
 		endsprite
 
 Map_objAF_a_0156:	spritemap
-		spritePiece	-$18, -$12, 3, 3, $B1, 0, 0, 0, 0
-		spritePiece	0, -$12, 3, 3, $BA, 0, 0, 0, 0
-		spritePiece	-$18, 6, 3, 3, $BA, 1, 1, 0, 0
-		spritePiece	0, 6, 3, 3, $B1, 1, 1, 0, 0
+		piece	-$18, -$12, 3x3, $B1
+		piece	0, -$12, 3x3, $BA
+		piece	-$18, 6, 3x3, $BA, xflip, yflip
+		piece	0, 6, 3x3, $B1, xflip, yflip
 		endsprite
 
 Map_objAF_a_0178:	spritemap
-		spritePiece	$E, 4, 1, 1, $C3, 0, 0, 0, 0
-		spritePiece	$12, $14, 3, 1, $CB, 0, 0, 0, 0
+		piece	$E, 4, 1x1, $C3
+		piece	$12, $14, 3x1, $CB
 		endsprite
 
 Map_objAF_a_018A:	spritemap
-		spritePiece	$E, 4, 3, 1, $C4, 0, 0, 0, 0
-		spritePiece	$12, $14, 3, 1, $CE, 0, 0, 0, 0
+		piece	$E, 4, 3x1, $C4
+		piece	$12, $14, 3x1, $CE
 		endsprite
 
 Map_objAF_a_019C:	spritemap
-		spritePiece	-$C, $1C, 1, 1, $C7, 0, 0, 0, 0
-		spritePiece	-4, $1C, 1, 1, $C7, 0, 0, 0, 0
+		piece	-$C, $1C, 1x1, $C7
+		piece	-4, $1C, 1x1, $C7
 		endsprite
 
 Map_objAF_a_01AE:	spritemap
-		spritePiece	-$C, $1C, 1, 3, $C8, 0, 0, 0, 0
-		spritePiece	-4, $1C, 1, 3, $C8, 0, 0, 0, 0
+		piece	-$C, $1C, 1x3, $C8
+		piece	-4, $1C, 1x3, $C8
 		endsprite
 
 Map_objAF_a_01C0:	spritemap
-		spritePiece	$12, $14, 3, 1, $CB, 0, 0, 0, 0
+		piece	$12, $14, 3x1, $CB
 		endsprite
 
 Map_objAF_a_01CA:	spritemap
-		spritePiece	$12, $14, 3, 1, $CE, 0, 0, 0, 0
+		piece	$12, $14, 3x1, $CE
 		endsprite
 
 Map_objAF_a_01D4:	spritemap
-		spritePiece	-4, -8, 1, 2, $D1, 0, 0, 0, 0
+		piece	-4, -8, 1x2, $D1
 		endsprite
 
 Map_objAF_a_01DE:	spritemap
-		spritePiece	-8, -8, 2, 2, $D3, 0, 0, 0, 0
+		piece	-8, -8, 2x2, $D3
 		endsprite
 
 Map_objAF_a_01E8:	spritemap
-		spritePiece	-8, -4, 2, 1, $D7, 0, 0, 0, 0
+		piece	-8, -4, 2x1, $D7
 		endsprite
 
 Map_objAF_a_01F2:	spritemap
-		spritePiece	-8, -8, 2, 2, $D3, 0, 1, 0, 0
+		piece	-8, -8, 2x2, $D3, yflip
 		endsprite
 
 Map_objAF_a_01FC:	spritemap
-		spritePiece	-4, -8, 1, 2, $D1, 0, 1, 0, 0
+		piece	-4, -8, 1x2, $D1, yflip
 		endsprite
 
 Map_objAF_a_0206:	spritemap
-		spritePiece	-8, -8, 2, 2, $D3, 1, 1, 0, 0
+		piece	-8, -8, 2x2, $D3, xflip, yflip
 		endsprite
 
 Map_objAF_a_0210:	spritemap
-		spritePiece	-8, -4, 2, 1, $D7, 1, 0, 0, 0
+		piece	-8, -4, 2x1, $D7, xflip
 		endsprite
 
 Map_objAF_a_021A:	spritemap
-		spritePiece	-8, -8, 2, 2, $D3, 1, 0, 0, 0
+		piece	-8, -8, 2x2, $D3, xflip
 		endsprite
 
 		even

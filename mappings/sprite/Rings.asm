@@ -21,28 +21,28 @@ Map_Rings:	index offset(*)
 		ptr	MapUnc_Rings_8
 
 MapUnc_Rings_1:
-		spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 0
 
 MapUnc_Rings_2:
-		spritePiece	-8, -8, 2, 2, 4, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 4
 
 MapUnc_Rings_3:
-		spritePiece	-4, -8, 1, 2, 8, 0, 0, 0, 0
+		piece	-4, -8, 1x2, 8
 
 MapUnc_Rings_4:
-		spritePiece	-8, -8, 2, 2, 4, 1, 0, 0, 0
+		piece	-8, -8, 2x2, 4, xflip
 
 MapUnc_Rings_5:
-		spritePiece	-8, -8, 2, 2, $A, 0, 0, 0, 0
+		piece	-8, -8, 2x2, $A
 
 MapUnc_Rings_6:
-		spritePiece	-8, -8, 2, 2, $A, 1, 1, 0, 0
+		piece	-8, -8, 2x2, $A, xflip, yflip
 
 MapUnc_Rings_7:
-		spritePiece	-8, -8, 2, 2, $A, 1, 0, 0, 0
+		piece	-8, -8, 2x2, $A, xflip
 
 MapUnc_Rings_8:
-		spritePiece	-8, -8, 2, 2, $A, 0, 1, 0, 0
+		piece	-8, -8, 2x2, $A, yflip
 
 		;dc.w 0
 		even

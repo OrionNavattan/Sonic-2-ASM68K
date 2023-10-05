@@ -11,37 +11,37 @@ Map_Sign_2P:	index offset(*)
 		ptr	Map_obj0D_b_0086
 
 Map_obj0D_b_000C:	spritemap
-		spritePiece	-$18, -$10, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 3, 4, $C, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 2, $214, 0, 0, 0, 0
+		piece	-$18, -$10, 3x4, 0
+		piece	0, -$10, 3x4, $C
+		piece	-4, $10, 1x2, $214
 		endsprite
 
 Map_obj0D_b_0026:	spritemap
-		spritePiece	-$18, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 4, 4, 4, 0, 0, 0, 0
-		spritePiece	$10, -$10, 1, 4, $14, 1, 0, 0, 0
-		spritePiece	-4, $10, 1, 2, $214, 0, 0, 0, 0
+		piece	-$18, -$10, 1x4, 0
+		piece	-$10, -$10, 4x4, 4
+		piece	$10, -$10, 1x4, $14, xflip
+		piece	-4, $10, 1x2, $214
 		endsprite
 
 Map_obj0D_b_0048:	spritemap
-		spritePiece	-$18, -$10, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 3, 4, 0, 1, 0, 0, 0
-		spritePiece	-4, $10, 1, 2, $214, 0, 0, 0, 0
+		piece	-$18, -$10, 3x4, 0
+		piece	0, -$10, 3x4, 0, xflip
+		piece	-4, $10, 1x2, $214
 		endsprite
 
 Map_obj0D_b_0062:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 2, $214, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
+		piece	-4, $10, 1x2, $214
 		endsprite
 
 Map_obj0D_b_0074:	spritemap
-		spritePiece	-4, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 2, $214, 0, 0, 0, 0
+		piece	-4, -$10, 1x4, 0
+		piece	-4, $10, 1x2, $214
 		endsprite
 
 Map_obj0D_b_0086:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 1, 0, 0, 0
-		spritePiece	-4, $10, 1, 2, $214, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0, xflip
+		piece	-4, $10, 1x2, $214
 		endsprite
 
 		even

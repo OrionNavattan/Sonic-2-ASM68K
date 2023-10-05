@@ -9,26 +9,26 @@ Map_Nut:	index offset(*)
 		ptr	Frame_Nut4
 
 Frame_Nut1:	spritemap
-		spritePiece	-$20, -$C, 4, 3, 0, 0, 0, 0, 0
-		spritePiece	0, -$C, 4, 3, $C, 0, 0, 0, 0
+		piece	-$20, -$C, 4x3, 0
+		piece	0, -$C, 4x3, $C
 		endsprite
 
 Frame_Nut2:	spritemap
-		spritePiece	-$20, -$C, 3, 3, 3, 0, 0, 0, 0
-		spritePiece	-8, -$C, 4, 3, $C, 0, 0, 0, 0
-		spritePiece	$18, -$C, 1, 3, 9, 1, 0, 0, 0
+		piece	-$20, -$C, 3x3, 3
+		piece	-8, -$C, 4x3, $C
+		piece	$18, -$C, 1x3, 9, xflip
 		endsprite
 
 Frame_Nut3:	spritemap
-		spritePiece	-$20, -$C, 2, 3, $24, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 4, 3, $2A, 0, 0, 0, 0
-		spritePiece	$10, -$C, 2, 3, $18, 0, 0, 0, 0
+		piece	-$20, -$C, 2x3, $24
+		piece	-$10, -$C, 4x3, $2A
+		piece	$10, -$C, 2x3, $18
 		endsprite
 
 Frame_Nut4:	spritemap
-		spritePiece	-$20, -$C, 1, 3, $27, 0, 0, 0, 0
-		spritePiece	-$18, -$C, 4, 3, $18, 0, 0, 0, 0
-		spritePiece	8, -$C, 3, 3, $2D, 1, 0, 0, 0
+		piece	-$20, -$C, 1x3, $27
+		piece	-$18, -$C, 4x3, $18
+		piece	8, -$C, 3x3, $2D, xflip
 		endsprite
 
 		even

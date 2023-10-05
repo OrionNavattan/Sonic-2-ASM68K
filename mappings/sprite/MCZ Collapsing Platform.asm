@@ -7,19 +7,19 @@ Map_CFlo_MCZ:	index offset(*)
 		ptr	Map_obj1F_c_0026
 
 Map_obj1F_c_0004:	spritemap
-		spritePiece	-$20, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 4, 2, 0, 1, 0, 0, 0
-		spritePiece	-$10, 0, 3, 2, 8, 0, 0, 0, 0
-		spritePiece	8, 0, 3, 4, $E, 0, 0, 0, 0
+		piece	-$20, -$10, 4x2, 0
+		piece	0, -$10, 4x2, 0, xflip
+		piece	-$10, 0, 3x2, 8
+		piece	8, 0, 3x4, $E
 		endsprite
 
 Map_obj1F_c_0026:	spritemap
-		spritePiece	-$20, -$10, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 2, 4, 1, 0, 0, 0
-		spritePiece	$10, -$10, 2, 2, 0, 1, 0, 0, 0
-		spritePiece	-$10, 0, 3, 2, 8, 0, 0, 0, 0
-		spritePiece	8, 0, 3, 4, $E, 0, 0, 0, 0
+		piece	-$20, -$10, 2x2, 0
+		piece	-$10, -$10, 2x2, 4
+		piece	0, -$10, 2x2, 4, xflip
+		piece	$10, -$10, 2x2, 0, xflip
+		piece	-$10, 0, 3x2, 8
+		piece	8, 0, 3x4, $E
 		endsprite
 
 		even

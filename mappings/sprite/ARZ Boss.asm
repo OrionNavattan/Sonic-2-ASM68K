@@ -12,31 +12,30 @@ Map_BARZ_Pillar:	index offset(*)
 		ptr	Map_obj89_a_0056
 
 Map_obj89_a_000E:	spritemap
-		spritePiece	0, $28, 4, 4, $88, 0, 0, 1, 0
-		spritePiece	0, 8, 4, 4, $88, 0, 0, 1, 0
-		spritePiece	0, -$18, 4, 4, $88, 0, 0, 1, 0
-		spritePiece	0, -$38, 4, 4, $88, 0, 0, 1, 0
-		spritePiece	0, -$40, 4, 1, $84, 0, 0, 1, 0
+		piece	0, $28, 4x4, $88, pal2
+		piece	0, 8, 4x4, $88, pal2
+		piece	0, -$18, 4x4, $88, pal2
+		piece	0, -$38, 4x4, $88, pal2
+		piece	0, -$40, 4x1, $84, pal2
 		endsprite
 
 Map_obj89_a_0038:	spritemap
-		spritePiece	-8, -4, 2, 1, $98, 0, 0, 1, 0
+		piece	-8, -4, 2x1, $98, pal2
 		endsprite
 
 Map_obj89_a_0042:	spritemap
-		spritePiece	-$10, -4, 4, 1, $9A, 0, 0, 1, 0
+		piece	-$10, -4, 4x1, $9A, pal2
 		endsprite
 
 Map_obj89_a_004C:	spritemap
-		spritePiece	-$10, -4, 4, 1, $9E, 0, 0, 1, 0
+		piece	-$10, -4, 4x1, $9E, pal2
 		endsprite
 
 Map_obj89_a_0056:	spritemap
-		spritePiece	-$10, -4, 4, 1, $A2, 0, 0, 1, 0
+		piece	-$10, -4, 4x1, $A2, pal2
 		endsprite
 
 		even
-
 
 ; -------------------------------------------------------------------------------
 ; Sprite mappings - HTZ Eggman, Eggpod, and hammer
@@ -59,75 +58,75 @@ Map_BARZ_EggPod:	index offset(*)
 		ptr	Map_obj89_b_0136
 
 Map_obj89_b_0018:	spritemap
-		spritePiece	-$18, -$18, 4, 2, $150, 0, 0, 0, 0
-		spritePiece	-$28, -$18, 2, 2, $148, 0, 0, 0, 0
+		piece	-$18, -$18, 4x2, $150
+		piece	-$28, -$18, 2x2, $148
 		endsprite
 
 Map_obj89_b_002A:	spritemap
-		spritePiece	-$18, -$18, 4, 2, $158, 0, 0, 0, 0
-		spritePiece	-$28, -$18, 2, 2, $148, 0, 0, 0, 0
+		piece	-$18, -$18, 4x2, $158
+		piece	-$28, -$18, 2x2, $148
 		endsprite
 
 Map_obj89_b_003C:	spritemap
-		spritePiece	-$18, -$18, 4, 2, $160, 0, 0, 0, 0
-		spritePiece	-$28, -$18, 2, 2, $14C, 0, 0, 0, 0
+		piece	-$18, -$18, 4x2, $160
+		piece	-$28, -$18, 2x2, $14C
 		endsprite
 
 Map_obj89_b_004E:	spritemap
-		spritePiece	-$18, -$18, 4, 2, $168, 0, 0, 0, 0
-		spritePiece	-$28, -$18, 2, 2, $14C, 0, 0, 0, 0
+		piece	-$18, -$18, 4x2, $168
+		piece	-$28, -$18, 2x2, $14C
 		endsprite
 
 Map_obj89_b_0060:	spritemap
-		spritePiece	-$18, -$18, 4, 2, $170, 0, 0, 0, 0
-		spritePiece	-$28, -$18, 2, 2, $14C, 0, 0, 0, 0
+		piece	-$18, -$18, 4x2, $170
+		piece	-$28, -$18, 2x2, $14C
 		endsprite
 
 Map_obj89_b_0072:	spritemap
-		spritePiece	-$18, -$18, 4, 2, $178, 0, 0, 0, 0
-		spritePiece	-$28, -$18, 2, 2, $14C, 0, 0, 0, 0
+		piece	-$18, -$18, 4x2, $178
+		piece	-$28, -$18, 2x2, $14C
 		endsprite
 
 Map_obj89_b_0084:	spritemap
-		spritePiece	-$18, $18, 2, 2, $7E, 0, 0, 0, 0
-		spritePiece	8, $18, 2, 2, $7E, 0, 0, 0, 0
+		piece	-$18, $18, 2x2, $7E
+		piece	8, $18, 2x2, $7E
 		endsprite
 
 Map_obj89_b_0096:	spritemap
-		spritePiece	-$18, $18, 2, 1, $82, 0, 0, 0, 0
-		spritePiece	8, $18, 2, 1, $82, 0, 0, 0, 0
+		piece	-$18, $18, 2x1, $82
+		piece	8, $18, 2x1, $82
 		endsprite
 
 Map_obj89_b_00A8:	spritemap
-		spritePiece	-6, -$28, 2, 2, $140, 0, 0, 0, 0
-		spritePiece	8, -$18, 2, 2, $144, 0, 0, 0, 0
-		spritePiece	-$30, 0, 1, 1, $6F, 0, 0, 1, 0
-		spritePiece	-$28, -8, 2, 3, $70, 0, 0, 1, 0
-		spritePiece	-$18, -8, 4, 4, $128, 0, 0, 1, 0
-		spritePiece	-$18, -8, 2, 4, $76, 0, 0, 1, 0
-		spritePiece	8, -8, 2, 4, $76, 0, 0, 1, 0
+		piece	-6, -$28, 2x2, $140
+		piece	8, -$18, 2x2, $144
+		piece	-$30, 0, 1x1, $6F, pal2
+		piece	-$28, -8, 2x3, $70, pal2
+		piece	-$18, -8, 4x4, $128, pal2
+		piece	-$18, -8, 2x4, $76, pal2
+		piece	8, -8, 2x4, $76, pal2
 		endsprite
 
 Map_obj89_b_00E2:	spritemap
-		spritePiece	-$64, -$16, 4, 4, 0, 0, 0, 1, 0
-		spritePiece	-$5C, -$2E, 3, 3, $10, 0, 0, 1, 0
-		spritePiece	-$44, -$2E, 3, 4, $19, 0, 0, 1, 0
-		spritePiece	-$44, -$E, 2, 2, $25, 0, 0, 1, 0
-		spritePiece	-$40, -8, 2, 2, $65, 0, 0, 1, 0
+		piece	-$64, -$16, 4x4, 0, pal2
+		piece	-$5C, -$2E, 3x3, $10, pal2
+		piece	-$44, -$2E, 3x4, $19, pal2
+		piece	-$44, -$E, 2x2, $25, pal2
+		piece	-$40, -8, 2x2, $65, pal2
 		endsprite
 
 Map_obj89_b_010C:	spritemap
-		spritePiece	-$63, -$F, 4, 4, $29, 0, 0, 1, 0
-		spritePiece	-$5B, -$27, 3, 3, $39, 0, 0, 1, 0
-		spritePiece	-$43, -$27, 2, 4, $42, 0, 0, 1, 0
-		spritePiece	-$43, -7, 1, 3, $4A, 0, 0, 1, 0
-		spritePiece	-$40, -8, 2, 2, $69, 0, 0, 1, 0
+		piece	-$63, -$F, 4x4, $29, pal2
+		piece	-$5B, -$27, 3x3, $39, pal2
+		piece	-$43, -$27, 2x4, $42, pal2
+		piece	-$43, -7, 1x3, $4A, pal2
+		piece	-$40, -8, 2x2, $69, pal2
 		endsprite
 
 Map_obj89_b_0136:	spritemap
-		spritePiece	-$60, -$14, 4, 4, $4D, 0, 0, 1, 0
-		spritePiece	-$60, $C, 4, 2, $5D, 0, 0, 1, 0
-		spritePiece	-$40, 0, 2, 1, $6D, 0, 0, 1, 0
+		piece	-$60, -$14, 4x4, $4D, pal2
+		piece	-$60, $C, 4x2, $5D, pal2
+		piece	-$40, 0, 2x1, $6D, pal2
 		endsprite
 
 		even

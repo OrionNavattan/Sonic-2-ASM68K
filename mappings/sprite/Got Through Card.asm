@@ -20,96 +20,96 @@ Map_GotThrough:	index offset (*)
 		ptr word_14E96
 
 word_14CDA:	spritemap
-		spritePiece	-$40, 0, 2, 2, $5D0, 0, 0, 0, 1
-		spritePiece	-$30, 0, 2, 2, $588, 0, 0, 0, 1
-		spritePiece	-$20, 0, 2, 2, $584, 0, 0, 0, 1
-		spritePiece	-$10, 0, 1, 2, $5C0, 0, 0, 0, 1
-		spritePiece	-8, 0, 2, 2, $5B4, 0, 0, 0, 1
-		spritePiece	$10, 0, 2, 2, $5B8, 0, 0, 0, 1
-		spritePiece	$20, 0, 2, 2, $588, 0, 0, 0, 1
-		spritePiece	$2F, 0, 2, 2, $5D4, 0, 0, 0, 1
+		piece	-$40, 0, 2x2, $5D0, hi
+		piece	-$30, 0, 2x2, $588, hi
+		piece	-$20, 0, 2x2, $584, hi
+		piece	-$10, 0, 1x2, $5C0, hi
+		piece	-8, 0, 2x2, $5B4, hi
+		piece	$10, 0, 2x2, $5B8, hi
+		piece	$20, 0, 2x2, $588, hi
+		piece	$2F, 0, 2x2, $5D4, hi
 		endsprite
 
 word_14D1C:	spritemap
-		spritePiece	-$44, 0, 3, 2, $5C6, 0, 0, 0, 1
-		spritePiece	-$2C, 0, 1, 2, $5C0, 0, 0, 0, 1
-		spritePiece	-$24, 0, 2, 2, $5C2, 0, 0, 0, 1
-		spritePiece	-$14, 0, 2, 2, $580, 0, 0, 0, 1
-		spritePiece	-4, 0, 2, 2, $5D0, 0, 0, 0, 1
-		spritePiece	$14, 0, 2, 2, $5B8, 0, 0, 0, 1
-		spritePiece	$24, 0, 2, 2, $588, 0, 0, 0, 1
-		spritePiece	$33, 0, 2, 2, $5D4, 0, 0, 0, 1
+		piece	-$44, 0, 3x2, $5C6, hi
+		piece	-$2C, 0, 1x2, $5C0, hi
+		piece	-$24, 0, 2x2, $5C2, hi
+		piece	-$14, 0, 2x2, $580, hi
+		piece	-4, 0, 2x2, $5D0, hi
+		piece	$14, 0, 2x2, $5B8, hi
+		piece	$24, 0, 2x2, $588, hi
+		piece	$33, 0, 2x2, $5D4, hi
 		endsprite
 
 word_14D5E:	spritemap
-		spritePiece	-$3D, 0, 2, 2, $5D4, 0, 0, 0, 1
-		spritePiece	-$30, 0, 2, 2, $5B0, 0, 0, 0, 1
-		spritePiece	-$20, 0, 1, 2, $5C0, 0, 0, 0, 1
-		spritePiece	-$18, 0, 2, 2, $5C2, 0, 0, 0, 1
-		spritePiece	-8, 0, 2, 2, $5D0, 0, 0, 0, 1
-		spritePiece	$10, 0, 2, 2, $5B8, 0, 0, 0, 1
-		spritePiece	$20, 0, 2, 2, $588, 0, 0, 0, 1
-		spritePiece	$2F, 0, 2, 2, $5D4, 0, 0, 0, 1
+		piece	-$3D, 0, 2x2, $5D4, hi
+		piece	-$30, 0, 2x2, $5B0, hi
+		piece	-$20, 0, 1x2, $5C0, hi
+		piece	-$18, 0, 2x2, $5C2, hi
+		piece	-8, 0, 2x2, $5D0, hi
+		piece	$10, 0, 2x2, $5B8, hi
+		piece	$20, 0, 2x2, $588, hi
+		piece	$2F, 0, 2x2, $5D4, hi
 		endsprite
 
 word_14DA0:	spritemap
-		spritePiece	-$38, 0, 2, 2, $5D4, 0, 0, 0, 1
-		spritePiece	-$28, 0, 2, 2, $5BC, 0, 0, 0, 1
-		spritePiece	-$18, 0, 2, 2, $5CC, 0, 0, 0, 1
-		spritePiece	-8, 0, 2, 2, $588, 0, 0, 0, 1
-		spritePiece	8, 0, 2, 2, $5D8, 0, 0, 0, 1
-		spritePiece	$18, 0, 2, 2, $5B8, 0, 0, 0, 1
-		spritePiece	$28, 0, 2, 2, $5BC, 0, 0, 0, 1
+		piece	-$38, 0, 2x2, $5D4, hi
+		piece	-$28, 0, 2x2, $5BC, hi
+		piece	-$18, 0, 2x2, $5CC, hi
+		piece	-8, 0, 2x2, $588, hi
+		piece	8, 0, 2x2, $5D8, hi
+		piece	$18, 0, 2x2, $5B8, hi
+		piece	$28, 0, 2x2, $5BC, hi
 		endsprite
 
 word_14DDA:	spritemap
-		spritePiece	0, 0, 2, 2, $5B0, 0, 0, 0, 1
-		spritePiece	$10, 0, 2, 2, $5B4, 0, 0, 0, 1
-		spritePiece	$1F, 0, 2, 2, $5D4, 0, 0, 0, 1
+		piece	0, 0, 2x2, $5B0, hi
+		piece	$10, 0, 2x2, $5B4, hi
+		piece	$1F, 0, 2x2, $5D4, hi
 		endsprite
 
 word_14DF4:	spritemap
-		spritePiece	-$48, 0, 3, 2, $5E6, 0, 0, 1, 1
-		spritePiece	-$30, 0, 2, 2, $5EC, 0, 0, 1, 1
-		spritePiece	-$2C, 0, 2, 2, $5F0, 0, 0, 0, 1
-		spritePiece	$38, 0, 4, 2, $520, 0, 0, 0, 1
-		spritePiece	$58, 0, 1, 2, $6F0, 0, 0, 0, 1
+		piece	-$48, 0, 3x2, $5E6, pal2, hi
+		piece	-$30, 0, 2x2, $5EC, pal2, hi
+		piece	-$2C, 0, 2x2, $5F0, hi
+		piece	$38, 0, 4x2, $520, hi
+		piece	$58, 0, 1x2, $6F0, hi
 		endsprite
 
 word_14E1E:	spritemap
-		spritePiece	-$5C, 0, 4, 2, $6DA, 0, 0, 1, 1
-		spritePiece	-$34, 0, 4, 2, $5DE, 0, 0, 1, 1
-		spritePiece	-$14, 0, 1, 2, $6CA, 0, 0, 1, 1
-		spritePiece	-$18, 0, 2, 2, $5F0, 0, 0, 0, 1
-		spritePiece	$38, 0, 4, 2, $528, 0, 0, 0, 1
-		spritePiece	$58, 0, 1, 2, $6F0, 0, 0, 0, 1
+		piece	-$5C, 0, 4x2, $6DA, pal2, hi
+		piece	-$34, 0, 4x2, $5DE, pal2, hi
+		piece	-$14, 0, 1x2, $6CA, pal2, hi
+		piece	-$18, 0, 2x2, $5F0, hi
+		piece	$38, 0, 4x2, $528, hi
+		piece	$58, 0, 1x2, $6F0, hi
 		endsprite
 
 word_14E50:	spritemap
-		spritePiece	-$5C, 0, 4, 2, $6D2, 0, 0, 1, 1
-		spritePiece	-$34, 0, 4, 2, $5DE, 0, 0, 1, 1
-		spritePiece	-$14, 0, 1, 2, $6CA, 0, 0, 1, 1
-		spritePiece	-$18, 0, 2, 2, $5F0, 0, 0, 0, 1
-		spritePiece	$38, 0, 4, 2, $530, 0, 0, 0, 1
-		spritePiece	$58, 0, 1, 2, $6F0, 0, 0, 0, 1
+		piece	-$5C, 0, 4x2, $6D2, pal2, hi
+		piece	-$34, 0, 4x2, $5DE, pal2, hi
+		piece	-$14, 0, 1x2, $6CA, pal2, hi
+		piece	-$18, 0, 2x2, $5F0, hi
+		piece	$38, 0, 4x2, $530, hi
+		piece	$58, 0, 1x2, $6F0, hi
 		endsprite
 
 word_14E82:	spritemap
-		spritePiece	0, 0, 2, 3, $5F4, 0, 0, 0, 1
+		piece	0, 0, 2x3, $5F4, hi
 		endsprite
 
 word_14E8C:	spritemap
-		spritePiece	0, 0, 2, 3, $5FA, 0, 0, 0, 1
+		piece	0, 0, 2x3, $5FA, hi
 		endsprite
 
 word_14E96:	spritemap
-		spritePiece	-$68, 0, 4, 2, $540, 0, 0, 1, 1
-		spritePiece	-$48, 0, 3, 2, $548, 0, 0, 1, 1
-		spritePiece	-$28, 0, 4, 2, $5DE, 0, 0, 1, 1
-		spritePiece	-8, 0, 1, 2, $6CA, 0, 0, 1, 1
-		spritePiece	-$C, 0, 2, 2, $5F0, 0, 0, 0, 1
-		spritePiece	$38, 0, 4, 2, $538, 0, 0, 0, 1
-		spritePiece	$58, 0, 1, 2, $6F0, 0, 0, 0, 1
+		piece	-$68, 0, 4x2, $540, pal2, hi
+		piece	-$48, 0, 3x2, $548, pal2, hi
+		piece	-$28, 0, 4x2, $5DE, pal2, hi
+		piece	-8, 0, 1x2, $6CA, pal2, hi
+		piece	-$C, 0, 2x2, $5F0, hi
+		piece	$38, 0, 4x2, $538, hi
+		piece	$58, 0, 1x2, $6F0, hi
 		endsprite
 
 		even

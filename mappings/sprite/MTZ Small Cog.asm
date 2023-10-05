@@ -8,18 +8,18 @@ Map_SmallCog:	index offset(*)
 		ptr	Map_obj65_b_002A
 
 Map_obj65_b_0006:	spritemap
-		spritePiece	-$10, -$C, 2, 3, 0, 0, 0, 0, 0
-		spritePiece	0, -$C, 2, 3, 0, 1, 0, 0, 0
+		piece	-$10, -$C, 2x3, 0
+		piece	0, -$C, 2x3, 0, xflip
 		endsprite
 
 Map_obj65_b_0018:	spritemap
-		spritePiece	-$10, -$C, 2, 3, 6, 0, 0, 0, 0
-		spritePiece	0, -$C, 2, 3, 6, 1, 1, 0, 0
+		piece	-$10, -$C, 2x3, 6
+		piece	0, -$C, 2x3, 6, xflip, yflip
 		endsprite
 
 Map_obj65_b_002A:	spritemap
-		spritePiece	-$10, -$C, 2, 3, 6, 0, 1, 0, 0
-		spritePiece	0, -$C, 2, 3, 6, 1, 0, 0, 0
+		piece	-$10, -$C, 2x3, 6, yflip
+		piece	0, -$C, 2x3, 6, xflip
 		endsprite
 
 		even

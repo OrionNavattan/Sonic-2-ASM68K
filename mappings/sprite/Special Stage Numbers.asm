@@ -16,47 +16,47 @@ Map_SpecialNum:	index offset(*)
 		ptr	Frame_SpecialNum_Unk
 
 Frame_SpecialNum_0:	spritemap
-		spritePiece	-4, -8, 1, 2, $12, 0, 0, 0, 1
+		piece	-4, -8, 1x2, $12, hi
 		endsprite
 
 Frame_SpecialNum_1:	spritemap
-		spritePiece	-4, -8, 1, 2, $14, 0, 0, 0, 1
+		piece	-4, -8, 1x2, $14, hi
 		endsprite
 
 Frame_SpecialNum_2:	spritemap
-		spritePiece	-4, -8, 1, 2, $16, 0, 0, 0, 1
+		piece	-4, -8, 1x2, $16, hi
 		endsprite
 
 Frame_SpecialNum_3:	spritemap
-		spritePiece	-4, -8, 1, 2, $18, 0, 0, 0, 1
+		piece	-4, -8, 1x2, $18, hi
 		endsprite
 
 Frame_SpecialNum_4:	spritemap
-		spritePiece	-4, -8, 1, 2, $1A, 0, 0, 0, 1
+		piece	-4, -8, 1x2, $1A, hi
 		endsprite
 
 Frame_SpecialNum_5:	spritemap
-		spritePiece	-4, -8, 1, 2, $1C, 0, 0, 0, 1
+		piece	-4, -8, 1x2, $1C, hi
 		endsprite
 
 Frame_SpecialNum_6:	spritemap
-		spritePiece	-4, -8, 1, 2, $1E, 0, 0, 0, 1
+		piece	-4, -8, 1x2, $1E, hi
 		endsprite
 
 Frame_SpecialNum_7:	spritemap
-		spritePiece	-4, -8, 1, 2, $20, 0, 0, 0, 1
+		piece	-4, -8, 1x2, $20, hi
 		endsprite
 
 Frame_SpecialNum_8:	spritemap
-		spritePiece	-4, -8, 1, 2, $22, 0, 0, 0, 1
+		piece	-4, -8, 1x2, $22, hi
 		endsprite
 
 Frame_SpecialNum_9:	spritemap
-		spritePiece	-4, -8, 1, 2, $24, 0, 0, 0, 1
+		piece	-4, -8, 1x2, $24, hi
 		endsprite
 
 Frame_SpecialNum_Unk:	spritemap
-		spritePiece	-8, -4, 2, 1, $3A, 0, 0, 0, 1
+		piece	-8, -4, 2x1, $3A, hi
 		endsprite
 
 		even

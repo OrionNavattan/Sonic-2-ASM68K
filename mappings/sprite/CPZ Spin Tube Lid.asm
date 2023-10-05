@@ -10,21 +10,21 @@ Map_TubeLid:	index offset(*)
 		ptr	Map_obj7B_0014
 
 Map_obj7B_000A:	spritemap
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, 0
 		endsprite
 
 Map_obj7B_0014:	spritemap
-		spritePiece	-$10, -$20, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	0, -$20, 2, 4, 8, 1, 0, 0, 0
+		piece	-$10, -$20, 2x4, 8
+		piece	0, -$20, 2x4, 8, xflip
 		endsprite
 
 Map_obj7B_0026:	spritemap
-		spritePiece	-$10, -$20, 2, 4, $10, 0, 0, 0, 0
-		spritePiece	0, -$20, 2, 4, $10, 1, 0, 0, 0
+		piece	-$10, -$20, 2x4, $10
+		piece	0, -$20, 2x4, $10, xflip
 		endsprite
 
 Map_obj7B_0038:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $18, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, $18
 		endsprite
 
 		even

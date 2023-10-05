@@ -26,87 +26,87 @@ Map_GrabString:	index offset(*)
 		ptr	Frame_GrabString8
 
 Frame_Grab_Idle:	spritemap
-		spritePiece	-$1B, -8, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$13, -8, 4, 2, 2, 0, 0, 0, 0
-		spritePiece	-$F, 8, 3, 2, $1D, 0, 0, 0, 0
+		piece	-$1B, -8, 1x2, 0
+		piece	-$13, -8, 4x2, 2
+		piece	-$F, 8, 3x2, $1D
 		endsprite
 
 Frame_Grab_HoldingPlayer:	spritemap
-		spritePiece	-$1B, -8, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$13, -8, 4, 2, 2, 0, 0, 0, 0
-		spritePiece	-$F, 8, 4, 2, $23, 0, 0, 0, 0
+		piece	-$1B, -8, 1x2, 0
+		piece	-$13, -8, 4x2, 2
+		piece	-$F, 8, 4x2, $23
 		endsprite
 
 Frame_GrabBox:	spritemap
-		spritePiece	-4, -4, 1, 1, $A, 0, 0, 0, 0
+		piece	-4, -4, 1x1, $A
 		endsprite
 
 Frame_GrabLegs_Idle:	spritemap
-		spritePiece	-7, -8, 3, 2, $F, 0, 0, 0, 0
+		piece	-7, -8, 3x2, $F
 		endsprite
 
 Frame_GrabLegs_HoldingPlayer:	spritemap
-		spritePiece	-7, -8, 4, 2, $15, 0, 0, 0, 0
+		piece	-7, -8, 4x2, $15
 		endsprite
 
 Frame_Grab_Unused1:	spritemap
-		spritePiece	-4, -4, 1, 1, $2B, 0, 0, 0, 0
+		piece	-4, -4, 1x1, $2B
 		endsprite
 
 Frame_Grab_Unused2:	spritemap
-		spritePiece	-4, -4, 1, 1, $2C, 0, 0, 0, 0
+		piece	-4, -4, 1x1, $2C
 		endsprite
 
 Frame_GrabString1:	spritemap
-		spritePiece	-4, 0, 1, 2, $B, 0, 0, 0, 0
+		piece	-4, 0, 1x2, $B
 		endsprite
 
 Frame_GrabString2:	spritemap
-		spritePiece	-4, 0, 1, 4, $B, 0, 0, 0, 0
+		piece	-4, 0, 1x4, $B
 		endsprite
 
 Frame_GrabString3:	spritemap
-		spritePiece	-4, 0, 1, 2, $B, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 4, $B, 0, 0, 0, 0
+		piece	-4, 0, 1x2, $B
+		piece	-4, $10, 1x4, $B
 		endsprite
 
 Frame_GrabString4:	spritemap
-		spritePiece	-4, 0, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $20, 1, 4, $B, 0, 0, 0, 0
+		piece	-4, 0, 1x4, $B
+		piece	-4, $20, 1x4, $B
 		endsprite
 
 Frame_GrabString5:	spritemap
-		spritePiece	-4, 0, 1, 2, $B, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $30, 1, 4, $B, 0, 0, 0, 0
+		piece	-4, 0, 1x2, $B
+		piece	-4, $10, 1x4, $B
+		piece	-4, $30, 1x4, $B
 		endsprite
 
 Frame_GrabString6:	spritemap
-		spritePiece	-4, 0, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $20, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $40, 1, 4, $B, 0, 0, 0, 0
+		piece	-4, 0, 1x4, $B
+		piece	-4, $20, 1x4, $B
+		piece	-4, $40, 1x4, $B
 		endsprite
 
 Frame_GrabString7:	spritemap		
-		spritePiece	-4, 0, 1, 2, $B, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $30, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $50, 1, 4, $B, 0, 0, 0, 0
+		piece	-4, 0, 1x2, $B
+		piece	-4, $10, 1x4, $B
+		piece	-4, $30, 1x4, $B
+		piece	-4, $50, 1x4, $B
 		endsprite
 
 Frame_GrabString8:	spritemap
-		spritePiece	-4, 0, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $20, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $40, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $60, 1, 4, $B, 0, 0, 0, 0
+		piece	-4, 0, 1x4, $B
+		piece	-4, $20, 1x4, $B
+		piece	-4, $40, 1x4, $B
+		piece	-4, $60, 1x4, $B
 		endsprite
 		
 Frame_GrabString9:	spritemap
-		spritePiece	-4, 0, 1, 2, $B, 0, 0, 0, 0
-		spritePiece	-4, $10, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $30, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $50, 1, 4, $B, 0, 0, 0, 0
-		spritePiece	-4, $70, 1, 4, $B, 0, 0, 0, 0
+		piece	-4, 0, 1x2, $B
+		piece	-4, $10, 1x4, $B
+		piece	-4, $30, 1x4, $B
+		piece	-4, $50, 1x4, $B
+		piece	-4, $70, 1x4, $B
 		endsprite		
 
 		even

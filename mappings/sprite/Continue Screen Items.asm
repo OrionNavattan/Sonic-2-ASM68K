@@ -12,33 +12,33 @@ Map_ContinueScreenItems:	index offset(*)
 		ptr	Map_objDA_0084
 
 Map_objDA_000C:	spritemap
-		spritePiece	-$3C, -8, 2, 2, $90, 0, 0, 0, 0
-		spritePiece	-$2C, -8, 2, 2, $88, 0, 0, 0, 0
-		spritePiece	-$1C, -8, 2, 2, $84, 0, 0, 0, 0
-		spritePiece	-$C, -8, 2, 2, $94, 0, 0, 0, 0
-		spritePiece	4, -8, 1, 2, $98, 0, 0, 0, 0
-		spritePiece	$C, -8, 2, 2, $84, 0, 0, 0, 0
-		spritePiece	$1C, -8, 2, 2, $9A, 0, 0, 0, 0
-		spritePiece	$2C, -8, 2, 2, $80, 0, 0, 0, 0
-		spritePiece	-$18, $38, 2, 2, $20, 0, 0, 1, 0
-		spritePiece	8, $38, 2, 2, $20, 0, 0, 1, 0
-		spritePiece	-8, $36, 2, 2, $1FC, 0, 0, 0, 0
+		piece	-$3C, -8, 2x2, $90
+		piece	-$2C, -8, 2x2, $88
+		piece	-$1C, -8, 2x2, $84
+		piece	-$C, -8, 2x2, $94
+		piece	4, -8, 1x2, $98
+		piece	$C, -8, 2x2, $84
+		piece	$1C, -8, 2x2, $9A
+		piece	$2C, -8, 2x2, $80
+		piece	-$18, $38, 2x2, $20, pal2
+		piece	8, $38, 2x2, $20, pal2
+		piece	-8, $36, 2x2, $1FC
 		endsprite
 
 Map_objDA_0066:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
 		endsprite
 
 Map_objDA_0070:	spritemap
-		spritePiece	-$10, -$10, 4, 4, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, $10
 		endsprite
 
 Map_objDA_007A:	spritemap
-		spritePiece	0, 0, 2, 3, 0, 0, 0, 0, 0
+		piece	0, 0, 2x3, 0
 		endsprite
 
 Map_objDA_0084:	spritemap
-		spritePiece	0, 0, 2, 3, 6, 0, 0, 0, 0
+		piece	0, 0, 2x3, 6
 		endsprite
 
 		even

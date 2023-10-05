@@ -11,44 +11,44 @@ Map_SegaScreenSonic:	index offset(*)
 		ptr	Frame_HideTM
 
 Map_objB1_000A:	spritemap
-		spritePiece	-$10, -$28, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	$10, -$28, 2, 4, $10, 0, 0, 0, 0
-		spritePiece	-$20, -8, 4, 4, $18, 0, 0, 0, 0
-		spritePiece	-$20, $18, 4, 4, $28, 0, 0, 0, 0
-		spritePiece	0, -8, 4, 4, $38, 0, 0, 0, 0
-		spritePiece	0, $18, 4, 4, $48, 0, 0, 0, 0
+		piece	-$10, -$28, 4x4, 0
+		piece	$10, -$28, 2x4, $10
+		piece	-$20, -8, 4x4, $18
+		piece	-$20, $18, 4x4, $28
+		piece	0, -8, 4x4, $38
+		piece	0, $18, 4x4, $48
 		endsprite
 
 Map_objB1_003C:	spritemap
-		spritePiece	-$10, -$28, 4, 4, $58, 0, 0, 0, 0
-		spritePiece	$10, -$28, 2, 4, $68, 0, 0, 0, 0
-		spritePiece	-$20, -8, 4, 4, $70, 0, 0, 0, 0
-		spritePiece	-$20, $18, 4, 4, $80, 0, 0, 0, 0
-		spritePiece	0, -8, 4, 4, $90, 0, 0, 0, 0
-		spritePiece	0, $18, 4, 4, $A0, 0, 0, 0, 0
+		piece	-$10, -$28, 4x4, $58
+		piece	$10, -$28, 2x4, $68
+		piece	-$20, -8, 4x4, $70
+		piece	-$20, $18, 4x4, $80
+		piece	0, -8, 4x4, $90
+		piece	0, $18, 4x4, $A0
 		endsprite
 
 Map_objB1_006E:	spritemap
-		spritePiece	-$10, -$28, 4, 4, $B0, 0, 0, 0, 0
-		spritePiece	$10, -$28, 2, 4, $C0, 0, 0, 0, 0
-		spritePiece	-$20, -8, 4, 4, $C8, 0, 0, 0, 0
-		spritePiece	-$20, $18, 4, 4, $D8, 0, 0, 0, 0
-		spritePiece	0, -8, 4, 4, $E8, 0, 0, 0, 0
-		spritePiece	0, $18, 4, 4, $F8, 0, 0, 0, 0
+		piece	-$10, -$28, 4x4, $B0
+		piece	$10, -$28, 2x4, $C0
+		piece	-$20, -8, 4x4, $C8
+		piece	-$20, $18, 4x4, $D8
+		piece	0, -8, 4x4, $E8
+		piece	0, $18, 4x4, $F8
 		endsprite
 
 Map_objB1_00A0:	spritemap
-		spritePiece	-$10, -$28, 4, 4, $108, 0, 0, 0, 0
-		spritePiece	$10, -$28, 2, 4, $118, 0, 0, 0, 0
-		spritePiece	-$20, -8, 4, 4, $120, 0, 0, 0, 0
-		spritePiece	-$20, $18, 4, 4, $130, 0, 0, 0, 0
-		spritePiece	0, -8, 4, 4, $140, 0, 0, 0, 0
-		spritePiece	0, $18, 4, 4, $150, 0, 0, 0, 0
+		piece	-$10, -$28, 4x4, $108
+		piece	$10, -$28, 2x4, $118
+		piece	-$20, -8, 4x4, $120
+		piece	-$20, $18, 4x4, $130
+		piece	0, -8, 4x4, $140
+		piece	0, $18, 4x4, $150
 		endsprite
 
 Frame_HideTM:	spritemap
-		spritePiece	-8, -4, 1, 1, 0, 0, 0, 0, 0
-		spritePiece	0, -4, 1, 1, 0, 0, 0, 0, 0
+		piece	-8, -4, 1x1, 0
+		piece	0, -4, 1x1, 0
 		endsprite
 
 		even

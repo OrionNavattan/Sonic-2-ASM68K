@@ -8,36 +8,36 @@ Map_TitleMenu:	index offset(*)
 		ptr	Map_obj0F_008A
 
 Map_obj0F_0006:	spritemap
-		spritePiece	-$2C, -$C, 1, 1, $402, 0, 0, 3, 0
-		spritePiece	-$1C, -$C, 4, 1, $403, 0, 0, 3, 0
-		spritePiece	4, -$C, 2, 1, $407, 0, 0, 3, 0
-		spritePiece	-$2C, 4, 1, 1, $409, 0, 0, 0, 0
-		spritePiece	-$1C, 4, 4, 1, $403, 0, 0, 0, 0
-		spritePiece	4, 4, 2, 1, $407, 0, 0, 0, 0
-		spritePiece	$1C, 4, 2, 1, $40A, 0, 0, 0, 0
-		spritePiece	-$44, -$C, 2, 1, $3FA, 0, 0, 3, 0
+		piece	-$2C, -$C, 1x1, $402, pal4
+		piece	-$1C, -$C, 4x1, $403, pal4
+		piece	4, -$C, 2x1, $407, pal4
+		piece	-$2C, 4, 1x1, $409
+		piece	-$1C, 4, 4x1, $403
+		piece	4, 4, 2x1, $407
+		piece	$1C, 4, 2x1, $40A
+		piece	-$44, -$C, 2x1, $3FA, pal4
 		endsprite
 
 Map_obj0F_0048:	spritemap
-		spritePiece	-$2C, -$C, 1, 1, $402, 0, 0, 0, 0
-		spritePiece	-$1C, -$C, 4, 1, $403, 0, 0, 0, 0
-		spritePiece	4, -$C, 2, 1, $407, 0, 0, 0, 0
-		spritePiece	-$2C, 4, 1, 1, $409, 0, 0, 3, 0
-		spritePiece	-$1C, 4, 4, 1, $403, 0, 0, 3, 0
-		spritePiece	4, 4, 2, 1, $407, 0, 0, 3, 0
-		spritePiece	$1C, 4, 2, 1, $40A, 0, 0, 3, 0
-		spritePiece	-$44, 4, 2, 1, $3FA, 0, 0, 3, 0
+		piece	-$2C, -$C, 1x1, $402
+		piece	-$1C, -$C, 4x1, $403
+		piece	4, -$C, 2x1, $407
+		piece	-$2C, 4, 1x1, $409, pal4
+		piece	-$1C, 4, 4x1, $403, pal4
+		piece	4, 4, 2x1, $407, pal4
+		piece	$1C, 4, 2x1, $40A, pal4
+		piece	-$44, 4, 2x1, $3FA, pal4
 		endsprite
 
 Map_obj0F_008A:	spritemap
-		spritePiece	-$24, -8, 1, 1, $69C, 0, 0, 3, 0
-		spritePiece	-$1C, -8, 1, 1, $69D, 0, 0, 3, 0
-		spritePiece	-$14, -8, 1, 1, $6A1, 0, 0, 3, 0
-		spritePiece	-$C, -8, 1, 1, $696, 0, 0, 3, 0
-		spritePiece	-4, -8, 1, 1, $69C, 0, 0, 3, 0
-		spritePiece	4, -8, 1, 1, $69B, 0, 0, 3, 0
-		spritePiece	$C, -8, 1, 1, $6A0, 0, 0, 3, 0
-		spritePiece	-$44, -8, 2, 1, $3FA, 0, 0, 3, 0
+		piece	-$24, -8, 1x1, $69C, pal4
+		piece	-$1C, -8, 1x1, $69D, pal4
+		piece	-$14, -8, 1x1, $6A1, pal4
+		piece	-$C, -8, 1x1, $696, pal4
+		piece	-4, -8, 1x1, $69C, pal4
+		piece	4, -8, 1x1, $69B, pal4
+		piece	$C, -8, 1x1, $6A0, pal4
+		piece	-$44, -8, 2x1, $3FA, pal4
 		endsprite
 
 		even

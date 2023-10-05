@@ -7,15 +7,15 @@ Map_RoundBump:	index offset(*)
 		ptr	Map_obj44_0016
 
 Map_obj44_0004:	spritemap
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 0, 1, 0, 0, 0
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -$10, 2x4, 0, xflip
 		endsprite
 
 Map_obj44_0016:	spritemap
-		spritePiece	-$18, -$14, 3, 4, 8, 0, 0, 0, 0
-		spritePiece	0, -$14, 3, 4, 8, 1, 0, 0, 0
-		spritePiece	-$10, $C, 2, 2, $14, 0, 0, 0, 0
-		spritePiece	0, $C, 2, 2, $14, 1, 0, 0, 0
+		piece	-$18, -$14, 3x4, 8
+		piece	0, -$14, 3x4, 8, xflip
+		piece	-$10, $C, 2x2, $14
+		piece	0, $C, 2x2, $14, xflip
 		endsprite
 
 		even

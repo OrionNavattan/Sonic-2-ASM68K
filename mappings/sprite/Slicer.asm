@@ -14,69 +14,69 @@ Map_Slice:	index offset(*)
 		ptr	Map_objA2_014A
 
 Map_objA2_0012:	spritemap
-		spritePiece	-$C, -7, 2, 1, $1A, 0, 0, 0, 0
-		spritePiece	-$C, 1, 1, 1, $1C, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	8, 0, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-$20, -9, 2, 1, $1A, 0, 0, 0, 0
-		spritePiece	-$20, -1, 1, 1, $1C, 0, 0, 0, 0
+		piece	-$C, -7, 2x1, $1A
+		piece	-$C, 1, 1x1, $1C
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 3x2, 6
+		piece	8, 0, 1x2, $C
+		piece	-$20, -9, 2x1, $1A
+		piece	-$20, -1, 1x1, $1C
 		endsprite
 
 Map_objA2_004C:	spritemap
-		spritePiece	-$C, -8, 2, 1, $1A, 0, 0, 0, 0
-		spritePiece	-$C, 0, 1, 1, $1C, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 3, 2, $E, 0, 0, 0, 0
-		spritePiece	8, 0, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-$20, -8, 2, 1, $1A, 0, 0, 0, 0
-		spritePiece	-$20, 0, 1, 1, $1C, 0, 0, 0, 0
+		piece	-$C, -8, 2x1, $1A
+		piece	-$C, 0, 1x1, $1C
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 3x2, $E
+		piece	8, 0, 1x2, $C
+		piece	-$20, -8, 2x1, $1A
+		piece	-$20, 0, 1x1, $1C
 		endsprite
 
 Map_objA2_0086:	spritemap
-		spritePiece	-$C, -9, 2, 1, $1A, 0, 0, 0, 0
-		spritePiece	-$C, -1, 1, 1, $1C, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 3, 2, $14, 0, 0, 0, 0
-		spritePiece	8, 0, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-$20, -7, 2, 1, $1A, 0, 0, 0, 0
-		spritePiece	-$20, 1, 1, 1, $1C, 0, 0, 0, 0
+		piece	-$C, -9, 2x1, $1A
+		piece	-$C, -1, 1x1, $1C
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 3x2, $14
+		piece	8, 0, 1x2, $C
+		piece	-$20, -7, 2x1, $1A
+		piece	-$20, 1, 1x1, $1C
 		endsprite
 
 Map_objA2_00C0:	spritemap
-		spritePiece	-$C, -$20, 2, 1, $1E, 1, 1, 0, 0
-		spritePiece	-4, -$18, 1, 1, $1D, 1, 1, 0, 0
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	8, 0, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-$20, -$20, 2, 1, $1E, 1, 1, 0, 0
-		spritePiece	-$18, -$18, 1, 1, $1D, 1, 1, 0, 0
+		piece	-$C, -$20, 2x1, $1E, xflip, yflip
+		piece	-4, -$18, 1x1, $1D, xflip, yflip
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 3x2, 6
+		piece	8, 0, 1x2, $C
+		piece	-$20, -$20, 2x1, $1E, xflip, yflip
+		piece	-$18, -$18, 1x1, $1D, xflip, yflip
 		endsprite
 
 Map_objA2_00FA:	spritemap
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	8, 0, 1, 2, $C, 0, 0, 0, 0
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 3x2, 6
+		piece	8, 0, 1x2, $C
 		endsprite
 
 Map_objA2_0114:	spritemap
-		spritePiece	-$10, -$10, 2, 1, $1A, 0, 0, 0, 0
-		spritePiece	-$10, -8, 1, 1, $1C, 0, 0, 0, 0
+		piece	-$10, -$10, 2x1, $1A
+		piece	-$10, -8, 1x1, $1C
 		endsprite
 
 Map_objA2_0126:	spritemap
-		spritePiece	-$10, 0, 1, 1, $1D, 0, 0, 0, 0
-		spritePiece	-$10, 8, 2, 1, $1E, 0, 0, 0, 0
+		piece	-$10, 0, 1x1, $1D
+		piece	-$10, 8, 2x1, $1E
 		endsprite
 
 Map_objA2_0138:	spritemap
-		spritePiece	8, 0, 1, 1, $1C, 1, 1, 0, 0
-		spritePiece	0, 8, 2, 1, $1A, 1, 1, 0, 0
+		piece	8, 0, 1x1, $1C, xflip, yflip
+		piece	0, 8, 2x1, $1A, xflip, yflip
 		endsprite
 
 Map_objA2_014A:	spritemap
-		spritePiece	0, -$10, 2, 1, $1E, 1, 1, 0, 0
-		spritePiece	8, -8, 1, 1, $1D, 1, 1, 0, 0
+		piece	0, -$10, 2x1, $1E, xflip, yflip
+		piece	8, -8, 1x1, $1D, xflip, yflip
 		endsprite
 
 		even

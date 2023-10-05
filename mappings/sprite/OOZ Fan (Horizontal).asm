@@ -16,39 +16,39 @@ Map_HorizFan:	index offset(*)
 		ptr	Map_obj3F_a_0016
 
 Map_obj3F_a_0016:	spritemap
-		spritePiece	-$C, -$D, 1, 3, 0, 0, 0, 0, 0
-		spritePiece	-4, -$10, 2, 2, 7, 0, 0, 0, 0
-		spritePiece	-4, 0, 2, 2, 7, 0, 1, 0, 0
+		piece	-$C, -$D, 1x3, 0
+		piece	-4, -$10, 2x2, 7
+		piece	-4, 0, 2x2, 7, yflip
 		endsprite
 
 Map_obj3F_a_0030:	spritemap
-		spritePiece	-$C, -$B, 1, 3, 0, 0, 1, 0, 0
-		spritePiece	-4, -$10, 2, 2, 7, 0, 0, 0, 0
-		spritePiece	-4, 0, 2, 2, 7, 0, 1, 0, 0
+		piece	-$C, -$B, 1x3, 0, yflip
+		piece	-4, -$10, 2x2, 7
+		piece	-4, 0, 2x2, 7, yflip
 		endsprite
 
 Map_obj3F_a_004A:	spritemap
-		spritePiece	-$C, -$10, 1, 4, 3, 0, 0, 0, 0
-		spritePiece	-4, -$10, 2, 2, 7, 0, 0, 0, 0
-		spritePiece	-4, 0, 2, 2, 7, 0, 1, 0, 0
+		piece	-$C, -$10, 1x4, 3
+		piece	-4, -$10, 2x2, 7
+		piece	-4, 0, 2x2, 7, yflip
 		endsprite
 
 Map_obj3F_a_0064:	spritemap
-		spritePiece	-$C, -$D, 1, 3, 0, 0, 0, 0, 0
-		spritePiece	-4, -$10, 2, 2, $B, 0, 0, 0, 0
-		spritePiece	-4, 0, 2, 2, $B, 0, 1, 0, 0
+		piece	-$C, -$D, 1x3, 0
+		piece	-4, -$10, 2x2, $B
+		piece	-4, 0, 2x2, $B, yflip
 		endsprite
 
 Map_obj3F_a_007E:	spritemap
-		spritePiece	-$C, -$B, 1, 3, 0, 0, 1, 0, 0
-		spritePiece	-4, -$10, 2, 2, $B, 0, 0, 0, 0
-		spritePiece	-4, 0, 2, 2, $B, 0, 1, 0, 0
+		piece	-$C, -$B, 1x3, 0, yflip
+		piece	-4, -$10, 2x2, $B
+		piece	-4, 0, 2x2, $B, yflip
 		endsprite
 
 Map_obj3F_a_0098:	spritemap
-		spritePiece	-$C, -$10, 1, 4, 3, 0, 0, 0, 0
-		spritePiece	-4, -$10, 2, 2, $B, 0, 0, 0, 0
-		spritePiece	-4, 0, 2, 2, $B, 0, 1, 0, 0
+		piece	-$C, -$10, 1x4, 3
+		piece	-4, -$10, 2x2, $B
+		piece	-4, 0, 2x2, $B, yflip
 		endsprite
 
 		even

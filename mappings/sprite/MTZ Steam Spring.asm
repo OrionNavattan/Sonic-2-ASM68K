@@ -13,41 +13,41 @@ Map_SteamSpring:	index offset(*)
 		ptr	Map_obj42_007E
 
 Map_obj42_0010:	spritemap
-		spritePiece	-$18, -1, 1, 1, 0, 0, 0, 0, 0
+		piece	-$18, -1, 1x1, 0
 		endsprite
 
 Map_obj42_001A:	spritemap
-		spritePiece	-$18, -1, 2, 1, 1, 0, 0, 0, 0
+		piece	-$18, -1, 2x1, 1
 		endsprite
 
 Map_obj42_0024:	spritemap
-		spritePiece	-$14, -4, 2, 2, 3, 0, 0, 0, 0
+		piece	-$14, -4, 2x2, 3
 		endsprite
 
 Map_obj42_002E:	spritemap
-		spritePiece	-8, -4, 2, 2, 7, 0, 0, 0, 0
-		spritePiece	-$10, -4, 2, 2, 3, 0, 0, 0, 0
+		piece	-8, -4, 2x2, 7
+		piece	-$10, -4, 2x2, 3
 		endsprite
 
 Map_obj42_0040:	spritemap
-		spritePiece	0, -4, 2, 2, 7, 0, 1, 0, 0
-		spritePiece	-8, -4, 1, 2, $B, 0, 1, 0, 0
+		piece	0, -4, 2x2, 7, yflip
+		piece	-8, -4, 1x2, $B, yflip
 		endsprite
 
 Map_obj42_0052:	spritemap
-		spritePiece	$C, -4, 1, 2, $D, 0, 0, 0, 0
-		spritePiece	4, -4, 1, 2, $B, 0, 0, 0, 0
-		spritePiece	-4, -4, 1, 2, $D, 1, 1, 0, 0
+		piece	$C, -4, 1x2, $D
+		piece	4, -4, 1x2, $B
+		piece	-4, -4, 1x2, $D, xflip, yflip
 		endsprite
 
 Map_obj42_006C:	spritemap
-		spritePiece	$10, -4, 1, 2, $D, 0, 0, 0, 0
-		spritePiece	8, -4, 1, 2, $D, 1, 1, 0, 0
+		piece	$10, -4, 1x2, $D
+		piece	8, -4, 1x2, $D, xflip, yflip
 		endsprite
 
 Map_obj42_007E:	spritemap
-		spritePiece	-$10, -$10, 2, 4, $15, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, $1D, 0, 0, 0, 0
+		piece	-$10, -$10, 2x4, $15
+		piece	0, -$10, 2x4, $1D
 		endsprite
 
 		even

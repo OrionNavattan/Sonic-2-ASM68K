@@ -10,28 +10,28 @@ Map_GunPlat:	index offset(*)
 		ptr	Map_objBE_0052
 
 Map_objBE_000A:	spritemap
-		spritePiece	-$18, -$18, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	0, -$18, 3, 2, 6, 0, 0, 0, 0
+		piece	-$18, -$18, 3x2, 0
+		piece	0, -$18, 3x2, 6
 		endsprite
 
 Map_objBE_001C:	spritemap
-		spritePiece	-$18, -$18, 3, 2, $C, 0, 0, 0, 0
-		spritePiece	0, -$18, 3, 2, $12, 0, 0, 0, 0
+		piece	-$18, -$18, 3x2, $C
+		piece	0, -$18, 3x2, $12
 		endsprite
 
 Map_objBE_002E:	spritemap
-		spritePiece	-$18, -$18, 3, 2, $18, 0, 0, 0, 0
-		spritePiece	0, -$18, 3, 2, $18, 1, 0, 0, 0
+		piece	-$18, -$18, 3x2, $18
+		piece	0, -$18, 3x2, $18, xflip
 		endsprite
 
 Map_objBE_0040:	spritemap
-		spritePiece	-$20, -$18, 4, 3, $1E, 0, 0, 0, 0
-		spritePiece	0, -$18, 4, 3, $1E, 1, 0, 0, 0
+		piece	-$20, -$18, 4x3, $1E
+		piece	0, -$18, 4x3, $1E, xflip
 		endsprite
 
 Map_objBE_0052:	spritemap
-		spritePiece	-$20, -$18, 4, 3, $2A, 0, 0, 0, 0
-		spritePiece	0, -$18, 4, 3, $2A, 1, 0, 0, 0
+		piece	-$20, -$18, 4x3, $2A
+		piece	0, -$18, 4x3, $2A, xflip
 		endsprite
 
 		even

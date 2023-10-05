@@ -10,12 +10,12 @@ Frame_TelptrFlash_Blank:	spritemap
 		endsprite
 
 Frame_TelptrFlash_Flash:	spritemap
-		spritePiece	-$14, -$20, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, -$20, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -$10, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, -$10, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, 0, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 2, 2, 0, 0, 0, 0, 0
+		piece	-$14, -$20, 2x2, 0
+		piece	-8, -$20, 2x2, 0
+		piece	-$14, -$10, 2x2, 0
+		piece	-8, -$10, 2x2, 0
+		piece	-$14, 0, 2x2, 0
+		piece	-8, 0, 2x2, 0
 		endsprite
 
 		even

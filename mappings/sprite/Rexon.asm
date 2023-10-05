@@ -9,19 +9,19 @@ Map_Rex:	index offset(*)
 		ptr	Frame_Rexon_Proj
 
 Frame_Rexon_Head:	spritemap
-		spritePiece	-$14, -6, 3, 2, 0, 0, 0, 0, 0
+		piece	-$14, -6, 3x2, 0
 		endsprite
 
 Frame_Rexon_Neck:	spritemap
-		spritePiece	-8, -8, 2, 2, 6, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 6
 		endsprite
 
 Frame_Rexon_Body:	spritemap
-		spritePiece	-$10, -8, 4, 2, $A, 0, 0, 0, 0
+		piece	-$10, -8, 4x2, $A
 		endsprite
 
 Frame_Rexon_Proj:	spritemap
-		spritePiece	-4, -4, 1, 1, $12, 0, 0, 0, 0
+		piece	-4, -4, 1x1, $12
 		endsprite
 
 		even

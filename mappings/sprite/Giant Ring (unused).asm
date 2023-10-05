@@ -9,45 +9,45 @@ Map_GRing:	index offset(*)
 		ptr	Map_obj37_b_00BE
 
 Map_obj37_b_0008:	spritemap
-		spritePiece	-$18, -$20, 3, 1, 0, 0, 0, 0, 0
-		spritePiece	0, -$20, 3, 1, 3, 0, 0, 0, 0
-		spritePiece	-$20, -$18, 4, 1, 6, 0, 0, 0, 0
-		spritePiece	0, -$18, 4, 1, $A, 0, 0, 0, 0
-		spritePiece	-$20, -$10, 2, 4, $E, 0, 0, 0, 0
-		spritePiece	$10, -$10, 2, 4, $16, 0, 0, 0, 0
-		spritePiece	-$20, $10, 4, 1, $1E, 0, 0, 0, 0
-		spritePiece	0, $10, 4, 1, $22, 0, 0, 0, 0
-		spritePiece	-$18, $18, 3, 1, $26, 0, 0, 0, 0
-		spritePiece	0, $18, 3, 1, $29, 0, 0, 0, 0
+		piece	-$18, -$20, 3x1, 0
+		piece	0, -$20, 3x1, 3
+		piece	-$20, -$18, 4x1, 6
+		piece	0, -$18, 4x1, $A
+		piece	-$20, -$10, 2x4, $E
+		piece	$10, -$10, 2x4, $16
+		piece	-$20, $10, 4x1, $1E
+		piece	0, $10, 4x1, $22
+		piece	-$18, $18, 3x1, $26
+		piece	0, $18, 3x1, $29
 		endsprite
 
 Map_obj37_b_005A:	spritemap
-		spritePiece	-$10, -$20, 4, 1, $2C, 0, 0, 0, 0
-		spritePiece	-$18, -$18, 3, 1, $30, 0, 0, 0, 0
-		spritePiece	0, -$18, 3, 2, $33, 0, 0, 0, 0
-		spritePiece	-$18, -$10, 2, 4, $39, 0, 0, 0, 0
-		spritePiece	8, -8, 2, 2, $41, 0, 0, 0, 0
-		spritePiece	0, 8, 3, 2, $45, 0, 0, 0, 0
-		spritePiece	-$18, $10, 3, 1, $4B, 0, 0, 0, 0
-		spritePiece	-$10, $18, 4, 1, $4E, 0, 0, 0, 0
+		piece	-$10, -$20, 4x1, $2C
+		piece	-$18, -$18, 3x1, $30
+		piece	0, -$18, 3x2, $33
+		piece	-$18, -$10, 2x4, $39
+		piece	8, -8, 2x2, $41
+		piece	0, 8, 3x2, $45
+		piece	-$18, $10, 3x1, $4B
+		piece	-$10, $18, 4x1, $4E
 		endsprite
 
 Map_obj37_b_009C:	spritemap
-		spritePiece	-$C, -$20, 2, 4, $52, 0, 0, 0, 0
-		spritePiece	4, -$20, 1, 4, $52, 1, 0, 0, 0
-		spritePiece	-$C, 0, 2, 4, $5A, 0, 0, 0, 0
-		spritePiece	4, 0, 1, 4, $5A, 1, 0, 0, 0
+		piece	-$C, -$20, 2x4, $52
+		piece	4, -$20, 1x4, $52, xflip
+		piece	-$C, 0, 2x4, $5A
+		piece	4, 0, 1x4, $5A, xflip
 		endsprite
 
 Map_obj37_b_00BE:	spritemap
-		spritePiece	-$10, -$20, 4, 1, $2C, 1, 0, 0, 0
-		spritePiece	0, -$18, 3, 1, $30, 1, 0, 0, 0
-		spritePiece	-$18, -$18, 3, 2, $33, 1, 0, 0, 0
-		spritePiece	8, -$10, 2, 4, $39, 1, 0, 0, 0
-		spritePiece	-$18, -8, 2, 2, $41, 1, 0, 0, 0
-		spritePiece	-$18, 8, 3, 2, $45, 1, 0, 0, 0
-		spritePiece	0, $10, 3, 1, $4B, 1, 0, 0, 0
-		spritePiece	-$10, $18, 4, 1, $4E, 1, 0, 0, 0
+		piece	-$10, -$20, 4x1, $2C, xflip
+		piece	0, -$18, 3x1, $30, xflip
+		piece	-$18, -$18, 3x2, $33, xflip
+		piece	8, -$10, 2x4, $39, xflip
+		piece	-$18, -8, 2x2, $41, xflip
+		piece	-$18, 8, 3x2, $45, xflip
+		piece	0, $10, 3x1, $4B, xflip
+		piece	-$10, $18, 4x1, $4E, xflip
 		endsprite
 
 		even

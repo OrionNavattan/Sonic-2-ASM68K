@@ -15,43 +15,43 @@ Map_EmeraldSpec:	index offset(*)
 		ptr	Map_obj59_006E
 
 Map_obj59_0014:	spritemap
-		spritePiece	-4, -4, 1, 1, 0, 0, 0, 0, 1
+		piece	-4, -4, 1x1, 0, hi
 		endsprite
 
 Map_obj59_001E:	spritemap
-		spritePiece	-4, -4, 1, 1, 1, 0, 0, 0, 1
+		piece	-4, -4, 1x1, 1, hi
 		endsprite
 
 Map_obj59_0028:	spritemap
-		spritePiece	-4, -4, 1, 1, 2, 0, 0, 0, 1
+		piece	-4, -4, 1x1, 2, hi
 		endsprite
 
 Map_obj59_0032:	spritemap
-		spritePiece	-8, -8, 2, 2, 3, 0, 0, 0, 1
+		piece	-8, -8, 2x2, 3, hi
 		endsprite
 
 Map_obj59_003C:	spritemap
-		spritePiece	-8, -8, 2, 2, 7, 0, 0, 0, 1
+		piece	-8, -8, 2x2, 7, hi
 		endsprite
 
 Map_obj59_0046:	spritemap
-		spritePiece	-8, -8, 2, 2, $B, 0, 0, 0, 1
+		piece	-8, -8, 2x2, $B, hi
 		endsprite
 
 Map_obj59_0050:	spritemap
-		spritePiece	-8, -8, 2, 2, $F, 0, 0, 0, 1
+		piece	-8, -8, 2x2, $F, hi
 		endsprite
 
 Map_obj59_005A:	spritemap
-		spritePiece	-$C, -$C, 3, 3, $13, 0, 0, 0, 1
+		piece	-$C, -$C, 3x3, $13, hi
 		endsprite
 
 Map_obj59_0064:	spritemap
-		spritePiece	-$C, -$C, 3, 3, $1C, 0, 0, 0, 1
+		piece	-$C, -$C, 3x3, $1C, hi
 		endsprite
 
 Map_obj59_006E:	spritemap
-		spritePiece	-$C, -$C, 3, 3, $25, 0, 0, 0, 1
+		piece	-$C, -$C, 3x3, $25, hi
 		endsprite
 
 		even

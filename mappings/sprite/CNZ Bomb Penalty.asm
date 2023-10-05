@@ -6,7 +6,7 @@ Map_BombPenalty:	index offset(*)
 		ptr	Frame_Bomb
 
 Frame_Bomb:	spritemap
-		spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 0
 		endsprite
 		
 		even

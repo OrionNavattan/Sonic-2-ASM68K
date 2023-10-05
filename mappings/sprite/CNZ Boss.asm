@@ -28,97 +28,97 @@ Map_BCNZ:	index offset(*)
 		ptr	Map_obj51_0158
 
 Map_obj51_002A:	spritemap
-		spritePiece	$10, -$10, 2, 2, $17D, 0, 0, 0, 0
-		spritePiece	-7, -$28, 4, 3, $60, 0, 0, 1, 0
-		spritePiece	-$28, 0, 4, 4, $6C, 0, 0, 1, 0
-		spritePiece	-8, 0, 4, 4, $7C, 0, 0, 1, 0
-		spritePiece	$18, 0, 2, 3, $8C, 0, 0, 1, 0
+		piece	$10, -$10, 2x2, $17D
+		piece	-7, -$28, 4x3, $60, pal2
+		piece	-$28, 0, 4x4, $6C, pal2
+		piece	-8, 0, 4x4, $7C, pal2
+		piece	$18, 0, 2x3, $8C, pal2
 		endsprite
 
 Map_obj51_0054:	spritemap
-		spritePiece	-$1C, $18, 2, 3, $AA, 0, 0, 1, 0
+		piece	-$1C, $18, 2x3, $AA, pal2
 		endsprite
 
 Map_obj51_005E:	spritemap
-		spritePiece	-$25, $10, 2, 3, $B0, 0, 0, 1, 0
+		piece	-$25, $10, 2x3, $B0, pal2
 		endsprite
 
 Map_obj51_0068:	spritemap
-		spritePiece	8, $10, 3, 4, $92, 0, 0, 1, 0
+		piece	8, $10, 3x4, $92, pal2
 		endsprite
 
 Map_obj51_0072:	spritemap
-		spritePiece	8, $10, 3, 2, $9E, 0, 0, 1, 0
-		spritePiece	$20, $10, 2, 3, $A4, 0, 0, 1, 0
+		piece	8, $10, 3x2, $9E, pal2
+		piece	$20, $10, 2x3, $A4, pal2
 		endsprite
 
 Map_obj51_0084:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $189, 0, 0, 0, 0
-		spritePiece	-$20, -$10, 2, 2, $181, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, $189
+		piece	-$20, -$10, 2x2, $181
 		endsprite
 
 Map_obj51_0096:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $191, 0, 0, 0, 0
-		spritePiece	-$20, -$10, 2, 2, $181, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, $191
+		piece	-$20, -$10, 2x2, $181
 		endsprite
 
 Map_obj51_00A8:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $199, 0, 0, 0, 0
-		spritePiece	-$20, -$10, 2, 2, $185, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, $199
+		piece	-$20, -$10, 2x2, $185
 		endsprite
 
 Map_obj51_00BA:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $1A1, 0, 0, 0, 0
-		spritePiece	-$20, -$10, 2, 2, $185, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, $1A1
+		piece	-$20, -$10, 2x2, $185
 		endsprite
 
 Map_obj51_00CC:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $1A9, 0, 0, 0, 0
-		spritePiece	-$20, -$10, 2, 2, $185, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, $1A9
+		piece	-$20, -$10, 2x2, $185
 		endsprite
 
 Map_obj51_00DE:	spritemap
-		spritePiece	-$10, -$10, 4, 2, $1B1, 0, 0, 0, 0
-		spritePiece	-$20, -$10, 2, 2, $185, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, $1B1
+		piece	-$20, -$10, 2x2, $185
 		endsprite
 
 Map_obj51_00F0:	spritemap
-		spritePiece	-$10, $28, 4, 1, $B6, 0, 0, 1, 0
+		piece	-$10, $28, 4x1, $B6, pal2
 		endsprite
 
 Map_obj51_00FA:	spritemap
-		spritePiece	-$10, $28, 4, 1, $BA, 0, 0, 1, 0
+		piece	-$10, $28, 4x1, $BA, pal2
 		endsprite
 
 Map_obj51_0104:	spritemap
-		spritePiece	-$10, $28, 4, 1, $BE, 0, 0, 1, 0
+		piece	-$10, $28, 4x1, $BE, pal2
 		endsprite
 
 Map_obj51_010E:	spritemap
-		spritePiece	-$1C, $20, 4, 1, $C2, 0, 0, 1, 0
-		spritePiece	4, $20, 4, 1, $C6, 0, 0, 1, 0
+		piece	-$1C, $20, 4x1, $C2, pal2
+		piece	4, $20, 4x1, $C6, pal2
 		endsprite
 
 Map_obj51_0120:	spritemap
-		spritePiece	-$1C, $20, 4, 1, $CA, 0, 0, 1, 0
-		spritePiece	4, $20, 4, 1, $CE, 0, 0, 1, 0
+		piece	-$1C, $20, 4x1, $CA, pal2
+		piece	4, $20, 4x1, $CE, pal2
 		endsprite
 
 Map_obj51_0132:	spritemap
-		spritePiece	-$1C, $20, 4, 1, $D2, 0, 0, 1, 0
-		spritePiece	4, $20, 4, 1, $D6, 0, 0, 1, 0
+		piece	-$1C, $20, 4x1, $D2, pal2
+		piece	4, $20, 4x1, $D6, pal2
 		endsprite
 
 Map_obj51_0144:	spritemap
-		spritePiece	-$C, -$C, 3, 3, $DA, 0, 0, 0, 0
+		piece	-$C, -$C, 3x3, $DA
 		endsprite
 
 Map_obj51_014E:	spritemap
-		spritePiece	-4, -4, 1, 1, $E3, 0, 0, 0, 0
+		piece	-4, -4, 1x1, $E3
 		endsprite
 
 Map_obj51_0158:	spritemap
-		spritePiece	-4, -4, 1, 1, $E4, 0, 0, 0, 0
+		piece	-4, -4, 1x1, $E4
 		endsprite
 
 		even

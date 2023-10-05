@@ -11,24 +11,24 @@ Map_SuperStars:	index offset(*)
 		ptr	Map_obj7E_0072
 
 Map_obj7E_000C:	spritemap
-		spritePiece	-8, -8, 1, 1, 0, 0, 0, 0, 0
-		spritePiece	0, -8, 1, 1, 0, 1, 0, 0, 0
-		spritePiece	-8, 0, 1, 1, 0, 0, 1, 0, 0
-		spritePiece	0, 0, 1, 1, 0, 1, 1, 0, 0
+		piece	-8, -8, 1x1, 0
+		piece	0, -8, 1x1, 0, xflip
+		piece	-8, 0, 1x1, 0, yflip
+		piece	0, 0, 1x1, 0, xflip, yflip
 		endsprite
 
 Map_obj7E_002E:	spritemap
-		spritePiece	-$10, -$10, 2, 2, 1, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 2, 1, 1, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, 1, 0, 1, 0, 0
-		spritePiece	0, 0, 2, 2, 1, 1, 1, 0, 0
+		piece	-$10, -$10, 2x2, 1
+		piece	0, -$10, 2x2, 1, xflip
+		piece	-$10, 0, 2x2, 1, yflip
+		piece	0, 0, 2x2, 1, xflip, yflip
 		endsprite
 
 Map_obj7E_0050:	spritemap
-		spritePiece	-$18, -$18, 3, 3, 5, 0, 0, 0, 0
-		spritePiece	0, -$18, 3, 3, 5, 1, 0, 0, 0
-		spritePiece	-$18, 0, 3, 3, 5, 0, 1, 0, 0
-		spritePiece	0, 0, 3, 3, 5, 1, 1, 0, 0
+		piece	-$18, -$18, 3x3, 5
+		piece	0, -$18, 3x3, 5, xflip
+		piece	-$18, 0, 3x3, 5, yflip
+		piece	0, 0, 3x3, 5, xflip, yflip
 		endsprite
 
 Map_obj7E_0072:	spritemap

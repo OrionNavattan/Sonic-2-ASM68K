@@ -11,39 +11,39 @@ Map_BreakPlate:	index offset(*)
 		ptr	Map_objC1_0096
 
 Map_objC1_000C:	spritemap
-		spritePiece	-$20, -$20, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$20, 2, 4, 0, 1, 0, 0, 0
-		spritePiece	-$20, 0, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 4, 0, 1, 0, 0, 0
-		spritePiece	-$40, -$20, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-$30, -$20, 2, 4, 0, 1, 0, 0, 0
-		spritePiece	-$40, 0, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-$30, 0, 2, 4, 0, 1, 0, 0, 0
+		piece	-$20, -$20, 2x4, 0
+		piece	-$10, -$20, 2x4, 0, xflip
+		piece	-$20, 0, 2x4, 0
+		piece	-$10, 0, 2x4, 0, xflip
+		piece	-$40, -$20, 2x4, 0
+		piece	-$30, -$20, 2x4, 0, xflip
+		piece	-$40, 0, 2x4, 0
+		piece	-$30, 0, 2x4, 0, xflip
 		endsprite
 
 Map_objC1_004E:	spritemap
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 0, 1, 0, 0, 0
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -$10, 2x4, 0, xflip
 		endsprite
 
 Map_objC1_0060:	spritemap
-		spritePiece	-8, -$10, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-8, 0, 2, 2, 8, 0, 1, 0, 0
+		piece	-8, -$10, 2x2, 8
+		piece	-8, 0, 2x2, 8, yflip
 		endsprite
 
 Map_objC1_0072:	spritemap
-		spritePiece	-4, -$10, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-4, 0, 1, 2, $C, 0, 1, 0, 0
+		piece	-4, -$10, 1x2, $C
+		piece	-4, 0, 1x2, $C, yflip
 		endsprite
 
 Map_objC1_0084:	spritemap
-		spritePiece	-4, -$10, 1, 2, $C, 1, 0, 0, 0
-		spritePiece	-4, 0, 1, 2, $C, 1, 1, 0, 0
+		piece	-4, -$10, 1x2, $C, xflip
+		piece	-4, 0, 1x2, $C, xflip, yflip
 		endsprite
 
 Map_objC1_0096:	spritemap
-		spritePiece	-8, -$10, 2, 2, 8, 1, 0, 0, 0
-		spritePiece	-8, 0, 2, 2, 8, 1, 1, 0, 0
+		piece	-8, -$10, 2x2, 8, xflip
+		piece	-8, 0, 2x2, 8, xflip, yflip
 		endsprite
 
 		even

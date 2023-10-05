@@ -13,53 +13,53 @@ Map_Eggman:	index offset(*)
 		ptr	Map_objC6_a_00D6
 
 Map_objC6_a_0010:	spritemap
-		spritePiece	-$10, -$1A, 4, 2, $500, 0, 0, 0, 0
-		spritePiece	-$10, -$A, 4, 3, $564, 0, 0, 0, 0
-		spritePiece	-$10, $E, 4, 2, $570, 0, 0, 0, 0
+		piece	-$10, -$1A, 4x2, $500
+		piece	-$10, -$A, 4x3, $564
+		piece	-$10, $E, 4x2, $570
 		endsprite
 
 Map_objC6_a_002A:	spritemap
-		spritePiece	-$10, -$1A, 4, 2, $510, 0, 0, 0, 0
-		spritePiece	-$10, -$A, 4, 3, $564, 0, 0, 0, 0
-		spritePiece	-$10, $E, 4, 2, $570, 0, 0, 0, 0
+		piece	-$10, -$1A, 4x2, $510
+		piece	-$10, -$A, 4x3, $564
+		piece	-$10, $E, 4x2, $570
 		endsprite
 
 Map_objC6_a_0044:	spritemap
-		spritePiece	-$20, -$14, 2, 1, $518, 0, 0, 0, 0
-		spritePiece	-$10, -$1C, 4, 2, $51A, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 4, 3, $522, 0, 0, 0, 0
-		spritePiece	-$18, 4, 1, 2, $52E, 0, 0, 0, 0
-		spritePiece	$10, 4, 2, 2, $530, 0, 0, 0, 0
+		piece	-$20, -$14, 2x1, $518
+		piece	-$10, -$1C, 4x2, $51A
+		piece	-$10, -$C, 4x3, $522
+		piece	-$18, 4, 1x2, $52E
+		piece	$10, 4, 2x2, $530
 		endsprite
 
 Map_objC6_a_006E:	spritemap
-		spritePiece	-$20, -$14, 2, 1, $518, 0, 0, 0, 0
-		spritePiece	-$10, -$1C, 4, 2, $51A, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 4, 3, $534, 0, 0, 0, 0
-		spritePiece	-8, $C, 2, 2, $540, 0, 0, 0, 0
+		piece	-$20, -$14, 2x1, $518
+		piece	-$10, -$1C, 4x2, $51A
+		piece	-$10, -$C, 4x3, $534
+		piece	-8, $C, 2x2, $540
 		endsprite
 
 Map_objC6_a_0090:	spritemap
-		spritePiece	-$20, -$14, 2, 1, $518, 0, 0, 0, 0
-		spritePiece	-$10, -$1C, 4, 3, $544, 0, 0, 0, 0
-		spritePiece	-$10, -4, 4, 4, $550, 0, 0, 0, 0
-		spritePiece	$10, $C, 1, 2, $560, 0, 0, 0, 0
+		piece	-$20, -$14, 2x1, $518
+		piece	-$10, -$1C, 4x3, $544
+		piece	-$10, -4, 4x4, $550
+		piece	$10, $C, 1x2, $560
 		endsprite
 
 Map_objC6_a_00B2:	spritemap
-		spritePiece	-8, -4, 2, 1, $562, 0, 0, 0, 0
+		piece	-8, -4, 2x1, $562
 		endsprite
 
 Map_objC6_a_00BC:	spritemap
-		spritePiece	-$10, -$1A, 4, 2, $508, 0, 0, 0, 0
-		spritePiece	-$10, -$A, 4, 3, $564, 0, 0, 0, 0
-		spritePiece	-$10, $E, 4, 2, $570, 0, 0, 0, 0
+		piece	-$10, -$1A, 4x2, $508
+		piece	-$10, -$A, 4x3, $564
+		piece	-$10, $E, 4x2, $570
 		endsprite
 
 Map_objC6_a_00D6:	spritemap
-		spritePiece	-$10, -$19, 4, 2, $508, 0, 0, 0, 0
-		spritePiece	-$10, -9, 4, 3, $564, 0, 0, 0, 0
-		spritePiece	-$10, $F, 4, 2, $578, 0, 0, 0, 0
+		piece	-$10, -$19, 4x2, $508
+		piece	-$10, -9, 4x3, $564
+		piece	-$10, $F, 4x2, $578
 		endsprite
 
 		even

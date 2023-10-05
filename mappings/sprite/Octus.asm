@@ -12,41 +12,41 @@ Map_Octus:	index offset(*)
 		ptr	Map_obj4A_009A
 
 Map_obj4A_000E:	spritemap
-		spritePiece	-$10, -$15, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -5, 4, 2, 8, 0, 0, 0, 0
+		piece	-$10, -$15, 4x2, 0
+		piece	-$10, -5, 4x2, 8
 		endsprite
 
 Map_obj4A_0020:	spritemap
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$18, 0, 3, 2, $10, 0, 0, 0, 0
-		spritePiece	0, 0, 3, 2, $16, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, 0
+		piece	-$18, 0, 3x2, $10
+		piece	0, 0, 3x2, $16
 		endsprite
 
 Map_obj4A_003A:	spritemap
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$18, 0, 3, 2, $1C, 0, 0, 0, 0
-		spritePiece	0, 0, 3, 2, $22, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, 0
+		piece	-$18, 0, 3x2, $1C
+		piece	0, 0, 3x2, $22
 		endsprite
 
 Map_obj4A_0054:	spritemap
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$18, 0, 3, 2, $28, 0, 0, 0, 0
-		spritePiece	0, 0, 3, 2, $2E, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, 0
+		piece	-$18, 0, 3x2, $28
+		piece	0, 0, 3x2, $2E
 		endsprite
 
 Map_obj4A_006E:	spritemap
-		spritePiece	-9, -$10, 1, 2, $34, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$18, 0, 3, 2, $10, 0, 0, 0, 0
-		spritePiece	0, 0, 3, 2, $16, 0, 0, 0, 0
+		piece	-9, -$10, 1x2, $34
+		piece	-$10, -$10, 4x2, 0
+		piece	-$18, 0, 3x2, $10
+		piece	0, 0, 3x2, $16
 		endsprite
 
 Map_obj4A_0090:	spritemap
-		spritePiece	-$10, -$E, 1, 2, $36, 0, 0, 0, 0
+		piece	-$10, -$E, 1x2, $36
 		endsprite
 
 Map_obj4A_009A:	spritemap
-		spritePiece	-$10, -$E, 1, 2, $38, 0, 0, 0, 0
+		piece	-$10, -$E, 1x2, $38
 		endsprite
 
 		dc.w 0

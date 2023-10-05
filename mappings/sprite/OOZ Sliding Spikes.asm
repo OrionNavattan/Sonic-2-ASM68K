@@ -6,12 +6,12 @@ Map_RailSpikes:	index offset(*)
 		ptr	Map_obj43_0002
 
 Map_obj43_0002:	spritemap
-		spritePiece	-$18, -$20, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, -$28, 4, 4, 4, 0, 0, 0, 0
-		spritePiece	-$18, -8, 3, 2, $14, 0, 0, 0, 0
-		spritePiece	0, -8, 3, 2, $1A, 0, 0, 0, 0
-		spritePiece	-$18, $10, 2, 2, 0, 0, 1, 0, 0
-		spritePiece	-8, 8, 4, 4, 4, 0, 1, 0, 0
+		piece	-$18, -$20, 2x2, 0
+		piece	-8, -$28, 4x4, 4
+		piece	-$18, -8, 3x2, $14
+		piece	0, -8, 3x2, $1A
+		piece	-$18, $10, 2x2, 0, yflip
+		piece	-8, 8, 4x4, 4, yflip
 		endsprite
 
 		even

@@ -37,90 +37,90 @@ Map_YellowSpring:	index offset(*)
 ; ----------------------------------------------------------------------------
 
 word_19048:	spritemap
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 2, 2, 8, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, 0
+		piece	-8, 0, 2x2, 8
 		endsprite
 
 word_1905A:	spritemap
-		spritePiece	-$10, -8, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, -8, 4x2, 0
 		endsprite
 
 word_19064:	spritemap
-		spritePiece	-$10, -$20, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, -$10, 2, 4, $C, 0, 0, 0, 0
+		piece	-$10, -$20, 4x2, 0
+		piece	-8, -$10, 2x4, $C
 		endsprite
 
 word_19076:	spritemap
-		spritePiece	0, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, -8, 1, 2, 4, 0, 0, 0, 0
+		piece	0, -$10, 1x4, 0
+		piece	-8, -8, 1x2, 4
 		endsprite
 
 word_19088:	spritemap
-		spritePiece	-8, -$10, 1, 4, 0, 0, 0, 0, 0
+		piece	-8, -$10, 1x4, 0
 		endsprite
 
 word_19092:	spritemap
-		spritePiece	$10, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, -8, 3, 2, 6, 0, 0, 0, 0
+		piece	$10, -$10, 1x4, 0
+		piece	-8, -8, 3x2, 6
 		endsprite
 
 word_190A4:	spritemap
-		spritePiece	-$10, 0, 4, 2, 0, 0, 1, 0, 0
-		spritePiece	-8, -$10, 2, 2, 8, 0, 1, 0, 0
+		piece	-$10, 0, 4x2, 0, yflip
+		piece	-8, -$10, 2x2, 8, yflip
 		endsprite
 
 word_190B6:	spritemap
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	0, 0, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$A, -5, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 1, 0
+		piece	-$10, -$10, 4x2, 0
+		piece	0, 0, 2x2, 8
+		piece	-$A, -5, 2x2, $C
+		piece	-$10, 0, 2x2, $1C, pal2
 		endsprite
 
 word_190D8:	spritemap
-		spritePiece	-$16, -$A, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-6, 6, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 1, 0
+		piece	-$16, -$A, 4x2, 0
+		piece	-6, 6, 2x2, 8
+		piece	-$10, 0, 2x2, $1C, pal2
 		endsprite
 
 word_190F2:	spritemap
-		spritePiece	-5, -$1A, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	$B, -$A, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$A, -$D, 3, 4, $10, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 1, 0
+		piece	-5, -$1A, 4x2, 0
+		piece	$B, -$A, 2x2, 8
+		piece	-$A, -$D, 3x4, $10
+		piece	-$10, 0, 2x2, $1C, pal2
 		endsprite
 
 word_19114:	spritemap
-		spritePiece	-$10, 0, 4, 2, 0, 0, 1, 0, 0
-		spritePiece	0, -$10, 2, 2, 8, 0, 1, 0, 0
-		spritePiece	-$A, -$B, 2, 2, $C, 0, 1, 0, 0
-		spritePiece	-$10, -$10, 2, 2, $1C, 0, 1, 1, 0
+		piece	-$10, 0, 4x2, 0, yflip
+		piece	0, -$10, 2x2, 8, yflip
+		piece	-$A, -$B, 2x2, $C, yflip
+		piece	-$10, -$10, 2x2, $1C, yflip, pal2
 		endsprite
 
 word_19136:	spritemap
-		spritePiece	-$10, -$10, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	0, 0, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$A, -5, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 0, 0
+		piece	-$10, -$10, 4x2, 0
+		piece	0, 0, 2x2, 8
+		piece	-$A, -5, 2x2, $C
+		piece	-$10, 0, 2x2, $1C
 		endsprite
 
 word_19158:	spritemap
-		spritePiece	-$16, -$A, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-6, 6, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 0, 0
+		piece	-$16, -$A, 4x2, 0
+		piece	-6, 6, 2x2, 8
+		piece	-$10, 0, 2x2, $1C
 		endsprite
 
 word_19172:	spritemap
-		spritePiece	-5, -$1A, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	$B, -$A, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$A, -$D, 3, 4, $10, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $1C, 0, 0, 0, 0
+		piece	-5, -$1A, 4x2, 0
+		piece	$B, -$A, 2x2, 8
+		piece	-$A, -$D, 3x4, $10
+		piece	-$10, 0, 2x2, $1C
 		endsprite
 
 word_19194:	spritemap
-		spritePiece	-$10, 0, 4, 2, 0, 0, 1, 0, 0
-		spritePiece	0, -$10, 2, 2, 8, 0, 1, 0, 0
-		spritePiece	-$A, -$B, 2, 2, $C, 0, 1, 0, 0
-		spritePiece	-$10, -$10, 2, 2, $1C, 0, 1, 0, 0
+		piece	-$10, 0, 4x2, 0, yflip
+		piece	0, -$10, 2x2, 8, yflip
+		piece	-$A, -$B, 2x2, $C, yflip
+		piece	-$10, -$10, 2x2, $1C, yflip
 		endsprite
 
 		even

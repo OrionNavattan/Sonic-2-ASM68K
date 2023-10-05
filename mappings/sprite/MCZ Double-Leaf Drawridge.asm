@@ -10,58 +10,58 @@ Map_DBridge:	index offset(*)
 		ptr	Frame_DBridge_Open
 
 Frame_DBridge_Closed:	spritemap
-		spritePiece	-$40, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$30, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$20, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	0, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$10, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$20, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$30, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-$40, -8, 2x2, 0
+		piece	-$30, -8, 2x2, 0
+		piece	-$20, -8, 2x2, 0
+		piece	-$10, -8, 2x2, 0
+		piece	0, -8, 2x2, 0
+		piece	$10, -8, 2x2, 0
+		piece	$20, -8, 2x2, 0
+		piece	$30, -8, 2x2, 0
 		endsprite
 
 Frame_DBridge_Opening1:	spritemap
-		spritePiece	-$40, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$32, -2, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$23, 4, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, $A, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	4, $A, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$13, 4, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$22, -2, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$30, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-$40, -8, 2x2, 0
+		piece	-$32, -2, 2x2, 0
+		piece	-$23, 4, 2x2, 0
+		piece	-$14, $A, 2x2, 0
+		piece	4, $A, 2x2, 0
+		piece	$13, 4, 2x2, 0
+		piece	$22, -2, 2x2, 0
+		piece	$30, -8, 2x2, 0
 		endsprite
 
 Frame_DBridge_Opening2:	spritemap
-		spritePiece	-$40, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$35, 3, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$2A, $E, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$1F, $19, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$F, $19, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$1A, $E, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$25, 3, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$30, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-$40, -8, 2x2, 0
+		piece	-$35, 3, 2x2, 0
+		piece	-$2A, $E, 2x2, 0
+		piece	-$1F, $19, 2x2, 0
+		piece	$F, $19, 2x2, 0
+		piece	$1A, $E, 2x2, 0
+		piece	$25, 3, 2x2, 0
+		piece	$30, -8, 2x2, 0
 		endsprite
 
 Frame_DBridge_Opening3:	spritemap
-		spritePiece	-$40, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$3A, 6, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$34, $15, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$2E, $24, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$1E, $24, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$24, $15, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$2A, 6, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$30, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-$40, -8, 2x2, 0
+		piece	-$3A, 6, 2x2, 0
+		piece	-$34, $15, 2x2, 0
+		piece	-$2E, $24, 2x2, 0
+		piece	$1E, $24, 2x2, 0
+		piece	$24, $15, 2x2, 0
+		piece	$2A, 6, 2x2, 0
+		piece	$30, -8, 2x2, 0
 		endsprite
 
 Frame_DBridge_Open:	spritemap
-		spritePiece	-$40, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$40, 8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$40, $18, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$40, $28, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$30, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$30, 8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$30, $18, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	$30, $28, 2, 2, 0, 0, 0, 0, 0
+		piece	-$40, -8, 2x2, 0
+		piece	-$40, 8, 2x2, 0
+		piece	-$40, $18, 2x2, 0
+		piece	-$40, $28, 2x2, 0
+		piece	$30, -8, 2x2, 0
+		piece	$30, 8, 2x2, 0
+		piece	$30, $18, 2x2, 0
+		piece	$30, $28, 2x2, 0
 		endsprite
 
 		even

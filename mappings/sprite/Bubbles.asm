@@ -2,7 +2,8 @@
 ; Sprite mappings - Bubble generator, bubbles, and drowning numbers
 ; Tails uses a different set of mappings for the countdown numbers
 ; -------------------------------------------------------------------------------
-Map_Bub_Main:	index offset(*)
+
+Map_Bub_Player1:	index offset(*)
 		ptr	Frame_Bubble_0				; 0
 		ptr	Frame_Bubble_1				; 1
 		ptr	Frame_Bubble_1,Frame_Bubble_1_Dup	; 2
@@ -21,7 +22,7 @@ Map_Bub_Main:	index offset(*)
 		ptr	Frame_Bubble_BubMaker2			; $F
 		ptr	Frame_Bubble_Blank			; $10
 
-Map_Bub_Sidekick:	index offset(*)
+Map_Bub_Player2:	index offset(*)
 		ptr	Frame_Bubble_0
 		ptr	Frame_Bubble_1
 		ptr	Frame_Bubble_1
@@ -41,52 +42,52 @@ Map_Bub_Sidekick:	index offset(*)
 		ptr	Frame_Bubble_Blank
 
 Frame_Bubble_0:	spritemap
-		spritePiece	-4, -4, 1, 1, $8D, 0, 0, 0, 0
+		piece	-4, -4, 1x1, $8D
 		endsprite
 
 Frame_Bubble_1:	spritemap
-		spritePiece	-4, -4, 1, 1, $8E, 0, 0, 0, 0
+		piece	-4, -4, 1x1, $8E
 		endsprite
 
 Frame_Bubble_2:	spritemap
-		spritePiece	-8, -8, 2, 2, $8F, 0, 0, 0, 0
+		piece	-8, -8, 2x2, $8F
 		endsprite
 
 Frame_Bubble_3:	spritemap
-		spritePiece	-8, -8, 2, 2, $93, 0, 0, 0, 0
+		piece	-8, -8, 2x2, $93
 		endsprite
 
 Frame_Bubble_4:	spritemap
-		spritePiece	-$C, -$C, 3, 3, $1C, 0, 0, 0, 0
+		piece	-$C, -$C, 3x3, $1C
 		endsprite
 
 Frame_Bubble_Full:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 8, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 8
 		endsprite
 
 Frame_Bubble_Burst:	spritemap
-		spritePiece	-$10, -$10, 2, 2, $18, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 2, $18, 1, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $18, 0, 1, 0, 0
-		spritePiece	0, 0, 2, 2, $18, 1, 1, 0, 0
+		piece	-$10, -$10, 2x2, $18
+		piece	0, -$10, 2x2, $18, xflip
+		piece	-$10, 0, 2x2, $18, yflip
+		piece	0, 0, 2x2, $18, xflip, yflip
 		endsprite
 
 Frame_DrownNum_Main:	spritemap
-		spritePiece	-8, -$C, 2, 3, $741, 1, 1, 0, 0
+		piece	-8, -$C, 2x3, $741, xflip, yflip
 		endsprite
 
 Frame_Bubble_BubMaker1:	spritemap				; SONLVL
-		spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 0
 		endsprite
 
 Frame_Bubble_BubMaker2:	spritemap
-		spritePiece	-8, -8, 2, 2, 4, 0, 0, 0, 0
+		piece	-8, -8, 2x2, 4
 		endsprite
 
 Frame_Bubble_Blank:	spritemap
 		endsprite
 
 Frame_DrownNum_Side:	spritemap
-		spritePiece	-8, -$C, 2, 3, $731, 1, 1, 0, 0
+		piece	-8, -$C, 2x3, $731, xflip, yflip
 		endsprite
 		even

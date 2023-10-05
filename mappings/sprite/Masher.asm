@@ -7,15 +7,15 @@ Map_Mash:	index offset(*)
 		ptr	Map_obj5C_001E
 
 Map_obj5C_0004:	spritemap
-		spritePiece	-$C, -$10, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	4, -$10, 1, 2, 4, 0, 0, 0, 0
-		spritePiece	-$C, 0, 3, 2, $A, 0, 0, 0, 0
+		piece	-$C, -$10, 2x2, 0
+		piece	4, -$10, 1x2, 4
+		piece	-$C, 0, 3x2, $A
 		endsprite
 
 Map_obj5C_001E:	spritemap
-		spritePiece	-$C, -$10, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	2, -$10, 2, 2, 6, 0, 0, 0, 0
-		spritePiece	-$C, 0, 3, 2, $10, 0, 0, 0, 0
+		piece	-$C, -$10, 2x2, 0
+		piece	2, -$10, 2x2, 6
+		piece	-$C, 0, 3x2, $10
 		endsprite
 
 		even

@@ -11,29 +11,29 @@ Map_VertLauncher:	index offset(*)
 		ptr	Map_obj85_a_0064
 
 Map_obj85_a_000C:	spritemap
-		spritePiece	-$C, -$38, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -$28, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$C, -$18, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$C, -8, 3, 2, $C, 0, 0, 0, 0
+		piece	-$C, -$38, 3x2, 0
+		piece	-$C, -$28, 3x2, 6
+		piece	-$C, -$18, 3x2, 6
+		piece	-$C, -8, 3x2, $C
 		endsprite
 
 Map_obj85_a_002E:	spritemap
-		spritePiece	-$C, -$20, 3, 2, 0, 0, 0, 0, 0
+		piece	-$C, -$20, 3x2, 0
 		endsprite
 
 Map_obj85_a_0038:	spritemap
-		spritePiece	-$C, -$30, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$C, -$20, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$C, -$10, 3, 2, $C, 0, 0, 0, 0
+		piece	-$C, -$30, 3x2, 6
+		piece	-$C, -$20, 3x2, 6
+		piece	-$C, -$10, 3x2, $C
 		endsprite
 
 Map_obj85_a_0052:	spritemap
-		spritePiece	-$C, -$20, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$C, -$10, 3, 2, $C, 0, 0, 0, 0
+		piece	-$C, -$20, 3x2, 6
+		piece	-$C, -$10, 3x2, $C
 		endsprite
 
 Map_obj85_a_0064:	spritemap
-		spritePiece	-$C, -$20, 3, 2, 0, 0, 0, 1, 0
+		piece	-$C, -$20, 3x2, 0, pal2
 		endsprite
 
 		even

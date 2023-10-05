@@ -13,48 +13,48 @@ Map_DEZBarrier:	index offset(*)
 		
 	if FixBugs
 Frame_DEZBarrier1:	spritemap
-		spritePiece	-8, -$20, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, -$20, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 2, 4, 0, 0, 0, 0, 0
+		piece	-8, -$20, 2x4, 0
+		piece	-8, 0, 2x4, 0
+		piece	-8, -$20, 2x4, 0
+		piece	-8, 0, 2x4, 0
 		endsprite
 		
 Frame_DEZBarrier2:	spritemap
-		spritePiece	-8, 0, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, -$20, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 2, 4, 0, 0, 0, 0, 0
+		piece	-8, 0, 2x4, 0
+		piece	-8, -$20, 2x4, 0
+		piece	-8, 0, 2x4, 0
 		endsprite
 		
 Frame_DEZBarrier3:	spritemap
-		spritePiece	-8, -$20, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 2, 4, 0, 0, 0, 0, 0
+		piece	-8, -$20, 2x4, 0
+		piece	-8, 0, 2x4, 0
 		endsprite
 		
 Frame_DEZBarrier4:	spritemap
-		spritePiece	-8, 0, 2, 4, 0, 0, 0, 0, 0
+		piece	-8, 0, 2x4, 0
 		endsprite						
 	else
 	
 Frame_DEZBarrier1:	spritemap
-		spritePiece	-8, -$20, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, -$10, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, $10, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -$20, 2x2, 0
+		piece	-8, -$10, 2x2, 0
+		piece	-8, 0, 2x2, 0
+		piece	-8, $10, 2x2, 0
 		endsprite
 
 Frame_DEZBarrier2:	spritemap
-		spritePiece	-8, -$20, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, -$10, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -$20, 2x2, 0
+		piece	-8, -$10, 2x2, 0
+		piece	-8, 0, 2x2, 0
 		endsprite
 
 Frame_DEZBarrier3:	spritemap
-		spritePiece	-8, -$20, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, -$10, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -$20, 2x2, 0
+		piece	-8, -$10, 2x2, 0
 		endsprite
 
 Frame_DEZBarrier4:	spritemap
-		spritePiece	-8, -$20, 2, 2, 0, 0, 0, 0, 0
+		piece	-8, -$20, 2x2, 0
 		endsprite
 	endc
 

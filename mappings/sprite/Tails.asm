@@ -143,682 +143,682 @@ Map_Tails_0116:	spritemap
 		endsprite
 
 Map_Tails_0118:	spritemap
-		spritePiece	-$C, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, 0, 3, 2, 6, 0, 0, 0, 0
+		piece	-$C, -$10, 3x2, 0
+		piece	-$C, 0, 3x2, 6
 		endsprite
 
 Map_Tails_012A:	spritemap
-		spritePiece	-$C, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, 0, 3, 2, 6, 0, 0, 0, 0
+		piece	-$C, -$10, 3x2, 0
+		piece	-$C, 0, 3x2, 6
 		endsprite
 
 Map_Tails_013C:	spritemap
-		spritePiece	-$C, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, 0, 3, 2, 6, 0, 0, 0, 0
+		piece	-$C, -$10, 3x2, 0
+		piece	-$C, 0, 3x2, 6
 		endsprite
 
 Map_Tails_014E:	spritemap
-		spritePiece	-$C, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, 0, 3, 2, 6, 0, 0, 0, 0
+		piece	-$C, -$10, 3x2, 0
+		piece	-$C, 0, 3x2, 6
 		endsprite
 
 Map_Tails_0160:	spritemap
-		spritePiece	-$C, -$10, 3, 4, 0, 0, 0, 0, 0
+		piece	-$C, -$10, 3x4, 0
 		endsprite
 
 Map_Tails_016A:	spritemap
-		spritePiece	-$C, -$10, 3, 4, 0, 0, 0, 0, 0
+		piece	-$C, -$10, 3x4, 0
 		endsprite
 
 Map_Tails_0174:	spritemap
-		spritePiece	-$C, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, 0, 3, 2, 6, 0, 0, 0, 0
+		piece	-$C, -$10, 3x2, 0
+		piece	-$C, 0, 3x2, 6
 		endsprite
 
 Map_Tails_0186:	spritemap
-		spritePiece	-$C, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, 0, 3, 2, 6, 0, 0, 0, 0
+		piece	-$C, -$10, 3x2, 0
+		piece	-$C, 0, 3x2, 6
 		endsprite
 
 Map_Tails_0198:	spritemap
-		spritePiece	-$14, -$10, 2, 4, 0, 0, 0, 0, 0
+		piece	-$14, -$10, 2x4, 0
 		endsprite
 
 Map_Tails_01A2:	spritemap
-		spritePiece	-$1C, -$10, 3, 4, 0, 0, 0, 0, 0
+		piece	-$1C, -$10, 3x4, 0
 		endsprite
 
 Map_Tails_01AC:	spritemap
-		spritePiece	-$1C, -$10, 3, 4, 0, 0, 0, 0, 0
+		piece	-$1C, -$10, 3x4, 0
 		endsprite
 
 Map_Tails_01B6:	spritemap
-		spritePiece	-$1C, 0, 3, 2, 0, 0, 0, 0, 0
+		piece	-$1C, 0, 3x2, 0
 		endsprite
 
 Map_Tails_01C0:	spritemap
-		spritePiece	-$1C, -$10, 3, 4, 0, 0, 0, 0, 0
+		piece	-$1C, -$10, 3x4, 0
 		endsprite
 
 Map_Tails_01CA:	spritemap
-		spritePiece	-$10, -$14, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -4, 4, 2, 6, 0, 0, 0, 0
-		spritePiece	-$1E, -4, 3, 2, $E, 0, 0, 0, 0
+		piece	-$10, -$14, 3x2, 0
+		piece	-$10, -4, 4x2, 6
+		piece	-$1E, -4, 3x2, $E
 		endsprite
 
 Map_Tails_01E4:	spritemap
-		spritePiece	-$D, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 6, 0, 0, 0, 0
-		spritePiece	-$1C, 0, 3, 2, $E, 0, 0, 0, 0
+		piece	-$D, -$10, 3x2, 0
+		piece	-$10, 0, 4x2, 6
+		piece	-$1C, 0, 3x2, $E
 		endsprite
 
 Map_Tails_01FE:	spritemap
-		spritePiece	-8, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$D, 0, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$1C, -3, 3, 2, $C, 0, 0, 0, 0
+		piece	-8, -$10, 3x2, 0
+		piece	-$D, 0, 3x2, 6
+		piece	-$1C, -3, 3x2, $C
 		endsprite
 
 Map_Tails_0218:	spritemap
-		spritePiece	-$E, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$E, 0, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$1A, -3, 3, 2, $C, 0, 0, 0, 0
+		piece	-$E, -$10, 3x2, 0
+		piece	-$E, 0, 3x2, 6
+		piece	-$1A, -3, 3x2, $C
 		endsprite
 
 Map_Tails_0232:	spritemap
-		spritePiece	-$10, -$14, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -4, 4, 2, 6, 0, 0, 0, 0
-		spritePiece	-$1E, -4, 3, 2, $E, 0, 0, 0, 0
+		piece	-$10, -$14, 3x2, 0
+		piece	-$10, -4, 4x2, 6
+		piece	-$1E, -4, 3x2, $E
 		endsprite
 
 Map_Tails_024C:	spritemap
-		spritePiece	-$D, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 6, 0, 0, 0, 0
-		spritePiece	-$1C, 0, 3, 2, $E, 0, 0, 0, 0
+		piece	-$D, -$10, 3x2, 0
+		piece	-$10, 0, 4x2, 6
+		piece	-$1C, 0, 3x2, $E
 		endsprite
 
 Map_Tails_0266:	spritemap
-		spritePiece	-8, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$F, 0, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$1C, -3, 3, 2, $C, 0, 0, 0, 0
+		piece	-8, -$10, 3x2, 0
+		piece	-$F, 0, 3x2, 6
+		piece	-$1C, -3, 3x2, $C
 		endsprite
 
 Map_Tails_0280:	spritemap
-		spritePiece	-$E, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$E, 0, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$1A, -3, 3, 2, $C, 0, 0, 0, 0
+		piece	-$E, -$10, 3x2, 0
+		piece	-$E, 0, 3x2, 6
+		piece	-$1A, -3, 3x2, $C
 		endsprite
 
 Map_Tails_029A:	spritemap
-		spritePiece	-$D, -$1D, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -$D, 1, 4, 2, 0, 0, 0, 0
-		spritePiece	-$C, -$D, 3, 4, 6, 0, 0, 0, 0
+		piece	-$D, -$1D, 1x2, 0
+		piece	-$14, -$D, 1x4, 2
+		piece	-$C, -$D, 3x4, 6
 		endsprite
 
 Map_Tails_02B4:	spritemap
-		spritePiece	-$A, -$19, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$12, -9, 3, 4, 4, 0, 0, 0, 0
-		spritePiece	6, -2, 2, 2, $10, 0, 0, 0, 0
+		piece	-$A, -$19, 2x2, 0
+		piece	-$12, -9, 3x4, 4
+		piece	6, -2, 2x2, $10
 		endsprite
 
 Map_Tails_02CE:	spritemap
-		spritePiece	-8, -$1A, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$11, -$A, 1, 4, 4, 0, 0, 0, 0
-		spritePiece	-9, -$A, 3, 4, 8, 0, 0, 0, 0
+		piece	-8, -$1A, 2x2, 0
+		piece	-$11, -$A, 1x4, 4
+		piece	-9, -$A, 3x4, 8
 		endsprite
 
 Map_Tails_02E8:	spritemap
-		spritePiece	-9, -$1D, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -$D, 4, 4, 2, 0, 0, 0, 0
-		spritePiece	$C, -5, 1, 2, $12, 0, 0, 0, 0
+		piece	-9, -$1D, 1x2, 0
+		piece	-$14, -$D, 4x4, 2
+		piece	$C, -5, 1x2, $12
 		endsprite
 
 Map_Tails_0302:	spritemap
-		spritePiece	-$D, -$1D, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -$D, 1, 4, 2, 0, 0, 0, 0
-		spritePiece	-$C, -$D, 3, 4, 6, 0, 0, 0, 0
+		piece	-$D, -$1D, 1x2, 0
+		piece	-$14, -$D, 1x4, 2
+		piece	-$C, -$D, 3x4, 6
 		endsprite
 
 Map_Tails_031C:	spritemap
-		spritePiece	-$A, -$19, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$12, -9, 3, 4, 4, 0, 0, 0, 0
-		spritePiece	6, -1, 2, 2, $10, 0, 0, 0, 0
+		piece	-$A, -$19, 2x2, 0
+		piece	-$12, -9, 3x4, 4
+		piece	6, -1, 2x2, $10
 		endsprite
 
 Map_Tails_0336:	spritemap
-		spritePiece	-8, -$1A, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$11, -$A, 1, 4, 4, 0, 0, 0, 0
-		spritePiece	-9, -$A, 3, 4, 8, 0, 0, 0, 0
+		piece	-8, -$1A, 2x2, 0
+		piece	-$11, -$A, 1x4, 4
+		piece	-9, -$A, 3x4, 8
 		endsprite
 
 Map_Tails_0350:	spritemap
-		spritePiece	-9, -$1D, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -$D, 4, 4, 2, 0, 0, 0, 0
-		spritePiece	$C, 3, 1, 2, $12, 0, 0, 0, 0
+		piece	-9, -$1D, 1x2, 0
+		piece	-$14, -$D, 4x4, 2
+		piece	$C, 3, 1x2, $12
 		endsprite
 
 Map_Tails_036A:	spritemap
-		spritePiece	-$14, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$10, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-4, 6, 2, 4, $10, 0, 0, 0, 0
+		piece	-$14, -$10, 2x4, 0
+		piece	-4, -$10, 2x4, 8
+		piece	-4, 6, 2x4, $10
 		endsprite
 
 Map_Tails_0384:	spritemap
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	0, 4, 2, 4, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -$10, 2x4, 8
+		piece	0, 4, 2x4, $10
 		endsprite
 
 Map_Tails_039E:	spritemap
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-3, 4, 2, 4, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -$10, 2x4, 8
+		piece	-3, 4, 2x4, $10
 		endsprite
 
 Map_Tails_03B8:	spritemap
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-3, 4, 2, 4, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -$10, 2x4, 8
+		piece	-3, 4, 2x4, $10
 		endsprite
 
 Map_Tails_03D2:	spritemap
-		spritePiece	-$14, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$10, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-4, 6, 2, 4, $10, 0, 0, 0, 0
+		piece	-$14, -$10, 2x4, 0
+		piece	-4, -$10, 2x4, 8
+		piece	-4, 6, 2x4, $10
 		endsprite
 
 Map_Tails_03EC:	spritemap
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	0, 4, 2, 4, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -$10, 2x4, 8
+		piece	0, 4, 2x4, $10
 		endsprite
 
 Map_Tails_0406:	spritemap
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-3, 4, 2, 4, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -$10, 2x4, 8
+		piece	-3, 4, 2x4, $10
 		endsprite
 
 Map_Tails_0420:	spritemap
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-3, 4, 2, 4, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -$10, 2x4, 8
+		piece	-3, 4, 2x4, $10
 		endsprite
 
 Map_Tails_043A:	spritemap
-		spritePiece	-$15, 4, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$D, -$C, 4, 4, 2, 0, 0, 0, 0
+		piece	-$15, 4, 1x2, 0
+		piece	-$D, -$C, 4x4, 2
 		endsprite
 
 Map_Tails_044C:	spritemap
-		spritePiece	-8, -$1E, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -6, 1, 2, 4, 0, 0, 0, 0
-		spritePiece	-8, -$E, 4, 4, 6, 0, 0, 0, 0
+		piece	-8, -$1E, 2x2, 0
+		piece	-$10, -6, 1x2, 4
+		piece	-8, -$E, 4x4, 6
 		endsprite
 
 Map_Tails_0466:	spritemap
-		spritePiece	-$14, -7, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -$F, 4, 4, 2, 0, 0, 0, 0
+		piece	-$14, -7, 1x2, 0
+		piece	-$C, -$F, 4x4, 2
 		endsprite
 
 Map_Tails_0478:	spritemap
-		spritePiece	-$11, -4, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-1, -$1B, 1, 2, 2, 0, 0, 0, 0
-		spritePiece	-9, -$B, 4, 4, 4, 0, 0, 0, 0
+		piece	-$11, -4, 1x2, 0
+		piece	-1, -$1B, 1x2, 2
+		piece	-9, -$B, 4x4, 4
 		endsprite
 
 Map_Tails_0492:	spritemap
-		spritePiece	-$15, 4, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$D, -$C, 4, 4, 2, 0, 0, 0, 0
+		piece	-$15, 4, 1x2, 0
+		piece	-$D, -$C, 4x4, 2
 		endsprite
 
 Map_Tails_04A4:	spritemap
-		spritePiece	0, -$1E, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -6, 1, 2, 2, 0, 0, 0, 0
-		spritePiece	-8, -$E, 4, 4, 4, 0, 0, 0, 0
+		piece	0, -$1E, 1x2, 0
+		piece	-$10, -6, 1x2, 2
+		piece	-8, -$E, 4x4, 4
 		endsprite
 
 Map_Tails_04BE:	spritemap
-		spritePiece	-$14, -7, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -$F, 4, 4, 2, 0, 0, 0, 0
+		piece	-$14, -7, 1x2, 0
+		piece	-$C, -$F, 4x4, 2
 		endsprite
 
 Map_Tails_04D0:	spritemap
-		spritePiece	-1, -$1C, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$11, -4, 1, 2, 2, 0, 0, 0, 0
-		spritePiece	-9, -$C, 4, 4, 4, 0, 0, 0, 0
+		piece	-1, -$1C, 1x2, 0
+		piece	-$11, -4, 1x2, 2
+		piece	-9, -$C, 4x4, 4
 		endsprite
 
 Map_Tails_04EA:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	-$16, -$10, 2, 4, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
+		piece	-$16, -$10, 2x4, $10
 		endsprite
 
 Map_Tails_04FC:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	-$16, -8, 2, 2, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
+		piece	-$16, -8, 2x2, $10
 		endsprite
 
 Map_Tails_050E:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	-$16, -8, 2, 2, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
+		piece	-$16, -8, 2x2, $10
 		endsprite
 
 Map_Tails_0520:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	-$16, -8, 2, 2, $10, 0, 1, 0, 0
+		piece	-$10, -$10, 4x4, 0
+		piece	-$16, -8, 2x2, $10, yflip
 		endsprite
 
 Map_Tails_0532:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	-$16, -$10, 2, 4, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
+		piece	-$16, -$10, 2x4, $10
 		endsprite
 
 Map_Tails_0544:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	-$18, -$10, 2, 4, $10, 1, 1, 0, 0
+		piece	-$10, -$10, 4x4, 0
+		piece	-$18, -$10, 2x4, $10, xflip, yflip
 		endsprite
 
 Map_Tails_0556:	spritemap
-		spritePiece	-6, -$1C, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 3, 4, 2, 0, 0, 0, 0
-		spritePiece	-$18, -2, 3, 4, $E, 0, 0, 0, 0
+		piece	-6, -$1C, 1x2, 0
+		piece	-$10, -$C, 3x4, 2
+		piece	-$18, -2, 3x4, $E
 		endsprite
 
 Map_Tails_0570:	spritemap
-		spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 3, 4, 4, 0, 0, 0, 0
-		spritePiece	-$11, 4, 2, 2, $10, 0, 0, 0, 0
+		piece	-8, -$1C, 2x2, 0
+		piece	-$10, -$C, 3x4, 4
+		piece	-$11, 4, 2x2, $10
 		endsprite
 
 Map_Tails_058A:	spritemap
-		spritePiece	-6, -$1C, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 3, 4, 2, 0, 0, 0, 0
-		spritePiece	-$11, 4, 2, 2, $E, 0, 0, 0, 0
+		piece	-6, -$1C, 1x2, 0
+		piece	-$10, -$C, 3x4, 2
+		piece	-$11, 4, 2x2, $E
 		endsprite
 
 Map_Tails_05A4:	spritemap
-		spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 3, 4, 4, 0, 0, 0, 0
-		spritePiece	-$11, 4, 2, 2, $10, 0, 0, 0, 0
+		piece	-8, -$1C, 2x2, 0
+		piece	-$10, -$C, 3x4, 4
+		piece	-$11, 4, 2x2, $10
 		endsprite
 
 Map_Tails_05BE:	spritemap
-		spritePiece	-6, -$1C, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 3, 4, 2, 0, 0, 0, 0
-		spritePiece	-$16, -4, 3, 4, $E, 0, 0, 0, 0
+		piece	-6, -$1C, 1x2, 0
+		piece	-$10, -$C, 3x4, 2
+		piece	-$16, -4, 3x4, $E
 		endsprite
 
 Map_Tails_05D8:	spritemap
-		spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 3, 4, 4, 0, 0, 0, 0
-		spritePiece	-$16, -9, 3, 4, $10, 1, 1, 0, 0
+		piece	-8, -$1C, 2x2, 0
+		piece	-$10, -$C, 3x4, 4
+		piece	-$16, -9, 3x4, $10, xflip, yflip
 		endsprite
 
 Map_Tails_05F2:	spritemap
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 6, 0, 0, 0, 0
-		spritePiece	-$10, 6, 4, 2, $E, 0, 0, 0, 0
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 4x2, 6
+		piece	-$10, 6, 4x2, $E
 		endsprite
 
 Map_Tails_060C:	spritemap
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 6, 0, 0, 0, 0
-		spritePiece	-8, 6, 2, 2, $E, 0, 0, 0, 0
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 4x2, 6
+		piece	-8, 6, 2x2, $E
 		endsprite
 
 Map_Tails_0626:	spritemap
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 6, 0, 0, 0, 0
-		spritePiece	-8, 6, 2, 2, $E, 0, 0, 0, 0
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 4x2, 6
+		piece	-8, 6, 2x2, $E
 		endsprite
 
 Map_Tails_0640:	spritemap
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 6, 0, 0, 0, 0
-		spritePiece	-$10, 6, 4, 2, $E, 0, 0, 0, 0
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 4x2, 6
+		piece	-$10, 6, 4x2, $E
 		endsprite
 
 Map_Tails_065A:	spritemap
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 6, 0, 0, 0, 0
-		spritePiece	-$10, 8, 4, 2, $E, 1, 1, 0, 0
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 4x2, 6
+		piece	-$10, 8, 4x2, $E, xflip, yflip
 		endsprite
 
 Map_Tails_0674:	spritemap
-		spritePiece	-$14, -8, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	4, -8, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	0, -2, 3, 4, $10, 1, 0, 0, 0
+		piece	-$14, -8, 3x4, 0
+		piece	4, -8, 2x2, $C
+		piece	0, -2, 3x4, $10, xflip
 		endsprite
 
 Map_Tails_068E:	spritemap
-		spritePiece	-$14, -8, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	4, -8, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	4, 1, 2, 2, $10, 1, 0, 0, 0
+		piece	-$14, -8, 3x4, 0
+		piece	4, -8, 2x2, $C
+		piece	4, 1, 2x2, $10, xflip
 		endsprite
 
 Map_Tails_06A8:	spritemap
-		spritePiece	-$14, -8, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	4, -8, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	4, 1, 2, 2, $10, 1, 0, 0, 0
+		piece	-$14, -8, 3x4, 0
+		piece	4, -8, 2x2, $C
+		piece	4, 1, 2x2, $10, xflip
 		endsprite
 
 Map_Tails_06C2:	spritemap
-		spritePiece	-$14, -8, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	4, -8, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	4, 1, 2, 2, $10, 1, 0, 0, 0
+		piece	-$14, -8, 3x4, 0
+		piece	4, -8, 2x2, $C
+		piece	4, 1, 2x2, $10, xflip
 		endsprite
 
 Map_Tails_06DC:	spritemap
-		spritePiece	-$14, -8, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	4, -8, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	-2, -4, 3, 4, $10, 1, 0, 0, 0
+		piece	-$14, -8, 3x4, 0
+		piece	4, -8, 2x2, $C
+		piece	-2, -4, 3x4, $10, xflip
 		endsprite
 
 Map_Tails_06F6:	spritemap
-		spritePiece	-$14, -8, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	4, -8, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	-1, -9, 3, 4, $10, 0, 1, 0, 0
+		piece	-$14, -8, 3x4, 0
+		piece	4, -8, 2x2, $C
+		piece	-1, -9, 3x4, $10, yflip
 		endsprite
 
 Map_Tails_0710:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
 		endsprite
 
 Map_Tails_071A:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
 		endsprite
 
 Map_Tails_0724:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
 		endsprite
 
 Map_Tails_072E:	spritemap
-		spritePiece	-$24, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$24, -8, 3x2, 0
 		endsprite
 
 Map_Tails_0738:	spritemap
-		spritePiece	-$24, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$24, -8, 3x2, 0
 		endsprite
 
 Map_Tails_0742:	spritemap
-		spritePiece	-$24, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$24, -8, 3x2, 0
 		endsprite
 
 Map_Tails_074C:	spritemap
-		spritePiece	-$24, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$24, -8, 3x2, 0
 		endsprite
 
 Map_Tails_0756:	spritemap
-		spritePiece	-$1F, 7, 3, 2, 0, 0, 0, 0, 0
+		piece	-$1F, 7, 3x2, 0
 		endsprite
 
 Map_Tails_0760:	spritemap
-		spritePiece	-$1F, 7, 3, 2, 0, 0, 0, 0, 0
+		piece	-$1F, 7, 3x2, 0
 		endsprite
 
 Map_Tails_076A:	spritemap
-		spritePiece	-$1F, 7, 3, 2, 0, 0, 0, 0, 0
+		piece	-$1F, 7, 3x2, 0
 		endsprite
 
 Map_Tails_0774:	spritemap
-		spritePiece	-$1F, 7, 3, 2, 0, 0, 0, 0, 0
+		piece	-$1F, 7, 3x2, 0
 		endsprite
 
 Map_Tails_077E:	spritemap
-		spritePiece	-8, $C, 2, 4, 0, 0, 0, 0, 0
+		piece	-8, $C, 2x4, 0
 		endsprite
 
 Map_Tails_0788:	spritemap
-		spritePiece	-8, $C, 2, 4, 0, 0, 0, 0, 0
+		piece	-8, $C, 2x4, 0
 		endsprite
 
 Map_Tails_0792:	spritemap
-		spritePiece	-8, $C, 2, 4, 0, 0, 0, 0, 0
+		piece	-8, $C, 2x4, 0
 		endsprite
 
 Map_Tails_079C:	spritemap
-		spritePiece	-8, $C, 2, 4, 0, 0, 0, 0, 0
+		piece	-8, $C, 2x4, 0
 		endsprite
 
 Map_Tails_07A6:	spritemap
-		spritePiece	7, 7, 2, 4, 0, 0, 0, 0, 0
+		piece	7, 7, 2x4, 0
 		endsprite
 
 Map_Tails_07B0:	spritemap
-		spritePiece	7, 7, 2, 4, 0, 0, 0, 0, 0
+		piece	7, 7, 2x4, 0
 		endsprite
 
 Map_Tails_07BA:	spritemap
-		spritePiece	7, 7, 2, 4, 0, 0, 0, 0, 0
+		piece	7, 7, 2x4, 0
 		endsprite
 
 Map_Tails_07C4:	spritemap
-		spritePiece	7, 7, 2, 4, 0, 0, 0, 0, 0
+		piece	7, 7, 2x4, 0
 		endsprite
 
 Map_Tails_07CE:	spritemap
-		spritePiece	-8, -$18, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -8, 3, 4, 4, 0, 0, 0, 0
+		piece	-8, -$18, 2x2, 0
+		piece	-$10, -8, 3x4, 4
 		endsprite
 
 Map_Tails_07E0:	spritemap
-		spritePiece	-8, -$18, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -8, 3, 4, 4, 0, 0, 0, 0
+		piece	-8, -$18, 2x2, 0
+		piece	-$10, -8, 3x4, 4
 		endsprite
 
 Map_Tails_07F2:	spritemap
-		spritePiece	-7, -$10, 3, 4, 0, 0, 0, 0, 0
+		piece	-7, -$10, 3x4, 0
 		endsprite
 
 Map_Tails_07FC:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
 		endsprite
 
 Map_Tails_0806:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
 		endsprite
 
 Map_Tails_0810:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	-$16, -$1C, 4, 2, $10, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
+		piece	-$16, -$1C, 4x2, $10
 		endsprite
 
 Map_Tails_0822:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	-$16, -$1C, 4, 2, $10, 1, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
+		piece	-$16, -$1C, 4x2, $10, xflip
 		endsprite
 
 Map_Tails_0834:	spritemap
-		spritePiece	-$10, -$C, 4, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$C, 4x4, 0
 		endsprite
 
 Map_Tails_083E:	spritemap
-		spritePiece	-$10, -$C, 4, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$C, 4x4, 0
 		endsprite
 
 Map_Tails_0848:	spritemap
-		spritePiece	-$10, -$C, 4, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$C, 4x4, 0
 		endsprite
 
 Map_Tails_0852:	spritemap
-		spritePiece	-8, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 6, 0, 0, 0, 0
+		piece	-8, -$10, 3x2, 0
+		piece	-$10, 0, 4x2, 6
 		endsprite
 
 Map_Tails_0864:	spritemap
-		spritePiece	-8, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 3, 2, 6, 0, 0, 0, 0
+		piece	-8, -$10, 3x2, 0
+		piece	-8, 0, 3x2, 6
 		endsprite
 
 Map_Tails_0876:	spritemap
-		spritePiece	-8, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 3, 2, 6, 0, 0, 0, 0
+		piece	-8, -$10, 3x2, 0
+		piece	-8, 0, 3x2, 6
 		endsprite
 
 Map_Tails_0888:	spritemap
-		spritePiece	-8, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, 0, 3, 2, 6, 0, 0, 0, 0
+		piece	-8, -$10, 3x2, 0
+		piece	-8, 0, 3x2, 6
 		endsprite
 
 Map_Tails_089A:	spritemap
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 6, 0, 0, 0, 0
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 4x2, 6
 		endsprite
 
 Map_Tails_08AC:	spritemap
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, 6, 0, 0, 0, 0
+		piece	-$10, -$10, 3x2, 0
+		piece	-$10, 0, 4x2, 6
 		endsprite
 
 Map_Tails_08BE:	spritemap
-		spritePiece	-$18, -8, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 3, 4, 2, 0, 0, 0, 0
+		piece	-$18, -8, 1x2, 0
+		piece	-$10, -$10, 3x4, 2
 		endsprite
 
 Map_Tails_08D0:	spritemap
-		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$18, 0, 4, 2, 6, 0, 0, 0, 0
+		piece	-$10, -$10, 3x2, 0
+		piece	-$18, 0, 4x2, 6
 		endsprite
 
 Map_Tails_08E2:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
 		endsprite
 
 Map_Tails_08EC:	spritemap
-		spritePiece	-$14, -$10, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	$C, -$10, 1, 4, $10, 0, 0, 0, 0
+		piece	-$14, -$10, 4x4, 0
+		piece	$C, -$10, 1x4, $10
 		endsprite
 
 Map_Tails_08FE:	spritemap
-		spritePiece	-$14, -$10, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	$C, -$10, 1, 4, $10, 0, 0, 0, 0
+		piece	-$14, -$10, 4x4, 0
+		piece	$C, -$10, 1x4, $10
 		endsprite
 
 Map_Tails_0910:	spritemap
-		spritePiece	-$14, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-4, -$10, 3, 4, 4, 0, 0, 0, 0
+		piece	-$14, -8, 2x2, 0
+		piece	-4, -$10, 3x4, 4
 		endsprite
 
 Map_Tails_0922:	spritemap
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 0, 1, 0, 0, 0
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -$10, 2x4, 0, xflip
 		endsprite
 
 Map_Tails_0934:	spritemap
-		spritePiece	4, -8, 2, 2, 0, 1, 0, 0, 0
-		spritePiece	-$14, -$10, 3, 4, 4, 1, 0, 0, 0
+		piece	4, -8, 2x2, 0, xflip
+		piece	-$14, -$10, 3x4, 4, xflip
 		endsprite
 
 Map_Tails_0946:	spritemap
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -8, 2, 2, 8, 0, 0, 0, 0
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -8, 2x2, 8
 		endsprite
 
 Map_Tails_0958:	spritemap
-		spritePiece	0, -$10, 2, 4, 0, 1, 0, 0, 0
-		spritePiece	-$10, -8, 2, 2, 8, 1, 0, 0, 0
+		piece	0, -$10, 2x4, 0, xflip
+		piece	-$10, -8, 2x2, 8, xflip
 		endsprite
 
 Map_Tails_096A:	spritemap
-		spritePiece	-$14, -8, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-4, -$10, 3, 4, 4, 0, 0, 0, 0
+		piece	-$14, -8, 2x2, 0
+		piece	-4, -$10, 3x4, 4
 		endsprite
 
 Map_Tails_097C:	spritemap
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$10, 4x4, 0
 		endsprite
 
 Map_Tails_0986:	spritemap
-		spritePiece	-$F, -$10, 3, 4, 0, 0, 0, 0, 0
+		piece	-$F, -$10, 3x4, 0
 		endsprite
 
 Map_Tails_0990:	spritemap
-		spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$F, -$C, 3, 4, 4, 0, 0, 0, 0
+		piece	-8, -$1C, 2x2, 0
+		piece	-$F, -$C, 3x4, 4
 		endsprite
 
 Map_Tails_09A2:	spritemap
-		spritePiece	-$E, -$E, 3, 4, 0, 0, 0, 0, 0
+		piece	-$E, -$E, 3x4, 0
 		endsprite
 
 Map_Tails_09AC:	spritemap
-		spritePiece	-$10, -$C, 3, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$C, 3x4, 0
 		endsprite
 
 Map_Tails_09B6:	spritemap
-		spritePiece	-$E, -$D, 3, 4, 0, 0, 0, 0, 0
+		piece	-$E, -$D, 3x4, 0
 		endsprite
 
 Map_Tails_09C0:	spritemap
-		spritePiece	-$E, -$E, 3, 4, 0, 0, 0, 0, 0
+		piece	-$E, -$E, 3x4, 0
 		endsprite
 
 Map_Tails_09CA:	spritemap
-		spritePiece	-$E, -$E, 3, 4, 0, 0, 0, 0, 0
+		piece	-$E, -$E, 3x4, 0
 		endsprite
 
 Map_Tails_09D4:	spritemap
-		spritePiece	-$F, -$10, 3, 4, 0, 0, 0, 0, 0
+		piece	-$F, -$10, 3x4, 0
 		endsprite
 
 Map_Tails_09DE:	spritemap
-		spritePiece	-$10, -$13, 3, 4, 0, 0, 0, 0, 0
+		piece	-$10, -$13, 3x4, 0
 		endsprite
 
 Map_Tails_09E8:	spritemap
-		spritePiece	-$F, -$14, 3, 4, 0, 0, 0, 0, 0
+		piece	-$F, -$14, 3x4, 0
 		endsprite
 
 Map_Tails_09F2:	spritemap
-		spritePiece	-$D, -$C, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$D, 4, 2, 2, 6, 0, 0, 0, 0
+		piece	-$D, -$C, 3x2, 0
+		piece	-$D, 4, 2x2, 6
 		endsprite
 
 Map_Tails_0A04:	spritemap
-		spritePiece	-$10, -$E, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$14, 1, 4, 8, 0, 0, 0, 0
+		piece	-$10, -$E, 2x4, 0
+		piece	0, -$14, 1x4, 8
 		endsprite
 
 Map_Tails_0A16:	spritemap
-		spritePiece	-$20, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$20, -8, 3x2, 0
 		endsprite
 
 Map_Tails_0A20:	spritemap
-		spritePiece	-$20, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$20, -8, 3x2, 0
 		endsprite
 
 Map_Tails_0A2A:	spritemap
-		spritePiece	-$20, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$20, -8, 3x2, 0
 		endsprite
 
 Map_Tails_0A34:	spritemap
-		spritePiece	-$20, -8, 3, 2, 0, 0, 0, 0, 0
+		piece	-$20, -8, 3x2, 0
 		endsprite
 
 Map_Tails_0A3E:	spritemap
-		spritePiece	-$C, -$18, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -8, 4, 2, 6, 0, 0, 0, 0
+		piece	-$C, -$18, 3x2, 0
+		piece	-$C, -8, 4x2, 6
 		endsprite
 
 Map_Tails_0A50:	spritemap
-		spritePiece	-$C, -$18, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -8, 4, 2, 6, 0, 0, 0, 0
+		piece	-$C, -$18, 3x2, 0
+		piece	-$C, -8, 4x2, 6
 		endsprite
 
 Map_Tails_0A62:	spritemap
-		spritePiece	-$1D, -3, 3, 2, 0, 0, 0, 0, 0
+		piece	-$1D, -3, 3x2, 0
 		endsprite
 
 Map_Tails_0A6C:	spritemap
-		spritePiece	-$1D, -3, 3, 2, 0, 0, 0, 0, 0
+		piece	-$1D, -3, 3x2, 0
 		endsprite
 
 Map_Tails_0A76:	spritemap
-		spritePiece	-$1D, -3, 3, 2, 0, 0, 0, 0, 0
+		piece	-$1D, -3, 3x2, 0
 		endsprite
 
 Map_Tails_0A80:	spritemap
-		spritePiece	-$1D, -3, 3, 2, 0, 0, 0, 0, 0
+		piece	-$1D, -3, 3x2, 0
 		endsprite
 
 		even

@@ -10,26 +10,26 @@ Map_Ast:	index offset(*)
 		ptr	Frame_Ast_Spike_AngleDown
 
 Frame_Ast_EyeRed:	spritemap
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 0, 1, 0, 0, 0
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -$10, 2x4, 0, xflip
 		endsprite
 
 Frame_Ast_EyeYellow:	spritemap
-		spritePiece	-4, -3, 1, 1, $E, 0, 0, 1, 0
-		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 4, 0, 1, 0, 0, 0
+		piece	-4, -3, 1x1, $E, pal2
+		piece	-$10, -$10, 2x4, 0
+		piece	0, -$10, 2x4, 0, xflip
 		endsprite
 
 Frame_Ast_Spike_Up:	spritemap
-		spritePiece	-4, -8, 1, 2, 8, 0, 0, 0, 0
+		piece	-4, -8, 1x2, 8
 		endsprite
 
 Frame_Ast_Spike_AngleUp:	spritemap
-		spritePiece	-8, -4, 2, 1, $A, 0, 0, 0, 0
+		piece	-8, -4, 2x1, $A
 		endsprite
 
 Frame_Ast_Spike_AngleDown:	spritemap
-		spritePiece	-4, -8, 1, 2, $C, 0, 0, 0, 0
+		piece	-4, -8, 1x2, $C
 		endsprite
 
 		even

@@ -11,27 +11,27 @@ Map_SauceBump:	index offset(*)
 		ptr	Map_objD8_003E
 
 Map_objD8_000C:	spritemap
-		spritePiece	-$10, -8, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, -8, 4x2, 0
 		endsprite
 
 Map_objD8_0016:	spritemap
-		spritePiece	-$C, -$10, 3, 4, 8, 0, 0, 0, 0
+		piece	-$C, -$10, 3x4, 8
 		endsprite
 
 Map_objD8_0020:	spritemap
-		spritePiece	-8, -$10, 2, 4, $14, 0, 0, 0, 0
+		piece	-8, -$10, 2x4, $14
 		endsprite
 
 Map_objD8_002A:	spritemap
-		spritePiece	-$10, -6, 4, 2, 0, 0, 0, 0, 0
+		piece	-$10, -6, 4x2, 0
 		endsprite
 
 Map_objD8_0034:	spritemap
-		spritePiece	-$E, -$E, 3, 4, 8, 0, 0, 0, 0
+		piece	-$E, -$E, 3x4, 8
 		endsprite
 
 Map_objD8_003E:	spritemap
-		spritePiece	-$A, -$10, 2, 4, $14, 0, 0, 0, 0
+		piece	-$A, -$10, 2x4, $14
 		endsprite
 
 		even

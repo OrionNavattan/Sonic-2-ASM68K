@@ -2,7 +2,7 @@
 ; Sprite mappings - Bubble generator, bubbles, and drowning numbers
 ; Tails uses a different set of mappings for the countdown numbers
 ; -------------------------------------------------------------------------------
-Map_Bub_Main:	index offset(*)
+Map_Bub_Player1:	index offset(*)
 		ptr	Frame_Bubble_0				; 0
 		ptr	Frame_Bubble_1				; 1
 		ptr	Frame_Bubble_1,Frame_Bubble_1_Dup	; 2
@@ -21,7 +21,7 @@ Map_Bub_Main:	index offset(*)
 		ptr	Frame_Bubble_BubMaker2			; $F
 		ptr	Frame_Bubble_Blank			; $10
 
-Map_Bub_Sidekick:	index offset(*)
+Map_Bub_Player2:	index offset(*)
 		ptr	Frame_Bubble_0
 		ptr	Frame_Bubble_1
 		ptr	Frame_Bubble_1

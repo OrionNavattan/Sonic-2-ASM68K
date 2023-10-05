@@ -19,179 +19,179 @@ Map_RisePillar:	index offset(*)
 		ptr	Map_obj2B_03F6
 
 Map_obj2B_001C:	spritemap
-		spritePiece	-$10, $10, 4, 2, $8B, 0, 0, 1, 0
-		spritePiece	-$20, -$18, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$18, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$18, 4, 2, $61, 0, 0, 0, 0
-		spritePiece	-$10, -8, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, 8, 4, 2, $83, 0, 0, 0, 0
+		piece	-$10, $10, 4x2, $8B, pal2
+		piece	-$20, -$18, 2x2, $5D
+		piece	$10, -$18, 2x2, $5D, xflip
+		piece	-$10, -$18, 4x2, $61
+		piece	-$10, -8, 4x2, $69
+		piece	-$10, 8, 4x2, $83
 		endsprite
 
 Map_obj2B_004E:	spritemap
-		spritePiece	-$10, $14, 4, 2, $8B, 0, 0, 1, 0
-		spritePiece	-$20, -$1C, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$1C, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$1C, 4, 2, $61, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, -4, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, $C, 4, 2, $83, 0, 0, 0, 0
+		piece	-$10, $14, 4x2, $8B, pal2
+		piece	-$20, -$1C, 2x2, $5D
+		piece	$10, -$1C, 2x2, $5D, xflip
+		piece	-$10, -$1C, 4x2, $61
+		piece	-$10, -$C, 4x2, $69
+		piece	-$10, -4, 4x2, $69
+		piece	-$10, $C, 4x2, $83
 		endsprite
 
 Map_obj2B_0088:	spritemap
-		spritePiece	-$10, $18, 4, 2, $8B, 0, 0, 1, 0
-		spritePiece	-$20, -$20, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$20, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$20, 4, 2, $61, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, $10, 4, 2, $83, 0, 0, 0, 0
+		piece	-$10, $18, 4x2, $8B, pal2
+		piece	-$20, -$20, 2x2, $5D
+		piece	$10, -$20, 2x2, $5D, xflip
+		piece	-$10, -$20, 4x2, $61
+		piece	-$10, -$10, 4x2, $69
+		piece	-$10, 0, 4x2, $69
+		piece	-$10, $10, 4x2, $83
 		endsprite
 
 Map_obj2B_00C2:	spritemap
-		spritePiece	-$10, $1C, 4, 2, $8B, 0, 0, 1, 0
-		spritePiece	-$20, -$24, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$24, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$24, 4, 2, $61, 0, 0, 0, 0
-		spritePiece	-$10, -$14, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, -4, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, 4, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, $14, 4, 2, $83, 0, 0, 0, 0
+		piece	-$10, $1C, 4x2, $8B, pal2
+		piece	-$20, -$24, 2x2, $5D
+		piece	$10, -$24, 2x2, $5D, xflip
+		piece	-$10, -$24, 4x2, $61
+		piece	-$10, -$14, 4x2, $69
+		piece	-$10, -4, 4x2, $69
+		piece	-$10, 4, 4x2, $69
+		piece	-$10, $14, 4x2, $83
 		endsprite
 
 Map_obj2B_0104:	spritemap
-		spritePiece	-$10, $20, 4, 2, $8B, 0, 0, 1, 0
-		spritePiece	-$20, -$28, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$28, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$28, 4, 2, $61, 0, 0, 0, 0
-		spritePiece	-$10, -$18, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, -8, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, 8, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, $18, 4, 2, $83, 0, 0, 0, 0
+		piece	-$10, $20, 4x2, $8B, pal2
+		piece	-$20, -$28, 2x2, $5D
+		piece	$10, -$28, 2x2, $5D, xflip
+		piece	-$10, -$28, 4x2, $61
+		piece	-$10, -$18, 4x2, $69
+		piece	-$10, -8, 4x2, $69
+		piece	-$10, 8, 4x2, $69
+		piece	-$10, $18, 4x2, $83
 		endsprite
 
 Map_obj2B_0146:	spritemap
-		spritePiece	-$10, $24, 4, 2, $8B, 0, 0, 1, 0
-		spritePiece	-$20, -$2C, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$2C, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$2C, 4, 2, $61, 0, 0, 0, 0
-		spritePiece	-$10, -$1C, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, 4, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, $C, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, $1C, 4, 2, $83, 0, 0, 0, 0
+		piece	-$10, $24, 4x2, $8B, pal2
+		piece	-$20, -$2C, 2x2, $5D
+		piece	$10, -$2C, 2x2, $5D, xflip
+		piece	-$10, -$2C, 4x2, $61
+		piece	-$10, -$1C, 4x2, $69
+		piece	-$10, -$C, 4x2, $69
+		piece	-$10, 4, 4x2, $69
+		piece	-$10, $C, 4x2, $69
+		piece	-$10, $1C, 4x2, $83
 		endsprite
 
 Map_obj2B_0190:	spritemap
-		spritePiece	-$10, $28, 4, 2, $8B, 0, 0, 1, 0
-		spritePiece	-$20, -$30, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$30, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$30, 4, 2, $61, 0, 0, 0, 0
-		spritePiece	-$10, -$20, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, $10, 4, 2, $69, 0, 0, 0, 0
-		spritePiece	-$10, $20, 4, 2, $83, 0, 0, 0, 0
+		piece	-$10, $28, 4x2, $8B, pal2
+		piece	-$20, -$30, 2x2, $5D
+		piece	$10, -$30, 2x2, $5D, xflip
+		piece	-$10, -$30, 4x2, $61
+		piece	-$10, -$20, 4x2, $69
+		piece	-$10, -$10, 4x2, $69
+		piece	-$10, 0, 4x2, $69
+		piece	-$10, $10, 4x2, $69
+		piece	-$10, $20, 4x2, $83
 		endsprite
 
 Map_obj2B_01DA:	spritemap
-		spritePiece	-$20, -$18, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$18, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$18, 2, 2, $61, 0, 0, 0, 0
-		spritePiece	0, -$18, 2, 2, $65, 0, 0, 0, 0
-		spritePiece	-$10, -8, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -8, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, 8, 2, 2, $83, 0, 0, 0, 0
-		spritePiece	0, 8, 2, 2, $87, 0, 0, 0, 0
+		piece	-$20, -$18, 2x2, $5D
+		piece	$10, -$18, 2x2, $5D, xflip
+		piece	-$10, -$18, 2x2, $61
+		piece	0, -$18, 2x2, $65
+		piece	-$10, -8, 2x2, $69
+		piece	0, -8, 2x2, $6D
+		piece	-$10, 8, 2x2, $83
+		piece	0, 8, 2x2, $87
 		endsprite
 
 Map_obj2B_021C:	spritemap
-		spritePiece	-$20, -$1C, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$1C, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$1C, 2, 2, $61, 0, 0, 0, 0
-		spritePiece	0, -$1C, 2, 2, $65, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -$C, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, -4, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -4, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, $C, 2, 2, $83, 0, 0, 0, 0
-		spritePiece	0, $C, 2, 2, $87, 0, 0, 0, 0
+		piece	-$20, -$1C, 2x2, $5D
+		piece	$10, -$1C, 2x2, $5D, xflip
+		piece	-$10, -$1C, 2x2, $61
+		piece	0, -$1C, 2x2, $65
+		piece	-$10, -$C, 2x2, $69
+		piece	0, -$C, 2x2, $6D
+		piece	-$10, -4, 2x2, $69
+		piece	0, -4, 2x2, $6D
+		piece	-$10, $C, 2x2, $83
+		piece	0, $C, 2x2, $87
 		endsprite
 
 Map_obj2B_026E:	spritemap
-		spritePiece	-$20, -$20, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$20, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$20, 2, 2, $61, 0, 0, 0, 0
-		spritePiece	0, -$20, 2, 2, $65, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, 0, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, $10, 2, 2, $83, 0, 0, 0, 0
-		spritePiece	0, $10, 2, 2, $87, 0, 0, 0, 0
+		piece	-$20, -$20, 2x2, $5D
+		piece	$10, -$20, 2x2, $5D, xflip
+		piece	-$10, -$20, 2x2, $61
+		piece	0, -$20, 2x2, $65
+		piece	-$10, -$10, 2x2, $69
+		piece	0, -$10, 2x2, $6D
+		piece	-$10, 0, 2x2, $69
+		piece	0, 0, 2x2, $6D
+		piece	-$10, $10, 2x2, $83
+		piece	0, $10, 2x2, $87
 		endsprite
 
 Map_obj2B_02C0:	spritemap
-		spritePiece	-$20, -$24, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$24, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$24, 2, 2, $61, 0, 0, 0, 0
-		spritePiece	0, -$24, 2, 2, $65, 0, 0, 0, 0
-		spritePiece	-$10, -$14, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -$14, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, -4, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -4, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, 4, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, 4, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, $14, 2, 2, $83, 0, 0, 0, 0
-		spritePiece	0, $14, 2, 2, $87, 0, 0, 0, 0
+		piece	-$20, -$24, 2x2, $5D
+		piece	$10, -$24, 2x2, $5D, xflip
+		piece	-$10, -$24, 2x2, $61
+		piece	0, -$24, 2x2, $65
+		piece	-$10, -$14, 2x2, $69
+		piece	0, -$14, 2x2, $6D
+		piece	-$10, -4, 2x2, $69
+		piece	0, -4, 2x2, $6D
+		piece	-$10, 4, 2x2, $69
+		piece	0, 4, 2x2, $6D
+		piece	-$10, $14, 2x2, $83
+		piece	0, $14, 2x2, $87
 		endsprite
 
 Map_obj2B_0322:	spritemap
-		spritePiece	-$20, -$28, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$28, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$28, 2, 2, $61, 0, 0, 0, 0
-		spritePiece	0, -$28, 2, 2, $65, 0, 0, 0, 0
-		spritePiece	-$10, -$18, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -$18, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, -8, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -8, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, 8, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, 8, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, $18, 2, 2, $83, 0, 0, 0, 0
-		spritePiece	0, $18, 2, 2, $87, 0, 0, 0, 0
+		piece	-$20, -$28, 2x2, $5D
+		piece	$10, -$28, 2x2, $5D, xflip
+		piece	-$10, -$28, 2x2, $61
+		piece	0, -$28, 2x2, $65
+		piece	-$10, -$18, 2x2, $69
+		piece	0, -$18, 2x2, $6D
+		piece	-$10, -8, 2x2, $69
+		piece	0, -8, 2x2, $6D
+		piece	-$10, 8, 2x2, $69
+		piece	0, 8, 2x2, $6D
+		piece	-$10, $18, 2x2, $83
+		piece	0, $18, 2x2, $87
 		endsprite
 
 Map_obj2B_0384:	spritemap
-		spritePiece	-$20, -$2C, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$2C, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$2C, 2, 2, $61, 0, 0, 0, 0
-		spritePiece	0, -$2C, 2, 2, $65, 0, 0, 0, 0
-		spritePiece	-$10, -$1C, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -$1C, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -$C, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, 4, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, 4, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, $C, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, $C, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, $1C, 2, 2, $83, 0, 0, 0, 0
-		spritePiece	0, $1C, 2, 2, $87, 0, 0, 0, 0
+		piece	-$20, -$2C, 2x2, $5D
+		piece	$10, -$2C, 2x2, $5D, xflip
+		piece	-$10, -$2C, 2x2, $61
+		piece	0, -$2C, 2x2, $65
+		piece	-$10, -$1C, 2x2, $69
+		piece	0, -$1C, 2x2, $6D
+		piece	-$10, -$C, 2x2, $69
+		piece	0, -$C, 2x2, $6D
+		piece	-$10, 4, 2x2, $69
+		piece	0, 4, 2x2, $6D
+		piece	-$10, $C, 2x2, $69
+		piece	0, $C, 2x2, $6D
+		piece	-$10, $1C, 2x2, $83
+		piece	0, $1C, 2x2, $87
 		endsprite
 
 Map_obj2B_03F6:	spritemap
-		spritePiece	-$20, -$30, 2, 2, $5D, 0, 0, 0, 0
-		spritePiece	$10, -$30, 2, 2, $5D, 1, 0, 0, 0
-		spritePiece	-$10, -$30, 2, 2, $61, 0, 0, 0, 0
-		spritePiece	0, -$30, 2, 2, $65, 0, 0, 0, 0
-		spritePiece	-$10, -$20, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -$20, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, -$10, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, -$10, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, 0, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, 0, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, $10, 2, 2, $69, 0, 0, 0, 0
-		spritePiece	0, $10, 2, 2, $6D, 0, 0, 0, 0
-		spritePiece	-$10, $20, 2, 2, $83, 0, 0, 0, 0
-		spritePiece	0, $20, 2, 2, $87, 0, 0, 0, 0
+		piece	-$20, -$30, 2x2, $5D
+		piece	$10, -$30, 2x2, $5D, xflip
+		piece	-$10, -$30, 2x2, $61
+		piece	0, -$30, 2x2, $65
+		piece	-$10, -$20, 2x2, $69
+		piece	0, -$20, 2x2, $6D
+		piece	-$10, -$10, 2x2, $69
+		piece	0, -$10, 2x2, $6D
+		piece	-$10, 0, 2x2, $69
+		piece	0, 0, 2x2, $6D
+		piece	-$10, $10, 2x2, $69
+		piece	0, $10, 2x2, $6D
+		piece	-$10, $20, 2x2, $83
+		piece	0, $20, 2x2, $87
 		endsprite
 
 		even

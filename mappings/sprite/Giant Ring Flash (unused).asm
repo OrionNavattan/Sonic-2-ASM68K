@@ -14,55 +14,55 @@ Map_RingFlash:	index offset(*)
 		ptr	Map_obj37_c_00DE
 
 Map_obj37_c_0010:	spritemap
-		spritePiece	0, -$20, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	0, 0, 4, 4, 0, 0, 1, 0, 0
+		piece	0, -$20, 4x4, 0
+		piece	0, 0, 4x4, 0, yflip
 		endsprite
 
 Map_obj37_c_0022:	spritemap
-		spritePiece	-$10, -$20, 4, 4, $10, 0, 0, 0, 0
-		spritePiece	$10, -$20, 2, 4, $20, 0, 0, 0, 0
-		spritePiece	-$10, 0, 4, 4, $10, 0, 1, 0, 0
-		spritePiece	$10, 0, 2, 4, $20, 0, 1, 0, 0
+		piece	-$10, -$20, 4x4, $10
+		piece	$10, -$20, 2x4, $20
+		piece	-$10, 0, 4x4, $10, yflip
+		piece	$10, 0, 2x4, $20, yflip
 		endsprite
 
 Map_obj37_c_0044:	spritemap
-		spritePiece	-$18, -$20, 4, 4, $28, 0, 0, 0, 0
-		spritePiece	8, -$20, 3, 4, $38, 0, 0, 0, 0
-		spritePiece	-$18, 0, 4, 4, $28, 0, 1, 0, 0
-		spritePiece	8, 0, 3, 4, $38, 0, 1, 0, 0
+		piece	-$18, -$20, 4x4, $28
+		piece	8, -$20, 3x4, $38
+		piece	-$18, 0, 4x4, $28, yflip
+		piece	8, 0, 3x4, $38, yflip
 		endsprite
 
 Map_obj37_c_0066:	spritemap
-		spritePiece	-$20, -$20, 4, 4, $34, 1, 0, 0, 0
-		spritePiece	0, -$20, 4, 4, $34, 0, 0, 0, 0
-		spritePiece	-$20, 0, 4, 4, $34, 1, 1, 0, 0
-		spritePiece	0, 0, 4, 4, $34, 0, 1, 0, 0
+		piece	-$20, -$20, 4x4, $34, xflip
+		piece	0, -$20, 4x4, $34
+		piece	-$20, 0, 4x4, $34, xflip, yflip
+		piece	0, 0, 4x4, $34, yflip
 		endsprite
 
 Map_obj37_c_0088:	spritemap
-		spritePiece	-$20, -$20, 3, 4, $38, 1, 0, 0, 0
-		spritePiece	-8, -$20, 4, 4, $28, 1, 0, 0, 0
-		spritePiece	-$20, 0, 3, 4, $38, 1, 1, 0, 0
-		spritePiece	-8, 0, 4, 4, $28, 1, 1, 0, 0
+		piece	-$20, -$20, 3x4, $38, xflip
+		piece	-8, -$20, 4x4, $28, xflip
+		piece	-$20, 0, 3x4, $38, xflip, yflip
+		piece	-8, 0, 4x4, $28, xflip, yflip
 		endsprite
 
 Map_obj37_c_00AA:	spritemap
-		spritePiece	-$20, -$20, 2, 4, $20, 1, 0, 0, 0
-		spritePiece	-$10, -$20, 4, 4, $10, 1, 0, 0, 0
-		spritePiece	-$20, 0, 2, 4, $20, 1, 1, 0, 0
-		spritePiece	-$10, 0, 4, 4, $10, 1, 1, 0, 0
+		piece	-$20, -$20, 2x4, $20, xflip
+		piece	-$10, -$20, 4x4, $10, xflip
+		piece	-$20, 0, 2x4, $20, xflip, yflip
+		piece	-$10, 0, 4x4, $10, xflip, yflip
 		endsprite
 
 Map_obj37_c_00CC:	spritemap
-		spritePiece	-$20, -$20, 4, 4, 0, 1, 0, 0, 0
-		spritePiece	-$20, 0, 4, 4, 0, 1, 1, 0, 0
+		piece	-$20, -$20, 4x4, 0, xflip
+		piece	-$20, 0, 4x4, 0, xflip, yflip
 		endsprite
 
 Map_obj37_c_00DE:	spritemap
-		spritePiece	-$20, -$20, 4, 4, $44, 0, 0, 0, 0
-		spritePiece	0, -$20, 4, 4, $44, 1, 0, 0, 0
-		spritePiece	-$20, 0, 4, 4, $44, 0, 1, 0, 0
-		spritePiece	0, 0, 4, 4, $44, 1, 1, 0, 0
+		piece	-$20, -$20, 4x4, $44
+		piece	0, -$20, 4x4, $44, xflip
+		piece	-$20, 0, 4x4, $44, yflip
+		piece	0, 0, 4x4, $44, xflip, yflip
 		endsprite
 
 		even
