@@ -12,24 +12,24 @@ Map_Barrier:	index offset(*)
 		ptr	Frame_Barrier_CPZ_ARZ_1
 		ptr	Frame_Barrier_CPZ_ARZ_2
 
-Frame_Barrier_HTZ:	spriteHeader
+Frame_Barrier_HTZ:	spritemap
 		spritePiece	-8, -$20, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-8, -$10, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-8, 0, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-8, $10, 2, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Frame_Barrier_Open:	spriteHeader
+Frame_Barrier_Open:	spritemap
 		spritePiece	-$C, -$20, 3, 4, $5F, 0, 0, 0, 0
 		spritePiece	-$C, 0, 3, 4, $5F, 0, 0, 0, 0
 		endsprite
 
-Frame_Barrier_CPZ_ARZ_1:	spriteHeader
+Frame_Barrier_CPZ_ARZ_1:	spritemap
 		spritePiece	-8, -$20, 2, 4, 0, 0, 0, 0, 0
 		spritePiece	-8, 0, 2, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Frame_Barrier_CPZ_ARZ_2:	spriteHeader
+Frame_Barrier_CPZ_ARZ_2:	spritemap
 		spritePiece	-8, -$20, 2, 4, 0, 0, 0, 0, 0
 		spritePiece	-8, 0, 2, 4, 0, 0, 0, 0, 0
 		endsprite

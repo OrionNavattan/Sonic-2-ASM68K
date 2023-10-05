@@ -12,7 +12,7 @@ Map_EggmanWindow:	index offset(*)
 		ptr	Map_objAF_b_011C
 		ptr	Map_objAF_b_0136
 
-Map_objAF_b_0010:	spriteHeader
+Map_objAF_b_0010:	spritemap
 		spritePiece	-$10, -$C, 2, 3, 0, 0, 0, 1, 0
 		spritePiece	0, -$C, 2, 3, 0, 1, 0, 1, 0
 		spritePiece	-$10, 4, 2, 1, 6, 0, 0, 1, 0
@@ -20,7 +20,7 @@ Map_objAF_b_0010:	spriteHeader
 		spritePiece	-$10, -8, 4, 2, $190, 0, 0, 0, 0
 		endsprite
 
-Map_objAF_b_003A:	spriteHeader
+Map_objAF_b_003A:	spritemap
 		spritePiece	-$10, -$C, 2, 3, 0, 0, 0, 1, 0
 		spritePiece	0, -$C, 2, 3, 0, 1, 0, 1, 0
 		spritePiece	-$10, 0, 2, 1, 6, 0, 0, 1, 0
@@ -28,7 +28,7 @@ Map_objAF_b_003A:	spriteHeader
 		spritePiece	-$10, -8, 4, 2, $190, 0, 0, 0, 0
 		endsprite
 
-Map_objAF_b_0064:	spriteHeader
+Map_objAF_b_0064:	spritemap
 		spritePiece	-$10, -$C, 2, 3, 0, 0, 0, 1, 0
 		spritePiece	0, -$C, 2, 3, 0, 1, 0, 1, 0
 		spritePiece	-$10, -4, 2, 1, 6, 0, 0, 1, 0
@@ -36,7 +36,7 @@ Map_objAF_b_0064:	spriteHeader
 		spritePiece	-$10, -8, 4, 2, $190, 0, 0, 0, 0
 		endsprite
 
-Map_objAF_b_008E:	spriteHeader
+Map_objAF_b_008E:	spritemap
 		spritePiece	-$10, -$C, 2, 3, 0, 0, 0, 1, 0
 		spritePiece	0, -$C, 2, 3, 0, 1, 0, 1, 0
 		spritePiece	-$10, -8, 2, 1, 6, 0, 0, 1, 0
@@ -46,7 +46,7 @@ Map_objAF_b_008E:	spriteHeader
 		spritePiece	-$10, -8, 4, 2, $190, 0, 0, 0, 0
 		endsprite
 
-Map_objAF_b_00C8:	spriteHeader
+Map_objAF_b_00C8:	spritemap
 		spritePiece	-$10, -$C, 2, 3, 0, 0, 0, 1, 0
 		spritePiece	0, -$C, 2, 3, 0, 1, 0, 1, 0
 		spritePiece	-$10, -$C, 2, 1, 6, 0, 0, 1, 0
@@ -56,19 +56,19 @@ Map_objAF_b_00C8:	spriteHeader
 		spritePiece	-$10, -8, 4, 2, $190, 0, 0, 0, 0
 		endsprite
 
-Map_objAF_b_0102:	spriteHeader
+Map_objAF_b_0102:	spritemap
 		spritePiece	-$10, -$C, 2, 3, 0, 0, 0, 1, 0
 		spritePiece	0, -$C, 2, 3, 0, 1, 0, 1, 0
 		spritePiece	-$10, -8, 4, 2, $190, 0, 0, 0, 0
 		endsprite
 
-Map_objAF_b_011C:	spriteHeader
+Map_objAF_b_011C:	spritemap
 		spritePiece	-$10, -$C, 2, 3, 0, 0, 0, 1, 0
 		spritePiece	0, -$C, 2, 3, 0, 1, 0, 1, 0
 		spritePiece	-$10, -7, 4, 2, $190, 0, 0, 0, 0
 		endsprite
 
-Map_objAF_b_0136:	spriteHeader
+Map_objAF_b_0136:	spritemap
 		spritePiece	-$10, -$C, 2, 3, 0, 0, 0, 1, 0
 		spritePiece	0, -$C, 2, 3, 0, 1, 0, 1, 0
 		spritePiece	-$10, -8, 4, 2, $198, 0, 0, 0, 0

@@ -12,7 +12,7 @@ Map_TransBall:	index offset(*)
 		ptr	Map_obj48_010C
 		ptr	Map_obj48_013E
 
-Map_obj48_0010:	spriteHeader
+Map_obj48_0010:	spritemap
 		spritePiece	-$10, -$28, 2, 1, 0, 0, 0, 0, 0
 		spritePiece	0, -$28, 2, 1, 0, 1, 0, 0, 0
 		spritePiece	-$10, -$20, 2, 1, 2, 0, 0, 0, 0
@@ -23,7 +23,7 @@ Map_obj48_0010:	spriteHeader
 		spritePiece	0, 0, 3, 3, 8, 1, 1, 0, 0
 		endsprite
 
-Map_obj48_0052:	spriteHeader
+Map_obj48_0052:	spritemap
 		spritePiece	-$10, -$20, 2, 1, 0, 0, 0, 0, 0
 		spritePiece	0, -$20, 2, 1, 0, 1, 0, 0, 0
 		spritePiece	-$18, -$18, 3, 3, $11, 0, 0, 0, 0
@@ -32,35 +32,35 @@ Map_obj48_0052:	spriteHeader
 		spritePiece	0, 0, 3, 3, 8, 1, 1, 0, 0
 		endsprite
 
-Map_obj48_0084:	spriteHeader
+Map_obj48_0084:	spritemap
 		spritePiece	-$18, -$18, 3, 3, $11, 0, 0, 0, 0
 		spritePiece	0, -$18, 3, 3, $11, 1, 0, 0, 0
 		spritePiece	-$18, 0, 3, 3, 8, 0, 1, 0, 0
 		spritePiece	0, 0, 3, 3, 8, 1, 1, 0, 0
 		endsprite
 
-Map_obj48_00A6:	spriteHeader
+Map_obj48_00A6:	spritemap
 		spritePiece	-$18, -$18, 3, 3, $1A, 0, 0, 0, 0
 		spritePiece	0, -$18, 3, 3, $23, 1, 1, 0, 0
 		spritePiece	-$18, 0, 3, 3, $23, 0, 0, 0, 0
 		spritePiece	0, 0, 3, 3, $1A, 1, 1, 0, 0
 		endsprite
 
-Map_obj48_00C8:	spriteHeader
+Map_obj48_00C8:	spritemap
 		spritePiece	-$18, -$18, 3, 3, $23, 0, 1, 0, 0
 		spritePiece	0, -$18, 3, 3, $1A, 1, 0, 0, 0
 		spritePiece	-$18, 0, 3, 3, $1A, 0, 1, 0, 0
 		spritePiece	0, 0, 3, 3, $23, 1, 0, 0, 0
 		endsprite
 
-Map_obj48_00EA:	spriteHeader
+Map_obj48_00EA:	spritemap
 		spritePiece	-$18, -$18, 3, 3, 8, 0, 0, 0, 0
 		spritePiece	0, -$18, 3, 3, $2C, 0, 1, 0, 0
 		spritePiece	-$18, 0, 3, 3, 8, 0, 1, 0, 0
 		spritePiece	0, 0, 3, 3, $2C, 0, 0, 0, 0
 		endsprite
 
-Map_obj48_010C:	spriteHeader
+Map_obj48_010C:	spritemap
 		spritePiece	-$18, -$18, 3, 3, 8, 0, 0, 0, 0
 		spritePiece	0, -$18, 3, 3, $2C, 0, 1, 0, 0
 		spritePiece	-$18, 0, 3, 3, 8, 0, 1, 0, 0
@@ -69,7 +69,7 @@ Map_obj48_010C:	spriteHeader
 		spritePiece	$18, 0, 1, 2, 6, 0, 1, 0, 0
 		endsprite
 
-Map_obj48_013E:	spriteHeader
+Map_obj48_013E:	spritemap
 		spritePiece	-$18, -$18, 3, 3, 8, 0, 0, 0, 0
 		spritePiece	0, -$18, 3, 3, $2C, 0, 1, 0, 0
 		spritePiece	-$18, 0, 3, 3, 8, 0, 1, 0, 0

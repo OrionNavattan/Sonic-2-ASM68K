@@ -14,43 +14,43 @@ Map_EmeraldSpec:	index offset(*)
 		ptr	Map_obj59_0064
 		ptr	Map_obj59_006E
 
-Map_obj59_0014:	spriteHeader
+Map_obj59_0014:	spritemap
 		spritePiece	-4, -4, 1, 1, 0, 0, 0, 0, 1
 		endsprite
 
-Map_obj59_001E:	spriteHeader
+Map_obj59_001E:	spritemap
 		spritePiece	-4, -4, 1, 1, 1, 0, 0, 0, 1
 		endsprite
 
-Map_obj59_0028:	spriteHeader
+Map_obj59_0028:	spritemap
 		spritePiece	-4, -4, 1, 1, 2, 0, 0, 0, 1
 		endsprite
 
-Map_obj59_0032:	spriteHeader
+Map_obj59_0032:	spritemap
 		spritePiece	-8, -8, 2, 2, 3, 0, 0, 0, 1
 		endsprite
 
-Map_obj59_003C:	spriteHeader
+Map_obj59_003C:	spritemap
 		spritePiece	-8, -8, 2, 2, 7, 0, 0, 0, 1
 		endsprite
 
-Map_obj59_0046:	spriteHeader
+Map_obj59_0046:	spritemap
 		spritePiece	-8, -8, 2, 2, $B, 0, 0, 0, 1
 		endsprite
 
-Map_obj59_0050:	spriteHeader
+Map_obj59_0050:	spritemap
 		spritePiece	-8, -8, 2, 2, $F, 0, 0, 0, 1
 		endsprite
 
-Map_obj59_005A:	spriteHeader
+Map_obj59_005A:	spritemap
 		spritePiece	-$C, -$C, 3, 3, $13, 0, 0, 0, 1
 		endsprite
 
-Map_obj59_0064:	spriteHeader
+Map_obj59_0064:	spritemap
 		spritePiece	-$C, -$C, 3, 3, $1C, 0, 0, 0, 1
 		endsprite
 
-Map_obj59_006E:	spriteHeader
+Map_obj59_006E:	spritemap
 		spritePiece	-$C, -$C, 3, 3, $25, 0, 0, 0, 1
 		endsprite
 

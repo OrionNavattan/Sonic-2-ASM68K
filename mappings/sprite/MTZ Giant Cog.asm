@@ -36,135 +36,135 @@ Map_CogTeeth:	index offset(*)
 		ptr	Map_obj70_018C
 		ptr	Map_obj70_0196
 
-Map_obj70_0040:	spriteHeader
+Map_obj70_0040:	spritemap
 		spritePiece	-$10, -$10, 2, 4, 0, 0, 0, 0, 0
 		spritePiece	0, -$10, 2, 4, 0, 1, 0, 0, 0
 		endsprite
 
-Map_obj70_0052:	spriteHeader
+Map_obj70_0052:	spritemap
 		spritePiece	-$C, -$10, 3, 4, 8, 1, 0, 0, 0
 		endsprite
 
-Map_obj70_005C:	spriteHeader
+Map_obj70_005C:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $14, 1, 0, 0, 0
 		endsprite
 
-Map_obj70_0066:	spriteHeader
+Map_obj70_0066:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $24, 1, 0, 0, 0
 		endsprite
 
-Map_obj70_0070:	spriteHeader
+Map_obj70_0070:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $34, 1, 0, 0, 0
 		endsprite
 
-Map_obj70_007A:	spriteHeader
+Map_obj70_007A:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $44, 1, 0, 0, 0
 		endsprite
 
-Map_obj70_0084:	spriteHeader
+Map_obj70_0084:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $54, 1, 0, 0, 0
 		endsprite
 
-Map_obj70_008E:	spriteHeader
+Map_obj70_008E:	spritemap
 		spritePiece	-$10, -$C, 4, 3, $64, 1, 0, 0, 0
 		endsprite
 
-Map_obj70_0098:	spriteHeader
+Map_obj70_0098:	spritemap
 		spritePiece	-$10, -$10, 4, 2, $70, 1, 0, 0, 0
 		spritePiece	-$10, 0, 4, 2, $70, 1, 1, 0, 0
 		endsprite
 
-Map_obj70_00AA:	spriteHeader
+Map_obj70_00AA:	spritemap
 		spritePiece	-$10, -$C, 4, 3, $64, 1, 1, 0, 0
 		endsprite
 
-Map_obj70_00B4:	spriteHeader
+Map_obj70_00B4:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $54, 1, 1, 0, 0
 		endsprite
 
-Map_obj70_00BE:	spriteHeader
+Map_obj70_00BE:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $44, 1, 1, 0, 0
 		endsprite
 
-Map_obj70_00C8:	spriteHeader
+Map_obj70_00C8:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $34, 1, 1, 0, 0
 		endsprite
 
-Map_obj70_00D2:	spriteHeader
+Map_obj70_00D2:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $24, 1, 1, 0, 0
 		endsprite
 
-Map_obj70_00DC:	spriteHeader
+Map_obj70_00DC:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $14, 1, 1, 0, 0
 		endsprite
 
-Map_obj70_00E6:	spriteHeader
+Map_obj70_00E6:	spritemap
 		spritePiece	-$C, -$10, 3, 4, 8, 1, 1, 0, 0
 		endsprite
 
-Map_obj70_00F0:	spriteHeader
+Map_obj70_00F0:	spritemap
 		spritePiece	-$10, -$10, 2, 4, 0, 0, 1, 0, 0
 		spritePiece	0, -$10, 2, 4, 0, 1, 1, 0, 0
 		endsprite
 
-Map_obj70_0102:	spriteHeader
+Map_obj70_0102:	spritemap
 		spritePiece	-$C, -$10, 3, 4, 8, 0, 1, 0, 0
 		endsprite
 
-Map_obj70_010C:	spriteHeader
+Map_obj70_010C:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $14, 0, 1, 0, 0
 		endsprite
 
-Map_obj70_0116:	spriteHeader
+Map_obj70_0116:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $24, 0, 1, 0, 0
 		endsprite
 
-Map_obj70_0120:	spriteHeader
+Map_obj70_0120:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $34, 0, 1, 0, 0
 		endsprite
 
-Map_obj70_012A:	spriteHeader
+Map_obj70_012A:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $44, 0, 1, 0, 0
 		endsprite
 
-Map_obj70_0134:	spriteHeader
+Map_obj70_0134:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $54, 0, 1, 0, 0
 		endsprite
 
-Map_obj70_013E:	spriteHeader
+Map_obj70_013E:	spritemap
 		spritePiece	-$10, -$C, 4, 3, $64, 0, 1, 0, 0
 		endsprite
 
-Map_obj70_0148:	spriteHeader
+Map_obj70_0148:	spritemap
 		spritePiece	-$10, -$10, 4, 2, $70, 0, 0, 0, 0
 		spritePiece	-$10, 0, 4, 2, $70, 0, 1, 0, 0
 		endsprite
 
-Map_obj70_015A:	spriteHeader
+Map_obj70_015A:	spritemap
 		spritePiece	-$10, -$C, 4, 3, $64, 0, 0, 0, 0
 		endsprite
 
-Map_obj70_0164:	spriteHeader
+Map_obj70_0164:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $54, 0, 0, 0, 0
 		endsprite
 
-Map_obj70_016E:	spriteHeader
+Map_obj70_016E:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $44, 0, 0, 0, 0
 		endsprite
 
-Map_obj70_0178:	spriteHeader
+Map_obj70_0178:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $34, 0, 0, 0, 0
 		endsprite
 
-Map_obj70_0182:	spriteHeader
+Map_obj70_0182:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $24, 0, 0, 0, 0
 		endsprite
 
-Map_obj70_018C:	spriteHeader
+Map_obj70_018C:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $14, 0, 0, 0, 0
 		endsprite
 
-Map_obj70_0196:	spriteHeader
+Map_obj70_0196:	spritemap
 		spritePiece	-$C, -$10, 3, 4, 8, 0, 0, 0, 0
 		endsprite
 

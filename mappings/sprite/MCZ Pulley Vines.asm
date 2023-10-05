@@ -11,20 +11,20 @@ Map_VinePulley:	index offset(*)
 		ptr	Map_obj80_a_00E0
 		ptr	Map_obj80_a_0122
 
-Map_obj80_a_000E:	spriteHeader
+Map_obj80_a_000E:	spritemap
 		spritePiece	-4, $30, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, $50, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
 		endsprite
 
-Map_obj80_a_0028:	spriteHeader
+Map_obj80_a_0028:	spritemap
 		spritePiece	-4, $10, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, $30, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, $50, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
 		endsprite
 
-Map_obj80_a_004A:	spriteHeader
+Map_obj80_a_004A:	spritemap
 		spritePiece	-4, -$10, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, $10, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, $30, 1, 4, 0, 0, 0, 0, 0
@@ -32,7 +32,7 @@ Map_obj80_a_004A:	spriteHeader
 		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
 		endsprite
 
-Map_obj80_a_0074:	spriteHeader
+Map_obj80_a_0074:	spritemap
 		spritePiece	-4, -$30, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, -$10, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, $10, 1, 4, 0, 0, 0, 0, 0
@@ -41,7 +41,7 @@ Map_obj80_a_0074:	spriteHeader
 		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
 		endsprite
 
-Map_obj80_a_00A6:	spriteHeader
+Map_obj80_a_00A6:	spritemap
 		spritePiece	-4, -$50, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, -$30, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, -$10, 1, 4, 0, 0, 0, 0, 0
@@ -51,7 +51,7 @@ Map_obj80_a_00A6:	spriteHeader
 		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
 		endsprite
 
-Map_obj80_a_00E0:	spriteHeader
+Map_obj80_a_00E0:	spritemap
 		spritePiece	-4, -$70, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, -$50, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, -$30, 1, 4, 0, 0, 0, 0, 0
@@ -62,7 +62,7 @@ Map_obj80_a_00E0:	spriteHeader
 		spritePiece	-$C, $70, 3, 2, 4, 0, 0, 0, 0
 		endsprite
 
-Map_obj80_a_0122:	spriteHeader
+Map_obj80_a_0122:	spritemap
 		spritePiece	-4, -$80, 1, 2, 2, 0, 0, 0, 0
 		spritePiece	-4, -$70, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	-4, -$50, 1, 4, 0, 0, 0, 0, 0

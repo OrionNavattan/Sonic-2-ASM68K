@@ -25,7 +25,7 @@ Map_TitleIntro:	index offset(*)
 		ptr	Frame_IntroSonic_NoArm			; $12
 		ptr	Frame_IntroTails_Hand			; $13
 
-Frame_IntroTails_0:	spriteHeader
+Frame_IntroTails_0:	spritemap
 		spritePiece	$30, $10, 4, 1, 0, 0, 0, 1, 1
 		spritePiece	$18, $18, 4, 4, 4, 0, 0, 1, 1
 		spritePiece	$38, $18, 3, 4, $14, 0, 0, 1, 1
@@ -34,7 +34,7 @@ Frame_IntroTails_0:	spriteHeader
 		spritePiece	$30, $38, 4, 3, $23, 0, 0, 1, 1
 		endsprite
 
-Frame_IntroTails_1:	spriteHeader
+Frame_IntroTails_1:	spritemap
 		spritePiece	$48, $10, 2, 1, $2F, 0, 0, 1, 1
 		spritePiece	$20, $18, 4, 4, $31, 0, 0, 1, 1
 		spritePiece	$40, $18, 3, 4, $41, 0, 0, 1, 1
@@ -46,7 +46,7 @@ Frame_IntroTails_1:	spriteHeader
 		spritePiece	$50, $38, 1, 1, $6A, 0, 0, 1, 1
 		endsprite
 
-Frame_IntroTails_2:	spriteHeader
+Frame_IntroTails_2:	spritemap
 		spritePiece	$28, $10, 3, 3, $6B, 0, 0, 1, 1
 		spritePiece	$40, $18, 4, 2, $74, 0, 0, 1, 1
 		spritePiece	8, $28, 4, 4, $7C, 0, 0, 1, 1
@@ -57,7 +57,7 @@ Frame_IntroTails_2:	spriteHeader
 		spritePiece	$30, $48, 2, 1, $AA, 0, 0, 1, 1
 		endsprite
 
-Frame_IntroTails_3:	spriteHeader
+Frame_IntroTails_3:	spritemap
 		spritePiece	$20, $10, 1, 1, $AC, 0, 0, 1, 1
 		spritePiece	$28, $10, 4, 3, $AD, 0, 0, 1, 1
 		spritePiece	$48, $10, 1, 1, $B9, 0, 0, 1, 1
@@ -73,7 +73,7 @@ Frame_IntroTails_3:	spriteHeader
 		spritePiece	$40, $40, 3, 1, $EE, 0, 0, 1, 1
 		endsprite
 
-Frame_IntroTails_4:	spriteHeader
+Frame_IntroTails_4:	spritemap
 		spritePiece	$40, 8, 2, 1, $F1, 0, 0, 1, 1
 		spritePiece	$18, $10, 1, 1, $AC, 0, 1, 1, 1
 		spritePiece	$20, $10, 4, 3, $F3, 0, 0, 1, 1
@@ -89,7 +89,7 @@ Frame_IntroTails_4:	spriteHeader
 		spritePiece	$30, $48, 2, 1, $135, 0, 0, 1, 1
 		endsprite
 
-Frame_IntroSonic_0:	spriteHeader
+Frame_IntroSonic_0:	spritemap
 		spritePiece	$20, 8, 4, 1, $137, 0, 0, 0, 1
 		spritePiece	$40, $10, 1, 1, $13B, 0, 0, 0, 1
 		spritePiece	8, $10, 4, 4, $13C, 0, 0, 0, 1
@@ -105,7 +105,7 @@ Frame_IntroSonic_0:	spriteHeader
 		spritePiece	$40, $30, 1, 3, $17A, 0, 0, 0, 1
 		endsprite
 
-Frame_IntroSonic_1:	spriteHeader
+Frame_IntroSonic_1:	spritemap
 		spritePiece	$18, 8, 4, 1, $17D, 0, 0, 0, 1
 		spritePiece	$38, 8, 2, 4, $181, 0, 0, 0, 1
 		spritePiece	$48, $10, 1, 1, $189, 0, 0, 0, 1
@@ -121,7 +121,7 @@ Frame_IntroSonic_1:	spriteHeader
 		spritePiece	$28, $48, 4, 2, $1CE, 0, 0, 0, 1
 		endsprite
 
-Frame_IntroSonic_2:	spriteHeader
+Frame_IntroSonic_2:	spritemap
 		spritePiece	$28, 8, 4, 1, $1D6, 0, 0, 0, 1
 		spritePiece	$48, 8, 1, 1, $1DA, 0, 0, 0, 1
 		spritePiece	$10, $18, 1, 4, $1DB, 0, 0, 0, 1
@@ -139,7 +139,7 @@ Frame_IntroSonic_2:	spriteHeader
 		spritePiece	$58, $38, 1, 2, $224, 0, 0, 0, 1
 		endsprite
 
-Frame_IntroSonic_BetaLeftover:	spriteHeader
+Frame_IntroSonic_BetaLeftover:	spritemap
 		spritePiece	$28, 8, 4, 4, $226, 0, 0, 0, 1
 		spritePiece	$20, $10, 1, 1, $236, 0, 0, 0, 1
 		spritePiece	$18, $18, 2, 4, $237, 0, 0, 0, 1
@@ -155,13 +155,13 @@ Frame_IntroSonic_BetaLeftover:	spriteHeader
 		spritePiece	$38, $48, 4, 2, $269, 0, 0, 0, 1
 		endsprite
 
-Frame_IntroSonic_Hand:	spriteHeader
+Frame_IntroSonic_Hand:	spritemap
 		spritePiece	8, 0, 4, 2, $271, 0, 0, 0, 1
 		spritePiece	8, $10, 3, 2, $279, 0, 0, 0, 1
 		spritePiece	$10, $20, 2, 2, $27F, 0, 0, 0, 1
 		endsprite
 
-Frame_LogoTop_NoTM:	spriteHeader
+Frame_LogoTop_NoTM:	spritemap
 		spritePiece	-$50, 0, 4, 1, $283, 0, 0, 3, 1
 		spritePiece	-$30, 0, 3, 1, $287, 0, 0, 3, 1
 		spritePiece	$18, 0, 3, 1, $28A, 0, 0, 3, 1
@@ -170,7 +170,7 @@ Frame_LogoTop_NoTM:	spriteHeader
 		spritePiece	8, 0, 2, 1, $10, 0, 0, 0, 0
 		endsprite
 
-Frame_LogoTop_TM:	spriteHeader
+Frame_LogoTop_TM:	spritemap
 		spritePiece	-$50, 0, 4, 1, $283, 0, 0, 3, 1
 		spritePiece	-$30, 0, 3, 1, $287, 0, 0, 3, 1
 		spritePiece	$18, 0, 3, 1, $28A, 0, 0, 3, 1
@@ -180,34 +180,34 @@ Frame_LogoTop_TM:	spriteHeader
 		spritePiece	$58, 8, 2, 1, $2A0, 0, 0, 3, 1
 		endsprite
 
-Frame_IntroStar_0:	spriteHeader
+Frame_IntroStar_0:	spritemap
 		spritePiece	-4, -4, 1, 1, $291, 0, 0, 1, 0
 		endsprite
 
-Frame_IntroStar_1:	spriteHeader
+Frame_IntroStar_1:	spritemap
 		spritePiece	-8, -8, 2, 2, $292, 0, 0, 1, 0
 		endsprite
 
-Frame_IntroStar_2:	spriteHeader
+Frame_IntroStar_2:	spritemap
 		spritePiece	-$C, -$C, 3, 3, $296, 0, 0, 1, 0
 		endsprite
 
-Frame_IntroStar_3:	spriteHeader
+Frame_IntroStar_3:	spritemap
 		spritePiece	-4, -4, 1, 1, $29F, 0, 0, 1, 0
 		endsprite
 
-Frame_IntroTM:	spriteHeader
+Frame_IntroTM:	spritemap
 		spritePiece	-8, -4, 2, 1, $2A0, 0, 0, 0, 1
 		endsprite
 
-Frame_MaskingSprite:	spriteHeader
+Frame_MaskingSprite:	spritemap
 		spritePiece	8, 0, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	0, 0, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	8, $20, 1, 4, 0, 0, 0, 0, 0
 		spritePiece	0, $20, 1, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Frame_IntroSonic_NoArm:	spriteHeader
+Frame_IntroSonic_NoArm:	spritemap
 		spritePiece	$28, 8, 4, 4, $226, 0, 0, 0, 1
 		spritePiece	$20, $10, 1, 1, $236, 0, 0, 0, 1
 		spritePiece	$18, $18, 2, 4, $237, 0, 0, 0, 1
@@ -224,7 +224,7 @@ Frame_IntroSonic_NoArm:	spriteHeader
 		spritePiece	$20, $48, 2, 1, $2A2, 0, 0, 0, 1
 		endsprite
 
-Frame_IntroTails_Hand:	spriteHeader
+Frame_IntroTails_Hand:	spritemap
 		spritePiece	8, 0, 2, 3, $2A4, 0, 0, 1, 1
 		endsprite
 

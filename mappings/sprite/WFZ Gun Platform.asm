@@ -9,27 +9,27 @@ Map_GunPlat:	index offset(*)
 		ptr	Map_objBE_0040
 		ptr	Map_objBE_0052
 
-Map_objBE_000A:	spriteHeader
+Map_objBE_000A:	spritemap
 		spritePiece	-$18, -$18, 3, 2, 0, 0, 0, 0, 0
 		spritePiece	0, -$18, 3, 2, 6, 0, 0, 0, 0
 		endsprite
 
-Map_objBE_001C:	spriteHeader
+Map_objBE_001C:	spritemap
 		spritePiece	-$18, -$18, 3, 2, $C, 0, 0, 0, 0
 		spritePiece	0, -$18, 3, 2, $12, 0, 0, 0, 0
 		endsprite
 
-Map_objBE_002E:	spriteHeader
+Map_objBE_002E:	spritemap
 		spritePiece	-$18, -$18, 3, 2, $18, 0, 0, 0, 0
 		spritePiece	0, -$18, 3, 2, $18, 1, 0, 0, 0
 		endsprite
 
-Map_objBE_0040:	spriteHeader
+Map_objBE_0040:	spritemap
 		spritePiece	-$20, -$18, 4, 3, $1E, 0, 0, 0, 0
 		spritePiece	0, -$18, 4, 3, $1E, 1, 0, 0, 0
 		endsprite
 
-Map_objBE_0052:	spriteHeader
+Map_objBE_0052:	spritemap
 		spritePiece	-$20, -$18, 4, 3, $2A, 0, 0, 0, 0
 		spritePiece	0, -$18, 4, 3, $2A, 1, 0, 0, 0
 		endsprite

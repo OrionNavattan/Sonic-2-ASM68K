@@ -6,7 +6,7 @@
 ; replaced by the index and ptr macros.
 ; ---------------------------------------------------------------------------		
 
-spriteHeader:	macro
+spritemap:	macro
 		if ~def(current_sprite)
 		current_sprite: = 1
 		endc
@@ -32,13 +32,16 @@ spritePiece: macro xpos,ypos,width,height,tile,xflip,yflip,pal,pri
 ; optional: xflip, yflip, pal2|pal3|pal4, hi (any order)
 ; ---------------------------------------------------------------------------	
 	
-piece:	macro	xpos,ypos,dimensions,size,tileindex,pal_flip_pri
+piece:	macro	xpos,ypos,dimensions,tileindex,pal_flip_pri
+
+		sprite_xpos: = \xpos
+		sprite_ypos: = \ypos
 		
-		sprite_width:	substr	1,1,"\3"	; width
-		sprite_height:	substr	3,3,"\3"	; height
+		sprite_width:	substr	1,1,"\dimensions"	; width
+		sprite_height:	substr	3,3,"\dimensions"	; height
 		
-		if \tileindex<0						; is tile index negative?
-			sprite_tile: = $10000+(\tileindex)		; convert signed to unsigned
+		if \tileindex<0					; is tile index negative?
+			sprite_tile: = $10000+(\tileindex)	; convert signed to unsigned
 		else
 			sprite_tile: = \tileindex
 		endc
@@ -65,18 +68,12 @@ piece:	macro	xpos,ypos,dimensions,size,tileindex,pal_flip_pri
 		shift
 		endr		
 		
-		dc.w	((\ypos&$FF)<<8)|(((sprite_width-1)&3)<<2)|((sprite_height-1)&3)	; y pos, width, and height
-		dc.w	((sprite_hi&1)<<15)|((sprite_pal&3)<<13)|((sprite_yflip&1)<<12)|((sprite_xflip&1)<<11)|(sprite_tile&$7FF)
-		dc.w	((sprite_hi&1)<<15)|((sprite_pal&3)<<13)|((sprite_yflip&1)<<12)|((sprite_xflip&1)<<11)|((sprite_tile>>1)&$7FF)
-		dc.w	\xpos
+		dc.w	((sprite_ypos&$FF)<<8)|(((sprite_width-1)&3)<<2)|((sprite_height-1)&3) ; y pos, width, and height
+		dc.w	(sprite_tile+sprite_xflip+sprite_yflip+sprite_hi+sprite_pal)&$FFFF ; tile, priority, xflip, yflip, pal 
+		dc.w	((sprite_tile>>1)+sprite_xflip+sprite_yflip+sprite_hi+sprite_pal)&$FFFF ; 2P mode tile, priority, xflip, yflip, pal 
+		dc.w	sprite_xpos				; x pos
 		endm			
 				
-;piece2P: macro xpos,ypos,width,height,tile,xflip,yflip,pal,pri,tile2,xflip2,yflip2,pal2,pri2
-;	dc.w	((ypos&$FF)<<8)|(((width-1)&3)<<2)|((height-1)&3)
-;	dc.w	((pri&1)<<15)|((pal&3)<<13)|((yflip&1)<<12)|((xflip&1)<<11)|(tile&$7FF)
-;	dc.w	((pri2&1)<<15)|((pal2&3)<<13)|((yflip2&1)<<12)|((xflip2&1)<<11)|(tile2&$7FF)
-;	dc.w	xpos
-;	endm
 
 dplcheader: macro *
 \* equ *

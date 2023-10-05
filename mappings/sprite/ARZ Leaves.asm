@@ -8,19 +8,19 @@ Map_Leaves:	index offset(*)
 		ptr	Map_obj2C_001C
 		ptr	Map_obj2C_0026
 
-Map_obj2C_0008:	spriteHeader
+Map_obj2C_0008:	spritemap
 		spritePiece	-4, -4, 1, 1, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj2C_0012:	spriteHeader
+Map_obj2C_0012:	spritemap
 		spritePiece	-8, -4, 2, 1, 1, 0, 0, 0, 0
 		endsprite
 
-Map_obj2C_001C:	spriteHeader
+Map_obj2C_001C:	spritemap
 		spritePiece	-8, -4, 2, 1, 3, 0, 0, 0, 0
 		endsprite
 
-Map_obj2C_0026:	spriteHeader
+Map_obj2C_0026:	spritemap
 		spritePiece	-8, -4, 2, 1, 5, 0, 0, 0, 0
 		endsprite
 

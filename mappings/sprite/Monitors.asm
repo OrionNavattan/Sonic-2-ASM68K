@@ -16,61 +16,61 @@ Map_Monitor:	index offset(*)
 		ptr	Map_obj26_00C4
 		ptr	Map_obj26_00D6
 
-Map_obj26_0018:	spriteHeader
+Map_obj26_0018:	spritemap
 		spritePiece	-$10, -$11, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj26_0022:	spriteHeader
+Map_obj26_0022:	spritemap
 		spritePiece	-8, -$B, 2, 2, $18, 0, 0, 0, 0
 		spritePiece	-$10, -$11, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj26_0034:	spriteHeader
+Map_obj26_0034:	spritemap
 		spritePiece	-8, -$B, 2, 2, $154, 0, 0, 0, 0
 		spritePiece	-$10, -$11, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj26_0046:	spriteHeader
+Map_obj26_0046:	spritemap
 		spritePiece	-8, -$B, 2, 2, $1C, 0, 0, 0, 0
 		spritePiece	-$10, -$11, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj26_0058:	spriteHeader
+Map_obj26_0058:	spritemap
 		spritePiece	-8, -$B, 2, 2, $20, 0, 0, 0, 0
 		spritePiece	-$10, -$11, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj26_006A:	spriteHeader
+Map_obj26_006A:	spritemap
 		spritePiece	-8, -$B, 2, 2, $24, 0, 0, 1, 0
 		spritePiece	-$10, -$11, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj26_007C:	spriteHeader
+Map_obj26_007C:	spritemap
 		spritePiece	-8, -$B, 2, 2, $28, 0, 0, 0, 0
 		spritePiece	-$10, -$11, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj26_008E:	spriteHeader
+Map_obj26_008E:	spritemap
 		spritePiece	-8, -$B, 2, 2, $2C, 0, 0, 0, 0
 		spritePiece	-$10, -$11, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj26_00A0:	spriteHeader
+Map_obj26_00A0:	spritemap
 		spritePiece	-8, -$B, 2, 2, $30, 0, 0, 0, 0
 		spritePiece	-$10, -$11, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj26_00B2:	spriteHeader
+Map_obj26_00B2:	spritemap
 		spritePiece	-8, -$B, 2, 2, $38, 0, 0, 0, 0
 		spritePiece	-$10, -$11, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj26_00C4:	spriteHeader
+Map_obj26_00C4:	spritemap
 		spritePiece	-8, -$B, 2, 2, $34, 0, 0, 0, 0
 		spritePiece	-$10, -$11, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj26_00D6:	spriteHeader
+Map_obj26_00D6:	spritemap
 		spritePiece	-$10, -1, 4, 2, $10, 0, 0, 0, 0
 		endsprite
 

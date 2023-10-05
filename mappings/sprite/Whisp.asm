@@ -6,12 +6,12 @@ Map_Whisp:	index offset(*)
 		ptr	Frame_Whisp_WingUp
 		ptr	Frame_Whisp_WingDown
 
-Frame_Whisp_WingUp:	spriteHeader
+Frame_Whisp_WingUp:	spritemap
 		spritePiece	-$C, -8, 3, 1, 0, 0, 0, 0, 0
 		spritePiece	-$C, 0, 3, 1, 3, 0, 0, 0, 0
 		endsprite
 
-Frame_Whisp_WingDown:	spriteHeader
+Frame_Whisp_WingDown:	spritemap
 		spritePiece	-$C, -8, 3, 1, 6, 0, 0, 0, 0
 		spritePiece	-$C, 0, 3, 1, 3, 0, 0, 0, 0
 		endsprite

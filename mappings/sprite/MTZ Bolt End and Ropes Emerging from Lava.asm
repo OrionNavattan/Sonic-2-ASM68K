@@ -7,15 +7,15 @@ Map_BoltEnd_Rope:	index offset(*)
 		ptr	Frame_Rope2
 		ptr	Frame_BoltEnd
 
-Frame_Rope1:	spriteHeader
+Frame_Rope1:	spritemap
 		spritePiece	-4, -8, 1, 2, 4, 0, 0, 0, 0
 		endsprite
 
-Frame_Rope2:	spriteHeader
+Frame_Rope2:	spritemap
 		spritePiece	-4, -8, 1, 2, 6, 0, 0, 0, 0
 		endsprite
 
-Frame_BoltEnd:	spriteHeader
+Frame_BoltEnd:	spritemap
 		spritePiece	-$10, -4, 4, 1, 0, 0, 0, 0, 0
 		endsprite
 

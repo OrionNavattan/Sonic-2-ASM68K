@@ -5,7 +5,7 @@
 Map_ConvPulley:	index offset(*)
 		ptr	Frame_ConvPulley
 
-Frame_ConvPulley:	spriteHeader
+Frame_ConvPulley:	spritemap
 		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 

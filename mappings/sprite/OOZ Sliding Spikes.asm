@@ -5,7 +5,7 @@
 Map_RailSpikes:	index offset(*)
 		ptr	Map_obj43_0002
 
-Map_obj43_0002:	spriteHeader
+Map_obj43_0002:	spritemap
 		spritePiece	-$18, -$20, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-8, -$28, 4, 4, 4, 0, 0, 0, 0
 		spritePiece	-$18, -8, 3, 2, $14, 0, 0, 0, 0

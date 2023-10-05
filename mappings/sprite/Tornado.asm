@@ -12,7 +12,7 @@ Map_Tornado:	index offset(*)
 		ptr	Map_objB2_a_01FC
 		ptr	Map_objB2_a_024E
 
-Map_objB2_a_0010:	spriteHeader
+Map_objB2_a_0010:	spritemap
 		spritePiece	-$60, -$10, 3, 4, 0, 0, 0, 0, 0
 		spritePiece	-$60, $10, 3, 1, $C, 0, 0, 0, 0
 		spritePiece	-$48, 3, 3, 3, $F, 0, 0, 0, 0
@@ -25,7 +25,7 @@ Map_objB2_a_0010:	spriteHeader
 		spritePiece	-$C, $20, 2, 2, $42, 0, 0, 0, 0
 		endsprite
 
-Map_objB2_a_0062:	spriteHeader
+Map_objB2_a_0062:	spritemap
 		spritePiece	-$60, -$10, 3, 4, 0, 0, 0, 0, 0
 		spritePiece	-$60, $10, 3, 1, $C, 0, 0, 0, 0
 		spritePiece	-$48, 3, 3, 3, $F, 0, 0, 0, 0
@@ -38,7 +38,7 @@ Map_objB2_a_0062:	spriteHeader
 		spritePiece	-$C, $20, 2, 2, $42, 0, 0, 0, 0
 		endsprite
 
-Map_objB2_a_00B4:	spriteHeader
+Map_objB2_a_00B4:	spritemap
 		spritePiece	-$60, -$10, 3, 4, 0, 0, 0, 0, 0
 		spritePiece	-$60, $10, 3, 1, $C, 0, 0, 0, 0
 		spritePiece	-$48, 3, 3, 3, $F, 0, 0, 0, 0
@@ -51,7 +51,7 @@ Map_objB2_a_00B4:	spriteHeader
 		spritePiece	-$C, $20, 2, 2, $42, 0, 0, 0, 0
 		endsprite
 
-Map_objB2_a_0106:	spriteHeader
+Map_objB2_a_0106:	spritemap
 		spritePiece	-$60, -$10, 3, 4, 0, 0, 0, 0, 0
 		spritePiece	-$60, $10, 3, 1, $C, 0, 0, 0, 0
 		spritePiece	-$48, 3, 3, 3, $F, 0, 0, 0, 0
@@ -64,7 +64,7 @@ Map_objB2_a_0106:	spriteHeader
 		spritePiece	-$C, $20, 2, 2, $42, 0, 0, 0, 0
 		endsprite
 
-Map_objB2_a_0158:	spriteHeader
+Map_objB2_a_0158:	spritemap
 		spritePiece	-$60, -$10, 3, 4, 0, 0, 0, 0, 0
 		spritePiece	-$60, $10, 3, 1, $C, 0, 0, 0, 0
 		spritePiece	-$48, 3, 3, 3, $F, 0, 0, 0, 0
@@ -77,7 +77,7 @@ Map_objB2_a_0158:	spriteHeader
 		spritePiece	-$C, $20, 2, 2, $42, 0, 0, 0, 0
 		endsprite
 
-Map_objB2_a_01AA:	spriteHeader
+Map_objB2_a_01AA:	spritemap
 		spritePiece	-$60, -$10, 3, 4, 0, 0, 0, 0, 0
 		spritePiece	-$60, $10, 3, 1, $C, 0, 0, 0, 0
 		spritePiece	-$48, 3, 3, 3, $F, 0, 0, 0, 0
@@ -90,7 +90,7 @@ Map_objB2_a_01AA:	spriteHeader
 		spritePiece	-$C, $20, 2, 2, $42, 0, 0, 0, 0
 		endsprite
 
-Map_objB2_a_01FC:	spriteHeader
+Map_objB2_a_01FC:	spritemap
 		spritePiece	-$60, -$10, 3, 4, 0, 0, 0, 0, 0
 		spritePiece	-$60, $10, 3, 1, $C, 0, 0, 0, 0
 		spritePiece	-$48, 3, 3, 3, $F, 0, 0, 0, 0
@@ -103,7 +103,7 @@ Map_objB2_a_01FC:	spriteHeader
 		spritePiece	-$C, $20, 2, 2, $42, 0, 0, 0, 0
 		endsprite
 
-Map_objB2_a_024E:	spriteHeader
+Map_objB2_a_024E:	spritemap
 		spritePiece	-$60, -$10, 3, 4, 0, 0, 0, 0, 0
 		spritePiece	-$60, $10, 3, 1, $C, 0, 0, 0, 0
 		spritePiece	-$48, 3, 3, 3, $F, 0, 0, 0, 0

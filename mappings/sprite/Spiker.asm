@@ -9,29 +9,29 @@ Map_Spiker:	index offset(*)
 		ptr	Map_obj93_0050
 		ptr	Map_obj93_0062
 
-Map_obj93_000A:	spriteHeader
+Map_obj93_000A:	spritemap
 		spritePiece	-$C, 8, 3, 2, $520, 0, 0, 0, 0
 		spritePiece	-8, -$18, 2, 4, $52C, 0, 0, 1, 0
 		spritePiece	-8, 0, 2, 2, $3DE, 0, 0, 0, 0
 		endsprite
 
-Map_obj93_0024:	spriteHeader
+Map_obj93_0024:	spritemap
 		spritePiece	-$C, 8, 3, 2, $526, 0, 0, 0, 0
 		spritePiece	-8, -$18, 2, 4, $52C, 0, 0, 1, 0
 		spritePiece	-8, 0, 2, 2, $3DE, 0, 0, 0, 0
 		endsprite
 
-Map_obj93_003E:	spriteHeader
+Map_obj93_003E:	spritemap
 		spritePiece	-$C, 8, 3, 2, $520, 0, 0, 0, 0
 		spritePiece	-8, 0, 2, 2, $3DE, 0, 0, 0, 0
 		endsprite
 
-Map_obj93_0050:	spriteHeader
+Map_obj93_0050:	spritemap
 		spritePiece	-$C, 8, 3, 2, $526, 0, 0, 0, 0
 		spritePiece	-8, 0, 2, 2, $3DE, 0, 0, 0, 0
 		endsprite
 
-Map_obj93_0062:	spriteHeader
+Map_obj93_0062:	spritemap
 		spritePiece	-8, -$14, 2, 4, $52C, 0, 0, 1, 0
 		endsprite
 

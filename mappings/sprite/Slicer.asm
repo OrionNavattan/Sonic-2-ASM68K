@@ -13,7 +13,7 @@ Map_Slice:	index offset(*)
 		ptr	Map_objA2_0138
 		ptr	Map_objA2_014A
 
-Map_objA2_0012:	spriteHeader
+Map_objA2_0012:	spritemap
 		spritePiece	-$C, -7, 2, 1, $1A, 0, 0, 0, 0
 		spritePiece	-$C, 1, 1, 1, $1C, 0, 0, 0, 0
 		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
@@ -23,7 +23,7 @@ Map_objA2_0012:	spriteHeader
 		spritePiece	-$20, -1, 1, 1, $1C, 0, 0, 0, 0
 		endsprite
 
-Map_objA2_004C:	spriteHeader
+Map_objA2_004C:	spritemap
 		spritePiece	-$C, -8, 2, 1, $1A, 0, 0, 0, 0
 		spritePiece	-$C, 0, 1, 1, $1C, 0, 0, 0, 0
 		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
@@ -33,7 +33,7 @@ Map_objA2_004C:	spriteHeader
 		spritePiece	-$20, 0, 1, 1, $1C, 0, 0, 0, 0
 		endsprite
 
-Map_objA2_0086:	spriteHeader
+Map_objA2_0086:	spritemap
 		spritePiece	-$C, -9, 2, 1, $1A, 0, 0, 0, 0
 		spritePiece	-$C, -1, 1, 1, $1C, 0, 0, 0, 0
 		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
@@ -43,7 +43,7 @@ Map_objA2_0086:	spriteHeader
 		spritePiece	-$20, 1, 1, 1, $1C, 0, 0, 0, 0
 		endsprite
 
-Map_objA2_00C0:	spriteHeader
+Map_objA2_00C0:	spritemap
 		spritePiece	-$C, -$20, 2, 1, $1E, 1, 1, 0, 0
 		spritePiece	-4, -$18, 1, 1, $1D, 1, 1, 0, 0
 		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
@@ -53,28 +53,28 @@ Map_objA2_00C0:	spriteHeader
 		spritePiece	-$18, -$18, 1, 1, $1D, 1, 1, 0, 0
 		endsprite
 
-Map_objA2_00FA:	spriteHeader
+Map_objA2_00FA:	spritemap
 		spritePiece	-$10, -$10, 3, 2, 0, 0, 0, 0, 0
 		spritePiece	-$10, 0, 3, 2, 6, 0, 0, 0, 0
 		spritePiece	8, 0, 1, 2, $C, 0, 0, 0, 0
 		endsprite
 
-Map_objA2_0114:	spriteHeader
+Map_objA2_0114:	spritemap
 		spritePiece	-$10, -$10, 2, 1, $1A, 0, 0, 0, 0
 		spritePiece	-$10, -8, 1, 1, $1C, 0, 0, 0, 0
 		endsprite
 
-Map_objA2_0126:	spriteHeader
+Map_objA2_0126:	spritemap
 		spritePiece	-$10, 0, 1, 1, $1D, 0, 0, 0, 0
 		spritePiece	-$10, 8, 2, 1, $1E, 0, 0, 0, 0
 		endsprite
 
-Map_objA2_0138:	spriteHeader
+Map_objA2_0138:	spritemap
 		spritePiece	8, 0, 1, 1, $1C, 1, 1, 0, 0
 		spritePiece	0, 8, 2, 1, $1A, 1, 1, 0, 0
 		endsprite
 
-Map_objA2_014A:	spriteHeader
+Map_objA2_014A:	spritemap
 		spritePiece	0, -$10, 2, 1, $1E, 1, 1, 0, 0
 		spritePiece	8, -8, 1, 1, $1D, 1, 1, 0, 0
 		endsprite

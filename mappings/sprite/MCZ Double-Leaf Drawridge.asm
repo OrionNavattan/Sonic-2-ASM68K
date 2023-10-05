@@ -9,7 +9,7 @@ Map_DBridge:	index offset(*)
 		ptr	Frame_DBridge_Opening3
 		ptr	Frame_DBridge_Open
 
-Frame_DBridge_Closed:	spriteHeader
+Frame_DBridge_Closed:	spritemap
 		spritePiece	-$40, -8, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$30, -8, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$20, -8, 2, 2, 0, 0, 0, 0, 0
@@ -20,7 +20,7 @@ Frame_DBridge_Closed:	spriteHeader
 		spritePiece	$30, -8, 2, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Frame_DBridge_Opening1:	spriteHeader
+Frame_DBridge_Opening1:	spritemap
 		spritePiece	-$40, -8, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$32, -2, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$23, 4, 2, 2, 0, 0, 0, 0, 0
@@ -31,7 +31,7 @@ Frame_DBridge_Opening1:	spriteHeader
 		spritePiece	$30, -8, 2, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Frame_DBridge_Opening2:	spriteHeader
+Frame_DBridge_Opening2:	spritemap
 		spritePiece	-$40, -8, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$35, 3, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$2A, $E, 2, 2, 0, 0, 0, 0, 0
@@ -42,7 +42,7 @@ Frame_DBridge_Opening2:	spriteHeader
 		spritePiece	$30, -8, 2, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Frame_DBridge_Opening3:	spriteHeader
+Frame_DBridge_Opening3:	spritemap
 		spritePiece	-$40, -8, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$3A, 6, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$34, $15, 2, 2, 0, 0, 0, 0, 0
@@ -53,7 +53,7 @@ Frame_DBridge_Opening3:	spriteHeader
 		spritePiece	$30, -8, 2, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Frame_DBridge_Open:	spriteHeader
+Frame_DBridge_Open:	spritemap
 		spritePiece	-$40, -8, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$40, 8, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$40, $18, 2, 2, 0, 0, 0, 0, 0

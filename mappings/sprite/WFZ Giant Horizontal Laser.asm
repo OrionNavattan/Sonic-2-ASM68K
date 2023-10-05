@@ -5,7 +5,7 @@
 Map_HorizLaser:	index offset(*)
 		ptr	Map_objB9_0002
 
-Map_objB9_0002:	spriteHeader
+Map_objB9_0002:	spritemap
 		spritePiece	-$48, -8, 1, 2, 0, 0, 0, 0, 0
 		spritePiece	-$40, -8, 4, 2, 2, 0, 0, 0, 0
 		spritePiece	-$20, -8, 4, 2, 2, 0, 0, 0, 0

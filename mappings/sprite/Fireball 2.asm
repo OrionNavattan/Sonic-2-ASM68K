@@ -10,27 +10,27 @@ Map_FireBall2:	index offset(*)
 		ptr	Map_obj20_a_0034
 		ptr	Map_obj20_a_003E
 
-Map_obj20_a_000C:	spriteHeader
+Map_obj20_a_000C:	spritemap
 		spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj20_a_0016:	spriteHeader
+Map_obj20_a_0016:	spritemap
 		spritePiece	-8, -8, 2, 2, 4, 0, 0, 0, 0
 		endsprite
 
-Map_obj20_a_0020:	spriteHeader
+Map_obj20_a_0020:	spritemap
 		spritePiece	-8, -7, 2, 2, 8, 0, 0, 0, 0
 		endsprite
 
-Map_obj20_a_002A:	spriteHeader
+Map_obj20_a_002A:	spritemap
 		spritePiece	-8, -$A, 2, 2, 8, 0, 0, 0, 0
 		endsprite
 
-Map_obj20_a_0034:	spriteHeader
+Map_obj20_a_0034:	spritemap
 		spritePiece	-8, -$A, 2, 2, $C, 0, 0, 0, 0
 		endsprite
 
-Map_obj20_a_003E:	spriteHeader
+Map_obj20_a_003E:	spritemap
 		endsprite
 
 		even

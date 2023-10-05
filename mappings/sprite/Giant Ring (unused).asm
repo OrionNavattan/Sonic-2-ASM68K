@@ -8,7 +8,7 @@ Map_GRing:	index offset(*)
 		ptr	Map_obj37_b_009C
 		ptr	Map_obj37_b_00BE
 
-Map_obj37_b_0008:	spriteHeader
+Map_obj37_b_0008:	spritemap
 		spritePiece	-$18, -$20, 3, 1, 0, 0, 0, 0, 0
 		spritePiece	0, -$20, 3, 1, 3, 0, 0, 0, 0
 		spritePiece	-$20, -$18, 4, 1, 6, 0, 0, 0, 0
@@ -21,7 +21,7 @@ Map_obj37_b_0008:	spriteHeader
 		spritePiece	0, $18, 3, 1, $29, 0, 0, 0, 0
 		endsprite
 
-Map_obj37_b_005A:	spriteHeader
+Map_obj37_b_005A:	spritemap
 		spritePiece	-$10, -$20, 4, 1, $2C, 0, 0, 0, 0
 		spritePiece	-$18, -$18, 3, 1, $30, 0, 0, 0, 0
 		spritePiece	0, -$18, 3, 2, $33, 0, 0, 0, 0
@@ -32,14 +32,14 @@ Map_obj37_b_005A:	spriteHeader
 		spritePiece	-$10, $18, 4, 1, $4E, 0, 0, 0, 0
 		endsprite
 
-Map_obj37_b_009C:	spriteHeader
+Map_obj37_b_009C:	spritemap
 		spritePiece	-$C, -$20, 2, 4, $52, 0, 0, 0, 0
 		spritePiece	4, -$20, 1, 4, $52, 1, 0, 0, 0
 		spritePiece	-$C, 0, 2, 4, $5A, 0, 0, 0, 0
 		spritePiece	4, 0, 1, 4, $5A, 1, 0, 0, 0
 		endsprite
 
-Map_obj37_b_00BE:	spriteHeader
+Map_obj37_b_00BE:	spritemap
 		spritePiece	-$10, -$20, 4, 1, $2C, 1, 0, 0, 0
 		spritePiece	0, -$18, 3, 1, $30, 1, 0, 0, 0
 		spritePiece	-$18, -$18, 3, 2, $33, 1, 0, 0, 0

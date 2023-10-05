@@ -5,7 +5,7 @@
 Map_BreakRock:	index offset(*)
 		ptr	Map_obj32_a_0002
 
-Map_obj32_a_0002:	spriteHeader
+Map_obj32_a_0002:	spritemap
 		spritePiece	-$18, -$10, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-8, -$10, 2, 2, 4, 0, 0, 0, 0
 		spritePiece	8, -$10, 2, 2, 8, 0, 0, 0, 0

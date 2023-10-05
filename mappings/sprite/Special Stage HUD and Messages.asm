@@ -26,87 +26,87 @@ Map_SSMessages:	index offset(*)
 		ptr	Map_obj5A_00F4
 		ptr	Map_obj5A_0136
 
-Map_obj5A_002C:	spriteHeader
+Map_obj5A_002C:	spritemap
 		spritePiece	-4, -8, 1, 2, 4, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_0036:	spriteHeader
+Map_obj5A_0036:	spritemap
 		spritePiece	-4, -8, 1, 2, 2, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_0040:	spriteHeader
+Map_obj5A_0040:	spritemap
 		spritePiece	-4, -8, 1, 2, $14, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_004A:	spriteHeader
+Map_obj5A_004A:	spritemap
 		spritePiece	-4, -8, 1, 2, $10, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_0054:	spriteHeader
+Map_obj5A_0054:	spritemap
 		spritePiece	-4, -8, 1, 2, 8, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_005E:	spriteHeader
+Map_obj5A_005E:	spritemap
 		spritePiece	-4, -8, 1, 2, $C, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_0068:	spriteHeader
+Map_obj5A_0068:	spritemap
 		spritePiece	-4, -8, 1, 2, $12, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_0072:	spriteHeader
+Map_obj5A_0072:	spritemap
 		spritePiece	-4, -8, 1, 2, 0, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_007C:	spriteHeader
+Map_obj5A_007C:	spritemap
 		spritePiece	-4, -8, 1, 2, $6A, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_0086:	spriteHeader
+Map_obj5A_0086:	spritemap
 		spritePiece	-4, -8, 1, 2, $A, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_0090:	spriteHeader
+Map_obj5A_0090:	spritemap
 		spritePiece	-4, -8, 1, 2, $16, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_009A:	spriteHeader
+Map_obj5A_009A:	spritemap
 		spritePiece	-4, -8, 1, 2, 6, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_00A4:	spriteHeader
+Map_obj5A_00A4:	spritemap
 		spritePiece	-4, -8, 1, 2, $23D, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_00AE:	spriteHeader
+Map_obj5A_00AE:	spritemap
 		spritePiece	-4, -8, 1, 2, $23F, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_00B8:	spriteHeader
+Map_obj5A_00B8:	spritemap
 		spritePiece	-4, -8, 1, 2, $241, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_00C2:	spriteHeader
+Map_obj5A_00C2:	spritemap
 		spritePiece	-4, -8, 1, 2, $243, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_00CC:	spriteHeader
+Map_obj5A_00CC:	spritemap
 		spritePiece	-4, -8, 1, 2, $245, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_00D6:	spriteHeader
+Map_obj5A_00D6:	spritemap
 		spritePiece	-4, -8, 1, 2, $18, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_00E0:	spriteHeader
+Map_obj5A_00E0:	spritemap
 		spritePiece	-4, -8, 1, 2, $E, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_00EA:	spriteHeader
+Map_obj5A_00EA:	spritemap
 		spritePiece	-8, -4, 2, 1, $247, 0, 0, 0, 1
 		endsprite
 
-Map_obj5A_00F4:	spriteHeader
+Map_obj5A_00F4:	spritemap
 		spritePiece	-$30, -$1C, 1, 4, $1A, 0, 0, 0, 1
 		spritePiece	-$28, -$14, 4, 4, $1E, 0, 0, 0, 1
 		spritePiece	-8, -$14, 1, 4, $2E, 0, 0, 0, 1
@@ -117,7 +117,7 @@ Map_obj5A_00F4:	spriteHeader
 		spritePiece	$28, -$1C, 1, 4, $1A, 1, 0, 0, 1
 		endsprite
 
-Map_obj5A_0136:	spriteHeader
+Map_obj5A_0136:	spritemap
 		spritePiece	-$18, -$10, 3, 4, $3A, 0, 0, 0, 1
 		spritePiece	-$18, $10, 3, 1, $46, 0, 0, 0, 1
 		spritePiece	0, 0, 3, 3, $49, 0, 0, 0, 1

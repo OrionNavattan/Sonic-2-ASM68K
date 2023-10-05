@@ -5,7 +5,7 @@
 Map_BWFZ_EggPlat:	index offset(*)
 		ptr	Frame_BWFZ_EggPlat
 
-Frame_BWFZ_EggPlat:	spriteHeader
+Frame_BWFZ_EggPlat:	spritemap
 		spritePiece	-$20, -$C, 4, 3, 0, 0, 0, 0, 0
 		spritePiece	0, -$C, 4, 3, 0, 1, 0, 0, 0
 		endsprite

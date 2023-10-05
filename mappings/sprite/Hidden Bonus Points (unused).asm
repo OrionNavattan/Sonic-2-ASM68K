@@ -8,18 +8,18 @@ Map_Bonus:	index offset(*)
 		ptr	Map_obj7D_0014
 		ptr	Map_obj7D_001E
 
-Map_obj7D_0008:	spriteHeader
+Map_obj7D_0008:	spritemap
 		endsprite
 
-Map_obj7D_000A:	spriteHeader
+Map_obj7D_000A:	spritemap
 		spritePiece	-$10, -$C, 4, 3, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj7D_0014:	spriteHeader
+Map_obj7D_0014:	spritemap
 		spritePiece	-$10, -$C, 4, 3, $C, 0, 0, 0, 0
 		endsprite
 
-Map_obj7D_001E:	spriteHeader
+Map_obj7D_001E:	spritemap
 		spritePiece	-$10, -$C, 4, 3, $18, 0, 0, 0, 0
 		endsprite
 

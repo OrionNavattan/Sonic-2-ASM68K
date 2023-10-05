@@ -26,90 +26,90 @@ Map_SplashDust:	index offset(*)
 		ptr	Map_obj08_010C
 		ptr	Map_obj08_002C
 
-Map_obj08_002C:	spriteHeader
+Map_obj08_002C:	spritemap
 		endsprite
 
-Map_obj08_002E:	spriteHeader
+Map_obj08_002E:	spritemap
 		spritePiece	-$10, -$E, 4, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_0038:	spriteHeader
+Map_obj08_0038:	spritemap
 		spritePiece	-$10, -$1E, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_0042:	spriteHeader
+Map_obj08_0042:	spritemap
 		spritePiece	-$10, -$1E, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_004C:	spriteHeader
+Map_obj08_004C:	spritemap
 		spritePiece	-$10, -$1E, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_0056:	spriteHeader
+Map_obj08_0056:	spritemap
 		spritePiece	-$10, -$1E, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_0060:	spriteHeader
+Map_obj08_0060:	spritemap
 		spritePiece	-$10, -$1E, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_006A:	spriteHeader
+Map_obj08_006A:	spritemap
 		spritePiece	-$10, -$E, 4, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_0074:	spriteHeader
+Map_obj08_0074:	spritemap
 		spritePiece	-$10, -$E, 4, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_007E:	spriteHeader
+Map_obj08_007E:	spritemap
 		spritePiece	-$10, -$E, 4, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_0088:	spriteHeader
+Map_obj08_0088:	spritemap
 		spritePiece	-$20, 4, 4, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_0092:	spriteHeader
+Map_obj08_0092:	spritemap
 		spritePiece	-$20, 4, 4, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_009C:	spriteHeader
+Map_obj08_009C:	spritemap
 		spritePiece	-$20, 4, 4, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_00A6:	spriteHeader
+Map_obj08_00A6:	spritemap
 		spritePiece	-$18, -$C, 1, 2, 0, 0, 0, 0, 0
 		spritePiece	-$20, 4, 4, 2, 2, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_00B8:	spriteHeader
+Map_obj08_00B8:	spritemap
 		spritePiece	-$18, -$C, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$20, 4, 4, 2, 4, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_00CA:	spriteHeader
+Map_obj08_00CA:	spritemap
 		spritePiece	-$20, -$C, 3, 2, 0, 0, 0, 0, 0
 		spritePiece	-$20, 4, 4, 2, 6, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_00DC:	spriteHeader
+Map_obj08_00DC:	spritemap
 		spritePiece	-$20, -$C, 3, 2, 0, 0, 0, 0, 0
 		spritePiece	-$20, 4, 4, 2, 6, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_00EE:	spriteHeader
+Map_obj08_00EE:	spritemap
 		spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_00F8:	spriteHeader
+Map_obj08_00F8:	spritemap
 		spritePiece	-8, -8, 2, 2, 4, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_0102:	spriteHeader
+Map_obj08_0102:	spritemap
 		spritePiece	-8, -8, 2, 2, 8, 0, 0, 0, 0
 		endsprite
 
-Map_obj08_010C:	spriteHeader
+Map_obj08_010C:	spritemap
 		spritePiece	-8, -8, 2, 2, $C, 0, 0, 0, 0
 		endsprite
 

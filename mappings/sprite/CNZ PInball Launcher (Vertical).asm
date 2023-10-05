@@ -10,29 +10,29 @@ Map_VertLauncher:	index offset(*)
 		ptr	Map_obj85_a_0064
 		ptr	Map_obj85_a_0064
 
-Map_obj85_a_000C:	spriteHeader
+Map_obj85_a_000C:	spritemap
 		spritePiece	-$C, -$38, 3, 2, 0, 0, 0, 0, 0
 		spritePiece	-$C, -$28, 3, 2, 6, 0, 0, 0, 0
 		spritePiece	-$C, -$18, 3, 2, 6, 0, 0, 0, 0
 		spritePiece	-$C, -8, 3, 2, $C, 0, 0, 0, 0
 		endsprite
 
-Map_obj85_a_002E:	spriteHeader
+Map_obj85_a_002E:	spritemap
 		spritePiece	-$C, -$20, 3, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Map_obj85_a_0038:	spriteHeader
+Map_obj85_a_0038:	spritemap
 		spritePiece	-$C, -$30, 3, 2, 6, 0, 0, 0, 0
 		spritePiece	-$C, -$20, 3, 2, 6, 0, 0, 0, 0
 		spritePiece	-$C, -$10, 3, 2, $C, 0, 0, 0, 0
 		endsprite
 
-Map_obj85_a_0052:	spriteHeader
+Map_obj85_a_0052:	spritemap
 		spritePiece	-$C, -$20, 3, 2, 6, 0, 0, 0, 0
 		spritePiece	-$C, -$10, 3, 2, $C, 0, 0, 0, 0
 		endsprite
 
-Map_obj85_a_0064:	spriteHeader
+Map_obj85_a_0064:	spritemap
 		spritePiece	-$C, -$20, 3, 2, 0, 0, 0, 1, 0
 		endsprite
 

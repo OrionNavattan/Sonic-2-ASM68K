@@ -7,7 +7,7 @@ Map_Ledge:	index offset(*)
 		ptr	Map_obj1A_a_010C
 		ptr	Map_obj1A_a_01D6
 
-Map_obj1A_a_0008:	spriteHeader
+Map_obj1A_a_0008:	spritemap
 		spritePiece	$10, -$38, 4, 3, $57, 0, 0, 0, 0
 		spritePiece	-$10, -$30, 4, 2, $63, 0, 0, 0, 0
 		spritePiece	$10, -$20, 4, 2, $6B, 0, 0, 0, 0
@@ -26,7 +26,7 @@ Map_obj1A_a_0008:	spriteHeader
 		spritePiece	0, $10, 2, 2, $B7, 0, 0, 0, 0
 		endsprite
 
-Map_obj1A_a_008A:	spriteHeader
+Map_obj1A_a_008A:	spritemap
 		spritePiece	$10, -$38, 4, 3, $57, 0, 0, 0, 0
 		spritePiece	-$10, -$30, 4, 2, $63, 0, 0, 0, 0
 		spritePiece	$10, -$20, 4, 2, $6B, 0, 0, 0, 0
@@ -45,7 +45,7 @@ Map_obj1A_a_008A:	spriteHeader
 		spritePiece	0, $10, 2, 2, $B7, 0, 0, 0, 0
 		endsprite
 
-Map_obj1A_a_010C:	spriteHeader
+Map_obj1A_a_010C:	spritemap
 		spritePiece	$20, -$38, 2, 3, $5D, 0, 0, 0, 0
 		spritePiece	$10, -$38, 2, 3, $57, 0, 0, 0, 0
 		spritePiece	0, -$30, 2, 2, $67, 0, 0, 0, 0
@@ -73,7 +73,7 @@ Map_obj1A_a_010C:	spriteHeader
 		spritePiece	0, $10, 2, 2, $B7, 0, 0, 0, 0
 		endsprite
 
-Map_obj1A_a_01D6:	spriteHeader
+Map_obj1A_a_01D6:	spritemap
 		spritePiece	$20, -$38, 2, 3, $5D, 0, 0, 0, 0
 		spritePiece	$10, -$38, 2, 3, $57, 0, 0, 0, 0
 		spritePiece	0, -$30, 2, 2, $67, 0, 0, 0, 0

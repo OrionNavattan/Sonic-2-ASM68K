@@ -11,7 +11,7 @@ Map_ContinueScreenItems:	index offset(*)
 		ptr	Map_objDA_007A
 		ptr	Map_objDA_0084
 
-Map_objDA_000C:	spriteHeader
+Map_objDA_000C:	spritemap
 		spritePiece	-$3C, -8, 2, 2, $90, 0, 0, 0, 0
 		spritePiece	-$2C, -8, 2, 2, $88, 0, 0, 0, 0
 		spritePiece	-$1C, -8, 2, 2, $84, 0, 0, 0, 0
@@ -25,19 +25,19 @@ Map_objDA_000C:	spriteHeader
 		spritePiece	-8, $36, 2, 2, $1FC, 0, 0, 0, 0
 		endsprite
 
-Map_objDA_0066:	spriteHeader
+Map_objDA_0066:	spritemap
 		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 
-Map_objDA_0070:	spriteHeader
+Map_objDA_0070:	spritemap
 		spritePiece	-$10, -$10, 4, 4, $10, 0, 0, 0, 0
 		endsprite
 
-Map_objDA_007A:	spriteHeader
+Map_objDA_007A:	spritemap
 		spritePiece	0, 0, 2, 3, 0, 0, 0, 0, 0
 		endsprite
 
-Map_objDA_0084:	spriteHeader
+Map_objDA_0084:	spritemap
 		spritePiece	0, 0, 2, 3, 6, 0, 0, 0, 0
 		endsprite
 

@@ -6,10 +6,10 @@ Map_SBridge:	index offset(*)
 		ptr	Frame_SBridge_Blank
 		ptr	Frame_SBridge_Log
 
-Frame_SBridge_Blank:	spriteHeader
+Frame_SBridge_Blank:	spritemap
 		endsprite
 
-Frame_SBridge_Log:	spriteHeader
+Frame_SBridge_Log:	spritemap
 		spritePiece	-8, -8, 2, 2, 0, 0, 0, 0, 0
 		endsprite
 

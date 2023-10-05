@@ -223,1339 +223,1339 @@ Sonic_Sprites:	macro
 Map_Sonic:
 		Sonic_Sprites	Frame				; generate the pointer index
 
-Frame_Sonic_Blank:	spriteHeader 
+Frame_Sonic_Blank:	spritemap 
 		endsprite 
 
-Frame_Sonic_Stand:	spriteHeader 
-		spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$14, 1, 4, 4, 0, 0, 0, 0
-		spritePiece	-8, -$C, 3, 2, 8, 0, 0, 0, 0
-		spritePiece	-8, 4, 3, 2, $E, 0, 0, 0, 0
+Frame_Sonic_Stand:	spritemap 
+		piece	-8, -$1C, 2x2, 0
+		piece	-$10, -$14, 1x4, 4
+		piece	-8, -$C, 3x2, 8
+		piece	-8, 4, 3x2, $E
 		endsprite 
 
-Frame_Sonic_Blink:	spriteHeader 
-		spritePiece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Blink:	spritemap 
+		piece	-$10, -$14, 3x4, 0
+		piece	-8, $C, 3x2, $C
 		endsprite 
 
-Frame_Sonic_Wait1:	spriteHeader 
-		spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, -$14, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-8, -4, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Wait1:	spritemap 
+		piece	-$10, -$14, 1x4, 0
+		piece	-8, -$14, 2x2, 4
+		piece	-8, -4, 2x2, 8
+		piece	-8, $C, 3x2, $C
 		endsprite 
 
-Frame_Sonic_Wait2:	spriteHeader 
-		spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, -$14, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-8, -4, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Wait2:	spritemap 
+		piece	-$10, -$14, 1x4, 0
+		piece	-8, -$14, 2x2, 4
+		piece	-8, -4, 2x2, 8
+		piece	-8, $C, 3x2, $C
 		endsprite 
 
-Frame_Sonic_Wait3:	spriteHeader 
-		spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, -$14, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-8, -4, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-8, $C, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	0, $C, 2, 2, $E, 0, 0, 0, 0
+Frame_Sonic_Wait3:	spritemap 
+		piece	-$10, -$14, 1x4, 0
+		piece	-8, -$14, 2x2, 4
+		piece	-8, -4, 2x2, 8
+		piece	-8, $C, 1x2, $C
+		piece	0, $C, 2x2, $E
 		endsprite 
 
-Frame_Sonic_Wait4:	spriteHeader 
-		spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, -$14, 2, 4, 4, 0, 0, 0, 0
-		spritePiece	-8, $C, 3, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Wait4:	spritemap 
+		piece	-$10, -$14, 1x4, 0
+		piece	-8, -$14, 2x4, 4
+		piece	-8, $C, 3x2, $C
 		endsprite 
 
-Frame_Sonic_LayDown:	spriteHeader 
-		spritePiece	-$10, -$C, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	8, 4, 1, 2, $C, 0, 0, 0, 0
+Frame_Sonic_LayDown:	spritemap 
+		piece	-$10, -$C, 3x4, 0
+		piece	8, 4, 1x2, $C
 		endsprite 
 
-Frame_Sonic_Laying1:	spriteHeader 
-		spritePiece	-$18, -$C, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	0, 4, 2, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Laying1:	spritemap 
+		piece	-$18, -$C, 3x4, 0
+		piece	0, 4, 2x2, $C
 		endsprite 
 
-Frame_Sonic_Laying2:	spriteHeader 
-		spritePiece	-$18, -$C, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	0, 4, 2, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Laying2:	spritemap 
+		piece	-$18, -$C, 3x4, 0
+		piece	0, 4, 2x2, $C
 		endsprite 
 
-Frame_Sonic_GetUp:	spriteHeader 
-		spritePiece	-$10, -$1C, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-$10, 4, 4, 2, $C, 0, 0, 0, 0
+Frame_Sonic_GetUp:	spritemap 
+		piece	-$10, -$1C, 3x4, 0
+		piece	-$10, 4, 4x2, $C
 		endsprite 
 
-Frame_Sonic_LookUp1:	spriteHeader 
-		spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$14, 1, 4, 4, 0, 0, 0, 0
-		spritePiece	-8, -$C, 3, 2, 8, 0, 0, 0, 0
-		spritePiece	-8, 4, 3, 2, $E, 0, 0, 0, 0
+Frame_Sonic_LookUp1:	spritemap 
+		piece	-8, -$1C, 2x2, 0
+		piece	-$10, -$14, 1x4, 4
+		piece	-8, -$C, 3x2, 8
+		piece	-8, 4, 3x2, $E
 		endsprite 
 
-Frame_Sonic_LookUp2:	spriteHeader 
-		spritePiece	-$10, -$14, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-8, -$1C, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-8, -$C, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-8, 4, 3, 2, $C, 0, 0, 0, 0
+Frame_Sonic_LookUp2:	spritemap 
+		piece	-$10, -$14, 1x4, 0
+		piece	-8, -$1C, 2x2, 4
+		piece	-8, -$C, 2x2, 8
+		piece	-8, 4, 3x2, $C
 		endsprite 
 
-Frame_Sonic_Walk11:	spriteHeader 
-		spritePiece	-$12, -$15, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, 3, 1, 2, 8, 0, 0, 0, 0
-		spritePiece	-$C, -5, 4, 4, $A, 0, 0, 0, 0
+Frame_Sonic_Walk11:	spritemap 
+		piece	-$12, -$15, 4x2, 0
+		piece	-$14, 3, 1x2, 8
+		piece	-$C, -5, 4x4, $A
 		endsprite 
 
-Frame_Sonic_Walk12:	spriteHeader 
-		spritePiece	-$12, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, 4, 1, 2, 8, 0, 0, 0, 0
-		spritePiece	-$C, -4, 3, 4, $A, 0, 0, 0, 0
-		spritePiece	$C, 4, 1, 2, $16, 0, 0, 0, 0
+Frame_Sonic_Walk12:	spritemap 
+		piece	-$12, -$14, 4x2, 0
+		piece	-$14, 4, 1x2, 8
+		piece	-$C, -4, 3x4, $A
+		piece	$C, 4, 1x2, $16
 		endsprite 
 
-Frame_Sonic_Walk13:	spriteHeader 
-		spritePiece	-$13, -$13, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -3, 3, 2, 8, 0, 0, 0, 0
-		spritePiece	-9, $D, 2, 2, $E, 0, 0, 0, 0
+Frame_Sonic_Walk13:	spritemap 
+		piece	-$13, -$13, 4x2, 0
+		piece	-$C, -3, 3x2, 8
+		piece	-9, $D, 2x2, $E
 		endsprite 
 
-Frame_Sonic_Walk14:	spriteHeader 
-		spritePiece	-$C, -$14, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$12, -4, 4, 4, 6, 0, 0, 0, 0
+Frame_Sonic_Walk14:	spritemap 
+		piece	-$C, -$14, 3x2, 0
+		piece	-$12, -4, 4x4, 6
 		endsprite 
 
-Frame_Sonic_Walk15:	spriteHeader 
-		spritePiece	-$C, -$15, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$12, -5, 4, 4, 6, 0, 0, 0, 0
-		spritePiece	$E, -5, 1, 2, $16, 0, 0, 0, 0
+Frame_Sonic_Walk15:	spritemap 
+		piece	-$C, -$15, 3x2, 0
+		piece	-$12, -5, 4x4, 6
+		piece	$E, -5, 1x2, $16
 		endsprite 
 
-Frame_Sonic_Walk16:	spriteHeader 
-		spritePiece	-$C, -$14, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, 4, 1, 2, 6, 0, 0, 0, 0
-		spritePiece	-$C, -4, 3, 4, 8, 0, 0, 0, 0
-		spritePiece	$C, 4, 1, 2, $14, 0, 0, 0, 0
+Frame_Sonic_Walk16:	spritemap 
+		piece	-$C, -$14, 3x2, 0
+		piece	-$14, 4, 1x2, 6
+		piece	-$C, -4, 3x4, 8
+		piece	$C, 4, 1x2, $14
 		endsprite 
 
-Frame_Sonic_Walk17:	spriteHeader 
-		spritePiece	-$13, -$13, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -3, 3, 2, 8, 0, 0, 0, 0
-		spritePiece	-9, $D, 2, 2, $E, 0, 0, 0, 0
+Frame_Sonic_Walk17:	spritemap 
+		piece	-$13, -$13, 4x2, 0
+		piece	-$C, -3, 3x2, 8
+		piece	-9, $D, 2x2, $E
 		endsprite 
 
-Frame_Sonic_Walk18:	spriteHeader 
-		spritePiece	-$12, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$D, -4, 3, 4, 8, 0, 0, 0, 0
+Frame_Sonic_Walk18:	spritemap 
+		piece	-$12, -$14, 4x2, 0
+		piece	-$D, -4, 3x4, 8
 		endsprite 
 
-Frame_Sonic_Walk21:	spriteHeader 
-		spritePiece	-$16, -$15, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$16, -5, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	2, -$D, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	-6, $B, 1, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Walk21:	spritemap 
+		piece	-$16, -$15, 3x2, 0
+		piece	-$16, -5, 3x2, 6
+		piece	2, -$D, 2x2, $C
+		piece	-6, $B, 1x2, $10
 		endsprite 
 
-Frame_Sonic_Walk22:	spriteHeader 
-		spritePiece	-$15, -$14, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	3, -$14, 1, 2, 6, 0, 0, 0, 0
-		spritePiece	-$15, -4, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	$B, -4, 2, 2, $10, 0, 0, 0, 0
-		spritePiece	-5, $C, 1, 2, $14, 0, 0, 0, 0
+Frame_Sonic_Walk22:	spritemap 
+		piece	-$15, -$14, 3x2, 0
+		piece	3, -$14, 1x2, 6
+		piece	-$15, -4, 4x2, 8
+		piece	$B, -4, 2x2, $10
+		piece	-5, $C, 1x2, $14
 		endsprite 
 
-Frame_Sonic_Walk23:	spriteHeader 
-		spritePiece	-$14, -$13, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$13, 1, 4, 8, 0, 0, 0, 0
-		spritePiece	4, -$B, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	4, 5, 2, 2, $E, 0, 0, 0, 0
+Frame_Sonic_Walk23:	spritemap 
+		piece	-$14, -$13, 2x4, 0
+		piece	-4, -$13, 1x4, 8
+		piece	4, -$B, 1x2, $C
+		piece	4, 5, 2x2, $E
 		endsprite 
 
-Frame_Sonic_Walk24:	spriteHeader 
-		spritePiece	-$15, -$14, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	3, -$14, 1, 2, 6, 0, 0, 0, 0
-		spritePiece	-$15, -4, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-5, -4, 3, 4, $C, 0, 0, 0, 0
+Frame_Sonic_Walk24:	spritemap 
+		piece	-$15, -$14, 3x2, 0
+		piece	3, -$14, 1x2, 6
+		piece	-$15, -4, 2x2, 8
+		piece	-5, -4, 3x4, $C
 		endsprite 
 
-Frame_Sonic_Walk25:	spriteHeader 
-		spritePiece	-$16, -$15, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	2, -$15, 1, 2, 6, 0, 0, 0, 0
-		spritePiece	-$16, -5, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	$A, -$D, 1, 2, $10, 0, 0, 0, 0
-		spritePiece	-$E, $B, 2, 2, $12, 0, 0, 0, 0
+Frame_Sonic_Walk25:	spritemap 
+		piece	-$16, -$15, 3x2, 0
+		piece	2, -$15, 1x2, 6
+		piece	-$16, -5, 4x2, 8
+		piece	$A, -$D, 1x2, $10
+		piece	-$E, $B, 2x2, $12
 		endsprite 
 
-Frame_Sonic_Walk26:	spriteHeader 
-		spritePiece	-$15, -$14, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	3, -$14, 1, 2, 6, 0, 0, 0, 0
-		spritePiece	-$15, -4, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	$B, -6, 2, 2, $10, 0, 0, 0, 0
-		spritePiece	-5, $C, 1, 2, $14, 0, 0, 0, 0
+Frame_Sonic_Walk26:	spritemap 
+		piece	-$15, -$14, 3x2, 0
+		piece	3, -$14, 1x2, 6
+		piece	-$15, -4, 4x2, 8
+		piece	$B, -6, 2x2, $10
+		piece	-5, $C, 1x2, $14
 		endsprite 
 
-Frame_Sonic_Walk27:	spriteHeader 
-		spritePiece	-$14, -$13, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$13, 1, 4, 8, 0, 0, 0, 0
-		spritePiece	4, -$B, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	4, 5, 2, 2, $E, 0, 0, 0, 0
+Frame_Sonic_Walk27:	spritemap 
+		piece	-$14, -$13, 2x4, 0
+		piece	-4, -$13, 1x4, 8
+		piece	4, -$B, 1x2, $C
+		piece	4, 5, 2x2, $E
 		endsprite 
 
-Frame_Sonic_Walk28:	spriteHeader 
-		spritePiece	-$15, -$14, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$15, -4, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	3, -$C, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-5, $C, 1, 2, $E, 0, 0, 0, 0
-		spritePiece	3, 4, 2, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Walk28:	spritemap 
+		piece	-$15, -$14, 3x2, 0
+		piece	-$15, -4, 3x2, 6
+		piece	3, -$C, 1x2, $C
+		piece	-5, $C, 1x2, $E
+		piece	3, 4, 2x2, $10
 		endsprite 
 
-Frame_Sonic_Walk31:	spriteHeader 
-		spritePiece	-$15, -$E, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-5, -$14, 3, 4, 8, 0, 0, 0, 0
-		spritePiece	3, $C, 2, 2, $14, 0, 0, 0, 0
+Frame_Sonic_Walk31:	spritemap 
+		piece	-$15, -$E, 2x4, 0
+		piece	-5, -$14, 3x4, 8
+		piece	3, $C, 2x2, $14
 		endsprite 
 
-Frame_Sonic_Walk32:	spriteHeader 
-		spritePiece	-$14, -$E, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$14, 3, 4, 8, 0, 0, 0, 0
-		spritePiece	4, $C, 2, 2, $14, 0, 0, 0, 0
+Frame_Sonic_Walk32:	spritemap 
+		piece	-$14, -$E, 2x4, 0
+		piece	-4, -$14, 3x4, 8
+		piece	4, $C, 2x2, $14
 		endsprite 
 
-Frame_Sonic_Walk33:	spriteHeader 
-		spritePiece	-$13, -$D, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-3, -$C, 1, 4, 8, 0, 0, 0, 0
-		spritePiece	5, -7, 2, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Walk33:	spritemap 
+		piece	-$13, -$D, 2x4, 0
+		piece	-3, -$C, 1x4, 8
+		piece	5, -7, 2x2, $C
 		endsprite 
 
-Frame_Sonic_Walk34:	spriteHeader 
-		spritePiece	-$14, -$C, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$E, 3, 4, 8, 0, 0, 0, 0
+Frame_Sonic_Walk34:	spritemap 
+		piece	-$14, -$C, 2x4, 0
+		piece	-4, -$E, 3x4, 8
 		endsprite 
 
-Frame_Sonic_Walk35:	spriteHeader 
-		spritePiece	-$15, -$C, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-5, -$1D, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-5, -$D, 3, 4, $C, 0, 0, 0, 0
+Frame_Sonic_Walk35:	spritemap 
+		piece	-$15, -$C, 2x4, 0
+		piece	-5, -$1D, 2x2, 8
+		piece	-5, -$D, 3x4, $C
 		endsprite 
 
-Frame_Sonic_Walk36:	spriteHeader 
-		spritePiece	-$14, -$C, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$14, 3, 4, 8, 0, 0, 0, 0
-		spritePiece	4, $C, 2, 2, $14, 0, 0, 0, 0
+Frame_Sonic_Walk36:	spritemap 
+		piece	-$14, -$C, 2x4, 0
+		piece	-4, -$14, 3x4, 8
+		piece	4, $C, 2x2, $14
 		endsprite 
 
-Frame_Sonic_Walk37:	spriteHeader 
-		spritePiece	-$13, -$D, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-3, -$C, 1, 4, 8, 0, 0, 0, 0
-		spritePiece	5, -7, 2, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Walk37:	spritemap 
+		piece	-$13, -$D, 2x4, 0
+		piece	-3, -$C, 1x4, 8
+		piece	5, -7, 2x2, $C
 		endsprite 
 
-Frame_Sonic_Walk38:	spriteHeader 
-		spritePiece	-$14, -$E, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$C, 3, 4, 8, 0, 0, 0, 0
+Frame_Sonic_Walk38:	spritemap 
+		piece	-$14, -$E, 2x4, 0
+		piece	-4, -$C, 3x4, 8
 		endsprite 
 
-Frame_Sonic_Walk41:	spriteHeader 
-		spritePiece	-$D, -$12, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$15, -2, 2, 4, 4, 0, 0, 0, 0
-		spritePiece	-5, -2, 4, 2, $C, 0, 0, 0, 0
-		spritePiece	-5, $E, 1, 2, $14, 0, 0, 0, 0
+Frame_Sonic_Walk41:	spritemap 
+		piece	-$D, -$12, 2x2, 0
+		piece	-$15, -2, 2x4, 4
+		piece	-5, -2, 4x2, $C
+		piece	-5, $E, 1x2, $14
 		endsprite 
 
-Frame_Sonic_Walk42:	spriteHeader 
-		spritePiece	-4, -$23, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
-		spritePiece	-$14, -3, 2, 4, $A, 0, 0, 0, 0
-		spritePiece	-4, -3, 4, 2, $12, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 2, $1A, 0, 0, 0, 0
+Frame_Sonic_Walk42:	spritemap 
+		piece	-4, -$23, 2x2, 0
+		piece	-$C, -$13, 3x2, 4
+		piece	-$14, -3, 2x4, $A
+		piece	-4, -3, 4x2, $12
+		piece	-4, $D, 1x2, $1A
 		endsprite 
 
-Frame_Sonic_Walk43:	spriteHeader 
-		spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$13, -4, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-3, -4, 2, 2, $10, 0, 0, 0, 0
-		spritePiece	-3, $C, 1, 2, $14, 0, 0, 0, 0
+Frame_Sonic_Walk43:	spritemap 
+		piece	-$B, -$14, 4x2, 0
+		piece	-$13, -4, 2x4, 8
+		piece	-3, -4, 2x2, $10
+		piece	-3, $C, 1x2, $14
 		endsprite 
 
-Frame_Sonic_Walk44:	spriteHeader 
-		spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -3, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-4, -3, 3, 2, $10, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 2, $16, 0, 0, 0, 0
+Frame_Sonic_Walk44:	spritemap 
+		piece	-$C, -$13, 4x2, 0
+		piece	-$14, -3, 2x4, 8
+		piece	-4, -3, 3x2, $10
+		piece	-4, $D, 1x2, $16
 		endsprite 
 
-Frame_Sonic_Walk45:	spriteHeader 
-		spritePiece	-$D, -$12, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$15, -2, 2, 4, 6, 0, 0, 0, 0
-		spritePiece	-5, -2, 4, 2, $E, 0, 0, 0, 0
-		spritePiece	-5, $E, 1, 2, $16, 0, 0, 0, 0
+Frame_Sonic_Walk45:	spritemap 
+		piece	-$D, -$12, 3x2, 0
+		piece	-$15, -2, 2x4, 6
+		piece	-5, -2, 4x2, $E
+		piece	-5, $E, 1x2, $16
 		endsprite 
 
-Frame_Sonic_Walk46:	spriteHeader 
-		spritePiece	-6, -$23, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
-		spritePiece	-$14, -3, 2, 4, $A, 0, 0, 0, 0
-		spritePiece	-4, -3, 4, 2, $12, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 2, $1A, 0, 0, 0, 0
+Frame_Sonic_Walk46:	spritemap 
+		piece	-6, -$23, 2x2, 0
+		piece	-$C, -$13, 3x2, 4
+		piece	-$14, -3, 2x4, $A
+		piece	-4, -3, 4x2, $12
+		piece	-4, $D, 1x2, $1A
 		endsprite 
 
-Frame_Sonic_Walk47:	spriteHeader 
-		spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$13, -4, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-3, -4, 2, 2, $10, 0, 0, 0, 0
-		spritePiece	-3, $C, 1, 2, $14, 0, 0, 0, 0
+Frame_Sonic_Walk47:	spritemap 
+		piece	-$B, -$14, 4x2, 0
+		piece	-$13, -4, 2x4, 8
+		piece	-3, -4, 2x2, $10
+		piece	-3, $C, 1x2, $14
 		endsprite 
 
-Frame_Sonic_Walk48:	spriteHeader 
-		spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -3, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-4, -3, 3, 2, $10, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 2, $16, 0, 0, 0, 0
+Frame_Sonic_Walk48:	spritemap 
+		piece	-$C, -$13, 4x2, 0
+		piece	-$14, -3, 2x4, 8
+		piece	-4, -3, 3x2, $10
+		piece	-4, $D, 1x2, $16
 		endsprite 
 
-Frame_Sonic_Run11:	spriteHeader 
-		spritePiece	-8, -$12, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -2, 4, 4, 6, 0, 0, 0, 0
+Frame_Sonic_Run11:	spritemap 
+		piece	-8, -$12, 3x2, 0
+		piece	-$10, -2, 4x4, 6
 		endsprite 
 
-Frame_Sonic_Run12:	spriteHeader 
-		spritePiece	-8, -$12, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -2, 4, 4, 6, 0, 0, 0, 0
+Frame_Sonic_Run12:	spritemap 
+		piece	-8, -$12, 3x2, 0
+		piece	-$10, -2, 4x4, 6
 		endsprite 
 
-Frame_Sonic_Run13:	spriteHeader 
-		spritePiece	-8, -$12, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -2, 4, 4, 6, 0, 0, 0, 0
+Frame_Sonic_Run13:	spritemap 
+		piece	-8, -$12, 3x2, 0
+		piece	-$10, -2, 4x4, 6
 		endsprite 
 
-Frame_Sonic_Run14:	spriteHeader 
-		spritePiece	-8, -$12, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -2, 4, 4, 6, 0, 0, 0, 0
+Frame_Sonic_Run14:	spritemap 
+		piece	-8, -$12, 3x2, 0
+		piece	-$10, -2, 4x4, 6
 		endsprite 
 
-Frame_Sonic_Run21:	spriteHeader 
-		spritePiece	-$13, -$14, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	5, -$14, 1, 2, 6, 0, 0, 0, 0
-		spritePiece	-$C, -4, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	-6, $C, 3, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Run21:	spritemap 
+		piece	-$13, -$14, 3x2, 0
+		piece	5, -$14, 1x2, 6
+		piece	-$C, -4, 4x2, 8
+		piece	-6, $C, 3x2, $10
 		endsprite 
 
-Frame_Sonic_Run22:	spriteHeader 
-		spritePiece	-$13, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$B, -4, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	-8, $C, 3, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Run22:	spritemap 
+		piece	-$13, -$14, 4x2, 0
+		piece	-$B, -4, 4x2, 8
+		piece	-8, $C, 3x2, $10
 		endsprite 
 
-Frame_Sonic_Run23:	spriteHeader 
-		spritePiece	-$13, -$14, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	5, -$14, 1, 2, 6, 0, 0, 0, 0
-		spritePiece	-$C, -4, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	-3, $C, 3, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Run23:	spritemap 
+		piece	-$13, -$14, 3x2, 0
+		piece	5, -$14, 1x2, 6
+		piece	-$C, -4, 4x2, 8
+		piece	-3, $C, 3x2, $10
 		endsprite 
 
-Frame_Sonic_Run24:	spriteHeader 
-		spritePiece	-$13, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$B, -4, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	-8, $C, 3, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Run24:	spritemap 
+		piece	-$13, -$14, 4x2, 0
+		piece	-$B, -4, 4x2, 8
+		piece	-8, $C, 3x2, $10
 		endsprite 
 
-Frame_Sonic_Run31:	spriteHeader 
-		spritePiece	-$12, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-2, -$10, 3, 4, 8, 0, 0, 0, 0
+Frame_Sonic_Run31:	spritemap 
+		piece	-$12, -$10, 2x4, 0
+		piece	-2, -$10, 3x4, 8
 		endsprite 
 
-Frame_Sonic_Run32:	spriteHeader 
-		spritePiece	-$12, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-2, -$10, 3, 4, 8, 0, 0, 0, 0
+Frame_Sonic_Run32:	spritemap 
+		piece	-$12, -$10, 2x4, 0
+		piece	-2, -$10, 3x4, 8
 		endsprite 
 
-Frame_Sonic_Run33:	spriteHeader 
-		spritePiece	-$12, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-2, -$10, 3, 4, 8, 0, 0, 0, 0
+Frame_Sonic_Run33:	spritemap 
+		piece	-$12, -$10, 2x4, 0
+		piece	-2, -$10, 3x4, 8
 		endsprite 
 
-Frame_Sonic_Run34:	spriteHeader 
-		spritePiece	-$12, -$10, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-2, -$10, 3, 4, 8, 0, 0, 0, 0
+Frame_Sonic_Run34:	spritemap 
+		piece	-$12, -$10, 2x4, 0
+		piece	-2, -$10, 3x4, 8
 		endsprite 
 
-Frame_Sonic_Run41:	spriteHeader 
-		spritePiece	-$C, -$17, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -7, 2, 4, 2, 0, 0, 0, 0
-		spritePiece	-4, -$14, 3, 4, $A, 0, 0, 0, 0
+Frame_Sonic_Run41:	spritemap 
+		piece	-$C, -$17, 1x2, 0
+		piece	-$14, -7, 2x4, 2
+		piece	-4, -$14, 3x4, $A
 		endsprite 
 
-Frame_Sonic_Run42:	spriteHeader 
-		spritePiece	-$14, -$D, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$15, 3, 4, 8, 0, 0, 0, 0
+Frame_Sonic_Run42:	spritemap 
+		piece	-$14, -$D, 2x4, 0
+		piece	-4, -$15, 3x4, 8
 		endsprite 
 
-Frame_Sonic_Run43:	spriteHeader 
-		spritePiece	-$C, -$17, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -7, 2, 4, 2, 0, 0, 0, 0
-		spritePiece	-4, -$14, 3, 4, $A, 0, 0, 0, 0
+Frame_Sonic_Run43:	spritemap 
+		piece	-$C, -$17, 1x2, 0
+		piece	-$14, -7, 2x4, 2
+		piece	-4, -$14, 3x4, $A
 		endsprite 
 
-Frame_Sonic_Run44:	spriteHeader 
-		spritePiece	-$14, -$D, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$15, 3, 4, 8, 0, 0, 0, 0
+Frame_Sonic_Run44:	spritemap 
+		piece	-$14, -$D, 2x4, 0
+		piece	-4, -$15, 3x4, 8
 		endsprite 
 
-Frame_Sonic_Roll1:	spriteHeader 
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Roll1:	spritemap 
+		piece	-$10, -$10, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Roll2:	spriteHeader 
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Roll2:	spritemap 
+		piece	-$10, -$10, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Roll3:	spriteHeader 
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Roll3:	spritemap 
+		piece	-$10, -$10, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Roll4:	spriteHeader 
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Roll4:	spritemap 
+		piece	-$10, -$10, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Roll5:	spriteHeader 
-		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Roll5:	spritemap 
+		piece	-$10, -$10, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Spindash1:	spriteHeader 
-		spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Spindash1:	spritemap 
+		piece	-$C, -8, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Spindash2:	spriteHeader 
-		spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Spindash2:	spritemap 
+		piece	-$C, -8, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Spindash3:	spriteHeader 
-		spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Spindash3:	spritemap 
+		piece	-$C, -8, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Spindash4:	spriteHeader 
-		spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Spindash4:	spritemap 
+		piece	-$C, -8, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Spindash5:	spriteHeader 
-		spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Spindash5:	spritemap 
+		piece	-$C, -8, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Spindash6:	spriteHeader 
-		spritePiece	-$C, -8, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Spindash6:	spritemap 
+		piece	-$C, -8, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Push1:	spriteHeader 
-		spritePiece	-$D, -$1B, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$D, -$B, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$15, 5, 4, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Push1:	spritemap 
+		piece	-$D, -$1B, 3x2, 0
+		piece	-$D, -$B, 3x2, 6
+		piece	-$15, 5, 4x2, $C
 		endsprite 
 
-Frame_Sonic_Push2:	spriteHeader 
-		spritePiece	-$D, -$1C, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$D, -$C, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$D, 4, 3, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Push2:	spritemap 
+		piece	-$D, -$1C, 3x2, 0
+		piece	-$D, -$C, 3x2, 6
+		piece	-$D, 4, 3x2, $C
 		endsprite 
 
-Frame_Sonic_Push3:	spriteHeader 
-		spritePiece	-$D, -$1B, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$D, -$B, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$15, 5, 4, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Push3:	spritemap 
+		piece	-$D, -$1B, 3x2, 0
+		piece	-$D, -$B, 3x2, 6
+		piece	-$15, 5, 4x2, $C
 		endsprite 
 
-Frame_Sonic_Push4:	spriteHeader 
-		spritePiece	-$D, -$1B, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$D, -$B, 3, 2, 6, 0, 0, 0, 0
-		spritePiece	-$D, 5, 3, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Push4:	spritemap 
+		piece	-$D, -$1B, 3x2, 0
+		piece	-$D, -$B, 3x2, 6
+		piece	-$D, 5, 3x2, $C
 		endsprite 
 
-Frame_Sonic_Duck1:	spriteHeader 
-		spritePiece	-$A, -$C, 3, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Duck1:	spritemap 
+		piece	-$A, -$C, 3x4, 0
 		endsprite 
 
-Frame_Sonic_Duck2:	spriteHeader 
-		spritePiece	-$E, -$C, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Duck2:	spritemap 
+		piece	-$E, -$C, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Injury:	spriteHeader 
-		spritePiece	-$14, -8, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -$10, 4, 4, 2, 0, 0, 0, 0
+Frame_Sonic_Injury:	spritemap 
+		piece	-$14, -8, 1x2, 0
+		piece	-$C, -$10, 4x4, 2
 		endsprite 
 
-Frame_Sonic_OilSlide:	spriteHeader 
-		spritePiece	-$14, -$10, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-$C, -$10, 4, 4, 4, 0, 0, 0, 0
+Frame_Sonic_OilSlide:	spritemap 
+		piece	-$14, -$10, 1x4, 0
+		piece	-$C, -$10, 4x4, 4
 		endsprite 
 
-Frame_Sonic_Hang11:	spriteHeader 
-		spritePiece	-$18, -$18, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	8, -$18, 1, 2, $10, 0, 0, 0, 0
-		spritePiece	8, -8, 2, 2, $12, 0, 0, 0, 0
+Frame_Sonic_Hang11:	spritemap 
+		piece	-$18, -$18, 4x4, 0
+		piece	8, -$18, 1x2, $10
+		piece	8, -8, 2x2, $12
 		endsprite 
 
-Frame_Sonic_Hang12:	spriteHeader 
-		spritePiece	-$18, -$18, 4, 4, 0, 0, 0, 0, 0
-		spritePiece	8, -$18, 1, 2, $10, 0, 0, 0, 0
-		spritePiece	8, -8, 2, 2, $12, 0, 0, 0, 0
+Frame_Sonic_Hang12:	spritemap 
+		piece	-$18, -$18, 4x4, 0
+		piece	8, -$18, 1x2, $10
+		piece	8, -8, 2x2, $12
 		endsprite 
 
-Frame_Sonic_Hang21:	spriteHeader 
-		spritePiece	-$C, -$18, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-$C, 8, 3, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Hang21:	spritemap 
+		piece	-$C, -$18, 3x4, 0
+		piece	-$C, 8, 3x2, $C
 		endsprite 
 
-Frame_Sonic_Hang22:	spriteHeader 
-		spritePiece	-$C, -$18, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-$C, 8, 3, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Hang22:	spritemap 
+		piece	-$C, -$18, 3x4, 0
+		piece	-$C, 8, 3x2, $C
 		endsprite 
 
-Frame_Sonic_Float1:	spriteHeader 
-		spritePiece	-$14, -4, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-4, -$C, 3, 4, 4, 0, 0, 0, 0
-		spritePiece	$14, -$C, 1, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Float1:	spritemap 
+		piece	-$14, -4, 2x2, 0
+		piece	-4, -$C, 3x4, 4
+		piece	$14, -$C, 1x2, $10
 		endsprite 
 
-Frame_Sonic_Float2:	spriteHeader 
-		spritePiece	-$18, -$C, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 2, 4, 2, 0, 0, 0, 0
-		spritePiece	0, -$C, 2, 4, 2, 1, 0, 0, 0
-		spritePiece	$10, -$C, 1, 2, 0, 1, 0, 0, 0
+Frame_Sonic_Float2:	spritemap 
+		piece	-$18, -$C, 1x2, 0
+		piece	-$10, -$C, 2x4, 2
+		piece	0, -$C, 2x4, 2, xflip
+		piece	$10, -$C, 1x2, 0, xflip
 		endsprite 
 
-Frame_Sonic_Float3:	spriteHeader 
-		spritePiece	4, -4, 2, 2, 0, 1, 0, 0, 0
-		spritePiece	-$14, -$C, 3, 4, 4, 1, 0, 0, 0
-		spritePiece	-$1C, -$C, 1, 2, $10, 1, 0, 0, 0
+Frame_Sonic_Float3:	spritemap 
+		piece	4, -4, 2x2, 0, xflip
+		piece	-$14, -$C, 3x4, 4, xflip
+		piece	-$1C, -$C, 1x2, $10, xflip
 		endsprite 
 
-Frame_Sonic_Float4:	spriteHeader 
-		spritePiece	-$1C, -$C, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -$C, 3, 4, 2, 0, 0, 0, 0
-		spritePiece	4, -4, 1, 2, $E, 0, 0, 0, 0
+Frame_Sonic_Float4:	spritemap 
+		piece	-$1C, -$C, 1x2, 0
+		piece	-$14, -$C, 3x4, 2
+		piece	4, -4, 1x2, $E
 		endsprite 
 
-Frame_Sonic_Float5:	spriteHeader 
-		spritePiece	$14, -$C, 1, 2, 0, 1, 0, 0, 0
-		spritePiece	-4, -$C, 3, 4, 2, 1, 0, 0, 0
-		spritePiece	-$C, -4, 1, 2, $E, 1, 0, 0, 0
+Frame_Sonic_Float5:	spritemap 
+		piece	$14, -$C, 1x2, 0, xflip
+		piece	-4, -$C, 3x4, 2, xflip
+		piece	-$C, -4, 1x2, $E, xflip
 		endsprite 
 
-Frame_Sonic_Float6:	spriteHeader 
-		spritePiece	-$14, -4, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-4, -$C, 3, 4, 4, 0, 0, 0, 0
-		spritePiece	$14, -$C, 1, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Float6:	spritemap 
+		piece	-$14, -4, 2x2, 0
+		piece	-4, -$C, 3x4, 4
+		piece	$14, -$C, 1x2, $10
 		endsprite 
 
-Frame_Sonic_GetAir:	spriteHeader 
-		spritePiece	-$C, -$1C, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -$C, 4, 4, 6, 0, 0, 0, 0
-		spritePiece	$C, 4, 1, 2, $16, 0, 0, 0, 0
+Frame_Sonic_GetAir:	spritemap 
+		piece	-$C, -$1C, 3x2, 0
+		piece	-$14, -$C, 4x4, 6
+		piece	$C, 4, 1x2, $16
 		endsprite 
 
-Frame_Sonic_Spring:	spriteHeader 
-		spritePiece	-$C, -$18, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, 8, 2, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Spring:	spritemap 
+		piece	-$C, -$18, 3x4, 0
+		piece	-4, 8, 2x2, $C
 		endsprite 
 
-Frame_Sonic_Death:	spriteHeader 
-		spritePiece	-$18, -$16, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$16, 3, 4, 2, 0, 0, 0, 0
-		spritePiece	8, -$16, 1, 2, $E, 0, 0, 0, 0
-		spritePiece	-$10, $A, 4, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Death:	spritemap 
+		piece	-$18, -$16, 1x2, 0
+		piece	-$10, -$16, 3x4, 2
+		piece	8, -$16, 1x2, $E
+		piece	-$10, $A, 4x2, $10
 		endsprite 
 
-Frame_Sonic_Drown:	spriteHeader 
-		spritePiece	-$18, -$16, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$16, 3, 4, 2, 0, 0, 0, 0
-		spritePiece	8, -$16, 1, 2, $E, 0, 0, 0, 0
-		spritePiece	-$10, $A, 4, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Drown:	spritemap 
+		piece	-$18, -$16, 1x2, 0
+		piece	-$10, -$16, 3x4, 2
+		piece	8, -$16, 1x2, $E
+		piece	-$10, $A, 4x2, $10
 		endsprite 
 
-Frame_Sonic_Burnt:	spriteHeader 
-		spritePiece	-$18, -$16, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	8, -$16, 1, 2, 8, 0, 0, 0, 0
-		spritePiece	-$10, -6, 3, 4, $A, 0, 0, 0, 0
+Frame_Sonic_Burnt:	spritemap 
+		piece	-$18, -$16, 4x2, 0
+		piece	8, -$16, 1x2, 8
+		piece	-$10, -6, 3x4, $A
 		endsprite 
 
-Frame_Sonic_Tumble1:	spriteHeader 
-		spritePiece	-$10, -$1C, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 3, 4, 6, 0, 0, 0, 0
-		spritePiece	8, -$C, 1, 2, $12, 0, 0, 0, 0
+Frame_Sonic_Tumble1:	spritemap 
+		piece	-$10, -$1C, 3x2, 0
+		piece	-$10, -$C, 3x4, 6
+		piece	8, -$C, 1x2, $12
 		endsprite 
 
-Frame_Sonic_Tumble2:	spriteHeader 
-		spritePiece	-$10, -$1B, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	8, -$C, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-8, 5, 2, 2, $E, 0, 0, 0, 0
+Frame_Sonic_Tumble2:	spritemap 
+		piece	-$10, -$1B, 3x4, 0
+		piece	8, -$C, 1x2, $C
+		piece	-8, 5, 2x2, $E
 		endsprite 
 
-Frame_Sonic_Tumble3:	spriteHeader 
-		spritePiece	-$F, -$14, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	9, -4, 1, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Tumble3:	spritemap 
+		piece	-$F, -$14, 3x4, 0
+		piece	9, -4, 1x2, $C
 		endsprite 
 
-Frame_Sonic_Tumble4:	spriteHeader 
-		spritePiece	-$10, -$12, 4, 4, 0, 0, 0, 0, 0
+Frame_Sonic_Tumble4:	spritemap 
+		piece	-$10, -$12, 4x4, 0
 		endsprite 
 
-Frame_Sonic_Tumble5:	spriteHeader 
-		spritePiece	-$10, -$E, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	8, -6, 1, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Tumble5:	spritemap 
+		piece	-$10, -$E, 3x4, 0
+		piece	8, -6, 1x2, $C
 		endsprite 
 
-Frame_Sonic_Tumble6:	spriteHeader 
-		spritePiece	0, -$1C, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 3, 4, 2, 0, 0, 0, 0
-		spritePiece	8, -$C, 1, 2, $E, 0, 0, 0, 0
+Frame_Sonic_Tumble6:	spritemap 
+		piece	0, -$1C, 1x2, 0
+		piece	-$10, -$C, 3x4, 2
+		piece	8, -$C, 1x2, $E
 		endsprite 
 
-Frame_Sonic_Tumble7:	spriteHeader 
-		spritePiece	-$10, -$1B, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$B, 3, 4, 6, 0, 0, 0, 0
-		spritePiece	8, -$13, 1, 4, $12, 0, 0, 0, 0
+Frame_Sonic_Tumble7:	spritemap 
+		piece	-$10, -$1B, 3x2, 0
+		piece	-$10, -$B, 3x4, 6
+		piece	8, -$13, 1x4, $12
 		endsprite 
 
-Frame_Sonic_Tumble8:	spriteHeader 
-		spritePiece	-8, -$1C, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 3, 4, 4, 0, 0, 0, 0
-		spritePiece	8, -$C, 1, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Tumble8:	spritemap 
+		piece	-8, -$1C, 2x2, 0
+		piece	-$10, -$C, 3x4, 4
+		piece	8, -$C, 1x2, $10
 		endsprite 
 
-Frame_Sonic_Tumble9:	spriteHeader 
-		spritePiece	-$10, -$13, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	8, -$B, 1, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Tumble9:	spritemap 
+		piece	-$10, -$13, 3x4, 0
+		piece	8, -$B, 1x2, $C
 		endsprite 
 
-Frame_Sonic_Tumble10:	spriteHeader 
-		spritePiece	-$10, -$C, 1, 2, 0, 0, 0, 0, 0
-		spritePiece	-8, -$F, 3, 4, 2, 0, 0, 0, 0
+Frame_Sonic_Tumble10:	spritemap 
+		piece	-$10, -$C, 1x2, 0
+		piece	-8, -$F, 3x4, 2
 		endsprite 
 
-Frame_Sonic_Tumble11:	spriteHeader 
-		spritePiece	-$F, -$1C, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$C, 3, 4, 4, 0, 0, 0, 0
-		spritePiece	8, -$C, 1, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Tumble11:	spritemap 
+		piece	-$F, -$1C, 2x2, 0
+		piece	-$10, -$C, 3x4, 4
+		piece	8, -$C, 1x2, $10
 		endsprite 
 
-Frame_Sonic_Tumble12:	spriteHeader 
-		spritePiece	-$10, -$1F, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$F, 4, 4, 4, 0, 0, 0, 0
+Frame_Sonic_Tumble12:	spritemap 
+		piece	-$10, -$1F, 2x2, 0
+		piece	-$10, -$F, 4x4, 4
 		endsprite 
 
-Frame_Sonic_Vine1:	spriteHeader 
-		spritePiece	-$10, -$18, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$20, 1, 4, 8, 0, 0, 0, 0
-		spritePiece	0, 0, 3, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Vine1:	spritemap 
+		piece	-$10, -$18, 2x4, 0
+		piece	0, -$20, 1x4, 8
+		piece	0, 0, 3x2, $C
 		endsprite 
 
-Frame_Sonic_Vine2:	spriteHeader 
-		spritePiece	-$10, -$18, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	0, -$20, 1, 4, 8, 0, 0, 0, 0
-		spritePiece	0, 0, 3, 2, $C, 0, 0, 0, 0
+Frame_Sonic_Vine2:	spritemap 
+		piece	-$10, -$18, 2x4, 0
+		piece	0, -$20, 1x4, 8
+		piece	0, 0, 3x2, $C
 		endsprite 
 
-Frame_SuperSonic_Transform1:	spriteHeader 
-		spritePiece	-$B, -$10, 3, 4, 0, 0, 0, 0, 0
+Frame_SuperSonic_Transform1:	spritemap 
+		piece	-$B, -$10, 3x4, 0
 		endsprite 
 
-Frame_SuperSonic_Transform2:	spriteHeader 
-		spritePiece	-$10, -$1A, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	8, -$12, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-$10, 6, 3, 2, $E, 0, 0, 0, 0
+Frame_SuperSonic_Transform2:	spritemap 
+		piece	-$10, -$1A, 3x4, 0
+		piece	8, -$12, 1x2, $C
+		piece	-$10, 6, 3x2, $E
 		endsprite 
 
-Frame_SuperSonic_Transform3:	spriteHeader 
-		spritePiece	-$10, -$1C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	8, -4, 1, 1, 9, 0, 0, 0, 0
-		spritePiece	-$10, -4, 3, 3, $A, 0, 0, 0, 0
+Frame_SuperSonic_Transform3:	spritemap 
+		piece	-$10, -$1C, 3x3, 0
+		piece	8, -4, 1x1, 9
+		piece	-$10, -4, 3x3, $A
 		endsprite 
 
-Frame_SuperSonic_Transform4:	spriteHeader 
-		spritePiece	-$10, -$1C, 3, 1, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$14, 1, 2, 3, 0, 0, 0, 0
-		spritePiece	-8, -$14, 2, 2, 5, 0, 0, 0, 0
-		spritePiece	-$10, -4, 3, 3, 9, 0, 0, 0, 0
-		spritePiece	8, -3, 1, 1, $12, 0, 0, 0, 0
+Frame_SuperSonic_Transform4:	spritemap 
+		piece	-$10, -$1C, 3x1, 0
+		piece	-$10, -$14, 1x2, 3
+		piece	-8, -$14, 2x2, 5
+		piece	-$10, -4, 3x3, 9
+		piece	8, -3, 1x1, $12
 		endsprite 
 
-Frame_SuperSonic_Transform5:	spriteHeader 
-		spritePiece	-$10, -$1C, 3, 1, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$14, 1, 2, 3, 0, 0, 0, 0
-		spritePiece	-8, -$14, 2, 2, 5, 0, 0, 0, 0
-		spritePiece	-$10, -4, 3, 3, 9, 0, 0, 0, 0
-		spritePiece	8, -3, 1, 1, $12, 0, 0, 0, 0
+Frame_SuperSonic_Transform5:	spritemap 
+		piece	-$10, -$1C, 3x1, 0
+		piece	-$10, -$14, 1x2, 3
+		piece	-8, -$14, 2x2, 5
+		piece	-$10, -4, 3x3, 9
+		piece	8, -3, 1x1, $12
 		endsprite 
 
-Frame_SuperSonic_Stand1:	spriteHeader 
-		spritePiece	-$F, -$19, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$D, -1, 3, 3, 9, 0, 0, 0, 0
+Frame_SuperSonic_Stand1:	spritemap 
+		piece	-$F, -$19, 3x3, 0
+		piece	-$D, -1, 3x3, 9
 		endsprite 
 
-Frame_SuperSonic_Stand2:	spriteHeader 
-		spritePiece	-$F, -$19, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$D, -1, 3, 3, 9, 0, 0, 0, 0
+Frame_SuperSonic_Stand2:	spritemap 
+		piece	-$F, -$19, 3x3, 0
+		piece	-$D, -1, 3x3, 9
 		endsprite 
 
-Frame_SuperSonic_Stand3:	spriteHeader 
-		spritePiece	-$F, -$19, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$D, -1, 3, 3, 9, 0, 0, 0, 0
+Frame_SuperSonic_Stand3:	spritemap 
+		piece	-$F, -$19, 3x3, 0
+		piece	-$D, -1, 3x3, 9
 		endsprite 
 
-Frame_SuperSonic_Walk11:	spriteHeader 
-		spritePiece	-$12, -$1D, 4, 3, 0, 0, 0, 0, 0
-		spritePiece	-$14, 3, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-$C, -5, 4, 4, $E, 0, 0, 0, 0
+Frame_SuperSonic_Walk11:	spritemap 
+		piece	-$12, -$1D, 4x3, 0
+		piece	-$14, 3, 1x2, $C
+		piece	-$C, -5, 4x4, $E
 		endsprite 
 
-Frame_SuperSonic_Walk12:	spriteHeader 
-		spritePiece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
-		spritePiece	-$14, 4, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-$C, -4, 3, 4, $E, 0, 0, 0, 0
-		spritePiece	$C, 4, 1, 2, $1A, 0, 0, 0, 0
+Frame_SuperSonic_Walk12:	spritemap 
+		piece	-$12, -$1C, 4x3, 0
+		piece	-$14, 4, 1x2, $C
+		piece	-$C, -4, 3x4, $E
+		piece	$C, 4, 1x2, $1A
 		endsprite 
 
-Frame_SuperSonic_Walk13:	spriteHeader 
-		spritePiece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
-		spritePiece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
-		spritePiece	-9, $D, 2, 2, $12, 0, 0, 0, 0
+Frame_SuperSonic_Walk13:	spritemap 
+		piece	-$13, -$1B, 4x3, 0
+		piece	-$C, -3, 3x2, $C
+		piece	-9, $D, 2x2, $12
 		endsprite 
 
-Frame_SuperSonic_Walk14:	spriteHeader 
-		spritePiece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$12, -4, 4, 4, 9, 0, 0, 0, 0
+Frame_SuperSonic_Walk14:	spritemap 
+		piece	-$C, -$1C, 3x3, 0
+		piece	-$12, -4, 4x4, 9
 		endsprite 
 
-Frame_SuperSonic_Walk15:	spriteHeader 
-		spritePiece	-$C, -$1D, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$12, -5, 4, 4, 9, 0, 0, 0, 0
-		spritePiece	$E, -5, 1, 2, $19, 0, 0, 0, 0
+Frame_SuperSonic_Walk15:	spritemap 
+		piece	-$C, -$1D, 3x3, 0
+		piece	-$12, -5, 4x4, 9
+		piece	$E, -5, 1x2, $19
 		endsprite 
 
-Frame_SuperSonic_Walk16:	spriteHeader 
-		spritePiece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$14, 4, 1, 2, 9, 0, 0, 0, 0
-		spritePiece	-$C, -4, 3, 4, $B, 0, 0, 0, 0
-		spritePiece	$C, 4, 1, 2, $17, 0, 0, 0, 0
+Frame_SuperSonic_Walk16:	spritemap 
+		piece	-$C, -$1C, 3x3, 0
+		piece	-$14, 4, 1x2, 9
+		piece	-$C, -4, 3x4, $B
+		piece	$C, 4, 1x2, $17
 		endsprite 
 
-Frame_SuperSonic_Walk17:	spriteHeader 
-		spritePiece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
-		spritePiece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
-		spritePiece	-9, $D, 2, 2, $12, 0, 0, 0, 0
+Frame_SuperSonic_Walk17:	spritemap 
+		piece	-$13, -$1B, 4x3, 0
+		piece	-$C, -3, 3x2, $C
+		piece	-9, $D, 2x2, $12
 		endsprite 
 
-Frame_SuperSonic_Walk18:	spriteHeader 
-		spritePiece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
-		spritePiece	-$D, -4, 3, 4, $C, 0, 0, 0, 0
+Frame_SuperSonic_Walk18:	spritemap 
+		piece	-$12, -$1C, 4x3, 0
+		piece	-$D, -4, 3x4, $C
 		endsprite 
 
-Frame_SuperSonic_Walk21:	spriteHeader 
-		spritePiece	-$1E, -$15, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	2, -$D, 2, 2, 8, 0, 0, 0, 0
-		spritePiece	-$16, -5, 3, 2, $C, 0, 0, 0, 0
-		spritePiece	-6, $B, 1, 2, $12, 0, 0, 0, 0
+Frame_SuperSonic_Walk21:	spritemap 
+		piece	-$1E, -$15, 4x2, 0
+		piece	2, -$D, 2x2, 8
+		piece	-$16, -5, 3x2, $C
+		piece	-6, $B, 1x2, $12
 		endsprite 
 
-Frame_SuperSonic_Walk22:	spriteHeader 
-		spritePiece	-$1D, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	3, -$14, 1, 2, 8, 0, 0, 0, 0
-		spritePiece	-$15, -4, 4, 2, $A, 0, 0, 0, 0
-		spritePiece	$B, -4, 2, 2, $12, 0, 0, 0, 0
-		spritePiece	-5, $C, 1, 2, $16, 0, 0, 0, 0
+Frame_SuperSonic_Walk22:	spritemap 
+		piece	-$1D, -$14, 4x2, 0
+		piece	3, -$14, 1x2, 8
+		piece	-$15, -4, 4x2, $A
+		piece	$B, -4, 2x2, $12
+		piece	-5, $C, 1x2, $16
 		endsprite 
 
-Frame_SuperSonic_Walk23:	spriteHeader 
-		spritePiece	-$1C, -$13, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-4, -$13, 1, 4, 9, 0, 0, 0, 0
-		spritePiece	-$C, 5, 1, 1, $D, 0, 0, 0, 0
-		spritePiece	4, -$B, 1, 2, $E, 0, 0, 0, 0
-		spritePiece	4, 5, 2, 2, $10, 0, 0, 0, 0
+Frame_SuperSonic_Walk23:	spritemap 
+		piece	-$1C, -$13, 3x3, 0
+		piece	-4, -$13, 1x4, 9
+		piece	-$C, 5, 1x1, $D
+		piece	4, -$B, 1x2, $E
+		piece	4, 5, 2x2, $10
 		endsprite 
 
-Frame_SuperSonic_Walk24:	spriteHeader 
-		spritePiece	-$F, -$1C, 1, 1, 0, 0, 0, 0, 0
-		spritePiece	-$1D, -$14, 4, 2, 1, 0, 0, 0, 0
-		spritePiece	3, -$14, 1, 2, 9, 0, 0, 0, 0
-		spritePiece	-$15, -4, 2, 2, $B, 0, 0, 0, 0
-		spritePiece	-5, -4, 3, 4, $F, 0, 0, 0, 0
+Frame_SuperSonic_Walk24:	spritemap 
+		piece	-$F, -$1C, 1x1, 0
+		piece	-$1D, -$14, 4x2, 1
+		piece	3, -$14, 1x2, 9
+		piece	-$15, -4, 2x2, $B
+		piece	-5, -4, 3x4, $F
 		endsprite 
 
-Frame_SuperSonic_Walk25:	spriteHeader 
-		spritePiece	-$10, -$1D, 1, 1, 0, 0, 0, 0, 0
-		spritePiece	-$1E, -$15, 4, 2, 1, 0, 0, 0, 0
-		spritePiece	2, -$15, 1, 2, 9, 0, 0, 0, 0
-		spritePiece	$A, -$D, 1, 2, $B, 0, 0, 0, 0
-		spritePiece	-$16, -5, 4, 2, $D, 0, 0, 0, 0
-		spritePiece	-$E, $B, 2, 2, $15, 0, 0, 0, 0
+Frame_SuperSonic_Walk25:	spritemap 
+		piece	-$10, -$1D, 1x1, 0
+		piece	-$1E, -$15, 4x2, 1
+		piece	2, -$15, 1x2, 9
+		piece	$A, -$D, 1x2, $B
+		piece	-$16, -5, 4x2, $D
+		piece	-$E, $B, 2x2, $15
 		endsprite 
 
-Frame_SuperSonic_Walk26:	spriteHeader 
-		spritePiece	-$F, -$1C, 1, 1, 0, 0, 0, 0, 0
-		spritePiece	-$1D, -$14, 4, 2, 1, 0, 0, 0, 0
-		spritePiece	3, -$14, 1, 2, 9, 0, 0, 0, 0
-		spritePiece	-$15, -4, 4, 2, $B, 0, 0, 0, 0
-		spritePiece	$B, -6, 2, 2, $13, 0, 0, 0, 0
-		spritePiece	-5, $C, 1, 2, $17, 0, 0, 0, 0
+Frame_SuperSonic_Walk26:	spritemap 
+		piece	-$F, -$1C, 1x1, 0
+		piece	-$1D, -$14, 4x2, 1
+		piece	3, -$14, 1x2, 9
+		piece	-$15, -4, 4x2, $B
+		piece	$B, -6, 2x2, $13
+		piece	-5, $C, 1x2, $17
 		endsprite 
 
-Frame_SuperSonic_Walk27:	spriteHeader 
-		spritePiece	-$1C, -$13, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-4, -$13, 1, 4, 9, 0, 0, 0, 0
-		spritePiece	-$C, 5, 1, 1, $D, 0, 0, 0, 0
-		spritePiece	4, -$B, 1, 2, $E, 0, 0, 0, 0
-		spritePiece	4, 5, 2, 2, $10, 0, 0, 0, 0
+Frame_SuperSonic_Walk27:	spritemap 
+		piece	-$1C, -$13, 3x3, 0
+		piece	-4, -$13, 1x4, 9
+		piece	-$C, 5, 1x1, $D
+		piece	4, -$B, 1x2, $E
+		piece	4, 5, 2x2, $10
 		endsprite 
 
-Frame_SuperSonic_Walk28:	spriteHeader 
-		spritePiece	-$1D, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	3, -$C, 1, 2, 8, 0, 0, 0, 0
-		spritePiece	-$15, -4, 3, 2, $A, 0, 0, 0, 0
-		spritePiece	-5, $C, 1, 1, $10, 0, 0, 0, 0
-		spritePiece	3, 4, 2, 2, $11, 0, 0, 0, 0
+Frame_SuperSonic_Walk28:	spritemap 
+		piece	-$1D, -$14, 4x2, 0
+		piece	3, -$C, 1x2, 8
+		piece	-$15, -4, 3x2, $A
+		piece	-5, $C, 1x1, $10
+		piece	3, 4, 2x2, $11
 		endsprite 
 
-Frame_SuperSonic_Walk31:	spriteHeader 
-		spritePiece	-$1D, -$E, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-5, -$14, 3, 4, $C, 0, 0, 0, 0
-		spritePiece	3, $C, 2, 2, $18, 0, 0, 0, 0
+Frame_SuperSonic_Walk31:	spritemap 
+		piece	-$1D, -$E, 3x4, 0
+		piece	-5, -$14, 3x4, $C
+		piece	3, $C, 2x2, $18
 		endsprite 
 
-Frame_SuperSonic_Walk32:	spriteHeader 
-		spritePiece	-$1C, -$E, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$14, 3, 4, $C, 0, 0, 0, 0
-		spritePiece	4, $C, 2, 2, $18, 0, 0, 0, 0
+Frame_SuperSonic_Walk32:	spritemap 
+		piece	-$1C, -$E, 3x4, 0
+		piece	-4, -$14, 3x4, $C
+		piece	4, $C, 2x2, $18
 		endsprite 
 
-Frame_SuperSonic_Walk33:	spriteHeader 
-		spritePiece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
-		spritePiece	5, -7, 2, 2, $10, 0, 0, 0, 0
+Frame_SuperSonic_Walk33:	spritemap 
+		piece	-$1B, -$D, 3x4, 0
+		piece	-3, -$C, 1x4, $C
+		piece	5, -7, 2x2, $10
 		endsprite 
 
-Frame_SuperSonic_Walk34:	spriteHeader 
-		spritePiece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-4, -$E, 3, 4, 9, 0, 0, 0, 0
+Frame_SuperSonic_Walk34:	spritemap 
+		piece	-$1C, -$C, 3x3, 0
+		piece	-4, -$E, 3x4, 9
 		endsprite 
 
-Frame_SuperSonic_Walk35:	spriteHeader 
-		spritePiece	-$1D, -$C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-5, -$1D, 2, 2, 9, 0, 0, 0, 0
-		spritePiece	-5, -$D, 3, 4, $D, 0, 0, 0, 0
+Frame_SuperSonic_Walk35:	spritemap 
+		piece	-$1D, -$C, 3x3, 0
+		piece	-5, -$1D, 2x2, 9
+		piece	-5, -$D, 3x4, $D
 		endsprite 
 
-Frame_SuperSonic_Walk36:	spriteHeader 
-		spritePiece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-4, -$14, 3, 4, 9, 0, 0, 0, 0
-		spritePiece	4, $C, 2, 2, $15, 0, 0, 0, 0
+Frame_SuperSonic_Walk36:	spritemap 
+		piece	-$1C, -$C, 3x3, 0
+		piece	-4, -$14, 3x4, 9
+		piece	4, $C, 2x2, $15
 		endsprite 
 
-Frame_SuperSonic_Walk37:	spriteHeader 
-		spritePiece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
-		spritePiece	5, -7, 2, 2, $10, 0, 0, 0, 0
+Frame_SuperSonic_Walk37:	spritemap 
+		piece	-$1B, -$D, 3x4, 0
+		piece	-3, -$C, 1x4, $C
+		piece	5, -7, 2x2, $10
 		endsprite 
 
-Frame_SuperSonic_Walk38:	spriteHeader 
-		spritePiece	-$1C, -$C, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$E, 3, 4, $C, 0, 0, 0, 0
+Frame_SuperSonic_Walk38:	spritemap 
+		piece	-$1C, -$C, 3x4, 0
+		piece	-4, -$E, 3x4, $C
 		endsprite 
 
-Frame_SuperSonic_Walk41:	spriteHeader 
-		spritePiece	-$D, -$12, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$15, -2, 2, 4, 4, 0, 0, 0, 0
-		spritePiece	-5, -2, 4, 2, $C, 0, 0, 0, 0
-		spritePiece	-5, $E, 1, 1, $14, 0, 0, 0, 0
+Frame_SuperSonic_Walk41:	spritemap 
+		piece	-$D, -$12, 2x2, 0
+		piece	-$15, -2, 2x4, 4
+		piece	-5, -2, 4x2, $C
+		piece	-5, $E, 1x1, $14
 		endsprite 
 
-Frame_SuperSonic_Walk42:	spriteHeader 
-		spritePiece	-4, -$23, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
-		spritePiece	-$14, -3, 2, 4, $A, 0, 0, 0, 0
-		spritePiece	-4, -3, 4, 2, $12, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 1, $1A, 0, 0, 0, 0
+Frame_SuperSonic_Walk42:	spritemap 
+		piece	-4, -$23, 2x2, 0
+		piece	-$C, -$13, 3x2, 4
+		piece	-$14, -3, 2x4, $A
+		piece	-4, -3, 4x2, $12
+		piece	-4, $D, 1x1, $1A
 		endsprite 
 
-Frame_SuperSonic_Walk43:	spriteHeader 
-		spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$13, -4, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-3, -4, 2, 2, $10, 0, 0, 0, 0
-		spritePiece	-3, $C, 1, 2, $14, 0, 0, 0, 0
+Frame_SuperSonic_Walk43:	spritemap 
+		piece	-$B, -$14, 4x2, 0
+		piece	-$13, -4, 2x4, 8
+		piece	-3, -4, 2x2, $10
+		piece	-3, $C, 1x2, $14
 		endsprite 
 
-Frame_SuperSonic_Walk44:	spriteHeader 
-		spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$1C, -3, 3, 4, 8, 0, 0, 0, 0
-		spritePiece	-4, -3, 3, 2, $14, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 1, $1A, 0, 0, 0, 0
+Frame_SuperSonic_Walk44:	spritemap 
+		piece	-$C, -$13, 4x2, 0
+		piece	-$1C, -3, 3x4, 8
+		piece	-4, -3, 3x2, $14
+		piece	-4, $D, 1x1, $1A
 		endsprite 
 
-Frame_SuperSonic_Walk45:	spriteHeader 
-		spritePiece	-$D, -$12, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$1D, -2, 3, 4, 6, 0, 0, 0, 0
-		spritePiece	-5, -2, 4, 2, $12, 0, 0, 0, 0
-		spritePiece	-5, $E, 1, 1, $1A, 0, 0, 0, 0
+Frame_SuperSonic_Walk45:	spritemap 
+		piece	-$D, -$12, 3x2, 0
+		piece	-$1D, -2, 3x4, 6
+		piece	-5, -2, 4x2, $12
+		piece	-5, $E, 1x1, $1A
 		endsprite 
 
-Frame_SuperSonic_Walk46:	spriteHeader 
-		spritePiece	-6, -$23, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
-		spritePiece	-$1C, -3, 3, 4, $A, 0, 0, 0, 0
-		spritePiece	-4, -3, 4, 2, $16, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 1, $1E, 0, 0, 0, 0
+Frame_SuperSonic_Walk46:	spritemap 
+		piece	-6, -$23, 2x2, 0
+		piece	-$C, -$13, 3x2, 4
+		piece	-$1C, -3, 3x4, $A
+		piece	-4, -3, 4x2, $16
+		piece	-4, $D, 1x1, $1E
 		endsprite 
 
-Frame_SuperSonic_Walk47:	spriteHeader 
-		spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$13, -4, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-3, -4, 2, 2, $10, 0, 0, 0, 0
-		spritePiece	-3, $C, 1, 2, $14, 0, 0, 0, 0
+Frame_SuperSonic_Walk47:	spritemap 
+		piece	-$B, -$14, 4x2, 0
+		piece	-$13, -4, 2x4, 8
+		piece	-3, -4, 2x2, $10
+		piece	-3, $C, 1x2, $14
 		endsprite 
 
-Frame_SuperSonic_Walk48:	spriteHeader 
-		spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -3, 2, 4, 8, 0, 0, 0, 0
-		spritePiece	-4, -3, 3, 2, $10, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 1, $16, 0, 0, 0, 0
+Frame_SuperSonic_Walk48:	spritemap 
+		piece	-$C, -$13, 4x2, 0
+		piece	-$14, -3, 2x4, 8
+		piece	-4, -3, 3x2, $10
+		piece	-4, $D, 1x1, $16
 		endsprite 
 
-Frame_SuperSonic_Walk11_QuillUp:	spriteHeader 
-		spritePiece	-$12, -$1D, 4, 3, 0, 0, 0, 0, 0
-		spritePiece	-$14, 3, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-$C, -5, 4, 4, $E, 0, 0, 0, 0
+Frame_SuperSonic_Walk11_QuillUp:	spritemap 
+		piece	-$12, -$1D, 4x3, 0
+		piece	-$14, 3, 1x2, $C
+		piece	-$C, -5, 4x4, $E
 		endsprite 
 
-Frame_SuperSonic_Walk12_QuillUp:	spriteHeader 
-		spritePiece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
-		spritePiece	-$14, 4, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-$C, -4, 3, 4, $E, 0, 0, 0, 0
-		spritePiece	$C, 4, 1, 2, $1A, 0, 0, 0, 0
+Frame_SuperSonic_Walk12_QuillUp:	spritemap 
+		piece	-$12, -$1C, 4x3, 0
+		piece	-$14, 4, 1x2, $C
+		piece	-$C, -4, 3x4, $E
+		piece	$C, 4, 1x2, $1A
 		endsprite 
 
-Frame_SuperSonic_Walk13_QuillUp:	spriteHeader 
-		spritePiece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
-		spritePiece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
-		spritePiece	-9, $D, 2, 2, $12, 0, 0, 0, 0
+Frame_SuperSonic_Walk13_QuillUp:	spritemap 
+		piece	-$13, -$1B, 4x3, 0
+		piece	-$C, -3, 3x2, $C
+		piece	-9, $D, 2x2, $12
 		endsprite 
 
-Frame_SuperSonic_Walk14_QuillUp:	spriteHeader 
-		spritePiece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$12, -4, 4, 4, 9, 0, 0, 0, 0
+Frame_SuperSonic_Walk14_QuillUp:	spritemap 
+		piece	-$C, -$1C, 3x3, 0
+		piece	-$12, -4, 4x4, 9
 		endsprite 
 
-Frame_SuperSonic_Walk15_QuillUp:	spriteHeader 
-		spritePiece	-$C, -$1D, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$12, -5, 4, 4, 9, 0, 0, 0, 0
-		spritePiece	$E, -5, 1, 2, $19, 0, 0, 0, 0
+Frame_SuperSonic_Walk15_QuillUp:	spritemap 
+		piece	-$C, -$1D, 3x3, 0
+		piece	-$12, -5, 4x4, 9
+		piece	$E, -5, 1x2, $19
 		endsprite 
 
-Frame_SuperSonic_Walk16_QuillUp:	spriteHeader 
-		spritePiece	-$C, -$1C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$14, 4, 1, 2, 9, 0, 0, 0, 0
-		spritePiece	-$C, -4, 3, 4, $B, 0, 0, 0, 0
-		spritePiece	$C, 4, 1, 2, $17, 0, 0, 0, 0
+Frame_SuperSonic_Walk16_QuillUp:	spritemap 
+		piece	-$C, -$1C, 3x3, 0
+		piece	-$14, 4, 1x2, 9
+		piece	-$C, -4, 3x4, $B
+		piece	$C, 4, 1x2, $17
 		endsprite 
 
-Frame_SuperSonic_Walk17_QuillUp:	spriteHeader 
-		spritePiece	-$13, -$1B, 4, 3, 0, 0, 0, 0, 0
-		spritePiece	-$C, -3, 3, 2, $C, 0, 0, 0, 0
-		spritePiece	-9, $D, 2, 2, $12, 0, 0, 0, 0
+Frame_SuperSonic_Walk17_QuillUp:	spritemap 
+		piece	-$13, -$1B, 4x3, 0
+		piece	-$C, -3, 3x2, $C
+		piece	-9, $D, 2x2, $12
 		endsprite 
 
-Frame_SuperSonic_Walk18_QuillUp:	spriteHeader 
-		spritePiece	-$12, -$1C, 4, 3, 0, 0, 0, 0, 0
-		spritePiece	-$D, -4, 3, 4, $C, 0, 0, 0, 0
+Frame_SuperSonic_Walk18_QuillUp:	spritemap 
+		piece	-$12, -$1C, 4x3, 0
+		piece	-$D, -4, 3x4, $C
 		endsprite 
 
-Frame_SuperSonic_Walk21_QuillUp:	spriteHeader 
-		spritePiece	-$16, -$1D, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$1E, -$15, 4, 2, 2, 0, 0, 0, 0
-		spritePiece	-$16, -5, 3, 2, $A, 0, 0, 0, 0
-		spritePiece	2, -$D, 2, 2, $10, 0, 0, 0, 0
-		spritePiece	-6, $B, 1, 2, $14, 0, 0, 0, 0
+Frame_SuperSonic_Walk21_QuillUp:	spritemap 
+		piece	-$16, -$1D, 2x1, 0
+		piece	-$1E, -$15, 4x2, 2
+		piece	-$16, -5, 3x2, $A
+		piece	2, -$D, 2x2, $10
+		piece	-6, $B, 1x2, $14
 		endsprite 
 
-Frame_SuperSonic_Walk22_QuillUp:	spriteHeader 
-		spritePiece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
-		spritePiece	3, -$14, 1, 2, $A, 0, 0, 0, 0
-		spritePiece	-$15, -4, 4, 2, $C, 0, 0, 0, 0
-		spritePiece	$B, -4, 2, 2, $14, 0, 0, 0, 0
-		spritePiece	-5, $C, 1, 2, $18, 0, 0, 0, 0
+Frame_SuperSonic_Walk22_QuillUp:	spritemap 
+		piece	-$15, -$1C, 2x1, 0
+		piece	-$1D, -$14, 4x2, 2
+		piece	3, -$14, 1x2, $A
+		piece	-$15, -4, 4x2, $C
+		piece	$B, -4, 2x2, $14
+		piece	-5, $C, 1x2, $18
 		endsprite 
 
-Frame_SuperSonic_Walk23_QuillUp:	spriteHeader 
-		spritePiece	-$1C, -$15, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -5, 2, 2, 6, 0, 0, 0, 0
-		spritePiece	-4, -$13, 1, 4, $A, 0, 0, 0, 0
-		spritePiece	4, -$B, 1, 2, $E, 0, 0, 0, 0
-		spritePiece	4, 5, 2, 2, $10, 0, 0, 0, 0
+Frame_SuperSonic_Walk23_QuillUp:	spritemap 
+		piece	-$1C, -$15, 3x2, 0
+		piece	-$14, -5, 2x2, 6
+		piece	-4, -$13, 1x4, $A
+		piece	4, -$B, 1x2, $E
+		piece	4, 5, 2x2, $10
 		endsprite 
 
-Frame_SuperSonic_Walk24_QuillUp:	spriteHeader 
-		spritePiece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
-		spritePiece	3, -$14, 1, 2, $A, 0, 0, 0, 0
-		spritePiece	-$15, -4, 2, 2, $C, 0, 0, 0, 0
-		spritePiece	-5, -4, 3, 4, $10, 0, 0, 0, 0
+Frame_SuperSonic_Walk24_QuillUp:	spritemap 
+		piece	-$15, -$1C, 2x1, 0
+		piece	-$1D, -$14, 4x2, 2
+		piece	3, -$14, 1x2, $A
+		piece	-$15, -4, 2x2, $C
+		piece	-5, -4, 3x4, $10
 		endsprite 
 
-Frame_SuperSonic_Walk25_QuillUp:	spriteHeader 
-		spritePiece	-$16, -$1D, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$1E, -$15, 4, 2, 2, 0, 0, 0, 0
-		spritePiece	2, -$15, 1, 2, $A, 0, 0, 0, 0
-		spritePiece	$A, -$D, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	-$16, -5, 4, 2, $E, 0, 0, 0, 0
-		spritePiece	-$E, $B, 2, 2, $16, 0, 0, 0, 0
+Frame_SuperSonic_Walk25_QuillUp:	spritemap 
+		piece	-$16, -$1D, 2x1, 0
+		piece	-$1E, -$15, 4x2, 2
+		piece	2, -$15, 1x2, $A
+		piece	$A, -$D, 1x2, $C
+		piece	-$16, -5, 4x2, $E
+		piece	-$E, $B, 2x2, $16
 		endsprite 
 
-Frame_SuperSonic_Walk26_QuillUp:	spriteHeader 
-		spritePiece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
-		spritePiece	3, -$14, 1, 2, $A, 0, 0, 0, 0
-		spritePiece	-$15, -4, 4, 2, $C, 0, 0, 0, 0
-		spritePiece	$B, -6, 2, 2, $14, 0, 0, 0, 0
-		spritePiece	-5, $C, 1, 2, $18, 0, 0, 0, 0
+Frame_SuperSonic_Walk26_QuillUp:	spritemap 
+		piece	-$15, -$1C, 2x1, 0
+		piece	-$1D, -$14, 4x2, 2
+		piece	3, -$14, 1x2, $A
+		piece	-$15, -4, 4x2, $C
+		piece	$B, -6, 2x2, $14
+		piece	-5, $C, 1x2, $18
 		endsprite 
 
-Frame_SuperSonic_Walk27_QuillUp:	spriteHeader 
-		spritePiece	-$1C, -$15, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$14, -5, 2, 2, 6, 0, 0, 0, 0
-		spritePiece	-4, -$13, 1, 4, $A, 0, 0, 0, 0
-		spritePiece	4, -$B, 1, 2, $E, 0, 0, 0, 0
-		spritePiece	4, 5, 2, 2, $10, 0, 0, 0, 0
+Frame_SuperSonic_Walk27_QuillUp:	spritemap 
+		piece	-$1C, -$15, 3x2, 0
+		piece	-$14, -5, 2x2, 6
+		piece	-4, -$13, 1x4, $A
+		piece	4, -$B, 1x2, $E
+		piece	4, 5, 2x2, $10
 		endsprite 
 
-Frame_SuperSonic_Walk28_QuillUp:	spriteHeader 
-		spritePiece	-$15, -$1C, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$1D, -$14, 4, 2, 2, 0, 0, 0, 0
-		spritePiece	-$15, -4, 3, 2, $A, 0, 0, 0, 0
-		spritePiece	3, -$C, 1, 2, $10, 0, 0, 0, 0
-		spritePiece	3, 4, 2, 2, $12, 0, 0, 0, 0
-		spritePiece	-5, $C, 1, 2, $16, 0, 0, 0, 0
+Frame_SuperSonic_Walk28_QuillUp:	spritemap 
+		piece	-$15, -$1C, 2x1, 0
+		piece	-$1D, -$14, 4x2, 2
+		piece	-$15, -4, 3x2, $A
+		piece	3, -$C, 1x2, $10
+		piece	3, 4, 2x2, $12
+		piece	-5, $C, 1x2, $16
 		endsprite 
 
-Frame_SuperSonic_Walk31_QuillUp:	spriteHeader 
-		spritePiece	-$1D, -$E, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-5, -$14, 3, 4, $C, 0, 0, 0, 0
-		spritePiece	3, $C, 2, 2, $18, 0, 0, 0, 0
+Frame_SuperSonic_Walk31_QuillUp:	spritemap 
+		piece	-$1D, -$E, 3x4, 0
+		piece	-5, -$14, 3x4, $C
+		piece	3, $C, 2x2, $18
 		endsprite 
 
-Frame_SuperSonic_Walk32_QuillUp:	spriteHeader 
-		spritePiece	-$1C, -$E, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$14, 3, 4, $C, 0, 0, 0, 0
-		spritePiece	4, $C, 2, 2, $18, 0, 0, 0, 0
+Frame_SuperSonic_Walk32_QuillUp:	spritemap 
+		piece	-$1C, -$E, 3x4, 0
+		piece	-4, -$14, 3x4, $C
+		piece	4, $C, 2x2, $18
 		endsprite 
 
-Frame_SuperSonic_Walk33_QuillUp:	spriteHeader 
-		spritePiece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
-		spritePiece	5, -7, 2, 2, $10, 0, 0, 0, 0
+Frame_SuperSonic_Walk33_QuillUp:	spritemap 
+		piece	-$1B, -$D, 3x4, 0
+		piece	-3, -$C, 1x4, $C
+		piece	5, -7, 2x2, $10
 		endsprite 
 
-Frame_SuperSonic_Walk34_QuillUp:	spriteHeader 
-		spritePiece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-4, -$E, 3, 4, 9, 0, 0, 0, 0
+Frame_SuperSonic_Walk34_QuillUp:	spritemap 
+		piece	-$1C, -$C, 3x3, 0
+		piece	-4, -$E, 3x4, 9
 		endsprite 
 
-Frame_SuperSonic_Walk35_QuillUp:	spriteHeader 
-		spritePiece	-$1D, -$C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-5, -$1D, 2, 2, 9, 0, 0, 0, 0
-		spritePiece	-5, -$D, 3, 4, $D, 0, 0, 0, 0
+Frame_SuperSonic_Walk35_QuillUp:	spritemap 
+		piece	-$1D, -$C, 3x3, 0
+		piece	-5, -$1D, 2x2, 9
+		piece	-5, -$D, 3x4, $D
 		endsprite 
 
-Frame_SuperSonic_Walk36_QuillUp:	spriteHeader 
-		spritePiece	-$1C, -$C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-4, -$14, 3, 4, 9, 0, 0, 0, 0
-		spritePiece	4, $C, 2, 2, $15, 0, 0, 0, 0
+Frame_SuperSonic_Walk36_QuillUp:	spritemap 
+		piece	-$1C, -$C, 3x3, 0
+		piece	-4, -$14, 3x4, 9
+		piece	4, $C, 2x2, $15
 		endsprite 
 
-Frame_SuperSonic_Walk37_QuillUp:	spriteHeader 
-		spritePiece	-$1B, -$D, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-3, -$C, 1, 4, $C, 0, 0, 0, 0
-		spritePiece	5, -7, 2, 2, $10, 0, 0, 0, 0
+Frame_SuperSonic_Walk37_QuillUp:	spritemap 
+		piece	-$1B, -$D, 3x4, 0
+		piece	-3, -$C, 1x4, $C
+		piece	5, -7, 2x2, $10
 		endsprite 
 
-Frame_SuperSonic_Walk38_QuillUp:	spriteHeader 
-		spritePiece	-$1C, -$E, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$C, 3, 4, $C, 0, 0, 0, 0
+Frame_SuperSonic_Walk38_QuillUp:	spritemap 
+		piece	-$1C, -$E, 3x4, 0
+		piece	-4, -$C, 3x4, $C
 		endsprite 
 
-Frame_SuperSonic_Walk41_QuillUp:	spriteHeader 
-		spritePiece	-$D, -$12, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$1D, -2, 3, 4, 4, 0, 0, 0, 0
-		spritePiece	-5, -2, 4, 2, $10, 0, 0, 0, 0
-		spritePiece	-5, $E, 1, 1, $18, 0, 0, 0, 0
+Frame_SuperSonic_Walk41_QuillUp:	spritemap 
+		piece	-$D, -$12, 2x2, 0
+		piece	-$1D, -2, 3x4, 4
+		piece	-5, -2, 4x2, $10
+		piece	-5, $E, 1x1, $18
 		endsprite 
 
-Frame_SuperSonic_Walk42_QuillUp:	spriteHeader 
-		spritePiece	-4, -$23, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
-		spritePiece	-$1C, -3, 3, 4, $A, 0, 0, 0, 0
-		spritePiece	-4, -3, 4, 2, $16, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 1, $1E, 0, 0, 0, 0
+Frame_SuperSonic_Walk42_QuillUp:	spritemap 
+		piece	-4, -$23, 2x2, 0
+		piece	-$C, -$13, 3x2, 4
+		piece	-$1C, -3, 3x4, $A
+		piece	-4, -3, 4x2, $16
+		piece	-4, $D, 1x1, $1E
 		endsprite 
 
-Frame_SuperSonic_Walk43_QuillUp:	spriteHeader 
-		spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$1B, 4, 1, 2, 8, 0, 0, 0, 0
-		spritePiece	-$13, -4, 2, 4, $A, 0, 0, 0, 0
-		spritePiece	-3, -4, 2, 2, $12, 0, 0, 0, 0
-		spritePiece	-3, $C, 1, 1, $16, 0, 0, 0, 0
+Frame_SuperSonic_Walk43_QuillUp:	spritemap 
+		piece	-$B, -$14, 4x2, 0
+		piece	-$1B, 4, 1x2, 8
+		piece	-$13, -4, 2x4, $A
+		piece	-3, -4, 2x2, $12
+		piece	-3, $C, 1x1, $16
 		endsprite 
 
-Frame_SuperSonic_Walk44_QuillUp:	spriteHeader 
-		spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$1C, -3, 3, 4, 8, 0, 0, 0, 0
-		spritePiece	-4, -3, 3, 2, $14, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 1, $1A, 0, 0, 0, 0
+Frame_SuperSonic_Walk44_QuillUp:	spritemap 
+		piece	-$C, -$13, 4x2, 0
+		piece	-$1C, -3, 3x4, 8
+		piece	-4, -3, 3x2, $14
+		piece	-4, $D, 1x1, $1A
 		endsprite 
 
-Frame_SuperSonic_Walk45_QuillUp:	spriteHeader 
-		spritePiece	-$D, -$12, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$1D, -2, 3, 4, 6, 0, 0, 0, 0
-		spritePiece	-5, -2, 4, 2, $12, 0, 0, 0, 0
-		spritePiece	-5, $E, 1, 1, $1A, 0, 0, 0, 0
+Frame_SuperSonic_Walk45_QuillUp:	spritemap 
+		piece	-$D, -$12, 3x2, 0
+		piece	-$1D, -2, 3x4, 6
+		piece	-5, -2, 4x2, $12
+		piece	-5, $E, 1x1, $1A
 		endsprite 
 
-Frame_SuperSonic_Walk46_QuillUp:	spriteHeader 
-		spritePiece	-6, -$23, 2, 2, 0, 0, 0, 0, 0
-		spritePiece	-$C, -$13, 3, 2, 4, 0, 0, 0, 0
-		spritePiece	-$1C, -3, 3, 4, $A, 0, 0, 0, 0
-		spritePiece	-4, -3, 4, 2, $16, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 1, $1E, 0, 0, 0, 0
+Frame_SuperSonic_Walk46_QuillUp:	spritemap 
+		piece	-6, -$23, 2x2, 0
+		piece	-$C, -$13, 3x2, 4
+		piece	-$1C, -3, 3x4, $A
+		piece	-4, -3, 4x2, $16
+		piece	-4, $D, 1x1, $1E
 		endsprite 
 
-Frame_SuperSonic_Walk47_QuillUp:	spriteHeader 
-		spritePiece	-$B, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$1B, 4, 1, 2, 8, 0, 0, 0, 0
-		spritePiece	-$13, -4, 2, 4, $A, 0, 0, 0, 0
-		spritePiece	-3, -4, 2, 2, $12, 0, 0, 0, 0
-		spritePiece	-3, $C, 1, 1, $16, 0, 0, 0, 0
+Frame_SuperSonic_Walk47_QuillUp:	spritemap 
+		piece	-$B, -$14, 4x2, 0
+		piece	-$1B, 4, 1x2, 8
+		piece	-$13, -4, 2x4, $A
+		piece	-3, -4, 2x2, $12
+		piece	-3, $C, 1x1, $16
 		endsprite 
 
-Frame_SuperSonic_Walk48_QuillUp:	spriteHeader 
-		spritePiece	-$C, -$13, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$1C, 5, 1, 2, 8, 0, 0, 0, 0
-		spritePiece	-$14, -3, 2, 4, $A, 0, 0, 0, 0
-		spritePiece	-4, -3, 3, 2, $12, 0, 0, 0, 0
-		spritePiece	-4, $D, 1, 1, $18, 0, 0, 0, 0
+Frame_SuperSonic_Walk48_QuillUp:	spritemap 
+		piece	-$C, -$13, 4x2, 0
+		piece	-$1C, 5, 1x2, 8
+		piece	-$14, -3, 2x4, $A
+		piece	-4, -3, 3x2, $12
+		piece	-4, $D, 1x1, $18
 		endsprite 
 
-Frame_SuperSonic_Run1:	spriteHeader 
-		spritePiece	-4, -$10, 3, 1, 0, 0, 0, 0, 0
-		spritePiece	-4, -8, 1, 1, 3, 0, 0, 0, 0
-		spritePiece	4, -8, 2, 2, 4, 0, 0, 0, 0
-		spritePiece	-$14, 0, 3, 2, 8, 0, 0, 0, 0
+Frame_SuperSonic_Run1:	spritemap 
+		piece	-4, -$10, 3x1, 0
+		piece	-4, -8, 1x1, 3
+		piece	4, -8, 2x2, 4
+		piece	-$14, 0, 3x2, 8
 		endsprite 
 
-Frame_SuperSonic_Run2:	spriteHeader 
-		spritePiece	-6, -$1A, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$E, -$12, 3, 4, 2, 0, 0, 0, 0
-		spritePiece	$A, -$12, 1, 3, $E, 0, 0, 0, 0
-		spritePiece	-6, $E, 2, 1, $11, 0, 0, 0, 0
+Frame_SuperSonic_Run2:	spritemap 
+		piece	-6, -$1A, 2x1, 0
+		piece	-$E, -$12, 3x4, 2
+		piece	$A, -$12, 1x3, $E
+		piece	-6, $E, 2x1, $11
 		endsprite 
 
-Frame_SuperSonic_Run3:	spriteHeader 
-		spritePiece	-$10, -$14, 1, 3, 0, 0, 0, 0, 0
-		spritePiece	-8, -$14, 2, 2, 3, 0, 0, 0, 0
-		spritePiece	-8, -4, 3, 1, 7, 0, 0, 0, 0
-		spritePiece	0, 4, 2, 2, $A, 0, 0, 0, 0
+Frame_SuperSonic_Run3:	spritemap 
+		piece	-$10, -$14, 1x3, 0
+		piece	-8, -$14, 2x2, 3
+		piece	-8, -4, 3x1, 7
+		piece	0, 4, 2x2, $A
 		endsprite 
 
-Frame_SuperSonic_Run4:	spriteHeader 
-		spritePiece	-$12, -$12, 3, 1, 0, 0, 0, 0, 0
-		spritePiece	-$1A, -$A, 4, 2, 3, 0, 0, 0, 0
-		spritePiece	6, -$A, 2, 2, $B, 0, 0, 0, 0
-		spritePiece	-$12, 6, 2, 1, $F, 0, 0, 0, 0
-		spritePiece	6, 6, 1, 1, $11, 0, 0, 0, 0
+Frame_SuperSonic_Run4:	spritemap 
+		piece	-$12, -$12, 3x1, 0
+		piece	-$1A, -$A, 4x2, 3
+		piece	6, -$A, 2x2, $B
+		piece	-$12, 6, 2x1, $F
+		piece	6, 6, 1x1, $11
 		endsprite 
 
-Frame_SuperSonic_Run1_QuillUp:	spriteHeader 
-		spritePiece	-4, -$18, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-4, -8, 1, 1, 6, 0, 0, 0, 0
-		spritePiece	4, -8, 2, 2, 7, 0, 0, 0, 0
-		spritePiece	-$14, 0, 3, 2, $B, 0, 0, 0, 0
+Frame_SuperSonic_Run1_QuillUp:	spritemap 
+		piece	-4, -$18, 3x2, 0
+		piece	-4, -8, 1x1, 6
+		piece	4, -8, 2x2, 7
+		piece	-$14, 0, 3x2, $B
 		endsprite 
 
-Frame_SuperSonic_Run2_QuillUp:	spriteHeader 
-		spritePiece	-6, -$1A, 2, 1, 0, 0, 0, 0, 0
-		spritePiece	-$E, -$12, 3, 4, 2, 0, 0, 0, 0
-		spritePiece	$A, -$12, 1, 3, $E, 0, 0, 0, 0
-		spritePiece	-6, $E, 1, 1, $11, 0, 0, 0, 0
+Frame_SuperSonic_Run2_QuillUp:	spritemap 
+		piece	-6, -$1A, 2x1, 0
+		piece	-$E, -$12, 3x4, 2
+		piece	$A, -$12, 1x3, $E
+		piece	-6, $E, 1x1, $11
 		endsprite 
 
-Frame_SuperSonic_Run3_QuillUp:	spriteHeader 
-		spritePiece	-$18, -$14, 2, 3, 0, 0, 0, 0, 0
-		spritePiece	-8, -$14, 2, 2, 6, 0, 0, 0, 0
-		spritePiece	-8, -4, 1, 1, $A, 0, 0, 0, 0
-		spritePiece	0, -4, 2, 3, $B, 0, 0, 0, 0
+Frame_SuperSonic_Run3_QuillUp:	spritemap 
+		piece	-$18, -$14, 2x3, 0
+		piece	-8, -$14, 2x2, 6
+		piece	-8, -4, 1x1, $A
+		piece	0, -4, 2x3, $B
 		endsprite 
 
-Frame_SuperSonic_Run4_QuillUp:	spriteHeader 
-		spritePiece	-$12, -$12, 3, 1, 0, 0, 0, 0, 0
-		spritePiece	-$1A, -$A, 4, 2, 3, 0, 0, 0, 0
-		spritePiece	6, -$A, 2, 2, $B, 0, 0, 0, 0
-		spritePiece	-$12, 6, 2, 1, $F, 0, 0, 0, 0
-		spritePiece	6, 6, 1, 1, $11, 0, 0, 0, 0
+Frame_SuperSonic_Run4_QuillUp:	spritemap 
+		piece	-$12, -$12, 3x1, 0
+		piece	-$1A, -$A, 4x2, 3
+		piece	6, -$A, 2x2, $B
+		piece	-$12, 6, 2x1, $F
+		piece	6, 6, 1x1, $11
 		endsprite 
 
-Frame_SuperSonic_Push1:	spriteHeader 
-		spritePiece	-$12, -$1B, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$15, -$B, 2, 2, 6, 0, 0, 0, 0
-		spritePiece	-5, -$B, 2, 2, $A, 0, 0, 0, 0
-		spritePiece	-$15, 5, 4, 2, $E, 0, 0, 0, 0
+Frame_SuperSonic_Push1:	spritemap 
+		piece	-$12, -$1B, 3x2, 0
+		piece	-$15, -$B, 2x2, 6
+		piece	-5, -$B, 2x2, $A
+		piece	-$15, 5, 4x2, $E
 		endsprite 
 
-Frame_SuperSonic_Push2:	spriteHeader 
-		spritePiece	-$12, -$1C, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$15, -$C, 2, 2, 6, 0, 0, 0, 0
-		spritePiece	-5, -$C, 2, 2, $A, 0, 0, 0, 0
-		spritePiece	-$15, 4, 4, 2, $E, 0, 0, 0, 0
+Frame_SuperSonic_Push2:	spritemap 
+		piece	-$12, -$1C, 3x2, 0
+		piece	-$15, -$C, 2x2, 6
+		piece	-5, -$C, 2x2, $A
+		piece	-$15, 4, 4x2, $E
 		endsprite 
 
-Frame_SuperSonic_Push3:	spriteHeader 
-		spritePiece	-$12, -$1B, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$15, -$B, 2, 2, 6, 0, 0, 0, 0
-		spritePiece	-5, -$B, 2, 2, $A, 0, 0, 0, 0
-		spritePiece	-$15, 5, 4, 2, $E, 0, 0, 0, 0
+Frame_SuperSonic_Push3:	spritemap 
+		piece	-$12, -$1B, 3x2, 0
+		piece	-$15, -$B, 2x2, 6
+		piece	-5, -$B, 2x2, $A
+		piece	-$15, 5, 4x2, $E
 		endsprite 
 
-Frame_SuperSonic_Push4:	spriteHeader 
-		spritePiece	-$12, -$1C, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-$15, -$C, 2, 2, 6, 0, 0, 0, 0
-		spritePiece	-5, -$C, 2, 2, $A, 0, 0, 0, 0
-		spritePiece	-$15, 4, 4, 2, $E, 0, 0, 0, 0
+Frame_SuperSonic_Push4:	spritemap 
+		piece	-$12, -$1C, 3x2, 0
+		piece	-$15, -$C, 2x2, 6
+		piece	-5, -$C, 2x2, $A
+		piece	-$15, 4, 4x2, $E
 		endsprite 
 
-Frame_SuperSonic_Duck:	spriteHeader 
-		spritePiece	-$10, -4, 1, 3, 0, 0, 0, 0, 0
-		spritePiece	-8, -$C, 3, 4, 3, 0, 0, 0, 0
+Frame_SuperSonic_Duck:	spritemap 
+		piece	-$10, -4, 1x3, 0
+		piece	-8, -$C, 3x4, 3
 		endsprite 
 
-Frame_SuperSonic_Balance1:	spriteHeader 
-		spritePiece	-$14, -$1C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$14, -4, 3, 1, 9, 0, 0, 0, 0
-		spritePiece	-$F, 4, 2, 2, $C, 0, 0, 0, 0
+Frame_SuperSonic_Balance1:	spritemap 
+		piece	-$14, -$1C, 3x3, 0
+		piece	-$14, -4, 3x1, 9
+		piece	-$F, 4, 2x2, $C
 		endsprite 
 
-Frame_SuperSonic_Balance2:	spriteHeader 
-		spritePiece	-$14, -$1C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$14, -4, 3, 1, 9, 0, 0, 0, 0
-		spritePiece	-$F, 4, 2, 2, $C, 0, 0, 0, 0
+Frame_SuperSonic_Balance2:	spritemap 
+		piece	-$14, -$1C, 3x3, 0
+		piece	-$14, -4, 3x1, 9
+		piece	-$F, 4, 2x2, $C
 		endsprite 
 
-Frame_SuperSonic_Balance3:	spriteHeader 
-		spritePiece	-$14, -$1C, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$14, -4, 3, 1, 9, 0, 0, 0, 0
-		spritePiece	-$F, 4, 2, 2, $C, 0, 0, 0, 0
+Frame_SuperSonic_Balance3:	spritemap 
+		piece	-$14, -$1C, 3x3, 0
+		piece	-$14, -4, 3x1, 9
+		piece	-$F, 4, 2x2, $C
 		endsprite 
 
-Frame_SuperSonic_Balance4:	spriteHeader 
-		spritePiece	-$13, -$1B, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$13, -3, 3, 1, 9, 0, 0, 0, 0
-		spritePiece	-$F, 5, 2, 2, $C, 0, 0, 0, 0
+Frame_SuperSonic_Balance4:	spritemap 
+		piece	-$13, -$1B, 3x3, 0
+		piece	-$13, -3, 3x1, 9
+		piece	-$F, 5, 2x2, $C
 		endsprite 
 
-Frame_SuperSonic_Balance5:	spriteHeader 
-		spritePiece	-$13, -$1B, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$13, -3, 3, 1, 9, 0, 0, 0, 0
-		spritePiece	-$F, 5, 2, 2, $C, 0, 0, 0, 0
+Frame_SuperSonic_Balance5:	spritemap 
+		piece	-$13, -$1B, 3x3, 0
+		piece	-$13, -3, 3x1, 9
+		piece	-$F, 5, 2x2, $C
 		endsprite 
 
-Frame_SuperSonic_Balance6:	spriteHeader 
-		spritePiece	-$13, -$1B, 3, 3, 0, 0, 0, 0, 0
-		spritePiece	-$13, -3, 3, 1, 9, 0, 0, 0, 0
-		spritePiece	-$F, 5, 2, 2, $C, 0, 0, 0, 0
+Frame_SuperSonic_Balance6:	spritemap 
+		piece	-$13, -$1B, 3x3, 0
+		piece	-$13, -3, 3x1, 9
+		piece	-$F, 5, 2x2, $C
 		endsprite 
 
-Frame_Sonic_Balance11:	spriteHeader 
-		spritePiece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	8, -$14, 1, 4, $C, 0, 0, 0, 0
-		spritePiece	-$F, $C, 2, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Balance11:	spritemap 
+		piece	-$10, -$14, 3x4, 0
+		piece	8, -$14, 1x4, $C
+		piece	-$F, $C, 2x2, $10
 		endsprite 
 
-Frame_Sonic_Balance12:	spriteHeader 
-		spritePiece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	8, -$14, 1, 4, $C, 0, 0, 0, 0
-		spritePiece	-$F, $C, 2, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Balance12:	spritemap 
+		piece	-$10, -$14, 3x4, 0
+		piece	8, -$14, 1x4, $C
+		piece	-$F, $C, 2x2, $10
 		endsprite 
 
-Frame_Sonic_Balance13:	spriteHeader 
-		spritePiece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	8, -$14, 1, 4, $C, 0, 0, 0, 0
-		spritePiece	-$F, $C, 2, 2, $10, 0, 0, 0, 0
+Frame_Sonic_Balance13:	spritemap 
+		piece	-$10, -$14, 3x4, 0
+		piece	8, -$14, 1x4, $C
+		piece	-$F, $C, 2x2, $10
 		endsprite 
 
-Frame_Sonic_Balance14:	spriteHeader 
-		spritePiece	-$10, -$14, 3, 4, 0, 0, 0, 0, 0
-		spritePiece	8, -$14, 1, 2, $C, 0, 0, 0, 0
-		spritePiece	$10, -$14, 1, 2, $E, 0, 0, 0, 0
-		spritePiece	8, -4, 1, 2, $10, 0, 0, 0, 0
-		spritePiece	-$F, $C, 2, 2, $12, 0, 0, 0, 0
+Frame_Sonic_Balance14:	spritemap 
+		piece	-$10, -$14, 3x4, 0
+		piece	8, -$14, 1x2, $C
+		piece	$10, -$14, 1x2, $E
+		piece	8, -4, 1x2, $10
+		piece	-$F, $C, 2x2, $12
 		endsprite 
 
-Frame_Sonic_Balance21:	spriteHeader 
-		spritePiece	-$15, -$14, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-5, -$14, 3, 2, 8, 0, 0, 0, 0
-		spritePiece	-5, -4, 2, 2, $E, 0, 0, 0, 0
-		spritePiece	-$12, $C, 3, 2, $12, 0, 0, 0, 0
+Frame_Sonic_Balance21:	spritemap 
+		piece	-$15, -$14, 2x4, 0
+		piece	-5, -$14, 3x2, 8
+		piece	-5, -4, 2x2, $E
+		piece	-$12, $C, 3x2, $12
 		endsprite 
 
-Frame_Sonic_Balance22:	spriteHeader 
-		spritePiece	-$14, -$14, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$14, 3, 2, 8, 0, 0, 0, 0
-		spritePiece	-4, -4, 2, 2, $E, 0, 0, 0, 0
-		spritePiece	-$11, $C, 3, 2, $12, 0, 0, 0, 0
+Frame_Sonic_Balance22:	spritemap 
+		piece	-$14, -$14, 2x4, 0
+		piece	-4, -$14, 3x2, 8
+		piece	-4, -4, 2x2, $E
+		piece	-$11, $C, 3x2, $12
 		endsprite 
 
-Frame_Sonic_Balance23:	spriteHeader 
-		spritePiece	-$14, -$14, 2, 4, 0, 0, 0, 0, 0
-		spritePiece	-4, -$14, 3, 2, 8, 0, 0, 0, 0
-		spritePiece	-4, -4, 3, 2, $E, 0, 0, 0, 0
-		spritePiece	-$10, $C, 3, 2, $14, 0, 0, 0, 0
+Frame_Sonic_Balance23:	spritemap 
+		piece	-$14, -$14, 2x4, 0
+		piece	-4, -$14, 3x2, 8
+		piece	-4, -4, 3x2, $E
+		piece	-$10, $C, 3x2, $14
 		endsprite 
 
-Frame_Sonic_LoseFooting:	spriteHeader 
-		spritePiece	-$18, -$C, 1, 4, 0, 0, 0, 0, 0
-		spritePiece	-$10, -$14, 3, 4, 4, 0, 0, 0, 0
-		spritePiece	-$10, $C, 2, 2, $10, 0, 0, 0, 0
+Frame_Sonic_LoseFooting:	spritemap 
+		piece	-$18, -$C, 1x4, 0
+		piece	-$10, -$14, 3x4, 4
+		piece	-$10, $C, 2x2, $10
 		endsprite 
 
-Frame_Sonic_Balance31:	spriteHeader 
-		spritePiece	$C, -$C, 1, 4, 0, 1, 0, 0, 0
-		spritePiece	-$C, -$14, 3, 4, 4, 1, 0, 0, 0
-		spritePiece	-4, $C, 2, 2, $10, 1, 0, 0, 0
+Frame_Sonic_Balance31:	spritemap 
+		piece	$C, -$C, 1x4, 0, xflip
+		piece	-$C, -$14, 3x4, 4, xflip
+		piece	-4, $C, 2x2, $10, xflip
 		endsprite 
 
-Frame_Sonic_Balance32:	spriteHeader 
-		spritePiece	$C, -$C, 1, 4, 0, 1, 0, 0, 0
-		spritePiece	-$C, -$14, 3, 4, 4, 1, 0, 0, 0
-		spritePiece	-4, $C, 2, 2, $10, 1, 0, 0, 0
+Frame_Sonic_Balance32:	spritemap 
+		piece	$C, -$C, 1x4, 0, xflip
+		piece	-$C, -$14, 3x4, 4, xflip
+		piece	-4, $C, 2x2, $10, xflip
 		endsprite 
 
-Frame_Sonic_Stop1:	spriteHeader 
-		spritePiece	-$13, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$11, -4, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	$F, -4, 1, 2, $10, 0, 0, 0, 0
-		spritePiece	1, $C, 2, 2, $12, 0, 0, 0, 0
+Frame_Sonic_Stop1:	spritemap 
+		piece	-$13, -$14, 4x2, 0
+		piece	-$11, -4, 4x2, 8
+		piece	$F, -4, 1x2, $10
+		piece	1, $C, 2x2, $12
 		endsprite 
 
-Frame_Sonic_Stop2:	spriteHeader 
-		spritePiece	-$12, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$11, -4, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	$F, -4, 1, 2, $10, 0, 0, 0, 0
-		spritePiece	1, $C, 2, 2, $12, 0, 0, 0, 0
+Frame_Sonic_Stop2:	spritemap 
+		piece	-$12, -$14, 4x2, 0
+		piece	-$11, -4, 4x2, 8
+		piece	$F, -4, 1x2, $10
+		piece	1, $C, 2x2, $12
 		endsprite 
 
-Frame_Sonic_Stop3:	spriteHeader 
-		spritePiece	-$11, -$14, 4, 2, 0, 0, 0, 0, 0
-		spritePiece	-$11, -4, 4, 2, 8, 0, 0, 0, 0
-		spritePiece	$F, -4, 1, 2, $10, 0, 0, 0, 0
-		spritePiece	1, $C, 2, 2, $12, 0, 0, 0, 0
+Frame_Sonic_Stop3:	spritemap 
+		piece	-$11, -$14, 4x2, 0
+		piece	-$11, -4, 4x2, 8
+		piece	$F, -4, 1x2, $10
+		piece	1, $C, 2x2, $12
 		endsprite 
 
-Frame_Sonic_TurnAround:	spriteHeader 
-		spritePiece	-$C, -$14, 3, 2, 0, 0, 0, 0, 0
-		spritePiece	-9, -4, 3, 4, 6, 0, 0, 0, 0
+Frame_Sonic_TurnAround:	spritemap 
+		piece	-$C, -$14, 3x2, 0
+		piece	-9, -4, 3x4, 6
 		endsprite 
 
 		even

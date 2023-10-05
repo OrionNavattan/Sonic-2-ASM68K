@@ -10,7 +10,7 @@ Map_SegaScreenSonic:	index offset(*)
 		ptr	Map_objB1_00A0
 		ptr	Frame_HideTM
 
-Map_objB1_000A:	spriteHeader
+Map_objB1_000A:	spritemap
 		spritePiece	-$10, -$28, 4, 4, 0, 0, 0, 0, 0
 		spritePiece	$10, -$28, 2, 4, $10, 0, 0, 0, 0
 		spritePiece	-$20, -8, 4, 4, $18, 0, 0, 0, 0
@@ -19,7 +19,7 @@ Map_objB1_000A:	spriteHeader
 		spritePiece	0, $18, 4, 4, $48, 0, 0, 0, 0
 		endsprite
 
-Map_objB1_003C:	spriteHeader
+Map_objB1_003C:	spritemap
 		spritePiece	-$10, -$28, 4, 4, $58, 0, 0, 0, 0
 		spritePiece	$10, -$28, 2, 4, $68, 0, 0, 0, 0
 		spritePiece	-$20, -8, 4, 4, $70, 0, 0, 0, 0
@@ -28,7 +28,7 @@ Map_objB1_003C:	spriteHeader
 		spritePiece	0, $18, 4, 4, $A0, 0, 0, 0, 0
 		endsprite
 
-Map_objB1_006E:	spriteHeader
+Map_objB1_006E:	spritemap
 		spritePiece	-$10, -$28, 4, 4, $B0, 0, 0, 0, 0
 		spritePiece	$10, -$28, 2, 4, $C0, 0, 0, 0, 0
 		spritePiece	-$20, -8, 4, 4, $C8, 0, 0, 0, 0
@@ -37,7 +37,7 @@ Map_objB1_006E:	spriteHeader
 		spritePiece	0, $18, 4, 4, $F8, 0, 0, 0, 0
 		endsprite
 
-Map_objB1_00A0:	spriteHeader
+Map_objB1_00A0:	spritemap
 		spritePiece	-$10, -$28, 4, 4, $108, 0, 0, 0, 0
 		spritePiece	$10, -$28, 2, 4, $118, 0, 0, 0, 0
 		spritePiece	-$20, -8, 4, 4, $120, 0, 0, 0, 0
@@ -46,7 +46,7 @@ Map_objB1_00A0:	spriteHeader
 		spritePiece	0, $18, 4, 4, $150, 0, 0, 0, 0
 		endsprite
 
-Frame_HideTM:	spriteHeader
+Frame_HideTM:	spritemap
 		spritePiece	-8, -4, 1, 1, 0, 0, 0, 0, 0
 		spritePiece	0, -4, 1, 1, 0, 0, 0, 0, 0
 		endsprite

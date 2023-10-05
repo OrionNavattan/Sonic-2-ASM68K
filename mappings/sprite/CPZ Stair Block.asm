@@ -5,7 +5,7 @@
 Map_StairBlock:	index offset(*)
 		ptr	Frame_StairBlock
 
-Frame_StairBlock:	spriteHeader
+Frame_StairBlock:	spritemap
 		spritePiece	-$10, -$10, 4, 4, 0, 0, 0, 0, 0
 		endsprite
 

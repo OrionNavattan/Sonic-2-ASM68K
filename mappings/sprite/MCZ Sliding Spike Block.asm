@@ -5,7 +5,7 @@
 Map_SlidSpks:	index offset(*)
 		ptr	Frame_SlidSpks
 
-Frame_SlidSpks:	spriteHeader
+Frame_SlidSpks:	spritemap
 		spritePiece	-$40, -$10, 2, 2, $42C, 0, 0, 1, 0
 		spritePiece	-$40, 0, 2, 2, $42C, 0, 0, 1, 0
 		spritePiece	-$30, -$10, 2, 4, $40, 0, 0, 3, 0

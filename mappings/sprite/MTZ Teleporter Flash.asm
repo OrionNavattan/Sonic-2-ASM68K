@@ -6,10 +6,10 @@ Map_TelptrFlash:	index offset(*)
 		ptr	Frame_TelptrFlash_Blank
 		ptr	Frame_TelptrFlash_Flash
 
-Frame_TelptrFlash_Blank:	spriteHeader
+Frame_TelptrFlash_Blank:	spritemap
 		endsprite
 
-Frame_TelptrFlash_Flash:	spriteHeader
+Frame_TelptrFlash_Flash:	spritemap
 		spritePiece	-$14, -$20, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-8, -$20, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	-$14, -$10, 2, 2, 0, 0, 0, 0, 0

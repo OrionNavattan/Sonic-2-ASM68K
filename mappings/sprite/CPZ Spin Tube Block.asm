@@ -5,7 +5,7 @@
 Map_SpinTubeBlock:	index offset(*)
 		ptr	Map_obj32_b_0002
 
-Map_obj32_b_0002:	spriteHeader
+Map_obj32_b_0002:	spritemap
 		spritePiece	-$10, -$10, 2, 2, 0, 0, 0, 0, 0
 		spritePiece	0, -$10, 2, 2, 0, 1, 0, 0, 0
 		spritePiece	-$10, 0, 2, 2, 0, 0, 0, 0, 0

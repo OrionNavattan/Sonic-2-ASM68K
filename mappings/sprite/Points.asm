@@ -11,33 +11,33 @@ Map_Points:	index offset(*)
 		ptr	Frame_Points_10K
 		ptr	Frame_Points_50K
 
-Frame_Points_100:	spriteHeader
+Frame_Points_100:	spritemap
 		spritePiece	-8, -8, 2, 2, 2, 0, 0, 0, 0
 		endsprite
 
-Frame_Points_200:	spriteHeader
+Frame_Points_200:	spritemap
 		spritePiece	-8, -8, 2, 2, 6, 0, 0, 0, 0
 		endsprite
 
-Frame_Points_500:	spriteHeader
+Frame_Points_500:	spritemap
 		spritePiece	-8, -8, 2, 2, $A, 0, 0, 0, 0
 		endsprite
 
-Frame_Points_1K:	spriteHeader
+Frame_Points_1K:	spritemap
 		spritePiece	-8, -8, 1, 2, 0, 0, 0, 0, 0
 		spritePiece	0, -8, 2, 2, $E, 0, 0, 0, 0
 		endsprite
 
-Frame_Points_10:	spriteHeader
+Frame_Points_10:	spritemap
 		spritePiece	-4, -8, 1, 2, 0, 0, 0, 0, 0
 		endsprite
 
-Frame_Points_10K:	spriteHeader
+Frame_Points_10K:	spritemap
 		spritePiece	-$10, -8, 2, 2, 2, 0, 0, 0, 0
 		spritePiece	0, -8, 2, 2, $E, 0, 0, 0, 0
 		endsprite
 
-Frame_Points_50K:	spriteHeader
+Frame_Points_50K:	spritemap
 		spritePiece	-$10, -8, 2, 2, $A, 0, 0, 0, 0
 		spritePiece	0, -8, 2, 2, $E, 0, 0, 0, 0
 		endsprite

@@ -5,7 +5,7 @@
 Map_VertLaser:	index offset(*)
 		ptr	Map_objB7_0002
 
-Map_objB7_0002:	spriteHeader
+Map_objB7_0002:	spritemap
 		spritePiece	-$18, -$70, 3, 4, 0, 0, 0, 0, 0
 		spritePiece	0, -$70, 3, 4, 0, 1, 0, 0, 0
 		spritePiece	-$18, -$50, 3, 4, 0, 0, 0, 0, 0
