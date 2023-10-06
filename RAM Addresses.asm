@@ -1,13 +1,14 @@
 ; ---------------------------------------------------------------------------
 ; RAM Addresses - Variables (v) and Flags (f)
 ; ---------------------------------------------------------------------------
+
 		pusho						; save options
 		opt	ae+					; enable auto evens
 
 
-						rsset $FFFF0000
+						rsset ram_start|$FF000000
 						
-RAM_Start:				equ __rs
+;ram_start:				equ __rs
 v_128x128_tiles:		rs.b $8000			;   $FFFF0000 ; 128x128 tile mappings ($8000 bytes); also used as decompression buffer for level tiles; referenced by both a full 32 bit address and by 24 bit addresses.
 v_level_layout:         rs.b sizeof_level			; $FFFF8000 ; level and background layouts ($1000 bytes)
 v_16x16_tiles:          rs.w sizeof_16x16_all			; $FFFF9000 ; 16x16 tile mappings ($C00 bytes)
@@ -895,7 +896,7 @@ v_title_falling_star:	rs.b sizeof_ost				; $FFFFB440
 ; ---------------------------------------------------------------------------
 
 ; Special Stage variables:	
-				rsset RAM_Start			; character art, stage layout, and object location data
+				rsset ram_start|$FF000000			; character art, stage layout, and object location data
 v_ss_character_art:		rs.b sizeof_nem_specialsonicandtails ; $FFFF0000 ; $353 art blocks ;  SSRAM_Nem_SpecialSonicAndTails
 
 v_ss_perspective_data:	rs.b $1AFC				; $FFFF6A60 ; SSRAM_Kos_SpecialPerspective
