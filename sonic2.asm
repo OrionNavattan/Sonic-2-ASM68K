@@ -228,9 +228,9 @@ SkipSetup:
 ; ===========================================================================
 
 SetupValues:	
-		dc.w vdp_mode_register1					; VDP register start number
+		dc.w vdp_mode_register1				; VDP register start number
 		dc.w (sizeof_ram/4)-1				; size of RAM/4
-		dc.w vdp_mode_register2-vdp_mode_register1		; VDP register diff
+		dc.w vdp_mode_register2-vdp_mode_register1	; VDP register diff
 
 		dc.l z80_ram					; start	of Z80 RAM
 		dc.l z80_bus_request				; Z80 bus request
@@ -242,26 +242,26 @@ SetupValues:
 SetupVDP:	
 		dc.b vdp_md_color&$FF				; $80 - normal color mode, horizontal interrupts disabled
 		dc.b (vdp_enable_dma|vdp_md_display)&$FF	; $81 - mode 5, NTSC, vertical interrupts disabled, DMA enabled
-		dc.b (vdp_fg_nametable+($C000>>10))&$FF				; $82 - foreground nametable address
-		dc.b (vdp_window_nametable+($F000>>10))&$FF				; $83 - window nametable address
-		dc.b (vdp_bg_nametable+($E000>>13))&$FF				; $84 - background nametable address
-		dc.b (vdp_sprite_table+($D800>>9))&$FF					; $85 - sprite attribute table address
-		dc.b vdp_sprite_table2&$FF					; $86 - unused (high bit of sprite attribute table address for 128KB VRAM)
-		dc.b (vdp_bg_color+0)&$FF				; $87 - background color
-		dc.b vdp_sms_hscroll&$FF				; $88 - unused (mode 4 hscroll register)
-		dc.b vdp_sms_vscroll&$FF				; $89 - unused (mode 4 vscroll register)
-		dc.b (vdp_hint_counter+255)&$FF					; $8A - horizontal interrupt register
-		dc.b (vdp_full_hscroll|vdp_full_vscroll)&$FF			; $8B - full-screen vertical/horizontal scrolling
+		dc.b (vdp_fg_nametable+($C000>>10))&$FF		; $82 - foreground nametable address
+		dc.b (vdp_window_nametable+($F000>>10))&$FF	; $83 - window nametable address
+		dc.b (vdp_bg_nametable+($E000>>13))&$FF		; $84 - background nametable address
+		dc.b (vdp_sprite_table+($D800>>9))&$FF		; $85 - sprite attribute table address
+		dc.b vdp_sprite_table2&$FF			; $86 - unused (high bit of sprite attribute table address for 128KB VRAM)
+		dc.b (vdp_bg_color+0)&$FF			; $87 - background color
+		dc.b vdp_sms_hscroll&$FF			; $88 - unused (mode 4 hscroll register)
+		dc.b vdp_sms_vscroll&$FF			; $89 - unused (mode 4 vscroll register)
+		dc.b (vdp_hint_counter+255)&$FF			; $8A - horizontal interrupt register
+		dc.b (vdp_full_hscroll|vdp_full_vscroll)&$FF	; $8B - full-screen vertical/horizontal scrolling
 		dc.b vdp_320px_screen_width&$FF			; $8C - H40 display mode
-		dc.b (vdp_hscroll_table+($DC00>>10))&$FF				; $8D - HScroll table address
-		dc.b vdp_nametable_hi&$FF					; $8E - unused (high bits of fg and bg nametable addresses for 128KB VRAM)
-		dc.b (vdp_auto_inc+1)&$FF						; $8F - VDP increment
+		dc.b (vdp_hscroll_table+($DC00>>10))&$FF	; $8D - HScroll table address
+		dc.b vdp_nametable_hi&$FF			; $8E - unused (high bits of fg and bg nametable addresses for 128KB VRAM)
+		dc.b (vdp_auto_inc+1)&$FF			; $8F - VDP increment
 		dc.b (vdp_plane_width_64|vdp_plane_height_32)&$FF ; $90 - 64x32 cell plane size
-		dc.b vdp_window_x_pos&$FF						; $91 - window horizontal position
-		dc.b vdp_window_y_pos&$FF						; $92 - window vertical position
-		dc.b (vdp_dma_length_low+((sizeof_vram-1)&$FF))&$FF	; $93/$94 - DMA length
+		dc.b vdp_window_x_pos&$FF			; $91 - window horizontal position
+		dc.b vdp_window_y_pos&$FF			; $92 - window vertical position
+		dc.b (vdp_dma_length_low+((sizeof_vram-1)&$FF))&$FF ; $93/$94 - DMA length
 		dc.b (vdp_dma_length_hi+((sizeof_vram-1)>>8))&$FF
-		dc.b (vdp_dma_source_low+0)&$FF		; $95/96 - DMA source
+		dc.b (vdp_dma_source_low+0)&$FF			; $95/96 - DMA source
 		dc.b (vdp_dma_source_mid+0)&$FF		
 		dc.b vdp_dma_vram_fill&$FF			; VDP $97 - DMA fill VRAM
 		arraysize	SetupVDP
@@ -274,7 +274,7 @@ Z80_Startup:
 
 		; fill the Z80 RAM with 00's (with the exception of this program)
 		xor	a					; clear a
-		ld	bc,sizeof_z80_ram-(.end+1)			; load the number of bytes to fill
+		ld	bc,sizeof_z80_ram-(.end+1)		; load the number of bytes to fill
 		ld	de,.end+1				; load the destination address of the RAM fill (1 byte after end of program)
 		ld	hl,.end					; load the source address of the RAM fill (a single 00 byte)
 		ld	sp,hl					; set stack pointer to end of program(?)
@@ -313,9 +313,9 @@ Z80_Startup_size:
 
 		dc.w	vdp_md_display				; VDP display mode
 		dc.w	vdp_auto_inc+2				; VDP increment
-		vdp_comm.l	dc,0,cram,write		; CRAM write address 0
+		vdp_comm.l	dc,0,cram,write			; CRAM write address 0
 		vdp_comm.l	dc,0,vsram,write		; VSRAM write address 0
-		dc.b tPSG1|psg_silence,tPSG2|psg_silence,tPSG3|psg_silence,tPSG4|psg_silence	; PSG mute values
+		dc.b tPSG1|psg_silence,tPSG2|psg_silence,tPSG3|psg_silence,tPSG4|psg_silence ; PSG mute values
 ; ===========================================================================
 
 GameProgram:				
@@ -974,7 +974,7 @@ VBlank_Ending:
 		startZ80
 
 		move.w	(v_ending_vblank_sub).w,d0
-		beq.s	.end							; exit if nothing to do
+		beq.s	.end					; exit if nothing to do
 		clr.w	(v_ending_vblank_sub).w
 		move.w	VBlank_Ending_DMA_Index-2(pc,d0.w),d0	
 		jsr	VBlank_Ending_DMA_Index(pc,d0.w)
@@ -1337,12 +1337,12 @@ ClearScreen:
 		clr.l	(v_unused_ss).w
 
 	if FixBugs
-		clear_ram	v_sprite_buffer,v_sprite_buffer_end	; clear the sprite buffer
-		clear_ram	hscroll,hscroll_end					; clear the hscroll buffer
+		clear_ram	v_sprite_buffer,v_sprite_buffer_end ; clear the sprite buffer
+		clear_ram	hscroll,hscroll_end		; clear the hscroll buffer
 	else
 		; These '+4's shouldn't be here; clearRAM accidentally clears an additional 4 bytes,
-		clear_ram	v_sprite_buffer,v_sprite_buffer_end+4	; clear the sprite buffer
-		clear_ram	hscroll,hscroll_end+4					; clear the hscroll buffer
+		clear_ram	v_sprite_buffer,v_sprite_buffer_end+4 ; clear the sprite buffer
+		clear_ram	hscroll,hscroll_end+4		; clear the hscroll buffer
 	endc
 		startZ80
 		rts	
@@ -2500,7 +2500,7 @@ PaletteCycle:
 		jmp	PCycle_Index(pc,d0.w)			; jump to relevant palette routine
 ; ===========================================================================
 
-		rts		; a single instruction of dead code
+		rts						; a single instruction of dead code
 ; ===========================================================================
 
 PCycle_Index:	index offset(*)
@@ -3884,7 +3884,7 @@ sega_bg_height:	equ $1C
 		move.w	#vdp_md_color,(a6)
 		move.w	#vdp_fg_nametable+(vram_sega_fg>>10),(a6) ; $8230 ; set fg nametable at $C000
 		move.w	#vdp_bg_nametable+(vram_sega_bg>>13),(a6) ; $8405 ; set bg nametable at $A000
-		move.w	#vdp_bg_color+0,(a6)					; BG color is Line 0 Color 0
+		move.w	#vdp_bg_color+0,(a6)			; BG color is Line 0 Color 0
 		move.w	#vdp_full_vscroll|vdp_1px_hscroll,(a6)	; vscroll by screen, hscroll by line
 		move.w	#vdp_320px_screen_width,(a6)		; H40 mode
 		move.w	#vdp_plane_width_128|vdp_plane_height_32,(a6) ; 128x32 plane size
@@ -3926,7 +3926,7 @@ sega_bg_height:	equ $1C
 		bmi.s	.loadpal				; if so, branch
 
 		lea	(v_ost_sega_hide_tm).w,a1		; load extra sprite to hide TM symbol
-		move.b	#id_SegaHideTM,ost_id(a1)	; (slightly faster to do this with two absolute short moves instead)
+		move.b	#id_SegaHideTM,ost_id(a1)		; (slightly faster to do this with two absolute short moves instead)
 		move.b	#$4E,ost_subtype(a1)
 
 	.loadpal:				
@@ -3961,7 +3961,7 @@ sega_bg_height:	equ $1C
 	endc	
 		move.b	#id_VBlank_Sega,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
-		move.w	#3*countof_ntsc_fps,(v_countdown).w			; 3 seconds
+		move.w	#3*countof_ntsc_fps,(v_countdown).w	; 3 seconds
 
 	.waitend:				
 		move.b	#id_VBlank_PCM,(v_vblank_routine).w
@@ -4037,11 +4037,11 @@ GM_Title:
 		clear_ram	misc_variables,misc_variables_end
 		clear_ram	camera_ram,camera_ram_end
 
-		vdp_comm.l	move,vram_CreditsFont,vram,write,(vdp_control_port).l					
+		vdp_comm.l	move,vram_CreditsFont_Intro,vram,write,(vdp_control_port).l					
 		lea	(Nem_CreditsFont).l,a0			; load the credits font
 		bsr.w	NemDec
 
-		lea	(IntroText).l,a1		; load the "SONIC AND MILES 'TAILS' PROWER IN" text
+		lea	(IntroText_Pointers).l,a1		; load the "SONIC AND MILES 'TAILS' PROWER IN" text
 		jsr	(DisplayText).l		
 
 		clear_ram	palette_fade_buffer,palette_fade_buffer_end ; clear the palette fade buffer (filling it with black)
@@ -4138,7 +4138,7 @@ GM_Title:
 		move.b	#0,(f_debug_enable).w
 		move.w	#0,(f_two_player).w
 		
-		move.w	#(10*countof_ntsc_fps)+40,(v_countdown).w		; time that the title screen lasts (640 frames)
+		move.w	#(10*countof_ntsc_fps)+40,(v_countdown).w ; time that the title screen lasts (640 frames)
 		
 		clr.w	(v_joypad_hold_actual).w		; clear input to prevent leftover input from skipping the intro
 		
@@ -4367,7 +4367,7 @@ TailsNameCode:
 		incfile	Nem_Player1VS2				; ArtNem_3DF4:
 			
 CopyrightText:	
-		charset	copyright,"@ 1992 SEGA"			; @ = copyright symbol
+		charset	copyright,"@ 1992 SEGA"			; '@' = copyright symbol
 		arraysize CopyrightText
 ; ===========================================================================
 
@@ -4716,7 +4716,7 @@ Level_TtlCardLoop:
 		jsr	(RingsManager).l			; initialize the rings manager and load rings
 	if FixBugs
 		; The main level loop does this, so why didn't they do the same here?
-		cmpi.b	#id_CNZ,(v_zone).w		; is it CNZ?
+		cmpi.b	#id_CNZ,(v_zone).w			; is it CNZ?
 		bne.s	.notCNZ					; branch if not
 		jsr	(SpecialCNZBumpers).l			; initialize the CNZ bumpers if applicable
 		
@@ -4752,13 +4752,13 @@ Level_TtlCardLoop:
 		move.b	1(a1),(v_demo_input_time_p2).w		; load button press duration
 
 	.not_EHZ_demo:				
-		move.w	#(27*countof_ntsc_fps)+20,(v_countdown).w		; run demo for a little over 27 seconds
+		move.w	#(27*countof_ntsc_fps)+20,(v_countdown).w ; run demo for a little over 27 seconds
 		tst.w	(f_demo_mode).w				; is this an ending demo?  (unused Sonic 1 leftover)
 		bpl.s	.not_endingdemo				; if not, branch
-		move.w	#9*countof_ntsc_fps,(v_countdown).w			; run ending demo for 9 seconds
+		move.w	#9*countof_ntsc_fps,(v_countdown).w	; run ending demo for 9 seconds
 		cmpi.w	#4,(v_s1_ending_demo_num).w		; is it the SLZ ending demo?
 		bne.s	.not_endingdemo				; if not branch
-		move.w	#(8*countof_ntsc_fps)+30,(v_countdown).w		; the SLZ ending demo in Sonic 1 only ran for 8.5 seconds
+		move.w	#(8*countof_ntsc_fps)+30,(v_countdown).w ; the SLZ ending demo in Sonic 1 only ran for 8.5 seconds
 
 	.not_endingdemo:								
 		tst.b	(f_water).w				; is this a water level?
@@ -5795,10 +5795,10 @@ SetLevelEndType:
 		tst.w	(f_two_player).w			; is it two-player mode?
 		bne.s	.setsignpost				; if so, branch
 		
-		cmpi.w	#id_EHZ_act2,(v_zone).w		; is it this level?
-		beq.w	.exit						; if so, exit
+		cmpi.w	#id_EHZ_act2,(v_zone).w			; is it this level?
+		beq.w	.exit					; if so, exit
 		
-		cmpi.w	#id_MTZ_act3,(v_zone).w		; repeat for all levels that do not have signposts
+		cmpi.w	#id_MTZ_act3,(v_zone).w			; repeat for all levels that do not have signposts
 		beq.w	.exit
 		
 		cmpi.w	#id_WFZ_act1,(v_zone).w
@@ -5842,7 +5842,7 @@ SetLevelEndType:
 ; ---------------------------------------------------------------------------
 
 SignpostArtLoad:				
-		tst.w	(f_has_signpost).w		; does this level have a signpost?
+		tst.w	(f_has_signpost).w			; does this level have a signpost?
 		beq.s	.exit					; branch if not
 		tst.w	(v_debug_active).w			; is debug mode	being used?
 		bne.s	.exit					; branch if so
@@ -5855,26 +5855,26 @@ SignpostArtLoad:
 		beq.s	.chkp2					; branch if their timer is stopped
 		cmp.w	(v_boundary_left).w,d1	
 		beq.s	.chkp2					; branch if screen has already been locked
-		move.w	d1,(v_boundary_left).w	; move left boundary to current screen position
+		move.w	d1,(v_boundary_left).w			; move left boundary to current screen position
 		tst.w	(f_two_player).w		
 		bne.s	.exit					; branch if we're in 2P mode
-		moveq	#id_PLC_Signpost,d0		; load signpost GFX
+		moveq	#id_PLC_Signpost,d0			; load signpost GFX
 		bra.w	NewPLC
 ; ===========================================================================
 
 	.chkp2:				
 		tst.w	(f_two_player).w
-		beq.s	.exit						; branch if we're not in 2P mode
+		beq.s	.exit					; branch if we're not in 2P mode
 		move.w	(v_camera_x_pos_p2).w,d0
 		move.w	(v_boundary_right_p2).w,d1
 		subi.w	#$100,d1
-		cmp.w	d1,d0						; has player 2 reached the end of the level?
-		blt.s	.exit						; branch if not
+		cmp.w	d1,d0					; has player 2 reached the end of the level?
+		blt.s	.exit					; branch if not
 		tst.b	(f_hud_time_update_p2).w
-		beq.s	.exit						; branch if their timer is stopped
+		beq.s	.exit					; branch if their timer is stopped
 		cmp.w	(v_boundary_left_p2).w,d1
-		beq.s	.exit						; branch if screen has already been locked
-		move.w	d1,(v_boundary_left_p2).w	; move left boundary to current screen position
+		beq.s	.exit					; branch if screen has already been locked
+		move.w	d1,(v_boundary_left_p2).w		; move left boundary to current screen position
 
 	.exit:				
 		rts	
@@ -12342,17 +12342,22 @@ loc_9FE6:
 		jsrto	ClearScreen,JmpTo_ClearScreen
 		bsr.w	sub_B262
 		bsr.w	PaletteFadeIn
-		move.w	#$18E,d0
+		
+		; The expressions in these move.w instructions automatically calculate the duration
+		; value for each frame of the credits. The values are calculated thusly: total number 
+		; of frames for entire credits in terms of NTSC or PAL FPS, divided by the the number 
+		; of slides in the credits, minus $16*2 for fade in and fade out of each slide.
+		move.w	#(((154*countof_ntsc_fps)+42)/(sizeof_Credits_Pointers/4))-($16+$16),d0 ; $18E
 		btst	#console_speed_bit,(v_console_region).w
 		beq.s	loc_A002
-		move.w	#$144,d0
+		move.w	#(((154*countof_pal_fps)+28)/(sizeof_Credits_Pointers/4))-($16+$16),d0 ; $144
 
 loc_A002:
 		move.b	#$18,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
 		dbf	d0,loc_A002
 		bsr.w	PaletteFadeOut
-		lea	(off_B2CA).l,a1
+		lea	(Credits_Pointers).l,a1
 		addq.w	#1,($FFFFFF4C).w
 		move.w	($FFFFFF4C).w,d0
 		lsl.w	#2,d0
@@ -13602,7 +13607,7 @@ byte_AD9E:
 
 
 sub_B262:				
-		lea	off_B2CA(pc),a1
+		lea	Credits_Pointers(pc),a1
 		move.w	($FFFFFF4C).w,d0
 		lsl.w	#2,d0
 		move.l	(a1,d0.w),d0
@@ -13646,579 +13651,428 @@ ConvertVRAMAddToWriteCmd:
 		swap	d0
 		rts	
 
+; ----------------------------------------------------------------------------
+; Credits and intro text pointers
+; ----------------------------------------------------------------------------
+
+creditsptr:	macro	addr,line,col
+		rept narg/3
+		dc.l \addr					; address of text
+		dc.w vram_ptr+((sizeof_vram_row_64*\line)+(2*\col)) ; location in VRAM where text will be drawn
+		shift						; next line
+		shift
+		shift		
+		endr
+		dc.w -1						; terminator
+		endm
+
+vram_ptr: = vram_title_fg
+
+IntroText_Pointers:	
+		; "SONIC"
+		; "AND"
+		; "MILES 'TAILS' PROWER"
+		; "IN"
+		creditsptr	&
+		IntroText_Line1,9,$F,&
+		IntroText_Line2,$C,$11,&
+		IntroText_Line3,$F,3,&
+		IntroText_Line4,$12,$12
+
+Credits_Pointers:	
+		dc.l Credits_Slide1				; 0 				
+		dc.l Credits_Slide2				; 1
+		dc.l Credits_Slide3				; 2
+		dc.l Credits_Slide4				; 3
+		dc.l Credits_Slide5				; 4
+		dc.l Credits_Slide6				; 5
+		dc.l Credits_Slide7				; 6
+		dc.l Credits_Slide8				; 7
+		dc.l Credits_Slide9				; 8
+		dc.l Credits_Slide10				; 9
+		dc.l Credits_Slide11				; 10
+		dc.l Credits_Slide12				; 11
+		dc.l Credits_Slide13				; 12
+		dc.l Credits_Slide14				; 13
+		dc.l Credits_Slide15				; 14
+		dc.l Credits_Slide16				; 15
+		dc.l Credits_Slide17				; 16
+		dc.l Credits_Slide18				; 17
+		dc.l Credits_Slide19				; 18
+		dc.l Credits_Slide20				; 19
+		dc.l Credits_Slide21				; 20
+		arraysize	Credits_Pointers		; used to calculate the per-slide duration
+		dc.l -1						; terminator
+		
+vram_ptr: = vram_ending_fg		
+		
+Credits_Slide1:	
+		; "SONIC"
+		; "2"
+		; "CAST OF CHARACTERS"
+		creditsptr	&
+		Cred_Slide1_Line1,11,14,&
+		Cred_Slide1_Line2,11,24,&
+		Cred_Slide1_Line3,15,2
+		
+Credits_Slide2:
+		; "EXECUTIVE"
+		; "PRODUCER"
+		; "HAYAO  NAKAYAMA"	
+		creditsptr	&
+		Cred_Slide2_Line1,11,3,&
+		Cred_Slide2_Line2,11,22,&
+		Cred_Slide2_Line3,15,6
+
+Credits_Slide3:
+		; "PRODUCER" 
+		; "SHINOBU  TOYODA"	
+		creditsptr	&
+		Cred_Slide3_Line1,11,12,&
+		Cred_Slide3_Line2,15,7
+
+Credits_Slide4:	
+		; "DIRECTOR"
+		; "MASAHARU  YOSHII"
+		creditsptr	&
+		Cred_Slide4_Line1,11,12,&
+		Cred_Slide4_Line2,15,6
+		
+Credits_Slide5:
+		; "CHIEF  PROGRAMMER"	
+		; "YUJI  NAKA (YU2)"
+		creditsptr	&
+		Cred_Slide5_Line1,11,5,&
+		Cred_Slide5_Line2,15,7
+		
+Credits_Slide6:
+		; "GAME  PLANNER"
+		; "HIROKAZU  YASUHARA"
+		; "(CAROL  YAS)"
+		creditsptr	&
+		Cred_Slide6_Line1,10,8,&
+		Cred_Slide6_Line2,14,4,&
+		Cred_Slide6_Line3,16,10
+		
+Credits_Slide7:	
+		; "CHARACTER  DESIGN"
+		; "AND"
+		; "CHIEF  ARTIST"		
+		; "YASUSHI  YAMAGUCHI"		
+		; "(JUDY  TOTOYA)"	
+		creditsptr	&
+		Cred_Slide7_Line1,8,4,&
+		Cred_Slide7_Line2,10,17,&
+		Cred_Slide7_Line3,12,9,&
+		Cred_Slide7_Line4,16,4,&
+		Cred_Slide7_Line5,18,8
+
+Credits_Slide8:
+		; "ASSISTANT"	
+		; "PROGRAMMERS"
+		; "BILL  WILLIS"
+		; "MASANOBU  YAMAMOTO"
+		creditsptr	&
+		Cred_Slide8_Line1,9,11,&
+		Cred_Slide8_Line2,11,9,&
+		Cred_Slide8_Line3,15,10,&
+		Cred_Slide8_Line4,17,3
+
+Credits_Slide9:
+		; "OBJECT  PLACEMENT"
+		; "HIROKAZU  YASUHARA"	
+		; "TAKAHIRO  ANTO"
+		; "YUTAKA  SUGANO"
+		creditsptr	&
+		Cred_Slide9_Line1,9,4,&
+		Cred_Slide9_Line2,13,4,&
+		Cred_Slide9_Line3,15,7,&
+		Cred_Slide9_Line4,17,7
+
+Credits_Slide10:
+		; "SPECIALSTAGE"
+		; "OBJECT  PLACEMENT"
+		; "YUTAKA  SUGANO"
+		creditsptr	&
+		Cred_Slide10_Line1,10,8,&
+		Cred_Slide10_Line2,12,4,&
+		Cred_Slide10_Line3,16,7
+
+Credits_Slide11:
+		; "ZONE  ARTISTS"
+		; "YASUSHI  YAMAGUCHI"
+		; "CRAIG  STITT"
+		; "BRENDA  ROSS"
+		; "JINA  ISHIWATARI"
+		; "TOM  PAYNE"
+		; "PHENIX  RIE"
+		creditsptr	&
+		Cred_Slide11_Line1,6,9,&
+		Cred_Slide11_Line2,10,4,&
+		Cred_Slide11_Line3,12,10,&
+		Cred_Slide11_Line4,14,9,&
+		Cred_Slide11_Line5,16,7,&
+		Cred_Slide11_Line6,18,11,&
+		Cred_Slide11_Line7,20,11
+
+Credits_Slide12:
+		; "SPECIALSTAGE"
+		; "ART  AND  CG"
+		; "TIM  SKELLY"
+		; "PETER  MORAWIEC"
+		creditsptr	&
+		Cred_Slide12_Line1,9,9,&
+		Cred_Slide12_Line2,11,10,&
+		Cred_Slide12_Line3,15,11,&
+		Cred_Slide12_Line4,17,7
+
+Credits_Slide13:
+		; "MUSIC  COMPOSER"
+		; "MASATO  NAKAMURA"
+		; "( @1992"
+		; "DREAMS  COME  TRUE)"
+		creditsptr	&
+		Cred_Slide13_Line1,9,6,&
+		Cred_Slide13_Line2,13,5,&
+		Cred_Slide13_Line3,15,3,&
+		Cred_Slide13_Line4,17,4
+		
+Credits_Slide14:
+		; "SOUND  PROGRAMMER"
+		; "TOMOYUKI  SHIMADA"
+		creditsptr	&
+		Cred_Slide14_Line1,11,4,&
+		Cred_Slide14_Line2,15,5
+		
+Credits_Slide15:
+		; "SOUND  ASSISTANTS"
+		; "MACKY"
+		; "JIMITA"
+		; "MILPO"
+		; "IPPO"
+		; "S.O"
+		; "OYZ"
+		; "N.GEE"
+		creditsptr	&
+		Cred_Slide15_Line1,5,4,&
+		Cred_Slide15_Line2,9,15,&
+		Cred_Slide15_Line3,11,15,&
+		Cred_Slide15_Line4,13,15,&
+		Cred_Slide15_Line5,15,16,&
+		Cred_Slide15_Line6,17,17,&
+		Cred_Slide15_Line7,19,17,&
+		Cred_Slide15_Line8,21,15
+		
+Credits_Slide16:
+		; "PROJECT  ASSISTANTS"
+		; "SYUICHI  KATAGI"
+		; "TAKAHIRO  HAMANO"
+		; "YOSHIKI  OOKA"
+		; "STEVE  WOITA"
+		creditsptr	&
+		Cred_Slide16_Line1,8,3,&
+		Cred_Slide16_Line2,12,8,&
+		Cred_Slide16_Line3,14,6,&
+		Cred_Slide16_Line4,16,9,&
+		Cred_Slide16_Line5,18,10
+		
+Credits_Slide17:
+		; "GAME  MANUAL"
+		; "YOUICHI  TAKAHASHI"
+		; "CAROL  ANN  HANSHAW"
+		creditsptr	&
+		Cred_Slide17_Line1,10,9,&
+		Cred_Slide17_Line2,14,5,&
+		Cred_Slide17_Line3,16,3
+		
+Credits_Slide18:
+		; "EXECUTIVE"
+		; "SUPPORTERS"
+		; "DAIZABUROU  SAKURAI"
+		; "HISASHI  SUZUKI"
+		; "THOMAS  KALINSKE"
+		; "FUJIO  MINEGISHI"
+		; "TAKAHARU UTSUNOMIYA"
+		creditsptr	&
+		Cred_Slide18_Line1,6,11,&
+		Cred_Slide18_Line2,8,10,&
+		Cred_Slide18_Line3,12,3,&
+		Cred_Slide18_Line4,14,7,&
+		Cred_Slide18_Line5,16,5,&
+		Cred_Slide18_Line6,18,7,&
+		Cred_Slide18_Line7,20,2
+		
+Credits_Slide19:
+		; "SPECIAL  THANKS"
+		; "TO"
+		; "CINDY  CLAVERAN"
+		; "FRANCE  TANTIADO"
+		; "DAISUKE  SAITO"
+		; "KUNITAKE  AOKI"
+		; "TSUNEKO  AOKI"
+		creditsptr	&
+		Cred_Slide19_Line1,6,6,&
+		Cred_Slide19_Line2,8,18,&
+		Cred_Slide19_Line3,12,6,&
+		Cred_Slide19_Line4,14,5,&
+		Cred_Slide19_Line5,16,8,&
+		Cred_Slide19_Line6,18,8,&
+		Cred_Slide19_Line7,20,9
+		
+Credits_Slide20:
+		; "SPECIAL  THANKS"
+		; "TO"
+		; "DEBORAH  MCCRACKEN"
+		; "TATSUO  YAMADA"
+		; "RICK  MACARAEG"
+		; "LOCKY  P"
+		; "MASAAKI  KAWAMURA"
+		creditsptr	&
+		Cred_Slide20_Line1,6,6,&
+		Cred_Slide20_Line2,8,18,&
+		Cred_Slide20_Line3,12,3,&
+		Cred_Slide20_Line4,14,7,&
+		Cred_Slide20_Line5,16,7,&
+		Cred_Slide20_Line6,18,13,&
+		Cred_Slide20_Line7,20,4
+
+Credits_Slide21:
+		; "PRESENTED"
+		; "BY"
+		; "SEGA"
+		creditsptr	&
+		Cred_Slide21_Line1,9,11,&
+		Cred_Slide21_Line2,13,18,&
+		Cred_Slide21_Line3,17,16
+
+; ----------------------------------------------------------------------------
+; Macro to define credit and intro text in conjunction with the charset macro
+; ----------------------------------------------------------------------------
+
+credtxt:	macro	chset,pal,txt
+		if (((vram_src/sizeof_cell)&$FF)<>0)&(((vram_src/sizeof_cell)&$FF)<>1)
+			inform 2,"The low byte of vram_src was $%h, but it must be 0 or 1.",vram_src&$FF
+		endc
+		dc.b ((vram_src/sizeof_cell+\pal)&$FF00)>>8	; palette index
+		charset	\chset,\txt				; generate the text
+		dc.b $FF					; terminator
+		rev02even
+		endm
+
+; ----------------------------------------------------------------------------
+; Credits strings
+; ----------------------------------------------------------------------------
+
+vram_src: = vram_CreditsFont_Credits				; VRAM for end credits
+
+Cred_Slide2_Line1:	
+Cred_Slide18_Line1:	credtxt	credits,tile_pal2,"EXECUTIVE"	
+Cred_Slide2_Line2:
+Cred_Slide3_Line1:	credtxt	credits,tile_pal2,"PRODUCER"
+Cred_Slide2_Line3:	credtxt credits,tile_pal1,"HAYAO  NAKAYAMA"	
+Cred_Slide3_Line2:	credtxt credits,tile_pal1,"SHINOBU  TOYODA"	
+Cred_Slide4_Line1:	credtxt credits,tile_pal2,"DIRECTOR"	
+Cred_Slide4_Line2:	credtxt credits,tile_pal1,"MASAHARU  YOSHII"	
+Cred_Slide5_Line1:	credtxt credits,tile_pal2,"CHIEF  PROGRAMMER"
+Cred_Slide5_Line2:	credtxt credits,tile_pal1,"YUJI  NAKA (YU2)"		
+Cred_Slide6_Line1:	credtxt credits,tile_pal2,"GAME  PLANNER"
+Cred_Slide6_Line2:		
+Cred_Slide9_Line2:	credtxt credits,tile_pal1,"HIROKAZU  YASUHARA"		
+Cred_Slide6_Line3:	credtxt credits,tile_pal1,"(CAROL  YAS)"		
+Cred_Slide7_Line1:	credtxt credits,tile_pal2,"CHARACTER  DESIGN"	
+Cred_Slide7_Line2:	credtxt credits,tile_pal2,"AND"	
+Cred_Slide7_Line3:	credtxt credits,tile_pal2,"CHIEF  ARTIST"		
+Cred_Slide7_Line4:	
+Cred_Slide11_Line2:	credtxt credits,tile_pal1,"YASUSHI  YAMAGUCHI"
+Cred_Slide7_Line5:	credtxt credits,tile_pal1,"(JUDY  TOTOYA)"	
+Cred_Slide8_Line1:	credtxt credits,tile_pal2,"ASSISTANT"		
+Cred_Slide8_Line2:	credtxt credits,tile_pal2,"PROGRAMMERS"	
+Cred_Slide8_Line3:	credtxt credits,tile_pal1,"BILL  WILLIS"	
+Cred_Slide8_Line4:	credtxt credits,tile_pal1,"MASANOBU  YAMAMOTO"
+Cred_Slide9_Line1:	
+Cred_Slide10_Line2: credtxt	credits,tile_pal2,"OBJECT  PLACEMENT"
+Cred_Slide9_Line3:	credtxt	credits,tile_pal1,"TAKAHIRO  ANTO"
+Cred_Slide9_Line4:	
+Cred_Slide10_Line3:	credtxt	credits,tile_pal1,"YUTAKA  SUGANO"
+Cred_Slide10_Line1:	
+Cred_Slide12_Line1:	credtxt	credits,tile_pal2,"SPECIALSTAGE"
+Cred_Slide17_Line3:	credtxt	credits,tile_pal1,"CAROL  ANN  HANSHAW"
+Cred_Slide11_Line1:	credtxt	credits,tile_pal2,"ZONE  ARTISTS"
+Cred_Slide11_Line3:	credtxt	credits,tile_pal1,"CRAIG  STITT"
+Cred_Slide11_Line4:	credtxt	credits,tile_pal1,"BRENDA  ROSS"
+Cred_Slide11_Line5:	credtxt	credits,tile_pal1,"JINA  ISHIWATARI"
+Cred_Slide11_Line6:	credtxt	credits,tile_pal1,"TOM  PAYNE"
+Cred_Slide11_Line7:	credtxt	credits,tile_pal1,"PHENIX  RIE"
+Cred_Slide12_Line2:	credtxt	credits,tile_pal2,"ART  AND  CG"
+Cred_Slide12_Line3:	credtxt	credits,tile_pal1,"TIM  SKELLY"
+Cred_Slide12_Line4:	credtxt	credits,tile_pal1,"PETER  MORAWIEC"
+Cred_Slide13_Line1:	credtxt	credits,tile_pal2,"MUSIC  COMPOSER"
+Cred_Slide13_Line2:	credtxt	credits,tile_pal1,"MASATO  NAKAMURA"
+Cred_Slide13_Line3:	credtxt	credits,tile_pal1,"( @1992"
+Cred_Slide13_Line4:	credtxt	credits,tile_pal1,"DREAMS  COME  TRUE)"
+Cred_Slide14_Line1:	credtxt	credits,tile_pal2,"SOUND  PROGRAMMER"
+Cred_Slide14_Line2:	credtxt	credits,tile_pal1,"TOMOYUKI  SHIMADA"
+Cred_Slide15_Line1:	credtxt	credits,tile_pal2,"SOUND  ASSISTANTS"
+Cred_Slide15_Line2:	credtxt	credits,tile_pal1,"MACKY"
+Cred_Slide15_Line3:	credtxt	credits,tile_pal1,"JIMITA"
+Cred_Slide15_Line4:	credtxt	credits,tile_pal1,"MILPO"
+Cred_Slide15_Line5:	credtxt	credits,tile_pal1,"IPPO"
+Cred_Slide15_Line6:	credtxt	credits,tile_pal1,"S.O"
+Cred_Slide15_Line7:	credtxt	credits,tile_pal1,"OYZ"
+Cred_Slide15_Line8:	credtxt	credits,tile_pal1,"N.GEE"
+Cred_Slide16_Line1:	credtxt	credits,tile_pal2,"PROJECT  ASSISTANTS"
+Cred_Slide16_Line2:	credtxt	credits,tile_pal1,"SYUICHI  KATAGI"
+Cred_Slide16_Line3:	credtxt	credits,tile_pal1,"TAKAHIRO  HAMANO"
+Cred_Slide16_Line4:	credtxt	credits,tile_pal1,"YOSHIKI  OOKA"
+Cred_Slide16_Line5:	credtxt	credits,tile_pal1,"STEVE  WOITA"
+Cred_Slide17_Line1:	credtxt	credits,tile_pal2,"GAME  MANUAL"
+Cred_Slide17_Line2:	credtxt	credits,tile_pal1,"YOUICHI  TAKAHASHI"
+Cred_Slide18_Line2:	credtxt	credits,tile_pal2,"SUPPORTERS"
+Cred_Slide18_Line3:	credtxt	credits,tile_pal1,"DAIZABUROU  SAKURAI"
+Cred_Slide18_Line4:	credtxt	credits,tile_pal1,"HISASHI  SUZUKI"
+
+    if Revision=0
+Cred_Slide18_Line5:	credtxt	credits,tile_pal1,"TOHMAS  KALINSKE" ; typo
+    else
+Cred_Slide18_Line5:	credtxt	credits,tile_pal1,"THOMAS  KALINSKE"
+    endc
+    
+Cred_Slide18_Line6:	credtxt	credits,tile_pal1,"FUJIO  MINEGISHI"
+Cred_Slide18_Line7:	credtxt	credits,tile_pal1,"TAKAHARU UTSUNOMIYA"
+Cred_Slide19_Line1:	
+Cred_Slide20_Line1:	credtxt	credits,tile_pal2,"SPECIAL  THANKS"
+Cred_Slide19_Line2:	
+Cred_Slide20_Line2:	credtxt	credits,tile_pal2,"TO"
+Cred_Slide19_Line3:	credtxt	credits,tile_pal1,"CINDY  CLAVERAN"
+Cred_Slide20_Line3:	credtxt	credits,tile_pal1,"DEBORAH  MCCRACKEN"
+Cred_Slide20_Line4:	credtxt	credits,tile_pal1,"TATSUO  YAMADA"
+Cred_Slide19_Line5:	credtxt	credits,tile_pal1,"DAISUKE  SAITO"
+Cred_Slide19_Line6:	credtxt	credits,tile_pal1,"KUNITAKE  AOKI"
+Cred_Slide19_Line7:	credtxt	credits,tile_pal1,"TSUNEKO  AOKI"
+Cred_Slide20_Line7:	credtxt	credits,tile_pal1,"MASAAKI  KAWAMURA"
+Cred_Slide1_Line1:	credtxt	credits,tile_pal1,"SONIC"
+Cred_Slide1_Line2:	credtxt	credits,tile_pal2,"2"
+Cred_Slide1_Line3:	credtxt	credits,tile_pal1,"CAST  OF  CHARACTERS"
+Cred_Slide21_Line1:	credtxt	credits,tile_pal1,"PRESENTED"
+Cred_Slide21_Line2:	credtxt	credits,tile_pal1,"BY"
+Cred_Slide21_Line3:	credtxt	credits,tile_pal1,"SEGA"
+Cred_Slide19_Line4:	credtxt	credits,tile_pal1,"FRANCE  TANTIADO"
+Cred_Slide20_Line5:	credtxt	credits,tile_pal1,"RICK  MACARAEG"
+Cred_Slide20_Line6:	credtxt	credits,tile_pal1,"LOCKY  P"
+
+; ----------------------------------------------------------------------------
+; Intro strings
+; ----------------------------------------------------------------------------
+					
+vram_src: = vram_CreditsFont_Intro
+
+IntroText_Line4:	credtxt	intro,tile_pal1,"IN"
+IntroText_Line2:	credtxt	intro,tile_pal1,"AND"
+IntroText_Line3:	credtxt	intro,tile_pal1,"MILES 'TAILS' PROWER"
+IntroText_Line1:	credtxt	intro,tile_pal1,"SONIC"
+		even
 ; ===========================================================================
-IntroText:	
-		dc.l byte_BD1A		
-		dc.w $C49E
-		dc.l byte_BCEE
-		dc.w $C622
-		dc.l byte_BCF6
-		dc.w $C786
-		dc.l byte_BCE9
-		dc.w $C924
-		dc.w $FFFF
-
-off_B2CA:	
-		dc.l off_B322					; 0 				
-		dc.l off_B336					; 1
-		dc.l off_B34A					; 2
-		dc.l off_B358					; 3
-		dc.l off_B366					; 4
-		dc.l off_B374					; 5
-		dc.l off_B388					; 6
-		dc.l off_B3A8					; 7
-		dc.l off_B3C2					; 8
-		dc.l off_B3DC					; 9
-		dc.l off_B3F0					; 10
-		dc.l off_B41C					; 11
-		dc.l off_B436					; 12
-		dc.l off_B450					; 13
-		dc.l off_B45E					; 14
-		dc.l off_B490					; 15
-		dc.l off_B4B0					; 16
-		dc.l off_B4C4					; 17
-		dc.l off_B4F0					; 18
-		dc.l off_B51C					; 19
-		dc.l off_B548					; 20
-		dc.l $FFFFFFFF					; 21
-off_B322:	dc.l byte_BC46		
-		dc.w $C59C
-		dc.l byte_BC51
-		dc.w $C5B0
-		dc.l byte_BC55
-		dc.w $C784
-		dc.w $FFFF
-off_B336:	dc.l byte_B55C					; 0 
-		dc.w $C586
-		dc.l byte_B56F
-		dc.w $C5AC
-		dc.l byte_B581
-		dc.w $C78C
-		dc.w $FFFF
-off_B34A:	dc.l byte_B56F					; 0 
-		dc.w $C598
-		dc.l byte_B59F
-		dc.w $C78E
-		dc.w $FFFF
-off_B358:	dc.l byte_B5BC					; 0 
-		dc.w $C598
-		dc.l byte_B5CD
-		dc.w $C78C
-		dc.w $FFFF
-off_B366:	dc.l byte_B5EB					; 0 
-		dc.w $C58A
-		dc.l byte_B60C
-		dc.w $C78E
-		dc.w $FFFF
-off_B374:	dc.l byte_B628					; 0 
-		dc.w $C510
-		dc.l byte_B642
-		dc.w $C708
-		dc.l byte_B665
-		dc.w $C814
-		dc.w $FFFF
-off_B388:	dc.l byte_B67B					; 0 
-		dc.w $C408
-		dc.l byte_B69C
-		dc.w $C522
-		dc.l byte_B6A4
-		dc.w $C612
-		dc.l byte_B6BC
-		dc.w $C808
-		dc.l byte_B6DE
-		dc.w $C910
-		dc.w $FFFF
-off_B3A8:	dc.l byte_B6F8					; 0 
-		dc.w $C496
-		dc.l byte_B70B
-		dc.w $C592
-		dc.l byte_B723
-		dc.w $C794
-		dc.l byte_B738
-		dc.w $C886
-		dc.w $FFFF
-off_B3C2:	dc.l byte_B75C					; 0 
-		dc.w $C488
-		dc.l byte_B642
-		dc.w $C688
-		dc.l byte_B77E
-		dc.w $C78E
-		dc.l byte_B799
-		dc.w $C88E
-		dc.w $FFFF
-off_B3DC:	dc.l byte_B7B5					; 0 
-		dc.w $C510
-		dc.l byte_B75C
-		dc.w $C608
-		dc.l byte_B799
-		dc.w $C80E
-		dc.w $FFFF
-off_B3F0:	dc.l byte_B7F2					; 0 
-		dc.w $C312
-		dc.l byte_B6BC
-		dc.w $C508
-		dc.l byte_B80B
-		dc.w $C614
-		dc.l byte_B821
-		dc.w $C712
-		dc.l byte_B839
-		dc.w $C80E
-		dc.l byte_B855
-		dc.w $C916
-		dc.l byte_B869
-		dc.w $CA16
-		dc.w $FFFF
-off_B41C:	dc.l byte_B7B5					; 0 
-		dc.w $C492
-		dc.l byte_B87D
-		dc.w $C594
-		dc.l byte_B893
-		dc.w $C796
-		dc.l byte_B8A8
-		dc.w $C88E
-		dc.w $FFFF
-off_B436:	dc.l byte_B8C5					; 0 
-		dc.w $C48C
-		dc.l byte_B8E2
-		dc.w $C68A
-		dc.l byte_B902
-		dc.w $C786
-		dc.l byte_B90F
-		dc.w $C888
-		dc.w $FFFF
-off_B450:	dc.l byte_B932					; 0 
-		dc.w $C588
-		dc.l byte_B954
-		dc.w $C78A
-		dc.w $FFFF
-off_B45E:	dc.l byte_B974					; 0 
-		dc.w $C288
-		dc.l byte_B995
-		dc.w $C49E
-		dc.l byte_B9A1
-		dc.w $C59E
-		dc.l byte_B9AD
-		dc.w $C69E
-		dc.l byte_B9B8
-		dc.w $C7A0
-		dc.l byte_B9C1
-		dc.w $C8A2
-		dc.l byte_B9C8
-		dc.w $C9A2
-		dc.l byte_B9D0
-		dc.w $CA9E
-		dc.w $FFFF
-off_B490:	dc.l byte_B9DB					; 0 
-		dc.w $C406
-		dc.l byte_BA00
-		dc.w $C610
-		dc.l byte_BA1B
-		dc.w $C70C
-		dc.l byte_BA3A
-		dc.w $C812
-		dc.l byte_BA52
-		dc.w $C914
-		dc.w $FFFF
-off_B4B0:	dc.l byte_BA69					; 0 
-		dc.w $C512
-		dc.l byte_BA81
-		dc.w $C70A
-		dc.l byte_B7CE
-		dc.w $C806
-		dc.w $FFFF
-off_B4C4:	dc.l byte_B55C					; 0 
-		dc.w $C316
-		dc.l byte_BAA2
-		dc.w $C414
-		dc.l byte_BAB8
-		dc.w $C606
-		dc.l byte_BADC
-		dc.w $C70E
-		dc.l byte_BAF7
-		dc.w $C80A
-		dc.l byte_BB16
-		dc.w $C90E
-		dc.l byte_BB32
-		dc.w $CA04
-		dc.w $FFFF
-off_B4F0:	dc.l byte_BB58					; 0 
-		dc.w $C30C
-		dc.l byte_BB75
-		dc.w $C424
-		dc.l byte_BB7B
-		dc.w $C60C
-		dc.l byte_BC9F
-		dc.w $C70A
-		dc.l byte_BBD8
-		dc.w $C810
-		dc.l byte_BBF2
-		dc.w $C910
-		dc.l byte_BC0C
-		dc.w $CA12
-		dc.w $FFFF
-off_B51C:	dc.l byte_BB58					; 0 
-		dc.w $C30C
-		dc.l byte_BB75
-		dc.w $C424
-		dc.l byte_BB98
-		dc.w $C606
-		dc.l byte_BBBC
-		dc.w $C70E
-		dc.l byte_BCBE
-		dc.w $C80E
-		dc.l byte_BCD9
-		dc.w $C91A
-		dc.l byte_BC25
-		dc.w $CA08
-		dc.w $FFFF
-
-off_B548:
-		dc.l byte_BC7B					; 0 
-		dc.w $C496
-		dc.l byte_BC8F
-		dc.w $C6A4
-		dc.l byte_BC95
-		dc.w $C8A0
-		dc.w $FFFF
-
-byte_B55C:	
-		dc.b $20, $A, $B,$2F,$30, $A, $B,  6,  7,$29,$2A,$27,$28,$12,$2B,$2C ; 0
-		dc.b  $A, $B,$FF				; 16
-			
-byte_B56F:	
-		dc.b $20,$1F,$20,$23,$24,$1D,$1E,  8,  9,$29,$2A,  6,  7, $A, $B,$23 ; 0	
-		dc.b $24,$FF					; 16
-		
-byte_B581:	
-		dc.b   0,$10,$11,  2,  3,$31,$32,  2,  3,$1D,$1E,  0,  0,$1B,$1C,  2 ; 0
-		dc.b   3,$15,$16,  2,  3,$31,$32,  2,  3,$19,$1A,  2,  3,$FF ; 16
-		
-byte_B59F:	
-		dc.b   0,$25,$26,$10,$11,$12,$1B,$1C,$1D,$1E,  4,  5,$29,$2A,  0,  0 ; 0
-		dc.b $27,$28,$1D,$1E,$31,$32,$1D,$1E,  8,  9,  2,  3,$FF ; 16
-		
-byte_B5BC:	
-		dc.b $20,  8,  9,$12,$23,$24, $A, $B,  6,  7,$27,$28,$1D,$1E,$23,$24 ; 0		
-		dc.b $FF					; 16
-		
-byte_B5CD:	
-		dc.b   0,$19,$1A,  2,  3,$25,$26,  2,  3,$10,$11,  2,  3,$23,$24,$29 ; 0
-		dc.b $2A,  0,  0,$31,$32,$1D,$1E,$25,$26,$10,$11,$12,$12,$FF ; 16
-		
-		
-byte_B5EB:	
-		dc.b $20,  6,  7,$10,$11,$12, $A, $B, $C, $D,  0,  0,$1F,$20,$23,$24 ; 0			
-		dc.b $1D,$1E, $E, $F,$23,$24,  2,  3,$19,$1A,$19,$1A, $A, $B,$23,$24 ; 16
-		dc.b $FF					; 32
-		
-byte_B60C:	
-		dc.b   0,$31,$32,$29,$2A,$13,$14,$12,  0,  0,$1B,$1C,  2,  3,$15,$16 ; 0
-		dc.b   2,  3,  0,$37,$31,$32,$29,$2A,$35,$36,$38,$FF ; 16
-		
-byte_B628:	
-		dc.b $20, $E, $F,  2,  3,$19,$1A, $A, $B,  0,  0,$1F,$20,$17,$18,  2 ; 0
-		dc.b   3,$1B,$1C,$1B,$1C, $A, $B,$23,$24,$FF	; 16
-		
-		
-byte_B642:	
-
-		dc.b   0,$10,$11,$12,$23,$24,$1D,$1E,$15,$16,  2,  3,$33,$34,$29,$2A ; 0
-		dc.b   0,  0,$31,$32,  2,  3,$25,$26,$29,$2A,$10,$11,  2,  3,$23,$24 ; 16
-		dc.b   2,  3,$FF				; 32
-		
-byte_B665:	
-		dc.b   0,$37,  6,  7,  2,  3,$23,$24,$1D,$1E,$17,$18,  0,  0,$31,$32 ; 0			
-		dc.b   2,  3,$25,$26,$38,$FF			; 16
-		
-byte_B67B:	
-		dc.b $20,  6,  7,$10,$11,  2,  3,$23,$24,  2,  3,  6,  7,$27,$28, $A ; 0			
-		dc.b  $B,$23,$24,  0,  0,  8,  9, $A, $B,$25,$26,$12, $E, $F,$1B,$1C ; 16
-		dc.b $FF					; 32
-		
-byte_B69C:	
-		dc.b $20,  2,  3,$1B,$1C,  8,  9,$FF		; 0	
-
-byte_B6A4:	
-		dc.b $20,  6,  7,$10,$11,$12, $A, $B, $C, $D,  0,  0,  2,  3,$23,$24 ; 0			
-		dc.b $27,$28,$12,$25,$26,$27,$28,$FF		; 16
-		
-byte_B6BC:	
-		dc.b   0,$31,$32,  2,  3,$25,$26,$29,$2A,$25,$26,$10,$11,$12,  0,  0 ; 0			
-		dc.b $31,$32,  2,  3,$19,$1A,  2,  3, $E, $F,$29,$2A,  6,  7,$10,$11 ; 16
-		dc.b $12,$FF					; 32
-		
-byte_B6DE:	
-		dc.b   0,$37,$13,$14,$29,$2A,  8,  9,$31,$32,  0,  0,$27,$28,$1D,$1E ; 0		
-		dc.b $27,$28,$1D,$1E,$31,$32,  2,  3,$38,$FF	; 16
-		
-byte_B6F8:	
-		dc.b $20,  2,  3,$25,$26,$25,$26,$12,$25,$26,$27,$28,  2,  3,$1B,$1C ; 0		
-		dc.b $27,$28,$FF				; 16
-		
-byte_B70B:	
-		dc.b $20,$1F,$20,$23,$24,$1D,$1E, $E, $F,$23,$24,  2,  3,$19,$1A,$19 ; 0			
-		dc.b $1A, $A, $B,$23,$24,$25,$26,$FF		; 16
-		
-byte_B723:	
-		dc.b   0,  4,  5,$12,$17,$18,$17,$18,  0,  0,$2D,$2E,$12,$17,$18,$17 ; 0		
-		dc.b $18,$12,$25,$26,$FF			; 16
-		
-byte_B738:	
-		dc.b   0,$19,$1A,  2,  3,$25,$26,  2,  3,$1B,$1C,$1D,$1E,  4,  5,$29 ; 0		
-		dc.b $2A,  0,  0,$31,$32,  2,  3,$19,$1A,  2,  3,$19,$1A,$1D,$1E,$27 ; 16
-		dc.b $28,$1D,$1E,$FF				; 32
-		
-byte_B75C:	
-		dc.b $20,$1D,$1E,  4,  5,$13,$14, $A, $B,  6,  7,$27,$28,  0,  0,$1F ; 0		
-		dc.b $20,$17,$18,  2,  3,  6,  7, $A, $B,$19,$1A, $A, $B,$1B,$1C,$27 ; 16
-		dc.b $28,$FF					; 32
-		
-byte_B77E:	
-		dc.b   0,$27,$28,  2,  3,$15,$16,  2,  3,$10,$11,$12,$23,$24,$1D,$1E ; 0		
-		dc.b   0,  0,  2,  3,$1B,$1C,$27,$28,$1D,$1E,$FF ; 16
-		
-byte_B799:	
-		dc.b   0,$31,$32,$29,$2A,$27,$28,  2,  3,$15,$16,  2,  3,  0,  0,$25 ; 0		
-		dc.b $26,$29,$2A, $E, $F,  2,  3,$1B,$1C,$1D,$1E,$FF ; 16
-		
-byte_B7B5:	
-		dc.b $20,$25,$26,$1F,$20, $A, $B,  6,  7,$12,  2,  3,$17,$18,$25,$26 ; 0
-		dc.b $27,$28,  2,  3, $E, $F, $A, $B,$FF	; 16
-		
-byte_B7CE:	
-		dc.b   0,  6,  7,  2,  3,$23,$24,$1D,$1E,$17,$18,  0,  0,  2,  3,$1B ; 0			
-		dc.b $1C,$1B,$1C,  0,  0,$10,$11,  2,  3,$1B,$1C,$25,$26,$10,$11,  2 ; 16
-		dc.b   3,$2D,$2E,$FF				; 32
-		
-byte_B7F2:	
-		dc.b $20,$33,$34,$1D,$1E,$1B,$1C, $A, $B,  0,  0,  2,  3,$23,$24,$27 ; 0		
-		dc.b $28,$12,$25,$26,$27,$28,$25,$26,$FF	; 16
-		
-byte_B80B:	
-		dc.b   0,  6,  7,$23,$24,  2,  3,$12, $E, $F,  0,  0,$25,$26,$27,$28 ; 0			
-		dc.b $12,$27,$28,$27,$28,$FF			; 16
-		
-byte_B821:	
-		dc.b   0,  4,  5,$23,$24, $A, $B,$1B,$1C,  8,  9,  2,  3,  0,  0,$23 ; 0				
-		dc.b $24,$1D,$1E,$25,$26,$25,$26,$FF		; 16
-		
-byte_B839:	
-		dc.b   0,$13,$14,$12,$1B,$1C,  2,  3,  0,  0,$12,$25,$26,$10,$11,$12 ; 0			
-		dc.b $2D,$2E,  2,  3,$27,$28,  2,  3,$23,$24,$12,$FF ; 16
-		
-byte_B855:	
-		dc.b   0,$27,$28,$1D,$1E,$19,$1A,  0,  0,$1F,$20,  2,  3,$31,$32,$1B ; 0		
-		dc.b $1C, $A, $B,$FF				; 16
-		
-byte_B869:	
-		dc.b   0,$1F,$20,$10,$11, $A, $B,$1B,$1C,$12,$2F,$30,  0,  0,$23,$24 ; 0		
-		dc.b $12, $A, $B,$FF				; 16
-		
-byte_B87D:	
-		dc.b $20,  2,  3,$23,$24,$27,$28,  0,  0,  2,  3,$1B,$1C,  8,  9,  0 ; 0		
-		dc.b   0,  6,  7, $E, $F,$FF			; 16
-		
-byte_B893:	
-		dc.b   0,$27,$28,$12,$19,$1A,  0,  0,$25,$26,$15,$16, $A, $B,$17,$18 ; 0			
-		dc.b $17,$18,$31,$32,$FF			; 16
-		
-byte_B8A8:	
-		dc.b   0,$1F,$20, $A, $B,$27,$28, $A, $B,$23,$24,  0,  0,$19,$1A,$1D ; 0			
-		dc.b $1E,$23,$24,  2,  3,$2D,$2E,$12, $A, $B,  6,  7,$FF ; 16
-		
-byte_B8C5:	
-		dc.b $20,$19,$1A,$29,$2A,$25,$26,$12,  6,  7,  0,  0,  6,  7,$1D,$1E ; 0		
-		dc.b $19,$1A,$1F,$20,$1D,$1E,$25,$26, $A, $B,$23,$24,$FF ; 16
-		
-byte_B8E2:	
-		dc.b   0,$19,$1A,  2,  3,$25,$26,  2,  3,$27,$28,$1D,$1E,  0,  0,$1B ; 0		
-		dc.b $1C,  2,  3,$15,$16,  2,  3,$19,$1A,$29,$2A,$23,$24,  2,  3,$FF ; 16
-		
-byte_B902:	
-		dc.b   0,$37,  0,$3B,$3C,$3D,$3E,$3F,$3E,$3F,$35,$36,$FF ; 0
 					
-byte_B90F:	
-		dc.b   0,  8,  9,$23,$24, $A, $B,  2,  3,$19,$1A,$25,$26,  0,  0,  6 ; 0		
-		dc.b   7,$1D,$1E,$19,$1A, $A, $B,  0,  0,$27,$28,$23,$24,$29,$2A, $A ; 16
-		dc.b  $B,$38,$FF				; 32
-		
-byte_B932:	
-		dc.b $20,$25,$26,$1D,$1E,$29,$2A,$1B,$1C,  8,  9,  0,  0,$1F,$20,$23 ; 0		
-		dc.b $24,$1D,$1E, $E, $F,$23,$24,  2,  3,$19,$1A,$19,$1A, $A, $B,$23 ; 16
-		dc.b $24,$FF					; 32
-
-byte_B954:	
-		dc.b   0,$27,$28,$1D,$1E,$19,$1A,$1D,$1E,$31,$32,$29,$2A,$15,$16,$12 ; 0		
-		dc.b   0,  0,$25,$26,$10,$11,$12,$19,$1A,  2,  3,  8,  9,  2,  3,$FF ; 16
-		
-byte_B974:	
-		dc.b $20,$25,$26,$1D,$1E,$29,$2A,$1B,$1C,  8,  9,  0,  0,  2,  3,$25 ; 0			
-		dc.b $26,$25,$26,$12,$25,$26,$27,$28,  2,  3,$1B,$1C,$27,$28,$25,$26 ; 16
-		dc.b $FF					; 32
-
-byte_B995:	
-		dc.b   0,$19,$1A,  2,  3,  6,  7,$15,$16,$31,$32,$FF ; 0
-					
-
-byte_B9A1:	
-		dc.b   0,$13,$14,$12,$19,$1A,$12,$27,$28,  2,  3,$FF ; 0
-					
-byte_B9AD:	
-		dc.b   0,$19,$1A,$12,$17,$18,$1F,$20,$1D,$1E,$FF ; 0
-					
-byte_B9B8:	
-		dc.b   0,$12,$1F,$20,$1F,$20,$1D,$1E,$FF	; 0 
-		
-byte_B9C1:	
-		dc.b   0,$25,$26,$3A,$1D,$1E,$FF		; 0 
-
-byte_B9C8:	
-		dc.b   0,$1D,$1E,$31,$32,$33,$34,$FF		; 0	
-
-byte_B9D0:	
-		dc.b   0,$1B,$1C,$3A, $E, $F, $A, $B, $A, $B,$FF ; 0
-					
-byte_B9DB:	
-		dc.b $20,$1F,$20,$23,$24,$1D,$1E,$13,$14, $A, $B,  6,  7,$27,$28,  0 ; 0			
-		dc.b   0,  2,  3,$25,$26,$25,$26,$12,$25,$26,$27,$28,  2,  3,$1B,$1C ; 16
-		dc.b $27,$28,$25,$26,$FF			; 32
-
-byte_BA00:	
-		dc.b   0,$25,$26,$31,$32,$29,$2A,$12,  6,  7,$10,$11,$12,  0,  0,$15 ; 0			
-		dc.b $16,  2,  3,$27,$28,  2,  3, $E, $F,$12,$FF ; 16
-
-byte_BA1B:	
-		dc.b   0,$27,$28,  2,  3,$15,$16,  2,  3,$10,$11,$12,$23,$24,$1D,$1E ; 0		
-		dc.b   0,  0,$10,$11,  2,  3,$19,$1A,  2,  3,$1B,$1C,$1D,$1E,$FF ; 16
-
-byte_BA3A:	
-		dc.b   0,$31,$32,$1D,$1E,$25,$26,$10,$11,$12,$15,$16,$12,  0,  0,$1D ; 0	
-		dc.b $1E,$1D,$1E,$15,$16,  2,  3,$FF		; 16
-
-byte_BA52:	
-		dc.b   0,$25,$26,$27,$28, $A, $B,$2B,$2C, $A, $B,  0,  0,$2D,$2E,$1D ; 0
-		dc.b $1E,$12,$27,$28,  2,  3,$FF		; 16
-
-byte_BA69:	
-		dc.b $20, $E, $F,  2,  3,$19,$1A, $A, $B,  0,  0,$19,$1A,  2,  3,$1B ; 0	
-		dc.b $1C,$29,$2A,  2,  3,$17,$18,$FF		; 16
-
-byte_BA81:	
-		dc.b   0,$31,$32,$1D,$1E,$29,$2A,$12,  6,  7,$10,$11,$12,  0,  0,$27 ; 0			
-		dc.b $28,  2,  3,$15,$16,  2,  3,$10,$11,  2,  3,$25,$26,$10,$11,$12 ; 16
-		dc.b $FF					; 32
-
-byte_BAA2:	
-		dc.b $20,$25,$26,$29,$2A,$1F,$20,$1F,$20,$1D,$1E,$23,$24,$27,$28, $A ; 0			
-		dc.b  $B,$23,$24,$25,$26,$FF			; 16
-		
-byte_BAB8:	
-		dc.b   0,  8,  9,  2,  3,$12,$33,$34,  2,  3,  4,  5,$29,$2A,$23,$24 ; 0		
-		dc.b $1D,$1E,$29,$2A,  0,  0,$25,$26,  2,  3,$15,$16,$29,$2A,$23,$24 ; 16
-		dc.b   2,  3,$12,$FF				; 32
-		
-byte_BADC:	
-		dc.b   0,$10,$11,$12,$25,$26,  2,  3,$25,$26,$10,$11,$12,  0,  0,$25 ; 0		
-		dc.b $26,$29,$2A,$33,$34,$29,$2A,$15,$16,$12,$FF ; 16
-		
-byte_BAF7:	
-		dc.b   0,$27,$28,$10,$11,$1D,$1E,$19,$1A,  2,  3,$25,$26,  0,  0,$15 ; 0
-		dc.b $16,  2,  3,$17,$18,$12,$1B,$1C,$25,$26,$15,$16, $A, $B,$FF ; 16
-		
-byte_BB16:	
-		dc.b   0, $C, $D,$29,$2A,$13,$14,$12,$1D,$1E,  0,  0,$19,$1A,$12,$1B ; 0		
-		dc.b $1C, $A, $B, $E, $F,$12,$25,$26,$10,$11,$12,$FF ; 16
-		
-byte_BB32:	
-		dc.b   0,$27,$28,  2,  3,$15,$16,  2,  3,$10,$11,  2,  3,$23,$24,$29 ; 0				
-		dc.b $2A,  0,$29,$2A,$27,$28,$25,$26,$29,$2A,$1B,$1C,$1D,$1E,$19,$1A ; 16
-		dc.b $12,$31,$32,  2,  3,$FF			; 32
-
-byte_BB58:	
-		dc.b $20,$25,$26,$1F,$20, $A, $B,  6,  7,$12,  2,  3,$17,$18,  0,  0 ; 0			
-		dc.b $27,$28,$10,$11,  2,  3,$1B,$1C,$15,$16,$25,$26,$FF ; 16
-
-byte_BB75:	
-		dc.b $20,$27,$28,$1D,$1E,$FF			; 0	
-					
-byte_BB7B:	
-		dc.b   0,  6,  7,$12,$1B,$1C,  8,  9,$31,$32,  0,  0,  6,  7,$17,$18 ; 0			
-		dc.b   2,  3,$2B,$2C, $A, $B,$23,$24,  2,  3,$1B,$1C,$FF ; 16
-
-byte_BB98:	
-		dc.b   0,  8,  9, $A, $B,  4,  5,$1D,$1E,$23,$24,  2,  3,$10,$11,  0 ; 0		
-		dc.b   0,$19,$1A,  6,  7,  6,  7,$23,$24,  2,  3,  6,  7,$15,$16, $A ; 16
-		dc.b  $B,$1B,$1C,$FF				; 32
-
-byte_BBBC:	
-		dc.b   0,$27,$28,  2,  3,$27,$28,$25,$26,$29,$2A,$1D,$1E,  0,  0,$31 ; 0			
-		dc.b $32,  2,  3,$19,$1A,  2,  3,  8,  9,  2,  3,$FF ; 16
-
-byte_BBD8:	
-		dc.b   0,  8,  9,  2,  3,$12,$25,$26,$29,$2A,$15,$16, $A, $B,  0,  0 ; 0	
-		dc.b $25,$26,  2,  3,$12,$27,$28,$1D,$1E,$FF	; 16
-
-byte_BBF2:	
-		dc.b   0,$15,$16,$29,$2A,$1B,$1C,$12,$27,$28,  2,  3,$15,$16, $A, $B ; 0			
-		dc.b   0,  0,  2,  3,$1D,$1E,$15,$16,$12,$FF	; 16
-
-byte_BC0C:	
-		dc.b   0,$27,$28,$25,$26,$29,$2A,$1B,$1C, $A, $B,$15,$16,$1D,$1E,  0 ; 0		
-		dc.b   0,  2,  3,$1D,$1E,$15,$16,$12,$FF	; 16
-
-byte_BC25:	
-		dc.b   0,$19,$1A,  2,  3,$25,$26,  2,  3,  2,  3,$15,$16,$12,  0,  0 ; 0		
-		dc.b $15,$16,  2,  3,$2D,$2E,  2,  3,$19,$1A,$29,$2A,$23,$24,  2,  3 ; 16
-		dc.b $FF					; 32
-
-byte_BC46:	
-		dc.b   0,$25,$26,$1D,$1E,$1B,$1C,$12,  6,  7,$FF ; 0
-					
-byte_BC51:	
-		dc.b $20,$35,$36,$FF				; 0 
-
-byte_BC55:	
-		dc.b   0,  6,  7,  2,  3,$25,$26,$27,$28,  0,  0,$1D,$1E, $C, $D,  0 ; 0			
-		dc.b   0,  6,  7,$10,$11,  2,  3,$23,$24,  2,  3,  6,  7,$27,$28, $A ; 16
-		dc.b  $B,$23,$24,$25,$26,$FF			; 32
-
-byte_BC7B:	
-		dc.b   0,$1F,$20,$23,$24, $A, $B,$25,$26, $A, $B,$1B,$1C,$27,$28, $A ; 0			
-		dc.b  $B,  8,  9,$FF				; 16
-
-byte_BC8F:	
-		dc.b   0,  4,  5,$31,$32,$FF			; 0	
-
-byte_BC95:	
-		dc.b   0,$25,$26, $A, $B, $E, $F,  2,  3,$FF	; 0	
-
-byte_BC9F:	
-		dc.b   0, $C, $D,$23,$24,  2,  3,$1B,$1C,  6,  7, $A, $B,  0,  0,$27 ; 0			
-		dc.b $28,  2,  3,$1B,$1C,$27,$28,$12,  2,  3,  8,  9,$1D,$1E,$FF ; 16
-
-byte_BCBE:	
-		dc.b   0,$23,$24,$12,  6,  7,$15,$16,  0,  0,$19,$1A,  2,  3,  6,  7 ; 0		
-		dc.b   2,  3,$23,$24,  2,  3, $A, $B, $E, $F,$FF ; 16
-
-byte_BCD9:	
-		dc.b   0,$17,$18,$1D,$1E,  6,  7,$15,$16,$31,$32,  0,  0,$1F,$20,$FF ; 0
-					
-
-byte_BCE9:	
-		dc.b   5,$11,$1A,$1B,$FF			; 0 
-
-byte_BCEE:	
-		dc.b   5,  1,  2,$1A,$1B,  7,  8,$FF		; 0	
-
-byte_BCF6:	
-		dc.b   5,$18,$19,$11,$16,$17,  9, $A,$24,$25,  0,$38,$26,$27,  1,  2 ; 0		
-		dc.b $11,$16,$17,$24,$25,$38,  0,$1E,$1F,$22,$23,$1C,$1D,$2C,$2D,  9 ; 16
-		dc.b  $A,$22,$23,$FF				; 32
-
-byte_BD1A:	
-		dc.b   5,$24,$25,$1C,$1D,$1A,$1B,$11,  5,  6,$FF,  0 ; 0
-					
-
 		incfile	Nem_CreditsFont
 
 ; ===========================================================================
@@ -45825,11 +45679,6 @@ loc_2297A:
 		move.w	d0,2(a4)
 		rts	
 ; ===========================================================================
-; Generate size entries for the spintube and MTZ teleport position arrays.
-tubedatasize:	macro	*
-\* equ *
-		dc.w	sizeof_\*-2
-		endm	
 
 		include "misc/CPZ Spin Tube Termini.asm"
 		include "misc/CPZ Spin Tube Locations.asm"
@@ -70134,7 +69983,7 @@ LoadChild:
 ;	d0 = 0 if player is left from object, 2 if right (set by FindPlayer)
 ; ---------------------------------------------------------------------------
 
-		bsr.w	FindPlayer			; get nearest player
+		bsr.w	FindPlayer				; get nearest player
 		bclr	#render_xflip_bit,ost_render(a0)	; clear x-flip bits
 		bclr	#status_xflip_bit,ost_primary_status(a0)
 		tst.w	d0					; is object to right of nearest player?
@@ -70463,7 +70312,7 @@ Ground_Init:
 ; ===========================================================================
 
 Ground_Wait:				
-		bsr.w	FindPlayer			; get nearest player
+		bsr.w	FindPlayer				; get nearest player
 		abs.w d2					; d2 = absolute value of horizontal distance to nearest player				
 		cmpi.w	#$60,d2					; is a player within $60 pixels horizontally?
 		bls.s	.within_60				; branch if so
@@ -71326,7 +71175,7 @@ Rex_Init:
 ; ===========================================================================
 
 Rex_Wait:				
-		bsr.w	FindPlayer			; get nearest player
+		bsr.w	FindPlayer				; get nearest player
 		addi.w	#$60,d2
 		cmpi.w	#$100,d2
 		bcc.s	.no_spawn				; branch if they're not close enough yet
@@ -71360,7 +71209,7 @@ Rex_CheckTurnAround:
 ; while waiting, with code in Rex_Init to set this routine.
 
 Rex_Wait_Stationary:			
-		bsr.w	FindPlayer			; find nearest player
+		bsr.w	FindPlayer				; find nearest player
 		addi.w	#$60,d2
 		cmpi.w	#$100,d2
 		bcc.s	.no_spawn				; branch if they're not close enough yet
@@ -73911,7 +73760,7 @@ Grab_Action_Index:	index offset(*),,2
 ; ===========================================================================
 
 Grab_FindPlayer:				
-		bsr.w	FindPlayer			; get nearest player
+		bsr.w	FindPlayer				; get nearest player
 		addi.w	#$40,d2				
 		cmpi.w	#$80,d2					; is player within $80 pixels of Grabber horizontally?
 		bcc.s	.notfound				; branch if not

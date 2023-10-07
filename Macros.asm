@@ -228,7 +228,7 @@ rev02even:	 macro
 ; to the destination. These two macros accomodate this difference. 
 ; ---------------------------------------------------------------------------
 
-jsrto:		 macro directaddr,indirectaddr
+jsrto:	macro directaddr,indirectaddr
 		if RemoveJmpTos
 			jsr (\directaddr).l			; jump directly to address
 		else
@@ -236,7 +236,7 @@ jsrto:		 macro directaddr,indirectaddr
 		endc
 		endm
 
-jmpto:		 macro directaddr,indirectaddr
+jmpto:	macro directaddr,indirectaddr
 		if RemoveJmpTos
 			jmp (\directaddr).l			; jump directly to address
 		else
@@ -347,8 +347,8 @@ arraysize:	macros
 ; Organise object RAM usage.
 ; ---------------------------------------------------------------------------
 
-rsobj:		macro name,start
-			rsobj_name: equs "\name"		; remember name of current object
+rsobj:	macro name,start
+		rsobj_name: equs "\name"			; remember name of current object
 		ifarg \start
 			rsset \start				; start at specified position
 		else
@@ -372,7 +372,7 @@ rsobjend:	macro
 ; input: start location, end location (may be defined with rsblock)
 ; ---------------------------------------------------------------------------		
 
-clear_ram:		macro startaddr,endaddr
+clear_ram:	macro startaddr,endaddr
 		
 		if startaddr>endaddr
 			inform 3,"Starting address of clearRAM $%h is after ending address $%h.",startaddr,endaddr
@@ -409,7 +409,7 @@ clear_ram:		macro startaddr,endaddr
 ; relative to themselves), id start (default 0), id increment (default 1)
 ; ---------------------------------------------------------------------------
 
-index:		macro start,idstart,idinc
+index:	macro start,idstart,idinc
 ;		nolist
 ;		pusho
 ;		opt	m-
@@ -448,7 +448,7 @@ index:		macro start,idstart,idinc
 ; to same location, such as the bubble mappings or deleted objects
 ; ---------------------------------------------------------------------------
 
-ptr:		macro
+ptr:	macro
 ;		nolist
 ;		pusho
 ;		opt	m-
@@ -487,15 +487,15 @@ ptr:		macro
 ; ---------------------------------------------------------------------------
 	
 bra_index:	macro *
-\* equ *
-		 index_start: = offset(\*)
-		 endm
+		\*: equ *
+		index_start: = offset(\*)
+		endm
 		 
 ; ---------------------------------------------------------------------------
 ; Item in a branch index
 ; ---------------------------------------------------------------------------
 
-braptr:		macro
+braptr:	macro
 		id_\1:	equ offset(*)-index_start
 		bra.w	\1
 		endm
@@ -531,7 +531,7 @@ vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 		endc
 		
 		if stricmp ("\0",".w")
-		command: = (((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)$FFFF ; AND to word-length
+		command: = (((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)$FFFF ; ensure word length
 		else
 		command: = (((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)
 		endc
@@ -549,7 +549,7 @@ vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 ; cram/vsram destination (0 by default)
 ; ---------------------------------------------------------------------------
 
-dma:		macro source,length,dest1,dest2
+dma:	macro source,length,dest1,dest2
 		dma_type: = $4000
 		dma_type2: = $80
 		
@@ -609,7 +609,7 @@ dma_fill:	macro value,length,dest
 
 dma_fill_sequential:	macro value,length,dest,firstlast
 	
-		if strcmp("\firstlast","first")			; if this is the first DMA fill,
+		if stricmp("\firstlast","first")		; if this is the first DMA fill,
 			lea	(vdp_control_port).l,a5		; load the VDP control port,
 			move.w	#vdp_auto_inc+1,(a5)		; and set VDP increment to 1 byte
 		endc	
@@ -623,7 +623,7 @@ dma_fill_sequential:	macro value,length,dest,firstlast
 		btst	#dma_status_bit,d1			; is DMA in progress?
 		bne.s	.wait_for_dma\@				; if yes, branch
 		
-		if strcmp("\firstlast","last")			; if this is the last DMA fill in the sequence,
+		if strimp("\firstlast","last")			; if this is the last DMA fill in the sequence,
 			move.w	#vdp_auto_inc+2,(a5)		; set VDP increment back to 2 bytes
 		endc	
 		
@@ -775,13 +775,13 @@ piece:	macro	xpos,ypos,dimensions,tileindex,pal_flip_pri
 ; ---------------------------------------------------------------------------	
 
 dplcheader: macro *
-\* equ *
-	dc.w ((\*_End-\*-2)/2)
-    endm
+		\*: equ *
+		dc.w ((\*_End-\*-2)/2)
+ 		endm
 
 dplc_entry: macro tiles,offset
-	dc.w (((tiles-1)&$F)<<12)|(offset&$FFF)
-	endm
+		dc.w (((tiles-1)&$F)<<12)|(offset&$FFF)
+		endm
 
 ; ---------------------------------------------------------------------------
 ; Object placement
@@ -869,7 +869,7 @@ childobjdata:	macro	chldptroffset,id,subdataptr
 
 sceneryobjdata:	macro	frame,mappings,vram,width,priority
 
-		dc.l (\frame\<<24)|mappings
+		dc.l (\frame\<<24)|\mappings
 		dc.w \vram
 		dc.b \width,\priority
 		endm
@@ -888,6 +888,14 @@ projdata:	macro	xoff,yoff,xvel,yvel,frame,render
 
 		dc.b	\xoff,\yoff,\xvel,\yvel,\frame,\render
 		endm
+; ---------------------------------------------------------------------------
+; Generate size entries for the CPZ spintube and MTZ teleport position arrays	
+; ---------------------------------------------------------------------------
+	
+tubedatasize:	macro	*
+		\*: equ *
+		dc.w	sizeof_\*-2
+		endm			
 		
 ; ---------------------------------------------------------------------------
 ; Remap ASCII to the custom character sets used throughout the game
@@ -911,13 +919,13 @@ charset:	macro	charset,txt
 			dc.b	0	
 		elseif	instr("0123456789","\chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$30)
-		elseif	instr("*","\chr")
+		elseif	strcmp("*","\chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$20)
-		elseif	instr("@","\chr")
+		elseif	strcmp("@","\chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$35) ; @ = copyright symbol	
-		elseif	instr(":","\chr")
+		elseif	strcmp(":","\chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$2E)
-		elseif	instr(".","\chr")
+		elseif	strcmp(".","\chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$21)		
 		elseif	instr("ABCDEFGHIJKLMNOPQRSTUVWXYZ","\chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$33)
@@ -936,18 +944,18 @@ charset:	macro	charset,txt
 			dc.w	0
 		elseif	instr("0123456789","\chr")
 			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$30)
-		elseif	instr("*","\chr")
+		elseif	strcmp("*","\chr")
 			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$2A)
-		elseif	instr("@","\chr")
+		elseif	strcmp("@","\chr")
 			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$35) ; @ = copyright symbol	
-		elseif	instr(":","\chr")
+		elseif	strcmp(":","\chr")
 			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$2E)
-		elseif	instr(".","\chr")
+		elseif	strcmp(".","\chr")
 			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$21)		
 		elseif	instr("ABCDEFGHIJKLMNOPQRSTUVWXYZ","\chr")
 			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$33)
 		else 	
-			inform 2,"Invalid character in title screen copyright text (must be uppercase letter, numeral, '*', '@', ' ;', or '.')."
+			inform 2,"Invalid character in copyright text (must be uppercase letter, numeral, '*', '@', ' ;', or '.')."
 		endc
 		endr
 		
@@ -961,15 +969,89 @@ charset:	macro	charset,txt
 			dc.b 	$FF
 		elseif	instr("0123456789","\chr")
 			dc.b	("\chr"-$30)*2
-		elseif	instr(":","\chr")
-			dc.b	$14
-		elseif	instr("E","\chr")	
-			dc.b	$16
+		elseif	strcmp(":","\chr")
+			dc.b	"\chr"-$26
+		elseif	strcmp("E","\chr")	
+			dc.b	"\chr"-$2F
 		else
-			inform 2,"Invalid character in HUD base text (must be numeral, 'E', ' ;', or ' ')."
+			inform 2,"Invalid character in HUD text (must be numeral, 'E', ' ;', or ' ')."
 		endc
 		endr
-		endc			
+		
+		elseif	stricmp("\charset","credits")
+		
+		rept strlen(\txt)				; repeat for length of string
+		chr:	substr ,1,"\str"			; get current character
+		str:	substr 2,,"\str"			; advance to next character in string
+		
+		if strcmp(" ","\chr")
+			dc.b 	0
+		elseif	instr("ABCDEFGH","\chr")
+			dc.b	("\chr"-$40)*2			; left half
+			dc.b	(("\chr"-$40)*2)+1		; right half
+		elseif	strcmp("I","\chr")
+			dc.b	("\chr"-$40)*2			; single width character
+		elseif	instr("JKLMNOPQRSTUVWXYZ","\chr")
+			dc.b 	(("\chr"-$40)*2)-1		; left half
+			dc.b	("\chr"-$40)*2			; right half	
+		elseif	strcmp("2","\chr")
+			dc.b	"\chr"+3			; left half
+			dc.b	"\chr"+4			; right half
+		elseif	instr("()","\chr")
+			dc.b	"\chr"+$F
+		elseif	strcmp("'","\chr")
+			dc.b	"\chr"+$12			; not actually used in the credits, but this character is loaded and usable
+		elseif	strcmp(".","\chr")
+			dc.b	"\chr"+$C
+		elseif	strcmp("@","\chr")
+			dc.b	"\chr"-5			; copyright symbol
+		elseif	strcmp("1","\chr")
+			dc.b	"\chr"+$B			; left half
+			dc.b	"\chr"+$C			; right half
+		elseif	strcmp("9","\chr")
+			dc.b	"\chr"+5			; left half
+			dc.b	"\chr"+6			; right half
+		elseif	strcmp(":","\chr")	
+			dc.b	"\chr"+6			; completely unused
+		else
+			inform 2,"Invalid character in credits text (must be uppercase letter, '1', '2', '9', '(', ')', '.', ''', ':', or '@')."
+		endc
+		endr
+					
+		elseif	stricmp("\charset","intro")
+		; Identical to credits, except all values are reduced by 1 and numbers are not supported.
+		rept strlen(\txt)				; repeat for length of string
+		chr:	substr ,1,"\str"			; get current character
+		str:	substr 2,,"\str"			; advance to next character in string
+		
+		if strcmp(" ","\chr")
+			dc.b 	0
+		elseif	instr("ABCDEFGH","\chr")
+			dc.b	(("\chr"-$40)*2)-1		; left half
+			dc.b	(("\chr"-$40)*2)		; right half
+		elseif	strcmp("I","\chr")
+			dc.b	(("\chr"-$40)*2)-1		; single width character
+		elseif	instr("JKLMNOPQRSTUVWXYZ","\chr")
+			dc.b 	("\chr"-$40)*2-2		; left half
+			dc.b	("\chr"-$40)*2-1		; right half	
+		elseif	instr("()","\chr")
+			dc.b	"\chr"+$E
+		elseif	strcmp("'","\chr")
+			dc.b	"\chr"+$11 		
+		elseif	strcmp(".","\chr")
+			dc.b	"\chr"+$B
+		elseif	strcmp("@","\chr")			; copyright symbol
+			dc.b	"\chr"-6
+		elseif	strcmp(":","\chr")	
+			dc.b	"\chr"+5			; completely unused
+		else						
+			inform 2,"Invalid character in intro text (must be uppercase letter, '(', ')', '.', ''', ':', or '@')."	
+		endc
+		endr
+		
+		else
+			inform 2,"Invalid character set specified (must be menu, copyright, hud, credits, or intro)."
+		endc	
 		endm
 	
 
@@ -988,7 +1070,7 @@ z80_ptr: macros
 ; ---------------------------------------------------------------------------	
 bnkswtch_vals: macro *
 
-\* equ *
+		\*: equ *
 
 		cnt: = 0
 		ptr_num: = 1
@@ -1020,7 +1102,7 @@ bnkswtch_vals: macro *
 
 startbank: macro *
 
-\* equ *
+		\*: equ *
 
 		if ~def(sndbnk_id)				; generate id of soundbank, used later to check for overflow
 			sndbnk_id: = 1

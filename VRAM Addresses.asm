@@ -19,11 +19,11 @@ vram_TitleSprites:          equ $2A00
 tile_TitleSprites:			equ vram_TitleSprites/sizeof_cell
 vram_MenuJunk:              equ $7E40
 vram_Player1VS2:            equ $8040
-vram_CreditsFont:           equ $A000
+vram_CreditsFont_Intro:     equ $A000
 vram_StandardFont_TtlScr:	equ $D000
 
 ; Credits
-vram_CreditText_CredScr:	equ $0020
+vram_CreditsFont_Credits:	equ $0020
 
 ; Menus
 vram_MenuBox:               equ $0E00

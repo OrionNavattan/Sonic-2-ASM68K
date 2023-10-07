@@ -896,7 +896,7 @@ v_title_falling_star:	rs.b sizeof_ost				; $FFFFB440
 ; ---------------------------------------------------------------------------
 
 ; Special Stage variables:	
-				rsset ram_start|$FF000000			; character art, stage layout, and object location data
+				rsset ram_start|$FF000000	; character art, stage layout, and object location data
 v_ss_character_art:		rs.b sizeof_nem_specialsonicandtails ; $FFFF0000 ; $353 art blocks ;  SSRAM_Nem_SpecialSonicAndTails
 
 v_ss_perspective_data:	rs.b $1AFC				; $FFFF6A60 ; SSRAM_Kos_SpecialPerspective
