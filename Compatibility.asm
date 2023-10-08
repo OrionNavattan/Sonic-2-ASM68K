@@ -113,9 +113,11 @@ boss_routine:			equ ost_boss_routine
 boss_defeated:			equ ost_boss_defeated
 boss_hitcount2:			equ ost_boss_hitcount2
 boss_hurt_sonic:		equ ost_boss_hurtplayer
+
+; ---------------------------------------------------------------------------
+; Variables/RAM Addresses
 ; ---------------------------------------------------------------------------
 
-; Variables/RAM Addresses
 Chunk_Table:			equ v_128x128_tiles
 Level_Layout:			equ v_level_layout
 Block_Table:			equ v_16x16_tiles
@@ -780,14 +782,15 @@ EndSeqPaletteChanger:	equ	v_ending_palchanger
 ;CutScene:				equ	v_ending_cutscene
 
 ; ---------------------------------------------------------------------------
-
 ; Major subroutines
+; ---------------------------------------------------------------------------
 
 DelayProgram:	equ	WaitForVBlank
 WindTunnel		equ	WindTunnels
 QueueDMATransfer: 	equ	AddDMA
 ProcessDMAQueue:	equ	ProcessDMA
 DrawInitialBG:	equ	DrawTilesAtStart
+DeformBgLayer:	equ DeformLayers
 MarkObjGone:	equ DespawnObject
 MarkObjGone2:	equ DespawnObject2
 MarkObjGone3:	equ DespawnObject3
@@ -803,6 +806,8 @@ SlopedPlatform:		equ SlopeObject
 SolidObject_Always:	equ SolidObject_NoRenderChk
 SlopedSolid:		equ SolidObject_Heightmap
 BreakObjectToPieces:	equ SmashObject
+Obj_GetOrientationToPlayer:	equ FindPlayer
+Obj_CapSpeed:	equ CapSpeed
 
 Sonic_AnglePos:	equ Player_AnglePos
 Sonic_Angle:	equ Player_UpdateAngle
@@ -832,10 +837,10 @@ CheckLeftCeilingDist:	equ Player_FindWallLeft
 CheckLeftWallDist:	equ Player_FindWallLeft_Quick_UsePos
 CheckLeftWallDist_Part2:	equ Player_FindWallLeft_Quick
 ObjCheckLeftWallDist:	equ FindWallLeftObj
+
 ; ---------------------------------------------------------------------------
-
 ; Sound Driver Compatibility
-
+; ---------------------------------------------------------------------------
 
 zYM2612_A0: 		equ ym_reg_a0
 zYM2612_D0:			equ ym_reg_d0
