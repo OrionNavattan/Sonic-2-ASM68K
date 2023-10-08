@@ -6265,7 +6265,7 @@ loc_52F4:
 		moveq	#0,d0
 		bsr.w	NewPLC
 		move.l	#$40400000,d0
-		lea	word_7822(pc),a0
+		lea	SS_ResultsLetters(pc),a0
 		jsrto	LoadTitleCardSS,JmpTo_LoadTitleCardSS
 		move.l	#$72000002,(vdp_control_port).l
 		lea	(Nem_SpecialStageResults).l,a0
@@ -9511,23 +9511,9 @@ SS_LoadPalAndData:
 		rts	
 
 ; ===========================================================================
-word_7822:	
-		dc.w	 4					; 0 
-		dc.w  $804					; 1
-		dc.w  $C04					; 2
-		dc.w $1404					; 3
-		dc.w $1804					; 4
-		dc.w $1C02					; 5
-		dc.w $2604					; 6
-		dc.w $2A06					; 7
-		dc.w $3004					; 8
-		dc.w $3804					; 9
-		dc.w $3C04					; 10
-		dc.w $4004					; 11
-		dc.w $4404					; 12
-		dc.w $4C06					; 13
-		dc.w $5A02					; 14
-		dc.w $FFFF					; 15
+
+SS_ResultsLetters:	charset titlecard,"ACDGHILMPRSTUW."
+
 ; ===========================================================================
 
 	if Revision<2
@@ -9694,11 +9680,13 @@ locret_7A5C:
 
 ; ===========================================================================
 ContinueText_AdditionalLetters:	
-		dc.w  $804					; 0 
-		dc.w $4004					; 1
-		dc.w $1C02					; 2
-		dc.w $4404					; 3
-		dc.w $FFFF					; 4
+		charset titlecard,"CONTINUE"
+
+	;	dc.w  $804					; 0 
+	;	dc.w $4004					; 1
+	;	dc.w $1C02					; 2
+	;	dc.w $4404					; 3
+	;	dc.w $FFFF					; 4
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object DA - Continue text
@@ -13663,7 +13651,7 @@ creditsptr:	macro	addr,line,col
 		shift
 		shift		
 		endr
-		dc.w -1						; terminator
+		dc.w $FFFF					; terminator
 		endm
 
 vram_ptr: = vram_title_fg
@@ -13955,7 +13943,6 @@ credtxt:	macro	chset,pal,txt
 		endc
 		dc.b ((vram_src/sizeof_cell+\pal)&$FF00)>>8	; palette index
 		charset	\chset,\txt				; generate the text
-		dc.b $FF					; terminator
 		rev02even
 		endm
 
@@ -27030,8 +27017,8 @@ LoadTitleCard:
 		bsr.s	sub_157B0
 		moveq	#0,d0
 		move.b	(v_zone).w,d0
-		move.b	byte_15820(pc,d0.w),d0
-		lea	word_15832(pc),a0
+		move.b	TitleCardLetters_Index(pc,d0.w),d0
+		lea	TitleCardLetters(pc),a0
 		lea	(a0,d0.w),a0	
 		vdp_comm.l	move,vram_LevelName,vram,write,d0
 
@@ -27062,23 +27049,41 @@ loc_1581A:
 		enable_ints
 		rts	
 ; ===========================================================================
-byte_15820:	
-		dc.b   0,  0,  0,  0,$10,$10,$98,$20,$2C,  0,$3C,$46,$58,$68,$A8,$7A ; 0
-		dc.b $8A,  0					; 16
-		
-word_15832:	
-		dc.w $2A06,$3804,    4,$2604, $C04,$1804,$1C02,$FFFF ; 0	
-		dc.w $2A06,$4004,$3804,$3004,$2604,$1C02,$3C04,$FFFF ; 8
-		dc.w $1804,$1C02,$2604,$4004,$3004,$FFFF,$1804,$1C02 ; 16
-		dc.w  $C04,$3004,    4,$2604, $804,$FFFF,$1C02,$2604 ; 24
-		dc.w  $804,    4,$FFFF,$2A06,$5604,$3C04,$4004,$1C02 ; 32
-		dc.w  $804,    4,$4804,$FFFF, $804,    4,$3C04,$1C02 ; 40
-		dc.w $1404,$1804,$4004,$FFFF, $804,$1804,$2A06,$1C02 ; 48
-		dc.w	 4,$2604,$3004,$4004,$FFFF,    4,$3404,$4404 ; 56
-		dc.w $4004,$1C02, $804,$3804,$FFFF,$3C04,$2204,$5604 ; 64
-		dc.w  $804,$1804,    4,$FFFF,$4C06,$1C02,$1404,$1004 ; 72
-		dc.w $3804,$4004,$3C04,$FFFF, $C04,    4,$4004,$1804 ; 80
-		dc.w $1404,$FFFF				; 88
+
+TitleCardLetters_Index:						; index and ptr can't be used here unfortunately due to forward reference restrictions
+		dc.b TitleCardLetters_EHZ-TitleCardLetters
+		dc.b TitleCardLetters_Null-TitleCardLetters
+		dc.b TitleCardLetters_Null-TitleCardLetters
+		dc.b TitleCardLetters_Null-TitleCardLetters
+		dc.b TitleCardLetters_MTZ-TitleCardLetters
+		dc.b TitleCardLetters_MTZ-TitleCardLetters
+		dc.b TitleCardLetters_WFZ-TitleCardLetters
+		dc.b TitleCardLetters_HTZ-TitleCardLetters
+		dc.b TitleCardLetters_HPZ-TitleCardLetters
+		dc.b TitleCardLetters_Null-TitleCardLetters
+		dc.b TitleCardLetters_OOZ-TitleCardLetters
+		dc.b TitleCardLetters_MCZ-TitleCardLetters
+		dc.b TitleCardLetters_CNZ-TitleCardLetters
+		dc.b TitleCardLetters_CPZ-TitleCardLetters
+		dc.b TitleCardLetters_DEZ-TitleCardLetters
+		dc.b TitleCardLetters_ARZ-TitleCardLetters
+		dc.b TitleCardLetters_SCZ-TitleCardLetters
+		even	
+			
+TitleCardLetters:
+TitleCardLetters_Null:	
+TitleCardLetters_EHZ:	charset titlecard,"EMERALD HILL"
+TitleCardLetters_MTZ:	charset titlecard,"METROPOLIS"
+TitleCardLetters_HTZ:	charset titlecard,"HILL TOP"
+TitleCardLetters_HPZ:	charset titlecard,"HIDDEN PALACE"
+TitleCardLetters_OOZ:	charset titlecard,"OIL OCEAN"
+TitleCardLetters_MCZ:	charset titlecard,"MYSTIC CAVE"
+TitleCardLetters_CNZ:	charset titlecard,"CASINO NIGHT"	
+TitleCardLetters_CPZ:	charset titlecard,"CHEMICAL PLANT"		
+TitleCardLetters_ARZ:	charset titlecard,"AQUATIC RUIN"		
+TitleCardLetters_SCZ:	charset titlecard,"SKY CHASE"		
+TitleCardLetters_WFZ:	charset titlecard,"WING FORTRESS"	
+TitleCardLetters_DEZ:	charset titlecard,"DEATH EGG"
 ; ===========================================================================
 
 	if Revision<2

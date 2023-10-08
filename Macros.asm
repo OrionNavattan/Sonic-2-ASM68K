@@ -908,7 +908,7 @@ charset:	macro	charset,txt
 		str:	equs \txt
 		
 		if stricmp("\charset","menu")
-		
+		; Text used in Options and 2P level select menus
 		dc.b	strlen(\txt)-1
 	
 		rept strlen(\txt)				; repeat for length of string
@@ -930,12 +930,12 @@ charset:	macro	charset,txt
 		elseif	instr("ABCDEFGHIJKLMNOPQRSTUVWXYZ","\chr")
 			dc.b	(vram_StandardFont/sizeof_cell)+("\chr"-$33)
 		else 	
-			inform 2,"Invalid character in menu text (must be uppercase letter, numeral, '*', '@', ' ;', or '.')."
+			inform 2,"Invalid character in menu text (must be uppercase letter, numeral, ' ', '*', '@', ' ;', or '.')."
 		endc		
 		endr
 					
 		elseif stricmp("\charset","copyright")
-		
+		; Text used for copyright message on title screen
 		rept strlen(\txt)				; repeat for length of string
 		chr:	substr ,1,"\str"			; get current character
 		str:	substr 2,,"\str"			; advance to next character in string
@@ -955,12 +955,12 @@ charset:	macro	charset,txt
 		elseif	instr("ABCDEFGHIJKLMNOPQRSTUVWXYZ","\chr")
 			dc.w	(vram_StandardFont_TtlScr/sizeof_cell)+("\chr"-$33)
 		else 	
-			inform 2,"Invalid character in copyright text (must be uppercase letter, numeral, '*', '@', ' ;', or '.')."
+			inform 2,"Invalid character in copyright text (must be uppercase letter, numeral, ' ', '*', '@', ' ;', or '.')."
 		endc
 		endr
 		
 		elseif stricmp("\charset","hud")
-		
+		; Tile indices for loading initial HUD state
 		rept strlen(\txt)				; repeat for length of string
 		chr:	substr ,1,"\str"			; get current character
 		str:	substr 2,,"\str"			; advance to next character in string
@@ -979,7 +979,7 @@ charset:	macro	charset,txt
 		endr
 		
 		elseif	stricmp("\charset","credits")
-		
+		; Text used in the credits
 		rept strlen(\txt)				; repeat for length of string
 		chr:	substr ,1,"\str"			; get current character
 		str:	substr 2,,"\str"			; advance to next character in string
@@ -1014,12 +1014,13 @@ charset:	macro	charset,txt
 		elseif	strcmp(":","\chr")	
 			dc.b	"\chr"+6			; completely unused
 		else
-			inform 2,"Invalid character in credits text (must be uppercase letter, '1', '2', '9', '(', ')', '.', ''', ':', or '@')."
+			inform 2,"Invalid character in credits text (must be uppercase letter, ' ', '1', '2', '9', '(', ')', '.', ''', ':', or '@')."
 		endc
 		endr
-					
+		dc.b	$FF					; terminator			
 		elseif	stricmp("\charset","intro")
-		; Identical to credits, except all values are reduced by 1 and numbers are not supported.
+		; Text used on "Sonic and Miles 'Tails' Prower In" screen
+		; Identical to credits, except all values are reduced by 1 and numbers are not supported
 		rept strlen(\txt)				; repeat for length of string
 		chr:	substr ,1,"\str"			; get current character
 		str:	substr 2,,"\str"			; advance to next character in string
@@ -1045,12 +1046,60 @@ charset:	macro	charset,txt
 		elseif	strcmp(":","\chr")	
 			dc.b	"\chr"+5			; completely unused
 		else						
-			inform 2,"Invalid character in intro text (must be uppercase letter, '(', ')', '.', ''', ':', or '@')."	
+			inform 2,"Invalid character in intro text (must be uppercase letter, ' ', '(', ')', '.', ''', ':', or '@')."	
 		endc
 		endr
+		dc.b	$FF					; terminator			
+		elseif	stricmp("\charset","titlecard")
+		; Tile indices for loading letters from Nem_TitleCardFont to VRAM
+		pushp " ENOZ"					; always skip these characters, as they are loaded with the global title card tiles
 		
+		rept strlen(\txt)				; repeat for length of string
+		chr:	substr ,1,"\str"			; get current character
+		str:	substr 2,,"\str"			; advance to next character in string
+	
+		popp used					; get string of used characters
+		
+		if instr("\used","\chr")
+			pushp "\used"				; if character has already been used, simply push the used character string for next time
 		else
-			inform 2,"Invalid character set specified (must be menu, copyright, hud, credits, or intro)."
+			pushp "\chr\\used"			; otherwise, push the used character string and add current character to it
+		
+			if instr("ABCD","\chr")
+				dc.b	("\chr"-$41)*4
+				dc.b	4
+			elseif instr("FGH","\chr")
+				dc.b	("\chr"-$42)*4
+				dc.b	4
+			elseif strcmp("I","\chr")
+				dc.b	("\chr"-$42)*4
+				dc.b	2
+			elseif instr("JKL","\chr")
+				dc.b	(("\chr"-$43)*4)+2
+				dc.b	4
+			elseif strcmp("M","\chr")
+				dc.b	(("\chr"-$43)*4)+2
+				dc.b	6			
+			elseif instr("PQRSTUV","\chr")
+				dc.b	(("\chr"-$44)*4)
+				dc.b	4
+			elseif strcmp("W","\chr")
+				dc.b	(("\chr"-$44)*4)
+				dc.b	6
+			elseif instr("XY","\chr")
+				dc.b	(("\chr"-$44)*4)+2
+				dc.b	4
+			elseif strcmp(".","\chr")
+				dc.b	(("\chr"-$18)*4)+2
+				dc.b	2
+			else
+				inform 2,"Invalid character in title card text (must be uppercase letter, ' ', or '.')."	
+			endc
+		endc
+		endr
+		dc.w	$FFFF					; terminator
+		else
+			inform 2,"Invalid character set specified (must be menu, copyright, hud, credits, intro, or titlecard)."
 		endc	
 		endm
 	
