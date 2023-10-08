@@ -69771,8 +69771,16 @@ FindPlayer:
 		sub.w	ost_x_pos(a2),d3			; subtract x pos of object
 		mvabs.w	d3,d5					; d5 =  absolute horizontal distance to player 2
 			
+	if FixBugs
+		; Fix various badniks following or otherwise behaving erratically in debug mode
+		tst.w	(v_debug_active).w			; is debug mode active?
+		bne.s 	.player2closer				; if so, ignore player 1
+	endc			
+			
 		cmp.w	d5,d4
 		bls.s	.chk_horiz				; branch if player 1 is closer
+	
+	.player2closer:
 		movea.l	a2,a1					; else, player 2 is closer (could be word-length)
 		move.w	d3,d2
 
@@ -71850,11 +71858,31 @@ Turt_Init:
 		bsr.w	Turt_LoadRider
 		lea	(Ani_TurtJet).l,a1			; set animation script for jet
 		move.l	a1,ost_turt_jetani(a0)
-; 		move.l	#Ani_TurtJet,ost_turt_jetani(a0) ; above two instructions could be optimized to this
+	;	move.l	#Ani_TurtJet,ost_turt_jetani(a0) ; above two instructions could be optimized to this
 		bra.w	BTJet_Load
 ; ===========================================================================
 
-Turt_Action:				
+
+	if FixBugs
+		; When the Turloid's rider is destroyed, ost_turt_riderptr is never cleared.
+		; In the event that a rider is destroyed before its parent Turtloid fires, and
+		; another Badnik is defeated after the rider's explosion finishes, there is a chance
+		; that the animal spawned by the second badnik will be loaded into the slot
+		; still referenced by the Turtloid. If the Turtloid attempts to fire after this,
+		; the animal will be treated as the rider and set to an invalid mapping frame (3),
+		; causing an address error in BuildSprites.
+		
+		; This can be fixed by clearing the pointer as soon as the rider is defeated,
+		; and skipping setting the rider's frame if it no longer exists
+Turt_Action:
+		movea.w	ost_turt_riderptr(a0),a1		; get pointer to rider
+		cmpi.b	#id_TurtloidRider,ost_id(a1)	
+		beq.s	.notdestroyed				; branch if rider hasn't been destroyed
+		clr.w	ost_turt_riderptr			; rider no longer exists; clear the pointer
+	.notdestroyed:
+	else
+Turt_Action:
+	endc					
 		moveq	#0,d0
 		move.b	ost_secondary_routine(a0),d0
 		move.w	Turt_Action_Index(pc,d0.w),d1
@@ -71906,8 +71934,14 @@ Turt_Fire:
 		subq.b	#1,ost_turt_delay(a0)			; decrement timer
 		bpl.w	TRider_SharedRTS			; branch if time remains
 		addq.b	#2,ost_secondary_routine(a0)		; go to Turt_ResumeFlight next
-		move.b	#8,ost_turt_delay(a0)			; wait for 8 frames		
+		move.b	#8,ost_turt_delay(a0)			; wait for 8 frames	
+	if FixBugs
+		move.w	ost_turt_riderptr(a0),d1
+		beq.w	Turt_LoadProjectile			; branch if rider has already been destroyed
+		movea.w	d1,a1					; a1 = Turtloid's rider
+	else	
 		movea.w	ost_turt_riderptr(a0),a1		; a1 = Turtloid's rider
+	endc
 		move.b	#id_Frame_TRider_FireProj,ost_frame(a1)	; set rider's fire frame
 		bra.w	Turt_LoadProjectile
 ; ===========================================================================
