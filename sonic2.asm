@@ -8759,6 +8759,7 @@ FindNextFreeObjSpecial:
 HUDSpecial:				
 		move.b	ost_primary_routine(a0),d0
 	if FixBugs
+		; See below.
 		beq.s	.skip_display
 		move.w	#sizeof_priority*0,d0
 		jmp	(DisplaySprite3).l		
@@ -8809,7 +8810,7 @@ loc_7012:
 loc_7032:				
 		move.w	d0,(a2,d2.w)
 		move.b	(a1)+,ost_subspr2_frame-ost_subspr2_x_pos(a2,d2.w)
-		addq.w	#6,d2
+		addq.w	#next_subspr,d2
 		dbf	d3,loc_7032
 		rts	
 ; ===========================================================================
@@ -8833,7 +8834,7 @@ byte_7068:	dc.b   2,$80,  0,  1				; 0
 byte_706C:	dc.b   2,$80,  0,  2				; 0 
 
 		include "mappings/sprite/Special HUD.asm"
-; ===========================================================================
+		
 ; ----------------------------------------------------------------------------
 ; Object 5F - Start banner/"Ending controller" from Special Stage
 ; ----------------------------------------------------------------------------
@@ -8979,7 +8980,6 @@ locret_723E:
 		include "mappings/sprite/Special Stage Start Banner.asm"
 		include "mappings/sprite/Special Stage Numbers.asm"
 		
-; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 87 - Number of rings in Special Stage
 ; ----------------------------------------------------------------------------
@@ -9457,6 +9457,7 @@ SS_RingReq_Alone:
 		dc.b  80,140,210,210				; 24
 		dc.b 100,150,190,190				; 28
 		even
+; ===========================================================================
 
 SS_PaletteTable:	
 		dc.w   id_Pal_SS1
@@ -9471,7 +9472,6 @@ SS_PaletteTable:
 		dc.w   id_Pal_SS3_2p
 
 ; ===========================================================================
-
 
 SS_LoadPalAndData:				
 		clr.b	(v_special_act).w
@@ -9627,8 +9627,8 @@ loc_798E:
 
 loc_79BA:				
 		move.b	#id_Level,(v_gamemode).w
-		move.b	#3,(v_lives).w
-		move.b	#3,(v_lives_p2).w
+		move.b	#lives_start,(v_lives).w
+		move.b	#lives_start,(v_lives_p2).w
 		moveq	#0,d0
 		move.w	d0,(v_rings).w
 		move.l	d0,(v_time).w
@@ -9638,8 +9638,8 @@ loc_79BA:
 		move.l	d0,(v_time_p2).w
 		move.l	d0,(v_score_p2).w
 		move.b	d0,(v_last_lamppost_p2).w
-		move.l	#5000,(v_score_next_life).w
-		move.l	#5000,(v_score_next_life_p2).w
+		move.l	#points_for_life,(v_score_next_life).w
+		move.l	#points_for_life,(v_score_next_life_p2).w
 		subq.b	#1,(v_continues).w
 		rts	
 
@@ -9681,12 +9681,7 @@ locret_7A5C:
 ; ===========================================================================
 ContinueText_AdditionalLetters:	
 		charset titlecard,"CONTINUE"
-
-	;	dc.w  $804					; 0 
-	;	dc.w $4004					; 1
-	;	dc.w $1C02					; 2
-	;	dc.w $4404					; 3
-	;	dc.w $FFFF					; 4
+		
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object DA - Continue text
@@ -9791,7 +9786,7 @@ loc_7B76:
 
 loc_7B7C:				
 		jmp	(DeleteObject).l
-; ===========================================================================
+
 ; ----------------------------------------------------------------------------
 ; Object DB - Sonic and Tails on the continue screen
 ; ----------------------------------------------------------------------------
@@ -40057,7 +40052,6 @@ loc_1E1B8:
 		nop	
 	endc
 	
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Subroutine to change Sonic and Tails' angle & position as they walk 
 ; along the floor
@@ -40448,6 +40442,7 @@ loc_1E57C:
 
 ;	uses d0.w, d1.l, d2.w, d4,w
 ; ---------------------------------------------------------------------------
+
 FindNearestTile:				
 		move.w	d2,d0					; get y pos of bottom edge of object
 		add.w	d0,d0					; multiply y pos by 2 (because layout alternates between level and bg lines)
@@ -40463,7 +40458,7 @@ FindNearestTile:
 		lea	(v_level_layout).w,a1
 		move.b	(a1,d0.w),d1				; get 128x128 tile number
 		add.w	d1,d1					; multiply by 2 
-		move.w	FindNearestTile_Offsets(pc,d1.w),d1	; get base address of 128x128 tile
+		move.w	TileOffsetList(pc,d1.w),d1	; get base address of 128x128 tile
 		move.w	d2,d0					; d0 = y pos * 2 (because each 16x16 tile is represented by 2 bytes)
 		andi.w	#$70,d0					; read only high nybble of low byte (for y pos within 128x128 tile)
 		add.w	d0,d1					; add to base address
@@ -40477,9 +40472,9 @@ FindNearestTile:
 ; in Sonic 1.
 ; ---------------------------------------------------------------------------
 
-FindNearestTile_Offsets:	
+TileOffsetList:	
 		c: = 0						; start at zero	
-		rept 256		
+		rept countof_128x128		
 		dc.w c						; include value	
 		c: = c+$80					; increment by 128
 		endr						; repeat 256 times, generating the table
