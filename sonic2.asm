@@ -35035,10 +35035,10 @@ locret_1AEA8:
 ; ===========================================================================
 
 loc_1AEAA:				
-		move.l	#-$2A00,(v_collision_index_ptr).w
+		move.l	#v_primary_collision,(v_collision_index_ptr).w
 		cmpi.b	#$C,$3E(a0)
 		beq.s	loc_1AEC2
-		move.l	#-$2700,(v_collision_index_ptr).w
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w
 
 loc_1AEC2:				
 		move.b	$3F(a0),d5
@@ -37953,10 +37953,10 @@ locret_1C958:
 ; ===========================================================================
 
 loc_1C95A:				
-		move.l	#-$2A00,(v_collision_index_ptr).w
+		move.l	#v_primary_collision,(v_collision_index_ptr).w
 		cmpi.b	#$C,$3E(a0)
 		beq.s	loc_1C972
-		move.l	#-$2700,(v_collision_index_ptr).w
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w
 
 loc_1C972:				
 		move.b	$3F(a0),d5
@@ -40056,123 +40056,123 @@ loc_1E1B8:
 ; Subroutine to change Sonic and Tails' angle & position as they walk 
 ; along the floor
 ; ---------------------------------------------------------------------------
-Player_AnglePos:				
-		move.l	#-$2A00,(v_collision_index_ptr).w
-		cmpi.b	#$C,$3E(a0)
-		beq.s	loc_1E24C
-		move.l	#-$2700,(v_collision_index_ptr).w
 
-loc_1E24C:				
-		move.b	$3E(a0),d5
-		btst	#3,ost_primary_status(a0)
-		beq.s	loc_1E264
+Player_AnglePos:				
+		move.l	#v_primary_collision,(v_collision_index_ptr).w
+		cmpi.b	#$C,ost_top_solid_bit(a0)
+		beq.s	.use_primary
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w
+
+	.use_primary:				
+		move.b	ost_top_solid_bit(a0),d5		;  bit to test for solidness
+		btst	#status_platform_bit,ost_primary_status(a0)
+		beq.s	.not_on_platform			; branch if player isn't on a platform
 		moveq	#0,d0
-		move.b	d0,(v_angle_right).w
+		move.b	d0,(v_angle_right).w			; clear angle hotspots
 		move.b	d0,(v_angle_left).w
 		rts	
 ; ===========================================================================
 
-loc_1E264:				
+.not_on_platform:				
 		moveq	#3,d0
 		move.b	d0,(v_angle_right).w
 		move.b	d0,(v_angle_left).w
-		move.b	ost_angle(a0),d0
+		move.b	ost_angle(a0),d0			; get last angle
 		addi.b	#$20,d0
-		bpl.s	loc_1E286
+		bpl.s	.floor_or_left				; branch if angle is (generally) flat or left vertical
 		move.b	ost_angle(a0),d0
-		bpl.s	loc_1E280
-		subq.b	#1,d0
+		bpl.s	.angle_pos				; branch if angle is between $60 and $7F
+		subq.b	#1,d0					; subtract 1 if $80-$DF
 
-loc_1E280:				
+	.angle_pos:				
 		addi.b	#$20,d0
-		bra.s	loc_1E292
+		bra.s	.chk_surface				; d0 = angle + ($1F or $20)
 ; ===========================================================================
 
-loc_1E286:				
+.floor_or_left:				
 		move.b	ost_angle(a0),d0
-		bpl.s	loc_1E28E
-		addq.b	#1,d0
+		bpl.s	.angle_pos_				; branch if angle is between 0 and $60
+		addq.b	#1,d0					; add 1 if $E0-$FF
+		
+	.angle_pos_:				
+		addi.b	#$1F,d0					; d0 = angle + ($1F or $20)
 
-loc_1E28E:				
-		addi.b	#$1F,d0
-
-loc_1E292:				
-		andi.b	#-$40,d0
+.chk_surface:				
+		andi.b	#$C0,d0					; read only bits 6-7 of angle
 		cmpi.b	#$40,d0
-		beq.w	Sonic_WalkVertL
-		cmpi.b	#-$80,d0
-		beq.w	Sonic_WalkCeiling
-		cmpi.b	#-$40,d0
-		beq.w	Player_WalkVertR
+		beq.w	Player_WalkVertL			; branch if on left vertical
+		cmpi.b	#$80,d0
+		beq.w	Player_WalkCeiling			; branch if on ceiling
+		cmpi.b	#$C0,d0
+		beq.w	Player_WalkVertR			; branch if on right vertical
+		
+;Player_WalkFloor:		
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
 		move.b	ost_height(a0),d0
 		ext.w	d0
-		add.w	d0,d2
+		add.w	d0,d2					; d2 = y pos of bottom edge of player
 		move.b	ost_width(a0),d0
 		ext.w	d0
-		add.w	d0,d3
-		lea	(v_angle_right).w,a4
-		movea.w	#$10,a3
+		add.w	d0,d3					; d3 = x pos of right edge of player
+		lea	(v_angle_right).w,a4			; write angle here
+		movea.w	#$10,a3					; tile height
 		move.w	#0,d6
 		bsr.w	FindFloor
-		move.w	d1,-(sp)
+		pushr.w	d1					; save d1 (distance to floor) to stack
+		
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
 		move.b	ost_height(a0),d0
 		ext.w	d0
-		add.w	d0,d2
+		add.w	d0,d2					; d2 = y pos of bottom edge of player
 		move.b	ost_width(a0),d0
 		ext.w	d0
 		neg.w	d0
-		add.w	d0,d3
-		lea	(v_angle_left).w,a4
-		movea.w	#$10,a3
+		add.w	d0,d3					; d3 = x pos of left edge of player
+		lea	(v_angle_left).w,a4			; write angle here
+		movea.w	#$10,a3					; tile height
 		move.w	#0,d6
-		bsr.w	FindFloor
-		move.w	(sp)+,d0
-		bsr.w	Player_UpdateAngle
+		bsr.w	FindFloor				; d1 = distance to floor left side		
+		popr.w	d0					; d0 = distance to floor right side
+		bsr.w	Player_UpdateAngle			; update angle (could be bsr.s)
 		tst.w	d1
-		beq.s	locret_1E31C
-		bpl.s	loc_1E31E
+		beq.s	.on_or_below_floor			; branch if player is 0px from floor
+		bpl.s	.above_floor				; branch if player is above floor
 		cmpi.w	#-$E,d1
-		blt.s	locret_1E31C
-		add.w	d1,ost_y_pos(a0)
+		blt.s	.on_or_below_floor			; branch if player is > 14px below floor
+		add.w	d1,ost_y_pos(a0)			; align to floor
 
-locret_1E31C:				
+.on_or_below_floor:				
 		rts	
 ; ===========================================================================
 
-loc_1E31E:				
-		move.b	ost_x_vel(a0),d0
-		bpl.s	loc_1E326
-		neg.b	d0
-
-loc_1E326:				
+.above_floor:				
+		mvabs.b	ost_x_vel(a0),d0			; d0 = absolute value of x vel			
 		addq.b	#4,d0
 		cmpi.b	#$E,d0
-		bcs.s	loc_1E332
-		move.b	#$E,d0
+		bcs.s	.slow_x					; branch if player's absolute x vel+4 is less than 14
+		move.b	#$E,d0					; 14 pixels above floor
 
-loc_1E332:				
+	.slow_x:				
 		cmp.b	d0,d1
-		bgt.s	loc_1E33C
+		bgt.s	.in_air					; branch if player is > 14px above floor
 
-loc_1E336:				
-		add.w	d1,ost_y_pos(a0)
+.on_disc:				
+		add.w	d1,ost_y_pos(a0)			; align to floor
 		rts	
 ; ===========================================================================
 
-loc_1E33C:				
-		tst.b	$38(a0)
-		bne.s	loc_1E336
-		bset	#1,ost_primary_status(a0)
-		bclr	#5,ost_primary_status(a0)
-		move.b	#1,ost_anim_restart(a0)
+.in_air:				
+		tst.b	ost_sticktoconvex(a0)	
+		bne.s	.on_disc				; branch if player is on a convex surface (used in Sonic 1 & 3K; unused here)				
+		bset	#status_air_bit,ost_primary_status(a0)
+		bclr	#status_pushing_bit,ost_primary_status(a0)
+		move.b	#id_Ani_Son_Run,ost_anim_restart(a0)	; restart player's animation
 		rts	
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to	update Sonic or Tails' angle
 
@@ -40184,6 +40184,7 @@ loc_1E33C:
 ;	d1 = shortest distance to floor (either side)
 ;	d2 = angle
 ; ---------------------------------------------------------------------------
+
 Player_UpdateAngle:				
 		move.b	(v_angle_left).w,d2			; use left side angle
 		cmp.w	d0,d1
@@ -40213,7 +40214,10 @@ Player_UpdateAngle:
 		move.b	d2,ost_angle(a0)			; update angle
 		rts	
 		
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine allowing Sonic and Tails to walk up a vertical slope/wall to
+; their right
+; ---------------------------------------------------------------------------
 
 Player_WalkVertR:				
 		move.w	ost_y_pos(a0),d2
@@ -40222,213 +40226,208 @@ Player_WalkVertR:
 		move.b	ost_width(a0),d0
 		ext.w	d0
 		neg.w	d0
-		add.w	d0,d2
+		add.w	d0,d2					; d2 = y pos of upper edge of player (i.e. their front or back)
 		move.b	ost_height(a0),d0
 		ext.w	d0
-		add.w	d0,d3
-		lea	(v_angle_right).w,a4
-		movea.w	#$10,a3
+		add.w	d0,d3					; d3 = x pos of bottom edge of player (i.e. their feet)
+		lea	(v_angle_right).w,a4			; write angle here
+		movea.w	#$10,a3					; tile width
 		move.w	#0,d6
 		bsr.w	FindWall
-		move.w	d1,-(sp)
+		pushr.w	d1					; save d1 (distance to wall) to stack
+
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
 		move.b	ost_width(a0),d0
 		ext.w	d0
-		add.w	d0,d2
+		add.w	d0,d2					; d2 = y pos of lower edge of Sonic (i.e. his front or back)
 		move.b	ost_height(a0),d0
 		ext.w	d0
-		add.w	d0,d3
-		lea	(v_angle_left).w,a4
-		movea.w	#$10,a3
+		add.w	d0,d3					; d3 = x pos of bottom edge of Sonic (i.e. his feet)
+		lea	(v_angle_left).w,a4			; write angle here
+		movea.w	#$10,a3					; tile width
 		move.w	#0,d6
-		bsr.w	FindWall
-		move.w	(sp)+,d0
-		bsr.w	Player_UpdateAngle
+		bsr.w	FindWall				; d1 = distance to wall lower side
+		popr.w	d0					; d0 = distance to wall upper side
+		bsr.w	Player_UpdateAngle			; update angle
 		tst.w	d1
-		beq.s	locret_1E400
-		bpl.s	loc_1E402
+		beq.s	.on_or_inside_wall			; branch if player is 0px from wall
+		bpl.s	.outside_wall				; branch if player is outside wall
 		cmpi.w	#-$E,d1
-		blt.s	locret_1E400
+		blt.s	.on_or_inside_wall			; branch if player is > 14px inside wall
 		add.w	d1,ost_x_pos(a0)
 
-locret_1E400:				
+	.on_or_inside_wall:				
 		rts	
 ; ===========================================================================
 
-loc_1E402:				
-		move.b	ost_y_vel(a0),d0
-		bpl.s	loc_1E40A
-		neg.b	d0
-
-loc_1E40A:				
+.outside_wall:				
+		mvabs.b	ost_y_vel(a0),d0			; d0 = absolute value of y vel	
 		addq.b	#4,d0
 		cmpi.b	#$E,d0
-		bcs.s	loc_1E416
-		move.b	#$E,d0
+		bcs.s	.slow_y					; branch if player's absolute y vel+4 is less than 14
+		move.b	#$E,d0					; 14 pixels outside of wall
 
-loc_1E416:				
+	.slow_y:				
 		cmp.b	d0,d1
-		bgt.s	loc_1E420
+		bgt.s	.in_air					; branch if player is > 14px outside wall
 
-loc_1E41A:				
-		add.w	d1,ost_x_pos(a0)
+.on_disc:				
+		add.w	d1,ost_x_pos(a0)			; align to wall
 		rts	
 ; ===========================================================================
 
-loc_1E420:				
-		tst.b	$38(a0)
-		bne.s	loc_1E41A
-		bset	#1,ost_primary_status(a0)
-		bclr	#5,ost_primary_status(a0)
-		move.b	#1,ost_anim_restart(a0)
+.in_air:				
+		tst.b	ost_sticktoconvex(a0)
+		bne.s	.on_disc				; branch if player is on a convex surface (used in Sonic 1 & 3K; unused here)
+		bset	#status_air_bit,ost_primary_status(a0)
+		bclr	#status_pushing_bit,ost_primary_status(a0)
+		move.b	#id_Ani_Son_Run,ost_anim_restart(a0)	; restart player's animation
 		rts	
-; ===========================================================================
 
-Sonic_WalkCeiling:				
+; ---------------------------------------------------------------------------
+; Subroutine allowing Sonic and Tails to walk upside down
+; ---------------------------------------------------------------------------
+
+Player_WalkCeiling:				
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
 		move.b	ost_height(a0),d0
 		ext.w	d0
-		sub.w	d0,d2
+		sub.w	d0,d2					; d2 = y pos of top edge of Sonic (i.e. his feet)
+		eori.w	#$F,d2					; add some amount
+		move.b	ost_width(a0),d0
+		ext.w	d0
+		add.w	d0,d3					; d3 = x pos of right edge of Sonic
+		lea	(v_angle_right).w,a4			; write angle here
+		movea.w	#-$10,a3				; tile height
+		move.w	#chunkmap_yflip,d6			; yflip tile
+		bsr.w	FindFloor
+		pushr.w	d1					; save d1 (distance to ceiling) to stack
+		
+		move.w	ost_y_pos(a0),d2
+		move.w	ost_x_pos(a0),d3
+		moveq	#0,d0
+		move.b	ost_height(a0),d0
+		ext.w	d0
+		sub.w	d0,d2					; d2 = y pos of top edge of Sonic (i.e. his feet)
 		eori.w	#$F,d2
 		move.b	ost_width(a0),d0
 		ext.w	d0
-		add.w	d0,d3
-		lea	(v_angle_right).w,a4
-		movea.w	#-$10,a3
-		move.w	#$800,d6
-		bsr.w	FindFloor
-		move.w	d1,-(sp)
-		move.w	ost_y_pos(a0),d2
-		move.w	ost_x_pos(a0),d3
-		moveq	#0,d0
-		move.b	ost_height(a0),d0
-		ext.w	d0
-		sub.w	d0,d2
-		eori.w	#$F,d2
-		move.b	ost_width(a0),d0
-		ext.w	d0
-		sub.w	d0,d3
-		lea	(v_angle_left).w,a4
-		movea.w	#-$10,a3
-		move.w	#$800,d6
-		bsr.w	FindFloor
-		move.w	(sp)+,d0
-		bsr.w	Player_UpdateAngle
+		sub.w	d0,d3					; d3 = x pos of left edge of Sonic
+		lea	(v_angle_left).w,a4			; write angle here
+		movea.w	#-$10,a3				; tile height
+		move.w	#chunkmap_yflip,d6			; yflip tile
+		bsr.w	FindFloor				; d1 = distance to ceiling left side
+		popr.w	d0					; d0 = distance to ceiling right side
+		bsr.w	Player_UpdateAngle			; update angle
 		tst.w	d1
-		beq.s	locret_1E4AE
-		bpl.s	loc_1E4B0
+		beq.s	.on_or_above_ceiling			; branch if player is 0px from ceiling
+		bpl.s	.below_ceiling				; branch if player is below ceiling
 		cmpi.w	#-$E,d1
-		blt.s	locret_1E4AE
-		sub.w	d1,ost_y_pos(a0)
+		blt.s	.on_or_above_ceiling			; branch if player is > 14px inside ceiling
+		sub.w	d1,ost_y_pos(a0)			; align to ceiling
 
-locret_1E4AE:				
+	.on_or_above_ceiling:				
 		rts	
 ; ===========================================================================
 
-loc_1E4B0:				
-		move.b	ost_x_vel(a0),d0
-		bpl.s	loc_1E4B8
-		neg.b	d0
-
-loc_1E4B8:				
+.below_ceiling:				
+		mvabs.b	ost_x_vel(a0),d0			; d0 = absolute value of x vel				
 		addq.b	#4,d0
 		cmpi.b	#$E,d0
-		bcs.s	loc_1E4C4
-		move.b	#$E,d0
+		bcs.s	.slow_x					; branch if player's absolute x vel+4 is less than 14
+		move.b	#$E,d0					; 14 pixels above floor
 
-loc_1E4C4:				
+	.slow_x:							
 		cmp.b	d0,d1
-		bgt.s	loc_1E4CE
+		bgt.s	.in_air					; branch if player is > 14px below ceiling
 
-loc_1E4C8:				
-		sub.w	d1,ost_y_pos(a0)
+.on_disc:				
+		sub.w	d1,ost_y_pos(a0)			; align to ceiling
 		rts	
 ; ===========================================================================
 
-loc_1E4CE:				
-		tst.b	$38(a0)
-		bne.s	loc_1E4C8
-		bset	#1,ost_primary_status(a0)
-		bclr	#5,ost_primary_status(a0)
-		move.b	#1,ost_anim_restart(a0)
+.in_air:				
+		tst.b	ost_sticktoconvex(a0)
+		bne.s	.on_disc				; branch if player is on a convex surface (used in Sonic 1 & 3K; unused here)
+		bset	#status_air_bit,ost_primary_status(a0)
+		bclr	#status_pushing_bit,ost_primary_status(a0)
+		move.b	#id_Ani_Son_Run,ost_anim_restart(a0)	; restart player's animation
 		rts	
 ; ===========================================================================
 
-Sonic_WalkVertL:				
+Player_WalkVertL:				
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
 		move.b	ost_width(a0),d0
 		ext.w	d0
-		sub.w	d0,d2
+		sub.w	d0,d2					; d2 = y pos of upper edge of Sonic (i.e. his front or back)
 		move.b	ost_height(a0),d0
 		ext.w	d0
-		sub.w	d0,d3
-		eori.w	#$F,d3
-		lea	(v_angle_right).w,a4
-		movea.w	#-$10,a3
-		move.w	#$400,d6
+		sub.w	d0,d3					; d3 = x pos of bottom edge of Sonic (i.e. his feet)
+		eori.w	#$F,d3					; add some amount
+		lea	(v_angle_right).w,a4			; write angle here
+		movea.w	#-$10,a3				; tile width
+		move.w	#chunkmap_xflip,d6
 		bsr.w	FindWall
-		move.w	d1,-(sp)
+		pushr.w	d1					; save d1 (distance to wall) to stack
+		
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
 		move.b	ost_width(a0),d0
 		ext.w	d0
-		add.w	d0,d2
+		add.w	d0,d2					; d2 = y pos of lower edge of Sonic (i.e. his front or back)
 		move.b	ost_height(a0),d0
 		ext.w	d0
-		sub.w	d0,d3
+		sub.w	d0,d3					; d3 = x pos of bottom edge of Sonic (i.e. his feet)
 		eori.w	#$F,d3
-		lea	(v_angle_left).w,a4
-		movea.w	#-$10,a3
-		move.w	#$400,d6
-		bsr.w	FindWall
-		move.w	(sp)+,d0
-		bsr.w	Player_UpdateAngle
+		lea	(v_angle_left).w,a4			; write angle here
+		movea.w	#-$10,a3				; tile width
+		move.w	#chunkmap_xflip,d6		
+		bsr.w	FindWall				; d1 = distance to wall lower side
+		popr.w	d0					; d0 = distance to wall upper side
+		bsr.w	Player_UpdateAngle			; update angle
 		tst.w	d1
-		beq.s	locret_1E55C
-		bpl.s	loc_1E55E
+		beq.s	.on_or_inside_wall			; branch if player is 0px from wall
+		bpl.s	.outside_wall				; branch if player is outside wall
 		cmpi.w	#-$E,d1
-		blt.s	locret_1E55C
-		sub.w	d1,ost_x_pos(a0)
+		blt.s	.on_or_inside_wall			; branch if player is > 14px inside wall
+		sub.w	d1,ost_x_pos(a0)			; align to wall
 
-locret_1E55C:				
+	.on_or_inside_wall:				
 		rts	
 ; ===========================================================================
 
-loc_1E55E:				
-		move.b	ost_y_vel(a0),d0
-		bpl.s	loc_1E566
-		neg.b	d0
-
-loc_1E566:				
+.outside_wall:				
+		mvabs.b	ost_y_vel(a0),d0			
 		addq.b	#4,d0
 		cmpi.b	#$E,d0
-		bcs.s	loc_1E572
-		move.b	#$E,d0
+		bcs.s	.slow_y					; branch if player's absolute y vel+4 is less than 14
+		move.b	#$E,d0					; 14 pixels outside of wall
 
-loc_1E572:				
+	.slow_y:				
 		cmp.b	d0,d1
-		bgt.s	loc_1E57C
+		bgt.s	.in_air					; branch if player is > 14px outside wall
 
-loc_1E576:				
-		sub.w	d1,ost_x_pos(a0)
+
+.on_disc:				
+		sub.w	d1,ost_x_pos(a0)			; align to wall
 		rts	
 ; ===========================================================================
 
-loc_1E57C:				
-		tst.b	$38(a0)
-		bne.s	loc_1E576
-		bset	#1,ost_primary_status(a0)
-		bclr	#5,ost_primary_status(a0)
-		move.b	#1,ost_anim_restart(a0)
+.in_air:				
+		tst.b	ost_sticktoconvex(a0)
+		bne.s	.on_disc				; branch if player is on a convex surface (used in Sonic 1 & 3K; unused here)
+		bset	#status_air_bit,ost_primary_status(a0)
+		bclr	#status_pushing_bit,ost_primary_status(a0)
+		move.b	#id_Ani_Son_Run,ost_anim_restart(a0)	; restart player's animation
 		rts	
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to	find which 16x16 tile the object is standing on
 
@@ -40458,7 +40457,7 @@ FindNearestTile:
 		lea	(v_level_layout).w,a1
 		move.b	(a1,d0.w),d1				; get 128x128 tile number
 		add.w	d1,d1					; multiply by 2 
-		move.w	TileOffsetList(pc,d1.w),d1	; get base address of 128x128 tile
+		move.w	TileOffsetList(pc,d1.w),d1		; get base address of 128x128 tile
 		move.w	d2,d0					; d0 = y pos * 2 (because each 16x16 tile is represented by 2 bytes)
 		andi.w	#$70,d0					; read only high nybble of low byte (for y pos within 128x128 tile)
 		add.w	d0,d1					; add to base address
@@ -40479,13 +40478,31 @@ TileOffsetList:
 		c: = c+$80					; increment by 128
 		endr						; repeat 256 times, generating the table
 		
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	find the floor
+
+; input:
+;	d2.w = y position of object's bottom edge
+;	d3.w = x position of object
+;	d5.l = bit to test for solidness: $D = top solid; $E = left/right/bottom solid
+;	d6.w = eor bitmask for 16x16 tile
+;	a3.w = height of 16x16 tiles: $10 or -$10 if object is inverted
+;	a4 = RAM address to write angle byte
+
+; output:
+;	d1.w = distance to the floor
+;	a1 = address within 256x256 mappings where object is standing
+;	(a1).w = 16x16 tile number, x/yflip, solidness
+;	(a4).b = floor angle
+
+;	uses d0.w, d2.w, d4.w
+; ---------------------------------------------------------------------------
 
 FindFloor:				
-		bsr.w	FindNearestTile
-		move.w	(a1),d0
+		bsr.w	FindNearestTile				; a1 = address within 128x128 mappings of 16x16 tile being stood on
+		move.w	(a1),d0					; get value for solidness, orientation and 16x16 tile number
 		move.w	d0,d4
-		andi.w	#$3FF,d0
+		andi.w	#(~chunkmap_settings)&$FFFF,d0		; ignore solid/orientation bits
 		beq.s	loc_1E7E2
 		btst	d5,d4
 		bne.s	loc_1E7F0
@@ -40503,7 +40520,7 @@ loc_1E7F0:
 		move.b	(a2,d0.w),d0
 		andi.w	#$FF,d0
 		beq.s	loc_1E7E2
-		lea	(ColCurveMap).l,a2
+		lea	(AngleMap).l,a2
 		move.b	(a2,d0.w),(a4)
 		lsl.w	#4,d0
 		move.w	d3,d1
@@ -40582,7 +40599,7 @@ loc_1E898:
 		move.b	(a2,d0.w),d0
 		andi.w	#$FF,d0
 		beq.s	loc_1E88A
-		lea	(ColCurveMap).l,a2
+		lea	(AngleMap).l,a2
 		move.b	(a2,d0.w),(a4)
 		lsl.w	#4,d0
 		move.w	d3,d1
@@ -40649,7 +40666,7 @@ loc_1E928:
 		move.b	(a2,d0.w),d0
 		andi.w	#$FF,d0
 		beq.s	loc_1E922
-		lea	(ColCurveMap).l,a2
+		lea	(AngleMap).l,a2
 		move.b	(a2,d0.w),(a4)
 		lsl.w	#4,d0
 		move.w	d3,d1
@@ -40726,7 +40743,7 @@ loc_1E9D0:
 		move.b	(a2,d0.w),d0
 		andi.w	#$FF,d0
 		beq.s	loc_1E9C2
-		lea	(ColCurveMap).l,a2
+		lea	(AngleMap).l,a2
 		move.b	(a2,d0.w),(a4)
 		lsl.w	#4,d0
 		move.w	d2,d1
@@ -40803,7 +40820,7 @@ loc_1EA78:
 		move.b	(a2,d0.w),d0
 		andi.w	#$FF,d0
 		beq.s	loc_1EA6A
-		lea	(ColCurveMap).l,a2
+		lea	(AngleMap).l,a2
 		move.b	(a2,d0.w),(a4)
 		lsl.w	#4,d0
 		move.w	d2,d1
@@ -40936,10 +40953,10 @@ loc_1EB7A:
 ; ===========================================================================
 	
 Player_CalcRoomAhead:				
-		move.l	#-$2A00,(v_collision_index_ptr).w
+		move.l	#v_primary_collision,(v_collision_index_ptr).w
 		cmpi.b	#$C,$3E(a0)
 		beq.s	loc_1EB9C
-		move.l	#-$2700,(v_collision_index_ptr).w
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w
 
 loc_1EB9C:				
 		move.b	$3F(a0),d5
@@ -40995,10 +41012,10 @@ loc_1EC06:
 ; ===========================================================================
 
 Player_CalcHeadroom:				
-		move.l	#-$2A00,(v_collision_index_ptr).w
+		move.l	#v_primary_collision,(v_collision_index_ptr).w
 		cmpi.b	#$C,$3E(a0)
 		beq.s	loc_1EC22
-		move.l	#-$2700,(v_collision_index_ptr).w
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w
 
 loc_1EC22:				
 		move.b	$3F(a0),d5
@@ -41094,10 +41111,10 @@ Player_SnapAngle:
 		move.w	ost_x_pos(a0),d3
 		move.w	ost_y_pos(a0),d2
 		subq.w	#4,d2
-		move.l	#-$2A00,(v_collision_index_ptr).w
+		move.l	#v_primary_collision,(v_collision_index_ptr).w
 		cmpi.b	#$D,$3F(a0)
 		beq.s	loc_1ED2E
-		move.l	#-$2700,(v_collision_index_ptr).w
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w
 
 	loc_1ED2E:				
 		lea	(v_angle_right).w,a4
@@ -41124,10 +41141,10 @@ FindFloorEdge_NoX:
 		move.b	ost_height(a0),d0
 		ext.w	d0
 		add.w	d0,d2
-		move.l	#-$2A00,(v_collision_index_ptr).w
+		move.l	#v_primary_collision,(v_collision_index_ptr).w
 		cmpi.b	#$C,$3E(a0)
 		beq.s	loc_1ED80
-		move.l	#-$2700,(v_collision_index_ptr).w
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w
 
 loc_1ED80:				
 		lea	(v_angle_right).w,a4
@@ -41152,10 +41169,10 @@ FindFloorEdge2:
 		move.b	ost_height(a1),d0
 		ext.w	d0
 		add.w	d0,d2
-		move.l	#-$2A00,(v_collision_index_ptr).w
+		move.l	#v_primary_collision,(v_collision_index_ptr).w
 		cmpi.b	#$C,$3E(a1)
 		beq.s	loc_1EDD2
-		move.l	#-$2700,(v_collision_index_ptr).w
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w
 
 loc_1EDD2:				
 		lea	(v_angle_right).w,a4
@@ -84077,35 +84094,35 @@ APM_EHZ_HTZ:	anipat
 		dc.w tile_Art_EHZMountains+$1C+tile_pal4,	tile_Art_EHZMountains+$1E+tile_pal4
 		dc.w tile_Art_EHZMountains+$1D+tile_pal4,	tile_Art_EHZMountains+$1F+tile_pal4		
 		
-		dc.w tile_Art_EHZPulseBall+tile_pal3,		tile_Art_EHZPulseBall+tilemap_xflip+tile_pal3
-		dc.w tile_Art_EHZPulseBall+1+tile_pal3,		tile_Art_EHZPulseBall+1+tilemap_xflip+tile_pal3
+		dc.w tile_Art_EHZPulseBall+tile_pal3,		tile_Art_EHZPulseBall+blockmap_xflip+tile_pal3
+		dc.w tile_Art_EHZPulseBall+1+tile_pal3,		tile_Art_EHZPulseBall+1+blockmap_xflip+tile_pal3
 		
 		dc.w tile_Kos_Checkers+tile_pal3,			tile_Art_EHZPulseBall+tile_pal3
 		dc.w tile_Kos_Checkers+1+tile_pal3,			tile_Art_EHZPulseBall+1+tile_pal3
 		
-		dc.w tile_Art_EHZPulseBall+tilemap_xflip+tile_pal3,		tile_Kos_Checkers+tilemap_xflip+tile_pal3
-		dc.w tile_Art_EHZPulseBall+1+tilemap_xflip+tile_pal3,	tile_Kos_Checkers+1+tilemap_xflip+tile_pal3
+		dc.w tile_Art_EHZPulseBall+blockmap_xflip+tile_pal3,		tile_Kos_Checkers+blockmap_xflip+tile_pal3
+		dc.w tile_Art_EHZPulseBall+1+blockmap_xflip+tile_pal3,	tile_Kos_Checkers+1+blockmap_xflip+tile_pal3
 		
-		dc.w tile_Art_Flowers1+tile_pal4,						tile_Art_Flowers1+tilemap_xflip+tile_pal4
-		dc.w tile_Art_Flowers1+1+tile_pal4,						tile_Art_Flowers1+1+tilemap_xflip+tile_pal4
+		dc.w tile_Art_Flowers1+tile_pal4,						tile_Art_Flowers1+blockmap_xflip+tile_pal4
+		dc.w tile_Art_Flowers1+1+tile_pal4,						tile_Art_Flowers1+1+blockmap_xflip+tile_pal4
 		
-		dc.w tile_Art_Flowers2+tile_pal4+tilemap_hi,			tile_Art_Flowers2+tilemap_xflip+tile_pal4+tilemap_hi
-		dc.w tile_Art_Flowers2+1+tile_pal4+tilemap_hi,			tile_Art_Flowers2+1+tilemap_xflip+tile_pal4+tilemap_hi
+		dc.w tile_Art_Flowers2+tile_pal4+blockmap_hi,			tile_Art_Flowers2+blockmap_xflip+tile_pal4+blockmap_hi
+		dc.w tile_Art_Flowers2+1+tile_pal4+blockmap_hi,			tile_Art_Flowers2+1+blockmap_xflip+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_Flowers3+tile_pal4,						tile_Art_Flowers3+tilemap_xflip+tile_pal4
-		dc.w tile_Art_Flowers3+1+tile_pal4,						tile_Art_Flowers3+1+tilemap_xflip+tile_pal4
+		dc.w tile_Art_Flowers3+tile_pal4,						tile_Art_Flowers3+blockmap_xflip+tile_pal4
+		dc.w tile_Art_Flowers3+1+tile_pal4,						tile_Art_Flowers3+1+blockmap_xflip+tile_pal4
 
-		dc.w tile_Art_Flowers4+tile_pal4+tilemap_hi,			tile_Art_Flowers4+tilemap_xflip+tile_pal4+tilemap_hi
-		dc.w tile_Art_Flowers4+1+tile_pal4+tilemap_hi,			tile_Art_Flowers4+1+tilemap_xflip+tile_pal4+tilemap_hi
+		dc.w tile_Art_Flowers4+tile_pal4+blockmap_hi,			tile_Art_Flowers4+blockmap_xflip+tile_pal4+blockmap_hi
+		dc.w tile_Art_Flowers4+1+tile_pal4+blockmap_hi,			tile_Art_Flowers4+1+blockmap_xflip+tile_pal4+blockmap_hi
 		anipat_end		
 ; ===========================================================================
 		
 APM_MTZ:	anipat
-		dc.w tile_Art_MTZAnimBack1+tile_pal2,		tile_Art_MTZAnimBack1+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack1+1+tile_pal2,		tile_Art_MTZAnimBack1+1+tilemap_xflip+tile_pal2		
+		dc.w tile_Art_MTZAnimBack1+tile_pal2,		tile_Art_MTZAnimBack1+blockmap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+1+tile_pal2,		tile_Art_MTZAnimBack1+1+blockmap_xflip+tile_pal2		
 	
-		dc.w tile_Art_MTZAnimBack1+2+tile_pal2,		tile_Art_MTZAnimBack1+2+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack1+3+tile_pal2,		tile_Art_MTZAnimBack1+3+tilemap_xflip+tile_pal2		
+		dc.w tile_Art_MTZAnimBack1+2+tile_pal2,		tile_Art_MTZAnimBack1+2+blockmap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+3+tile_pal2,		tile_Art_MTZAnimBack1+3+blockmap_xflip+tile_pal2		
 		
 		dc.w tile_Art_MTZCylinder+$E+tile_pal4,		tile_Art_MTZCylinder+$E+tile_pal4
 		dc.w tile_Art_MTZCylinder+$F+tile_pal4,		tile_Art_MTZCylinder+$F+tile_pal4
@@ -84131,53 +84148,53 @@ APM_MTZ:	anipat
 		dc.w tile_Art_MTZCylinder+tile_pal4,		tile_Art_MTZCylinder+tile_pal4
 		dc.w tile_Art_MTZCylinder+1+tile_pal4,		tile_Art_MTZCylinder+1+tile_pal4
 		
-		dc.w tile_Art_MTZAnimBack1+4+tile_pal2,		tile_Art_MTZAnimBack1+4+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack1+5+tile_pal2,		tile_Art_MTZAnimBack1+5+tilemap_xflip+tile_pal2		
+		dc.w tile_Art_MTZAnimBack1+4+tile_pal2,		tile_Art_MTZAnimBack1+4+blockmap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+5+tile_pal2,		tile_Art_MTZAnimBack1+5+blockmap_xflip+tile_pal2		
 		
-		dc.w tile_Art_MTZAnimBack2+tile_pal2,		tile_Art_MTZAnimBack2+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack2+1+tile_pal2,		tile_Art_MTZAnimBack2+1+tilemap_xflip+tile_pal2		
+		dc.w tile_Art_MTZAnimBack2+tile_pal2,		tile_Art_MTZAnimBack2+blockmap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+1+tile_pal2,		tile_Art_MTZAnimBack2+1+blockmap_xflip+tile_pal2		
 		
-		dc.w tile_Art_MTZAnimBack2+2+tile_pal2,		tile_Art_MTZAnimBack2+2+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack2+3+tile_pal2,		tile_Art_MTZAnimBack2+3+tilemap_xflip+tile_pal2	
+		dc.w tile_Art_MTZAnimBack2+2+tile_pal2,		tile_Art_MTZAnimBack2+2+blockmap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+3+tile_pal2,		tile_Art_MTZAnimBack2+3+blockmap_xflip+tile_pal2	
 		
-		dc.w tile_Art_MTZAnimBack2+4+tile_pal2,		tile_Art_MTZAnimBack2+4+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack2+5+tile_pal2,		tile_Art_MTZAnimBack2+5+tilemap_xflip+tile_pal2	
+		dc.w tile_Art_MTZAnimBack2+4+tile_pal2,		tile_Art_MTZAnimBack2+4+blockmap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+5+tile_pal2,		tile_Art_MTZAnimBack2+5+blockmap_xflip+tile_pal2	
 		
-		dc.w tile_LevelArt+tile_pal3+tilemap_hi,	tile_LevelArt+tile_pal3+tilemap_hi
-		dc.w tile_Art_Lava+tile_pal3+tilemap_hi,	tile_Art_Lava+1+tile_pal3+tilemap_hi
+		dc.w tile_LevelArt+tile_pal3+blockmap_hi,	tile_LevelArt+tile_pal3+blockmap_hi
+		dc.w tile_Art_Lava+tile_pal3+blockmap_hi,	tile_Art_Lava+1+tile_pal3+blockmap_hi
 		
-		dc.w tile_LevelArt+tile_pal3+tilemap_hi,	tile_LevelArt+tile_pal3+tilemap_hi
-		dc.w tile_Art_Lava+2+tile_pal3+tilemap_hi,	tile_Art_Lava+3+tile_pal3+tilemap_hi
+		dc.w tile_LevelArt+tile_pal3+blockmap_hi,	tile_LevelArt+tile_pal3+blockmap_hi
+		dc.w tile_Art_Lava+2+tile_pal3+blockmap_hi,	tile_Art_Lava+3+tile_pal3+blockmap_hi
 		
-		dc.w tile_Art_Lava+4+tile_pal3+tilemap_hi,	tile_Art_Lava+5+tile_pal3+tilemap_hi
-		dc.w tile_Art_Lava+8+tile_pal3+tilemap_hi,	tile_Art_Lava+9+tile_pal3+tilemap_hi
+		dc.w tile_Art_Lava+4+tile_pal3+blockmap_hi,	tile_Art_Lava+5+tile_pal3+blockmap_hi
+		dc.w tile_Art_Lava+8+tile_pal3+blockmap_hi,	tile_Art_Lava+9+tile_pal3+blockmap_hi
 		
-		dc.w tile_Art_Lava+6+tile_pal3+tilemap_hi,	tile_Art_Lava+7+tile_pal3+tilemap_hi
-		dc.w tile_Art_Lava+$A+tile_pal3+tilemap_hi,	tile_Art_Lava+$B+tile_pal3+tilemap_hi
+		dc.w tile_Art_Lava+6+tile_pal3+blockmap_hi,	tile_Art_Lava+7+tile_pal3+blockmap_hi
+		dc.w tile_Art_Lava+$A+tile_pal3+blockmap_hi,	tile_Art_Lava+$B+tile_pal3+blockmap_hi
 		
-		dc.w tile_Art_MTZCylinder+$E+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$E+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+$F+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$F+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+$E+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+$E+tile_pal4+blockmap_hi
+		dc.w tile_Art_MTZCylinder+$F+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+$F+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_MTZCylinder+$C+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$C+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+$D+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$D+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+$C+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+$C+tile_pal4+blockmap_hi
+		dc.w tile_Art_MTZCylinder+$D+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+$D+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_MTZCylinder+$A+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$A+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+$B+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$B+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+$A+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+$A+tile_pal4+blockmap_hi
+		dc.w tile_Art_MTZCylinder+$B+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+$B+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_MTZCylinder+8+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+8+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+9+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+9+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+8+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+8+tile_pal4+blockmap_hi
+		dc.w tile_Art_MTZCylinder+9+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+9+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_MTZCylinder+6+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+6+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+7+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+7+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+6+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+6+tile_pal4+blockmap_hi
+		dc.w tile_Art_MTZCylinder+7+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+7+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_MTZCylinder+4+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+4+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+5+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+5+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+4+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+4+tile_pal4+blockmap_hi
+		dc.w tile_Art_MTZCylinder+5+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+5+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_MTZCylinder+2+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+2+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+3+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+3+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+2+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+2+tile_pal4+blockmap_hi
+		dc.w tile_Art_MTZCylinder+3+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+3+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_MTZCylinder+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+1+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+1+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+tile_pal4+blockmap_hi
+		dc.w tile_Art_MTZCylinder+1+tile_pal4+blockmap_hi,		tile_Art_MTZCylinder+1+tile_pal4+blockmap_hi
 		anipat_end
 ; ===========================================================================
 
@@ -84329,11 +84346,11 @@ APM_HPZ:	anipat
 ; ===========================================================================
 
 APM_OOZ:	anipat	
-		dc.w tile_Art_OOZPulseBall+tilemap_hi, 					tile_Art_OOZPulseBall+2+tilemap_hi
-		dc.w tile_Art_OOZPulseBall+1+tilemap_hi, 				tile_Art_OOZPulseBall+3+tilemap_hi
+		dc.w tile_Art_OOZPulseBall+blockmap_hi, 					tile_Art_OOZPulseBall+2+blockmap_hi
+		dc.w tile_Art_OOZPulseBall+1+blockmap_hi, 				tile_Art_OOZPulseBall+3+blockmap_hi
 		
-		dc.w tile_Art_OOZSquareBall1+tile_pal4+tilemap_hi,		tile_Art_OOZSquareBall1+1+tile_pal4+tilemap_hi
-		dc.w tile_Art_OOZSquareBall1+2+tile_pal4+tilemap_hi, 	tile_Art_OOZSquareBall1+3+tile_pal4+tilemap_hi
+		dc.w tile_Art_OOZSquareBall1+tile_pal4+blockmap_hi,		tile_Art_OOZSquareBall1+1+tile_pal4+blockmap_hi
+		dc.w tile_Art_OOZSquareBall1+2+tile_pal4+blockmap_hi, 	tile_Art_OOZSquareBall1+3+tile_pal4+blockmap_hi
 
 	if Revision=2
 		; Same deal as with HPZ's blocks, except they were changed to use palette line 3.
@@ -84350,29 +84367,29 @@ APM_OOZ:	anipat
 		dc.w tile_Art_OOZSquareBall2+3+tile_pal4,		tile_LevelArt
 	endc	
 		
-		dc.w tile_Art_Oil1+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+1+tilemap_hi
-		dc.w tile_Art_Oil1+8+tile_pal3+tilemap_hi, 		tile_Art_Oil1+tile_pal3+9+tilemap_hi
+		dc.w tile_Art_Oil1+tile_pal3+blockmap_hi,		tile_Art_Oil1+tile_pal3+1+blockmap_hi
+		dc.w tile_Art_Oil1+8+tile_pal3+blockmap_hi, 		tile_Art_Oil1+tile_pal3+9+blockmap_hi
 		
-		dc.w tile_Art_Oil1+2+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+3+tilemap_hi
-		dc.w tile_Art_Oil1+$A+tile_pal3+tilemap_hi, 	tile_Art_Oil1+tile_pal3+$B+tilemap_hi
+		dc.w tile_Art_Oil1+2+tile_pal3+blockmap_hi,		tile_Art_Oil1+tile_pal3+3+blockmap_hi
+		dc.w tile_Art_Oil1+$A+tile_pal3+blockmap_hi, 	tile_Art_Oil1+tile_pal3+$B+blockmap_hi
 		
-		dc.w tile_Art_Oil1+4+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+5+tilemap_hi
-		dc.w tile_Art_Oil1+$C+tile_pal3+tilemap_hi, 	tile_Art_Oil1+tile_pal3+$D+tilemap_hi
+		dc.w tile_Art_Oil1+4+tile_pal3+blockmap_hi,		tile_Art_Oil1+tile_pal3+5+blockmap_hi
+		dc.w tile_Art_Oil1+$C+tile_pal3+blockmap_hi, 	tile_Art_Oil1+tile_pal3+$D+blockmap_hi
 		
-		dc.w tile_Art_Oil1+6+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+7+tilemap_hi
-		dc.w tile_Art_Oil1+$E+tile_pal3+tilemap_hi, 	tile_Art_Oil1+tile_pal3+$F+tilemap_hi
+		dc.w tile_Art_Oil1+6+tile_pal3+blockmap_hi,		tile_Art_Oil1+tile_pal3+7+blockmap_hi
+		dc.w tile_Art_Oil1+$E+tile_pal3+blockmap_hi, 	tile_Art_Oil1+tile_pal3+$F+blockmap_hi
 		
-		dc.w tile_Art_Oil2+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+1+tilemap_hi
-		dc.w tile_Art_Oil2+8+tile_pal3+tilemap_hi, 		tile_Art_Oil2+tile_pal3+9+tilemap_hi
+		dc.w tile_Art_Oil2+tile_pal3+blockmap_hi,		tile_Art_Oil2+tile_pal3+1+blockmap_hi
+		dc.w tile_Art_Oil2+8+tile_pal3+blockmap_hi, 		tile_Art_Oil2+tile_pal3+9+blockmap_hi
 		
-		dc.w tile_Art_Oil2+2+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+3+tilemap_hi
-		dc.w tile_Art_Oil2+$A+tile_pal3+tilemap_hi, 	tile_Art_Oil2+tile_pal3+$B+tilemap_hi
+		dc.w tile_Art_Oil2+2+tile_pal3+blockmap_hi,		tile_Art_Oil2+tile_pal3+3+blockmap_hi
+		dc.w tile_Art_Oil2+$A+tile_pal3+blockmap_hi, 	tile_Art_Oil2+tile_pal3+$B+blockmap_hi
 		
-		dc.w tile_Art_Oil2+4+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+5+tilemap_hi
-		dc.w tile_Art_Oil2+$C+tile_pal3+tilemap_hi, 	tile_Art_Oil2+tile_pal3+$D+tilemap_hi
+		dc.w tile_Art_Oil2+4+tile_pal3+blockmap_hi,		tile_Art_Oil2+tile_pal3+5+blockmap_hi
+		dc.w tile_Art_Oil2+$C+tile_pal3+blockmap_hi, 	tile_Art_Oil2+tile_pal3+$D+blockmap_hi
 		
-		dc.w tile_Art_Oil2+6+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+7+tilemap_hi
-		dc.w tile_Art_Oil2+$E+tile_pal3+tilemap_hi, 	tile_Art_Oil2+tile_pal3+$F+tilemap_hi	
+		dc.w tile_Art_Oil2+6+tile_pal3+blockmap_hi,		tile_Art_Oil2+tile_pal3+7+blockmap_hi
+		dc.w tile_Art_Oil2+$E+tile_pal3+blockmap_hi, 	tile_Art_Oil2+tile_pal3+$F+blockmap_hi	
 		anipat_end
 ; ===========================================================================
 
@@ -84413,29 +84430,29 @@ APM_CNZ:	anipat
 		dc.w tile_Art_SlotPics3+$A,	tile_Art_SlotPics3+$E
 		dc.w tile_Art_SlotPics3+$B,	tile_Art_SlotPics3+$F
 		
-		dc.w tile_Art_CNZFlipPanels2+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2+4+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2+1+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+5+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels2+4+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels2+1+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels2+5+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels2+8+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$C+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2+9+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$D+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+8+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels2+$C+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels2+9+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels2+$D+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels2+2+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+6+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2+3+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+7+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+2+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels2+6+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels2+3+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels2+7+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels2+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$E+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$F+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+$A+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels2+$E+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels2+$B+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels2+$F+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels1+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1+4+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1+1+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+5+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels1+4+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels1+1+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels1+5+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels1+8+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$C+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1+9+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$D+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+8+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels1+$C+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels1+9+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels1+$D+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels1+2+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+6+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1+3+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+7+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+2+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels1+6+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels1+3+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels1+7+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels1+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$E+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$F+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+$A+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels1+$E+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels1+$B+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels1+$F+tile_pal4+blockmap_hi
 		anipat_end	
 ; ===========================================================================
 
@@ -84476,29 +84493,29 @@ APM_CNZ_2P:	anipat
 		dc.w tile_Art_SlotPics3_2p+$A,	tile_Art_SlotPics3_2p+$E
 		dc.w tile_Art_SlotPics3_2p+$B,	tile_Art_SlotPics3_2p+$F
 		
-		dc.w tile_Art_CNZFlipPanels2_2p+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+4+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2_2p+1+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+5+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels2_2p+4+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+1+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels2_2p+5+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels2_2p+8+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+$C+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2_2p+9+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+$D+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+8+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels2_2p+$C+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+9+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels2_2p+$D+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels2_2p+2+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+6+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2_2p+3+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+7+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+2+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels2_2p+6+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+3+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels2_2p+7+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels2_2p+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2_2p+$E+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2_2p+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2_2p+$F+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+$A+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels2_2p+$E+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+$B+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels2_2p+$F+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels1_2p+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+4+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1_2p+1+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+5+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels1_2p+4+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+1+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels1_2p+5+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels1_2p+8+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+$C+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1_2p+9+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+$D+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+8+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels1_2p+$C+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+9+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels1_2p+$D+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels1_2p+2+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+6+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1_2p+3+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+7+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+2+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels1_2p+6+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+3+tile_pal4+blockmap_hi,		tile_Art_CNZFlipPanels1_2p+7+tile_pal4+blockmap_hi
 		
-		dc.w tile_Art_CNZFlipPanels1_2p+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1_2p+$E+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1_2p+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1_2p+$F+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+$A+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels1_2p+$E+tile_pal4+blockmap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+$B+tile_pal4+blockmap_hi,	tile_Art_CNZFlipPanels1_2p+$F+tile_pal4+blockmap_hi
 		anipat_end
 ; ===========================================================================
 
@@ -84515,22 +84532,22 @@ APM_DEZ:	anipat
 ; ===========================================================================
 					
 APM_ARZ:	anipat
-		dc.w tile_Art_Waterfall3+tile_pal3+tilemap_hi,		tile_Art_Waterfall3+1+tile_pal3+tilemap_hi
-		dc.w tile_Art_Waterfall3+2+tile_pal3+tilemap_hi,	tile_Art_Waterfall3+3+tile_pal3+tilemap_hi
+		dc.w tile_Art_Waterfall3+tile_pal3+blockmap_hi,		tile_Art_Waterfall3+1+tile_pal3+blockmap_hi
+		dc.w tile_Art_Waterfall3+2+tile_pal3+blockmap_hi,	tile_Art_Waterfall3+3+tile_pal3+blockmap_hi
 		
-		dc.w tile_Art_Waterfall2+tile_pal3+tilemap_hi,		tile_Art_Waterfall2+1+tile_pal3+tilemap_hi
-		dc.w tile_Art_Waterfall2+2+tile_pal3+tilemap_hi,	tile_Art_Waterfall2+3+tile_pal3+tilemap_hi
+		dc.w tile_Art_Waterfall2+tile_pal3+blockmap_hi,		tile_Art_Waterfall2+1+tile_pal3+blockmap_hi
+		dc.w tile_Art_Waterfall2+2+tile_pal3+blockmap_hi,	tile_Art_Waterfall2+3+tile_pal3+blockmap_hi
 		
-		dc.w tile_Art_Waterfall1_1+tile_pal3+tilemap_hi,	tile_Art_Waterfall1_1+1+tile_pal3+tilemap_hi
-		dc.w tile_Art_Waterfall1_1+2+tile_pal3+tilemap_hi,	tile_Art_Waterfall1_1+3+tile_pal3+tilemap_hi
+		dc.w tile_Art_Waterfall1_1+tile_pal3+blockmap_hi,	tile_Art_Waterfall1_1+1+tile_pal3+blockmap_hi
+		dc.w tile_Art_Waterfall1_1+2+tile_pal3+blockmap_hi,	tile_Art_Waterfall1_1+3+tile_pal3+blockmap_hi
 		
 	if FixBugs
-		dc.w tile_Art_Waterfall1_2+tile_pal3+tilemap_hi,		tile_Art_Waterfall1_2+1+tile_pal3+tilemap_hi
-		dc.w tile_Art_Waterfall1_2+2+tile_pal3+tilemap_hi,		tile_Art_Waterfall1_2+3+tile_pal3+tilemap_hi	
+		dc.w tile_Art_Waterfall1_2+tile_pal3+blockmap_hi,		tile_Art_Waterfall1_2+1+tile_pal3+blockmap_hi
+		dc.w tile_Art_Waterfall1_2+2+tile_pal3+blockmap_hi,		tile_Art_Waterfall1_2+3+tile_pal3+blockmap_hi	
 	else
 		; Those '+$C's shouldn't be here; these are invalid animation entries for waterfalls.
-		dc.w tile_Art_Waterfall1_2+tile_pal3+tilemap_hi+$C,		tile_Art_Waterfall1_2+1+tile_pal3+tilemap_hi+$C
-		dc.w tile_Art_Waterfall1_2+2+tile_pal3+tilemap_hi+$C,	tile_Art_Waterfall1_2+3+tile_pal3+tilemap_hi+$C
+		dc.w tile_Art_Waterfall1_2+tile_pal3+blockmap_hi+$C,		tile_Art_Waterfall1_2+1+tile_pal3+blockmap_hi+$C
+		dc.w tile_Art_Waterfall1_2+2+tile_pal3+blockmap_hi+$C,	tile_Art_Waterfall1_2+3+tile_pal3+blockmap_hi+$C
 	endc
 		
 		dc.w tile_Art_Waterfall3+tile_pal3,			tile_Art_Waterfall3+1+tile_pal3
@@ -88014,7 +88031,7 @@ PLC_ResultsTails_dup:	plcheader
 ; Collision data
 ;---------------------------------------------------------------------------------------
 
-		incfile ColCurveMap
+		incfile AngleMap
 		incfile CollArray1
 		incfile CollArray2
 

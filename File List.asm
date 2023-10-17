@@ -414,7 +414,7 @@
 ; File definitions - collision
 ; ---------------------------------------------------------------------------
 
-		filedef	ColCurveMap,"collision/Curve & Resistance Mapping",bin,bin
+		filedef	AngleMap,"collision/Curve & Resistance Mapping",bin,bin
 		filedef	CollArray1,"collision/Collision Array (Normal)",bin,bin
 		filedef	CollArray2,"collision/Collision Array (Rotated)",bin,bin
 		filedef	ColP_EHZHTZ,"collision/EHZ & HTZ Primary",kos,unc

@@ -378,7 +378,7 @@ ost_render:		rs.b 1					;  1 ; universal; bitfield for x/y flip, display mode; b
 
 ost_tile:		rs.w 1					;  2 ; universal; tile VRAM, palette, priority, and x-flip/y-flip (2 bytes)
 	; Low byte and bits 0-2 of high byte are the VRAM address divided by sizeof_cell ($20).
-	; Bits 3-7 of upper byte are bitfield as follows. 
+	; Bits 3-7 of upper byte are bitfield as follows. (Palette constants are also used for 16x16 maps).
 	tile_xflip_bit:	equ 3
 	tile_yflip_bit:	equ 4
 	tile_pal12_bit:	equ 5
@@ -600,15 +600,30 @@ redraw_right:		equ 1<<redraw_right_bit			; 8
 redraw_topall:		equ 1<<redraw_topall_bit		; $10
 redraw_bottomall:	equ 1<<redraw_bottomall_bit		; $20
 
-; 16x16 and 128x128 mappings
-tilemap_xflip_bit:	equ $B
-tilemap_yflip_bit:	equ $C
-tilemap_solid_top_bit:	equ $D
-tilemap_solid_lrb_bit:	equ $E
-tilemap_priority_bit:	equ $F
-tilemap_xflip:		equ 1<<tilemap_xflip_bit		; $800
-tilemap_yflip:		equ 1<<tilemap_yflip_bit		; $1000
-tilemap_solid_top:	equ 1<<tilemap_solid_top_bit		; $2000
-tilemap_solid_lrb:	equ 1<<tilemap_solid_lrb_bit		; $4000
-tilemap_solid_all:	equ tilemap_solid_top+tilemap_solid_lrb	; $6000
-tilemap_hi:			equ 1<<tilemap_priority_bit
+; 16x16 mappings
+blockmap_xflip_bit:	equ $B
+blockmap_yflip_bit:	equ $C
+blockmap_priority_bit:	equ $F
+
+blockmap_xflip:		equ 1<<blockmap_xflip_bit		; $800
+blockmap_yflip:		equ 1<<blockmap_yflip_bit		; $1000
+blockmap_hi:			equ 1<<blockmap_priority_bit
+
+; 128x128 mappings
+chunkmap_xflip_bit:	equ $A
+chunkmap_yflip_bit:	equ $B
+chunkmap_primary_solid_top_bit:	equ $C
+chunkmap_primary_solid_lrb_bit:	equ $D
+chunkmap_secondary_solid_top_bit:	equ $E
+chunkmap_secondary_solid_lrb_bit:	equ $F
+
+chunkmap_xflip:		equ 1<<chunkmap_xflip_bit		; $400
+chunkmap_yflip:		equ 1<<chunkmap_yflip_bit		; $800
+chunkmap_primary_solid_top:	equ 1<<chunkmap_primary_solid_top_bit ; $1000
+chunkmap_primary_solid_lrb:	equ 1<<chunkmap_primary_solid_lrb_bit ; $2000
+chunkmap_secondary_solid_top:	equ 1<<chunkmap_secondary_solid_top_bit ; $4000
+chunkmap_secondary_solid_lrb:	equ 1<<chunkmap_secondary_solid_lrb_bit ; $8000
+chunkmap_primary_solid_all:		equ chunkmap_primary_solid_top+chunkmap_primary_solid_lrb ; $3000
+chunkmap_secondary_solid_all:	equ chunkmap_secondary_solid_top+chunkmap_secondary_solid_lrb ; $3000
+
+chunkmap_settings:	equ chunkmap_xflip+chunkmap_yflip+chunkmap_primary_solid_all+chunkmap_secondary_solid_all ; $FC00
