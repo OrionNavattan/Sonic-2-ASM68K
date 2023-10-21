@@ -769,7 +769,7 @@ slotvar:	macro	absolute,offset,num
 	
 	slot_offset:	equ slot1_offset-slot1_index		; $1
 	slot_speed:		equ	slot1_speed-slot1_index	; $2
-	slot_subroutine:	equ slot1_rout-slot1_index	; $3
+	slot_secondary_routine:	equ slot1_rout-slot1_index	; $3
 	ramblocksize	slot_machine_vars
 
 								rs.b $10 ; $FFFFFF60-$FFFFFF6F ; seems unused		

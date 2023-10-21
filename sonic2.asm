@@ -854,7 +854,7 @@ SS_FGTblTrans_2_3:
 SS_Set_VScroll:				
 		move.w	(vdp_control_port).l,d0
 		vdp_comm.l	move,0,vsram,write,(vdp_control_port).l ; set VDP to VSRAM write
-		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l
+		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l		; unnecessary, as this was already done by the global VBlank code!
 		rts	
 ; ===========================================================================
 
@@ -4912,7 +4912,7 @@ InitPlayers:
 		move.w	(v_player_mode).w,d0			; is it a Sonic and Tails game?		
 		bne.s	InitPlayers_Alone			; if not, branch
 
-		move.b	#id_Sonic,(v_ost_player1+ost_id).w	; load Sonic
+		move.b	#id_SonicPlayer,(v_ost_player1+ost_id).w	; load Sonic
 		move.b	#id_Splash_SpindashDust,(v_ost_lo_sonic_dust+ost_id).w ; load Sonic's spindash dust
 
 		cmpi.b	#id_WFZ,(v_zone).w	
@@ -4922,7 +4922,7 @@ InitPlayers:
 		cmpi.b	#id_SCZ,(v_zone).w
 		beq.s	.exit					; ...or SCZ 
 		
-		move.b	#id_Tails,(v_ost_player2+ost_id).w	; load Tails
+		move.b	#id_TailsPlayer,(v_ost_player2+ost_id).w	; load Tails
 		move.w	(v_ost_player1+ost_x_pos).w,(v_ost_player2+ost_x_pos).w ; copy start position from Sonic's OST to Tails' (this was previously set by LevelParameterLoad)
 		move.w	(v_ost_player1+ost_y_pos).w,(v_ost_player2+ost_y_pos).w
 
@@ -4937,13 +4937,13 @@ InitPlayers:
 InitPlayers_Alone:				
 		subq.w	#1,d0				
 		bne.s	.tails_alone				; branch if Tails alone
-		move.b	#id_Sonic,(v_ost_player1+ost_id).w	; load Sonic
+		move.b	#id_SonicPlayer,(v_ost_player1+ost_id).w	; load Sonic
 		move.b	#id_Splash_SpindashDust,(v_ost_lo_sonic_dust+ost_id).w ; load Sonic's spindash dust
 		rts	
 ; ===========================================================================
 
 .tails_alone:				
-		move.b	#id_Tails,(v_ost_player1+ost_id).w	; load Tails in main character slot
+		move.b	#id_TailsPlayer,(v_ost_player1+ost_id).w	; load Tails in main character slot
 		move.b	#id_Splash_SpindashDust,(v_ost_lo_tails_dust+ost_id).w ; load Tails' spindash dust
 		addi_.w	#4,(v_ost_player1+ost_y_pos).w		; Tails is 4 pixels shorter than Sonic
 		rts	
@@ -12550,7 +12550,7 @@ loc_A2E0:
 		moveq	#8,d0
 
 loc_A2E2:				
-		move.b	#id_Sonic,ost_id(a1)
+		move.b	#id_SonicPlayer,ost_id(a1)
 		move.b	#-$7F,$2A(a1)
 		rts	
 ; ===========================================================================
@@ -12562,7 +12562,7 @@ loc_A2EE:
 
 loc_A2F2:				
 		moveq	#$E,d0
-		move.b	#id_Tails,ost_id(a1)
+		move.b	#id_TailsPlayer,ost_id(a1)
 		move.b	#-$7F,$2A(a1)
 		move.b	#5,($FFFFB080).w
 		move.w	a1,($FFFFB0BE).w
@@ -16889,7 +16889,7 @@ UpdateCamera_Y:
 		; rolling, and vice versa. Not even Sonic 3 & Knuckles fixed this.
 		; To fix this, just adjust the subtraction to suit Tails (who is four
 		; pixels shorter).
-		cmpi.b	#id_Tails,ost_id(a0)			; is the player Tails?
+		cmpi.b	#id_TailsPlayer,ost_id(a0)			; is the player Tails?
 		bne.s	.not_rolling				; branch if not
 		addq.w	#4,d0					; adjust difference to suit Tails
 	endc
@@ -27660,8 +27660,8 @@ ExecuteObjects:
 ; ---------------------------------------------------------------------------
 Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 
-		ptr Sonic					; 1 
-		ptr Tails
+		ptr SonicPlayer					; 1 
+		ptr TailsPlayer
 		ptr PlaneSwitcher
 		ptr WaterSurface				; 4
 		ptr TailsTails
@@ -33530,14 +33530,14 @@ loc_19F36:
 loc_19F4C:				
 		moveq	#0,d4
 		rts	
-; ===========================================================================
+
 ; ----------------------------------------------------------------------------
 ; Object 01 - Sonic
 ; ----------------------------------------------------------------------------
 
-Sonic:				
-		tst.w	(v_debug_active).w
-		beq.s	Sonic_Normal
+SonicPlayer:				
+		tst.w	(v_debug_active).w			; is debug mode	being used?
+		beq.s	Sonic_Normal				; if not, branch
 		jmp	(DebugMode).l
 ; ===========================================================================
 
@@ -33556,8 +33556,8 @@ Sonic_Index:	index offset(*),,2
 		CharacterRoutines	SonicRoutines		; generate pointers and IDs for Sonic's primary routines	
 ; ===========================================================================
 
-Sonic_Main:				
-		addq.b	#2,ost_primary_routine(a0)
+Sonic_Main:		; Routine 0		
+		addq.b	#2,ost_primary_routine(a0)	; go to Sonic_Control next
 		move.b	#$13,ost_height(a0)
 		move.b	#9,ost_width(a0)
 		move.l	#Map_Sonic,ost_mappings(a0)
@@ -33588,6 +33588,7 @@ loc_19FE6:
 		move.w	#0,(v_sonic_pos_tracker_num).w
 
 		move.w	#$3F,d2
+		
 loc_1A014:				
 		bsr.w	Sonic_RecordPosition
 		subq.w	#4,a1
@@ -35239,7 +35240,7 @@ Sonic_ResetOnFloor:
 		move.b	#0,ost_anim(a0)
 
 Sonic_ResetOnFloor_2:				
-		_cmpi.b	#id_Sonic,ost_id(a0)
+		_cmpi.b	#id_SonicPlayer,ost_id(a0)
 		bne.w	loc_1CB5C
 		btst	#status_jump_bit,ost_primary_status(a0)
 		beq.s	loc_1B0DA
@@ -35441,20 +35442,21 @@ loc_1B342:
 ; ===========================================================================
 
 	if FixBugs
-	; The mechanism used to drown the player (namely, the drowning countdown object
-	; manually overriding their control and setting their animation and movement)
-	; relies on the assumption that the character is in their normal routine (Sonic_Control). 
-	; Unfortunately, this leads to some edge cases: if the character is in their hurt 
-	; routine when they drown, the gravity from that state will still apply, and they can
-	; still interact with floors and walls before the reset timer forces them off
-	; the bottom of the screen. This issue also occurred in Sonic 1 and Sonic CD;
-	; S3&K fixes it by completely rewriting the drowning mechanism, making it
-	; a distinct top-level routine for the character. The addition here, and changes
-	; in DrownCount, are more or less backported from Sonic 3.
+		; The mechanism used to drown the player (namely, the drowning countdown object
+		; manually overriding their control and setting their animation and movement)
+		; relies on the assumption that the character is in their normal routine (Sonic_Control). 
+		; Unfortunately, this leads to some edge cases: if the character is in their hurt 
+		; routine when they drown, the gravity from that state will still apply, and they can
+		; still interact with floors and walls before the reset timer forces them off
+		; the bottom of the screen. This issue also occurred in Sonic 1 and Sonic CD;
+		; S3&K fixes it by completely rewriting the drowning mechanism, making it
+		; a distinct primary routine for the character. The addition here, and changes
+		; in DrownCount, are more or less backported from Sonic 3.
 	
 ; ---------------------------------------------------------------------------
 ; Sonic when he's drowning
 ; ---------------------------------------------------------------------------
+
 Sonic_Drown:
 		bsr.w	SpeedToPos	
 		addi.w	#$10,ost_y_vel(a0)	
@@ -35462,8 +35464,7 @@ Sonic_Drown:
 		bsr.s	Sonic_Animate	
 		bsr.w	Sonic_LoadGFX	
 		bra.w	DisplaySprite
-	endc		
-		
+	endc			
 ; ===========================================================================
 
 Sonic_Animate:								
@@ -36291,12 +36292,11 @@ JmpTo_KillCharacter:
 		align 4
 	endc	 
 
-; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 02 - Tails
 ; ----------------------------------------------------------------------------
-; Sprite_1B8A4: Object_Tails: Obj02:
-Tails:				
+
+TailsPlayer:				
 		cmpi.w	#tails_alone,(v_player_mode).w
 		bne.s	loc_1B8BE
 		move.w	(v_boundary_left).w,(v_boundary_left_p2).w
@@ -38894,7 +38894,7 @@ ost_drown_parent_lo:	equ __rs-1				; $3F ; tst.b'd to check if manager object is
 		rsobjend
 ; ===========================================================================
 
-Drown_Main:				
+Drown_Main: ; Routine 0				
 		addq.b	#2,ost_primary_routine(a0)		; go to Drown_Animate next
 		move.l	#Map_Bub_Player1,ost_mappings(a0)
 		tst.b	ost_drown_parent_lo(a0)			; did the main character spawn this object?
@@ -38920,11 +38920,11 @@ Drown_Main:
 		move.w	ost_x_pos(a0),ost_drown_x_start(a0)
 		move.w	#-$88,ost_y_vel(a0)
 
-Drown_Animate:				
+Drown_Animate: ; Routine 2				
 		lea	(Ani_Drown).l,a1			; could be PC-relative
 		jsr	(AnimateSprite).l			; run animation and go to Drown_ChkWater next
 
-Drown_ChkWater:				
+Drown_ChkWater: ; Routine 4				
 		move.w	(v_water_height_actual).w,d0
 		cmp.w	ost_y_pos(a0),d0			; has small or medium bubble reached the water surface?
 		bcs.s	.wobble					; if not, branch
@@ -38933,7 +38933,7 @@ Drown_ChkWater:
 		cmpi.b	#id_Ani_Drown_Blank,ost_anim(a0)
 	if FixBugs=0
 		; This block of code sets the medium bubble's animation to a blank frame when it reaches the surface of the 
-		; water. In Sonic 1, this function was completely broken: the ‘move.b  #id_Ani_Drown_Blank,ost_anim(a0)’ 
+		; water. In Sonic 1, this functionality was completely broken: the ‘move.b  #id_Ani_Drown_Blank,ost_anim(a0)’ 
 		; was missing, causing the blank frame to never be set. While Sonic 2 fixed this, 
 		; the code still has this redundant instruction left in it, which can safely be removed.			
 		beq.s	Drown_Display
@@ -38961,7 +38961,7 @@ Drown_ChkWater:
 		add.w	ost_drown_x_start(a0),d0
 		move.w	d0,ost_x_pos(a0)			; update position
 	if FixBugs
-		; This isn't actually a bugfix: it's just that a later bugfix pushes
+		; This isn't actually a bugfix: it's just that the next bugfix pushes
 		; this call out of range, so it has to be extended to a word.	
 		bsr.w	Drown_ShowNumber	
 	else
@@ -38977,12 +38977,12 @@ Drown_ChkWater:
 		jmp	(DeleteObject).l
 ; ===========================================================================
 
-Drown_Display_Num:				
+Drown_Display_Num: ; Routine $E				
 		movea.l	ost_drown_parent(a0),a2			; a2 = character
 		cmpi.b	#air_alert,ost_air_left(a2)		; check air remaining
 		bhi.s	Drown_Delete				; if higher than $C, branch
 
-Drown_Display:				
+Drown_Display: ; Routine 6				
 		bsr.s	Drown_ShowNumber
 		lea	(Ani_Drown).l,a1
 		jsr	(AnimateSprite).l
@@ -38994,12 +38994,12 @@ Drown_Display:
 	endc	
 		jmp	(DisplaySprite).l
 ; ===========================================================================
-;JmpTo5_DeleteObject
-Drown_Delete:								
+
+Drown_Delete: ; Routine 8 & $10								
 		jmp	(DeleteObject).l
 ; ===========================================================================
 
-Drown_AirLeft:				
+Drown_AirLeft: ; Routine $C			
 		movea.l	ost_drown_parent(a0),a2			; a2 = character
 		cmpi.b	#air_alert,ost_air_left(a2)		; check air remaining
 		bhi.s	.delete					; if higher than $C, branch
@@ -39018,7 +39018,6 @@ Drown_AirLeft:
 		bpl.s	.delete					; if not, branch
 		jmp	(DisplaySprite).l
 	
-	;JmpTo6_DeleteObject:
 	.delete:				
 		jmp	(DeleteObject).l
 ; ===========================================================================
@@ -39047,11 +39046,12 @@ Drown_ShowNumber:
 
 	.nonumber:				
 		rts	
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Data for a bubble's side-to-side wobble. Second copy of data is unused
 ; Sonic 1 leftover: it was used by the background ripple effect in Revision 1.
 ; ---------------------------------------------------------------------------
+
 Drown_WobbleData:
 		rept 2	
 		dc.b  0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2
@@ -39063,11 +39063,12 @@ Drown_WobbleData:
 		dc.b -4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-4,-3
 		dc.b -3,-3,-3,-3,-3,-3,-2,-2,-2,-2,-2,-1,-1,-1,-1,-1
 		endr
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to determine if countdown number art needs to be loaded/updated
 ; and prepare a DMA transfer if so.
 ; ---------------------------------------------------------------------------
+
 Drown_LoadCountdownArt:				
 		moveq	#0,d1
 		move.b	ost_frame(a0),d1			; get current frame
@@ -39100,7 +39101,7 @@ Drown_LoadCountdownArt:
 		rts	
 ; ===========================================================================
 
-Drown_Countdown:							
+Drown_Countdown: ; Routine $A							
 		movea.l	ost_drown_parent(a0),a2			; a2 = character
 		tst.w	ost_drown_restart_time(a0)		; has the character drowned?
 		bne.w	.kill_character				; if so, branch
@@ -39200,6 +39201,7 @@ Drown_Countdown:
 		move.b	#id_Death,ost_primary_routine(a2)	; character is now dead
 		rts	
 ; ===========================================================================
+
 	if FixBugs=0
 		; This function is no longer needed with the rewrite of the drowning mechanism.
 		; See Sonic_Drown for more information.
@@ -39318,10 +39320,11 @@ ResumeMusic:
 .reset_air:				
 		move.b	#air_full,ost_air_left(a1)		; reset the air timer
 		rts	
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Animation script - bubbles
 ; ---------------------------------------------------------------------------
+
 Ani_Drown:	index offset(*)
 		ptr Ani_Drown_ZeroAppear			; 0 
 		ptr Ani_Drown_OneAppear				; 1
@@ -56334,7 +56337,7 @@ ost_cage_player:		rs.w 1				; $3E ; player currently in the cage; used to set pa
 		rsobjend
 ; ===========================================================================
 
-Cage_Main:				
+Cage_Main: ; Routine 0				
 		addq.b	#2,ost_primary_routine(a0)		; go to Cage_Action next
 		move.l	#Map_Cage,ost_mappings(a0)
 		move.w	#tile_Nem_Cage,ost_tile(a0)
@@ -56343,7 +56346,7 @@ Cage_Main:
 		move.b	#$18,ost_displaywidth(a0)
 		move.b	#1,ost_priority(a0)
 
-Cage_Action:				
+Cage_Action: ; Routine 2				
 		move.w	#($46/2),d1				; width of cage/2
 		move.w	#($20/2),d2				; height of cage/2
 		move.w	#($22/2),d3				; height of cage standing/2
@@ -56375,7 +56378,7 @@ Cage_ActionIndex:	index offset(*),,2
 		ptr Cage_Ignore					; 4
 ; ===========================================================================
 
-Cage_Detect:				
+Cage_Detect: ; Subroutine 0				
 		tst.b	ost_obj_control(a1)			; is player already in the cage?
 		bne.w	.return					; if so, branch
 		tst.b	ost_subtype(a0)				; is it a slot machine cage?
@@ -56520,7 +56523,7 @@ Cage_GiveRings:
 		rts	
 ; ===========================================================================
 
-Cage_Active:				
+Cage_Active: ; Subroutine 2				
 		tst.b	ost_render(a0)				; is cage on-screen?
 		bpl.s	Cage_ReleasePlayer			; if not, branch
 		tst.b	ost_subtype(a0)				; is it a slot machine cage?
@@ -56575,7 +56578,7 @@ Cage_GivePoints:
 		rts	
 ; ===========================================================================
 
-Cage_Ignore:				
+Cage_Ignore: ; Subroutine 4				
 		subq.w	#1,2(a2)				; decrement timer
 		bpl.s	.return					; branch if time remains
 		clr.w	(a2)					; character can now be caught by cage again
@@ -56638,11 +56641,10 @@ id_Slot_Ring:		rs.b 1					; 4
 id_Slot_Bar:		rs.b 1					; 5		
 
 ; ------------------------------------------------------------------------------
-; Subroutine to initialize the slot machine and load the initial faces
-; during level load
+; Initializes the slot machine and load the initial faces during level load
 ; ------------------------------------------------------------------------------
 
-Slot_Init:				
+Slot_Init: ; Routine 0				
 		movea.l	a4,a1			
 		moveq	#(sizeof_slot_machine_vars/2)-1,d0	; $12 bytes
 
@@ -56669,7 +56671,7 @@ Slot_Init:
 		
 ; ===========================================================================
 
-Slot_Ready:				
+Slot_Ready:	 ; Routine 4			
 		bsr.w	Slot_Draw				; draw the slots
 		tst.b	slot_timer(a4)				; are we still rolling?
 		beq.s	.done					; if not, branch
@@ -56684,7 +56686,7 @@ Slot_Ready:
 		rts	
 ; ===========================================================================
 
-Slot_Start:				
+Slot_Start: ; Routine 8				
 		move.b	(v_vblank_counter_byte).w,d0		; use low byte of frame counter as pseudorandom seed
 		andi.b	#7,d0					; only need lowest three bits
 		subq.b	#4,d0					; three pairs of these two instructions can be optimized to 'addi.b $2C,d0'
@@ -56751,7 +56753,7 @@ Slot_Start:
 		rts	
 ; ===========================================================================
 
-Slot_SpeedUp:				
+Slot_SpeedUp: ; Routine $C				
 		bsr.w	Slot_Draw				; draw the slots
 		tst.b	slot_timer(a4)				; has timer reached zero?
 		beq.s	.timeleft				; if so, branch
@@ -56771,7 +56773,7 @@ Slot_SpeedUp:
 		rts	
 ; ===========================================================================
 
-Slot_Run:				
+Slot_Run: ; Routine $10				
 		bsr.w	Slot_Draw				; draw the slots
 		cmpi.b	#id_Slot_Done,slot1_rout(a4)		; is slot done?
 		bne.s	.notdone				; branch if not
@@ -56789,7 +56791,7 @@ Slot_Run:
 		add.w	d0,d0					; double current slot index
 		adda.w	d0,a3					; add to a3 to get current slot sequence
 		moveq	#0,d0
-		move.b	slot_subroutine(a1),d0
+		move.b	slot_secondary_routine(a1),d0
 		jmp	Slot_Run_Index(pc,d0.w)
 ; ===========================================================================
 
@@ -56833,7 +56835,7 @@ Slot_ChangeTarget:
 		rts	
 ; ===========================================================================
 
-Slot_RunNormal:				
+Slot_RunNormal: ; Subroutine 0				
 		tst.b	slot_index(a4)				; is this slot 1?
 		bne.s	.not_slot_1				; if not, branch
 		tst.b	slot_timer(a4)				; has time run out (underflowed to negative)? 
@@ -56860,12 +56862,12 @@ Slot_RunNormal:
 ; ===========================================================================
 
 	.near_target:			
-		addq.b	#4,slot_subroutine(a1)			; go to Slot_NearTarget next
+		addq.b	#4,slot_secondary_routine(a1)			; go to Slot_NearTarget next
 		move.b	#$60,slot_speed(a1)			; decrease slot speed
 		rts	
 ; ===========================================================================
 
-Slot_NearTarget:				
+Slot_NearTarget: ; Subroutine 4				
 		bsr.s	Slot_GetSlotTarget			; get current slot target	
 		move.w	(a1),d0					; get current slot index/offset
 		addi.w	#30*8,d0				; add 30 lines (3.75 tiles) to it
@@ -56907,11 +56909,11 @@ Slot_NearTarget:
 		move.b	(a3,d0.w),d1				; get slot pic ID from sequence data
 		bsr.w	Slot_ChangeTarget			; set slot index to pic ID in lieu of sequence index
 		move.b	#-8,slot_speed(a1)			; rotate slowly backwards
-		addq.b	#4,slot_subroutine(a1)			; go to Slot_AtTarget next
+		addq.b	#4,slot_secondary_routine(a1)			; go to Slot_AtTarget next
 		rts	
 ; ===========================================================================
 
-Slot_AtTarget:				
+Slot_AtTarget: ; Subroutine 8				
 		tst.b	slot_offset(a1)				; is offset 0?
 		beq.s	.stop_slot				; if so, branch
 		rts	
@@ -56919,15 +56921,15 @@ Slot_AtTarget:
 
 	.stop_slot:				
 		clr.b	slot_speed(a1)				; stop slot
-		addq.b	#4,slot_subroutine(a1)			; go to Slot_Done next
+		addq.b	#4,slot_secondary_routine(a1)			; go to Slot_Done next
 		rts	
 ; ===========================================================================
 
-Slot_Done:				
+Slot_Done: ; Subroutine $C				
 		rts	
 ; ===========================================================================
 
-Slot_Finished:				
+Slot_Finished: ;  Routine $14				
 		clr.w	slot1_speed(a4)				; stop all slots
 		clr.w	slot2_speed(a4)
 		clr.w	slot3_speed(a4)
@@ -56987,11 +56989,11 @@ Slot_DrawChk:
 		rts	
 
 ; ---------------------------------------------------------------------------
-; Subroutine to update slot machine art in the 16x16 block table, and queue
-; a DMA transfer to update the copy in VRAM
+; Subroutine to update slot machine art and queue a DMA transfer
+; Slot art is stored in a buffer in the 16x16 block table
 ; ---------------------------------------------------------------------------
+
 .update_slot_art:
-		; Copy new slot art to the block table, and update in VRAM via DMA		
 		bsr.w	.get_pixel_row				; get pointer to pixel row	
 		lea	(v_16x16_tiles+$1000).w,a1		; destination	
 		
@@ -71191,7 +71193,7 @@ ost_rex_head:		rs.w 1					; $34, pointer to head
 		rsobjend
 ; ==========================================================================
 
-Rex_Init:				
+Rex_Init: ; Routine 0	
 		bsr.w	LoadSubObjData				; go to Rex_Wait next
 		move.b	#id_Frame_Rexon_Body,ost_frame(a0)
 		move.w	#-$20,ost_x_vel(a0)
@@ -71199,7 +71201,7 @@ Rex_Init:
 		rts	
 ; ===========================================================================
 
-Rex_Wait:				
+Rex_Wait: ; Routine 2				
 		bsr.w	FindPlayer				; get nearest player
 		addi.w	#$60,d2
 		cmpi.w	#$100,d2
@@ -71233,7 +71235,7 @@ Rex_CheckTurnAround:
 ; guess is that object ID 94 would have been used for a Rexon that did not move
 ; while waiting, with code in Rex_Init to set this routine.
 
-Rex_Wait_Stationary:			
+Rex_Wait_Stationary: ; Routine 4 (unused)		
 		bsr.w	FindPlayer				; find nearest player
 		addi.w	#$60,d2
 		cmpi.w	#$100,d2
@@ -71253,7 +71255,7 @@ Rex_Solid:
 		jmpto	SolidObject,JmpTo27_SolidObject
 ; ===========================================================================
 
-Rex_HeadSpawned:				
+Rex_HeadSpawned: ; Routine 6			
 		bsr.s	Rex_Solid				; run solidity checks
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
@@ -71298,7 +71300,7 @@ countof_rexnecksegs:	equ 4
 
 ; ===========================================================================
 
-RexHead_Init:				
+RexHead_Init: ; Routine 0			
 		bsr.w	LoadSubObjData				; go to RexHead_Wait next
 		move.b	#8,ost_displaywidth(a0)
 		moveq	#$28,d0					; start $28 pixels to right of body if x-flipped
@@ -71339,7 +71341,7 @@ RexHead_Delays:
 		even
 ; ===========================================================================
 
-RexHead_Wait:
+RexHead_Wait: ; Routine 2
 	if	(Revision<2)&(FixBugs=0)
 		; This call is in the wrong place. If ost_rexhead_timer expires on the same frame
 		; as the Rexon is defeated, the routine will be erroneously set back to RexHead_Raise;
@@ -71367,7 +71369,7 @@ RexHead_StartRaise:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-RexHead_Raise:
+RexHead_Raise: ; Routine 4
 	if	(Revision<2)&(FixBugs=0)
 		; Same bug as RexHead_Wait.
 		bsr.w	RexHead_CheckAlive
@@ -71401,7 +71403,7 @@ RexHead_OscIndicies:
 		even
 ; ===========================================================================
 
-RexHead_Risen:				
+RexHead_Risen: ; Routine 6				
 		bsr.w	RexHead_CheckAlive
 		cmpi.w	#id_RexHead_Head,ost_rexhead_subid(a0)
 		bne.s	.nothead				; branch if this not the head
@@ -71422,7 +71424,7 @@ RexHead_Risen:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
-RexHead_Defeated:				
+RexHead_Defeated: ; Routine 8				
 		move.w	(v_boundary_bottom).w,d0
 		addi.w	#$E0,d0	
 		cmp.w	ost_y_pos(a0),d0			; has neck segment passed below bottom boundary?
@@ -71869,7 +71871,7 @@ ost_turt_jetani:	rs.l 1					; $2E; pointer to animation script for jet; used whe
 		rsobjend
 ; ===========================================================================
 
-Turt_Init:				
+Turt_Init:	 ; Routine 0			
 		bsr.w	LoadSubObjData				; go to Turt_Action next
 		move.w	#-$80,ost_x_vel(a0)			; 
 		bsr.w	Turt_LoadRider
@@ -71891,14 +71893,14 @@ Turt_Init:
 		
 		; This can be fixed by clearing the pointer as soon as the rider is defeated,
 		; and skipping setting the rider's frame if it no longer exists
-Turt_Action:
+Turt_Action: ; Routine 2
 		movea.w	ost_turt_riderptr(a0),a1		; get pointer to rider
 		cmpi.b	#id_TurtloidRider,ost_id(a1)	
 		beq.s	.notdestroyed				; branch if rider hasn't been destroyed
 		clr.w	ost_turt_riderptr			; rider no longer exists; clear the pointer
 	.notdestroyed:
 	else
-Turt_Action:
+Turt_Action: ; Routine 2
 	endc					
 		moveq	#0,d0
 		move.b	ost_secondary_routine(a0),d0
@@ -71926,7 +71928,7 @@ Turt_Platform:
 		jmpto	DetectPlatform,JmpTo9_DetectPlatform	; handle platform collision
 ; ===========================================================================
 
-Turt_ChkDist:				
+Turt_ChkDist: ; Action 0			
 		bsr.w	FindPlayer
 	if FixBugs	
 		tst.w	d2					; d2 = horizontal distance to nearest player		
@@ -71947,7 +71949,7 @@ Turt_ChkDist:
 		rts	
 ; ===========================================================================
 
-Turt_Fire:				
+Turt_Fire: ; Action 2				
 		subq.b	#1,ost_turt_delay(a0)			; decrement timer
 		bpl.w	TRider_SharedRTS			; branch if time remains
 		addq.b	#2,ost_secondary_routine(a0)		; go to Turt_ResumeFlight next
@@ -71963,7 +71965,7 @@ Turt_Fire:
 		bra.w	Turt_LoadProjectile
 ; ===========================================================================
 
-Turt_ResumeFlight:				
+Turt_ResumeFlight: ; Action 4				
 		subq.b	#1,ost_turt_delay(a0)			; decrement timer
 		bpl.s	.exit					; branch if time remains
 		addq.b	#2,ost_secondary_routine(a0)		; go to Turt_Null next	
@@ -71975,7 +71977,7 @@ Turt_ResumeFlight:
 		rts	
 ; ===========================================================================
 
-Turt_Null:				
+Turt_Null: ; Action 6				
 		rts						; after Turtloid has fired shot, do nothing
 		
 ; ===========================================================================
@@ -71998,11 +72000,11 @@ ost_trider_turtptr:	rs.w 1					; pointer to parent Turtloid
 		rsobjend	
 ; ===========================================================================
 
-TRider_Init:				
+TRider_Init: ; Routine 0					
 		bra.w	LoadSubObjData
 ; ===========================================================================
 
-TRider_Display:				
+TRider_Display: ; Routine 2				
 		movea.w	ost_trider_turtptr(a0),a1		; a1 = parent turtloid
 		lea	TRider_Offsets(pc),a2
 		bsr.w	TRider_Align				; could be bsr.s or inlined
@@ -72067,11 +72069,11 @@ ost_btjet_type:		rs.b 1					; $32; id of parent object
 		rsobjend
 ; ===========================================================================
 
-BTJet_Init:				
+BTJet_Init:	 ; Routine 0			
 		bra.w	LoadSubObjData
 ; ===========================================================================
 
-BTJet_Display:				
+BTJet_Display: ; Routine 2				
 		movea.w	ost_btjet_parent(a0),a1			; a1 = parent Turtloid or Balkiry
 		move.b	ost_btjet_type(a0),d0			; id of parent object
 		cmp.b	ost_id(a1),d0
@@ -75292,7 +75294,7 @@ SonicSegaScreen_Index:	index offset(*),,2
 		ptr SonicSegaScreen_MidWipe			; 4
 		ptr SonicSegaScreen_RunRight			; 6
 		ptr SonicSegaScreen_EndWipe			; 8
-		ptr SonicSegaScreen_Done			; 10	; rts
+		ptr SonicSegaScreen_Done			; $A	; rts
 		
 		rsobj	SonicSegaScreen,$2A
 ost_sonicsega_frame_counter:		rs.w 1			; number of frames remaining in each stage of the animation
@@ -75301,7 +75303,7 @@ ost_sonicsega_streakcounter:		rs.b 1			; number of times the streak palette has 
 		rsobjend
 ; ===========================================================================
 
-SonicSegaScreen_Init:				
+SonicSegaScreen_Init: ; Routine 0				
 		bsr.w	LoadSubObjData				; load mapping and tile data, go to SonicSegaScreen_RunLeft next	
 		move.w	#screen_right+40,ost_x_screen(a0)
 		move.w	#screen_top+112,ost_y_screen(a0)
@@ -75410,7 +75412,7 @@ sizeof_SonicSegaScreen_ScaledSpriteData: equ	SonicSegaScreen_ScaledSpriteDataEnd
 		endc	
 ; ===========================================================================
 
-SonicSegaScreen_RunLeft:				
+SonicSegaScreen_RunLeft: ; Routine 2				
 		subi.w	#$20,ost_x_screen(a0)			; move Sonic left 32 pixels
 		subq.w	#1,ost_sonicsega_frame_counter(a0)	; decrement frame counter
 		bmi.s	.runleft_done				; if we're done, branch
@@ -75427,7 +75429,7 @@ SonicSegaScreen_RunLeft:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 
-SonicSegaScreen_MidWipe:				
+SonicSegaScreen_MidWipe: ; Routine 4				
 		tst.w	ost_sonicsega_frame_counter(a0)		; has frame counter reached 0?
 		beq.s	.updatepalette				; if so, branch	
 		subq.w	#1,ost_sonicsega_frame_counter(a0)	; decrement frame counter
@@ -75477,7 +75479,7 @@ SonicSegaScreen_RunRightInit:
 		rts
 ; ===========================================================================
 
-SonicSegaScreen_RunRight:				
+SonicSegaScreen_RunRight: ; Routine 6				
 		subq.w	#1,ost_sonicsega_frame_counter(a0)	; decrement frame counter
 		bmi.s	.runright_done				; if we're done, branch
 		addi.w	#$20,ost_x_screen(a0)			; move Sonic 32 pixels right
@@ -75495,7 +75497,7 @@ SonicSegaScreen_RunRight:
 		rts	
 ; ===========================================================================
 
-SonicSegaScreen_EndWipe:				
+SonicSegaScreen_EndWipe: ; Routine 8				
 		tst.w	ost_sonicsega_frame_counter(a0)		; has frame counter reached 0?			
 		beq.s	.updatepalette				; if so, branch
 		subq.w	#1,ost_sonicsega_frame_counter(a0)	; decrement counter
@@ -75514,7 +75516,7 @@ SonicSegaScreen_PlaySegaSound:
 		move.b	#cmd_Sega,d0
 		jsrto	PlaySound,JmpTo12_PlaySound
 
-SonicSegaScreen_Done:				
+SonicSegaScreen_Done:	 ; Routine $A			
 		rts	
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -75532,7 +75534,7 @@ SegaHideTM_Index:	index offset(*),,2
 		ptr SegaHideTM_Display				; 2
 ; ===========================================================================
 
-SegaHideTM_Init:				
+SegaHideTM_Init: ; Routine 0				
 		bsr.w	LoadSubObjData
 		move.b	#id_Frame_HideTM,ost_frame(a0)
 		move.w	#screen_left+244,ost_x_screen(a0)
@@ -75540,7 +75542,7 @@ SegaHideTM_Init:
 		rts	
 ; ===========================================================================
 
-SegaHideTM_Display:				
+SegaHideTM_Display:	 ; Routine 2			
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -76751,7 +76753,7 @@ VertProp_Index:	index offset(*),,2
 		ptr VertProp_Main				; 2
 ; ===========================================================================
 
-VertProp_Init:				
+VertProp_Init: ; Routine 0				
 		bsr.w	LoadSubObjData				; go to VertProp_Main next
 		bclr	#render_yflip_bit,ost_render(a0)	; y-flip bit indicates whether or not collision should be enabled
 		beq.s	.collision_enabled			; branch if y-flip bit is not set
@@ -76761,7 +76763,7 @@ VertProp_Init:
 		rts	
 ; ===========================================================================
 
-VertProp_Main:				
+VertProp_Main: ; Routine 2				
 		lea	(Ani_VertProp).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		move.b	(v_vblank_counter_byte).w,d0		; get byte that increments every frame
