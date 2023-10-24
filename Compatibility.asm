@@ -1,5 +1,5 @@
 ; ---------------------------------------------------------------------------
-; Compatibility with Sonic 2 AS
+; Compatibility with Sonic 2 AS and Hivebrain 2022
 ; A few are commented out due to conflicts
 ; ---------------------------------------------------------------------------
 
@@ -105,7 +105,6 @@ sub9_x_pos:				equ ost_subspr9_x_pos
 sub9_y_pos:				equ ost_subspr9_y_pos
 sub9_mapframe:			equ ost_subspr9_frame
 
-
 boss_subtype:			equ ost_boss_subtype
 boss_invulnerable_time: equ ost_boss_flash_time
 boss_sine_count:		equ ost_boss_wobble
@@ -113,6 +112,9 @@ boss_routine:			equ ost_boss_routine
 boss_defeated:			equ ost_boss_defeated
 boss_hitcount2:			equ ost_boss_hitcount2
 boss_hurt_sonic:		equ ost_boss_hurtplayer
+
+ost_status:				equ ost_primary_status
+ost_sonic_on_obj:		equ ost_interact
 
 ; ---------------------------------------------------------------------------
 ; Variables/RAM Addresses

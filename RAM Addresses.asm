@@ -222,6 +222,7 @@ v_boundary_bottom:			rs.w 1			; $FFFFEECE ; bottom level boundary, was "Camera_m
 				ramblock horiz_scroll_delay	; required for teleport swap table 
 v_hscroll_delay_val:		rs.w 1				; $FFFFEED0 ; if its value is a, where a != 0, horizontal scrolling will be based on the player's X position a-1 frames ago
 v_sonic_pos_tracker_num:		rs.w 1			; $FFFFEED2 ; current location within Sonic's position tracking data
+v_sonic_pos_tracker_num_low:	equ __rs-1
 				ramblocksize horiz_scroll_delay
 
 				ramblock horiz_scroll_delay_p2	; required for teleport swap table 

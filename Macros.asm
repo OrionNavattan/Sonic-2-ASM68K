@@ -1018,6 +1018,7 @@ charset:	macro	charset,txt
 		endc
 		endr
 		dc.b	$FF					; terminator			
+
 		elseif	stricmp("\charset","intro")
 		; Text used on "Sonic and Miles 'Tails' Prower In" screen
 		; Identical to credits, except all values are reduced by 1 and numbers are not supported
@@ -1049,7 +1050,8 @@ charset:	macro	charset,txt
 			inform 2,"Invalid character in intro text (must be uppercase letter, ' ', '(', ')', '.', ''', ':', or '@')."	
 		endc
 		endr
-		dc.b	$FF					; terminator			
+		dc.b	$FF					; terminator	
+				
 		elseif	stricmp("\charset","titlecard")
 		; Tile indices for loading letters from Nem_TitleCardFont to VRAM
 		pushp " ENOZ"					; always skip these characters, as they are loaded with the global title card tiles
@@ -1261,7 +1263,7 @@ incpal: macro lbl,lbl2
 		endm		
 
 ; ---------------------------------------------------------------------------
-; Set the destination for an afBack flag, and generate the declaration
+; Set the destination for the afBack flag, and generate the declaration
 ; usage: backdest id_Frame_Sonic_Laying1
 ; ---------------------------------------------------------------------------
 

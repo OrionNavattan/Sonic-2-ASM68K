@@ -238,12 +238,19 @@ sonic_max_speed:		equ $600
 sonic_max_speed_roll:		equ $1000			; rolling
 sonic_acceleration:		equ $C
 sonic_deceleration:		equ $80
+
 sonic_max_speed_water:		equ sonic_max_speed/2		; underwater
 sonic_acceleration_water:	equ sonic_acceleration/2
 sonic_deceleration_water:	equ sonic_deceleration/2
+
 sonic_max_speed_shoes:		equ sonic_max_speed*2		; with speed shoes
 sonic_acceleration_shoes:	equ sonic_acceleration*2
 sonic_deceleration_shoes:	equ sonic_deceleration
+
+sonic_max_speed_super:		equ sonic_max_speed+$400	; super
+sonic_acceleration_super:	equ sonic_acceleration*4
+sonic_deceleration_super:	equ sonic_deceleration*2
+
 sonic_min_speed_roll:		equ $80				; speed required to trigger roll
 sonic_min_speed_slope:		equ $280			; speed required to overcome gravity on steep slopes
 sonic_jump_power:		equ $680			; initial jump power
@@ -512,15 +519,15 @@ ost_subspr9_frame:			rs.b 1			; $3F
 ost_flip_angle:				rs.b 1			; $27 ; angle about the x axis (360 degrees = 256) (twist/tumble)
 ost_air_left:				rs.b 1			; $28 ; air left while underwater
 ost_flip_turned:			rs.b 1			; $29 ; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
-ost_obj_control:			rs.b 1			; $2A ; 1 for hanging or for resting on a flipper, $81 for going through CNZ/OOZ/MTZ tubes or held by Grabbers, stopped in CNZ cages or launcher, or flying if Tails
+ost_obj_control:			rs.b 1			; $2A ; +1 = lock controls, lock player's position & animation; +$80 = no collision with objects
 ost_secondary_status:		rs.b 1				; $2B ; status flags for powerups and oil slides
 	status_shield_bit:		equ	0		; set if character is equipped with a shield
 	status_invincible_bit:	equ	1			; set if character is invincible
 	status_speedshoes_bit:	equ	2			; set if character has speed shoes
 	status_sliding_bit:		equ	7		; set if character is on an oil slide
-	status_shield:			equ	1<<status_shield_bit ; $01
-	status_invincible:		equ	1<<status_invincible_bit ; $02
-	status_speedshoes:		equ	1<<status_speedshoes_bit ; $04
+	status_shield:			equ	1<<status_shield_bit ; 1
+	status_invincible:		equ	1<<status_invincible_bit ; 2
+	status_speedshoes:		equ	1<<status_speedshoes_bit ; 4
 	status_sliding:			equ	1<<status_sliding_bit ; $80
 ost_flips_remaining:		rs.b 1				; $2C ; number of flip revolutions remaining
 ost_flip_speed:				rs.b 1			; $2D ; number of flip revolutions per frame / 256
@@ -533,6 +540,7 @@ ost_angle_left:				rs.b 1			; $37 ; angle of floor on Sonic/Tails' left side
 ost_sticktoconvex:			rs.b 1			; $38 ; 1 if Sonic/Tails is stuck to a convex surface. used in Sonic 1 and 3 for rotating discs, unused here
 ost_pinball_mode:
 ost_spindash_flag:			rs.b 1			; $39 ; 0 for normal, 1 for charging a spindash or forced rolling
+ost_pinball_flag:			equ ost_spindash_flag
 ost_spindash_counter:						; $3A ; 
 ost_restart_time:			rs.w 1			; $3A ; time until level restarts
 ost_jump:					rs.b 1		; $3C ; 1 if Sonic/Tails is jumping
