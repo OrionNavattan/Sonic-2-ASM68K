@@ -34032,30 +34032,30 @@ Sonic_BalRight:
 
 	.facingleft:				
 		move.b	#id_Ani_Son_BalanceIn1,ost_anim(a0)
-		addq.w	#6,d2		; d2 = display width of platform +4
-		cmp.w	d2,d1		; is Sonic greater than 4 pixels beyond right edge?
-		blt.w	Sonic_ResetScr	; branch if not
+		addq.w	#6,d2					; d2 = display width of platform +4
+		cmp.w	d2,d1					; is Sonic greater than 4 pixels beyond right edge?
+		blt.w	Sonic_ResetScr				; branch if not
 		move.b	#id_Ani_Son_BalanceIn2,ost_anim(a0)
-		bclr	#status_xflip_bit,ost_primary_status(a0)	; Sonic faces out from platform
+		bclr	#status_xflip_bit,ost_primary_status(a0) ; Sonic faces out from platform
 		bra.w	Sonic_ResetScr
 ; ===========================================================================
 
 Sonic_BalLeft:				
 		btst	#status_xflip_bit,ost_primary_status(a0)
-		beq.s	.facingright		; branch if Sonic is facing right
+		beq.s	.facingright				; branch if Sonic is facing right
 		move.b	#id_Ani_Son_BalanceOut1,ost_anim(a0)
-		cmpi.w	#-4,d1			; is Sonic greater than 4 pixels beyond left edge?
-		bge.w	Sonic_ResetScr	; branch if not
+		cmpi.w	#-4,d1					; is Sonic greater than 4 pixels beyond left edge?
+		bge.w	Sonic_ResetScr				; branch if not
 		move.b	#id_Ani_Son_BalanceOut2,ost_anim(a0)
 		bra.w	Sonic_ResetScr
 ; ===========================================================================
 
 	.facingright:				
 		move.b	#id_Ani_Son_BalanceIn1,ost_anim(a0)
-		cmpi.w	#-4,d1			; is Sonic greater than 4 pixels beyond left edge?
-		bge.w	Sonic_ResetScr	; branch if not
+		cmpi.w	#-4,d1					; is Sonic greater than 4 pixels beyond left edge?
+		bge.w	Sonic_ResetScr				; branch if not
 		move.b	#id_Ani_Son_BalanceIn2,ost_anim(a0)
-		bset	#status_xflip_bit,ost_primary_status(a0)	; Sonic faces out from platform
+		bset	#status_xflip_bit,ost_primary_status(a0) ; Sonic faces out from platform
 		bra.w	Sonic_ResetScr
 ; ===========================================================================
 
@@ -36193,7 +36193,7 @@ Ani_Son_BalanceIn1:
 Ani_Son_BalanceIn2:
 		dc.b 3
 		dc.b id_Frame_Sonic_LoseFooting
-		backdest id_Frame_Sonic_Balance11 ; identical to Ani_Son_BalanceOut2 from here on; could have been implemented with afChange
+		backdest id_Frame_Sonic_Balance11		; identical to Ani_Son_BalanceOut2 from here on; could have been implemented with afChange
 		dc.b id_Frame_Sonic_Balance12
 		dc.b id_Frame_Sonic_Balance13
 		dc.b id_Frame_Sonic_Balance14
@@ -41319,7 +41319,7 @@ FindFloorEdge_NoX:
 		moveq	#0,d0
 		move.b	ost_height(a0),d0
 		ext.w	d0
-		add.w	d0,d2	; d2 = y pos of bottom edge of object
+		add.w	d0,d2					; d2 = y pos of bottom edge of object
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
 		cmpi.b	#$C,ost_top_solid_bit(a0)
 		beq.s	.useprimary
@@ -41328,11 +41328,11 @@ FindFloorEdge_NoX:
 	.useprimary:				
 		lea	(v_angle_right).w,a4
 		move.b	#0,(a4)
-		movea.w	#$10,a3		; height of a 16x16 tile
-		move.w	#0,d6		; EOR bitmask
-		move.b	ost_top_solid_bit(a0),d5	; bit to test for solidness
+		movea.w	#$10,a3					; height of a 16x16 tile
+		move.w	#0,d6					; EOR bitmask
+		move.b	ost_top_solid_bit(a0),d5		; bit to test for solidness
 		bsr.w	FindFloor
-		move.b	(v_angle_right).w,d3	; get floor angle (overwriting low byte of x pos)
+		move.b	(v_angle_right).w,d3			; get floor angle (overwriting low byte of x pos)
 		btst	#0,d3					; is angle snap bit set?
 		beq.s	.exit
 		move.b	#0,d3					; snap to flat floor
@@ -42625,255 +42625,280 @@ JmpTo3_SpeedToPos:
 		align 4
 	endc
 
-; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 03 - Collision plane/layer switcher
 ; ----------------------------------------------------------------------------
+
 PlaneSwitcher:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	PSwitch_Index(pc,d0.w),d1
-		jsr	PSwitch_Index(pc,d1.w)
+		move.w	PSwtch_Index(pc,d0.w),d1
+		jsr	PSwtch_Index(pc,d1.w)
 		jmp	(DespawnObject3).l
 ; ===========================================================================
-PSwitch_Index	index offset(*),,2	
-		ptr loc_1FCF6					; 0 
-		ptr loc_1FDA4					; 2
-		ptr loc_1FEAE					; 4
+
+PSwtch_Index:	index offset(*),,2	
+		ptr PSwtch_Init					; 0 
+		ptr PSwtch_MainX				; 2
+		ptr PSwtch_MainY				; 4
+		
+		rsobj	PlaneSwitcher,$32
+ost_pswtch_radius:		rs.w 1				; $32 ; height of x-switcher or width of y-switcher divided by 2
+ost_pswtch_p1_side:		rs.b 1				; $34 ; 0 if player 1 is above or to left of switcher, 1 if below or to right
+ost_pswtch_p2_side:		rs.b 1				; $35 ; same as above, but for player 2
+		rsobjend
+
+; Subtype bits
+; Bits 0-1 indicate size; rest of subtype is bitfield with following definitions:
+pswtch_xy_bit:			equ 2				; 0 if x-switcher (horizontal movement), 1 if y-switcher (vertical movement)
+pswtch_downright_bit:	equ 3					; if set, moves player to plane 1 when touching left or top, otherwise moves them to plane 0
+pswtch_upleft_bit:		equ 4				; if set, moves player to plane 1 when touching right or bottom, otherwise moves them to plane 0
+pswtch_downright_hi_bit:	equ 5				; if set, sets player's priority to low when moving up or left and high when moving down or right
+pswtch_upleft_hi_bit:	equ 6					; if set, sets player's priority to low when moving down or right and high when moving up or left
+pswtch_ignore_air_bit:	equ 7					; if set, switcher will ignore player if they are airborne
+
+pswtch_priority_only:	equ render_xflip_bit			; if xflip is set in objpos definition, this switcher only changes player's sprite priority
+
+pswtch_size:			equ 3				; bits 0-1 : size of switcher, 4-32 blocks
+pswtch_xy:				equ 1<<pswtch_xy_bit
 ; ===========================================================================
 
-loc_1FCF6:				
-		addq.b	#2,ost_primary_routine(a0)
+PSwtch_Init:				
+		addq.b	#2,ost_primary_routine(a0)		; go to PSwtch_MainX net
 		move.l	#Map_PSwitch,ost_mappings(a0)
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a0)
-
-loc_1FD08:
 		jsrto	Adjust2PArtPointer,JmpTo7_Adjust2PArtPointer
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#$10,ost_displaywidth(a0)
+		move.b	#$20/2,ost_displaywidth(a0)
 		move.b	#5,ost_priority(a0)
-		move.b	ost_subtype(a0),d0
-		btst	#2,d0
-		beq.s	loc_1FD70
-		addq.b	#2,ost_primary_routine(a0)
-		andi.w	#7,d0
-		move.b	d0,ost_frame(a0)
-		andi.w	#3,d0
-		add.w	d0,d0
-		move.w	word_1FD68(pc,d0.w),$32(a0)
-		move.w	ost_y_pos(a0),d1
+		move.b	ost_subtype(a0),d0			; d0 = subtype
+		btst	#pswtch_xy_bit,d0
+		beq.s	PSwtch_Init_CheckX			; branch if this is an x-switcher
+
+;PSwtch_Init_CheckY:
+		addq.b	#2,ost_primary_routine(a0)		; go to PSwtch_MainY next
+		andi.w	#pswtch_size|pswtch_xy,d0		; only need size and xy bits
+		move.b	d0,ost_frame(a0)			; index to mapping frame
+		andi.w	#pswtch_size,d0				; only need size
+		add.w	d0,d0				
+		move.w	PSwtch_Radii(pc,d0.w),ost_pswtch_radius(a0) ; set radius
+		move.w	ost_y_pos(a0),d1			; d1 = y pos of switcher
 		lea	(v_ost_player1).w,a1
 		cmp.w	ost_y_pos(a1),d1
-		bcc.s	loc_1FD54
-		move.b	#1,$34(a0)
+		bcc.s	.player1_above				; branch if player 1 is at or above switcher
+		move.b	#1,ost_pswtch_p1_side(a0)		; mark player as below switcher
 
-loc_1FD54:				
+	.player1_above:				
 		lea	(v_ost_player2).w,a1
 		cmp.w	ost_y_pos(a1),d1
-		bcc.s	loc_1FD64
-		move.b	#1,$35(a0)
+		bcc.s	.player2_above				; branch if player 2 is at or above switcher
+		move.b	#1,ost_pswtch_p2_side(a0)		; mark player as below switcher
 
-loc_1FD64:				
-		bra.w	loc_1FEAE
-; ===========================================================================
-word_1FD68:	
-		dc.w   $20					; 0
-		dc.w   $40					; 1
-		dc.w   $80					; 2
-		dc.w  $100					; 3
+	.player2_above:				
+		bra.w	PSwtch_MainY
 ; ===========================================================================
 
-loc_1FD70:				
-		andi.w	#3,d0
-		move.b	d0,ost_frame(a0)
+PSwtch_Radii:	
+		dc.w   64/2					; 0
+		dc.w  128/2					; 1
+		dc.w  256/2					; 2
+		dc.w  512/2					; 3
+; ===========================================================================
+
+PSwtch_Init_CheckX:				
+		andi.w	#pswtch_size,d0				; only need size and xy bits
+		move.b	d0,ost_frame(a0)			; index to mapping frame
 		add.w	d0,d0
-		move.w	word_1FD68(pc,d0.w),$32(a0)
-		move.w	ost_x_pos(a0),d1
-		lea	($FFFFB000).w,a1
+		move.w	PSwtch_Radii(pc,d0.w),ost_pswtch_radius(a0) ; set radius
+		move.w	ost_x_pos(a0),d1			; d1 = x pos of switcher
+		lea	(v_ost_player1).w,a1
 		cmp.w	ost_x_pos(a1),d1
-		bcc.s	loc_1FD94
-		move.b	#1,$34(a0)
+		bcc.s	.player1_right				; branch if player 1 is at or to left left of switcher
+		move.b	#1,ost_pswtch_p1_side(a0)		; mark player as right of switcher
 
-loc_1FD94:				
-		lea	($FFFFB040).w,a1
+	.player1_right:				
+		lea	(v_ost_player2).w,a1
 		cmp.w	ost_x_pos(a1),d1
-		bcc.s	loc_1FDA4
-		move.b	#1,$35(a0)
+		bcc.s	PSwtch_MainX				; branch if player 2 is at or to left of switcher
+		move.b	#1,ost_pswtch_p2_side(a0)		; mark player as right of switcher
 
-loc_1FDA4:
-		tst.w	(v_debug_active).w
-		bne.w	locret_1FEAC
-		move.w	ost_x_pos(a0),d1
-		lea	$34(a0),a2
-		lea	($FFFFB000).w,a1
-		bsr.s	loc_1FDBE
-		lea	($FFFFB040).w,a1
+PSwtch_MainX:
+		tst.w	(v_debug_active).w			; is debug placement mode active?
+		bne.w	.done					; if so, exit
+		move.w	ost_x_pos(a0),d1			; d1 = switcher x pos
+		lea	ost_pswtch_p1_side(a0),a2		; a2 = flag indicating which side of switcher player is on
+		lea	(v_ost_player1).w,a1			; a1 = player
+		bsr.s	.x_do					; run for player 1
+		lea	(v_ost_player2).w,a1			; run for player 2
 
-loc_1FDBE:				
+	.x_do:				
 		tst.b	(a2)+
-		bne.s	loc_1FE38
-		cmp.w	ost_x_pos(a1),d1
-		bhi.w	locret_1FEAC
-		move.b	#1,-1(a2)
+		bne.s	.right					; branch if player is at or right of switcher
+
+	;.left:
+		cmp.w	ost_x_pos(a1),d1			; has player reached the x pos of the switcher?
+		bhi.w	.done					; branch if not
+		move.b	#1,ost_pswtch_p1_side-ost_pswtch_p2_side(a2) ; mark player as right of switcher
 		move.w	ost_y_pos(a0),d2
 		move.w	d2,d3
-		move.w	$32(a0),d4
-		sub.w	d4,d2
-		add.w	d4,d3
-		move.w	ost_y_pos(a1),d4
+		move.w	ost_pswtch_radius(a0),d4
+		sub.w	d4,d2					; d2 = y pos of top of switcher
+		add.w	d4,d3					; d3 = y pos of bottom of switcher
+		move.w	ost_y_pos(a1),d4			; d4 = player y pos
 		cmp.w	d2,d4
-		blt.w	locret_1FEAC
+		blt.w	.done					; branch if player is above switcher
 		cmp.w	d3,d4
-		bge.w	locret_1FEAC
-		move.b	ost_subtype(a0),d0
-		bpl.s	loc_1FDFE
-		btst	#1,ost_primary_status(a1)
-		bne.w	locret_1FEAC
+		bge.w	.done					; branch if player is below switcher
+		move.b	ost_subtype(a0),d0			; is this switcher set to ignore the player if they're airborne?
+		bpl.s	.set_plane1				; branch if not
+		btst	#status_air_bit,ost_primary_status(a1)	; is player in the air?
+		bne.w	.done					; if so, do nothing
 
-loc_1FDFE:				
-		btst	#render_xflip_bit,ost_render(a0)
-		bne.s	loc_1FE24
-		move.b	#$C,$3E(a1)
-		move.b	#$D,$3F(a1)
-		btst	#3,d0
-		beq.s	loc_1FE24
-		move.b	#$E,$3E(a1)
-		move.b	#$F,$3F(a1)
+	.set_plane1:				
+		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
+		bne.s	.set_priority1				; branch if so
+		move.b	#plane0_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#plane0_lrbsolid,ost_lrb_solid_bit(a1)
+		btst	#pswtch_downright_bit,d0		
+		beq.s	.set_priority1				; branch if player is being switched to plane 0
+		move.b	#plane1_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#plane1_lrbsolid,ost_lrb_solid_bit(a1)
 
-loc_1FE24:				
-		andi.w	#tile_draw,ost_tile(a1)
-		btst	#5,d0
-		beq.s	locret_1FEAC
-		ori.w	#tile_hi,ost_tile(a1)
-		bra.s	locret_1FEAC
+	.set_priority1:				
+		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
+		btst	#pswtch_downright_hi_bit,d0
+		beq.s	.done					; branch if we're setting priority to low
+		ori.w	#tile_hi,ost_tile(a1)			; set player's priority to high
+		bra.s	.done
 ; ===========================================================================
 
-loc_1FE38:				
-		cmp.w	ost_x_pos(a1),d1
-		bls.w	locret_1FEAC
-		move.b	#0,-1(a2)
+	.right:				
+		cmp.w	ost_x_pos(a1),d1			; has player reached the x pos of the switcher?
+		bls.w	.done					; branch if not
+		move.b	#0,ost_pswtch_p1_side-ost_pswtch_p2_side(a2) ; mark player as left of switcher
 		move.w	ost_y_pos(a0),d2
 		move.w	d2,d3
-		move.w	$32(a0),d4
-		sub.w	d4,d2
-		add.w	d4,d3
-		move.w	ost_y_pos(a1),d4
+		move.w	ost_pswtch_radius(a0),d4
+		sub.w	d4,d2					; d2 = y pos of top of switcher
+		add.w	d4,d3					; d3 = y pos of bottom of switcher
+		move.w	ost_y_pos(a1),d4			; d4 = player y pos
 		cmp.w	d2,d4
-		blt.w	locret_1FEAC
+		blt.w	.done					; branch if player is above switcher
 		cmp.w	d3,d4
-		bge.w	locret_1FEAC
-		move.b	ost_subtype(a0),d0
-		bpl.s	loc_1FE74
-		btst	#1,ost_primary_status(a1)
-		bne.w	locret_1FEAC
+		bge.w	.done					; branch if player is below switcher
+		move.b	ost_subtype(a0),d0			; is this switcher set to ignore the player if they're airborne?
+		bpl.s	.set_plane2				; branch if not
+		btst	#status_air_bit,ost_primary_status(a1)	; is player in the air?
+		bne.w	.done					; if so, do nothing
 
-loc_1FE74:				
-		btst	#render_xflip_bit,ost_render(a0)
-		bne.s	loc_1FE9A
-		move.b	#$C,$3E(a1)
-		move.b	#$D,$3F(a1)
-		btst	#4,d0
-		beq.s	loc_1FE9A
-		move.b	#$E,$3E(a1)
-		move.b	#$F,$3F(a1)
+	.set_plane2:				
+		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
+		bne.s	.set_priority2				; branch if so
+		move.b	#plane0_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#plane0_lrbsolid,ost_lrb_solid_bit(a1)
+		btst	#pswtch_upleft_bit,d0
+		beq.s	.set_priority2				; branch if player is being switched to plane 0
+		move.b	#plane1_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#plane1_lrbsolid,ost_lrb_solid_bit(a1)
 
-loc_1FE9A:				
-		andi.w	#tile_draw,ost_tile(a1)
-		btst	#6,d0
-		beq.s	locret_1FEAC
-		ori.w	#tile_hi,ost_tile(a1)
+	.set_priority2:				
+		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
+		btst	#pswtch_upleft_hi_bit,d0
+		beq.s	.done					; branch if we're setting priority to low
+		ori.w	#tile_hi,ost_tile(a1)			; set player's priority to high
 
-locret_1FEAC:				
+	.done:				
 		rts	
 ; ===========================================================================
 
-loc_1FEAE:
-		tst.w	(v_debug_active).w
-		bne.w	locret_1FFB6
-		move.w	ost_y_pos(a0),d1
-		lea	$34(a0),a2
-		lea	(v_ost_player1).w,a1
-		bsr.s	loc_1FEC8
-		lea	(v_ost_player2).w,a1
+PSwtch_MainY:
+		tst.w	(v_debug_active).w			; is debug placement mode active?
+		bne.w	.done					; if so, exit
+		move.w	ost_y_pos(a0),d1			; d1 = switcher y pos
+		lea	ost_pswtch_p1_side(a0),a2		; a2 = flag indicating which side of switcher player is on
+		lea	(v_ost_player1).w,a1			; a1 = player		
+		bsr.s	.y_do					; run for player 1
+		lea	(v_ost_player2).w,a1			; run for player 2
 
-loc_1FEC8:				
+	.y_do:				
 		tst.b	(a2)+
-		bne.s	loc_1FF42
-		cmp.w	ost_y_pos(a1),d1
-		bhi.w	locret_1FFB6
-		move.b	#1,-1(a2)
+		bne.s	.below					; branch if player is at or below switcher
+		
+	;.above:	
+		cmp.w	ost_y_pos(a1),d1			; has player reached the y pos of the switcher?
+		bhi.w	.done					; branch if not
+		move.b	#1,ost_pswtch_p1_side-ost_pswtch_p2_side(a2) ; mark player as below switcher
 		move.w	ost_x_pos(a0),d2
 		move.w	d2,d3
-		move.w	$32(a0),d4
-		sub.w	d4,d2
-		add.w	d4,d3
-		move.w	ost_x_pos(a1),d4
+		move.w	ost_pswtch_radius(a0),d4
+		sub.w	d4,d2					; d2 = y pos of top of switcher
+		add.w	d4,d3					; d3 = y pos of bottom of switcher
+		move.w	ost_x_pos(a1),d4			; d4 = player y pos
 		cmp.w	d2,d4
-		blt.w	locret_1FFB6
+		blt.w	.done					; branch if player is left of switcher
 		cmp.w	d3,d4
-		bge.w	locret_1FFB6
-		move.b	ost_subtype(a0),d0
-		bpl.s	loc_1FF08
+		bge.w	.done					; branch if player is right of switcher
+		move.b	ost_subtype(a0),d0			; is this switcher set to ignore the player if they're airborne?
+		bpl.s	.set_plane1				; branch if not
+		btst	#status_air_bit,ost_primary_status(a1)	; is player in the air?
+		bne.w	.done					; if so, do nothing
 
-loc_1FEFE:
-		btst	#1,ost_primary_status(a1)
-		bne.w	locret_1FFB6
+	.set_plane1:				
+		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
+		bne.s	.set_priority1				; branch if so
+		move.b	#plane0_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#plane0_lrbsolid,ost_lrb_solid_bit(a1)
+		btst	#pswtch_downright_bit,d0
+		beq.s	.set_priority1				; branch if player is being switched to plane 0
+		move.b	#plane1_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#plane1_lrbsolid,ost_lrb_solid_bit(a1)
 
-loc_1FF08:				
-		btst	#render_xflip_bit,ost_render(a0)
-		bne.s	loc_1FF2E
-		move.b	#$C,$3E(a1)
-		move.b	#$D,$3F(a1)
-		btst	#3,d0
-		beq.s	loc_1FF2E
-		move.b	#$E,$3E(a1)
-		move.b	#$F,$3F(a1)
-
-loc_1FF2E:				
-		andi.w	#tile_draw,ost_tile(a1)
-		btst	#5,d0
-		beq.s	locret_1FFB6
-		ori.w	#tile_hi,ost_tile(a1)
-		bra.s	locret_1FFB6
+	.set_priority1:				
+		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
+		btst	#pswtch_downright_hi_bit,d0
+		beq.s	.done					; branch if we're setting priority to low
+		ori.w	#tile_hi,ost_tile(a1)			; set player's priority to high
+		bra.s	.done
 ; ===========================================================================
 
-loc_1FF42:				
-		cmp.w	ost_y_pos(a1),d1
-		bls.w	locret_1FFB6
-		move.b	#0,-1(a2)
+	.below:				
+		cmp.w	ost_y_pos(a1),d1			; has player reached the y pos of the switcher?
+		bls.w	.done					; branch if not
+		move.b	#0,ost_pswtch_p1_side-ost_pswtch_p2_side(a2) ; mark player as above switcher
 		move.w	ost_x_pos(a0),d2
 		move.w	d2,d3
-		move.w	$32(a0),d4
-		sub.w	d4,d2
-		add.w	d4,d3
-		move.w	ost_x_pos(a1),d4
+		move.w	ost_pswtch_radius(a0),d4
+		sub.w	d4,d2					; d2 = y pos of top of switcher
+		add.w	d4,d3					; d3 = y pos of bottom of switcher
+		move.w	ost_x_pos(a1),d4			; d4 = player y pos
 		cmp.w	d2,d4
-		blt.w	locret_1FFB6
+		blt.w	.done					; branch if player is left of switcher
 		cmp.w	d3,d4
-		bge.w	locret_1FFB6
-		move.b	ost_subtype(a0),d0
-		bpl.s	loc_1FF7E
-		btst	#1,ost_primary_status(a1)
-		bne.w	locret_1FFB6
+		bge.w	.done					; branch if player is right of switcher
+		move.b	ost_subtype(a0),d0			; is this switcher set to ignore the player if they're airborne?
+		bpl.s	.set_plane2				; branch if not
+		btst	#status_air_bit,ost_primary_status(a1)	; is player in the air?
+		bne.w	.done					; if so, do nothing
 
-loc_1FF7E:				
-		btst	#render_xflip_bit,ost_render(a0)
-		bne.s	loc_1FFA4
-		move.b	#$C,$3E(a1)
-		move.b	#$D,$3F(a1)
-		btst	#4,d0
-		beq.s	loc_1FFA4
-		move.b	#$E,$3E(a1)
-		move.b	#$F,$3F(a1)
+	.set_plane2:				
+		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
+		bne.s	.set_priority2				; branch if so
+		move.b	#plane0_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#plane0_lrbsolid,ost_lrb_solid_bit(a1)
+		btst	#pswtch_upleft_bit,d0
+		beq.s	.set_priority2				; branch if player is being switched to plane 0
+		move.b	#plane1_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#plane1_lrbsolid,ost_lrb_solid_bit(a1)
 
-loc_1FFA4:				
-		andi.w	#tile_draw,ost_tile(a1)
-		btst	#6,d0
-		beq.s	locret_1FFB6
-		ori.w	#tile_hi,ost_tile(a1)
+	.set_priority2:				
+		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
+		btst	#pswtch_upleft_hi_bit,d0
+		beq.s	.done					; branch if we're setting priority to low
+		ori.w	#tile_hi,ost_tile(a1)			; set player's priority to high
 
-locret_1FFB6:				
+	.done:				
 		rts	
+; ===========================================================================
 
 		include "mappings/sprite/Plane Switcher.asm"
 		
@@ -42886,7 +42911,6 @@ JmpTo7_Adjust2PArtPointer:
 		align 4	
 	endc	
 	  
-; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 0B - CPZ tipping pipe section
 ; ----------------------------------------------------------------------------

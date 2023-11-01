@@ -297,6 +297,12 @@ spring_power_red:		equ $1000
 spring_power_yellow:		equ $A00
 debug_move_speed:		equ 15				; initial speed object moves in debug mode when d-pad is held (1px per frame)
 
+; Plane solidity values
+plane0_topsolid:		equ $C
+plane0_lrbsolid:		equ $D
+plane1_topsolid:		equ $E
+plane1_lrbsolid:		equ $F
+
 
 ; Gameplay values
 lives_start:			equ 3				; lives at start of game
@@ -327,6 +333,7 @@ specbump_type:		rs.w 1					; 0 ; type of bumper
 specbump_xpos:		rs.w 1					; 2 ; x pos of bumper
 specbump_ypos:		rs.w 1					; 4 ; y pos of bumper
 sizeof_specbump:	equ __rs				; size of each bumper entry
+
 ; ----------------------------------------------------------------------------
 ; This macro is used to keep Sonic and Tails' primary routine IDs synchronized,
 ; as much of the code depends on them being the same.

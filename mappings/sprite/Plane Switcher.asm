@@ -3,51 +3,51 @@
 ; -------------------------------------------------------------------------------
 
 Map_PSwitch:	index offset(*)
-		ptr	Map_obj03_0010
-		ptr	Map_obj03_0032
-		ptr	Map_obj03_0054
-		ptr	Map_obj03_0054
-		ptr	Map_obj03_0076
-		ptr	Map_obj03_0098
-		ptr	Map_obj03_00BA
-		ptr	Map_obj03_00BA
+		ptr	Frame_Pswtch_X_64
+		ptr	Frame_Pswtch_X_128
+		ptr	Frame_Pswtch_X_256_512
+		ptr	Frame_Pswtch_X_256_512
+		ptr	Frame_Pswtch_Y_64
+		ptr	Frame_Pswtch_Y_128
+		ptr	Frame_Pswtch_Y_256_512
+		ptr	Frame_Pswtch_Y_256_512
 
-Map_obj03_0010:	spritemap
+Frame_Pswtch_X_64:	spritemap
 		piece	-8, -$20, 2x2, 0
 		piece	-8, -$10, 2x2, 0
 		piece	-8, 0, 2x2, 0
 		piece	-8, $10, 2x2, 0
 		endsprite
 
-Map_obj03_0032:	spritemap
+Frame_Pswtch_X_128:	spritemap
 		piece	-8, -$40, 2x2, 0
 		piece	-8, -$20, 2x2, 0
 		piece	-8, 0, 2x2, 0
 		piece	-8, $30, 2x2, 0
 		endsprite
 
-Map_obj03_0054:	spritemap
+Frame_Pswtch_X_256_512:	spritemap
 		piece	-8, -$80, 2x2, 0
 		piece	-8, -$20, 2x2, 0
 		piece	-8, 0, 2x2, 0
 		piece	-8, $70, 2x2, 0
 		endsprite
 
-Map_obj03_0076:	spritemap
+Frame_Pswtch_Y_64:	spritemap
 		piece	-$20, -8, 2x2, 0
 		piece	-$10, -8, 2x2, 0
 		piece	0, -8, 2x2, 0
 		piece	$10, -8, 2x2, 0
 		endsprite
 
-Map_obj03_0098:	spritemap
+Frame_Pswtch_Y_128:	spritemap
 		piece	-$40, -8, 2x2, 0
 		piece	-$20, -8, 2x2, 0
 		piece	0, -8, 2x2, 0
 		piece	$30, -8, 2x2, 0
 		endsprite
 
-Map_obj03_00BA:	spritemap
+Frame_Pswtch_Y_256_512:	spritemap
 		piece	-$80, -8, 2x2, 0
 		piece	-$20, -8, 2x2, 0
 		piece	0, -8, 2x2, 0
