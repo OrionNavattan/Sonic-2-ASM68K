@@ -59,8 +59,11 @@ AddSubOptimize: equ 0|(Revision=2|AllOptimizations)
 RelativeLea: equ 0|(Revision<>2|AllOptimizations)
 ; If 1, makes some lea instructions use pc-relative addressing, instead of absolute long.
 
-WaterPhysicsFixes	equ 0
+WaterPhysicsFixes:	equ 0
 ; If 1, applies some consistency changes to the water physics
+
+DebugImprovements:	equ 0
+; If 1, enables some improvements to debug mode	(make some otherwise invisible objects visible)
 
 ;SkipChecksumCheck equ 0
 ; If 1, disables the slow bootup checksum calculation
@@ -27945,78 +27948,81 @@ SpeedToPos:
 		move.l	d3,ost_y_pos(a0)			; update y-axis position
 		rts
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to check if object is still on-screen:
+; display if yes, delete if not
+
+;	uses d0.l, d1.l, a1, a2
+; ---------------------------------------------------------------------------
 
 DespawnObject:
-		tst.w	(f_two_player).w
-		beq.s	loc_163DC
+		tst.w	(f_two_player).w	; is it 2P mode?
+		beq.s	.not2P			; branch if not
 		bra.w	DisplaySprite
 
-	loc_163DC:				
-		move.w	ost_x_pos(a0),d0
-		andi.w	#-$80,d0
-		sub.w	(v_camera_x_pos_coarse).w,d0
-		cmpi.w	#(screen_width+64)+(128*2),d0
-		bhi.w	loc_163F4				; could be optimized to .s
-		bra.w	DisplaySprite
+	.not2P:
+		out_of_range.w	.offscreen,ost_x_pos(a0)			; branch if object moves off screen (could be .s)
+		bra.w	DisplaySprite			; display instead of despawn
 
-	loc_163F4:				
+	.offscreen:				
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d0
-		move.b	ost_respawn(a0),d0
-		beq.s	loc_16406
-		bclr	#7,2(a2,d0.w)
-
-	loc_16406:				
-		bra.w	DeleteObject
-; ===========================================================================
-
-DespawnObject2:						
-		tst.w	(f_two_player).w
-		beq.s	loc_16414
-		bra.w	DisplaySprite
-		
-	loc_16414:				
-		andi.w	#-$80,d0
-		sub.w	(v_camera_x_pos_coarse).w,d0
-		cmpi.w	#(screen_width+64)+(128*2),d0		; screen width plus 64 to bring to power of two, plus 128 pixels off screen in either direction
-		bhi.w	.delete					; could be optimized to .s
-		bra.w	DisplaySprite
+		move.b	ost_respawn(a0),d0			; get respawn id
+		beq.s	.delete					; branch if not set
+		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w)		; clear high bit of respawn entry (i.e. object was despawned not broken)
 
 	.delete:				
+		bra.w	DeleteObject				; delete the object
+
+
+; ---------------------------------------------------------------------------
+; Same as DespawnObject, but object x-pos is already in d0
+
+;	uses d0.l, d1.l, a1, a2
+; ---------------------------------------------------------------------------
+
+DespawnObject2:						
+		tst.w	(f_two_player).w	; is it 2P mode?
+		beq.s	.not2P			; branch if not
+		bra.w	DisplaySprite
+
+	.not2P:
+		out_of_range.w	.offscreen			; branch if object moves off screen (could be .s)
+		bra.w	DisplaySprite		; display instead of despawn
+
+	.offscreen:				
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d0
-		move.b	ost_respawn(a0),d0
-		beq.s	loc_1643A
-		bclr	#7,2(a2,d0.w)
+		move.b	ost_respawn(a0),d0			; get respawn id
+		beq.s	.delete					; branch if not set
+		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w)		; clear high bit of respawn entry (i.e. object was despawned not broken)
 
-	loc_1643A:				
+	.delete:				
 		bra.w	DeleteObject
 		
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Same as DespawnObject, but does nothing if object is onscreen
+
+;	uses d0.l, d1.l, a1, a2
+; ---------------------------------------------------------------------------
 
 DespawnObject3:				
-		tst.w	(f_two_player).w
-		beq.s	loc_16446
+		tst.w	(f_two_player).w	; is it 2P mode?
+		beq.s	.not2P			; branch if not
+		rts
+
+	.not2P:
+		out_of_range.w	.offscreen,ost_x_pos(a0)			; branch if object moves off screen (could be .s)			
 		rts	
 
-	loc_16446:				
-		move.w	ost_x_pos(a0),d0
-		andi.w	#$FF80,d0
-		sub.w	(v_camera_x_pos_coarse).w,d0
-		cmpi.w	#(screen_width+64)+(128*2),d0
-		bhi.w	loc_1645C				; could be optimized to .s
-		rts	
-
-
-	loc_1645C:				
+	.offscreen:				
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d0
-		move.b	ost_respawn(a0),d0
-		beq.s	loc_1646E
-		bclr	#7,2(a2,d0.w)
+		move.b	ost_respawn(a0),d0			; get respawn id
+		beq.s	.delete					; branch if not set
+		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w)		; clear high bit of respawn entry (i.e. object was despawned not broken)
 
-	loc_1646E:				
+	.delete:			
 		bra.w	DeleteObject
 		
 ; ===========================================================================
@@ -42634,7 +42640,18 @@ PlaneSwitcher:
 		move.b	ost_primary_routine(a0),d0
 		move.w	PSwtch_Index(pc,d0.w),d1
 		jsr	PSwtch_Index(pc,d1.w)
-		jmp	(DespawnObject3).l
+		
+	if DebugImprovements
+		; Allow this object to be visible in debug mode.
+		tst.w	(v_debug_active).w	; is debug mode in use?
+		bne.s	.nodisplay		; branch if not
+		jmp	(DespawnObject3).l	; don't display sprite
+		
+	.nodisplay:		
+		jmp	(DespawnObject).l	; display sprite if in debug mode
+	else
+		jmp	(DespawnObject3).l	; don't display sprite
+	endc	
 ; ===========================================================================
 
 PSwtch_Index:	index offset(*),,2	
@@ -43646,7 +43663,7 @@ loc_20F2E:
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
 		bhi.w	JmpTo18_DeleteObject
-	if (Revision=0)|FixBugs
+	if (Revision=0)|DebugImprovements
 	.chkdebug:
 		; This object was visible with debug mode in Revision 0.
 		tst.w	(v_debug_active).w
@@ -50485,7 +50502,7 @@ loc_2702C:
 		sub.w	(v_camera_x_pos_coarse).w,d0
 		cmpi.w	#$280,d0
 		bhi.w	JmpTo33_DeleteObject
-	if (Revision=0)|FixBugs
+	if (Revision=0)|DebugImprovements
 		; This object was visible with debug mode in Revision 0.
 		tst.w	(v_debug_active).w
 		beq.s	.nodisplay
@@ -70346,9 +70363,9 @@ DeleteOffScreen:
 
 loc_36904:	
 	if AllOptimizations
-		out_of_range.s JmpTo64_DeleteObject
+		out_of_range.s JmpTo64_DeleteObject,ost_x_pos(a0)
 	else
-		out_of_range.w JmpTo64_DeleteObject		
+		out_of_range.w JmpTo64_DeleteObject,ost_x_pos(a0)		
 	endc
 		jmp	(DisplaySprite).l
 ; ===========================================================================
@@ -74388,9 +74405,9 @@ Grab_Display:
 
 .chkdel:
 	if AllOptimizations
-		out_of_range.s .delete				; branch if out of range		
+		out_of_range.s .delete,ost_x_pos(a0)				; branch if out of range		
 	else
-		out_of_range.w .delete				; branch if out of range	
+		out_of_range.w .delete,ost_x_pos(a0)				; branch if out of range	
 	endc	
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================

@@ -695,13 +695,13 @@ zonewarning:	macro dest,elementsize
 
 out_of_range:	macro exit,pos
 		ifarg \pos
-		move.w	pos,d0					; get object position (if specified as not ost_x_pos)
-		else
-		move.w	ost_x_pos(a0),d0			; get object position
+		move.w	pos,d0					; get object position (if not specified d0 already contains x pos)
+	;	else
+	;	move.w	ost_x_pos(a0),d0			; get object position
 		endc
 		andi.w	#-$80,d0				; round down to nearest $80
 		sub.w	(v_camera_x_pos_coarse).w,d0		; get screen position; d0 = approx distance between object and screen (negative if object is left of screen)
-		cmpi.w	#128+320+192,d0
+		cmpi.w	#(screen_width+64)+(128*2),d0
 		bhi.\0	exit					; branch if d0 is negative or higher than 640
 		endm
 
