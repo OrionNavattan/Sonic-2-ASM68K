@@ -27956,20 +27956,20 @@ SpeedToPos:
 ; ---------------------------------------------------------------------------
 
 DespawnObject:
-		tst.w	(f_two_player).w	; is it 2P mode?
-		beq.s	.not2P			; branch if not
+		tst.w	(f_two_player).w			; is it 2P mode?
+		beq.s	.not2P					; branch if not
 		bra.w	DisplaySprite
 
 	.not2P:
-		out_of_range.w	.offscreen,ost_x_pos(a0)			; branch if object moves off screen (could be .s)
-		bra.w	DisplaySprite			; display instead of despawn
+		out_of_range.w	.offscreen,ost_x_pos(a0)	; branch if object moves off screen (could be .s)
+		bra.w	DisplaySprite				; display instead of despawn
 
 	.offscreen:				
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d0
 		move.b	ost_respawn(a0),d0			; get respawn id
 		beq.s	.delete					; branch if not set
-		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w)		; clear high bit of respawn entry (i.e. object was despawned not broken)
+		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w) ; clear high bit of respawn entry (i.e. object was despawned not broken)
 
 	.delete:				
 		bra.w	DeleteObject				; delete the object
@@ -27982,20 +27982,20 @@ DespawnObject:
 ; ---------------------------------------------------------------------------
 
 DespawnObject2:						
-		tst.w	(f_two_player).w	; is it 2P mode?
-		beq.s	.not2P			; branch if not
+		tst.w	(f_two_player).w			; is it 2P mode?
+		beq.s	.not2P					; branch if not
 		bra.w	DisplaySprite
 
 	.not2P:
 		out_of_range.w	.offscreen			; branch if object moves off screen (could be .s)
-		bra.w	DisplaySprite		; display instead of despawn
+		bra.w	DisplaySprite				; display instead of despawn
 
 	.offscreen:				
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d0
 		move.b	ost_respawn(a0),d0			; get respawn id
 		beq.s	.delete					; branch if not set
-		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w)		; clear high bit of respawn entry (i.e. object was despawned not broken)
+		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w) ; clear high bit of respawn entry (i.e. object was despawned not broken)
 
 	.delete:				
 		bra.w	DeleteObject
@@ -28007,12 +28007,12 @@ DespawnObject2:
 ; ---------------------------------------------------------------------------
 
 DespawnObject3:				
-		tst.w	(f_two_player).w	; is it 2P mode?
-		beq.s	.not2P			; branch if not
+		tst.w	(f_two_player).w			; is it 2P mode?
+		beq.s	.not2P					; branch if not
 		rts
 
 	.not2P:
-		out_of_range.w	.offscreen,ost_x_pos(a0)			; branch if object moves off screen (could be .s)			
+		out_of_range.w	.offscreen,ost_x_pos(a0)	; branch if object moves off screen (could be .s)			
 		rts	
 
 	.offscreen:				
@@ -28020,7 +28020,7 @@ DespawnObject3:
 		moveq	#0,d0
 		move.b	ost_respawn(a0),d0			; get respawn id
 		beq.s	.delete					; branch if not set
-		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w)		; clear high bit of respawn entry (i.e. object was despawned not broken)
+		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w) ; clear high bit of respawn entry (i.e. object was despawned not broken)
 
 	.delete:			
 		bra.w	DeleteObject
@@ -42643,14 +42643,14 @@ PlaneSwitcher:
 		
 	if DebugImprovements
 		; Allow this object to be visible in debug mode.
-		tst.w	(v_debug_active).w	; is debug mode in use?
-		bne.s	.nodisplay		; branch if not
-		jmp	(DespawnObject3).l	; don't display sprite
+		tst.w	(v_debug_active).w			; is debug mode in use?
+		bne.s	.nodisplay				; branch if not
+		jmp	(DespawnObject3).l			; don't display sprite
 		
 	.nodisplay:		
-		jmp	(DespawnObject).l	; display sprite if in debug mode
+		jmp	(DespawnObject).l			; display sprite if in debug mode
 	else
-		jmp	(DespawnObject3).l	; don't display sprite
+		jmp	(DespawnObject3).l			; don't display sprite
 	endc	
 ; ===========================================================================
 
@@ -70639,7 +70639,7 @@ GWall_Index:	index offset(*),,2
 		
 		rsobj GrounderWall,$2C
 ost_gwall_parent: 		rs.w 1				; $2C ; parent grounder that spawned this object
-ost_gwall_vel_index:	rs.w 1					; $2E ; index into velocity table
+ost_gwall_vel_index:	rs.w 1					; $2E ; index into GRock_Vels
 		rsobjend
 ; ===========================================================================
 
@@ -70674,7 +70674,7 @@ Gwall_FragSpeeds:
 		dc.b   1,$FF					; 2
 		dc.b $FF,$FE					; 4
 		dc.b $FF,$FF					; 6
-; ===========================================================================
+
 ; ----------------------------------------------------------------------------
 ; Object 90 - Rocks thrown by Grounder behind wall
 ; ----------------------------------------------------------------------------
@@ -70685,6 +70685,7 @@ GrounderRocks:
 		move.w	GRock_Index(pc,d0.w),d1
 		jmp	GRock_Index(pc,d1.w)
 ; ===========================================================================
+
 GRock_Index:	index offset(*),,2
 		ptr GRock_Init					; 0 
 		ptr GWall_GRock_Fall				; 2
@@ -70702,27 +70703,27 @@ GRock_Init:
 		move.w	#tile_Nem_Grounder+tile_pal3,ost_tile(a0) ; why do this when you can put it in the subtype data?
 	endc	
 		move.w	ost_grock_vel_index(a0),d0		; get velocity table index
-		move.b	GRock_Speeds(pc,d0.w),ost_x_vel(a0)	; set x vel
-		move.b	GRock_Speeds+1(pc,d0.w),ost_y_vel(a0)	; set y_vel
+		move.b	GRock_Vels(pc,d0.w),ost_x_vel(a0)	; set x vel
+		move.b	GRock_Vels+1(pc,d0.w),ost_y_vel(a0)	; set y_vel
 		lsr.w	#1,d0					; divide by 2 to get frame index
 		move.b	GRock_Frames(pc,d0.w),ost_frame(a0)	; set mapping frame
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
 
 GRock_Frames:	
-		dc.b   0					; 0
-		dc.b   2					; 1
-		dc.b   0					; 2
-		dc.b   1					; 3
-		dc.b   0					; 4
-		dc.b   0					; 5
+		dc.b   id_Frame_GRock_Large			; 0
+		dc.b   id_Frame_GRock_Small			; 1
+		dc.b   id_Frame_GRock_Large			; 2
+		dc.b   id_Frame_GRock_Medium			; 3
+		dc.b   id_Frame_GRock_Large			; 4
+		dc.b   id_Frame_GRock_Large			; 5
 		
-GRock_Speeds:
-		dc.b $FF,$FC					; 0
-		dc.b   4,$FD					; 2
-		dc.b   2,  0					; 4
-		dc.b $FD,$FF					; 6
-		dc.b $FD,$FD					; 8
+GRock_Vels:
+		dc.b  -1, -4
+		dc.b   4, -3	; 2
+		dc.b   2,  0	; 4
+		dc.b  -3, -1	; 6
+		dc.b  -3, -3	; 8
 ; ===========================================================================
 
 GWall_GRock_Fall:				
@@ -70733,8 +70734,8 @@ GWall_GRock_Fall:
 ; ===========================================================================
 
 Ground_LoadRocks:				
-		moveq	#0,d1
-		moveq	#5-1,d6
+		moveq	#0,d1	; initial index into GRock_Vels
+		moveq	#5-1,d6	; five rocks to load
 
 	.loadloop:				
 		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
@@ -70750,10 +70751,10 @@ Ground_LoadRocks:
 		_move.b	#id_GrounderRocks,ost_id(a1)		; load grounder's rock
 		move.b	#id_SubData_GRock,ost_subdata_ptr(a1)	; index to ost data
 		move.w	a0,ost_grock_parent(a1)			; set pointer to parent
-		move.w	d1,ost_grock_vel_index(a1)
-		move.w	ost_x_pos(a0),ost_x_pos(a1)
+		move.w	d1,ost_grock_vel_index(a1)		; set velocity table index
+		move.w	ost_x_pos(a0),ost_x_pos(a1)		; spawn at parent grounder's position
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		addq.w	#2,d1
+		addq.w	#2,d1							; next velocity table index
 		rts	
 ; ===========================================================================
 
@@ -70797,11 +70798,13 @@ Ground_LoadWall:
 		
 		addq.w	#2,d1					; next index in GWall_Offsets
 		rts	
-; ===========================================================================
 
+; ----------------------------------------------------------------------------
 ; Offsets for Grounder's wall relative to parent
+; ----------------------------------------------------------------------------
+
 GWall_Offsets:	
-		dc.b    0,-$14
+		dc.b    0,-$14					; 0
 		dc.b  $10,  -4					; 2
 		dc.b    0,  $C					; 4
 		dc.b -$10,  -4					; 6
@@ -74405,9 +74408,9 @@ Grab_Display:
 
 .chkdel:
 	if AllOptimizations
-		out_of_range.s .delete,ost_x_pos(a0)				; branch if out of range		
+		out_of_range.s .delete,ost_x_pos(a0)		; branch if out of range		
 	else
-		out_of_range.w .delete,ost_x_pos(a0)				; branch if out of range	
+		out_of_range.w .delete,ost_x_pos(a0)		; branch if out of range	
 	endc	
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
