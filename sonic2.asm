@@ -32627,29 +32627,29 @@ SolidObject:
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
 		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
-		bsr.s	.singlecharacter			; run for main character
+		bsr.s	.singlecharacter			; run for player 1
 		popr.l	d1-d4
-		lea	(v_ost_player2).w,a1
-		tst.b	ost_render(a1)				; is Tails loaded, and if so, onscreen?
-		bpl.w	.skipsidekick				; if not, exit
+		lea	(v_ost_player2).w,a1		; run for player 2
+		tst.b	ost_render(a1)				; is player 2 onscreen?
+		bpl.w	.done				; if not, exit
 		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
 	.singlecharacter:				
-		btst	d6,ost_primary_status(a0)		; is character standing on the objecT?
+		btst	d6,ost_primary_status(a0)		; is player standing on the object?
 		beq.w	Solid_ChkCollision			; if not, branch
 		move.w	d1,d2
 		add.w	d2,d2
-		btst	#status_air_bit,ost_primary_status(a1)	; is character in the air?
+		btst	#status_air_bit,ost_primary_status(a1)	; is player in the air?
 		bne.s	.leave					; if so, branch
 		move.w	ost_x_pos(a1),d0			
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0					; d0 = x pos of character on object						
-		bmi.s	.leave					; if character moves off the left, branch
-		cmp.w	d2,d0					; has character moved off the right?
+		add.w	d1,d0					; d0 = x pos of player on object						
+		bmi.s	.leave					; if player moves off the left, branch
+		cmp.w	d2,d0					; has player moved off the right?
 		bcs.s	.stand					; if not, branch
 
 	.leave:				
-		bclr	#status_platform_bit,ost_primary_status(a1) ; clear character's standing flag
+		bclr	#status_platform_bit,ost_primary_status(a1) ; clear player's standing flag
 		bset	#status_air_bit,ost_primary_status(a1)	; set their air bit
 		bclr	d6,ost_primary_status(a0)		; clear object's standing flag
 		moveq	#0,d4					; clear flag for no collision
@@ -32660,38 +32660,38 @@ SolidObject:
 		bsr.w	MoveWithPlatform
 		moveq	#0,d4					; clear flag for no new collision
 
-	.skipsidekick:				
+	.done:				
 		rts	
 
 ; ---------------------------------------------------------------------------
-; As above, but the object and sidekick's on-screen statuses are not checked
+; As above, but the object and player 2's on-screen statuses are not checked
 ; ---------------------------------------------------------------------------
 
 SolidObject_NoRenderChk:				
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
 		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
-		bsr.s	SolidObject_NoRenderChk_SingleCharacter
+		bsr.s	SolidObject_NoRenderChk_SingleCharacter	; run for player 1
 		popr.l	d1-d4
-		lea	(v_ost_player2).w,a1
+		lea	(v_ost_player2).w,a1		; run for player 2
 		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
 	SolidObject_NoRenderChk_SingleCharacter:				
-		btst	d6,ost_primary_status(a0)		; is character standing on the object?
+		btst	d6,ost_primary_status(a0)		; is player standing on the object?
 		beq.w	Solid_SkipRenderChk			; if not, branch
 		move.w	d1,d2
 		add.w	d2,d2
-		btst	#status_air_bit,ost_primary_status(a1)	; is character in the air?
+		btst	#status_air_bit,ost_primary_status(a1)	; is player in the air?
 		bne.s	.leave					; if so, branch
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0					; d0 = x pos of character on object						
-		bmi.s	.leave					; if character moves off the left, branch
-		cmp.w	d2,d0					; has character moved off the right?
+		add.w	d1,d0					; d0 = x pos of player on object						
+		bmi.s	.leave					; if player moves off the left, branch
+		cmp.w	d2,d0					; has player moved off the right?
 		bcs.s	.stand					; if not, branch
 
 	.leave:				
-		bclr	#status_platform_bit,ost_primary_status(a1) ; clear character's standing flag
+		bclr	#status_platform_bit,ost_primary_status(a1) ; clear player's standing flag
 		bset	#status_air_bit,ost_primary_status(a1)	; set their air bit
 		bclr	d6,ost_primary_status(a0)		; clear object's standing flag
 		moveq	#0,d4					; clear flag for no collision
@@ -32703,20 +32703,34 @@ SolidObject_NoRenderChk:
 		moveq	#0,d4					; clear flag for no new collision
 		rts	
 		
-; ===========================================================================
-; SlopedSolid:
+; ---------------------------------------------------------------------------
+; Solid	object with heightmap subroutine (MZ grass platforms)
+;
+; input:
+;	d1.w = object half width
+;	d2.w = object half height
+;	a2 = address of heightmap data
+;
+; output:
+;	d4.l = collision type for player 2: 1 = side collision; -1 = top/bottom collision
+;	d5.w = x distance of player 2 from nearest left/right edge
+;	a1 = address of OST of player 2
+
+;	uses d0.l, d1.l, d2.w, d3.w, a2
+; ---------------------------------------------------------------------------
+
 SolidObject_Heightmap:				
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
 		pushr.l	d1-d4					; back up input registers so we can run this routine again for sidekick
-		bsr.s	SolidObject_Heightmap_SingleCharacter
+		bsr.s	SolidObject_Heightmap_SingleCharacter	; run for player 1
 		popr.l	d1-d4
-		lea	(v_ost_player2).w,a1
+		lea	(v_ost_player2).w,a1		; run for player 2
 		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
 SolidObject_Heightmap_SingleCharacter:				
 		btst	d6,ost_primary_status(a0)		; is character standing on the object?
-		beq.w	SolidObject_Heightmap_Cont		; if not, branch
+		beq.w	SolidObject_Heightmap_ChkCollision		; if not, branch
 		move.w	d1,d2
 		add.w	d2,d2
 		btst	#status_air_bit,ost_primary_status(a1)	; is character in the air?
@@ -32851,7 +32865,7 @@ SolidObject_OOZSpring_cont:
 		bra.w	Solid_Collision
 ; ===========================================================================
 
-SolidObject_Heightmap_Cont:				
+SolidObject_Heightmap_ChkCollision:				
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
 		add.w	d1,d0
@@ -32927,115 +32941,125 @@ loc_199AE:
 ; ===========================================================================
 
 Solid_ChkCollision:				
-		tst.b	ost_render(a0)
-		bpl.w	Solid_NoCollision
+		tst.b	ost_render(a0)		; is object onscreen?
+		bpl.w	Solid_NoCollision		; if not, branch
 
-Solid_SkipRenderChk:				
+Solid_SkipRenderChk:
+		; Perform the X portion of a bounding box check. To do this, we assume a
+		; coordinate system where the X origin is at the object's left edge.				
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		bmi.w	Solid_NoCollision
+		add.w	d1,d0					; d0 = x pos of player on object
+		bmi.w	Solid_NoCollision			; branch if player is outside left edge
+
+		; Perform the y portion of a bounding box check. To do this, we assume a
+		; coordinate system where the y origin is at the highest y position relative to the object
+		; at which the player would still collide with it. This point is
+		; ost_y_pos(a0) - ost_width(a0)/2 - (ost_height(a1)/2) - 4,
+		; where (a0) = object, (a1) = player, and ost_height(a1)/2 in d2. This way
+		; of doing it causes the object's hitbox to be vertically off-center by -4 pixels.
 		move.w	d1,d3
-		add.w	d3,d3
+		add.w	d3,d3						; d3 = object's width
 		cmp.w	d3,d0
-		bhi.w	Solid_NoCollision
+		bhi.w	Solid_NoCollision			; branch if player is outside right edge
 		move.b	ost_height(a1),d3
 		ext.w	d3
-		add.w	d3,d2
+		add.w	d3,d2					; d2 = combined player + object half height (maximum distance for a top collision)
 		move.w	ost_y_pos(a1),d3
-		sub.w	ost_y_pos(a0),d3
+		sub.w	ost_y_pos(a0),d3			; d3 = y pos of player on object (0 is center)
 		addq.w	#4,d3
-		add.w	d2,d3
-		bmi.w	Solid_NoCollision
+		add.w	d2,d3					; d3 = y pos of player's feet on object (0 is top)
+		bmi.w	Solid_NoCollision			; branch if player is outside upper edge
 		andi.w	#$7FF,d3
 		move.w	d2,d4
-		add.w	d4,d4
+		add.w	d4,d4						; calculate minimum distance for a bottom collision.
 		cmp.w	d4,d3
-		bcc.w	Solid_NoCollision
+		bcc.w	Solid_NoCollision			; branch if player is outside lower edge
 
 Solid_Collision:				
-		tst.b	$2A(a1)
-		bmi.w	Solid_NoCollision
-		cmpi.b	#6,ost_primary_routine(a1)
-		bcc.w	Solid_Debug
-		tst.w	(v_debug_active).w
-		bne.w	Solid_Debug
-		move.w	d0,d5
-		cmp.w	d0,d1
-		bcc.s	.player_left
+		tst.b	ost_obj_control(a1)		; are controls locked?
+		bmi.w	Solid_NoCollision			; if so, branch
+		cmpi.b	#id_Death,ost_primary_routine(a1)	; is player dying?
+		bcc.w	Solid_Debug			; if so, branch
+		tst.w	(v_debug_active).w	; is debug mode being used?
+		bne.w	Solid_Debug		; if so, branch
+		move.w	d0,d5					; d0/d5 = x pos of player on object
+		cmp.w	d0,d1					; d1 = object half width
+		bcc.s	.player_left		; branch if player is on left side
 		
 	;.player_right:	
 		add.w	d1,d1
 		sub.w	d1,d0
 		move.w	d0,d5
-		neg.w	d5
+		neg.w	d5				; d5 = x dist of player from left/right edge (nearest)
 
 	.player_left:				
-		move.w	d3,d1
-		cmp.w	d3,d2
-		bcc.s	.player_top
+		move.w	d3,d1					; d1/d3 = y pos of player's feet on object
+		cmp.w	d3,d2					; d2 = object half height
+		bcc.s	.player_top				; branch if player is on top half
 		
 	;.player_bottom:	
 		subq.w	#4,d3
 		sub.w	d4,d3
 		move.w	d3,d1
-		neg.w	d1
+		neg.w	d1					; d1 = y dist of player from top/bottom edge (nearest)
 
 	.player_top:				
 		cmp.w	d1,d5
-		bhi.w	Solid_TopBottom
+		bhi.w	Solid_TopBottom				; branch if player is nearer top/bottom than left/right
 
 Solid_LeftRight:				
 		cmpi.w	#4,d1
-		bls.s	Solid_SideAir
-		tst.w	d0
-		beq.s	Solid_AlignToSide
-		bmi.s	Solid_OnRight
+		bls.s	Solid_SideAir				; branch if player is nearer top/bottom than left/right
+		tst.w	d0					; d0 = x dist of player from left/right edge (-ve if on right)
+		beq.s	Solid_AlignToSide			; branch if on the edge
+		bmi.s	Solid_OnRight				; branch if nearer right side
+
 		tst.w	ost_x_vel(a1)
-		bmi.s	Solid_AlignToSide
+		bmi.s	Solid_AlignToSide			; branch if player is moving left
 		bra.s	Solid_StopX
 ; ===========================================================================
 
 Solid_OnRight:				
 		tst.w	ost_x_vel(a1)
-		bpl.s	Solid_AlignToSide
+		bpl.s	Solid_AlignToSide			; branch if player is moving right
 
 Solid_StopX:				
 		move.w	#0,ost_inertia(a1)
-		move.w	#0,ost_x_vel(a1)
+		move.w	#0,ost_x_vel(a1)			; stop player moving
 
 Solid_AlignToSide:				
-		sub.w	d0,ost_x_pos(a1)
-		btst	#1,ost_primary_status(a1)
-		bne.s	Solid_SideAir
+		sub.w	d0,ost_x_pos(a1)			; correct player's position
+		btst	#status_air_bit,ost_primary_status(a1)
+		bne.s	Solid_SideAir				; branch if player is in the air
 		move.l	d6,d4
-		addq.b	#2,d4
-		bset	d4,ost_primary_status(a0)
-		bset	#5,ost_primary_status(a1)
+		addq.b	#status_p1_pushing_bit-status_p1_platform_bit,d4	; d4 = pushing bit for current player
+		bset	d4,ost_primary_status(a0)	; make object be pushed
+		bset	#status_pushing_bit,ost_primary_status(a1)	; make player push object
 		move.w	d6,d4
-		addi.b	#$D,d4
-		bset	d4,d6
-		moveq	#1,d4
+		addi.b	#($10-status_p1_platform_bit+p1_touch_side_bit),d4	; d4 = side touch bit for current player
+		bset	d4,d6	; mark player as having side collision
+		moveq	#1,d4	; return side collision
 		rts	
 ; ===========================================================================
 
 Solid_SideAir:				
-		bsr.s	Solid_NotPushing
+		bsr.s	Solid_NotPushing	; don't push if player is jumping or close to top/bottom edges
 		move.w	d6,d4
-		addi.b	#$D,d4
-		bset	d4,d6
-		moveq	#1,d4
+		addi.b	#($10-status_p1_platform_bit+p1_touch_side_bit),d4	; d4 = side touch bit for current player
+		bset	d4,d6	; mark player as having side collision
+		moveq	#1,d4	; return side collision
 		rts	
 ; ===========================================================================
 
 Solid_NoCollision:				
 		move.l	d6,d4
-		addq.b	#2,d4
-		btst	d4,ost_primary_status(a0)
-		beq.s	Solid_Debug
-		cmpi.b	#2,ost_anim(a1)
+		addq.b	#status_p1_pushing_bit-status_p1_platform_bit,d4	; d4 = pushing bit for current player
+		btst	d4,ost_primary_status(a0)	; is player pushing?
+		beq.s	Solid_Debug			; branch if not
+		cmpi.b	#2,ost_anim(a1)		; ani_roll
 		beq.s	Solid_NotPushing
-		move.w	#1,ost_anim(a1)
+		move.w	#1,ost_anim(a1)		; ani_run
 
 Solid_NotPushing:				
 		move.l	d6,d4
@@ -33510,7 +33534,7 @@ DropOnFloor:
 		lea	($FFFFB000).w,a1
 		btst	#3,ost_primary_status(a0)
 		beq.s	loc_19F1E
-		jsr	(FindFloorEdge2).l
+		jsr	(FindFloorObj_ChkCol2).l
 		tst.w	d1
 		beq.s	loc_19F08
 		bpl.s	loc_19F1E
@@ -33525,7 +33549,7 @@ loc_19F1E:
 		lea	($FFFFB040).w,a1
 		btst	#4,ost_primary_status(a0)
 		beq.s	loc_19F4C
-		jsr	(FindFloorEdge2).l
+		jsr	(FindFloorObj_ChkCol2).l
 		tst.w	d1
 		beq.s	loc_19F36
 		bpl.s	loc_19F4C
@@ -34066,7 +34090,7 @@ Sonic_BalLeft:
 ; ===========================================================================
 
 Sonic_Balance:				
-		jsr	(FindFloorEdge).l
+		jsr	(FindFloorObj_ChkCol).l
 		cmpi.w	#$C,d1
 		blt.w	Sonic_LookUp
 		tst.b	(f_super).w
@@ -34078,7 +34102,7 @@ Sonic_Balance:
 		move.b	#6,ost_anim(a0)
 		move.w	ost_x_pos(a0),d3
 		subq.w	#6,d3
-		jsr	(FindFloorEdge_NoX).l
+		jsr	(FindFloorObj_ChkCol_NoX).l
 		cmpi.w	#$C,d1
 		blt.w	Sonic_ResetScr
 		move.b	#$C,ost_anim(a0)
@@ -34089,7 +34113,7 @@ loc_1A4D6:
 		move.b	#$1D,ost_anim(a0)
 		move.w	ost_x_pos(a0),d3
 		subq.w	#6,d3
-		jsr	(FindFloorEdge_NoX).l
+		jsr	(FindFloorObj_ChkCol_NoX).l
 		cmpi.w	#$C,d1
 		blt.w	Sonic_ResetScr
 		move.b	#$1E,ost_anim(a0)
@@ -34105,7 +34129,7 @@ loc_1A500:
 		move.b	#6,ost_anim(a0)
 		move.w	ost_x_pos(a0),d3
 		addq.w	#6,d3
-		jsr	(FindFloorEdge_NoX).l
+		jsr	(FindFloorObj_ChkCol_NoX).l
 		cmpi.w	#$C,d1
 		blt.w	Sonic_ResetScr
 		move.b	#$C,ost_anim(a0)
@@ -34116,7 +34140,7 @@ loc_1A534:
 		move.b	#$1D,ost_anim(a0)
 		move.w	ost_x_pos(a0),d3
 		addq.w	#6,d3
-		jsr	(FindFloorEdge_NoX).l
+		jsr	(FindFloorObj_ChkCol_NoX).l
 		cmpi.w	#$C,d1
 		blt.w	Sonic_ResetScr
 		move.b	#$1E,ost_anim(a0)
@@ -35150,7 +35174,7 @@ loc_1AEC2:
 		move.w	#0,ost_x_vel(a0)
 
 loc_1AF06:				
-		bsr.w	FindWallRight_Quick_UsePos
+		bsr.w	Player_FindWallRight_Quick_UsePos
 		tst.w	d1
 		bpl.s	loc_1AF18
 		add.w	d1,ost_x_pos(a0)
@@ -35253,7 +35277,7 @@ loc_1AFE8:
 		move.w	#0,ost_x_vel(a0)
 
 loc_1AFFA:				
-		bsr.w	FindWallRight_Quick_UsePos
+		bsr.w	Player_FindWallRight_Quick_UsePos
 		tst.w	d1
 		bpl.s	loc_1B00C
 		add.w	d1,ost_x_pos(a0)
@@ -35285,7 +35309,7 @@ locret_1B042:
 ; ===========================================================================
 
 loc_1B044:				
-		bsr.w	FindWallRight_Quick_UsePos
+		bsr.w	Player_FindWallRight_Quick_UsePos
 		tst.w	d1
 		bpl.s	loc_1B05E
 		add.w	d1,ost_x_pos(a0)
@@ -37218,7 +37242,7 @@ loc_1C0E0:
 ; ===========================================================================
 
 loc_1C142:				
-		jsr	(FindFloorEdge).l
+		jsr	(FindFloorObj_ChkCol).l
 		cmpi.w	#$C,d1
 		blt.s	loc_1C174
 		cmpi.b	#3,$36(a0)
@@ -38132,7 +38156,7 @@ loc_1C972:
 		move.w	#0,ost_x_vel(a0)
 
 loc_1C9B6:				
-		bsr.w	FindWallRight_Quick_UsePos
+		bsr.w	Player_FindWallRight_Quick_UsePos
 		tst.w	d1
 		bpl.s	loc_1C9C8
 		add.w	d1,ost_x_pos(a0)
@@ -38235,7 +38259,7 @@ loc_1CA98:
 		move.w	#0,ost_x_vel(a0)
 
 loc_1CAAA:				
-		bsr.w	FindWallRight_Quick_UsePos
+		bsr.w	Player_FindWallRight_Quick_UsePos
 		tst.w	d1
 		bpl.s	loc_1CABC
 		add.w	d1,ost_x_pos(a0)
@@ -38267,7 +38291,7 @@ locret_1CAF2:
 ; ===========================================================================
 
 loc_1CAF4:				
-		bsr.w	FindWallRight_Quick_UsePos
+		bsr.w	Player_FindWallRight_Quick_UsePos
 		tst.w	d1
 		bpl.s	loc_1CB0E
 		add.w	d1,ost_x_pos(a0)
@@ -40640,7 +40664,7 @@ TileOffsetList:
 		endr						; repeat 256 times, generating the table
 		
 ; ---------------------------------------------------------------------------
-; Subroutine to	find the floor
+; Subroutine to	find the floor or ceiling
 
 ; input:
 ;	d2.w = y position of object's bottom edge
@@ -40884,95 +40908,119 @@ loc_1E9A2:
 		add.w	a3,d2
 		subi.w	#$10,d1
 		rts	
-; ===========================================================================
+		
+; ---------------------------------------------------------------------------
+; Subroutine to	find a wall
+
+; input:
+;	d2.w = y position of object's bottom edge
+;	d3.w = x position of object
+;	d5.l = bit to test for solidness: $D = top solid; $E = left/right/bottom solid
+;	d6.w = eor bitmask for 16x16 tile
+;	a3.w = height of 16x16 tiles: $10 or -$10 if object is inverted
+;	a4 = RAM address to write angle byte
+
+; output:
+;	d1.w = distance to the wall
+;	a1 = address within 256x256 mappings where object is standing
+;	(a1).w = 16x16 tile number, x/yflip, solidness
+;	(a4).b = floor angle
+
+;	uses d0.w, d3.w, d4.w
+; ---------------------------------------------------------------------------
 
 FindWall:				
-		bsr.w	FindNearestTile
-		move.w	(a1),d0
+		bsr.w	FindNearestTile				; a1 = address within 256x256 mappings of 16x16 tile being stood on
+		move.w	(a1),d0					; get value for solidness, orientation and 16x16 tile number
 		move.w	d0,d4
-		andi.w	#$3FF,d0
-		beq.s	loc_1E9C2
-		btst	d5,d4
-		bne.s	loc_1E9D0
+		andi.w	#(~chunkmap_settings)&$FFFF,d0				; ignore solid/orientation bits
+		beq.s	.isblank				; branch if tile is blank
+		btst	d5,d4					; is the tile solid?
+		bne.s	.issolid				; if yes, branch
 
-loc_1E9C2:				
+.isblank:
 		add.w	a3,d3
-		bsr.w	FindWall2
+		bsr.w	FindWall2				; try tile to the right
 		sub.w	a3,d3
-		addi.w	#$10,d1
+		addi.w	#$10,d1					; return distance to wall
 		rts	
 ; ===========================================================================
 
-loc_1E9D0:				
+.issolid:				
 		movea.l	(v_collision_index_ptr).w,a2
-		move.b	(a2,d0.w),d0
-		andi.w	#$FF,d0
-		beq.s	loc_1E9C2
+		move.b	(a2,d0.w),d0				; get collision heightmap id
+		andi.w	#$FF,d0					; heightmap id is 1 byte
+		beq.s	.isblank				; branch if 0
 		lea	(AngleMap).l,a2
-		move.b	(a2,d0.w),(a4)
-		lsl.w	#4,d0
-		move.w	d2,d1
-		btst	#$B,d4
-		beq.s	loc_1E9FE
+		move.b	(a2,d0.w),(a4)				; get collision angle value
+		lsl.w	#4,d0					; d0 = heightmap id * $10 (the width of a heightmap for 1 tile)
+		move.w	d2,d1					; get y pos of object
+		btst	#chunkmap_yflip_bit,d4			; is block flipped vertically?
+		beq.s	.no_yflip				; if not, branch
 		not.w	d1
 		addi.b	#$40,(a4)
 		neg.b	(a4)
-		subi.b	#$40,(a4)
+		subi.b	#$40,(a4)				; yflip angle
 
-loc_1E9FE:				
-		btst	#$A,d4
-		beq.s	loc_1EA06
-		neg.b	(a4)
+	.no_yflip:				
+		btst	#chunkmap_xflip_bit,d4			; is block flipped horizontally?
+		beq.s	.no_xflip				; if not, branch
+		neg.b	(a4)					; xflip angle
 
-loc_1EA06:				
-		andi.w	#$F,d1
-		add.w	d0,d1
+	.no_xflip:				
+		andi.w	#$F,d1					; read only low nybble of x pos (i.e. x pos within 16x16 tile)
+		add.w	d0,d1					; (id * $10) + x pos. = place in heightmap data
 		lea	(CollArray2).l,a2
-		move.b	(a2,d1.w),d0
+		move.b	(a2,d1.w),d0				; get actual height value from heightmap
 		ext.w	d0
-		eor.w	d6,d4
-		btst	#$A,d4
-		beq.s	loc_1EA22
+		eor.w	d6,d4					; apply x/yflip (allows for double-flip cancellation)
+		btst	#chunkmap_xflip_bit,d4			; is block flipped horizontally?
+		beq.s	.no_xflip2				; if not, branch
 		neg.w	d0
 
-loc_1EA22:				
+	.no_xflip2:				
 		tst.w	d0
-		beq.s	loc_1E9C2
-		bmi.s	loc_1EA3E
+		beq.s	.isblank				; branch if height is 0
+		bmi.s	.negfloor				; branch if height is negative
 		cmpi.b	#$10,d0
-		beq.s	loc_1EA4A
-		move.w	d3,d1
-		andi.w	#$F,d1
+		beq.s	.maxfloor				; branch if height is $10 (max)
+		move.w	d3,d1					; get x pos of object
+		andi.w	#$F,d1					; read only low nybble for x pos within 16x16 tile
 		add.w	d1,d0
 		move.w	#$F,d1
-		sub.w	d0,d1
+		sub.w	d0,d1					; return distance to wall
 		rts	
 ; ===========================================================================
 
-loc_1EA3E:				
+.negfloor:				
 		move.w	d3,d1
 		andi.w	#$F,d1
 		add.w	d1,d0
-		bpl.w	loc_1E9C2
+		bpl.w	.isblank
 
-loc_1EA4A:				
+.maxfloor:				
 		sub.w	a3,d3
-		bsr.w	FindWall2
+		bsr.w	FindWall2				; try tile to the left
 		add.w	a3,d3
-		subi.w	#$10,d1
+		subi.w	#$10,d1					; return distance to wall
 		rts	
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Subroutine to	find a wall left/right of the current 16x16 tile.
+; Almost identical to FindWall, but a few key differences mean it cannot
+; be easily combined with it.
+; ---------------------------------------------------------------------------
 
 FindWall2:				
 		bsr.w	FindNearestTile
 		move.w	(a1),d0
 		move.w	d0,d4
 		andi.w	#$3FF,d0
-		beq.s	loc_1EA6A
+		beq.s	.isblank
 		btst	d5,d4
-		bne.s	loc_1EA78
+		bne.s	.issolid
 
-loc_1EA6A:				
+.isblank:				
 		move.w	#$F,d1
 		move.w	d3,d0
 		andi.w	#$F,d0
@@ -40980,42 +41028,42 @@ loc_1EA6A:
 		rts	
 ; ===========================================================================
 
-loc_1EA78:				
+.issolid:				
 		movea.l	(v_collision_index_ptr).w,a2
 		move.b	(a2,d0.w),d0
 		andi.w	#$FF,d0
-		beq.s	loc_1EA6A
+		beq.s	.isblank
 		lea	(AngleMap).l,a2
 		move.b	(a2,d0.w),(a4)
 		lsl.w	#4,d0
 		move.w	d2,d1
-		btst	#$B,d4
-		beq.s	loc_1EAA6
+		btst	#chunkmap_yflip_bit,d4
+		beq.s	.no_yflip
 		not.w	d1
 		addi.b	#$40,(a4)
 		neg.b	(a4)
 		subi.b	#$40,(a4)
 
-loc_1EAA6:				
-		btst	#$A,d4
-		beq.s	loc_1EAAE
+	.no_yflip:				
+		btst	#chunkmap_xflip_bit,d4
+		beq.s	.no_xflip
 		neg.b	(a4)
 
-loc_1EAAE:				
+	.no_xflip:				
 		andi.w	#$F,d1
 		add.w	d0,d1
 		lea	(CollArray2).l,a2
 		move.b	(a2,d1.w),d0
 		ext.w	d0
 		eor.w	d6,d4
-		btst	#$A,d4
-		beq.s	loc_1EACA
+		btst	#chunkmap_xflip_bit,d4
+		beq.s	.no_xflip2
 		neg.w	d0
 
-loc_1EACA:				
+	.no_xflip2:				
 		tst.w	d0
-		beq.s	loc_1EA6A
-		bmi.s	loc_1EAE0
+		beq.s	.isblank
+		bmi.s	.negfloor
 		move.w	d3,d1
 		andi.w	#$F,d1
 		add.w	d1,d0
@@ -41024,235 +41072,292 @@ loc_1EACA:
 		rts	
 ; ===========================================================================
 
-loc_1EAE0:				
+.negfloor:				
 		move.w	d3,d1
 		andi.w	#$F,d1
 		add.w	d1,d0
-		bpl.w	loc_1EA6A
+		bpl.w	.isblank
 		not.w	d1
 		rts	
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Unused collision array converter
+
+; This subroutine takes 'raw' bitmap-like collision block data as input and
+; converts it into the proper collision arrays (ColArray and ColArray2).
+; Pointers to said raw data are dummied out.
+; Curiously, an example of the original 'raw' data that this was intended
+; to process can be found in the J2ME version, in a file called 'blkcol.bct'.
+
+;	uses d0.l, d1.w, d2.w, d3.w, d4.l, d5.l, a1, a2
+; ---------------------------------------------------------------------------
+
+RawColBlocks		equ CollArray1
+ConvRowColBlocks	equ CollArray1
 
 ConvertCollisionArray:				
-		rts	
+		rts			; dummied out
 ; ===========================================================================
-		lea	(CollArray1).l,a1
-		lea	(CollArray1).l,a2
-		move.w	#$FF,d3
+		
+		; The raw format stores the collision data column by column for the normal collision array.
+		; This makes a copy of the data, but stored row by row, for the rotated collision array.	
+		lea	(RawColBlocks).l,a1			; source location of raw collision block data
+		lea	(ConvRowColBlocks).l,a2			; destinatation location for row-converted collision block data
+		move.w	#$100-1,d3				; Nnmber of blocks in collision data
 
-loc_1EB02:				
-		moveq	#$10,d5
-		move.w	#$F,d2
+	.blockloop:				
+		moveq	#16,d5					; start on the 16th bit (the leftmost pixel)
+		move.w	#16-1,d2				; width of a block in pixels
 
-loc_1EB08:				
+	.columnloop:				
 		moveq	#0,d4
-		move.w	#$F,d1
+		move.w	#16-1,d1				; height of a block in pixels
 
-loc_1EB0E:				
-		move.w	(a1)+,d0
-		lsr.l	d5,d0
-		addx.w	d4,d4
-		dbf	d1,loc_1EB0E
-		move.w	d4,(a2)+
-		suba.w	#$20,a1
-		subq.w	#1,d5
-		dbf	d2,loc_1EB08
-		adda.w	#$20,a1
-		dbf	d3,loc_1EB02
-		lea	(CollArray1).l,a1
+	.rowloop:
+		move.w	(a1)+,d0				; get row of collision bits
+		lsr.l	d5,d0					; push the selected bit of this row into the 'eXtend' flag
+		addx.w	d4,d4					; shift d4 to the left, and insert the selected bit into bit 0
+		dbf	d1,.rowloop				; loop for each row of pixels in a block
+
+		move.w	d4,(a2)+				; store column of collision bits
+		suba.w	#2*16,a1				; back to the start of the block
+		subq.w	#1,d5					; get next bit in the row
+		dbf	d2,.columnloop				; loop for each column of pixels in a block
+
+		adda.w	#2*16,a1				; next block
+		dbf	d3,.blockloop				; loop for each block in the raw collision block data
+
+		; This then converts the collision data into the final collision arrays.		
+		lea	(ConvRowColBlocks).l,a1
 		lea	(CollArray2).l,a2
-		bsr.s	loc_1EB46
-		lea	(CollArray1).l,a1
-		lea	(CollArray1).l,a2
+		bsr.s	.convertarray			; convert the row-converted collision block data into final rotated collision array
+		lea	(RawColBlocks).l,a1
+		lea	(CollArray1).l,a2		; convert the raw collision block data into final normal collision array
 
-loc_1EB46:				
-		move.w	#$FFF,d3
+	.convertarray:
+		move.w	#$1000-1,d3				; Size of the collision array
 
-loc_1EB4A:				
+	.processloop:
 		moveq	#0,d2
 		move.w	#$F,d1
-		move.w	(a1)+,d0
-		beq.s	loc_1EB78
-		bmi.s	loc_1EB62
+		move.w	(a1)+,d0				; get current column of collision pixels
+		beq.s	.nocollision				; branch if there's no collision in this column
+		bmi.s	.toppixelsolid				; branch if top pixel of collision is solid
 
-loc_1EB56:				
+	; Here we count, starting from the bottom, how many pixels tall
+	; the collision in this column is.
+	.processcolumnloop1:
 		lsr.w	#1,d0
-		bcc.s	loc_1EB5C
+		bcc.s	.pixelnotsolid1
 		addq.b	#1,d2
 
-loc_1EB5C:				
-		dbf	d1,loc_1EB56
-		bra.s	loc_1EB7A
+	.pixelnotsolid1:
+		dbf	d1,.processcolumnloop1
+
+		bra.s	.columnprocessed
 ; ===========================================================================
 
-loc_1EB62:				
-		cmpi.w	#-1,d0
-		beq.s	loc_1EB74
+	.toppixelsolid:
+		cmpi.w	#$FFFF,d0				; is entire column solid?
+		beq.s	.entirecolumnsolid			; branch if so
 
-loc_1EB68:				
+	; Here we count, starting from the top, how many pixels tall
+	; the collision in this column is (the resulting number is negative).
+	.processcolumnloop2:
 		lsl.w	#1,d0
-		bcc.s	loc_1EB6E
+		bhs.s	.pixelnotsolid2
 		subq.b	#1,d2
 
-loc_1EB6E:				
-		dbf	d1,loc_1EB68
-		bra.s	loc_1EB7A
+	.pixelnotsolid2:
+		dbf	d1,.processcolumnloop2
+
+		bra.s	.columnprocessed
 ; ===========================================================================
 
-loc_1EB74:				
+	.entirecolumnsolid:
 		move.w	#$10,d0
 
-loc_1EB78:				
+	.nocollision:
 		move.w	d0,d2
 
-loc_1EB7A:				
-		move.b	d2,(a2)+
-		dbf	d3,loc_1EB4A
-		rts	
+	.columnprocessed:
+		move.b	d2,(a2)+				; store column collision height
+		dbf	d3,.processloop
+
+		rts
+
 ; ===========================================================================
 
 	if Revision<2
 		nop
 	endc
 	
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	calculate distance from Sonic/Tails to the wall in front of 
+; them
+
+; input:
+;	d0 = player's floor angle rotated 90 degrees (i.e. angle of wall ahead)
+
+; output:
+;	d1 = distance to wall
+; ---------------------------------------------------------------------------
 	
 Player_CalcRoomAhead:				
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#$C,$3E(a0)
-		beq.s	loc_1EB9C
-		move.l	#v_secondary_collision,(v_collision_index_ptr).w
+		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0)	; is player on plane 0?
+		beq.s	.useprimary			; if so, branch
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w	; use secondary collision
 
-loc_1EB9C:				
-		move.b	$3F(a0),d5
+	.useprimary:				
+		move.b	ost_lrb_solid_bit(a0),d5	; bit to test for solidness
 		move.l	ost_x_pos(a0),d3
 		move.l	ost_y_pos(a0),d2
 		move.w	ost_x_vel(a0),d1
 		ext.l	d1
 		asl.l	#8,d1
-		add.l	d1,d3
+		add.l	d1,d3				; d3 = predicted x pos. at next frame
 		move.w	ost_y_vel(a0),d1
 		ext.l	d1
 		asl.l	#8,d1
-		add.l	d1,d2
+		add.l	d1,d2				; d2 = predicted y pos. at next frame
 		swap	d2
 		swap	d3
 		move.b	d0,(v_angle_right).w
 		move.b	d0,(v_angle_left).w
 		move.b	d0,d1
 		addi.b	#$20,d0
-		bpl.s	loc_1EBDC
+		bpl.s	.floor_or_left				; branch if angle is floor or left vertical
 		move.b	d1,d0
-		bpl.s	loc_1EBD6
+		bpl.s	.angle_pos	
 		subq.b	#1,d0
 
-loc_1EBD6:				
+	.angle_pos:				
 		addi.b	#$20,d0
-		bra.s	loc_1EBE6
+		bra.s	.find_wall
 ; ===========================================================================
 
-loc_1EBDC:				
+.floor_or_left:				
 		move.b	d1,d0
-		bpl.s	loc_1EBE2
+		bpl.s	.angle_pos_
 		addq.b	#1,d0
 
-loc_1EBE2:				
+	.angle_pos_:				
 		addi.b	#$1F,d0
 
-loc_1EBE6:				
-		andi.b	#-$40,d0
+.find_wall:				
+		andi.b	#$C0,d0
 		beq.w	Player_FindFloor_Quick
-		cmpi.b	#-$80,d0
+		cmpi.b	#$80,d0
 		beq.w	Player_FindCeiling_Quick
 		andi.b	#$38,d1
-		bne.s	loc_1EBFE
+		bne.s	.find_wall_lr
 		addq.w	#8,d2
 
-loc_1EBFE:				
+	.find_wall_lr:				
 		cmpi.b	#$40,d0
 		beq.w	Player_FindWallLeft_Quick
+		bra.w	Player_FindWallRight_Quick
+		
+; ---------------------------------------------------------------------------
+; Subroutine to	calculate distance from Sonic/Tails' head to the ceiling
 
-loc_1EC06:
-		bra.w	FindWallRight_Quick
-; ===========================================================================
+; input:
+;	d0 = player's floor angle inverted
+
+; output:
+;	d1 = distance to ceiling
+; ---------------------------------------------------------------------------
 
 Player_CalcHeadroom:				
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#$C,$3E(a0)
-		beq.s	loc_1EC22
-		move.l	#v_secondary_collision,(v_collision_index_ptr).w
+		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0)	; is player on plane 0?
+		beq.s	.useprimary			; if so, branch
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w	; use secondary collision
 
-loc_1EC22:				
-		move.b	$3F(a0),d5
+	.useprimary:				
+		move.b	ost_lrb_solid_bit(a0),d5
 		move.b	d0,(v_angle_right).w
 		move.b	d0,(v_angle_left).w
 		addi.b	#$20,d0
-		andi.b	#-$40,d0
-		cmpi.b	#$40,d0
-		beq.w	Player_FindWallLeft
-		cmpi.b	#-$80,d0
-		beq.w	Player_FindCeiling
-		cmpi.b	#-$40,d0
-		beq.w	Player_FindWallRight
+		andi.b	#$C0,d0					; read only bits 6 and 7 of angle
+		cmpi.b	#$40,d0					; is Sonic on a left-facing wall?
+		beq.w	Player_FindWallLeft			; ceiling is to the left
+		cmpi.b	#$80,d0					; is Sonic on the ground?
+		beq.w	Player_FindCeiling			; ceiling is directly above
+		cmpi.b	#$C0,d0					; is Sonic on a right-facing wall?
+		beq.w	Player_FindWallRight			; ceiling is to the right
+		; else, fall through to Player_FindFloor (could skip the collision layer check with a bra.s)
+		
+; ---------------------------------------------------------------------------
+; Subroutine to	find distance to floor
 
-; ===========================================================================
+; output:
+;	d0 = distance to floor (larger if on a slope)
+;	d1 = distance to floor (smaller if on a slope)
+;	d3 = floor angle
+;	a1 = address within 256x256 mappings where Sonic is standing
+;	(a1) = 16x16 tile number
+;	(a4) = floor angle
+; ---------------------------------------------------------------------------
 
 Player_FindFloor:				
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#$C,ost_top_solid_bit(a0)
-		beq.s	loc_1EC66
-		move.l	#v_secondary_collision,(v_collision_index_ptr).w
+		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0)	; is player on plane 0?
+		beq.s	.useprimary			; if so, branch
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w	; use secondary collision
 
-loc_1EC66:				
-		move.b	$3E(a0),d5
+	.useprimary:				
+		move.b	ost_top_solid_bit(a0),d5	; bit to check for solidness
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
 		move.b	ost_height(a0),d0
 		ext.w	d0
-		add.w	d0,d2
+		add.w	d0,d2					; d2 = y pos. of player's bottom edge
 		move.b	ost_width(a0),d0
 		ext.w	d0
-		add.w	d0,d3
-		lea	(v_angle_right).w,a4
-		movea.w	#$10,a3
+		add.w	d0,d3					; d3 = x pos. of player's right edge
+		lea	(v_angle_right).w,a4			; write angle here
+		movea.w	#$10,a3					; tile height
 		move.w	#0,d6
 		bsr.w	FindFloor
-		move.w	d1,-(sp)
+		pushr.w	d1					; save d1 (distance to floor) to stack
+		
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
 		move.b	ost_height(a0),d0
 		ext.w	d0
-		add.w	d0,d2
+		add.w	d0,d2					; d2 = y pos. of player's bottom edge
 		move.b	ost_width(a0),d0
 		ext.w	d0
-		sub.w	d0,d3
-		lea	(v_angle_left).w,a4
-		movea.w	#$10,a3
+		sub.w	d0,d3					; d3 = x pos. of player's left edge
+		lea	(v_angle_left).w,a4			; write angle here
+		movea.w	#$10,a3					; tile height
 		move.w	#0,d6
-		bsr.w	FindFloor
-		move.w	(sp)+,d0
+		bsr.w	FindFloor				; d1 = distance to floor left side
+		popr.w	d0					; d0 = distance to floor right side
 		move.b	#0,d2
 
-loc_1ECC6:				
+Player_FindSmaller:				
 		move.b	(v_angle_left).w,d3
-		cmp.w	d0,d1
-		ble.s	loc_1ECD4
+		cmp.w	d0,d1					; compare the output distances
+		ble.s	.no_swap				; branch if d0 > d1
 		move.b	(v_angle_right).w,d3
-		exg	d0,d1
+		exg	d0,d1					; d1 is always the smaller distance
 
-loc_1ECD4:				
-		btst	#0,d3
-		beq.s	locret_1ECDC
-		move.b	d2,d3
+	.no_swap:				
+		btst	#0,d3					; is bit 0 of angle set?
+		beq.s	.no_angle_snap				; if not, branch
+		move.b	d2,d3					; clear d3 (this is copied to ost_angle)
 
-locret_1ECDC:				
+	.no_angle_snap:				
 		rts	
 
-
 ; ---------------------------------------------------------------------------
-; Subroutine to	find distance to floor, no width/height checks
+; Subroutine to	find distance to floor, no width/height or collision layer
+; checks
 
 ; input:
 ;	d2 = y position of Sonic
@@ -41261,19 +41366,19 @@ locret_1ECDC:
 ; output:
 ;	d1 = distance to floor
 ;	d3 = floor angle
-;	a1 = address within 256x256 mappings where Sonic is standing
+;	a1 = address within 256x256 mappings where player is standing
 ;	(a1) = 16x16 tile number
 ;	(a4) = floor angle
 ; ---------------------------------------------------------------------------
 
-		; Two unused/dead lines
+;Player_FindFloor_Quick_UsePos:
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 
 Player_FindFloor_Quick:				
-		addi.w	#$A,d2
-		lea	(v_angle_right).w,a4
-		movea.w	#$10,a3
+		addi.w	#sonic_average_radius,d2
+		lea	(v_angle_right).w,a4			; write angle here
+		movea.w	#$10,a3					; tile height
 		move.w	#0,d6
 		bsr.w	FindFloor
 		move.b	#0,d2
@@ -41281,97 +41386,111 @@ Player_FindFloor_Quick:
 Player_SnapAngle:				
 		move.b	(v_angle_right).w,d3
 		btst	#0,d3
-		beq.s	.no_angle_snap
-		move.b	d2,d3
+		beq.s	.no_angle_snap				; branch if bit 0 of angle is clear
+		move.b	d2,d3					; snap angle to 0, $40, $80 or $C0
 
 	.no_angle_snap:				
 		rts	
 		
-; ===========================================================================
-	; Dead/unused
+; ---------------------------------------------------------------------------
+; Unused collision checking subroutine
+; ---------------------------------------------------------------------------
+
 		move.w	ost_x_pos(a0),d3
 		move.w	ost_y_pos(a0),d2
 		subq.w	#4,d2
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#$D,$3F(a0)
-		beq.s	loc_1ED2E
-		move.l	#v_secondary_collision,(v_collision_index_ptr).w
-
-	loc_1ED2E:				
-		lea	(v_angle_right).w,a4
-		move.b	#0,(a4)
-		movea.w	#$10,a3
-		move.w	#0,d6
-		move.b	$3F(a0),d5
-		bsr.w	FindFloor
-		move.b	(v_angle_right).w,d3
-		btst	#0,d3
-		beq.s	locret_1ED54
-		move.b	#0,d3
-
-	locret_1ED54:				
-		rts	
-
-; ---------------------------------------------------------------------------
-; Subroutine to find the distance of an object to the floor, checking both
-; collision layers
-; ---------------------------------------------------------------------------
-
-FindFloorEdge:				
-		move.w	ost_x_pos(a0),d3
-
-FindFloorEdge_NoX:				
-		move.w	ost_y_pos(a0),d2
-		moveq	#0,d0
-		move.b	ost_height(a0),d0
-		ext.w	d0
-		add.w	d0,d2					; d2 = y pos of bottom edge of object
-		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#$C,ost_top_solid_bit(a0)
+		cmpi.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a0)
 		beq.s	.useprimary
 		move.l	#v_secondary_collision,(v_collision_index_ptr).w
 
 	.useprimary:				
 		lea	(v_angle_right).w,a4
 		move.b	#0,(a4)
+		movea.w	#$10,a3
+		move.w	#0,d6
+		move.b	ost_lrb_solid_bit(a0),d5
+		bsr.w	FindFloor
+		move.b	(v_angle_right).w,d3
+		btst	#0,d3
+		beq.s	.nosnap
+		move.b	#0,d3
+
+	.nosnap:				
+		rts	
+
+; ---------------------------------------------------------------------------
+; Subroutine to find the the distance of an object to the floor, taking both
+; collision layers into account. Identical to FindFloorObj, expect it checks 
+; which collision layer the object is on and sets the appropriate collision
+; pointer for FindFloor.
+
+; output:
+;	d1 = distance to floor
+;	d3 = floor angle
+;	a1 = address within 256x256 mappings where player is standing
+;	(a1) = 16x16 tile number
+;	(a4) = floor angle
+; ---------------------------------------------------------------------------
+
+FindFloorObj_ChkCol:				
+		move.w	ost_x_pos(a0),d3
+
+FindFloorObj_ChkCol_NoX:				
+		move.w	ost_y_pos(a0),d2
+		moveq	#0,d0
+		move.b	ost_height(a0),d0
+		ext.w	d0
+		add.w	d0,d2					; d2 = y pos of bottom edge of object
+		move.l	#v_primary_collision,(v_collision_index_ptr).w
+		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0)	; is object on plane 0?
+		beq.s	.useprimary							; if so, branch
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w	; use secondary collision
+
+	.useprimary:				
+		lea	(v_angle_right).w,a4		; write angle here
+		move.b	#0,(a4)
 		movea.w	#$10,a3					; height of a 16x16 tile
 		move.w	#0,d6					; EOR bitmask
 		move.b	ost_top_solid_bit(a0),d5		; bit to test for solidness
 		bsr.w	FindFloor
-		move.b	(v_angle_right).w,d3			; get floor angle (overwriting low byte of x pos)
+		move.b	(v_angle_right).w,d3
 		btst	#0,d3					; is angle snap bit set?
 		beq.s	.exit
 		move.b	#0,d3					; snap to flat floor
 
 	.exit:				
 		rts	
-; ===========================================================================
 
-FindFloorEdge2:				
+; ---------------------------------------------------------------------------
+; Identical to FindFloorObj_ChkCol, expect object = a1
+; ---------------------------------------------------------------------------
+
+FindFloorObj_ChkCol2:				
 		move.w	ost_x_pos(a1),d3
 		move.w	ost_y_pos(a1),d2
 		moveq	#0,d0
 		move.b	ost_height(a1),d0
 		ext.w	d0
-		add.w	d0,d2
+		add.w	d0,d2					; d2 = y pos of bottom edge of object
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#$C,$3E(a1)
-		beq.s	loc_1EDD2
-		move.l	#v_secondary_collision,(v_collision_index_ptr).w
+		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1)	; is object on plane 0?
+		beq.s	.useprimary							; if so, branch
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w	; use secondary collision
 
-loc_1EDD2:				
-		lea	(v_angle_right).w,a4
+	.useprimary:				
+		lea	(v_angle_right).w,a4		; write angle here
 		move.b	#0,(a4)
-		movea.w	#$10,a3
-		move.w	#0,d6
-		move.b	$3E(a1),d5
+		movea.w	#$10,a3					; height of a 16x16 tile
+		move.w	#0,d6					; EOR bitmask
+		move.b	ost_top_solid_bit(a1),d5		; bit to test for solidness
 		bsr.w	FindFloor
 		move.b	(v_angle_right).w,d3
-		btst	#0,d3
-		beq.s	locret_1EDF8
-		move.b	#0,d3
+		btst	#0,d3					; is angle snap bit set?
+		beq.s	.exit
+		move.b	#0,d3					; snap to flat floor
 
-locret_1EDF8:				
+	.exit:				
 		rts	
 ; ===========================================================================
 ;ObjCheckFloorDist:
@@ -41454,14 +41573,14 @@ Player_FindWallRight:
 		bsr.w	FindWall
 		move.w	(sp)+,d0
 		move.b	#-$40,d2
-		bra.w	loc_1ECC6
+		bra.w	Player_FindSmaller
 ; ===========================================================================
 
-FindWallRight_Quick_UsePos:				
+Player_FindWallRight_Quick_UsePos:				
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 
-FindWallRight_Quick:				
+Player_FindWallRight_Quick:				
 		addi.w	#$A,d3
 		lea	(v_angle_right).w,a4
 		movea.w	#$10,a3
@@ -41521,7 +41640,7 @@ Player_FindCeiling:
 		bsr.w	FindFloor
 		move.w	(sp)+,d0
 		move.b	#-$80,d2
-		bra.w	loc_1ECC6
+		bra.w	Player_FindSmaller
 ; ===========================================================================
 		; unused/dead.
 		move.w	ost_y_pos(a0),d2
@@ -41592,7 +41711,7 @@ Player_FindWallLeft:
 		bsr.w	FindWall
 		popr.w	d0
 		move.b	#$40,d2
-		bra.w	loc_1ECC6
+		bra.w	Player_FindSmaller
 ; ===========================================================================
 
 Player_FindWallLeft_Quick_UsePos:				
@@ -42680,7 +42799,7 @@ pswtch_size:			equ 3				; bits 0-1 : size of switcher, 4-32 blocks
 pswtch_xy:				equ 1<<pswtch_xy_bit
 ; ===========================================================================
 
-PSwtch_Init:				
+PSwtch_Init: ; Routine 0		
 		addq.b	#2,ost_primary_routine(a0)		; go to PSwtch_MainX net
 		move.l	#Map_PSwitch,ost_mappings(a0)
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a0)
@@ -42739,7 +42858,7 @@ PSwtch_Init_CheckX:
 		bcc.s	PSwtch_MainX				; branch if player 2 is at or to left of switcher
 		move.b	#1,ost_pswtch_p2_side(a0)		; mark player as right of switcher
 
-PSwtch_MainX:
+PSwtch_MainX: ; Routine 2
 		tst.w	(v_debug_active).w			; is debug placement mode active?
 		bne.w	.done					; if so, exit
 		move.w	ost_x_pos(a0),d1			; d1 = switcher x pos
@@ -42774,12 +42893,12 @@ PSwtch_MainX:
 	.set_plane1:				
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority1				; branch if so
-		move.b	#plane0_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 0
-		move.b	#plane0_lrbsolid,ost_lrb_solid_bit(a1)
+		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_downright_bit,d0		
 		beq.s	.set_priority1				; branch if player is being switched to plane 0
-		move.b	#plane1_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 1
-		move.b	#plane1_lrbsolid,ost_lrb_solid_bit(a1)
+		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority1:				
 		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
@@ -42811,12 +42930,12 @@ PSwtch_MainX:
 	.set_plane2:				
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority2				; branch if so
-		move.b	#plane0_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 0
-		move.b	#plane0_lrbsolid,ost_lrb_solid_bit(a1)
+		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_upleft_bit,d0
 		beq.s	.set_priority2				; branch if player is being switched to plane 0
-		move.b	#plane1_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 1
-		move.b	#plane1_lrbsolid,ost_lrb_solid_bit(a1)
+		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority2:				
 		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
@@ -42828,7 +42947,7 @@ PSwtch_MainX:
 		rts	
 ; ===========================================================================
 
-PSwtch_MainY:
+PSwtch_MainY: ; Routine 4
 		tst.w	(v_debug_active).w			; is debug placement mode active?
 		bne.w	.done					; if so, exit
 		move.w	ost_y_pos(a0),d1			; d1 = switcher y pos
@@ -42863,12 +42982,12 @@ PSwtch_MainY:
 	.set_plane1:				
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority1				; branch if so
-		move.b	#plane0_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 0
-		move.b	#plane0_lrbsolid,ost_lrb_solid_bit(a1)
+		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_downright_bit,d0
 		beq.s	.set_priority1				; branch if player is being switched to plane 0
-		move.b	#plane1_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 1
-		move.b	#plane1_lrbsolid,ost_lrb_solid_bit(a1)
+		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority1:				
 		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
@@ -42900,12 +43019,12 @@ PSwtch_MainY:
 	.set_plane2:				
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority2				; branch if so
-		move.b	#plane0_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 0
-		move.b	#plane0_lrbsolid,ost_lrb_solid_bit(a1)
+		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_upleft_bit,d0
 		beq.s	.set_priority2				; branch if player is being switched to plane 0
-		move.b	#plane1_topsolid,ost_top_solid_bit(a1)	; set player collision to plane 1
-		move.b	#plane1_lrbsolid,ost_lrb_solid_bit(a1)
+		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority2:				
 		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
@@ -69851,8 +69970,7 @@ JmpTo2_FindFreeObjSpecial:
 
 		align 4
 	endc
-	
-; ===========================================================================	
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to	load OST data for an object from a subobjdata declaration.
 ; Requires data index to be set beforehand. Part 2 assumes d0 is already set
@@ -70258,7 +70376,7 @@ LoadChild:
 ; ---------------------------------------------------------------------------
 
 LoadProjectiles:				
-		moveq	#0,d1
+		moveq	#0,d1	; first index in projectile list
 
 	.loop:				
 		jsr	(FindNextFreeObj).l			; find free OST slot after parent
@@ -70580,12 +70698,13 @@ Ground_StartRoam:
 		move.w	Ground_Speeds(pc,d0.w),ost_x_vel(a0)	; set x vel based on direction to nearest player
 		bclr	#status_xflip_bit,ost_primary_status(a0)	
 		tst.w	d0
-		beq.s	.no_x_flip				; branch if player is to the left
+		beq.s	.no_xflip				; branch if player is to the left
 		bset	#status_xflip_bit,ost_primary_status(a0) ; else, player is to the right	
 
-	.no_x_flip:				
+	.no_xflip:				
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
+
 Ground_Speeds:	
 		dc.w -$100
 		dc.w $100
@@ -70621,7 +70740,7 @@ Ground_Pause:
 		neg.w	ost_x_vel(a0)				; reverse direction
 		bchg	#status_xflip_bit,ost_primary_status(a0) ; x-flip
 		jmpto	DespawnObject,JmpTo39_DespawnObject
-; ===========================================================================
+
 ; ----------------------------------------------------------------------------
 ; Object 8F - Wall behind which Grounder hides
 ; ----------------------------------------------------------------------------
@@ -70632,6 +70751,7 @@ GrounderWall:
 		move.w	GWall_Index(pc,d0.w),d1
 		jmp	GWall_Index(pc,d1.w)
 ; ===========================================================================
+
 GWall_Index:	index offset(*),,2
 		ptr GWall_Init					; 0 
 		ptr GWall_Wait					; 2

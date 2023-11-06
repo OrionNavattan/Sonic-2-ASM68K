@@ -297,13 +297,6 @@ spring_power_red:		equ $1000
 spring_power_yellow:		equ $A00
 debug_move_speed:		equ 15				; initial speed object moves in debug mode when d-pad is held (1px per frame)
 
-; Plane solidity values
-plane0_topsolid:		equ $C
-plane0_lrbsolid:		equ $D
-plane1_topsolid:		equ $E
-plane1_lrbsolid:		equ $F
-
-
 ; Gameplay values
 lives_start:			equ 3				; lives at start of game
 rings_for_life:			equ 100				; rings needed for first extra life
@@ -333,6 +326,22 @@ specbump_type:		rs.w 1					; 0 ; type of bumper
 specbump_xpos:		rs.w 1					; 2 ; x pos of bumper
 specbump_ypos:		rs.w 1					; 4 ; y pos of bumper
 sizeof_specbump:	equ __rs				; size of each bumper entry
+
+; After a call to SolidObject, high word of d6 is a bitfield with following definitions
+; (low word is identical to definitions for ost_primary_status)
+p1_touch_side_bit: 		equ 0
+p2_touch_side_bit: 		equ 1
+p1_touch_bottom_bit:  	equ 2
+p2_touch_bottom_bit:	equ 3
+p1_touch_top_bit:   	equ 4
+p2_touch_top_bit:   	equ 5
+
+p1_touch_side:      equ 1<<p1_touch_side_bit
+p2_touch_side:      equ 1<<p2_touch_side_bit
+p1_touch_bottom:    equ 1<<p1_touch_bottom_bit
+p2_touch_bottom:    equ 1<<p2_touch_bottom_bit
+p1_touch_top:       equ 1<<p1_touch_top_bit
+p2_touch_top:       equ 1<<p2_touch_top_bit
 
 ; ----------------------------------------------------------------------------
 ; This macro is used to keep Sonic and Tails' primary routine IDs synchronized,
@@ -460,11 +469,12 @@ ost_primary_status:			rs.b 1			; $22 ; most objects; bitfield indicating orienta
 	status_standing_both:   equ status_p1_platform|status_p2_platform ; both players are standing on this object (objects only)
 	status_rolljump:	equ 1<<status_rolljump_bit	; Sonic/Tails is jumping after rolling (Sonic/Tails only)
 	status_pushing:		equ 1<<status_pushing_bit	; Sonic/Tails is pushing an object (Sonic/Tails only)
-	status_p1_pushing:		equ 1<<status_p1_pushing_bit ; main character is pushing this (objects only)
-	status_p2_pushing:      equ 1<<status_p2_pushing_bit	; sidekick is pushing this (objects only)
+	status_p1_pushing:		equ 1<<status_p1_pushing_bit ; player 1 is pushing this (objects only)
+	status_p2_pushing:      equ 1<<status_p2_pushing_bit	; player 2 is pushing this (objects only)
 	status_pushing_both:    equ status_p1_pushing|status_p2_pushing ; both players are pushing this (objects only)
 	status_underwater:	equ 1<<status_underwater_bit	; Sonic/Tails is underwater (Sonic/Tails only)
 	status_broken:		equ 1<<status_broken_bit	; object has been broken (enemies/bosses)
+	
 ost_respawn:				rs.b 1			; $23 ; non-player objects; respawn list index number
 ost_primary_routine:		rs.b 1				; $24 ; most objects; primary routine number
 ost_secondary_routine:		rs.b 1				; $25 ; most objects; secondary routine number

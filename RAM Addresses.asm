@@ -526,7 +526,7 @@ v_bonus_count_1:			rs.w 1			; $FFFFF7D2 ; level results time bonus or special st
 v_bonus_count_2:			rs.w 1			; $FFFFF7D4 ; level results ring bonus or special stage Tails ring bonus
 f_pass_bonus_update:		rs.b 1				; $FFFFF7D6 ; flag set to update bonuses at the end of an act
 							rs.b 3	; $FFFFF7D7-$FFFFF7D9 ; unused
-v_camera_x_pos_coarse:		rs.w 1				; $FFFFF7DA ; (v_camera_x_pos-128)/256 ; used by MarkObjGone
+v_camera_x_pos_coarse:		rs.w 1				; $FFFFF7DA ; (v_camera_x_pos-128)/256 ; used for onscreen checks
 	ramblocksize	v_camera_x_pos_coarse
 
 v_camera_x_pos_coarse_p2:		rs.w 1			; $FFFFF7DC
