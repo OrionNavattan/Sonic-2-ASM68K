@@ -370,6 +370,64 @@ CommonRoutineIDs:	macro	routinename
 		ptr_id_inc: = 2
 
 		CharacterRoutines	CommonRoutineIDs	; generate routine IDs without character names (used wherever code applies to both characters)
+		
+
+; ----------------------------------------------------------------------------
+; This macro is used to keep Sonic and Tails' animation IDs synchronized,
+; as much of the code depends on them being the same.
+
+; 
+; flag1: s = different animation script for Super Sonic; n = Super Sonic
+; does not have a pointer for this animation
+; flag2: c = common animation to both Sonic and Tails; n = Tails does not
+; have a pointer for this animation
+; ----------------------------------------------------------------------------
+		
+CharacterAnimations:		macro	func
+		\func	s,c, 	Walk				; 0
+		\func	s,c,	Run				; 1
+		\func	 ,c,	Roll1				; 2
+		\func	 ,c,	Roll2				; 3
+		\func	s,c,	Pushing				; 4
+		\func	s,c,	Wait				; 5
+		\func	s, ,	BalanceOut1,Balance		; 6
+		\func	 ,c,	LookUp				; 7
+		\func	s,c,	Duck				; 8
+		\func	 ,c,	Spindash			; 9
+		\func	 , ,	Blink,Dummy1			; $A
+		\func	 , ,	GetUp,Dummy2			; $B
+		\func	 , ,	BalanceOut2,Dummy3		; $C
+		\func	 ,c,	Stop				; $D
+		\func	 ,c,	Float1				; $E
+		\func	 ,c,	Float2				; $F
+		\func	 ,c,	Spring				; $10
+		\func	 ,c,	Hang1				; $11
+		\func	 , ,	Spindash2,Blink			; $12
+		\func	 , ,	Spindash3,Blink2		; $13
+		\func	 ,c,	Hang2				; $14
+		\func	 ,c,	Bubble				; $15
+		\func	 ,c,	Burnt				; $16
+		\func	 ,c,	Drown				; $17
+		\func	 ,c,	Death				; $18
+		\func	 ,c,	Hurt				; $19
+		\func	 , ,	Hurt,Hurt2			; $1A
+		\func	 ,c,	OilSlide			; $1B
+		\func	 ,c,	Blank				; $1C
+		\func	 , ,	BalanceIn1,Dummy4		; $1D
+		\func	 , ,	BalanceIn2,Dummy5		; $1E
+		\func	 , ,	Transform,HaulAss		; $1F
+		\func	n, ,	Lying,Fly			; $20
+		\func	n,n,	LieDown,			; $21
+		endm		
+		
+CommonAnimationIDs:	macro	flag1,flag2,sonic,tails
+		if stricmp ("\flag2","c")
+		id_Ani_\sonic:	equ	ptr_id			; make ID constant if animation is shared
+		endc
+		ptr_id: = ptr_id+ptr_id_inc			; increment pointer ID
+		endm
+		
+		CharacterAnimations		CommonAnimationIDs ; generate common ID for animations shared by Sonic and Tails			
 
 ; ---------------------------------------------------------------------------
 ; Object variable offsets

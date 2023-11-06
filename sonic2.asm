@@ -32629,9 +32629,9 @@ SolidObject:
 		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
 		bsr.s	.singlecharacter			; run for player 1
 		popr.l	d1-d4
-		lea	(v_ost_player2).w,a1		; run for player 2
+		lea	(v_ost_player2).w,a1			; run for player 2
 		tst.b	ost_render(a1)				; is player 2 onscreen?
-		bpl.w	.done				; if not, exit
+		bpl.w	.done					; if not, exit
 		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
 	.singlecharacter:				
@@ -32673,7 +32673,7 @@ SolidObject_NoRenderChk:
 		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
 		bsr.s	SolidObject_NoRenderChk_SingleCharacter	; run for player 1
 		popr.l	d1-d4
-		lea	(v_ost_player2).w,a1		; run for player 2
+		lea	(v_ost_player2).w,a1			; run for player 2
 		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
 	SolidObject_NoRenderChk_SingleCharacter:				
@@ -32725,12 +32725,12 @@ SolidObject_Heightmap:
 		pushr.l	d1-d4					; back up input registers so we can run this routine again for sidekick
 		bsr.s	SolidObject_Heightmap_SingleCharacter	; run for player 1
 		popr.l	d1-d4
-		lea	(v_ost_player2).w,a1		; run for player 2
+		lea	(v_ost_player2).w,a1			; run for player 2
 		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
 SolidObject_Heightmap_SingleCharacter:				
 		btst	d6,ost_primary_status(a0)		; is character standing on the object?
-		beq.w	SolidObject_Heightmap_ChkCollision		; if not, branch
+		beq.w	SolidObject_Heightmap_ChkCollision	; if not, branch
 		move.w	d1,d2
 		add.w	d2,d2
 		btst	#status_air_bit,ost_primary_status(a1)	; is character in the air?
@@ -32941,8 +32941,8 @@ loc_199AE:
 ; ===========================================================================
 
 Solid_ChkCollision:				
-		tst.b	ost_render(a0)		; is object onscreen?
-		bpl.w	Solid_NoCollision		; if not, branch
+		tst.b	ost_render(a0)				; is object onscreen?
+		bpl.w	Solid_NoCollision			; if not, branch
 
 Solid_SkipRenderChk:
 		; Perform the X portion of a bounding box check. To do this, we assume a
@@ -32959,7 +32959,7 @@ Solid_SkipRenderChk:
 		; where (a0) = object, (a1) = player, and ost_height(a1)/2 in d2. This way
 		; of doing it causes the object's hitbox to be vertically off-center by -4 pixels.
 		move.w	d1,d3
-		add.w	d3,d3						; d3 = object's width
+		add.w	d3,d3					; d3 = object's width
 		cmp.w	d3,d0
 		bhi.w	Solid_NoCollision			; branch if player is outside right edge
 		move.b	ost_height(a1),d3
@@ -32972,26 +32972,26 @@ Solid_SkipRenderChk:
 		bmi.w	Solid_NoCollision			; branch if player is outside upper edge
 		andi.w	#$7FF,d3
 		move.w	d2,d4
-		add.w	d4,d4						; calculate minimum distance for a bottom collision.
+		add.w	d4,d4					; calculate minimum distance for a bottom collision.
 		cmp.w	d4,d3
 		bcc.w	Solid_NoCollision			; branch if player is outside lower edge
 
 Solid_Collision:				
-		tst.b	ost_obj_control(a1)		; are controls locked?
+		tst.b	ost_obj_control(a1)			; are controls locked?
 		bmi.w	Solid_NoCollision			; if so, branch
 		cmpi.b	#id_Death,ost_primary_routine(a1)	; is player dying?
-		bcc.w	Solid_Debug			; if so, branch
-		tst.w	(v_debug_active).w	; is debug mode being used?
-		bne.w	Solid_Debug		; if so, branch
+		bcc.w	Solid_Debug				; if so, branch
+		tst.w	(v_debug_active).w			; is debug mode being used?
+		bne.w	Solid_Debug				; if so, branch
 		move.w	d0,d5					; d0/d5 = x pos of player on object
 		cmp.w	d0,d1					; d1 = object half width
-		bcc.s	.player_left		; branch if player is on left side
+		bcc.s	.player_left				; branch if player is on left side
 		
 	;.player_right:	
 		add.w	d1,d1
 		sub.w	d1,d0
 		move.w	d0,d5
-		neg.w	d5				; d5 = x dist of player from left/right edge (nearest)
+		neg.w	d5					; d5 = x dist of player from left/right edge (nearest)
 
 	.player_left:				
 		move.w	d3,d1					; d1/d3 = y pos of player's feet on object
@@ -33033,33 +33033,33 @@ Solid_AlignToSide:
 		btst	#status_air_bit,ost_primary_status(a1)
 		bne.s	Solid_SideAir				; branch if player is in the air
 		move.l	d6,d4
-		addq.b	#status_p1_pushing_bit-status_p1_platform_bit,d4	; d4 = pushing bit for current player
-		bset	d4,ost_primary_status(a0)	; make object be pushed
-		bset	#status_pushing_bit,ost_primary_status(a1)	; make player push object
+		addq.b	#status_p1_pushing_bit-status_p1_platform_bit,d4 ; d4 = pushing bit for current player
+		bset	d4,ost_primary_status(a0)		; make object be pushed
+		bset	#status_pushing_bit,ost_primary_status(a1) ; make player push object
 		move.w	d6,d4
-		addi.b	#($10-status_p1_platform_bit+p1_touch_side_bit),d4	; d4 = side touch bit for current player
-		bset	d4,d6	; mark player as having side collision
-		moveq	#1,d4	; return side collision
+		addi.b	#($10-status_p1_platform_bit+p1_touch_side_bit),d4 ; d4 = side touch bit for current player
+		bset	d4,d6					; mark player as having side collision
+		moveq	#1,d4					; return side collision
 		rts	
 ; ===========================================================================
 
 Solid_SideAir:				
-		bsr.s	Solid_NotPushing	; don't push if player is jumping or close to top/bottom edges
+		bsr.s	Solid_NotPushing			; don't push if player is jumping or close to top/bottom edges
 		move.w	d6,d4
-		addi.b	#($10-status_p1_platform_bit+p1_touch_side_bit),d4	; d4 = side touch bit for current player
-		bset	d4,d6	; mark player as having side collision
-		moveq	#1,d4	; return side collision
+		addi.b	#($10-status_p1_platform_bit+p1_touch_side_bit),d4 ; d4 = side touch bit for current player
+		bset	d4,d6					; mark player as having side collision
+		moveq	#1,d4					; return side collision
 		rts	
 ; ===========================================================================
 
 Solid_NoCollision:				
 		move.l	d6,d4
-		addq.b	#status_p1_pushing_bit-status_p1_platform_bit,d4	; d4 = pushing bit for current player
-		btst	d4,ost_primary_status(a0)	; is player pushing?
-		beq.s	Solid_Debug			; branch if not
-		cmpi.b	#2,ost_anim(a1)		; ani_roll
+		addq.b	#status_p1_pushing_bit-status_p1_platform_bit,d4 ; d4 = pushing bit for current player
+		btst	d4,ost_primary_status(a0)		; is player pushing?
+		beq.s	Solid_Debug				; branch if not
+		cmpi.b	#2,ost_anim(a1)				; ani_roll
 		beq.s	Solid_NotPushing
-		move.w	#1,ost_anim(a1)		; ani_run
+		move.w	#1,ost_anim(a1)				; ani_run
 
 Solid_NotPushing:				
 		move.l	d6,d4
@@ -35838,7 +35838,7 @@ loc_1B59A:
 		lea	(Ani_Son_Roll2).l,a1
 		cmpi.w	#$600,d2
 		bcc.s	loc_1B5AC
-		lea	(Ani_Son_Roll).l,a1
+		lea	(Ani_Son_Roll1).l,a1
 
 loc_1B5AC:				
 		neg.w	d2
@@ -35874,7 +35874,7 @@ loc_1B5EA:
 		lea	(Ani_Son_Pushing).l,a1
 		tst.b	(f_super).w
 		beq.s	loc_1B602
-		lea	(Ani_SupSon_Push).l,a1
+		lea	(Ani_SupSon_Pushing).l,a1
 
 loc_1B602:				
 		move.b	ost_primary_status(a0),d1
@@ -35885,41 +35885,14 @@ loc_1B602:
 ; ===========================================================================
 
 Ani_Sonic:	index offset(*)
-		ptr Ani_Son_Walk				; 0 
-		ptr Ani_Son_Run					; 1
-		ptr Ani_Son_Roll				; 2
-		ptr Ani_Son_Roll2				; 3
-		ptr Ani_Son_Pushing				; 4
-		ptr Ani_Son_Wait				; 5
-		ptr Ani_Son_BalanceOut1				; 6
-		ptr Ani_Son_LookUp				; 7
-		ptr Ani_Son_Duck				; 8
-		ptr Ani_Son_Spindash				; 9
-		ptr Ani_Son_Blink				; 10
-		ptr Ani_Son_GetUp				; 11
-		ptr Ani_Son_BalanceOut2				; 12
-		ptr Ani_Son_Stop				; 13
-		ptr Ani_Son_Float1				; 14
-		ptr Ani_Son_Float2				; 15
-		ptr Ani_Son_Spring				; 16
-		ptr Ani_Son_Hang1				; 17
-		ptr Ani_Son_Spindash2				; 18
-		ptr Ani_Son_Spindash3				; 19
-		ptr Ani_Son_Hang2				; 20
-		ptr Ani_Son_Bubble				; 21
-		ptr Ani_Son_Burnt				; 22
-		ptr Ani_Son_Drown				; 23
-		ptr Ani_Son_Death				; 24
-		ptr Ani_Son_Hurt				; 25
-		ptr Ani_Son_Hurt				; 26
-		ptr Ani_Son_OilSlide				; 27
-		ptr Ani_Son_Blank				; 28
-		ptr Ani_Son_BalanceIn1				; 29
-		ptr Ani_Son_BalanceIn2				; 30
-		ptr Ani_SupSon_Transform			; 31
-		ptr Ani_Son_Lying				; 32
-		ptr Ani_Son_LieDown				; 33
+
+SonicAnimations:	macro	flag1,flag2,sonic,tails	
+		ptr	Ani_Son_\sonic
+		endm
 		
+		CharacterAnimations		SonicAnimations	; generate pointers and IDs for Sonic's animations
+; ===========================================================================
+
 Ani_Son_Walk:	
 		dc.b $FF
 		dc.b id_Frame_Sonic_Walk13
@@ -35945,7 +35918,7 @@ Ani_Son_Run:
 		dc.b afEnd
 		rev02even
 		
-Ani_Son_Roll:	
+Ani_Son_Roll1:	
 		dc.b $FE
 		dc.b id_Frame_Sonic_Roll1
 		dc.b id_Frame_Sonic_Roll5
@@ -36242,41 +36215,21 @@ Ani_Son_LieDown:
 		dc.b id_Frame_Sonic_LayDown
 		dc.b afChange,id_Ani_Son_Walk	
 		rev02even
-		
+; ===========================================================================		
 		
 Ani_SuperSonic:	index offset(*)
-		ptr Ani_SupSon_Walk				; 0
-		ptr Ani_SupSon_Run				; 1
-		ptr Ani_Son_Roll				; 2
-		ptr Ani_Son_Roll2				; 3
-		ptr Ani_SupSon_Push				; 4
-		ptr Ani_SupSon_Stand				; 5
-		ptr Ani_SupSon_Balance				; 6
-		ptr Ani_Son_LookUp				; 7
-		ptr Ani_SupSon_Duck				; 8
-		ptr Ani_Son_Spindash				; 9
-		ptr Ani_Son_Blink				; $A
-		ptr Ani_Son_GetUp				; $B
-		ptr Ani_Son_BalanceOut2				; $C
-		ptr Ani_Son_Stop				; $D
-		ptr Ani_Son_Float1				; $E
-		ptr Ani_Son_Float2				; $F
-		ptr Ani_Son_Spring				; $10
-		ptr Ani_Son_Hang1				; $11
-		ptr Ani_Son_Spindash2				; $12
-		ptr Ani_Son_Spindash3				; $13
-		ptr Ani_Son_Hang2				; $14
-		ptr Ani_Son_Bubble				; $15
-		ptr Ani_Son_Burnt				; $16
-		ptr Ani_Son_Drown				; $17
-		ptr Ani_Son_Death				; $18
-		ptr Ani_Son_Hurt				; $19
-		ptr Ani_Son_Hurt				; $1A
-		ptr Ani_Son_OilSlide				; $1B
-		ptr Ani_Son_Blank				; $1C
-		ptr Ani_Son_BalanceIn1				; $1D
-		ptr Ani_Son_BalanceIn2				; $1E
-		ptr Ani_SupSon_Transform			; $1F
+
+SuperSonicAnimations:	macro		flag1,flag2,sonic,tails	
+		if stricmp ("\flag1","s")	
+		ptr Ani_SupSon_\sonic				; use separate script for Super Sonic
+		elseif	stricmp ("\flag1","n")			; Super Sonic does not use this animation
+		else
+		ptr	Ani_Son_\sonic				; Super Sonic uses same animation as normal Sonic
+		endc
+		endm
+		
+		CharacterAnimations		SuperSonicAnimations ; generate pointers and IDs for Super Sonic's animations
+; ===========================================================================
 
 Ani_SupSon_Walk:	
 		dc.b $FF
@@ -36304,7 +36257,7 @@ Ani_SupSon_Run:
 		dc.b afEnd		
 		rev02even
 		
-Ani_SupSon_Push:	
+Ani_SupSon_Pushing:	
 		dc.b $FD
 		dc.b id_Frame_SuperSonic_Push1
 		dc.b id_Frame_SuperSonic_Push2
@@ -36317,7 +36270,7 @@ Ani_SupSon_Push:
 		dc.b afEnd		
 		rev02even
 		
-Ani_SupSon_Stand:	
+Ani_SupSon_Wait:	
 		dc.b 7
 		dc.b id_Frame_SuperSonic_Stand1
 		dc.b id_Frame_SuperSonic_Stand2
@@ -36326,7 +36279,7 @@ Ani_SupSon_Stand:
 		dc.b afEnd	
 		rev02even
 				
-Ani_SupSon_Balance:	
+Ani_SupSon_BalanceOut1:	
 		dc.b 9
 		dc.b id_Frame_SuperSonic_Balance1
 		dc.b id_Frame_SuperSonic_Balance2
@@ -36345,7 +36298,7 @@ Ani_SupSon_Duck:
 		dc.b afEnd		
 		rev02even
 		
-Ani_SupSon_Transform:	
+Ani_Son_Transform:	
 		dc.b 2
 		dc.b id_Frame_SuperSonic_Transform1
 		dc.b id_Frame_SuperSonic_Transform1
@@ -38649,10 +38602,10 @@ loc_1CEC0:
 		move.b	d0,d3
 		add.b	d3,d3
 		add.b	d3,d3
-		lea	(byte_1D07A).l,a1
+		lea	(Ani_Tails_Walk).l,a1
 		cmpi.w	#$600,d2
 		bcs.s	loc_1CEEE
-		lea	(byte_1D084).l,a1
+		lea	(Ani_Tails_Run).l,a1
 		move.b	d0,d1
 		lsr.b	#1,d1
 		add.b	d1,d0
@@ -38660,7 +38613,7 @@ loc_1CEC0:
 		move.b	d0,d3
 		cmpi.w	#$700,d2
 		bcs.s	loc_1CEEE
-		lea	(byte_1D176).l,a1
+		lea	(Ani_Tails_HaulAss).l,a1
 
 loc_1CEEE:				
 		neg.w	d2
@@ -38721,10 +38674,10 @@ loc_1CF6E:
 		neg.w	d2
 
 loc_1CF7A:				
-		lea	(byte_1D093).l,a1
+		lea	(Ani_Tails_Roll2).l,a1
 		cmpi.w	#$600,d2
 		bcc.s	loc_1CF8C
-		lea	(byte_1D08E).l,a1
+		lea	(Ani_Tails_Roll1).l,a1
 
 loc_1CF8C:				
 		neg.w	d2
@@ -38755,7 +38708,7 @@ loc_1CFBA:
 loc_1CFC2:				
 		lsr.w	#6,d2
 		move.b	d2,ost_anim_time(a0)
-		lea	(byte_1D098).l,a1
+		lea	(Ani_Tails_Pushing).l,a1
 		move.b	ost_primary_status(a0),d1
 		andi.b	#status_xflip,d1
 		andi.b	#~(render_xflip|render_yflip),ost_render(a0)
@@ -38796,84 +38749,69 @@ loc_1D00E:
 		add.b	d3,ost_frame(a0)
 		rts	
 ; ===========================================================================
+
 Ani_Tails:	index offset(*)
-		ptr byte_1D07A					; 0 
-		ptr byte_1D084					; 1
-		ptr byte_1D08E					; 2
-		ptr byte_1D093					; 3
-		ptr byte_1D098					; 4
-		ptr byte_1D0A2					; 5
-		ptr byte_1D0E0					; 6
-		ptr byte_1D0F8					; 7
-		ptr byte_1D0FB					; 8
-		ptr byte_1D0FE					; 9
-		ptr byte_1D103					; 10
-		ptr byte_1D106					; 11
-		ptr byte_1D10C					; 12
-		ptr byte_1D110					; 13
-		ptr byte_1D117					; 14
-		ptr byte_1D11B					; 15
-		ptr byte_1D122					; 16
-		ptr byte_1D131					; 17
-		ptr byte_1D135					; 18
-		ptr byte_1D13B					; 19
-		ptr byte_1D140					; 20
-		ptr byte_1D144					; 21
-		ptr byte_1D14B					; 22
-		ptr byte_1D14E					; 23
-		ptr byte_1D151					; 24
-		ptr byte_1D154					; 25
-		ptr byte_1D157					; 26
-		ptr byte_1D15A					; 27
-		ptr byte_1D15E					; 28
-		ptr byte_1D162					; 29
-		ptr byte_1D16C					; 30
-		ptr byte_1D176					; 31
-		ptr byte_1D180					; 32
-byte_1D07A:	dc.b $FF,$10,$11,$12,$13,$14,$15, $E, $F,$FF	; 0	
 
-byte_1D084:	dc.b $FF,$2E,$2F,$30,$31,$FF,$FF,$FF,$FF,$FF	; 0	
+TailsAnimations:	macro		flag1,flag2,sonic,tails	
 
-byte_1D08E:	dc.b   1,$48,$47,$46,$FF			; 0 
-byte_1D093:	dc.b   1,$48,$47,$46,$FF			; 0 
-byte_1D098:	dc.b $FD,$63,$64,$65,$66,$FF,$FF,$FF,$FF,$FF	; 0	
+		if stricmp ("\flag2","n")			; Tails does not use this animation
+		else
+		ifarg \tails
+		ptr	Ani_Tails_\tails			; Tails has a different animation from Sonic
+		else
+		ptr	Ani_Tails_\sonic			; Tails shares an animation with Sonic
+		endc
+		endc
+		endm
+		
+		CharacterAnimations		TailsAnimations	; generate pointers and IDs for Tails' animations
+; ===========================================================================
 
-byte_1D0A2:	dc.b   7,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  3,  2,  1,  1,  1 ; 0
-					
+Ani_Tails_Walk:	dc.b $FF,$10,$11,$12,$13,$14,$15, $E, $F,$FF	; 0	
+
+Ani_Tails_Run:	dc.b $FF,$2E,$2F,$30,$31,$FF,$FF,$FF,$FF,$FF	; 0	
+
+Ani_Tails_Roll1:	dc.b   1,$48,$47,$46,$FF		; 0 
+Ani_Tails_Roll2:	dc.b   1,$48,$47,$46,$FF		; 0 
+Ani_Tails_Pushing:	dc.b $FD,$63,$64,$65,$66,$FF,$FF,$FF,$FF,$FF ; 0	
+
+Ani_Tails_Wait:	
+		dc.b   7,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  3,  2,  1,  1,  1 ; 0			
 		dc.b   1,  1,  1,  1,  1,  3,  2,  1,  1,  1,  1,  1,  1,  1,  1,  1 ; 16
 		dc.b   5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5 ; 32
 		dc.b   6,  7,  8,  7,  8,  7,  8,  7,  8,  7,  8,  6,$FE,$1C ; 48
-byte_1D0E0:	dc.b   9,$69,$69,$6A,$6A,$69,$69,$6A,$6A,$69,$69,$6A,$6A,$69,$69,$6A ; 0
-					
+Ani_Tails_Balance:	
+		dc.b   9,$69,$69,$6A,$6A,$69,$69,$6A,$6A,$69,$69,$6A,$6A,$69,$69,$6A ; 0		
 		dc.b $6A,$69,$69,$6A,$6A,$69,$6A,$FF		; 16
-byte_1D0F8:	dc.b $3F,  4,$FF				; 0 
-byte_1D0FB:	dc.b $3F,$5B,$FF				; 0 
-byte_1D0FE:	dc.b   0,$60,$61,$62,$FF			; 0 
-byte_1D103:	dc.b $3F,$82,$FF				; 0 
-byte_1D106:	dc.b   7,  8,  8,  9,$FD,  5			; 0	
-byte_1D10C:	dc.b   7,  9,$FD,  5				; 0 
-byte_1D110:	dc.b   7,$67,$68,$67,$68,$FD,  0		; 0 
-byte_1D117:	dc.b   9,$6E,$73,$FF				; 0 
-byte_1D11B:	dc.b   9,$6E,$6F,$70,$71,$72,$FF		; 0 
-byte_1D122:	dc.b   3,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$FD,  0 ; 0
+Ani_Tails_LookUp:	dc.b $3F,  4,$FF			; 0 
+Ani_Tails_Duck:	dc.b $3F,$5B,$FF				; 0 
+Ani_Tails_Spindash:	dc.b   0,$60,$61,$62,$FF		; 0 
+Ani_Tails_Dummy1:	dc.b $3F,$82,$FF			; 0 
+Ani_Tails_Dummy2:	dc.b   7,  8,  8,  9,$FD,  5		; 0	
+Ani_Tails_Dummy3:	dc.b   7,  9,$FD,  5			; 0 
+Ani_Tails_Stop:	dc.b   7,$67,$68,$67,$68,$FD,  0		; 0 
+Ani_Tails_Float1:	dc.b   9,$6E,$73,$FF			; 0 
+Ani_Tails_Float2:	dc.b   9,$6E,$6F,$70,$71,$72,$FF	; 0 
+Ani_Tails_Spring:	dc.b   3,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$FD,  0 ; 0
 					
-byte_1D131:	dc.b   5,$6C,$6D,$FF				; 0 
-byte_1D135:	dc.b  $F,  1,  2,  3,$FE,  1			; 0	
-byte_1D13B:	dc.b  $F,  1,  2,$FE,  1			; 0 
-byte_1D140:	dc.b $13,$85,$86,$FF				; 0 
-byte_1D144:	dc.b  $B,$74,$74,$12,$13,$FD,  0		; 0 
-byte_1D14B:	dc.b $20,$5D,$FF				; 0 
-byte_1D14E:	dc.b $2F,$5D,$FF				; 0 
-byte_1D151:	dc.b   3,$5D,$FF				; 0 
-byte_1D154:	dc.b   3,$5D,$FF				; 0 
-byte_1D157:	dc.b   3,$5C,$FF				; 0 
-byte_1D15A:	dc.b   9,$6B,$5C,$FF				; 0 
-byte_1D15E:	dc.b $77,  0,$FD,  0	
-byte_1D162:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,$FF	; 0	
-byte_1D16C:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,$FF	; 0	
-byte_1D176:	dc.b $FF,$32,$33,$FF,$FF,$FF,$FF,$FF,$FF,$FF	; 0	
+Ani_Tails_Hang1:	dc.b   5,$6C,$6D,$FF			; 0 
+Ani_Tails_Blink:	dc.b  $F,  1,  2,  3,$FE,  1		; 0	
+Ani_Tails_Blink2:	dc.b  $F,  1,  2,$FE,  1		; 0 
+Ani_Tails_Hang2:	dc.b $13,$85,$86,$FF			; 0 
+Ani_Tails_Bubble:	dc.b  $B,$74,$74,$12,$13,$FD,  0	; 0 
+Ani_Tails_Burnt:	dc.b $20,$5D,$FF			; 0 
+Ani_Tails_Drown:	dc.b $2F,$5D,$FF			; 0 
+Ani_Tails_Death:	dc.b   3,$5D,$FF			; 0 
+Ani_Tails_Hurt:	dc.b   3,$5D,$FF				; 0 
+Ani_Tails_Hurt2:	dc.b   3,$5C,$FF			; 0 
+Ani_Tails_OilSlide:	dc.b   9,$6B,$5C,$FF			; 0 
+Ani_Tails_Blank:	dc.b $77,  0,$FD,  0	
+Ani_Tails_Dummy4:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,$FF ; 0	
+Ani_Tails_Dummy5:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,$FF ; 0	
+Ani_Tails_HaulAss:	dc.b $FF,$32,$33,$FF,$FF,$FF,$FF,$FF,$FF,$FF ; 0	
 
-byte_1D180:	dc.b   1,$5E,$5F,$FF				; 0 
+Ani_Tails_Fly:	dc.b   1,$5E,$5F,$FF				; 0 
+
 ; ===========================================================================
 
 loc_1D184:				
@@ -40933,7 +40871,7 @@ FindWall:
 		bsr.w	FindNearestTile				; a1 = address within 256x256 mappings of 16x16 tile being stood on
 		move.w	(a1),d0					; get value for solidness, orientation and 16x16 tile number
 		move.w	d0,d4
-		andi.w	#(~chunkmap_settings)&$FFFF,d0				; ignore solid/orientation bits
+		andi.w	#(~chunkmap_settings)&$FFFF,d0		; ignore solid/orientation bits
 		beq.s	.isblank				; branch if tile is blank
 		btst	d5,d4					; is the tile solid?
 		bne.s	.issolid				; if yes, branch
@@ -41096,7 +41034,7 @@ RawColBlocks		equ CollArray1
 ConvRowColBlocks	equ CollArray1
 
 ConvertCollisionArray:				
-		rts			; dummied out
+		rts						; dummied out
 ; ===========================================================================
 		
 		; The raw format stores the collision data column by column for the normal collision array.
@@ -41130,9 +41068,9 @@ ConvertCollisionArray:
 		; This then converts the collision data into the final collision arrays.		
 		lea	(ConvRowColBlocks).l,a1
 		lea	(CollArray2).l,a2
-		bsr.s	.convertarray			; convert the row-converted collision block data into final rotated collision array
+		bsr.s	.convertarray				; convert the row-converted collision block data into final rotated collision array
 		lea	(RawColBlocks).l,a1
-		lea	(CollArray1).l,a2		; convert the raw collision block data into final normal collision array
+		lea	(CollArray1).l,a2			; convert the raw collision block data into final normal collision array
 
 	.convertarray:
 		move.w	#$1000-1,d3				; Size of the collision array
@@ -41205,22 +41143,22 @@ ConvertCollisionArray:
 	
 Player_CalcRoomAhead:				
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0)	; is player on plane 0?
-		beq.s	.useprimary			; if so, branch
-		move.l	#v_secondary_collision,(v_collision_index_ptr).w	; use secondary collision
+		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0) ; is player on plane 0?
+		beq.s	.useprimary				; if so, branch
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w ; use secondary collision
 
 	.useprimary:				
-		move.b	ost_lrb_solid_bit(a0),d5	; bit to test for solidness
+		move.b	ost_lrb_solid_bit(a0),d5		; bit to test for solidness
 		move.l	ost_x_pos(a0),d3
 		move.l	ost_y_pos(a0),d2
 		move.w	ost_x_vel(a0),d1
 		ext.l	d1
 		asl.l	#8,d1
-		add.l	d1,d3				; d3 = predicted x pos. at next frame
+		add.l	d1,d3					; d3 = predicted x pos. at next frame
 		move.w	ost_y_vel(a0),d1
 		ext.l	d1
 		asl.l	#8,d1
-		add.l	d1,d2				; d2 = predicted y pos. at next frame
+		add.l	d1,d2					; d2 = predicted y pos. at next frame
 		swap	d2
 		swap	d3
 		move.b	d0,(v_angle_right).w
@@ -41271,9 +41209,9 @@ Player_CalcRoomAhead:
 
 Player_CalcHeadroom:				
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0)	; is player on plane 0?
-		beq.s	.useprimary			; if so, branch
-		move.l	#v_secondary_collision,(v_collision_index_ptr).w	; use secondary collision
+		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0) ; is player on plane 0?
+		beq.s	.useprimary				; if so, branch
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w ; use secondary collision
 
 	.useprimary:				
 		move.b	ost_lrb_solid_bit(a0),d5
@@ -41303,12 +41241,12 @@ Player_CalcHeadroom:
 
 Player_FindFloor:				
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0)	; is player on plane 0?
-		beq.s	.useprimary			; if so, branch
-		move.l	#v_secondary_collision,(v_collision_index_ptr).w	; use secondary collision
+		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0) ; is player on plane 0?
+		beq.s	.useprimary				; if so, branch
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w ; use secondary collision
 
 	.useprimary:				
-		move.b	ost_top_solid_bit(a0),d5	; bit to check for solidness
+		move.b	ost_top_solid_bit(a0),d5		; bit to check for solidness
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
 		moveq	#0,d0
@@ -41443,12 +41381,12 @@ FindFloorObj_ChkCol_NoX:
 		ext.w	d0
 		add.w	d0,d2					; d2 = y pos of bottom edge of object
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0)	; is object on plane 0?
-		beq.s	.useprimary							; if so, branch
-		move.l	#v_secondary_collision,(v_collision_index_ptr).w	; use secondary collision
+		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0) ; is object on plane 0?
+		beq.s	.useprimary				; if so, branch
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w ; use secondary collision
 
 	.useprimary:				
-		lea	(v_angle_right).w,a4		; write angle here
+		lea	(v_angle_right).w,a4			; write angle here
 		move.b	#0,(a4)
 		movea.w	#$10,a3					; height of a 16x16 tile
 		move.w	#0,d6					; EOR bitmask
@@ -41474,12 +41412,12 @@ FindFloorObj_ChkCol2:
 		ext.w	d0
 		add.w	d0,d2					; d2 = y pos of bottom edge of object
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1)	; is object on plane 0?
-		beq.s	.useprimary							; if so, branch
-		move.l	#v_secondary_collision,(v_collision_index_ptr).w	; use secondary collision
+		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; is object on plane 0?
+		beq.s	.useprimary				; if so, branch
+		move.l	#v_secondary_collision,(v_collision_index_ptr).w ; use secondary collision
 
 	.useprimary:				
-		lea	(v_angle_right).w,a4		; write angle here
+		lea	(v_angle_right).w,a4			; write angle here
 		move.b	#0,(a4)
 		movea.w	#$10,a3					; height of a 16x16 tile
 		move.w	#0,d6					; EOR bitmask
@@ -42893,11 +42831,11 @@ PSwtch_MainX: ; Routine 2
 	.set_plane1:				
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority1				; branch if so
-		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
 		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_downright_bit,d0		
 		beq.s	.set_priority1				; branch if player is being switched to plane 0
-		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
 		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority1:				
@@ -42930,11 +42868,11 @@ PSwtch_MainX: ; Routine 2
 	.set_plane2:				
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority2				; branch if so
-		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
 		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_upleft_bit,d0
 		beq.s	.set_priority2				; branch if player is being switched to plane 0
-		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
 		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority2:				
@@ -42982,11 +42920,11 @@ PSwtch_MainY: ; Routine 4
 	.set_plane1:				
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority1				; branch if so
-		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
 		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_downright_bit,d0
 		beq.s	.set_priority1				; branch if player is being switched to plane 0
-		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
 		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority1:				
@@ -43019,11 +42957,11 @@ PSwtch_MainY: ; Routine 4
 	.set_plane2:				
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority2				; branch if so
-		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 0
+		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
 		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_upleft_bit,d0
 		beq.s	.set_priority2				; branch if player is being switched to plane 0
-		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1)	; set player collision to plane 1
+		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
 		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority2:				
@@ -70376,7 +70314,7 @@ LoadChild:
 ; ---------------------------------------------------------------------------
 
 LoadProjectiles:				
-		moveq	#0,d1	; first index in projectile list
+		moveq	#0,d1					; first index in projectile list
 
 	.loop:				
 		jsr	(FindNextFreeObj).l			; find free OST slot after parent
@@ -70840,10 +70778,10 @@ GRock_Frames:
 		
 GRock_Vels:
 		dc.b  -1, -4
-		dc.b   4, -3	; 2
-		dc.b   2,  0	; 4
-		dc.b  -3, -1	; 6
-		dc.b  -3, -3	; 8
+		dc.b   4, -3					; 2
+		dc.b   2,  0					; 4
+		dc.b  -3, -1					; 6
+		dc.b  -3, -3					; 8
 ; ===========================================================================
 
 GWall_GRock_Fall:				
@@ -70854,8 +70792,8 @@ GWall_GRock_Fall:
 ; ===========================================================================
 
 Ground_LoadRocks:				
-		moveq	#0,d1	; initial index into GRock_Vels
-		moveq	#5-1,d6	; five rocks to load
+		moveq	#0,d1					; initial index into GRock_Vels
+		moveq	#5-1,d6					; five rocks to load
 
 	.loadloop:				
 		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
@@ -70874,7 +70812,7 @@ Ground_LoadRocks:
 		move.w	d1,ost_grock_vel_index(a1)		; set velocity table index
 		move.w	ost_x_pos(a0),ost_x_pos(a1)		; spawn at parent grounder's position
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		addq.w	#2,d1							; next velocity table index
+		addq.w	#2,d1					; next velocity table index
 		rts	
 ; ===========================================================================
 
