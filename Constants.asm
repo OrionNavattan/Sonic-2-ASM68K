@@ -427,6 +427,9 @@ CommonAnimationIDs:	macro	flag1,flag2,sonic,tails
 		ptr_id: = ptr_id+ptr_id_inc			; increment pointer ID
 		endm
 		
+		ptr_id:		= 0
+		ptr_id_inc: = 1
+		
 		CharacterAnimations		CommonAnimationIDs ; generate common ID for animations shared by Sonic and Tails			
 
 ; ---------------------------------------------------------------------------
