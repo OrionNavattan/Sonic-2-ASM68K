@@ -2176,7 +2176,7 @@ Eni_Loop:
 		andi.w	#$7F,d1					; get format list entry
 		move.w	d1,d2					; and copy it
 		cmpi.w	#$40,d1					; is the high bit of the entry set?
-		bhs.s	.sevenbitentry
+		bcc.s	.sevenbitentry
 		moveq	#6,d0					; if it isn't, the entry is actually 6 bits
 		lsr.w	#1,d2
 
@@ -2371,7 +2371,7 @@ EniDec_Masks:
 EniDec_FetchByte:
 		sub.w	d0,d6					; subtract length of current entry from shift value so that next entry is read next time around
 		cmpi.w	#9,d6					; does a new byte need to be read?
-		bhs.s	.return					; if not, branch
+		bcc.s	.return					; if not, branch
 		addq.w	#8,d6
 		asl.w	#8,d5
 		move.b	(a0)+,d5
@@ -3443,7 +3443,7 @@ WhiteOut_AddColor:
 
 	.no_skip:
 		cmpi.w	#sizeof_pal*3,d0
-		bhs.s	.end_of_pal				; branch if at the end of the palettes
+		bcc.s	.end_of_pal				; branch if at the end of the palettes
 		move.w	(a0)+,(a1,d0.w)				; copy 1 colour from source to target
 
 	.end_of_pal:
@@ -4653,7 +4653,7 @@ Level_TtlCardLoop:
 		
 		bsr.w	LevelArtLoad				; load level art
 		jsrto	LevelBlockMapsLoad,JmpTo_LevelBlockMapsLoad ; load 16x16 block and 128x128 chunk mappings and secondary level PLC
-		jsr	(AnimatedBlocksLoad).l			; load animated blocks
+		jsr	(AnimatedBlocksLoad).l			; load animated 16x16 blocks and HTZ's distant background cliffs if applicable
 		jsrto DrawTilesAtStart,JmpTo_DrawTilesAtStart	; draw the initial background state
 		jsr	(ConvertCollisionArray).l		; unused development leftover
 		bsr.w	SetColIndexPtr				; load collision data
@@ -13652,7 +13652,7 @@ creditsptr:	macro	addr,line,col
 		shift
 		shift		
 		endr
-		dc.w $FFFF					; terminator
+		dc.w -1					; terminator
 		endm
 
 vram_ptr: = vram_title_fg
@@ -14019,7 +14019,7 @@ Cred_Slide18_Line2:	credtxt	credits,tile_pal2,"SUPPORTERS"
 Cred_Slide18_Line3:	credtxt	credits,tile_pal1,"DAIZABUROU  SAKURAI"
 Cred_Slide18_Line4:	credtxt	credits,tile_pal1,"HISASHI  SUZUKI"
 
-    if Revision=0
+    if (Revision=0)|FixBugs
 Cred_Slide18_Line5:	credtxt	credits,tile_pal1,"TOHMAS  KALINSKE" ; typo
     else
 Cred_Slide18_Line5:	credtxt	credits,tile_pal1,"THOMAS  KALINSKE"
@@ -14769,7 +14769,7 @@ Deform_EHZ:
 		; The bottom two lines haven't had their HScroll values set!
 		; The resulting graphical defect is often difficult to see 
 		; on NTSC CRTs, but is extremely obvious on PAL CRTs, modern LCDs
-		; that do not crop overscan, and in emulation.
+		; that do not crop overscan, and in emulators.
 		; Knuckles in Sonic 2 fixes this with the following code:
 	;.lines_223_224:
 		rept 2	
@@ -15122,7 +15122,7 @@ Deform_WFZ_Normal_Array:
 		
 	if FixBugs
 		; This array is missing data for the last $80 lines compared to the transition array.
-		; This causes the lower clouds to read data from the start of SwScrl_HTZ.
+		; This causes the lower clouds to read the first two instructions of Deform_HTZ.
 		; These are the missing entries:
 		dc.b $20,  8
 		dc.b $30, $C
@@ -16547,30 +16547,37 @@ loc_D508:
 		add.l	d0,d1
 		swap	d1
 		move.w	d1,(a3)+
+		
 		swap	d1
 		add.l	d0,d1
 		swap	d1
 		move.w	d1,(a3)+
+		
 		swap	d1
 		add.l	d0,d1
 		swap	d1
 		move.w	d1,(a3)+
+		
 		swap	d1
 		add.l	d0,d1
 		swap	d1
 		move.w	d1,(a3)+
+		
 		swap	d1
 		add.l	d0,d1
 		swap	d1
 		move.w	d1,(a3)+
+		
 		swap	d1
 		add.l	d0,d1
 		swap	d1
 		move.w	d1,(a3)+
+		
 		swap	d1
 		add.l	d0,d1
 		swap	d1
 		move.w	d1,(a3)+
+		
 		move.w	d1,(a2)
 		move.w	d1,4(a2)
 		move.w	(v_bg1_x_pos).w,d0
@@ -20669,7 +20676,7 @@ loc_F8D2:
 
 loc_F8F0:				
 		move.w	d1,-(sp)
-		jsrto	loc_19D9C,JmpTo_loc_19D9C
+		jsrto	DetectPlatform_FullWidth,JmpTo_DetectPlatform_FullWidth
 		move.w	(sp)+,d1
 		btst	d6,ost_primary_status(a0)
 		beq.s	locret_F910
@@ -20921,8 +20928,8 @@ byte_FB28:
 	if RemoveJmpTos=0
 JmpTo_FindNextFreeObj:				
 		jmp	(FindNextFreeObj).l
-JmpTo_loc_19D9C:				
-		jmp	(loc_19D9C).l
+JmpTo_DetectPlatform_FullWidth:				
+		jmp	(DetectPlatform_FullWidth).l
 JmpTo_CalcSine:				
 		jmp	(CalcSine).l
 
@@ -22054,7 +22061,7 @@ sub_1099E:
 		move.b	ost_displaywidth(a0),d1
 		movea.l	$3C(a0),a2
 		move.w	ost_x_pos(a0),d4
-		jsrto	SlopedPlatform,JmpTo_SlopeObject
+		jsrto	SlopeObject,JmpTo_SlopeObject
 		bra.w	DespawnObject
 
 ; ===========================================================================
@@ -28385,7 +28392,7 @@ BuildSprites:
 		cmpi.w	#screen_top-32,d2			; assume Y radius to be 32 pixels
 		bcs.s	BuildSprites_NextObject			; branch if > 32px outside top side of screen
 		cmpi.w	#screen_bottom+32,d2
-		bhs.s	BuildSprites_NextObject			; branch if > 32px outside bottom side of screen
+		bcc.s	BuildSprites_NextObject			; branch if > 32px outside bottom side of screen
 
 	.draw_object:
 		movea.l	ost_mappings(a0),a1			; get address of mappings
@@ -28494,7 +28501,7 @@ BuildSprites_MultiDraw:
 		cmpi.w	#screen_top-32,d2
 		bcs.s	.next_object
 		cmpi.w	#screen_bottom+32,d2
-		bhs.s	.next_object
+		bcc.s	.next_object
 
 	.draw_parent_object:
 		moveq	#0,d1
@@ -28568,7 +28575,7 @@ BuildSpr_Draw:
 		; This check has been moved, so it is redundant.
 		; See the bugfix under 'BuildSpr_DrawLoop'.
 		cmpi.b	#countof_max_sprites,d5
-		bhs.s	BuildSpr_Done
+		bcc.s	BuildSpr_Done
     endc
 
     if FixBugs
@@ -28605,7 +28612,7 @@ BuildSpr_DrawLoop:
 		; this optimistaion too, but heavily optimized the rest of 'BuildSprites' 
 		; to make up for it.
 		cmpi.b	#countof_max_sprites,d5			; has the sprite limit been reached?
-		bhs.s	BuildSpr_Done				; if it has, branch
+		bcc.s	BuildSpr_Done				; if it has, branch
     endc
     
 		move.b	(a1)+,d0				; get relative y pos from mappings
@@ -28641,7 +28648,7 @@ BuildSpr_FlipX:
     if FixBugs
 		; See the bugfix under 'BuildSpr_DrawLoop'.
 		cmpi.b	#countof_max_sprites,d5			; has the sprite limit been reached?
-		bhs.s	.return					; if it has, branch
+		bcc.s	.return					; if it has, branch
     endc
 		move.b	(a1)+,d0				; y position
 		ext.w	d0
@@ -28692,7 +28699,7 @@ BuildSpr_FlipY:
     if FixBugs
 		; See the bugfix under 'BuildSpr_DrawLoop'.
 		cmpi.b	#countof_max_sprites,d5			; has the sprite limit been reached?
-		bhs.s	.return					; if it has, branch
+		bcc.s	.return					; if it has, branch
     endc
 		move.b	(a1)+,d0				; get y-offset
 		move.b	(a1),d4					; get size
@@ -28736,7 +28743,7 @@ BuildSpr_FlipXY:
     if FixBugs
 ; See the bugfix under 'BuildSpr_DrawLoop'.
 		cmpi.b	#80,d5					; has the sprite limit been reached?
-		bhs.s	.return					; if it has, branch
+		bcc.s	.return					; if it has, branch
     endc
 		move.b	(a1)+,d0
 		move.b	(a1),d4
@@ -32619,20 +32626,25 @@ byte_195BA:	dc.b  $F,  1,$FF,  0				; 0
 		nop
     endc
 
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Solid object subroutines (includes spikes, blocks, rocks etc)
-; These check collision of Sonic/Tails with objects on the screen
-;
-; input variables:
-; d1 = object width / 2
-; d2 = object height / 2 (when jumping)
-; d3 = object height / 2 (when walking)
-; d4 = object x-axis position
-;
-; address registers:
-; a0 = the object to check collision with
-; a1 = Sonic or Tails (set inside these subroutines)
+
+; input:
+;	d1.w = object half width
+;	d2.w = object half height (initial collision)
+;	d3.w = object half height (when stood on object)
+;	d4.w = object x position (when stood on object)
+;	a0 = the object to check collision with
+;	a1 = Sonic or Tails (set inside these subroutines)
+
+; output (after running a single character):
+;	d3.w = y distance of player from nearest top/bottom edge (-ve if on bottom)
+;	d4.l = collision type: 0 = none/no change; 1 = side collision; -1 = top collision; -2 = bottom collision
+;	d5.w = x distance of player from nearest left/right edge
+;	d6.l = high word is bitfield indicating top/bottom/side collision (see Constants.asm)
+
+;	uses d0.l, d1.l, d2.w, a2
 ; ---------------------------------------------------------------------------
 
 SolidObject:				
@@ -32669,7 +32681,7 @@ SolidObject:
 
 	.stand:				
 		move.w	d4,d2
-		bsr.w	MoveWithPlatform
+		bsr.w	MoveWithPlatform				; move player with platform
 		moveq	#0,d4					; clear flag for no new collision
 
 	.done:				
@@ -32711,158 +32723,182 @@ SolidObject_NoRenderChk:
 
 	.stand:				
 		move.w	d4,d2
-		bsr.w	MoveWithPlatform
+		bsr.w	MoveWithPlatform				; move player with platform
 		moveq	#0,d4					; clear flag for no new collision
 		rts	
 		
 ; ---------------------------------------------------------------------------
-; Solid	object with heightmap subroutine (MZ grass platforms)
-;
+; Solid	object with heightmap subroutine
+
 ; input:
 ;	d1.w = object half width
 ;	d2.w = object half height
+;	d4.w - platform x pos (for passing to MoveWithSlope)
 ;	a2 = address of heightmap data
 ;
 ; output:
-;	d4.l = collision type for player 2: 1 = side collision; -1 = top/bottom collision
-;	d5.w = x distance of player 2 from nearest left/right edge
-;	a1 = address of OST of player 2
+;	d3.w = y distance of player from nearest top/bottom edge (-ve if on bottom)
+;	d4.l = collision type: 0 = none/no change; 1 = side collision; -1 = top collision; -2 = bottom collision
+;	d5.w = x distance of player from nearest left/right edge
+;	d6.l = high word is bitfield indicating top/bottom/side collision (see Constants.asm)
 
-;	uses d0.l, d1.l, d2.w, d3.w, a2
+;	uses d0.l, d1.l, d2.w, d3.w, d6.l, a2
 ; ---------------------------------------------------------------------------
 
 SolidObject_Heightmap:				
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
-		pushr.l	d1-d4					; back up input registers so we can run this routine again for sidekick
+		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
 		bsr.s	SolidObject_Heightmap_SingleCharacter	; run for player 1
 		popr.l	d1-d4
 		lea	(v_ost_player2).w,a1			; run for player 2
 		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
 SolidObject_Heightmap_SingleCharacter:				
-		btst	d6,ost_primary_status(a0)		; is character standing on the object?
+		btst	d6,ost_primary_status(a0)		; is player standing on the object?
 		beq.w	SolidObject_Heightmap_ChkCollision	; if not, branch
 		move.w	d1,d2
 		add.w	d2,d2
-		btst	#status_air_bit,ost_primary_status(a1)	; is character in the air?
+		btst	#status_air_bit,ost_primary_status(a1)	; is player in the air?
 		bne.s	.leave					; if so, branch
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0					; d0 = x pos of character on object						
-		bmi.s	.leave					; if character moves off the left, branch
+		add.w	d1,d0					; d0 = x pos of player on object						
+		bmi.s	.leave					; if player moves off the left, branch
 		cmp.w	d2,d0					; has character moved off the right?
 		bcs.s	.stand					; if not, branch
 		
 	.leave:				
-		bclr	#status_platform_bit,ost_primary_status(a1) ; clear character's standing flag
+		bclr	#status_platform_bit,ost_primary_status(a1) ; clear players's standing flag
 		bset	#status_air_bit,ost_primary_status(a1)	; set their air bit
 		bclr	d6,ost_primary_status(a0)		; clear object's standing flag
 		moveq	#0,d4					; clear flag for no collision
 		rts	
+; ===========================================================================
 
-	.stand:				
+.stand:				
 		move.w	d4,d2
-		bsr.w	MoveOnSlope
+		bsr.w	MoveWithSlope			; move player with sloped platform
+		moveq	#0,d4					; clear flag for no new collision
+		rts
+		
+; ---------------------------------------------------------------------------
+; Unused subroutine to handle a solid object with heightmaps on both top and
+; bottom
+; ---------------------------------------------------------------------------
+
+SolidObject_Heightmap_Double:
+		lea	(v_ost_player1).w,a1
+		moveq	#status_p1_platform_bit,d6
+		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
+		bsr.s	.singlecharacter	; run for player 1
+		popr.l	d1-d4
+		lea	(v_ost_player2).w,a1			; run for player 2
+		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
+
+	.singlecharacter:				
+		btst	d6,ost_primary_status(a0)		; is player standing on the object?
+		beq.w	SolidObject_Heightmap_Double_cont	; if not, branch
+		move.w	d1,d2
+		add.w	d2,d2
+		btst	#status_air_bit,ost_primary_status(a1)	; is player in the air?
+		bne.s	.leave					; if so, branch
+		move.w	ost_x_pos(a1),d0
+		sub.w	ost_x_pos(a0),d0
+		add.w	d1,d0					; d0 = x pos of player on object						
+		bmi.s	.leave					; if player moves off the left, branch
+		cmp.w	d2,d0					; has character moved off the right?
+		bcs.s	.stand					; if not, branch
+
+	.leave:				
+		bclr	#status_platform_bit,ost_primary_status(a1) ; clear players's standing flag
+		bset	#status_air_bit,ost_primary_status(a1)	; set their air bit
+		bclr	d6,ost_primary_status(a0)		; clear object's standing flag
 		moveq	#0,d4					; clear flag for no collision
 		rts	
 ; ===========================================================================
-; unused/dead code: check for an object that is sloped at the top and at the bottom.
 
-;SlopeObject_Double:
-		lea	(v_ost_player1).w,a1
-		moveq	#3,d6
-		pushr.l	d1-d4
-		bsr.s	loc_1983E
-		popr.l	d1-d4
-		lea	(v_ost_player2).w,a1
-		addq.b	#1,d6
-
-loc_1983E:				
-		btst	d6,ost_primary_status(a0)
-		beq.w	SlopeObject_Double_cont
-		move.w	d1,d2
-		add.w	d2,d2
-		btst	#1,ost_primary_status(a1)
-		bne.s	loc_19862
-		move.w	ost_x_pos(a1),d0
-		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		bmi.s	loc_19862
-		cmp.w	d2,d0
-		bcs.s	loc_19876
-
-loc_19862:				
-		bclr	#3,ost_primary_status(a1)
-		bset	#1,ost_primary_status(a1)
-		bclr	d6,ost_primary_status(a0)
-		moveq	#0,d4
-		rts	
-; ===========================================================================
-
-loc_19876:				
+.stand:				
 		move.w	d4,d2
-		bsr.w	MoveOnDoubleSlope
-		moveq	#0,d4
+		bsr.w	MoveWithDoubleSlope			; move player with sloped platform
+		moveq	#0,d4					; clear flag for no new collision
 		rts	
-; ===========================================================================
+		
+; ---------------------------------------------------------------------------
+; Custom collision subroutine for Oil Ocean's pressure springs (Object 45)
+; Almost identical to SolidObject, expect it branches to a custom 
+; MoveWithPlatform routine.
+; ---------------------------------------------------------------------------
 
 SolidObject_OOZSpring:				
 		lea	(v_ost_player1).w,a1
-		moveq	#3,d6
-		movem.l	d1-d4,-(sp)
-		bsr.s	loc_19896
-		movem.l	(sp)+,d1-d4
-		lea	(v_ost_player2).w,a1
-		addq.b	#1,d6
+		moveq	#status_p1_platform_bit,d6
+		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
+		bsr.s	.singlecharacter	; run for player 1
+		popr.l	d1-d4
+		lea	(v_ost_player2).w,a1			; run for player 2
+		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
-loc_19896:				
-		btst	d6,ost_primary_status(a0)
-		beq.w	SolidObject_OOZSpring_cont
-		btst	#1,ost_primary_status(a1)
-		bne.s	loc_198B8
+	.singlecharacter:				
+		btst	d6,ost_primary_status(a0)		; is player standing on the object?
+		beq.w	SolidObject_OOZSpring_ChkCollision	; if not, branch
+		btst	#status_air_bit,ost_primary_status(a1)	; is player in the air?
+		bne.s	.leave					; if so, branch
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		bmi.s	loc_198B8
-		add.w	d1,d1
-		cmp.w	d1,d0
-		bcs.s	loc_198CC
+		add.w	d1,d0					; d0 = x pos of player on object	
+		bmi.s	.leave					; if player moves off the left, branch
+		add.w	d1,d1					; d1 = full width of object
+		cmp.w	d1,d0					; has character moved off the right?
+		bcs.s	.stand					; if not, branch
 
-loc_198B8:				
-		bclr	#3,ost_primary_status(a1)
-		bset	#1,ost_primary_status(a1)
-		bclr	d6,ost_primary_status(a0)
-		moveq	#0,d4
+	.leave:				
+		bclr	#status_platform_bit,ost_primary_status(a1) ; clear players's standing flag
+		bset	#status_air_bit,ost_primary_status(a1)	; set their air bit
+		bclr	d6,ost_primary_status(a0)		; clear object's standing flag
+		moveq	#0,d4					; clear flag for no new collision
 		rts	
-; ===========================================================================
-; In-lined call to MoveWithPlatform
-loc_198CC:				
-		move.w	ost_y_pos(a0),d0
-		sub.w	d2,d0
-		add.w	d3,d0
+
+; ---------------------------------------------------------------------------
+; Custom variant of MoveWithPlatform used by OOZ pressure springs
+; This routine could be condensed down to this:
+
+;		move.w	ost_y_pos(a0),d0	
+;		sub.w	d2,d0				; d2 = half object height
+;		add.w	d3,d0				; d3 = ost_frame*2
+;		move.w	d4,d2
+;		bsr.w	MoveWithPlatform3	; update player position
+;		moveq	#0,d4				; clear flag for no new collision	
+;		rts	
+; ---------------------------------------------------------------------------
+
+.stand:				
+		move.w	ost_y_pos(a0),d0	
+		sub.w	d2,d0				; d2 = half object height
+		add.w	d3,d0				; d3 = ost_frame*2
 		moveq	#0,d1
 		move.b	ost_height(a1),d1
-		sub.w	d1,d0
-		move.w	d0,ost_y_pos(a1)
+		sub.w	d1,d0				; subtract player's height
+		move.w	d0,ost_y_pos(a1)			; update player's y position
 		sub.w	ost_x_pos(a0),d4
-		sub.w	d4,ost_x_pos(a1)
-		moveq	#0,d4
+		sub.w	d4,ost_x_pos(a1)			; update player's x position
+		moveq	#0,d4					; clear flag for no new collision
 		rts	
 ; ===========================================================================
 
-SolidObject_OOZSpring_cont:				
+SolidObject_OOZSpring_ChkCollision:				
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		bmi.w	Solid_NoCollision
+		add.w	d1,d0					; d0 = x pos of player on object
+		bmi.w	Solid_NoCollision			; branch if player is outside left edge
+		
 		move.w	d1,d4
-		add.w	d4,d4
+		add.w	d4,d4					; d4 = object's width
 		cmp.w	d4,d0
-		bhi.w	Solid_NoCollision
+		bhi.w	Solid_NoCollision			; branch if player is outside right edge
 		move.w	ost_y_pos(a0),d5
-		add.w	d3,d5
-		move.b	ost_height(a1),d3
+		add.w	d3,d5					; d3 = ost_frame*2
+		move.b	ost_height(a1),d3		
 		ext.w	d3
 		add.w	d3,d2
 		move.w	ost_y_pos(a1),d3
@@ -32880,41 +32916,42 @@ SolidObject_OOZSpring_cont:
 SolidObject_Heightmap_ChkCollision:				
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		bmi.w	Solid_NoCollision
+		add.w	d1,d0					; d0 = x pos of player on object
+		bmi.w	Solid_NoCollision			; branch if player is outside left edge
 		move.w	d1,d3
-		add.w	d3,d3
+		add.w	d3,d3					; d3 = full width of object
 		cmp.w	d3,d0
-		bhi.w	Solid_NoCollision
+		bhi.w	Solid_NoCollision			; branch if player is outside right edge
+
 		move.w	d0,d5
-		btst	#render_xflip_bit,ost_render(a0)
-		beq.s	.no_xflip
+		btst	#render_xflip_bit,ost_render(a0)	; is object horizontally flipped?
+		beq.s	.no_xflip				; if not, branch
 		not.w	d5
-		add.w	d3,d5
+		add.w	d3,d5					; d5 = x pos of player on object, xflipped if needed
 
 	.no_xflip:				
 		lsr.w	#1,d5
-		move.b	(a2,d5.w),d3
-		sub.b	(a2),d3
+		move.b	(a2,d5.w),d3				; get heightmap value based on player's position on platform
+		sub.b	(a2),d3					; subtract baseline
 		ext.w	d3
 		move.w	ost_y_pos(a0),d5
-		sub.w	d3,d5
+		sub.w	d3,d5					; d5 = y pos of spot where player is standing
 		move.b	ost_height(a1),d3
 		ext.w	d3
-		add.w	d3,d2
+		add.w	d3,d2					; d2 = combined player + object half height
 		move.w	ost_y_pos(a1),d3
 		sub.w	d5,d3
 		addq.w	#4,d3
-		add.w	d2,d3
-		bmi.w	Solid_NoCollision
+		add.w	d2,d3					; d3 = y dist of player's feet from spot
+		bmi.w	Solid_NoCollision			; branch if player is above spot
 		move.w	d2,d4
-		add.w	d4,d4
+		add.w	d4,d4					; d4 = combined player + object full height
 		cmp.w	d4,d3
-		bcc.w	Solid_NoCollision
+		bcc.w	Solid_NoCollision			; branch if player is below object
 		bra.w	Solid_Collision
 ; ===========================================================================
 ; unused/dead
-SlopeObject_Double_cont:				
+SolidObject_Heightmap_Double_cont:				
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
 		add.w	d1,d0
@@ -33069,83 +33106,100 @@ Solid_NoCollision:
 		addq.b	#status_p1_pushing_bit-status_p1_platform_bit,d4 ; d4 = pushing bit for current player
 		btst	d4,ost_primary_status(a0)		; is player pushing?
 		beq.s	Solid_Debug				; branch if not
-		cmpi.b	#2,ost_anim(a1)				; ani_roll
+		cmpi.b	#id_Ani_Roll1,ost_anim(a1)		; is player rolling?
+		beq.s	Solid_NotPushing			; branch if so
+	if FixBugs	
+		; Prevent Sonic or Tails from entering their running animation when
+		; stood next to solid objects while charging a Spin Dash, dying, or
+		; drowning. One way to see this bug is by charging a Spin Dash while
+		; next to one of Mystic Cave Zone's crushing pillars.
+		cmpi.b	#id_Ani_Spindash,ost_anim(a1)		; branch if charging a spindash
 		beq.s	Solid_NotPushing
-		move.w	#1,ost_anim(a1)				; ani_run
+		cmpi.b	#id_Ani_Death,ost_anim(a1)		; branch if player is dying
+		beq.s	Solid_NotPushing
+		cmpi.b	#id_Ani_Drown,ost_anim(a1)		; branch if player is drowning
+		beq.s	Solid_NotPushing	
+	endc	
+		move.w	#(id_Ani_Walk<<8)|id_Ani_Run,ost_anim(a1) ; use running animation
 
 Solid_NotPushing:				
 		move.l	d6,d4
-		addq.b	#2,d4
-		bclr	d4,ost_primary_status(a0)
-		bclr	#5,ost_primary_status(a1)
+		addq.b	#status_p1_pushing_bit-status_p1_platform_bit,d4 ; d4 = pushing bit for current player
+		bclr	d4,ost_primary_status(a0)		; clear player's pushing flag
+		bclr	#status_pushing_bit,ost_primary_status(a1) ; clear object's pushing flag
 
 Solid_Debug:				
-		moveq	#0,d4
+		moveq	#0,d4					; return no collision
 		rts	
 ; ===========================================================================
 
 Solid_TopBottom:				
-		tst.w	d3
-		bmi.s	Solid_Below
+		tst.w	d3					; d3 = y dist of player from top/bottom edge (-ve if on bottom)
+		bmi.s	Solid_Below				; branch if player is nearer bottom
 		
 ;Solid_Above:		
 		cmpi.w	#$10,d3
-		bcs.s	Solid_Landed
-		cmpi.b	#id_PinballLauncher,ost_id(a0)
-		bne.s	Solid_NoCollision
+		bcs.s	Solid_Landed				; branch if within 16px of top edge
+		cmpi.b	#id_PinballLauncher,ost_id(a0)		; is calling object the pinball launcher spring?
+		bne.s	Solid_NoCollision			; if so, branch
 		cmpi.w	#$14,d3
-		bcs.s	Solid_Landed
+		bcs.s	Solid_Landed				; branch if within 20px of top edge
 		bra.s	Solid_NoCollision
 ; ===========================================================================
 
 Solid_Below:				
 		tst.w	ost_y_vel(a1)
-		beq.s	Solid_Squash
-		bpl.s	Solid_TopBtmAir
+		beq.s	Solid_Squash				; branch if player isn't moving up/down
+		bpl.s	Solid_TopBtmAir				; branch if moving downwards
 		tst.w	d3
-		bpl.s	Solid_TopBtmAir
+		bpl.s	Solid_TopBtmAir				; branch if nearer top (they can't be)
 	if FixBugs=0
-		; This is in the wrong place: Sonic will not be pushed out of an object 
-		; from above if he's not moving upwards against it!
+		; This is in the wrong place: the player will not be pushed out of an object 
+		; from above if they're not moving upwards against it!
 		; This is much more noticeable when playing as Knuckles, as he'll be
 		; able to phase through objects when climbing up walls.
 		; 'Knuckles in Sonic 2' and 'Sonic 3 & Knuckles' tried to fix this,
 		; but didn't do it very well.		
-		sub.w	d3,ost_y_pos(a1)
+		sub.w	d3,ost_y_pos(a1)			; correct player's position
 	endc	
-		move.w	#0,ost_y_vel(a1)
+		move.w	#0,ost_y_vel(a1)			; stop player moving
 
 Solid_TopBtmAir:
 	if FixBugs
 		; See the bug above.
-		sub.w	d3,ost_y_pos(a1)
+		sub.w	d3,ost_y_pos(a1)			; correct player's position
 	endc				
 		move.w	d6,d4
-		addi.b	#$F,d4
-		bset	d4,d6
-		moveq	#-2,d4
+		addi.b	#($10-status_p1_platform_bit+p1_touch_bottom_bit),d4 ; d4 = bottom touch bit for current player
+		bset	d4,d6					; mark player as having bottom collision
+		moveq	#-2,d4					; return bottom collision
 		rts	
 ; ===========================================================================
 
 Solid_Squash:				
-		btst	#1,ost_primary_status(a1)
-		bne.s	Solid_TopBtmAir	
+		btst	#status_air_bit,ost_primary_status(a1)	; is player in the air?
+		bne.s	Solid_TopBtmAir				; branch if so
 		mvabs.w	d0,d4
 
 		; Hey, look: it's the two lines of code that the Taxman/Stealth
 		; remasters forgot to copy.
-		; If Sonic is near the left or right edge of the object, then don't
+		; If Sonic/Tails is near the left or right edge of the object, then don't
 		; kill him, instead just push him away horizontally.			
 		cmpi.w	#$10,d4
-		bcs.w	Solid_LeftRight
-		pushr.l	a0
-		movea.l	a1,a0
-		jsr	(KillCharacter).l
-		popr.l	a0
+		bcs.w	Solid_LeftRight				; branch if player is within 16px of edge of object
+		pushr.l	a0					; save address of OST of current object to stack
+	if FixBugs
+		; a2 needs to be set here, otherwise KillCharacter
+		; will access a dangling pointer!
+		movea.l	a0,a2					; set a2 to current object so KillCharacter knows what killed them
+	endc	
+		movea.l	a1,a0					; temporarily make the player the current object
+		jsr	(KillCharacter).l			; the player is crushed to death
+		popr.l	a0					; restore address of OST of current object from stack
 		move.w	d6,d4
-		addi.b	#$F,d4
-		bset	d4,d6
-		moveq	#-2,d4
+		addi.b	#($10-status_p1_platform_bit+p1_touch_bottom_bit),d4 ; d4 = bottom touch bit for current player
+		bset	d4,d6					; mark player as having bottom collision (even if it killed them)
+		moveq	#-2,d4					; return bottom collision
 		rts	
 ; ===========================================================================
 
@@ -33154,177 +33208,263 @@ Solid_Landed:
 		moveq	#0,d1
 		move.b	ost_displaywidth(a0),d1
 		move.w	d1,d2
-		add.w	d2,d2
+		add.w	d2,d2					; d2 = full width of object
 		add.w	ost_x_pos(a1),d1
-		sub.w	ost_x_pos(a0),d1
-		bmi.s	Solid_Miss
+		sub.w	ost_x_pos(a0),d1			; d1 = x pos of Sonic on object
+		bmi.s	Solid_Miss				; branch if player is outside left edge
 		cmp.w	d2,d1
-		bcc.s	Solid_Miss
+		bcc.s	Solid_Miss				; branch if player is outside right edge
 		tst.w	ost_y_vel(a1)
-		bmi.s	Solid_Miss
-		sub.w	d3,ost_y_pos(a1)
-		subq.w	#1,ost_y_pos(a1)
-		bsr.w	loc_19E14
+		bmi.s	Solid_Miss				; branch if player is moving upwards
+		sub.w	d3,ost_y_pos(a1)			; correct Sonic's position
+		subq.w	#1,ost_y_pos(a1)			; move player up 1px
+		bsr.w	Plat_NoCheck				; make player stand on object
 		move.w	d6,d4
-		addi.b	#$11,d4
-		bset	d4,d6
-		moveq	#-1,d4
+		addi.b	#($10-status_p1_platform_bit+p1_touch_top_bit),d4 ; d4 = top touch bit for current player
+		bset	d4,d6					; mark player as having top collision
+		moveq	#-1,d4					; return top collision
 		rts	
 ; ===========================================================================
 
 Solid_Miss:				
-		moveq	#0,d4
+		moveq	#0,d4					; return no collision
 		rts	
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Subroutine to	update Sonic/Tails' position when standing on a platform
+
+; input:
+;	d2.w = platform x position
+;	d3.w = platform height (MoveWithPlatform only)
+
+; output:
+;	d1.l = player's height
+;	a1 = address of OST of player
+
+;	uses d0.w, d2.w
+
+; usage (if object only moves vertically):
+;		move.w	ost_x_pos(a0),d2
+;		move.w	#$10,d3
+;		bsr.w	MoveWithPlatform
+
+; usage (if object moves horizontally):
+;		pushr.w	ost_x_pos(a0)				; save x pos before moving
+;		bsr.w	MoveObject				; move object
+;		popr.w	d2					; retrieve previous x pos
+;		move.w	#$10,d3
+;		bsr.w	MoveWithPlatform
+; ---------------------------------------------------------------------------
 
 MoveWithPlatform:				
 		move.w	ost_y_pos(a0),d0
-		sub.w	d3,d0
-		bra.s	loc_19BA2
-; ===========================================================================
-		; a couple lines of unused/leftover/dead code from Sonic 1 ; a0=object
-		move.w	ost_y_pos(a0),d0
-		subi.w	#9,d0
+		sub.w	d3,d0					; d0 = y position of top of platform
+		bra.s	.moveplayer
 
-loc_19BA2:				
-		tst.b	$2A(a1)
-		bmi.s	locret_19BCA
-		cmpi.b	#6,ost_primary_routine(a1)
-		bcc.s	locret_19BCA
-		tst.w	(v_debug_active).w
-		bne.s	locret_19BCA
+;MoveWithPlatform2:
+		; Unused Sonic 1 leftover; use standard height (9)
+		move.w	ost_y_pos(a0),d0
+		subi.w	#9,d0					; d0 = y position of top of platform
+
+	.moveplayer:				
+		tst.b	ost_obj_control(a1)			; is object collision disabled?
+		bmi.s	.exit					; if so, exit
+		cmpi.b	#id_Death,ost_primary_routine(a1)	; is player dying?
+		bcc.s	.exit					; if so, exit					
+		tst.w	(v_debug_active).w			; is debug mode active?
+		bne.s	.exit					; if so, exit
+
+;MoveWithPlatform3:
+		; Skip height and col checks; could be used with OOZ's custom solid routine
 		moveq	#0,d1
 		move.b	ost_height(a1),d1
-		sub.w	d1,d0
-		move.w	d0,ost_y_pos(a1)
+		sub.w	d1,d0				; subtract player's height
+		move.w	d0,ost_y_pos(a1)			; update player's y position
 		sub.w	ost_x_pos(a0),d2
-		sub.w	d2,ost_x_pos(a1)
+		sub.w	d2,ost_x_pos(a1)			; update player's x position
 
-locret_19BCA:				
+	.exit:				
 		rts	
-; ===========================================================================
 
-MoveOnSlope:				
-		btst	#3,ost_primary_status(a1)
-		beq.s	locret_19C0C
+; ---------------------------------------------------------------------------
+; Subroutine to	update Sonic/Tails' position when standing on a sloped object
+
+; input:
+;	d2.w = platform x position
+
+; output:
+;	d1.l = player's height
+;	a1 = address of OST of player
+
+;	uses d0.w, d2.w
+; ---------------------------------------------------------------------------
+
+MoveWithSlope:				
+		btst	#status_platform_bit,ost_primary_status(a1) ; is player standing on the object?
+		beq.s	MoveOnSlope_Done		; exit if not
 		move.w	ost_x_pos(a1),d0
-		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		lsr.w	#1,d0
-		btst	#render_xflip_bit,ost_render(a0)
-		beq.s	loc_19BEC
+		sub.w	ost_x_pos(a0),d0		; object x pos is already in d2; could be sub.w d2,d0
+		add.w	d1,d0					; d0 = x pos of player on object
+		lsr.w	#1,d0					; divide by 2
+		btst	#render_xflip_bit,ost_render(a0)	; is object horizontally flipped?
+		beq.s	MoveWithSlope_Do
 		not.w	d0
-		add.w	d1,d0
+		add.w	d1,d0					; d5 = x pos of player on object, divided by 2 and xflipped if needed
 
-loc_19BEC:				
-		move.b	(a2,d0.w),d1
+MoveWithSlope_Do:				
+		move.b	(a2,d0.w),d1				; get heightmap value based on player's position on platform
 		ext.w	d1
-		move.w	ost_y_pos(a0),d0
-		sub.w	d1,d0
+		move.w	ost_y_pos(a0),d0	
+		sub.w	d1,d0				; subtract heightmap value from object y pos
 		moveq	#0,d1
 		move.b	ost_height(a1),d1
-		sub.w	d1,d0
-		move.w	d0,ost_y_pos(a1)
-		sub.w	ost_x_pos(a0),d2
-		sub.w	d2,ost_x_pos(a1)
+		sub.w	d1,d0				; subtract player's height
+		move.w	d0,ost_y_pos(a1)	; set player's new y pos
+		sub.w	ost_x_pos(a0),d2	; subtract x pos from itself?
+		sub.w	d2,ost_x_pos(a1)	; subtract to set player's new x pos
 
-locret_19C0C:				
+	MoveOnSlope_Done:				
 		rts	
-; ===========================================================================
 
-MoveOnDoubleSlope:				
-		btst	#3,ost_primary_status(a1)
-		beq.s	locret_19C0C
+; ---------------------------------------------------------------------------
+; Unused subroutine to update Sonic/Tails' position when standing on a 
+; double-sloped object
+
+; input:
+;	d2.w = platform x position
+
+;	uses d0.w, d2.w
+; ---------------------------------------------------------------------------
+
+MoveWithDoubleSlope:				
+		btst	#status_platform_bit,ost_primary_status(a1) ; is player standing on the object?
+		beq.s	MoveOnSlope_Done		; exit if not
 		move.w	ost_x_pos(a1),d0
-		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		btst	#render_xflip_bit,ost_render(a0)
-		beq.s	loc_19C2C
+		sub.w	ost_x_pos(a0),d0		; object x pos is already in d2; could be sub.w d2,d0
+		add.w	d1,d0					; d0 = x pos of player on object
+		btst	#render_xflip_bit,ost_render(a0)	; is object horizontally flipped?
+		beq.s	.no_xflip
 		not.w	d0
-		add.w	d1,d0
+		add.w	d1,d0					; d5 = x pos of player on object, xflipped if needed
 
-loc_19C2C:				
+	.no_xflip:				
 		andi.w	#-2,d0
-		bra.s	loc_19BEC
-; ===========================================================================
+		bra.s	MoveWithSlope_Do
+
+; ---------------------------------------------------------------------------
+; Subroutine to detect collision with a platform, and update relevant flags
+;
+; input:
+;	d1.w = platform half width
+;	d3.w = platform half height
+;	d4.w - platform x pos (for passing to MoveWithPlatform)
+
+;	uses d0.l, d1.w
+
+; usage:
+;		moveq	#0,d1
+;		move.b	ost_displaywidth(a0),d1
+;		move.w	#2,d3
+;		move.w	ost_x_pos(a0),d4
+;		bsr.w	DetectPlatform
+; ---------------------------------------------------------------------------
 
 DetectPlatform:				
 		lea	(v_ost_player1).w,a1
-		moveq	#3,d6
-		pushr.l	d1-d4
-		bsr.s	DetectPlatform_SingleCharacter
-		movem.l	(sp)+,d1-d4
-		lea	(v_ost_player2).w,a1
-		addq.b	#1,d6
+		moveq	#status_p1_platform_bit,d6
+		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
+		bsr.s	DetectPlatform_SingleCharacter		; run for player 1
+		popr.l	d1-d4
+		lea	(v_ost_player2).w,a1			; run for player 2
+		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
 	DetectPlatform_SingleCharacter:				
-		btst	d6,ost_primary_status(a0)
-		beq.w	loc_19DBA
+		btst	d6,ost_primary_status(a0)		; is player already on platform?
+		beq.w	Plat_XCheck				; branch if not
 		move.w	d1,d2
-		add.w	d2,d2
-		btst	#1,ost_primary_status(a1)
-		bne.s	loc_19C6C
+		add.w	d2,d2					; d2 = full width of platform
+		btst	#status_air_bit,ost_primary_status(a1)
+		bne.s	.exitplat				; branch if player is in the air
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		bmi.s	loc_19C6C
+		add.w	d1,d0					; d0 = player's distance from center of platform (-ve if left of center)
+		bmi.s	.exitplat				; branch if player is left of the platform
 		cmp.w	d2,d0
-		bcs.s	loc_19C80
+		bcs.s	.stillonplat				; branch if player is not right of platform
 
-loc_19C6C:				
-		bclr	#3,ost_primary_status(a1)
-		bset	#1,ost_primary_status(a1)
-		bclr	d6,ost_primary_status(a0)
+	.exitplat:				
+		bclr	#status_platform_bit,ost_primary_status(a1)
+		bset	#status_air_bit,ost_primary_status(a1)
+		bclr	d6,ost_primary_status(a0)		; clear object's platform flag
 		moveq	#0,d4
 		rts	
 ; ===========================================================================
 
-loc_19C80:				
+	.stillonplat:				
 		move.w	d4,d2
-		bsr.w	MoveWithPlatform
+		bsr.w	MoveWithPlatform			; move player with platform
 		moveq	#0,d4
 		rts	
-; ===========================================================================
-;SlopedPlatform:
+		
+; ---------------------------------------------------------------------------
+; Subroutine to detect collision with a sloped platform, and update relevant
+; flags
+;
+; input:
+;	d1.w = platform half width
+;	d3.w = platform half height
+;	d4.w - platform x pos (for passing to MoveWithSlope)
+;	a2 = address of heightmap data
+
+;	uses d0.l, d1.w, a2
+
+; usage:
+;		move.w	#$30,d1					; width
+;		move.w	#2,d3					; height
+;		move.w	ost_x_pos(a0),d4		; x pos	
+;		lea	Ledge_SlopeData(pc),a2			; heightmap
+;		bsr.w	SlopeObject
+; ---------------------------------------------------------------------------
+
 SlopeObject:				
-		lea	($FFFFB000).w,a1
-		moveq	#3,d6
-		movem.l	d1-d4,-(sp)
-		bsr.s	loc_19CA0
-		movem.l	(sp)+,d1-d4
-		lea	($FFFFB040).w,a1
-		addq.b	#1,d6
+		lea	(v_ost_player1).w,a1
+		moveq	#status_p1_platform_bit,d6
+		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
+		bsr.s	.singlecharacter			; run for player 1
+		popr.l	d1-d4
+		lea	(v_ost_player2).w,a1			; run for player 2
+		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
-loc_19CA0:				
-		btst	d6,ost_primary_status(a0)
-		beq.w	loc_19E90
+	.singlecharacter:				
+		btst	d6,ost_primary_status(a0)		; is player already on platform?
+		beq.w	SlopePlat_XCheck			; branch if not
 		move.w	d1,d2
-		add.w	d2,d2
-		btst	#1,ost_primary_status(a1)
-		bne.s	loc_19CC4
+		add.w	d2,d2					; d2 = full width of platform
+		btst	#status_air_bit,ost_primary_status(a1)
+		bne.s	.exitplat				; branch if player is in the air
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		bmi.s	loc_19CC4
+		add.w	d1,d0					; d0 = player's distance from center of platform (-ve if left of center)
+		bmi.s	.exitplat				; branch if player is left of the platform
 		cmp.w	d2,d0
-		bcs.s	loc_19CD8
+		bcs.s	.stillonplat				; branch if player is not right of platfor,
 
-loc_19CC4:				
-		bclr	#3,ost_primary_status(a1)
-		bset	#1,ost_primary_status(a1)
-		bclr	d6,ost_primary_status(a0)
+	.exitplat:				
+		bclr	#status_platform_bit,ost_primary_status(a1)
+		bset	#status_air_bit,ost_primary_status(a1)
+		bclr	d6,ost_primary_status(a0)		; clear object's platform flag
 		moveq	#0,d4
 		rts	
 ; ===========================================================================
 
-loc_19CD8:				
+	.stillonplat:				
 		move.w	d4,d2
-		bsr.w	MoveOnSlope
+		bsr.w	MoveWithSlope	; move player with platform
 		moveq	#0,d4
 		rts	
 ; ===========================================================================
 ; Identical to DetectPlatform, except it branches to MoveWithPlatform.
-; Used only by ARZ, MCZ, and OOZ swinging platform
+; Used only by ARZ, MCZ, and OOZ swinging platforms
 DetectPlatform2:				
 		lea	($FFFFB000).w,a1
 		moveq	#3,d6
@@ -33379,7 +33519,7 @@ loc_19D50:
 		bne.s	loc_19D62
 		btst	#3,ost_primary_status(a1)
 		bne.s	loc_19D8E
-		bra.w	loc_19DBA
+		bra.w	Plat_XCheck
 ; ===========================================================================
 
 loc_19D62:				
@@ -33409,110 +33549,120 @@ loc_19D92:
 		bsr.w	MoveWithPlatform
 		moveq	#0,d4
 		rts	
+
+; ---------------------------------------------------------------------------
+; Almost identical to Plat_XCheck, expect d2 already has the full width of
+; the object. Used only by EHZ and HPZ bridges.
+; ---------------------------------------------------------------------------
+
+DetectPlatform_FullWidth:				
+		tst.w	ost_y_vel(a1)				; is player moving up/jumping?
+		bmi.w	Plat_Exit				; branch if so
+
+		move.w	ost_x_pos(a1),d0
+		sub.w	ost_x_pos(a0),d0			; d0 = player's distance from center of platform (-ve if left of center)
+		add.w	d1,d0
+		bmi.w	Plat_Exit				; branch if player is left of the platform
+		cmp.w	d2,d0					; d2 = full width of platform
+		bcc.w	Plat_Exit				; branch if player is left of the platform
+		bra.s	Plat_NoXCheck
 ; ===========================================================================
 
-loc_19D9C:				
+Plat_XCheck:
+		; perform x-axis range check				
 		tst.w	ost_y_vel(a1)
-		bmi.w	locret_19E8E
+		bmi.w	Plat_Exit
 		move.w	ost_x_pos(a1),d0
-		sub.w	ost_x_pos(a0),d0
+		sub.w	ost_x_pos(a0),d0			; d0 = player's distance from centre of platform (-ve if left of centre)
 		add.w	d1,d0
-		bmi.w	locret_19E8E
-		cmp.w	d2,d0
-		bcc.w	locret_19E8E
-		bra.s	loc_19DD8
-; ===========================================================================
-
-loc_19DBA:				
-		tst.w	ost_y_vel(a1)
-		bmi.w	locret_19E8E
-		move.w	ost_x_pos(a1),d0
-		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		bmi.w	locret_19E8E
+		bmi.w	Plat_Exit				; branch if player is left of the platform
 		add.w	d1,d1
-		cmp.w	d1,d0
-		bcc.w	locret_19E8E
+		cmp.w	d1,d0					; d1 = full width of platform
+		bcc.w	Plat_Exit				; branch if player is right of the platform
 
-loc_19DD8:				
+	Plat_NoXCheck:						; jump here to skip x position check		
 		move.w	ost_y_pos(a0),d0
-		sub.w	d3,d0
+		sub.w	d3,d0					; d3 = platform height / 2
 
-loc_19DDE:				
+	Plat_NoXCheck_AltY:					; jump here to skip x position check and use custom y position			
+
+		; perform y-axis range chec
 		move.w	ost_y_pos(a1),d2
 		move.b	ost_height(a1),d1
 		ext.w	d1
-		add.w	d2,d1
+		add.w	d2,d1					; d1 = y pos of player's bottom edge
 		addq.w	#4,d1
-		sub.w	d1,d0
-		bhi.w	locret_19E8E
-		cmpi.w	#-$10,d0
-		bcs.w	locret_19E8E
-		tst.b	$2A(a1)
-		bmi.w	locret_19E8E
-		cmpi.b	#6,ost_primary_routine(a1)
-		bcc.w	locret_19E8E
+		sub.w	d1,d0					; d0 = distance between top of platform and player's bottom edge (-ve if below platform)
+		bhi.w	Plat_Exit				; branch if player is above platform
+		cmpi.w	#-16,d0
+		bcs.w	Plat_Exit				; branch if player is more than 16px below top of platform
+
+		tst.b	ost_obj_control(a1)			; is object collision off?
+		bmi.w	Plat_Exit				; if yes, branch
+		cmpi.b	#id_Death,ost_primary_routine(a1)	; is Sonic dying?
+		bcc.w	Plat_Exit				; if yes, branch
 		add.w	d0,d2
-		addq.w	#3,d2
+		addq.w	#3,d2				
 		move.w	d2,ost_y_pos(a1)
 
-loc_19E14:				
-		btst	#3,ost_primary_status(a1)
-		beq.s	loc_19E30
+Plat_NoCheck:				
+		btst	#status_platform_bit,ost_primary_status(a1) ; is player on a platform already?
+		beq.s	.no
 		moveq	#0,d0
-		move.b	$3D(a1),d0
+		move.b	ost_interact(a1),d0			; get OST index for that platform
 		lsl.w	#6,d0
-		addi.l	#-$5000,d0
-		movea.l	d0,a3
-		bclr	d6,ost_primary_status(a3)
+		addi.l	#v_ost_all,d0				; convert index to RAM address
+		movea.l	d0,a3					; point a3 to that address
+		bclr	d6,ost_primary_status(a3)		; clear object's platform bit for this player
 
-loc_19E30:				
+	.no:				
 		move.w	a0,d0
-		subi.w	#-$5000,d0
+		subi.w	#v_ost_all,d0
 		lsr.w	#6,d0
-		andi.w	#$7F,d0
-		move.b	d0,$3D(a1)
+		andi.w	#$7F,d0	
+		move.b	d0,ost_interact(a1)			; convert current platform OST address to index and store it
 		move.b	#0,ost_angle(a1)
-		move.w	#0,ost_y_vel(a1)
+		move.w	#0,ost_y_vel(a1)			; stop player moving vertically
 		move.w	ost_x_vel(a1),ost_inertia(a1)
-		btst	#1,ost_primary_status(a1)
-		beq.s	loc_19E7E
-		move.l	a0,-(sp)
-		movea.l	a1,a0
-		move.w	a0,d1
-		subi.w	#-$5000,d1
-		bne.s	loc_19E76
+		btst	#status_air_bit,ost_primary_status(a1)	; is player in the air/jumping?
+		beq.s	.notinair				; branch if not
+
+		pushr.l	a0
+		movea.l	a1,a0					; player is temporarily the current object
+		move.w	a0,d1		
+		subi.w	#v_ost_all,d1	
+		bne.s	.tails					; branch if its player 2 (why not use cmpa?)
 		cmpi.w	#tails_alone,(v_player_mode).w
-		beq.s	loc_19E76
-		jsr	(Sonic_ResetOnFloor_2).l
-		bra.s	loc_19E7C
+		beq.s	.tails					; branch if it's a Tails alone game
+		jsr	(Sonic_ResetOnFloor_2).l		; make Sonic land
+		bra.s	.restorea0
 ; ===========================================================================
 
-loc_19E76:				
-		jsr	(loc_1CB5C).l
+	.tails:				
+		jsr	(Tails_ResetOnFloor_2).l		; make Tails land
 
-loc_19E7C:				
-		movea.l	(sp)+,a0
+	.restorea0:				
+		popr.l	a0					; restore a0
 
-loc_19E7E:				
-		bset	#3,ost_primary_status(a1)
-		bclr	#1,ost_primary_status(a1)
-		bset	d6,ost_primary_status(a0)
+	.notinair:				
+		bset	#status_platform_bit,ost_primary_status(a1) ; player is on platform
+		bclr	#status_air_bit,ost_primary_status(a1)
+		bset	d6,ost_primary_status(a0)		; set object's platform flag
 
-locret_19E8E:				
+Plat_Exit:				
 		rts	
 ; ===========================================================================
 
-loc_19E90:				
+SlopePlat_XCheck:				
 		tst.w	ost_y_vel(a1)
-		bmi.w	locret_19E8E
+		bmi.w	Plat_Exit
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
 		add.w	d1,d0
-		bmi.s	locret_19E8E
+		bmi.s	Plat_Exit
 		add.w	d1,d1
 		cmp.w	d1,d0
-		bcc.s	locret_19E8E
+		bcc.s	Plat_Exit
 		btst	#render_xflip_bit,ost_render(a0)
 		beq.s	loc_19EB6
 		not.w	d0
@@ -33524,22 +33674,22 @@ loc_19EB6:
 		ext.w	d3
 		move.w	ost_y_pos(a0),d0
 		sub.w	d3,d0
-		bra.w	loc_19DDE
+		bra.w	Plat_NoXCheck_AltY
 ; ===========================================================================
 
 loc_19EC8:				
 		tst.w	ost_y_vel(a1)
-		bmi.w	locret_19E8E
+		bmi.w	Plat_Exit
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
 		add.w	d1,d0
-		bmi.w	locret_19E8E
+		bmi.w	Plat_Exit
 		add.w	d1,d1
 		cmp.w	d1,d0
-		bcc.w	locret_19E8E
+		bcc.w	Plat_Exit
 		move.w	ost_y_pos(a0),d0
 		sub.w	d3,d0
-		bra.w	loc_19DDE
+		bra.w	Plat_NoXCheck_AltY
 ; ===========================================================================
 
 DropOnFloor:				
@@ -35366,7 +35516,7 @@ Sonic_ResetOnFloor:
 
 Sonic_ResetOnFloor_2:				
 		_cmpi.b	#id_SonicPlayer,ost_id(a0)
-		bne.w	loc_1CB5C
+		bne.w	Tails_ResetOnFloor_2
 		btst	#status_jump_bit,ost_primary_status(a0)
 		beq.s	loc_1B0DA
 		bclr	#status_jump_bit,ost_primary_status(a0)
@@ -38299,7 +38449,7 @@ loc_1CB50:
 		bne.s	loc_1CB80
 		move.b	#0,ost_anim(a0)
 
-loc_1CB5C:				
+Tails_ResetOnFloor_2:				
 		btst	#status_jump_bit,ost_primary_status(a0)
 		beq.s	loc_1CB80
 		bclr	#status_jump_bit,ost_primary_status(a0)
@@ -41115,7 +41265,7 @@ ConvertCollisionArray:
 	; the collision in this column is (the resulting number is negative).
 	.processcolumnloop2:
 		lsl.w	#1,d0
-		bhs.s	.pixelnotsolid2
+		bcc.s	.pixelnotsolid2
 		subq.b	#1,d2
 
 	.pixelnotsolid2:
@@ -44277,7 +44427,7 @@ loc_21562:
 		bcc.s	locret_215BE
 		tst.b	$2A(a1)
 		bne.s	locret_215BE
-		bsr.w	loc_19E14
+		bsr.w	Plat_NoCheck
 		rts	
 ; ===========================================================================
 
@@ -44305,7 +44455,7 @@ loc_215A8:
 		subi.w	#$10,d1
 		cmpi.w	#$30,d1
 		bcc.s	locret_215BE
-		bsr.w	loc_19E14
+		bsr.w	Plat_NoCheck
 
 locret_215BE:				
 		rts	
@@ -44432,7 +44582,7 @@ loc_2181E:
 		addq.w	#3,d2
 		move.w	d2,ost_y_pos(a1)
 		move.b	#1,ost_flip_turned(a1)
-		bsr.w	loc_19E14
+		bsr.w	Plat_NoCheck
 		move.w	#1,ost_anim(a1)
 		move.b	#0,(a2)
 		tst.w	ost_inertia(a1)
@@ -49357,7 +49507,7 @@ loc_2623A:
 		move.b	#4,$38(a1)
 		
 	if FixBugs
-		move.b	d1,ost_angle(a1); d1 = random number by the above call to RandomNumber
+		move.b	d1,ost_angle(a1)			; d1 = random number by the above call to RandomNumber
 	else	
 		; This line makes no sense: the object being written to is the parent,
 		; not the child, and angle isn't used by the parent at all. The child,
@@ -75993,8 +76143,8 @@ SegaScreen_VBlank_SetFGTable:
 
 	.innerloop:				
 		move.w	(a2)+,d4				; get one name table entry
-		bclr	#$A,d4					; test and clear end-of-line flag
-		beq.s	.write_entry				; branch if it wasn't set
+		bclr	#$A,d4					; is this the end of the line?
+		beq.s	.write_entry				; branch if not
 		bsr.w	.write_end_of_line			; fill rest of line with this set of pixels (could be bsr.s)
 
 	.write_entry:				
@@ -82681,7 +82831,7 @@ col_4x8:		colid    4,    8			; $1E
 col_4x24:		colid    4,  $18			; $1F
 col_4x40:		colid    4,  $28			; $20
 col_4x32:		colid    4,  $10			; $21
-col_24x24_2:	colid  $18,  $18				; $22
+col_24x24_2:	colid  $18,  $18			; $22
 col_12x24:		colid   $C,  $18			; $23
 col_72x8:		colid  $48,    8			; $24
 col_24x40:		colid  $18,  $28			; $25
@@ -83724,7 +83874,7 @@ Dynamic_ARZ:
 		rts	
 
 ; ---------------------------------------------------------------------------
-; Script header structure
+; Zone animation script header structure
 ; ---------------------------------------------------------------------------
 		rsreset
 aniscrpt_globaldur:	rs.l 1					; 0; global duration value in highest byte
@@ -83734,7 +83884,7 @@ aniscrpt_size:		rs.b 1					; 6; count of individual elements in script
 aniscrpt_tilecnt:	rs.b 1					; 7; count of tiles to copy in this script
 aniscrpt_start:		rs.b 1					; 8; start of actual script
 aniscrpt_tileid:	equ aniscrpt_start			; 8; ID of first tile in source to copy 
-aniscrpt_perframedur: rs.b 1					; 9; per frame duration if applicable
+aniscrpt_perframedur: rs.b 1					; 9; per frame duration of first tile if applicable
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to process dynamic zone animation scripts
@@ -83752,23 +83902,23 @@ Dynamic_Normal2:
 		move.w	(a2)+,d6				; get count of scripts in list
 		
 	.loop:				
-		subq.b	#1,(a3)					; decrement frame counter
+		subq.b	#1,zoneanim_duration(a3)					; decrement duration counter
 		bcc.s	.nextscript				; skip to next script if frames remains
 		
 	;.next_frame:	
 		moveq	#0,d0		
-		move.b	1(a3),d0				; get current frame
+		move.b	zoneanim_frames(a3),d0				; get current frame
 		cmp.b	aniscrpt_size(a2),d0			; have we processed the last frame in the script?
 		bcs.s	.not_last_frame				; branch if not
 		moveq	#0,d0
-		move.b	d0,1(a3)				; reset to first frame
+		move.b	d0,zoneanim_frames(a3)				; reset to first frame (could be clr.b)
 
 	.not_last_frame:				
-		addq.b	#1,1(a3)				; set to next frame
-		move.b	aniscrpt_globaldur(a2),(a3)		; get global duration value
-		bpl.s	.global_duration			; branch if we're using a global duration
-		add.w	d0,d0					; double frame id since scripts are two bytes with per-frame durations
-		move.b	aniscrpt_perframedur(a2,d0.w),(a3)	; get per-frame duration
+		addq.b	#1,zoneanim_frames(a3)				; increment frame ID
+		move.b	aniscrpt_globaldur(a2),zoneanim_duration(a3)		; get global duration value
+		bpl.s	.global_duration			; branch if this script uses a global duration
+		add.w	d0,d0					; d0 = index to per-frame duration
+		move.b	aniscrpt_perframedur(a2,d0.w),zoneanim_duration(a3)	; get per-frame duration
 
 	.global_duration:				
 		move.b	aniscrpt_tileid(a2,d0.w),d0		; get tile id
@@ -83786,13 +83936,13 @@ Dynamic_Normal2:
 		move.b	aniscrpt_size(a2),d0			; get total size of script
 		tst.b	aniscrpt_globaldur(a2)	
 		bpl.s	.global_duration2			; branch if we're using a global duration
-		add.b	d0,d0					; double size to account for additional duration byte in each script
+		add.b	d0,d0					; double size to account for additional duration byte in each script element
 
 	.global_duration2:				
 		addq.b	#1,d0
 		andi.w	#$FE,d0					; round to even address
 		lea	aniscrpt_start(a2,d0.w),a2		; advance to next script in list
-		addq.w	#2,a3					; advance to next script's counter
+		addq.w	#2,a3					; advance to next script's counters
 		dbf	d6,.loop				; repeat for all scripts
 		rts	
 
@@ -84255,7 +84405,7 @@ Unused_CPZAnim:
       	endr
 		
 		move.w	d0,(a1)+				; shift first word of line in first tile to the end
-		suba.w	#sizeof_128x128*3,a1			; advance to next line in all tile
+		suba.w	#sizeof_128x128*3,a1			; advance to next line in all tiles
 		dbf	d1,.loop				; repeat for all lines of each tile
 		rts	
 
@@ -84328,7 +84478,29 @@ AnimatedBlocksLoad:
 		move.w	d0,(a1)+				; write to block table
 		dbf	d1,.loop_2P
 		rts	
-; ===========================================================================
+	
+; ---------------------------------------------------------------------------
+; Start an animated block list
+; ---------------------------------------------------------------------------		
+
+anipat:	macro *
+		\*: equ *
+		current_anipat:	equs "\*"
+		dc.w ((sizeof_16x16_all*2)-sizeof_\*_Blocks)	; start offset of animated blocks in v_16x16_tiles
+		dc.w (sizeof_\*_Blocks/2)-1			; loops to copy blocks in word-length moves
+	\*_Blocks:	
+		endm
+		
+; ---------------------------------------------------------------------------
+; Terminate an animated block list
+; ---------------------------------------------------------------------------			
+
+anipat_end:	macros	
+		arraysize	\current_anipat\_Blocks
+
+; ---------------------------------------------------------------------------
+; Animated 16x16 block lists
+; ---------------------------------------------------------------------------	
 
 AniPatMap_Index:	index offset(*),,1
 		ptr APM_EHZ_HTZ					; EHZ
@@ -84349,18 +84521,7 @@ AniPatMap_Index:	index offset(*),,1
 		ptr APM_ARZ					; ARZ
 		ptr APM_Null					; unused
 		zonewarning	AniPatMap_Index,2
-
-anipat:	macro *
-		\*: equ *
-		current_anipat:	equs "\*"
-		dc.w ((sizeof_16x16_all*2)-sizeof_\*_Blocks)	; start offset of animated blocks in v_16x16_tiles
-		dc.w (sizeof_\*_Blocks/2)-1			; loops to copy blocks in word-length moves
-	\*_Blocks:	
-		endm
-
-anipat_end:	macros	
-		arraysize	\current_anipat\_Blocks
-		
+				
 APM_EHZ_HTZ:	anipat	
 		dc.w tile_Art_EHZMountains+tile_pal3,		tile_Art_EHZMountains+4+tile_pal3
 		dc.w tile_Art_EHZMountains+1+tile_pal3,		tile_Art_EHZMountains+5+tile_pal3
@@ -85814,7 +85975,7 @@ ContScrCounter:
 
 	.find_digit:
 		sub.l	d3,d1
-		blo.s	.digit_found				; branch if number is less than the value in d3
+		bcs.s	.digit_found				; branch if number is less than the value in d3
 		addq.w	#1,d2					; increment digit counter
 		bra.s	.find_digit				; repeat until d2 = digit
 ; ===========================================================================

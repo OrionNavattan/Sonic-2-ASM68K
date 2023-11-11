@@ -622,7 +622,7 @@ ost_pinball_flag:			equ ost_spindash_flag
 ost_spindash_counter:						; $3A ; 
 ost_restart_time:			rs.w 1			; $3A ; time until level restarts
 ost_jump:					rs.b 1		; $3C ; 1 if Sonic/Tails is jumping
-ost_interact:				rs.b 1			; $3D ; OST index of object Sonic stands on
+ost_interact:				rs.b 1			; $3D ; OST index of object player stands on
 ost_top_solid_bit:			rs.b 1			; $3E ; the bit to check for top solidity (either $C or $E)
 ost_lrb_solid_bit:			rs.w 1			; $3F ; ; the bit to check for left/right/bottom solidity (either $D or $F)
 

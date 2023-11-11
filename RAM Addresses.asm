@@ -535,7 +535,9 @@ v_camera_x_pos_coarse_p2:		rs.w 1			; $FFFFF7DC
 v_tails_last_frame_id:			rs.b 1			; $FFFFF7DE ; Tails' previous frame id; compared with current frame to determine if graphics need updating. can be set to a dummy value like -1 to force a refresh DMA.
 v_tailstails_last_frame_id:		rs.b 1			; $FFFFF7DF ; Previous frame id of Tails' tails; compared with current frame to determine if graphics need updating. can be set to a dummy value like -1 to force a refresh DMA.
 v_button_state:					rs.b $10	; $FFFFF7E0 ; 16 byte flag array, #subtype byte set when button/vine of respective subtype activated
-v_anim_counters:				rs.b $10	; $FFFFF7F0-$FFFFF7FF
+v_anim_counters:				rs.b $10	; $FFFFF7F0-$FFFFF7FF; counters for zone animation scripts; two bytes for each script; low byte is duration counter; high byte is frame ID
+	zoneanim_duration:		equ 0
+	zoneanim_frames:		equ 1
 				rsblockend misc_variables
 				
 v_sprite_buffer:			rs.b sizeof_vram_sprites ; $FFFFF800 ; Sprite attribute table buffer
