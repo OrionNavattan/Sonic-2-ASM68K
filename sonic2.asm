@@ -42884,20 +42884,6 @@ ost_pswtch_radius:		rs.w 1				; $32 ; height of x-switcher or width of y-switche
 ost_pswtch_p1_side:		rs.b 1				; $34 ; 0 if player 1 is above or to left of switcher, 1 if below or to right
 ost_pswtch_p2_side:		rs.b 1				; $35 ; same as above, but for player 2
 		rsobjend
-
-; Subtype bits
-; Bits 0-1 indicate size; rest of subtype is bitfield with following definitions:
-pswtch_xy_bit:			equ 2				; 0 if x-switcher (horizontal movement), 1 if y-switcher (vertical movement)
-pswtch_downright_bit:	equ 3					; if set, moves player to plane 1 when touching left or top, otherwise moves them to plane 0
-pswtch_upleft_bit:		equ 4				; if set, moves player to plane 1 when touching right or bottom, otherwise moves them to plane 0
-pswtch_downright_hi_bit:	equ 5				; if set, sets player's priority to low when moving up or left and high when moving down or right
-pswtch_upleft_hi_bit:	equ 6					; if set, sets player's priority to low when moving down or right and high when moving up or left
-pswtch_ignore_air_bit:	equ 7					; if set, switcher will ignore player if they are airborne
-
-pswtch_priority_only:	equ render_xflip_bit			; if xflip is set in objpos definition, this switcher only changes player's sprite priority
-
-pswtch_size:			equ 3				; bits 0-1 : size of switcher, 4-32 blocks
-pswtch_xy:				equ 1<<pswtch_xy_bit
 ; ===========================================================================
 
 PSwtch_Init: ; Routine 0		
@@ -43375,38 +43361,34 @@ JmpTo5_CalcSine
 GiantEmerald:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	GiantEmrld_Index(pc,d0.w),d1
-		jmp	GiantEmrld_Index(pc,d1.w)
+		move.w	GiantEmerld_Index(pc,d0.w),d1
+		jmp	GiantEmerld_Index(pc,d1.w)
 ; ===========================================================================
-GiantEmrld_Index:	index offset(*),,2	
-		ptr loc_2032E					; 0 
-		ptr loc_20356					; 2
+GiantEmerld_Index:	index offset(*),,2	
+		ptr GiantEmerld_Init				; 0 
+		ptr GiantEmerld_Solid				; 2
 ; ===========================================================================
 
-loc_2032E:				
-		addq.b	#2,ost_primary_routine(a0)
-		move.l	#Map_GiantEmrld,ost_mappings(a0)
+GiantEmerld_Init:						; Routine 0			
+		addq.b	#2,ost_primary_routine(a0)		; go to GiantEmerld_Solid next
+		move.l	#Map_GiantEmerld,ost_mappings(a0)
 		move.w	#(vram_HPZEmerald/sizeof_cell)+tile_pal4,ost_tile(a0)
 		jsrto	Adjust2PArtPointer,JmpTo10_Adjust2PArtPointer
 		move.b	#render_rel,ost_render(a0)
-		move.b	#$20,ost_displaywidth(a0)
+		move.b	#$40/2,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
 
-loc_20356:				
-		move.w	#$20,d1
-		move.w	#$10,d2
-		move.w	#$10,d3
-		move.w	ost_x_pos(a0),d4
-		bsr.w	SolidObject
-		move.w	ost_x_pos(a0),d0
-		andi.w	#-$80,d0
-		sub.w	(v_camera_x_pos_coarse).w,d0
-		cmpi.w	#$280,d0
-		bhi.w	JmpTo16_DeleteObject
-		jmpto	DisplaySprite,JmpTo8_DisplaySprite
+GiantEmerld_Solid:						; Routine 2		
+		move.w	#$40/2,d1				; width / 2
+		move.w	#$20/2,d2				; height when jumping / 2
+		move.w	#$20/2,d3				; height when walking / 2
+		move.w	ost_x_pos(a0),d4			; object x-pos
+		bsr.w	SolidObject				; perform collision checks with players
 		
+		out_of_range	JmpTo16_DeleteObject,ost_x_pos(a0)
+		jmpto	DisplaySprite,JmpTo8_DisplaySprite
 ; ===========================================================================	
-		include "mappings/sprite/Giant Emerald (unused).asm"
+		include "mappings/sprite/HPZ Giant Emerald (unused).asm"
 ; ===========================================================================
 	
 	if Revision<2
@@ -47529,7 +47511,6 @@ JmpTo_DetectPlatform_SingleCharacter:
 		align 4
 	endc
 		
-; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 45 - OOZ pressure spring
 ; ----------------------------------------------------------------------------
@@ -47550,24 +47531,9 @@ PSpring_Index:	index offset(*),,2
 ost_pspring_strength:	rs.w 1					; $30; strength of spring
 ost_pspring_frame:		rs.b 1				; $32; frame counter used to track how compressed the spring is
 						rs.b 1		; unused
-ost_pspring_og_xpos: 	rs.w 1					; $34
-ost_pspring_compress:			rs.b 1			; $36 ; clearer
+ost_pspring_og_xpos: 	rs.w 1					; $34; backup of horizontal spring's initial x pos
+ost_pspring_compress:	rs.b 1					; $36; flag indicating horizontal spring is compressing
 		rsobjend	
-		
-; Subtype definitions
-pspring_tumbleplayer_bit:		equ 0			; if set, make player tumble after launch (unused)
-pspring_strength_bit:			equ 1			; 0 = strong spring, 1 = weak spring
-pspring_plane0_bit:				equ 2		; if set, move player to collision plane 0 on launch (unused)
-pspring_plane1_bit:				equ 3		; if set, move player to collision plane 1 on launch (unused)
-pspring_direction_bit:			equ 4			; 0 = vertical, 1 = horizontal
-pspring_killtransverse_bit:		equ 7			; if set, cancel transverse velocity on launch (unused)	
-
-pspring_tumbleplayer:		equ 1<<pspring_tumbleplayer_bit
-pspring_strength:			equ 1<<pspring_strength_bit
-pspring_plane0:				equ 1<<pspring_plane0_bit
-pspring_plane1:				equ 1<<pspring_plane1_bit
-pspring_direction:			equ 1<<pspring_direction_bit
-pspring_killtransverse:		equ 1<<pspring_killtransverse_bit
 ; ===========================================================================
 
 PSpring_Init:	; Routine 0			
@@ -47649,7 +47615,7 @@ PSpring_Vertical:						; Routine 2; unused
 PSpring_Vertical_LaunchPlayer:				
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
-		bsr.s	.launchplayerdo			; run for player 1
+		bsr.s	.launchplayerdo				; run for player 1
 		lea	(v_ost_player2).w,a1
 		moveq	#status_p2_platform_bit,d6		; run for player 2
 
@@ -47705,7 +47671,7 @@ PSpring_Vertical_LaunchPlayer:
 		rts	
 ; ===========================================================================
 
-PSpring_Horizontal:				
+PSpring_Horizontal:						; Routine 4		
 		move.b	#0,ost_pspring_compress(a0)
 		move.w	#$3E/2,d1				; half width
 		move.w	#$18/2,d2				; half height
@@ -47932,8 +47898,8 @@ PSpring_Horiz_LaunchPlayer:
 ; -------------------------------------------------------------------------------
 
 Ani_PSpring:	index offset(*)	
-		ptr Ani_PSpring_Vert			; 0 
-		ptr Ani_PSpring_Horiz					; 1
+		ptr Ani_PSpring_Vert				; 0 
+		ptr Ani_PSpring_Horiz				; 1
 		
 Ani_PSpring_Vert:		
 		dc.b 0
