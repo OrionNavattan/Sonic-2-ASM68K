@@ -25,7 +25,7 @@ vdp_control_port:	equ $C00004
 	vdp_md_color:		equ vdp_mode_register1+4	; Mega Drive colour mode
 	vdp_freeze_hvcounter:	equ vdp_mode_register1+2	; freeze H/V counter on interrupts
 	vdp_disable_display:	equ vdp_mode_register1+1
-	
+
 	vdp_mode_register2:	equ $8100
 	vdp_128kb_vram:		equ vdp_mode_register2+$80	; use 128kB of VRAM, Teradrive only
 	vdp_enable_display:	equ vdp_mode_register2+$40	; if not set, display is filled with background color
@@ -34,7 +34,7 @@ vdp_control_port:	equ $C00004
 	vdp_pal_display:	equ vdp_mode_register2+8	; 240px screen height (PAL)
 	vdp_ntsc_display:	equ vdp_mode_register2		; 224px screen height (NTSC)
 	vdp_md_display:		equ vdp_mode_register2+4	; mode 5 Mega Drive display
-	
+
 	vdp_fg_nametable:	equ $8200			; fg (plane A) nametable setting
 	vdp_window_nametable:	equ $8300			; window nametable setting
 	vdp_bg_nametable:	equ $8400			; bg (plane B) nametable setting
@@ -44,7 +44,7 @@ vdp_control_port:	equ $C00004
 	vdp_sms_hscroll:	equ $8800
 	vdp_sms_vscroll:	equ $8900
 	vdp_hint_counter:	equ $8A00			; number of lines between horizontal interrupts
-	
+
 	vdp_mode_register3:	equ $8B00
 	vdp_enable_xint:	equ vdp_mode_register3+8	; enable external interrupts
 	vdp_16px_vscroll:	equ vdp_mode_register3+4	; 16px column vertical scroll mode
@@ -52,18 +52,18 @@ vdp_control_port:	equ $C00004
 	vdp_1px_hscroll:	equ vdp_mode_register3+3	; 1px row horizontal scroll mode
 	vdp_8px_hscroll:	equ vdp_mode_register3+2	; 8px row horizontal scroll mode
 	vdp_full_hscroll:	equ vdp_mode_register3		; full screen horizontal scroll mode
-	
+
 	vdp_mode_register4:	equ $8C00
 	vdp_320px_screen_width:	equ vdp_mode_register4+$81	; 320px wide screen mode
 	vdp_256px_screen_width:	equ vdp_mode_register4		; 256px wide screen mode
 	vdp_shadow_highlight:	equ vdp_mode_register4+8	; enable shadow/highlight mode
 	vdp_interlace:		equ vdp_mode_register4+2	; enable interlace mode
 	vdp_interlace_x2:	equ vdp_mode_register4+6	; enable double height interlace mode (e.g. Sonic 2 two player game)
-	
+
 	vdp_hscroll_table:	equ $8D00			; horizontal scroll table setting
 	vdp_nametable_hi:	equ $8E00			; high bits of fg/bg nametable settings for 128kB VRAM
 	vdp_auto_inc:		equ $8F00			; value added to VDP address after each write
-	
+
 	vdp_plane_size:		equ $9000			; fg/bg plane dimensions
 	vdp_plane_height_128:	equ vdp_plane_size+$30		; height = 128 cells (1024px)
 	vdp_plane_height_64:	equ vdp_plane_size+$10		; height = 64 cells (512px)
@@ -71,15 +71,15 @@ vdp_control_port:	equ $C00004
 	vdp_plane_width_128:	equ vdp_plane_size+3		; width = 128 cells (1024px)
 	vdp_plane_width_64:	equ vdp_plane_size+1		; width = 64 cells (512px)
 	vdp_plane_width_32:	equ vdp_plane_size		; width = 32 cells (256px)
-	
+
 	vdp_window_x_pos:	equ $9100
 	vdp_window_right:	equ vdp_window_x_pos+$80	; draw window from x pos to right edge of screen
 	vdp_window_left:	equ vdp_window_x_pos		; draw window from x pos to left edge of screen
-	
+
 	vdp_window_y_pos:	equ $9200
 	vdp_window_bottom:	equ vdp_window_y_pos+$80	; draw window from y pos to bottom edge of screen
 	vdp_window_top:		equ vdp_window_y_pos		; draw window from y pos to top edge of screen
-	
+
 	vdp_dma_length_low:	equ $9300
 	vdp_dma_length_hi:	equ $9400
 	vdp_dma_source_low:	equ $9500
@@ -88,7 +88,7 @@ vdp_control_port:	equ $C00004
 	vdp_dma_68k_copy:	equ vdp_dma_source_hi		; DMA 68k to VRAM copy mode
 	vdp_dma_vram_fill:	equ vdp_dma_source_hi+$80	; DMA VRAM fill mode
 	vdp_dma_vram_copy:	equ vdp_dma_source_hi+$C0	; DMA VRAM to VRAM copy mode
-		
+
 vdp_counter:		equ $C00008
 psg_input:			equ $C00011
 debug_reg:			equ $C0001C

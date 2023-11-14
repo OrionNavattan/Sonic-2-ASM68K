@@ -19,9 +19,9 @@ countof_ost_per_2pblock:	equ $C				; number of OSTs in 2P mode blocks
 countof_ost_2p_blocks:		equ 6				; number of 2P mode OST blocks; 3 per player
 sizeof_ost_2p_block:	equ	sizeof_ost*countof_ost_per_2pblock ; size of each 2p mode block
 
-countof_ost_level_only: equ $10					; additional reserved object ram for objects attached to players, run only when in level 
-sizeof_ost_level_only:	equ sizeof_ost*countof_ost_level_only 
-                
+countof_ost_level_only: equ $10					; additional reserved object ram for objects attached to players, run only when in level
+sizeof_ost_level_only:	equ sizeof_ost*countof_ost_level_only
+
 sizeof_plc:			equ 6				; size of one pattern load cue
 countof_plc:		equ $10					; number of slots in the pattern load cue buffer
 sizeof_plc_buffer:	equ sizeof_plc*countof_plc		; total size of the PLC buffer, $60 by default
@@ -58,12 +58,12 @@ countof_pal_fps:	equ 50					; 50 frames per second in PAL
 sizeof_cell:			equ $20				; single 8x8 tile, two pixels per byte
 widthof_cell:			equ	8			; width of single tile in pixels
 
-sizeof_vram_row_64:			equ (512/widthof_cell)*2 ; $80,  single row of fg/bg nametable when 64 cells (512 pixels) wide 
+sizeof_vram_row_64:			equ (512/widthof_cell)*2 ; $80,  single row of fg/bg nametable when 64 cells (512 pixels) wide
 sizeof_vram_row_128:		equ (1024/widthof_cell)*2	; $100, single row of fg/bg nametable when 128 cells (1024 pixels) wide
 
 sizeof_vram_planetable_64x32:	equ sizeof_vram_row_64*32	; $1000
-sizeof_vram_planetable_128x32:	equ sizeof_vram_row_128*32	; $2000 
-sizeof_vram_planetable_64x64:	equ sizeof_vram_row_64*64	; $2000 
+sizeof_vram_planetable_128x32:	equ sizeof_vram_row_128*32	; $2000
+sizeof_vram_planetable_64x64:	equ sizeof_vram_row_64*64	; $2000
 
 sizeof_sprite:			equ 8				; one sprite in sprite attribute table
 countof_max_sprites:	equ $50					; max number of sprites that can be displayed at once (80)
@@ -74,7 +74,7 @@ sizeof_vram_hscroll_padded:	equ sizeof_vram_hscroll+$80	; $400
 vram_start:				 equ $0000
 
 vram_sprites:			equ $F800			; sprite attribute table ($280 bytes)
-sizeof_vram_sprites:	equ $280				
+sizeof_vram_sprites:	equ $280
 vram_hscroll:			equ $FC00			; horizontal scroll table ($380 bytes); extends until $FF7F
 sizeof_vram_hscroll:	equ 224*2*2				; $380; 224 lines * 2 bytes per entry * 2 plane nametables
 
@@ -357,32 +357,32 @@ CharacterRoutines:	macro	func
 		\func	Respawn					; $A
 	if FixBugs
 		\func	Drown					; $C
-	endc		
-		endm	
+	endc
+		endm
 
-		
+
 CommonRoutineIDs:	macro	routinename
 		id_\routinename:	equ	ptr_id
-		ptr_id: = ptr_id+ptr_id_inc	
+		ptr_id: = ptr_id+ptr_id_inc
 		endm
 
 		ptr_id:		= 0
 		ptr_id_inc: = 2
 
 		CharacterRoutines	CommonRoutineIDs	; generate routine IDs without character names (used wherever code applies to both characters)
-		
+
 
 ; ----------------------------------------------------------------------------
 ; This macro is used to keep Sonic and Tails' animation IDs synchronized,
 ; as much of the code depends on them being the same.
 
-; 
+;
 ; flag1: s = different animation script for Super Sonic; n = Super Sonic
 ; does not have a pointer for this animation
 ; flag2: c = common animation to both Sonic and Tails; n = Tails does not
 ; have a pointer for this animation
 ; ----------------------------------------------------------------------------
-		
+
 CharacterAnimations:		macro	func
 		\func	s,c, 	Walk				; 0
 		\func	s,c,	Run				; 1
@@ -418,19 +418,19 @@ CharacterAnimations:		macro	func
 		\func	 , ,	Transform,HaulAss		; $1F
 		\func	n, ,	Lying,Fly			; $20
 		\func	n,n,	LieDown,			; $21
-		endm		
-		
+		endm
+
 CommonAnimationIDs:	macro	flag1,flag2,sonic,tails
 		if stricmp ("\flag2","c")
 		id_Ani_\sonic:	equ	ptr_id			; make ID constant if animation is shared
 		endc
 		ptr_id: = ptr_id+ptr_id_inc			; increment pointer ID
 		endm
-		
+
 		ptr_id:		= 0
 		ptr_id_inc: = 1
-		
-		CharacterAnimations		CommonAnimationIDs ; generate common ID for animations shared by Sonic and Tails			
+
+		CharacterAnimations		CommonAnimationIDs ; generate common ID for animations shared by Sonic and Tails
 
 ; ---------------------------------------------------------------------------
 ; Object variable offsets
@@ -439,7 +439,7 @@ CommonAnimationIDs:	macro	flag1,flag2,sonic,tails
 		opt	ae+					; enable auto evens
 			rsreset
 
-; Main OST					
+; Main OST
 ost_id:			rs.b 1					;  0 ; universal; object id
 ost_render:		rs.b 1					;  1 ; universal; bitfield for x/y flip, display mode; bits defined below
 	render_xflip_bit:	equ 0
@@ -468,7 +468,7 @@ ost_tile:		rs.w 1					;  2 ; universal; tile VRAM, palette, priority, and x-flip
 	tile_pal12_bit:	equ 5
 	tile_pal34_bit:	equ 6
 	tile_hi_bit:	equ 7
-	
+
 	tile_xflip:	equ (1<<tile_xflip_bit)<<8		; $800
 	tile_yflip:	equ (1<<tile_yflip_bit)<<8		; $1000
 	tile_pal1:	equ (0<<tile_xflip_bit)<<8		; 0
@@ -476,13 +476,13 @@ ost_tile:		rs.w 1					;  2 ; universal; tile VRAM, palette, priority, and x-flip
 	tile_pal3:	equ (1<<tile_pal34_bit)<<8		; $4000
 	tile_pal4:	equ ((1<<tile_pal34_bit)|(1<<tile_pal12_bit))<<8 ; $6000
 	tile_hi:	equ (1<<tile_hi_bit)<<8			; $8000
-	
+
 	tile_palette:	equ tile_pal4				; $6000
 	tile_settings:	equ	tile_xflip|tile_yflip|tile_palette|tile_hi ; $F800
 	tile_vram:		equ (~tile_settings)&$FFFF	; $7FF
 	tile_draw:		equ	(~tile_hi)&$FFFF	; $7FFF
-	
-	
+
+
 ost_mappings:		rs.l 1					;  4 ; universal; mappings address (4 bytes)
 ost_x_pos:			rs.l 1				;  8 ; universal; x-axis position (2 bytes)
 ost_x_screen:		equ ost_x_pos				;  8 ; x-axis position for screen-fixed items (2 bytes)
@@ -535,7 +535,7 @@ ost_primary_status:			rs.b 1			; $22 ; most objects; bitfield indicating orienta
 	status_pushing_both:    equ status_p1_pushing|status_p2_pushing ; both players are pushing this (objects only)
 	status_underwater:	equ 1<<status_underwater_bit	; Sonic/Tails is underwater (Sonic/Tails only)
 	status_broken:		equ 1<<status_broken_bit	; object has been broken (enemies/bosses)
-	
+
 ost_respawn:				rs.b 1			; $23 ; non-player objects; respawn list index number
 ost_primary_routine:		rs.b 1				; $24 ; most objects; primary routine number
 ost_secondary_routine:		rs.b 1				; $25 ; most objects; secondary routine number
@@ -551,7 +551,7 @@ ost_used:		equ __rs-1				; bytes used by regular OST, everything after this is s
 ; Multi-sprite object data OST offsets
 ; Note that multisprite objects cannot use a number of ordinary OST slots
 next_subspr:	equ 6
-			
+
 			rsset ost_y_pos-1			; $B
 ost_mainspr_frame:			rs.b 1			; $B ; current frame of parent sprite
 							rs.b 2	; $C-D; unused in this context
@@ -619,7 +619,7 @@ ost_sticktoconvex:			rs.b 1			; $38 ; 1 if Sonic/Tails is stuck to a convex surf
 ost_pinball_mode:
 ost_spindash_flag:			rs.b 1			; $39 ; 0 for normal, 1 for charging a spindash or forced rolling
 ost_pinball_flag:			equ ost_spindash_flag
-ost_spindash_counter:						; $3A ; 
+ost_spindash_counter:						; $3A ;
 ost_restart_time:			rs.w 1			; $3A ; time until level restarts
 ost_jump:					rs.b 1		; $3C ; 1 if Sonic/Tails is jumping
 ost_interact:				rs.b 1			; $3D ; OST index of object player stands on
@@ -629,29 +629,29 @@ ost_lrb_solid_bit:			rs.w 1			; $3F ; ; the bit to check for left/right/bottom s
 
 ; Boss object variables
 ost_boss_subtype: 		equ $A				;  subtype counter for all bosses except EHZ and CPZ; also determines primary routine
-ost_boss_flash_time: 	equ $14					; 
-ost_boss_wobble:		equ $1A				; 
+ost_boss_flash_time: 	equ $14					;
+ost_boss_wobble:		equ $1A				;
 ost_boss_routine:		equ $26				;  in place of ost_angle
-ost_boss_defeated:		equ $2C				; 
-ost_boss_hitcount2:		equ $32				; 
+ost_boss_defeated:		equ $2C				;
+ost_boss_hitcount2:		equ $32				;
 ost_boss_hurtplayer:		equ $38				;  flag set by collision response routine when player 1 has just been hurt by a boss
 
 
 ; Special Stage object properties
-ost_ss_dplc_timer: 		equ $23				; 
-ost_ss_x_pos: 			equ $2A				; 
-ost_ss_x_sub: 			equ $2C				; 
-ost_ss_y_pos: 			equ $2E				; 
-ost_ss_y_sub:			equ $30				; 
-ost_ss_init_flip_timer: equ $32					; 
-ost_ss_flip_timer: 		equ $33				; 
-ost_ss_z_pos: 			equ $34				; 
-ost_ss_hurt_timer: 		equ $36				; 
-ost_ss_slide_timer: 	equ $37					; 
+ost_ss_dplc_timer: 		equ $23				;
+ost_ss_x_pos: 			equ $2A				;
+ost_ss_x_sub: 			equ $2C				;
+ost_ss_y_pos: 			equ $2E				;
+ost_ss_y_sub:			equ $30				;
+ost_ss_init_flip_timer: equ $32					;
+ost_ss_flip_timer: 		equ $33				;
+ost_ss_z_pos: 			equ $34				;
+ost_ss_hurt_timer: 		equ $36				;
+ost_ss_slide_timer: 	equ $37					;
 ost_ss_rings_base:		equ $3C				;  ; read as a word
 ost_ss_rings_hundreds: 	equ $3C					;  : read as a byte if we only want hundreds
-ost_ss_rings_tens: 		equ $3D				;  
-ost_ss_rings_units: 	equ $3E					;  
+ost_ss_rings_tens: 		equ $3D				;
+ost_ss_rings_units: 	equ $3E					;
 ost_ss_last_angle_index: equ $3F
 
 ; Additional object variables

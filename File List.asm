@@ -16,11 +16,11 @@
 		filedef	BM128_CNZ,"mappings/128x128/CNZ",kos,kos
 		filedef	BM16_CPZ,"mappings/16x16/CPZ_DEZ",kos,kos
 		filedef	BM128_CPZ,"mappings/128x128/CPZ_DEZ",kos,kos
-		 
+
 		; This file contains $320 blocks, overflowing the 'Block_table' buffer. This causes
 		; 'TempArray_LayerDef' to be overwritten with (empty) block data.
 		filedef	BM16_ARZ,"mappings/16x16/ARZ",kos,kos
-		
+
 		filedef	BM128_ARZ,"mappings/128x128/ARZ",kos,kos
 		filedef	BM16_WFZ,"mappings/16x16/WFZ_SCZ",kos,kos
 		filedef	BM128_WFZ,"mappings/128x128/WFZ_SCZ",kos,kos
@@ -52,7 +52,7 @@
 		filedef	Eni_EndingSonicPlane,"mappings/planes/Sonic Piloting Tornado in Ending Cutscene",eni,unc
 		filedef	Eni_SpecialBack,"mappings/planes/Special Stage Background (Main)",eni,unc
 		filedef	Eni_SpecialBackBottom,"mappings/planes/Special Stage Background (Lower)",eni,unc
-		
+
 ; ---------------------------------------------------------------------------
 ; File definitions - Kosinski graphics
 ; ---------------------------------------------------------------------------
@@ -68,13 +68,13 @@
 		filedef	Kos_ARZ,"art/kosinski/ARZ",kos,unc
 		filedef	Kos_SCZ,"art/kosinski/WFZ_SCZ",kos,unc
 		filedef	Kos_WFZ,"art/kosinski/WFZ_Supp",kos,unc
-		
+
 		; Special Stage level patterns
 		; Only one line of each tile is stored in this file. The other 7 lines are
 		; the same at this one line, so to get the full tiles, each line needs to be
-		; duplicated 7 times over.  
+		; duplicated 7 times over.
 		filedef	Kos_Special,"art/kosinski/SpecialStage",kos,unc
-		
+
 ; ---------------------------------------------------------------------------
 ; File definitions - Nemesis graphics
 ; ---------------------------------------------------------------------------
@@ -235,7 +235,7 @@
 		filedef Nem_DEZBoss,"art/nemesis/Eggrobo",nem,unc ; 327 tiles
 		filedef Nem_Crawl,"art/nemesis/Crawl",nem,unc	; 42 tiles
 		filedef Nem_TornadoThruster,"art/nemesis/The Tornado's Rocket Booster",nem,unc ; 26 tiles
-		
+
 		filedef Nem_EndingStills,"art/nemesis/Ending Stills",nem,unc ; 363 tiles
 		filedef Nem_EndingFinalTornado,"art/nemesis/Tornado Facing Camera at End of Ending Sequence",nem,unc ; 127 tiles
 		filedef Nem_EndingMiniTornado,"art/nemesis/Tornado Distant Shots in Ending Sequence",nem,unc ; 109 tiles
@@ -255,17 +255,17 @@
 		filedef Nem_SpecialExplosion,"art/nemesis/Special Stage Explosion",nem,unc ; 48 tiles
 		filedef Nem_SpecialBomb,"art/nemesis/Special Stage Bomb",nem,unc ; 80 tiles
 		filedef Nem_SpecialEmerald,"art/nemesis/Special Stage Emerald",nem,unc ; 46 tiles
-		filedef Nem_SpecialMessages,"art/nemesis/Special Stage Checkpoint Messages & Icons",nem,unc ; 99 tiles 
+		filedef Nem_SpecialMessages,"art/nemesis/Special Stage Checkpoint Messages & Icons",nem,unc ; 99 tiles
 		filedef Nem_SpecialSonicAndTails,"art/nemesis/Special Stage Sonic & Tails",nem,unc ; 851 tiles
 		filedef Nem_SpecialTailsText,"art/nemesis/Special Stage Tails HUD Text",nem,unc ; 5 tiles
-		
+
 		filedef Nem_Fireball1,"art/nemesis/HTZ Fireball 1",nem,unc ; 20 tiles
 		filedef Nem_Waterfall,"art/nemesis/Waterfall",nem,unc ; 24 tiles
 		filedef Nem_HTZFireball2,"art/nemesis/HTZ Fireball 2",nem,unc ; 16 tiles
 		filedef Nem_EHZBridge,"art/nemesis/EHZ Bridge",nem,unc ; 8 tiles
 		filedef Nem_Tram,"art/nemesis/HTZ Zipline Platform",nem,unc ; 48 tiles
 		filedef Nem_HTZOneWayBarrier,"art/nemesis/HTZ One-Way Barrier",nem,unc ; 4 tiles
-		filedef Nem_SeeSaw,"art/nemesis/HTZ See-saw",nem,unc ; 24 tiles 
+		filedef Nem_SeeSaw,"art/nemesis/HTZ See-saw",nem,unc ; 24 tiles
 		filedef Nem_UnusedFireball,"art/nemesis/Unused Fireball",nem,unc ; 24 tiles
 		filedef Nem_HTZRock,"art/nemesis/HTZ Rock",nem,unc ; 20 tiles
 		filedef Nem_Sol,"art/nemesis/Sol",nem,unc	; 4 tiles
@@ -285,7 +285,7 @@
 		filedef Nem_VineSwitch,"art/nemesis/MCZ Vine Switch",nem,unc ; 16 tiles
 		filedef Nem_VinePulley,"art/nemesis/MCZ Vine Pulley",nem,unc ; 10 tiles
 		filedef Nem_DrawbridgeLogs,"art/nemesis/MCZ Drawbridge Logs",nem,unc ; 20 tiles
-		
+
 
 ; ---------------------------------------------------------------------------
 ; File definitions - uncompressed graphics
@@ -354,8 +354,8 @@
 		filedef	Pal_SS_TransformationCyc,"art/palettes/Cycle - Super Sonic Transformation",bin,bin
 		filedef	Pal_SS_CPZUWTransformationCyc,"art/palettes/Cycle - Super Sonic Transformation CPZ Water",bin,bin
 		filedef	Pal_SS_ARZUWTransformationCyc,"art/palettes/Cycle - Super Sonic Transformation ARZ Water",bin,bin
-		filedef	Pal_S1_Sega1,"art/palettes/S1 Sega Logo Stripe",bin,bin ; unused Sonic 1 leftover - SEGA logo stripe	
-		filedef	Pal_S1_Sega2,"art/palettes/S1 Sega Logo",bin,bin ; unused Sonic 1 leftover - SEGA logo	
+		filedef	Pal_S1_Sega1,"art/palettes/S1 Sega Logo Stripe",bin,bin ; unused Sonic 1 leftover - SEGA logo stripe
+		filedef	Pal_S1_Sega2,"art/palettes/S1 Sega Logo",bin,bin ; unused Sonic 1 leftover - SEGA logo
 		filedef Pal_Sega,"art/palettes/Sega Screen",bin,bin
 		filedef	Pal_Title,"art/palettes/Title Screen",bin,bin
 		filedef	Pal_MenuB,"art/palettes/S2B Level Select",bin,bin ; unused beta leftover - level select
@@ -432,7 +432,7 @@
 		filedef	ColS_ARZ,"collision/ARZ Secondary",kos,unc
 		filedef	ColP_WFZSCZ,"collision/WFZ & SCZ Primary",kos,unc
 		filedef	ColS_WFZSCZ,"collision/WFZ & SCZ Secondary",kos,unc
-		
+
 ; ---------------------------------------------------------------------------
 ; File definitions - level layouts
 ; ---------------------------------------------------------------------------
@@ -457,8 +457,8 @@
 		filedef	Level_ARZ1,"level/layout/ARZ 1",kos,unc
 		filedef	Level_ARZ2,"level/layout/ARZ 2",kos,unc
 		filedef	Level_SCZ,"level/layout/SCZ",kos,unc
-		
-		
+
+
 ; ---------------------------------------------------------------------------
 ; File definitions - misc compressed data
 ; ---------------------------------------------------------------------------
@@ -466,13 +466,13 @@
 		filedef Kos_SpecialPerspective,"misc/Special Stage Object Perspective Data",kos,unc
 		filedef	Nem_SpecialLevelLayouts,"misc/Special Stage Level Layouts",nem,unc
 		filedef Koz_SpecialObjectLocations,"misc/Special Stage Object Locations",kos,unc
-		
+
 ; ---------------------------------------------------------------------------
 ; File definitions - sound
 ; ---------------------------------------------------------------------------
 
 		filedef SegaPCM,"sound/PCM/SEGA",pcm,pcm
-	
+
 	if sizeof_SegaPCM>sizeof_z80_bank
 		inform 3,"Sega sound must fit within $%h bytes, but you have a $%h byte Sega sound.",sizeof_z80_bank,sizeof_SegaPCM
 	endif
@@ -496,7 +496,7 @@ defdac:	macro	lbl,file
 		defdac	DAC_Clap,"sound/DAC/Clap.bin"
 		defdac	DAC_RecordScratch,"sound/DAC/Record Scratch.bin"
 		defdac	DAC_VLowClap,"sound/DAC/Low Clap.bin"
-		
+
 	if sizeof_dac_samples>sizeof_z80_bank
 		inform 3,"DAC samples must fit within $%h bytes, but you have $%h bytes of DAC samples.",sizeof_z80_bank,sizeof_dac_samples
 	endc

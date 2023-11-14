@@ -61,7 +61,7 @@ Map_obj56_a_00BA:	spritemap
 ; -------------------------------------------------------------------------------
 
 include_EggDrillster_Maps:	macro
-		
+
 Map_Drillster:	index offset(*)
 		ptr	Map_obj56_b_0010
 		ptr	Map_obj56_b_002A
@@ -108,7 +108,7 @@ Map_obj56_b_0066:	spritemap
 
 		even
 		endm
-		
+
 ; -------------------------------------------------------------------------------
 ; Sprite mappings - EHZ Eggman and Eggpod
 ; -------------------------------------------------------------------------------
@@ -175,4 +175,4 @@ Map_obj56_c_00DA:	spritemap
 
 		even
 		endm
-		
+

@@ -1,11 +1,11 @@
 ; ---------------------------------------------------------------------------
 ; Define background music
 ;
-; This special macro is used to generate constants for both the main program and 
+; This special macro is used to generate constants for both the main program and
 ; sound driver, and for the compressed music file definitions.
-; Unfortunately, we can't use it to generate the includes directly, as they are 
+; Unfortunately, we can't use it to generate the includes directly, as they are
 ; included in the ROM in a completely different order.
-; line format: \func	sound file, speed shoes tempo, flag 
+; line format: \func	sound file, speed shoes tempo, flag
 ; (20h = uncompressed, 40h = disables PAL adjustment)
 ; ---------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ MusicFiles:	macro func
 		\func	Emerald,		0D5h,	uncompressed_mus
 		\func	Credits,		0F0h,	uncompressed_mus
 		\func	Drowning,		80h,	disable_pal ; don't adjust the drowning music for PAL; keep it synchronized with the gameplay
-		endm	
+		endm
 
 ; ---------------------------------------------------------------------------
 ; Define sound effects
@@ -68,7 +68,7 @@ SFXFiles:	macro	func
 		; the sound driver via their ID constants. If you change their names here,
 		; you will need to change their constants in the driver accordingly.
 
-		\func	Jump,			80h	
+		\func	Jump,			80h
 		\func	Checkpoint,		70h
 		\func	SpikeSwitch,	70h			; used by Mecha Sonic
 		\func	Death,			70h
@@ -77,14 +77,14 @@ SFXFiles:	macro	func
 		\func	SpikeHit,		70h		; spike impalement
 		\func	Sparkle,		70h
 		\func	Beep,			70h
-		\func	ActionBlock,	70h			; unused Sonic 1 leftover, sound made when touching R block in Special Stage 
+		\func	ActionBlock,	70h			; unused Sonic 1 leftover, sound made when touching R block in Special Stage
 		\func	Splash,			68h
 		\func	Swish,			70h		; apparently unused
 		\func	BossHit,		70h
 		\func	Bubble,			70h
 		\func	FireBall,		60h		; lava ball, arrow firing
 		\func	Shield,			70h
-		
+
 		\func	LaserBeam,		70h		; same sound was used for the saws in Sonic 1's SBZ
 		\func	Electricity,	60h			; unused Sonic 1 leftover, sound made by SBZ electric traps
 		\func	Drown,			70h
@@ -101,7 +101,7 @@ SFXFiles:	macro	func
 		\func	Hammer,			70h
 		\func	Roll,			70h
 		\func	ContinueJingle,	7Fh
-				
+
 		\func	SlotMachine,	6Fh			; slot machine ding
 		\func	Break,			70h
 		\func	Ding,			70h		; air warning ding
@@ -118,7 +118,7 @@ SFXFiles:	macro	func
 		\func	Switch,			6Fh
 		\func	RingLeft,		70h
 		\func	Signpost,		70h
-		
+
 		\func	Zapper,			70h		; CNZ boss zapper
 		\func	Unknown2,		60h		; unknown, never used
 		\func	Unknown3,		60h		; unknown, never used
@@ -135,7 +135,7 @@ SFXFiles:	macro	func
 		\func	ArrowStick,		60h
 		\func	Helicopter,		60h		; Eggman's helicopter in EHZ, propellers in WFZ
 		\func	Transform,		70h		; Super Sonic transformation
-		
+
 		\func	SpinDashCharge,	70h			; charging a spindash
 		\func	Rumbling2,		70h		; HTZ earthquakes, ARZ boss pillars, Death Egg rumbling as it explodes
 		\func	PinballLauncher,70h			; CNZ pinball launchers
@@ -152,8 +152,8 @@ SFXFiles:	macro	func
 		\func	Error,			71h
 		\func	MechaSonicBuzz,	70h
 		\func	LargeLaser,		70h		; large laser that shoots down Tornado in WFZ
-		
-		\func	OilSlide,		6Fh	
+
+		\func	OilSlide,		6Fh
 		endm
 
 
@@ -163,22 +163,22 @@ SFXFiles:	macro	func
 ; This special macro is used to generate constants.
 ; line format: \func	command name, command priority
 
-; Note that Pause and Unpause are not real commands: but instead signal 
+; Note that Pause and Unpause are not real commands: but instead signal
 ; SndDriverInput to set the driver's pause flag, and are not passed to the
 ; driver itself.
 ; ---------------------------------------------------------------------------
 DriverCmds:	macro	func
-		
+
 		\func	StopSFX,	real
 		\func	Fade,		real
-		\func	Sega,		real	
-		\func	Speedup,	real	
-		\func	Slowdown,	real	
+		\func	Sega,		real
+		\func	Speedup,	real
+		\func	Slowdown,	real
 		\func	Stop,		real			; last real command
 		\func	Pause
 		\func	Unpause
 		endm
-			
+
 ; ---------------------------------------------------------------------------
 ; Generate constants for sound IDs in the main program
 ; (Constants for the sound driver are generated at MusicIndex)
@@ -204,9 +204,9 @@ _firstSfx:	rs.b 0						; constant for the first sfx
 GenSfxConst:	macro	name
 sfx_\name:	rs.b 1						; use the next ID for sfx
 		endm
-		
+
 		SfxFiles	GenSfxConst			; generate constants for each sfx file
-_lastSfx:	equ __rs					; constant for empty slot after last sfx		
+_lastSfx:	equ __rs					; constant for empty slot after last sfx
 ; ---------------------------------------------------------------------------
 
 ; Sound commands

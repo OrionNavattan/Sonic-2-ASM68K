@@ -225,13 +225,13 @@ Map_obj5D_a_0276:	spritemap
 		endsprite
 
 		even
-	
+
 ; -------------------------------------------------------------------------------
 ; Sprite mappings - CPZ Eggman and Eggpod
 ; -------------------------------------------------------------------------------
 
 include_CPZEggpodSmoke_Maps:	macro
-		
+
 Map_BCPZ_Eggpod:	index offset(*)
 		ptr	Map_obj5D_b_000E
 		ptr	Map_obj5D_b_0030
@@ -309,7 +309,7 @@ Map_obj5D_c_000E:	spritemap
 		endsprite
 
 		even
-		
+
 ; -------------------------------------------------------------------------------
 ; Sprite mappings - smoke made by CPZ boss upon defeat
 ; Unused due to a bug in loc_2E9B6; see there for more information
@@ -337,5 +337,5 @@ Map_obj5D_d_0026:	spritemap
 		piece	-8, -8, 2x2, $C
 		endsprite
 
-		even		
-		endm	
+		even
+		endm

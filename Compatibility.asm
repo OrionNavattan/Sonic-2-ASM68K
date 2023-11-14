@@ -23,15 +23,15 @@ mapping_frame:	equ	ost_frame
 anim_frame:		equ	ost_anim_frame
 anim:			equ	ost_anim
 prev_anim:		equ	ost_anim_restart
-anim_frame_duration:	equ ost_anim_time 
-collision_flags:		equ ost_col_type 
+anim_frame_duration:	equ ost_anim_time
+collision_flags:		equ ost_col_type
 collision_property:		equ ost_col_property
 status:					equ	ost_primary_status
 respawn_index:			equ ost_respawn
 routine:				equ ost_primary_routine
 routine_secondary:		equ	ost_secondary_routine
 angle:					equ	ost_angle
- 
+
 subtype:			equ ost_subtype
 flip_angle:			equ ost_flip_angl
 air_left:			equ ost_air_left
@@ -79,7 +79,7 @@ next_object			equ sizeof_ost
 
 mainspr_mapframe:		equ ost_mainspr_frame
 mainspr_childsprites:	equ	ost_mainspr_childsprites
-sub2_x_pos:				equ	ost_subspr2_x_pos		
+sub2_x_pos:				equ	ost_subspr2_x_pos
 sub2_y_pos:				equ ost_subspr2_y_pos
 mainspr_height:			equ ost_mainspr_height
 sub2_mapframe:			equ ost_subspr2_frame
@@ -166,7 +166,7 @@ Primary_Collision:			equ	v_primary_collision
 Secondary_Collision:		equ	v_secondary_collision
 VDP_Command_Buffer:			equ	v_dma_queue
 VDP_Command_Buffer_Slot:	equ	v_dma_queue_slot
-Sprite_Table_2:				equ	v_sprite_queue_2	
+Sprite_Table_2:				equ	v_sprite_queue_2
 Horiz_Scroll_Buf:			equ v_hscroll_buffer
 Sonic_Stat_Record_Buf:		equ	v_sonic_stat_tracker
 Sonic_Pos_Record_Buf:		equ v_sonic_pos_tracker
@@ -653,7 +653,7 @@ unk_FFDA:	equ v_unknown_titlescrn
 unk_FFDC:	equ	v_cnz_bumper_debug1
 unk_FFDD:	equ	v_cnz_bumper_debug2
 unk_FFDE:	equ	v_cnz_bumper_debug3
-unk_FFDF:	equ	v_cnz_bumper_debug4	
+unk_FFDF:	equ	v_cnz_bumper_debug4
 
 SoundQueue:	equ v_soundqueue
 SoundQueue.Music0: equ	v_soundqueue+music_0
@@ -920,9 +920,9 @@ GoSubStack:			equ ch_stack
 zTrack:				equ sizeof_trackvars
 
 zPalUpdTick			equ	v_pal_update_counter
-zCurDAC:			equ	v_current_dac	
-zCurSong			equ	v_current_song	
-zDoSFXFlag:			equ	f_sfx	
+zCurDAC:			equ	v_current_dac
+zCurSong			equ	v_current_song
+zDoSFXFlag:			equ	f_sfx
 zRingSpeaker:			equ	f_stereo_alt
 zGloopFlag:				equ	f_gloop
 zSpindashPlayingCounter:		equ	v_spindash_counter

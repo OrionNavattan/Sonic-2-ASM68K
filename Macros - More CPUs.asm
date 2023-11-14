@@ -1055,7 +1055,7 @@ sbc:		macro
 		if narg=2 & strcmp("\1","a")
 			shift					; ignore a
 		endc
-		
+
 		if (narg=1) | (narg=2)
 			if instr("a b c d e h l (hl) ","\1\ ")
 			getzreg	\1

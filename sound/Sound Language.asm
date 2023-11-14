@@ -11,16 +11,16 @@
 ; OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ; ===========================================================================
-; Orginally created for AS by Flamewing, based on S1SMPS2ASM version 1.1 
+; Orginally created for AS by Flamewing, based on S1SMPS2ASM version 1.1
 ; by Marc Gordon (AKA Cinossu)
 
 ; Initial ASM68K port by Brainulator; modified by OrionNavattan
 ; with some influence from NatsumiFox's AMPS.
 
-; The conditionals for driver version, SMPS2ASM version, and sample settings, 
+; The conditionals for driver version, SMPS2ASM version, and sample settings,
 ; as well as all note and sample definitions, are in "Frequency, Note, Envelope,
 ; & Sample Definitions.asm".
-; Everything in this file is specific to SMPS2ASM. 
+; Everything in this file is specific to SMPS2ASM.
 ; ---------------------------------------------------------------------------
 
 ; PSG conversion to S3/S&K/S3D drivers require a tone shift of 12 semi-tones.
@@ -151,7 +151,7 @@ CheckedChannelPointer macro location
 		endc
 	endc
 	endm
-	
+
 ; ---------------------------------------------------------------------------
 ; Header Macros
 smpsHeaderStartSong macro ver,sourcesmps2asmver
@@ -292,7 +292,7 @@ smpsHeaderSFXChannel macro chanid,location,pitch,vol
 	endc
 	dc.b	vol
 	endm
-	
+
 ; ---------------------------------------------------------------------------
 ; Co-ord Flag Macros and Equates
 ; E0xx - Panning, AMS, FMS
@@ -534,7 +534,7 @@ smpsCall macro loc
 		dc.w \loc-offset(*)-1
 	endc
 	endm
-	
+
 ; ---------------------------------------------------------------------------
 ; Alter Volume
 smpsFMAlterVol macro val1,val2
@@ -650,7 +650,7 @@ smpsPlayMusic macro index
 	endc
 
 	endc
-	
+
 ; ---------------------------------------------------------------------------
 ; S1/S2 only coordination flag
 ; Sets D1L to maximum volume (minimum attenuation) and RR to maximum for operators 3 and 4 of FM1
@@ -684,7 +684,7 @@ smpsWeirdD1LRR macro
 smpsSetvoice macro
 	smpsFMvoice \_
 	endm
-	
+
 ; ---------------------------------------------------------------------------
 ; Macros for FM instruments
 ; Voices - Feedback

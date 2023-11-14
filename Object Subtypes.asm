@@ -18,7 +18,7 @@ type_titlintr_tailshand:		equ	id_TitlIntr_TailsHand ; $10
 
 ; PalChanger
 ; These match each of the entries in this object's data array.
-type_palchngr_titlelogo:				equ id_PalChngrData_TitleLogo ; 0 			
+type_palchngr_titlelogo:				equ id_PalChngrData_TitleLogo ; 0
 type_palchngr_titlebackground:			equ id_PalChngrData_TitleBackground ; 2
 type_palchngr_endingstillfirst:			equ id_PalChngrData_EndingStillFirst ; 4
 type_palchngr_endingstillnext:			equ id_PalChngrData_EndingStillNext ; 6
@@ -35,7 +35,7 @@ pspring_strength_bit:			equ 1			; 0 = strong spring, 1 = weak spring
 pspring_plane0_bit:				equ 2		; if set, move player to collision plane 0 on launch (unused)
 pspring_plane1_bit:				equ 3		; if set, move player to collision plane 1 on launch (unused)
 pspring_direction_bit:			equ 4			; 0 = vertical, 1 = horizontal
-pspring_killtransverse_bit:		equ 7			; if set, cancel transverse velocity on launch (unused)	
+pspring_killtransverse_bit:		equ 7			; if set, cancel transverse velocity on launch (unused)
 
 pspring_tumbleplayer:		equ 1<<pspring_tumbleplayer_bit
 pspring_strength:			equ 1<<pspring_strength_bit

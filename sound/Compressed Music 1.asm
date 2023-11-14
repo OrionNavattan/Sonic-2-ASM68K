@@ -15,5 +15,5 @@
 		inc_music	SpecialStage
 
 		end
-		
-		
+
+

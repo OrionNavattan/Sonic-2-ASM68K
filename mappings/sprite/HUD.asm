@@ -61,6 +61,7 @@ Frame_HUD1_AllRed:	spritemap
 		endsprite
 
 		even
+
 ; ---------------------------------------------------------------------------
 ; Sprite mappings - 2P mode HUD (TIME and RINGS text and life counter)
 ; ---------------------------------------------------------------------------
@@ -107,7 +108,7 @@ Frame_HUD2_TailsLives:	spritemap
 		piece	$10, $40, 4x2, $78, pal2
 		endsprite
 
-		even		
+		even
 ; ---------------------------------------------------------------------------
 ; Sprite mappings - 2P mode HUD (individual digits and colon)
 ; ---------------------------------------------------------------------------
@@ -169,4 +170,4 @@ Frame_HUD3_Colon:	spritemap
 		piece	0, 0, 1x2, $14, pal2
 		endsprite
 
-		even		
+		even

@@ -194,7 +194,7 @@ VolumeEnv:	macro	func
 ;		\func	07
 ;		\func	08
 ;		\func	09
-;	elseif SonicDriverVer=2	
+;	elseif SonicDriverVer=2
 		\func	01
 		\func	02
 		\func	03
@@ -208,7 +208,7 @@ VolumeEnv:	macro	func
 		\func	0Bh
 		\func	0Ch
 		\func	0Dh
-;	else							;if SonicDriverVer>=3	
+;	else							;if SonicDriverVer>=3
 ;		\func	01
 ;		\func	02
 ;		\func	03
@@ -248,7 +248,7 @@ VolumeEnv:	macro	func
 ;		\func	25h
 ;		\func	26h
 ;		\func	27h
-;	endc	
+;	endc
 	endm
 
 ; ---------------------------------------------------------------------------
@@ -257,19 +257,19 @@ VolumeEnv:	macro	func
 
 GenEnvConst:	macro	const
 		num: = \const
-		numstr: substr 1,2,"\const"			; get digits for constant	
+		numstr: substr 1,2,"\const"			; get digits for constant
 ;	if SonicDriverVer>=5
-;		if num<=$0D 
+;		if num<=$0D
 ;fTone_\numstr\:	rs.b 0						; if Flamewing's clone driver, generate fTone constants for envelopes $0D and lower for conversions
 ;		endc
-;sTone_\numstr\:	rs.b 1						; generate main constant for Flamewing's clone driver		
-;	elseif  SonicDriverVer>=3	
+;sTone_\numstr\:	rs.b 1						; generate main constant for Flamewing's clone driver
+;	elseif  SonicDriverVer>=3
 ;sTone_\numstr\:	rs.b 1						; generate constant for S3, S3K, S3D
-;	else							;if SonicDriverVer<=2	
-fTone_\numstr\:	rs.b 1						; generate constans for S1 & 2	
+;	else							;if SonicDriverVer<=2
+fTone_\numstr\:	rs.b 1						; generate constans for S1 & 2
 ;	endc
-	endm			
-		
+	endm
+
 ; ---------------------------------------------------------------------------
 
 		rsset	0					; envelopes start at 1
@@ -286,7 +286,7 @@ evcHold:		equ 80h					; terminator for PSG envelope lists
 ; Constants for IDs are: d(name)
 ; This special macro is used to generate constants and jump tables
 ;
-; line format: \func	name, name of original sample if this is simply 
+; line format: \func	name, name of original sample if this is simply
 ; a pitch alias, sample rate
 ; ---------------------------------------------------------------------------
 
@@ -304,27 +304,27 @@ DefineSamples:	macro	func
 ;		\func	TimpaniMid				; Timpani middle pitch
 ;		\func	TimpaniLow				; Timpani low pitch
 ;		\func	TimpaniFloor				; Timpani very low pitch
-		
+
 ;	elseif SonicDriverVer=2
-	
+
 		\func Kick,			,			8250 ; Kick Sample
 		\func Snare,		,			24000 ; Snare sample
 		\func Clap,			,			17000 ; Clap sample
-		\func Scratch,		,			15000 ; Record scratch sample	
-		\func Timpani,		,			7500 ; Timpani sample (DO NOT USE DIRECTLY)	
+		\func Scratch,		,			15000 ; Record scratch sample
+		\func Timpani,		,			7500 ; Timpani sample (DO NOT USE DIRECTLY)
 		\func HiTom,		,			14000 ; High tom sample
 		\func VLowClap,		,			7500 ; Very low clap sample, apparently unused directly?
 		\func HiTimpani,	Timpani,	9750	; Timpani high pitch
 		\func MidTimpani,	Timpani,	8750	; Timpani middle pitch
 		\func LowTimpani,	Timpani,	7250	; Timpani low pitch
-		\func VLowTimpani,	Timpani,	7000	; Timpani very low pitch	
+		\func VLowTimpani,	Timpani,	7000	; Timpani very low pitch
 		\func MidTom,		HiTom,		23000	; Middle tom sample
 		\func LowTom,		HiTom,		18000	; Low tom sample
 		\func FloorTom,		HiTom,		15000	; Very low tom sample
 		\func HiClap,		VLowClap,	15000	; High clap
 		\func MidClap,		VLowClap,	13000	; Mid clap
 		\func LowClap,		VLowClap,	9750	; Low clap
-		
+
 ;	else;if SonicDriverVer>=3
 ;		if use_s3_samples|use_sk_samples|use_s3d_samples
 ;			\func SnareS3				; $81
@@ -341,7 +341,7 @@ DefineSamples:	macro	func
 ;			\func HighMetalHit
 ;			\func HigherMetalHit
 ;			\func MidMetalHit
-;			\func ClapS3 
+;			\func ClapS3
 ;			\func ElectricHighTom			; $90
 ;			\func ElectricMidTom
 ;			\func ElectricLowTom
@@ -358,7 +358,7 @@ DefineSamples:	macro	func
 ;			\func PowerKick
 ;			\func QuickGlassCrash			; $9E
 ;		endc
-		
+
 ;		if use_s3_samples|use_sk_samples
 ;			\func GlassCrashSnare			; $9F
 ;			\func GlassCrash
@@ -368,7 +368,7 @@ DefineSamples:	macro	func
 ;			\func KickExtraBass
 ;			\func ComeOn
 ;			\func DanceSnare
-;			\func LooseKick	
+;			\func LooseKick
 ;			\func ModLooseKick
 ;			\func Woo
 ;			\func Go
@@ -377,7 +377,7 @@ DefineSamples:	macro	func
 ;			\func HiWoodBlock
 ;			\func LowWoodBlock
 ;			\func HiHitDrum1			; $AF
-		
+
 ;			\func LowHitDrum
 ;			\func MetalCrashHit
 ;			\func EchoedClapHit
@@ -400,7 +400,7 @@ DefineSamples:	macro	func
 ;			\func LowerPowerKickHit
 ;			\func LowestPowerKickHit		; $C4
 ;		endc
-		
+
 		; For conversions:
 ;		if use_s2_samples
 ;			\func Kick				; if using s2 samples AND any combo of s3, s3k, s3d samples, we need to reset the rs counter here
@@ -421,17 +421,17 @@ DefineSamples:	macro	func
 ;			\func MidClap
 ;			\func LowClap
 ;		endc
-		
+
 ;		if use_s3d_samples
 ;			\func FinalFightMetalCrash
 ;			\func IntroKick
 ;		endc
-		
+
 ;		if use_s3_samples
 ;			\func EchoedClapHit_S3
 ;			\func LowerEchoedClapHit_S3
 ;		endc
-;	endc					
+;	endc
 	endm
 
 ; ---------------------------------------------------------------------------
@@ -440,15 +440,15 @@ DefineSamples:	macro	func
 
 GenSampleConst:	macro	const
 ; for SMPS conversions, if we are using the Sonic 3 driver or greater, Sonic 2 samples,
-; AND any combination of S3, S3K, or S3D samples, then reset the rs counter to $81  
+; AND any combination of S3, S3K, or S3D samples, then reset the rs counter to $81
 ; starting with the S2 kick sample
 ;	if SonicDriverVer>=3
 ;		if use_s2_samples&(use_s3_samples|use_sk_samples|use_s3d_samples)
 ;			if stricmp("\const","Kick")
 ;				rsset $81
-;			endc	
-;		endc	
-;	endc		
+;			endc
+;		endc
+;	endc
 
 d\const:	rs.b 1						; generate the main constant
 
@@ -459,7 +459,7 @@ d\const:	rs.b 1						; generate the main constant
 _firstSample:	rs.b 0						; the first valid sample
 
 		DefineSamples	GenSampleConst			; generate constants for samples
-			
+
 _lastSample:	equ __rs-1					; the last valid sample
 
 ; ---------------------------------------------------------------------------
@@ -527,9 +527,9 @@ TrackCommand:	macro	func
 		\func	Loop					; Loop song data
 		\func	Call					; Call song subroutine
 		\func	Release34,MaxRelRate			; Hacky command to immediately release ops 3 and 4. Used in Sonic 1's SYZ music only
-	;elseif	SonicDriverVer=3	
+	;elseif	SonicDriverVer=3
 	endm
-	
+
 ; ---------------------------------------------------------------------------
 ; Constants for tracker commands
 ; ---------------------------------------------------------------------------
