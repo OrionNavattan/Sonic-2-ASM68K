@@ -527,7 +527,7 @@ ost_primary_status:			rs.b 1			; $22 ; most objects; bitfield indicating orienta
 	status_platform:	equ 1<<status_platform_bit	; Sonic/Tails is standing on an object (Sonic/Tails only)
 	status_p1_platform:		equ 1<<status_p1_platform_bit ; main character is standing on this object (objects only)
 	status_p2_platform:		equ 1<<status_p2_platform_bit ; sidekick is standing on this object (objects only)
-	status_standing_both:   equ status_p1_platform|status_p2_platform ; both players are standing on this object (objects only)
+	status_platform_both:   equ status_p1_platform|status_p2_platform ; both players are standing on this object (objects only)
 	status_rolljump:	equ 1<<status_rolljump_bit	; Sonic/Tails is jumping after rolling (Sonic/Tails only)
 	status_pushing:		equ 1<<status_pushing_bit	; Sonic/Tails is pushing an object (Sonic/Tails only)
 	status_p1_pushing:		equ 1<<status_p1_pushing_bit ; player 1 is pushing this (objects only)

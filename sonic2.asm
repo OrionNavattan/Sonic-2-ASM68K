@@ -13652,7 +13652,7 @@ creditsptr:	macro	addr,line,col
 		shift
 		shift		
 		endr
-		dc.w -1					; terminator
+		dc.w -1						; terminator
 		endm
 
 vram_ptr: = vram_title_fg
@@ -32681,7 +32681,7 @@ SolidObject:
 
 	.stand:				
 		move.w	d4,d2
-		bsr.w	MoveWithPlatform				; move player with platform
+		bsr.w	MoveWithPlatform			; move player with platform
 		moveq	#0,d4					; clear flag for no new collision
 
 	.done:				
@@ -32723,7 +32723,7 @@ SolidObject_NoRenderChk:
 
 	.stand:				
 		move.w	d4,d2
-		bsr.w	MoveWithPlatform				; move player with platform
+		bsr.w	MoveWithPlatform			; move player with platform
 		moveq	#0,d4					; clear flag for no new collision
 		rts	
 		
@@ -32778,7 +32778,7 @@ SolidObject_Heightmap_SingleCharacter:
 
 .stand:				
 		move.w	d4,d2
-		bsr.w	MoveWithSlope			; move player with sloped platform
+		bsr.w	MoveWithSlope				; move player on slope
 		moveq	#0,d4					; clear flag for no new collision
 		rts
 		
@@ -32791,7 +32791,7 @@ SolidObject_Heightmap_Double:
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
 		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
-		bsr.s	.singlecharacter	; run for player 1
+		bsr.s	.singlecharacter			; run for player 1
 		popr.l	d1-d4
 		lea	(v_ost_player2).w,a1			; run for player 2
 		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
@@ -32825,7 +32825,8 @@ SolidObject_Heightmap_Double:
 		rts	
 		
 ; ---------------------------------------------------------------------------
-; Custom collision subroutine for Oil Ocean's pressure springs (Object 45)
+; Unused custom collision subroutine for the unused vertical subtype of Oil 
+; Ocean's pressure springs (Object 45)
 ; Almost identical to SolidObject, expect it branches to a custom 
 ; MoveWithPlatform routine.
 ; ---------------------------------------------------------------------------
@@ -32834,7 +32835,7 @@ SolidObject_OOZSpring:
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
 		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
-		bsr.s	.singlecharacter	; run for player 1
+		bsr.s	.singlecharacter			; run for player 1
 		popr.l	d1-d4
 		lea	(v_ost_player2).w,a1			; run for player 2
 		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
@@ -32874,11 +32875,11 @@ SolidObject_OOZSpring:
 
 .stand:				
 		move.w	ost_y_pos(a0),d0	
-		sub.w	d2,d0				; d2 = half object height
-		add.w	d3,d0				; d3 = ost_frame*2
+		sub.w	d2,d0					; d2 = half object height
+		add.w	d3,d0					; d3 = ost_frame*2
 		moveq	#0,d1
 		move.b	ost_height(a1),d1
-		sub.w	d1,d0				; subtract player's height
+		sub.w	d1,d0					; subtract player's height
 		move.w	d0,ost_y_pos(a1)			; update player's y position
 		sub.w	ost_x_pos(a0),d4
 		sub.w	d4,ost_x_pos(a1)			; update player's x position
@@ -33278,7 +33279,7 @@ MoveWithPlatform:
 		; Skip height and col checks; could be used with OOZ's custom solid routine
 		moveq	#0,d1
 		move.b	ost_height(a1),d1
-		sub.w	d1,d0				; subtract player's height
+		sub.w	d1,d0					; subtract player's height
 		move.w	d0,ost_y_pos(a1)			; update player's y position
 		sub.w	ost_x_pos(a0),d2
 		sub.w	d2,ost_x_pos(a1)			; update player's x position
@@ -33301,9 +33302,9 @@ MoveWithPlatform:
 
 MoveWithSlope:				
 		btst	#status_platform_bit,ost_primary_status(a1) ; is player standing on the object?
-		beq.s	MoveOnSlope_Done		; exit if not
+		beq.s	MoveOnSlope_Done			; exit if not
 		move.w	ost_x_pos(a1),d0
-		sub.w	ost_x_pos(a0),d0		; object x pos is already in d2; could be sub.w d2,d0
+		sub.w	ost_x_pos(a0),d0			; object x pos is already in d2; could be sub.w d2,d0
 		add.w	d1,d0					; d0 = x pos of player on object
 		lsr.w	#1,d0					; divide by 2
 		btst	#render_xflip_bit,ost_render(a0)	; is object horizontally flipped?
@@ -33315,13 +33316,13 @@ MoveWithSlope_Do:
 		move.b	(a2,d0.w),d1				; get heightmap value based on player's position on platform
 		ext.w	d1
 		move.w	ost_y_pos(a0),d0	
-		sub.w	d1,d0				; subtract heightmap value from object y pos
+		sub.w	d1,d0					; subtract heightmap value from object y pos
 		moveq	#0,d1
 		move.b	ost_height(a1),d1
-		sub.w	d1,d0				; subtract player's height
-		move.w	d0,ost_y_pos(a1)	; set player's new y pos
-		sub.w	ost_x_pos(a0),d2	; subtract x pos from itself?
-		sub.w	d2,ost_x_pos(a1)	; subtract to set player's new x pos
+		sub.w	d1,d0					; subtract player's height
+		move.w	d0,ost_y_pos(a1)			; set player's new y pos
+		sub.w	ost_x_pos(a0),d2			; subtract x pos from itself?
+		sub.w	d2,ost_x_pos(a1)			; subtract to set player's new x pos
 
 	MoveOnSlope_Done:				
 		rts	
@@ -33338,9 +33339,9 @@ MoveWithSlope_Do:
 
 MoveWithDoubleSlope:				
 		btst	#status_platform_bit,ost_primary_status(a1) ; is player standing on the object?
-		beq.s	MoveOnSlope_Done		; exit if not
+		beq.s	MoveOnSlope_Done			; exit if not
 		move.w	ost_x_pos(a1),d0
-		sub.w	ost_x_pos(a0),d0		; object x pos is already in d2; could be sub.w d2,d0
+		sub.w	ost_x_pos(a0),d0			; object x pos is already in d2; could be sub.w d2,d0
 		add.w	d1,d0					; d0 = x pos of player on object
 		btst	#render_xflip_bit,ost_render(a0)	; is object horizontally flipped?
 		beq.s	.no_xflip
@@ -33459,7 +33460,7 @@ SlopeObject:
 
 	.stillonplat:				
 		move.w	d4,d2
-		bsr.w	MoveWithSlope	; move player with platform
+		bsr.w	MoveWithSlope				; move player with platform
 		moveq	#0,d4
 		rts	
 ; ===========================================================================
@@ -47536,383 +47537,476 @@ JmpTo_DetectPlatform_SingleCharacter:
 PressureSpring:				
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_2410A(pc,d0.w),d1
-		jsr	off_2410A(pc,d1.w)
+		move.w	PSpring_Index(pc,d0.w),d1
+		jsr	PSpring_Index(pc,d1.w)
 		jmpto	DespawnObject,JmpTo11_DespawnObject
 ; ===========================================================================
-off_2410A:	index offset(*),,2	
-		ptr loc_24110					; 0 
-		ptr loc_24186					; 2
-		ptr loc_2427A					; 4
+PSpring_Index:	index offset(*),,2	
+		ptr PSpring_Init				; 0 
+		ptr PSpring_Vertical				; 2
+		ptr PSpring_Horizontal				; 4
+		
+		rsobj	PressureSpring,$30
+ost_pspring_strength:	rs.w 1					; $30; strength of spring
+ost_pspring_frame:		rs.b 1				; $32; frame counter used to track how compressed the spring is
+						rs.b 1		; unused
+ost_pspring_og_xpos: 	rs.w 1					; $34
+ost_pspring_compress:			rs.b 1			; $36 ; clearer
+		rsobjend	
+		
+; Subtype definitions
+pspring_tumbleplayer_bit:		equ 0			; if set, make player tumble after launch (unused)
+pspring_strength_bit:			equ 1			; 0 = strong spring, 1 = weak spring
+pspring_plane0_bit:				equ 2		; if set, move player to collision plane 0 on launch (unused)
+pspring_plane1_bit:				equ 3		; if set, move player to collision plane 1 on launch (unused)
+pspring_direction_bit:			equ 4			; 0 = vertical, 1 = horizontal
+pspring_killtransverse_bit:		equ 7			; if set, cancel transverse velocity on launch (unused)	
+
+pspring_tumbleplayer:		equ 1<<pspring_tumbleplayer_bit
+pspring_strength:			equ 1<<pspring_strength_bit
+pspring_plane0:				equ 1<<pspring_plane0_bit
+pspring_plane1:				equ 1<<pspring_plane1_bit
+pspring_direction:			equ 1<<pspring_direction_bit
+pspring_killtransverse:		equ 1<<pspring_killtransverse_bit
 ; ===========================================================================
 
-loc_24110:				
-		addq.b	#2,ost_primary_routine(a0)
+PSpring_Init:	; Routine 0			
+		addq.b	#2,ost_primary_routine(a0)		; go to PSpring_Vertical next
 		move.l	#Map_PSpring,ost_mappings(a0)
 		move.w	#tile_Nem_PushSpring+tile_pal3,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#$10,ost_displaywidth(a0)
+		move.b	#32/2,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
-		move.b	ost_subtype(a0),d0
-		lsr.w	#3,d0
+		move.b	ost_subtype(a0),d0			; high nybble of subtype = orientation, low nybble = strength
+		lsr.w	#3,d0					; only need high nybble
     if FixBugs
 		; This bugfix is a bit of a hack: ideally, the Oil Ocean Zone Act 2
 		; object layout should be corrected to not contain instances of this
 		; object with an invalid subtype, but this will have to do.
-		andi.w	#2,d0
+		andi.w	#pspring_direction>>3,d0
   	 else
 		; Some instances of this object use an invalid subtype of $30, 
 		; which results in d0 being 6 here. Due to sheer luck, 
-		; this ends up branching to 'loc_2414A' instead of crashing the game.
-		andi.w	#$E,d0
+		; this ends up branching to 'PSpring_InitHorizontal' instead of crashing the game.
+		andi.w	#(pspring_direction|$60)>>3,d0		; $E
     endc
-		move.w	off_24146(pc,d0.w),d0
-		jmp	off_24146(pc,d0.w)
+		move.w	PSpring_Init_Index(pc,d0.w),d0
+		jmp	PSpring_Init_Index(pc,d0.w)
 ; ===========================================================================
-off_24146:	index offset(*)					; verify subtype IDs
-		ptr loc_2416E					; 0 
-		ptr loc_2414A					; 1
+PSpring_Init_Index:	index offset(*)	
+		ptr PSpring_InitVertical			; 0 
+		ptr PSpring_InitHorizontal			; 2
 ; ===========================================================================
 
-loc_2414A:				
-		move.b	#4,ost_primary_routine(a0)
-		move.b	#1,ost_anim(a0)
-		move.b	#$A,ost_frame(a0)
-		move.w	#tile_Nem_PushSpring+tile_pal3,ost_tile(a0)
-		move.b	#$14,ost_displaywidth(a0)
-		move.w	ost_x_pos(a0),$34(a0)
+PSpring_InitHorizontal:				
+		move.b	#id_PSpring_Horizontal,ost_primary_routine(a0)
+		move.b	#1,ost_anim(a0)				; unused
+		move.b	#id_Frame_PSpring_Horiz1,ost_frame(a0)
+		move.w	#tile_Nem_PushSpring+tile_pal3,ost_tile(a0) ; unnecessary
+		move.b	#40/2,ost_displaywidth(a0)
+		move.w	ost_x_pos(a0),ost_pspring_og_xpos(a0)
 
-loc_2416E:				
+PSpring_InitVertical:				
 		move.b	ost_subtype(a0),d0
-		andi.w	#2,d0
-		move.w	word_24182(pc,d0.w),$30(a0)
+		andi.w	#2,d0					; only need low nybble
+		move.w	PSpring_Strengths(pc,d0.w),ost_pspring_strength(a0) ; get spring strength
 		jsrto	Adjust2PArtPointer,JmpTo20_Adjust2PArtPointer
 		rts	
 ; ===========================================================================
-word_24182:	
+
+PSpring_Strengths:	
 		dc.w $F000					; 0
-		dc.w $F600					; 1
+		dc.w $F600					; 2
 ; ===========================================================================
 
-loc_24186:				
+PSpring_Vertical:						; Routine 2; unused			
 		move.b	ost_primary_status(a0),d0
-		andi.b	#$18,d0
-		bne.s	loc_2419C
-		tst.b	$32(a0)
-		beq.s	loc_241A8
-		subq.b	#1,$32(a0)
-		bra.s	loc_241A8
+		andi.b	#status_platform_both,d0		; is a player standing on the spring?
+		bne.s	.compress				; if so, branch
+		tst.b	ost_pspring_frame(a0)			; is spring at rest (id_Frame_PSpring_Vert1)?
+		beq.s	.solid					; if so, branch
+		subq.b	#1,ost_pspring_frame(a0)		; decrement frame, decompressing the spring
+		bra.s	.solid
 ; ===========================================================================
 
-loc_2419C:				
-		cmpi.b	#9,$32(a0)
-		beq.s	loc_241C6
-		addq.b	#1,$32(a0)
+	.compress:				
+		cmpi.b	#id_Frame_PSpring_Vert10,ost_pspring_frame(a0) ; is spring fully compressed?
+		beq.s	PSpring_Vertical_LaunchPlayer		; if so, branch
+		addq.b	#1,ost_pspring_frame(a0)		; increment frame, compressing the spring
 
-loc_241A8:				
+	.solid:				
 		moveq	#0,d3
-		move.b	$32(a0),d3
-		move.b	d3,ost_frame(a0)
-		add.w	d3,d3
-		move.w	#$1B,d1
-		move.w	#$14,d2
-		move.w	ost_x_pos(a0),d4
+		move.b	ost_pspring_frame(a0),d3		; current frame of spring
+		move.b	d3,ost_frame(a0)			; set frame for display
+		add.w	d3,d3					; d3 = frame ID*2
+		move.w	#54/2,d1				; d1 = half width		
+		move.w	#40/2,d2				; d2 = half height
+		move.w	ost_x_pos(a0),d4			; d4 = x pos
 		jsrto	SolidObject_OOZSpring,JmpTo_SolidObject_OOZSpring
 		rts	
 ; ===========================================================================
 
-loc_241C6:				
-		lea	($FFFFB000).w,a1
-		moveq	#3,d6
-		bsr.s	loc_241D4
-		lea	($FFFFB040).w,a1
-		moveq	#4,d6
+PSpring_Vertical_LaunchPlayer:				
+		lea	(v_ost_player1).w,a1
+		moveq	#status_p1_platform_bit,d6
+		bsr.s	.launchplayerdo			; run for player 1
+		lea	(v_ost_player2).w,a1
+		moveq	#status_p2_platform_bit,d6		; run for player 2
 
-loc_241D4:				
-		bclr	d6,ost_primary_status(a0)
-		beq.w	locret_24278
-		move.w	$30(a0),ost_y_vel(a1)
-		bset	#1,ost_primary_status(a1)
-		bclr	#3,ost_primary_status(a1)
-		move.b	#$10,ost_anim(a1)
-		move.b	#2,ost_primary_routine(a1)
-		move.b	ost_subtype(a0),d0
-		bpl.s	loc_24206
-		move.w	#0,ost_x_vel(a1)
+.launchplayerdo:				
+		bclr	d6,ost_primary_status(a0)		; is player standing on spring?
+		beq.w	.nolaunch				; branch if not
+		move.w	ost_pspring_strength(a0),ost_y_vel(a1)	; launch player vertically
+		bset	#status_air_bit,ost_primary_status(a1)
+		bclr	#status_platform_bit,ost_primary_status(a1)
+		move.b	#id_Ani_Spring,ost_anim(a1)		; use spring animation
+		move.b	#id_Control,ost_primary_routine(a1)
+		move.b	ost_subtype(a0),d0			; does this spring stop player's transverse movement?
+		bpl.s	.retain_transverse			; branch if not
+		move.w	#0,ost_x_vel(a1)			; stop player's horizontal movement
 
-loc_24206:				
-		btst	#0,d0
-		beq.s	loc_24246
+	.retain_transverse:				
+		btst	#pspring_tumbleplayer_bit,d0
+		beq.s	.no_tumble				; branch if this spring isn't set to tumble the player
 		move.w	#1,ost_inertia(a1)
 		move.b	#1,ost_flip_angle(a1)
-		move.b	#0,ost_anim(a1)
-		move.b	#0,$2C(a1)
-		move.b	#4,$2D(a1)
-		btst	#1,d0
-		bne.s	loc_24236
-		move.b	#1,$2C(a1)
+		move.b	#id_Ani_Walk,ost_anim(a1)
+		move.b	#1-1,ost_flips_remaining(a1)		; make player flip once
+		move.b	#4,ost_flip_speed(a1)
+		btst	#pspring_strength_bit,d0
+		bne.s	.weak					; branch if this is a weak spring
+		move.b	#2-1,ost_flips_remaining(a1)		; make player flip twice
 
-loc_24236:				
+	.weak:				
 		btst	#status_xflip_bit,ost_primary_status(a1)
-		beq.s	loc_24246
-		neg.b	ost_flip_angle(a1)
+		beq.s	.no_tumble				; branch if spring isn't x-flipped
+		neg.b	ost_flip_angle(a1)			; invert flip angle and inertia
 		neg.w	ost_inertia(a1)
 
-loc_24246:				
-		andi.b	#$C,d0
-		cmpi.b	#4,d0
-		bne.s	loc_2425C
-		move.b	#$C,$3E(a1)
-		move.b	#$D,$3F(a1)
+	.no_tumble:				
+		andi.b	#pspring_plane0|pspring_plane1,d0	; only need plane switch bits
+		cmpi.b	#pspring_plane0,d0			; are we moving player to plane 0?
+		bne.s	.not_plane0				; branch if not
+		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 0
+		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
-loc_2425C:				
-		cmpi.b	#8,d0
-		bne.s	loc_2426E
-		move.b	#$E,$3E(a1)
-		move.b	#$F,$3F(a1)
+	.not_plane0:				
+		cmpi.b	#pspring_plane1,d0			; are we moving player to plane 1?
+		bne.s	.playsound				; branch if not
+		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 1
+		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
-loc_2426E:				
-		move.w	#sfx_Spring,d0	
+	.playsound:				
+		move.w	#sfx_Spring,d0				; play spring SFX
 		jmp	(PlaySound).l
 ; ===========================================================================
 
-locret_24278:				
+.nolaunch:	
 		rts	
 ; ===========================================================================
 
-loc_2427A:				
-		move.b	#0,$36(a0)
-		move.w	#$1F,d1
-		move.w	#$C,d2
-		move.w	#$D,d3
-		move.w	ost_x_pos(a0),d4
+PSpring_Horizontal:				
+		move.b	#0,ost_pspring_compress(a0)
+		move.w	#$3E/2,d1				; half width
+		move.w	#$18/2,d2				; half height
+		move.w	#$1A/2,d3				; half height standing
+		move.w	ost_x_pos(a0),d4			; object x pos
 		lea	(v_ost_player1).w,a1
-		moveq	#3,d6
-		movem.l	d1-d4,-(sp)
-		jsrto	SolidObject_NoRenderChk_SingleCharacter,JmpTo_SolidObject_NoRenderChk_SingleCharacter
-		cmpi.w	#1,d4
-		bne.s	loc_242C0
+		moveq	#status_p1_platform_bit,d6
+		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
+		jsrto	SolidObject_NoRenderChk_SingleCharacter,JmpTo_SolidObject_NoRenderChk_SingleCharacter ; run solidity checks for player 1
+		cmpi.w	#1,d4					; did player 1 touch the side of the spring?
+		bne.s	.player2				; branch if not
 		move.b	ost_primary_status(a0),d1
-		move.w	ost_x_pos(a0),d2
-		sub.w	ost_x_pos(a1),d2
-		bcs.s	loc_242B6
-		eori.b	#1,d1
+		move.w	ost_x_pos(a0),d2		
+		sub.w	ost_x_pos(a1),d2		
+		bcs.s	.player1_right				; branch if player 1 is right of spring
+		eori.b	#status_xflip,d1			; invert x flip flag
 
-loc_242B6:				
-		andi.b	#1,d1
-		bne.s	loc_242C0
-		bsr.w	loc_2433C
+	.player1_right:				
+		andi.b	#status_xflip,d1			; is x flip bit still set?
+		bne.s	.player2				; if so, branch
+		bsr.w	PSpring_HorizCompress			; compress spring
 
-loc_242C0:				
-		movem.l	(sp)+,d1-d4
+	.player2:				
+		popr.l	d1-d4
 		lea	(v_ost_player2).w,a1
-		moveq	#4,d6
-		jsrto	SolidObject_NoRenderChk_SingleCharacter,JmpTo_SolidObject_NoRenderChk_SingleCharacter
-		cmpi.w	#1,d4
-		bne.s	loc_242EE
+		moveq	#status_p2_platform_bit,d6
+		jsrto	SolidObject_NoRenderChk_SingleCharacter,JmpTo_SolidObject_NoRenderChk_SingleCharacter ; run solidity checks for player 2
+		cmpi.w	#1,d4					; did player 2 touch the side of the spring?
+		bne.s	.chk_decompress				; branch if not
 		move.b	ost_primary_status(a0),d1
 		move.w	ost_x_pos(a0),d2
 		sub.w	ost_x_pos(a1),d2
-		bcs.s	loc_242E6
-		eori.b	#1,d1
+		bcs.s	.player2_right				; branch if player 2 is right of spring
+		eori.b	#status_xflip,d1			; invert x flip flag
 
-loc_242E6:				
-		andi.b	#1,d1
-		bne.s	loc_242EE
-		bsr.s	loc_2433C
+	.player2_right:				
+		andi.b	#status_xflip,d1			; is x flip bit still set?
+		bne.s	.chk_decompress				; if so branch
+		bsr.s	PSpring_HorizCompress
 
-loc_242EE:				
-		tst.b	$36(a0)
-		bne.s	locret_2433A
-		move.w	$34(a0),d0
+	.chk_decompress:				
+		tst.b	ost_pspring_compress(a0)		; is spring compressing?
+		bne.s	.exit					; if so, exit
+		move.w	ost_pspring_og_xpos(a0),d0
 		cmp.w	ost_x_pos(a0),d0
-		beq.s	locret_2433A
-		bcc.s	loc_2431C
-		subq.b	#4,ost_frame(a0)
-		subq.w	#4,ost_x_pos(a0)
-		cmp.w	ost_x_pos(a0),d0
-		bcs.s	loc_24336
-		move.b	#$A,ost_frame(a0)
-		move.w	$34(a0),ost_x_pos(a0)
-		bra.s	loc_24336
+		beq.s	.exit					; branch if spring is idle
+		bcc.s	.right					; branch if spring faces right (decompress to right)
+		subq.b	#4,ost_frame(a0)			; decrement frame by 4, decompressing the spring 
+		subq.w	#4,ost_x_pos(a0)			; move spring left 4 px
+		cmp.w	ost_x_pos(a0),d0			; has spring fully decompressed?
+		bcs.s	.launchplayer				; branch if not
+		move.b	#id_Frame_PSpring_Horiz1,ost_frame(a0)	; set idle frame
+		move.w	ost_pspring_og_xpos(a0),ost_x_pos(a0)	; force original x pos
+		bra.s	.launchplayer
 ; ===========================================================================
 
-loc_2431C:				
-		subq.b	#4,ost_frame(a0)
-		addq.w	#4,ost_x_pos(a0)
-		cmp.w	ost_x_pos(a0),d0
-		bcc.s	loc_24336
-		move.b	#$A,ost_frame(a0)
-		move.w	$34(a0),ost_x_pos(a0)
+	.right:				
+		subq.b	#4,ost_frame(a0)			; decrement frame by 4, decompressing the spring 
+		addq.w	#4,ost_x_pos(a0)			; move spring right 4 px
+		cmp.w	ost_x_pos(a0),d0			; has spring fully decompressed?
+		bcc.s	.launchplayer				; branch if not
+		move.b	#id_Frame_PSpring_Horiz1,ost_frame(a0)	; set idle frame
+		move.w	ost_pspring_og_xpos(a0),ost_x_pos(a0)	; force original x pos
 
-loc_24336:				
-		bsr.w	loc_243D0
+	.launchplayer:				
+		bsr.w	PSpring_Horiz_LaunchPlayer	
 
-locret_2433A:				
+	.exit:				
 		rts	
 ; ===========================================================================
 
-loc_2433C:				
-		btst	#status_xflip_bit,ost_primary_status(a0)
-		beq.s	loc_24378
+PSpring_HorizCompress:				
+		btst	#status_xflip_bit,ost_primary_status(a0)	
+		beq.s	.spring_right				; branch if spring faces right
 		btst	#status_xflip_bit,ost_primary_status(a1)
-		bne.w	locret_243CE
-		tst.w	d0
-		bne.w	loc_2435E
+		bne.w	.exit					; branch if player is not facing spring
+		
+;spring_left:	
+		tst.w	d0					; d0 = 0 if earlier SolidObject call branched to Solid_AlignToSide from Solid_LeftRight (occurs if player is on edge of object)
+		bne.w	.on_edge				; branch if player is on edge
+		tst.w	ost_inertia(a1)	
+		beq.s	.exit					; branch if player is not moving
+		bpl.s	.max_compression			; branch if player is moving right
+		bra.s	.exit					; exit if moving left
+; ===========================================================================
+
+	.on_edge:				
+		move.w	ost_pspring_og_xpos(a0),d0	
+		addi.w	#18,d0		
+		cmp.w	ost_x_pos(a0),d0			; has spring moved 18px right?
+		beq.s	.max_compression			; if so, branch
+		addq.w	#1,ost_x_pos(a0)			; move 1px right
+		moveq	#1,d0					; same with player
+		move.w	#$40,d1					; new player inertia
+		bra.s	.set_player_pos
+; ===========================================================================
+
+.spring_right:				
+		btst	#status_xflip_bit,ost_primary_status(a1)	
+		beq.s	.exit					; branch if player is not facing spring
+		tst.w	d0					; d0 = 0 if earlier SolidObject call branched to Solid_AlignToSide from Solid_LeftRight (occurs if player is on edge of object)
+		bne.w	.on_edge2				; branch if player is on edge
 		tst.w	ost_inertia(a1)
-		beq.s	locret_243CE
-		bpl.s	loc_243C8
-		bra.s	locret_243CE
+		bmi.s	.max_compression			; branch if player is moving left
+		bra.s	.exit					; exit if player is not moving or moving right			
 ; ===========================================================================
 
-loc_2435E:				
-		move.w	$34(a0),d0
-		addi.w	#$12,d0
-		cmp.w	ost_x_pos(a0),d0
-		beq.s	loc_243C8
-		addq.w	#1,ost_x_pos(a0)
-		moveq	#1,d0
-		move.w	#$40,d1
-		bra.s	loc_243A6
-; ===========================================================================
+	.on_edge2:				
+		move.w	ost_pspring_og_xpos(a0),d0
+		subi.w	#18,d0		
+		cmp.w	ost_x_pos(a0),d0			; has spring moved 18px left?
+		beq.s	.max_compression			; if so, branch
+		subq.w	#1,ost_x_pos(a0)			; move 1 px left
+		moveq	#-1,d0					; same with player
+		move.w	#-$40,d1				; new player inertia	
 
-loc_24378:				
-		btst	#status_xflip_bit,ost_primary_status(a1)
-		beq.s	locret_243CE
-		tst.w	d0
-		bne.w	loc_2438E
-		tst.w	ost_inertia(a1)
-		bmi.s	loc_243C8
-		bra.s	locret_243CE
-; ===========================================================================
-
-loc_2438E:				
-		move.w	$34(a0),d0
-		subi.w	#$12,d0
-		cmp.w	ost_x_pos(a0),d0
-		beq.s	loc_243C8
-		subq.w	#1,ost_x_pos(a0)
-		moveq	#-1,d0
-		move.w	#-$40,d1
-
-loc_243A6:				
+	.set_player_pos:				
 		add.w	d0,ost_x_pos(a1)
 		move.w	d1,ost_inertia(a1)
-		move.w	#0,ost_x_vel(a1)
-		move.w	$34(a0),d0
-		sub.w	ost_x_pos(a0),d0
-		bcc.s	loc_243C0
+		move.w	#0,ost_x_vel(a1)			; stop player's x movement
+		move.w	ost_pspring_og_xpos(a0),d0
+		sub.w	ost_x_pos(a0),d0			; diference of og and current x pos + $A is current sprite frame
+		bcc.s	.setframe				; branch if spring faces right (i.e., compressing to the left)
 		neg.w	d0
 
-loc_243C0:				
-		addi.w	#$A,d0
-		move.b	d0,ost_frame(a0)
+	.setframe:				
+		addi.w	#id_Frame_PSpring_Horiz1,d0	
+		move.b	d0,ost_frame(a0)			; set sprite frame
 
-loc_243C8:				
-		move.b	#1,$36(a0)
+	.max_compression:				
+		move.b	#1,ost_pspring_compress(a0)		; mark spring as compressing
 
-locret_243CE:				
+	.exit:				
 		rts	
 ; ===========================================================================
 
-loc_243D0:				
-		move.b	ost_primary_status(a0),d0
-		andi.b	#$60,d0
-		beq.w	locret_244D0
-		lea	($FFFFB000).w,a1
-		moveq	#5,d6
-		bsr.s	loc_243EA
-		lea	($FFFFB040).w,a1
-		moveq	#6,d6
+PSpring_Horiz_LaunchPlayer:				
+		move.b	ost_primary_status(a0),d0	
+		andi.b	#status_pushing_both,d0			; is at least one player touching spring?
+		beq.w	.nolaunch				; exit if not
+		lea	(v_ost_player1).w,a1
+		moveq	#status_p1_pushing_bit,d6
+		bsr.s	.launchplayerdo				; run for player 1
+		lea	(v_ost_player2).w,a1
+		moveq	#status_p2_pushing_bit,d6		; run for player 2
 
-loc_243EA:				
-		bclr	d6,ost_primary_status(a0)
-		beq.w	locret_244D0
-		move.w	$34(a0),d0
+.launchplayerdo:				
+		bclr	d6,ost_primary_status(a0)		; clear spring's pushing bit for this player
+		beq.w	.nolaunch				; branch if this player was not touching spring
+		move.w	ost_pspring_og_xpos(a0),d0	
 		sub.w	ost_x_pos(a0),d0
-		bcc.s	loc_243FE
+		bcc.s	.springright				; branch if spring faces right
 		neg.w	d0
 
-loc_243FE:				
-		addi.w	#$A,d0
-		lsl.w	#7,d0
-		neg.w	d0
-		move.w	d0,ost_x_vel(a1)
-		subq.w	#4,ost_x_pos(a1)
-		bset	#status_xflip_bit,ost_primary_status(a1)
-		btst	#status_xflip_bit,ost_primary_status(a0)
-		bne.s	loc_2442C
-		bclr	#status_xflip_bit,ost_primary_status(a1)
-		addi_.w	#8,ost_x_pos(a1)
-		neg.w	ost_x_vel(a1)
+	.springright:				
+		addi.w	#$A,d0					; add 12
+		lsl.w	#7,d0					; multiply by 128
+		neg.w	d0					; negate
+		move.w	d0,ost_x_vel(a1)			; d0 = new x vel of player
+		subq.w	#4,ost_x_pos(a1)			; move player 4px left
+		bset	#status_xflip_bit,ost_primary_status(a1) ; player faces left
+		btst	#status_xflip_bit,ost_primary_status(a0)	
+		bne.s	.springleft				; branch if spring faces left
+		bclr	#status_xflip_bit,ost_primary_status(a1) ; player faces right
+		addi_.w	#8,ost_x_pos(a1)			; move player 8px right	
+		neg.w	ost_x_vel(a1)	
 
-loc_2442C:				
-		move.w	#$F,$2E(a1)
+	.springleft:				
+		move.w	#$F,ost_lock_time(a1)			; lock player's controls for 15 frames
 		move.w	ost_x_vel(a1),ost_inertia(a1)
 		btst	#status_jump_bit,ost_primary_status(a1)
-		bne.s	loc_24446
-		move.b	#0,ost_anim(a1)
+		bne.s	.jump					; branch if player jumped into the spring
+		move.b	#id_Ani_Walk,ost_anim(a1)		; use walking animation
 
-loc_24446:				
-		move.b	ost_subtype(a0),d0
-		bpl.s	loc_24452
-		move.w	#0,ost_y_vel(a1)
+	.jump:				
+		move.b	ost_subtype(a0),d0			; does this spring stop player's transverse movement?
+		bpl.s	.retain_transverse			; branch if not
+		move.w	#0,ost_y_vel(a1)			; stop player's horizontal movement
 
-loc_24452:				
-		btst	#0,d0
-		beq.s	loc_24492
+	.retain_transverse:				
+		btst	#pspring_tumbleplayer_bit,d0
+		beq.s	.no_tumble				; branch if this spring isn't set to tumble the player
 		move.w	#1,ost_inertia(a1)
 		move.b	#1,ost_flip_angle(a1)
-		move.b	#0,ost_anim(a1)
-		move.b	#1,$2C(a1)
-		move.b	#8,$2D(a1)
-		btst	#1,d0
-		bne.s	loc_24482
-		move.b	#3,$2C(a1)
+		move.b	#id_Ani_Walk,ost_anim(a1)
+		move.b	#2-1,ost_flips_remaining(a1)		; make player flip twice
+		move.b	#8,ost_flip_speed(a1)
+		btst	#pspring_strength_bit,d0
+		bne.s	.weak
+		move.b	#4-1,ost_flips_remaining(a1)		; make player flip 4 times
 
-loc_24482:				
+	.weak:				
 		btst	#status_xflip_bit,ost_primary_status(a1)
-		beq.s	loc_24492
-		neg.b	ost_flip_angle(a1)
+		beq.s	.no_tumble				; branch if spring isn't x-flipped
+		neg.b	ost_flip_angle(a1)			; invert flip angle and inertia
 		neg.w	ost_inertia(a1)
 
-loc_24492:				
-		andi.b	#$C,d0
-		cmpi.b	#4,d0
-		bne.s	loc_244A8
-		move.b	#$C,$3E(a1)
-		move.b	#$D,$3F(a1)
+	.no_tumble:				
+		andi.b	#pspring_plane0|pspring_plane1,d0	; only need plane switch bits
+		cmpi.b	#pspring_plane0,d0			; are we moving player to plane 0?
+		bne.s	.not_plane0				; branch if not
+		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 0
+		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
-loc_244A8:				
-		cmpi.b	#8,d0
-		bne.s	loc_244BA
-		move.b	#$E,$3E(a1)
-		move.b	#$F,$3F(a1)
+	.not_plane0:				
+		cmpi.b	#pspring_plane1,d0			; are we moving player to plane 1?
+		bne.s	.playsound				; branch if not
+		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 1
+		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
-loc_244BA:				
-		bclr	#5,ost_primary_status(a1)
-		move.b	#1,ost_anim_restart(a1)
-		move.w	#sfx_Spring,d0	
-		jmp	(PlaySound).l
-; ===========================================================================
-
-locret_244D0:				
-		rts	
-; ===========================================================================
-; Unused animation script
-off_244D2:	index offset(*)	
-		ptr byte_244D6					; 0 
-		ptr byte_244F8					; 1
+	.playsound:				
+		bclr	#status_pushing_bit,ost_primary_status(a1) ; clear player's pushing flag
+		move.b	#id_Ani_Run,ost_anim_restart(a1)	; force player's animation to restart
 		
-byte_244D6:	
-		dc.b   0,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  9,  9,  9,  9,  9 ; 0			
-		dc.b   9,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0,  0,  0,  0,  0,  0 ; 16
-		dc.b   0,$FF	
-								; 32
-byte_244F8:	
-		dc.b   0, $A, $B, $C, $D, $E, $F,$10,$11,$12,$13,$13,$13,$13,$13,$13 ; 0			
-		dc.b $13,$13,$12,$11,$10, $F, $E, $D, $C, $B, $A, $A, $A, $A, $A, $A ; 16
-		dc.b  $A,$FF					; 32
+		move.w	#sfx_Spring,d0	
+		jmp	(PlaySound).l				; play spring SFX
+; ===========================================================================
+
+.nolaunch:				
+		rts	
+
+; -------------------------------------------------------------------------------
+; Unused animation script
+; -------------------------------------------------------------------------------
+
+Ani_PSpring:	index offset(*)	
+		ptr Ani_PSpring_Vert			; 0 
+		ptr Ani_PSpring_Horiz					; 1
+		
+Ani_PSpring_Vert:		
+		dc.b 0
+		dc.b id_Frame_PSpring_Vert1
+		dc.b id_Frame_PSpring_Vert2
+		dc.b id_Frame_PSpring_Vert3
+		dc.b id_Frame_PSpring_Vert4
+		dc.b id_Frame_PSpring_Vert5
+		dc.b id_Frame_PSpring_Vert6
+		dc.b id_Frame_PSpring_Vert7
+		dc.b id_Frame_PSpring_Vert8
+		dc.b id_Frame_PSpring_Vert9
+		dc.b id_Frame_PSpring_Vert10
+		dc.b id_Frame_PSpring_Vert10
+		dc.b id_Frame_PSpring_Vert10
+		dc.b id_Frame_PSpring_Vert10
+		dc.b id_Frame_PSpring_Vert10
+		dc.b id_Frame_PSpring_Vert10
+		dc.b id_Frame_PSpring_Vert10
+		dc.b id_Frame_PSpring_Vert10
+		dc.b id_Frame_PSpring_Vert9
+		dc.b id_Frame_PSpring_Vert8
+		dc.b id_Frame_PSpring_Vert7
+		dc.b id_Frame_PSpring_Vert6
+		dc.b id_Frame_PSpring_Vert5
+		dc.b id_Frame_PSpring_Vert4
+		dc.b id_Frame_PSpring_Vert3
+		dc.b id_Frame_PSpring_Vert2
+		dc.b id_Frame_PSpring_Vert1
+		dc.b id_Frame_PSpring_Vert1
+		dc.b id_Frame_PSpring_Vert1
+		dc.b id_Frame_PSpring_Vert1
+		dc.b id_Frame_PSpring_Vert1
+		dc.b id_Frame_PSpring_Vert1
+		dc.b id_Frame_PSpring_Vert1
+		dc.b afEnd
+
+Ani_PSpring_Horiz:	
+		dc.b 0
+		dc.b id_Frame_PSpring_Horiz1
+		dc.b id_Frame_PSpring_Horiz2
+		dc.b id_Frame_PSpring_Horiz3
+		dc.b id_Frame_PSpring_Horiz4
+		dc.b id_Frame_PSpring_Horiz5
+		dc.b id_Frame_PSpring_Horiz6
+		dc.b id_Frame_PSpring_Horiz7
+		dc.b id_Frame_PSpring_Horiz8
+		dc.b id_Frame_PSpring_Horiz9
+		dc.b id_Frame_PSpring_Horiz10
+		dc.b id_Frame_PSpring_Horiz10
+		dc.b id_Frame_PSpring_Horiz10
+		dc.b id_Frame_PSpring_Horiz10
+		dc.b id_Frame_PSpring_Horiz10
+		dc.b id_Frame_PSpring_Horiz10
+		dc.b id_Frame_PSpring_Horiz10
+		dc.b id_Frame_PSpring_Horiz10
+		dc.b id_Frame_PSpring_Horiz9
+		dc.b id_Frame_PSpring_Horiz8
+		dc.b id_Frame_PSpring_Horiz7
+		dc.b id_Frame_PSpring_Horiz6
+		dc.b id_Frame_PSpring_Horiz5
+		dc.b id_Frame_PSpring_Horiz4
+		dc.b id_Frame_PSpring_Horiz3
+		dc.b id_Frame_PSpring_Horiz2
+		dc.b id_Frame_PSpring_Horiz1
+		dc.b id_Frame_PSpring_Horiz1
+		dc.b id_Frame_PSpring_Horiz1
+		dc.b id_Frame_PSpring_Horiz1
+		dc.b id_Frame_PSpring_Horiz1
+		dc.b id_Frame_PSpring_Horiz1
+		dc.b id_Frame_PSpring_Horiz1
+		dc.b afEnd
+
 ; ===========================================================================
 
 		include "mappings/sprite/OOZ Pressure Spring.asm"
@@ -77608,7 +77702,7 @@ loc_3B7A6:
 loc_3B7BC:				
 		move.b	ost_primary_status(a0),d0
 	if (Revision<2)|FixBugs	
-		andi.b	#status_standing_both,d0
+		andi.b	#status_platform_both,d0
 	else
 		; I don't know what this change was meant to do, but it causes
 		; Sonic/Tails to not fall off WFZ's ascending platforms when they retract,
@@ -82831,7 +82925,7 @@ col_4x8:		colid    4,    8			; $1E
 col_4x24:		colid    4,  $18			; $1F
 col_4x40:		colid    4,  $28			; $20
 col_4x32:		colid    4,  $10			; $21
-col_24x24_2:	colid  $18,  $18			; $22
+col_24x24_2:	colid  $18,  $18				; $22
 col_12x24:		colid   $C,  $18			; $23
 col_72x8:		colid  $48,    8			; $24
 col_24x40:		colid  $18,  $28			; $25
@@ -83902,23 +83996,23 @@ Dynamic_Normal2:
 		move.w	(a2)+,d6				; get count of scripts in list
 		
 	.loop:				
-		subq.b	#1,zoneanim_duration(a3)					; decrement duration counter
+		subq.b	#1,zoneanim_duration(a3)		; decrement duration counter
 		bcc.s	.nextscript				; skip to next script if frames remains
 		
 	;.next_frame:	
 		moveq	#0,d0		
-		move.b	zoneanim_frames(a3),d0				; get current frame
+		move.b	zoneanim_frames(a3),d0			; get current frame
 		cmp.b	aniscrpt_size(a2),d0			; have we processed the last frame in the script?
 		bcs.s	.not_last_frame				; branch if not
 		moveq	#0,d0
-		move.b	d0,zoneanim_frames(a3)				; reset to first frame (could be clr.b)
+		move.b	d0,zoneanim_frames(a3)			; reset to first frame (could be clr.b)
 
 	.not_last_frame:				
-		addq.b	#1,zoneanim_frames(a3)				; increment frame ID
-		move.b	aniscrpt_globaldur(a2),zoneanim_duration(a3)		; get global duration value
+		addq.b	#1,zoneanim_frames(a3)			; increment frame ID
+		move.b	aniscrpt_globaldur(a2),zoneanim_duration(a3) ; get global duration value
 		bpl.s	.global_duration			; branch if this script uses a global duration
 		add.w	d0,d0					; d0 = index to per-frame duration
-		move.b	aniscrpt_perframedur(a2,d0.w),zoneanim_duration(a3)	; get per-frame duration
+		move.b	aniscrpt_perframedur(a2,d0.w),zoneanim_duration(a3) ; get per-frame duration
 
 	.global_duration:				
 		move.b	aniscrpt_tileid(a2,d0.w),d0		; get tile id
