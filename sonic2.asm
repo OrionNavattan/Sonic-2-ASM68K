@@ -689,7 +689,7 @@ VBlank_Level:
 
 		; copy camera position variables to their duplicates used by DrawTilesWhenMoving
 		movem.l	(v_camera_x_pos).w,d0-d7
-		movem.l	d0-d7,(v_camera_pos_copy).w
+		movem.l	d0-d7,(v_camera_x_pos_copy).w
 		movem.l	(v_camera_x_pos_p2).w,d0-d7
 		movem.l	d0-d7,(v_camera_pos_p2_copy).w
 		movem.l	(v_fg_redraw_direction).w,d0-d3
@@ -938,7 +938,7 @@ VBlank_TitleCard:
 		startZ80
 
 		movem.l	(v_camera_x_pos).w,d0-d7
-		movem.l	d0-d7,(v_camera_pos_copy).w
+		movem.l	d0-d7,(v_camera_x_pos_copy).w
 		movem.l	(v_fg_redraw_direction).w,d0-d1
 		movem.l	d0-d1,(v_fg_redraw_direction_copy).w
 		move.l	(v_fg_y_pos_vsram_p2).w,(v_hblank_fg_y_pos_vsram_p2).w
@@ -972,7 +972,7 @@ VBlank_Ending:
 		bsr.w	ProcessDMA
 		bsr.w	SoundDriverInput
 		movem.l	(v_camera_x_pos).w,d0-d7
-		movem.l	d0-d7,(v_camera_pos_copy).w
+		movem.l	d0-d7,(v_camera_x_pos_copy).w
 		movem.l	(v_fg_redraw_direction).w,d0-d3
 		movem.l	d0-d3,(v_fg_redraw_direction_copy).w
 		jsrto	DrawTilesWhenMoving,JmpTo_DrawTilesWhenMoving
@@ -6111,8 +6111,8 @@ GM_SpecialStage:
 		clr.b	(f_level_started).w
 		move.l	#0,(v_camera_x_pos).w
 		move.l	#0,(v_camera_y_pos).w
-		move.l	#0,(v_camera_x_pos_copy).w
-		move.l	#0,(v_camera_y_pos_copy).w
+		move.l	#0,(v_camera_x_pos_copy2).w
+		move.l	#0,(v_camera_y_pos_copy2).w
 		cmpi.w	#sonic_alone,(v_player_mode).w		; is this a Sonic alone game?
 		bgt.s	.dont_load_sonic			; if not, branch
 		move.b	#id_SonicSpecial,(v_ost_player1+ost_id).w ; load Special Stage Sonic
@@ -9591,8 +9591,8 @@ loc_78DE:
 		bsr.w	PlayMusic
 		move.w	#$293,(v_countdown).w
 		clr.b	(f_level_started).w
-		clr.l	(v_camera_x_pos_copy).w
-		move.l	#$1000000,(v_camera_y_pos_copy).w
+		clr.l	(v_camera_x_pos_copy2).w
+		move.l	#$1000000,(v_camera_y_pos_copy2).w
 		move.b	#-$25,(v_ost_player1+ost_id).w
 		move.b	#-$25,(v_ost_player2+ost_id).w
 		move.b	#6,(v_ost_player2+ost_primary_routine).w
@@ -12195,8 +12195,8 @@ EndSeq_LoadArt:
 		move.w	d0,(v_frame_counter).w
 		move.w	d0,(v_camera_x_pos).w
 		move.w	d0,(v_camera_y_pos).w
-		move.w	d0,(v_camera_x_pos_copy).w
-		move.w	d0,(v_camera_y_pos_copy).w
+		move.w	d0,(v_camera_x_pos_copy2).w
+		move.w	d0,(v_camera_y_pos_copy2).w
 		move.w	d0,(v_bg1_x_pos).w
 		move.w	#$C8,(v_bg1_y_pos).w
 		move.l	d0,(v_fg_y_pos_vsram).w
@@ -12300,8 +12300,8 @@ loc_9F68:
 		move.w	d0,(v_frame_counter).w
 		move.w	d0,(v_camera_x_pos).w
 		move.w	d0,(v_camera_y_pos).w
-		move.w	d0,(v_camera_x_pos_copy).w
-		move.w	d0,(v_camera_y_pos_copy).w
+		move.w	d0,(v_camera_x_pos_copy2).w
+		move.w	d0,(v_camera_y_pos_copy2).w
 		move.w	d0,(v_bg1_x_pos).w
 		move.w	d0,(v_bg1_y_pos).w
 		move.l	d0,(v_fg_y_pos_vsram).w
@@ -14553,8 +14553,8 @@ DeformLayers:
 		bsr.w	DynamicLevelEvents			; run DLE (updating level boundaries, loading bosses, and running CNZ's slot machines)
 		move.w	(v_camera_y_pos).w,(v_fg_y_pos_vsram).w	; update VSRAM buffer
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
-		move.l	(v_camera_x_pos).w,(v_camera_x_pos_copy).w ; update camera position copies
-		move.l	(v_camera_y_pos).w,(v_camera_y_pos_copy).w
+		move.l	(v_camera_x_pos).w,(v_camera_x_pos_copy2).w ; update camera position copies
+		move.l	(v_camera_y_pos).w,(v_camera_y_pos_copy2).w
 
 		moveq	#0,d0
 		move.b	(v_zone).w,d0				; get zone ID
@@ -15304,9 +15304,9 @@ HTZ_Screen_Shake:
 		move.b	(a1)+,d0
 		add.w	d0,(v_fg_y_pos_vsram).w
 		add.w	d0,(v_bg_y_pos_vsram).w
-		add.w	d0,(v_camera_y_pos_copy).w
+		add.w	d0,(v_camera_y_pos_copy2).w
 		move.b	(a1)+,d2
-		add.w	d2,(v_camera_x_pos_copy).w
+		add.w	d2,(v_camera_x_pos_copy2).w
 
 loc_CAEE:
 		lea	(v_hscroll_buffer).w,a1
@@ -15607,9 +15607,9 @@ loc_CD54:
 		move.b	(a1)+,d0
 		add.w	d0,(v_fg_y_pos_vsram).w
 		add.w	d0,(v_bg_y_pos_vsram).w
-		add.w	d0,(v_camera_y_pos_copy).w
+		add.w	d0,(v_camera_y_pos_copy2).w
 		move.b	(a1)+,d2
-		add.w	d2,(v_camera_x_pos_copy).w
+		add.w	d2,(v_camera_x_pos_copy2).w
 
 loc_CD90:
 		lea	(v_bgscroll_buffer).w,a2
@@ -16450,9 +16450,9 @@ Deform_DEZ:
 		move.b	(a1)+,d0
 		add.w	d0,(v_fg_y_pos_vsram).w
 		add.w	d0,(v_bg_y_pos_vsram).w
-		add.w	d0,(v_camera_y_pos_copy).w
+		add.w	d0,(v_camera_y_pos_copy2).w
 		move.b	(a1)+,d2
-		add.w	d2,(v_camera_x_pos_copy).w
+		add.w	d2,(v_camera_x_pos_copy2).w
 
 	locret_D488:
 		rts
@@ -16525,9 +16525,9 @@ loc_D4CE:
 		move.b	(a1)+,d0
 		add.w	d0,(v_fg_y_pos_vsram).w
 		add.w	d0,(v_bg_y_pos_vsram).w
-		add.w	d0,(v_camera_y_pos_copy).w
+		add.w	d0,(v_camera_y_pos_copy2).w
 		move.b	(a1)+,d2
-		add.w	d2,(v_camera_x_pos_copy).w
+		add.w	d2,(v_camera_x_pos_copy2).w
 
 loc_D508:
 		lea	(v_bgscroll_buffer).w,a2
@@ -17287,17 +17287,17 @@ DrawTilesWhenMoving:
 		lea	(vdp_control_port).l,a5
 		lea	(vdp_data_port).l,a6
 		lea	(v_bg1_redraw_direction_copy).w,a2
-		lea	(v_camera_pos_bg_copy).w,a3
+		lea	(v_bg1_x_pos_copy).w,a3
 		lea	(v_level_layout+level_max_width).w,a4
 		move.w	#$6000,d2
 		bsr.w	DrawBGScrollBlock1
 
 		lea	(v_bg2_redraw_direction_copy).w,a2
-		lea	(v_camera_pos_bg2_copy).w,a3
+		lea	(v_bg2_x_pos_copy).w,a3
 		bsr.w	DrawBGScrollBlock2
 
 		lea	(v_bg3_redraw_direction_copy).w,a2
-		lea	(v_camera_pos_bg3_copy).w,a3
+		lea	(v_bg3_x_pos_copy).w,a3
 		bsr.w	DrawBGScrollBlock3
 
 		tst.w	(f_two_player).w
@@ -17310,7 +17310,7 @@ DrawTilesWhenMoving:
 
 loc_DAAE:
 		lea	(v_fg_redraw_direction_copy).w,a2
-		lea	(v_camera_pos_copy).w,a3
+		lea	(v_camera_x_pos_copy).w,a3
 		lea	(v_level_layout).w,a4
 		move.w	#$4000,d2
 		tst.b	(f_screen_redraw).w
@@ -17477,22 +17477,22 @@ loc_DC28:
 		beq.s	loc_DC40
 		moveq	#-$10,d4
 		moveq	#0,d5
-		bsr.w	Calc_VRAM_Pos_AbsoluteX
+		bsr.w	Calc_VRAM_Pos_P1_AbsX
 		moveq	#-$10,d4
 		moveq	#0,d5
 		moveq	#$1F,d6
-		bsr.w	DrawRow_Partial
+		bsr.w	DrawRow_CustomWidth_AbsX
 
 loc_DC40:
 		bclr	#5,(a2)
 		beq.s	loc_DC5C
 		move.w	#$E0,d4
 		moveq	#0,d5
-		bsr.w	Calc_VRAM_Pos_AbsoluteX
+		bsr.w	Calc_VRAM_Pos_P1_AbsX
 		move.w	#$E0,d4
 		moveq	#0,d5
 		moveq	#$1F,d6
-		bsr.w	DrawRow_Partial
+		bsr.w	DrawRow_CustomWidth_AbsX
 
 loc_DC5C:
 		bclr	#6,(a2)
@@ -17622,10 +17622,10 @@ loc_DD0A:
 loc_DD3E:
 		moveq	#0,d5
 		movem.l	d4-d5,-(sp)
-		bsr.w	Calc_VRAM_Pos_AbsoluteX
+		bsr.w	Calc_VRAM_Pos_P1_AbsX
 		movem.l	(sp)+,d4-d5
 		moveq	#$1F,d6
-		bsr.w	DrawRow_Partial
+		bsr.w	DrawRow_CustomWidth_AbsX
 
 loc_DD52:
 		tst.b	(a2)
@@ -17933,7 +17933,7 @@ loc_DF84:
 DrawRow_CustomWidth:
 		add.w	(a3),d5
 		add.w	4(a3),d4
-		bra.s	loc_DF9A
+		bra.s	DrawRow_CustomWidth_AbsX_AbsY
 
 ; ===========================================================================
 
@@ -17942,10 +17942,10 @@ DrawRow:
 		moveq	#((screen_width+16+16)/16)-1,d6		; draw the entire width of the screen + two extra columns
 		add.w	(a3),d5
 
-DrawRow_Partial:
+DrawRow_CustomWidth_AbsX:
 		add.w	4(a3),d4
 
-loc_DF9A:
+DrawRow_CustomWidth_AbsX_AbsY:
 		tst.w	(f_two_player).w
 		bne.s	loc_E018
 		move.l	a2,-(sp)
@@ -18293,124 +18293,178 @@ loc_E234:
 		rts
 
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to get the address of a 16x16 tile at a screen coordinate
 
+; input:
+;	d4.w = y coordinate
+;	d5.w = x coordinate
+;	(a3).w = camera/bg x position
+;	4(a3).w = camera/bg y position
+;	a4 = address of level/bg layout
+;	a5 = vdp_control_port
+;	a6 = vdp_data_port
+
+; output:
+;	a0 = address of 16x16 tile id and x/y flip metadata from 256x256 mappings
+;	a1 = address of 16x16 tile mappings
+
+;	uses d0.w, d3.l, d4.w, d5.w
+; ---------------------------------------------------------------------------
 
 GetBlockData:
-		add.w	(a3),d5
-		add.w	4(a3),d4
+		add.w	(a3),d5					; add camera x pos to relative coordinate
+		add.w	v_camera_y_pos_copy-v_camera_x_pos_copy(a3),d4 ; add camera y pos to relative coordinate
 		lea	(v_16x16_tiles).w,a1
+
+		; Turn y coordinate into index into level layout
 		move.w	d4,d3
-		add.w	d3,d3
-		andi.w	#$F00,d3
-		lsr.w	#3,d5
+		add.w	d3,d3					; multiply by 2 (because layout alternates between level and bg lines)
+		andi.w	#$F00,d3				; read only low nybble of high byte (because each level chunk is 1286px tall)
+		; Turn x coordinate into index into level layout
+		lsr.w	#3,d5					; divide by 8
 		move.w	d5,d0
-		lsr.w	#4,d0
-		andi.w	#$7F,d0
-		add.w	d3,d0
+		lsr.w	#4,d0					; divide by 16 (overall division by 128)
+		andi.w	#$7F,d0					; read only high byte of x pos
+		; Get 128x128 tile id from level layout
+		add.w	d3,d0					; combine for position within layout
 		moveq	#-1,d3
-		clr.w	d3
-		move.b	(a4,d0.w),d3
-		lsl.w	#7,d3
-		andi.w	#$70,d4
-		andi.w	#$E,d5
+		clr.w	d3					; d3 = $FFFF0000 (used to make a RAM address)
+		move.b	(a4,d0.w),d3				; d3 = $FFFF0000 + 128x128 tile id
+		lsl.w	#7,d3					; multiply by 128 (sizeof_128x128)
+		; Turn y coordinate into position within 256x256 tile
+		andi.w	#$70,d4					; round y offset to nearest pixel boundary
+		; Turn x coordinate into position within 256x256 tile
+		andi.w	#$E,d5					; round x offset to multiple of 16
 		add.w	d4,d3
 		add.w	d5,d3
-		movea.l	d3,a0
-		move.w	(a0),d3
+		movea.l	d3,a0					; a0 = address of 16x16 tile id and metadata within 128x128 mappings
+		move.w	(a0),d3					; copy 16x16 tile id to d3
+		; Turn 16x16 tile id into tile mappings address
 		andi.w	#$3FF,d3
 		lsl.w	#3,d3
-		adda.w	d3,a1
+		adda.w	d3,a1					; a1 = address of 16x16 tile mappings
 		rts
 
+; ---------------------------------------------------------------------------
+; Subroutine to	convert screen relative coordinates to VDP command for VRAM
+; fg/bg nametable access
 
-; ===========================================================================
+; input:
+;	d4.w = y coordinate
+;	d5.w = x coordinate
+;	(a3).w = camera x position (Calc_VRAM_Pos_P1 only)
+;	4(a3).w = camera y position (Calc_VRAM_Pos_P1 & Calc_VRAM_Pos_P1_AbsX only)
 
-; sub_E286: Calc_VRAM_Pos: CalcBlockVRAMPos: CalculateVRAMAddressOfBlockForPlayer1:
+; output:
+;	d0.l = VDP command (word swapped)
+
+;	uses d4.w, d5.w
+; ---------------------------------------------------------------------------
+
 Calc_VRAM_Pos_P1:
-		add.w	(a3),d5
+		add.w	(a3),d5					; add camera x pos
 
-; CalcBlockVRAMPos2:
-	Calc_VRAM_Pos_AbsoluteX:
+Calc_VRAM_Pos_P1_AbsX:
 		tst.w	(f_two_player).w			; is it two-player mode?
-		bne.s	Calc_VRAM_Pos_AbsoluteX_DoubleResolution ; if so, use the double resolution branch
-		add.w	4(a3),d4				; add camera y pos
+		bne.s	Calc_VRAM_Pos_P1_AbsX_DoubleResolution	; if so, use the double resolution branch
+		add.w	v_bg1_y_pos-v_bg1_x_pos(a3),d4		; add camera y pos
 
-; CalcBlockVRAMPos_NoCamera: CalculateVRAMAddressOfBlockForPlayer1.AbsoluteXAbsoluteY:
-	Calc_VRAM_Pos_AbsoluteX_AbsoluteY:
-		andi.w	#$F0,d4
-		andi.w	#$1F0,d5
+Calc_VRAM_Pos_P1_AbsX_AbsY:
+		andi.w	#$F0,d4					; round down to 16 (size of block) and limit to $100 (height of plane, 32*8)
+		andi.w	#$1F0,d5				; round down to 16 (size of block) and limit to $200 (width of plane, 64*8)
+		; Transform the adjusted coordinates into a VDP command
 		lsl.w	#4,d4
 		lsr.w	#2,d5
 		add.w	d5,d4
-		moveq	#3,d0
-		swap	d0
-		move.w	d4,d0
+		moveq	#draw_base>>14,d0			; bits 15 & 14 of VRAM address ($C000)
+		swap	d0					; swap high/low words (swapped back later by DrawBlock)
+		move.w	d4,d0					; add offset for coordinate in fg/bg nametable
 		rts
 ; ===========================================================================
-; loc_E2A8: CalcBlockVRAMPos_2P:
-; CalculateVRAMAddressOfBlockForPlayer1.AbsoluteX_DoubleResolution
-	Calc_VRAM_Pos_AbsoluteX_DoubleResolution:
-		add.w	4(a3),d4
 
-; loc_E2AC: CalcBlockVRAMPos_2P_NoCamera:
-; CalculateVRAMAddressOfBlockForPlayer1.AbsoluteXAbsoluteY_DoubleResolution
-	Calc_VRAM_Pos_AbsoluteX_AbsoluteY_DoubleResolution:
-		andi.w	#$1F0,d4
-		andi.w	#$1F0,d5
+Calc_VRAM_Pos_P1_AbsX_DoubleResolution:
+		add.w	v_bg1_y_pos-v_bg1_x_pos(a3),d4		; add camera y pos
+
+Calc_VRAM_Pos_P1_AbsX_AbsY_DoubleResolution:
+		andi.w	#$1F0,d4				; round down to 16 (size of block) and limit to $200 (height of plane, 64*8)
+		andi.w	#$1F0,d5				; round down to 16 (size of block) and limit to $200 (width of plane, 64*8)
+		; Transform the adjusted coordinates into a VDP command
 		lsl.w	#3,d4
 		lsr.w	#2,d5
 		add.w	d5,d4
-		moveq	#3,d0
-		swap	d0
-		move.w	d4,d0
+		moveq	#draw_base>>14,d0			; bits 15 & 14 of VRAM address ($C000)
+		swap	d0					; swap high/low words (swapped back later by DrawBlock)
+		move.w	d4,d0					; add offset for coordinate in fg/bg nametable
 		rts
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; As above,except the base address for the fg/bg nametable is $A000 instead
+; of $C000. .regular_resolution is unused; .double_resolution is used by
+; player 2's half of screen in 2p mode.
 
-;loc_E2C2: CalcBlockVRAMPosB: CalculateVRAMAddressOfBlockForPlayer2:
+; input:
+;	d4.w = y coordinate
+;	d5.w = x coordinate
+;	(a3).w = camera x position
+;	4(a3).w = camera y position
+
+; output:
+;	d0.l = VDP command (word swapped)
+
+;	uses d4.w, d5.w
+; ---------------------------------------------------------------------------
+
 Calc_VRAM_Pos_P2:
-		tst.w	(f_two_player).w
-		bne.s	.double_resolution
+		tst.w	(f_two_player).w			; is it 2p mode?
+		bne.s	.double_resolution			; branch if so (it always will be)
 
-;.regular_resolution:
-		add.w	4(a3),d4
-		add.w	(a3),d5
-		andi.w	#$F0,d4
-		andi.w	#$1F0,d5
+	;.regular_resolution:
+		; Unused.
+		add.w	v_bg1_y_pos_p2-v_bg1_x_pos_p2(a3),d4	; add camera y pos
+		add.w	(a3),d5					; add camera x pos
+		andi.w	#$F0,d4					; round down to 16 (size of block) and limit to $100 (height of plane, 32*8)
+		andi.w	#$1F0,d5				; round down to 16 (size of block) and limit to $200 (width of plane, 64*8)
+		; Transform the adjusted coordinates into a VDP command
 		lsl.w	#4,d4
 		lsr.w	#2,d5
 		add.w	d5,d4
-		moveq	#2,d0
-		swap	d0
-		move.w	d4,d0
+		moveq	#draw_base_2p>>14,d0			; bits 15 & 14 of VRAM address ($C000)
+		swap	d0					; swap high/low words (swapped back later by DrawBlock)
+		move.w	d4,d0					; add offset for coordinate in fg/bg nametable
 		rts
 ; ===========================================================================
 
 	.double_resolution:
-		add.w	4(a3),d4
-		add.w	(a3),d5
-		andi.w	#$1F0,d4
-		andi.w	#$1F0,d5
+		add.w	v_bg1_y_pos_p2-v_bg1_x_pos_p2(a3),d4	; add camera y pos
+		add.w	(a3),d5					; add camera x pos
+		andi.w	#$1F0,d4				; round down to 16 (size of block) and limit to $200 (height of plane, 32*8)
+		andi.w	#$1F0,d5				; round down to 16 (size of block) and limit to $200 (width of plane, 64*8)
+		; Transform the adjusted coordinates into a VDP command
 		lsl.w	#3,d4
 		lsr.w	#2,d5
 		add.w	d5,d4
-		moveq	#2,d0
-		swap	d0
-		move.w	d4,d0
+		moveq	#draw_base_2p>>14,d0			; bits 15 & 14 of VRAM address ($C000)
+		swap	d0					; swap high/low words (swapped back later by DrawBlock)
+		move.w	d4,d0					; add offset for coordinate in fg/bg nametable
 		rts
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	load tiles as soon as the level	appears
 
-;loc_E300: DrawInitialBG:
+; output:
+;	a5 = vdp_control_port
+;	a6 = vdp_data_port
+; ---------------------------------------------------------------------------
+
 DrawTilesAtStart:
 		lea	(vdp_control_port).l,a5
-		lea	(vdp_data_port).l,a6
+		lea	(vdp_data_port).l,a6			; could be 'lea vdp_data_port-vdp_control_port(a5),a6'
 		lea	(v_bg1_x_pos).w,a3
 		lea	(v_level_layout+level_max_width).w,a4
-		move.w	#$6000,d2
+		vdp_comm.w	move,vram_bg,vram,write,d2,>>16
 
-;	if FixBugs
+	if FixBugs
 		; The purpose of this function is to dynamically load a portion of
 		; the background, based on where the BG camera is pointing. This
 		; makes plenty of sense for levels that dynamically load their
@@ -18430,31 +18484,43 @@ DrawTilesAtStart:
 		; its own background initialisation function (see 'LevelSetup' in the
 		; Sonic & Knuckles Git disassembly). This fix by Clownancy doesn't go quite that far,
 		; but it does give these 'static' backgrounds their own
-		; initialisation logic, much like two player Mystic Cave Zone does.
-;		move.b	(v_zone).w,d0
-;		cmpi.b	#emerald_hill_zone,d0
-;		beq.w	DrawInitialBG_LoadWholeBackground_512x256
-;		cmpi.b	#casino_night_zone,d0
-;		beq.w	DrawInitialBG_LoadWholeBackground_512x256
-;		cmpi.b	#hill_top_zone,d0
-;		beq.w	DrawInitialBG_LoadWholeBackground_512x256
-;	else
+		; initialisation logic, much like two player Mystic Cave Zone 2P does.
+		move.b	(v_zone).w,d0
+		cmpi.b	#id_EHZ,d0
+		beq.w	DrawInitialBG_LoadWholeBackground_512x256
+		cmpi.b	#id_CNZ,d0
+		beq.w	DrawInitialBG_LoadWholeBackground_512x256
+		cmpi.b	#id_HTZ,d0
+		beq.w	DrawInitialBG_LoadWholeBackground_512x256
+	else
 		; This is a nasty hack to work around the bug described above.
 		moveq	#0,d4
 		cmpi.b	#id_CNZ,(v_zone).w			; is it CNZ?
-		beq.w	DrawTilesAtStart_Dynamic		; if it is, branch
-;	endc
+		beq.w	DrawChunks_CustomY			; if so, branch (skipping the 'moveq #-16,d4')
+	endc
 		tst.w	(f_two_player).w			; is it two-player mode?
-		beq.w	loc_E336				; if not, branch
+		beq.w	DrawChunks				; if not, branch
 		cmpi.b	#id_MCZ,(v_zone).w			; is it MCZ 2P?
-		beq.w	loc_E396				; if it is, branch
+		beq.w	DrawTilesAtStart_LoadFull_512x512	; if so, branch
+		; else run directly into DrawChunks
 
-	loc_E336:
-		moveq	#-$10,d4				; draw from 16px above top of screen (skipped by CNZ)
+; ---------------------------------------------------------------------------
+; Subroutine to draw 16x16 tiles on whole screen
 
-DrawTilesAtStart_Dynamic:
-		; Identical to Sonic 1's DrawChunks.
-		moveq	#((screen_height+16+16)/16)-1,d6	; draw entire height of screen; height of plane in blocks minus 1
+; input:
+;	d2 = VRAM write command ($4000) + nametable start address relative to vram_fg
+;	(a3) = camera/bg x position
+;	4(a3) = camera/bg y position
+;	a4 = address of level/bg layout
+;	a5 = vdp_control_port
+;	a6 = vdp_data_port
+; ---------------------------------------------------------------------------
+
+DrawChunks:
+		moveq	#-16,d4					; draw from 16px (1 16x16 block row) above top of screen (skipped by CNZ)
+
+DrawChunks_CustomY:
+		moveq	#(256/16)-1,d6				; draw entire height of screen; height of plane in blocks minus 1
 
 	.loop:
 		pushr.l	d4-d6
@@ -18463,56 +18529,96 @@ DrawTilesAtStart_Dynamic:
 		bsr.w	Calc_VRAM_Pos_P1
 		move.w	d1,d4
 		moveq	#0,d5
-		moveq	#(512/16)-1,d6				; draw full row; width of plane in blocks minus 1.
+		moveq	#(512/16)-1,d6				; draw full row; width of plane in blocks minus 1
 		disable_ints
 		bsr.w	DrawRow_CustomWidth
 		enable_ints
 		popr.l	d4-d6
-		addi.w	#16,d4
+		addi.w	#16,d4					; next row
 		dbf	d6,.loop
 		rts
-; ===========================================================================
-; Dead code for initialising the second player's portion of Plane B.
-; I wonder why this is unused?
-		moveq	#-$10,d4
-		moveq	#$F,d6
+
+; ---------------------------------------------------------------------------
+; Unused subroutine to initialize player 2's portion of the background plane
+; ---------------------------------------------------------------------------
+
+		moveq	#-16,d4
+		moveq	#(256/16)-1,d6				; draw entire height of screen; height of plane in blocks minus 1
 
 	.loop2:
-		movem.l	d4-d6,-(sp)
-		moveq	#0,d5
+		pushr.l	d4-d6
+		moveq	#0,d5					; draw from left edge of screen
 		move.w	d4,d1
 		bsr.w	Calc_VRAM_Pos_P2
 		move.w	d1,d4
 		moveq	#0,d5
-		moveq	#$1F,d6
+		moveq	#(512/16)-1,d6				; draw full row; width of plane in blocks minus 1
 		disable_ints
 		bsr.w	DrawRow_CustomWidth
 		enable_ints
-		movem.l	(sp)+,d4-d6
-		addi.w	#$10,d4
+		popr.l	d4-d6
+		addi.w	#16,d4					; next row
 		dbf	d6,.loop2
 		rts
-; ===========================================================================
 
-loc_E396:
-		moveq	#0,d4
-		moveq	#$1F,d6
+; ---------------------------------------------------------------------------
+; Subroutine to load a static 512x512 background plane
+; Used only by MCZ 2P.
+; ---------------------------------------------------------------------------
 
-loc_E39A:
-		movem.l	d4-d6,-(sp)
-		moveq	#0,d5
+DrawTilesAtStart_LoadFull_512x512:
+		moveq	#0,d4					; absolute y plane coordinate
+		moveq	#(512/16)-1,d6				; draw entire height of screen; height of plane in blocks minus 1
+
+	.loop:
+		pushr.l	d4-d6
+		moveq	#0,d5					; draw from left edge of screen
 		move.w	d4,d1
-		bsr.w	Calc_VRAM_Pos_AbsoluteX_AbsoluteY_DoubleResolution
+		bsr.w	Calc_VRAM_Pos_P1_AbsX_AbsY_DoubleResolution
 		move.w	d1,d4
 		moveq	#0,d5
-		moveq	#$1F,d6
+		moveq	#(512/16)-1,d6				; draw full row; width of plane in blocks minus 1
 		disable_ints
-		bsr.w	loc_DF9A
+		bsr.w	DrawRow_CustomWidth_AbsX_AbsY
 		enable_ints
-		movem.l	(sp)+,d4-d6
-		addi.w	#$10,d4
-		dbf	d6,loc_E39A
+		popr.l	d4-d6
+		addi.w	#16,d4					; next row
+		dbf	d6,.loop
 		rts
+
+; ---------------------------------------------------------------------------
+; Subroutine to load a static 512x256 background plane
+; Written by Clownacy to fix the bug described in DrawTilesAtStart;
+; used by EHZ, CNZ, and HTZ.
+; ---------------------------------------------------------------------------
+
+	if FixBugs
+DrawTilesAtStart_LoadFull_512x256:
+		moveq	#0,d4					; absolute y plane coordinate
+		moveq	#(256/16)-1,d6				; draw entire height of screen; height of plane in blocks minus 1
+
+	.loop:
+		pushr.l	d4-d6
+		moveq	#0,d5					; draw from left edge of screen
+		move.w	d4,d1
+		pea	.drawrow(pc)				; push return address so we can do an 'if true then call this, else call that'
+		tst.w	(f_two_player).w			; is it 2P mode?
+		beq.w	Calc_VRAM_Pos_P1_AbsX_AbsY		; branch if not
+		bra.w	Calc_VRAM_Pos_P1_AbsX_AbsY_DoubleResolution ; if 2P mode, use double resolution version of function
+
+	.drawrow:
+		move.w	d1,d4
+		moveq	#0,d5
+		moveq	#(512/16)-1,d6				; draw full row; width of plane in blocks minus 1
+		disable_ints
+		bsr.w	DrawRow_CustomWidth_AbsX_AbsY
+		enable_ints
+		popr.l	d4-d6
+		addi.w	#16,d4					; next row
+		dbf	d6,.loop
+		rts
+   	endc
+
 ; ===========================================================================
 
 LevelBlockMapsLoad:
@@ -28345,7 +28451,7 @@ BuildSprites:
 		bne.w	BuildSprites_MultiDraw			; if so, branch
 		andi.w	#render_rel+render_bg,d0		; is this to be positioned by screen coordinates?
 		beq.s	.abs_screen_coords			; if so, branch
-		lea	(v_camera_x_pos_copy).w,a1		; get address for camera x position (or background x position if render_bg is used)
+		lea	(v_camera_x_pos_copy2).w,a1		; get address for camera x position (or background x position if render_bg is used)
 
 		; check if object is visible
 		moveq	#0,d0
@@ -29857,7 +29963,7 @@ BuildRings:
 loc_17186:
 	if FixBugs
 		; This fixes screen shaking not being applied to rings.
-		lea	(v_camera_x_pos_copy).w,a3
+		lea	(v_camera_x_pos_copy2).w,a3
 	else
 		lea	(v_camera_x_pos).w,a3
 	endc

@@ -116,6 +116,7 @@ vram_menu_fg:				equ $C000		; extends until $CFFF
 vram_menu_bg:             	equ $E000			; extends until $EFFF
 
 draw_base:		equ vram_fg				; base address for nametables, used by Calc_VRAM_Pos (must be multiple of $4000)
+draw_base_2p:	equ vram_fg_2p
 draw_fg:		equ $4000+(vram_fg-draw_base)		; VRAM write command + fg nametable address relative to base
 draw_bg:		equ $4000+(vram_bg-draw_base)		; VRAM write command + bg nametable address relative to base
 

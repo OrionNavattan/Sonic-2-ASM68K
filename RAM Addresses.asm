@@ -123,9 +123,9 @@ v_camera_y_pos_p2:		rs.l 1				; $FFFFEE24
 v_bg1_x_pos_p2:			rs.l 1				; $FFFFEE28 ; only used sometimes as the layer deformation makes it sort of redundant
 v_bg1_y_pos_p2:			rs.l 1				; $FFFFEE2C
 v_bg2_x_pos_p2:			rs.l 1				; $FFFFEE30 ; unused (only initialised at beginning of level)?
-v_bg2_y_pos_p2:			rs.l 1				; $FFFFEE34
+v_bg2_y_pos_p2:			rs.l 1				; $FFFFEE34 ; unused (only initialised at beginning of level)?
 v_bg3_x_pos_p2:			rs.l 1				; $FFFFEE38 ; unused (only initialised at beginning of level)?
-v_bg3_y_pos_p2:			rs.l 1				; $FFFFEE3C
+v_bg3_y_pos_p2:			rs.l 1				; $FFFFEE3C ; unused (only initialised at beginning of level)?
 				ramblocksize	camera_positions_p2
 
 				ramblock block_redraw_flags	; required for teleport swap table
@@ -164,11 +164,19 @@ v_bg3_redraw_direction_p2:		rs.w 1			; $FFFFEE5E ; bitfield ; for CPZ; bits 0-3 
 				ramblocksize scroll_redraw_flags_p2
 
 				ramblock vblank_camera_copies	; required for teleport swap table
-; Copies of the camera position RAM and scroll redraw flags that are copied during VBlank and used by DrawTilesWhenMoving:
-v_camera_pos_copy:			rs.l 2			; $FFFFEE60
-v_camera_pos_bg_copy:		rs.l 2				; $FFFFEE68
-v_camera_pos_bg2_copy:		rs.l 2				; $FFFFEE70
-v_camera_pos_bg3_copy:		rs.l 2				; $FFFFEE78
+; Copies of the camera positions and scroll redraw flags made during VBlank and used by DrawTilesWhenMoving:
+v_camera_x_pos_copy:		rs.l 8				; $FFFFFF10 ; copy of v_camera_x_pos
+v_camera_y_pos_copy:		equ __rs-$1C			; $FFFFFF14 ; copy of v_camera_y_pos
+v_bg1_x_pos_copy:		equ __rs-$18			; $FFFFFF18 ; copy of v_bg1_x_pos
+v_bg1_y_pos_copy:		equ __rs-$14			; $FFFFFF1C ; copy of v_bg1_y_pos
+v_bg2_x_pos_copy:		equ __rs-$10			; $FFFFFF20 ; copy of v_bg2_x_pos
+v_bg2_y_pos_copy:		equ __rs-$C			; $FFFFFF24 ; copy of v_bg2_y_pos
+v_bg3_x_pos_copy:		equ __rs-8			; $FFFFFF28 ; copy of v_bg3_x_pos
+v_bg3_y_pos_copy:		equ __rs-4			; $FFFFFF2C ; copy of v_bg3_y_pos
+;v_camera_x_pos_copy:			rs.l 2			; $FFFFEE60
+;v_bg1_x_pos_copy:		rs.l 2				; $FFFFEE68
+;v_bg2_x_pos_copy:		rs.l 2				; $FFFFEE70
+;v_bg3_x_pos_copy:		rs.l 2				; $FFFFEE78
 				ramblocksize vblank_camera_copies
 
 v_camera_pos_p2_copy:			rs.l 8			; $FFFFEE80
@@ -247,8 +255,8 @@ v_htz_terrain_delay:			rs.w 1			; $FFFFEEE6 ; delay between rising and sinking t
 v_htz_terrain_direction:		rs.b 1			; $FFFFEEE8 ; direction of terrain movement during HTZ earthquakes: 0 if terrain/lava is rising, 1 if lowering
 								rs.b 3 ; $FFFFEEE9-$FFFFEEEB ; unused
 v_hblank_fg_y_pos_vsram_p2:		rs.l 1			; $FFFFEEEC
-v_camera_x_pos_copy:			rs.l 1			; $FFFFEEF0
-v_camera_y_pos_copy:			rs.l 1			; $FFFFEEF4
+v_camera_x_pos_copy2:			rs.l 1			; $FFFFEEF0; copies of camera pos made by DeformLayers, used by DeformLayers and BuildSprites (plus BuildRings if bugfixes are enabled)
+v_camera_y_pos_copy2:			rs.l 1			; $FFFFEEF4
 
 				ramblock camera_boundaries_p2	; required for teleport swap table
 v_boundary_left_p2:		rs.w 1				; $FFFFEEF8

@@ -203,10 +203,10 @@ Scroll_flags_BG_P2:		equ	v_bg1_redraw_direction_p2
 Scroll_flags_BG2_P2:	equ	v_bg2_redraw_direction_p2
 Scroll_flags_BG3_P2:	equ	v_bg3_redraw_direction_p2
 
-Camera_RAM_copy:		equ	v_camera_pos_copy
-Camera_BG_copy:			equ	v_camera_pos_bg_copy
-Camera_BG2_copy:		equ	v_camera_pos_bg2_copy
-Camera_BG3_copy:		equ	v_camera_pos_bg3_copy
+Camera_RAM_copy:		equ	v_camera_x_pos_copy
+Camera_BG_copy:			equ	v_bg1_x_pos_copy
+Camera_BG2_copy:		equ	v_bg2_x_pos_copy
+Camera_BG3_copy:		equ	v_bg3_x_pos_copy
 
 Camera_P2_copy:			equ	v_camera_pos_p2_copy
 
@@ -258,8 +258,8 @@ HTZ_Terrain_Delay:		equ	v_htz_terrain_delay
 HTZ_Terrain_Direction:	equ	v_htz_terrain_direction
 
 Vscroll_Factor_P2_HInt:	equ	v_hblank_fg_y_pos_vsram_p2
-Camera_X_pos_copy:		equ	v_camera_x_pos_copy
-Camera_Y_pos_copy:		equ	v_camera_y_pos_copy
+Camera_X_pos_copy:		equ	v_camera_x_pos_copy2
+Camera_Y_pos_copy:		equ	v_camera_y_pos_copy2
 
 Tails_Min_X_pos:	equ	v_boundary_left_p2
 Tails_Max_X_pos:	equ	v_boundary_right_p2
