@@ -12663,7 +12663,7 @@ EndingTrigger:
 loc_A3DA:
 		ori.b	#$7C,d4
 		lea	(off_3AFC8).l,a1
-		jsrto	LoadSubObjData_Part3,JmpTo_LoadSubObjData_Part3
+		jsrto	LoadSubObjData3,JmpTo_LoadSubObjData3
 		cmpi.w	#tails_alone,(v_player_mode).w
 		bne.s	loc_A3FC
 		move.b	#4,ost_frame(a0)
@@ -13093,7 +13093,7 @@ off_A8A2:	index offset(*),,2
 
 loc_A8AA:
 		lea	(SubData_Cloud).l,a1
-		jsrto	LoadSubObjData_Part3,JmpTo_LoadSubObjData_Part3
+		jsrto	LoadSubObjData3,JmpTo_LoadSubObjData3
 		move.l	#Map_TornadoHelices,ost_mappings(a0)
 		move.w	#tile_LevelArt+tile_hi,ost_tile(a0)
 		move.b	#1,ost_priority(a0)
@@ -13196,7 +13196,7 @@ off_A996:	index offset(*),,2
 
 loc_A99A:
 		lea	(SubData_Cloud).l,a1
-		jsrto	LoadSubObjData_Part3,JmpTo_LoadSubObjData_Part3
+		jsrto	LoadSubObjData3,JmpTo_LoadSubObjData3
 		move.l	#Map_TornadoHelices,ost_mappings(a0)
 		move.w	#tile_hi,ost_tile(a0)
 		move.b	#3,ost_priority(a0)
@@ -13235,7 +13235,7 @@ off_AA00:	index offset(*),,2
 
 loc_AA06:
 		lea	(SubData_Cloud).l,a1
-		jsrto	LoadSubObjData_Part3,JmpTo_LoadSubObjData_Part3
+		jsrto	LoadSubObjData3,JmpTo_LoadSubObjData3
 		move.w	ost_tile(a0),d0
 		andi.w	#$1FFF,d0
 		ori.w	#$6000,d0
@@ -13314,7 +13314,7 @@ off_AABC:	index offset(*),,2
 
 loc_AAC0:
 		lea	(off_AD72).l,a1
-		jsrto	LoadSubObjData_Part3,JmpTo_LoadSubObjData_Part3
+		jsrto	LoadSubObjData3,JmpTo_LoadSubObjData3
 		move.l	(v_random).w,d0
 		ror.l	#3,d0
 		move.l	d0,(v_random).w
@@ -14092,8 +14092,8 @@ JmpTo2_SpeedToPos:
 		jmp	(SpeedToPos).l
 JmpTo_PaletteCycle:
 		jmp	(PaletteCycle).l
-JmpTo_LoadSubObjData_Part3:
-		jmp	(LoadSubObjData_Part3).l
+JmpTo_LoadSubObjData3:
+		jmp	(LoadSubObjData3).l
 
 		align 4
 	endc
@@ -27860,16 +27860,16 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr RailSpikes
 		ptr Bumper					; $44; CNZ round bumpers (all others except the hexagonal one are run by the SpecialCNZBumpers psuedoobject)
 		ptr PressureSpring
-		ptr GiantBall					; unused beta leftover
+		ptr GiantBall					; unused OOZ beta leftover
 		ptr Button
 		ptr LauncherBall				; $48
 		ptr WaterfallEmeraldHill
 		ptr Octus
 		ptr Buzzer
-		ptr Obj4C					; $4C
-		ptr Obj4D
-		ptr Obj4E
-		ptr Obj4F
+		ptr Obj4C					; $4C; used to be the BBat badnik
+		ptr Obj4D					; used to be the Stego badnik
+		ptr Obj4E					; used to be the Gator badnik
+		ptr Obj4F					; used to be the Redz badnik
 		ptr Aquis					; $50
 		ptr BossCasinoNight
 		ptr BossHillTop
@@ -27888,7 +27888,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr StartBannerSpecial
 		ptr RingsSpecial				; $60
 		ptr BombSpecial
-		ptr Obj62
+		ptr Obj62						; unknown
 		ptr ShadowSpecial				; not Shads, but rather the character's shadows in the Special Stages :P
 		ptr TwinStompers				; $64
 		ptr Platform5
@@ -58767,7 +58767,7 @@ loc_2CCDE:
 		move.b	#3,ost_anim(a1)
 		move.l	a1,$36(a0)
 		move.l	a0,$36(a1)
-		bset	#status_underwater_bit,ost_primary_status(a0) ; pointless, as this object does not have any child sprites
+		bset	#6,ost_primary_status(a0) ; pointless, as this object does not have any child sprites
 
 loc_2CDA2:
 		lea	(Ani_Aquis).l,a1
@@ -70273,30 +70273,32 @@ JmpTo2_FindFreeObjSpecial:
 	endc
 
 ; ---------------------------------------------------------------------------
-; Subroutine to	load OST data for an object from a subobjdata declaration.
-; Requires data index to be set beforehand. Part 2 assumes d0 is already set
-; to index; part 3 assumes a1 already points to the data.
+; Subroutine to	load OST data from a subobjdata declaration.
+; Part 2 assumes d0 is already set to index; part 3 assumes a1 already points
+; to the data.
 
 ; input:
-;	a0 = object's ost slot
+;	a0 = address of OST of object
+;	d0 = ID of subobjdata declaration (LoadSubObjData2 only)
+;	a1 = pointer to subobjdata declaration (LoadSubObjData3 only)
 
-;	uses d0.w, a0, a1
+;	uses d0.l, a0, a1
 ; ---------------------------------------------------------------------------
 
 LoadSubObjData:
 		moveq	#0,d0
-		move.b	ost_subdata_ptr(a0),d0			; get object's subtype
+		move.b	ost_subdata_ptr(a0),d0			; get subobjdata ID
 
-LoadSubObjData_Part2:
+LoadSubObjData2:
 		move.w	SubData_Index(pc,d0.w),d0
-		lea	SubData_Index(pc,d0.w),a1		; a1 = data for this subtype
+		lea	SubData_Index(pc,d0.w),a1		; a1 = subobjdata declaration
 
-LoadSubObjData_Part3:
+LoadSubObjData3:
 		move.l	(a1)+,ost_mappings(a0)			; mappings pointer
 		move.w	(a1)+,ost_tile(a0)			; tile base
 		jsr	(Adjust2PArtPointer).l			; adjust for two-player mode if required
 		move.b	(a1)+,d0
-		or.b	d0,ost_render(a0)			; render setting
+		or.b	d0,ost_render(a0)			; render flags
 		move.b	(a1)+,ost_priority(a0)			; priority
 		move.b	(a1)+,ost_displaywidth(a0)		; display width
 		move.b	(a1),ost_col_type(a0)			; collision type
@@ -70394,19 +70396,18 @@ SubData_Index:	index offset(*),,2
 		ptr SubData_Crawl				; 86
 
 ; ---------------------------------------------------------------------------
-; Subroutine to determine the nearest player to an object, said player's
-; location relative to the object, and their vertical and horizontal distance
-; from it
+; Subroutine to find the nearest player to an object and their direction and
+; distance from it
 
 ; input:
 ;	a0 = object
 
 ; output:
-;	a1 = address of nearest player
-;	d0 = 0 if player is left from object, 2 if right
+;	a1 =address of OST of nearest player
+;	d0 = 0 if player is left of object, 2 if right
 ;	d1 = 0 if player is above object, 2 if below
-;	d2 = closest character's horizontal distance to object
-; 	d3 = closest character's vertical distance to object
+;	d2 = player's horizontal distance to object
+; 	d3 = player's vertical distance to object
 
 ;	uses d0.l, d1.l, d2.w, d3.w, d4.w, d5.w, a0, a1, a2
 ; ---------------------------------------------------------------------------
@@ -70515,8 +70516,8 @@ MoveStop:
 		rts
 
 ; ---------------------------------------------------------------------------
-; Subroutine to align a child object to its parent with variable x and y offset
-; Used by Grabber and Mecha Sonic.
+; Subroutine to align a child object to its parent with variable x and y
+; offset. Used by Grabber and Mecha Sonic.
 
 ; input:
 ;	d0 = x offset
@@ -72158,7 +72159,7 @@ Rex_SpawnHead:
 		jsrto	FindFreeObj,JmpTo19_FindFreeObj		; find free OST slot
 		bne.s	.fail					; branch if not found
 		_move.b	#id_RexonHead,ost_id(a1)		; load Rexon's head
-		move.b	ost_render(a0),ost_render(a1)		; pointless, as this is overwritten by LoadSubObjData
+		move.b	ost_render(a0),ost_render(a1)
 		move.b	ost_subdata_ptr(a0),ost_subdata_ptr(a1)	; index to subobjdata
 		move.w	a0,ost_rexhead_parent(a1)		; set pointer to parent
 		move.w	a1,(a2)+				; set parent's child pointer
@@ -77580,7 +77581,7 @@ TiltPlat_Index:	index offset(*),,2
 loc_3B5E8:
 		moveq	#0,d0
 		move.b	#$6A,d0
-		bsr.w	LoadSubObjData_Part2
+		bsr.w	LoadSubObjData2
 		move.b	ost_subtype(a0),d0
 		andi.b	#6,d0
 		addq.b	#2,d0
@@ -78396,7 +78397,7 @@ GunPlat_Index:	index offset(*),,2
 loc_3BD94:
 		moveq	#0,d0
 		move.b	#-$7E,d0
-		bsr.w	LoadSubObjData_Part2
+		bsr.w	LoadSubObjData2
 		bra.w	loc_3B77E
 ; ===========================================================================
 
@@ -78533,7 +78534,7 @@ CPult_Index:	index offset(*),,2
 
 loc_3BF16:
 		move.w	#$86,d0
-		bsr.w	LoadSubObjData_Part2
+		bsr.w	LoadSubObjData2
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		lsl.w	#4,d0
@@ -78721,7 +78722,7 @@ BreakPlate_Index:	index offset(*),,2
 
 loc_3C0C0:
 		move.w	#id_SubData_BreakPlate,d0
-		bsr.w	LoadSubObjData_Part2
+		bsr.w	LoadSubObjData2
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		mulu.w	#$3C,d0
@@ -80417,7 +80418,7 @@ off_3D4D6:	index offset(*),,2
 
 loc_3D4F8:
 		lea	off_3E590(pc),a1
-		bsr.w	LoadSubObjData_Part3
+		bsr.w	LoadSubObjData3
 		move.b	ost_subtype(a0),ost_primary_routine(a0)
 		rts
 ; ===========================================================================
