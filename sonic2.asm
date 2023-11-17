@@ -32839,7 +32839,7 @@ SolidObject_NoRenderChk:
 ; input:
 ;	d1.w = object half width
 ;	d2.w = object half height
-;	d4.w - platform x pos (for passing to MoveWithSlope)
+;	d4.w - platform x pos (for passing to MoveOnSlope)
 ;	a2 = address of heightmap data
 ;
 ; output:
@@ -32884,7 +32884,7 @@ SolidObject_Heightmap_SingleCharacter:
 
 .stand:
 		move.w	d4,d2
-		bsr.w	MoveWithSlope				; move player on slope
+		bsr.w	MoveOnSlope				; move player on slope
 		moveq	#0,d4					; clear flag for no new collision
 		rts
 
@@ -32926,7 +32926,7 @@ SolidObject_Heightmap_Double:
 
 .stand:
 		move.w	d4,d2
-		bsr.w	MoveWithDoubleSlope			; move player with sloped platform
+		bsr.w	MoveOnDoubleSlope			; move player with sloped platform
 		moveq	#0,d4					; clear flag for no new collision
 		rts
 
@@ -32935,6 +32935,12 @@ SolidObject_Heightmap_Double:
 ; Ocean's pressure springs (Object 45)
 ; Almost identical to SolidObject, expect it branches to a custom
 ; MoveWithPlatform routine.
+
+; input:
+;	d1.w = spring half width
+;	d2.w = spring half height (initial collision)
+;	d3.w = distance in pixels that spring has compressed (derived by doubling sprite frame ID)
+;	d4.w = spring x position (when stood on object)
 ; ---------------------------------------------------------------------------
 
 SolidObject_OOZSpring:
@@ -32967,12 +32973,13 @@ SolidObject_OOZSpring:
 		rts
 
 ; ---------------------------------------------------------------------------
-; Custom variant of MoveWithPlatform used by OOZ pressure springs
+; Unused custom variant of MoveWithPlatform used by vertical
+; OOZ pressure springs
 ; This routine could be condensed down to this:
 
 ;		move.w	ost_y_pos(a0),d0
-;		sub.w	d2,d0				; d2 = half object height
-;		add.w	d3,d0				; d3 = ost_frame*2
+;		sub.w	d2,d0
+;		add.w	d3,d0
 ;		move.w	d4,d2
 ;		bsr.w	MoveWithPlatform3	; update player position
 ;		moveq	#0,d4				; clear flag for no new collision
@@ -32981,8 +32988,8 @@ SolidObject_OOZSpring:
 
 .stand:
 		move.w	ost_y_pos(a0),d0
-		sub.w	d2,d0					; d2 = half object height
-		add.w	d3,d0					; d3 = ost_frame*2
+		sub.w	d2,d0
+		add.w	d3,d0					; d0 = y pos of top of spring
 		moveq	#0,d1
 		move.b	ost_height(a1),d1
 		sub.w	d1,d0					; subtract player's height
@@ -32996,27 +33003,27 @@ SolidObject_OOZSpring:
 SolidObject_OOZSpring_ChkCollision:
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0					; d0 = x pos of player on object
+		add.w	d1,d0					; d0 = x pos of player on spring
 		bmi.w	Solid_NoCollision			; branch if player is outside left edge
 
 		move.w	d1,d4
-		add.w	d4,d4					; d4 = object's width
+		add.w	d4,d4					; d4 = full width of spring
 		cmp.w	d4,d0
 		bhi.w	Solid_NoCollision			; branch if player is outside right edge
 		move.w	ost_y_pos(a0),d5
-		add.w	d3,d5					; d3 = ost_frame*2
+		add.w	d3,d5					; d5 = spring y pos + distance spring has compressed
 		move.b	ost_height(a1),d3
 		ext.w	d3
-		add.w	d3,d2
+		add.w	d3,d2					; d2 = combined player + object half height (maximum distance for a top collision)
 		move.w	ost_y_pos(a1),d3
-		sub.w	d5,d3
+		sub.w	d5,d3				; d3 = y pos of player on spring (0 is center)
 		addq.w	#4,d3
-		add.w	d2,d3
-		bmi.w	Solid_NoCollision
+		add.w	d2,d3					; d3 = y pos of player's feet on spring (0 is top)
+		bmi.w	Solid_NoCollision			; branch if player is outside upper edge
 		move.w	d2,d4
-		add.w	d4,d4
+		add.w	d4,d4					; d4 = combined player + object full height
 		cmp.w	d4,d3
-		bcc.w	Solid_NoCollision
+		bcc.w	Solid_NoCollision			; branch if player is outside lower edge
 		bra.w	Solid_Collision
 ; ===========================================================================
 
@@ -33038,61 +33045,65 @@ SolidObject_Heightmap_ChkCollision:
 
 	.no_xflip:
 		lsr.w	#1,d5
-		move.b	(a2,d5.w),d3				; get heightmap value based on player's position on platform
+		move.b	(a2,d5.w),d3				; get heightmap value based on player's x pos on object
 		sub.b	(a2),d3					; subtract baseline
 		ext.w	d3
 		move.w	ost_y_pos(a0),d5
-		sub.w	d3,d5					; d5 = y pos of spot where player is standing
+		sub.w	d3,d5					; d5 = y pos of top of object
 		move.b	ost_height(a1),d3
 		ext.w	d3
-		add.w	d3,d2					; d2 = combined player + object half height
+		add.w	d3,d2					; d2 = combined player + object half height baseline
 		move.w	ost_y_pos(a1),d3
-		sub.w	d5,d3
+		sub.w	d5,d3						; d3 = y pos of player on object (0 is center)
 		addq.w	#4,d3
-		add.w	d2,d3					; d3 = y dist of player's feet from spot
-		bmi.w	Solid_NoCollision			; branch if player is above spot
+		add.w	d2,d3						; d3 = y pos of player's feet on object (0 is top)
+		bmi.w	Solid_NoCollision			; branch if player is outside upper edge
 		move.w	d2,d4
 		add.w	d4,d4					; d4 = combined player + object full height
 		cmp.w	d4,d3
-		bcc.w	Solid_NoCollision			; branch if player is below object
+		bcc.w	Solid_NoCollision			; branch if player is outside lower edge
 		bra.w	Solid_Collision
-; ===========================================================================
-; unused/dead
+
+; ---------------------------------------------------------------------------
+; Part of unused double-sloped solid collision routine
+; ---------------------------------------------------------------------------
+
 SolidObject_Heightmap_Double_cont:
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		bmi.w	Solid_NoCollision
+		add.w	d1,d0					; d0 = x pos of player on object
+		bmi.w	Solid_NoCollision			; branch if player is outside left edge
 		move.w	d1,d3
-		add.w	d3,d3
+		add.w	d3,d3					; d3 = full width of object
 		cmp.w	d3,d0
-		bhi.w	Solid_NoCollision
-		move.w	d0,d5
-		btst	#render_xflip_bit,ost_render(a0)
-		beq.s	loc_199AE
-		not.w	d5
-		add.w	d3,d5
+		bhi.w	Solid_NoCollision			; branch if player is outside right edge
 
-loc_199AE:
-		andi.w	#-2,d5
-		move.b	(a2,d5.w),d3
-		move.b	1(a2,d5.w),d2
+		move.w	d0,d5
+		btst	#render_xflip_bit,ost_render(a0)	; is object horizontally flipped?
+		beq.s	.no_xflip				; if not, branch
+		not.w	d5
+		add.w	d3,d5					; d5 = x pos of player on object, xflipped if needed
+
+	.no_xflip:
+		andi.w	#$FFFE,d5		; round to next lowest even
+		move.b	(a2,d5.w),d3	; get heightmap values based on player's x pos on object
+		move.b	1(a2,d5.w),d2	; d3 = top, d2 = bottom
 		ext.w	d2
 		ext.w	d3
 		move.w	ost_y_pos(a0),d5
-		sub.w	d3,d5
+		sub.w	d3,d5					; d5 = y pos of top of object
 		move.w	ost_y_pos(a1),d3
 		sub.w	d5,d3
 		move.b	ost_height(a1),d5
 		ext.w	d5
-		add.w	d5,d3
-		addq.w	#4,d3
-		bmi.w	Solid_NoCollision
+		add.w	d5,d3					; d3 = y pos of player on object (0 is center)
+		addq.w	#4,d3						; d3 = y pos of player's feet on object (0 is top)
+		bmi.w	Solid_NoCollision			; branch if player is outside upper edge
 		add.w	d5,d2
 		move.w	d2,d4
-		add.w	d5,d4
+		add.w	d5,d4					; d4 = combined player + object full height
 		cmp.w	d4,d3
-		bcc.w	Solid_NoCollision
+		bcc.w	Solid_NoCollision			; branch if player is outside lower edge
 		bra.w	Solid_Collision
 ; ===========================================================================
 
@@ -33128,7 +33139,7 @@ Solid_SkipRenderChk:
 		bmi.w	Solid_NoCollision			; branch if player is outside upper edge
 		andi.w	#$7FF,d3
 		move.w	d2,d4
-		add.w	d4,d4					; calculate minimum distance for a bottom collision.
+		add.w	d4,d4					; d4 = combined player + object full height
 		cmp.w	d4,d3
 		bcc.w	Solid_NoCollision			; branch if player is outside lower edge
 
@@ -33406,7 +33417,7 @@ MoveWithPlatform:
 ;	uses d0.w, d2.w
 ; ---------------------------------------------------------------------------
 
-MoveWithSlope:
+MoveOnSlope:
 		btst	#status_platform_bit,ost_primary_status(a1) ; is player standing on the object?
 		beq.s	MoveOnSlope_Done			; exit if not
 		move.w	ost_x_pos(a1),d0
@@ -33414,12 +33425,12 @@ MoveWithSlope:
 		add.w	d1,d0					; d0 = x pos of player on object
 		lsr.w	#1,d0					; divide by 2
 		btst	#render_xflip_bit,ost_render(a0)	; is object horizontally flipped?
-		beq.s	MoveWithSlope_Do
+		beq.s	MoveOnSlope_Do
 		not.w	d0
 		add.w	d1,d0					; d5 = x pos of player on object, divided by 2 and xflipped if needed
 
-MoveWithSlope_Do:
-		move.b	(a2,d0.w),d1				; get heightmap value based on player's position on platform
+MoveONSlope_Do:
+		move.b	(a2,d0.w),d1				; get heightmap value based on player's position on object
 		ext.w	d1
 		move.w	ost_y_pos(a0),d0
 		sub.w	d1,d0					; subtract heightmap value from object y pos
@@ -33443,7 +33454,7 @@ MoveWithSlope_Do:
 ;	uses d0.w, d2.w
 ; ---------------------------------------------------------------------------
 
-MoveWithDoubleSlope:
+MoveOnDoubleSlope:
 		btst	#status_platform_bit,ost_primary_status(a1) ; is player standing on the object?
 		beq.s	MoveOnSlope_Done			; exit if not
 		move.w	ost_x_pos(a1),d0
@@ -33456,11 +33467,11 @@ MoveWithDoubleSlope:
 
 	.no_xflip:
 		andi.w	#-2,d0
-		bra.s	MoveWithSlope_Do
+		bra.s	MoveOnSlope_Do
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to detect collision with a platform, and update relevant flags
-;
+
 ; input:
 ;	d1.w = platform half width
 ;	d3.w = platform half height
@@ -33516,11 +33527,11 @@ DetectPlatform:
 ; ---------------------------------------------------------------------------
 ; Subroutine to detect collision with a sloped platform, and update relevant
 ; flags
-;
+
 ; input:
 ;	d1.w = platform half width
 ;	d3.w = platform half height
-;	d4.w - platform x pos (for passing to MoveWithSlope)
+;	d4.w - platform x pos (for passing to MoveOnSlope)
 ;	a2 = address of heightmap data
 
 ;	uses d0.l, d1.w, a2
@@ -33566,94 +33577,102 @@ SlopeObject:
 
 	.stillonplat:
 		move.w	d4,d2
-		bsr.w	MoveWithSlope				; move player with platform
+		bsr.w	MoveOnSlope				; move player with platform
 		moveq	#0,d4
 		rts
-; ===========================================================================
-; Identical to DetectPlatform, except it branches to MoveWithPlatform.
-; Used only by ARZ, MCZ, and OOZ swinging platforms
-DetectPlatform2:
-		lea	($FFFFB000).w,a1
-		moveq	#3,d6
-		movem.l	d1-d4,-(sp)
-		bsr.s	loc_19CF8
-		movem.l	(sp)+,d1-d4
-		lea	($FFFFB040).w,a1
-		addq.b	#1,d6
 
-loc_19CF8:
-		btst	d6,ost_primary_status(a0)
-		beq.w	loc_19EC8
+; ---------------------------------------------------------------------------
+; Duplicate of DetectPlatform that uses a different X check routine. It
+; behaves identically to DetectPlatform, and is present in this form as far
+; back as the Nick Arcade proto, so it begs the question as to why this
+; routine even exists...
+; ---------------------------------------------------------------------------
+
+DetectPlatform2:
+		lea	(v_ost_player1).w,a1
+		moveq	#status_p1_platform_bit,d6
+		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
+		bsr.s	.singlecharacter	; run for player 1
+		popr.l	d1-d4
+		lea	(v_ost_player2).w,a1	; run for player 2
+		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
+
+	.singlecharacter:
+		btst	d6,ost_primary_status(a0)		; is player already on platform?
+		beq.w	Plat2_XCheck				; branch if not
 		move.w	d1,d2
-		add.w	d2,d2
-		btst	#1,ost_primary_status(a1)
-		bne.s	loc_19D1C
+		add.w	d2,d2					; d2 = full width of platform
+		btst	#status_air_bit,ost_primary_status(a1)
+		bne.s	.exitplat				; branch if player is in the air
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		bmi.s	loc_19D1C
+		add.w	d1,d0					; d0 = player's distance from center of platform (-ve if left of center)
+		bmi.s	.exitplat				; branch if player is left of the platform
 		cmp.w	d2,d0
-		bcs.s	loc_19D30
+		bcs.s	.stillonplat				; branch if player is not right of platform
 
-loc_19D1C:
-		bclr	#3,ost_primary_status(a1)
-		bset	#1,ost_primary_status(a1)
-		bclr	d6,ost_primary_status(a0)
+	.exitplat:
+		bclr	#status_platform_bit,ost_primary_status(a1)
+		bset	#status_air_bit,ost_primary_status(a1)
+		bclr	d6,ost_primary_status(a0)		; clear object's platform flag
 		moveq	#0,d4
 		rts
 ; ===========================================================================
 
-loc_19D30:
+	.stillonplat:
 		move.w	d4,d2
-		bsr.w	MoveWithPlatform
+		bsr.w	MoveWithPlatform				; move player with platform
 		moveq	#0,d4
 		rts
-; ===========================================================================
-; Almost identical to DetectPlatform, except that this function does nothing if
-; the character is already standing on a platform. Used only by the elevators
-; in CNZ.
-DetectPlatform3:
-		lea	($FFFFB000).w,a1
-		moveq	#3,d6
-		pushr.l	d1-d4
-		bsr.s	loc_19D50
-		popr.l	d1-d4
-		lea	($FFFFB040).w,a1
-		addq.b	#1,d6
 
-loc_19D50:
-		btst	d6,ost_primary_status(a0)
-		bne.s	loc_19D62
-		btst	#3,ost_primary_status(a1)
-		bne.s	loc_19D8E
+; ---------------------------------------------------------------------------
+; Almost identical to DetectPlatform, except that this function does nothing
+; if the player is already standing on a different platform. Used only by the
+; CNZ elevators.
+; ---------------------------------------------------------------------------
+
+DetectPlatform3:
+		lea	(v_ost_player1).w,a1
+		moveq	#status_p1_platform_bit,d6
+		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
+		bsr.s	.singlecharacter	; run for player 1
+		popr.l	d1-d4
+		lea	(v_ost_player2).w,a1	; run for player 2
+		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
+
+	.singlecharacter:
+		btst	d6,ost_primary_status(a0)		; is player already on this platform?
+		bne.s	.chk_on_plat					; branch if so
+		btst	#status_platform_bit,ost_primary_status(a1)	; is player on a different platform?
+		bne.s	.donothing					; branch if so
 		bra.w	Plat_XCheck
 ; ===========================================================================
 
-loc_19D62:
+	.chk_on_plat:
 		move.w	d1,d2
-		add.w	d2,d2
-		btst	#1,ost_primary_status(a1)
-		bne.s	loc_19D7E
+		add.w	d2,d2					; d2 = full width of platform
+		btst	#status_air_bit,ost_primary_status(a1)
+		bne.s	.exitplat			; branch if player is in the air
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
-		add.w	d1,d0
-		bmi.s	loc_19D7E
+		add.w	d1,d0					; d0 = player's distance from center of platform (-ve if left of center)
+		bmi.s	.exitplat				; branch if player is left of the platform
 		cmp.w	d2,d0
-		bcs.s	loc_19D92
+		bcs.s	.stillonplat				; branch if player is not right of platform
 
-loc_19D7E:
-		bclr	#3,ost_primary_status(a1)
-		bset	#1,ost_primary_status(a1)
-		bclr	d6,ost_primary_status(a0)
+	.exitplat:
+		bclr	#status_platform_bit,ost_primary_status(a1)
+		bset	#status_air_bit,ost_primary_status(a1)
+		bclr	d6,ost_primary_status(a0)		; clear object's platform flag
 
-loc_19D8E:
+	.donothing:
 		moveq	#0,d4
 		rts
 ; ===========================================================================
 
-loc_19D92:
+	.stillonplat:
 		move.w	d4,d2
-		bsr.w	MoveWithPlatform
+		bsr.w	MoveWithPlatform				; move player with platform
 		moveq	#0,d4
 		rts
 
@@ -33677,10 +33696,10 @@ DetectPlatform_FullWidth:
 
 Plat_XCheck:
 		; perform x-axis range check
-		tst.w	ost_y_vel(a1)
-		bmi.w	Plat_Exit
+		tst.w	ost_y_vel(a1)				; is player moving up/jumping?
+		bmi.w	Plat_Exit				; branch if so
 		move.w	ost_x_pos(a1),d0
-		sub.w	ost_x_pos(a0),d0			; d0 = player's distance from centre of platform (-ve if left of centre)
+		sub.w	ost_x_pos(a0),d0			; d0 = player's distance from center of platform (-ve if left of center)
 		add.w	d1,d0
 		bmi.w	Plat_Exit				; branch if player is left of the platform
 		add.w	d1,d1
@@ -33689,7 +33708,7 @@ Plat_XCheck:
 
 	Plat_NoXCheck:						; jump here to skip x position check
 		move.w	ost_y_pos(a0),d0
-		sub.w	d3,d0					; d3 = platform height / 2
+		sub.w	d3,d0
 
 	Plat_NoXCheck_AltY:					; jump here to skip x position check and use custom y position
 
@@ -33761,75 +33780,82 @@ Plat_Exit:
 ; ===========================================================================
 
 SlopePlat_XCheck:
-		tst.w	ost_y_vel(a1)
-		bmi.w	Plat_Exit
+		tst.w	ost_y_vel(a1)				; is player moving up/jumping?
+		bmi.w	Plat_Exit				; branch if so (could be .s)
 		move.w	ost_x_pos(a1),d0
-		sub.w	ost_x_pos(a0),d0
+		sub.w	ost_x_pos(a0),d0			; d0 = player's distance from center of platform (-ve if left of center)
 		add.w	d1,d0
-		bmi.s	Plat_Exit
+		bmi.s	Plat_Exit				; branch if player is left of the platform
 		add.w	d1,d1
-		cmp.w	d1,d0
-		bcc.s	Plat_Exit
-		btst	#render_xflip_bit,ost_render(a0)
-		beq.s	loc_19EB6
+		cmp.w	d1,d0					; d1 = full width of platform
+		bcc.s	Plat_Exit				; branch if player is right of the platform
+
+		btst	#render_xflip_bit,ost_render(a0)	; is object horizontally flipped?
+		beq.s	.no_xflip					; branch if not
 		not.w	d0
 		add.w	d1,d0
 
-loc_19EB6:
+	.no_xflip:
 		lsr.w	#1,d0
-		move.b	(a2,d0.w),d3
+		move.b	(a2,d0.w),d3					; get heightmap value based on player's position on platform
 		ext.w	d3
 		move.w	ost_y_pos(a0),d0
-		sub.w	d3,d0
+		sub.w	d3,d0					; subtract heightmap value from object y pos
 		bra.w	Plat_NoXCheck_AltY
 ; ===========================================================================
 
-loc_19EC8:
-		tst.w	ost_y_vel(a1)
-		bmi.w	Plat_Exit
+Plat2_XCheck:
+		tst.w	ost_y_vel(a1)				; is player moving up/jumping?
+		bmi.w	Plat_Exit				; branch if so
 		move.w	ost_x_pos(a1),d0
-		sub.w	ost_x_pos(a0),d0
+		sub.w	ost_x_pos(a0),d0			; d0 = player's distance from center of platform (-ve if left of center)
 		add.w	d1,d0
-		bmi.w	Plat_Exit
+		bmi.w	Plat_Exit				; branch if player is left of the platform
 		add.w	d1,d1
-		cmp.w	d1,d0
-		bcc.w	Plat_Exit
+		cmp.w	d1,d0					; d1 = full width of platform
+		bcc.w	Plat_Exit				; branch if player is left of the platform
 		move.w	ost_y_pos(a0),d0
-		sub.w	d3,d0
+		sub.w	d3,d0				; d3 = platform height / 2
 		bra.w	Plat_NoXCheck_AltY
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Subroutine to drop Sonic/Tails on the floor if an object attempts to drag
+; them into it. Used only by HTZ's rising lava.
+
+;	uses d1.w, d4.l, a1
+; ---------------------------------------------------------------------------
 
 DropOnFloor:
-		lea	($FFFFB000).w,a1
-		btst	#3,ost_primary_status(a0)
-		beq.s	loc_19F1E
-		jsr	(FindFloorObj_ChkCol2).l
+		lea	(v_ost_player1).w,a1
+		btst	#status_p1_platform_bit,ost_primary_status(a0)	; is player 1 on object?
+		beq.s	.chk_p2				; branch if not
+		jsr	(FindFloorObj_ChkCol2).l	; find floor, accounting for both collision planes
 		tst.w	d1
-		beq.s	loc_19F08
-		bpl.s	loc_19F1E
+		beq.s	.drop_p1		; branch if player is on the floor
+		bpl.s	.chk_p2		; branch if player is above the floor
 
-loc_19F08:
-		lea	($FFFFB000).w,a1
-		bclr	#3,ost_primary_status(a1)
-		bset	#1,ost_primary_status(a1)
-		bclr	#3,ost_primary_status(a0)
+	.drop_p1:
+		lea	(v_ost_player1).w,a1	; (a1 was trashed by the call to FindFloorObj_ChkCol2)
+		bclr	#status_platform_bit,ost_primary_status(a1)		; drop player 1 on floor
+		bset	#status_air_bit,ost_primary_status(a1)
+		bclr	#status_p1_platform_bit,ost_primary_status(a0)	; clear object's platform flag
 
-loc_19F1E:
-		lea	($FFFFB040).w,a1
-		btst	#4,ost_primary_status(a0)
-		beq.s	loc_19F4C
-		jsr	(FindFloorObj_ChkCol2).l
+.chk_p2:
+		lea	(v_ost_player2).w,a1
+		btst	#status_p2_platform_bit,ost_primary_status(a0)	; is player 2 on object?
+		beq.s	.done				; branch if not
+		jsr	(FindFloorObj_ChkCol2).l	; find floor, accounting for both collision planes
 		tst.w	d1
-		beq.s	loc_19F36
-		bpl.s	loc_19F4C
+		beq.s	.drop_p2		; branch if player is on the floor
+		bpl.s	.done		; branch if player is above the floor
 
-loc_19F36:
-		lea	($FFFFB040).w,a1
-		bclr	#3,ost_primary_status(a1)
-		bset	#1,ost_primary_status(a1)
-		bclr	#4,ost_primary_status(a0)
+	.drop_p2:
+		lea	(v_ost_player2).w,a1	; (a1 was trashed by the call to FindFloorObj_ChkCol2)
+		bclr	#status_platform_bit,ost_primary_status(a1)		; drop player 1 on floor
+		bset	#status_air_bit,ost_primary_status(a1)
+		bclr	#status_p2_platform_bit,ost_primary_status(a0)	; clear object's platform flag
 
-loc_19F4C:
+	.done:
 		moveq	#0,d4
 		rts
 
@@ -41474,6 +41500,8 @@ Player_CalcRoomAhead:
 
 ; output:
 ;	d1 = distance to ceiling
+
+;	uses d5.b
 ; ---------------------------------------------------------------------------
 
 Player_CalcHeadroom:
@@ -41497,7 +41525,7 @@ Player_CalcHeadroom:
 		; else, fall through to Player_FindFloor (could skip the collision layer check with a bra.s)
 
 ; ---------------------------------------------------------------------------
-; Subroutine to	find distance to floor
+; Subroutine to	find Sonic/Tails' distance to the floor
 
 ; output:
 ;	d0 = distance to floor (larger if on a slope)
@@ -41574,8 +41602,8 @@ Player_FindSmaller:
 ;	d1 = distance to floor
 ;	d3 = floor angle
 ;	a1 = address within 256x256 mappings where player is standing
-;	(a1) = 16x16 tile number
-;	(a4) = floor angle
+;	(a1).w = 16x16 tile number
+;	(a4).b = floor angle
 ; ---------------------------------------------------------------------------
 
 ;Player_FindFloor_Quick_UsePos:
@@ -41632,12 +41660,17 @@ Player_SnapAngle:
 ; which collision layer the object is on and sets the appropriate collision
 ; pointer for FindFloor.
 
+; input:
+;	d3.w =  x position of object (FindFloorObj_ChkCol_NoX only)
+
 ; output:
 ;	d1 = distance to floor
 ;	d3 = floor angle
 ;	a1 = address within 256x256 mappings where player is standing
-;	(a1) = 16x16 tile number
-;	(a4) = floor angle
+;	(a1).w = 16x16 tile number
+;	(a4).b = floor angle
+
+;
 ; ---------------------------------------------------------------------------
 
 FindFloorObj_ChkCol:
@@ -47710,7 +47743,7 @@ PSpring_Vertical:						; Routine 2; unused
 		moveq	#0,d3
 		move.b	ost_pspring_frame(a0),d3		; current frame of spring
 		move.b	d3,ost_frame(a0)			; set frame for display
-		add.w	d3,d3					; d3 = frame ID*2
+		add.w	d3,d3					; d3 = frame ID * 2 (each successive frame lowers player by 2px)
 		move.w	#54/2,d1				; d1 = half width
 		move.w	#40/2,d2				; d2 = half height
 		move.w	ost_x_pos(a0),d4			; d4 = x pos
