@@ -489,13 +489,13 @@ defdac:	macro	lbl,file
 		sizeof_dac_samples: = sizeof_dac_samples+sizeof_\lbl ; add size to running total
 		endm
 
-		defdac	DAC_Kick,"sound/DAC/Kick.bin"
-		defdac	DAC_Snare,"sound/DAC/Snare.bin"
-		defdac	DAC_Timpani,"sound/DAC/Timpani.bin"
-		defdac	DAC_Tom,"sound/DAC/Tom.bin"
-		defdac	DAC_Clap,"sound/DAC/Clap.bin"
-		defdac	DAC_RecordScratch,"sound/DAC/Record Scratch.bin"
-		defdac	DAC_VLowClap,"sound/DAC/Low Clap.bin"
+		defdac	DAC_Kick,"sound/DAC/Kick.dpcm"
+		defdac	DAC_Snare,"sound/DAC/Snare.dpcm"
+		defdac	DAC_Timpani,"sound/DAC/Timpani.dpcm"
+		defdac	DAC_Tom,"sound/DAC/Tom.dpcm"
+		defdac	DAC_Clap,"sound/DAC/Clap.dpcm"
+		defdac	DAC_RecordScratch,"sound/DAC/Record Scratch.dpcm"
+		defdac	DAC_VLowClap,"sound/DAC/Low Clap.dpcm"
 
 	if sizeof_dac_samples>sizeof_z80_bank
 		inform 3,"DAC samples must fit within $%h bytes, but you have $%h bytes of DAC samples.",sizeof_z80_bank,sizeof_dac_samples
