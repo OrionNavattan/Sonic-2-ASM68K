@@ -1114,10 +1114,13 @@ z80_ptr: macros
 		dc.w (\1<<8&$FF00)|(\1>>8&$7F)|$80
 
 ; ---------------------------------------------------------------------------
-; Generate the constants used by the sound driver's bankswitch macro.
-; This replaces part of the bankswitch macro in Sonic 2 AS' sound driver.
+; Generate the instruction opcodes used by the sound driver's bankswitch
+; macro. This replaces part of the bankswitch macro in Sonic 2 AS' sound
+; driver. This is not meant to be invoked directly; use bnkswtch_vals or
+; startbank as appropriate.
 ; ---------------------------------------------------------------------------
-bnkswtch_vals: macro *
+
+gen_bnkswtch_vals: macro *
 
 		\*: equ *
 
@@ -1145,8 +1148,18 @@ bnkswtch_vals: macro *
 		endm
 
 ; ---------------------------------------------------------------------------
+; Generate bankswitch instructions without starting a new soundbank
+; ---------------------------------------------------------------------------
+
+bnkswtch_vals:	macro *
+		\*: equ *
+\*_Start:	gen_bnkswtch_vals
+		endm
+
+; ---------------------------------------------------------------------------
 ; Define and align the start of a sound bank, initialize the sndbank_ptr
-; constant, and generate the constants used by the sound driver's bankswitch macro.
+; constant, and generate the constants used by the sound driver's bankswitch
+; macro.
 ; ---------------------------------------------------------------------------
 
 startbank: macro *
@@ -1163,33 +1176,7 @@ startbank: macro *
 		align	sizeof_z80_bank				; align to 32KB boundary
 		sound_bank_start: = offset(*)			; start address of sound bank
 
-
-		; Unfortunately, because the bnkswtch_vals macro requires a label
-		; on the same line, we can't invoke it here; we have no choice but
-		; to include the entire macro a second time.
-
-		cnt: = 0
-		ptr_num: = 1
-		rept 9
-
-		if OptimizeSoundDriver
-		; Because why use a and e when you can use h and l?
-			if (offset(*))&(1<<(15+cnt))<>0
-				bnkswtch_\*_\$ptr_num:	equ 75h	; ld (hl),l
-			else
-				bnkswtch_\*_\$ptr_num:	equ 74h	; ld (hl),h
-			endc
-		else
-			if (offset(*))&(1<<(15+cnt))=0
-				bnkswtch_\*_\$ptr_num:	equ 77h	; ld (hl),a
-			else
-				bnkswtch_\*_\$ptr_num:	equ 73h	; ld (hl),e
-			endc
-		endc
-		cnt: = cnt+1
-		ptr_num: = ptr_num+1
-		endr
-
+\*_Start:	gen_bnkswtch_vals	; generate the bankswitch instructions
    		endm
 
 ; ---------------------------------------------------------------------------
