@@ -27689,50 +27689,54 @@ word_15EAC:
 ; ===========================================================================
 		bra.w	NullObject				; dead
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Object code execution subroutine
 
-; sub_15F9C: ObjectsLoad: RunObjects:
+; output:
+;	a0 = address of OST of last object
+
+;	uses d0.l, a1 (objects may use other registers)
+; ---------------------------------------------------------------------------
+
 ExecuteObjects:
 		tst.b	(f_teleport).w				; is a teleport in progress?
-		bne.s	.teleport				; if so, exit
+		bne.s	.done				; if so, exit
 
 		lea	(v_ost_all).w,a0			; set address for object RAM
 		moveq	#countof_ost-1,d7			; $80 objects -1 (main OSTs only)
 		moveq	#0,d0
-		cmpi.b	#id_Demo,(v_gamemode).w
-		beq.s	.in_level
-		cmpi.b	#id_Level,(v_gamemode).w
-		bne.s	.run_object
+		cmpi.b	#id_Demo,(v_gamemode).w		; are we in a demo?
+		beq.s	.in_level					; if so, branch
+		cmpi.b	#id_Level,(v_gamemode).w	; are we in a level?
+		bne.s	.run_object					; branch if not
 
 	.in_level:
 		move.w	#(countof_ost+countof_ost_level_only)-1,d7 ; $90 objects -1 (main and level only OSTs)
-		tst.w	(f_two_player).w
-		bne.s	.run_object
-		cmpi.b	#id_Death,(v_ost_player1+ost_primary_routine).w ; is main character dead, drowning, or respawning?
+		tst.w	(f_two_player).w		; is it 2P mode?
+		bne.s	.run_object				; branch if not
+		cmpi.b	#id_Death,(v_ost_player1+ost_primary_routine).w ; is player 1 dead, drowning, or respawning?
 		bcc.s	.dead					; if so, branch
 
-	; RunObject:
 	.run_object:
-		move.b	ost_id(a0),d0
-		beq.s	.no_object
+		move.b	ost_id(a0),d0			; load object number
+		beq.s	.no_object		; branch if 0
 		add.w	d0,d0
-		add.w	d0,d0
+		add.w	d0,d0		; multiply by 4 to make index
 		movea.l	Obj_Index-4(pc,d0.w),a1
-		jsr	(a1)
+		jsr	(a1)			; run the object's code
 		moveq	#0,d0
 
 	.no_object:
-		lea	sizeof_ost(a0),a0
-		dbf	d7,.run_object
+		lea	sizeof_ost(a0),a0	; next object
+		dbf	d7,.run_object		; repeat for all objects
 
-.teleport:
+	.done:
 		rts
-
 ; ===========================================================================
-; RunObjectsWhenPlayerIsDead:
+
 	.dead:
 	if FixBugs
-		; If main character has just drowned, continue running objects normally
+		; Drowning fixes: if player 1 has just drowned, continue running objects normally
 		; until they are marked as dead, so that the bubbles from their mouth are
 		; displayed.
 		cmpi.b	#id_Drown,(v_ost_player+ost_routine)	; has main character just drowned?
@@ -27744,20 +27748,19 @@ ExecuteObjects:
 		bsr.s	.display_object				; next $70 objects are only displayed
 		moveq	#countof_ost_level_only-1,d7
 		bra.s	.run_object				; run final $10 objects run normally
-
 ; ===========================================================================
 
-; RunObjectDisplayOnly:
+
 .display_object:
 		moveq	#0,d0
-		move.b	ost_id(a0),d0				; get object's id
-		beq.s	.no_object2				; if there is no object loaded here, skip
-		tst.b	ost_render(a0)				; was the object displayed on the previous frame?
-		bpl.s	.no_object2				; if not, skip
+		move.b	ost_id(a0),d0			; load object number
+		beq.s	.no_object2				; branch if 0
+		tst.b	ost_render(a0)
+		bpl.s	.no_object2			; branch if off-screen
 
 	if FixBugs
 		; If this is a multi-sprite object, then we cannot use its 'priority'
-		; value to display it as it's being used for coordinate data.
+		; value to display it, as it's being used for coordinate data.
 		; In theory, this means that calls to 'DisplaySprite' here could
 		; overflow 'v_sprite_buffer' and write to the OST
 		; instead, which could be quite disasterous. However, I don't think
@@ -27767,14 +27770,14 @@ ExecuteObjects:
 		; is force them to display on a certain layer consistently.
 		; This quirk becomes a much bigger problem if you extend the
 		; 'priority' value to 16-bit, such as if you've ported S3K's priority
-		; manager, rather than just the upper byte of the Y coordinate being
+		; manager: rather than just the upper byte of the Y coordinate being
 		; read as priority data, the whole word is. This makes it much more
 		; likely to lead to buffer overflow and memory corruption.
 
-		pea .no_object2(pc)				; go to .no_object2 after returning from DisplaySprite or DisplaySprite3
+		pea .no_object2(pc)				; return to .no_object2 after returning from DisplaySprite or DisplaySprite3
 		btst	#render_subobjects_bit,ost_render(a0)	; is this a multisprite object?
 		beq.w	DisplaySprite				; if not, display using object's priority value
-		move.w	#$80*4,d0				; if so, display with priority of four
+		move.w	#sizeof_priority*4,d0				; if so, display with priority of four
 		bra.w	DisplaySprite3
 	else
 		bsr.w	DisplaySprite
@@ -27785,12 +27788,11 @@ ExecuteObjects:
 		dbf	d7,.display_object
 		rts
 
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Object pointers
 ; ---------------------------------------------------------------------------
-Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 
+Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr SonicPlayer					; 1
 		ptr TailsPlayer
 		ptr PlaneSwitcher
@@ -28012,7 +28014,6 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr ContinueCharacters
 		ptr RingPrize					; $DC
 
-; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 4C, 4D, 4E, 4F, 62, D0, and D1
 ; Objects removed from the game. All it does is deallocate its array.
@@ -28027,7 +28028,6 @@ ObjD1:
 NullObject:
 		bra.w	DeleteObject
 
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Subroutine to	make an	object fall downwards, increasingly fast
 ; Also updates its position
@@ -28150,69 +28150,86 @@ DespawnObject3:
 	.delete:
 		bra.w	DeleteObject
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; For objects used in 2P mode zones that do NOT participate in the 12-slot
+; block system. Used only by the Buzzer and Flasher badniks.
 
-DespawnObject_P1:
-		tst.w	(f_two_player).w
-		bne.s	DespawnObject_P2
-		move.w	ost_x_pos(a0),d0
-		andi.w	#$FF80,d0
-		sub.w	(v_camera_x_pos_coarse).w,d0
-		cmpi.w	#(screen_width+64)+(128*2),d0
-		bhi.w	loc_16490				; could be optimized to .s
+;	uses d0.l, d1.l, a1, a2
+; ---------------------------------------------------------------------------
+
+DespawnObject4:
+		tst.w	(f_two_player).w	; is it 2P mode?
+		bne.s	.2p_mode	; branch if so
+
+		out_of_range.w	.offscreen,ost_x_pos(a0)	; branch if offscreen (could be .s)
 		bra.w	DisplaySprite
 
-	loc_16490:
+	.offscreen:
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d0
-		move.b	ost_respawn(a0),d0
-		beq.s	loc_164A2
-		bclr	#7,2(a2,d0.w)
+		move.b	ost_respawn(a0),d0			; get respawn id
+		beq.s	.delete					; branch if not set
+		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w) ; clear high bit of respawn entry (i.e. object was despawned not broken)
 
-	loc_164A2:
+	.delete:
 		bra.w	DeleteObject
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; The Buzzer and Flasher badniks are managed separate from the 12-slot block
+; system due to their potential to wander far beyond a 256 pixel radius. The
+; range check here nevertheless accounts for this system, allowing these
+; objects a range of 768 pixels (3 blocks) within which they can stay spawned.
+; ---------------------------------------------------------------------------
 
-DespawnObject_P2:
-		move.w	ost_x_pos(a0),d0
-		andi.w	#-$100,d0
+.2p_mode:
+		move.w	ost_x_pos(a0),d0	; get object x pos
+		andi.w	#-$100,d0			; round down to nearest $100
 		move.w	d0,d1
-		sub.w	(v_camera_x_pos_coarse).w,d0
-		cmpi.w	#$300,d0
-		bhi.w	loc_164C0				; could be optimized to .s
+		sub.w	(v_camera_x_pos_coarse).w,d0		; get screen position for player 1; d0 = approx distance between object and screen (negative if object is left of screen)
+		cmpi.w	#256+256+256,d0	; 256 pixel wide block. plus two adjacent blocks
+		bhi.w	.chkp2				; branch if out of range (could be optimized to .s)
 		bra.w	DisplaySprite
 
-	loc_164C0:
-		sub.w	(v_camera_x_pos_coarse_p2).w,d1
-		cmpi.w	#$300,d1
-		bhi.w	loc_164D0				; could be optimized to .s
+	.chkp2:
+		sub.w	(v_camera_x_pos_coarse_p2).w,d1		; get screen position for player 2; d0 = approx distance between object and screen (negative if object is left of screen)
+		cmpi.w	#256+256+256,d1	; 256 pixel wide block. plus two adjacent blocks
+		bhi.w	.offscreen2				; branch if out of range (could be optimized to .s)
 		bra.w	DisplaySprite
 
-	loc_164D0:
+	.offscreen2:
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d0
-		move.b	ost_respawn(a0),d0
-		beq.s	loc_164E2				; could be optimized to .s
-		bclr	#7,2(a2,d0.w)
+		move.b	ost_respawn(a0),d0			; get respawn id
+		beq.s	.delete2				; branch if not set
+		bclr	#respawn_bit,v_respawn_data-v_respawn_list(a2,d0.w) ; clear high bit of respawn entry (i.e. object was despawned not broken)
 
-	loc_164E2:
+	.delete2:
 		bra.w	DeleteObject				; useless branch...
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	delete an object
+
+; input:
+;	a0 = address of OST of object (DeleteObject only)
+;	a1 = address of OST of object (DeleteChild only)
+
+; output:
+;	a1 = address of next OST
+
+;	uses d0.l, d1.l
+; ---------------------------------------------------------------------------
 
 DeleteObject:
-		movea.l	a0,a1
+		movea.l	a0,a1					; move object RAM address to (a1)
 
-DeleteChild:
+DeleteChild:							; child objects are already in (a1)
 		moveq	#0,d1
 		moveq	#(sizeof_ost/4)-1,d0
 
 	.loop:
-		move.l	d1,(a1)+
-		dbf	d0,.loop
+		move.l	d1,(a1)+				; clear	the object RAM
+		dbf	d0,.loop				; repeat for length of object RAM
 		rts
-
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to add an object to the sprite queue for display by BuildSprites
@@ -28393,8 +28410,6 @@ Anim_End_F9:
 Anim_End:
 		rts
 
-
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Subroutine to	convert	objects into proper Mega Drive sprites
 
@@ -28525,7 +28540,6 @@ BuildSprites:
 		subq.w	#2,(a4)					; decrement object count
 		bne.w	BuildSprites_ObjectLoop			; if there are objects left, repeat
 
-
 	BuildSprites_NextPriority:
 		lea	sizeof_priority(a4),a4			; next priority section ($80)
 		dbf	d7,BuildSprites_PriorityLoop		; repeat for all sections
@@ -28547,8 +28561,8 @@ BuildSprites:
 	.max_sprites:
 		move.b	#0,-5(a2)				; set link field to 0
 		rts
-
 ; ===========================================================================
+
     if Revision=0
 		; In the Simon Wai prototype, these two lines weren't here.
 		; This may have been a debugging feature for helping the
@@ -28559,7 +28573,6 @@ BuildSprites_Crash:
 		move.w	(1).w,d0				; causes an address exception
 		bra.s	BuildSprites_NextPriority
     endc
-
 ; ===========================================================================
 
 BuildSprites_MultiDraw:
@@ -28660,8 +28673,7 @@ BuildSprites_MultiDraw:
 	.next_object:
 		movea.l	(sp)+,a4
 		bra.w	BuildSprites_NextObject
-
-
+; ===========================================================================
 
     if FixBugs=0
 	BuildSpr_DrawCheck:
@@ -28671,7 +28683,7 @@ BuildSprites_MultiDraw:
 		bcs.s	BuildSpr_Cont				; if it hasn't, branch
 		rts						; otherwise, return
     endc
-
+; ===========================================================================
 
 ; DrawSprite
 BuildSpr_Draw:
@@ -28703,7 +28715,7 @@ BuildSpr_DrawLoop:
     	; Hey look, it's the bug that Ashura the Hedgehog and Surge the Tenrec
     	; owe their existence to. In a rather overzealous optimization,
     	; the game doesn't check if the sprite limit has been reached after
-    	; processing each sprite spritePiece. This means that a multisprite object may be
+    	; processing each sprite piece. This means that a multisprite object may be
     	; processed even if there is not enough room left in 'v_sprite_buffer', leading
     	; to a buffer overflow. To prevent this from causing harm, the developers placed
     	; an $80 byte buffer after 'v_sprite_buffer' to 'catch' the overflow.
@@ -59029,7 +59041,7 @@ Buzz_Projectile:
 		jsrto	SpeedToPos,JmpTo21_SpeedToPos
 		lea	(Ani_Buzz).l,a1
 		jsrto	AnimateSprite,JmpTo15_AnimateSprite
-		jmpto	DespawnObject_P1,JmpTo_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo_DespawnObject4
 ; ===========================================================================
 
 Buzz_Flame:
@@ -59058,7 +59070,7 @@ loc_2D0A2:
 		move.b	ost_render(a1),ost_render(a0)
 		lea	(Ani_Buzz).l,a1
 		jsrto	AnimateSprite,JmpTo15_AnimateSprite
-		jmpto	DespawnObject_P1,JmpTo_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo_DespawnObject4
 ; ===========================================================================
 
 Buzz_Main:
@@ -59105,7 +59117,7 @@ Buzz_Action:
 		jsr	Buzz_Action_Index(pc,d1.w)
 		lea	(Ani_Buzz).l,a1
 		jsrto	AnimateSprite,JmpTo15_AnimateSprite
-		jmpto	DespawnObject_P1,JmpTo_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo_DespawnObject4
 ; ===========================================================================
 Buzz_Action_Index:	index offset(*),,2
 		ptr Buzz_Roaming				; 0
@@ -59265,8 +59277,8 @@ JmpTo15_AnimateSprite:
 		jmp	(AnimateSprite).l
 JmpTo7_Adjust2PArtPointer2:
 		jmp	(Adjust2PArtPointer2).l
-JmpTo_DespawnObject_P1:
-		jmp	(DespawnObject_P1).l
+JmpTo_DespawnObject4:
+		jmp	(DespawnObject4).l
 JmpTo57_Adjust2PArtPointer:
 		jmp	(Adjust2PArtPointer).l
 JmpTo21_SpeedToPos:
@@ -64670,7 +64682,7 @@ JmpTo39_DisplaySprite:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#$80*3,d0
+		move.w	#sizeof_priority*3,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo39_DisplaySprite
@@ -64817,7 +64829,7 @@ loc_31DB8:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#$80*3,d0
+		move.w	#sizeof_priority*3,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo39_DisplaySprite
@@ -64868,7 +64880,7 @@ loc_31E0E:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#$80*3,d0
+		move.w	#sizeof_priority*3,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo39_DisplaySprite
@@ -64901,7 +64913,7 @@ loc_31E4A:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#$80*3,d0
+		move.w	#sizeof_priority*3,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo39_DisplaySprite
@@ -66621,7 +66633,7 @@ loc_333BA:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#$80*3,d0
+		move.w	#sizeof_priority*3,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo41_DisplaySprite
@@ -69291,7 +69303,7 @@ loc_357B2:
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
 		bcc.s	locret_357D0
-		move.w	#$80*1,d0
+		move.w	#sizeof_priority*1,d0
 		jmp	(DisplaySprite3).l
 	else
 		bcs.w	JmpTo44_DisplaySprite
@@ -73851,7 +73863,7 @@ loc_3875A:
 loc_38766:
 		subq.w	#1,$2A(a0)
 		bmi.s	loc_38770
-		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo2_DespawnObject4
 ; ===========================================================================
 
 loc_38770:
@@ -73861,7 +73873,7 @@ loc_38770:
 		move.w	#2,$2E(a0)
 		clr.w	$2A(a0)
 		move.w	#$80,$30(a0)
-		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo2_DespawnObject4
 ; ===========================================================================
 
 loc_38794:
@@ -73901,14 +73913,14 @@ loc_387EC:
 
 loc_387F4:
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
-		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo2_DespawnObject4
 ; ===========================================================================
 
 loc_387FC:
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	#$80,$30(a0)
 		ori.b	#id_col_hurt,ost_col_type(a0)
-		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo2_DespawnObject4
 ; ===========================================================================
 word_38810:
 		dc.w  $100					; 0
@@ -73947,7 +73959,7 @@ loc_38832:
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		cmp.b	ost_primary_routine(a0),d2
 		bne.s	loc_3884A
-		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo2_DespawnObject4
 ; ===========================================================================
 
 loc_3884A:
@@ -73962,20 +73974,20 @@ loc_3885C:
 		bmi.s	loc_38870
 		lea	(Ani_Flash2).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
-		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo2_DespawnObject4
 ; ===========================================================================
 
 loc_38870:
 		addq.b	#2,ost_primary_routine(a0)
 		clr.l	ost_frame(a0)
 		clr.w	ost_anim_time(a0)
-		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo2_DespawnObject4
 ; ===========================================================================
 
 loc_38880:
 		lea	(Ani_Flash3).l,a1
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
-		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo2_DespawnObject4
 ; ===========================================================================
 
 loc_3888E:
@@ -73984,7 +73996,7 @@ loc_3888E:
 		andi.b	#(~id_col_hurt)&$FF,ost_col_type(a0)
 		clr.l	ost_frame(a0)
 		clr.w	ost_anim_time(a0)
-		jmpto	DespawnObject_P1,JmpTo2_DespawnObject_P1
+		jmpto	DespawnObject4,JmpTo2_DespawnObject4
 ; ===========================================================================
 SubData_Flash:
 		dc.l Map_Flash
@@ -82562,8 +82574,8 @@ JmpTo_PlaySoundLocal:
 		jmp	(PlaySoundLocal).l
 JmpTo6_RandomNumber:
 		jmp	(RandomNumber).l
-JmpTo2_DespawnObject_P1:
-		jmp	(DespawnObject_P1).l
+JmpTo2_DespawnObject4:
+		jmp	(DespawnObject4).l
 JmpTo_WhiteOut_AddColor:
 		jmp	(WhiteOut_AddColor).l
 JmpTo_Tails_LoadGFX_2:
