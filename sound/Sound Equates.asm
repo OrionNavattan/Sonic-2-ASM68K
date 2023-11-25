@@ -379,7 +379,7 @@ v_pal_update_counter:	db 0					; 12FEh ; counts from 0 to 5 to periodically "dou
 v_current_dac:			db 0				; 12FFh ; indicates current dac sample
 v_current_song:			db 0				; 1300h ; currently playing song index
 f_sfx:					db 0			; 1301h ; flag to indicate SFX are being updated (and thus using custom voice table); set to FFh while doing SFX, 0 otherwise.
-f_stereo_alt:			db 0				; 1302h ; stereo alternation flag for ring SFX. 0 = next one plays on left, FFh = next one plays on right
+f_stereo_alt:			db 0				; 1302h ; stereo alternation flag for ring SFX; 0 = next one plays on left, FFh = next one plays on right
 f_gloop:				db 0			; 1303h ; flag indicating if gloop sound should play this frame; 0 = yes, FFh = no.
 v_spindash_counter:		db 0				; 1304h
 v_spindash_freq_index:	db 0					; 1305h

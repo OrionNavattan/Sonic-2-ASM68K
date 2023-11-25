@@ -1176,7 +1176,7 @@ startbank: macro *
 		align	sizeof_z80_bank				; align to 32KB boundary
 		sound_bank_start: = offset(*)			; start address of sound bank
 
-\*_Start:	gen_bnkswtch_vals	; generate the bankswitch instructions
+\*_Start:	gen_bnkswtch_vals				; generate the bankswitch instructions
    		endm
 
 ; ---------------------------------------------------------------------------

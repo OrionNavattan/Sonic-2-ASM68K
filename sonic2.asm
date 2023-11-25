@@ -27700,35 +27700,35 @@ word_15EAC:
 
 ExecuteObjects:
 		tst.b	(f_teleport).w				; is a teleport in progress?
-		bne.s	.done				; if so, exit
+		bne.s	.done					; if so, exit
 
 		lea	(v_ost_all).w,a0			; set address for object RAM
 		moveq	#countof_ost-1,d7			; $80 objects -1 (main OSTs only)
 		moveq	#0,d0
-		cmpi.b	#id_Demo,(v_gamemode).w		; are we in a demo?
-		beq.s	.in_level					; if so, branch
-		cmpi.b	#id_Level,(v_gamemode).w	; are we in a level?
-		bne.s	.run_object					; branch if not
+		cmpi.b	#id_Demo,(v_gamemode).w			; are we in a demo?
+		beq.s	.in_level				; if so, branch
+		cmpi.b	#id_Level,(v_gamemode).w		; are we in a level?
+		bne.s	.run_object				; branch if not
 
 	.in_level:
 		move.w	#(countof_ost+countof_ost_level_only)-1,d7 ; $90 objects -1 (main and level only OSTs)
-		tst.w	(f_two_player).w		; is it 2P mode?
+		tst.w	(f_two_player).w			; is it 2P mode?
 		bne.s	.run_object				; branch if not
 		cmpi.b	#id_Death,(v_ost_player1+ost_primary_routine).w ; is player 1 dead, drowning, or respawning?
 		bcc.s	.dead					; if so, branch
 
 	.run_object:
-		move.b	ost_id(a0),d0			; load object number
-		beq.s	.no_object		; branch if 0
+		move.b	ost_id(a0),d0				; load object number
+		beq.s	.no_object				; branch if 0
 		add.w	d0,d0
-		add.w	d0,d0		; multiply by 4 to make index
+		add.w	d0,d0					; multiply by 4 to make index
 		movea.l	Obj_Index-4(pc,d0.w),a1
-		jsr	(a1)			; run the object's code
+		jsr	(a1)					; run the object's code
 		moveq	#0,d0
 
 	.no_object:
-		lea	sizeof_ost(a0),a0	; next object
-		dbf	d7,.run_object		; repeat for all objects
+		lea	sizeof_ost(a0),a0			; next object
+		dbf	d7,.run_object				; repeat for all objects
 
 	.done:
 		rts
@@ -27753,10 +27753,10 @@ ExecuteObjects:
 
 .display_object:
 		moveq	#0,d0
-		move.b	ost_id(a0),d0			; load object number
+		move.b	ost_id(a0),d0				; load object number
 		beq.s	.no_object2				; branch if 0
 		tst.b	ost_render(a0)
-		bpl.s	.no_object2			; branch if off-screen
+		bpl.s	.no_object2				; branch if off-screen
 
 	if FixBugs
 		; If this is a multi-sprite object, then we cannot use its 'priority'
@@ -27777,7 +27777,7 @@ ExecuteObjects:
 		pea .no_object2(pc)				; return to .no_object2 after returning from DisplaySprite or DisplaySprite3
 		btst	#render_subobjects_bit,ost_render(a0)	; is this a multisprite object?
 		beq.w	DisplaySprite				; if not, display using object's priority value
-		move.w	#sizeof_priority*4,d0				; if so, display with priority of four
+		move.w	#sizeof_priority*4,d0			; if so, display with priority of four
 		bra.w	DisplaySprite3
 	else
 		bsr.w	DisplaySprite
@@ -27890,7 +27890,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr StartBannerSpecial
 		ptr RingsSpecial				; $60
 		ptr BombSpecial
-		ptr Obj62						; unknown
+		ptr Obj62					; unknown
 		ptr ShadowSpecial				; not Shads, but rather the character's shadows in the Special Stages :P
 		ptr TwinStompers				; $64
 		ptr Platform5
@@ -28158,8 +28158,8 @@ DespawnObject3:
 ; ---------------------------------------------------------------------------
 
 DespawnObject4:
-		tst.w	(f_two_player).w	; is it 2P mode?
-		bne.s	.2p_mode	; branch if so
+		tst.w	(f_two_player).w			; is it 2P mode?
+		bne.s	.2p_mode				; branch if so
 
 		out_of_range.w	.offscreen,ost_x_pos(a0)	; branch if offscreen (could be .s)
 		bra.w	DisplaySprite
@@ -28182,17 +28182,17 @@ DespawnObject4:
 ; ---------------------------------------------------------------------------
 
 .2p_mode:
-		move.w	ost_x_pos(a0),d0	; get object x pos
-		andi.w	#-$100,d0			; round down to nearest $100
+		move.w	ost_x_pos(a0),d0			; get object x pos
+		andi.w	#-$100,d0				; round down to nearest $100
 		move.w	d0,d1
 		sub.w	(v_camera_x_pos_coarse).w,d0		; get screen position for player 1; d0 = approx distance between object and screen (negative if object is left of screen)
-		cmpi.w	#256+256+256,d0	; 256 pixel wide block. plus two adjacent blocks
-		bhi.w	.chkp2				; branch if out of range (could be optimized to .s)
+		cmpi.w	#256+256+256,d0				; 256 pixel wide block. plus two adjacent blocks
+		bhi.w	.chkp2					; branch if out of range (could be optimized to .s)
 		bra.w	DisplaySprite
 
 	.chkp2:
 		sub.w	(v_camera_x_pos_coarse_p2).w,d1		; get screen position for player 2; d0 = approx distance between object and screen (negative if object is left of screen)
-		cmpi.w	#256+256+256,d1	; 256 pixel wide block. plus two adjacent blocks
+		cmpi.w	#256+256+256,d1				; 256 pixel wide block. plus two adjacent blocks
 		bhi.w	.offscreen2				; branch if out of range (could be optimized to .s)
 		bra.w	DisplaySprite
 
@@ -33028,7 +33028,7 @@ SolidObject_OOZSpring_ChkCollision:
 		ext.w	d3
 		add.w	d3,d2					; d2 = combined player + object half height (maximum distance for a top collision)
 		move.w	ost_y_pos(a1),d3
-		sub.w	d5,d3				; d3 = y pos of player on spring (0 is center)
+		sub.w	d5,d3					; d3 = y pos of player on spring (0 is center)
 		addq.w	#4,d3
 		add.w	d2,d3					; d3 = y pos of player's feet on spring (0 is top)
 		bmi.w	Solid_NoCollision			; branch if player is outside upper edge
@@ -33066,9 +33066,9 @@ SolidObject_Heightmap_ChkCollision:
 		ext.w	d3
 		add.w	d3,d2					; d2 = combined player + object half height baseline
 		move.w	ost_y_pos(a1),d3
-		sub.w	d5,d3						; d3 = y pos of player on object (0 is center)
+		sub.w	d5,d3					; d3 = y pos of player on object (0 is center)
 		addq.w	#4,d3
-		add.w	d2,d3						; d3 = y pos of player's feet on object (0 is top)
+		add.w	d2,d3					; d3 = y pos of player's feet on object (0 is top)
 		bmi.w	Solid_NoCollision			; branch if player is outside upper edge
 		move.w	d2,d4
 		add.w	d4,d4					; d4 = combined player + object full height
@@ -33097,9 +33097,9 @@ SolidObject_Heightmap_Double_cont:
 		add.w	d3,d5					; d5 = x pos of player on object, xflipped if needed
 
 	.no_xflip:
-		andi.w	#$FFFE,d5		; round to next lowest even
-		move.b	(a2,d5.w),d3	; get heightmap values based on player's x pos on object
-		move.b	1(a2,d5.w),d2	; d3 = top, d2 = bottom
+		andi.w	#$FFFE,d5				; round to next lowest even
+		move.b	(a2,d5.w),d3				; get heightmap values based on player's x pos on object
+		move.b	1(a2,d5.w),d2				; d3 = top, d2 = bottom
 		ext.w	d2
 		ext.w	d3
 		move.w	ost_y_pos(a0),d5
@@ -33109,7 +33109,7 @@ SolidObject_Heightmap_Double_cont:
 		move.b	ost_height(a1),d5
 		ext.w	d5
 		add.w	d5,d3					; d3 = y pos of player on object (0 is center)
-		addq.w	#4,d3						; d3 = y pos of player's feet on object (0 is top)
+		addq.w	#4,d3					; d3 = y pos of player's feet on object (0 is top)
 		bmi.w	Solid_NoCollision			; branch if player is outside upper edge
 		add.w	d5,d2
 		move.w	d2,d4
@@ -33604,9 +33604,9 @@ DetectPlatform2:
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
 		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
-		bsr.s	.singlecharacter	; run for player 1
+		bsr.s	.singlecharacter			; run for player 1
 		popr.l	d1-d4
-		lea	(v_ost_player2).w,a1	; run for player 2
+		lea	(v_ost_player2).w,a1			; run for player 2
 		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
 	.singlecharacter:
@@ -33633,7 +33633,7 @@ DetectPlatform2:
 
 	.stillonplat:
 		move.w	d4,d2
-		bsr.w	MoveWithPlatform				; move player with platform
+		bsr.w	MoveWithPlatform			; move player with platform
 		moveq	#0,d4
 		rts
 
@@ -33647,16 +33647,16 @@ DetectPlatform3:
 		lea	(v_ost_player1).w,a1
 		moveq	#status_p1_platform_bit,d6
 		pushr.l	d1-d4					; back up input registers so we can run this routine again for player 2
-		bsr.s	.singlecharacter	; run for player 1
+		bsr.s	.singlecharacter			; run for player 1
 		popr.l	d1-d4
-		lea	(v_ost_player2).w,a1	; run for player 2
+		lea	(v_ost_player2).w,a1			; run for player 2
 		addq.b	#status_p2_platform_bit-status_p1_platform_bit,d6
 
 	.singlecharacter:
 		btst	d6,ost_primary_status(a0)		; is player already on this platform?
-		bne.s	.chk_on_plat					; branch if so
-		btst	#status_platform_bit,ost_primary_status(a1)	; is player on a different platform?
-		bne.s	.donothing					; branch if so
+		bne.s	.chk_on_plat				; branch if so
+		btst	#status_platform_bit,ost_primary_status(a1) ; is player on a different platform?
+		bne.s	.donothing				; branch if so
 		bra.w	Plat_XCheck
 ; ===========================================================================
 
@@ -33664,7 +33664,7 @@ DetectPlatform3:
 		move.w	d1,d2
 		add.w	d2,d2					; d2 = full width of platform
 		btst	#status_air_bit,ost_primary_status(a1)
-		bne.s	.exitplat			; branch if player is in the air
+		bne.s	.exitplat				; branch if player is in the air
 		move.w	ost_x_pos(a1),d0
 		sub.w	ost_x_pos(a0),d0
 		add.w	d1,d0					; d0 = player's distance from center of platform (-ve if left of center)
@@ -33684,7 +33684,7 @@ DetectPlatform3:
 
 	.stillonplat:
 		move.w	d4,d2
-		bsr.w	MoveWithPlatform				; move player with platform
+		bsr.w	MoveWithPlatform			; move player with platform
 		moveq	#0,d4
 		rts
 
@@ -33803,13 +33803,13 @@ SlopePlat_XCheck:
 		bcc.s	Plat_Exit				; branch if player is right of the platform
 
 		btst	#render_xflip_bit,ost_render(a0)	; is object horizontally flipped?
-		beq.s	.no_xflip					; branch if not
+		beq.s	.no_xflip				; branch if not
 		not.w	d0
 		add.w	d1,d0
 
 	.no_xflip:
 		lsr.w	#1,d0
-		move.b	(a2,d0.w),d3					; get heightmap value based on player's position on platform
+		move.b	(a2,d0.w),d3				; get heightmap value based on player's position on platform
 		ext.w	d3
 		move.w	ost_y_pos(a0),d0
 		sub.w	d3,d0					; subtract heightmap value from object y pos
@@ -33827,7 +33827,7 @@ Plat2_XCheck:
 		cmp.w	d1,d0					; d1 = full width of platform
 		bcc.w	Plat_Exit				; branch if player is left of the platform
 		move.w	ost_y_pos(a0),d0
-		sub.w	d3,d0				; d3 = platform height / 2
+		sub.w	d3,d0					; d3 = platform height / 2
 		bra.w	Plat_NoXCheck_AltY
 
 ; ---------------------------------------------------------------------------
@@ -33839,33 +33839,33 @@ Plat2_XCheck:
 
 DropOnFloor:
 		lea	(v_ost_player1).w,a1
-		btst	#status_p1_platform_bit,ost_primary_status(a0)	; is player 1 on object?
-		beq.s	.chk_p2				; branch if not
-		jsr	(FindFloorObj_ChkCol2).l	; find floor, accounting for both collision planes
+		btst	#status_p1_platform_bit,ost_primary_status(a0) ; is player 1 on object?
+		beq.s	.chk_p2					; branch if not
+		jsr	(FindFloorObj_ChkCol2).l		; find floor, accounting for both collision planes
 		tst.w	d1
-		beq.s	.drop_p1		; branch if player is on the floor
-		bpl.s	.chk_p2		; branch if player is above the floor
+		beq.s	.drop_p1				; branch if player is on the floor
+		bpl.s	.chk_p2					; branch if player is above the floor
 
 	.drop_p1:
-		lea	(v_ost_player1).w,a1	; (a1 was trashed by the call to FindFloorObj_ChkCol2)
-		bclr	#status_platform_bit,ost_primary_status(a1)		; drop player 1 on floor
+		lea	(v_ost_player1).w,a1			; (a1 was trashed by the call to FindFloorObj_ChkCol2)
+		bclr	#status_platform_bit,ost_primary_status(a1) ; drop player 1 on floor
 		bset	#status_air_bit,ost_primary_status(a1)
-		bclr	#status_p1_platform_bit,ost_primary_status(a0)	; clear object's platform flag
+		bclr	#status_p1_platform_bit,ost_primary_status(a0) ; clear object's platform flag
 
 .chk_p2:
 		lea	(v_ost_player2).w,a1
-		btst	#status_p2_platform_bit,ost_primary_status(a0)	; is player 2 on object?
-		beq.s	.done				; branch if not
-		jsr	(FindFloorObj_ChkCol2).l	; find floor, accounting for both collision planes
+		btst	#status_p2_platform_bit,ost_primary_status(a0) ; is player 2 on object?
+		beq.s	.done					; branch if not
+		jsr	(FindFloorObj_ChkCol2).l		; find floor, accounting for both collision planes
 		tst.w	d1
-		beq.s	.drop_p2		; branch if player is on the floor
-		bpl.s	.done		; branch if player is above the floor
+		beq.s	.drop_p2				; branch if player is on the floor
+		bpl.s	.done					; branch if player is above the floor
 
 	.drop_p2:
-		lea	(v_ost_player2).w,a1	; (a1 was trashed by the call to FindFloorObj_ChkCol2)
-		bclr	#status_platform_bit,ost_primary_status(a1)		; drop player 1 on floor
+		lea	(v_ost_player2).w,a1			; (a1 was trashed by the call to FindFloorObj_ChkCol2)
+		bclr	#status_platform_bit,ost_primary_status(a1) ; drop player 1 on floor
 		bset	#status_air_bit,ost_primary_status(a1)
-		bclr	#status_p2_platform_bit,ost_primary_status(a0)	; clear object's platform flag
+		bclr	#status_p2_platform_bit,ost_primary_status(a0) ; clear object's platform flag
 
 	.done:
 		moveq	#0,d4
@@ -58779,7 +58779,7 @@ loc_2CCDE:
 		move.b	#3,ost_anim(a1)
 		move.l	a1,$36(a0)
 		move.l	a0,$36(a1)
-		bset	#6,ost_primary_status(a0) ; pointless, as this object does not have any child sprites
+		bset	#6,ost_primary_status(a0)		; pointless, as this object does not have any child sprites
 
 loc_2CDA2:
 		lea	(Ani_Aquis).l,a1
