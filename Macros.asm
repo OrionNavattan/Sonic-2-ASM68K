@@ -728,44 +728,44 @@ endsprite:	macro
 
 piece:	macro	xpos,ypos,dimensions,tileindex,pal_flip_pri
 
-		sprite_xpos: = \xpos
-		sprite_ypos: = \ypos
+		spritemap_xpos: = \xpos
+		spritemap_ypos: = \ypos
 
-		sprite_width:	substr	1,1,"\dimensions"	; width
-		sprite_height:	substr	3,3,"\dimensions"	; height
+		spritemap_width:	substr	1,1,"\dimensions" ; width
+		spritemap_height:	substr	3,3,"\dimensions" ; height
 
 		if \tileindex<0					; is tile index negative?
-			sprite_tile: = $10000+(\tileindex)	; convert signed to unsigned
+			spritemao_tile: = $10000+(\tileindex)	; convert signed to unsigned
 		else
-			sprite_tile: = \tileindex
+			spritemap_tile: = \tileindex
 		endc
 
-		sprite_xflip: = 0
-		sprite_yflip: = 0
-		sprite_hi: = 0
-		sprite_pal: = 0
+		spritemap_xflip: = 0
+		spritemap_yflip: = 0
+		spritemap_hi: = 0
+		spritemap_pal: = 0
 		rept narg-4
 			if strcmp("\pal_flip_pri","xflip")
-			sprite_xflip: = $800
+			spritemap_xflip: = $800
 			elseif strcmp("\pal_flip_pri","yflip")
-			sprite_yflip: = $1000
+			spritemap_yflip: = $1000
 			elseif strcmp("\pal_flip_pri","hi")
-			sprite_hi: = $8000
+			spritemap_hi: = $8000
 			elseif strcmp("\pal_flip_pri","pal2")
-			sprite_pal: = $2000
+			spritemap_pal: = $2000
 			elseif strcmp("\pal_flip_pri","pal3")
-			sprite_pal: = $4000
+			spritemap_pal: = $4000
 			elseif strcmp("\pal_flip_pri","pal4")
-			sprite_pal: = $6000
+			spritemap_pal: = $6000
 			else
 			endc
 		shift
 		endr
 
-		dc.w	((sprite_ypos&$FF)<<8)|(((sprite_width-1)&3)<<2)|((sprite_height-1)&3) ; y pos, width, and height
-		dc.w	(sprite_tile+sprite_xflip+sprite_yflip+sprite_hi+sprite_pal)&$FFFF ; tile, priority, xflip, yflip, pal
-		dc.w	((sprite_tile>>1)+sprite_xflip+sprite_yflip+sprite_hi+sprite_pal)&$FFFF ; 2P mode tile, priority, xflip, yflip, pal
-		dc.w	sprite_xpos				; x pos
+		dc.w	((spritemap_ypos&$FF)<<8)|(((spritemap_width-1)&3)<<2)|((spritemap_height-1)&3) ; y pos, width, and height
+		dc.w	(spritemap_tile+spritemap_xflip+spritemap_yflip+spritemap_hi+spritemap_pal)&$FFFF ; tile, priority, xflip, yflip, pal
+		dc.w	((spritemap_tile>>1)+spritemap_xflip+spritemap_yflip+spritemap_hi+spritemap_pal)&$FFFF ; 2P mode tile, priority, xflip, yflip, pal
+		dc.w	spritemap_xpos				; x pos
 		endm
 
 ; ---------------------------------------------------------------------------

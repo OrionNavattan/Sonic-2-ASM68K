@@ -125,7 +125,7 @@ Level_Layout:			equ v_level_layout
 Block_Table:			equ v_16x16_tiles
 TempArray_LayerDef:		equ	v_bgscroll_buffer
 Decomp_Buffer:			equ	v_nem_gfx_buffer
-Sprite_Table_Input:		equ	v_sprite_queue
+Object_Display_Lists:	equ	v_sprite_queue
 
 Object_RAM:				equ v_ost_all
 Reserved_Object_RAM:	equ v_ost_reserved
@@ -166,7 +166,7 @@ Primary_Collision:			equ	v_primary_collision
 Secondary_Collision:		equ	v_secondary_collision
 VDP_Command_Buffer:			equ	v_dma_queue
 VDP_Command_Buffer_Slot:	equ	v_dma_queue_slot
-Sprite_Table_2:				equ	v_sprite_queue_2
+Sprite_Table_2:				equ	v_sprite_buffer_2
 Horiz_Scroll_Buf:			equ v_hscroll_buffer
 Sonic_Stat_Record_Buf:		equ	v_sonic_stat_tracker
 Sonic_Pos_Record_Buf:		equ v_sonic_pos_tracker
@@ -278,6 +278,11 @@ Underwater_palette:			equ v_pal_water
 Underwater_palette_line2:	equ v_pal_water_line2
 Underwater_palette_line3:	equ v_pal_water_line3
 Underwater_palette_line4:	equ v_pal_water_line4
+
+	if FixBugs
+Sprite_Table_Alternate:		equ	v_sprite_buffer_alt
+Sprite_Table_P2_Alternate:	equ	v_sprite_buffer_alt2
+	endc
 
 Game_Mode:		equ v_gamemode
 
@@ -468,6 +473,12 @@ TailsTails_LastLoadedDPLC:	equ	v_tailstails_last_frame_id
 ButtonVine_Trigger:			equ	v_button_state
 
 Sprite_Table:		equ v_sprite_buffer
+
+	if FixBugs
+Current_sprite_table_page:		equ	f_sprite_buffer_page
+Sprite_table_page_flip_pending:	equ	f_sprite_buffer_pageflip
+	endc
+
 Normal_palette:		equ v_pal_dry
 Normal_palette_line2:	equ v_pal_dry_line2
 Normal_palette_line3:	equ v_pal_dry_line3

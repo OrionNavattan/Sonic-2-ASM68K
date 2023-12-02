@@ -65,7 +65,29 @@ sizeof_vram_planetable_64x32:	equ sizeof_vram_row_64*32	; $1000
 sizeof_vram_planetable_128x32:	equ sizeof_vram_row_128*32	; $2000
 sizeof_vram_planetable_64x64:	equ sizeof_vram_row_64*64	; $2000
 
-sizeof_sprite:			equ 8				; one sprite in sprite attribute table
+; Sprite structure
+		rsreset
+sprite_y_pos:		rs.w 1					; bits 0-9 = y pos of sprite, 10-15 unused
+sprite_size:		rs.b 1					; bits 0-1 = vertical size, 2-3 = horizontal size, 4-7 unused
+	sprite_height_1: 	equ 0
+	sprite_height_2:	equ 1
+	sprite_height_3:	equ 2
+	sprite_height_4:	equ 3
+	sprite_width_1: 	equ 0
+	sprite_width_2:		equ 1
+	sprite_width_3:		equ 2
+	sprite_width_4:		equ 3
+sprite_link:		rs.b 1					; bits 0-6 = id of sprite to draw next, 7 unused
+sprite_tile:		rs.w 1					; tile base, palette, flip, and priority
+	sprite_priority_bit:	equ $F				; 0 = low priority, 1 = high
+	; bits $D-$E = palette ID
+	sprite_xflip_bit:	equ $B
+	sprite_yflip_bit:	equ $C
+	sprite_xflip:	equ 1<<sprite_xflip_bit
+	sprite_yflip:	equ 1<<sprite_yflip_bit
+sprite_x_pos:		rs.w 1					; bits 0-8 = x pos of sprite
+sizeof_sprite:		equ __rs				; 8 bytes; size of one sprite in sprite attribute table
+
 countof_max_sprites:	equ $50					; max number of sprites that can be displayed at once (80)
 sizeof_vram_sprites:	equ sizeof_sprite*countof_max_sprites	; sprite attribute table ($280 bytes)
 sizeof_vram_hscroll:	equ $380
@@ -449,7 +471,7 @@ ost_render:		rs.b 1					;  1 ; universal; bitfield for x/y flip, display mode; b
 	render_bg_bit:		equ 3
 	render_useheight_bit:	equ 4
 	render_rawmap_bit:		equ 5
-	render_subobjects_bit:		equ 6
+	render_subsprites_bit:		equ 6
 	render_onscreen_bit:	equ 7
 	render_xflip:		equ 1<<render_xflip_bit		; xflip
 	render_yflip:		equ 1<<render_yflip_bit		; yflip
@@ -458,7 +480,7 @@ ost_render:		rs.b 1					;  1 ; universal; bitfield for x/y flip, display mode; b
 	render_bg:			equ 1<<render_bg_bit	; align to background
 	render_useheight:	equ 1<<render_useheight_bit	; use ost_height to decide if object is on screen, otherwise height is assumed to be $20 (used for large objects)
 	render_rawmap:		equ 1<<render_rawmap_bit	; sprites use raw mappings - i.e. object consists of a single sprite instead of multipart sprite mappings (e.g. broken block fragments)
-	render_subobjects:		equ 1<<render_subobjects_bit ; has subobjects to be rendered
+	render_subsprites:		equ 1<<render_subsprites_bit ; has child sprites to be rendered
 	render_onscreen:	equ 1<<render_onscreen_bit	; object is on screen
 
 ost_tile:		rs.w 1					;  2 ; universal; tile VRAM, palette, priority, and x-flip/y-flip (2 bytes)
@@ -568,8 +590,7 @@ ost_subspr3_y_pos:			rs.b 2			; $18 ; in place of ost_priority
 ost_subspr3_frame:			rs.b 1			; $1B ; in place of ost_anim_frame
 ost_subspr4_x_pos:			rs.b 2			; $1C ; in place of ost_anim
 ost_subspr4_y_pos:			rs.b 2			; $1E ; in place of ost_anim_time
-
-			rsset ost_col_property			; $21
+							rs.b 1	; $20 ; unused in this context
 ost_subspr4_frame:			rs.b 1			; $21 ; in place of ost_col_property
 ost_subspr5_x_pos:			rs.b 2			; $22 ; in place of ost_status
 ost_subspr5_y_pos:			rs.b 2			; $24 ; in place of ost_routine

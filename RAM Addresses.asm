@@ -76,8 +76,8 @@ v_secondary_collision:  rs.b $300				; $FFFFD900
 
 v_dma_queue:       		rs.b sizeof_dma_queue		; $FFFFDC00 ; queued DMA commands to be executed the next time ProcessDMA is called, $12 commands by default, $E bytes each, $FC bytes total
 v_dma_queue_slot:  		rs.l 1				; $FFFFDCFC ; stores the address of the next open slot for a queued VDP command
-v_sprite_queue_2:       rs.b $280				; $FFFFDD00 ; sprite attribute table buffer for player 2's half of screen in two-player mode
-                        rs.b $80				; unused, but SAT buffer 2 can spill over into this area when there are too many sprites on-screen
+v_sprite_buffer_2:       rs.b $280				; $FFFFDD00 ; sprite attribute table buffer for player 2's half of screen in two-player mode
+                        rs.b $80				; unused, but v_sprite_buffer_2 can spill over into this area when there are too many sprites on-screen
 
 				rsblock hscroll
 v_hscroll_buffer:  		rs.b sizeof_vram_hscroll	; $FFFFE000 ; horizontal scroll table buffer ($380 bytes)
@@ -280,8 +280,12 @@ v_pal_water_line2:				equ v_pal_water+sizeof_pal ; $FFFFF0A0
 v_pal_water_line3:				equ v_pal_water+(sizeof_pal*2) ; $FFFFF0C0
 v_pal_water_line4:				equ v_pal_water+(sizeof_pal*3) ; $FFFFF0E0
 
+	if FixBugs
+v_sprite_buffer_alt:			rs.b sizeof_vram_sprites ; $FFFFF100	; alternate sprite table pages for 2P mode
+v_sprite_buffer_alt_2:			rs.b sizeof_vram_sprites ; $FFFFF380
+	else
 							rs.b $500 ; $FFFFF100-$FFFFF5FF ; unused, was used by the sound driver in Sonic 1
-
+	endc
 v_gamemode:					rs.b 1		; $FFFFF600 ; see GameModesArray (master level trigger, Mstr_Lvl_Trigger)
 							rs.b 1	; $FFFFF601 ; unused
 v_joypad_hold:				rs.w 1			; $FFFFF602	; joypad input - held, can be overridden by demos
@@ -550,7 +554,14 @@ v_anim_counters:				rs.b $10	; $FFFFF7F0-$FFFFF7FF; counters for zone animation 
 
 v_sprite_buffer:			rs.b sizeof_vram_sprites ; $FFFFF800 ; Sprite attribute table buffer
 v_sprite_buffer_end:		equ __rs			; $FFFFFA80 ; required by clear_ram
+
+	if FixBugs
+f_sprite_buffer_page:		rs.b 1				; $FFFFFA80	; current sprite table page in use
+f_sprite_buffer_pageflip:	rs.b 1				; $FFFFFA81	; set if time to flip page
+							rs.b $7E ;  $FFFFFA82; unused
+	else
 							rs.b $80 ; unused, but v_sprite_buffer buffer can spill over into this area when there are too many sprites on-screen (see the bugfix in BuildSpr_DrawLoop)
+	endc
 
 				rsblock		palette_buffer
 v_pal_dry:					rs.w sizeof_pal_all/2 ; $FFFFFB00 ; main palette for non-underwater parts of the screen

@@ -496,6 +496,7 @@ VBlank_Index:	index offset(*),,2
 ; If not in level, only update sound; if in a water level, update sound and
 ; palettes; if in non-water level, update sound, vscroll, and sprite table
 ; ---------------------------------------------------------------------------
+
 VBlank_Lag:
 		cmpi.b	#titlecard_flag|id_Demo,(v_gamemode).w	; is game on level init sequence in demo mode?
 		beq.s	.islevel				; if yes, branch
@@ -549,8 +550,11 @@ VBlank_Lag:
 
 	.nowater:
 		move.w	(vdp_control_port).l,d0
+	if FixBugs=0
+		; This only needs to be done in 2P mode.
 		vdp_comm.l	move,0,vsram,write,(vdp_control_port).l ; set VDP to VSRAM write
-		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l
+		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l	; update VScroll values
+	endc
 		btst	#console_speed_bit,(v_console_region).w
 		beq.s	.notPAL2
 
@@ -562,12 +566,35 @@ VBlank_Lag:
 		move.w	#1,(f_hblank).w				; set flag to let HBlank know a frame has finished
 		move.w	(v_vdp_hint_counter).w,(vdp_control_port).l
 		move.w	#vdp_fg_nametable|(vram_fg>>10),(vdp_control_port).l ; set fg nametable base to $C000
+	if FixBugs=0
+		; Does not need to be done on lag frames.
 		move.l	(v_fg_y_pos_vsram_p2).w,(v_hblank_fg_y_pos_vsram_p2).w
+	endc
 		stopZ80
 		waitz80
+	if FixBugs
+		; In two-player mode, we have to update the sprite table and
+		; VScroll values even during a lag frame so that the top half
+		; of the screen shows the correct sprites.
+		tst.w	(f_two_player).w			; is it 2P mode?
+		beq.s	.not2P					; branch if not
 
+		vdp_comm.l	move,0,vsram,write,(vdp_control_port).l ; set VDP to VSRAM write
+		move.l	(v_fg_y_pos_vsram).w,(vdp_data_port).l	; update VScroll values
+
+		tst.b	(f_sprite_buffer_page).w
+		beq.s	.usealt					; branch if we're using the alternate page for player 1
+		dma	v_sprite_buffer,sizeof_vram_sprites,vram_sprites ; update sprite table for player 1
+		bra.s	.not2P
+; ===========================================================================
+
+	.usealt:
+		dma	v_sprite_buffer_alt,sizeof_vram_sprites,vram_sprites ; update sprite table for player 1 with alternate page
+	.not2P:
+	else
+		; In the original game, the sprite table is needlessly updated on lag frames in 1P mode.
 		dma	v_sprite_buffer,sizeof_vram_sprites,vram_sprites
-
+	endc
 		bsr.w	SoundDriverInput
 		startZ80
 		bra.w	VBlank_Exit
@@ -680,8 +707,27 @@ VBlank_Level:
 		move.w	(v_vdp_hint_counter).w,(a5)
 		move.w	#vdp_fg_nametable|(vram_fg>>10),(vdp_control_port).l
 		dma v_hscroll_buffer,sizeof_vram_hscroll,vram_hscroll ; update HScroll values
+
+	if FixBugs
+		; Like in Sonic 3, the sprite tables are page-flipped in two-player mode.
+		; This fixes a race-condition where incomplete sprite tables can be uploaded
+		; to the VDP on lag frames, causing corrupted sprites to appear.
+		tst.b	(f_sprite_buffer_pageflip).w
+		beq.s	.nopageflip				; branch if we aren't flipping the sprite table page
+		sf.b	(f_sprite_buffer_pageflip).w
+		not.b	(f_sprite_buffer_page).w
+
+	.nopageflip:
+		tst.b	(f_sprite_buffer_page).w
+		bne.s	.useprimary				; branch if we're using the primary page for player 1
+		dma	v_sprite_buffer_alt,sizeof_vram_sprites,vram_sprites ; update sprite attribute table with alternate page
+		bra.s	.processdma
+
+	.useprimary:
+	endc
 		dma	v_sprite_buffer,sizeof_vram_sprites,vram_sprites ; update sprite attribute table
 
+	.processdma:
 		bsr.w	ProcessDMA				; process pending DMAs
 		bsr.w	SoundDriverInput			; update sound
 
@@ -929,8 +975,27 @@ VBlank_TitleCard:
 		move.w	(v_vdp_hint_counter).w,(a5)
 
 		dma v_hscroll_buffer,sizeof_vram_hscroll,vram_hscroll ; update HScroll values
+
+	if FixBugs
+		; Like in Sonic 3, the sprite tables are page-flipped in two-player mode.
+		; This fixes a race-condition where incomplete sprite tables can be uploaded
+		; to the VDP on lag frames, causing corrupted sprites to appear.
+		tst.b	(f_sprite_buffer_pageflip).w
+		beq.s	.nopageflip				; branch if we aren't flipping the sprite table page
+		sf.b	(f_sprite_buffer_pageflip).w
+		not.b	(f_sprite_buffer_page).w
+
+	.nopageflip:
+		tst.b	(f_sprite_buffer_page).w
+		bne.s	.useprimary				; branch if we're using the primary page for player 1
+		dma	v_sprite_buffer_alt,sizeof_vram_sprites,vram_sprites ; update sprite attribute table with alternate page
+		bra.s	.processdma
+
+	.useprimary:
+	endc
 		dma	v_sprite_buffer,sizeof_vram_sprites,vram_sprites ; update sprite attribute table
 
+	.processdma:
 		bsr.w	ProcessDMA
 		jsr	(DrawLevelTitleCard).l
 		jsr	(SoundDriverInput).l			; can be optimized to bsr.w
@@ -1063,6 +1128,7 @@ ReadPad_Palette_Sprites_HScroll:
 		bsr.w	SoundDriverInput
 		startZ80
 		rts
+
 ; ---------------------------------------------------------------------------
 ; Horizontal interrupt
 ; ---------------------------------------------------------------------------
@@ -1090,8 +1156,22 @@ HBlank:
 		stopZ80
 		waitz80
 
-		dma v_sprite_queue_2,sizeof_vram_sprites,vram_sprites ; upload sprite table for player 1's half of screen
+	if FixBugs
+		; Like in Sonic 3, the sprite tables are page-flipped in two-player mode.
+		; This fixes a race-condition where incomplete sprite tables can be uploaded
+		; to the VDP on lag frames.
+		tst.b	(f_sprite_buffer_page).w
+		beq.s	.usealt					; branch if we;re using the alternate sprite table page for player 2
+		dma v_sprite_buffer_2,sizeof_vram_sprites,vram_sprites ; update sprite table for player 2's half of screen
+		bra.s	.startz80
 
+	.usealt:
+		dma v_sprite_buffer_alt_2,sizeof_vram_sprites,vram_sprites ; update sprite table for player 2 with alternate page
+
+	.startz80:
+	else
+		dma v_sprite_buffer_2,sizeof_vram_sprites,vram_sprites ; update sprite table for player 2
+	endc
 		startZ80
 
 	.wait_hblank2:
@@ -4196,7 +4276,7 @@ Title_MainLoop:
 		; its pixel limit). Because of this, a sprite is placed at X 4 before
 		; a second one is placed at X 0.
 
-		lea	(v_sprite_buffer+4).w,a1
+		lea	(v_sprite_buffer+sprite_tile).w,a1
 		moveq	#0,d0
 		moveq	#((v_sprite_buffer_end-v_sprite_buffer)/8)-1,d6
 
@@ -4204,7 +4284,7 @@ Title_MainLoop:
 		tst.w	(a1)					; the masking sprite has its art-tile set to $0000.
 		bne.s	.not_mask				; if this isn't it, branch
 		bchg	#2,d0					; alternate between X positions of 0 and 4
-		move.w	d0,2(a1)
+		move.w	d0,sprite_x_pos-sprite_tile(a1)
 
 	.not_mask:
 		addq.w	#sizeof_sprite,a1			; check the next entry in the sprite buffer
@@ -6092,11 +6172,11 @@ GM_SpecialStage:
 		clear_ram	ost,ost_end
 
     if FixBugs
-	; The DMA queue needs to be reset here, to prevent the remaining queued DMA transfers from
-	; overwriting the special stage's graphics.
-	; In a bizarre twist of luck, the above bug actually nullifies this bug: the excessive
-	; ss_shared_ram clear sets v_dma_queue to 0, just like the below code.
-	; - Clownacy
+		; The DMA queue needs to be reset here, to prevent the remaining queued DMA transfers from
+		; overwriting the special stage's graphics.
+		; In a bizarre twist of luck, the above bug actually nullifies this bug: the excessive
+		; ss_shared_ram clear sets v_dma_queue to 0, just like the below code.
+		; - Clownacy
 		reset_dma_queue
     endc
 
@@ -8782,7 +8862,7 @@ HUDSpecial:
 		move.b	#0,ost_priority(a0)
 	endc
 		move.b	#1,ost_primary_routine(a0)
-		bset	#render_subobjects_bit,ost_render(a0)
+		bset	#render_subsprites_bit,ost_render(a0)
 		moveq	#0,d1
 		tst.b	(f_ss_2p).w
 		beq.s	loc_7002
@@ -9011,7 +9091,7 @@ loc_736C:
 		move.l	#Map_SpecialNum,ost_mappings(a0)
 		move.w	#tile_Nem_SpecialHUD+tile_pal3,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
-		bset	#render_subobjects_bit,ost_render(a0)	; these two instructions could instead be "move.b render_rel|render_subobjects,ost_render(a0)
+		bset	#render_subsprites_bit,ost_render(a0)	; these two instructions could instead be "move.b render_rel|render_subsprites,ost_render(a0)
 		move.b	#2,ost_mainspr_childsprites(a0)
 		move.w	#$20,d0
 		moveq	#0,d1
@@ -9043,7 +9123,7 @@ loc_73E0:
 		move.l	#Map_SpecialNum,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHUD+tile_pal3,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		bset	#render_subobjects_bit,ost_render(a1)	; these two instructions could instead be "move.b render_rel|render_subobjects,ost_render(a0)
+		bset	#render_subsprites_bit,ost_render(a1)	; these two instructions could instead be "move.b render_rel|render_subsprites,ost_render(a0)
 		move.b	#1,ost_mainspr_childsprites(a1)
 		lea	ost_subspr2_x_pos(a1),a2
 		move.w	#$80,(a2)
@@ -9064,7 +9144,7 @@ loc_742A:
 		move.l	#Map_SpecialNum,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHUD+tile_pal3,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		bset	#render_subobjects_bit,ost_render(a1)	; these two instructions could instead be "move.b render_rel|render_subobjects,ost_render(a0)
+		bset	#render_subsprites_bit,ost_render(a1)	; these two instructions could instead be "move.b render_rel|render_subsprites,ost_render(a0)
 		move.b	#0,ost_mainspr_childsprites(a1)
 		lea	ost_subspr2_x_pos(a1),a2
 		move.w	#$2C,d0
@@ -9710,7 +9790,7 @@ loc_7A7E:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_ContinueScreenItems,ost_mappings(a0)
 		move.w	#(vram_ContinueText/sizeof_cell)+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo_AdjustVRAM2P
 		move.b	#render_abs,ost_render(a0)
 		move.b	#$3C,ost_displaywidth(a0)
 		move.w	#screen_left+160,ost_x_screen(a0)
@@ -9760,7 +9840,7 @@ loc_7B0C:
 		move.b	#6,ost_primary_routine(a1)
 		move.l	#Map_ContinueScreenItems,ost_mappings(a1)
 		move.w	#(vram_ContinueText_2/sizeof_cell)+tile_hi,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo_AdjustVRAM2P2
 		move.b	#render_abs,ost_render(a1)
 		lea	$40(a1),a1
 		dbf	d1,loc_7AF8
@@ -9904,10 +9984,10 @@ byte_7CB2:	dc.b   9,  2,  3,$FF				; 0
 ; ===========================================================================
 
 	if RemoveJmpTos=0
-JmpTo_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
-JmpTo_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo_AdjustVRAM2P2:
+		jmp	(AdjustVRAM2P2).l
+JmpTo_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -10244,7 +10324,7 @@ loc_80E4:
 		move.l	TwoPlayerResults_PosData(pc,d0.w),ost_x_screen(a0) ; and ost_y_screen(a0)
 		move.l	#Map_2P_Results_Text,ost_mappings(a0)
 		move.w	#vram_1P2PWins/sizeof_cell,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo2_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo2_AdjustVRAM2P
 		move.b	#render_abs,ost_render(a0)
 		move.b	#0,ost_priority(a0)
 		moveq	#2,d1
@@ -10931,8 +11011,8 @@ off_87DC:
 ; ===========================================================================
 
 	if RemoveJmpTos=0
-JmpTo2_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo2_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo_Dynamic_Normal:
 		jmp	(Dynamic_Normal).l
 	endc
@@ -12757,7 +12837,7 @@ loc_A4F4:
 		clr.b	ost_anim_time(a0)
 		move.l	#Map_TornadoHelices,ost_mappings(a0)
 		move.w	#0,ost_tile(a0)				; level art
-		jsr	(Adjust2PArtPointer).l
+		jsr	(AdjustVRAM2P).l
 		subi.w	#$14,ost_x_pos(a0)
 		addi.w	#$14,ost_y_pos(a0)
 		bra.w	sub_A58C
@@ -13097,7 +13177,7 @@ loc_A8AA:
 		move.l	#Map_TornadoHelices,ost_mappings(a0)
 		move.w	#tile_LevelArt+tile_hi,ost_tile(a0)
 		move.b	#1,ost_priority(a0)
-		jsr	(Adjust2PArtPointer).l
+		jsr	(AdjustVRAM2P).l
 		move.b	#$C,ost_frame(a0)
 		cmpi.w	#4,($FFFFF750).w
 		bne.s	loc_A8E8
@@ -13200,7 +13280,7 @@ loc_A99A:
 		move.l	#Map_TornadoHelices,ost_mappings(a0)
 		move.w	#tile_hi,ost_tile(a0)
 		move.b	#3,ost_priority(a0)
-		jsr	(Adjust2PArtPointer).l
+		jsr	(AdjustVRAM2P).l
 		move.b	#5,ost_frame(a0)
 		move.b	#2,ost_anim(a0)
 		move.w	#$10F,d0
@@ -20502,7 +20582,7 @@ JmpTo3_PlayMusic:
 ; ----------------------------------------------------------------------------
 
 Bridge:
-		btst	#render_subobjects_bit,ost_render(a0)
+		btst	#render_subsprites_bit,ost_render(a0)
 		bne.w	.ischild
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
@@ -20533,7 +20613,7 @@ loc_F694:
 		move.w	#(vram_HiddenPalaceBridge/sizeof_cell)+tile_pal4,ost_tile(a0)
 
 loc_F6C6:
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#-$80,ost_displaywidth(a0)
 		move.w	ost_y_pos(a0),d2
@@ -20581,7 +20661,7 @@ sub_F728:
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	ost_render(a0),ost_render(a1)
-		bset	#render_subobjects_bit,ost_render(a1)
+		bset	#render_subsprites_bit,ost_render(a1)
 		move.b	#$40,ost_mainspr_width(a1)
 		move.b	d1,ost_mainspr_childsprites(a1)
 		subq.b	#1,d1
@@ -21048,7 +21128,7 @@ JmpTo_CalcSine:
 ; ----------------------------------------------------------------------------
 
 SwingingPlatform:
-		btst	#render_subobjects_bit,ost_render(a0)
+		btst	#render_subsprites_bit,ost_render(a0)
 		bne.w	loc_FCB4
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
@@ -21096,7 +21176,7 @@ loc_FD22:
 		move.b	#8,ost_height(a0)
 
 loc_FD44:
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		moveq	#0,d1
 		move.b	ost_subtype(a0),d1
 		bpl.s	loc_FD54
@@ -21131,7 +21211,7 @@ loc_FD54:
 ; ===========================================================================
 
 loc_FDC6:
-		bset	#render_subobjects_bit,ost_render(a1)
+		bset	#render_subsprites_bit,ost_render(a1)
 		move.b	#$48,ost_mainspr_width(a1)
 		move.b	d1,ost_mainspr_childsprites(a1)
 		subq.b	#1,d1
@@ -21571,7 +21651,7 @@ loc_10324:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Hel,ost_mappings(a0)
 		move.w	#(vram_SpikePole/sizeof_cell)+tile_pal3,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
@@ -21605,7 +21685,7 @@ loc_10372:
 		move.w	d3,ost_x_pos(a1)
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.w	#(vram_SpikePole/sizeof_cell)+tile_pal3,ost_tile(a1)
-		bsr.w	Adjust2PArtPointer2
+		bsr.w	AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#3,ost_priority(a1)
 		move.b	#8,ost_displaywidth(a1)
@@ -21726,7 +21806,7 @@ loc_104CE:
 		move.w	#0+tile_pal3,ost_tile(a0)
 
 loc_1050E:
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		move.w	ost_y_pos(a0),$2C(a0)
@@ -22111,7 +22191,7 @@ loc_108D0:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Ledge,ost_mappings(a0)
 		move.w	#0+tile_pal3,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		move.b	#7,$38(a0)
@@ -22121,7 +22201,7 @@ loc_108D0:
 		bne.s	loc_10938
 		move.l	#Map_CPlat_HPZ,ost_mappings(a0)
 		move.w	#(vram_HPZPlatform/sizeof_cell)+tile_pal3,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#$30,ost_displaywidth(a0)
 		move.l	#byte_10FEC,$3C(a0)
 		move.l	#byte_10C0B,$34(a0)
@@ -22133,7 +22213,7 @@ loc_10938:
 		bne.s	loc_10962
 		move.l	#Map_CFlo_OOZ,ost_mappings(a0)
 		move.w	#tile_Nem_OOZPlatform+tile_pal4,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#$40,ost_displaywidth(a0)
 		move.l	#byte_10FDC,$3C(a0)
 		bra.s	loc_1097C
@@ -22246,7 +22326,7 @@ loc_10A5A:
 		bne.s	loc_10A86
 		move.l	#Map_CFlo_OOZ,ost_mappings(a0)
 		move.w	#tile_Nem_OOZPlatform+tile_pal4,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#$40,ost_displaywidth(a0)
 		move.l	#byte_10C27,$34(a0)
 
@@ -22255,7 +22335,7 @@ loc_10A86:
 		bne.s	loc_10AAE
 		move.l	#Map_CFlo_MCZ,ost_mappings(a0)
 		move.w	#tile_Nem_MCZCollapsingPlat+tile_pal4,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#$20,ost_displaywidth(a0)
 		move.l	#byte_10C2E,$34(a0)
 
@@ -22264,7 +22344,7 @@ loc_10AAE:
 		bne.s	loc_10AD6
 		move.l	#Map_CFlo_ARZ,ost_mappings(a0)
 		move.w	#0+tile_pal3,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#$20,ost_displaywidth(a0)
 		move.l	#byte_10C34,$34(a0)
 
@@ -22534,7 +22614,7 @@ loc_112A4:
 		move.b	(a1),ost_frame(a0)
 		move.l	(a1)+,ost_mappings(a0)
 		move.w	(a1)+,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	(a1)+,ost_displaywidth(a0)
 		move.b	(a1)+,ost_priority(a0)
@@ -22577,7 +22657,7 @@ loc_1131A:
 		move.b	(a1),ost_frame(a0)
 		move.l	(a1)+,ost_mappings(a0)
 		move.w	(a1)+,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	(a1)+,ost_displaywidth(a0)
 		move.b	(a1)+,ost_priority(a0)
@@ -22636,7 +22716,7 @@ loc_115D6:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Stomper,ost_mappings(a0)
 		move.w	#tile_LevelArt+tile_pal3,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -22727,7 +22807,7 @@ loc_11708:
 		move.b	#8,ost_displaywidth(a0)
 
 loc_1171C:
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		move.w	ost_y_pos(a0),$32(a0)
@@ -23019,7 +23099,7 @@ Anml_Main:
 		move.w	(a1,d0.w),ost_x_vel(a0)
 		move.w	2(a1,d0.w),$34(a0)
 		move.w	2(a1,d0.w),ost_y_vel(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#$C,ost_height(a0)
 		move.b	#render_rel,ost_render(a0)
 		bset	#render_xflip_bit,ost_render(a0)
@@ -23051,7 +23131,7 @@ loc_11A46:
 		move.w	(a1)+,$32(a0)
 		move.w	(a1)+,$34(a0)
 		move.l	(a1)+,ost_mappings(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#$C,ost_height(a0)
 		move.b	#render_rel,ost_render(a0)
 		bset	#render_xflip_bit,ost_render(a0)
@@ -23370,7 +23450,7 @@ Poi_Main:
 		addq.b	#2,ost_primary_routine(a0)		; goto Poi_Slower next
 		move.l	#Map_Points,ost_mappings(a0)
 		move.w	#tile_Nem_Numbers+tile_hi,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#1,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
@@ -23422,7 +23502,7 @@ loc_11F5C:
 		move.w	ost_x_pos(a0),$32(a0)
 		move.l	#Map_Ring,ost_mappings(a0)
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#2,ost_priority(a0)
 		move.b	#id_col_6x6+id_col_item,ost_col_type(a0)
@@ -23571,7 +23651,7 @@ loc_120BA:
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.l	#Map_Ring,ost_mappings(a1)
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a1)
-		bsr.w	Adjust2PArtPointer2
+		bsr.w	AdjustVRAM2P2
 		move.b	#render_rel|render_onscreen,ost_render(a1)
 		move.b	#3,ost_priority(a1)
 		move.b	#id_col_6x6+id_col_item,ost_col_type(a1)
@@ -23687,7 +23767,7 @@ off_1220E:		index offset(*),,2
 loc_12216:
 		move.l	#Map_GRing,ost_mappings(a0)
 		move.w	#(vram_GiantRing/sizeof_cell)+tile_pal2,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$40,ost_displaywidth(a0)
 		tst.b	ost_render(a0)
@@ -23761,7 +23841,7 @@ loc_122D8:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_RingFlash,ost_mappings(a0)
 		move.w	#(vram_GiantRingFlash/sizeof_cell)+tile_pal2,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#0,ost_priority(a0)
 		move.b	#$20,ost_displaywidth(a0)
@@ -23943,7 +24023,7 @@ loc_12688:
 		move.b	#$E,ost_width(a0)
 		move.l	#Map_Monitor,ost_mappings(a0)
 		move.w	#tile_Nem_Monitors,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
 		move.b	#$F,ost_displaywidth(a0)
@@ -24113,7 +24193,7 @@ off_12862:	index offset(*),,2
 loc_12868:
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	#tile_Nem_Monitors+tile_hi,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#render_rel|render_rawmap,ost_render(a0)
 		move.b	#3,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
@@ -25462,7 +25542,7 @@ loc_13616:
 		move.w	#screen_top+(screen_height/2)+92,ost_y_screen(a0)
 		move.l	#Map_TitleMenu,ost_mappings(a0)
 		move.w	#vram_start,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		andi.b	#1,(v_title_screen_option).w
 		move.b	(v_title_screen_option).w,ost_frame(a0)
 
@@ -25987,7 +26067,7 @@ loc_13FA8:
 		move.w	#screen_top+112,ost_y_screen(a0)
 		move.l	#Map_Over,ost_mappings(a0)
 		move.w	#tile_Nem_Game_Over+tile_hi,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#render_abs,ost_render(a0)
 		move.b	#0,ost_priority(a0)
 
@@ -26122,7 +26202,7 @@ loc_140CE:
 		move.b	(a2)+,ost_primary_routine(a1)
 		move.b	(a2)+,ost_frame(a1)
 		move.l	#Map_GotThrough,ost_mappings(a1)
-		bsr.w	Adjust2PArtPointer2
+		bsr.w	AdjustVRAM2P2
 		move.b	#render_abs,ost_render(a1)
 		lea	$40(a1),a1
 		dbf	d1,loc_140BC
@@ -26250,7 +26330,7 @@ loc_14220:
 		move.w	#screen_left+264,ost_x_screen(a1)
 		move.w	#screen_top+152,ost_y_screen(a1)
 		move.l	#Map_GotThrough,ost_mappings(a1)
-		bsr.w	Adjust2PArtPointer2
+		bsr.w	AdjustVRAM2P2
 		move.b	#render_abs,ost_render(a1)
 		move.w	#$3C,ost_anim_time(a1)
 		addq.b	#1,(v_continues).w
@@ -27294,7 +27374,7 @@ loc_15978:
 loc_15986:
 		move.w	ost_x_pos(a0),$30(a0)			; spikes_base_x_pos(a0)
 		move.w	ost_y_pos(a0),$32(a0)			; spikes_base_y_pos(a0)
-		bra.w	Adjust2PArtPointer
+		bra.w	AdjustVRAM2P
 ; ===========================================================================
 
 loc_15996:
@@ -27515,7 +27595,7 @@ loc_15CDA:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_PRock,ost_mappings(a0)
 		move.w	#(vram_PurpleRock/sizeof_cell)+tile_pal4,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$13,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -27566,7 +27646,7 @@ loc_15D5C:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Smash,ost_mappings(a0)
 		move.w	#(vram_SmashWall/sizeof_cell)+tile_pal3,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -27775,7 +27855,7 @@ ExecuteObjects:
 		; likely to lead to buffer overflow and memory corruption.
 
 		pea .no_object2(pc)				; return to .no_object2 after returning from DisplaySprite or DisplaySprite3
-		btst	#render_subobjects_bit,ost_render(a0)	; is this a multisprite object?
+		btst	#render_subsprites_bit,ost_render(a0)	; is this a multisprite object?
 		beq.w	DisplaySprite				; if not, display using object's priority value
 		move.w	#sizeof_priority*4,d0			; if so, display with priority of four
 		bra.w	DisplaySprite3
@@ -28419,13 +28499,12 @@ Anim_End:
 ;	uses d0.l, d1.w, d2.w, d3.w, d4.w, d5.l, d6.l, d7.l, a0, a1, a4
 ; ---------------------------------------------------------------------------
 
-; sub_16604:
 BuildSprites:
 		tst.w	(f_two_player).w			; is it 2P mode?
 		bne.w	BuildSprites_2P				; if so, use the 2P version of this function
-		lea	(v_sprite_buffer).w,a2			; ; set address for sprite table - $280 bytes, copied to VRAM at VBlank
-		moveq	#0,d5
-		moveq	#0,d4
+		lea	(v_sprite_buffer).w,a2			; set address for sprite table - $280 bytes, copied to VRAM at VBlank
+		moveq	#0,d5					; initial link value
+		moveq	#0,d4					; holds copy of render flags
 		tst.b	(f_level_started).w			; has the level started?
 		beq.s	.notstarted				; if not, branch
 		jsrto	BuildHUD, JmpTo_BuildHUD		; render the HUD
@@ -28433,16 +28512,16 @@ BuildSprites:
 
 	.notstarted:
 		lea	(v_sprite_queue).w,a4			; address of sprite queue - $400 bytes, 8 sections of $80 bytes (1 word for count, $3F words for OST addresses)
-		moveq	#8-1,d7					; 8 priority levels
+		moveq	#countof_priority-1,d7			; 8 priority levels
 
 
 	BuildSprites_PriorityLoop:
 		tst.w	(a4)					; are there objects left in current section?
 		beq.w	BuildSprites_NextPriority		; if not, branch
-		moveq	#2,d6					; start address within current section (1st word is object count)
+		moveq	#2,d6					; index to start address within current section (1st word is object count)
 
 	BuildSprites_ObjectLoop:
-		movea.w	(a4,d6.w),a0				; a0=object
+		movea.w	(a4,d6.w),a0				; load address of OST of object
 
     if Revision=0
 		; These are sanity checks to detect invalid objects which should not
@@ -28450,22 +28529,22 @@ BuildSprites:
 		; since they shouldn't be needed and they just slow this code down.
 		; In REV00, it appears that these checks were used for debugging, as
 		; they deliberately crash the console if they detect an invalid object.
-		tst.b	ost_id(a0)				; is this object slot occupied?
-		beq.w	BuildSprites_Crash			; if not, branch
-		tst.l	ost_mappings(a0)			; does this object have any mappings?
-		beq.w	BuildSprites_Crash			; if not, branch
+		tst.b	ost_id(a0)
+		beq.w	BuildSprites_Crash			; if object id is 0, branch
+		tst.l	ost_mappings(a0)
+		beq.w	BuildSprites_Crash			; branch if no mappings pointer is set
     else
-		tst.b	ost_id(a0)				; is this object slot occupied?
-		beq.w	BuildSprites_NextObject			; if not, check next one
+		tst.b	ost_id(a0)
+		beq.w	BuildSprites_NextObject			; if object id is 0, branch
     endc
 
-		andi.b	#(~render_onscreen)&$FF,ost_render(a0)	; clear on-screen flag
+		andi.b	#(~render_onscreen)&$FF,ost_render(a0)	; set as not visible
 		move.b	ost_render(a0),d0
 		move.b	d0,d4
-		btst	#render_subobjects_bit,d0		; is the multi-draw flag set?
+		btst	#render_subsprites_bit,d0		; is this a multisprite object?
 		bne.w	BuildSprites_MultiDraw			; if so, branch
-		andi.w	#render_rel+render_bg,d0		; is this to be positioned by screen coordinates?
-		beq.s	.abs_screen_coords			; if so, branch
+		andi.w	#render_rel+render_bg,d0		; get drawing coordinate system
+		beq.s	.abs_screen_coords			; branch if 0 (absolute screen coordinates)
 		lea	(v_camera_x_pos_copy2).w,a1		; get address for camera x position (or background x position if render_bg is used)
 
 		; check if object is visible
@@ -28482,35 +28561,35 @@ BuildSprites:
 		bge.w	BuildSprites_NextObject			; branch if object is outside right side of screen
 		addi.w	#screen_left,d3				; d3 = x pos of object on screen, +128px for VDP sprite coordinate
 
-		btst	#render_useheight_bit,d4		; is use height flag set?
+		btst	#render_useheight_bit,d4		; is use height flag on?
 		beq.s	.assume_height				; if not, branch
 		moveq	#0,d0
 		move.b	ost_height(a0),d0
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a1),d2
+		sub.w	v_camera_y_pos_copy2-v_camera_x_pos_copy2(a1),d2
 		move.w	d2,d1
-		add.w	d0,d1
-		bmi.s	BuildSprites_NextObject			; if the object is above the screen
+		add.w	d0,d1					; d1 = y pos of object's bottom edge on screen
+		bmi.s	BuildSprites_NextObject			; branch if object is outside top side of screen
 		move.w	d2,d1
-		sub.w	d0,d1
+		sub.w	d0,d1					; d1 = y pos of object's top edge on screen
 		cmpi.w	#screen_height,d1
-		bge.s	BuildSprites_NextObject			; if the object is below the screen
-		addi.w	#screen_top,d2
+		bge.s	BuildSprites_NextObject			; branch if object is outside bottom side of screen
+		addi.w	#screen_top,d2				; d2 = y pos of object on screen, +128px for VDP sprite coordinate
 		bra.s	.draw_object
 ; ===========================================================================
 
 	.abs_screen_coords:
-		move.w	ost_y_screen(a0),d2
-		move.w	ost_x_screen(a0),d3
+		move.w	ost_y_screen(a0),d2			; d2 = y pos
+		move.w	ost_x_screen(a0),d3			; d3 = x pos
 		bra.s	.draw_object
 ; ===========================================================================
 
 	.assume_height:
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a1),d2				; d2 = y pos of object on screen
+		sub.w	v_camera_y_pos_copy2-v_camera_x_pos_copy2(a1),d2 ; d2 = y pos of object on screen
 		addi.w	#screen_top,d2
 		andi.w	#$7FF,d2
-		cmpi.w	#screen_top-32,d2			; assume Y radius to be 32 pixels
+		cmpi.w	#screen_top-32,d2			; assume y radius to be 32 pixels
 		bcs.s	BuildSprites_NextObject			; branch if > 32px outside top side of screen
 		cmpi.w	#screen_bottom+32,d2
 		bcc.s	BuildSprites_NextObject			; branch if > 32px outside bottom side of screen
@@ -28519,47 +28598,45 @@ BuildSprites:
 		movea.l	ost_mappings(a0),a1			; get address of mappings
 		moveq	#0,d1
 		btst	#render_rawmap_bit,d4			; is raw mappings flag on?
-		bne.s	.draw_now				; if it is, branch
+		bne.s	.draw_now				; if so, branch
 
-		move.b	ost_frame(a0),d1
+		move.b	ost_frame(a0),d1			; get currrent frame
 		add.w	d1,d1
 		adda.w	(a1,d1.w),a1				; jump to frame within mappings
 		move.w	(a1)+,d1				; number of sprite pieces
-		subq.w	#1,d1					; subtract 1 for loops
-		bmi.s	.skip_draw				; if there are 0 pieces, branch
+		subq.w	#1,d1					; subtract 1 for loop counter
+		bmi.s	.skip_draw				; branch if frame contained 0 sprite pieces
 
 	.draw_now:
-		bsr.w	BuildSpr_Draw				; draw the sprite
+		bsr.w	BuildSpr_Draw				; write data from sprite pieces to buffer
 
 	.skip_draw:
 		ori.b	#render_onscreen,ost_render(a0)		; set object as visible
 
-
 	BuildSprites_NextObject:
-		addq.w	#2,d6					; load next object
-		subq.w	#2,(a4)					; decrement object count
-		bne.w	BuildSprites_ObjectLoop			; if there are objects left, repeat
+		addq.w	#2,d6					; read next object in sprite queue
+		subq.w	#2,(a4)					; decrement number of objects left
+		bne.w	BuildSprites_ObjectLoop			; branch if not 0
 
 	BuildSprites_NextPriority:
 		lea	sizeof_priority(a4),a4			; next priority section ($80)
 		dbf	d7,BuildSprites_PriorityLoop		; repeat for all sections
 		move.b	d5,(v_spritecount).w			; set sprite count
 
-; Terminate the sprite list.
-; If the sprite list is full, then set the link field of the last
-; entry to 0. Otherwise, push the next sprite offscreen and set its
-; link field to 0. You might be thinking why this doesn't just do the
-; first one no matter what. Well, think about what if the sprite list
-; was empty: then it would access data before the start of the list.
-
-		cmpi.b	#countof_max_sprites,d5			; was the sprite limit reached?
-		beq.s	.max_sprites				; if it was, branch
-		move.l	#0,(a2)					; set link field to 0
+		; Terminate the sprite list.
+		; If the sprite list is full, then set the link field of the last
+		; entry to 0. Otherwise, push the next sprite offscreen and set its
+		; link field to 0. You might be thinking why this doesn't just do the
+		; first one no matter what? Well, think about what if the sprite list
+		; was empty: then it would access data before the start of the list.
+		cmpi.b	#countof_max_sprites,d5			; max displayable sprites ($50)
+		beq.s	.max_sprites				; branch if at max
+		move.l	#0,(a2)					; set next sprite to link to first (could be clr.l)
 		rts
 ; ===========================================================================
 
 	.max_sprites:
-		move.b	#0,-5(a2)				; set link field to 0
+		move.b	#0,-sizeof_sprite+sprite_link(a2)	; set current sprite to link to first (could be clr.b)
 		rts
 ; ===========================================================================
 
@@ -28567,8 +28644,9 @@ BuildSprites:
 		; In the Simon Wai prototype, these two lines weren't here.
 		; This may have been a debugging feature for helping the
 		; devs detect when an object tried to display with a blank ID or
-		; mappings pointer. The latter was actually an issue that plagued
-		; Sonic 1, but is (almost) completely absent in this game.
+		; mappings pointer. This "display after free" was actually an
+		; issue that plagued Sonic 1, but is (almost) completely absent in
+		; this game.
 BuildSprites_Crash:
 		move.w	(1).w,d0				; causes an address exception
 		bra.s	BuildSprites_NextPriority
@@ -28576,7 +28654,7 @@ BuildSprites_Crash:
 ; ===========================================================================
 
 BuildSprites_MultiDraw:
-		move.l	a4,-(sp)
+		pushr.l	a4					; back up sprite queue address
 		lea	(v_camera_x_pos).w,a4
 		movea.w	ost_tile(a0),a3
 		movea.l	ost_mappings(a0),a5
@@ -28584,7 +28662,7 @@ BuildSprites_MultiDraw:
 
 		; check if object is within X bounds
 		move.b	ost_mainspr_width(a0),d0		; load pixel width
-		move.w	ost_x_pos(a0),d3
+		move.w	ost_x_pos(a0),d3			; load x pos
 		sub.w	(a4),d3
 		move.w	d3,d1
 		add.w	d0,d1					; d1 = x pos of object's right edge on screen
@@ -28597,11 +28675,11 @@ BuildSprites_MultiDraw:
 
 		; check if object is within Y bounds
 		btst	#render_useheight_bit,d4		; is use height flag on?
-		beq.s	.assume_height				; if so ,branch
+		beq.s	.assume_height				; if so, branch
 		moveq	#0,d0
 		move.b	ost_mainspr_height(a0),d0		; load pixel height
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a4),d2
+		sub.w	v_camera_y_pos-v_camera_x_pos(a4),d2	; d2 = y pos of object on screen
 		move.w	d2,d1
 		add.w	d0,d1					; d1 = y pos of object's bottom edge on screen
 		bmi.w	.next_object				; branch if object is outside top side of screen
@@ -28610,107 +28688,118 @@ BuildSprites_MultiDraw:
 		cmpi.w	#screen_height,d1
 		bge.w	.next_object				; branch if object is outside bottom side of screen
 		addi.w	#screen_top,d2				; d2 = y pos of object on screen, +128px for VDP sprite coordinate
-		bra.s	.draw_parent_object
+		bra.s	.draw_parent
+; ===========================================================================
 
 	.assume_height:
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a4),d2
+		sub.w	v_camera_y_pos-v_camera_x_pos(a4),d2	; d2 = y pos of object on screen
 		addi.w	#screen_top,d2
 		andi.w	#$7FF,d2
-		cmpi.w	#screen_top-32,d2
-		bcs.s	.next_object
+		cmpi.w	#screen_top-32,d2			; assume y radius to be 32 pixels
+		bcs.s	.next_object				; branch if > 32px outside top side of screen
 		cmpi.w	#screen_bottom+32,d2
-		bcc.s	.next_object
+		bcc.s	.next_object				; branch if > 32px outside bottom side of screen
 
-	.draw_parent_object:
+	.draw_parent:
 		moveq	#0,d1
-		move.b	ost_mainspr_frame(a0),d1		; get current frame
-		beq.s	.skip_draw_parent			; if it was zero, skip drawing the parent
+		move.b	ost_mainspr_frame(a0),d1		; get current frame of parent sprite
+		beq.s	.skip_parent				; branch if zero
 		add.w	d1,d1
 		movea.l	a5,a1
 		adda.w	(a1,d1.w),a1				; jump to frame within mappings
 		move.w	(a1)+,d1				; number of sprite pieces
 		subq.w	#1,d1					; subtract 1 for loops
-		bmi.s	.skip_draw_parent			; branch if frame contained 0 sprite pieces
-		move.w	d4,-(sp)
-		bsr.w	BuildSpr_DrawCheck			; draw the sprite
-		move.w	(sp)+,d4
+		bmi.s	.skip_parent				; branch if frame contained 0 sprite pieces
+		pushr.w	d4					; back up render flags copy
+		bsr.w	BuildSpr_DrawCheck			; write data from sprite pieces to buffer
+		popr.w	d4					; restore render flags
 
-	.skip_draw_parent:
-		ori.b	#render_onscreen,ost_render(a0)		; set onscreen flag
-		lea	ost_subspr2_x_pos(a0),a6
+	.skip_parent:
+		ori.b	#render_onscreen,ost_render(a0)		; set object as visible
+		lea	ost_subspr2_x_pos(a0),a6		; a6 = x pos of first child sprite
 		moveq	#0,d0
 		move.b	ost_mainspr_childsprites(a0),d0		; get child sprite count
-		subq.w	#1,d0					; if there are 0, go to next object
-		bcs.s	.next_object
+		subq.w	#1,d0					; subtract 1 for loops
+		bcs.s	.next_object				; branch if there are no child sprites
 
 	.childsprite_loop:
-		swap	d0
-		move.w	(a6)+,d3				; get X pos
+		swap	d0					; stash loop counter in high word of d0
+		move.w	(a6)+,d3
 		sub.w	(a4),d3
-		addi.w	#screen_left,d3
-		move.w	(a6)+,d2				; get Y pos
-		sub.w	4(a4),d2
-		addi.w	#screen_top,d2
+		addi.w	#screen_left,d3				; d3 = x pos of child sprite on screen, +128px for VDP sprite coordinate
+		move.w	(a6)+,d2
+		sub.w	v_camera_y_pos-v_camera_x_pos(a4),d2
+		addi.w	#screen_top,d2				; d2 = y pos of child sprite on screen, +128px for VDP sprite coordinate
 		andi.w	#$7FF,d2
-		addq.w	#1,a6
+		addq.w	#1,a6					; skip over mainsprite height or unused variable
 		moveq	#0,d1
-		move.b	(a6)+,d1				; get mapping frame
+		move.b	(a6)+,d1				; get current frame of child
 		add.w	d1,d1
 		movea.l	a5,a1
 		adda.w	(a1,d1.w),a1				; jump to frame within mappings
 		move.w	(a1)+,d1				; number of sprite pieces
 		subq.w	#1,d1					; subtract 1 for loops
-		bmi.s	.skip_draw_child
-		move.w	d4,-(sp)
-		bsr.w	BuildSpr_DrawCheck
-		move.w	(sp)+,d4
+		bmi.s	.skip_draw_child			; branch if frame contained 0 sprite pieces
+		pushr.w	d4					; back up render flags copy
+		bsr.w	BuildSpr_DrawCheck			; write data from sprite pieces to buffer
+		popr.w	d4					; restore render flags
 
 	.skip_draw_child:
-		swap	d0
+		swap	d0					; restore loop counter
 		dbf	d0,.childsprite_loop			; repeat for number of child sprites
 
 	.next_object:
-		movea.l	(sp)+,a4
-		bra.w	BuildSprites_NextObject
+		popr.l	a4					; a4 = v_sprite_queue
+		bra.w	BuildSprites_NextObject			; all children processed; proceed to next discreet object
 ; ===========================================================================
 
     if FixBugs=0
 	BuildSpr_DrawCheck:
 		; This check has been moved, so it is redundant.
-		; See the bugfix under 'BuildSpr_DrawLoop'.
-		cmpi.b	#countof_max_sprites,d5			; has the sprite limit been reached?
-		bcs.s	BuildSpr_Cont				; if it hasn't, branch
+		; See the bugfix under 'BuildSpr_Normal'.
+		cmpi.b	#countof_max_sprites,d5			; max displayable sprites ($50)
+		bcs.s	BuildSpr_Cont				; branch if not at max
 		rts						; otherwise, return
     endc
-; ===========================================================================
 
-; DrawSprite
+; ---------------------------------------------------------------------------
+; Subroutine to	convert	and add sprite mappings to the sprite buffer
+
+; input:
+;	d1.w = number of sprite pieces
+;	d2.w = VDP y position
+;	d3.w = VDP x position
+;	d4.b = render flags (ost_render)
+;	d5.b = current sprite count
+;	a1 = current address in sprite mappings
+;	a2 = current address in sprite buffer
+
+;	uses d0, d1.w, d4.w, d5.b, a1, a2, a3
+; ---------------------------------------------------------------------------
+
 BuildSpr_Draw:
-		movea.w	ost_tile(a0),a3
+		movea.w	ost_tile(a0),a3				; get VRAM setting (tile, x/yflip, palette, priority)
 
    if FixBugs=0
 		; This check has been moved, so it is redundant.
-		; See the bugfix under 'BuildSpr_DrawLoop'.
-		cmpi.b	#countof_max_sprites,d5
-		bcc.s	BuildSpr_Done
+		; See the bugfix under 'BuildSpr_Normal'.
+		cmpi.b	#countof_max_sprites,d5			; max displayable sprites ($50)
+		bcc.s	BuildSpr_Done				; branch if at max
     endc
 
     if FixBugs
-; sub_1680A:
 BuildSpr_DrawCheck:
     else
-; loc_1681C:
 BuildSpr_Cont:
     endc
 
 		btst	#render_xflip_bit,d4			; is the sprite to be X-flipped?
-		bne.s	BuildSpr_FlipX				; if it is, branch
+		bne.s	BuildSpr_FlipX				; if so, branch
 		btst	#render_yflip_bit,d4			; is the sprite to be Y-flipped?
-		bne.w	BuildSpr_FlipY				; if it is, branch
+		bne.w	BuildSpr_FlipY				; if so, branch
 
-; loc_1682A:
-BuildSpr_DrawLoop:
+BuildSpr_Normal:
     if FixBugs
     	; Hey look, it's the bug that Ashura the Hedgehog and Surge the Tenrec
     	; owe their existence to. In a rather overzealous optimization,
@@ -28730,20 +28819,23 @@ BuildSpr_DrawLoop:
 		; this optimistaion too, but heavily optimized the rest of 'BuildSprites'
 		; to make up for it.
 		cmpi.b	#countof_max_sprites,d5			; has the sprite limit been reached?
-		bcc.s	BuildSpr_Done				; if it has, branch
+		bcc.s	BuildSpr_Done				; branch if at max
     endc
 
 		move.b	(a1)+,d0				; get relative y pos from mappings
 		ext.w	d0
 		add.w	d2,d0					; add VDP y pos
 		move.w	d0,(a2)+				; write y pos to sprite buffer
+
 		move.b	(a1)+,(a2)+				; write sprite size to buffer
 		addq.b	#1,d5					; increment sprite counter
 		move.b	d5,(a2)+				; write link to next sprite in buffer
+
 		move.w	(a1)+,d0				; get high byte of tile number from mappings
 		add.w	a3,d0					; add VRAM setting
 		move.w	d0,(a2)+				; write to buffer
-		addq.w	#2,a1
+
+		addq.w	#2,a1					; skip 2P mode specific data
 		move.w	(a1)+,d0				; get relative x pos from mappings
 		add.w	d3,d0					; add VDP x pos
 		andi.w	#$1FF,d0				; keep within 512px
@@ -28751,153 +28843,163 @@ BuildSpr_DrawLoop:
 		addq.w	#1,d0					; add 1 to prevent sprite masking (sprites at x pos 0 act as masks)
 
 	.x_not_0:
-		move.w	d0,(a2)+				; set X pos
-		dbf	d1,BuildSpr_DrawLoop			; repeat for next sprite
+		move.w	d0,(a2)+				; write to buffer
+		dbf	d1,BuildSpr_Normal			; next sprite piece
 
 	BuildSpr_Done:
 		rts
 ; ===========================================================================
-; loc_16854:
+
 BuildSpr_FlipX:
 		btst	#render_yflip_bit,d4			; is it to be Y-flipped as well?
-		bne.w	BuildSpr_FlipXY				; if it is, branch
+		bne.w	BuildSpr_FlipXY				; if so, branch
 
 	.loop:
     if FixBugs
-		; See the bugfix under 'BuildSpr_DrawLoop'.
+		; See the bugfix under 'BuildSpr_Normal'.
 		cmpi.b	#countof_max_sprites,d5			; has the sprite limit been reached?
 		bcc.s	.return					; if it has, branch
     endc
-		move.b	(a1)+,d0				; y position
+		move.b	(a1)+,d0				; get relative y pos from mappings
 		ext.w	d0
-		add.w	d2,d0
-		move.w	d0,(a2)+
-		move.b	(a1)+,d4				; size
-		move.b	d4,(a2)+
-		addq.b	#1,d5					; link
-		move.b	d5,(a2)+
-		move.w	(a1)+,d0				; art tile
-		add.w	a3,d0
-		eori.w	#$800,d0				; toggle xflip in VDP
+		add.w	d2,d0					; add VDP y pos
+		move.w	d0,(a2)+				; write y pos to sprite buffer
+
+		move.b	(a1)+,d4				; get sprite size (copy in d4 will be used later)
+		move.b	d4,(a2)+				; write to buffer
+		addq.b	#1,d5					; increment sprite counter
+		move.b	d5,(a2)+				; write link to next sprite in buffer
+
+		move.w	(a1)+,d0				; get high byte of tile number from mappings
+		add.w	a3,d0					; add VRAM setting
+		eori.w	#sprite_xflip,d0			; toggle xflip in VDP
 		move.w	d0,(a2)+				; write to buffer
-		addq.w	#2,a1
-		move.w	(a1)+,d0
-		neg.w	d0					; negate x-offset
-		move.b	CellOffsets_XFlip(pc,d4.w),d4
-		sub.w	d4,d0					; subtract sprite size
-		add.w	d3,d0
+
+		addq.w	#2,a1					; skip 2P mode specific data
+		move.w	(a1)+,d0				; get relative x pos from mappings
+		neg.w	d0					; negate it
+		move.b	CellOffsets_XFlip(pc,d4.w),d4		; get x offset based on size
+		sub.w	d4,d0					; subtract offset
+		add.w	d3,d0					; add VDP x pos
 		andi.w	#$1FF,d0				; keep within 512px
-		bne.s	.x_not_0
-		addq.w	#1,d0
+		bne.s	.x_not_0				; branch if x pos isn't 0
+		addq.w	#1,d0					; add 1 to prevent sprite masking (sprites at x pos 0 act as masks)
 
 	.x_not_0:
-		move.w	d0,(a2)+
-		dbf	d1,.loop
+		move.w	d0,(a2)+				; write to buffer
+		dbf	d1,.loop				; next sprite piece
 
 	.return:
 		rts
-; ===========================================================================
-; offsets for horizontally mirrored sprite pieces
-; in Sonic 1, these were calculated
+
+; ---------------------------------------------------------------------------
+; Lookup tables of offsets for mirrored sprite pieces. In Sonic 1, these were
+; calculated. Multiple copies of these tables are used so that PC-relative
+; with index can be used for all sprite flip operations.
+; ---------------------------------------------------------------------------
+
 CellOffsets_XFlip:
 		dc.b   8,  8,  8,  8				; 4
 		dc.b $10,$10,$10,$10				; 8
 		dc.b $18,$18,$18,$18				; 12
 		dc.b $20,$20,$20,$20				; 16
-; offsets for vertically mirrored sprite pieces
-; in Sonic 1, these were calculated
+
 CellOffsets_YFlip:
 		dc.b   8,$10,$18,$20				; 4
 		dc.b   8,$10,$18,$20				; 8
 		dc.b   8,$10,$18,$20				; 12
 		dc.b   8,$10,$18,$20				; 16
 ; ===========================================================================
-; loc_168B4:
+
 BuildSpr_FlipY:
     if FixBugs
-		; See the bugfix under 'BuildSpr_DrawLoop'.
+		; See the bugfix under 'BuildSpr_Normal'.
 		cmpi.b	#countof_max_sprites,d5			; has the sprite limit been reached?
 		bcc.s	.return					; if it has, branch
     endc
-		move.b	(a1)+,d0				; get y-offset
+		move.b	(a1)+,d0				; get relative y pos from mappings
 		move.b	(a1),d4					; get size
 		ext.w	d0
-		neg.w	d0					; negate y-offset
-		move.b	CellOffsets_YFlip(pc,d4.w),d4
-		sub.w	d4,d0
-		add.w	d2,d0					; add y-position
-		move.w	d0,(a2)+				; write to buffer
-		move.b	(a1)+,(a2)+				; size
+		neg.w	d0					; negate y pos
+		move.b	CellOffsets_YFlip(pc,d4.w),d4		; get y offset based on size
+		sub.w	d4,d0					; subtract offset
+		add.w	d2,d0					; add VDP y pos
+		move.w	d0,(a2)+				; write y pos to sprite buffer
+
+		move.b	(a1)+,(a2)+				; write sprite size to buffer
 		addq.b	#1,d5
-		move.b	d5,(a2)+				; link
-		move.w	(a1)+,d0				; art tile
-		add.w	a3,d0
-		eori.w	#$1000,d0				; toggle yflip in VDP
-		move.w	d0,(a2)+
-		addq.w	#2,a1
-		move.w	(a1)+,d0
-		add.w	d3,d0
+		move.b	d5,(a2)+				; write link to next sprite in buffer
+
+		move.w	(a1)+,d0				; get high byte of tile number from mappings
+		add.w	a3,d0					; add VRAM setting
+		eori.w	#sprite_yflip,d0			; toggle yflip in VDP
+		move.w	d0,(a2)+				; write to buffer
+
+		addq.w	#2,a1					; skip 2P mode specific data
+		move.w	(a1)+,d0				; get relative x pos from mappings
+		add.w	d3,d0					; add VDP x pos
 		andi.w	#$1FF,d0				; keep within 512px
-		bne.s	.x_not_0
-		addq.w	#1,d0
+		bne.s	.x_not_0				; branch if x pos isn't 0
+		addq.w	#1,d0					; add 1 to prevent sprite masking (sprites at x pos 0 act as masks)
 
 	.x_not_0:
-		move.w	d0,(a2)+				; set X pos
-		dbf	d1,BuildSpr_FlipY
+		move.w	d0,(a2)+				; write to buffer
+		dbf	d1,BuildSpr_FlipY			; next sprite piece
 
 	.return:
 		rts
 ; ===========================================================================
-; offsets for vertically mirrored sprite pieces
+
 CellOffsets_YFlip2:
 		dc.b   8,$10,$18,$20				; 4
 		dc.b   8,$10,$18,$20				; 8
 		dc.b   8,$10,$18,$20				; 12
 		dc.b   8,$10,$18,$20				; 16
 ; ===========================================================================
-; loc_168FC:
-BuildSpr_FlipXY:
 
+BuildSpr_FlipXY:
     if FixBugs
-; See the bugfix under 'BuildSpr_DrawLoop'.
-		cmpi.b	#80,d5					; has the sprite limit been reached?
+		; See the bugfix under 'BuildSpr_Normal'.
+		cmpi.b	#countof_max_sprites,d5			; has the sprite limit been reached?
 		bcc.s	.return					; if it has, branch
     endc
-		move.b	(a1)+,d0
-		move.b	(a1),d4
+		move.b	(a1)+,d0				; get relative y pos from mappings
+		move.b	(a1),d4					; get size
 		ext.w	d0
-		neg.w	d0
-		move.b	CellOffsets_YFlip2(pc,d4.w),d4
-		sub.w	d4,d0
-		add.w	d2,d0
-		move.w	d0,(a2)+
-		move.b	(a1)+,d4				; size
-		move.b	d4,(a2)+				; link
-		addq.b	#1,d5
-		move.b	d5,(a2)+
-		move.w	(a1)+,d0
-		add.w	a3,d0
-		eori.w	#$1800,d0				; toggle x/yflip in VDP
-		move.w	d0,(a2)+
-		addq.w	#2,a1
-		move.w	(a1)+,d0
-		neg.w	d0
-		move.b	CellOffsets_XFlip2(pc,d4.w),d4
-		sub.w	d4,d0
-		add.w	d3,d0
+		neg.w	d0					; negate y pos
+		move.b	CellOffsets_YFlip2(pc,d4.w),d4		; get y offset based on size
+		sub.w	d4,d0					; subtract offset
+		add.w	d2,d0					; add VDP y pos
+		move.w	d0,(a2)+				; write y pos to sprite buffer
+
+		move.b	(a1)+,d4				; get sprite size (copy in d4 will be used later)
+		move.b	d4,(a2)+				; write to buffer
+		addq.b	#1,d5					; increment sprite counter
+		move.b	d5,(a2)+				; write link to next sprite in buffer
+
+		move.w	(a1)+,d0				; get high byte of tile number from mappings
+		add.w	a3,d0					; add VRAM setting
+		eori.w	#sprite_xflip|sprite_yflip,d0		; toggle xflip and yflip in VDP
+		move.w	d0,(a2)+				; write to buffer
+
+		addq.w	#2,a1					; skip 2P mode specific data
+		move.w	(a1)+,d0				; get relative x pos from mappings
+		neg.w	d0					; negate it
+		move.b	CellOffsets_XFlip2(pc,d4.w),d4		; get x offset based on size
+		sub.w	d4,d0					; subtract offset
+		add.w	d3,d0					; add VDP x pos
 		andi.w	#$1FF,d0				; keep within 512px
-		bne.s	.x_not_0
-		addq.w	#1,d0
+		bne.s	.x_not_0				; branch if x pos isn't 0
+		addq.w	#1,d0					; add 1 to prevent sprite masking (sprites at x pos 0 act as masks)
 
 	.x_not_0:
-		move.w	d0,(a2)+
-		dbf	d1,BuildSpr_FlipXY
+		move.w	d0,(a2)+				; write to buffer
+		dbf	d1,BuildSpr_FlipXY			; next sprite piece
 
 	.return:
 		rts
-
 ; ===========================================================================
-; offsets for horizontally mirrored sprite pieces
+
 CellOffsets_XFlip2:
 		dc.b   8,  8,  8,  8				; 4
 		dc.b $10,$10,$10,$10				; 8
@@ -28906,458 +29008,513 @@ CellOffsets_XFlip2:
 ; ===========================================================================
 
 BuildSprites_2P:
+	if FixBugs
+		; Like in Sonic 3, the sprite tables are page-flipped in two-player mode.
+		; This fixes a race condition where incomplete sprite tables can be uploaded
+		; to the VDP on lag frames, causing corrupted sprites to appear.
 		lea	(v_sprite_buffer).w,a2
-		moveq	#2,d5
-		moveq	#0,d4
-		move.l	#$1D80F01,(a2)+
-		move.l	#1,(a2)+
-		move.l	#$1D80F02,(a2)+
-		move.l	#0,(a2)+
-		tst.b	(f_level_started).w
-		beq.s	loc_1697C
-		jsrto	BuildHUD_P1,JmpTo_BuildHUD_P1
-		bsr.w	loc_171F8
+		tst.b	(f_sprite_buffer_page).w
+		beq.s	.useprimary				; branch if we're using the primary page
+		lea	(v_sprite_buffer_alt).w,a2
+	else
+		lea	(v_sprite_buffer).w,a2
+	endc
+		moveq	#2,d5					; initial link value
+		moveq	#0,d4					; holds copy of render flags
 
-loc_1697C:
-		lea	(v_sprite_queue).w,a4
-		moveq	#7,d7
+		; Sprite table in 2P mode is prefaced by two dummy sprites that mask everything between 216-248px.
+		move.l	#($1D8<<16)|(sprite_width_4<<10)|(sprite_height_4<<8)|1,(a2)+ ; $1D80F01; y pos $1D8, size 4x4 tiles, link 1
+		move.l	#1,(a2)+				; tile = 0, x pos 1
+		move.l	#($1D8<<16)|(sprite_width_4<<10)|(sprite_height_4<<8)|2,(a2)+ ; $1D80F02; y pos $1D8, size 4x4 tiles, link 1
+		move.l	#0,(a2)+				; tile = 0, x pos 0
+		tst.b	(f_level_started).w			; has the level started?
+		beq.s	.notstarted				; if not, branch
+		jsrto	BuildHUD_P1,JmpTo_BuildHUD_P1		; render player 1's HUD
+		bsr.w	BuildRings_P1				; render player 1's rings
 
-loc_16982:
-		move.w	(a4),d0
-		beq.w	loc_16A5A
-		move.w	d0,-(sp)
-		moveq	#2,d6
+	.notstarted:
+		lea	(v_sprite_queue).w,a4			; address of sprite queue - $400 bytes, 8 sections of $80 bytes (1 word for count, $3F words for OST addresses)
+		moveq	#countof_priority-1,d7			; 8 priority levels
 
-loc_1698C:
-		movea.w	(a4,d6.w),a0
+	BuildSprites_P1_PriorityLoop:
+		move.w	(a4),d0					; are there objects left in current section?
+		beq.w	BuildSprites_P1_NextPriority		; if not, branch
+		pushr.w	d0					; (sp) =  remaining objects in queue
+		moveq	#2,d6					; index to start address within current section (1st word is object count)
+
+	BuildSprites_P1_ObjectLoop:
+		movea.w	(a4,d6.w),a0				; load address of OST of object
 		tst.b	ost_id(a0)
-		beq.w	loc_16A50
-		andi.b	#(~render_onscreen)&$FF,ost_render(a0)
+		beq.w	BuildSprites_P1_NextObject		; if object id is 0, branch
+
+		andi.b	#(~render_onscreen)&$FF,ost_render(a0)	; set as not visible
 		move.b	ost_render(a0),d0
 		move.b	d0,d4
-		btst	#6,d0
-		bne.w	loc_16B9A
-		andi.w	#$C,d0
-		beq.s	loc_16A00
-		lea	(v_camera_x_pos).w,a1
+		btst	#render_subsprites_bit,d0		; is this a multisprite object?
+		bne.w	BuildSprites_P1_MultiDraw		; if so, branch
+		andi.w	#render_rel|render_bg,d0		; get drawing coordinate system
+		beq.s	.abs_screen_coords			; branch if 0 (absolute screen coordinates)
+		lea	(v_camera_x_pos).w,a1			; get address for camera x position (or background x position if render_bg is used)
+
+		; check if object is visible
 		moveq	#0,d0
 		move.b	ost_displaywidth(a0),d0
 		move.w	ost_x_pos(a0),d3
 		sub.w	(a1),d3
 		move.w	d3,d1
-		add.w	d0,d1
-		bmi.w	loc_16A50
+		add.w	d0,d1					; d1 = x pos of object's right edge on screen
+		bmi.w	BuildSprites_P1_NextObject		; branch if object is outside left side of screen
 		move.w	d3,d1
-		sub.w	d0,d1
-		cmpi.w	#$140,d1
-		bge.s	loc_16A50
-		addi.w	#$80,d3
-		btst	#4,d4
-		beq.s	loc_16A0E
+		sub.w	d0,d1					; d1 = x pos of object's left edge on screen
+		cmpi.w	#screen_width,d1
+		bge.s	BuildSprites_P1_NextObject		; branch if object is outside right side of screen
+		addi.w	#screen_left,d3				; d3 = x pos of object on screen, +128px for VDP sprite coordinate
+
+		btst	#render_useheight_bit,d4		; is use height flag on?
+		beq.s	.assume_height				; if not, branch
 		moveq	#0,d0
 		move.b	ost_height(a0),d0
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a1),d2
+		sub.w	v_camera_y_pos-v_camera_x_pos(a1),d2
 		move.w	d2,d1
-		add.w	d0,d1
-		bmi.s	loc_16A50
+		add.w	d0,d1					; d1 = y pos of object's bottom edge on screen
+		bmi.s	BuildSprites_P1_NextObject		; branch if object is outside top side of screen
 		move.w	d2,d1
-		sub.w	d0,d1
-		cmpi.w	#$E0,d1
-		bge.s	loc_16A50
-		addi.w	#$100,d2
-		bra.s	loc_16A2A
+		sub.w	d0,d1					; d1 = y pos of object's top edge on screen
+		cmpi.w	#screen_height,d1
+		bge.s	BuildSprites_P1_NextObject		; branch if object is outside bottom side of player 1's viewport
+		addi.w	#screen_top*2,d2			; d2 = y pos of object on screen, +256px for VDP sprite coordinate
+		bra.s	.draw_object
 ; ===========================================================================
 
-loc_16A00:
-		move.w	ost_y_screen(a0),d2
-		move.w	ost_x_screen(a0),d3
-		addi.w	#$80,d2
-		bra.s	loc_16A2A
+	.abs_screen_coords:
+		move.w	ost_y_screen(a0),d2			; d2 = y pos
+		move.w	ost_x_screen(a0),d3			; d3 = x pos
+		addi.w	#screen_top,d2				; adjust y pos
+		bra.s	.draw_object
 ; ===========================================================================
 
-loc_16A0E:
+	.assume_height:
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a1),d2
-		addi.w	#$80,d2
-		cmpi.w	#$60,d2
-		bcs.s	loc_16A50
-		cmpi.w	#$180,d2
-		bcc.s	loc_16A50
-		addi.w	#$80,d2
+		sub.w	v_camera_y_pos-v_camera_x_pos(a1),d2	; d2 = y pos of object on screen
+		addi.w	#screen_top,d2
+		cmpi.w	#screen_top-32,d2			; assume y radius to be 32 pixels
+		bcs.s	BuildSprites_P1_NextObject		; branch if > 32px outside top side of screen
+		cmpi.w	#screen_bottom+32,d2
+		bcc.s	BuildSprites_P1_NextObject		; branch if > 32px outside bottom of player 1's viewport
+		addi.w	#screen_top,d2				; d2 = y pos of object on screen, +128px for VDP sprite coordinate
 
-loc_16A2A:
-		movea.l	ost_mappings(a0),a1
+	.draw_object:
+		movea.l	ost_mappings(a0),a1			; get address of mappings
 		moveq	#0,d1
-		btst	#5,d4
-		bne.s	loc_16A46
-		move.b	ost_frame(a0),d1
+		btst	#render_rawmap_bit,d4			; is raw mappings flag on?
+		bne.s	.draw_now				; if so, branch
+
+		move.b	ost_frame(a0),d1			; get currrent frame
 		add.w	d1,d1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		bmi.s	loc_16A4A
+		adda.w	(a1,d1.w),a1				; jump to frame within mappings
+		move.w	(a1)+,d1				; number of sprite pieces
+		subq.w	#1,d1					; subtract 1 for loop counter
+		bmi.s	.skip_draw				; branch if frame contained 0 sprite pieces
 
-loc_16A46:
-		bsr.w	BuildSpr_Draw_2P
+	.draw_now:
+		bsr.w	BuildSpr_Draw_2P			; write data from sprite pieces to buffer
 
-loc_16A4A:
-		ori.b	#render_onscreen,ost_render(a0)
+	.skip_draw:
+		ori.b	#render_onscreen,ost_render(a0)		; set object as visible
 
-loc_16A50:
-		addq.w	#2,d6
-		subq.w	#2,(sp)
-		bne.w	loc_1698C
-		addq.w	#2,sp
+	BuildSprites_P1_NextObject:
+		addq.w	#2,d6					; read next object in sprite queue
+		subq.w	#2,(sp)					; decrement number of objects left
+		bne.w	BuildSprites_P1_ObjectLoop		; branch if not 0
+		addq.w	#2,sp					; all done; deallocate word on stack
 
-loc_16A5A:
-		lea	$80(a4),a4
-		dbf	d7,loc_16982
-		move.b	d5,(v_spritecount).w
-		cmpi.b	#$50,d5
-		bcc.s	loc_16A74
-		move.l	#0,(a2)
-		bra.s	loc_16A7A
+	BuildSprites_P1_NextPriority:
+		lea	sizeof_priority(a4),a4			; next priority section ($80)
+		dbf	d7,BuildSprites_P1_PriorityLoop		; repeat for all sections
+		move.b	d5,(v_spritecount).w			; set sprite count
+		cmpi.b	#countof_max_sprites,d5			; max displayable sprites ($50)
+		bcc.s	.max_sprites				; branch if at max
+		move.l	#0,(a2)					; set next sprite to link to first (could be clr.l)
+		bra.s	BuildSprites_P2
 ; ===========================================================================
 
-loc_16A74:
-		move.b	#0,-5(a2)
+.max_sprites:
+		move.b	#0,-sizeof_sprite+sprite_link(a2)
 
-loc_16A7A:
-		tst.w	(f_hblank).w
-		bne.s	loc_16A7A
-		lea	(v_sprite_queue_2).w,a2
-		moveq	#0,d5
-		moveq	#0,d4
-		tst.b	(f_level_started).w
-		beq.s	loc_16A96
-		jsrto	BuildHUD_P2,JmpTo_BuildHUD_P2
-		bsr.w	loc_1720E
+BuildSprites_P2:
+	if FixBugs
+		; Like in Sonic 3, the sprite tables are page-flipped in two-player mode.
+		; This fixes a race condition where incomplete sprite tables can be uploaded
+		; to the VDP on lag frames, causing corrupted sprites to appear.
+		lea	(v_sprite_buffer_2).w,a2
+		tst.b	(f_sprite_buffer_page).w
+		beq.s	.useprimary				; branch if we're using the primary page
+		lea	(v_sprite_buffer_alt_2).w,a2
+	else
+		tst.w	(f_hblank).w				; has HBlank run?
+		bne.s	BuildSprites_P2				; if not, wait
+		lea	(v_sprite_buffer_2).w,a2
+	endc
+		moveq	#0,d5					; initial link value
+		moveq	#0,d4					; holds copy of render flags
+		tst.b	(f_level_started).w			; has the level started?
+		beq.s	.notstarted				; if not, branch
+		jsrto	BuildHUD_P2,JmpTo_BuildHUD_P2		; render player 2's HUD
+		bsr.w	loc_1720E				; render player 2's rings
 
-loc_16A96:
-		lea	(v_sprite_queue).w,a4
-		moveq	#7,d7
+	.notstarted:
+		lea	(v_sprite_queue).w,a4			; address of sprite queue - $400 bytes, 8 sections of $80 bytes (1 word for count, $3F words for OST addresses)
+		moveq	#countof_priority-1,d7			; 8 priority levels
 
-loc_16A9C:
-		move.w	(a4),d0
-		beq.w	loc_16B78
-		move.w	d0,-(sp)
-		moveq	#2,d6
+	BuildSprites_P2_PriorityLoop:
+		move.w	(a4),d0					; are there objects left in current section?
+		beq.w	BuildSprites_P2_NextPriority		; if not, branch
+		pushr.w	d0					; (sp) =  remaining objects in queue
+		moveq	#2,d6					; index to start address within current section (1st word is object count)
 
-loc_16AA6:
-		movea.w	(a4,d6.w),a0
+	BuildSprites_P2_ObjectLoop:
+		movea.w	(a4,d6.w),a0				; load address of OST of object
 		tst.b	ost_id(a0)
-		beq.w	loc_16B64
+		beq.w	BuildSprites_P2_NextObject		; if object id is 0, branch
+
 		move.b	ost_render(a0),d0
 		move.b	d0,d4
-		btst	#6,d0
-		bne.w	loc_16C84
-		andi.w	#$C,d0
-		beq.s	loc_16B14
-		lea	(v_camera_x_pos_p2).w,a1
+		btst	#render_subsprites_bit,d0		; is this a multisprite object?
+		bne.w	BuildSprites_P2_MultiDraw		; if so, branch
+		andi.w	#render_rel|render_bg,d0		; get drawing coordinate system
+		beq.s	.abs_screen_coords			; branch if 0 (absolute screen coordinates)
+		lea	(v_camera_x_pos_p2).w,a1		; get address for camera x position (or background x position if render_bg is used)
+
+		; check if object is visible
 		moveq	#0,d0
 		move.b	ost_displaywidth(a0),d0
 		move.w	ost_x_pos(a0),d3
 		sub.w	(a1),d3
 		move.w	d3,d1
-		add.w	d0,d1
-		bmi.w	loc_16B64
+		add.w	d0,d1					; d1 = x pos of object's right edge on screen
+		bmi.w	BuildSprites_P2_NextObject		; branch if object is outside left side of screen
 		move.w	d3,d1
-		sub.w	d0,d1
-		cmpi.w	#$140,d1
-		bge.s	loc_16B64
-		addi.w	#$80,d3
-		btst	#4,d4
-		beq.s	loc_16B22
+		sub.w	d0,d1					; d1 = x pos of object's left edge on screen
+		cmpi.w	#screen_width,d1
+		bge.s	BuildSprites_P2_NextObject		; branch if object is outside right side of screen
+		addi.w	#screen_left,d3				; d3 = x pos of object on screen, +128px for VDP sprite coordinate
+
+		btst	#render_useheight_bit,d4		; is use height flag on?
+		beq.s	.assume_height				; if not, branch
 		moveq	#0,d0
 		move.b	ost_height(a0),d0
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a1),d2
+		sub.w	v_camera_y_pos_p2-v_camera_x_pos_p2(a1),d2
 		move.w	d2,d1
-		add.w	d0,d1
-		bmi.s	loc_16B64
+		add.w	d0,d1					; d1 = y pos of object's bottom edge on screen
+		bmi.s	BuildSprites_P2_NextObject		; branch if object is outside top of player 2's viewport
 		move.w	d2,d1
-		sub.w	d0,d1
-		cmpi.w	#$E0,d1
-		bge.s	loc_16B64
-		addi.w	#$1E0,d2
-		bra.s	loc_16B3E
+		sub.w	d0,d1					; d1 = y pos of object's top edge on screen
+		cmpi.w	#screen_height,d1
+		bge.s	BuildSprites_P2_NextObject		; branch if object is outside bottom side of screen
+		addi.w	#(screen_top*2)+screen_height,d2	; d2 = y pos of object on screen, +256px for VDP sprite coordinate, +224px for bottom viewport
+		bra.s	.draw_object
 ; ===========================================================================
 
-loc_16B14:
-		move.w	ost_y_screen(a0),d2
-		move.w	ost_x_screen(a0),d3
-		addi.w	#screen_top+screen_height,d2
-		bra.s	loc_16B3E
+	.abs_screen_coords:
+		move.w	ost_y_screen(a0),d2			; d2 = y pos
+		move.w	ost_x_screen(a0),d3			; d3 = x pos
+		addi.w	#screen_top+screen_height,d2		; adjust y pos
+		bra.s	.draw_object
 ; ===========================================================================
 
-loc_16B22:
+	.assume_height:
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a1),d2
-		addi.w	#128,d2
-		cmpi.w	#128-32,d2
-		bcs.s	loc_16B64
-		cmpi.w	#32+128+224,d2
-		bcc.s	loc_16B64
-		addi.w	#128+224,d2
+		sub.w	v_camera_y_pos_p2-v_camera_x_pos_p2(a1),d2 ; d2 = y pos of object on screen
+		addi.w	#screen_top,d2
+		cmpi.w	#screen_top-32,d2			; assume y radius to be 32 pixels
+		bcs.s	BuildSprites_P2_NextObject
+		cmpi.w	#screen_bottom+32,d2
+		bcc.s	BuildSprites_P2_NextObject		; branch if > 32px outside bottom side of screen
+		addi.w	#screen_top+screen_height,d2		; d2 = y pos of object on screen, +128px for VDP sprite coordinate
 
-loc_16B3E:
-		movea.l	ost_mappings(a0),a1
+	.draw_object:
+		movea.l	ost_mappings(a0),a1			; get address of mappings
 		moveq	#0,d1
-		btst	#5,d4
-		bne.s	loc_16B5A
-		move.b	ost_frame(a0),d1
+		btst	#render_rawmap_bit,d4			; is raw mappings flag on?
+		bne.s	.draw_now				; if so, branch
+
+		move.b	ost_frame(a0),d1			; get currrent frame
 		add.w	d1,d1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		bmi.s	loc_16B5E
+		adda.w	(a1,d1.w),a1				; jump to frame within mappings
+		move.w	(a1)+,d1				; number of sprite pieces
+		subq.w	#1,d1					; subtract 1 for loop counter
+		bmi.s	.skip_draw				; branch if frame contained 0 sprite pieces
 
-loc_16B5A:
-		bsr.w	BuildSpr_Draw_2P
+	.draw_now:
+		bsr.w	BuildSpr_Draw_2P			; write data from sprite pieces to buffer
 
-loc_16B5E:
-		ori.b	#render_onscreen,ost_render(a0)
+	.skip_draw:
+		ori.b	#render_onscreen,ost_render(a0)		; set object as visible
 
-loc_16B64:
-		addq.w	#2,d6
-		subq.w	#2,(sp)
-		bne.w	loc_16AA6
-		addq.w	#2,sp
-		tst.b	(f_teleport).w
-		bne.s	loc_16B78
-		move.w	#0,(a4)
+	BuildSprites_P2_NextObject:
+		addq.w	#2,d6					; read next object in sprite queue
+		subq.w	#2,(sp)					; decrement number of objects left
+		bne.w	BuildSprites_P2_ObjectLoop		; branch if not 0
+		addq.w	#2,sp					; all done; deallocate word on stack
 
-loc_16B78:
-		lea	$80(a4),a4
-		dbf	d7,loc_16A9C
-		move.b	d5,(v_spritecount).w
-		cmpi.b	#$50,d5
-		beq.s	loc_16B92
-		move.l	#0,(a2)
+		tst.b	(f_teleport).w				; is a teleport in progress?
+		bne.s	BuildSprites_P2_NextPriority		; branch if so
+		move.w	#0,(a4)					; clear count of objects for this priority section
+
+BuildSprites_P2_NextPriority:
+		lea	sizeof_priority(a4),a4			; next priority section ($80)
+		dbf	d7,BuildSprites_P2_PriorityLoop		; repeat for all sections
+		move.b	d5,(v_spritecount).w			; set sprite count
+
+	if FixBugs
+		; The new sprite tables are complete: signal a page flip to
+		; allow them to be uploaded to the VDP!
+		st.b	(f_sprite_buffer_pageflip).w		; mark sprite tables as complete
+	endc
+
+		cmpi.b	#countof_max_sprites,d5			; max displayable sprites ($50)
+		beq.s	.max_sprites				; branch if at max
+		move.l	#0,(a2)					; set next sprite to link to first (could be clr.l)
 		rts
 ; ===========================================================================
 
-loc_16B92:
-		move.b	#0,-5(a2)
+.max_sprites:
+		move.b	#0,-sizeof_sprite+sprite_link(a2)	; set current sprite to link to first (could be clr.b)
 		rts
 ; ===========================================================================
 
-loc_16B9A:
-		move.l	a4,-(sp)
+BuildSprites_P1_MultiDraw:
+		pushr.l	a4					; back up sprite queue address
 		lea	(v_camera_x_pos).w,a4
 		movea.w	ost_tile(a0),a3
 		movea.l	ost_mappings(a0),a5
 		moveq	#0,d0
-		move.b	ost_mainspr_width(a0),d0
-		move.w	ost_x_pos(a0),d3
+
+		; check if object is within X bounds
+		move.b	ost_mainspr_width(a0),d0		; load pixel width
+		move.w	ost_x_pos(a0),d3			; load x pos
 		sub.w	(a4),d3
 		move.w	d3,d1
-		add.w	d0,d1
-		bmi.w	loc_16C7E
+		add.w	d0,d1					; d1 = x pos of object's right edge on screen
+		bmi.w	.next_object				; branch if object is outside left side of screen
 		move.w	d3,d1
 		sub.w	d0,d1
-		cmpi.w	#$140,d1
-		bge.w	loc_16C7E
-		addi.w	#$80,d3
-		btst	#4,d4
-		beq.s	loc_16BFA
+		cmpi.w	#screen_width,d1			; d1 = x pos of object's left edge on screen
+		bge.w	.next_object				; branch if object is outside right side of screen
+		addi.w	#screen_left,d3				; d3 = x pos of object on screen, +128px for VDP sprite coordinate
+
+		; check if object is within Y bounds
+		btst	#render_useheight_bit,d4		; is use height flag on?
+		beq.s	.assume_height				; if so, branch
 		moveq	#0,d0
-		move.b	ost_mainspr_height(a0),d0
+		move.b	ost_mainspr_height(a0),d0		; load pixel height
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a4),d2
+		sub.w	v_camera_y_pos-v_camera_x_pos(a4),d2	; d2 = y pos of object on screen
 		move.w	d2,d1
-		add.w	d0,d1
-		bmi.w	loc_16C7E
+		add.w	d0,d1					; d1 = y pos of object's bottom edge on screen
+		bmi.w	.next_object				; branch if object is outside top side of screen
 		move.w	d2,d1
-		sub.w	d0,d1
-		cmpi.w	#$E0,d1
-		bge.w	loc_16C7E
-		addi.w	#$100,d2
-		bra.s	loc_16C16
+		sub.w	d0,d1					; d1 = y pos of object's top edge on screen
+		cmpi.w	#screen_height,d1
+		bge.w	.next_object				; branch if object is outside bottom side of screen
+		addi.w	#screen_top*2,d2			; d2 = y pos of object on screen, +128px for VDP sprite coordinate
+		bra.s	.draw_parent
 ; ===========================================================================
 
-loc_16BFA:
+	.assume_height:
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a4),d2
-		addi.w	#$80,d2
-		cmpi.w	#$60,d2
-		bcs.s	loc_16C7E
-		cmpi.w	#$180,d2
-		bcc.s	loc_16C7E
-		addi.w	#$80,d2
+		sub.w	v_camera_y_pos-v_camera_x_pos(a4),d2	; d2 = y pos of object on screen
+		addi.w	#screen_top,d2
+		cmpi.w	#screen_top-32,d2			; assume y radius to be 32 pixels
+		bcs.s	.next_object				; branch if > 32px outside top side of screen
+		cmpi.w	#screen_bottom+32,d2
+		bcc.s	.next_object				; branch if > 32px outside bottom of player 1's viewport
+		addi.w	#screen_top,d2				; d2 = y pos of object on screen, +128px for VDP sprite coordinate
 
-loc_16C16:
+	.draw_parent:
 		moveq	#0,d1
-		move.b	ost_mainspr_frame(a0),d1
-		beq.s	loc_16C34
+		move.b	ost_mainspr_frame(a0),d1		; get current frame of parent sprite
+		beq.s	.skip_parent				; branch if zero
 		add.w	d1,d1
 		movea.l	a5,a1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		bmi.s	loc_16C34
-		move.w	d4,-(sp)
-		bsr.w	sub_16DA6
-		move.w	(sp)+,d4
+		adda.w	(a1,d1.w),a1				; jump to frame within mappings
+		move.w	(a1)+,d1				; number of sprite pieces
+		subq.w	#1,d1					; subtract 1 for loops
+		bmi.s	.skip_parent				; branch if frame contained 0 sprite pieces
+		pushr.w	d4					; back up render flags copy
+		bsr.w	BuildSpr_DrawCheck_2P			; write data from sprite pieces to buffer
+		popr.w	d4					; restore render flags
 
-loc_16C34:
-		ori.b	#render_onscreen,ost_render(a0)
-		lea	ost_subspr2_x_pos(a0),a6
+	.skip_parent:
+		ori.b	#render_onscreen,ost_render(a0)		; set object as visible
+		lea	ost_subspr2_x_pos(a0),a6		; a6 = x pos of first child sprite
 		moveq	#0,d0
-		move.b	ost_mainspr_childsprites(a0),d0
-		subq.w	#1,d0
-		bcs.s	loc_16C7E
+		move.b	ost_mainspr_childsprites(a0),d0		; get child sprite count
+		subq.w	#1,d0					; subtract 1 for loops
+		bcs.s	.next_object				; branch if there are no child sprites
 
-loc_16C48:
-		swap	d0
+	.childsprite_loop:
+		swap	d0					; stash loop counter in high word of d0
 		move.w	(a6)+,d3
 		sub.w	(a4),d3
-		addi.w	#$80,d3
+		addi.w	#screen_left,d3				; d3 = x pos of child sprite on screen, +128px for VDP sprite coordinate
 		move.w	(a6)+,d2
-		sub.w	4(a4),d2
-		addi.w	#$100,d2
-		addq.w	#1,a6
+		sub.w	v_camera_y_pos-v_camera_x_pos(a4),d2
+		addi.w	#screen_top*2,d2			; d2 = y pos of child sprite on screen, +256px for VDP sprite coordinate
+		addq.w	#1,a6					; skip over mainsprite height or unused variable
 		moveq	#0,d1
-		move.b	(a6)+,d1
+		move.b	(a6)+,d1				; get current frame of child
 		add.w	d1,d1
 		movea.l	a5,a1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		bmi.s	loc_16C78
-		move.w	d4,-(sp)
-		bsr.w	sub_16DA6
-		move.w	(sp)+,d4
+		adda.w	(a1,d1.w),a1				; jump to frame within mappings
+		move.w	(a1)+,d1				; number of sprite pieces
+		subq.w	#1,d1					; subtract 1 for loops
+		bmi.s	.skip_draw_child			; branch if frame contained 0 sprite pieces
+		pushr.w	d4					; back up render flags copy
+		bsr.w	BuildSpr_DrawCheck_2P			; write data from sprite pieces to buffer
+		popr.w	d4					; restore render flags
 
-loc_16C78:
-		swap	d0
-		dbf	d0,loc_16C48
+	.skip_draw_child:
+		swap	d0					; restore loop counter
+		dbf	d0,.childsprite_loop			; repeat for number of child sprites
 
-loc_16C7E:
-		movea.l	(sp)+,a4
-		bra.w	loc_16A50
+	.next_object:
+		popr.l	a4					; a4 = v_sprite_queue
+		bra.w	BuildSprites_P1_NextObject
 ; ===========================================================================
 
-loc_16C84:
-		move.l	a4,-(sp)
+BuildSprites_P2_MultiDraw:
+		pushr.l	a4					; back up sprite queue address
 		lea	(v_camera_x_pos_p2).w,a4
 		movea.w	ost_tile(a0),a3
 		movea.l	ost_mappings(a0),a5
 		moveq	#0,d0
-		move.b	ost_mainspr_width(a0),d0
-		move.w	ost_x_pos(a0),d3
+
+		; check if object is within X bounds
+		move.b	ost_mainspr_width(a0),d0		; load pixel width
+		move.w	ost_x_pos(a0),d3			; load x pos
 		sub.w	(a4),d3
 		move.w	d3,d1
-		add.w	d0,d1
-		bmi.w	loc_16D68
+		add.w	d0,d1					; d1 = x pos of object's right edge on screen
+		bmi.w	.next_object				; branch if object is outside left side of screen
 		move.w	d3,d1
 		sub.w	d0,d1
-		cmpi.w	#$140,d1
-		bge.w	loc_16D68
-		addi.w	#$80,d3
-		btst	#4,d4
-		beq.s	loc_16CE4
+		cmpi.w	#screen_width,d1			; d1 = x pos of object's left edge on screen
+		bge.w	.next_object				; branch if object is outside right side of screen
+		addi.w	#screen_left,d3				; d3 = x pos of object on screen, +128px for VDP sprite coordinate
+
+		; check if object is within Y bounds
+		btst	#render_useheight_bit,d4		; is use height flag on?
+		beq.s	.assume_height				; if so, branch
 		moveq	#0,d0
-		move.b	ost_mainspr_height(a0),d0
+		move.b	ost_mainspr_height(a0),d0		; load pixel height
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a4),d2
+		sub.w	v_camera_y_pos_p2-v_camera_x_pos_p2(a4),d2 ; d2 = y pos of object on screen
 		move.w	d2,d1
-		add.w	d0,d1
-		bmi.w	loc_16D68
+		add.w	d0,d1					; d1 = y pos of object's bottom edge on screen
+		bmi.w	.next_object				; branch if object is outside top of player 2's viewport
 		move.w	d2,d1
-		sub.w	d0,d1
-		cmpi.w	#$E0,d1
-		bge.w	loc_16D68
-		addi.w	#$1E0,d2
-		bra.s	loc_16D00
+		sub.w	d0,d1					; d1 = y pos of object's top edge on screen
+		cmpi.w	#screen_height,d1
+		bge.w	.next_object				; branch if object is outside bottom side of screen
+		addi.w	#(screen_top*2)+screen_height,d2	; d2 = y pos of object on screen, +256px for VDP sprite coordinate, +224px for bottom viewport
+		bra.s	.draw_parent
 ; ===========================================================================
 
-loc_16CE4:
+	.assume_height:
 		move.w	ost_y_pos(a0),d2
-		sub.w	4(a4),d2
-		addi.w	#$80,d2
-		cmpi.w	#$60,d2
-		bcs.s	loc_16D68
-		cmpi.w	#$180,d2
-		bcc.s	loc_16D68
-		addi.w	#$160,d2
+		sub.w	v_camera_y_pos_p2-v_camera_x_pos_p2(a4),d2 ; d2 = y pos of object on screen
+		addi.w	#screen_top,d2
+		cmpi.w	#screen_top-32,d2			; assume y radius to be 32 pixels
+		bcs.s	.next_object
+		cmpi.w	#screen_bottom+32,d2
+		bcc.s	.next_object				; branch if > 32px outside bottom side of screen
+		addi.w	#screen_top+screen_height,d2		; d2 = y pos of object on screen, +128px for VDP sprite coordinate
 
-loc_16D00:
+	.draw_parent:
 		moveq	#0,d1
-		move.b	ost_mainspr_frame(a0),d1
-		beq.s	loc_16D1E
+		move.b	ost_mainspr_frame(a0),d1		; get current frame of parent sprite
+		beq.s	.skip_parent				; branch if zero
 		add.w	d1,d1
 		movea.l	a5,a1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		bmi.s	loc_16D1E
-		move.w	d4,-(sp)
-		bsr.w	sub_16DA6
-		move.w	(sp)+,d4
+		adda.w	(a1,d1.w),a1				; jump to frame within mappings
+		move.w	(a1)+,d1				; number of sprite pieces
+		subq.w	#1,d1					; subtract 1 for loops
+		bmi.s	.skip_parent				; branch if frame contained 0 sprite pieces
+		pushr.w	d4					; back up render flags copy
+		bsr.w	BuildSpr_DrawCheck_2P			; write data from sprite pieces to buffer
+		popr.w	d4					; restore render flags
 
-loc_16D1E:
-		ori.b	#render_onscreen,ost_render(a0)
-		lea	ost_subspr2_x_pos(a0),a6
+	.skip_parent:
+		ori.b	#render_onscreen,ost_render(a0)		; set object as visible
+		lea	ost_subspr2_x_pos(a0),a6		; a6 = x pos of first child sprite
 		moveq	#0,d0
-		move.b	ost_mainspr_childsprites(a0),d0
-		subq.w	#1,d0
-		bcs.s	loc_16D68
+		move.b	ost_mainspr_childsprites(a0),d0		; get child sprite count
+		subq.w	#1,d0					; subtract 1 for loops
+		bcs.s	.next_object				; branch if there are no child sprites
 
-loc_16D32:
-		swap	d0
+	.childsprite_loop:
+		swap	d0					; stash loop counter in high word of d0
 		move.w	(a6)+,d3
 		sub.w	(a4),d3
-		addi.w	#$80,d3
+		addi.w	#screen_left,d3				; d3 = x pos of child sprite on screen, +128px for VDP sprite coordinate
 		move.w	(a6)+,d2
-		sub.w	4(a4),d2
-		addi.w	#$1E0,d2
+		sub.w	v_camera_y_pos_p2-v_camera_x_pos_p2(a4),d2
+		addi.w	#(screen_top*2)+screen_height,d2	; d2 = y pos of child sprite on screen, +256px for VDP sprite coordinate, +224px for bottom viewport
 		addq.w	#1,a6
 		moveq	#0,d1
-		move.b	(a6)+,d1
+		move.b	(a6)+,d1				; get current frame of child
 		add.w	d1,d1
 		movea.l	a5,a1
-		adda.w	(a1,d1.w),a1
-		move.w	(a1)+,d1
-		subq.w	#1,d1
-		bmi.s	loc_16D62
-		move.w	d4,-(sp)
-		bsr.w	sub_16DA6
-		move.w	(sp)+,d4
+		adda.w	(a1,d1.w),a1				; jump to frame within mappings
+		move.w	(a1)+,d1				; number of sprite pieces
+		subq.w	#1,d1					; subtract 1 for loops
+		bmi.s	.skip_draw_child			; branch if frame contained 0 sprite pieces
+		pushr.w	d4					; back up render flags copy
+		bsr.w	BuildSpr_DrawCheck_2P			; write data from sprite pieces to buffer
+		popr.w	d4					; restore render flags
 
-loc_16D62:
-		swap	d0
-		dbf	d0,loc_16D32
+	.skip_draw_child:
+		swap	d0					; restore loop counter
+		dbf	d0,.childsprite_loop			; repeat for number of child sprites
 
-loc_16D68:
-		movea.l	(sp)+,a4
-		bra.w	loc_16B64
+	.next_object:
+		popr.l	a4					; a4 = v_sprite_queue
+		bra.w	BuildSprites_P2_NextObject
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to adjust an object's VRAM pointer for two-player mode
 
+; input:
+;	a0 = OST of object
 
-Adjust2PArtPointer:
+;	uses d0.w
+; ---------------------------------------------------------------------------
+
+AdjustVRAM2P:
 		tst.w	(f_two_player).w			; is it two-player mode?
 		beq.s	.return					; if not, return
 		move.w	ost_tile(a0),d0				; get tile OST
 		andi.w	#tile_vram,d0				; only need VRAM assignment
-		lsr.w	#1,d0					; adjust VRAM assignment
+		lsr.w	#1,d0					; shift VRAM assignment right by 1 bit
 		andi.w	#tile_settings,ost_tile(a0)		; clear VRAM assignment in OST
 		add.w	d0,ost_tile(a0)				; replace with adjusted assignment
 
 	.return:
 		rts
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; As above, except a1 = object
+; ---------------------------------------------------------------------------
 
-
-Adjust2PArtPointer2:
+AdjustVRAM2P2:
 		tst.w	(f_two_player).w			; is it two-player mode?
 		beq.s	.return					; if not, return
 		move.w	ost_tile(a1),d0				; get tile OST
 		andi.w	#tile_vram,d0				; only need VRAM assignment
-		lsr.w	#1,d0					; adjust VRAM assignment
+		lsr.w	#1,d0					; shift VRAM assignment right by 1 bit
 		andi.w	#tile_settings,ost_tile(a1)		; clear VRAM assignment in OST
 		add.w	d0,ost_tile(a1)				; replace with adjusted assignment
 
@@ -29366,256 +29523,253 @@ Adjust2PArtPointer2:
 
 ; ===========================================================================
 
-
-sub_16DA6:
-		cmpi.b	#$50,d5
-		bcs.s	BuildSpr_DrawLoop_2P
+	if FixBugs=0
+BuildSpr_DrawCheck_2P:
+		; This branch skips the xflip and yflip checks, causing
+		; multi-sprite objects to not properly mirror in two player mode.
+		; An easy place to see this is Mystic Case Zone: the Crawltons
+		; badnik's body segments will always face in one direction, and only
+		; the head will be properly flipped. This is fixed by moving the draw
+		; check to a more appropriate location as part of another fix;
+		; see the bugfix under 'BuildSpr_Normal'.
+		cmpi.b	#countof_max_sprites,d5			; max displayable sprites ($50)
+		bcs.s	BuildSpr_DrawLoop_2P			; branch if not at max
 		rts
-
-
+	endc
 ; ===========================================================================
-
 
 BuildSpr_Draw_2P:
 		movea.w	ost_tile(a0),a3
-		cmpi.b	#$50,d5
-		bcc.s	locret_16DF2
-		btst	#0,d4
-		bne.s	loc_16E04
-		btst	#1,d4
-		bne.w	loc_16E66
 
-BuildSpr_DrawLoop_2P:
-		move.b	(a1)+,d0
+	if FixBugs=0
+		; This check has been moved, so it is redundant.
+		; See the bugfix under 'BuildSpr_Normal'.
+		cmpi.b	#countof_max_sprites,d5			; max displayable sprites ($50)
+		bcc.s	BuildSpr_Draw_2P_Done			; branch if not at max
+	endc
+	if FixBugs
+BuildSpr_DrawCheck_2P:
+	endc
+		btst	#render_xflip_bit,d4			; is the sprite to be X-flipped?
+		bne.s	BuildSpr_2P_FlipX			; if so, branch
+		btst	#render_yflip_bit,d4			; is the sprite to be Y-flipped?
+		bne.w	BuildSpr_2P_FlipY			; if so, branch
+
+	BuildSpr_DrawLoop_2P:
+	if FixBugs
+		; See the bugfix under 'DrawSprite_Loop'.
+		cmpi.b	#countof_max_sprites,d5			; max displayable sprites ($50)
+		bcc.s	BuildSpr_Draw_2P_Done			; branch if not at max
+	endc
+		move.b	(a1)+,d0				; get relative y pos from mappings
 		ext.w	d0
-		add.w	d2,d0
-		move.w	d0,(a2)+
-		move.b	(a1)+,d4
-		move.b	byte_16DF4(pc,d4.w),(a2)+
-		addq.b	#1,d5
-		move.b	d5,(a2)+
-		addq.w	#2,a1
-		move.w	(a1)+,d0
-		add.w	a3,d0
-		move.w	d0,(a2)+
-		move.w	(a1)+,d0
-		add.w	d3,d0
-		andi.w	#$1FF,d0
-		bne.s	loc_16DEC
-		addq.w	#1,d0
+		add.w	d2,d0					; add VDP y pos
+		move.w	d0,(a2)+				; write y pos to sprite buffer
 
-loc_16DEC:
-		move.w	d0,(a2)+
-		dbf	d1,BuildSpr_DrawLoop_2P
+		move.b	(a1)+,d4				; get sprite size
+		move.b	SpriteSizes_2P(pc,d4.w),(a2)+		; get adjusted size for 2P mode and write to buffer
+		addq.b	#1,d5					; increment sprite counter
+		move.b	d5,(a2)+				; write link to next sprite in buffer
 
-locret_16DF2:
-		rts
-; ===========================================================================
-byte_16DF4:
-		dc.b   0					; 0
-		dc.b   0					; 1
-		dc.b   1					; 2
-		dc.b   1					; 3
-		dc.b   4					; 4
-		dc.b   4					; 5
-		dc.b   5					; 6
-		dc.b   5					; 7
-		dc.b   8					; 8
-		dc.b   8					; 9
-		dc.b   9					; 10
-		dc.b   9					; 11
-		dc.b  $C					; 12
-		dc.b  $C					; 13
-		dc.b  $D					; 14
-		dc.b  $D					; 15
-; ===========================================================================
+		addq.w	#2,a1					; skip 1P mode specific data
+		move.w	(a1)+,d0				; get high byte of tile number from mappings
+		add.w	a3,d0					; add VRAM setting
+		move.w	d0,(a2)+				; write to buffer
 
-loc_16E04:
-		btst	#1,d4
-		bne.w	loc_16EC2
+		move.w	(a1)+,d0				; get relative x pos from mappings
+		add.w	d3,d0					; add VDP x pos
+		andi.w	#$1FF,d0				; keep within 512px
+		bne.s	.x_not_0				; branch if not 0
+		addq.w	#1,d0					; add 1 to prevent sprite masking (sprites at x pos 0 act as masks)
 
-loc_16E0C:
-		move.b	(a1)+,d0
-		ext.w	d0
-		add.w	d2,d0
-		move.w	d0,(a2)+
-		move.b	(a1)+,d4
-		move.b	byte_16DF4(pc,d4.w),(a2)+
-		addq.b	#1,d5
-		move.b	d5,(a2)+
-		addq.w	#2,a1
-		move.w	(a1)+,d0
-		add.w	a3,d0
-		eori.w	#$800,d0
-		move.w	d0,(a2)+
-		move.w	(a1)+,d0
-		neg.w	d0
-		move.b	byte_16E46(pc,d4.w),d4
-		sub.w	d4,d0
-		add.w	d3,d0
-		andi.w	#$1FF,d0
-		bne.s	loc_16E3E
-		addq.w	#1,d0
+	.x_not_0:
+		move.w	d0,(a2)+				; write to buffer
+		dbf	d1,BuildSpr_DrawLoop_2P			; next sprite piece
 
-loc_16E3E:
-		move.w	d0,(a2)+
-		dbf	d1,loc_16E0C
-		rts
-; ===========================================================================
-byte_16E46:
-		dc.b   8					; 0
-		dc.b   8					; 1
-		dc.b   8					; 2
-		dc.b   8					; 3
-		dc.b $10					; 4
-		dc.b $10					; 5
-		dc.b $10					; 6
-		dc.b $10					; 7
-		dc.b $18					; 8
-		dc.b $18					; 9
-		dc.b $18					; 10
-		dc.b $18					; 11
-		dc.b $20					; 12
-		dc.b $20					; 13
-		dc.b $20					; 14
-		dc.b $20					; 15
-
-byte_16E56:
-		dc.b   8					; 0
-		dc.b $10					; 1
-		dc.b $18					; 2
-		dc.b $20					; 3
-		dc.b   8					; 4
-		dc.b $10					; 5
-		dc.b $18					; 6
-		dc.b $20					; 7
-		dc.b   8					; 8
-		dc.b $10					; 9
-		dc.b $18					; 10
-		dc.b $20					; 11
-		dc.b   8					; 12
-		dc.b $10					; 13
-		dc.b $18					; 14
-		dc.b $20					; 15
-; ===========================================================================
-
-loc_16E66:
-		move.b	(a1)+,d0
-		move.b	(a1),d4
-		ext.w	d0
-		neg.w	d0
-		move.b	byte_16E56(pc,d4.w),d4
-		sub.w	d4,d0
-		add.w	d2,d0
-		move.w	d0,(a2)+
-		move.b	(a1)+,d4
-		move.b	byte_16EA2(pc,d4.w),(a2)+
-		addq.b	#1,d5
-		move.b	d5,(a2)+
-		addq.w	#2,a1
-		move.w	(a1)+,d0
-		add.w	a3,d0
-		eori.w	#$1000,d0
-		move.w	d0,(a2)+
-		move.w	(a1)+,d0
-		add.w	d3,d0
-		andi.w	#$1FF,d0
-		bne.s	loc_16E9A
-		addq.w	#1,d0
-
-loc_16E9A:
-		move.w	d0,(a2)+
-		dbf	d1,loc_16E66
-		rts
-; ===========================================================================
-byte_16EA2:
-		dc.b   0					; 0
-		dc.b   0					; 1
-		dc.b   1					; 2
-		dc.b   1					; 3
-		dc.b   4					; 4
-		dc.b   4					; 5
-		dc.b   5					; 6
-		dc.b   5					; 7
-		dc.b   8					; 8
-		dc.b   8					; 9
-		dc.b   9					; 10
-		dc.b   9					; 11
-		dc.b  $C					; 12
-		dc.b  $C					; 13
-		dc.b  $D					; 14
-		dc.b  $D					; 15
-
-byte_16EB2:
-		dc.b   8					; 0
-		dc.b $10					; 1
-		dc.b $18					; 2
-		dc.b $20					; 3
-		dc.b   8					; 4
-		dc.b $10					; 5
-		dc.b $18					; 6
-		dc.b $20					; 7
-		dc.b   8					; 8
-		dc.b $10					; 9
-		dc.b $18					; 10
-		dc.b $20					; 11
-		dc.b   8					; 12
-		dc.b $10					; 13
-		dc.b $18					; 14
-		dc.b $20					; 15
-; ===========================================================================
-
-loc_16EC2:
-		move.b	(a1)+,d0
-		move.b	(a1),d4
-		ext.w	d0
-		neg.w	d0
-		move.b	byte_16EB2(pc,d4.w),d4
-		sub.w	d4,d0
-		add.w	d2,d0
-		move.w	d0,(a2)+
-		move.b	(a1)+,d4
-		move.b	byte_16EA2(pc,d4.w),(a2)+
-		addq.b	#1,d5
-		move.b	d5,(a2)+
-		addq.w	#2,a1
-		move.w	(a1)+,d0
-		add.w	a3,d0
-		eori.w	#$1800,d0
-		move.w	d0,(a2)+
-		move.w	(a1)+,d0
-		neg.w	d0
-		move.b	byte_16F06(pc,d4.w),d4
-		sub.w	d4,d0
-		add.w	d3,d0
-		andi.w	#$1FF,d0
-		bne.s	loc_16EFE
-		addq.w	#1,d0
-
-loc_16EFE:
-		move.w	d0,(a2)+
-		dbf	d1,loc_16EC2
+	BuildSpr_Draw_2P_Done:
 		rts
 
+; ---------------------------------------------------------------------------
+; Adjusted sprite sizes for 2P mode. Cells are double height in 2P mode
+; (double height interlace), so we halve the number of rows.
+; As with the xflip and yflip values, this table is duplicated so that
+; PC-relative with index can be used for all sprite flip operations.
+; ---------------------------------------------------------------------------
+
+SpriteSizes_2P:
+		dc.b   0,0
+		dc.b   1,1
+		dc.b   4,4
+		dc.b   5,5
+		dc.b   8,8
+		dc.b   9,9
+		dc.b  $C,$C
+		dc.b  $D,$D
 ; ===========================================================================
-byte_16F06:
-		dc.b   8					; 0
-		dc.b   8					; 1
-		dc.b   8					; 2
-		dc.b   8					; 3
-		dc.b $10					; 4
-		dc.b $10					; 5
-		dc.b $10					; 6
-		dc.b $10					; 7
-		dc.b $18					; 8
-		dc.b $18					; 9
-		dc.b $18					; 10
-		dc.b $18					; 11
-		dc.b $20					; 12
-		dc.b $20					; 13
-		dc.b $20					; 14
-		dc.b $20					; 15
+
+BuildSpr_2P_FlipX:
+		btst	#render_yflip_bit,d4			; is it to be Y-flipped as well?
+		bne.w	BuildSpr_2P_FlipXY			; if so, branch
+
+	if FixBugs
+		; See the bugfix under 'DrawSprite_Loop'.
+		cmpi.b	#countof_max_sprites,d5			; max displayable sprites ($50)
+		bcc.s	.return					; branch if not at max
+	endc
+
+	.loop:
+		move.b	(a1)+,d0				; get relative y pos from mappings
+		ext.w	d0
+		add.w	d2,d0					; add VDP y pos
+		move.w	d0,(a2)+				; write y pos to sprite buffer
+
+		move.b	(a1)+,d4				; get sprite size
+		move.b	SpriteSizes_2P(pc,d4.w),(a2)+		; get adjusted size for 2P mode and write to buffer
+		addq.b	#1,d5					; increment sprite counter
+		move.b	d5,(a2)+				; write link to next sprite in buffer
+
+		addq.w	#2,a1					; skip 1P mode specific data
+		move.w	(a1)+,d0				; get high byte of tile number from mappings
+		add.w	a3,d0					; add VRAM setting
+		eori.w	#sprite_xflip,d0			; toggle xflip in VDP
+		move.w	d0,(a2)+				; write to buffer
+
+		move.w	(a1)+,d0				; get relative x pos from mappings
+		neg.w	d0					; negate it
+		move.b	CellOffsets_XFlip3(pc,d4.w),d4		; get x offset based on size
+		sub.w	d4,d0					; subtract offset
+		add.w	d3,d0					; add VDP x pos
+		andi.w	#$1FF,d0				; keep within 512px
+		bne.s	.x_not_0				; branch if x pos isn't 0
+		addq.w	#1,d0					; add 1 to prevent sprite masking (sprites at x pos 0 act as masks)
+
+	.x_not_0:
+		move.w	d0,(a2)+				; write to buffer
+		dbf	d1,.loop				; next sprite piece
+
+	.return:
+		rts
 ; ===========================================================================
+
+CellOffsets_XFlip3:
+		dc.b   8,  8,  8,  8				; 4
+		dc.b $10,$10,$10,$10				; 8
+		dc.b $18,$18,$18,$18				; 12
+		dc.b $20,$20,$20,$20				; 16
+
+CellOffsets_YFlip3:
+		dc.b   8,$10,$18,$20				; 4
+		dc.b   8,$10,$18,$20				; 8
+		dc.b   8,$10,$18,$20				; 12
+		dc.b   8,$10,$18,$20				; 16
+; ===========================================================================
+
+BuildSpr_2P_FlipY:
+    if FixBugs
+		; See the bugfix under 'BuildSpr_Normal'.
+		cmpi.b	#countof_max_sprites,d5			; has the sprite limit been reached?
+		bcc.s	.return					; if it has, branch
+    endc
+		move.b	(a1)+,d0				; get relative y pos from mappings
+		move.b	(a1),d4					; get sprite size
+		ext.w	d0
+		neg.w	d0					; negate y pos
+		move.b	CellOffsets_YFlip3(pc,d4.w),d4		; get y offset based on size
+		sub.w	d4,d0					; subtract offset
+		add.w	d2,d0					; add VDP y pos
+		move.w	d0,(a2)+				; write y pos to sprite buffer
+
+		move.b	(a1)+,d4				; get sprite size
+		move.b	SpriteSizes_2P_2(pc,d4.w),(a2)+		; get adjusted size for 2P mode and write to buffer
+		addq.b	#1,d5					; increment sprite counter
+		move.b	d5,(a2)+				; write link to next sprite in buffer
+
+		addq.w	#2,a1					; skip 1P mode specific data
+		move.w	(a1)+,d0				; get high byte of tile number from mappings
+		add.w	a3,d0					; add VRAM setting
+		eori.w	#sprite_yflip,d0			; toggle yflip in VDP
+		move.w	d0,(a2)+				; write to buffer
+
+		move.w	(a1)+,d0				; get relative x pos from mappings
+		add.w	d3,d0					; add VDP x pos
+		andi.w	#$1FF,d0				; keep within 512px
+		bne.s	.x_not_0				; branch if not 0
+		addq.w	#1,d0					; add 1 to prevent sprite masking (sprites at x pos 0 act as masks)
+
+	.x_not_0:
+		move.w	d0,(a2)+				; write to buffer
+		dbf	d1,BuildSpr_2P_FlipY			; next sprite piece
+
+	.return:
+		rts
+; ===========================================================================
+
+SpriteSizes_2P_2:
+		dc.b   0,0
+		dc.b   1,1					; 2
+		dc.b   4,4					; 4
+		dc.b   5,5					; 6
+		dc.b   8,8					; 8
+		dc.b   9,9					; 10
+		dc.b  $C,$C					; 12
+		dc.b  $D,$D					; 14
+
+CellOffsets_YFlip4:
+		dc.b   8,$10,$18,$20				; 4
+		dc.b   8,$10,$18,$20				; 8
+		dc.b   8,$10,$18,$20				; 12
+		dc.b   8,$10,$18,$20				; 16
+; ===========================================================================
+
+BuildSpr_2P_FlipXY:
+    if FixBugs
+		; See the bugfix under 'BuildSpr_Normal'.
+		cmpi.b	#countof_max_sprites,d5			; has the sprite limit been reached?
+		bcc.s	.return					; if it has, branch
+    endc
+		move.b	(a1)+,d0				; get relative y pos from mappings
+		move.b	(a1),d4					; get sprite size
+		ext.w	d0
+		neg.w	d0					; negate y pos
+		move.b	CellOffsets_YFlip4(pc,d4.w),d4		; get y offset based on size
+		sub.w	d4,d0					; subtract offset
+		add.w	d2,d0					; add VDP y pos
+		move.w	d0,(a2)+				; write y pos to sprite buffer
+
+		move.b	(a1)+,d4				; get sprite size
+		move.b	SpriteSizes_2P_2(pc,d4.w),(a2)+		; get adjusted size for 2P mode and write to buffer
+		addq.b	#1,d5					; increment sprite counter
+		move.b	d5,(a2)+				; write link to next sprite in buffer
+
+		addq.w	#2,a1					; skip 1P mode specific data
+		move.w	(a1)+,d0				; get high byte of tile number from mappings
+		add.w	a3,d0					; add VRAM setting
+		eori.w	#sprite_xflip|sprite_yflip,d0		; toggle xflip and yflip in VDP
+		move.w	d0,(a2)+				; write to buffer
+
+		move.w	(a1)+,d0				; get relative x pos from mappings
+		neg.w	d0					; negate it
+		move.b	CellOffsets_XFlip4(pc,d4.w),d4		; get x offset based on size
+		sub.w	d4,d0					; subtract offset
+		add.w	d3,d0					; add VDP x pos
+		andi.w	#$1FF,d0				; keep within 512px
+		bne.s	.x_not_0				; branch if x pos isn't 0
+		addq.w	#1,d0					; add 1 to prevent sprite masking (sprites at x pos 0 act as masks)
+
+	.x_not_0:
+		move.w	d0,(a2)+				; write to buffer
+		dbf	d1,BuildSpr_2P_FlipXY			; next sprite piece
+
+	.return:
+		rts
+; ===========================================================================
+
+CellOffsets_XFlip4:
+		dc.b   8,  8,  8,  8				; 4
+		dc.b $10,$10,$10,$10				; 8
+		dc.b $18,$18,$18,$18				; 12
+		dc.b $20,$20,$20,$20				; 16
+
 ; ---------------------------------------------------------------------------
 ; Unused Sonic 1 leftover: subroutine to check if an object is off screen
 
@@ -29627,24 +29781,27 @@ byte_16F06:
 ;		bsr.w	CheckOffScreen
 ;		bne.s	.offscreen				; branch if off screen
 ; ---------------------------------------------------------------------------
+
 CheckOffScreen:
-		move.w	ost_x_pos(a0),d0
-		sub.w	(v_camera_x_pos).w,d0
-		bmi.s	.offscreen
-		cmpi.w	#$140,d0
-		bge.s	.offscreen
-		move.w	ost_y_pos(a0),d1
-		sub.w	(v_camera_y_pos).w,d1
-		bmi.s	.offscreen
-		cmpi.w	#$E0,d1
-		bge.s	.offscreen
-		moveq	#0,d0
+		move.w	ost_x_pos(a0),d0			; get object x position
+		sub.w	(v_camera_x_pos).w,d0			; subtract screen x position
+		bmi.s	.offscreen				; branch if off left side of screen
+		cmpi.w	#screen_width,d0
+		bge.s	.offscreen				; branch if off right side of screen
+
+		move.w	ost_y_pos(a0),d1			; get object y position
+		sub.w	(v_camera_y_pos).w,d1			; subtract screen y position
+		bmi.s	.offscreen				; branch if off top of screen
+		cmpi.w	#screen_height,d1
+		bge.s	.offscreen				; branch if off bottom of screen
+
+		moveq	#0,d0					; set flag to 0
 		rts
 
 	.offscreen:
-		moveq	#1,d0
+		moveq	#1,d0					; set flag to 1
 		rts
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Unused Sonic 1 leftover: Subroutine to check if an object is off screen
 ; More precise than above subroutine, taking width into account
@@ -29659,29 +29816,31 @@ CheckOffScreen:
 ;		bsr.w	CheckOffScreen_Wide
 ;		bne.s	.offscreen				; branch if off screen
 ; ---------------------------------------------------------------------------
+
 CheckOffScreen_Wide:
 		moveq	#0,d1
 		move.b	ost_displaywidth(a0),d1
-		move.w	ost_x_pos(a0),d0
-		sub.w	(v_camera_x_pos).w,d0
-		add.w	d1,d0
-		bmi.s	.offscreen
+		move.w	ost_x_pos(a0),d0			; get object x position
+		sub.w	(v_camera_x_pos).w,d0			; subtract screen x position
+		add.w	d1,d0					; d0 = x pos of object's right edge relative to screen
+		bmi.s	.offscreen				; branch if off left side of screen
 		add.w	d1,d1
-		sub.w	d1,d0
-		cmpi.w	#$140,d0
-		bge.s	.offscreen
+		sub.w	d1,d0					; d0 = x pos of object's left edge relative to screen
+		cmpi.w	#screen_width,d0
+		bge.s	.offscreen				; branch if off right side of screen
+
 		move.w	ost_y_pos(a0),d1
 		sub.w	(v_camera_y_pos).w,d1
-		bmi.s	.offscreen
-		cmpi.w	#$E0,d1
-		bge.s	.offscreen
-		moveq	#0,d0
+		bmi.s	.offscreen				; branch if off top of screen
+		cmpi.w	#screen_height,d1
+		bge.s	.offscreen				; branch if off bottom of screen
+
+		moveq	#0,d0					; set flag to 0
 		rts
 
-.offscreen:
-		moveq	#1,d0
+	.offscreen:
+		moveq	#1,d0					; set flag to 1
 		rts
-
 ; ===========================================================================
 
     if Revision=1
@@ -29699,7 +29858,7 @@ JmpTo_BuildHUD_P2:						; JmpTo
 		align 4
     endc
 
-; ===========================================================================
+
 ; ----------------------------------------------------------------------------
 ; Pseudo-object that manages where rings are placed onscreen
 ; as you move through the level, and otherwise updates them.
@@ -30035,7 +30194,7 @@ loc_171EC:
 		rts
 ; ===========================================================================
 
-loc_171F8:
+BuildRings_P1:
 		lea	(v_camera_x_pos).w,a3
 		move.w	#$78,d6
 		movea.w	(v_ring_start).w,a0
@@ -31413,7 +31572,7 @@ OPL_2P_UnloadBlock:
 		nop
 
 	.gotblock:
-		move.b	#-1,-(a1)				; mark block as empty and back up so a1 points to 1
+		move.b	#-1,-(a1)				; mark block as empty
 		pushr.l	a1/a3					; back up a1 and a3
 		moveq	#0,d1
 		moveq	#countof_ost_per_2pblock-1,d2
@@ -31774,7 +31933,7 @@ Spring_Init_Subtype:	index offset(*),,2
 		move.l	#Map_YellowSpring,ost_mappings(a0)
 
 	.red:
-		bsr.w	Adjust2PArtPointer			; could be bra.w
+		bsr.w	AdjustVRAM2P				; could be bra.w
 		rts
 ; ===========================================================================
 Spring_Powers:
@@ -32411,7 +32570,7 @@ loc_1921E:
 
 loc_1922C:
 		addq.b	#2,ost_primary_routine(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -32543,7 +32702,7 @@ loc_19398:
 		move.w	d0,ost_y_pos(a1)
 		move.l	#Map_Ring,ost_mappings(a1)
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a1)
-		bsr.w	Adjust2PArtPointer2
+		bsr.w	AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#2,ost_priority(a1)
 		move.b	#8,ost_displaywidth(a1)
@@ -33917,7 +34076,7 @@ Sonic_Main:	; Routine 0
 		tst.b	(v_last_lamppost).w			; are we starting from a starpost?
 		bne.s	.lamppost				; branch if so
 		move.w	#tile_Sonic,ost_tile(a0)		; set tile
-		bsr.w	Adjust2PArtPointer			; adjust tile for 2P mode if necessary
+		bsr.w	AdjustVRAM2P				; adjust tile for 2P mode if necessary
 		move.b	#$C,ost_top_solid_bit(a0)		; set solidity bits
 		move.b	#$D,ost_lrb_solid_bit(a0)
 		move.w	ost_x_pos(a0),(v_x_pos_lampcopy).w	; initialize lampcopies of position tile, and top solid variables
@@ -36771,7 +36930,7 @@ Tails_Main:
 		tst.b	(v_last_lamppost).w
 		bne.s	loc_1B96E
 		move.w	#tile_Tails,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#$C,$3E(a0)
 		move.b	#$D,$3F(a0)
 		move.w	ost_x_pos(a0),(v_x_pos_lampcopy).w
@@ -36783,7 +36942,7 @@ Tails_Main:
 
 loc_1B952:
 		move.w	#tile_Tails,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.w	(v_ost_player1+ost_top_solid_bit).w,$3E(a0)
 		tst.w	(v_ost_player1+ost_tile).w
 		bpl.s	loc_1B96E
@@ -39191,7 +39350,7 @@ loc_1D212:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Tails,ost_mappings(a0)
 		move.w	#tile_Tails_Tails,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		move.b	#2,ost_priority(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.b	#render_rel,ost_render(a0)
@@ -39952,7 +40111,7 @@ loc_1D904:
 		move.b	#1,ost_priority(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.w	#tile_Nem_Shield,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 
 loc_1D92C:
 		movea.w	$3E(a0),a2
@@ -40019,9 +40178,9 @@ loc_1D9AE:
 		move.b	#4,ost_invstars_routine(a1)
 		move.l	#Map_Invincibility,ost_mappings(a1)
 		move.w	#tile_Nem_Invinciblity_Stars,ost_tile(a1)
-		bsr.w	Adjust2PArtPointer2
+		bsr.w	AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
-		bset	#render_subobjects_bit,ost_render(a1)
+		bset	#render_subsprites_bit,ost_render(a1)
 		move.b	#$10,ost_mainspr_width(a1)
 		move.b	#2,ost_mainspr_childsprites(a1)
 		move.w	$3E(a0),$3E(a1)
@@ -40226,7 +40385,7 @@ loc_1DD36:
 		move.w	#vram_TailsDust,$3C(a0)
 
 loc_1DD8C:
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 
 loc_1DD90:
 		movea.w	$3E(a0),a2
@@ -40415,7 +40574,7 @@ loc_1E102:
 		move.b	#1,ost_priority(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.w	#tile_Nem_SuperSonic_Stars,ost_tile(a0)
-		bsr.w	Adjust2PArtPointer
+		bsr.w	AdjustVRAM2P
 		btst	#tile_hi_bit,(v_ost_player1+ost_tile).w
 		beq.s	loc_1E138
 		bset	#tile_hi_bit,ost_tile(a0)
@@ -42025,7 +42184,7 @@ loc_1F0CC:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Starpost,ost_mappings(a0)
 		move.w	#tile_Nem_Checkpoint,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo3_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo3_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.b	#5,ost_priority(a0)
@@ -42432,8 +42591,8 @@ JmpTo_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo2_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo3_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo3_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -42476,7 +42635,7 @@ loc_1F636:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Bonus,ost_mappings(a0)
 		move.w	#(vram_Bonus/sizeof_cell)+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo4_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo4_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#0,ost_priority(a0)
 		move.b	#$10,ost_displaywidth(a0)
@@ -42533,8 +42692,8 @@ JmpTo12_DeleteObject:
 	endc
 
 	if RemoveJmpTos=0
-JmpTo4_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo4_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -42559,7 +42718,7 @@ loc_1F742:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_RoundBump,ost_mappings(a0)
 		move.w	#tile_Nem_RoundBumper+tile_pal3,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo5_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo5_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#1,ost_priority(a0)
@@ -42665,8 +42824,8 @@ JmpTo2_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo3_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo5_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo5_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -42695,7 +42854,7 @@ loc_1F8C2:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Bub_Player1,ost_mappings(a0)
 		move.w	#tile_Nem_BubbleGenerator+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo6_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo6_AdjustVRAM2P
 		move.b	#render_rel|render_onscreen,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#1,ost_priority(a0)
@@ -42994,8 +43153,8 @@ JmpTo7_DisplaySprite:
 		jmp	(DisplaySprite).l
 JmpTo15_DeleteObject:
 		jmp	(DeleteObject).l
-JmpTo6_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo6_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo3_SpeedToPos:
 		jmp	(SpeedToPos).l
 
@@ -43015,10 +43174,10 @@ PlaneSwitcher:
 	if DebugImprovements
 		; Allow this object to be visible in debug mode.
 		tst.w	(v_debug_active).w			; is debug mode in use?
-		bne.s	.nodisplay				; branch if not
+		bne.s	.display				; branch if not
 		jmp	(DespawnObject3).l			; don't display sprite
 
-	.nodisplay:
+	.display:
 		jmp	(DespawnObject).l			; display sprite if in debug mode
 	else
 		jmp	(DespawnObject3).l			; don't display sprite
@@ -43041,7 +43200,7 @@ PSwtch_Init: ; Routine 0
 		addq.b	#2,ost_primary_routine(a0)		; go to PSwtch_MainX net
 		move.l	#Map_PSwitch,ost_mappings(a0)
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo7_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo7_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$20/2,ost_displaywidth(a0)
 		move.b	#5,ost_priority(a0)
@@ -43279,8 +43438,8 @@ PSwtch_MainY: ; Routine 4
 ; ===========================================================================
 
 	if RemoveJmpTos=0
-JmpTo7_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo7_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -43305,7 +43464,7 @@ loc_200B0:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_obj0B,ost_mappings(a0)
 		move.w	#tile_Nem_CPZDumpingPipePlat+tile_pal4+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo8_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo8_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -43388,8 +43547,8 @@ byte_20198:	dc.b   7,  4,  3,  2,  1,  0,$FE,  1		; 0
     if RemoveJmpTos=0
 JmpTo3_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo8_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo8_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
     endc
@@ -43415,7 +43574,7 @@ loc_20222:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_CPZBetaPlat,ost_mappings(a0)
 		move.w	#(vram_FloatPlatform/sizeof_cell)+tile_pal4+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo9_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo9_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -43496,8 +43655,8 @@ loc_202E6:
     if RemoveJmpTos=0
 JmpTo4_DespawnObject
 		jmp	(DespawnObject).l
-JmpTo9_Adjust2PArtPointer
-		jmp	(Adjust2PArtPointer).l
+JmpTo9_AdjustVRAM2P
+		jmp	(AdjustVRAM2P).l
 JmpTo5_CalcSine
 		jmp	(CalcSine).l
 
@@ -43524,7 +43683,7 @@ GiantEmerld_Init:						; Routine 0
 		addq.b	#2,ost_primary_routine(a0)		; go to GiantEmerld_Solid next
 		move.l	#Map_GiantEmerld,ost_mappings(a0)
 		move.w	#(vram_HPZEmerald/sizeof_cell)+tile_pal4,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo10_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo10_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$40/2,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -43554,8 +43713,8 @@ JmpTo8_DisplaySprite:
 		jmp	(DisplaySprite).l
 JmpTo16_DeleteObject:
 		jmp	(DeleteObject).l
-JmpTo10_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo10_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -43581,7 +43740,7 @@ loc_203C0:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_HPZWFall,ost_mappings(a0)
 		move.w	#(vram_HPZWaterfall/sizeof_cell)+tile_pal4+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo11_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo11_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#1,ost_priority(a0)
@@ -43612,7 +43771,7 @@ loc_20428:
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.l	#Map_HPZWFall,ost_mappings(a1)
 		move.w	#(vram_HPZWaterfall/sizeof_cell)+tile_pal4+tile_hi,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo2_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo2_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	#1,ost_priority(a1)
@@ -43708,10 +43867,10 @@ JmpTo9_DisplaySprite:
 		jmp	(DisplaySprite).l
 JmpTo17_DeleteObject:
 		jmp	(DeleteObject).l
-JmpTo2_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
-JmpTo11_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo2_AdjustVRAM2P2:
+		jmp	(AdjustVRAM2P2).l
+JmpTo11_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -43737,7 +43896,7 @@ loc_208F0:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Surf1,ost_mappings(a0)
 		move.w	#tile_Nem_WaterSurface1+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo12_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#-$80,ost_displaywidth(a0)
 		move.w	ost_x_pos(a0),$30(a0)
@@ -43841,7 +44000,7 @@ loc_20BB0:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_EHZWFall,ost_mappings(a0)
 		move.w	#tile_Nem_Waterfall+tile_pal2,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo12_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.w	ost_x_pos(a0),$30(a0)
@@ -43982,7 +44141,7 @@ loc_20EF2:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Invis,ost_mappings(a0)
 		move.w	#tile_Nem_Monitors+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo12_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	ost_subtype(a0),d0
 		move.b	d0,d1
@@ -44048,7 +44207,7 @@ loc_20FE4:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Pylon,ost_mappings(a0)
 		move.w	#tile_Nem_Pylon+tile_pal3+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo12_AdjustVRAM2P
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#7,ost_priority(a0)
 
@@ -44106,7 +44265,7 @@ Explosion_Main:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_ExplodeItem,ost_mappings(a0)
 		move.w	#tile_Nem_Explosion,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo12_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#1,ost_priority(a0)
 		move.b	#0,ost_col_type(a0)
@@ -44151,7 +44310,7 @@ loc_21176:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_PSwitch,ost_mappings(a0)
 		move.w	#tile_Nem_Ring,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo12_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#5,ost_priority(a0)
@@ -44376,7 +44535,7 @@ loc_213B2:
 		move.w	#tile_Nem_Ring,ost_tile(a0)
 
 loc_213C4:
-		jsrto	Adjust2PArtPointer,JmpTo12_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo12_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#5,ost_priority(a0)
@@ -44474,8 +44633,8 @@ JmpTo18_DeleteObject:
 		jmp	(DeleteObject).l
 JmpTo2_FindFreeObj:
 		jmp	(FindFreeObj).l
-JmpTo12_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo12_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -44819,7 +44978,7 @@ loc_2194A:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Seesaw,ost_mappings(a0)
 		move.w	#tile_Nem_SeeSaw,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo13_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo13_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		move.b	#$30,ost_displaywidth(a0)
@@ -44959,7 +45118,7 @@ loc_21AA2:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_SSawBall,ost_mappings(a0)
 		move.w	#tile_Nem_Sol,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo13_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo13_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		move.b	#id_col_8x8+id_col_hurt,ost_col_type(a0)
@@ -45147,8 +45306,8 @@ byte_21CBF:
 	if RemoveJmpTos=0
 JmpTo3_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo13_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo13_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo_ObjectFall:
 		jmp	(ObjectFall).l
 JmpTo_DespawnObject2:
@@ -45177,7 +45336,7 @@ loc_21DBE:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Tram,ost_mappings(a0)
 		move.w	#tile_Nem_Tram+tile_pal3,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo14_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo14_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#0,ost_frame(a0)
@@ -45295,8 +45454,8 @@ JmpTo5_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo4_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo14_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo14_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo3_DetectPlatform:
 		jmp	(DetectPlatform).l
 JmpTo4_SpeedToPos:
@@ -45342,7 +45501,7 @@ loc_22052:
 		move.w	#tile_Nem_WFZFloatingPlatform+tile_pal2+tile_hi,ost_tile(a0)
 
 loc_22060:
-		jsrto	Adjust2PArtPointer,JmpTo15_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo15_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
@@ -45559,8 +45718,8 @@ JmpTo11_DisplaySprite:
 		jmp	(DisplaySprite).l
 JmpTo20_DeleteObject:
 		jmp	(DeleteObject).l
-JmpTo15_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo15_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo4_DetectPlatform:
 		jmp	(DetectPlatform).l
 JmpTo5_SpeedToPos:
@@ -45593,7 +45752,7 @@ loc_222C2:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Bstr,ost_mappings(a0)
 		move.w	#tile_Nem_Booster+tile_pal4+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo16_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo16_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#1,ost_priority(a0)
@@ -45686,8 +45845,8 @@ loc_223D8:
 	if RemoveJmpTos=0
 JmpTo6_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo16_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo16_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -45747,7 +45906,7 @@ loc_22458:
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.l	#Map_BBalls,ost_mappings(a1)
 		move.w	#tile_Nem_Droplet+tile_pal4,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo3_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo3_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#3,ost_priority(a1)
 		move.b	#id_col_8x8+id_col_hurt,ost_col_type(a1)
@@ -45846,8 +46005,8 @@ JmpTo7_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo5_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo3_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
+JmpTo3_AdjustVRAM2P2:
+		jmp	(AdjustVRAM2P2).l
 JmpTo6_SpeedToPos:
 		jmp	(SpeedToPos).l
 
@@ -46311,7 +46470,7 @@ loc_23014:
 		move.b	#8,ost_width(a0)
 		move.l	#Map_Fireball2,ost_mappings(a0)
 		move.w	#tile_Nem_HTZFireball2+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo17_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo17_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
@@ -46422,7 +46581,7 @@ loc_23176:
 		move.w	#0,ost_y_vel(a0)
 		move.l	#Map_Fireball1,ost_mappings(a0)
 		move.w	#(vram_HTZFireball1/sizeof_cell)+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo17_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo17_AdjustVRAM2P
 		move.b	#0,ost_frame(a0)
 		move.w	#9,$32(a0)
 		move.b	#3,$36(a0)
@@ -46492,8 +46651,8 @@ JmpTo6_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
 JmpTo4_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo17_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo17_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo7_SpeedToPos:
 		jmp	(SpeedToPos).l
 
@@ -46530,7 +46689,7 @@ loc_2331E:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_SmashGround,ost_mappings(a0)
 		move.w	#0+tile_pal3+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo18_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo18_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -46760,7 +46919,7 @@ loc_2352E:
 		move.l	#byte_23698,$3C(a0)
 
 loc_23572:
-		jsrto	Adjust2PArtPointer,JmpTo18_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo18_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 
@@ -46928,8 +47087,8 @@ JmpTo3_FindFreeObj:
 		jmp	(FindFreeObj).l
 JmpTo9_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo18_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo18_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo_SmashObject:
 		jmp	(SmashObject).l
 JmpTo3_SolidObject:
@@ -47412,7 +47571,7 @@ byte_23E54:
 loc_23E66:
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	#tile_Nem_SlidingSpikes+tile_pal3+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo19_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo19_AdjustVRAM2P
 		moveq	#0,d1
 		move.b	ost_subtype(a0),d1
 		lea	byte_23E54(pc,d1.w),a2
@@ -47552,8 +47711,8 @@ locret_23FDE:
 	if RemoveJmpTos=0
 JmpTo8_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo19_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo19_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -47727,7 +47886,7 @@ PSpring_InitVertical:
 		move.b	ost_subtype(a0),d0
 		andi.w	#2,d0					; only need low nybble
 		move.w	PSpring_Strengths(pc,d0.w),ost_pspring_strength(a0) ; get spring strength
-		jsrto	Adjust2PArtPointer,JmpTo20_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo20_AdjustVRAM2P
 		rts
 ; ===========================================================================
 
@@ -48161,7 +48320,7 @@ loc_24A48:
 		move.b	#$F,ost_width(a0)
 		move.l	#Map_OOZBetaBall,ost_mappings(a0)
 		move.w	#tile_Nem_SpringBall+tile_pal4,ost_tile(a0)
-		bsr.w	JmpTo20_Adjust2PArtPointer
+		bsr.w	JmpTo20_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
 		move.w	ost_x_pos(a0),$34(a0)
@@ -48359,8 +48518,8 @@ JmpTo4_FindFreeObj:
 		jmp	(FindFreeObj).l
 JmpTo11_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo20_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo20_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo5_SolidObject:
 		jmp	(SolidObject).l
 JmpTo_SolidObject_NoRenderChk_SingleCharacter:
@@ -48393,7 +48552,7 @@ loc_24D06:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_But,ost_mappings(a0)
 		move.w	#tile_Nem_Button,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo21_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo21_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -48450,8 +48609,8 @@ BranchTo_JmpTo12_DespawnObject:
 	if RemoveJmpTos=0
 JmpTo12_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo21_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo21_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo6_SolidObject:
 		jmp	(SolidObject).l
 
@@ -48486,7 +48645,7 @@ loc_24DE6:
 		move.b	#2,ost_frame(a0)
 
 loc_24E0A:
-		jsrto	Adjust2PArtPointer,JmpTo22_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo22_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		bset	#status_broken_bit,ost_primary_status(a0)
@@ -48747,8 +48906,8 @@ JmpTo9_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
 JmpTo3_DespawnObject3:
 		jmp	(DespawnObject3).l
-JmpTo22_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo22_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo2_SmashObject:
 		jmp	(SmashObject).l
 JmpTo7_SolidObject:
@@ -48799,7 +48958,7 @@ loc_25276:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_TransBall,ost_mappings(a0)
 		move.w	#tile_Nem_LaunchBall+tile_pal4,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo23_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo23_AdjustVRAM2P
 		move.b	ost_subtype(a0),d0
 		andi.w	#$F,d0
 		btst	#status_xflip_bit,ost_primary_status(a0)
@@ -49031,8 +49190,8 @@ JmpTo15_DisplaySprite:
 		jmp	(DisplaySprite).l
 JmpTo14_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo23_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo23_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -49060,7 +49219,7 @@ loc_256AC:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_ArrowShoot,ost_mappings(a0)
 		move.w	#tile_Nem_ArrowAndShooter,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo24_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo24_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
 		move.b	#$10,ost_displaywidth(a0)
@@ -49190,8 +49349,8 @@ JmpTo15_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo5_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo24_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo24_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo11_SpeedToPos:
 		jmp	(SpeedToPos).l
 
@@ -49218,7 +49377,7 @@ loc_2589E:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_FallPillar,ost_mappings(a0)
 		move.w	#0+tile_pal2,ost_tile(a0)		; level art
-		jsrto	Adjust2PArtPointer,JmpTo25_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo25_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#$20,ost_height(a0)
@@ -49358,7 +49517,7 @@ loc_25A6E:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_RisePillar,ost_mappings(a0)
 		move.w	#0+tile_pal2,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo25_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo25_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#$18,ost_height(a0)
@@ -49565,8 +49724,8 @@ JmpTo16_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo10_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo25_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo25_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo8_SolidObject:
 		jmp	(SolidObject).l
 JmpTo12_SpeedToPos:
@@ -49856,7 +50015,7 @@ loc_2638C:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_SprngBrd,ost_mappings(a0)
 		move.w	#tile_Nem_LeverSpring,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo26_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo26_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$1C,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -50048,8 +50207,8 @@ JmpTo17_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo6_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo26_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo26_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo_SolidObject_Heightmap_SingleCharacter:
 		jmp	(SolidObject_Heightmap_SingleCharacter).l
 
@@ -50080,7 +50239,7 @@ loc_26648:
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
-		jsrto	Adjust2PArtPointer,JmpTo27_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo27_AdjustVRAM2P
 		move.b	#7,ost_frame(a0)
 		move.w	ost_y_pos(a0),$34(a0)
 		move.w	#$10,$36(a0)
@@ -50270,8 +50429,8 @@ JmpTo7_FindFreeObj:
 		jmp	(FindFreeObj).l
 JmpTo18_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo27_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo27_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo2_SolidObject_NoRenderChk_SingleCharacter:
 		jmp	(SolidObject_NoRenderChk_SingleCharacter).l
 
@@ -50318,7 +50477,7 @@ loc_2693A:
 loc_2696A:
 		move.l	#Map_Stomp,ost_mappings(a0)
 		move.w	#0+tile_pal2,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo28_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo28_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		move.w	ost_x_pos(a0),$34(a0)
@@ -50416,8 +50575,8 @@ loc_26A50:
 ; ===========================================================================
 
 	if RemoveJmpTos=0
-JmpTo28_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo28_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo9_SolidObject:
 		jmp	(SolidObject).l
 
@@ -50457,7 +50616,7 @@ loc_26B06:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_MTZPlats,ost_mappings(a0)
 		move.w	#tile_LevelArt+tile_pal4,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo29_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo29_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		moveq	#0,d0
@@ -50842,8 +51001,8 @@ JmpTo19_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo11_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo29_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo29_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo10_SolidObject:
 		jmp	(SolidObject).l
 
@@ -50870,7 +51029,7 @@ loc_26F6A:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_SpringWall,ost_mappings(a0)
 		move.w	#tile_Nem_Monitors+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo30_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo30_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -51034,8 +51193,8 @@ JmpTo47_DisplaySprite:
 
 JmpTo33_DeleteObject:
 		jmp	(DeleteObject).l
-JmpTo30_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo30_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo3_SolidObject_NoRenderChk_SingleCharacter:
 		jmp	(SolidObject_NoRenderChk_SingleCharacter).l
 
@@ -51378,7 +51537,7 @@ loc_275A8:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_SpkBlk,ost_mappings(a0)
 		move.w	#tile_Nem_SpikeBlock+tile_pal4,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo31_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo31_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -51540,7 +51699,7 @@ loc_277A6:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_SpkBlk,ost_mappings(a0)
 		move.w	#tile_Nem_MTZSpike+tile_pal2,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo31_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo31_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -51603,8 +51762,8 @@ JmpTo20_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo12_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo31_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo31_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo11_SolidObject:
 		jmp	(SolidObject).l
 JmpTo2_DespawnObject2:
@@ -51646,7 +51805,7 @@ loc_2789A:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Nut,ost_mappings(a0)
 		move.w	#tile_Nem_Nut+tile_pal2,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo32_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo32_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#$B,ost_height(a0)
@@ -51807,8 +51966,8 @@ JmpTo21_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo_FindFloorObj:
 		jmp	(FindFloorObj).l
-JmpTo32_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo32_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo12_SolidObject:
 		jmp	(SolidObject).l
 JmpTo13_SpeedToPos:
@@ -51900,7 +52059,7 @@ loc_27BC4:
 		move.w	ost_y_pos(a0),$30(a0)
 
 loc_27BD0:
-		jsrto	Adjust2PArtPointer,JmpTo33_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo33_AdjustVRAM2P
 		move.b	ost_subtype(a0),$38(a0)
 		bra.w	loc_27CA2
 ; ===========================================================================
@@ -52029,8 +52188,8 @@ byte_27D12:	; MCZ crate (x-flipped)
 	if RemoveJmpTos=0
 JmpTo13_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo33_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo33_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo13_SolidObject:
 		jmp	(SolidObject).l
 JmpTo3_DespawnObject2:
@@ -52075,7 +52234,7 @@ loc_27D86:
 		move.w	#tile_Nem_StairBlock+tile_pal4,ost_tile(a0)
 
 loc_27DAE:
-		jsrto	Adjust2PArtPointer,JmpTo34_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo34_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
 		moveq	#0,d0
@@ -52355,8 +52514,8 @@ locret_2800C:
 	endc
 
 	if RemoveJmpTos=0
-JmpTo34_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo34_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo14_SolidObject:
 		jmp	(SolidObject).l
 JmpTo4_DespawnObject2:
@@ -52403,7 +52562,7 @@ loc_28060:
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
-		jsrto	Adjust2PArtPointer,JmpTo35_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo35_AdjustVRAM2P
 		move.b	#0,ost_frame(a0)
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
@@ -52642,8 +52801,8 @@ JmpTo34_DeleteObject:
 		jmp	(DeleteObject).l
 JmpTo8_FindFreeObj:
 		jmp	(FindFreeObj).l
-JmpTo35_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo35_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo5_DetectPlatform:
 		jmp	(DetectPlatform).l
 JmpTo15_SpeedToPos:
@@ -52679,7 +52838,7 @@ loc_283C8:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_CirclePlat,ost_mappings(a0)
 		move.w	#tile_LevelArt+tile_pal4,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo36_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo36_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		moveq	#0,d0
@@ -52697,7 +52856,7 @@ loc_283C8:
 		bne.s	loc_28432
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	#tile_Nem_WheelIndent+tile_pal4,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo36_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo36_AdjustVRAM2P
 		move.b	#5,ost_priority(a0)
 		bra.w	loc_284BC
 ; ===========================================================================
@@ -52803,8 +52962,8 @@ loc_28526:
 ; ===========================================================================
 
 	if RemoveJmpTos=0
-JmpTo36_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo36_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo15_SolidObject:
 		jmp	(SolidObject).l
 
@@ -52849,7 +53008,7 @@ loc_285F4:
 		addq.b	#2,ost_primary_routine(a1)
 		move.l	#Map_CogTeeth,ost_mappings(a1)
 		move.w	#tile_Nem_GiantCog+tile_pal4,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo4_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo4_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#4,ost_priority(a1)
 		move.b	#$10,ost_displaywidth(a1)
@@ -53005,8 +53164,8 @@ byte_28726:
 	if RemoveJmpTos=0
 JmpTo14_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo4_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
+JmpTo4_AdjustVRAM2P2:
+		jmp	(AdjustVRAM2P2).l
 JmpTo16_SolidObject:
 		jmp	(SolidObject).l
 
@@ -53106,7 +53265,7 @@ loc_289E8:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_MCZRotRings,ost_mappings(a0)
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo37_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo37_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
@@ -53257,8 +53416,8 @@ JmpTo9_FindFreeObj:
 		jmp	(FindFreeObj).l
 JmpTo_DeleteChild:
 		jmp	(DeleteChild).l
-JmpTo37_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo37_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo17_SolidObject:
 		jmp	(SolidObject).l
 
@@ -53271,7 +53430,7 @@ JmpTo17_SolidObject:
 ; ----------------------------------------------------------------------------
 
 BrickAndSpikeChain:
-		btst	#render_subobjects_bit,ost_render(a0)
+		btst	#render_subsprites_bit,ost_render(a0)
 		bne.w	loc_28BE0
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
@@ -53293,7 +53452,7 @@ loc_28BEE:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_BrckSpkChn,ost_mappings(a0)
 		move.w	#tile_LevelArt+tile_pal2,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo38_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo38_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#5,ost_priority(a0)
 		move.b	#$10,ost_displaywidth(a0)
@@ -53326,7 +53485,7 @@ loc_28C5E:
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		bset	#render_subobjects_bit,ost_render(a1)
+		bset	#render_subsprites_bit,ost_render(a1)
 		move.b	#$40,ost_mainspr_width(a1)
 		move.w	ost_x_pos(a0),d2
 		move.w	ost_y_pos(a0),d3
@@ -53443,8 +53602,8 @@ JmpTo2_DeleteChild:
 		jmp	(DeleteChild).l
 JmpTo15_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo38_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo38_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo8_CalcSine:
 		jmp	(CalcSine).l
 JmpTo18_SolidObject:
@@ -53479,7 +53638,7 @@ loc_28E0E:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_SlidSpks,ost_mappings(a0)
 		move.w	#tile_LevelArt,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo39_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo39_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 
@@ -53599,8 +53758,8 @@ locret_28F38:
 	if RemoveJmpTos=0
 JmpTo_React_ChkHurt2:
 		jmp	(React_ChkHurt2).l
-JmpTo39_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo39_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo19_SolidObject:
 		jmp	(SolidObject).l
 JmpTo5_DespawnObject2:
@@ -53629,7 +53788,7 @@ loc_28F9A:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_DBridge,ost_mappings(a0)
 		move.w	#tile_Nem_DrawbridgeLogs+tile_pal4,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo40_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo40_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#-$80,ost_displaywidth(a0)
 
@@ -53704,8 +53863,8 @@ Ani_DBridge_Open:
 	if RemoveJmpTos=0
 JmpTo23_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo40_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo40_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo20_SolidObject:
 		jmp	(SolidObject).l
 
@@ -53756,7 +53915,7 @@ loc_29214:
 		_move.b	ost_id(a0),ost_id(a1)
 		move.l	#Map_StairBlock,ost_mappings(a1)
 		move.w	#tile_Nem_StairBlock+tile_pal4,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo5_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo5_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#3,ost_priority(a1)
 		move.b	#$10,ost_displaywidth(a1)
@@ -53912,8 +54071,8 @@ locret_29386:
 	if RemoveJmpTos=0
 JmpTo16_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo5_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
+JmpTo5_AdjustVRAM2P2:
+		jmp	(AdjustVRAM2P2).l
 JmpTo21_SolidObject:
 		jmp	(SolidObject).l
 JmpTo6_DespawnObject2:
@@ -53978,7 +54137,7 @@ loc_293CC:
 		move.w	#tile_LevelArt,ost_tile(a0)
 
 loc_293F4:
-		jsrto	Adjust2PArtPointer,JmpTo41_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo41_AdjustVRAM2P
 		moveq	#0,d1
 		move.b	ost_subtype(a0),d1
 		lea	byte_293B4(pc,d1.w),a2
@@ -54131,8 +54290,8 @@ JmpTo24_DisplaySprite:
 		jmp	(DisplaySprite).l
 JmpTo17_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo41_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo41_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo6_DetectPlatform:
 		jmp	(DetectPlatform).l
 
@@ -54186,7 +54345,7 @@ loc_295C8:
 		move.b	ost_subtype(a0),d0
 		andi.w	#2,d0
 		move.w	byte_295C4(pc,d0.w),$30(a0)
-		jsrto	Adjust2PArtPointer,JmpTo42_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo42_AdjustVRAM2P
 
 loc_295FE:
 		cmpi.b	#1,ost_frame(a0)
@@ -54339,8 +54498,8 @@ JmpTo40_DeleteObject:
 		jmp	(DeleteObject).l
 JmpTo8_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo42_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo42_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo4_SolidObject_NoRenderChk_SingleCharacter:
 		jmp	(SolidObject_NoRenderChk_SingleCharacter).l
 
@@ -54367,7 +54526,7 @@ loc_297F6:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_VineSwitch,ost_mappings(a0)
 		move.w	#tile_Nem_VineSwitch+tile_pal4,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo43_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo43_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -54468,8 +54627,8 @@ locret_29936:
 	if RemoveJmpTos=0
 JmpTo24_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo43_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo43_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -54504,7 +54663,7 @@ VineHook_Main:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Hook,ost_mappings(a0)
 		move.w	#(tile_Nem_Hook+4)+tile_pal2,ost_tile(a0) ; +4 is workaround for bugged mappings
-		jsrto	Adjust2PArtPointer,JmpTo44_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo44_AdjustVRAM2P
 		move.w	#$A0,$2E(a0)
 		move.b	ost_subtype(a0),d0
 		move.b	d0,d1
@@ -54532,7 +54691,7 @@ loc_29A18:
 loc_29A1C:
 		move.l	#Map_VinePulley,ost_mappings(a0)
 		move.w	#tile_Nem_VinePulley+tile_pal4,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo44_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo44_AdjustVRAM2P
 		move.w	#$B0,$2E(a0)
 		move.b	ost_subtype(a0),d0
 		bpl.s	loc_29A40
@@ -54757,8 +54916,8 @@ loc_29C42:
 	if RemoveJmpTos=0
 JmpTo25_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo44_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo44_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -54769,7 +54928,7 @@ JmpTo44_Adjust2PArtPointer:
 ; ----------------------------------------------------------------------------
 
 SingleDrawbridge:
-		btst	#render_subobjects_bit,ost_render(a0)
+		btst	#render_subsprites_bit,ost_render(a0)
 		bne.w	loc_2A018
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
@@ -54791,7 +54950,7 @@ loc_2A026:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_SBridge,ost_mappings(a0)
 		move.w	#tile_Nem_DrawbridgeLogs+tile_pal4,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo45_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo45_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#5,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
@@ -54821,7 +54980,7 @@ loc_2A092:
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		bset	#render_subobjects_bit,ost_render(a1)
+		bset	#render_subsprites_bit,ost_render(a1)
 		move.b	#$40,ost_mainspr_width(a1)
 		move.w	$30(a0),d2
 		move.w	$32(a0),d3
@@ -54987,8 +55146,8 @@ JmpTo3_DeleteChild:
 		jmp	(DeleteChild).l
 JmpTo18_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo45_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo45_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo9_CalcSine:
 		jmp	(CalcSine).l
 JmpTo22_SolidObject:
@@ -55031,7 +55190,7 @@ PillPlat_Main:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_PillPlat,ost_mappings(a0)
 		move.w	#tile_LevelArt,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo46_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo46_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
 		moveq	#0,d0
@@ -55234,8 +55393,8 @@ locret_2A474:
 	if RemoveJmpTos=0
 JmpTo2_FindFloorObj:
 		jmp	(FindFloorObj).l
-JmpTo46_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo46_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo_FindCeilingObj:
 		jmp	(FindCeilingObj).l
 JmpTo23_SolidObject:
@@ -55254,7 +55413,7 @@ JmpTo16_SpeedToPos:
 ; ----------------------------------------------------------------------------
 
 CirclingPlatform:
-		btst	#render_subobjects_bit,ost_render(a0)
+		btst	#render_subsprites_bit,ost_render(a0)
 		bne.w	loc_2A514
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
@@ -55276,7 +55435,7 @@ loc_2A522:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_ARZPlats,ost_mappings(a0)
 		move.w	#tile_LevelArt,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo47_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo47_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		move.b	#$20,ost_displaywidth(a0)
@@ -55302,7 +55461,7 @@ loc_2A522:
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		bset	#render_subobjects_bit,ost_render(a1)
+		bset	#render_subsprites_bit,ost_render(a1)
 		move.b	#$40,ost_mainspr_width(a1)
 		moveq	#8,d1
 		move.b	d1,ost_mainspr_childsprites(a1)
@@ -55488,8 +55647,8 @@ JmpTo4_DeleteChild:
 		jmp	(DeleteChild).l
 JmpTo19_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
-JmpTo47_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo47_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo10_CalcSine:
 		jmp	(CalcSine).l
 JmpTo7_DetectPlatform:
@@ -55521,7 +55680,7 @@ loc_2A7C4:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_HorizFan,ost_mappings(a0)
 		move.w	#tile_Nem_Fan+tile_pal4,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo48_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo48_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -55736,8 +55895,8 @@ locret_2AA10:
 	if RemoveJmpTos=0
 JmpTo26_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo48_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo48_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -55793,9 +55952,9 @@ loc_2ABD4:
 		move.w	#tile_Nem_DiagLauncher,ost_tile(a0)
 
 loc_2ABFA:
-		jsrto	Adjust2PArtPointer,JmpTo49_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo49_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		bset	#render_subobjects_bit,ost_render(a0)
+		bset	#render_subsprites_bit,ost_render(a0)
 		move.b	#1,ost_mainspr_frame(a0)
 		tst.b	ost_subtype(a0)
 		beq.s	loc_2AC54
@@ -56177,8 +56336,8 @@ JmpTo4_DisplaySprite3:
 		jmp	(DisplaySprite3).l
 JmpTo43_DeleteObject:
 		jmp	(DeleteObject).l
-JmpTo49_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo49_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo5_SolidObject_NoRenderChk_SingleCharacter:
 		jmp	(SolidObject_NoRenderChk_SingleCharacter).l
 
@@ -56207,7 +56366,7 @@ loc_2B158:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Flip,ost_mappings(a0)
 		move.w	#tile_Nem_Flipper+tile_pal3,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo50_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo50_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -56454,8 +56613,8 @@ JmpTo27_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo9_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo50_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo50_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo11_CalcSine:
 		jmp	(CalcSine).l
 JmpTo6_SolidObject_NoRenderChk_SingleCharacter:
@@ -56486,7 +56645,7 @@ loc_2B53A:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Snake,ost_mappings(a0)
 		move.w	#tile_Nem_SnakePlats+tile_pal3,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo51_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo51_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -56599,8 +56758,8 @@ byte_2B654:
 	if RemoveJmpTos=0
 JmpTo6_DespawnObject3:
 		jmp	(DespawnObject3).l
-JmpTo51_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo51_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo24_SolidObject:
 		jmp	(SolidObject).l
 JmpTo9_DespawnObject2:
@@ -56719,7 +56878,7 @@ loc_2B8FE:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_LrgMovBlock,ost_mappings(a0)
 		move.w	#tile_Nem_LargeMovingBlock+tile_pal3,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo52_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo52_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -56795,8 +56954,8 @@ loc_2B9C4:
 	endc
 
 	if RemoveJmpTos=0
-JmpTo52_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo52_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo25_SolidObject:
 		jmp	(SolidObject).l
 JmpTo10_DespawnObject2:
@@ -56827,7 +56986,7 @@ loc_2BA1A:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Elevator,ost_mappings(a0)
 		move.w	#tile_Nem_CNZElevator+tile_pal3,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo53_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo53_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#4,ost_priority(a0)
@@ -56945,8 +57104,8 @@ locret_2BB3E:
 	if RemoveJmpTos=0
 JmpTo28_DespawnObject:
 		jmp	(DespawnObject).l
-JmpTo53_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo53_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo_DetectPlatform3:
 		jmp	(DetectPlatform3).l
 JmpTo18_SpeedToPos:
@@ -56988,7 +57147,7 @@ Cage_Main: ; Routine 0
 		addq.b	#2,ost_primary_routine(a0)		; go to Cage_Action next
 		move.l	#Map_Cage,ost_mappings(a0)
 		move.w	#tile_Nem_Cage,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo54_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo54_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.b	#1,ost_priority(a0)
@@ -57089,7 +57248,7 @@ Cage_GivePenalty:
 		_move.b	#id_BombPenalty,ost_id(a1)		; load bomb penalty object
 		move.l	#Map_BombPenalty,ost_mappings(a1)
 		move.w	#tile_Nem_BombPenalty,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo6_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo6_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	#4,ost_priority(a1)
@@ -57137,7 +57296,7 @@ Cage_GiveRings:
 		_move.b	#id_RingPrize,ost_id(a1)		; load ring prize object
 		move.l	#Map_Ring,ost_mappings(a1)
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo6_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo6_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#3,ost_priority(a1)
 		move.b	#8,ost_displaywidth(a1)
@@ -57922,10 +58081,10 @@ JmpTo29_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo10_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo6_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
-JmpTo54_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo6_AdjustVRAM2P2:
+		jmp	(AdjustVRAM2P2).l
+JmpTo54_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo12_CalcSine:
 		jmp	(CalcSine).l
 JmpTo7_SolidObject_NoRenderChk_SingleCharacter:
@@ -57954,7 +58113,7 @@ loc_2C45A:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_HexBump,ost_mappings(a0)
 		move.w	#tile_Nem_HexBumper+tile_pal3,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo55_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo55_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#1,ost_priority(a0)
@@ -58140,8 +58299,8 @@ JmpTo30_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo11_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo55_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo55_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -58167,7 +58326,7 @@ loc_2C6C0:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_SauceBump,ost_mappings(a0)
 		move.w	#tile_Nem_SaucerBumper+tile_pal3,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo56_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo56_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#1,ost_priority(a0)
@@ -58390,8 +58549,8 @@ JmpTo31_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo12_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo56_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo56_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -58779,7 +58938,7 @@ loc_2CCDE:
 		move.b	#3,ost_anim(a1)
 		move.l	a1,$36(a0)
 		move.l	a0,$36(a1)
-		bset	#6,ost_primary_status(a0)		; pointless, as this object does not have any child sprites
+		bset	#render_subsprites_bit,ost_primary_status(a0) ; pointless, as this object does not have any child sprites, and they set the bit in the wrong OST variable
 
 loc_2CDA2:
 		lea	(Ani_Aquis).l,a1
@@ -59076,7 +59235,7 @@ loc_2D0A2:
 Buzz_Main:
 		move.l	#Map_Buzz,ost_mappings(a0)
 		move.w	#tile_Nem_Buzzer,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo57_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo57_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#id_col_16x8,ost_col_type(a0)
 		move.b	#4,ost_priority(a0)
@@ -59091,7 +59250,7 @@ Buzz_Main:
 		move.b	#4,ost_primary_routine(a1)
 		move.l	#Map_Buzz,ost_mappings(a1)
 		move.w	#tile_Nem_Buzzer,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo7_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo7_AdjustVRAM2P2
 		move.b	#4,ost_priority(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	ost_primary_status(a0),ost_primary_status(a1)
@@ -59212,7 +59371,7 @@ loc_2D24E:
 		move.b	#6,ost_primary_routine(a1)
 		move.l	#Map_Buzz,ost_mappings(a1)
 		move.w	#tile_Nem_Buzzer,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo7_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo7_AdjustVRAM2P2
 		move.b	#4,ost_priority(a1)
 		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a1)
 		move.b	#$10,ost_displaywidth(a1)
@@ -59275,12 +59434,12 @@ JmpTo20_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
 JmpTo15_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo7_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
+JmpTo7_AdjustVRAM2P2:
+		jmp	(AdjustVRAM2P2).l
 JmpTo_DespawnObject4:
 		jmp	(DespawnObject4).l
-JmpTo57_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo57_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo21_SpeedToPos:
 		jmp	(SpeedToPos).l
 
@@ -59308,7 +59467,7 @@ loc_2D3AA:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Mash,ost_mappings(a0)
 		move.w	#tile_Nem_Masher,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo58_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo58_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		move.b	#id_col_12x16,ost_col_type(a0)
@@ -59368,8 +59527,8 @@ JmpTo34_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo16_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo58_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo58_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo22_SpeedToPos:
 		jmp	(SpeedToPos).l
 
@@ -59396,7 +59555,7 @@ loc_2D4A6:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_ExplodeBomb,ost_mappings(a0)
 		move.w	#tile_Nem_FieryExplosion+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo59_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo59_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#0,ost_priority(a0)
 		move.b	#0,ost_col_type(a0)
@@ -59644,8 +59803,8 @@ JmpTo4_AddPLC:
 		jmp	(AddPLC).l
 JmpTo_AddPoints:
 		jmp	(AddPoints).l
-JmpTo59_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo59_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -59714,7 +59873,7 @@ BCPZ_Main:
 		move.w	ost_x_pos(a0),$30(a0)
 		move.w	ost_y_pos(a0),$38(a0)
 		bclr	#3,$2D(a0)
-		jsrto	Adjust2PArtPointer,JmpTo60_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo60_AdjustVRAM2P
 		jsr	(FindNextFreeObj).l
 		bne.w	loc_2D8AC
 		_move.b	#id_BossChemicalPlant,ost_id(a1)
@@ -59730,7 +59889,7 @@ BCPZ_Main:
 		move.b	#$16,ost_primary_routine(a1)
 		move.b	#1,ost_anim(a1)
 		move.b	ost_render(a0),ost_render(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo8_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo8_AdjustVRAM2P2
 		tst.b	ost_subtype(a0)
 		bmi.w	loc_2D8AC
 		jsr	(FindNextFreeObj).l
@@ -59739,7 +59898,7 @@ BCPZ_Main:
 		move.l	a0,$34(a1)
 		move.l	#Map_BCPZ_EggpodJets,ost_mappings(a1)
 		move.w	#tile_Nem_EggpodJets_CPZ,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo8_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo8_AdjustVRAM2P2
 		move.b	#1,ost_anim_time(a0)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
@@ -61223,7 +61382,7 @@ loc_2E9B6:
 	else
 		move.w	#tile_Nem_EggpodJets_CPZ,ost_tile(a0)
 	endc
-		jsrto	Adjust2PArtPointer,JmpTo60_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo60_AdjustVRAM2P
 		move.b	#0,ost_frame(a0)
 		move.b	#5,ost_anim_time(a0)
 		movea.l	$34(a0),a1
@@ -61340,14 +61499,14 @@ JmpTo35_DespawnObject:
 		jmp	(DespawnObject).l
 JmpTo5_PlaySound:
 		jmp	(PlaySound).l
-JmpTo8_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
+JmpTo8_AdjustVRAM2P2:
+		jmp	(AdjustVRAM2P2).l
 JmpTo5_AddPLC:
 		jmp	(AddPLC).l
 JmpTo2_AddPoints:
 		jmp	(AddPoints).l
-JmpTo60_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo60_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo_RestoreLevelMusic:
 		jmp	(RestoreLevelMusic).l
 JmpTo_LoadAnimalExplosionArt:
@@ -61411,7 +61570,7 @@ loc_2EF36:
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		move.w	ost_y_pos(a0),$38(a0)
-		jsrto	Adjust2PArtPointer,JmpTo61_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo61_AdjustVRAM2P
 
 		jsr	(FindNextFreeObj).l
 		bne.w	loc_2EFE4
@@ -61438,7 +61597,7 @@ loc_2EFE4:
 		move.l	a0,$34(a1)
 		move.l	#Map_Drillster,ost_mappings(a1)
 		move.w	#tile_Nem_EHZBoss,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$30,ost_displaywidth(a1)
 		move.b	#$10,ost_height(a1)
@@ -61458,7 +61617,7 @@ loc_2F032:
 		move.l	a0,$34(a1)
 		move.l	#Map_Rotor,ost_mappings(a1)
 		move.w	#tile_Nem_EggChopperBlades+tile_pal2,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$40,ost_displaywidth(a1)
 		move.b	#3,ost_priority(a1)
@@ -61478,7 +61637,7 @@ loc_2F098:
 		move.l	a0,$34(a1)
 		move.l	#Map_Drillster,ost_mappings(a1)
 		move.w	#tile_Nem_EHZBoss+tile_pal2,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	#2,ost_priority(a1)
@@ -61501,7 +61660,7 @@ loc_2F110:
 		move.l	a0,$34(a1)
 		move.l	#Map_Drillster,ost_mappings(a1)
 		move.w	#tile_Nem_EHZBoss+tile_pal2,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	#2,ost_priority(a1)
@@ -61524,7 +61683,7 @@ loc_2F188:
 		move.l	a0,$34(a1)
 		move.l	#Map_Drillster,ost_mappings(a1)
 		move.w	#tile_Nem_EHZBoss+tile_pal2,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	#3,ost_priority(a1)
@@ -61548,7 +61707,7 @@ loc_2F200:
 		move.l	a0,$34(a1)
 		move.l	#Map_Drillster,ost_mappings(a1)
 		move.w	#tile_Nem_EHZBoss+tile_pal2,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
 		move.b	#2,ost_priority(a1)
@@ -61696,7 +61855,7 @@ loc_2F3A2:
 		move.l	a0,$34(a1)
 		move.l	#Map_Rotor,ost_mappings(a1)
 		move.w	#tile_Nem_EggChopperBlades+tile_pal2,ost_tile(a1)
-		jsrto	Adjust2PArtPointer2,JmpTo9_Adjust2PArtPointer2
+		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
 		move.b	#3,ost_priority(a1)
@@ -62263,16 +62422,16 @@ JmpTo21_FindNextFreeObj:
 		jmp	(FindNextFreeObj).l
 JmpTo17_AnimateSprite:
 		jmp	(AnimateSprite).l
-JmpTo9_Adjust2PArtPointer2:
-		jmp	(Adjust2PArtPointer2).l
+JmpTo9_AdjustVRAM2P2:
+		jmp	(AdjustVRAM2P2).l
 JmpTo3_FindFloorObj:
 		jmp	(FindFloorObj).l
 JmpTo6_AddPLC:
 		jmp	(AddPLC).l
 JmpTo3_AddPoints:
 		jmp	(AddPoints).l
-JmpTo61_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo61_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo2_RestoreLevelMusic:
 		jmp	(RestoreLevelMusic).l
 JmpTo2_LoadAnimalExplosionArt:
@@ -62321,7 +62480,7 @@ loc_2FC68:
 		move.b	#1,ost_boss_defeated(a0)
 		move.b	#1,ost_mainspr_frame(a0)
 		addq.b	#2,ost_boss_subtype(a0)
-		bset	#render_subobjects_bit,ost_render(a0)
+		bset	#render_subsprites_bit,ost_render(a0)
 		move.b	#id_col_32x28,ost_col_type(a0)
 		move.b	#8,ost_boss_hitcount2(a0)
 		move.w	#-$E0,(v_boss_y_vel).w
@@ -62642,7 +62801,7 @@ loc_3002E:
 		move.w	#0,ost_y_vel(a0)
 		move.l	#Map_Fireball1,ost_mappings(a0)
 		move.w	#tile_Nem_Fireball1+tile_hi,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo62_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo62_AdjustVRAM2P
 		move.b	#0,ost_frame(a0)
 		move.w	#9,$32(a0)
 		move.b	#3,$36(a0)
@@ -62887,8 +63046,8 @@ JmpTo_LavaBubble:
 		jmp	(LavaBubble).l
 JmpTo4_AddPoints:
 		jmp	(AddPoints).l
-JmpTo62_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo62_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo3_RestoreLevelMusic:
 		jmp	(RestoreLevelMusic).l
 JmpTo3_LoadAnimalExplosionArt:
@@ -62965,7 +63124,7 @@ loc_304D4:
 		move.w	#$388,ost_y_pos(a0)
 		move.w	#$2AE0,($FFFFF750).w
 		move.w	#$388,(v_boss_y_pos).w
-		bset	#render_subobjects_bit,ost_render(a0)
+		bset	#render_subsprites_bit,ost_render(a0)
 		move.b	#3,ost_mainspr_childsprites(a0)
 		move.b	#id_col_24x24,ost_col_type(a0)
 		move.b	#8,ost_boss_hitcount2(a0)
@@ -63805,7 +63964,7 @@ loc_30FB8:
 		move.b	#5,ost_mainspr_frame(a0)
 		addq.b	#2,ost_boss_subtype(a0)
 		move.b	#2,ost_boss_routine(a0)
-		bset	#render_subobjects_bit,ost_render(a0)
+		bset	#render_subsprites_bit,ost_render(a0)
 		move.b	#4,ost_mainspr_childsprites(a0)
 		move.b	#id_col_24x24,ost_col_type(a0)
 		move.b	#8,ost_boss_hitcount2(a0)
@@ -64464,7 +64623,7 @@ loc_31904:
 	endc
 		addq.b	#2,ost_boss_subtype(a0)
 		move.b	#0,ost_boss_routine(a0)
-		bset	#render_subobjects_bit,ost_render(a0)
+		bset	#render_subsprites_bit,ost_render(a0)
 		move.b	#4,ost_mainspr_childsprites(a0)
 		move.b	#id_col_24x24,ost_col_type(a0)
 		move.b	#8,ost_boss_hitcount2(a0)
@@ -65220,7 +65379,7 @@ loc_3229E:
 		move.w	#$380,ost_y_pos(a0)
 		move.b	#2,ost_mainspr_frame(a0)
 		addq.b	#2,ost_boss_subtype(a0)
-		bset	#render_subobjects_bit,ost_render(a0)
+		bset	#render_subsprites_bit,ost_render(a0)
 		move.b	#2,ost_mainspr_childsprites(a0)
 		move.b	#id_col_24x24,ost_col_type(a0)
 		move.b	#8,ost_boss_hitcount2(a0)
@@ -66284,7 +66443,7 @@ loc_32FA8:
 		move.w	#tile_Nem_OOZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#3,ost_priority(a0)
-		bset	#render_subobjects_bit,ost_render(a0)
+		bset	#render_subsprites_bit,ost_render(a0)
 		move.b	#0,ost_mainspr_childsprites(a0)
 		addq.b	#2,ost_boss_subtype(a0)
 		move.b	#id_col_24x24,ost_col_type(a0)
@@ -66910,7 +67069,7 @@ loc_33640:
 		move.w	#0,ost_y_vel(a1)
 		move.l	#Map_BOOZ,ost_mappings(a1)
 		move.w	#tile_Nem_OOZBoss,ost_tile(a1)
-		jsrto	Adjust2PArtPointer,JmpTo63_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo63_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#2,ost_priority(a1)
 		move.w	#5,$32(a1)
@@ -67011,8 +67170,8 @@ JmpTo22_AnimateSprite:
 		jmp	(AnimateSprite).l
 JmpTo5_RandomNumber:
 		jmp	(RandomNumber).l
-JmpTo63_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo63_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo13_CalcSine:
 		jmp	(CalcSine).l
 JmpTo8_RestoreLevelMusic:
@@ -69130,7 +69289,7 @@ loc_3561E:
 		move.b	#1,ost_priority(a1)
 
 loc_35648:
-		bset	#render_subobjects_bit,ost_render(a1)
+		bset	#render_subsprites_bit,ost_render(a1)
 		move.b	#0,ost_mainspr_childsprites(a1)
 		move.b	#$E,ost_primary_routine(a1)
 		lea	ost_subspr2_x_pos(a1),a2
@@ -70308,7 +70467,7 @@ LoadSubObjData2:
 LoadSubObjData3:
 		move.l	(a1)+,ost_mappings(a0)			; mappings pointer
 		move.w	(a1)+,ost_tile(a0)			; tile base
-		jsr	(Adjust2PArtPointer).l			; adjust for two-player mode if required
+		jsr	(AdjustVRAM2P).l			; adjust for two-player mode if required
 		move.b	(a1)+,d0
 		or.b	d0,ost_render(a0)			; render flags
 		move.b	(a1)+,ost_priority(a0)			; priority
@@ -71657,7 +71816,7 @@ Sol_Index:	index offset(*),,2
 loc_37116:
 		move.l	#Map_Sol,ost_mappings(a0)
 		move.w	#tile_LevelArt,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo64_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo64_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
 		move.b	#id_col_8x8,ost_col_type(a0)
@@ -73172,7 +73331,7 @@ loc_37F74:
 		bne.s	locret_37FE6
 		_move.b	#id_Crawlton,ost_id(a1)
 		move.b	ost_render(a0),ost_render(a1)
-		bset	#render_subobjects_bit,ost_render(a1)
+		bset	#render_subsprites_bit,ost_render(a1)
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#$A,$3B(a1)
@@ -82584,8 +82743,8 @@ JmpTo_Sonic_LoadGFX_2:
 		jmp	(Sonic_LoadGFX_2).l
 JmpTo8_DespawnObject3:
 		jmp	(DespawnObject3).l
-JmpTo64_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo64_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 JmpTo5_PlayMusic:
 		jmp	(PlayMusic).l
 JmpTo_BossExplode:
@@ -82625,7 +82784,7 @@ loc_3EADA:
 		move.w	#screen_top+112,ost_y_screen(a0)
 		move.l	#Map_S1Cred,ost_mappings(a0)
 		move.w	#vram_S1Credits/sizeof_cell,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo65_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo65_AdjustVRAM2P
 		move.w	(v_s1_ending_demo_num).w,d0
 		move.b	d0,ost_frame(a0)
 		move.b	#render_abs,ost_render(a0)
@@ -82633,7 +82792,7 @@ loc_3EADA:
 		cmpi.b	#4,(v_gamemode).w
 		bne.s	loc_3EB48
 		move.w	#vram_S1Title_Credits/sizeof_cell,ost_tile(a0)
-		jsrto	Adjust2PArtPointer,JmpTo65_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo65_AdjustVRAM2P
 		move.b	#$A,ost_frame(a0)
 		tst.b	(f_s1_credits_cheat).w
 		beq.s	loc_3EB48
@@ -82657,8 +82816,8 @@ loc_3EB48:
 	endc
 
 	if RemoveJmpTos=0
-JmpTo65_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo65_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -83206,7 +83365,7 @@ loc_3F78C:
 		bne.w	React_ChkHurt
 
 loc_3F7A6:
-		btst	#render_subobjects_bit,ost_render(a1)
+		btst	#render_subsprites_bit,ost_render(a1)
 		beq.s	loc_3F7C8
 		tst.b	ost_boss_hitcount2(a1)
 		beq.s	locret_3F7C6
@@ -85321,7 +85480,7 @@ BuildHUD:
 		move.w	(a1)+,d1				; d1 = total sprite pieces
 		subq.w	#1,d1					; adjust for loop counter
 		bmi.s	.skipdraw				; branch if it underflows for some reason
-		jsrto	BuildSpr_DrawLoop,JmpTo_BuildSpr_DrawLoop ; draw the HUD (could be jmpto)
+		jsrto	BuildSpr_Normal,JmpTo_BuildSpr_DrawLoop	; draw the HUD (could be jmpto)
 
 	.skipdraw:
 		rts
@@ -86408,7 +86567,7 @@ HUD_Lives_Load:
 JmpTo_BuildSpr_DrawLoop_2P:
 		jmp	(BuildSpr_DrawLoop_2P).l
 JmpTo_BuildSpr_DrawLoop:
-		jmp	(BuildSpr_DrawLoop).l
+		jmp	(BuildSpr_Normal).l
 
 		align 4
 	endc
@@ -86663,7 +86822,7 @@ sub_41CEC:
 		move.l	(a2,d0.w),ost_mappings(a0)
 		move.w	6(a2,d0.w),ost_tile(a0)
 		move.b	5(a2,d0.w),ost_frame(a0)
-		jsrto	Adjust2PArtPointer,JmpTo66_Adjust2PArtPointer
+		jsrto	AdjustVRAM2P,JmpTo66_AdjustVRAM2P
 		rts
 
 ; ===========================================================================
@@ -87509,8 +87668,8 @@ DbgSCZ_42522:	dc.w $D
 ; ===========================================================================
 
     if RemoveJmpTos=0
-JmpTo66_Adjust2PArtPointer:
-		jmp	(Adjust2PArtPointer).l
+JmpTo66_AdjustVRAM2P:
+		jmp	(AdjustVRAM2P).l
 
 		align 4
 	endc
@@ -89603,7 +89762,6 @@ SaxDec_GetByte:
 
 	.exit:
 		rts
-
 ; ===========================================================================
 
 SoundDriver:
@@ -89624,7 +89782,6 @@ MergeCode: section org(0), file("sound/MergeData.dat"),over(Main) ; make data fi
 		ds.b Z80_Space					; reserve space for the compressed sound driver
 		even
 
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; DAC samples
 ; ---------------------------------------------------------------------------
