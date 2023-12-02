@@ -28774,6 +28774,7 @@ BuildSprites_MultiDraw:
 ;	d5.b = current sprite count
 ;	a1 = current address in sprite mappings
 ;	a2 = current address in sprite buffer
+;	a3 = VRAM tile setting (used as source for add instruction)
 
 ;	uses d0, d1.w, d4.w, d5.b, a1, a2, a3
 ; ---------------------------------------------------------------------------
@@ -85735,7 +85736,7 @@ BuildHUD_P2:
 		move.w	#screen_top+376,d2			; same for y pos
 		movea.w	#((vram_HUD2P_Numbers/sizeof_cell)>>1)+tile_hi,a3 ; set art tile
 		moveq	#0,d7
-		move.w	(v_rings_p2).w,d7			; get player 1's ring count
+		move.w	(v_rings_p2).w,d7			; get player 2's ring count
 		bsr.w	HUD_2P_Rings				; draw the ring count
 
 	;.draw_loser_time:
