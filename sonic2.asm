@@ -89670,7 +89670,7 @@ DecompressSoundDriver:
 		lea	SoundDriver(pc),a6
 	; WARNING: you must edit MergeCode if you rename this label
 	movewZ80CompSize:
-		move.w	#$F64,d7				; size of compressed data; patched if necessary by SndDriverCompress.exe
+		move.w	#Z80_space,d7				; size of compressed data; patched if necessary by SndDriverCompress.exe
 		moveq	#0,d6					; make the decompressor fetch the first byte of descriptor bits
 		lea	(z80_ram).l,a5
 		moveq	#0,d5
