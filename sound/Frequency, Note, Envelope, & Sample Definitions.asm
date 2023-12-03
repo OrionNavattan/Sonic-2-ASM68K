@@ -63,7 +63,7 @@ DefineNotes:	macro	func
 		\func	nAb0,	538, $0000|fmfq_Gs,f		; G#0 note
 		\func	nA0,	507, $0000|fmfq_A,f		; A0 note
 		\func	nBb0,	479, $0000|fmfq_As,f		; A#0 note
-		\func	nB0,	452, $0800|fmfq_B,f		; B0 note
+		\func	nB0,	452, $0800|fmfq_B,		; B0 note
 
 		\func	nC1,	427, $0800|fmfq_C		; C1 note
 		\func	nCs1,	403, $0800|fmfq_Cs		; C#1 note

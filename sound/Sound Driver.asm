@@ -1080,7 +1080,7 @@ PSGNoteOff:
 
 GenNoteFM:	macro	const,psgfq,fmfq,firstoctave
 		if OptimizeSoundDriver
-			if strlen("\fmfq")>0&strlen("\firstoctave")>0 ; only include values for the first octave; the rest will be calculated on the fly to save space
+			if (strlen("\fmfq")>0)&(strlen("\firstoctave")>0) ; only include values for the first octave; the rest will be calculated on the fly to save space
 			dw \fmfq				; add FM note value into ROM
 			endc
 		else
