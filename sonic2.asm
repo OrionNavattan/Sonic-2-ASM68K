@@ -28398,7 +28398,6 @@ DisplaySprite3:
 ;		bsr.w	AnimateSprite
 ; ---------------------------------------------------------------------------
 
-
 AnimateSprite:
 		moveq	#0,d0
 		move.b	ost_anim(a0),d0				; move animation number to d0
@@ -28496,7 +28495,7 @@ Anim_End:
 ; output:
 ;	a2 = address of last sprite in sprite buffer
 
-;	uses d0.l, d1.w, d2.w, d3.w, d4.w, d5.l, d6.l, d7.l, a0, a1, a4
+;	uses d0.l, d1.w, d2.w, d3.w, d4.w, d5.l, d6.l, d7.l, a0, a1, a3, a4
 ; ---------------------------------------------------------------------------
 
 BuildSprites:
@@ -28776,7 +28775,7 @@ BuildSprites_MultiDraw:
 ;	a2 = current address in sprite buffer
 ;	a3 = VRAM tile setting (used as source for add instruction)
 
-;	uses d0, d1.w, d4.w, d5.b, a1, a2, a3
+;	uses d0.w, d1.w, d4.w, d5.b, a1, a2
 ; ---------------------------------------------------------------------------
 
 BuildSpr_Draw:
@@ -34038,7 +34037,7 @@ DropOnFloor:
 SonicPlayer:
 		tst.w	(v_debug_active).w			; is debug mode	being used?
 		beq.s	Sonic_Normal				; if not, branch
-		jmp	(DebugMode).l
+		jmp	(DebugMode).l				; run the debug mode psuedoobject
 ; ===========================================================================
 
 Sonic_Normal:
@@ -41742,7 +41741,7 @@ Player_FindFloor:
 		sub.w	d0,d3					; d3 = x pos. of player's left edge
 		lea	(v_angle_left).w,a4			; write angle here
 		movea.w	#$10,a3					; tile height
-		move.w	#0,d6
+		move.w	#0,d6				; EOR bitmask
 		bsr.w	FindFloor				; d1 = distance to floor left side
 		popr.w	d0					; d0 = distance to floor right side
 		move.b	#0,d2
@@ -41842,7 +41841,7 @@ Player_SnapAngle:
 ;	(a1).w = 16x16 tile number
 ;	(a4).b = floor angle
 
-;
+;	uses d0.w, d5.b, d6.w, a3
 ; ---------------------------------------------------------------------------
 
 FindFloorObj_ChkCol:
