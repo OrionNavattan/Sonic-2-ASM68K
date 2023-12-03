@@ -41741,7 +41741,7 @@ Player_FindFloor:
 		sub.w	d0,d3					; d3 = x pos. of player's left edge
 		lea	(v_angle_left).w,a4			; write angle here
 		movea.w	#$10,a3					; tile height
-		move.w	#0,d6				; EOR bitmask
+		move.w	#0,d6					; EOR bitmask
 		bsr.w	FindFloor				; d1 = distance to floor left side
 		popr.w	d0					; d0 = distance to floor right side
 		move.b	#0,d2
