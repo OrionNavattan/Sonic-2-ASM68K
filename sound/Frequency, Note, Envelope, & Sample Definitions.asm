@@ -41,10 +41,10 @@ fmfq_B1:	equ	1216					; B1	; <- used in S3K, as opposed to fmfq_B. This one seem
 
 ; ---------------------------------------------------------------------------
 ; Define note information
-;
+
 ; Notes are tuned to where A4 = 440hz. Note that values are slightly off.
 ; By default, range from $80 to $DF. The first entries have lower ID.
-;
+
 ; line format: \func	constant, psg frequency, fm frequency, flag to mark first octave
 ; (used to enable a driver optimization)
 ; ---------------------------------------------------------------------------
@@ -282,10 +282,10 @@ evcHold:		equ 80h					; terminator for PSG envelope lists
 
 ; ---------------------------------------------------------------------------
 ; Define samples for the sound driver and SMPS2ASM
-;
+
 ; Constants for IDs are: d(name)
 ; This special macro is used to generate constants and jump tables
-;
+
 ; line format: \func	name, name of original sample if this is simply
 ; a pitch alias, sample rate
 ; ---------------------------------------------------------------------------
@@ -312,18 +312,18 @@ DefineSamples:	macro	func
 		\func Clap,			,			17000 ; Clap sample
 		\func Scratch,		,			15000 ; Record scratch sample
 		\func Timpani,		,			7500 ; Timpani sample (DO NOT USE DIRECTLY)
-		\func HiTom,		,			14000 ; High tom sample
-		\func VLowClap,		,			7500 ; Very low clap sample, apparently unused directly?
+		\func Tom,			,			14000 ; High tom sample
+		\func Bongo,		,			7500 ; Very low clap sample, apparently unused directly?
 		\func HiTimpani,	Timpani,	9750	; Timpani high pitch
 		\func MidTimpani,	Timpani,	8750	; Timpani middle pitch
 		\func LowTimpani,	Timpani,	7250	; Timpani low pitch
 		\func VLowTimpani,	Timpani,	7000	; Timpani very low pitch
-		\func MidTom,		HiTom,		23000	; Middle tom sample
-		\func LowTom,		HiTom,		18000	; Low tom sample
-		\func FloorTom,		HiTom,		15000	; Very low tom sample
-		\func HiClap,		VLowClap,	15000	; High clap
-		\func MidClap,		VLowClap,	13000	; Mid clap
-		\func LowClap,		VLowClap,	9750	; Low clap
+		\func MidTom,		Tom,		23000	; Middle tom sample
+		\func LowTom,		Tom,		18000	; Low tom sample
+		\func FloorTom,		Tom,		15000	; Very low tom sample
+		\func HiClap,		Bongo,	15000		; High clap
+		\func MidClap,		Bongo,	13000		; Mid clap
+		\func LowClap,		Bongo,	9750		; Low clap
 
 ;	else;if SonicDriverVer>=3
 ;		if use_s3_samples|use_sk_samples|use_s3d_samples
@@ -409,7 +409,7 @@ DefineSamples:	macro	func
 ;			\func Scratch
 ;			\func Timpani
 ;			\func HiTom
-;			\func VLowClap
+;			\func Bongo
 ;			\func HiTimpani
 ;			\func MidTimpani
 ;			\func LowTimpani
@@ -439,20 +439,8 @@ DefineSamples:	macro	func
 ; ---------------------------------------------------------------------------
 
 GenSampleConst:	macro	const
-; for SMPS conversions, if we are using the Sonic 3 driver or greater, Sonic 2 samples,
-; AND any combination of S3, S3K, or S3D samples, then reset the rs counter to $81
-; starting with the S2 kick sample
-;	if SonicDriverVer>=3
-;		if use_s2_samples&(use_s3_samples|use_sk_samples|use_s3d_samples)
-;			if stricmp("\const","Kick")
-;				rsset $81
-;			endc
-;		endc
-;	endc
-
-d\const:	rs.b 1						; generate the main constant
-
-	endm
+		d\const:	rs.b 1				; generate the main constant
+		endm
 ; ---------------------------------------------------------------------------
 
 		rsset	nRst+1					; samples start at $81
@@ -464,14 +452,15 @@ _lastSample:	equ __rs-1					; the last valid sample
 
 ; ---------------------------------------------------------------------------
 ; Define track commands
-;
+
 ; By default, range from $E0 to $FF, and $FF can have special flags.
 ; The first entries have lower ID.
 ; Constants for IDs are: com_(name)
 ; This special macro is used to generate constants and jump tables
-;
+
 ; line format: \func	name, alt1, alt2 [...]
 ; ---------------------------------------------------------------------------
+
 TrackCommand:	macro	func
 ;	if SonicDriverVer=1
 ;		\func	Pan					; Pan FM channel (left/right/centre)

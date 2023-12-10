@@ -458,7 +458,6 @@
 		filedef	Level_ARZ2,"level/layout/ARZ 2",kos,unc
 		filedef	Level_SCZ,"level/layout/SCZ",kos,unc
 
-
 ; ---------------------------------------------------------------------------
 ; File definitions - misc compressed data
 ; ---------------------------------------------------------------------------
@@ -468,7 +467,7 @@
 		filedef Koz_SpecialObjectLocations,"misc/Special Stage Object Locations",kos,unc
 
 ; ---------------------------------------------------------------------------
-; File definitions - sound
+; File definitions- DAC samples
 ; ---------------------------------------------------------------------------
 
 		filedef SegaPCM,"sound/PCM/SEGA",pcm,pcm
@@ -477,25 +476,25 @@
 		inform 3,"Sega sound must fit within $%h bytes, but you have a $%h byte Sega sound.",sizeof_z80_bank,sizeof_SegaPCM
 	endif
 
-defdac:	macro	lbl,file
+defdac:	macro	name
 		; Essentially the same as filedef, except we are adding the filesizes to
 		; a running total to get the size of all DAC samples.
 		if ~def(sizeof_dac_samples)
 			sizeof_dac_samples: = 0
 		endc
-		filename: equs \file				; get file name without quotes
-		file_\lbl: equs "\filename"			; record file name
-		sizeof_\lbl: equ filesize("\filename")		; record file size
-		sizeof_dac_samples: = sizeof_dac_samples+sizeof_\lbl ; add size to running total
+		filename:	equs	"sound/DAC/\name\.dpcm"	; generate file path
+		file_\name: equs "\filename"			; record file name
+		sizeof_DAC_\name: equ filesize("\filename")	; record file size
+		sizeof_dac_samples: = sizeof_dac_samples+sizeof_DAC_\name ; add size to running total
 		endm
 
-		defdac	DAC_Kick,"sound/DAC/Kick.dpcm"
-		defdac	DAC_Snare,"sound/DAC/Snare.dpcm"
-		defdac	DAC_Timpani,"sound/DAC/Timpani.dpcm"
-		defdac	DAC_Tom,"sound/DAC/Tom.dpcm"
-		defdac	DAC_Clap,"sound/DAC/Clap.dpcm"
-		defdac	DAC_RecordScratch,"sound/DAC/Record Scratch.dpcm"
-		defdac	DAC_VLowClap,"sound/DAC/Low Clap.dpcm"
+SampleFiles:	macro name,src,samplerate
+		ifnotarg	\src				; ignore aliases for different sample rates
+			defdac	\name				; generate file listing for sample
+		endc
+		endm
+
+		DefineSamples	SampleFiles			; generate file listings for DAC samples
 
 	if sizeof_dac_samples>sizeof_z80_bank
 		inform 3,"DAC samples must fit within $%h bytes, but you have $%h bytes of DAC samples.",sizeof_z80_bank,sizeof_dac_samples

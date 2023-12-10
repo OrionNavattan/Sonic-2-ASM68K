@@ -72,25 +72,23 @@ DebugImprovements:	equ 0
 ; If 1, zone offset tables for water levels cover all level slots instead of only slots 8-$F
 ; If you've shifted level IDs around or you want water in levels with a level slot below 8
 
-
 		include "Macros - More CPUs.asm"
 		cpu 68000
 
 		include "Mega Drive.asm"
 		include "Macros.asm"
-		include "File List.asm"
 		include "Constants.asm"
-		include "RAM Addresses.asm"
 
 		include "sound/Sound Equates.asm"		; variables and constants for the sound driver
 		include "sound/Frequency, Note, Envelope, & Sample Definitions.asm" ; definitions used in both the sound driver and SMPS2ASM
 		include "sound/Sound Language.asm"		; SMPS2ASM macros and conversion functionality
 		include "sound/Sounds.asm"
 
+		include "File List.asm"
+		include "RAM Addresses.asm"
 		include "VRAM Addresses.asm"
 		include "Object Subtypes.asm"			; object subtype constants
 		include "Compatibility.asm"			; compatibility with Sonic 2 AS
-
 
 ROM_Start:
 		if offset(*)<>0
@@ -89790,21 +89788,22 @@ MergeCode: section org(0), file("sound/MergeData.dat"),over(Main) ; make data fi
 
 ; Macro to include DAC samples, and generate bank pointer constants
 ; for them.
-incdac:	macro lbl
-		filename: equs file_\lbl			; get file name
-		zbankptr_\lbl:	equ	z_rom_window+(offset(*)&7FFFh) ; make pointer constant
-	\lbl:	incbin	"\filename"				; write file to ROM
+incdac:	macro name
+		filename: equs file_\name			; get file name
+		zbankptr_DAC_\name:	equ	z_rom_window+(offset(*)&7FFFh) ; make pointer constant
+	DAC_\name:	incbin	"\filename"			; write file to ROM
 
 		endm
 
 DAC_Start: bnkswtch_vals
-		incdac	DAC_Kick
-		incdac	DAC_Snare
-		incdac	DAC_Timpani
-		incdac	DAC_Tom
-		incdac	DAC_Clap
-		incdac	DAC_RecordScratch
-		incdac	DAC_VLowClap
+
+		incdac	Kick
+		incdac	Snare
+		incdac	Timpani
+		incdac	Tom
+		incdac	Clap
+		incdac	Scratch
+		incdac	Bongo
 
 ; ------------------------------------------------------------------------------
 ; One music track

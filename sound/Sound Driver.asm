@@ -3460,19 +3460,19 @@ SpeedUpIndex:
 
 		ensure1byteoffset 1Ch
 
-zsample:	macro	sample
-		dw	zbankptr_\sample
-		dw	sizeof_\sample
+zsample:	macro	name
+		dw	zbankptr_DAC_\name
+		dw	sizeof_DAC_\name
 		endm
 
 DACPtrTbl:
-		zsample	DAC_Kick
-		zsample	DAC_Snare
-		zsample	DAC_Clap
-		zsample	DAC_RecordScratch
-		zsample	DAC_Timpani
-		zsample DAC_Tom
-		zsample	DAC_VLowClap
+		zsample	Kick
+		zsample	Snare
+		zsample	Clap
+		zsample	Scratch
+		zsample	Timpani
+		zsample Tom
+		zsample	Bongo
 
 ; ---------------------------------------------------------------------------
 ; DAC sample playlist
