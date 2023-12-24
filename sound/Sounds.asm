@@ -77,7 +77,7 @@ SFXFiles:	macro	func
 		\func	SpikeHit,		70h		; spike impalement
 		\func	Sparkle,		70h
 		\func	Beep,			70h
-		\func	ActionBlock,	70h			; unused Sonic 1 leftover, sound made when touching R block in Special Stage
+		\func	ActionBlock,	70h			; unused Sonic 1 leftover, sound made when touching action blocks in Special Stage
 		\func	Splash,			68h
 		\func	Swish,			70h		; apparently unused
 		\func	BossHit,		70h

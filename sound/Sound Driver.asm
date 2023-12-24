@@ -235,7 +235,7 @@ UpdateSound:    rsttarget
 		ld	hl,v_pal_update_counter			; get update counter
 		dec	(hl)					; decrement
 		jr	nz,.not_pal				; branch if time remains
-		ld	(hl),6-1				; reset PAL update coutner
+		ld	(hl),6-1				; reset PAL update counter
 		call	UpdateMusic				; every 6 frames, run UpdateMusic twice to keep pace with NTSC consoles
 
 	.not_pal:
