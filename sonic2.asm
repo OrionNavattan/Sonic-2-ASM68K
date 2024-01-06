@@ -14097,7 +14097,7 @@ Cred_Slide18_Line2:	credtxt	credits,tile_pal2,"SUPPORTERS"
 Cred_Slide18_Line3:	credtxt	credits,tile_pal1,"DAIZABUROU  SAKURAI"
 Cred_Slide18_Line4:	credtxt	credits,tile_pal1,"HISASHI  SUZUKI"
 
-    if (Revision=0)|FixBugs
+    if (Revision=0)&(FixBugs=0)
 Cred_Slide18_Line5:	credtxt	credits,tile_pal1,"TOHMAS  KALINSKE" ; typo
     else
 Cred_Slide18_Line5:	credtxt	credits,tile_pal1,"THOMAS  KALINSKE"

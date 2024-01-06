@@ -530,11 +530,7 @@ vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 		else inform 2,"Invalid VDP command type (must be read, write, or dma)."
 		endc
 
-		if stricmp ("\0",".w")
-		command: = (((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)$FFFF ; ensure word length
-		else
 		command: = (((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)
-		endc
 
 		ifarg \dest
 			\inst\.\0	#command\adjustment\,\dest
@@ -1019,7 +1015,7 @@ charset:	macro	charset,txt
 
 		elseif	stricmp("\charset","intro")
 		; Text used on "Sonic and Miles 'Tails' Prower In" screen
-		; Identical to credits, except all values are reduced by 1 and numbers are not supported
+		; Identical to credits, except all values are reduced by 1 and digits are not supported
 		rept strlen(\txt)				; repeat for length of string
 		chr:	substr ,1,"\str"			; get current character
 		str:	substr 2,,"\str"			; advance to next character in string
