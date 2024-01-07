@@ -4463,7 +4463,7 @@ JmpTo_Deform_TitleScreen:
 	endc
 
 ;----------------------------------------------------------------------------
-; 1P Music Playlist
+; 1P music playlist
 ;----------------------------------------------------------------------------
 
 MusicList:
@@ -4488,7 +4488,7 @@ MusicList:
 		even
 
 ;----------------------------------------------------------------------------
-; 2P Music Playlist
+; 2P music playlist
 ;----------------------------------------------------------------------------
 
 MusicList2:
@@ -4905,7 +4905,7 @@ Level_MainLoop:
 		move.b	#id_VBlank_Level,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
 		addq.w	#1,(v_frame_counter).w			; increment level timer
-		bsr.w	MoveSonicAndTailsInDemo			; move players if this is a demo
+		bsr.w	MovePlayersInDemo			; move players if this is a demo
 		bsr.w	WaterFeatures				; manage water levels, oil slides, and wind tunnels if required
 		jsr	(ExecuteObjects).l			; run all objects except rings
 		tst.w	(f_restart).w				; is level restart flag set?
@@ -4957,7 +4957,7 @@ Level_Demo:
 	.fade_loop:
 		move.b	#id_VBlank_Level,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
-		bsr.w	MoveSonicAndTailsInDemo			; continue running objects while fading out
+		bsr.w	MovePlayersInDemo			; continue running objects while fading out
 		jsr	(ExecuteObjects).l
 		jsr	(BuildSprites).l
 		jsr	(ObjPosLoad).l
@@ -5128,7 +5128,7 @@ WaterFeatures:
 
 ; ---------------------------------------------------------------------------
 ; Initial water heights
-; Only Level slots 8-$F are included here
+; Only level slots 8-$F are included here
 ; ---------------------------------------------------------------------------
 
 WaterHeight:
@@ -5210,8 +5210,9 @@ DynWater_CPZ2:
 
 ;	uses d0.l, d1.l, d2.w, a1, a2
 ; ---------------------------------------------------------------------------
-	; displacements for Wind Tunnel data relative to WindTunnel_Data
-		rsset	0
+
+	; Displacements for Wind Tunnel data relative to WindTunnel_Data
+		rsreset
 	wt_min_x_pos:	rs.w 1					; 0
 	wt_min_y_pos:	rs.w 1					; 2
 	wt_max_x_pos:	rs.w 1					; 4
@@ -5275,8 +5276,8 @@ WindTunnels:
 	;WindTunnel_End
 	.exit:
 		rts
-
 ; ===========================================================================
+
 WindTunnel_Data:
 		; min x, min y, max x, max y
 		dc.w $1510,$400,$1AF0,$580
@@ -5305,13 +5306,13 @@ OilSlides:
 
 .doslide:
 		btst	#status_air_bit,ost_primary_status(a1)	; is character in the air?
-		bne.s	.character_in_air			; if so, branch
+		bne.s	.player_in_air				; if so, branch
 		move.w	ost_y_pos(a1),d0
 		add.w	d0,d0					; multiply y pos by 2
-		andi.w	#$F00,d0				; only high byte
+		andi.w	#$F00,d0				; only need high byte
 		move.w	ost_x_pos(a1),d1
 		lsr.w	#7,d1					; multiply x pos by 128
-		andi.w	#$7F,d1					; only high byte
+		andi.w	#$7F,d1					; only need high byte
 		add.w	d1,d0					; combine for position within layout
 		lea	(v_level_layout).w,a2
 		move.b	(a2,d0.w),d0				; get 128x128 tile number
@@ -5322,9 +5323,9 @@ OilSlides:
 	.loop:
 		cmp.b	-(a2),d0				; compare current 128x128 tile with those in list
 		dbeq	d1,.loop				; check every tile in list
-		beq.s	OilSlide_Move
+		beq.s	OilSlide_Move				; branch when match found
 
-.character_in_air:
+	.player_in_air:
 		tst.b	ost_secondary_status(a1)		; is sliding flag set?
 		bpl.s	.exit					; if not, exit
 		move.w	#lock_time_slide,ost_lock_time(a1)	; lock controls for 5 frames
@@ -5335,7 +5336,7 @@ OilSlides:
 ; ===========================================================================
 
 OilSlide_Move:
-		lea	(OilSlide_Speeds).l,a2			; slide speeds array
+		lea	(OilSlide_Speeds).l,a2			; slide speeds array (could be pc-relative)
 		move.b	(a2,d1.w),d0				; d0 = slide speed
 		beq.s	OilSlide_Flat				; if it is a flat section, branch
 		move.b	ost_inertia(a1),d1			; current inertia of character
@@ -5423,6 +5424,7 @@ OilSlide_Flat:
 ; of which direction they should make the character move: 8 = right, -8 = left
 ; 0 = level section of slide at the top
 ; ---------------------------------------------------------------------------
+
 OilSlide_Speeds:
 		dc.b  -8, -8, -8,  8,  8,  0,  0,  0, -8, -8,  0,  8,  8,  8,  0,  8
 		dc.b   8,  8,  0, -8,  0,  0, -8,  8, -8, -8, -8,  8,  8,  8, -8, -8 ; 16
@@ -5430,6 +5432,7 @@ OilSlide_Speeds:
 ; ---------------------------------------------------------------------------
 ; IDs of chunks in OOZ's layout that contain of oil slides
 ; ---------------------------------------------------------------------------
+
 OilSlide_Chunks:
 		dc.b $2F,$30,$31,$33,$35,$38,$3A,$3C,$63,$64,$83,$90,$91,$93,$A1,$A3 ; 32
 		dc.b $BD,$C7,$C8,$CE,$D7,$D8,$E6,$EB,$EC,$ED,$F1,$F2,$F3,$F4,$FA,$FD ; 48
@@ -5442,7 +5445,7 @@ OilSlide_Chunks:
 ;	uses d0.l, d1.b, d2.l, a0, a1
 ; ---------------------------------------------------------------------------
 
-MoveSonicAndTailsInDemo:
+MovePlayersInDemo:
 		tst.w	(f_demo_mode).w				; is demo mode on?
 		bne.w	MDemo_On				; if so, branch
 		rts
@@ -5455,6 +5458,7 @@ MoveSonicAndTailsInDemo:
 
 ;	uses d0.w
 ; ---------------------------------------------------------------------------
+
 DemoRecorder:
 		lea	(DemoDataPtr).l,a1			; location to record player 1's inputs
 		moveq	#0,d0
@@ -5584,7 +5588,7 @@ MDemo_On:
 
 	.end:
 		rts
-
+; ===========================================================================
 
 .skip_player2:
 		move.w	#0,(v_joypad2_hold_actual).w		; clear player 2's joypad state
@@ -5711,9 +5715,10 @@ SecondaryColPointers:
 
 ;	uses d1.l, a1, a2
 ; ---------------------------------------------------------------------------
+
 OscillateNumInit:
 		lea	(v_oscillating_direction).w,a1
-		lea	(OscillateNum_Baselines).l,a2		; why absolute long?
+		lea	(OscillateNum_Baselines).l,a2		; (could be pc-relative)
 		moveq	#(sizeof_OscillateNum_Baselines/2)-1,d1
 
 	.loop:
@@ -5757,7 +5762,7 @@ OscillateNum_Baselines:
 OscillateNumDo:
 		tst.w	(f_two_player).w			; is it two-player mode?
 		bne.s	.is2P					; if so, branch
-		cmpi.b	#id_Sonic_Death,(v_ost_player1+ost_primary_routine).w ; has main character just died?
+		cmpi.b	#id_Death,(v_ost_player1+ost_primary_routine).w ; has player 1 just died?
 		bcc.s	.end					; if so, exit
 
 	.is2P:
@@ -6037,7 +6042,7 @@ LevelArtLoad:
 		movea.l	d0,a0
 		lea	(v_128x128_tiles).l,a1			; 128x128 mappings RAM is used as decompression buffer
 		bsr.w	KosDec					; decompress the level art
-		move.w	a1,d3					; end address of decompressed tiles
+		move.w	a1,d3					; d3 = size of decompressed tiles
 
 		cmpi.b	#id_HTZ,(v_zone).w			; are we loading HTZ?
 		bne.s	.notHTZ					; if not, branch
@@ -6063,19 +6068,19 @@ LevelArtLoad:
 .prepare_dma:
 		; Transfer the decompressed art to VRAM, starting  with the highest tiles and
 		; working backwards in $1000 byte chunks.
-		move.w	d3,d7					; d3 & d7 = end address of decompressed tiles
+		move.w	d3,d7					; d7 = size of decompressed tiles
 		andi.w	#$FFF,d3				; divide lower 12 bits by 2
 		lsr.w	#1,d3					; d3 = size of first DMA transfer in words
-		rol.w	#4,d7					; divide by 4
+		rol.w	#4,d7					; divide total size by 4
 		andi.w	#$F,d7					; d7 = number of DMAs needed to transfer everything-1
 
 	.loop:
-		move.w	d7,d2					; get loop counter
+		move.w	d7,d2					; d2 = loop counter
 		lsl.w	#7,d2					; multiply by $1000
 		lsl.w	#5,d2					; destination is nearest multiple of $1000 that does not exceed size
 		move.l	#$FFFFFF,d1
 		move.w	d2,d1					; d1 = source
-		jsr	(AddDMA).l				; queue the DMA transfer (could be bsr.w)
+		jsr	(AddDMA).l				; queue the DMA transfer (could be absolute short jsr)
 		pushr.w	d7					; back up loop counter
 		move.b	#id_VBlank_TitleCard,(v_vblank_routine).w
 		bsr.w	WaitForVBlank				; wait for VBlank to run DMA
@@ -14225,12 +14230,13 @@ LevelParameterLoad:
 		move.w	#camera_y_shift_default,(v_camera_y_shift).w ; default camera shift = $60 (changes when Sonic or Tails look up/down)
 		move.w	#camera_y_shift_default,(v_camera_y_shift_p2).w
 		bra.w	LPL_StartPos
-; ===========================================================================
+
 ; ----------------------------------------------------------------------------
 ; Level boundary list - 4 values per act:
 
 ; v_boundary_left, v_boundary_right, v_boundary_top, v_boundary_bottom
 ; ----------------------------------------------------------------------------
+
 LevelBoundaryList:
 		dc.w	 0,$29A0,    0,	$320			; 0
 		dc.w	 0,$2940,    0,	$420			; 4
@@ -14271,61 +14277,63 @@ LevelBoundaryList:
 
 LPL_StartPos:
 		tst.b	(v_last_lamppost).w			; have any starposts been hit?
-		beq.s	loc_C17A				; if not, branch
+		beq.s	.nostarpost				; if not, branch
 		jsr	(Starpost_LoadInfo).l			; load starpost variables
-		move.w	($FFFFB008).w,d1
-		move.w	($FFFFB00C).w,d0
-		bra.s	loc_C196
+		move.w	(v_ost_player1+ost_x_pos).w,d1		; use saved x and y pos for setting camera
+		move.w	(v_ost_player1+ost_y_pos).w,d0
+		bra.s	LPL_Camera
 ; ===========================================================================
 
-loc_C17A:
-		move.w	(v_zone).w,d0
+	.nostarpost:
+		move.w	(v_zone).w,d0				; get zone/act number
 		ror.b	#1,d0
-		lsr.w	#5,d0
-		lea	StartPosList(pc,d0.w),a1
+		lsr.w	#5,d0					; convert to 1-byte index with stride of 2
+		lea	StartPosList(pc,d0.w),a1		; load player 1's start position
+
 		moveq	#0,d1
 		move.w	(a1)+,d1
-		move.w	d1,($FFFFB008).w
+		move.w	d1,(v_ost_player1+ost_x_pos).w		; set player 1's x position
 		moveq	#0,d0
 		move.w	(a1),d0
-		move.w	d0,($FFFFB00C).w
+		move.w	d0,(v_ost_player1+ost_y_pos).w		; set player 1's y position
 
-loc_C196:
-		subi.w	#$A0,d1
-		bcc.s	loc_C19E
+LPL_Camera:
+		subi.w	#160,d1					; is player 1 more than 160px from left edge?
+		bcc.s	.chk_right				; if so, branch
 		moveq	#0,d1
 
-loc_C19E:
+	.chk_right:
 		move.w	(v_boundary_right).w,d2
-		cmp.w	d2,d1
-		bcs.s	loc_C1A8
+		cmp.w	d2,d1					; is player 1 inside the right edge?
+		bcs.s	.set_camera_x				; if so, branch
 		move.w	d2,d1
 
-loc_C1A8:
-		move.w	d1,(v_camera_x_pos).w
-		move.w	d1,(v_camera_x_pos_p2).w
-		subi.w	#$60,d0
-		bcc.s	loc_C1B8
+	.set_camera_x:
+		move.w	d1,(v_camera_x_pos).w			; set camera x position
+		move.w	d1,(v_camera_x_pos_p2).w		; (both players)
+
+		subi.w	#96,d0					; is player 1 within 96px of upper edge?
+		bcc.s	.chk_bottom				; branch if so
 		moveq	#0,d0
 
-loc_C1B8:
-		cmp.w	(v_boundary_bottom).w,d0
-		blt.s	loc_C1C2
+.chk_bottom:
+		cmp.w	(v_boundary_bottom).w,d0		; is player 1 above the bottom edge?
+		blt.s	.set_camera_y				; branch if so
 		move.w	(v_boundary_bottom).w,d0
 
-loc_C1C2:
-		move.w	d0,(v_camera_y_pos).w
-		move.w	d0,(v_camera_y_pos_p2).w
-		bsr.w	sub_C258
+.set_camera_y:
+		move.w	d0,(v_camera_y_pos).w			; set camera y pos
+		move.w	d0,(v_camera_y_pos_p2).w		; (both players)
+		bsr.w	LPL_InitBG
 		rts
 
-; ===========================================================================
 ; --------------------------------------------------------------------------------------
 ; Character start location array
 ;
 ; 2 entries per	act, corresponding to the X and	Y locations that you want the player to
 ; appear at when the level starts.
 ; --------------------------------------------------------------------------------------
+
 StartPosList:
 		dc.w   $60, $28F				; 0
 		dc.w   $60, $2AF				; 2
@@ -14362,13 +14370,20 @@ StartPosList:
 		dc.w  $120,  $70				; 64
 		dc.w  $140,  $70				; 66
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	initialize background position and scrolling
 
+; input:
+;	d0.w = v_camera_y_pos
+;	d1.w = v_camera_x_pos
 
-sub_C258:
-		tst.b	(v_last_lamppost).w
-		bne.s	loc_C286
-		move.w	d0,(v_bg1_y_pos).w
+;	uses d0.l, d1.w, d2.l, a2
+; ---------------------------------------------------------------------------
+
+LPL_InitBG:
+		tst.b	(v_last_lamppost).w			; have any starposts been hit?
+		bne.s	.starpost				; branch if so
+		move.w	d0,(v_bg1_y_pos).w			; use same x/y pos for fg and bg
 		move.w	d0,(v_bg2_y_pos).w
 		move.w	d1,(v_bg1_x_pos).w
 		move.w	d1,(v_bg2_x_pos).w
@@ -14379,65 +14394,82 @@ sub_C258:
 		move.w	d1,(v_bg2_x_pos_p2).w
 		move.w	d1,(v_bg3_x_pos_p2).w
 
-loc_C286:
+	.starpost:
 		moveq	#0,d2
 		move.b	(v_zone).w,d2
 		add.w	d2,d2
-		move.w	off_C296(pc,d2.w),d2
-		jmp	off_C296(pc,d2.w)
+		move.w	LPL_InitBG_Index(pc,d2.w),d2
+		jmp	LPL_InitBG_Index(pc,d2.w)		; run custom background initialization code if there is any
 
 ; ===========================================================================
-off_C296:	index offset(*),,2
-		ptr loc_C2B8					; 0
-		ptr loc_C2E4					; 1
-		ptr loc_C2E4					; 2
-		ptr loc_C2E4					; 3
-		ptr loc_C2E4					; 4
-		ptr loc_C2E4					; 5
-		ptr locret_C2F2					; 6
-		ptr loc_C2F4					; 7
-		ptr locret_C320					; 8
-		ptr locret_C320					; 9
-		ptr loc_C322					; $A
-		ptr loc_C332					; $B
-		ptr loc_C364					; $C
-		ptr loc_C372					; $D
-		ptr locret_C38A					; $E
-		ptr loc_C38C					; $F
-		ptr loc_C3C6					; $10
-		zonewarning	off_C296,2
+LPL_InitBG_Index:	index offset(*),,2
+		ptr LPL_InitBG_EHZ				; 0
+		ptr LPL_InitBG_Null0				; 1
+		ptr LPL_InitBG_WZ				; 2
+		ptr LPL_InitBG_Null0				; 3
+		ptr LPL_InitBG_MTZ				; 4
+		ptr LPL_InitBG_MTZ				; 5
+		ptr LPL_InitBG_Null1				; 6
+		ptr LPL_InitBG_HTZ				; 7
+		ptr LPL_InitBG_Null2				; 8
+		ptr LPL_InitBG_Null2				; 9
+		ptr LPL_InitBG_OOZ				; $A
+		ptr LPL_InitBG_MCZ				; $B
+		ptr LPL_InitBG_CNZ				; $C
+		ptr LPL_InitBG_CPZ				; $D
+		ptr LPL_InitBG_Null3				; $E
+		ptr LPL_InitBG_ARZ				; $F
+		ptr LPL_InitBG_SCZ				; $10
+		zonewarning	LPL_InitBG_Index,2
 ; ===========================================================================
 
-loc_C2B8:
-		clr.l	(v_bg1_x_pos).w
+LPL_InitBG_EHZ:
+		clr.l	(v_bg1_x_pos).w				; clear both background 1 positions
 		clr.l	(v_bg1_y_pos).w
-		clr.l	(v_bg2_y_pos).w
+		clr.l	(v_bg2_y_pos).w				; clear background 2 and 3 y pos
 		clr.l	(v_bg3_y_pos).w
 		lea	(v_bgscroll_buffer).w,a2
+		clr.l	(a2)+					; clear first 12 bytes of scroll buffer
 		clr.l	(a2)+
 		clr.l	(a2)+
-		clr.l	(a2)+
-		clr.l	(v_bg1_x_pos_p2).w
+		clr.l	(v_bg1_x_pos_p2).w			; clear BG pos vars for player 2
 		clr.l	(v_bg1_y_pos_p2).w
 		clr.l	(v_bg2_y_pos_p2).w
-		clr.l	($FFFFEE3C).w
+		clr.l	(v_bg3_y_pos_p2).w
 		rts
 ; ===========================================================================
 
-loc_C2E4:
+LPL_InitBG_Null0:
+	if Revision=0
+		rts
+	endc
+; ===========================================================================
+
+LPL_InitBG_WZ:
+	if Revision=0
 		asr.w	#2,d0
+		addi.w	#$400,d0				; d0 = (v_camera_y_pos/4)+$400
 		move.w	d0,(v_bg1_y_pos).w
-		asr.w	#3,d1
+		asr.w	#3,d1					; d1 = v_camera_x_pos/8
+		move.w	d1,(v_bg1_x_pos).w
+		rts
+	endc
+; ===========================================================================
+
+LPL_InitBG_MTZ:
+		asr.w	#2,d0					; d0 = v_camera_y_pos/4
+		move.w	d0,(v_bg1_y_pos).w
+		asr.w	#3,d1					; d1 = v_camera_x_pos/8
 		move.w	d1,(v_bg1_x_pos).w
 		rts
 ; ===========================================================================
 
-locret_C2F2:
+LPL_InitBG_Null1:
 		rts
 ; ===========================================================================
 
-loc_C2F4:
-		clr.l	(v_bg1_x_pos).w
+LPL_InitBG_HTZ:
+		clr.l	(v_bg1_x_pos).w				; identical to EHZ's code
 		clr.l	(v_bg1_y_pos).w
 		clr.l	(v_bg2_y_pos).w
 		clr.l	(v_bg3_y_pos).w
@@ -14448,94 +14480,116 @@ loc_C2F4:
 		clr.l	(v_bg1_x_pos_p2).w
 		clr.l	(v_bg1_y_pos_p2).w
 		clr.l	(v_bg2_y_pos_p2).w
-		clr.l	($FFFFEE3C).w
+		clr.l	(v_bg3_y_pos_p2).w
 		rts
 ; ===========================================================================
 
-locret_C320:
+LPL_InitBG_HPZ:
+	if Revision=0
+		asr.w	#1,d0					; d0 = v_camera_y_pos/2
+		move.w	d0,(v_bg1_y_pos).w
+		clr.l	(v_bg1_x_pos).w
+		rts
+	endc
+; ===========================================================================
+; Unused Sonic 1 leftover: Spring Yard Zone's BG init routine from Revision 1
+;LPL_InitBG_SYZ:
+	if Revision=0
+		asl.l	#4,d0
+		move.l	d0,d2
+		asl.l	#1,d0
+		add.l	d2,d0
+		asr.l	#8,d0					; d0 = v_camera_y_pos/5 (approx)
+		addq.w	#1,d0
+		move.w	d0,(v_bg1_y_pos).w
+		clr.l	(v_bg1_x_pos).w
+		rts
+	endc
+; ===========================================================================
+
+LPL_InitBG_Null2:
 		rts
 ; ===========================================================================
 
-loc_C322:
+LPL_InitBG_OOZ:
 		lsr.w	#3,d0
-		addi.w	#$50,d0
+		addi.w	#$50,d0					; d0 = (v_camera_y_pos*8)+$50
 		move.w	d0,(v_bg1_y_pos).w
 		clr.l	(v_bg1_x_pos).w
 		rts
 ; ===========================================================================
 
-loc_C332:
-		clr.l	(v_bg1_x_pos).w
-		clr.l	(v_bg1_x_pos_p2).w
+LPL_InitBG_MCZ:
+		clr.l	(v_bg1_x_pos).w				; clear background 1 x pos
+		clr.l	(v_bg1_x_pos_p2).w			; (both players)
 		tst.b	(v_act).w
-		bne.s	loc_C352
+		bne.s	.act2					; branch if it's act 2
 		divu.w	#3,d0
-		subi.w	#$140,d0
+		subi.w	#$140,d0				; d0 = (v_camera_y_pos/3)-$140
 		move.w	d0,(v_bg1_y_pos).w
 		move.w	d0,(v_bg1_y_pos_p2).w
 		rts
 ; ===========================================================================
 
-loc_C352:
+	.act2:
 		divu.w	#6,d0
-		subi.w	#$10,d0
+		subi.w	#$10,d0					; d0 = (v_camera_y_pos/6)-$10
 		move.w	d0,(v_bg1_y_pos).w
 		move.w	d0,(v_bg1_y_pos_p2).w
 		rts
 ; ===========================================================================
 
-loc_C364:
-		clr.l	(v_bg1_x_pos).w
+LPL_InitBG_CNZ:
+		clr.l	(v_bg1_x_pos).w				; clear bg 1 x and y pos
 		clr.l	(v_bg1_y_pos).w
-		clr.l	(v_bg1_y_pos_p2).w
+		clr.l	(v_bg1_y_pos_p2).w			; clear player 2's bg 1 y pos
 		rts
 ; ===========================================================================
 
-loc_C372:
-		lsr.w	#2,d0
+LPL_InitBG_CPZ:
+		lsr.w	#2,d0					; d0 = v_camera_y_pos/4
 		move.w	d0,(v_bg1_y_pos).w
 		move.w	d0,(v_bg1_y_pos_p2).w
-		lsr.w	#1,d1
+		lsr.w	#1,d1					; d1 = v_camera_x_pos/2
 		move.w	d1,(v_bg2_x_pos).w
-		lsr.w	#2,d1
+		lsr.w	#2,d1					; d1 = v_camera_x_pos/8
 		move.w	d1,(v_bg1_x_pos).w
 		rts
 ; ===========================================================================
 
-locret_C38A:
+LPL_InitBG_Null3:
 		rts
 ; ===========================================================================
 
-loc_C38C:
+LPL_InitBG_ARZ:
 		tst.b	(v_act).w
-		beq.s	loc_C39E
+		beq.s	.act1					; branch if it's act 1
 		subi.w	#$E0,d0
-		lsr.w	#1,d0
+		lsr.w	#1,d0					; d0 = (v_camera_y_pos-$E0)/2
 		move.w	d0,(v_bg1_y_pos).w
-		bra.s	loc_C3A6
+		bra.s	.set_x
 ; ===========================================================================
 
-loc_C39E:
-		subi.w	#$180,d0
+	.act1:
+		subi.w	#$180,d0				; d0 = v_camera_y_pos-$180
 		move.w	d0,(v_bg1_y_pos).w
 
-loc_C3A6:
+	.set_x:
 		muls.w	#$119,d1
-		asr.l	#8,d1
-		move.w	d1,(v_bg1_x_pos).w
+		asr.l	#8,d1					; d1 = (v_camera_x_pos*$119)/$100
+		move.w	d1,(v_bg1_x_pos).w			; clear background positions
 		move.w	d1,(v_camera_arz_bg_x_pos).w
-		clr.w	($FFFFEE0A).w
-		clr.w	($FFFFF674).w
+		clr.w	(v_bg1_x_pos+2).w
+		clr.w	(v_camera_arz_bg_x_pos+2).w
 		clr.l	(v_bg2_y_pos).w
 		clr.l	(v_bg3_y_pos).w
 		rts
 ; ===========================================================================
 
-loc_C3C6:
-		clr.l	(v_bg1_x_pos).w
+LPL_InitBG_SCZ:
+		clr.l	(v_bg1_x_pos).w				; clear background positions
 		clr.l	(v_bg1_y_pos).w
 		rts
-
 
 ; ---------------------------------------------------------------------------
 ; Background layer deformation and camera movement subroutines
@@ -14913,7 +14967,6 @@ Deform_EHZ_2P:
 		; Do 15 lines.
 		move.w	#11+4-1,d1
 
-
 .dobackground:
 		neg.w	d0
 		move.w	d0,d2
@@ -14927,7 +14980,7 @@ Deform_EHZ_2P:
 		move.w	d2,d0
 		asr.w	#6,d0
 
-; Do 29 lines.
+		; Do 29 lines.
 		move.w	#29-1,d1
 	.loop29:
 		move.l	d0,(a1)+
@@ -14939,7 +14992,7 @@ Deform_EHZ_2P:
 		lea_	Deform_Ripple_Data,a2
 		lea	(a2,d1.w),a2
 
-; Do 11 lines.
+		; Do 11 lines.
 		move.w	#11-1,d1
 	.loop11:
 		move.b	(a2)+,d0
@@ -14950,7 +15003,7 @@ Deform_EHZ_2P:
 
 		move.w	#0,d0
 
-; Do 5 lines.
+		; Do 5 lines.
 		move.w	#5-1,d1
 	.loop5:
 		move.l	d0,(a1)+
@@ -14959,7 +15012,7 @@ Deform_EHZ_2P:
 		move.w	d2,d0
 		asr.w	#4,d0
 
-; Do 8 lines.
+		; Do 8 lines.
 		move.w	#8-1,d1
 	.loop8_1:
 		move.l	d0,(a1)+
@@ -14971,7 +15024,7 @@ Deform_EHZ_2P:
 		asr.w	#1,d1
 		add.w	d1,d0
 
-; Do 8 lines.
+		; Do 8 lines.
 		move.w	#8-1,d1
 	.loop8_2:
 		move.l	d0,(a1)+
@@ -14991,7 +15044,7 @@ Deform_EHZ_2P:
 		move.w	d2,d3
 		asr.w	#3,d3
 
-; Do 40 lines.
+		; Do 40 lines.
 		move.w	#40-1,d1
 	.loop40:
 		move.w	d2,(a1)+
@@ -15002,15 +15055,15 @@ Deform_EHZ_2P:
 		dbf	d1,.loop40
 
 
-; 11+29+11+5+8+8+40=112.
-; No missing lines here.
+		; 11+29+11+5+8+8+40=112.
+		; No missing lines here.
 		rts
 
 ; ===========================================================================
 
 Deform_Lev2:
 	if Revision<2
-	; Just a duplicate of 'SwScrl_Minimal'.
+		; Just a duplicate of 'SwScrl_Minimal'.
 		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
 		asl.l	#5,d4
@@ -15055,34 +15108,40 @@ loc_C822:
 		move.l	d0,(a1)+
 		dbf	d1,loc_C822
 		rts
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Wing Fortress Zone background layer scrolling/deformation routine
+; ---------------------------------------------------------------------------
 
 Deform_WFZ:
-		move.w	(v_bg_x_pos_diff).w,d4
+		move.w	(v_bg_x_pos_diff).w,d4			; get BG x pos change since last frame
 		ext.l	d4
-		asl.l	#8,d4
+		asl.l	#8,d4					; multiply by 256
 		moveq	#2,d6
-		bsr.w	UpdateBG_Y2
-		move.w	(v_bg_y_pos_diff).w,d5
+		bsr.w	UpdateBG_X2				; update bg x pos and set redraw flags
+		move.w	(v_bg_y_pos_diff).w,d5			; get BG y pos change since last frame
 		ext.l	d5
-		lsl.l	#8,d5
+		lsl.l	#8,d5					; multiply by 256
 		moveq	#6,d6
-		bsr.w	UpdateBG_Y_Absolute
-		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
+		bsr.w	UpdateBG_Y_Absolute			; update bg y pos and set redraw flags
+		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w	; update VSRAM buffer
 		move.l	(v_bg1_x_pos).w,d0
 		move.l	d0,d1
-		lea	(v_bgscroll_buffer).w,a2
-		move.l	d0,(a2)+
-		move.l	d1,(a2)+
-		addi.l	#$8000,(a2)+
-		addi.l	#$4000,(a2)+
-		addi.l	#$2000,(a2)+
-		lea	(Deform_WFZ_Transition_Array).l,a3
-		cmpi.w	#$2700,(v_camera_x_pos).w
-		bcc.s	loc_C880
-		lea	(Deform_WFZ_Normal_Array).l,a3
 
-loc_C880:
+		; Set up scroll value buffer
+		lea	(v_bgscroll_buffer).w,a2
+		move.l	d0,(a2)+				; static sections of background (empty sky with no clouds)
+		move.l	d1,(a2)+				; Eggman's getaway ship
+		addi.l	#$8000,(a2)+				; large clouds
+		addi.l	#$4000,(a2)+				; medium clouds
+		addi.l	#$2000,(a2)+				; small clouds
+
+		lea	(Deform_WFZ_Transition_Array).l,a3	; array for end-of-level cutscene
+		cmpi.w	#$2700,(v_camera_x_pos).w
+		bcc.s	.got_array				; branch if camera is right of $2700
+		lea	(Deform_WFZ_Normal_Array).l,a3		; use array for main level
+
+.got_array:
 		lea	(v_bgscroll_buffer).w,a2
 		lea	(v_hscroll_buffer).w,a1
 		move.w	(v_bg1_y_pos).w,d1
@@ -15090,33 +15149,56 @@ loc_C880:
 		moveq	#0,d0
 		moveq	#0,d3
 
-loc_C894:
-		move.b	(a3)+,d0
-		addq.w	#1,a3
-		sub.w	d0,d1
-		bcc.s	loc_C894
-		neg.w	d1
-		move.w	#$DF,d2
+	.seg_loop:
+		move.b	(a3)+,d0				; get number of lines in this segment
+		addq.w	#1,a3					; skip over index value
+		sub.w	d0,d1					; does this segment have any visible lines?
+		bcc.s	.seg_loop				; branch if not
+
+		neg.w	d1					; number of lines to draw in this segment
+		move.w	#screen_height-1,d2			; (could be moveq)
 		move.w	(v_camera_x_pos).w,d0
 		neg.w	d0
-		swap	d0
-		move.b	-1(a3),d3
-		move.w	(a2,d3.w),d0
-		neg.w	d0
+		swap	d0					; d0 = fg scroll value in high word
+		move.b	-1(a3),d3				; d3 = index into v_bgscroll_buffer
+		move.w	(a2,d3.w),d0				; d0 = bg scroll value for this segment
 
-loc_C8B4:
-		move.l	d0,(a1)+
-		subq.w	#1,d1
-		bne.s	loc_C8C4
-		move.b	(a3)+,d1
-		move.b	(a3)+,d3
-		move.w	(a2,d3.w),d0
-		neg.w	d0
+	if FixBugs
+		; The clouds scroll incorrectly when the camera is moving, slowing down when
+		; moving left and speeding up when moving right. This is because the scroll
+		; values don't take into account the movement of the background. To fix this,
+		; we just need to add the background x pos to the scroll value.
+		cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
+		bcs.s	.notclouds				; branch if this row isn't clouds
+		add.w	(v_bg1_x_pos).w,d0			; add bg x pos so
 
-loc_C8C4:
-		dbf	d2,loc_C8B4
+	.notclouds:
+	endc
+		neg.w	d0					; negate to make bg scroll value
+
+	.row_loop:
+		move.l	d0,(a1)+				; write value to hscroll buffer
+		subq.w	#1,d1					; has current segment finished?
+		bne.s	.next_row				; branch if not
+		move.b	(a3)+,d1				; get number of lines in next segment
+		move.b	(a3)+,d3				; get next index
+		move.w	(a2,d3.w),d0				; d0 = bg scroll value for this segment
+
+	if FixBugs
+		; See the fix above.
+		cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
+		bcs.s	.notclouds2				; branch if this row isn't clouds
+		add.w	(v_bg1_x_pos).w,d0			; add bg x pos so clouds scroll correctly
+
+	.notclouds2:
+	endc
+		neg.w	d0					; negate to make bg scroll value
+
+	.next_row:
+		dbf	d2,.row_loop
 		rts
 ; ===========================================================================
+
 Deform_WFZ_Transition_Array:
 		dc.b $C0,  0
 		dc.b $C0,  0
@@ -15362,7 +15444,7 @@ HTZ_Screen_Shake:
 		ext.l	d4
 		lsl.l	#8,d4
 		moveq	#2,d6
-		bsr.w	UpdateBG_Y2
+		bsr.w	UpdateBG_X2
 		move.w	(v_bg_y_pos_diff).w,d5
 		ext.l	d5
 		lsl.l	#8,d5
@@ -15456,7 +15538,7 @@ Deform_HPZ:
 		ext.l	d4
 		asl.l	#6,d4
 		moveq	#2,d6
-		bsr.w	UpdateBG_Y2
+		bsr.w	UpdateBG_X2
 		move.w	(v_camera_y_diff).w,d5
 		ext.l	d5
 		asl.l	#7,d5
@@ -16960,7 +17042,6 @@ UCX_SetScreen:
 
 ; ===========================================================================
 
-
 UpdateCamera_Y:
 		moveq	#0,d1
 		move.w	ost_y_pos(a0),d0
@@ -16968,7 +17049,17 @@ UpdateCamera_Y:
 		cmpi.w	#-$100,(v_boundary_top).w		; does the level wrap vertically?
 		bne.s	.nowrap					; branch if not
 		andi.w	#$7FF,d0
-
+	if FixBugs
+		; The above andi strips the sign from the y_pos. This results in a situation where
+		; if the player ducks, allows the camera to scroll down, then exits the duck
+		; and immediately jumps, they will be incorrectly treated them as having gone to the
+		; bottom boundary of the level on y-wrapped levels, causing the camera to scroll
+		; downward all the way around until it reaches them again. The following three
+		; instructions effectively restore the sign, eliminating this bug.
+		move.w  #$FC00,d1
+    	add.w   d1,d0
+   		eor.w   d1,d0
+	endc
 	.nowrap:
 		btst	#status_jump_bit,ost_primary_status(a0)	; is player jumping/rolling?
 		beq.s	.not_rolling
@@ -17189,7 +17280,7 @@ UpdateBG_Y:
 ; ===========================================================================
 
 ; SetHorizScrollFlagsBG:
-UpdateBG_Y2:
+UpdateBG_X2:
 		move.l	(v_bg1_x_pos).w,d2
 		move.l	d2,d0
 		add.l	d4,d0
