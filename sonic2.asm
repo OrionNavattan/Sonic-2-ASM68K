@@ -15161,7 +15161,7 @@ Deform_WFZ:
 		neg.w	d0
 		swap	d0					; d0 = fg scroll value in high word
 		move.b	-1(a3),d3				; d3 = index into v_bgscroll_buffer
-		move.w	(a2,d3.w),d0				; d0 = bg scroll value for this segment
+		move.w	(a2,d3.w),d0				; d0 = base scroll value for this segment
 
 	if FixBugs
 		; The clouds scroll incorrectly when the camera is moving, slowing down when
@@ -15170,7 +15170,7 @@ Deform_WFZ:
 		; we just need to add the background x pos to the scroll value.
 		cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
 		bcs.s	.notclouds				; branch if this row isn't clouds
-		add.w	(v_bg1_x_pos).w,d0			; add bg x pos so
+		add.w	(v_bg1_x_pos).w,d0			; add bg x pos so clouds scroll correctly
 
 	.notclouds:
 	endc
@@ -15182,7 +15182,7 @@ Deform_WFZ:
 		bne.s	.next_row				; branch if not
 		move.b	(a3)+,d1				; get number of lines in next segment
 		move.b	(a3)+,d3				; get next index
-		move.w	(a2,d3.w),d0				; d0 = bg scroll value for this segment
+		move.w	(a2,d3.w),d0				; d0 = base scroll value for this segment
 
 	if FixBugs
 		; See the fix above.
