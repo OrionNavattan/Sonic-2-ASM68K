@@ -15169,7 +15169,7 @@ Deform_WFZ:
 		; values don't take into account the movement of the background. To fix this,
 		; we just need to add the background x pos to the scroll value.
 		cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
-		bcs.s	.notclouds				; branch if this row isn't clouds
+		bcs.s	.notclouds				; branch if this segment isn't clouds
 		add.w	(v_bg1_x_pos).w,d0			; add bg x pos so clouds scroll correctly
 
 	.notclouds:
@@ -15187,7 +15187,7 @@ Deform_WFZ:
 	if FixBugs
 		; See the fix above.
 		cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
-		bcs.s	.notclouds2				; branch if this row isn't clouds
+		bcs.s	.notclouds2				; branch if this segment isn't clouds
 		add.w	(v_bg1_x_pos).w,d0			; add bg x pos so clouds scroll correctly
 
 	.notclouds2:
@@ -33689,7 +33689,7 @@ MoveOnSlope:
 		not.w	d0
 		add.w	d1,d0					; d5 = x pos of player on object, divided by 2 and xflipped if needed
 
-MoveONSlope_Do:
+MoveOnSlope_Do:
 		move.b	(a2,d0.w),d1				; get heightmap value based on player's position on object
 		ext.w	d1
 		move.w	ost_y_pos(a0),d0
@@ -88500,7 +88500,7 @@ PLC_OOZAnimals:		plcheader
 		arraysize PLC_OOZAnimals
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues - SCZ Animals
+; Pattern load cues - SCZ Animals
 ;---------------------------------------------------------------------------------------
 
 PLC_SCZAnimals:		plcheader
@@ -88509,7 +88509,7 @@ PLC_SCZAnimals:		plcheader
 		arraysize PLC_SCZAnimals
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues - CNZ Animals
+; Pattern load cues - CNZ Animals
 ;---------------------------------------------------------------------------------------
 
 PLC_CNZAnimals:		plcheader
@@ -88518,7 +88518,7 @@ PLC_CNZAnimals:		plcheader
 		arraysize PLC_CNZAnimals
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues - CPZ Animals
+; Pattern load cues - CPZ Animals
 ;---------------------------------------------------------------------------------------
 
 PLC_CPZAnimals:		plcheader
@@ -88527,7 +88527,7 @@ PLC_CPZAnimals:		plcheader
 		arraysize PLC_CPZAnimals
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues - ARZ Animals
+; Pattern load cues - ARZ Animals
 ;---------------------------------------------------------------------------------------
 
 PLC_ARZAnimals:		plcheader
@@ -88536,7 +88536,7 @@ PLC_ARZAnimals:		plcheader
 		arraysize PLC_ARZAnimals
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues - Special Stage
+; Pattern load cues - Special Stage
 ;---------------------------------------------------------------------------------------
 
 PLC_SpecialStage:	plcheader
@@ -88556,7 +88556,7 @@ PLC_SpecialStage:	plcheader
 		arraysize PLC_SpecialStage
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cue - Special Stage Bombs
+; Pattern load cue - Special Stage Bombs
 ;---------------------------------------------------------------------------------------
 
 PLC_SpecialStageBombs:	plcheader
@@ -88564,7 +88564,7 @@ PLC_SpecialStageBombs:	plcheader
 		arraysize PLC_SpecialStageBombs
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues - WFZ Boss
+; Pattern load cues - WFZ Boss
 ;---------------------------------------------------------------------------------------
 
 PLC_WFZBoss:	plcheader
@@ -88576,7 +88576,7 @@ PLC_WFZBoss:	plcheader
 		arraysize PLC_WFZBoss
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues - Tornado
+; Pattern load cues - Tornado
 ;---------------------------------------------------------------------------------------
 
 PLC_Tornado:	plcheader
@@ -88586,7 +88586,7 @@ PLC_Tornado:	plcheader
 		arraysize PLC_Tornado
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cue - Egg Prison
+; Pattern load cue - Egg Prison
 ;---------------------------------------------------------------------------------------
 
 PLC_Capsule:	plcheader
@@ -88594,7 +88594,7 @@ PLC_Capsule:	plcheader
 		arraysize PLC_Capsule
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cue - Explosion
+; Pattern load cue - Explosion
 ;---------------------------------------------------------------------------------------
 
 PLC_Explosion:	plcheader
@@ -88602,7 +88602,7 @@ PLC_Explosion:	plcheader
 		arraysize PLC_Explosion
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cue - Tails end of level results screen
+; Pattern load cue - Tails end of level results screen
 ;---------------------------------------------------------------------------------------
 
 PLC_ResultsTails:	plcheader
@@ -88801,7 +88801,7 @@ PLC_WFZAnimals_dup:		plcheader
 		arraysize PLC_WFZAnimals_dup
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues (duplicate) - DEZ Animals
+; Pattern load cues (duplicate) - DEZ Animals
 ;---------------------------------------------------------------------------------------
 
 PLC_DEZAnimals_dup:		plcheader
@@ -88810,7 +88810,7 @@ PLC_DEZAnimals_dup:		plcheader
 		arraysize PLC_DEZAnimals_dup
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues (duplicate) - HPZ animals
+; Pattern load cues (duplicate) - HPZ animals
 ;---------------------------------------------------------------------------------------
 
 PLC_HPZAnimals_dup:		plcheader
@@ -88819,7 +88819,7 @@ PLC_HPZAnimals_dup:		plcheader
 		arraysize PLC_HPZAnimals_dup
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues (duplicate) - OOZ Animals
+; Pattern load cues (duplicate) - OOZ Animals
 ;---------------------------------------------------------------------------------------
 
 PLC_OOZAnimals_dup:		plcheader
@@ -88828,7 +88828,7 @@ PLC_OOZAnimals_dup:		plcheader
 		arraysize PLC_OOZAnimals_dup
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues (duplicate) - SCZ Animals
+; Pattern load cues (duplicate) - SCZ Animals
 ;---------------------------------------------------------------------------------------
 
 PLC_SCZAnimals_dup:		plcheader
@@ -88837,7 +88837,7 @@ PLC_SCZAnimals_dup:		plcheader
 		arraysize PLC_SCZAnimals_dup
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues (duplicate) - CNZ Animals
+; Pattern load cues (duplicate) - CNZ Animals
 ;---------------------------------------------------------------------------------------
 
 PLC_CNZAnimals_dup:		plcheader
@@ -88846,7 +88846,7 @@ PLC_CNZAnimals_dup:		plcheader
 		arraysize PLC_CNZAnimals_dup
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues (duplicate) - CPZ Animals
+; Pattern load cues (duplicate) - CPZ Animals
 ;---------------------------------------------------------------------------------------
 
 PLC_CPZAnimals_dup:		plcheader
@@ -88855,7 +88855,7 @@ PLC_CPZAnimals_dup:		plcheader
 		arraysize PLC_CPZAnimals_dup
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues (duplicate) - ARZ Animals
+; Pattern load cues (duplicate) - ARZ Animals
 ;---------------------------------------------------------------------------------------
 
 PLC_ARZAnimals_dup:		plcheader
@@ -88903,7 +88903,7 @@ PLC_WFZBoss_dup:	plcheader
 		arraysize PLC_WFZBoss_dup
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cues (duplicate) - Tornado
+; Pattern load cues (duplicate) - Tornado
 ;---------------------------------------------------------------------------------------
 
 PLC_Tornado_dup:	plcheader
@@ -88913,7 +88913,7 @@ PLC_Tornado_dup:	plcheader
 		arraysize PLC_Tornado_dup
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cue (duplicate) - Egg Prison
+; Pattern load cue (duplicate) - Egg Prison
 ;---------------------------------------------------------------------------------------
 
 PLC_Capsule_dup:	plcheader
@@ -88921,7 +88921,7 @@ PLC_Capsule_dup:	plcheader
 		arraysize PLC_Capsule_dup
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cue (duplicate) - Explosion
+; Pattern load cue (duplicate) - Explosion
 ;---------------------------------------------------------------------------------------
 
 PLC_Explosion_dup:	plcheader
@@ -88929,7 +88929,7 @@ PLC_Explosion_dup:	plcheader
 		arraysize PLC_Explosion_dup
 
 ;---------------------------------------------------------------------------------------
-;Pattern load cue (duplicate) - Tails end of level results screen
+; Pattern load cue (duplicate) - Tails end of level results screen
 ;---------------------------------------------------------------------------------------
 
 PLC_ResultsTails_dup:	plcheader
