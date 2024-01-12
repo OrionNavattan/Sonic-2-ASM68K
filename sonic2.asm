@@ -22863,11 +22863,11 @@ ADoor_Index:	index offset(*),,2
 
 		rsobj	AutoDoor,$30
 ost_adoor_motion:		equ ost_secondary_routine	; $25; 0 if door is closed or closing, 2 if open or opening
-ost_adoor_y_delta:		rs.w 1 ; $30; distance in pixels that door has retracted
-ost_adoor_og_ypos:		rs.w 1 ; $32; initial y pos of door
+ost_adoor_y_delta:		rs.w 1				; $30; distance in pixels that door has retracted
+ost_adoor_og_ypos:		rs.w 1				; $32; initial y pos of door
 		rsset $38
-ost_adoor_rangeleft:	rs.w 1 ; $38; left limit of range within which door opens
-ost_adoor_rangeright:	rs.w 1 ; $3A; right limit of range within which door opens
+ost_adoor_rangeleft:	rs.w 1					; $38; left limit of range within which door opens
+ost_adoor_rangeright:	rs.w 1					; $3A; right limit of range within which door opens
 		rsobjend
 ; ===========================================================================
 
@@ -25772,7 +25772,7 @@ Card_Index:	index offset(*),,2
 		ptr Card_WaitAndGoAway				; $16
 
 
-		rsobj TitleCard,$30
+		rsobj	TitleCard,$30
 ost_card_x_stop:		rs.w 1				; $30 ; on screen x position
 ost_card_x_start:		rs.w 1				; $32 ; start & finish x position
 ost_card_location:		rs.w 1				; $34 ; point up to which titlecard is drawn
@@ -57237,7 +57237,7 @@ Cage_Index:	index offset(*),,2
 		ptr Cage_Main					; 0
 		ptr Cage_Action					; 2
 
-		rsobj Cage,$2A
+		rsobj	Cage,$2A
 ost_cage_bombcount:		rs.w 1				; $2A ; number of bombs left to spawn
 ost_cage_childcount:	rs.w 1					; $2C ; number of rings or bombs spawned; no more than 16 of each are allowed at any given time
 ost_cage_prize_angle:	rs.w 1					; $2E ; angle at which next ring or bomb is spawned
@@ -59943,7 +59943,7 @@ BCPZ_Index:	index offset(*),,2
 		ptr BCPZ_Flame					; $18
 		ptr BCPZ_Smoke					; $1A
 
-		rsobj BossChemicalPlant,$2A
+		rsobj	BossChemicalPlant,$2A
 	; Some of these are only used by certain subobjects of this object,
 	; hence the overlap.
 ost_bcpz_timer2:			rs.w 1			; $2A
@@ -68073,7 +68073,7 @@ loc_34084:
 
 ShadowSpecial:
 
-		rsobj ShadowSpecial,$38
+		rsobj	ShadowSpecial,$38
 ost_shadspec_parent:	rs.l 1					; $38; parent player of this shadow
 		rsobjend
 
@@ -68441,7 +68441,7 @@ loc_34A32:
 
 TailsTailsSpecial:
 
-		rsobj TailsTailsSpecial,$38
+		rsobj	TailsTailsSpecial,$38
 ost_ttspec_parent:	rs.l 1					; $38
 		rsobjend
 
@@ -71337,7 +71337,7 @@ GWall_Index:	index offset(*),,2
 		ptr GWall_Wait					; 2
 		ptr GWall_GRock_Fall				; 4
 
-		rsobj GrounderWall,$2C
+		rsobj	GrounderWall,$2C
 ost_gwall_parent: 		rs.w 1				; $2C ; parent grounder that spawned this object
 ost_gwall_vel_index:	rs.w 1					; $2E ; index into GRock_Vels
 		rsobjend
@@ -71390,7 +71390,7 @@ GRock_Index:	index offset(*),,2
 		ptr GRock_Init					; 0
 		ptr GWall_GRock_Fall				; 2
 
-		rsobj GrounderRocks,$2C
+		rsobj	GrounderRocks,$2C
 ost_grock_parent: 		rs.w 1				; $2C ; parent grounder that spawned this object
 ost_grock_vel_index:	rs.w 1					; $2E ; index into velocity and frame tables
 		rsobjend
@@ -72100,7 +72100,7 @@ Rex_Index:	index offset(*),,2
 		ptr Rex_Wait_Stationary				; 4 ; unused
 		ptr Rex_HeadSpawned				; 6
 
-		rsobj Rexon,$2A
+		rsobj	Rexon,$2A
 ost_rex_turntime:	rs.b 1					; $2A ; time until Rexon turns around
 					rs.b 1			; unused
 ost_rex_neck1:		rs.w 1					; $2C, pointer to bottommost next segment (does NOT oscillate)
@@ -72194,7 +72194,7 @@ RexHead_Index:	index offset(*),,2
 		ptr RexHead_Risen				; 6
 		ptr RexHead_Defeated				; 8
 
-		rsobj RexonHead,$2A
+		rsobj	RexonHead,$2A
 ost_rexhead_timer:		rs.b 1				; $2A ; multi-use delay timer
 ost_rexhead_osc_index:	rs.b 1					; $2B ; current index into oscillating data
 ost_rexhead_parent:		rs.w 1				; $2C ; pointer to parent Rexon
@@ -72573,7 +72573,7 @@ Proj_Index:	index offset(*),,2
 		ptr Proj_Init					; 0
 		ptr Proj_Run					; 2
 
-		rsobj Projectile,$2A
+		rsobj	Projectile,$2A
 ost_proj_codeptr: rs.l 1					; $2A ; address of code to run for the object
 		rsobjend
 ; ===========================================================================
@@ -74663,7 +74663,7 @@ Grab_Index:	index offset(*),,2
 		ptr Grab_Init					; 0
 		ptr Grab_Action					; 2
 
-		rsobj Grabber,$2A
+		rsobj	Grabber,$2A
 ost_grab_timer1: 		rs.w 1				; $2A ; time in frames until an idle grabber reverses their horizontal movement, and time until Grabber changes color while holding player
 ost_grab_colorchng_time:	equ __rs-1			; $2B ; value used to reset above timer, decrementing by 1 each time
 ost_grab_timer2:		rs.w 1				; $2C ; time in frames to wait until attack animation starts, and duration of attack movement
