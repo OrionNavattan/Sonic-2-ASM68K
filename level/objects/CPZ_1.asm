@@ -62,7 +62,7 @@ ObjPos_CPZ_1:
 		objpos $10A0,$0530,SpeedBooster,$00
 		objpos $10A8,$0188,PlaneSwitcher,$65
 		objpos $10B0,$05E8,Starpost,$01,rem
-		objpos $10C8,$0260,Barrier,$00,xflip
+		objpos $10C8,$0260,AutoDoor,$00,xflip
 		objpos $10D0,$0500,PlaneSwitcher,$29
 		objpos $10D2,$05F1,Monitor,$04,rem
 		objpos $1110,$0288,BlueBalls,$15
@@ -138,7 +138,7 @@ ObjPos_CPZ_1:
 		objpos $1FA0,$03D0,Platform2,$06
 		objpos $1FC0,$03FC,PlaneSwitcher,$15
 		objpos $1FE0,$0490,Platform2,$07
-		objpos $2008,$0460,Barrier,$00
+		objpos $2008,$0460,AutoDoor,$00
 		objpos $2088,$0440,PlaneSwitcher,$21
 		objpos $2090,$0350,StairBlocks,$00,xflip
 		objpos $20A0,$04F0,SpeedBooster,$00

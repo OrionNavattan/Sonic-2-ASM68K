@@ -62,7 +62,7 @@ ObjPos_MTZ_3:
 		objpos $0AF0,$0031,Monitor,$04,rem
 		objpos $0AF8,$06C0,LargeRotatingPlatform,$10
 		objpos $0B08,$07C0,SpringWall,$01,xflip
-		objpos $0B0C,$0520,Barrier,$01,xflip
+		objpos $0B0C,$0520,AutoDoor,$01,xflip
 		objpos $0B10,$0570,Asteron,$2E,rem
 		objpos $0B20,$076C,Platform5,$13,xflip
 		objpos $0B80,$06B4,LargeRotatingPlatform,$20
@@ -79,7 +79,7 @@ ObjPos_MTZ_3:
 		objpos $0C80,$0760,Asteron,$2E,rem
 		objpos $0CC0,$0190,Invisibarrier,$71
 		objpos $0CC0,$01AC,TwinStompers,$01
-		objpos $0CCC,$0720,Barrier,$01,xflip
+		objpos $0CCC,$0720,AutoDoor,$01,xflip
 		objpos $0CF0,$0760,Asteron,$2E,rem
 		objpos $0D68,$00F0,Asteron,$2E,rem
 		objpos $0D6C,$0050,Asteron,$2E,rem
@@ -93,7 +93,7 @@ ObjPos_MTZ_3:
 		objpos $0F60,$0424,Platform5,$13,xflip
 		objpos $0F60,$060C,Platform4,$07
 		objpos $0FD8,$03B0,Teleporter,$09
-		objpos $0FF4,$06C0,Barrier,$01
+		objpos $0FF4,$06C0,AutoDoor,$01
 		objpos $10A0,$0664,Asteron,$2E,rem
 		objpos $10E0,$0664,Asteron,$2E,rem
 		objpos $10F8,$0180,SpringWall,$11
@@ -102,7 +102,7 @@ ObjPos_MTZ_3:
 		objpos $1140,$02B0,SteamSpring,$01
 		objpos $1140,$036C,Invisibarrier,$71
 		objpos $1140,$04E4,Nut,$02
-		objpos $1174,$05E0,Barrier,$01
+		objpos $1174,$05E0,AutoDoor,$01
 		objpos $1180,$0180,SpringWall,$11,xflip
 		objpos $11B0,$03F0,FloorSpike,$00
 		objpos $11C0,$00B0,Spikes,$20,yflip

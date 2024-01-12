@@ -96,7 +96,7 @@ ObjPos_WFZ_1:
 		objpos $13D0,$0480,PalSwitcherWingFortress,$01,xflip
 		objpos $13E8,$059C,ConveyerPlatforms,$80
 		objpos $1464,$0657,GunPlatform,$00
-		objpos $14E0,$04A0,Barrier,$00,xflip
+		objpos $14E0,$04A0,AutoDoor,$00,xflip
 		objpos $14E3,$0627,GunPlatform,$30
 		objpos $1563,$0657,GunPlatform,$60
 		objpos $15E5,$0655,GunPlatform,$90

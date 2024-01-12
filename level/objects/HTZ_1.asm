@@ -112,12 +112,12 @@ ObjPos_HTZ_1:
 		objpos $17E0,$04C4,Monitor,$07,rem
 		objpos $17E8,$0160,Invisibarrier,$23,rem
 		objpos $1800,$0220,Invisibarrier,$E3,rem
-		objpos $1800,$05A0,Barrier,$00
+		objpos $1800,$05A0,AutoDoor,$00
 		objpos $1880,$0020,Invisibarrier,$E3,rem
 		objpos $1880,$0160,Invisibarrier,$E3,rem
-		objpos $1890,$05A0,Barrier,$00
+		objpos $1890,$05A0,AutoDoor,$00
 		objpos $1980,$01A0,Invisibarrier,$E3,rem
-		objpos $19F8,$05A0,Barrier,$00
+		objpos $19F8,$05A0,AutoDoor,$00
 		objpos $1A20,$0560,Invisibarrier,$31,rem
 		objpos $1A50,$0570,Spikes,$00,yflip
 		objpos $1A60,$0550,Invisibarrier,$31,rem
@@ -129,8 +129,8 @@ ObjPos_HTZ_1:
 		objpos $1CD0,$04C8,Spiker,$0A,yflip,rem
 		objpos $1D20,$0598,Platform1,$9A
 		objpos $1D40,$04F0,RisingLava,$04,rem
-		objpos $1E08,$0560,Barrier,$00
-		objpos $1EA0,$0560,Barrier,$00
+		objpos $1E08,$0560,AutoDoor,$00
+		objpos $1EA0,$0560,AutoDoor,$00
 		objpos $1F88,$0570,PinballMode,$00
 		objpos $2178,$0770,PinballMode,$00,xflip
 		objpos $21F8,$0768,PlaneSwitcher,$21

@@ -22846,158 +22846,176 @@ loc_1163C:
 
 		include "mappings/sprite/MCZ Stomper.asm"
 
-; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 2D - One way barrier from CPZ and DEZ
+; Object 2D - CPZ, HTZ, MTZ, WFZ, and DEZ one-way door
 ; (also supports ARZ, but never used)
 ; ----------------------------------------------------------------------------
 
-Barrier:
+AutoDoor:
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_116A8(pc,d0.w),d1
-		jmp	off_116A8(pc,d1.w)
+		move.w	ADoor_Index(pc,d0.w),d1
+		jmp	ADoor_Index(pc,d1.w)
 ; ===========================================================================
-off_116A8:	index offset(*),,2
-		ptr loc_116AC					; 0
-		ptr loc_1175E					; 2
+ADoor_Index:	index offset(*),,2
+		ptr ADoor_Init					; 0
+		ptr ADoor_OpenShut				; 2
+
+		rsobj	AutoDoor,$30
+ost_adoor_motion:		equ ost_secondary_routine	; $25; 0 if door is closed or closing, 2 if open or opening
+ost_adoor_y_delta:		rs.w 1 ; $30; distance in pixels that door has retracted
+ost_adoor_og_ypos:		rs.w 1 ; $32; initial y pos of door
+		rsset $38
+ost_adoor_rangeleft:	rs.w 1 ; $38; left limit of range within which door opens
+ost_adoor_rangeright:	rs.w 1 ; $3A; right limit of range within which door opens
+		rsobjend
 ; ===========================================================================
 
-loc_116AC:
-		addq.b	#2,ost_primary_routine(a0)
+ADoor_Init:							; Routine 0
+		addq.b	#2,ost_primary_routine(a0)		; go to ADoor_OpenShut next
 		move.l	#Map_Barrier,ost_mappings(a0)
 		move.w	#tile_Nem_HTZOneWayBarrier+tile_pal2,ost_tile(a0)
-		move.b	#8,ost_displaywidth(a0)
+		move.b	#16/2,ost_displaywidth(a0)
 		cmpi.b	#id_MTZ,(v_zone).w			; is it MTZ acts 1 or 2?
-		beq.s	loc_116D4				; if so, branch
+		beq.s	.is_mtz					; if so, branch
 		cmpi.b	#id_MTZ_2,(v_zone).w			; is it MTZ act 3?
-		bne.s	loc_116E0				; if not, branch
+		bne.s	.not_mtz				; if not, branch
 
-loc_116D4:
-		move.w	#0+tile_pal4,ost_tile(a0)
-		move.b	#$C,ost_displaywidth(a0)
+	.is_mtz:
+		move.w	#tile_LevelArt+tile_pal4,ost_tile(a0)
+		move.b	#24/2,ost_displaywidth(a0)
 
-loc_116E0:
-		cmpi.b	#id_CPZ,(v_zone).w
-		bne.s	loc_116F4
+	.not_mtz:
+		cmpi.b	#id_CPZ,(v_zone).w			; is it CPZ?
+		bne.s	.not_cpz				; branch if not
 		move.w	#tile_Nem_ConstructionStripes_CPZ+tile_pal2,ost_tile(a0)
-		move.b	#8,ost_displaywidth(a0)
+		move.b	#16/2,ost_displaywidth(a0)		; (redundant)
 
-loc_116F4:
-		cmpi.b	#id_DEZ,(v_zone).w
-		bne.s	loc_11708
+	.not_cpz:
+		cmpi.b	#id_DEZ,(v_zone).w			; is it DEZ?
+		bne.s	.not_dez				; branch if not
 		move.w	#tile_Nem_ConstructionStripes_DEZ+tile_pal2,ost_tile(a0)
-		move.b	#8,ost_displaywidth(a0)
+		move.b	#16/2,ost_displaywidth(a0)		; (redundant)
 
-loc_11708:
+	.not_dez:
 		cmpi.b	#id_ARZ,(v_zone).w
-		bne.s	loc_1171C
+		bne.s	.not_arz
 		move.w	#tile_Nem_ARZBarrier+tile_pal2,ost_tile(a0)
-		move.b	#8,ost_displaywidth(a0)
+		move.b	#16/2,ost_displaywidth(a0)		; (redundant)
 
-loc_1171C:
+	.not_arz:
 		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_priority(a0)
-		move.w	ost_y_pos(a0),$32(a0)
-		move.b	ost_subtype(a0),ost_frame(a0)		; subtype determines mappings, though a bug means only HTZ's are used
+		move.w	ost_y_pos(a0),ost_adoor_og_ypos(a0)
+		move.b	ost_subtype(a0),ost_frame(a0)		; subtype is frame ID (though a bug means only HTZ and MTZ's are used
 		move.w	ost_x_pos(a0),d2
 		move.w	d2,d3
-		subi.w	#$200,d2
-		addi.w	#$18,d3
+		subi.w	#512,d2					; door opens when player is within 512px of front
+		addi.w	#24,d3					; door remains open until player is 24px beyond door
 		btst	#status_xflip_bit,ost_primary_status(a0)
-		beq.s	loc_11756
-		subi.w	#-$1E8,d2
-		addi.w	#$1E8,d3
+		beq.s	.no_xflip				; branch if door isn't x-flipped
+		subi.w	#-($200-$18),d2				; invert detection ranges
+		addi.w	#($200-$18),d3
 
-loc_11756:
-		move.w	d2,$38(a0)
-		move.w	d3,$3A(a0)
+	.no_xflip:
+		move.w	d2,ost_adoor_rangeleft(a0)
+		move.w	d3,ost_adoor_rangeright(a0)
 
-loc_1175E:
+ADoor_OpenShut:	; Routine 2
 		btst	#status_xflip_bit,ost_primary_status(a0)
-		bne.s	loc_1177A
-		move.w	$38(a0),d2
-		move.w	ost_x_pos(a0),d3
-		tst.b	ost_secondary_routine(a0)
-		beq.s	loc_1178C
-		move.w	$3A(a0),d3
-		bra.s	loc_1178C
+		bne.s	.x_flip					; branch if door is x-flipped
+
+		move.w	ost_adoor_rangeleft(a0),d2		; d2 = front range limit
+		move.w	ost_x_pos(a0),d3			; d3 = door x pos
+		tst.b	ost_adoor_motion(a0)			; is door closed?
+		beq.s	ADoor_ChkPlayers			; branch if so (check if player is within range to open door)
+		move.w	ost_adoor_rangeright(a0),d3		; d3 = rear range limit
+		bra.s	ADoor_ChkPlayers			; check if player is within range to keep door open
 ; ===========================================================================
 
-loc_1177A:
-		move.w	ost_x_pos(a0),d2
-		move.w	$3A(a0),d3
-		tst.b	ost_secondary_routine(a0)
-		beq.s	loc_1178C
-		move.w	$38(a0),d2
+	.x_flip:
+		move.w	ost_x_pos(a0),d2			; d2 = door x pos
+		move.w	ost_adoor_rangeright(a0),d3		; d3 = front range limit
+		tst.b	ost_adoor_motion(a0)			; is door closed?
+		beq.s	ADoor_ChkPlayers			; branch if so (check if player is within range to open door)
+		move.w	ost_adoor_rangeleft(a0),d2		; d2 = rear range limit
+		; fall through (check if player is within range to keep door open)
 
-loc_1178C:
-		move.w	$32(a0),d4
+ADoor_ChkPlayers:
+		move.w	ost_adoor_og_ypos(a0),d4		; get initial y pos
 		move.w	d4,d5
-		subi.w	#$20,d4
-		addi.w	#$20,d5
-		move.b	#0,ost_secondary_routine(a0)
-		lea	($FFFFB000).w,a1
-		bsr.s	sub_117F4
-		lea	($FFFFB040).w,a1
-		bsr.s	sub_117F4
-		tst.b	ost_secondary_routine(a0)
-		beq.s	loc_117C0
-		cmpi.w	#$40,$30(a0)
-		beq.s	loc_117D6
-		addq.w	#8,$30(a0)
-		bra.s	loc_117CA
+		subi.w	#32,d4					; set y range for detection
+		addi.w	#32,d5					; (32px above and below initial y pos)
+		move.b	#0,ost_adoor_motion(a0)			; door is closed by default
+		lea	(v_ost_player1).w,a1
+		bsr.s	ADoor_CheckPlayer			; check player 1
+		lea	(v_ost_player2).w,a1
+		bsr.s	ADoor_CheckPlayer			; check player 2
+
+		tst.b	ost_adoor_motion(a0)
+		beq.s	.door_closing				; branch if door is closing
+		cmpi.w	#64,ost_adoor_y_delta(a0)
+		beq.s	ADoor_ChkSolid				; branch if door is fully open
+		addq.w	#8,ost_adoor_y_delta(a0)		; move door up 8px
+		bra.s	.set_y
 ; ===========================================================================
 
-loc_117C0:
-		tst.w	$30(a0)
-		beq.s	loc_117D6
-		subq.w	#8,$30(a0)
+	.door_closing:
+		tst.w	ost_adoor_y_delta(a0)
+		beq.s	ADoor_ChkSolid				; branch if door is fully closed
+		subq.w	#8,ost_adoor_y_delta(a0)		; move door down 8px
 
-loc_117CA:
-		move.w	$32(a0),d0
-		sub.w	$30(a0),d0
+	.set_y:
+		move.w	ost_adoor_og_ypos(a0),d0
+		sub.w	ost_adoor_y_delta(a0),d0		; d0 = new y pos of door
 		move.w	d0,ost_y_pos(a0)
 
-loc_117D6:
+ADoor_ChkSolid:
 		moveq	#0,d1
 		move.b	ost_displaywidth(a0),d1
-		addi.w	#$B,d1
-		move.w	#$20,d2
+		addi.w	#11,d1
+		move.w	#64/2,d2
 		move.w	d2,d3
 		addq.w	#1,d3
 		move.w	ost_x_pos(a0),d4
 		jsrto	SolidObject,JmpTo2_SolidObject
 		bra.w	DespawnObject
 
-; ===========================================================================
+; ----------------------------------------------------------------------------
+; Subroutine to check if player is within door's range
 
+; input:
+;	d2 = left range limit
+;	d3 = right range limit
+;	d4 = top range limit
+; 	d5 = bottom range limit
+; ----------------------------------------------------------------------------
 
-sub_117F4:
-		move.w	ost_x_pos(a1),d0
+ADoor_CheckPlayer:
+		move.w	ost_x_pos(a1),d0			; d0 = player x pos
 		cmp.w	d2,d0
-		blt.w	locret_11820
+		blt.w	.done					; branch if player is left of door's range
 		cmp.w	d3,d0
-		bcc.w	locret_11820
+		bcc.w	.done					; branch if player is right of door's range
 
-loc_11804:
-		move.w	ost_y_pos(a1),d0
+		move.w	ost_y_pos(a1),d0			; d0 = player y pos
 		cmp.w	d4,d0
-		bcs.w	locret_11820
+		bcs.w	.done					; branch if player is above door's range
 		cmp.w	d5,d0
-		bcc.w	locret_11820
-		tst.b	$2A(a1)
-		bmi.s	locret_11820
-		move.b	#2,ost_secondary_routine(a0)
+		bcc.w	.done					; branch if player is below door's range
 
-locret_11820:
+		tst.b	ost_obj_control(a1)
+		bmi.s	.done					; branch if object collision is disabled
+
+		move.b	#2,ost_adoor_motion(a0)			; set door to open
+
+	.done:
 		rts
 
-
 ; ===========================================================================
 
-		include	"mappings/sprite/CPZ, ARZ, HTZ, & DEZ One-Way Barrier.asm"
+		include	"mappings/sprite/CPZ, ARZ, HTZ, MTZ, WFZ, & DEZ One-Way Door.asm"
 
 ; ===========================================================================
 
@@ -28006,7 +28024,7 @@ Obj_Index:	index.l 0,1					; longword, absolute (relative to 0), start ids at 1
 		ptr Stomper
 		ptr RisingPillar
 		ptr LeafGenerator				; $2C
-		ptr Barrier
+		ptr AutoDoor
 		ptr PowerUp
 		ptr SmashGround
 		ptr RisingLava					; $30
@@ -80429,7 +80447,7 @@ byte_3D0E8:
 ; ===========================================================================
 
 		include "mappings/sprite/DEZ Eggman.asm"
-		include "mappings/sprite/DEZ One-Way Barrier.asm"
+		include "mappings/sprite/DEZ One-Way Door.asm"
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------

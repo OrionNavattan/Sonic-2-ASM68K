@@ -117,13 +117,13 @@ ObjPos_HTZ_2:
 		objpos $1408,$0510,PlaneSwitcher,$39
 		objpos $1408,$0650,PlaneSwitcher,$39
 		objpos $1448,$0218,Spiker,$0A,yflip,rem
-		objpos $14D8,$06A0,Barrier,$00
-		objpos $1508,$0560,Barrier,$00
+		objpos $14D8,$06A0,AutoDoor,$00
+		objpos $1508,$0560,AutoDoor,$00
 		objpos $1548,$0258,Spiker,$0A,yflip,rem
-		objpos $1588,$02A0,Barrier,$00
-		objpos $1678,$0561,Barrier,$00
-		objpos $1678,$06E0,Barrier,$00
-		objpos $16F8,$02A0,Barrier,$00
+		objpos $1588,$02A0,AutoDoor,$00
+		objpos $1678,$0561,AutoDoor,$00
+		objpos $1678,$06E0,AutoDoor,$00
+		objpos $16F8,$02A0,AutoDoor,$00
 		objpos $16F8,$0560,PlaneSwitcher,$19,xflip
 		objpos $16F8,$06E0,PlaneSwitcher,$19,xflip
 		objpos $1740,$0270,Invisibarrier,$71,rem
@@ -161,12 +161,12 @@ ObjPos_HTZ_2:
 		objpos $19E0,$04E8,Platform1,$03
 		objpos $19E0,$0590,PlaneSwitcher,$14
 		objpos $19EC,$06B2,Monitor,$06
-		objpos $1A08,$04A0,Barrier,$00
+		objpos $1A08,$04A0,AutoDoor,$00
 		objpos $1A08,$0558,Invisibarrier,$07
-		objpos $1A88,$0120,Barrier,$00
+		objpos $1A88,$0120,AutoDoor,$00
 		objpos $1AD8,$05C4,Monitor,$07,rem
-		objpos $1B50,$0460,Barrier,$00
-		objpos $1C18,$0120,Barrier,$00
+		objpos $1B50,$0460,AutoDoor,$00
+		objpos $1C18,$0120,AutoDoor,$00
 		objpos $1C88,$0108,PlaneSwitcher,$21
 		objpos $1D30,$0164,SmashGround,$00,rem
 		objpos $1D30,$016C,SmashGround,$02,rem

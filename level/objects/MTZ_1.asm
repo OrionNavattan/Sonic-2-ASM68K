@@ -44,7 +44,7 @@ ObjPos_MTZ_1:
 		objpos $0AF0,$0231,Monitor,$06,rem
 		objpos $0B30,$05F0,SteamSpring,$01
 		objpos $0B68,$00D0,Slicer,$28,rem
-		objpos $0B8C,$0360,Barrier,$01
+		objpos $0B8C,$0360,AutoDoor,$01
 		objpos $0BC8,$0380,Button,$03
 		objpos $0C58,$05F0,Teleporter,$01
 		objpos $0CC0,$038D,Platform5,$83,xflip
@@ -73,7 +73,7 @@ ObjPos_MTZ_1:
 		objpos $0EE0,$008C,Platform4,$07
 		objpos $0F40,$0074,Shellcracker,$24,xflip,rem
 		objpos $0F60,$028C,Platform4,$07
-		objpos $0F74,$0440,Barrier,$01
+		objpos $0F74,$0440,AutoDoor,$01
 		objpos $0F90,$0424,Springs,$20
 		objpos $0FC0,$05C0,Spiral,$80
 		objpos $0FEC,$0730,Slicer,$28,rem
@@ -88,7 +88,7 @@ ObjPos_MTZ_1:
 		objpos $10C0,$06EC,Invisibarrier,$71
 		objpos $10C0,$074C,Nut,$15
 		objpos $10F0,$0060,Asteron,$2E,rem
-		objpos $10F0,$0460,Barrier,$01,xflip
+		objpos $10F0,$0460,AutoDoor,$01,xflip
 		objpos $1110,$00F0,Spikes,$00
 		objpos $1120,$0710,Asteron,$2E,rem
 		objpos $1140,$05C0,Spiral,$80

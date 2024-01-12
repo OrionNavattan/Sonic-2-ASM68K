@@ -44,7 +44,7 @@ ObjPos_CPZ_2:
 		objpos $0C00,$0440,PlaneSwitcher,$A8
 		objpos $0C08,$0600,PlaneSwitcher,$21
 		objpos $0C10,$03F0,Monitor,$01,rem
-		objpos $0C38,$05E0,Barrier,$00
+		objpos $0C38,$05E0,AutoDoor,$00
 		objpos $0C38,$0690,PlaneSwitcher,$6A
 		objpos $0C40,$0268,Starpost,$01,rem
 		objpos $0CC0,$057A,PlaneSwitcher,$1D
@@ -106,7 +106,7 @@ ObjPos_CPZ_2:
 		objpos $12A0,$02F0,SpeedBooster,$00
 		objpos $12AF,$058E,Grabber,$36,rem
 		objpos $12F0,$0280,PlaneSwitcher,$3A
-		objpos $12F8,$05A0,Barrier,$00
+		objpos $12F8,$05A0,AutoDoor,$00
 		objpos $1380,$0240,PlaneSwitcher,$28
 		objpos $1388,$0670,Springs,$12
 		objpos $13A0,$0470,SpeedBooster,$00
@@ -156,8 +156,8 @@ ObjPos_CPZ_2:
 		objpos $1E70,$0600,Invisibarrier,$17
 		objpos $1E70,$06A0,Invisibarrier,$13
 		objpos $1E70,$0740,Invisibarrier,$17
-		objpos $1E78,$0660,Barrier,$00
-		objpos $1E78,$06E0,Barrier,$00
+		objpos $1E78,$0660,AutoDoor,$00
+		objpos $1E78,$06E0,AutoDoor,$00
 		objpos $1E78,$06E0,PlaneSwitcher,$31
 		objpos $1EC0,$0520,Platform4,$19,xflip
 		objpos $1EC0,$0520,Platform4,$19,xflip,yflip
