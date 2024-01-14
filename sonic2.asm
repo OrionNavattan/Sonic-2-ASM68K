@@ -4713,8 +4713,8 @@ Level_TtlCardLoop:
 		move.w	(v_ost_titlecard_zonename+ost_x_pos).w,d0
 		cmp.w	(v_ost_titlecard_zonename+ost_card_x_stop).w,d0 ; has title card sequence finished?
 		bne.s	Level_TtlCardLoop			; if not, branch
-		tst.l	(v_plc_buffer).w			; are there any items in the pattern load cue?
-		bne.s	Level_TtlCardLoop			; if yes, branch
+		tst.l	(v_plc_buffer).w			; have primary level PLCs finished processing?
+		bne.s	Level_TtlCardLoop			; if not, branch
 		move.b	#id_VBlank_TitleCard,(v_vblank_routine).w
 		bsr.w	WaitForVBlank
 		jsr	(HUD_Base).l				; load HUD 'E', 0, and colon graphics
@@ -4730,8 +4730,8 @@ Level_TtlCardLoop:
 		clear_ram	hscroll,hscroll_end		; clear the h-scroll buffer
 
 		bsr.w	LevelArtLoad				; load level art
-		jsrto	LevelBlockMapsLoad,JmpTo_LevelBlockMapsLoad ; load 16x16 block and 128x128 chunk mappings and secondary level PLC
-		jsr	(AnimatedBlocksLoad).l			; load animated 16x16 blocks and HTZ's distant background cliffs if applicable
+		jsrto	LevelBlockMapsLoad,JmpTo_LevelBlockMapsLoad ; load 16x16 block maps, 128x128 chunk maps, and secondary level PLC
+		jsr	(AnimatedBlocksLoad).l			; load animated 16x16 blocks and HTZ's distant background cliff art if applicable
 		jsrto DrawTilesAtStart,JmpTo_DrawTilesAtStart	; draw the initial background state
 		jsr	(ConvertCollisionArray).l		; unused development leftover
 		bsr.w	SetColIndexPtr				; load collision data
@@ -22621,7 +22621,8 @@ JmpTo2_DetectPlatform:
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 1C - EHZ bridge stakes, HTZ tram posts, and OOZ falling oil
+; Object 1C - EHZ bridge stakes, HTZ tram posts, OOZ falling oil, MTZ giant
+; bolt ends, and MTZ looped rope ends
 ; ----------------------------------------------------------------------------
 
 Scenery1:
@@ -22717,7 +22718,7 @@ loc_112EC:
 		bra.w	DespawnObject
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
-; Object 71 - ; MTZ lava bubble, HPZ bridge stake, and HPZ pulsing orb
+; Object 71 - MTZ lava bubble, HPZ bridge stake, and HPZ pulsing orb
 ; ----------------------------------------------------------------------------
 
 Scenery2:
@@ -24953,8 +24954,8 @@ TitlIntr_Sonic_FlashBackground:
 TitlIntr_Sonic_SpawnFallingStar:
 		; Wait for 176 frames on NTSC consoles and 112 on PAL; this ensures the
 		; falling star synchronizes properly with the music.
-		btst	#console_speed_bit,(v_console_region).w	; are we on a PAL console?
-		beq.s	.ntsc					; if not, branch
+		btst	#console_speed_bit,(v_console_region).w	; are we on an NTSC console?
+		beq.s	.ntsc					; if so, branch
 
 	;.pal:
 		cmpi.w	#400,ost_titlintr_current_frame(a0)	; have we reached the 400th frame?
@@ -25058,8 +25059,8 @@ TitlIntr_Tails_AnimationFinished:
 
 BranchTo10_DisplaySprite:
 		bra.w	DisplaySprite
-
 ; ===========================================================================
+
 TitlIntr_Tails_Positions:
 		;           		X,      		Y
 		dc.w   screen_left+87, screen_top+72
@@ -25181,6 +25182,7 @@ TitlIntr_FlashingStar_Move:
 		moveq_	sfx_Sparkle,d0				; play twinkling sound
 		jmpto	PlaySound,JmpTo4_PlaySound
 ; ===========================================================================
+
 TitlIntr_FlashingStar_Positions:
 		;          			 X,     	 	Y
 		dc.w  screen_left+90,  screen_top+114
@@ -25315,7 +25317,6 @@ TitlIntr_FallingStar_Fall:
 		bsr.w	AnimateSprite
 		bra.w	DisplaySprite
 
-; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object C9 - Title Screen and ending palette change handler
 ; ----------------------------------------------------------------------------
@@ -25374,7 +25375,7 @@ PalChanger_Main:
 		bpl.s	.exit					; if there is time left, exit
 		move.b	ost_palchngr_fadein_time(a0),ost_palchngr_fadein_time_left(a0) ; reset time left
 		subq.b	#1,ost_palchngr_fadein_amount(a0)	; decrement fade amount
-		bmi.w	DeleteObject				; if fade-in is complete, delete the PalChanger object
+		bmi.w	DeleteObject				; if fade-in is complete, delete
 		movea.l	ost_palchngr_codeptr(a0),a2		; get code pointer
 		movea.l	a0,a3					; back up a0
 		move.w	ost_palchngr_length(a0),d0		; get length
@@ -25435,7 +25436,6 @@ PalChngrData_EndingTails:				palchngrdata	PalChanger_WhiteIn,	Pal_EndingSonicFar
 	incfile	Pal_TitleBackground
 	incfile	Pal_TitleLogo
 
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Subroutine to reduce the values of a single palette entry while fading in
 ; from white. Used by the title screen background, the still transitions in
@@ -25446,8 +25446,9 @@ PalChngrData_EndingTails:				palchngrdata	PalChanger_WhiteIn,	Pal_EndingSonicFar
 ;	a0 = target palette
 ;	a1 = current palette
 
-;	uses d2, d3, d4, d5, a0, a1
+;	uses d2.b, d3.b, d4.b, d5.b, a0, a1
 ;-----------------------------------------------------------------------------
+
 PalChanger_WhiteIn:
 		move.b	(a1)+,d2				; blue byte of target color
 		andi.b	#cBlue>>8,d2				; only bits 1-3 used by the actual color data
@@ -25482,7 +25483,7 @@ PalChanger_WhiteIn:
 		or.b	d4,d5
 		move.b	d5,(a0)+				; update green and red
 		rts
-; ===========================================================================
+
 ; ---------------------------------------------------------------------------
 ; Subroutine to increase the values of a single palette entry while fading to
 ; white. Used only by the still transitions in the ending sequence.
@@ -25493,6 +25494,7 @@ PalChanger_WhiteIn:
 
 ;	uses d2, d3, d4, a0
 ; ---------------------------------------------------------------------------
+
 PalChanger_WhiteOut:
 		moveq	#cBlue>>8,d2
 		move.b	(a0),d3					; blue byte of current color
@@ -25524,7 +25526,6 @@ PalChanger_WhiteOut:
 		move.b	d4,(a0)+				; update green and red
 		rts
 
-; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Subroutine to skip the title screen animation when the start button
 ; is pressed.
@@ -25890,7 +25891,7 @@ Card_BottomIn:
 		add.w	d0,d0
 		move.w	#(sizeof_vram_row_64*$14)/2,d1		; Line 20 in 2P mode
 		tst.w	(f_two_player).w			; is it two-player mode?
-		sne	d6					; if so, set d6...
+		sne	d6					; if not, set d6...
 		bne.s	.not2P					; ...and branch
 		add.w	d1,d1					; Line 40 in 1P mode
 
@@ -48967,7 +48968,7 @@ loc_25054:
 		move.l	d3,ost_y_pos(a1)
 		rts
 ; ===========================================================================
-; spritePiece x and y vels
+; piece x and y vels
 word_2507A:
 		dc.w -$400,-$400				; 0
 		dc.w -$200,-$400				; 2
@@ -76277,8 +76278,8 @@ SonicSegaScreen_Init: ; Routine 0
 
 	.loop_pixel:
 		move.l	(a4)+,(a5)+				; copy a longword of art data to buffer
-		dbf	d1,.loop_pixel				; repeat for all pixels in this spritePiece
-		dbf	d6,.loop_piece				; repeat for every spritePiece in the frame
+		dbf	d1,.loop_pixel				; repeat for all pixels in this piece
+		dbf	d6,.loop_piece				; repeat for every piece in the frame
 		dbf	d5,.loop_frame				; repeat until all frames have been copied
 
 ;SonicSegaScreen_UpscaleSprites:
@@ -76291,10 +76292,10 @@ SonicSegaScreen_Init: ; Routine 0
 	.loop_upscale:
 		movea.l	(a6)+,a1				; source in RAM of tile graphics to enlarge
 		movea.l	(a6)+,a2				; destination in RAM of enlarged graphics
-		move.b	(a6)+,d0				; width of the sprite spritePiece to enlarge (minus 1)
-		move.b	(a6)+,d1				; height of the sprite spritePiece to enlarge (minus 1)
-		bsr.w	Scale_2x				; upscale the spritePiece
-		dbf	d7,.loop_upscale			; repeat for every spritePiece
+		move.b	(a6)+,d0				; width of the sprite piece to enlarge (minus 1)
+		move.b	(a6)+,d1				; height of the sprite piece to enlarge (minus 1)
+		bsr.w	Scale_2x				; upscale the piece
+		dbf	d7,.loop_upscale			; repeat for every piece
 		popr.w	d7
 		rts
 ; ===========================================================================
@@ -76308,7 +76309,7 @@ SonicSegaScreen_DPLCPointers:
 upscaledata: macro width,height
 
 	dc.l copysrc,copydst					; source of data to upscale, destination where upscaled data will be written
-	dc.b \width-1,\height-1					; the width and height of the spritePiece to enlarge minus 1
+	dc.b \width-1,\height-1					; the width and height of the piece to enlarge minus 1
 
 	copysrc: = copysrc+(((\width*\height)&$7FF)<<5)		; increment source
 	copydst: = copydst+(((\width*\height)&$7FF)<<5)*2*2	; increment destination
@@ -76319,8 +76320,8 @@ copysrc:	= v_128x128_tiles
 copydst:	= v_128x128_tiles+$B00
 SonicSegaScreen_ScaledSpriteDataStart = copydst
 		rept 4						; repeat 4 times since there are 4 frames to scale up
-		upscaledata 3,2					; spritePiece 1 of each frame (the smaller top spritePiece):
-		upscaledata 4,4					; spritePiece 2 of each frame (the larger bottom spritePiece):
+		upscaledata 3,2					; piece 1 of each frame (the smaller top piece):
+		upscaledata 4,4					; piece 2 of each frame (the larger bottom piece):
 		endr
 SonicSegaScreen_ScaledSpriteDataEnd	= copydst
 sizeof_SonicSegaScreen_ScaledSpriteData: equ	SonicSegaScreen_ScaledSpriteDataEnd-SonicSegaScreen_ScaledSpriteDataStart
@@ -82607,21 +82608,21 @@ byte_3E5F0:
 ; Subroutine to upscale graphics by a factor of 2x, based on given mappings
 ; data for correct positioning of tiles.
 
-; This code is awfully structured and planned: whenever a 3-column sprite spritePiece
-; is scaled, it scales the next tiles that were copied to RAM as if the spritePiece
-; had 4 columns; this will then be promptly overwritten by the next spritePiece. If
+; This code is awfully structured and planned: whenever a 3-column sprite piece
+; is scaled, it scales the next tiles that were copied to RAM as if the piece
+; had 4 columns; this will then be promptly overwritten by the next piece. If
 ; this happens near the end of the buffer, you will get a buffer overrun.
-; Moreover, when the number of rows in the sprite spritePiece is also 3 or 4, the code
+; Moreover, when the number of rows in the sprite piece is also 3 or 4, the code
 ; will make an incorrect computation for the output of the next subpiece, which
 ; causes the output to overwrite art from the previous subpiece. Thus, this code
-; fails if there is a 3x3 or a 3x4 sprite spritePiece in the source mappings. Sadly,
+; fails if there is a 3x3 or a 3x4 sprite piece in the source mappings. Sadly,
 ; this issue is basically unfixable without rewriting the code entirely.
 
 ; input:
 ; 	a1 = location of tiles to be enlarged
 ; 	a2 = destination buffer for enlarged tiles
-; 	d0 = width-1 of sprite spritePiece
-; 	d1 = height-1 of sprite spritePiece
+; 	d0 = width-1 of sprite piece
+; 	d1 = height-1 of sprite piece
 
 ;	uses d0.w, d1.w, d2.w, d3.w, d4.w, d5.w, a1, a2, a3, a4, a5
 ; ---------------------------------------------------------------------------
