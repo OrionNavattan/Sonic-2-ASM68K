@@ -8850,7 +8850,7 @@ HUDSpecial:
 	if FixBugs
 		; See below.
 		beq.s	.skip_display
-		move.w	#sizeof_priority*0,d0
+		move.w	#sizeof_priority*priority_0,d0
 		jmp	(DisplaySprite3).l
 	.skip_display:
 	else
@@ -8862,7 +8862,7 @@ HUDSpecial:
 	if FixBugs=0
 		; Multi-sprite objects cannot use 'ost_priority' as it is
 		; overwritten by 'ost_subspr3_y_pos'.
-		move.b	#0,ost_priority(a0)
+		move.b	#priority_0,ost_priority(a0)
 	endc
 		move.b	#1,ost_primary_routine(a0)
 		bset	#render_subsprites_bit,ost_render(a0)
@@ -8980,7 +8980,7 @@ loc_7158:
 		move.l	#Map_SpecStartBan,ost_mappings(a0)
 		move.w	#tile_Nem_SpecialStart,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	#2,ost_primary_routine(a0)
 
 loc_718A:
@@ -9251,7 +9251,7 @@ loc_7536:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#sizeof_priority*0,d0
+		move.w	#sizeof_priority*priority_0,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo_DisplaySprite
@@ -9312,7 +9312,7 @@ loc_758C:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#sizeof_priority*0,d0
+		move.w	#sizeof_priority*priority_0,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo_DisplaySprite
@@ -9327,7 +9327,7 @@ loc_75BC:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer..
-		move.w	#sizeof_priority*0,d0
+		move.w	#sizeof_priority*priority_0,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo_DisplaySprite
@@ -9344,7 +9344,7 @@ loc_75C8:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#sizeof_priority*0,d0
+		move.w	#sizeof_priority*priority_0,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo_DisplaySprite
@@ -9401,7 +9401,7 @@ loc_7648:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#sizeof_priority*0,d0
+		move.w	#sizeof_priority*priority_0,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo_DisplaySprite
@@ -9903,7 +9903,7 @@ loc_7BA2:
 		move.l	#Map_Sonic,ost_mappings(a0)
 		move.w	#tile_Sonic,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.b	#$20,ost_anim(a0)
 
 loc_7BD2:
@@ -9943,7 +9943,7 @@ loc_7C22:
 		move.l	#Map_ContinueScreenItems,ost_mappings(a0)
 		move.w	#vram_ContinueTails/sizeof_cell,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.b	#0,ost_anim(a0)
 
 loc_7C52:
@@ -10329,7 +10329,7 @@ loc_80E4:
 		move.w	#vram_1P2PWins/sizeof_cell,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo2_AdjustVRAM2P
 		move.b	#render_abs,ost_render(a0)
-		move.b	#0,ost_priority(a0)
+		move.b	#priority_0,ost_priority(a0)
 		moveq	#2,d1
 		move.b	(v_ss_total_won).w,d0
 		sub.b	(v_ss_total_won+1).w,d0
@@ -12758,7 +12758,7 @@ loc_A3FC:
 		move.w	#$100,ost_x_vel(a0)
 		move.w	#-$80,ost_y_vel(a0)
 		move.b	#$14,$35(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.w	#4,($FFFFF662).w
 		move.l	a0,-(sp)
 		lea	(Eni_EndingTailsPlane).l,a0
@@ -13179,7 +13179,7 @@ loc_A8AA:
 		jsrto	LoadSubObjData3,JmpTo_LoadSubObjData3
 		move.l	#Map_TornadoHelices,ost_mappings(a0)
 		move.w	#tile_LevelArt+tile_hi,ost_tile(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		jsr	(AdjustVRAM2P).l
 		move.b	#$C,ost_frame(a0)
 		cmpi.w	#4,($FFFFF750).w
@@ -13282,7 +13282,7 @@ loc_A99A:
 		jsrto	LoadSubObjData3,JmpTo_LoadSubObjData3
 		move.l	#Map_TornadoHelices,ost_mappings(a0)
 		move.w	#tile_hi,ost_tile(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		jsr	(AdjustVRAM2P).l
 		move.b	#5,ost_frame(a0)
 		move.b	#2,ost_anim(a0)
@@ -13621,7 +13621,7 @@ dword_AD6E:
 		childobjdata $3E,id_TornadoHelicies,0
 
 off_AD72:
-		subobjdata Map_Animal1,tile_Nem_Animal_2,render_rel,2,8,id_col_null
+		subobjdata Map_Animal1,tile_Nem_Animal_2,render_rel,priority_2,16/2,id_col_null
 
 byte_AD7C:	index offset(*)
 		ptr byte_AD7E
@@ -20680,7 +20680,7 @@ Bridge:
 ; ===========================================================================
 
 .ischild:
-		move.w	#$180,d0
+		move.w	#sizeof_priority*priority_3,d0
 		bra.w	DisplaySprite3
 ; ===========================================================================
 off_F68C:	index offset(*),,2
@@ -20694,7 +20694,7 @@ loc_F694:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_EmeraldHillBridge,ost_mappings(a0)
 		move.w	#tile_Nem_EHZBridge+tile_pal3,ost_tile(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		cmpi.b	#id_HPZ,(v_zone).w
 		bne.s	loc_F6C6
 		addq.b	#4,ost_primary_routine(a0)
@@ -21226,7 +21226,7 @@ SwingingPlatform:
 ; ===========================================================================
 
 loc_FCB4:
-		move.w	#$200,d0
+		move.w	#sizeof_priority*priority_4,d0
 		bra.w	DisplaySprite3
 ; ===========================================================================
 off_FCBC:	index offset(*),,2
@@ -21244,7 +21244,7 @@ loc_FCCA:
 		move.l	#Map_Swing_OOZ,ost_mappings(a0)
 		move.w	#tile_Nem_OOZSwingPlat+tile_pal3,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#$10,ost_height(a0)
 		move.w	ost_y_pos(a0),$38(a0)
@@ -21286,7 +21286,7 @@ loc_FD54:
 		cmpi.b	#$20,d4
 		bne.s	loc_FDC6
 		move.b	#4,ost_primary_routine(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	#$50,ost_height(a1)
 		bset	#render_useheight_bit,ost_render(a1)
@@ -21742,7 +21742,7 @@ loc_10324:
 		move.w	#(vram_SpikePole/sizeof_cell)+tile_pal3,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.w	ost_y_pos(a0),d2
 		move.w	ost_x_pos(a0),d3
@@ -21776,7 +21776,7 @@ loc_10372:
 		move.w	#(vram_SpikePole/sizeof_cell)+tile_pal3,ost_tile(a1)
 		bsr.w	AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.b	#8,ost_displaywidth(a1)
 		move.b	d6,$3E(a1)
 		addq.b	#1,d6
@@ -21897,7 +21897,7 @@ loc_104CE:
 loc_1050E:
 		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	ost_y_pos(a0),$2C(a0)
 		move.w	ost_y_pos(a0),$34(a0)
 		move.w	ost_x_pos(a0),$32(a0)
@@ -22282,7 +22282,7 @@ loc_108D0:
 		move.w	#0+tile_pal3,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#7,$38(a0)
 		move.b	ost_subtype(a0),ost_frame(a0)
 		move.l	#byte_10BF2,$34(a0)
@@ -22401,7 +22401,7 @@ loc_10A1C:
 		move.l	#Map_CFlo_S1,ost_mappings(a0)
 		move.w	#(vram_MZPlatform/sizeof_cell)+tile_pal3,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#7,$38(a0)
 		move.b	#$44,ost_displaywidth(a0)
 		lea	(byte_10C17).l,a4
@@ -22636,27 +22636,27 @@ Scenery1_Index:	index offset(*),,2
 		ptr loc_112EC					; 2
 
 Scenery1_ObjData:
-		sceneryobjdata	id_Frame_Rope1,Map_BoltEnd_Rope,tile_Nem_BoltEnd_Rope+tile_pal3,4,6 ; end of looped rope emerging from lava (right)
-		sceneryobjdata	id_Frame_Rope2,Map_BoltEnd_Rope,tile_Nem_BoltEnd_Rope+tile_pal3,4,6 ; end of looped rope emerging from lava (left)
-		sceneryobjdata	1,Map_EmeraldHillBridge,tile_Nem_EHZBridge+tile_pal3,4,1
-		sceneryobjdata	id_Frame_BoltEnd,Map_BoltEnd_Rope,tile_Nem_BoltEnd_Rope+tile_pal2,$10,6 ; bottom tip of hanging bolts
-		sceneryobjdata	3,Map_Tram,tile_Nem_Tram+tile_pal3,8,4
-		sceneryobjdata	4,Map_Tram,tile_Nem_Tram+tile_pal3,8,4
-		sceneryobjdata	1,Map_Tram,tile_Nem_Tram+tile_pal3,$20,1
-		sceneryobjdata	0,Map_TramStake,tile_LevelArt+tile_pal3,8,1
-		sceneryobjdata	1,Map_TramStake,tile_LevelArt+tile_pal3,8,1
-		sceneryobjdata	0,Map_ARZUnusedScenery,tile_Art_Waterfall3+tile_pal3,4,4 ; unused, appears to be a small slice of ground
-		sceneryobjdata	0,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,4
-		sceneryobjdata	1,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,4
-		sceneryobjdata	2,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,4
-		sceneryobjdata	3,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,4
-		sceneryobjdata	4,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,4
-		sceneryobjdata	5,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,4
-		sceneryobjdata	0,Map_WideFallingOil,tile_Nem_OilFall2+tile_pal3,$18,4
-		sceneryobjdata	1,Map_WideFallingOil,tile_Nem_OilFall2+tile_pal3,$18,4
-		sceneryobjdata	2,Map_WideFallingOil,tile_Nem_OilFall2+tile_pal3,8,4
-		sceneryobjdata	3,Map_WideFallingOil,tile_Nem_OilFall2+tile_pal3,8,4
-		sceneryobjdata	4,Map_WideFallingOil,tile_Nem_OilFall2+tile_pal3,8,4
+		sceneryobjdata	id_Frame_Rope1,Map_BoltEnd_Rope,tile_Nem_BoltEnd_Rope+tile_pal3,4,priority_6 ; end of looped rope emerging from lava (right)
+		sceneryobjdata	id_Frame_Rope2,Map_BoltEnd_Rope,tile_Nem_BoltEnd_Rope+tile_pal3,4,priority_6 ; end of looped rope emerging from lava (left)
+		sceneryobjdata	1,Map_EmeraldHillBridge,tile_Nem_EHZBridge+tile_pal3,4,priority_1
+		sceneryobjdata	id_Frame_BoltEnd,Map_BoltEnd_Rope,tile_Nem_BoltEnd_Rope+tile_pal2,$10,priority_6 ; bottom tip of hanging bolts
+		sceneryobjdata	3,Map_Tram,tile_Nem_Tram+tile_pal3,8,priority_4
+		sceneryobjdata	4,Map_Tram,tile_Nem_Tram+tile_pal3,8,priority_4
+		sceneryobjdata	1,Map_Tram,tile_Nem_Tram+tile_pal3,$20,priority_1
+		sceneryobjdata	0,Map_TramStake,tile_LevelArt+tile_pal3,8,priority_1
+		sceneryobjdata	1,Map_TramStake,tile_LevelArt+tile_pal3,8,priority_1
+		sceneryobjdata	0,Map_ARZUnusedScenery,tile_Art_Waterfall3+tile_pal3,4,priority_4 ; unused, appears to be a small slice of ground
+		sceneryobjdata	0,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,priority_4
+		sceneryobjdata	1,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,priority_4
+		sceneryobjdata	2,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,priority_4
+		sceneryobjdata	3,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,priority_4
+		sceneryobjdata	4,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,priority_4
+		sceneryobjdata	5,Map_NarrowFallingOil,tile_Nem_OilFall2+tile_pal3,4,priority_4
+		sceneryobjdata	0,Map_WideFallingOil,tile_Nem_OilFall2+tile_pal3,$18,priority_4
+		sceneryobjdata	1,Map_WideFallingOil,tile_Nem_OilFall2+tile_pal3,$18,priority_4
+		sceneryobjdata	2,Map_WideFallingOil,tile_Nem_OilFall2+tile_pal3,8,priority_4
+		sceneryobjdata	3,Map_WideFallingOil,tile_Nem_OilFall2+tile_pal3,8,priority_4
+		sceneryobjdata	4,Map_WideFallingOil,tile_Nem_OilFall2+tile_pal3,8,priority_4
 
 
 Scenery1_Radii:
@@ -22732,9 +22732,9 @@ Scenery2_Index:	index offset(*),,2
 		ptr loc_1135C					; 2
 
 Scenery2_ObjData:
-		sceneryobjdata	3,Map_HiddenPalaceBridge,(vram_HiddenPalaceBridge/sizeof_cell)+tile_pal4,4,1
-		sceneryobjdata	0,Map_HiddenPalaceOrb,(vram_HiddenPalaceOrb/sizeof_cell)+tile_pal4+tile_hi,$10,1
-		sceneryobjdata	0,Map_LavaBubble,tile_Nem_LavaBubble+tile_pal3,$10,1
+		sceneryobjdata	3,Map_HiddenPalaceBridge,(vram_HiddenPalaceBridge/sizeof_cell)+tile_pal4,4,priority_1
+		sceneryobjdata	0,Map_HiddenPalaceOrb,(vram_HiddenPalaceOrb/sizeof_cell)+tile_pal4+tile_hi,$10,priority_1
+		sceneryobjdata	0,Map_LavaBubble,tile_Nem_LavaBubble+tile_pal3,$10,priority_1
 ; ===========================================================================
 
 loc_1131A:
@@ -22809,7 +22809,7 @@ loc_115D6:
 		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	ost_y_pos(a0),$32(a0)
 		move.b	#$50,ost_height(a0)
 		bset	#render_useheight_bit,ost_render(a0)
@@ -22907,7 +22907,7 @@ ADoor_Init:							; Routine 0
 	.not_arz:
 		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	ost_y_pos(a0),ost_adoor_og_ypos(a0)
 		move.b	ost_subtype(a0),ost_frame(a0)		; subtype is frame ID (though a bug means only HTZ and MTZ's are used
 		move.w	ost_x_pos(a0),d2
@@ -23211,7 +23211,7 @@ Anml_Main:
 		move.b	#$C,ost_height(a0)
 		move.b	#render_rel,ost_render(a0)
 		bset	#render_xflip_bit,ost_render(a0)
-		move.b	#6,ost_priority(a0)
+		move.b	#priority_6,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.b	#7,ost_anim_time(a0)
 		bra.w	DisplaySprite
@@ -23243,7 +23243,7 @@ loc_11A46:
 		move.b	#$C,ost_height(a0)
 		move.b	#render_rel,ost_render(a0)
 		bset	#render_xflip_bit,ost_render(a0)
-		move.b	#6,ost_priority(a0)
+		move.b	#priority_6,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.b	#7,ost_anim_time(a0)
 		move.b	#2,ost_frame(a0)
@@ -23368,7 +23368,7 @@ loc_11BF4:
 		subq.w	#1,$36(a0)
 		bne.w	loc_11C10
 		move.b	#2,ost_primary_routine(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 
 loc_11C10:
 		bra.w	DisplaySprite
@@ -23560,7 +23560,7 @@ Poi_Main:
 		move.w	#tile_Nem_Numbers+tile_hi,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.w	#-$300,ost_y_vel(a0)			; move object upwards
 
@@ -23612,7 +23612,7 @@ loc_11F5C:
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.b	#id_col_6x6+id_col_item,ost_col_type(a0)
 		move.b	#8,ost_displaywidth(a0)
 
@@ -23625,7 +23625,7 @@ loc_11F90:
 loc_11F9E:
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#0,ost_col_type(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		bsr.s	CollectRing
 
 loc_11FB0:
@@ -23761,7 +23761,7 @@ loc_120BA:
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a1)
 		bsr.w	AdjustVRAM2P2
 		move.b	#render_rel|render_onscreen,ost_render(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.b	#id_col_6x6+id_col_item,ost_col_type(a1)
 		move.b	#8,ost_displaywidth(a1)
 		move.b	#-1,(v_syncani_3_time).w
@@ -23843,7 +23843,7 @@ loc_121D0:
 loc_121DA:
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#0,ost_col_type(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		bsr.w	CollectRing
 
 loc_121EE:
@@ -23889,7 +23889,7 @@ loc_12216:
 
 loc_1224E:
 		addq.b	#2,ost_primary_routine(a0)
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.b	#id_col_8x16+id_col_item,ost_col_type(a0)
 		move.w	#$C40,(v_giantring_gfx_offset).w
 
@@ -23951,7 +23951,7 @@ loc_122D8:
 		move.w	#(vram_GiantRingFlash/sizeof_cell)+tile_pal2,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#0,ost_priority(a0)
+		move.b	#priority_0,ost_priority(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#-1,ost_frame(a0)
 
@@ -24133,7 +24133,7 @@ loc_12688:
 		move.w	#tile_Nem_Monitors,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.b	#$F,ost_displaywidth(a0)
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d0
@@ -24303,7 +24303,7 @@ loc_12868:
 		move.w	#tile_Nem_Monitors+tile_hi,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
 		move.b	#render_rel|render_rawmap,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.w	#-$300,ost_y_vel(a0)
 		moveq	#0,d0
@@ -24778,7 +24778,7 @@ TitlIntr_Main:
 		addq.b	#2,ost_primary_routine(a0)		; pointless, because it's overwritten with the subtype below
 		move.l	#Map_TitleIntro,ost_mappings(a0)
 		move.w	#tile_TitleSprites,ost_tile(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	ost_subtype(a0),ost_primary_routine(a0)	; subtype is also routine
 		bra.s	TitleIntro
 ; ===========================================================================
@@ -25037,7 +25037,7 @@ TitlIntr_Tails_Main:
 		; 'TitleScreen_SetFinalState', suggesting that it was meant to be.
 		; This causes Tails to be layered behind Sonic instead of in front of
 		; him.
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 	endc
 		move.w	#screen_left+88,ost_x_screen(a0)
 		move.w	#screen_top+88,ost_y_screen(a0)
@@ -25092,7 +25092,7 @@ TitlIntr_LogoTop_Main:
 		move.b	#id_Frame_LogoTop_NoTM,ost_frame(a0)	; use alternate mappings that remove the TM symbol
 
 	.notJPKR:
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.w	#screen_left+(screen_width/2),ost_x_screen(a0)
 		move.w	#screen_top+104,ost_y_screen(a0)
 
@@ -25118,7 +25118,7 @@ TitlIntr_MaskingSprite_Main:
 		addq.b	#2,ost_secondary_routine(a0)		; go to BranchTo12_DisplaySprite next
 		move.w	#vram_Title,ost_tile(a0)		; start of VRAM
 		move.b	#id_Frame_MaskingSprite,ost_frame(a0)
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.w	#screen_left+128,ost_x_screen(a0)	; should be zero, but is corrected by the titlescreen loop
 		move.w	#screen_top+224/2,ost_y_screen(a0)
 
@@ -25144,7 +25144,7 @@ TitlIntr_FlashingStar_Main:
 		move.b	#id_Frame_IntroStar_0,ost_frame(a0)
 		ori.w	#tile_hi,ost_tile(a0)
 		move.b	#id_Ani_TitlIntr_FlashingStar,ost_anim(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.w	#screen_left+128,ost_x_screen(a0)
 		move.w	#screen_top+40,ost_y_screen(a0)
 		move.w	#4,ost_titlintr_counter(a0)
@@ -25214,10 +25214,10 @@ TitlIntr_SonicHand_Main:
 		move.b	#id_Frame_IntroSonic_Hand,ost_frame(a0)
 	if FixBugs
 		; This matches 'TitleScreen_SetFinalState'.
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 	else
 		; This is inconsistent with 'TitleScreen_SetFinalState'.
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 	endc
 		move.w	#screen_left+197,ost_x_screen(a0)
 		move.w	#screen_top+63,ost_y_screen(a0)
@@ -25257,12 +25257,12 @@ TitlIntr_TailsHand_Main:
 		move.b	#id_Frame_IntroTails_Hand,ost_frame(a0)
 	if FixBugs
 		; This matches 'TitlIntr_SetFinalState'.
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 	else
 		; This is inconsistent with 'TitlIntr_SetFinalState', and causes
 		; Tails' hand to be layered behind Tails if his priority is fixed
 		; in TitlIntr_Tails_Main.
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 	endc
 		move.w	#screen_left+143,ost_x_screen(a0)
 		move.w	#screen_left+85,ost_y_screen(a0)
@@ -25298,7 +25298,7 @@ TitlIntr_FallingStar_Index:	index offset(*),,2
 TitlIntr_FallingStar_Main:
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#id_Frame_IntroStar_0,ost_frame(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		move.w	#screen_left+240,ost_x_screen(a0)
 		move.w	#screen_top,ost_y_screen(a0)
 		move.b	#id_Ani_TitlIntr_FallingStar,ost_anim(a0)
@@ -25552,7 +25552,7 @@ TitlIntr_SetFinalState:
 		bsr.w	TitlIntr_InitSprite
 		move.b	#id_TitleIntro,ost_id(a1)
 		move.b	#id_TitlIntr_SonicHand,ost_primary_routine(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.b	#id_Frame_IntroSonic_Hand,ost_frame(a1)
 		move.b	#id_BranchTo13_DisplaySprite,ost_secondary_routine(a1)
 		move.w	#screen_left+193,ost_x_screen(a1)
@@ -25564,7 +25564,7 @@ TitlIntr_SetFinalState:
 		move.b	#id_TitlIntr_Tails,ost_primary_routine(a1)
 		move.b	#id_Frame_IntroTails_4,ost_frame(a1)
 		move.b	#id_TitlIntr_Tails_AnimationFinished,ost_secondary_routine(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.w	#screen_left+72,ost_x_screen(a1)
 		move.w	#screen_top+32,ost_y_screen(a1)
 
@@ -25572,7 +25572,7 @@ TitlIntr_SetFinalState:
 		bsr.w	TitlIntr_InitSprite
 		move.b	#id_TitleIntro,ost_id(a1)
 		move.b	#id_TitlIntr_TailsHand,ost_primary_routine(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.b	#id_Frame_IntroTails_Hand,ost_frame(a1)
 		move.b	#id_BranchTo14_DisplaySprite,ost_secondary_routine(a1)
 		move.w	#screen_left+141,ost_x_screen(a1)
@@ -25624,7 +25624,7 @@ TitlIntr_SetFinalState:
 TitlIntr_InitSprite:
 		move.l	#Map_TitleIntro,ost_mappings(a1)
 		move.w	#tile_TitleSprites,ost_tile(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		rts
 
 ; ===========================================================================
@@ -26177,7 +26177,7 @@ loc_13FA8:
 		move.w	#tile_Nem_Game_Over+tile_hi,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
 		move.b	#render_abs,ost_render(a0)
-		move.b	#0,ost_priority(a0)
+		move.b	#priority_0,ost_priority(a0)
 
 Over_Move:
 		moveq	#$10,d1
@@ -27458,7 +27458,7 @@ loc_15926:
 		move.l	#Map_Spike,ost_mappings(a0)
 		move.w	#tile_Nem_Spikes+tile_pal2,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	ost_subtype(a0),d0
 		andi.b	#$F,ost_subtype(a0)
 		andi.w	#$F0,d0
@@ -27706,7 +27706,7 @@ loc_15CDA:
 		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$13,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 
 loc_15D02:
 		move.w	#$1B,d1
@@ -27757,7 +27757,7 @@ loc_15D5C:
 		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	ost_subtype(a0),ost_frame(a0)
 
 loc_15D8A:
@@ -27965,7 +27965,7 @@ ExecuteObjects:
 		pea .no_object2(pc)				; return to .no_object2 after returning from DisplaySprite or DisplaySprite3
 		btst	#render_subsprites_bit,ost_render(a0)	; is this a multisprite object?
 		beq.w	DisplaySprite				; if not, display using object's priority value
-		move.w	#sizeof_priority*4,d0			; if so, display with priority of four
+		move.w	#sizeof_priority*priority_4,d0			; if so, display with fixed priority of four
 		bra.w	DisplaySprite3
 	else
 		bsr.w	DisplaySprite
@@ -31980,7 +31980,7 @@ Spring_Main:
 		move.w	#tile_Nem_VrtclSprng,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	ost_subtype(a0),d0
 		lsr.w	#3,d0
 		andi.w	#$E,d0
@@ -32681,7 +32681,7 @@ loc_1922C:
 		bsr.w	AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$18,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	#(60<<8)|countof_ntsc_fps,(v_loser_time_left).w ; 60 seconds, 60 frames per second
 
 loc_1924C:
@@ -32812,7 +32812,7 @@ loc_19398:
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a1)
 		bsr.w	AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.b	#8,ost_displaywidth(a1)
 
 locret_19406:
@@ -34168,7 +34168,7 @@ Sonic_Main:	; Routine 0
 		move.b	#sonic_height,ost_height(a0)
 		move.b	#sonic_width,ost_width(a0)
 		move.l	#Map_Sonic,ost_mappings(a0)
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.b	#render_rel,ost_render(a0)
 
@@ -37027,7 +37027,7 @@ Tails_Main:
 		move.b	#$F,ost_height(a0)
 		move.b	#9,ost_width(a0)
 		move.l	#Map_Tails,ost_mappings(a0)
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.b	#render_rel|render_onscreen,ost_render(a0)
 		move.w	#$600,(v_tails_max_speed).w
@@ -39459,7 +39459,7 @@ loc_1D212:
 		move.l	#Map_Tails,ost_mappings(a0)
 		move.w	#tile_Tails_Tails,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.b	#render_rel,ost_render(a0)
 
@@ -39595,7 +39595,7 @@ Drown_Main: ; Routine 0
 		move.w	#tile_Nem_BubbleGenerator+tile_hi,ost_tile(a0)
 		move.b	#render_rel|render_onscreen,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	ost_subtype(a0),d0			; get subtype (drowning manager is $81)
 		bpl.s	.bubble_or_num				; if it is a bubble or a number, branch
 
@@ -40216,7 +40216,7 @@ loc_1D904:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_Shield,ost_mappings(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.w	#tile_Nem_Shield,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
@@ -40341,7 +40341,7 @@ loc_1DA44:
 
 loc_1DA74:
 		add.b	d0,$34(a0)
-		move.w	#$80,d0
+		move.w	#sizeof_priority*priority_1,d0
 		bra.w	DisplaySprite3
 ; ===========================================================================
 
@@ -40414,7 +40414,7 @@ loc_1DAE4:
 
 loc_1DB20:
 		add.b	d0,$34(a0)
-		move.w	#$80,d0
+		move.w	#sizeof_priority*priority_1,d0
 		bra.w	DisplaySprite3
 ; ===========================================================================
 
@@ -40478,7 +40478,7 @@ loc_1DD36:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_SplashDust,ost_mappings(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.w	#vram_SonicDust/sizeof_cell,ost_tile(a0)
 		move.w	#v_ost_player1,$3E(a0)
@@ -40594,7 +40594,7 @@ loc_1DE9A:
 		addq.b	#2,ost_primary_routine(a1)
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.b	ost_render(a0),ost_render(a1)
-		move.b	#1,ost_priority(a1)
+		move.b	#priority_1,ost_priority(a1)
 		move.b	#4,ost_displaywidth(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.w	$3E(a0),$3E(a1)
@@ -40679,7 +40679,7 @@ loc_1E102:
 		addq.b	#2,ost_primary_routine(a0)
 		move.l	#Map_SuperStars,ost_mappings(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.w	#tile_Nem_SuperSonic_Stars,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
@@ -42295,7 +42295,7 @@ loc_1F0CC:
 		jsrto	AdjustVRAM2P,JmpTo3_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#8,ost_displaywidth(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		lea	(v_respawn_list).w,a2
 		moveq	#0,d0
 		move.b	ost_respawn(a0),d0
@@ -42364,7 +42364,7 @@ loc_1F154:
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#8,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#2,ost_frame(a1)
 		move.w	#$20,$36(a1)
 		move.w	a0,$3E(a1)
@@ -42745,7 +42745,7 @@ loc_1F636:
 		move.w	#(vram_Bonus/sizeof_cell)+tile_hi,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo4_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#0,ost_priority(a0)
+		move.b	#priority_0,ost_priority(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	ost_subtype(a0),ost_frame(a0)
 		move.w	#$77,$30(a0)
@@ -42829,7 +42829,7 @@ loc_1F742:
 		jsrto	AdjustVRAM2P,JmpTo5_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	#id_col_8x8_2+id_col_custom,ost_col_type(a0)
 
 loc_1F770:
@@ -42965,7 +42965,7 @@ loc_1F8C2:
 		jsrto	AdjustVRAM2P,JmpTo6_AdjustVRAM2P
 		move.b	#render_rel|render_onscreen,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	ost_subtype(a0),d0
 		bpl.s	loc_1F90A
 		addq.b	#8,ost_primary_routine(a0)
@@ -43311,7 +43311,7 @@ PSwtch_Init: ; Routine 0
 		jsrto	AdjustVRAM2P,JmpTo7_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$20/2,ost_displaywidth(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		move.b	ost_subtype(a0),d0			; d0 = subtype
 		btst	#pswtch_xy_bit,d0
 		beq.s	PSwtch_Init_CheckX			; branch if this is an x-switcher
@@ -43575,7 +43575,7 @@ loc_200B0:
 		jsrto	AdjustVRAM2P,JmpTo8_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		andi.w	#$F0,d0
@@ -43685,7 +43685,7 @@ loc_20222:
 		jsrto	AdjustVRAM2P,JmpTo9_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	ost_y_pos(a0),d0
 		subi.w	#$10,d0
 		move.w	d0,$3A(a0)
@@ -43794,7 +43794,7 @@ GiantEmerld_Init:						; Routine 0
 		jsrto	AdjustVRAM2P,JmpTo10_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$40/2,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 
 GiantEmerld_Solid:						; Routine 2
 		move.w	#$40/2,d1				; width / 2
@@ -43851,7 +43851,7 @@ loc_203C0:
 		jsrto	AdjustVRAM2P,JmpTo11_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	#$12,ost_frame(a0)
 		bsr.s	loc_20428
 		move.b	#-$60,ost_height(a1)
@@ -43882,7 +43882,7 @@ loc_20428:
 		jsrto	AdjustVRAM2P2,JmpTo2_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
-		move.b	#1,ost_priority(a1)
+		move.b	#priority_1,ost_priority(a1)
 
 locret_2046A:
 		rts
@@ -44112,7 +44112,7 @@ loc_20BB0:
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.w	ost_x_pos(a0),$30(a0)
-		move.b	#0,ost_priority(a0)
+		move.b	#priority_0,ost_priority(a0)
 		move.b	#-$80,ost_height(a0)
 		bset	#render_useheight_bit,ost_render(a0)
 
@@ -44204,7 +44204,7 @@ loc_20E02:
 		move.b	#render_rel|render_onscreen,ost_render(a0)
 	endc
 		move.b	#-$80,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	ost_subtype(a0),ost_frame(a0)
 
 loc_20E46:
@@ -44317,7 +44317,7 @@ loc_20FE4:
 		move.w	#tile_Nem_Pylon+tile_pal3+tile_hi,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo12_AdjustVRAM2P
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#7,ost_priority(a0)
+		move.b	#priority_7,ost_priority(a0)
 
 loc_21006:
 		move.w	(v_camera_x_pos).w,d1
@@ -44375,7 +44375,7 @@ Explosion_Main:
 		move.w	#tile_Nem_Explosion,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo12_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	#0,ost_col_type(a0)
 		move.b	#$C,ost_displaywidth(a0)
 		move.b	#3,ost_anim_time(a0)
@@ -44421,7 +44421,7 @@ loc_21176:
 		jsrto	AdjustVRAM2P,JmpTo12_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		move.b	ost_subtype(a0),d0
 		btst	#2,d0
 		beq.s	loc_211F0
@@ -44646,7 +44646,7 @@ loc_213C4:
 		jsrto	AdjustVRAM2P,JmpTo12_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		move.b	ost_subtype(a0),d0
 		andi.w	#3,d0
 		move.b	d0,ost_frame(a0)
@@ -45088,7 +45088,7 @@ loc_2194A:
 		move.w	#tile_Nem_SeeSaw,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo13_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#$30,ost_displaywidth(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		tst.b	ost_subtype(a0)
@@ -45228,7 +45228,7 @@ loc_21AA2:
 		move.w	#tile_Nem_Sol,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo13_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#id_col_8x8+id_col_hurt,ost_col_type(a0)
 		move.b	#$C,ost_displaywidth(a0)
 		move.w	ost_x_pos(a0),$30(a0)
@@ -45448,7 +45448,7 @@ loc_21DBE:
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#0,ost_frame(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		move.w	ost_y_pos(a0),$32(a0)
 		move.b	#$40,ost_height(a0)
@@ -45618,7 +45618,7 @@ loc_22060:
 		lea	Plat2_SubtypeProperties(pc,d0.w),a2
 		move.b	(a2)+,ost_displaywidth(a0)
 		move.b	(a2)+,ost_frame(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		move.w	ost_y_pos(a0),$32(a0)
 		andi.b	#$F,ost_subtype(a0)
@@ -45863,7 +45863,7 @@ loc_222C2:
 		jsrto	AdjustVRAM2P,JmpTo16_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	ost_subtype(a0),d0
 		andi.w	#2,d0
 		move.w	Bstr_Speeds(pc,d0.w),$30(a0)
@@ -46016,7 +46016,7 @@ loc_22458:
 		move.w	#tile_Nem_Droplet+tile_pal4,ost_tile(a1)
 		jsrto	AdjustVRAM2P2,JmpTo3_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.b	#id_col_8x8+id_col_hurt,ost_col_type(a1)
 		move.w	ost_x_pos(a1),$38(a1)
 		move.w	ost_y_pos(a1),$30(a1)
@@ -46580,7 +46580,7 @@ loc_23014:
 		move.w	#tile_Nem_HTZFireball2+tile_hi,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo17_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.w	ost_y_pos(a0),$30(a0)
 		moveq	#0,d0
@@ -46637,7 +46637,7 @@ loc_230C2:
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.b	#8,ost_displaywidth(a1)
 		move.b	#id_col_8x8+id_col_hurt,ost_col_type(a1)
 		move.w	ost_y_pos(a1),$30(a1)
@@ -46800,7 +46800,7 @@ loc_2331E:
 		jsrto	AdjustVRAM2P,JmpTo18_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		andi.w	#$1E,d0
@@ -47029,7 +47029,7 @@ loc_2352E:
 loc_23572:
 		jsrto	AdjustVRAM2P,JmpTo18_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 
 loc_23582:
 		move.w	(v_enemy_combo).w,$38(a0)
@@ -47401,7 +47401,7 @@ loc_23B08:
 		move.l	#Map_BurnPlat,ost_mappings(a0)
 		move.w	#tile_Nem_BurnerLid+tile_pal4,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.b	#$18,ost_displaywidth(a0)
 		move.w	ost_y_pos(a0),$30(a0)
 		addq.b	#2,ost_secondary_routine(a0)
@@ -47421,7 +47421,7 @@ loc_23B48:
 		move.l	#Map_Burner,ost_mappings(a1)
 		move.w	#tile_Nem_Burner+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.l	a0,$3C(a1)
 
@@ -47701,7 +47701,7 @@ loc_23EA8:
 		move.l	#Map_RailSpikes,ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#$18,ost_displaywidth(a1)
 		move.b	#id_col_24x40+id_col_hurt,ost_col_type(a1)
 		move.w	ost_x_pos(a1),$30(a1)
@@ -47960,7 +47960,7 @@ PSpring_Init:	; Routine 0
 		move.w	#tile_Nem_PushSpring+tile_pal3,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#32/2,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	ost_subtype(a0),d0			; high nybble of subtype = orientation, low nybble = strength
 		lsr.w	#3,d0					; only need high nybble
     if FixBugs
@@ -48430,7 +48430,7 @@ loc_24A48:
 		move.w	#tile_Nem_SpringBall+tile_pal4,ost_tile(a0)
 		bsr.w	JmpTo20_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.w	ost_x_pos(a0),$34(a0)
 		move.w	ost_y_pos(a0),$36(a0)
 		move.b	#$10,ost_displaywidth(a0)
@@ -48449,7 +48449,7 @@ loc_24A48:
 		move.w	#tile_Nem_PushSpring+tile_pal3,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#9,ost_frame(a1)
 		move.l	a0,$3C(a1)
 
@@ -48663,7 +48663,7 @@ loc_24D06:
 		jsrto	AdjustVRAM2P,JmpTo21_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		addq.w	#4,ost_y_pos(a0)
 
 loc_24D32:
@@ -48757,7 +48757,7 @@ loc_24E0A:
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		bset	#status_broken_bit,ost_primary_status(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 
 loc_24E26:
 		move.b	($FFFFB01C).w,$32(a0)
@@ -49083,7 +49083,7 @@ loc_2529E:
 loc_252B4:
 		move.b	$3F(a0),ost_frame(a0)
 		move.b	#$28,ost_displaywidth(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 
 loc_252C6:
 		lea	($FFFFB000).w,a1
@@ -49329,7 +49329,7 @@ loc_256AC:
 		move.w	#tile_Nem_ArrowAndShooter,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo24_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#1,ost_frame(a0)
 		andi.b	#$F,ost_subtype(a0)
@@ -49397,7 +49397,7 @@ loc_2577A:
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#8,ost_height(a0)
 		move.b	#$10,ost_width(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#id_col_8x4+id_col_hurt,ost_col_type(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.b	#0,ost_frame(a0)
@@ -49489,7 +49489,7 @@ loc_2589E:
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#$20,ost_height(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		jsrto	FindNextFreeObj,JmpTo10_FindNextFreeObj
 		bne.s	loc_25922
 		_move.b	ost_id(a0),ost_id(a1)
@@ -49504,7 +49504,7 @@ loc_2589E:
 		move.b	ost_render(a0),ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	#$10,ost_height(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#1,ost_frame(a1)
 
 loc_25922:
@@ -49629,7 +49629,7 @@ loc_25A6E:
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#$18,ost_height(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 
 loc_25A9C:
 		move.w	ost_x_pos(a0),-(sp)
@@ -49881,7 +49881,7 @@ loc_2611C:
 		move.b	#render_rel|render_onscreen,ost_render(a0)
 	endc
 		move.b	#-$80,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	ost_subtype(a0),ost_frame(a0)
 
 loc_26152:
@@ -49981,7 +49981,7 @@ loc_2623A:
 		move.w	#tile_Nem_Leaves+tile_pal4+tile_hi,ost_tile(a1)
 		move.b	#render_rel|render_onscreen,ost_render(a1)
 		move.b	#8,ost_displaywidth(a1)
-		move.b	#1,ost_priority(a1)
+		move.b	#priority_1,ost_priority(a1)
 		move.b	#4,$38(a1)
 
 	if FixBugs
@@ -50126,7 +50126,7 @@ loc_2638C:
 		jsrto	AdjustVRAM2P,JmpTo26_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$1C,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		bset	#status_broken_bit,ost_primary_status(a0)
 		move.b	ost_subtype(a0),d0
 		andi.w	#2,d0
@@ -50346,7 +50346,7 @@ loc_26648:
 		move.w	#0+tile_pal4,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		jsrto	AdjustVRAM2P,JmpTo27_AdjustVRAM2P
 		move.b	#7,ost_frame(a0)
 		move.w	ost_y_pos(a0),$34(a0)
@@ -50441,7 +50441,7 @@ loc_2674C:
 		move.w	#tile_Nem_SteamSpring+tile_pal2,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#$18,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 
 	locret_2678C:
 		rts
@@ -50587,7 +50587,7 @@ loc_2696A:
 		move.w	#0+tile_pal2,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo28_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	ost_x_pos(a0),$34(a0)
 		move.w	ost_y_pos(a0),$30(a0)
 		moveq	#0,d0
@@ -50726,7 +50726,7 @@ loc_26B06:
 		move.w	#tile_LevelArt+tile_pal4,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo29_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		lsr.w	#2,d0
@@ -50784,7 +50784,7 @@ loc_26BE0:
 		move.w	#tile_Nem_Cog+tile_pal4,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.l	a0,$3C(a1)
 
 loc_26C04:
@@ -51140,7 +51140,7 @@ loc_26F6A:
 		jsrto	AdjustVRAM2P,JmpTo30_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#8,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#$40,ost_height(a0)
 		move.b	ost_subtype(a0),d0
 		lsr.b	#4,d0
@@ -51337,7 +51337,7 @@ loc_27188:
 		move.w	#tile_Nem_TeleportFlash+tile_pal4,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 
 loc_271AC:
 		lea	(v_ost_player1).w,a1
@@ -51648,7 +51648,7 @@ loc_275A8:
 		jsrto	AdjustVRAM2P,JmpTo31_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		jsrto	FindNextFreeObj,JmpTo12_FindNextFreeObj
 		bne.s	loc_27644
 		_move.b	ost_id(a0),ost_id(a1)
@@ -51661,7 +51661,7 @@ loc_275A8:
 		move.w	#tile_Nem_MTZSpike+tile_pal2,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.w	(v_frame_counter).w,d0
 		lsr.w	#6,d0
 		move.w	d0,d1
@@ -51810,7 +51810,7 @@ loc_277A6:
 		jsrto	AdjustVRAM2P,JmpTo31_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#4,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		move.w	ost_y_pos(a0),$32(a0)
 		move.b	#id_col_4x16+id_col_hurt,ost_col_type(a0)
@@ -51917,7 +51917,7 @@ loc_2789A:
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#$B,ost_height(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	ost_y_pos(a0),ost_nut_32(a0)
 		move.b	ost_subtype(a0),d0
 		andi.w	#$7F,d0
@@ -52106,7 +52106,7 @@ loc_27AC4:
 		move.l	#Map_MTZPlats,ost_mappings(a0)
 		move.w	#0+tile_pal4,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#$C,ost_height(a0)
 		move.l	#byte_27CDC,$2C(a0)
@@ -52344,7 +52344,7 @@ loc_27D86:
 loc_27DAE:
 		jsrto	AdjustVRAM2P,JmpTo34_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		lsr.w	#2,d0
@@ -52669,7 +52669,7 @@ loc_28060:
 		move.w	#tile_Nem_RopePlat+tile_pal4,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		jsrto	AdjustVRAM2P,JmpTo35_AdjustVRAM2P
 		move.b	#0,ost_frame(a0)
 		moveq	#0,d0
@@ -52948,7 +52948,7 @@ loc_283C8:
 		move.w	#tile_LevelArt+tile_pal4,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo36_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		lsr.w	#3,d0
@@ -52965,7 +52965,7 @@ loc_283C8:
 		addq.b	#2,ost_primary_routine(a0)
 		move.w	#tile_Nem_WheelIndent+tile_pal4,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo36_AdjustVRAM2P
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		bra.w	loc_284BC
 ; ===========================================================================
 
@@ -53118,7 +53118,7 @@ loc_285F4:
 		move.w	#tile_Nem_GiantCog+tile_pal4,ost_tile(a1)
 		jsrto	AdjustVRAM2P2,JmpTo4_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.w	d2,$32(a1)
 		move.w	d3,$30(a1)
@@ -53375,7 +53375,7 @@ loc_289E8:
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo37_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
 		move.w	ost_x_pos(a0),$3A(a0)
 		move.w	ost_y_pos(a0),$38(a0)
@@ -53547,7 +53547,7 @@ BrickAndSpikeChain:
 ; ===========================================================================
 
 loc_28BE0:
-		move.w	#$280,d0
+		move.w	#sizeof_priority*priority_5,d0
 		jmpto	DisplaySprite3,JmpTo_DisplaySprite3
 ; ===========================================================================
 off_28BE8:	index offset(*),,2
@@ -53562,7 +53562,7 @@ loc_28BEE:
 		move.w	#tile_LevelArt+tile_pal2,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo38_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		move.w	ost_y_pos(a0),$32(a0)
@@ -53580,7 +53580,7 @@ loc_28BEE:
 		cmpi.b	#$F,d1
 		bne.s	loc_28C5E
 		addq.b	#2,ost_primary_routine(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#id_Frame_Bricks,ost_frame(a0)
 		rts
 ; ===========================================================================
@@ -53748,7 +53748,7 @@ loc_28E0E:
 		move.w	#tile_LevelArt,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo39_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 
 		; It seems that at one point this object was going to have different sizes determined
 		; by subtype, with these five lines fetching the appropriate height, width, and mapping
@@ -54025,7 +54025,7 @@ loc_29214:
 		move.w	#tile_Nem_StairBlock+tile_pal4,ost_tile(a1)
 		jsrto	AdjustVRAM2P2,JmpTo5_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	ost_subtype(a0),ost_subtype(a1)
 		move.w	d2,ost_x_pos(a1)
@@ -54266,7 +54266,7 @@ loc_29426:
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#$18,ost_displaywidth(a1)
 		move.w	ost_x_pos(a1),$30(a1)
 
@@ -54449,7 +54449,7 @@ loc_295C8:
 		move.w	#tile_Nem_TubeLid,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	ost_subtype(a0),d0
 		andi.w	#2,d0
 		move.w	byte_295C4(pc,d0.w),$30(a0)
@@ -54637,7 +54637,7 @@ loc_297F6:
 		jsrto	AdjustVRAM2P,JmpTo43_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#8,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 
 loc_2981E:
 		lea	$30(a0),a2
@@ -54762,7 +54762,7 @@ VineHook_Main:
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#-$80,ost_height(a0)
 		bset	#render_useheight_bit,ost_render(a0)
 		move.w	ost_y_pos(a0),$3C(a0)
@@ -55045,7 +55045,7 @@ SingleDrawbridge:
 ; ===========================================================================
 
 loc_2A018:
-		move.w	#$280,d0
+		move.w	#sizeof_priority*priority_5,d0
 		jmpto	DisplaySprite3,JmpTo2_DisplaySprite3
 ; ===========================================================================
 off_2A020:	index offset(*),,2
@@ -55060,7 +55060,7 @@ loc_2A026:
 		move.w	#tile_Nem_DrawbridgeLogs+tile_pal4,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo45_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		move.b	#8,ost_displaywidth(a0)
 		ori.b	#-$80,ost_primary_status(a0)
 		move.w	ost_x_pos(a0),$30(a0)
@@ -55300,7 +55300,7 @@ PillPlat_Main:
 		move.w	#tile_LevelArt,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo46_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
 		lsr.w	#3,d0
@@ -55530,7 +55530,7 @@ CirclingPlatform:
 ; ===========================================================================
 
 loc_2A514:
-		move.w	#$280,d0
+		move.w	#sizeof_priority*priority_5,d0
 		jmpto	DisplaySprite3,JmpTo3_DisplaySprite3
 ; ===========================================================================
 Circ_Index:	index offset(*),,2
@@ -55545,7 +55545,7 @@ loc_2A522:
 		move.w	#tile_LevelArt,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo47_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		move.w	ost_y_pos(a0),$32(a0)
@@ -55601,7 +55601,7 @@ loc_2A5DE:
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#$20,ost_displaywidth(a1)
 		move.w	ost_x_pos(a0),$30(a1)
 		move.w	ost_y_pos(a0),$32(a1)
@@ -55791,7 +55791,7 @@ loc_2A7C4:
 		jsrto	AdjustVRAM2P,JmpTo48_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		tst.b	ost_subtype(a0)
 		bpl.s	loc_2A802
 		addq.b	#2,ost_primary_routine(a0)
@@ -56019,7 +56019,7 @@ PinballLauncher:
 		move.b	ost_primary_routine(a0),d0
 		move.w	PLaunch_Index(pc,d0.w),d1
 		jsr	PLaunch_Index(pc,d1.w)
-		move.w	#$200,d0
+		move.w	#sizeof_priority*priority_4,d0
 		tst.w	(f_two_player).w
 		beq.s	loc_2ABA0
 		jmpto	DisplaySprite3,JmpTo4_DisplaySprite3
@@ -56477,7 +56477,7 @@ loc_2B158:
 		jsrto	AdjustVRAM2P,JmpTo50_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$18,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		tst.b	ost_subtype(a0)
 		beq.s	loc_2B194
 		addq.b	#2,ost_primary_routine(a0)
@@ -56756,7 +56756,7 @@ loc_2B53A:
 		jsrto	AdjustVRAM2P,JmpTo51_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#8,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		move.w	ost_y_pos(a0),$32(a0)
 		moveq	#0,d0
@@ -56989,7 +56989,7 @@ loc_2B8FE:
 		jsrto	AdjustVRAM2P,JmpTo52_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	ost_x_pos(a0),$30(a0)
 		move.w	ost_y_pos(a0),$32(a0)
 		move.w	#$8000,ost_x_sub(a0)
@@ -57097,7 +57097,7 @@ loc_2BA1A:
 		jsrto	AdjustVRAM2P,JmpTo53_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	ost_y_pos(a0),$32(a0)
 		move.w	#-$8000,ost_y_sub(a0)
 		moveq	#0,d0
@@ -57258,7 +57258,7 @@ Cage_Main: ; Routine 0
 		jsrto	AdjustVRAM2P,JmpTo54_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$18,ost_displaywidth(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 
 Cage_Action: ; Routine 2
 		move.w	#($46/2),d1				; width of cage/2
@@ -57359,7 +57359,7 @@ Cage_GivePenalty:
 		jsrto	AdjustVRAM2P2,JmpTo6_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.w	#30,ost_casinobmb_display_delay(a1)	; delay display for 30 frames
 		move.w	ost_cage_prize_angle(a0),ost_casinobmb_angle(a1) ; set spawn angle
 		addi.w	#$90,ost_cage_prize_angle(a0)		; increment angle
@@ -57406,7 +57406,7 @@ Cage_GiveRings:
 		move.w	#tile_Nem_Ring+tile_pal2,ost_tile(a1)
 		jsrto	AdjustVRAM2P2,JmpTo6_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.b	#8,ost_displaywidth(a1)
 		move.w	#26,ost_casinoprz_display_delay(a1)	; delay display for 26 frames
 		move.w	ost_cage_prize_angle(a0),ost_casinoprz_angle(a1) ; set spawn angle
@@ -58224,7 +58224,7 @@ loc_2C45A:
 		jsrto	AdjustVRAM2P,JmpTo55_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	#id_col_16x8+id_col_custom,ost_col_type(a0)
 		btst	#status_xflip_bit,ost_primary_status(a0)
 		beq.s	loc_2C496
@@ -58437,7 +58437,7 @@ loc_2C6C0:
 		jsrto	AdjustVRAM2P,JmpTo56_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$10,ost_displaywidth(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	#id_col_8x8_2+id_col_custom,ost_col_type(a0)
 		move.b	ost_subtype(a0),d0
 		rol.b	#2,d0
@@ -58682,7 +58682,7 @@ loc_2C93E:
 		addq.b	#2,ost_primary_routine(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$18,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 
 loc_2C954:
 		lea	$30(a0),a2
@@ -58804,7 +58804,7 @@ loc_2CA52:
 		move.w	#tile_Nem_Octus+tile_pal2,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#id_col_16x8,ost_col_type(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#$B,ost_height(a0)
 		move.b	#8,ost_width(a0)
@@ -58919,7 +58919,7 @@ loc_2CB70:
 		move.b	#6,ost_primary_routine(a1)
 		move.l	#Map_Octus,ost_mappings(a1)
 		move.w	#tile_Nem_Octus+tile_pal2,ost_tile(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
@@ -59013,7 +59013,7 @@ loc_2CCDE:
 		move.w	#tile_Nem_Aquis+tile_pal2,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#id_col_16x8,ost_col_type(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.w	#-$100,ost_x_vel(a0)
 		move.b	ost_subtype(a0),d0
@@ -59041,7 +59041,7 @@ loc_2CCDE:
 		move.l	#Map_Aquis,ost_mappings(a1)
 		move.w	#tile_Nem_Aquis+tile_pal2,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.b	ost_primary_status(a0),ost_primary_status(a1)
 		move.b	#3,ost_anim(a1)
 		move.l	a1,$36(a0)
@@ -59128,7 +59128,7 @@ loc_2CE24:
 		move.l	#Map_Aquis,ost_mappings(a1)
 		move.w	#tile_Nem_Aquis+tile_pal2,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a1)
 		move.b	#2,ost_anim(a1)
 		move.w	#$A,d0
@@ -59346,11 +59346,11 @@ Buzz_Main:
 		jsrto	AdjustVRAM2P,JmpTo57_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#id_col_16x8,ost_col_type(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.b	#$10,ost_height(a0)
 		move.b	#$18,ost_width(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		addq.b	#2,ost_primary_routine(a0)
 		jsrto	FindNextFreeObj,JmpTo20_FindNextFreeObj
 		bne.s	locret_2D172
@@ -59359,7 +59359,7 @@ Buzz_Main:
 		move.l	#Map_Buzz,ost_mappings(a1)
 		move.w	#tile_Nem_Buzzer,ost_tile(a1)
 		jsrto	AdjustVRAM2P2,JmpTo7_AdjustVRAM2P2
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	ost_primary_status(a0),ost_primary_status(a1)
 		move.b	ost_render(a0),ost_render(a1)
@@ -59480,7 +59480,7 @@ loc_2D24E:
 		move.l	#Map_Buzz,ost_mappings(a1)
 		move.w	#tile_Nem_Buzzer,ost_tile(a1)
 		jsrto	AdjustVRAM2P2,JmpTo7_AdjustVRAM2P2
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a1)
 		move.b	#$10,ost_displaywidth(a1)
 		move.b	ost_primary_status(a0),ost_primary_status(a1)
@@ -59577,7 +59577,7 @@ loc_2D3AA:
 		move.w	#tile_Nem_Masher,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo58_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#id_col_12x16,ost_col_type(a0)
 		move.b	#$10,ost_displaywidth(a0)
 		move.w	#-$400,ost_y_vel(a0)
@@ -59665,7 +59665,7 @@ loc_2D4A6:
 		move.w	#tile_Nem_FieryExplosion+tile_hi,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo59_AdjustVRAM2P
 		move.b	#render_rel,ost_render(a0)
-		move.b	#0,ost_priority(a0)
+		move.b	#priority_0,ost_priority(a0)
 		move.b	#0,ost_col_type(a0)
 		move.b	#$C,ost_displaywidth(a0)
 		move.b	#7,ost_anim_time(a0)
@@ -59974,7 +59974,7 @@ BCPZ_Main:
 		move.b	#$20,ost_displaywidth(a0)
 		move.w	#$2B80,ost_x_pos(a0)
 		move.w	#$4B0,ost_y_pos(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.b	#id_col_24x24,ost_col_type(a0)
 		move.b	#8,ost_col_property(a0)
 		addq.b	#2,ost_primary_routine(a0)
@@ -59991,7 +59991,7 @@ BCPZ_Main:
 		move.w	#tile_Nem_Eggpod_CPZ,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#$16,ost_primary_routine(a1)
@@ -60010,7 +60010,7 @@ BCPZ_Main:
 		move.b	#1,ost_anim_time(a0)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#$18,ost_primary_routine(a1)
@@ -60023,7 +60023,7 @@ BCPZ_Main:
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#$12,ost_primary_routine(a1)
@@ -60037,7 +60037,7 @@ loc_2D8AC:
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		subi.w	#$38,ost_y_pos(a1)
@@ -60055,7 +60055,7 @@ loc_2D908:
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#4,ost_primary_routine(a1)
@@ -60437,7 +60437,7 @@ loc_2DD26:
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	ost_primary_status(a0),ost_primary_status(a1)
@@ -60518,7 +60518,7 @@ BCPZ_Pipe_LoadSegment_2:
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#5,ost_priority(a1)
+		move.b	#priority_5,ost_priority(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.w	$2C(a0),d0
@@ -60563,7 +60563,7 @@ loc_2DE7A:
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#2,$32(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
@@ -60761,7 +60761,7 @@ loc_2E098:
 		move.w	#tile_Nem_CPZBoss+tile_pal4,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_displaywidth(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		movea.l	$34(a0),a1
 		move.w	ost_x_pos(a1),ost_x_pos(a0)
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
@@ -60846,7 +60846,7 @@ loc_2E1AC:
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#$10,ost_primary_routine(a1)
@@ -60862,7 +60862,7 @@ loc_2E20E:
 		move.w	#tile_Nem_CPZBoss+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		addi.b	#$10,ost_primary_routine(a1)
@@ -60966,7 +60966,7 @@ loc_2E35C:
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	ost_render(a0),ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		addi_.w	#8,ost_y_pos(a1)
@@ -61059,7 +61059,7 @@ loc_2E464:
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#5,ost_priority(a1)
+		move.b	#priority_5,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#$B,ost_anim(a1)
@@ -61091,7 +61091,7 @@ loc_2E4DA:
 		move.w	#tile_Nem_CPZBoss+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#4,ost_primary_routine(a1)
@@ -61275,7 +61275,7 @@ loc_2E728:
 loc_2E746:
 		subi_.w	#1,$2A(a0)
 		bpl.s	loc_2E77A
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.b	#$25,ost_frame(a0)
 		movea.l	$34(a0),a1
 		movea.l	$34(a1),a1
@@ -61356,7 +61356,7 @@ loc_2E834:
 		move.w	#tile_Nem_CPZBoss+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#4,ost_height(a1)
@@ -61672,7 +61672,7 @@ loc_2EF36:
 		move.w	#$426,ost_y_pos(a0)
 		move.b	#$20,ost_displaywidth(a0)
 		move.b	#$14,ost_height(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#id_col_24x24,ost_col_type(a0)
 		move.b	#8,ost_col_property(a0)
 		addq.b	#2,ost_primary_routine(a0)
@@ -61690,7 +61690,7 @@ loc_2EF36:
 		move.w	#tile_Nem_Eggpod_EHZ,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#$E,ost_primary_routine(a1)
@@ -61709,7 +61709,7 @@ loc_2EFE4:
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$30,ost_displaywidth(a1)
 		move.b	#$10,ost_height(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.w	#$2AF0,ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		move.b	#6,ost_primary_routine(a1)
@@ -61728,7 +61728,7 @@ loc_2F032:
 		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$40,ost_displaywidth(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		move.w	#$1E,$2A(a1)
@@ -61748,7 +61748,7 @@ loc_2F098:
 		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.b	#$10,ost_height(a1)
 		move.b	#$10,ost_width(a1)
 		move.w	#$2AF0,ost_x_pos(a1)
@@ -61771,7 +61771,7 @@ loc_2F110:
 		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.b	#$10,ost_height(a1)
 		move.b	#$10,ost_width(a1)
 		move.w	#$2AF0,ost_x_pos(a1)
@@ -61794,7 +61794,7 @@ loc_2F188:
 		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$10,ost_displaywidth(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.b	#$10,ost_height(a1)
 		move.b	#$10,ost_width(a1)
 		move.w	#$2AF0,ost_x_pos(a1)
@@ -61818,7 +61818,7 @@ loc_2F200:
 		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.w	#$2AF0,ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#-$36,ost_x_pos(a1)
@@ -61966,7 +61966,7 @@ loc_2F3A2:
 		jsrto	AdjustVRAM2P2,JmpTo9_AdjustVRAM2P2
 		move.b	#render_rel,ost_render(a1)
 		move.b	#$20,ost_displaywidth(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.l	ost_x_pos(a0),ost_x_pos(a1)
 		move.l	ost_y_pos(a0),ost_y_pos(a1)
 		addi.w	#$C,ost_y_pos(a1)
@@ -62150,7 +62150,7 @@ loc_2F5C6:
 		bpl.s	loc_2F5E8
 		cmpi.w	#-$10,$2A(a0)
 		ble.w	JmpTo52_DeleteObject
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		addi_.w	#1,ost_y_pos(a0)
 		bra.w	JmpTo35_DisplaySprite
 ; ===========================================================================
@@ -62277,7 +62277,7 @@ loc_2F714:
 		btst	#1,$2D(a1)
 		beq.w	JmpTo35_DisplaySprite
 		addq.b	#2,ost_secondary_routine(a0)
-		cmpi.b	#2,ost_priority(a0)
+		cmpi.b	#priority_2,ost_priority(a0)
 		bne.s	loc_2F742
 		move.w	ost_y_pos(a0),d0
 		movea.l	$34(a0),a1
@@ -62307,7 +62307,7 @@ loc_2F768:
 
 loc_2F77E:
 		move.w	#$100,ost_y_vel(a0)
-		cmpi.b	#2,ost_priority(a0)
+		cmpi.b	#priority_2,ost_priority(a0)
 		bne.s	loc_2F798
 		move.w	ost_y_pos(a0),d0
 		movea.l	$34(a0),a1
@@ -62325,7 +62325,7 @@ loc_2F7A6:
 		addq.b	#2,ost_secondary_routine(a0)
 		move.w	#$A,$2A(a0)
 		move.w	#-$300,ost_y_vel(a0)
-		cmpi.b	#2,ost_priority(a0)
+		cmpi.b	#priority_2,ost_priority(a0)
 		beq.w	JmpTo35_DisplaySprite
 		neg.w	ost_x_vel(a0)
 		bra.w	JmpTo35_DisplaySprite
@@ -62582,7 +62582,7 @@ loc_2FC68:
 		; right after this.
 		move.b	#$90,ost_mainspr_height(a0)
 	endc
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	#$3040,ost_x_pos(a0)
 		move.w	#$580,ost_y_pos(a0)
 		move.b	#1,ost_boss_defeated(a0)
@@ -62806,7 +62806,7 @@ loc_2FF02:
 		move.l	#Map_BHTZ_Eggpod,ost_mappings(a0)
 		move.w	#tile_Nem_HTZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#5,ost_anim(a0)
 		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a0)
@@ -62862,7 +62862,7 @@ loc_2FF94:
 		move.l	#Map_BHTZ_Eggpod,ost_mappings(a1)
 		move.w	#tile_Nem_HTZBoss,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		addq.b	#2,ost_secondary_routine(a1)
 		move.b	#7,ost_anim(a1)
 		move.b	#id_col_8x8+id_col_hurt,ost_col_type(a1)
@@ -63061,7 +63061,7 @@ loc_301B4:
 		move.l	#Map_BHTZ_Smoke,ost_mappings(a1)
 		move.w	#tile_Nem_BossSmoke_HTZ,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
-		move.b	#1,ost_priority(a1)
+		move.b	#priority_1,ost_priority(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.w	ost_x_pos(a0),$2A(a1)
@@ -63226,7 +63226,7 @@ loc_304D4:
 		move.l	#Map_BARZ_EggPod,ost_mappings(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#$20,ost_mainspr_width(a0)
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.b	#2,ost_boss_subtype(a0)
 		move.w	#$2AE0,ost_x_pos(a0)
 		move.w	#$388,ost_y_pos(a0)
@@ -63257,13 +63257,13 @@ loc_304D4:
 		ori.b	#render_rel,ost_render(a1)
 		move.w	#tile_Nem_ARZBoss,ost_tile(a1)
 		move.b	#$10,ost_displaywidth(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.w	#$2A50,ost_x_pos(a1)
 		move.w	#$510,ost_y_pos(a1)
 		addq.b	#4,ost_boss_subtype(a1)
 		move.l	a0,$2A(a1)
 		move.b	#0,ost_frame(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.b	#$20,ost_height(a1)
 		movea.l	a1,a2
 		jsrto	FindNextFreeObj,JmpTo22_FindNextFreeObj
@@ -63832,7 +63832,7 @@ loc_30BC8:
 		move.w	#tile_Nem_ARZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
 		move.b	#-$70,ost_mainspr_width(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		addq.b	#2,$2A(a0)
 		movea.l	$34(a0),a1
 		move.w	ost_x_pos(a1),ost_x_pos(a0)
@@ -64065,7 +64065,7 @@ loc_30FB8:
 	if FixBugs=0
 		; Multi-sprite objects cannot use 'ost_priority' as it is
 		; overwritten by 'ost_subspr3_y_pos'.
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 	endc
 		move.w	#$21A0,ost_x_pos(a0)
 		move.w	#$560,ost_y_pos(a0)
@@ -64383,7 +64383,7 @@ loc_313DA:
 		move.l	#Map_BMCZ,ost_mappings(a1)
 		move.w	#vram_FallingRocks/sizeof_cell,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		move.b	#$D,ost_frame(a1)
 		tst.b	d2
 		bne.s	locret_31438
@@ -64714,7 +64714,7 @@ loc_31904:
 		move.l	#Map_BCNZ,ost_mappings(a0)
 		move.w	#tile_Nem_CNZBoss-$60,ost_tile(a0)	; (badly) reused mappings
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.w	#$2A46,ost_x_pos(a0)
 		move.w	#$654,ost_y_pos(a0)
 		move.b	#0,ost_mainspr_frame(a0)
@@ -64949,7 +64949,7 @@ JmpTo39_DisplaySprite:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#sizeof_priority*3,d0
+		move.w	#sizeof_priority*priority_3,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo39_DisplaySprite
@@ -65096,7 +65096,7 @@ loc_31DB8:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#sizeof_priority*3,d0
+		move.w	#sizeof_priority*priority_3,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo39_DisplaySprite
@@ -65147,7 +65147,7 @@ loc_31E0E:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#sizeof_priority*3,d0
+		move.w	#sizeof_priority*priority_3,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo39_DisplaySprite
@@ -65180,7 +65180,7 @@ loc_31E4A:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#sizeof_priority*3,d0
+		move.w	#sizeof_priority*priority_3,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo39_DisplaySprite
@@ -65269,7 +65269,7 @@ loc_31F48:
 		move.l	#Map_BCNZ,ost_mappings(a0)
 		move.w	#tile_Nem_CNZBoss-$60,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#7,ost_priority(a0)
+		move.b	#priority_7,ost_priority(a0)
 		addq.b	#2,ost_secondary_routine(a0)
 		movea.l	$34(a0),a1
 		move.w	ost_x_pos(a1),ost_x_pos(a0)
@@ -65482,7 +65482,7 @@ loc_3229E:
 		move.l	#Map_BMTZ,ost_mappings(a0)
 		move.w	#$37C,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.w	#$2B50,ost_x_pos(a0)
 		move.w	#$380,ost_y_pos(a0)
 		move.b	#2,ost_mainspr_frame(a0)
@@ -65516,7 +65516,7 @@ loc_3229E:
 		move.l	#Map_BMTZ,ost_mappings(a1)
 		move.w	#tile_Nem_MTZBoss,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
-		move.b	#6,ost_priority(a1)
+		move.b	#priority_6,ost_priority(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
 		move.l	a0,$34(a1)
@@ -66083,7 +66083,7 @@ loc_32966:
 		move.l	#Map_BMTZ,ost_mappings(a1)
 		move.w	#tile_Nem_MTZBoss,ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
-		move.b	#3,ost_priority(a1)
+		move.b	#priority_3,ost_priority(a1)
 		addq.b	#2,ost_primary_routine(a1)
 		move.b	#5,ost_frame(a1)
 		move.b	byte_329CC(pc,d2.w),$28(a1)
@@ -66242,13 +66242,13 @@ loc_32B1A:
 		cmpi.w	#$C,d0
 		blt.s	loc_32B34
 		move.b	#3,ost_frame(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		rts
 ; ===========================================================================
 
 loc_32B34:
 		move.b	#4,ost_frame(a0)
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		rts
 ; ===========================================================================
 
@@ -66256,13 +66256,13 @@ loc_32B42:
 		cmpi.w	#-$C,d0
 		blt.s	loc_32B56
 		move.b	#4,ost_frame(a0)
-		move.b	#6,ost_priority(a0)
+		move.b	#priority_6,ost_priority(a0)
 		rts
 ; ===========================================================================
 
 loc_32B56:
 		move.b	#5,ost_frame(a0)
-		move.b	#7,ost_priority(a0)
+		move.b	#priority_7,ost_priority(a0)
 		rts
 ; ===========================================================================
 
@@ -66407,7 +66407,7 @@ loc_32CC0:
 		move.l	#Map_BMTZ,ost_mappings(a0)
 		move.w	#tile_Nem_MTZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		move.b	#$12,ost_frame(a0)
 		addq.b	#2,ost_secondary_routine(a0)
 		movea.l	$34(a0),a1
@@ -66550,7 +66550,7 @@ loc_32FA8:
 		move.l	#Map_BOOZ,ost_mappings(a0)
 		move.w	#tile_Nem_OOZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		bset	#render_subsprites_bit,ost_render(a0)
 		move.b	#0,ost_mainspr_childsprites(a0)
 		addq.b	#2,ost_boss_subtype(a0)
@@ -66900,7 +66900,7 @@ loc_333BA:
 		; must use 'DisplaySprite3' instead of 'DisplaySprite'.
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
-		move.w	#sizeof_priority*3,d0
+		move.w	#sizeof_priority*priority_3,d0
 		jmp	(DisplaySprite3).l
 	else
 		jmpto	DisplaySprite,JmpTo41_DisplaySprite
@@ -67105,7 +67105,7 @@ loc_33586:
 		move.l	#Map_BOOZ,ost_mappings(a0)
 		move.w	#tile_Nem_OOZBoss,ost_tile(a0)
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		movea.l	$34(a0),a1
 		move.w	ost_x_pos(a1),ost_x_pos(a0)
 		move.w	ost_y_pos(a1),ost_y_pos(a0)
@@ -67179,7 +67179,7 @@ loc_33640:
 		move.w	#tile_Nem_OOZBoss,ost_tile(a1)
 		jsrto	AdjustVRAM2P,JmpTo63_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a1)
-		move.b	#2,ost_priority(a1)
+		move.b	#priority_2,ost_priority(a1)
 		move.w	#5,$32(a1)
 		move.b	#7,$36(a1)
 		move.w	ost_x_vel(a0),ost_x_vel(a1)
@@ -67339,7 +67339,7 @@ loc_3391C:
 		move.l	#Map_SSS,ost_mappings(a0)
 		move.w	#(vram_SpecialSonic/sizeof_cell)+tile_pal2,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.w	#$6E,ost_ss_z_pos(a0)
 		clr.b	($FFFFF742).w
 		move.w	#$400,ost_ss_init_flip_timer(a0)
@@ -67357,7 +67357,7 @@ loc_3391C:
 		move.l	#Map_ShadSpec,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHorizShadow+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.l	a0,ost_shadspec_parent(a1)
 		bra.w	SSS_LoadGFX
 ; ===========================================================================
@@ -67836,12 +67836,12 @@ loc_33E76:
 		move.w	d0,ost_ss_z_pos(a0)
 		cmpi.w	#$77,d0
 		bcc.s	loc_33E88
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		rts
 ; ===========================================================================
 
 loc_33E88:
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 
 locret_33E8E:
 		rts
@@ -68257,11 +68257,11 @@ loc_34804:
 		move.l	#Map_TSS,ost_mappings(a0)
 		move.w	#(vram_SpecialTails/sizeof_cell)+tile_pal3,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#2,ost_priority(a0)
+		move.b	#priority_2,ost_priority(a0)
 		move.w	#$80,ost_ss_z_pos(a0)
 		tst.w	(v_player_mode).w
 		beq.s	loc_34864
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.w	#$6E,ost_ss_z_pos(a0)
 
 loc_34864:
@@ -68279,7 +68279,7 @@ loc_34864:
 		move.l	#Map_ShadSpec,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHorizShadow+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.l	a0,ost_shadspec_parent(a1)
 		movea.l	#v_ss_tails_tails,a1
 		move.b	#id_TailsTailsSpecial,ost_id(a1)
@@ -68591,7 +68591,7 @@ loc_34EC6:
 		move.l	#Map_BombSpec,ost_mappings(a0)
 		move.w	#tile_Nem_SpecialBomb+tile_pal2,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.b	#id_col_12x20,ost_col_type(a0)
 		move.b	#-1,(f_unused_ss_bomb).w		; never used again
 		tst.b	ost_angle(a0)
@@ -68647,7 +68647,7 @@ loc_34F6A:
 loc_34F90:
 		cmpi.w	#4,$30(a0)
 		bcc.s	locret_34F9E
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 
 locret_34F9E:
 		rts
@@ -68676,7 +68676,7 @@ loc_34FB6:
 		move.l	#Map_RingSpec,ost_mappings(a0)
 		move.w	#tile_Nem_SpecialRings+tile_pal4,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		move.b	#id_col_20x20,ost_col_type(a0)
 		tst.b	ost_angle(a0)
 		bmi.s	loc_34FF0
@@ -68988,7 +68988,7 @@ loc_3529C:
 		move.l	#Map_ShadSpec,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialHorizShadow+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#5,ost_priority(a1)
+		move.b	#priority_5,ost_priority(a1)
 		move.b	ost_angle(a0),d0
 		cmpi.b	#$10,d0
 		bgt.s	loc_352E6
@@ -69230,7 +69230,7 @@ loc_3547E:
 		move.l	#Map_RingSpec,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialRings+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#5,ost_priority(a1)
+		move.b	#priority_5,ost_priority(a1)
 		move.b	#0,ost_col_type(a1)
 		move.b	#8,ost_anim(a1)
 		move.w	ost_x_pos(a3),ost_x_pos(a1)
@@ -69269,7 +69269,7 @@ loc_354E4:
 loc_3551C:
 		tst.w	ost_y_vel(a0)
 		bmi.w	locret_35530
-		move.b	#0,ost_priority(a0)
+		move.b	#priority_0,ost_priority(a0)
 		move.b	#9,ost_anim(a0)
 
 locret_35530:
@@ -69334,7 +69334,7 @@ loc_3559C:
 		move.l	#Map_RingSpec,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialRings+tile_pal4,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#5,ost_priority(a1)
+		move.b	#priority_5,ost_priority(a1)
 		move.b	d0,$2A(a1)
 		move.w	#0,$30(a1)
 		move.b	#-1,ost_frame(a1)
@@ -69394,7 +69394,7 @@ loc_3561E:
 		move.w	#tile_Nem_SpecialHUD+tile_pal3,ost_tile(a1)
 		move.b	#id_MessageSpecial,ost_id(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#1,ost_priority(a1)
+		move.b	#priority_1,ost_priority(a1)
 
 loc_35648:
 		bset	#render_subsprites_bit,ost_render(a1)
@@ -69470,7 +69470,7 @@ loc_356E6:
 		; overwritten by 'ost_subspr3_y_pos'. This object doesn't use the
 		; multi-sprite system, but it does share display code with one, so
 		; this might as well be removed since it won't be used.
-		move.b	#1,ost_priority(a1)
+		move.b	#priority_1,ost_priority(a1)
 	endc
 		rts
 ; ===========================================================================
@@ -69570,7 +69570,7 @@ loc_357B2:
 		; This object's 'priority' is overwritten by 'ost_subspr3_y_pos',
 		; causing it to display on the wrong layer.
 		bcc.s	locret_357D0
-		move.w	#sizeof_priority*1,d0
+		move.w	#sizeof_priority*priority_1,d0
 		jmp	(DisplaySprite3).l
 	else
 		bcs.w	JmpTo44_DisplaySprite
@@ -69887,7 +69887,7 @@ loc_35AC4:
 		move.l	#Map_SSMessages,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialMessages+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#1,ost_priority(a1)
+		move.b	#priority_1,ost_priority(a1)
 		move.w	d3,ost_x_pos(a1)
 		move.w	d4,ost_y_pos(a1)
 		move.w	#$46,$2A(a1)
@@ -69900,7 +69900,7 @@ loc_35AC4:
 		move.l	#Map_SSMessages,ost_mappings(a1)
 		move.w	#tile_Nem_SpecialMessages+tile_pal2,ost_tile(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#0,ost_priority(a1)
+		move.b	#priority_0,ost_priority(a1)
 		move.w	d3,ost_x_pos(a1)
 		move.w	d4,ost_y_pos(a1)
 		move.w	d4,$30(a1)
@@ -69959,7 +69959,7 @@ loc_35BD6:
 		move.b	#id_MessageSpecial,ost_id(a1)
 		move.b	#4,ost_primary_routine(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#1,ost_priority(a1)
+		move.b	#priority_1,ost_priority(a1)
 		move.w	d1,ost_x_pos(a1)
 		move.w	d2,ost_y_pos(a1)
 		move.w	#$46,$2A(a1)
@@ -69983,7 +69983,7 @@ loc_35C1C:
 		move.b	#id_MessageSpecial,ost_id(a1)
 		move.b	#4,ost_primary_routine(a1)
 		move.b	#render_rel,ost_render(a1)
-		move.b	#1,ost_priority(a1)
+		move.b	#priority_1,ost_priority(a1)
 		move.w	d1,ost_x_pos(a1)
 		move.w	d2,ost_y_pos(a1)
 		move.w	#$46,$2A(a1)
@@ -70231,7 +70231,7 @@ loc_35FEC:
 		move.l	#Map_EmeraldSpec,ost_mappings(a0)
 		move.w	#tile_Nem_SpecialEmerald+tile_pal4,ost_tile(a0)
 		move.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.w	#$36,$30(a0)
 		move.b	#$40,ost_angle(a0)
 		bsr.w	loc_3529C
@@ -71182,7 +71182,7 @@ loc_36A26:
 ; ===========================================================================
 
 SubData_Whisp:
-		subobjdata	Map_Whisp,tile_Nem_Whisp+tile_pal2+tile_hi,render_rel,4,$18/2,id_col_8x8
+		subobjdata	Map_Whisp,tile_Nem_Whisp+tile_pal2+tile_hi,render_rel,priority_4,$18/2,id_col_8x8
 
 Ani_Whisp:	index offset(*)
 		ptr Ani_Whisp_Fly
@@ -71512,20 +71512,20 @@ GWall_Offsets:
 ; ===========================================================================
 
 SubData_Ground:
-		subobjdata	Map_Ground,tile_nem_Grounder+tile_pal2+tile_hi,render_rel,5,$20/2,id_col_12x20 ; tile_hi is cleared by init code
+		subobjdata	Map_Ground,tile_nem_Grounder+tile_pal2+tile_hi,render_rel,priority_5,$20/2,id_col_12x20 ; tile_hi is cleared by init code
 
 SubData_GWall:
-		subobjdata	Map_GWall,tile_LevelArt,render_rel|render_onscreen,4,$20/2,id_col_null
+		subobjdata	Map_GWall,tile_LevelArt,render_rel|render_onscreen,priority_4,$20/2,id_col_null
 
 SubData_GRock:
 	if FixBugs
 		; The correct tile setting for this object.
-		subobjdata	Map_GRock,tile_Nem_Grounder+tile_pal3,render_rel|render_onscreen,4,$10/2,id_col_null
+		subobjdata	Map_GRock,tile_Nem_Grounder+tile_pal3,render_rel|render_onscreen,priority_4,$10/2,id_col_null
 	else
 		; The tile setting here is incorrect, and is corrected with an additional instruction
 		; in the object's code. It'd make more sense to put the correct setting here and eliminate
 		; the additional instruction.
-		subobjdata	Map_GRock,tile_nem_Grounder+tile_pal2+tile_hi,render_rel|render_onscreen,4,$10/2,id_col_null
+		subobjdata	Map_GRock,tile_nem_Grounder+tile_pal2+tile_hi,render_rel|render_onscreen,priority_4,$10/2,id_col_null
 	endc
 
 ; ----------------------------------------------------------------------------
@@ -71711,7 +71711,7 @@ loc_36EE2:
 ; ===========================================================================
 
 SubData_Chop:
-		subobjdata	Map_Chop,tile_nem_ChopChop+tile_pal2,render_rel,4,$20/2,id_col_12x20
+		subobjdata	Map_Chop,tile_nem_ChopChop+tile_pal2,render_rel,priority_4,$20/2,id_col_12x20
 
 ; ----------------------------------------------------------------------------
 ; Animation script
@@ -71886,7 +71886,7 @@ loc_37066:
 ; ===========================================================================
 
 SubData_Spiker:
-		subobjdata	Map_Spiker,tile_LevelArt,render_rel,4,$20/2,id_col_8x16
+		subobjdata	Map_Spiker,tile_LevelArt,render_rel,priority_4,$20/2,id_col_8x16
 
 Ani_Spiker:	index offset(*)
 		ptr byte_3708A					; 0
@@ -71926,7 +71926,7 @@ loc_37116:
 		move.w	#tile_LevelArt,ost_tile(a0)
 		jsrto	AdjustVRAM2P,JmpTo64_AdjustVRAM2P
 		ori.b	#render_rel,ost_render(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#id_col_8x8,ost_col_type(a0)
 		move.b	#$C,ost_displaywidth(a0)
 		move.w	#-$40,ost_x_vel(a0)
@@ -71950,7 +71950,7 @@ loc_37152:
 		move.l	ost_mappings(a0),ost_mappings(a1)
 		move.w	ost_tile(a0),ost_tile(a1)
 		ori.b	#render_rel,ost_render(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.b	#8,ost_displaywidth(a1)
 		move.b	#3,ost_frame(a1)
 		move.b	#id_col_4x4+id_col_hurt,ost_col_type(a1)
@@ -72516,7 +72516,7 @@ RexHead_Oscillate:
 ; ===========================================================================
 
 SubData_Rex:
-		subobjdata	Map_Rex,tile_Nem_Rexon+tile_pal4,render_rel,4,$20/2,id_col_null
+		subobjdata	Map_Rex,tile_Nem_Rexon+tile_pal4,render_rel,priority_4,$20/2,id_col_null
 ; ===========================================================================
 
 		include "mappings/sprite/Rexon.asm"
@@ -72627,7 +72627,7 @@ loc_37756:
 		jmpto	AnimateSprite,JmpTo25_AnimateSprite
 ; ===========================================================================
 SubData_RexProj:
-		subobjdata	Map_Rex,tile_nem_Rexon+tile_pal2,render_rel|render_onscreen,4,8/2,id_col_4x4|id_col_hurt
+		subobjdata	Map_Rex,tile_nem_Rexon+tile_pal2,render_rel|render_onscreen,priority_4,8/2,id_col_4x4|id_col_hurt
 
 off_3776E:
 		dc.l Map_Neb
@@ -72636,7 +72636,7 @@ off_3776E:
 		dc.w $88B
 
 SubData_TurtProj:
-		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel|render_onscreen,4,8/2,id_col_4x4|id_col_hurt
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel|render_onscreen,priority_4,8/2,id_col_4x4|id_col_hurt
 
 off_37782:
 		dc.l Map_Coco
@@ -73053,18 +73053,18 @@ Turt_LoadProjectile:
 ; ===========================================================================
 SubData_Turt:
 	if FixBugs
-		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,$38/2,id_col_null
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,priority_5,$38/2,id_col_null
 	else
 		; This is too narrow, and causes the Turtloid to 'pop in' at the right
 		; edge of the screen.
-		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,$30/2,id_col_null
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,priority_5,$30/2,id_col_null
 	endc
 
 SubData_TRider:
-		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,4,$18/2,id_col_12x12
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,priority_4,$18/2,id_col_12x12
 
 SubData_BTJet:
-		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,5,$10/2,id_col_null
+		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel,priority_5,$10/2,id_col_null
 
 Ani_TurtProj:	index offset(*)
 		ptr TurtProj_Flicker
@@ -73430,7 +73430,7 @@ loc_37F5C:
 		dbf	d6,loc_37F4E
 
 loc_37F6C:
-		move.w	#$280,d0
+		move.w	#sizeof_priority*priority_5,d0
 		jmpto	DisplaySprite3,JmpTo5_DisplaySprite3
 ; ===========================================================================
 
@@ -73799,7 +73799,7 @@ loc_38296:
 		_move.b	#id_ShellcrackerClaw,ost_id(a1)
 		move.b	#$26,ost_subdata_ptr(a1)
 		move.b	#5,ost_frame(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.w	a0,$2C(a1)
 		move.w	d1,$2E(a1)
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
@@ -74035,7 +74035,7 @@ loc_38546:
 		move.b	#$2A,ost_subdata_ptr(a1)
 		move.b	ost_render(a0),ost_render(a1)
 		move.b	#5,ost_frame(a1)
-		move.b	#4,ost_priority(a1)
+		move.b	#priority_4,ost_priority(a1)
 		move.w	#$78,$2A(a1)
 		move.w	a0,$2C(a1)
 		move.w	a1,(a2)+
@@ -74411,7 +74411,7 @@ ProjData_Ast:
 		arraysize ProjData_Ast
 
 SubData_Ast:
-		subobjdata Map_Ast,tile_Nem_Asteron+tile_hi,render_rel,4,$20/2,id_col_8x8
+		subobjdata Map_Ast,tile_Nem_Asteron+tile_hi,render_rel,priority_4,$20/2,id_col_8x8
 
 Ani_Ast:	index offset(*)
 		ptr Ani_Ast_Flashing
@@ -75151,21 +75151,21 @@ ChildData_GrabString:
 
 SubData_Grabber:
 	if FixBugs
-		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,4,$2C/2,id_col_8x8
+		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,priority_4,$2C/2,id_col_8x8
 	else
 		; The Grabber disappears a bit too early off the edges of the screen. This is
 		; because the width set here is too narrow.
-		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,4,$20/2,id_col_8x8
+		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,priority_4,$20/2,id_col_8x8
 	endc
 
 SubData_GrabLegs:
-		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,1,$20/2,id_col_8x8_2|id_col_custom
+		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,priority_1,$20/2,id_col_8x8_2|id_col_custom
 
 SubData_GrabBox:
-		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,4,8/2,id_col_null
+		subobjdata Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,priority_4,8/2,id_col_null
 
 SubData_GrabString:
-		subobjdata Map_GrabString,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,5,8/2,id_col_null
+		subobjdata Map_GrabString,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel,priority_5,8/2,id_col_null
 
 Ani_Grab:	index offset(*)
 		ptr Ani_Grab_Attack
@@ -75906,7 +75906,7 @@ loc_39BEA:
 		bsr.w	LoadSubObjData
 		move.b	#8,ost_displaywidth(a0)
 		move.b	#$B,ost_frame(a0)
-		move.b	#3,ost_priority(a0)
+		move.b	#priority_3,ost_priority(a0)
 		rts
 ; ===========================================================================
 
@@ -76565,10 +76565,10 @@ Pal_SegaScreen3:
 
 
 SubData_SonicSega:
-		subobjdata	Map_SegaScreenSonic,(vram_Giant_Sonic/sizeof_cell)+tile_pal3+tile_hi,0,1,$20/2,id_col_null
+		subobjdata	Map_SegaScreenSonic,(vram_Giant_Sonic/sizeof_cell)+tile_pal3+tile_hi,0,priority_1,$20/2,id_col_null
 
 SubData_SegaHideTM:
-		subobjdata	Map_SegaScreenSonic,(vram_SEGA/sizeof_cell)+2,0,2,$10/2,id_col_null
+		subobjdata	Map_SegaScreenSonic,(vram_SEGA/sizeof_cell)+2,0,priority_2,$10/2,id_col_null
 
 Ani_SonicSegaScreen:	index offset(*)
 		ptr Ani_SonicSega_0
@@ -77696,7 +77696,7 @@ VertProp_Main: ; Routine 2
 ; ===========================================================================
 
 SubData_VertProp:
-		subobjdata	Map_VertProp,tile_Nem_VertProp+tile_pal2+tile_hi,render_rel,4,8/2,id_col_4x64|id_col_hurt
+		subobjdata	Map_VertProp,tile_Nem_VertProp+tile_pal2+tile_hi,render_rel,priority_4,8/2,id_col_4x64|id_col_hurt
 
 Ani_VertProp:	index offset(*)
 		ptr Ani_VertProp_Spin
@@ -78464,7 +78464,7 @@ StatHook_Display:
 ; ===========================================================================
 
 SubData_StatHook:
-		subobjdata	Map_StatHook,tile_Nem_Hook+tile_pal2,render_rel,4,$18/2,id_col_12x16
+		subobjdata	Map_StatHook,tile_Nem_Hook+tile_pal2,render_rel,priority_4,$18/2,id_col_12x16
 ; ===========================================================================
 
 		include "mappings/sprite/WFZ Stationary Hook (unused).asm"
@@ -79920,7 +79920,7 @@ off_3CA66:	index offset(*),,2
 loc_3CA70:
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#$D,ost_frame(a0)
-		move.b	#4,ost_priority(a0)
+		move.b	#priority_4,ost_priority(a0)
 		move.b	#0,ost_col_type(a0)
 		addi.w	#$10,ost_y_pos(a0)
 		move.b	#$C,ost_anim_frame(a0)
@@ -80723,7 +80723,7 @@ off_3D51A:	index offset(*),,2
 loc_3D52A:
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#3,ost_frame(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		lea	(byte_3E55C).l,a2
 		bsr.w	LoadChild
 		lea	(byte_3E564).l,a2
@@ -81605,7 +81605,7 @@ off_3DCB4:	index offset(*),,2
 loc_3DCB8:
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#$B,ost_frame(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		rts
 ; ===========================================================================
 
@@ -81633,7 +81633,7 @@ off_3DCE4:	index offset(*),,2
 loc_3DCEE:
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#6,ost_frame(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		rts
 ; ===========================================================================
 
@@ -81668,7 +81668,7 @@ off_3DD38:	index offset(*),,2
 loc_3DD3C:
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#$A,ost_frame(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		rts
 ; ===========================================================================
 
@@ -81692,7 +81692,7 @@ loc_3DD64:
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#$10,ost_frame(a0)
 		ori.w	#tile_hi,ost_tile(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.w	#$A0,$2A(a0)
 		lea	($FFFFB000).w,a1
 		move.w	ost_x_pos(a1),ost_x_pos(a0)
@@ -81790,7 +81790,7 @@ off_3DE7E:	index offset(*),,2
 loc_3DE82:
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#$14,ost_frame(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		ori.w	#tile_hi,ost_tile(a0)
 		move.w	#4,$2A(a0)
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
@@ -81826,7 +81826,7 @@ loc_3DED8:
 		addq.b	#2,ost_secondary_routine(a0)
 		move.b	#$E,ost_frame(a0)
 		move.b	#id_col_12x16+id_col_hurt,ost_col_type(a0)
-		move.b	#5,ost_priority(a0)
+		move.b	#priority_5,ost_priority(a0)
 		move.b	#$C,ost_displaywidth(a0)
 		lea	byte_3DF00(pc),a1
 		bsr.w	loc_3E282
@@ -81872,7 +81872,7 @@ loc_3DF4C:
 		move.b	#6,ost_secondary_routine(a0)
 		move.l	#Map_ExplodeBomb,ost_mappings(a0)
 		move.w	#tile_Nem_FieryExplosion,ost_tile(a0)
-		move.b	#1,ost_priority(a0)
+		move.b	#priority_1,ost_priority(a0)
 		move.b	#7,ost_anim_time(a0)
 		move.b	#0,ost_frame(a0)
 		move.w	#$C4,d0
@@ -82896,7 +82896,7 @@ loc_3EADA:
 		move.w	(v_s1_ending_demo_num).w,d0
 		move.b	d0,ost_frame(a0)
 		move.b	#render_abs,ost_render(a0)
-		move.b	#0,ost_priority(a0)
+		move.b	#priority_0,ost_priority(a0)
 		cmpi.b	#4,(v_gamemode).w
 		bne.s	loc_3EB48
 		move.w	#vram_S1Title_Credits/sizeof_cell,ost_tile(a0)

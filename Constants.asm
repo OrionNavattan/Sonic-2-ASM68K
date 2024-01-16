@@ -88,6 +88,16 @@ sprite_tile:		rs.w 1					; tile base, palette, flip, and priority
 sprite_x_pos:		rs.w 1					; bits 0-8 = x pos of sprite
 sizeof_sprite:		equ __rs				; 8 bytes; size of one sprite in sprite attribute table
 
+; Sprite priorities
+priority_0:		equ 0
+priority_1:		equ 1
+priority_2:		equ 2
+priority_3:		equ 3
+priority_4:		equ 4
+priority_5:		equ 5
+priority_6:		equ 6
+priority_7:		equ 7
+
 countof_max_sprites:	equ $50					; max number of sprites that can be displayed at once (80)
 sizeof_vram_sprites:	equ sizeof_sprite*countof_max_sprites	; sprite attribute table ($280 bytes)
 sizeof_vram_hscroll:	equ $380
