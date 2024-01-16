@@ -2,7 +2,7 @@
 ; Sprite mappings - Clucker enemy and base (WFZ)
 ; -------------------------------------------------------------------------------
 
-Map_Clucker:	index offset(*)
+Map_Cluck:	index offset(*)
 		ptr	Map_objAE_002C
 		ptr	Map_objAE_0036
 		ptr	Map_objAE_0040

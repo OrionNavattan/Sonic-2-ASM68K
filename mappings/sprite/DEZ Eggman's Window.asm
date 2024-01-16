@@ -2,7 +2,7 @@
 ; Sprite mappings - Eggman's window in Mecha Sonic boss arena
 ; -------------------------------------------------------------------------------
 
-Map_EggmanWindow:	index offset(*)
+Map_DEZEggWindow:	index offset(*)
 		ptr	Map_objAF_b_0010
 		ptr	Map_objAF_b_003A
 		ptr	Map_objAF_b_0064

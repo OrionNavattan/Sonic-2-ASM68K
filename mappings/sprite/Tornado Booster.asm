@@ -2,7 +2,7 @@
 ; Sprite mappings - the Tornado's rocket booster
 ; -------------------------------------------------------------------------------
 
-Map_TornadoBooster:	index offset(*)
+Map_TornadoBoost:	index offset(*)
 		ptr	Frame_Booster1
 		ptr	Frame_Booster2
 		ptr	Frame_Booster3

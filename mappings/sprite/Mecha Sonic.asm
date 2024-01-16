@@ -2,7 +2,7 @@
 ; Sprite mappings - Mecha Sonic
 ; -------------------------------------------------------------------------------
 
-Map_MechSon:	index offset(*)
+Map_MechSonic:	index offset(*)
 		ptr	Map_objAF_a_002E
 		ptr	Map_objAF_a_0058
 		ptr	Map_objAF_a_0082

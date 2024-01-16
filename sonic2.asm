@@ -12739,13 +12739,16 @@ EndingTrigger:
 		jsrto	loc_3AF58,JmpTo_loc_3AF58
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	loc_A3DA(pc,d0.w),d1
-		jmp	loc_A3DA(pc,d1.w)
+		move.w	EndTrig_Index(pc,d0.w),d1
+		jmp	EndTrig_Index(pc,d1.w)
+; ===========================================================================
+EndTrig_Index:	index offset(*),,2
+		ptr EndTrig_Init
+		ptr	EndTrig_Main
 ; ===========================================================================
 
-loc_A3DA:
-		ori.b	#$7C,d4
-		lea	(off_3AFC8).l,a1
+EndTrig_Init:
+		lea	(SubData_Tornado).l,a1
 		jsrto	LoadSubObjData3,JmpTo_LoadSubObjData3
 		cmpi.w	#tails_alone,(v_player_mode).w
 		bne.s	loc_A3FC
@@ -12774,6 +12777,8 @@ loc_A43C:
 		move.w	#$C00,(v_pal_dry_line3).w
 		jmpto	DisplaySprite,JmpTo5_DisplaySprite
 ; ===========================================================================
+
+EndTrig_Main:
 		moveq	#0,d0
 		move.b	ost_secondary_routine(a0),d0
 		move.w	off_A468(pc,d0.w),d1
@@ -19069,27 +19074,27 @@ loc_E62A:
 
 ; ===========================================================================
 DLE_Index:	index offset(*),,2
-		ptr loc_E658					; 0
-		ptr locret_E752					; 1
-		ptr locret_E754					; 2
-		ptr locret_E756					; 3
-		ptr locret_E758					; 4
-		ptr loc_E75A					; 5
-		ptr loc_E842					; 6
-		ptr loc_E986					; 7
-		ptr locret_F05A					; 8
-		ptr locret_F05C					; 9
-		ptr loc_F05E					; 10
-		ptr loc_F13E					; 11
-		ptr loc_F26A					; 12
-		ptr loc_F378					; 13
-		ptr loc_F446					; 14
-		ptr loc_F4D0					; 15
-		ptr loc_F59E					; 16
+		ptr DLE_EHZ					; 0
+		ptr DLE_Zone1					; 1, rts
+		ptr DLE_WZ					; 2, rts
+		ptr DLE_Zone3					; 3, rts
+		ptr DLE_MTZ12					; 4, rts
+		ptr DLE_MTZ3					; 5
+		ptr DLE_WFZ					; 6
+		ptr DLE_HTZ					; 7
+		ptr DLE_HPZ					; 8, rts
+		ptr DLE_Zone9					; 9, rts
+		ptr DLE_OOZ					; 10
+		ptr DLE_MCZ					; 11
+		ptr DLE_CNZ					; 12
+		ptr DLE_CPZ					; 13
+		ptr DLE_DEZ					; 14
+		ptr DLE_ARZ					; 15
+		ptr DLE_SCZ					; 16
 		zonewarning DLE_Index,2
 ; ===========================================================================
 
-loc_E658:
+DLE_EHZ:
 		tst.b	(v_act).w
 		bne.s	loc_E660
 		rts
@@ -19185,23 +19190,23 @@ locret_E750:
 		rts
 ; ===========================================================================
 
-locret_E752:
+DLE_Zone1:
 		rts
 ; ===========================================================================
 
-locret_E754:
+DLE_WZ:
 		rts
 ; ===========================================================================
 
-locret_E756:
+DLE_Zone3:
 		rts
 ; ===========================================================================
 
-locret_E758:
+DLE_MTZ12:
 		rts
 ; ===========================================================================
 
-loc_E75A:
+DLE_MTZ3:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
 		move.w	off_E768(pc,d0.w),d0
@@ -19289,7 +19294,7 @@ loc_E82E:
 		rts
 ; ===========================================================================
 
-loc_E842:
+DLE_WFZ:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
 		move.w	off_E862(pc,d0.w),d0
@@ -19421,7 +19426,7 @@ locret_E984:
 		rts
 ; ===========================================================================
 
-loc_E986:
+DLE_HTZ:
 		tst.b	(v_act).w
 		bne.w	loc_EBEA
 		moveq	#0,d0
@@ -20033,15 +20038,15 @@ locret_F058:
 		rts
 ; ===========================================================================
 
-locret_F05A:
+DLE_HPZ:
 		rts
 ; ===========================================================================
 
-locret_F05C:
+DLE_Zone9:
 		rts
 ; ===========================================================================
 
-loc_F05E:
+DLE_OOZ:
 		tst.b	(v_act).w
 		bne.s	loc_F066
 		rts
@@ -20129,7 +20134,7 @@ locret_F13C:
 		rts
 ; ===========================================================================
 
-loc_F13E:
+DLE_MCZ:
 		tst.b	(v_act).w
 		bne.s	loc_F146
 		rts
@@ -20240,7 +20245,7 @@ loc_F256:
 		rts
 ; ===========================================================================
 
-loc_F26A:
+DLE_CNZ:
 		jsr	(SlotMachine).l
 		tst.b	(v_act).w
 		bne.s	loc_F278
@@ -20340,7 +20345,7 @@ locret_F376:
 		rts
 ; ===========================================================================
 
-loc_F378:
+DLE_CPZ:
 		tst.b	(v_act).w
 		bne.s	loc_F380
 		rts
@@ -20422,7 +20427,7 @@ loc_F432:
 		rts
 ; ===========================================================================
 
-loc_F446:
+DLE_DEZ:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
 		move.w	off_F454(pc,d0.w),d0
@@ -20490,7 +20495,7 @@ locret_F4CE:
 		rts
 ; ===========================================================================
 
-loc_F4D0:
+DLE_ARZ:
 		tst.b	(v_act).w
 		bne.s	loc_F4D8
 		rts
@@ -20569,7 +20574,7 @@ loc_F58A:
 		rts
 ; ===========================================================================
 
-loc_F59E:
+DLE_SCZ:
 		tst.b	(v_act).w
 		bne.w	locret_F624
 		moveq	#0,d0
@@ -22889,13 +22894,13 @@ ADoor_Init:							; Routine 0
 	.not_mtz:
 		cmpi.b	#id_CPZ,(v_zone).w			; is it CPZ?
 		bne.s	.not_cpz				; branch if not
-		move.w	#tile_Nem_ConstructionStripes_CPZ+tile_pal2,ost_tile(a0)
+		move.w	#tile_Nem_HazardStripes_CPZ+tile_pal2,ost_tile(a0)
 		move.b	#16/2,ost_displaywidth(a0)		; (redundant)
 
 	.not_cpz:
 		cmpi.b	#id_DEZ,(v_zone).w			; is it DEZ?
 		bne.s	.not_dez				; branch if not
-		move.w	#tile_Nem_ConstructionStripes_DEZ+tile_pal2,ost_tile(a0)
+		move.w	#tile_Nem_HazardStripes_DEZ+tile_pal2,ost_tile(a0)
 		move.b	#16/2,ost_displaywidth(a0)		; (redundant)
 
 	.not_dez:
@@ -27965,7 +27970,7 @@ ExecuteObjects:
 		pea .no_object2(pc)				; return to .no_object2 after returning from DisplaySprite or DisplaySprite3
 		btst	#render_subsprites_bit,ost_render(a0)	; is this a multisprite object?
 		beq.w	DisplaySprite				; if not, display using object's priority value
-		move.w	#sizeof_priority*priority_4,d0			; if so, display with fixed priority of four
+		move.w	#sizeof_priority*priority_4,d0		; if so, display with fixed priority of four
 		bra.w	DisplaySprite3
 	else
 		bsr.w	DisplaySprite
@@ -70592,87 +70597,87 @@ SubData_Index:	index offset(*),,2
 		ptr SubData_GRock				; 6
 		ptr SubData_Chop				; 8
 		ptr SubData_Spiker				; $A
-		ptr Rexon					; invalid
+		ptr Rexon					; $C, invalid
 		ptr SubData_Rex					; $E
 		ptr SubData_RexProj				; $10
 		ptr SubData_Neb					; $12
-		ptr off_3776E					; $14
+		ptr SubData_NebProj				; $14
 		ptr SubData_Turt				; $16
 		ptr SubData_TRider				; $18
 		ptr SubData_BTJet				; $1A
 		ptr SubData_TurtProj				; $1C
 		ptr SubData_Coco				; $1E
-		ptr off_37782					; $20
-		ptr SubData_CrawlT				; 17
-		ptr SubData_Shelcrk				; 18
-		ptr SubData_ShelcrkClaw				; 19
-		ptr SubData_Slice				; 20
-		ptr SubData_SlicePinc				; 21
-		ptr SubData_Flash				; 22
-		ptr SubData_Ast					; 23
-		ptr off_3778C					; 24
-		ptr off_38CAE					; 25
-		ptr off_37796					; 26
-		ptr SubData_Grabber				; 27
-		ptr SubData_GrabLegs				; 28
-		ptr SubData_GrabBox				; 29
-		ptr SubData_GrabString				; 30
-		ptr off_377A0					; 31
-		ptr SubData_Balkiry				; 32
-		ptr off_39576					; 33
-		ptr off_39580					; 34
-		ptr off_377AA					; 35
-		ptr off_39DCE					; 36
-		ptr off_377B4					; 37
-		ptr SubData_SonicSega				; 38
-		ptr SubData_SegaHideTM				; 39
-		ptr off_3AFC8					; 40
-		ptr off_3AFC8					; 41
-		ptr off_3AFC8					; 42
-		ptr SubData_ShipExh				; 43
-		ptr SubData_ShipExh				; 44
-		ptr SubData_Cloud				; 45
-		ptr off_3AFD2					; 46
-		ptr SubData_Cloud				; 47
-		ptr SubData_Cloud				; 48
-		ptr SubData_Cloud				; 49
-		ptr SubData_VertProp				; 50
+		ptr SubData_CocoProj				; $20
+		ptr SubData_CrawlT				; $22
+		ptr SubData_Shelcrk				; $24
+		ptr SubData_ShelcrkClaw				; $26
+		ptr SubData_Slice				; $28
+		ptr SubData_SlicePinc				; $2A
+		ptr SubData_Flash				; $2C
+		ptr SubData_Ast					; $2E
+		ptr SubData_AstProj				; $30
+		ptr SubData_Spiny				; $32
+		ptr SubData_SpinyProj				; $34
+		ptr SubData_Grabber				; $36
+		ptr SubData_GrabLegs				; $38
+		ptr SubData_GrabBox				; $3A
+		ptr SubData_GrabString				; $3C
+		ptr SubData_Unused1				; $3E
+		ptr SubData_Balkiry				; $40
+		ptr SubData_CluckBase				; $42
+		ptr SubData_Cluck				; $44
+		ptr SubData_CluckProj				; $46
+		ptr SubData_MechSonic				; $48
+		ptr SubData_MechSonicProj			; $4A
+		ptr SubData_SonicSega				; $4C
+		ptr SubData_SegaHideTM				; $4E
+		ptr SubData_Tornado,SubData_Tornado_SCZ		; $50, SCZ subtype
+		ptr SubData_Tornado,SubData,Tornado_WFZ		; $52, WFZ subtype
+		ptr SubData_Tornado				; $54, seems unused
+		ptr SubData_ShipExh				; $56
+		ptr SubData_ShipExh				; $58
+		ptr SubData_Cloud				; $5A
+		ptr SubData_TornadoBoost			; $5C
+		ptr SubData_Cloud,SubData_Cloud_Large		; $5E, large subtype
+		ptr SubData_Cloud,SubData_Cloud_Medium		; $60. medium subtype
+		ptr SubData_Cloud,SubData_Cloud_Small		; $62, small subtype
+		ptr SubData_VertProp				; $64
 		ptr SubData_HorizProp,SubData_HorizProp_WFZ	; $66, WFZ subtype
 		ptr SubData_HorizProp,SubData_HorizProp_SCZ	; $68, SCZ subtype
-		ptr off_3B818					; 53
-		ptr off_3B818					; 54
-		ptr off_3B818					; 55
-		ptr off_3B818					; 56
-		ptr off_3B8DA					; 57
-		ptr off_3BA36					; 58
-		ptr SubData_HorizLaser				; 59
-		ptr SubData_ConvPulley				; 60
-		ptr SubData_StatHook				; 61
-		ptr SubData_ShipExh				; 62
-		ptr SubData_ConvPlat				; 63
-		ptr SubData_ConvPlat				; 64
-		ptr SubData_GunPlat				; 65
-		ptr SubData_PropShaft				; 66
-		ptr SubData_CPult				; 67
-		ptr SubData_BreakPlate				; 68
-		ptr SubData_Rivet				; 69
-		ptr TornadoSmoke				; invalid
-		ptr off_377BE					; 71
-		ptr SubData_TorSmoke				; 72
-		ptr off_3CC80					; 73
-		ptr off_3CC8A					; 74
-		ptr off_3CC94					; 75
-		ptr off_3CC94					; 76
-		ptr off_3CC94					; 77
-		ptr off_3CC94					; 78
-		ptr off_3CC94					; 79
-		ptr off_3CC9E					; 80
-		ptr off_3CCA8					; 81
-		ptr off_39DD8					; 82
-		ptr off_3D0B2					; 83
-		ptr off_3D0BC					; 84
-		ptr off_3D0C6					; 85
-		ptr SubData_Crawl				; 86
+		ptr SubData_TiltPlat				; $6A
+		ptr SubData_TiltPlat				; $6C, unused
+		ptr SubData_TiltPlat				; $6E, unused
+		ptr SubData_TiltPlat				; $70, unused
+		ptr SubData_VertLaser				; $72
+		ptr SubData_WallTurr				; $74
+		ptr SubData_HorizLaser				; $76
+		ptr SubData_ConvPulley				; $78
+		ptr SubData_StatHook				; $7A
+		ptr SubData_ShipExh				; $7C
+		ptr SubData_ConvPlat				; $7E
+		ptr SubData_ConvPlat				; $80
+		ptr SubData_GunPlat				; $82
+		ptr SubData_PropShaft				; $84
+		ptr SubData_CPult				; $86
+		ptr SubData_BreakPlate				; $88
+		ptr SubData_Rivet				; $8A
+		ptr TornadoSmoke				;  $8C, invalid
+		ptr SubData_WallTurrProj			;  $8E
+		ptr SubData_TorSmoke				; $90
+		ptr SubData_BWFZ_LCase				; $92
+		ptr SubData_BWFZ_LWalls				; $94
+		ptr SubData_BWFZ_LPlat,SubData_BWFZ_PlatRelease	; $96
+		ptr SubData_BWFZ_LPlat,SubData_BWFZ_Plat	; $98
+		ptr SubData_BWFZ_LPlat,SubData_BWFZ_PlatHurt	; $9A
+		ptr SubData_BWFZ_LPlat,SubData_BWFZ_LShooter	; $9C
+		ptr SubData_BWFZ_LPlat,SubData_BWFZ_Laser	; $9E
+		ptr SubData_BWFZ_Eggman				; $A0
+		ptr SubData_BWFZ_EggPlat			; $A2
+		ptr SubData_DEZEggWindow			; $A4
+		ptr SubData_Eggman1				; $A6
+		ptr SubData_DEZBarrier				; $A8
+		ptr SubData_Eggman2				; $AA
+		ptr SubData_Crawl				; $AC
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to find the nearest player to an object and their direction and
@@ -72629,51 +72634,34 @@ loc_37756:
 SubData_RexProj:
 		subobjdata	Map_Rex,tile_nem_Rexon+tile_pal2,render_rel|render_onscreen,priority_4,8/2,id_col_4x4|id_col_hurt
 
-off_3776E:
-		dc.l Map_Neb
-		dc.w $A36E
-		dc.w $8404
-		dc.w $88B
+SubData_NebProj:
+		subobjdata	Map_Neb,tile_Nem_Nebula+tile_pal2+tile_hi,render_rel|render_onscreen,priority_4,$10/2,id_col_8x8|id_col_hurt
 
 SubData_TurtProj:
 		subobjdata	Map_Turt,tile_Nem_Turtloid,render_rel|render_onscreen,priority_4,8/2,id_col_4x4|id_col_hurt
 
-off_37782:
-		dc.l Map_Coco
-		dc.w $3EE
-		dc.w $8404
-		dc.w $88B
-off_3778C:
-		dc.l Map_Ast
-		dc.w $8368
-		dc.w $8405
-		dc.w $498
-off_37796:
-		dc.l Map_Spiny
-		dc.w $252D
-		dc.w $8405
-		dc.w $498
-off_377A0:
-		dc.l Map_Grab
-		dc.w $A500
-		dc.w $8404
-		dc.w $498
-off_377AA:
-		dc.l Map_Clucker
-		dc.w $379
-		dc.w $8405
-		dc.w $498
-off_377B4:
-		dc.l Map_MechSon
-		dc.w $2380
-		dc.w $8405
-		dc.w $498
-off_377BE:
-		dc.l Map_WallTurr
-		dc.w $3AB
-		dc.w $8403
-		dc.w $498
-; ===========================================================================
+SubData_CocoProj:
+		subobjdata	Map_Coco,tile_Nem_Coconuts,render_rel|render_onscreen,priority_4,$10/2,id_col_8x8|id_col_hurt
+
+SubData_AstProj:
+		subobjdata	Map_Ast,tile_Nem_Asteron+tile_hi,render_rel|render_onscreen,priority_5,8/2,id_col_4x4|id_col_hurt
+
+SubData_SpinyProj:
+		subobjdata	Map_Spiny,tile_Nem_Spiny+tile_pal2,render_rel|render_onscreen,priority_5,8/2,id_col_4x4|id_col_hurt
+
+SubData_Unused1:
+		subobjdata	Map_Grab,tile_Nem_Grabber+tile_pal2+tile_hi,render_rel|render_onscreen,priority_4,8/2,id_col_4x4|id_col_hurt
+
+SubData_CluckProj:
+		subobjdata	Map_Cluck,tile_Nem_Clucker,render_rel|render_onscreen,priority_5,8/2,id_col_4x4|id_col_hurt
+
+SubData_MechSonicProj:
+		subobjdata	Map_MechSonic,tile_Nem_BombPenalty+tile_pal2,render_rel|render_onscreen,priority_5,8/2,id_col_4x4|id_col_hurt
+
+SubData_WallTurrProj:
+		subobjdata	Map_WallTurr,tile_Nem_WallTurret,render_rel|render_onscreen,priority_3,8/2,id_col_4x4|id_col_hurt
+
+
 ; ----------------------------------------------------------------------------
 ; Object 99 - Nebula
 ; ----------------------------------------------------------------------------
@@ -72753,10 +72741,11 @@ locret_37886:
 		rts
 ; ===========================================================================
 SubData_Neb:
-		dc.l Map_Neb
-		dc.w $A36E
-		dc.w $404
-		dc.w $1006
+		subobjdata	Map_Neb,tile_Nem_Nebula+tile_pal2+tile_hi,render_rel,priority_4,$20/2,id_col_16x16
+	;	dc.l Map_Neb
+	;	dc.w $A36E
+	;	dc.w $404
+	;	dc.w $1006
 
 Ani_Neb:	index offset(*)
 		ptr byte_37894
@@ -73267,10 +73256,7 @@ Coco_ThrowData:
 		dc.w	$B, -$100				; 4
 
 SubData_Coco:
-		dc.l Map_Coco
-		dc.w $3EE
-		dc.w $405
-		dc.w $C09
+		subobjdata	Map_Coco,tile_Nem_Coconuts,render_rel,priority_5,$18/2,id_col_12x16
 
 Ani_Coco:	index offset(*)
 		ptr byte_37D8C					; 0
@@ -73466,11 +73452,9 @@ loc_37FD6:
 locret_37FE6:
 		rts
 ; ===========================================================================
+
 SubData_CrawlT:
-		dc.l Map_CrawlT
-		dc.w $23C0
-		dc.w $404
-		dc.w $800B
+		subobjdata	Map_CrawlT,tile_Nem_Crawlton+tile_pal2,render_rel,priority_4,$100/2,id_col_8x8
 ; ===========================================================================
 
 		include "mappings/sprite/Crawlton.asm"
@@ -73822,16 +73806,10 @@ locret_382EE:
 		rts
 ; ===========================================================================
 SubData_Shelcrk:
-		dc.l Map_Shelcrk
-		dc.w $31C
-		dc.w $405
-		dc.w $180A
+		subobjdata	Map_Shelcrk,tile_Nem_Shellcracker,render_rel,priority_5,$30/2,id_col_16x8
 
 SubData_ShelcrkClaw:
-		dc.l Map_Shelcrk
-		dc.w $31C
-		dc.w $404
-		dc.w $C9A
+		subobjdata	Map_Shelcrk,tile_Nem_Shellcracker,render_rel,priority_4,$18/2,id_col_12x12|id_col_hurt
 
 off_38304:	index offset(*)
 		ptr byte_38308					; 0
@@ -74072,16 +74050,10 @@ byte_385BC:
 		dc.b -$10,    0
 
 SubData_Slice:
-		dc.l Map_Slice
-		dc.w $243C
-		dc.w $405
-		dc.w $1006
+		subobjdata	Map_Slice,tile_Nem_Slicer+tile_pal2,render_rel,priority_5,$20/2,id_col_16x16
 
 SubData_SlicePinc:
-		dc.l Map_Slice
-		dc.w $243C
-		dc.w $404
-		dc.w $109A
+		subobjdata	Map_Slice,tile_Nem_Slicer+tile_pal2,render_rel,priority_4,$20/2,id_col_12x12|id_col_hurt
 
 Ani_Slice:	index offset(*)
 		ptr byte_385D6
@@ -74265,11 +74237,9 @@ loc_3888E:
 		clr.w	ost_anim_time(a0)
 		jmpto	DespawnObject4,JmpTo2_DespawnObject4
 ; ===========================================================================
+
 SubData_Flash:
-		dc.l Map_Flash
-		dc.w $83A8
-		dc.w $404
-		dc.w $1006
+		subobjdata	Map_Flash,tile_Nem_Flasher+tile_hi,render_rel,priority_4,$20/2,id_col_16x16
 
 Ani_Flash1:	index offset(*)
 		ptr byte_388B8
@@ -74618,11 +74588,8 @@ loc_38CA0:
 locret_38CAC:
 		rts
 ; ===========================================================================
-off_38CAE:
-		dc.l Map_Spiny
-		dc.w $252D
-		dc.w $404
-		dc.w $80B
+SubData_Spiny:
+		subobjdata	Map_Spiny,tile_Nem_Spiny+tile_pal2,render_rel,priority_4,$10/2,id_col_8x8
 
 off_38CB8:	index offset(*)
 		ptr byte_38CBA
@@ -75214,11 +75181,9 @@ loc_393B6:
 		bsr.w	AdjustPosSCZ
 		bra.w	DeleteBehindScreen
 ; ===========================================================================
+
 SubData_Balkiry:
-		dc.l Map_Balkiry
-		dc.w $565
-		dc.w $404
-		dc.w $2008
+		subobjdata	Map_Balkiry,tile_Nem_Balkiry,render_rel,priority_4,$40/2,id_col_24x12
 ; ===========================================================================
 
 		include "mappings/sprite/Balkiry.asm"
@@ -75375,17 +75340,11 @@ loc_39564:
 locret_39574:
 		rts
 ; ===========================================================================
-off_39576:
-		dc.l Map_Clucker
-		dc.w $379
-		dc.w $404
-		dc.w $1800
+SubData_CluckBase:
+		subobjdata	Map_Cluck,tile_Nem_Clucker,render_rel,priority_4,$30/2,id_col_null
 
-off_39580:
-		dc.l Map_Clucker
-		dc.w $379
-		dc.w $405
-		dc.w $1000
+SubData_Cluck:
+		subobjdata	Map_Cluck,tile_Nem_Clucker,render_rel,priority_5,$20/2,id_col_null
 
 off_3958A:	index offset(*)
 		ptr byte_3958C
@@ -75426,10 +75385,10 @@ byte_395AA:
 MechaSonic:
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_3973A(pc,d0.w),d1
-		jmp	off_3973A(pc,d1.w)
+		move.w	MechSonic_Index(pc,d0.w),d1
+		jmp	MechSonic_Index(pc,d1.w)
 ; ===========================================================================
-off_3973A:	index offset(*),,2
+MechSonic_Index:	index offset(*),,2
 		ptr loc_3975E					; 0
 		ptr loc_397AC					; 2
 		ptr loc_397E6					; 4
@@ -76090,34 +76049,19 @@ byte_39D92:							; projectile data
 		dc.b   2,  2,$14,  0,$18,  0,  3,  0,$15,  0,$10,$F0,  2,$FE,$16,  0 ; 32
 
 byte_39DC2:
-		dc.b   0					; 0
-		dc.b $3E					; 1
-		dc.b $AF					; 2
-		dc.b $48					; 3
+		childobjdata	$3E,id_MechaSonic,id_SubData_MechSonic
 
 byte_39DC6:
-		dc.b   0					; 0
-		dc.b $3C					; 1
-		dc.b $AF					; 2
-		dc.b $48					; 3
+		childobjdata	$3C,id_MechaSonic,id_SubData_MechSonic
 
 byte_39DCA:
-		dc.b   0					; 0
-		dc.b $3A					; 1
-		dc.b $AF					; 2
-		dc.b $A4					; 3
+		childobjdata	$3A,id_MechaSonic,id_SubData_DEZEggWindow
 
-off_39DCE:
-		dc.l Map_MechSon
-		dc.w $2380
-		dc.w $404
-		dc.w $101A
+SubData_MechSonic:
+		subobjdata	Map_MechSonic,tile_Nem_MechaSonic+tile_pal2,render_rel,priority_4,$20/2,id_col_12x12
 
-off_39DD8:
-		dc.l Map_EggmanWindow
-		dc.w $378
-		dc.w $406
-		dc.w $1000
+SubData_DEZEggWindow:
+		subobjdata	Map_DEZEggWindow,tile_Nem_DEZWindow,render_rel,priority_6,$20/2,id_col_null
 
 off_39DE2:	index offset(*)
 		ptr byte_39DEE					; 0
@@ -77563,24 +77507,18 @@ word_3AFBC:
 word_3AFC0:
 		dc.w $3A
 		dc.b id_Tornado
-		dc.b $5C
+		dc.b id_SubData_TornadoBoost
 
 		; Unused
 		dc.w $3E
 		dc.b id_Tornado
 		dc.b $5A
 
-off_3AFC8:
-		dc.l Map_Tornado
-		dc.w $8500
-		dc.w $404
-		dc.w $6000
+SubData_Tornado:
+		subobjdata	Map_Tornado,tile_Nem_Tornado+tile_hi,render_rel,priority_4,$C0/2,id_col_null
 
-off_3AFD2:
-		dc.l Map_TornadoBooster
-		dc.w $561
-		dc.w $403
-		dc.w $4000
+SubData_TornadoBoost:
+		subobjdata	Map_TornadoBoost,tile_Nem_TornadoBooster,render_rel,priority_3,$80/2,id_col_null
 
 Ani_3AFDC:	index offset(*)
 		ptr Ani_3AFE0					; 0
@@ -77626,15 +77564,15 @@ loc_3B2F0:
 		bsr.w	LoadSubObjData
 		moveq	#0,d0
 		move.b	ost_subtype(a0),d0
-		subi.b	#$5E,d0
+		subi.b	#id_SubData_Cloud_Large,d0		; d0 = index to cloud's speed
 
 loc_3B2FE:
-		move.w	word_3B30C(pc,d0.w),ost_x_vel(a0)
-		lsr.w	#1,d0
+		move.w	Cloud_Speeds(pc,d0.w),ost_x_vel(a0)	; set speed
+		lsr.w	#1,d0					; d0 = index to frame
 		move.b	d0,ost_frame(a0)
 		rts
 ; ===========================================================================
-word_3B30C:
+Cloud_Speeds:
 		dc.w  -$80
 		dc.w  -$40
 		dc.w  -$20
@@ -77648,10 +77586,8 @@ loc_3B312:
 ; ===========================================================================
 
 SubData_Cloud:
-		dc.l Map_Cloud
-		dc.w $454F
-		dc.w $406
-		dc.w $3000
+		subobjdata	Map_Cloud,tile_Nem_Clouds+tile_pal3,render_rel,priority_6,$60/2,id_col_null
+
 ; ===========================================================================
 
 		include "mappings/sprite/SCZ Clouds.asm"
@@ -77806,11 +77742,9 @@ loc_3B4A0:
 locret_3B4DC:
 		rts
 ; ===========================================================================
+
 SubData_HorizProp:
-		dc.l Map_HorizProp
-		dc.w $A3CD
-		dc.w $404
-		dc.w $4000
+		subobjdata	Map_HorizProp,tile_Nem_HorizProp+tile_pal2+tile_hi,render_rel,priority_4,$80/2,id_col_null
 
 Ani_HorizProp:	index offset(*)
 		ptr byte_3B4FC					; 0
@@ -77859,7 +77793,7 @@ TiltPlat_Index:	index offset(*),,2
 
 loc_3B5E8:
 		moveq	#0,d0
-		move.b	#$6A,d0
+		move.b	#id_SubData_TiltPlat,d0
 		bsr.w	LoadSubObjData2
 		move.b	ost_subtype(a0),d0
 		andi.b	#6,d0
@@ -78125,11 +78059,8 @@ loc_3B80A:
 locret_3B816:
 		rts
 ; ===========================================================================
-off_3B818:
-		dc.l Map_TiltPlat
-		dc.w $A393
-		dc.w $404
-		dc.w $1000
+SubData_TiltPlat:
+		subobjdata	Map_TiltPlat,tile_Nem_TiltPlatform+tile_pal2+tile_hi,render_rel,priority_4,$20/2,id_col_null
 
 off_3B822:	index offset(*)
 		ptr byte_3B830					; 0
@@ -78221,11 +78152,12 @@ loc_3B8C4:
 		beq.w	TRider_SharedRTS
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3B8DA:
-		dc.l Map_VertLaser
-		dc.w $C39F
-		dc.w $404
-		dc.w $18A9
+SubData_VertLaser:
+		subobjdata	Map_VertLaser,tile_Nem_VertLaser+tile_pal3+tile_hi,render_rel,priority_4,$30/2,id_col_24x128|id_col_hurt
+	;	dc.l Map_VertLaser
+	;	dc.w $C39F
+	;	dc.w $404
+	;	dc.w $18A9
 
 ; ===========================================================================
 
@@ -78334,11 +78266,8 @@ byte_3BA2A:
 		dc.b   1					; 10
 		dc.b   1					; 11
 
-off_3BA36:
-		dc.l Map_WallTurr
-		dc.w $3AB
-		dc.w $404
-		dc.w $1000
+SubData_WallTurr:
+		subobjdata	Map_WallTurr,tile_Nem_WallTurret,render_rel,priority_4,$20/2,id_col_null
 
 off_3BA40:	index offset(*)
 		ptr byte_3BA42
@@ -78397,11 +78326,9 @@ loc_3BAF8:
 		blt.w	JmpTo65_DeleteObject
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
+
 SubData_HorizLaser:
-		dc.l Map_HorizLaser
-		dc.w $C3C3
-		dc.w $401
-		dc.w $6000
+		subobjdata	Map_HorizLaser,tile_Nem_HorizLaser+tile_pal3+tile_hi,render_rel,priority_1,$C0/2,id_col_null
 ; ===========================================================================
 
 		include "mappings/sprite/WFZ Giant Horizontal Laser.asm"
@@ -78431,10 +78358,7 @@ loc_3BB62:
 ; ===========================================================================
 
 SubData_ConvPulley:
-		dc.l Map_ConvPulley
-		dc.w $C3EA
-		dc.w $404
-		dc.w $1000
+		subobjdata	Map_ConvPulley,tile_Nem_ConvPulley+tile_pal3+tile_hi,render_rel,priority_4,$20/2,id_col_null
 ; ===========================================================================
 
 		include "mappings/sprite/WFZ Conveyer Belt Pulley.asm"
@@ -78502,11 +78426,9 @@ ShipExh_Main:
 		beq.w	TRider_SharedRTS
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
+
 SubData_ShipExh:
-		dc.l Map_ShipExh
-		dc.w $4465
-		dc.w $404
-		dc.w $1000
+		subobjdata	Map_ShipExh,tile_Nem_ShipExhaust+tile_pal3,render_rel,priority_4,$20/2,id_col_null
 ; ===========================================================================
 
 		include "mappings/sprite/WFZ Ship Exhaust.asm"
@@ -78632,11 +78554,9 @@ loc_3BCF8:
 locret_3BD22:
 		rts
 ; ===========================================================================
+
 SubData_ConvPlat:
-		dc.l Map_ConvPlat
-		dc.w $E40E
-		dc.w $404
-		dc.w $1800
+		subobjdata	Map_ConvPlat,tile_Nem_ConvPlat+tile_pal4+tile_hi,render_rel,priority_4,$30/2,id_col_null
 
 Ani_ConvPlat:	index offset(*)
 		ptr byte_3BD32					; 0
@@ -78737,10 +78657,7 @@ loc_3BE16:
 		jmpto	DetectPlatform,JmpTo9_DetectPlatform
 ; ===========================================================================
 SubData_GunPlat:
-		dc.l Map_GunPlat
-		dc.w $E41A
-		dc.w $404
-		dc.w $1800
+		subobjdata	Map_GunPlat,tile_Nem_GunPlat+tile_pal4+tile_hi,render_rel,priority_4,$30/2,id_col_null
 
 Ani_GunPlat:	index offset(*)
 		ptr byte_3BE3A					; 0
@@ -78779,11 +78696,9 @@ loc_3BEC0:
 		jsrto	AnimateSprite,JmpTo25_AnimateSprite
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
+
 SubData_PropShaft:
-		dc.l Map_PropShaft
-		dc.w $E450
-		dc.w $404
-		dc.w $404
+		subobjdata	Map_PropShaft,tile_Nem_PropShaft+tile_pal4+tile_hi,render_rel,priority_4,8/2,id_col_4x16
 
 Ani_PropShaft:	index offset(*)
 		ptr byte_3BEDA
@@ -78972,11 +78887,9 @@ loc_3C088:
 		move.w	d0,ost_x_pos(a0)
 		rts
 ; ===========================================================================
+
 SubData_CPult:
-		dc.l Map_CPult
-		dc.w $245C
-		dc.w $404
-		dc.w $1000
+		subobjdata	Map_CPult,tile_Nem_Catapult+tile_pal2,render_rel,priority_4,$20/2,id_col_null
 ; ===========================================================================
 
 		include "mappings/sprite/WFZ Catapult.asm"
@@ -79161,11 +79074,14 @@ loc_3C26C:
 		move.w	#$CB,d0
 		jmp	(PlaySound).l
 ; ===========================================================================
+
 SubData_BreakPlate:
-		dc.l Map_BreakPlate
-		dc.w $E48C
-		dc.w $404
-		dc.w $40E1
+	if FixBugs
+		subobjdata	Map_BreakPlate,tile_Nem_BreakPlate+tile_pal4+tile_hi,render_rel,priority_4,$80/2,id_col_4x32|id_col_custom
+	else
+		; Harmless, but this object doesn't need the col_hurt flag.
+		subobjdata	Map_BreakPlate,tile_Nem_BreakPlate+tile_pal4+tile_hi,render_rel,priority_4,$80/2,id_col_4x32|id_col_custom|id_col_hurt
+	endc
 ; ===========================================================================
 
 		include "mappings/sprite/WFZ Breakable Plating.asm"
@@ -79223,11 +79139,9 @@ loc_3C366:
 loc_3C3B4:
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
+
 SubData_Rivet:
-		dc.l Map_Rivet
-		dc.w $A461
-		dc.w $404
-		dc.w $1000
+		subobjdata	Map_Rivet,tile_Nem_Rivet+tile_pal2+tile_hi,render_rel,priority_4,$20/2,id_col_null
 ; ===========================================================================
 
 		include "mappings/sprite/WFZ Rivet.asm"
@@ -79273,11 +79187,9 @@ loc_3C416:
 loc_3C434:
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
+
 SubData_TorSmoke:
-		dc.l Map_ExplodeItem
-		dc.w $5A4
-		dc.w $405
-		dc.w $C00
+		subobjdata	Map_ExplodeItem,tile_Nem_Explosion,render_rel,priority_5,$18/2,id_col_null
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object C5 - WFZ boss
@@ -79306,7 +79218,7 @@ off_3C450:	index offset(*),,2
 loc_3C464:
 		bsr.w	LoadSubObjData
 		move.b	ost_subtype(a0),d0
-		subi.b	#-$70,d0
+		subi.b	#$90,d0
 		move.b	d0,ost_primary_routine(a0)
 		rts
 ; ===========================================================================
@@ -79363,19 +79275,19 @@ loc_3C4DC:
 loc_3C4EE:
 		addq.b	#2,ost_secondary_routine(a0)
 		move.w	#$40,ost_y_vel(a0)
-		lea	(byte_3CC60).l,a2
+		lea	(ChildData_BWFZ_LWalls).l,a2
 		bsr.w	LoadChild
 		subi.w	#$88,ost_x_pos(a1)
 		addi.w	#$60,ost_y_pos(a1)
-		lea	(byte_3CC60).l,a2
+		lea	(ChildData_BWFZ_LWalls).l,a2
 		bsr.w	LoadChild
 		addi.w	#$88,ost_x_pos(a1)
 		addi.w	#$60,ost_y_pos(a1)
-		lea	(byte_3CC6C).l,a2
+		lea	(ChildData_BWFZ_LShooter).l,a2
 		bsr.w	LoadChild
-		lea	(byte_3CC70).l,a2
+		lea	(ChildData_BWFZ_PlatRelease).l,a2
 		bsr.w	LoadChild
-		lea	(byte_3CC78).l,a2
+		lea	(ChildData_BWFZ_Eggman).l,a2
 		bsr.w	LoadChild
 		move.w	#$5A,$2A(a0)
 		moveq	#-7,d0
@@ -79493,7 +79405,7 @@ loc_3C640:
 
 loc_3C64A:
 		addq.b	#2,ost_secondary_routine(a0)
-		lea	(byte_3CC74).l,a2
+		lea	(ChildData_BWFZ_Laser).l,a2
 		bsr.w	LoadChild
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79726,7 +79638,7 @@ loc_3C884:
 		tst.b	$30(a0,d0.w)
 		bne.s	loc_3C8A2
 		st.b	$30(a0,d0.w)
-		lea	(byte_3CC64).l,a2
+		lea	(ChildData_BWFZ_Plat).l,a2
 		bsr.w	LoadChild
 		move.b	$2E(a0),$2E(a1)
 
@@ -79771,7 +79683,7 @@ loc_3C8F0:
 		move.b	#7,ost_frame(a0)
 		move.w	#$100,ost_y_vel(a0)
 		move.w	#$60,$2A(a0)
-		lea	(byte_3CC68).l,a2
+		lea	(ChildData_BWFZ_PlatHurt).l,a2
 		bra.w	LoadChild
 ; ===========================================================================
 
@@ -80028,7 +79940,7 @@ loc_3CB52:
 		move.b	#1,ost_anim(a0)
 		move.w	#$2C60,ost_x_pos(a0)
 		move.w	#$4E6,ost_y_pos(a0)
-		lea	(byte_3CC7C).l,a2
+		lea	(ChildData_BWFZ_EggPlat).l,a2
 		bsr.w	LoadChild
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -80120,64 +80032,45 @@ loc_3CC3C:
 		bclr	#status_underwater_bit,ost_primary_status(a0)
 		rts
 ; ===========================================================================
-byte_3CC60:
-		dc.w $2A
-		dc.b id_BossWingFortress
-		dc.b $94
-byte_3CC64:
-		dc.w $3E
-		dc.b id_BossWingFortress
-		dc.b $98
-byte_3CC68:
-		dc.w $3C
-		dc.b id_BossWingFortress
-		dc.b $9A
-byte_3CC6C:
-		dc.w $3C
-		dc.b id_BossWingFortress
-		dc.b $9C
-byte_3CC70:
-		dc.w $3A
-		dc.b id_BossWingFortress
-		dc.b $96
-byte_3CC74:
-		dc.w $3E
-		dc.b id_BossWingFortress
-		dc.b $9E
-byte_3CC78:
-		dc.w $38
-		dc.b id_BossWingFortress
-		dc.b $A0
-byte_3CC7C:
-		dc.w $3E
-		dc.b id_BossWingFortress
-		dc.b $A2
 
-off_3CC80:
-		dc.l Map_BWFZ
-		dc.w $379
-		dc.w $404
-		dc.w $2000
-off_3CC8A:
-		dc.l Map_BWFZ
-		dc.w $379
-		dc.w $401
-		dc.w $800
-off_3CC94:
-		dc.l Map_BWFZ
-		dc.w $379
-		dc.w $405
-		dc.w $1000
-off_3CC9E:
-		dc.l Map_Eggman
-		dc.w 0
-		dc.w $405
-		dc.w $2000
-off_3CCA8:
-		dc.l Map_BWFZ_EggPlat
-		dc.w $A46D
-		dc.w $405
-		dc.w $2000
+ChildData_BWFZ_LWalls:
+		childobjdata	$2A,id_BossWingFortress,id_SubData_BWFZ_LWalls
+
+ChildData_BWFZ_Plat:
+		childobjdata	$3E,id_BossWingFortress,id_SubData_BWFZ_Plat
+
+ChildData_BWFZ_PlatHurt:
+		childobjdata	$3C,id_BossWingFortress,id_SubData_BWFZ_PlatHurt
+
+ChildData_BWFZ_LShooter:
+		childobjdata	$3C,id_BossWingFortress,id_SubData_BWFZ_LShooter
+
+ChildData_BWFZ_PlatRelease:
+		childobjdata	$3A,id_BossWingFortress,id_SubData_BWFZ_PlatRelease
+
+ChildData_BWFZ_Laser:
+		childobjdata	$3E,id_BossWingFortress,id_SubData_BWFZ_Laser
+
+ChildData_BWFZ_Eggman:
+		childobjdata	$38,id_BossWingFortress,id_SubData_BWFZ_Eggman
+
+ChildData_BWFZ_EggPlat:
+		childobjdata	$3E,id_BossWingFortress,id_SubData_BWFZ_EggPlat
+
+SubData_BWFZ_LCase:
+		subobjdata	Map_BWFZ,tile_Nem_WFZBoss,render_rel,priority_4,$40/2,id_col_null
+
+SubData_BWFZ_LWalls:
+		subobjdata	Map_BWFZ,tile_Nem_WFZBoss,render_rel,priority_1,$10/2,id_col_null
+
+SubData_BWFZ_LPlat:
+		subobjdata	Map_BWFZ,tile_Nem_WFZBoss,render_rel,priority_5,$20/2,id_col_null
+
+SubData_BWFZ_Eggman:
+		subobjdata	Map_Eggman,tile_LevelArt,render_rel,priority_5,$40/2,id_col_null
+
+SubData_BWFZ_EggPlat:
+		subobjdata	Map_BWFZ_EggPlat,tile_Nem_WFZFloatingPlatform+tile_pal2+tile_hi,render_rel,priority_5,$40/2,id_col_null
 
 off_3CCB2:	index offset(*)
 		ptr byte_3CCBA					; 0
@@ -80402,21 +80295,15 @@ loc_3D09C:
 		jsrto	SpeedToPos,JmpTo26_SpeedToPos
 		jmpto	DespawnObject,JmpTo39_DespawnObject
 ; ===========================================================================
-off_3D0B2:
-		dc.l Map_Eggman
-		dc.w 0
-		dc.w $405
-		dc.w $1800
-off_3D0BC:
-		dc.l Map_DEZBarrier
-		dc.w $2328
-		dc.w $401
-		dc.w $800
-off_3D0C6:
-		dc.l Map_Eggman
-		dc.w 0
-		dc.w $405
-		dc.w $400
+
+SubData_Eggman1:
+		subobjdata	Map_Eggman,tile_LevelArt,render_rel,priority_5,$30/2,id_col_null
+
+SubData_DEZBarrier:
+		subobjdata	Map_DEZBarrier,tile_Nem_HazardStripes_DEZ+tile_pal2,render_rel,priority_1,$10/2,id_col_null
+
+SubData_Eggman2:
+		subobjdata	Map_Eggman,tile_LevelArt,render_rel,priority_5,8/2,id_col_null
 
 byte_3D0D0:
 		dc.w $3E
@@ -80648,11 +80535,13 @@ loc_3D416:
 locret_3D43E:
 		rts
 ; ===========================================================================
+
 SubData_Crawl:
-		dc.l Map_Crawl
-		dc.w $8340
-		dc.w $403
-		dc.w $10D7
+		subobjdata	Map_Crawl,tile_Nem_Crawl+tile_hi,render_rel,priority_3,$20/2,id_col_8x8_2|id_col_custom
+	;	dc.l Map_Crawl
+	;	dc.w $8340
+	;	dc.w $403
+	;	dc.w $10D7
 
 Ani_Crawl:	index offset(*)
 		ptr byte_3D44C
@@ -83276,7 +83165,7 @@ id_col_hurt:	equ $80						; non-enemy object that hurts Sonic/Tails when touched
 id_col_custom:	equ $C0						;
 
 React_Sizes:
-col_null:		colid    4,    4			; 0 ; unused
+col_null:		colid    4,    4			; 0, dummy entry
 col_20x20:		colid  $14,  $14			; 1
 col_12x20:		colid   $C,  $14			; 2
 col_20x12:		colid  $14,   $C			; 3
@@ -87165,10 +87054,10 @@ DbgWFZ_41EEC:	dc.w $20
 		dc.l $B5000000+Map_HorizProp
 		dc.w $6800
 		dc.w $A3CD
-		dc.l $AD000000+Map_Clucker
+		dc.l $AD000000+Map_Cluck
 		dc.w $420C
 		dc.w $379
-		dc.l $AE000000+Map_Clucker
+		dc.l $AE000000+Map_Cluck
 		dc.w $440B
 		dc.w $379
 		dc.l $B6000000+Map_TiltPlat
@@ -88099,9 +87988,9 @@ PLC_WFZ1:		plcheader
 		plcm	Nem_VertProp,vram_VertProp
 		plcm	Nem_HorizProp,vram_HorizProp
 		plcm	Nem_Balkiry,vram_Balkriy
-		plcm	Nem_BreakPanels,vram_BreakPanels
+		plcm	Nem_BreakPlate,vram_BreakPlate
 		plcm	Nem_Clucker,vram_Clucker
-		plcm	Nem_WFZTiltPlatforms,vram_WFZTiltPlatforms
+		plcm	Nem_TiltPlatform,vram_TiltPlatform
 		; Redundant entries.
 		plcm	Nem_Tornado,vram_Tornado
 		plcm	Nem_Clouds,vram_Clouds
@@ -88115,17 +88004,17 @@ PLC_WFZ2:	plcheader
 		; Redundant: these first two are also loaded by the first cue.
 		plcm	Nem_VertProp,vram_VertProp
 		plcm	Nem_HorizProp,vram_HorizProp
-		plcm	Nem_WFZVrtclLaser,vram_WFZVrtclLaser
-		plcm	Nem_WFZWallTurret,vram_WFZWallTurret
-		plcm	Nem_WFZHrzntlLaser,vram_WFZHrzntlLaser
+		plcm	Nem_VertLaser,vram_VertLaser
+		plcm	Nem_WallTurret,vram_WallTurret
+		plcm	Nem_HorizLaser,vram_HorizLaser
 		plcm	Nem_ConvPulley,vram_ConvPulley
 		plcm	Nem_Hook,vram_Hook
-		plcm	Nem_WFZThrust,vram_WFZThrust
-		plcm	Nem_WFZBeltPlatform,vram_WFZBeltPlatform
-		plcm	Nem_WFZGunPlatform,vram_WFZGunPlatform
-		plcm	Nem_WFZUnusedBadnik,vram_WfzUnusedBadnik
-		plcm	Nem_WFZLaunchCatapult,vram_WFZLaunchCatapult
-		plcm	Nem_WFZSwitch,vram_WFZSwitch
+		plcm	Nem_ShipExhaust,vram_ShipExhaust
+		plcm	Nem_ConvPlat,vram_ConvPlat
+		plcm	Nem_GunPlat,vram_GunPlat
+		plcm	Nem_PropShaft,vram_PropShaft
+		plcm	Nem_Catapult,vram_Catapult
+		plcm	Nem_Rivet,vram_Rivet
 		plcm	Nem_WFZFloatingPlatform,vram_WFZFloatingPlatform
 		arraysize PLC_WFZ2
 
@@ -88254,7 +88143,7 @@ PLC_CNZ2:	plcheader
 
 PLC_CPZ1:	plcheader
 		plcm	Nem_Pylon,vram_Pylon
-		plcm	Nem_ConstructionStripes,vram_CPZConstructionStripes,CPZ
+		plcm	Nem_HazardStripes,vram_CPZHazardStripes,CPZ
 		plcm	Nem_Booster,vram_Booster
 		plcm	Nem_CPZElevator,vram_CPZElevator
 		plcm	Nem_CPZDumpingPipePlat,vram_CPZDumpingPipePlat
@@ -88283,7 +88172,7 @@ PLC_CPZ2:	plcheader
 ;---------------------------------------------------------------------------------------
 
 PLC_DEZ1:	plcheader
-		plcm	Nem_ConstructionStripes,vram_DEZConstructionStripes,DEZ
+		plcm	Nem_HazardStripes,vram_DEZHazardStripes,DEZ
 		arraysize PLC_DEZ1
 
 ;---------------------------------------------------------------------------------------
@@ -88600,7 +88489,7 @@ PLC_WFZBoss:	plcheader
 
 PLC_Tornado:	plcheader
 		plcm	Nem_Tornado,vram_Tornado
-		plcm	Nem_TornadoThruster,vram_TornadoThruster
+		plcm	Nem_TornadoBooster,vram_TornadoBooster
 		plcm	Nem_Clouds,vram_Clouds
 		arraysize PLC_Tornado
 
@@ -88927,7 +88816,7 @@ PLC_WFZBoss_dup:	plcheader
 
 PLC_Tornado_dup:	plcheader
 		plcm	Nem_Tornado,vram_Tornado
-		plcm	Nem_TornadoThruster,vram_TornadoThruster
+		plcm	Nem_TornadoBooster,vram_TornadoBooster
 		plcm	Nem_Clouds,vram_Clouds
 		arraysize PLC_Tornado_dup
 
@@ -89192,8 +89081,8 @@ LevelIndex:		index offset(*)
 ; WFZ objects
 ;---------------------------------------------------------------------------------------
 
-		incfile	Nem_WFZSwitch				; ArtNem_7FF2A:
-		incfile	Nem_BreakPanels				; ArtNem_7FF98:
+		incfile	Nem_Rivet				; ArtNem_7FF2A:
+		incfile	Nem_BreakPlate				; ArtNem_7FF98:
 
 ;---------------------------------------------------------------------------------------
 ; OOZ objects
@@ -89240,7 +89129,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_Droplet				; ArtNem_8253C:
 		incfile	Nem_Pylon				; ArtNem_825AE:
 		incfile	Nem_CPZMetalBlock			; ArtNem_827B8:
-		incfile	Nem_ConstructionStripes			; ArtNem_827F8:
+		incfile	Nem_HazardStripes			; ArtNem_827F8:
 		incfile	Nem_CPZDumpingPipePlat			; ArtNem_82864: ; ArtNem_CPZAnimatedBits
 		incfile	Nem_StairBlock				; ArtNem_82A46:
 		incfile	Nem_TubeLid				; ArtNem_82C06:
@@ -89351,21 +89240,21 @@ LevelIndex:		index offset(*)
 		incfile	Nem_MechaSonic				; ArtNem_8BE12:
 		incfile	Nem_Tornado				; ArtNem_8CC44:
 
-		incfile	Nem_WFZWallTurret			; ArtNem_8D1A0:
+		incfile	Nem_WallTurret				; ArtNem_8D1A0:
 		incfile	Nem_Hook				; ArtNem_8D388:
-		incfile	Nem_WFZGunPlatform			; ArtNem_8D540:
+		incfile	Nem_GunPlat				; ArtNem_8D540:
 		incfile	Nem_ConvPulley				; ArtNem_8D7D8:
 		incfile	Nem_WFZFloatingPlatform
-		incfile	Nem_WFZVrtclLaser			; ArtNem_8DA6E:
+		incfile	Nem_VertLaser				; ArtNem_8DA6E:
 		incfile	Nem_Clouds				; ArtNem_8DAFC:
-		incfile	Nem_WFZHrzntlLaser			; ArtNem_8DC42:
-		incfile	Nem_WFZLaunchCatapult			; ArtNem_8DCA2:
-		incfile	Nem_WFZBeltPlatform			; ArtNem_8DD0C:
-		incfile	Nem_WFZUnusedBadnik			; ArtNem_8DDF6:
+		incfile	Nem_HorizLaser				; ArtNem_8DC42:
+		incfile	Nem_Catapult				; ArtNem_8DCA2:
+		incfile	Nem_ConvPlat				; ArtNem_8DD0C:
+		incfile	Nem_PropShaft				; ArtNem_8DDF6:
 		incfile	Nem_VertProp				; ArtNem_8DEB8:
 		incfile	Nem_HorizProp				; ArtNem_8DEE8:
-		incfile	Nem_WFZTiltPlatforms			; ArtNem_8E010:
-		incfile	Nem_WFZThrust				; ArtNem_8E0C4:
+		incfile	Nem_TiltPlatform			; ArtNem_8E010:
+		incfile	Nem_ShipExhaust				; ArtNem_8E0C4:
 		incfile	Nem_WFZBoss
 
 		incfile	Nem_RobotnikUpper
@@ -89374,7 +89263,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_DEZWindow
 		incfile	Nem_DEZBoss
 		incfile	Nem_Crawl
-		incfile	Nem_TornadoThruster
+		incfile	Nem_TornadoBooster
 
 ;---------------------------------------------------------------------------------------
 ; Ending

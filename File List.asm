@@ -134,8 +134,8 @@
 		filedef Nem_Turtle,"art/nemesis/Turtle",nem,unc	; 20 tiles
 		filedef Nem_Bear,"art/nemesis/Bear",nem,unc	; 20 tiles
 		filedef Nem_Rabbit,"art/nemesis/Rabbit",nem,unc	; 18 tiles
-		filedef Nem_WFZSwitch,"art/nemesis/WFZ Boss Chamber Switch",nem,unc ; 4 tiles
-		filedef Nem_BreakPanels,"art/nemesis/WFZ Breakaway Panels",nem,unc ; 15 tiles
+		filedef Nem_Rivet,"art/nemesis/WFZ Boss Chamber Switch",nem,unc ; 4 tiles
+		filedef Nem_BreakPlate,"art/nemesis/WFZ Breakaway Panels",nem,unc ; 15 tiles
 		filedef Nem_SlidingSpikes,"art/nemesis/OOZ Spiked Ball",nem,unc ; 32 tiles
 		filedef Nem_BurnerLid,"art/nemesis//OOZ Burner Lid Platform",nem,unc ; 6 tiles
 		filedef Nem_StripedBlocksVert,"art/nemesis/CPZ Striped Blocks 1",nem,unc ; 4 tiles
@@ -168,7 +168,7 @@
 		filedef Nem_Droplet,"art/nemesis/CPZ Blue Balls",nem,unc ; 4 tiles
 		filedef Nem_Pylon,"art/nemesis/CPZ Pylons",nem,unc ; 33 tiles
 		filedef Nem_CPZMetalBlock,"art/nemesis/CPZ Breakable Metal Block",nem,unc ; 4 tiles
-		filedef Nem_ConstructionStripes,"art/nemesis/CPZ & DEZ Yellow & Black Striped Blocks",nem,unc ; 8 tiles
+		filedef Nem_HazardStripes,"art/nemesis/CPZ & DEZ Yellow & Black Striped Blocks",nem,unc ; 8 tiles
 		filedef Nem_CPZDumpingPipePlat,"art/nemesis/CPZ Dumping Pipe Platform",nem,unc ; 48 tiles
 		filedef Nem_StairBlock,"art/nemesis/CPZ Stair Block",nem,unc ; 24 tiles
 		filedef Nem_TubeLid,"art/nemesis/CPZ Spintube Exit Cover & Spring",nem,unc ; 32 tiles
@@ -212,21 +212,21 @@
 		filedef Nem_Balkiry,"art/nemesis/Balkiry",nem,unc ; 25 tiles
 		filedef Nem_MechaSonic,"art/nemesis/Mecha Sonic",nem,unc ; 217 tiles
 		filedef Nem_Tornado,"art/nemesis/The Tornado",nem,unc ; 79 tiles
-		filedef Nem_WFZWallTurret,"art/nemesis/WFZ Wall Turret",nem,unc ; 24 tiles
+		filedef Nem_WallTurret,"art/nemesis/WFZ Wall Turret",nem,unc ; 24 tiles
 		filedef Nem_Hook,"art/nemesis/WFZ Hook & Chain",nem,unc ; 20 tiles
-		filedef Nem_WFZGunPlatform,"art/nemesis/WFZ Gun Platform",nem,unc ; 54 tiles
+		filedef Nem_GunPlat,"art/nemesis/WFZ Gun Platform",nem,unc ; 54 tiles
 		filedef Nem_ConvPulley,"art/nemesis/WFZ Conveyer Belt Wheel",nem,unc ; 16 tiles
 		filedef Nem_WFZFloatingPlatform,"art/nemesis/WFZ Floating Platform",nem,unc ; 12 tiles
-		filedef Nem_WFZVrtclLaser,"art/nemesis/WFZ Vertical Laser",nem,unc ; 12 tiles
+		filedef Nem_VertLaser,"art/nemesis/WFZ Vertical Laser",nem,unc ; 12 tiles
 		filedef Nem_Clouds,"art/nemesis/SCZ, WFZ, and Ending Clouds",nem,unc ; 18 tiles
-		filedef Nem_WFZHrzntlLaser,"art/nemesis/WFZ Horizontal Laser",nem,unc ; 10 tiles
-		filedef Nem_WFZLaunchCatapult,"art/nemesis/WFZ Catapult",nem,unc ; 5 tiles
-		filedef Nem_WFZBeltPlatform,"art/nemesis/WFZ Belt Platform",nem,unc ; 12 tiles
-		filedef Nem_WFZUnusedBadnik,"art/nemesis/WFZ Unused Badnik",nem,unc ; 12 tiles
+		filedef Nem_HorizLaser,"art/nemesis/WFZ Horizontal Laser",nem,unc ; 10 tiles
+		filedef Nem_Catapult,"art/nemesis/WFZ Catapult",nem,unc ; 5 tiles
+		filedef Nem_ConvPlat,"art/nemesis/WFZ Belt Platform",nem,unc ; 12 tiles
+		filedef Nem_PropShaft,"art/nemesis/WFZ Unused Badnik",nem,unc ; 12 tiles
 		filedef Nem_VertProp,"art/nemesis/WFZ Vertical Propeller",nem,unc ; 4 tiles
 		filedef Nem_HorizProp,"art/nemesis/WFZ Horizontal Propeller",nem,unc ; 29 tiles
-		filedef Nem_WFZTiltPlatforms,"art/nemesis/WFZ Tilting Platforms",nem,unc ; 12 tiles
-		filedef Nem_WFZThrust,"art/nemesis/WFZ Getaway Ship Thrust",nem,unc ; 8 tiles
+		filedef Nem_TiltPlatform,"art/nemesis/WFZ Tilting Platforms",nem,unc ; 12 tiles
+		filedef Nem_ShipExhaust,"art/nemesis/WFZ Getaway Ship Thrust",nem,unc ; 8 tiles
 		filedef Nem_WFZBoss,"art/nemesis/WFZ Boss",nem,unc ; 117 tiles
 		filedef Nem_RobotnikUpper,"art/nemesis/Eggman's Head",nem,unc ; 24 tiles
 		filedef Nem_RobotnikRunning,"art/nemesis/Eggman",nem,unc ; 76 tiles
@@ -234,7 +234,7 @@
 		filedef Nem_DEZWindow,"art/nemesis/Eggman's Window in Mecha Sonic Boss Arena",nem,unc ; 8 tiles
 		filedef Nem_DEZBoss,"art/nemesis/Eggrobo",nem,unc ; 327 tiles
 		filedef Nem_Crawl,"art/nemesis/Crawl",nem,unc	; 42 tiles
-		filedef Nem_TornadoThruster,"art/nemesis/The Tornado's Rocket Booster",nem,unc ; 26 tiles
+		filedef Nem_TornadoBooster,"art/nemesis/The Tornado's Rocket Booster",nem,unc ; 26 tiles
 
 		filedef Nem_EndingStills,"art/nemesis/Ending Stills",nem,unc ; 363 tiles
 		filedef Nem_EndingFinalTornado,"art/nemesis/Tornado Facing Camera at End of Ending Sequence",nem,unc ; 127 tiles

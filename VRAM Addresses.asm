@@ -100,7 +100,7 @@ vram_Capsule:               equ $D000
 
 ; Tornado.
 vram_Tornado:               equ $A000
-vram_TornadoThruster:       equ $AC20
+vram_TornadoBooster:       equ $AC20
 ; Shared badniks and objects.
 
 
@@ -234,20 +234,20 @@ tile_Art_MTZAnimBack2:		equ vram_MTZAnimBack2/sizeof_cell
 
 ; WFZ
 vram_Clucker:             	equ $6F20
-vram_WFZTiltPlatforms:		equ $7260
-vram_WFZVrtclLaser:         equ $73E0
-vram_WFZWallTurret:         equ $7560
-vram_WFZHrzntlLaser:        equ $7860
+vram_TiltPlatform:			equ $7260
+vram_VertLaser:        		equ $73E0
+vram_WallTurret:        	equ $7560
+vram_HorizLaser:        	equ $7860
 vram_ConvPulley:  			equ $7D40
 vram_Hook:              	equ $7F40			; mappings for this object are bugged, this is worked around by adding 4 to the tile setting
-vram_WFZBeltPlatform:       equ $81C0
-vram_WFZGunPlatform:        equ $8340
-vram_WFZUnusedBadnik:       equ $8A00
-vram_WFZLaunchCatapult:     equ $8B80
-vram_WFZSwitch:             equ $8C20
-vram_WFZThrust:             equ $8CA0
+vram_ConvPlat:       		equ $81C0
+vram_GunPlat:        		equ $8340
+vram_PropShaft:     		equ $8A00
+vram_Catapult:				equ $8B80
+vram_Rivet:					equ $8C20
+vram_ShipExhaust:           equ $8CA0
 vram_WFZFloatingPlatform:   equ $8DA0
-vram_BreakPanels:           equ $9180
+vram_BreakPlate:        	equ $9180
 
 ; SCZ
 vram_Turtloid:              equ $7140
@@ -349,7 +349,7 @@ tile_Art_SlotPics3_2p:       	equ vram_SlotPics3_2p/sizeof_cell
 ; CPZ
 vram_CPZAnimBack:           equ $6E00
 vram_Pylon:         		equ $6E60
-vram_CPZConstructionStripes:	equ $7280
+vram_CPZHazardStripes:		equ $7280
 vram_Booster:				equ $7380
 vram_CPZElevator:           equ $7400
 vram_CPZDumpingPipePlat:	equ $7600
@@ -364,7 +364,7 @@ tile_Art_CPZAnimBack:	equ vram_CPZAnimBack/sizeof_cell
 
 ; DEZ
 vram_DEZAnimBack:  				equ $64C0
-vram_DEZConstructionStripes: 	equ $6500
+vram_DEZHazardStripes:			equ $6500
 
 tile_Art_DEZAnimBack:			equ vram_DEZAnimBack/sizeof_cell
 
