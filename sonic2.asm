@@ -710,6 +710,8 @@ VBlank_Level:
 		; Like in Sonic 3, the sprite tables are page-flipped in two-player mode.
 		; This fixes a race-condition where incomplete sprite tables can be uploaded
 		; to the VDP on lag frames, causing corrupted sprites to appear.
+		tst.w	(f_two_player).w
+		beq.s	.useprimary		; branch if not 2P mode
 		tst.b	(f_sprite_buffer_pageflip).w
 		beq.s	.nopageflip				; branch if we aren't flipping the sprite table page
 		sf.b	(f_sprite_buffer_pageflip).w
@@ -978,6 +980,8 @@ VBlank_TitleCard:
 		; Like in Sonic 3, the sprite tables are page-flipped in two-player mode.
 		; This fixes a race-condition where incomplete sprite tables can be uploaded
 		; to the VDP on lag frames, causing corrupted sprites to appear.
+		tst.w	(f_two_player).w
+		beq.s	.useprimary		; branch if not 2P mode
 		tst.b	(f_sprite_buffer_pageflip).w
 		beq.s	.nopageflip				; branch if we aren't flipping the sprite table page
 		sf.b	(f_sprite_buffer_pageflip).w
@@ -17968,17 +17972,17 @@ loc_DE68:
 		lea_	byte_DDD0,a0
 		move.w	(v_bg1_y_pos).w,d0
 
-    if FixBugs
+;    if FixBugs
    		; After right-shifting, the is a mask of $3F. Since CPZ_CameraSections is $40 items
    		; long, this is correct.
-		andi.w	#$3F0,d
-    else
+;		andi.w	#$3F0,d0
+;     else
 		; After right-shifting, the is a mask of $7F. Since CPZ_CameraSections
 		; is $40 items long, this is incorrect, and will cause accesses to
 		; exceed the bounds of CPZ_CameraSections and read invalid data. This
 		; is most notably a problem in Marble Zone's version of this code.
 		andi.w	#$7F0,d0
-    endc
+;    endc
 
 		lsr.w	#4,d0
 		lea	(a0,d0.w),a0
@@ -18661,11 +18665,11 @@ DrawTilesAtStart:
 		; initialisation logic, much like two player Mystic Cave Zone 2P does.
 		move.b	(v_zone).w,d0
 		cmpi.b	#id_EHZ,d0
-		beq.w	DrawInitialBG_LoadWholeBackground_512x256
+		beq.w	DrawTilesAtStart_LoadFull_512x256
 		cmpi.b	#id_CNZ,d0
-		beq.w	DrawInitialBG_LoadWholeBackground_512x256
+		beq.w	DrawTilesAtStart_LoadFull_512x256
 		cmpi.b	#id_HTZ,d0
-		beq.w	DrawInitialBG_LoadWholeBackground_512x256
+		beq.w	DrawTilesAtStart_LoadFull_512x256
 	else
 		; This is a nasty hack to work around the bug described above.
 		moveq	#0,d4
@@ -27932,7 +27936,7 @@ ExecuteObjects:
 		; Drowning fixes: if player 1 has just drowned, continue running objects normally
 		; until they are marked as dead, so that the bubbles from their mouth are
 		; displayed.
-		cmpi.b	#id_Drown,(v_ost_player+ost_routine)	; has main character just drowned?
+		cmpi.b	#id_Drown,(v_ost_player1+ost_primary_routine)	; has main character just drowned?
 		beq.s	.run_object				; if so, run objects normally
 	endc
 		moveq	#countof_ost_reserved-1,d7
@@ -29129,6 +29133,8 @@ BuildSprites_2P:
 		tst.b	(f_sprite_buffer_page).w
 		beq.s	.useprimary				; branch if we're using the primary page
 		lea	(v_sprite_buffer_alt).w,a2
+
+	.useprimary:
 	else
 		lea	(v_sprite_buffer).w,a2
 	endc
@@ -29264,6 +29270,8 @@ BuildSprites_P2:
 		tst.b	(f_sprite_buffer_page).w
 		beq.s	.useprimary				; branch if we're using the primary page
 		lea	(v_sprite_buffer_alt_2).w,a2
+
+	.useprimary:
 	else
 		tst.w	(f_hblank).w				; has HBlank run?
 		bne.s	BuildSprites_P2				; if not, wait
@@ -35462,7 +35470,7 @@ locret_1AC3C:
 
 Sonic_CheckSpindash:
 		tst.b	$39(a0)
-		bne.s	loc_1AC8E
+		bne.s	Sonic_UpdateSpindash
 		cmpi.b	#8,ost_anim(a0)
 		bne.s	locret_1AC8C
 		move.b	(v_joypad_press).w,d0
@@ -35486,7 +35494,7 @@ locret_1AC8C:
 		rts
 ; ===========================================================================
 
-loc_1AC8E:
+Sonic_UpdateSpindash:
 		move.b	(v_joypad_hold).w,d0
 		btst	#1,d0
 		bne.w	loc_1AD30
@@ -35498,19 +35506,35 @@ loc_1AC8E:
 		moveq	#0,d0
 		move.b	$3A(a0),d0
 		add.w	d0,d0
-		move.w	word_1AD0C(pc,d0.w),ost_inertia(a0)
+		move.w	Sonic_SpindashSpeeds(pc,d0.w),ost_inertia(a0)
 		tst.b	(f_super).w
 		beq.s	loc_1ACD0
-		move.w	word_1AD1E(pc,d0.w),ost_inertia(a0)
+		move.w	SuperSonic_SpindashSpeeds(pc,d0.w),ost_inertia(a0)
 
-loc_1ACD0:
+	loc_1ACD0:
 		move.w	ost_inertia(a0),d0
 		subi.w	#$800,d0
+
+	if Fixbugs
+		; To fix a bug in 'ScrollHoriz', we need an extra variable, so this
+		; code has been modified to make the delay value only a single byte.
+		; The lower byte has been repurposed to hold a copy of the position
+		; array index at the time that the spin dash was released.
+		; This is used by the fixed 'ScrollHoriz'.
+		lsr.w	#7,d0
+		neg.w	d0
+		addi.w	#$20,d0
+		move.b	d0,(v_hscroll_delay_val).w
+		; Back up the position array index for later.
+		move.b	(v_sonic_pos_tracker_num+1).w,(v_hscroll_delay_val+1).w
+	else
 		add.w	d0,d0
 		andi.w	#$1F00,d0
 		neg.w	d0
 		addi.w	#$2000,d0
 		move.w	d0,(v_hscroll_delay_val).w
+
+	endc
 		btst	#status_xflip_bit,ost_primary_status(a0)
 		beq.s	loc_1ACF4
 		neg.w	ost_inertia(a0)
@@ -35522,7 +35546,7 @@ loc_1ACF4:
 		jsr	(PlaySound).l
 		bra.s	loc_1AD78
 ; ===========================================================================
-word_1AD0C:
+Sonic_SpindashSpeeds:
 		dc.w  $800					; 0
 		dc.w  $880					; 1
 		dc.w  $900					; 2
@@ -35532,7 +35556,8 @@ word_1AD0C:
 		dc.w  $B00					; 6
 		dc.w  $B80					; 7
 		dc.w  $C00					; 8
-word_1AD1E:
+
+SuperSonic_SpindashSpeeds:
 		dc.w  $B00					; 0
 		dc.w  $B80					; 1
 		dc.w  $C00					; 2
@@ -37667,7 +37692,7 @@ loc_1C000:
 ; ===========================================================================
 
 loc_1C00A:
-		bsr.w	loc_1C70E
+		bsr.w	Tails_CheckSpindash
 		bsr.w	loc_1C61E
 		bsr.w	loc_1C846
 		bsr.w	loc_1C0AC
@@ -38410,9 +38435,9 @@ locret_1C70C:
 		rts
 ; ===========================================================================
 
-loc_1C70E:
+Tails_CheckSpindash:
 		tst.b	$39(a0)
-		bne.s	loc_1C75E
+		bne.s	Tails_UpdateSpindash
 		cmpi.b	#8,ost_anim(a0)
 		bne.s	locret_1C75C
 		move.b	(v_joypad2_press).w,d0
@@ -38436,7 +38461,7 @@ locret_1C75C:
 		rts
 ; ===========================================================================
 
-loc_1C75E:
+Tails_UpdateSpindash:
 		move.b	(v_joypad2_hold).w,d0
 		btst	#1,d0
 		bne.s	loc_1C7E0
@@ -38448,7 +38473,21 @@ loc_1C75E:
 		moveq	#0,d0
 		move.b	$3A(a0),d0
 		add.w	d0,d0
-		move.w	word_1C7CE(pc,d0.w),ost_inertia(a0)
+		move.w	Tails_SpindashSpeeds(pc,d0.w),ost_inertia(a0)
+
+	if FixBugs
+		; To fix a bug in 'ScrollHoriz', we need an extra variable, so this
+		; code has been modified to make the delay value only a single byte.
+		; The lower byte has been repurposed to hold a copy of the position
+		; array index at the time that the spin dash was released.
+		; This is used by the fixed 'ScrollHoriz'.
+		lsr.w	#7,d0
+		neg.w	d0
+		addi.w	#$20,d0
+		move.b	d0,(v_hscroll_delay_val_p2).w
+		; Back up the position array index for later.
+		move.b	(v_tails_pos_tracker_num+1).w,(v_hscroll_delay_val_p2+1).w
+	else
 		move.w	ost_inertia(a0),d0
 		subi.w	#$800,d0
 		add.w	d0,d0
@@ -38456,6 +38495,8 @@ loc_1C75E:
 		neg.w	d0
 		addi.w	#$2000,d0
 		move.w	d0,(v_hscroll_delay_val_p2).w
+	endc
+
 		btst	#status_xflip_bit,ost_primary_status(a0)
 		beq.s	loc_1C7B6
 		neg.w	ost_inertia(a0)
@@ -38467,7 +38508,7 @@ loc_1C7B6:
 		jsr	(PlaySound).l
 		bra.s	loc_1C828
 ; ===========================================================================
-word_1C7CE:
+Tails_SpindashSpeeds:
 		dc.w  $800					; 0
 		dc.w  $880					; 1
 		dc.w  $900					; 2
@@ -44278,7 +44319,7 @@ loc_20F2E:
 		move.w	ost_x_pos(a0),d4
 		bsr.w	SolidObject_NoRenderChk
 		tst.w	(f_two_player).w
-	if (Revision=0)|FixBugs
+	if (Revision=0)|DebugImprovements
 		bne.s	.chkdebug
 	else
 		bne.s	.locret_20F64
