@@ -711,7 +711,7 @@ VBlank_Level:
 		; This fixes a race-condition where incomplete sprite tables can be uploaded
 		; to the VDP on lag frames, causing corrupted sprites to appear.
 		tst.w	(f_two_player).w
-		beq.s	.useprimary		; branch if not 2P mode
+		beq.s	.useprimary				; branch if not 2P mode
 		tst.b	(f_sprite_buffer_pageflip).w
 		beq.s	.nopageflip				; branch if we aren't flipping the sprite table page
 		sf.b	(f_sprite_buffer_pageflip).w
@@ -981,7 +981,7 @@ VBlank_TitleCard:
 		; This fixes a race-condition where incomplete sprite tables can be uploaded
 		; to the VDP on lag frames, causing corrupted sprites to appear.
 		tst.w	(f_two_player).w
-		beq.s	.useprimary		; branch if not 2P mode
+		beq.s	.useprimary				; branch if not 2P mode
 		tst.b	(f_sprite_buffer_pageflip).w
 		beq.s	.nopageflip				; branch if we aren't flipping the sprite table page
 		sf.b	(f_sprite_buffer_pageflip).w
@@ -23082,6 +23082,8 @@ Anml_Index:	index offset(*),,2
 		ptr loc_11D24					; $30
 		ptr loc_11C8A					; $30
 
+ost_animal_prison_num:	equ $36					; id num for animals in prison capsule, lets them jump out 1 at a time
+ost_animal_type:		equ $38				; if 1, animal did NOT come from an
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Declare which animals will appear in each level.
@@ -23257,8 +23259,8 @@ loc_11A46:
 		move.b	#7,ost_anim_time(a0)
 		move.b	#2,ost_frame(a0)
 		move.w	#-$400,ost_y_vel(a0)
-		tst.b	$38(a0)
-		bne.s	loc_11AD0
+		tst.b	ost_animal_type(a0)			; did animal come from a prison capsule?
+		bne.s	loc_11AD0				; branch if so
 		bsr.w	FindFreeObj
 		bne.s	loc_11ACC
 		_move.b	#id_Points,ost_id(a1)
@@ -23374,7 +23376,7 @@ loc_11BF0:
 loc_11BF4:
 		tst.b	ost_render(a0)
 		bpl.w	DeleteObject
-		subq.w	#1,$36(a0)
+		subq.w	#1,ost_animal_prison_num(a0)
 		bne.w	loc_11C10
 		move.b	#2,ost_primary_routine(a0)
 		move.b	#priority_1,ost_priority(a0)
@@ -27936,7 +27938,7 @@ ExecuteObjects:
 		; Drowning fixes: if player 1 has just drowned, continue running objects normally
 		; until they are marked as dead, so that the bubbles from their mouth are
 		; displayed.
-		cmpi.b	#id_Drown,(v_ost_player1+ost_primary_routine)	; has main character just drowned?
+		cmpi.b	#id_Drown,(v_ost_player1+ost_primary_routine) ; has main character just drowned?
 		beq.s	.run_object				; if so, run objects normally
 	endc
 		moveq	#countof_ost_reserved-1,d7
@@ -32870,7 +32872,7 @@ loc_19434:
 loc_1944C:
 		move.b	#0,ost_secondary_routine(a0)
 
-loc_19452:
+HasPassedAct:
 		lea	(v_ost_player1).w,a1
 		clr.b	$2B(a1)
 		clr.b	(f_hud_time_update).w
@@ -43328,8 +43330,8 @@ PlaneSwitcher:
 	if DebugImprovements
 		; Allow this object to be visible in debug mode.
 		tst.w	(v_debug_active).w			; is debug mode in use?
-		bne.s	.display				; branch if not
-		jmp	(DespawnObject3).l			; don't display sprite
+		bne.s	.display				; branch if so
+		jmp	(DespawnObject3).l			; if not, don't display sprite
 
 	.display:
 		jmp	(DespawnObject).l			; display sprite if in debug mode
@@ -82872,149 +82874,158 @@ Prison:
 		jmp	Pri_Index(pc,d1.w)
 ; ===========================================================================
 Pri_Index:	index offset(*),,2
-		ptr loc_3F212					; 0
-		ptr loc_3F278					; 2
-		ptr loc_3F354					; 4
-		ptr loc_3F38E					; 6
-		ptr loc_3F3A8					; 8
-		ptr loc_3F406					; $A
+		ptr Pri_LoadObjs				; 0
+		ptr Pri_Body					; 2
+		ptr Pri_Switch					; 4
+		ptr Pri_Latch					; 6
+		ptr Pri_Animals					; 8
+		ptr Pri_EndAct					; $A
 
-byte_3F1FE:
-		dc.b   0,  2,$20,  4,  0
-		dc.b $28,  4,$10,  5,  4			; 5
-		dc.b $18,  6,  8,  3,  5			; 10
-		dc.b   0,  8,$20,  4,  0			; 15
+		rsobj	Prison,$30
+ost_prison_ypos_backup:	rs.w 1					; $30 ; OG y pos used by switch object
+ost_prison_opened:		rs.w 1				; $32 ; flag set when capsule is opened
+ost_prison_wait:		rs.w 1				; $34 ; time in frames until capsule opens after switch is pressed
+		rsset $38
+ost_prison_switch_ptr:	rs.w 1					; $38 ; body's pointer to switch object
+ost_prison_latch_ptr:	rs.w 1					; $3A ; body's pointer to latch object
+ost_prison_animmgr_ptr:	rs.w 1					; $3C ; body's pointer to animal manager object
+		rsobjend
+
+Pri_Var:
+		; y offset, primary routine, display width, priority, frame
+		dc.b   0,id_Pri_Body,	$40/2,priority_4,id_Frame_Pri_Closed ; capsule body
+		dc.b $28,id_Pri_Switch,	$20/2,priority_5,id_Frame_Pri_Switch ; the switch on top of the capsule
+		dc.b $18,id_Pri_Latch,	$10/2,priority_3,id_Frame_Pri_Latch ; the latch that flies away when opened
+		dc.b   0,id_Pri_Animals,$40/2,priority_4,id_Frame_Pri_Closed ; invisible object that manages animals and triggers end-of-act sequence
 		even
 ; ===========================================================================
 
-loc_3F212:
-		movea.l	a0,a1
-		lea	$38(a0),a3
-		lea	byte_3F1FE(pc),a2
-		moveq	#3,d1
-		bra.s	loc_3F228
+Pri_LoadObjs:	; Routine 0
+		movea.l	a0,a1					; load data for parent object (could be movea.w)
+		lea	ost_prison_switch_ptr(a0),a3		; child pointers
+		lea	Pri_Var(pc),a2
+		moveq	#4-1,d1					; four objects to load
+		bra.s	.loaddata
 ; ===========================================================================
 
-loc_3F220:
-		jsrto	FindFreeObj,JmpTo20_FindFreeObj
-		bne.s	loc_3F272
-		move.w	a1,(a3)+
+.loadloop:
+		jsrto	FindFreeObj,JmpTo20_FindFreeObj		; find free OST slot
+		bne.s	.fail					; branch if not found
+		move.w	a1,(a3)+				; set pointer to child
 
-loc_3F228:
-		_move.b	ost_id(a0),ost_id(a1)
-		move.w	ost_x_pos(a0),ost_x_pos(a1)
+	.loaddata: ; this label could be moved dowm three instructions, as these are redundant for first object
+		_move.b	ost_id(a0),ost_id(a1)			; load Prison object
+		move.w	ost_x_pos(a0),ost_x_pos(a1)		; match position
 		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		move.w	ost_y_pos(a0),$30(a1)
+		move.w	ost_y_pos(a0),ost_prison_ypos_backup(a1)
 		move.l	#Map_Pri,ost_mappings(a1)
 		move.w	#tile_Nem_Capsule+tile_pal2,ost_tile(a1)
 		move.b	#render_rel|render_onscreen,ost_render(a1)
 		moveq	#0,d0
 		move.b	(a2)+,d0
-		sub.w	d0,ost_y_pos(a1)
-		move.w	ost_y_pos(a1),$30(a1)
-		move.b	(a2)+,ost_primary_routine(a1)
+		sub.w	d0,ost_y_pos(a1)			; calculate y pos of child
+		move.w	ost_y_pos(a1),ost_prison_ypos_backup(a1) ; back up y pos
+		move.b	(a2)+,ost_primary_routine(a1)		; set primary routine
 		move.b	(a2)+,ost_displaywidth(a1)
 		move.b	(a2)+,ost_priority(a1)
 		move.b	(a2)+,ost_frame(a1)
 
-loc_3F272:
-		dbf	d1,loc_3F220
+	.fail:
+		dbf	d1,.loadloop				; repeat for all objects
 		rts
 ; ===========================================================================
 
-loc_3F278:
+Pri_Body:	; Routine 2
 		moveq	#0,d0
 		move.b	ost_secondary_routine(a0),d0
-		move.w	off_3F2AE(pc,d0.w),d1
-		jsr	off_3F2AE(pc,d1.w)
-		move.w	#$2B,d1
-		move.w	#$18,d2
-		move.w	#$18,d3
+		move.w	Pri_Body_Index(pc,d0.w),d1
+		jsr	Pri_Body_Index(pc,d1.w)
+		move.w	#$56/2,d1
+		move.w	#$30/2,d2
+		move.w	#$30/2,d3
 		move.w	ost_x_pos(a0),d4
 		jsr	(SolidObject).l
-		lea	(off_3F428).l,a1
+		lea	(Ani_Pri).l,a1
 		jsr	(AnimateSprite).l
 		jmp	(DespawnObject).l
 ; ===========================================================================
-off_3F2AE:	index offset(*),,2
-		ptr loc_3F2B4					; 0
-		ptr loc_3F2FC					; 2
-		ptr locret_3F352				; 4
+Pri_Body_Index:	index offset(*),,2
+		ptr Pri_Body_ChkOpen				; 0
+		ptr Pri_Body_LoadAnimals			; 2
+		ptr Pri_Body_Done				; 4
 ; ===========================================================================
 
-loc_3F2B4:
-		movea.w	$38(a0),a1
-		tst.w	$32(a1)
-		beq.s	locret_3F2FA
-		movea.w	$3A(a0),a2
-		jsr	(FindFreeObj).l
-		bne.s	loc_3F2E0
-		_move.b	#id_ExplosionItem,ost_id(a1)
-		addq.b	#2,ost_primary_routine(a1)
-		move.w	ost_x_pos(a2),ost_x_pos(a1)
+Pri_Body_ChkOpen:						; Secondary Routine 0
+		movea.w	ost_prison_switch_ptr(a0),a1		; a1 = switch object
+		tst.w	ost_prison_opened(a1)			; has prison been opened?
+		beq.s	.notopened				; branch if not
+
+	;.opened:
+		movea.w	ost_prison_latch_ptr(a0),a2		; a2 = latch object
+		jsr	(FindFreeObj).l				; find free OST slot
+		bne.s	.noexplosion				; branch if not found
+		_move.b	#id_ExplosionItem,ost_id(a1)		; load explosion object
+		addq.b	#id_Explosion_Main,ost_primary_routine(a1)
+		move.w	ost_x_pos(a2),ost_x_pos(a1)		; match position
 		move.w	ost_y_pos(a2),ost_y_pos(a1)
 
-loc_3F2E0:
-		move.w	#-$400,ost_y_vel(a2)
+	.noexplosion:
+		move.w	#-$400,ost_y_vel(a2)			; make the latch fly away at high speed
 		move.w	#$800,ost_x_vel(a2)
-		addq.b	#2,ost_secondary_routine(a2)
-		move.w	#$1D,$34(a0)
-		addq.b	#2,ost_secondary_routine(a0)
+		addq.b	#2,ost_secondary_routine(a2)		; tell latch it's now flying away
+		move.w	#29,ost_prison_wait(a0)			; wait 29 frames before opening capsule
+		addq.b	#2,ost_secondary_routine(a0)		; go to Pri_Body_LoadAnimals next
 
-locret_3F2FA:
+	.notopened:
 		rts
 ; ===========================================================================
 
-loc_3F2FC:
-		subq.w	#1,$34(a0)
-		bpl.s	locret_3F352
+Pri_Body_LoadAnimals:						; Secondary Routine 2
+		subq.w	#1,ost_prison_wait(a0)			; decrement timer
+		bpl.s	Pri_Body_Done				; branch if time remains
+		move.b	#id_Ani_Pri_Opening,ost_anim(a0)	; use opening animation
+		moveq	#8-1,d6					; number of animals to load
+		move.w	#154,d5					; animal jumping queue start
+		moveq	#-28,d4					; relative x position (first animal is 28px left of capsule)
 
-loc_3F302:
-		move.b	#1,ost_anim(a0)
-		moveq	#7,d6
-
-loc_3F30A:
-		move.w	#$9A,d5
-		moveq	#-$1C,d4
-
-loc_3F310:
-		jsr	(FindFreeObj).l
-		bne.s	loc_3F340
-		_move.b	#id_Animals,ost_id(a1)
+	.makeanimal:
+		jsr	(FindFreeObj).l				; find free OST slot
+		bne.s	.fail					; branch if not found
+		_move.b	#id_Animals,ost_id(a1)			; load animal object
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
-		move.w	ost_y_pos(a0),ost_y_pos(a1)
-		add.w	d4,ost_x_pos(a1)
-		move.b	#1,$38(a1)
-		addq.w	#7,d4
-		move.w	d5,$36(a1)
-		subq.w	#8,d5
-		dbf	d6,loc_3F310
+		move.w	ost_y_pos(a0),ost_y_pos(a1)		; match y pos
+		add.w	d4,ost_x_pos(a1)			; relative x pos
+		move.b	#1,ost_animal_type(a1)			; mark animal as coming from a prison capsule
+		addq.w	#7,d4					; next animal loads 7px right
+		move.w	d5,ost_animal_prison_num(a1)		; give each animal a num so it jumps at a different time
+		subq.w	#8,d5					; decrement queue number
+		dbf	d6,.makeanimal
 
-loc_3F340:
-		movea.w	$3C(a0),a2
-		move.w	#$B4,ost_anim_time(a2)
-		addq.b	#2,ost_secondary_routine(a2)
-		addq.b	#2,ost_secondary_routine(a0)
+	.fail:
+		movea.w	ost_prison_animmgr_ptr(a0),a2		; a2 = animal/end-of-act manager
+		move.w	#180,ost_anim_time(a2)			; spawn addtional animals for 180 frames
+		addq.b	#2,ost_secondary_routine(a2)		; mark first 8 animals as spawned
+		addq.b	#2,ost_secondary_routine(a0)		; go to Pri_Body_Done next
 
-locret_3F352:
+Pri_Body_Done: ; Secondary Routine 4
 		rts
 ; ===========================================================================
 
-loc_3F354:
-		move.w	#$1B,d1
-		move.w	#8,d2
-		move.w	#8,d3
+Pri_Switch:	; Routine 4
+		move.w	#$36/2,d1
+		move.w	#$10/2,d2
+		move.w	#$10/2,d3
 		move.w	ost_x_pos(a0),d4
-		jsr	(SolidObject).l
-		move.w	$30(a0),ost_y_pos(a0)
+		jsr	(SolidObject).l				; check player collision
+		move.w	ost_prison_ypos_backup(a0),ost_y_pos(a0) ; restore y pos (as it will be moved down on every frame after being triggered)
 		move.b	ost_primary_status(a0),d0
-		andi.b	#$18,d0
-		beq.s	loc_3F388
-		addq.w	#8,ost_y_pos(a0)
-		clr.b	(f_hud_time_update).w
-		move.w	#1,$32(a0)
+		andi.b	#status_platform_both,d0		; are Sonic or Tails on top of the switch?
+		beq.s	.not_on_top				; branch if not
+		addq.w	#8,ost_y_pos(a0)			; move switch down 8px
+		clr.b	(f_hud_time_update).w			; stop time counter
+		move.w	#1,ost_prison_opened(a0)		; set flag for prison opened
 
-loc_3F388:
+	.not_on_top:
 		jmp	(DespawnObject).l
 
     if RemoveJmpTos
@@ -83023,79 +83034,86 @@ JmpTo66_DeleteObject:
     endc
 ; ===========================================================================
 
-loc_3F38E:
-		tst.b	ost_secondary_routine(a0)
-		beq.s	loc_3F3A2
-		tst.b	ost_render(a0)
-		bpl.w	JmpTo66_DeleteObject
-		jsr	(ObjectFall).l
+Pri_Latch:	; Routine 6
+		tst.b	ost_secondary_routine(a0)		; is latch flying away?
+		beq.s	.display				; branch if not?
+		tst.b	ost_render(a0)				; has it moved offscreen?
+		bpl.w	JmpTo66_DeleteObject			; branch if not
+		jsr	(ObjectFall).l				; apply gravity
 
-loc_3F3A2:
+	.display:
 		jmp	(DespawnObject).l
 ; ===========================================================================
 
-loc_3F3A8:
-		tst.b	ost_secondary_routine(a0)
-		beq.s	locret_3F404
-		move.b	(v_vblank_counter_byte).w,d0
+Pri_Animals:
+		tst.b	ost_secondary_routine(a0)		; have first 8 animals been spawned?
+		beq.s	.exit					; branch if not
+		move.b	(v_vblank_counter_byte).w,d0		; byte that increments every frame
 		andi.b	#7,d0
-		bne.s	loc_3F3F4
-		jsr	(FindFreeObj).l
-		bne.s	loc_3F3F4
-		_move.b	#id_Animals,ost_id(a1)
+		bne.s	.noanimal				; branch if any of bits 0-2 are set
+
+		jsr	(FindFreeObj).l				; find free OST slot
+		bne.s	.noanimal				; branch if not found
+		_move.b	#id_Animals,ost_id(a1)			; load an additional animal every 8 frames
 		move.w	ost_x_pos(a0),ost_x_pos(a1)
-		move.w	ost_y_pos(a0),ost_y_pos(a1)
+		move.w	ost_y_pos(a0),ost_y_pos(a1)		; match y pos
 		jsr	(RandomNumber).l
 		andi.w	#$1F,d0
 		subq.w	#6,d0
 		tst.w	d1
-		bpl.s	loc_3F3E4
+		bpl.s	.alreadypos
 		neg.w	d0
 
-loc_3F3E4:
-		add.w	d0,ost_x_pos(a1)
-		move.b	#1,$38(a1)
-		move.w	#$C,$36(a1)
+	.alreadypos:
+		add.w	d0,ost_x_pos(a1)			; psuedorandom relative x pos
+		move.b	#1,ost_animal_type(a1)			; mark animal as coming from a prison capsule
+		move.w	#$C,ost_animal_prison_num(a1)		; set time for animal to jump out
 
-loc_3F3F4:
-		subq.w	#1,ost_anim_time(a0)
-		bne.s	locret_3F404
-		addq.b	#2,ost_primary_routine(a0)
+	.noanimal:
+		subq.w	#1,ost_anim_time(a0)			; decrement timer
+		bne.s	.exit					; branch if time remains
+		addq.b	#2,ost_primary_routine(a0)		; goto Pri_EndAct next
 
-loc_3F3FE:
-		move.w	#$B4,ost_anim_time(a0)
+		move.w	#$B4,ost_anim_time(a0)			; pointless; does nothing
 
-locret_3F404:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_3F406:
-		moveq	#$6F,d0
+Pri_EndAct:
+		moveq	#countof_ost_dynamic-1,d0		; search entire dynamic OST for animal objects
 		moveq	#id_Animals,d1
 		lea	(v_ost_dynamic).w,a1
 
-loc_3F40E:
-		cmp.b	ost_id(a1),d1
-		beq.s	locret_3F426
-		lea	$40(a1),a1
-		dbf	d0,loc_3F40E
-		jsr	(loc_19452).l
-		jmp	(DeleteObject).l
-; ===========================================================================
+	.findanimal:
+		cmp.b	ost_id(a1),d1				; is object $28	(animal) loaded?
+		beq.s	.found					; branch if so
+		lea	sizeof_ost(a1),a1			; next OST slot
+		dbf	d0,.findanimal				; repeat $6F times (Sonic 1 failed to search entire OST)
 
-locret_3F426:
+		jsr	(HasPassedAct).l			; load gfx, play end-of-act music
+		jmp	(DeleteObject).l
+
+	.found:
 		rts
 ; ===========================================================================
-off_3F428:	index offset(*)
-		ptr byte_3F42C					; 0
-		ptr byte_3F42F					; 1
+Ani_Pri:	index offset(*)
+		ptr Ani_Pri_Closed				; 0
+		ptr Ani_Pri_Opening				; 1
 
-byte_3F42C:
-		dc.b  $F,  0,$FF
+Ani_Pri_Closed:
+		dc.b $F
+		dc.b id_Frame_Pri_Closed
+		dc.b afEnd
 		rev02even
 
-byte_3F42F:
-		dc.b   3,  0,  1,  2,  3,$FE,  1
+Ani_Pri_Opening:
+		dc.b 3
+		dc.b id_Frame_Pri_Closed
+		dc.b id_Frame_Pri_Opening1
+		dc.b id_Frame_Pri_Opening2
+		backdest id_Frame_Pri_Open
+		afback
 		even
 ; ===========================================================================
 
