@@ -99,16 +99,14 @@ priority_6:		equ 6
 priority_7:		equ 7
 
 countof_max_sprites:	equ $50					; max number of sprites that can be displayed at once (80)
-sizeof_vram_sprites:	equ sizeof_sprite*countof_max_sprites	; sprite attribute table ($280 bytes)
-sizeof_vram_hscroll:	equ $380
-sizeof_vram_hscroll_padded:	equ sizeof_vram_hscroll+$80	; $400
 
-vram_start:				 equ $0000
+vram_start:				equ $0000
 
 vram_sprites:			equ $F800			; sprite attribute table ($280 bytes)
-sizeof_vram_sprites:	equ $280
 vram_hscroll:			equ $FC00			; horizontal scroll table ($380 bytes); extends until $FF7F
+sizeof_vram_sprites:	equ sizeof_sprite*countof_max_sprites	; sprite attribute table ($280 bytes)
 sizeof_vram_hscroll:	equ 224*2*2				; $380; 224 lines * 2 bytes per entry * 2 plane nametables
+sizeof_vram_hscroll_padded:	equ sizeof_vram_hscroll+$80	; $400
 
 ; VRAM regions for main game
 ; Plane dimensions 64x32

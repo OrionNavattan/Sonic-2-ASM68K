@@ -510,27 +510,7 @@ braptr:	macro
 
 vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 
-		local type,rwd,command
-
-		if stricmp ("\cmdtarget","vram")
-		type: =	$21					; %10 0001
-		elseif stricmp ("\cmdtarget","cram")
-		type: = $2B					; %10 1011
-		elseif stricmp ("\cmdtarget","vsram")
-		type: = $25					; %10 0101
-		else inform 2,"Invalid VDP command destination (must be vram, cram, or vsram)."
-		endc
-
-		if stricmp ("\cmd","read")
-		rwd: =	$C					; %00 1100
-		elseif stricmp ("\cmd","write")
-		rwd: = 7					; %00 0111
-		elseif stricmp ("\cmd","dma")
-		rwd: = $27					; %10 0111
-		else inform 2,"Invalid VDP command type (must be read, write, or dma)."
-		endc
-
-		command: = (((type&rwd)&3)<<30)|((addr&$3FFF)<<16)|(((type&rwd)&$FC)<<2)|((addr&$C000)>>14)
+		command: = (\cmdtarget\_\cmd\)|((addr&$3FFF)<<16)|((addr&$C000)>>14)
 
 		ifarg \dest
 			\inst\.\0	#command\adjustment\,\dest
@@ -587,7 +567,7 @@ dma_fill:	macro value,length,dest
 		move.w	#vdp_auto_inc+1,(a5)			; set VDP increment to 1 byte
 		move.l	#(vdp_dma_length_hi<<16)+(((length-1)&$FF00)<<8)+vdp_dma_length_low+((length-1)&$FF),(a5) ; set length of DMA
 		move.w	#vdp_dma_vram_fill,(a5)			; set DMA mode to fill
-		move.l	#$40000080+(((dest)&$3FFF)<<16)+(((dest)&$C000)>>14),(a5) ; set target of DMA
+		move.l	#vram_dma+(((dest)&$3FFF)<<16)+(((dest)&$C000)>>14),(a5) ; set target of DMA
 		move.w	#value<<8,(vdp_data_port).l		; set byte to fill with
 	.wait_for_dma\@:
 		move.w	(a5),d1					; get status register
