@@ -391,7 +391,21 @@ f_paused:				db 0			; 1307h ; pause flag used by the driver program; 0 = normal,
 ; Size/count constants
 ; ---------------------------------------------------------------------------
 
-Z80_space:						equ $F64 ; size of compressed sound driver. S2 SounddDriver Compress may ask you to increase this value if you've added code to the driver
+	if def(MusHeader)					; ignore this if we're assembling compressed music
+	else
+	; Default sizes for sound driver for each combination of FixBugs and OptimizeSoundDriver.
+	; S2 SounddDriver Compress may ask you to increase this value if you've modified the driver.
+	if FixBugs&OptimizeSoundDriver
+Z80_space:						equ $E88
+	elseif	FixBugs
+Z80_space:						equ $F86
+	elseif	OptimizeSoundDriver
+Z80_space:						equ $E6A
+	else
+Z80_space:						equ $F86
+	endc
+	endc
+
 countof_music_tracks:			equ	(z_tracks_end-z_tracks_start)/sizeof_trackvars
 countof_music_dac_fm_tracks:	equ (z_song_dac_fm_end-z_song_dac_fm_start)/sizeof_trackvars
 countof_music_fm_tracks:		equ	(z_song_fm_end-z_song_fm_start)/sizeof_trackvars

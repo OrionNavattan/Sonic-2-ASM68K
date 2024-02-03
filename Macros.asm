@@ -510,7 +510,7 @@ braptr:	macro
 
 vdp_comm:	macro inst,addr,cmdtarget,cmd,dest,adjustment
 
-		command: = (\cmdtarget\_\cmd\)|((addr&$3FFF)<<16)|((addr&$C000)>>14)
+		command: = (\cmdtarget\_\cmd\)|((\addr&$3FFF)<<16)|((\addr&$C000)>>14)
 
 		ifarg \dest
 			\inst\.\0	#command\adjustment\,\dest

@@ -15173,8 +15173,8 @@ Deform_WFZ:
 		move.w	(a2,d3.w),d0				; d0 = base scroll value for this segment
 
 	if FixBugs
-		; The clouds scroll incorrectly when the camera is moving, slowing down when
-		; moving left and speeding up when moving right. This is because the scroll
+		; The clouds scroll incorrectly when the camera is moving, speeding up when
+		; moving left and slowing down when moving right. This is because the scroll
 		; values don't take into account the movement of the background. To fix this,
 		; we just need to add the background x pos to the scroll value.
 		cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
@@ -15325,21 +15325,46 @@ Deform_HTZ:
 		; Update the values in v_bgscroll_buffer used to dynamically load the cloud art.
 		move.w	(v_bgscroll_buffer+$22).w,d0		; get seed value
 		addq.w	#4,(v_bgscroll_buffer+$22).w		; increment for next frame
-		sub.w	d0,d2					; subtract seed from base scroll value
+		sub.w	d0,d2					; d2 = delta between camera x and cloud scroll value
+
+
+		; This big block of code divides and then multiplies the delta by roughly 2.28,
+		; effectively subtracting 'delta modulo 2.28' from the delta.
+
+		; Start by reducing to 44% (100% divided by 2.28)...
 		move.w	d2,d0
 		move.w	d0,d1
 		asr.w	#1,d0					; divide by 2
-		asr.w	#4,d1					; divide by 16 to get initial value
-		sub.w	d1,d0					; (base-seed)/16 - (base-seed)/2
+	if FixBugs
+		swap	d1
+		asr.l	#4,d1					; divide by 16, preserving the remainder in lower 16 bits
+		swap	d1
+	else
+		asr.w	#4,d1					; divide by 16, discarding remainder
+	endc
+		sub.w	d1,d0					; 100 / 2 - 100 / 16 = 44
 		ext.l	d0
 		asl.l	#8,d0					; multiply by 256
-		divs.w	#$70,d0					; divide by 112
+		divs.w	#256*44/100,d0				; divide by 112 (44% of 256)
 		ext.l	d0
+
+		; ...then increase the result to 228%, effectively undoing the reduction to 44% from earlier (0.44 x 2.28 = 1).
 		asl.l	#8,d0					; multiply by 256 to make delta
 
 		lea	(v_bgscroll_buffer).w,a2
+
+	if FixBugs
+		move.l	d1,d3					; d1 = pre-modulo delta divided by 16
+	else
+		; d3 is used as a fixed-point accumulator here, with the upper 16 bits
+		; holding the integer part, and the lower 16 bits holding the decimal
+		; part. This accumulator is initialised to the value of the delta
+		; divided by 16, however, the decimal part of this division was not
+		; preserved. This loss of precision causes the clouds to scroll with a
+		; visible jerkiness.
 		moveq	#0,d3
 		move.w	d1,d3					; d3 = 0 in high word, initial value in low word
+	endc
 
 		rept 3
 		swap	d3
@@ -25525,7 +25550,7 @@ PalChanger_WhiteOut:
 
 		cmpi.b	#cGreen,d3				; has green reached its max?
 		bcc.s	.skipgreen				; if so, branch
-		addi.b	#$20,d3					; increase green
+		addi.b	#$20,d3					; increase green value
 
 	.skipgreen:
 		cmp.b	d2,d4					; has red reached its max? (cRed = cBlue>>8)

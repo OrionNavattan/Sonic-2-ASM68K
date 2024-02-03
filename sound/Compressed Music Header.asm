@@ -4,6 +4,7 @@
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
 
+MusHeader:	equ 1
 
 ; ---------------------------------------------------------------------------
 ; Test if argument is used

@@ -90,17 +90,17 @@ vdp_control_port:	equ $C00004
 	vdp_dma_vram_copy:	equ vdp_dma_source_hi+$C0	; DMA VRAM to VRAM copy mode
 
 	; High word of VDP read/write/DMA command
-	vdp_write_bit:	equ 14 ; CD0; 0 = read, 1 = write
+	vdp_write_bit:	equ 14					; CD0; 0 = read, 1 = write
 
 	vdp_write:		equ 1<<vdp_write_bit
-	vdp_dest_low:	equ $3FFF	; bits 0-13 of high word
+	vdp_dest_low:	equ $3FFF				; bits 0-13 of high word
 
 	; Low word of VDP read/write/DMA command
-	vdp_vram_copy_bit:	equ 6 ; CD4
-	vdp_dma_bit:		equ 7 ; CD5
+	vdp_vram_copy_bit:	equ 6				; CD4
+	vdp_dma_bit:		equ 7				; CD5
 
 	vdp_vram_copy:	equ 1<<vdp_vram_copy_bit
-	vdp_dma:		equ 1<<vdp_dma_bit ; CD5
+	vdp_dma:		equ 1<<vdp_dma_bit		; CD5
 	;vdp_dest_high:	equ $C000	; mask to isolation highest two bits of destination
 
 	vdp_vram:		equ 0
@@ -110,18 +110,18 @@ vdp_control_port:	equ $C00004
 	vdp_vram_byte_read:	equ 5
 
 	; VDP read/write commands (destination = 0)
-	vram_read:		equ ((vdp_vram&1)<<31)|((vdp_vram&$7E)<<3)						; $00000000
-	vram_write:		equ ((vdp_vram&1)<<31)|(vdp_write<<16)|((vdp_vram&$7E)<<3)		; $40000000
-	vram_dma:		equ ((vdp_vram&1)<<31)|(vdp_write<<16)|((vdp_vram&$7E)<<3)|vdp_dma	; $40000080
+	vram_read:		equ ((vdp_vram&1)<<31)|((vdp_vram&$7E)<<3) ; $00000000
+	vram_write:		equ ((vdp_vram&1)<<31)|(vdp_write<<16)|((vdp_vram&$7E)<<3) ; $40000000
+	vram_dma:		equ ((vdp_vram&1)<<31)|(vdp_write<<16)|((vdp_vram&$7E)<<3)|vdp_dma ; $40000080
 	vram_copy:		equ	((vdp_vram&1)<<31)|((vdp_vram&$7E)<<3)|vdp_dma|vdp_vram_copy
 
-	vsram_read:		equ ((vdp_vsram&1)<<31)|((vdp_vsram&$7E)<<3)					; $00000010
-	vsram_write:	equ ((vdp_vsram&1)<<31)|(vdp_write<<16)|((vdp_vsram&$7E)<<3)	; $40000010
-	vsram_dma:		equ ((vdp_vsram&1)<<31)|(vdp_write<<16)|((vdp_vsram&$7E)<<3)|vdp_dma	; $40000090
+	vsram_read:		equ ((vdp_vsram&1)<<31)|((vdp_vsram&$7E)<<3) ; $00000010
+	vsram_write:	equ ((vdp_vsram&1)<<31)|(vdp_write<<16)|((vdp_vsram&$7E)<<3) ; $40000010
+	vsram_dma:		equ ((vdp_vsram&1)<<31)|(vdp_write<<16)|((vdp_vsram&$7E)<<3)|vdp_dma ; $40000090
 
-	cram_read:		equ ((vdp_cram_read&1)<<31)|((vdp_cram_read&$7E)<<3)					; $00000020
-	cram_write:		equ ((vdp_cram_write&1)<<31)|(vdp_write<<16)|((vdp_cram_write&$7E)<<3)	; $C0000000
-	cram_dma:		equ ((vdp_cram_write&1)<<31)|(vdp_write<<16)|((vdp_cram_write&$7E)<<3)|vdp_dma	; $C0000080
+	cram_read:		equ ((vdp_cram_read&1)<<31)|((vdp_cram_read&$7E)<<3) ; $00000020
+	cram_write:		equ ((vdp_cram_write&1)<<31)|(vdp_write<<16)|((vdp_cram_write&$7E)<<3) ; $C0000000
+	cram_dma:		equ ((vdp_cram_write&1)<<31)|(vdp_write<<16)|((vdp_cram_write&$7E)<<3)|vdp_dma ; $C0000080
 
 vdp_counter:		equ $C00008
 psg_input:			equ $C00011
