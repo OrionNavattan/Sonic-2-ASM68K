@@ -15155,6 +15155,11 @@ Deform_WFZ:
 		lea	(v_hscroll_buffer).w,a1
 		move.w	(v_bg1_y_pos).w,d1
 		andi.w	#$7FF,d1
+	if FixBugs
+		; See below.
+		move.w	(v_bg1_x_pos).w,d6			; bg x pos / 4 for adjusting cloud values
+		lsr.w	#2,d6
+	endc
 		moveq	#0,d0
 		moveq	#0,d3
 
@@ -15176,11 +15181,12 @@ Deform_WFZ:
 		; The clouds scroll incorrectly when the camera is moving, speeding up when
 		; moving left and slowing down when moving right. This is because the scroll
 		; values don't take into account the movement of the background. To fix this,
-		; we just need to add the background x pos to the scroll value.
+		; we need to add the background x pos to the scroll value. We divide
+		; this value by four beforehand so the clouds move slow in relation
+		; to the foreground.
 		cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
 		bcs.s	.notclouds				; branch if this segment isn't clouds
-		add.w	(v_bg1_x_pos).w,d0			; add bg x pos so clouds scroll correctly
-
+		add.w	d6,d0			; add bg x pos / 4 so clouds scroll correctly
 	.notclouds:
 	endc
 		neg.w	d0					; negate to make bg scroll value
@@ -15197,8 +15203,7 @@ Deform_WFZ:
 		; See the fix above.
 		cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
 		bcs.s	.notclouds2				; branch if this segment isn't clouds
-		add.w	(v_bg1_x_pos).w,d0			; add bg x pos so clouds scroll correctly
-
+		add.w	d6,d0			; add bg x pos / 4 so clouds scroll correctly
 	.notclouds2:
 	endc
 		neg.w	d0					; negate to make bg scroll value
