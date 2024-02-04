@@ -15137,13 +15137,46 @@ Deform_WFZ:
 		move.l	(v_bg1_x_pos).w,d0
 		move.l	d0,d1
 
-		; Set up scroll value buffer
+	if FixBugs
+		; See below.
+		lea	(v_bgscroll_buffer+$14).w,a2		; a2 = cloud accumulators
+		movea.l	a2,a1
+		addi.l	#$8000,(a2)+				; accumulator for large clouds
+		addi.l	#$4000,(a2)+				; accumulator for medium clouds
+		addi.l	#$2000,(a2)+				; accumulator for small clouds
+	endc
+
 		lea	(v_bgscroll_buffer).w,a2
 		move.l	d0,(a2)+				; static sections of background (empty sky with no clouds)
 		move.l	d1,(a2)+				; Eggman's getaway ship
+
+	if FixBugs
+		; The clouds scroll incorrectly when the camera is moving, speeding up when
+		; moving left and slowing down when moving right. This is because the scroll
+		; values don't take into account the movement of the background. To fix this,
+		; we need to adjust the scroll value accordingly. Since merely adding the
+		; bg x pos to the scroll value causes the cloud parallax to move a lot faster
+		; than in the original bugged behavior, we'll divide the x pos value by four to
+		; keep the clouds at a reasonable speed.
+		swap	d0					; swap bg x pos to low word
+		lsr.w	#2,d0					; d0 = bg x pos / 4
+
+		rept 2
+		move.w	(a1)+,d1				; get high word of accumulator
+		add.w	d0,d1					; add bg x pos / 4
+		move.w	d1,(a2)+				; write to scroll buffer (large and medium clouds)
+		addq.w	#2,a1					; skip unused RAM
+		addq.w	#2,a2
+		endr
+
+		move.w	(a1),d1					; get high word of accumulator
+		add.w	d0,d1					; add bg x pos / 4
+		move.w	d1,(a2)					; write to scroll buffer (small clouds)
+	else
 		addi.l	#$8000,(a2)+				; large clouds
-		addi.l	#$4000,(a2)+				; medium clouds
-		addi.l	#$2000,(a2)+				; small clouds
+		addi.l	#$4000,(a2)+				; accumulator for medium clouds
+		addi.l	#$2000,(a2)+				; accumulator for small clouds
+	endc
 
 		lea	(Deform_WFZ_Transition_Array).l,a3	; array for end-of-level cutscene
 		cmpi.w	#$2700,(v_camera_x_pos).w
@@ -15155,11 +15188,6 @@ Deform_WFZ:
 		lea	(v_hscroll_buffer).w,a1
 		move.w	(v_bg1_y_pos).w,d1
 		andi.w	#$7FF,d1
-	if FixBugs
-		; See below.
-		move.w	(v_bg1_x_pos).w,d6			; bg x pos / 4 for adjusting cloud values
-		lsr.w	#2,d6
-	endc
 		moveq	#0,d0
 		moveq	#0,d3
 
@@ -15177,18 +15205,13 @@ Deform_WFZ:
 		move.b	-1(a3),d3				; d3 = index into v_bgscroll_buffer
 		move.w	(a2,d3.w),d0				; d0 = base scroll value for this segment
 
-	if FixBugs
-		; The clouds scroll incorrectly when the camera is moving, speeding up when
-		; moving left and slowing down when moving right. This is because the scroll
-		; values don't take into account the movement of the background. To fix this,
-		; we need to add the background x pos to the scroll value. We divide
-		; this value by four beforehand so the clouds move slow in relation
-		; to the foreground.
-		cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
-		bcs.s	.notclouds				; branch if this segment isn't clouds
-		add.w	d6,d0			; add bg x pos / 4 so clouds scroll correctly
-	.notclouds:
-	endc
+	;if FixBugs
+
+	;	cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
+	;	bcs.s	.notclouds				; branch if this segment isn't clouds
+	;	add.w	d6,d0			; add bg x pos / 4 so clouds scroll correctly
+	;.notclouds:
+	;endc
 		neg.w	d0					; negate to make bg scroll value
 
 	.row_loop:
@@ -15198,14 +15221,6 @@ Deform_WFZ:
 		move.b	(a3)+,d1				; get number of lines in next segment
 		move.b	(a3)+,d3				; get next index
 		move.w	(a2,d3.w),d0				; d0 = base scroll value for this segment
-
-	if FixBugs
-		; See the fix above.
-		cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
-		bcs.s	.notclouds2				; branch if this segment isn't clouds
-		add.w	d6,d0			; add bg x pos / 4 so clouds scroll correctly
-	.notclouds2:
-	endc
 		neg.w	d0					; negate to make bg scroll value
 
 	.next_row:
