@@ -198,16 +198,16 @@ v_bg3_redraw_direction_p2_copy:		rs.w 1			; $FFFFEEAE
 
 				ramblock camera_diffs		; required for teleport swap table
 ; Camera differences
-v_camera_x_diff:		rs.w 1				; $FFFFEEB0 ; (new X pos - old X pos) * 256
-v_camera_y_diff:		rs.w 1				; $FFFFEEB2 ; (new X pos - old X pos) * 256
+v_camera_x_diff:		rs.w 1				; $FFFFEEB0 ; (new x pos - old x pos) * 256
+v_camera_y_diff:		rs.w 1				; $FFFFEEB2 ; (new y pos - old y pos) * 256
 				ramblocksize camera_diffs
 
 v_bg_x_pos_diff: 			rs.w 1			; $FFFFEEB4 ; Effective camera change used in WFZ ending and HTZ screen shake
 v_bg_y_pos_diff:			rs.w 1			; $FFFFEEB6 ; Effective camera change used in WFZ ending and HTZ screen shake
 
 				ramblock camera_diffs_p2	; required for teleport swap table
-v_camera_x_diff_p2:		rs.w 1				; $FFFFEEB8 ; (new X pos - old X pos) * 256
-v_camera_y_diff_p2:		rs.w 1				; $FFFFEEBA ; (new X pos - old X pos) * 256
+v_camera_x_diff_p2:		rs.w 1				; $FFFFEEB8 ; (new x pos - old x pos) * 256
+v_camera_y_diff_p2:		rs.w 1				; $FFFFEEBA ; (new y pos - old y pos) * 256
 				ramblocksize camera_diffs_p2
 
 f_screen_shake_htz:		rs.b 1				; $FFFFEEBC ; flag to activate screen shaking code in HTZ's layer deformation routine

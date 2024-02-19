@@ -488,6 +488,11 @@ ptr:	macro
 
 bra_index:	macro *
 		\*: equ *
+
+		if ~def(prefix_id)
+			prefix_id: equs "id_"
+		endc
+
 		index_start: = offset(\*)
 		endm
 
@@ -496,8 +501,8 @@ bra_index:	macro *
 ; ---------------------------------------------------------------------------
 
 braptr:	macro
-		id_\1:	equ offset(*)-index_start
-		bra.w	\1
+		\prefix_id\\1:	equ offset(*)-index_start	; create id for pointer
+		bra.w	\1					; generate the branch
 		endm
 
 ; ---------------------------------------------------------------------------
@@ -687,8 +692,8 @@ spritemap:	macro
 		if ~def(current_sprite)
 		current_sprite: = 1
 		endc
-		sprite_start: = offset(*)
-		dc.w (sprite_\#current_sprite\-offset(*)-2)/8
+		sprite_start: = offset(*)-1
+		dc.w (sprite_\#current_sprite-sprite_start-1)/8
 		endm
 
 endsprite:	macro
@@ -711,7 +716,7 @@ piece:	macro	xpos,ypos,dimensions,tileindex,pal_flip_pri
 		spritemap_height:	substr	3,3,"\dimensions" ; height
 
 		if \tileindex<0					; is tile index negative?
-			spritemao_tile: = $10000+(\tileindex)	; convert signed to unsigned
+			spritemap_tile: = $10000+(\tileindex)	; convert signed to unsigned
 		else
 			spritemap_tile: = \tileindex
 		endc
@@ -738,7 +743,7 @@ piece:	macro	xpos,ypos,dimensions,tileindex,pal_flip_pri
 		shift
 		endr
 
-		dc.w	((spritemap_ypos&$FF)<<8)|(((spritemap_width-1)&3)<<2)|((spritemap_height-1)&3) ; y pos, width, and height
+		dc.w	(spritemap_ypos<<8)|((spritemap_width-1)<<2)|(spritemap_height-1) ; y pos, width, and height
 		dc.w	(spritemap_tile+spritemap_xflip+spritemap_yflip+spritemap_hi+spritemap_pal)&$FFFF ; tile, priority, xflip, yflip, pal
 		dc.w	((spritemap_tile>>1)+spritemap_xflip+spritemap_yflip+spritemap_hi+spritemap_pal)&$FFFF ; 2P mode tile, priority, xflip, yflip, pal
 		dc.w	spritemap_xpos				; x pos

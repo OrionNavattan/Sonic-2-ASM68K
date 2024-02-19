@@ -1194,11 +1194,29 @@ HBlank_PalToCRAM:
 		move.w	#0,(f_hblank).w
 		pushr.l	a0-a1
 		lea	(vdp_data_port).l,a1
+	if FixBugs
+		; Skip loading the water palette if the water level is below the screen.
+		; This fixes a graphical defect in CPZ Act 2 where the overscan area
+		; changes color at the very bottom of the screen if the Megamack is
+		; offscreen (visible on PAL consoles or on NTSC consoles with televisons
+		; that do not crop the overscan).
+		pushr.l	d0
+		move.w	(v_water_height_actual).w,d0
+		subi.w	#screen_height,d0
+		cmp.w	(v_camera_y_pos).w,d0
+		bgt.s	.nowaterpal				; branch if water level is below screen
+	endc
 		lea	(v_pal_water).w,a0
 		vdp_comm.l	move,0,cram,write,vdp_control_port-vdp_data_port(a1) ; set VDP to CRAM write
 		rept 32
 		move.l	(a0)+,(a1)				; move water palette to CRAM (all 64 colors at once)
 		endr
+
+	.nowaterpal:
+	if FixBugs
+		; See above.ß
+		popr.l	d0
+	endc
 		move.w	#vdp_hint_counter|(screen_height-1),vdp_control_port-vdp_data_port(a1) ; horizontal interupt every 224th line
 		popr.l	a0-a1
 		tst.b	(f_hblank_run_snd).w
@@ -15165,7 +15183,7 @@ Deform_WFZ:
 		move.w	(a1)+,d1				; get high word of accumulator
 		add.w	d0,d1					; add bg x pos / 4
 		move.w	d1,(a2)+				; write to scroll buffer (large and medium clouds)
-		addq.w	#2,a1					; skip unused RAM
+		addq.w	#2,a1					; skip unused low word
 		addq.w	#2,a2
 		endr
 
@@ -15204,14 +15222,6 @@ Deform_WFZ:
 		swap	d0					; d0 = fg scroll value in high word
 		move.b	-1(a3),d3				; d3 = index into v_bgscroll_buffer
 		move.w	(a2,d3.w),d0				; d0 = base scroll value for this segment
-
-	;if FixBugs
-
-	;	cmpi.b	#8,d3					; clouds use indices 8, $A, and $10
-	;	bcs.s	.notclouds				; branch if this segment isn't clouds
-	;	add.w	d6,d0			; add bg x pos / 4 so clouds scroll correctly
-	;.notclouds:
-	;endc
 		neg.w	d0					; negate to make bg scroll value
 
 	.row_loop:

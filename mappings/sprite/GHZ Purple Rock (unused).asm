@@ -10,5 +10,4 @@ Map_obj3B_0002:	spritemap
 		piece	0, -$10, 3x4, $C
 		endsprite
 
-		dc.w 0
 		even
