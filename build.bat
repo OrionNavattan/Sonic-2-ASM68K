@@ -21,12 +21,9 @@ rem delete this garbage file
 del "sound\Compressed Music.bin"
 
 echo Compressing Saxman files
-rem Compress Saxman files. for inaccurate but more efficient compression (ClownLZSS), remove "-a" from the below command. 
-rem For even more efficient compression (Flamewing's MDComp), change to "build tools\saxcmp.exe" "%%f" "sound\music\compressed\%%~nf.sax" "-S"
 for %%f in ("sound\music\compressed\*.unc") do "build tools\saxman.exe" "-a" "%%f" "sound\music\compressed\%%~nf.sax"
 
 echo Compressing Kosinski files
-rem compress Kosinski files. for inaccurate but more efficient compression, change "accurate_kosinski" to "koscmp."
 for %%f in ("art\kosinski\*.unc") do "build tools\accurate_kosinski.exe" "%%f" "art\kosinski\%%~nf.kos"
 for %%f in ("level\layout\*.unc") do "build tools\accurate_kosinski.exe" "%%f" "level\layout\%%~nf.kos"
 for %%f in ("mappings\16x16\*.unc") do "build tools\accurate_kosinski.exe" "%%f" "mappings\16x16\%%~nf.kos"
@@ -35,9 +32,9 @@ for %%f in ("collision\*.unc") do "build tools\accurate_kosinski.exe" "%%f" "col
 "build tools\accurate_kosinski.exe" "misc\Special Stage Object Locations.unc"	"misc\Special Stage Object Locations.kos"
 "build tools\accurate_kosinski.exe" "misc\Special Stage Object Perspective Data.unc"	"misc\Special Stage Object Perspective Data.kos"
 
-rem optionally compress Nemesis files using Flamewing's MDComp implementation for more efficient compression. (WARNING: THIS CANNOT BE UNDONE.)
-rem for %%f in ("art\nemesis\*.unc") do "build tools\nemcmp.exe" "%%f" "art\nemesis\%%~nf.nem"
-rem "build tools\nemcmp.exe" "misc\Special Stage Level Layouts.unc"	"misc\Special Stage Level Layouts.nem"
+echo Compressing Nemesis files
+for %%f in ("art\nemesis\*.unc") do "build tools\clownnemesis.exe" "-ca" "%%f" "art\nemesis\%%~nf.nem"
+"build tools\clownnemesis.exe" "-ca" "misc\Special Stage Level Layouts.unc"	"misc\Special Stage Level Layouts.nem"
 
 rem in the future, would like to compress Enigma files at build time if an accurate or more efficient compresser is developed
 rem for %%f in ("mappings\planes\*.unc") do "build tools\enicmp.exe" "%%f" "mappings\planes\%%~nf.eni"
@@ -54,6 +51,6 @@ rem compress the sound driver and insert in rom. For more efficient compression,
 
 rem if using an error handler such as Vladikomper's, processing and appending the symbol table is done here
 
-rem fix the ROm end address and calculate the checksum
+rem fix the ROM end address and calculate the checksum
 "build tools\fixheadr.exe" s2built.bin
 pause

@@ -37,6 +37,6 @@ rem compress the sound driver and insert in rom. For more efficient compression,
 
 rem if using an error handler such as Vladikomper's, processing and appending the symbol table is done here
 
-rem fix the ROm end address and calculate the checksum
+rem fix the ROM end address and calculate the checksum
 "build tools\fixheadr.exe" s2built.bin
 pause

@@ -1217,6 +1217,13 @@ incfile:	macro lbl
 		endm
 
 ; ---------------------------------------------------------------------------
+; Insert padding to replicate empty Nemesis files (per Clownacy)
+; ---------------------------------------------------------------------------
+
+emptynem:	macros
+		dc.w	0
+
+; ---------------------------------------------------------------------------
 ; Incbin a palette (required due to the main Sonic/Tails palette spanning two lines)
 ; input: label, label of second line (both must be declared by filedef)
 ; ---------------------------------------------------------------------------
