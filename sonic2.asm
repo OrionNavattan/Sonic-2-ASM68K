@@ -89113,7 +89113,6 @@ LevelIndex:		index offset(*)
 
 		incfile	Nem_SEGA				; ArtNem_74876:
 		incfile Nem_IntroTrails				; ArtNem_74CF6:
-		emptynem
 		incfile Eni_SEGA				; MapEng_74D0E:
 
 ;---------------------------------------------------------------------------------------
@@ -89171,12 +89170,10 @@ LevelIndex:		index offset(*)
 		incfile	Nem_TitleCardFont			; ArtNem_7D58A:
 		incfile	Nem_MenuBox				; ArtNem_7D990:
 		incfile	Nem_LevelSelectPics			; ArtNem_7DA10:
-		emptynem
 		incfile	Nem_ResultsText				; ArtNem_7E86A:
 		incfile	Nem_SpecialStageResults			; ArtNem_7EB58:
-		emptynem
 		incfile	Nem_Perfect				; ArtNem_7EEBE:
-		emptynem
+
 
 ;---------------------------------------------------------------------------------------
 ; Small animals
@@ -89211,9 +89208,7 @@ LevelIndex:		index offset(*)
 		incfile	Nem_StripedBlocksVert			; ArtNem_8030A:
 		incfile	Nem_Oilfall				; ArtNem_80376:
 		incfile	Nem_Oilfall2				; ArtNem_804F2:
-		emptynem
 		incfile	Nem_SpringBall				; ArtNem_805C0:
-		emptynem
 		incfile	Nem_LaunchBall				; ArtNem_806E0:
 		incfile	Nem_OOZPlatform				; ArtNem_806E0:
 		incfile	Nem_PushSpring				; ArtNem_80C64:
@@ -89230,17 +89225,14 @@ LevelIndex:		index offset(*)
 		incfile	Nem_SnakePlats				; ArtNem_81600: ; ArtNem_CNZSnake:
 		incfile	Nem_BombPenalty				; ArtNem_81668:
 		incfile	Nem_LargeMovingBlock			; ArtNem_816C8:
-		emptynem
 		incfile	Nem_CNZElevator				; ArtNem_817B4:
 		incfile	Nem_Cage				; ArtNem_81826:
 		incfile	Nem_HexBumper				; ArtNem_81894:
 		incfile	Nem_RoundBumper				; ArtNem_8191E:
 		incfile	Nem_DiagLauncher			; ArtNem_81AB0:
 		incfile	Nem_VertLauncher			; ArtNem_81C96:
-		emptynem
 		incfile	Nem_SaucerBumper			; ArtNem_81DCC: ; ArtNem_CNZMiniBumper
 		incfile	Nem_Flipper				; ArtNem_81EF2:
-		emptynem
 
 ;---------------------------------------------------------------------------------------
 ; CPZ object art
@@ -89248,7 +89240,6 @@ LevelIndex:		index offset(*)
 
 		incfile	Nem_CPZElevator				; ArtNem_82216:
 		incfile	Nem_WaterSurface1			; ArtNem_82364:
-		emptynem
 		incfile	Nem_Booster				; ArtNem_824D4:
 		incfile	Nem_Droplet				; ArtNem_8253C:
 		incfile	Nem_Pylon				; ArtNem_825AE:
@@ -89285,7 +89276,6 @@ LevelIndex:		index offset(*)
 ;---------------------------------------------------------------------------------------
 
 		incfile	Nem_Masher				; ArtNem_839EA:	ArtNem_Pirahna:
-		emptynem
 
 ;---------------------------------------------------------------------------------------
 ; Bosses
@@ -89297,17 +89287,13 @@ LevelIndex:		index offset(*)
 		incfile	Nem_EggpodJets				; ArtNem_84F18:
 		incfile	Nem_BossSmoke				; ArtNem_84F96:
 		incfile	Nem_EHZBoss				; ArtNem_8507C:
-		emptynem
 		incfile	Nem_EggChopperBlades			; ArtNem_85868:  ; ArtNem_EggChoppers:
-		emptynem
 		incfile	Nem_HTZBoss				; ArtNem_8595C:
 		incfile	Nem_ARZBoss				; ArtNem_86128:
 		incfile	Nem_MCZBoss				; ArtNem_86B6E:
-		emptynem
 		incfile	Nem_CNZBoss				; ArtNem_87AAC:
 		incfile	Nem_OOZBoss				; ArtNem_882D6:
 		incfile	Nem_MTZBoss				; ArtNem_88DA6:
-		emptynem
 		incfile	Art_FallingRocks			; Art_FallingRocks:
 
 ;---------------------------------------------------------------------------------------
@@ -89322,7 +89308,6 @@ LevelIndex:		index offset(*)
 ;---------------------------------------------------------------------------------------
 
 		incfile	Nem_Rexon				;	ArtNem_89DEC: ArtNem_HtzRexxon:
-		emptynem
 		incfile	Nem_Spiker				;	ArtNem_89FAA:	ArtNem_HtzDriller:
 
 ;---------------------------------------------------------------------------------------
@@ -89369,13 +89354,11 @@ LevelIndex:		index offset(*)
 
 		incfile	Nem_MechaSonic				; ArtNem_8BE12:
 		incfile	Nem_Tornado				; ArtNem_8CC44:
-		emptynem
 
 		incfile	Nem_WallTurret				; ArtNem_8D1A0:
 		incfile	Nem_Hook				; ArtNem_8D388:
 		incfile	Nem_GunPlat				; ArtNem_8D540:
 		incfile	Nem_ConvPulley				; ArtNem_8D7D8:
-		emptynem
 		incfile	Nem_WFZFloatingPlatform
 		incfile	Nem_VertLaser				; ArtNem_8DA6E:
 		incfile	Nem_Clouds				; ArtNem_8DAFC:
@@ -89386,17 +89369,14 @@ LevelIndex:		index offset(*)
 		incfile	Nem_VertProp				; ArtNem_8DEB8:
 		incfile	Nem_HorizProp				; ArtNem_8DEE8:
 		incfile	Nem_TiltPlatform			; ArtNem_8E010:
-		emptynem
 		incfile	Nem_ShipExhaust				; ArtNem_8E0C4:
 		incfile	Nem_WFZBoss
 
 		incfile	Nem_RobotnikUpper
 		incfile	Nem_RobotnikRunning
 		incfile	Nem_RobotnikLower
-		emptynem
 		incfile	Nem_DEZWindow
 		incfile	Nem_DEZBoss
-		emptynem
 		incfile	Nem_Crawl
 		incfile	Nem_TornadoBooster
 
@@ -89980,7 +89960,6 @@ MusFile_Continue:		incbin	"sound/music/compressed/Continue.sax"
 		incfile	Nem_BoltEnd_Rope
 		incfile	Nem_Cog
 		incfile	Nem_TeleportFlash
-		emptynem
 
 ;---------------------------------------------------------------------------------------
 ; MCZ objects
