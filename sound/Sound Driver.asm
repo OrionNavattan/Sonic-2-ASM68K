@@ -215,7 +215,7 @@ UpdateSound:    rsttarget
 
 	;.nosndinput:
 		ld	a,(z_abs_vars+v_sound_id)
-		cp	com_Null				; is song queue set for silence (empty)?
+		cp	a,com_Null				; is song queue set for silence (empty)?
 		call	nz,PlaySoundID				; if not 80h, call; we need to play something new
 
 	;.update_spindash_cntr:
@@ -503,7 +503,7 @@ DACUpdateTrack:
 	.sampleloop:
 		ld	a,(hl)					; get next byte
 		inc	hl
-		cp	_firstCom				; is it a coordination flag?
+		cp	a,_firstCom				; is it a coordination flag?
 		jr	c,.notcoord				; if not, branch
 		call	SongCommand				; handle coordination flag
 		jp	.sampleloop				; loop back around for another byte
@@ -533,7 +533,7 @@ DACUpdateTrack:
 		bit chf_mask_bit,(ix+ch_flags)			; is track being overridden?
 		ret	nz					; if so, return
 		ld	a,(ix+ch_sample)			; get sample
-		cp	nRst					; is it a rest?
+		cp	a,nRst					; is it a rest?
 		ret	z					; if so, return
 		sub	a,_firstSample
 		add	a,a					; convert to index
@@ -577,7 +577,7 @@ FMDoNext:
 	.noteloop:
 		ld	a,(hl)					; get next byte
 		inc	hl
-		cp	_firstCom				; is it a coordination flag?
+		cp	a,_firstCom				; is it a coordination flag?
 		jr	c,.gotnote				; if not, branch
 		call	SongCommand				; handle coordination flag
 		jr	.noteloop				; loop back around for another byte
@@ -869,7 +869,7 @@ PSGDoNext:
 	.noteloop:
 		ld	a,(hl)					; get next byte
 		inc	hl
-		cp	_firstCom				; is it a coordination flag?
+		cp	a,_firstCom				; is it a coordination flag?
 		jr	c,.gotnote				; if not, branch
 		call	SongCommand				; handle coordination flag
 		jr	.noteloop				; loop back around for another byte
@@ -947,7 +947,7 @@ PSGUpdateFreq:
     endc
 		add	hl,de					; alter frequency just a tad
 		ld	a,(ix+ch_type)				; get channel assignment
-		cp	tPSG4					; is it the noise channel?
+		cp	a,tPSG4					; is it the noise channel?
 		jr	nz,.notnoise				; if not, branch
 		ld	a,tPSG3					; use PSG 3 channel bits
 
@@ -1003,7 +1003,7 @@ PSGDoVolFX:
 		inc	(ix+ch_flutter)				; increment PSG flutter value
 		or	a					; is flutter valeu negative?
 		jp	p,.gotflutter				; branch if not
-		cp	evcHold					; is it the terminator?
+		cp	a,evcHold					; is it the terminator?
 		jr	z,VolEnvCmd_Hold			; if so, branch (we hold at this flutter value, i.e. no more changes in ch_volume)
 
 	.gotflutter:
@@ -1019,7 +1019,7 @@ SetPSGVolume:
 
 PSGSendVolume:
 		ld	a,b					; 'b' -> 'a'
-		cp	10h					; Did the level get pushed below silence level? (i.e. a > 0Fh)
+		cp	a,10h					; Did the level get pushed below silence level? (i.e. a > 0Fh)
 		jr	c,.abovesilence
 		ld	a,0Fh					; if so, fix it!
 
@@ -1064,7 +1064,7 @@ PSGNoteOff:
 		; the PSG4/noise channel needs muting, on track initialisation.
 		; This bug can be heard be playing the End of Level music in CNZ, whose
 		; music uses the noise channel. S&K's driver contains a fix just like this.
-		cp	tPSG3|psg_silence			; are we stopping PSG3?
+		cp	a,tPSG3|psg_silence			; are we stopping PSG3?
 		ret	nz					; return if not
 		ld	a,tPSG4|psg_silence			; if we are, stop noise channel while we're at it
 		ld	(zPSG),a
@@ -1181,7 +1181,7 @@ PauseMusic:
 
 CycleSoundQueue:
 		ld	a,(z_abs_vars+v_sound_id)
-		cp	com_Null				; is driver processing a previous sound, or has music been queued?
+		cp	a,com_Null				; is driver processing a previous sound, or has music been queued?
 		ret	nz					; if so, exit
 		ld	hl,z_abs_vars+z_queue_0			; hl = first queue slot
 	if OptimizeSoundDriver
@@ -1197,9 +1197,9 @@ CycleSoundQueue:
 		ld	e,a
 		ld	(hl),0					; clear queue slot
 		inc	hl					; advance hl to next queue slot
-		cp	_firstMusic				; is it before first music (invalid)?
+		cp	a,_firstMusic				; is it before first music (invalid)?
 		jr	c,.nextinput				; if so, branch
-		cp	_firstCmd				; is it a command?
+		cp	a,_firstCmd				; is it a command?
 		jr	nc,.queuesound				; if so, branch
 		sub	a,_firstSfx				; subtract first SFX index
 		jr	c,.queuesound				; branch if it is a music track
@@ -1209,7 +1209,7 @@ CycleSoundQueue:
 		sub	a,l					; a = high byte of pointer to SFX priority
 		ld	h,a					; hl = pointer to SFX priority
 		ld	a,(hl)					; get SFX priority
-		cp	c					; is the new SFX of a higher priority?
+		cp	a,c					; is the new SFX of a higher priority?
 		jr	c,.setpriority				; if not, branch
 		ld	c,a					; save new priority
 		call	.queuesound				; queue the new SFX
@@ -1246,20 +1246,20 @@ PlaySoundID:
     if _firstMusic-1 = 80h
 		ret	p					; return if it was (invalidates 00h-7Fh; maybe we don't want that someday?)
     else
-		cp	_firstMusic
+		cp	a,_firstMusic
 		ret	c					; return if id is less than the first music id
     endc
 
 		ld	(ix+v_sound_id),com_Null		; no new sound is coming in
-		cp	_lastMusic				; is it music (less than index 20)?
+		cp	a,_lastMusic				; is it music (less than index 20)?
 		jp	c,Sound_PlayBGM				; if yes, play it
-		cp	_firstSfx				; is it not a sound effect? (this check is redundant if _lastMusic == _firstSfx...)
+		cp	a,_firstSfx				; is it not a sound effect? (this check is redundant if _lastMusic == _firstSfx...)
 		ret	c					; if not, return (do nothing)
-		cp	_lastSfx				; is it a sound effect (less than index 71)?
+		cp	a,_lastSfx				; is it a sound effect (less than index 71)?
 		jp	c,Sound_PlaySFX				; if yes, play it
-		cp	_firstCmd				; is it after the last regular sound but before the first special sound command (between 71 and 78)?
+		cp	a,_firstCmd				; is it after the last regular sound but before the first special sound command (between 71 and 78)?
 		ret	c					; if yes, return (do nothing)
-		cp	cmd_Pause				; is it sound 7E or 7F (pause all or resume all)
+		cp	a,cmd_Pause				; is it sound 7E or 7F (pause all or resume all)
 		ret	nc					; if yes, return (those get handled elsewhere)
 
 	;.is_command:
@@ -1329,7 +1329,7 @@ SoundCmd_Sega:
 
 		nop
 		ld	a,(z_abs_vars+v_sound_id)		; get v_sound_id
-		cp	c					; is it com_Null?
+		cp	a,c					; is it com_Null?
 		jr	nz,.stop				; if not, stop Sega PCM
 		ld	a,(hl)					; get next PCM byte
 		ld	(ym_reg_d0),a				; send to DAC
@@ -1372,7 +1372,7 @@ Sound_PlayBGM:
 		pop	af
     endc
 		ld	(v_current_song),a			; get current BGM
-		cp	mus_ExtraLife				; is it the Extra Life jingle?
+		cp	a,mus_ExtraLife				; is it the Extra Life jingle?
 		jr	nz,.bgmnot1up				; if not, branch
 
 		; Disable all SFX for duration of 1-up music.
@@ -1581,7 +1581,7 @@ Sound_PlayBGM:
 
 		pop	iy					; restore 'iy'
 		ld	a,(ix+smps_fmch_cnt)			; get number of FM+DAC channels
-		cp	countof_music_dac_fm_tracks		; are there six FM channels? (count includes a dummy entry for the DAC)
+		cp	a,countof_music_dac_fm_tracks		; are there six FM channels? (count includes a dummy entry for the DAC)
 		jr	nz,.silencefm6				; if not, branch
 		xor	a
     if OptimizeSoundDriver=0
@@ -1812,7 +1812,7 @@ Sound_PlaySFX:
 		xor	a
 		ld	(f_spindash),a				; clear spindash sound flag
 		ld	a,c					; a = sound index
-		cp	sfx_Ring				; is this the ring sound?
+		cp	a,sfx_Ring				; is this the ring sound?
 		jr	nz,.checkgloop				; if not, branch
 
 	; Alternate the ring SFX between speakers
@@ -1834,7 +1834,7 @@ Sound_PlaySFX:
     	; Reduntant.
 		ld	a,c
     endc
-		cp	sfx_Gloop				; is this the bloop/gloop noise?
+		cp	a,sfx_Gloop				; is this the bloop/gloop noise?
 		jr	nz,.checkspindash			; if not, branch
 		ld	a,(f_gloop)				; get gloop flag
 		cpl						; invert
@@ -1849,7 +1849,7 @@ Sound_PlaySFX:
     	; Reduntant.
 		ld	a,c
     endc
-		cp	sfx_SpinDashCharge			; is this the spindash rev sound?
+		cp	a,sfx_SpinDashCharge			; is this the spindash rev sound?
 		jr	nz,.playsound				; if not, branch
 
 		ld	a,(v_spindash_counter)			; get spindash counter
@@ -1860,7 +1860,7 @@ Sound_PlaySFX:
 
 	.incfreq:
 		inc	a					; increase the frequency
-		cp	0Ch
+		cp	a,0Ch
 		jr	nc,.maxfreq				; branch if we've reached the maximum frequency
 		ld	(v_spindash_freq_index),a		; store new frequency
 
@@ -1913,7 +1913,7 @@ Sound_PlaySFX:
 		; This is a PSG track!
 		; Always ends up writing zero to voice table pointer?
 		ld	(.chk_psg+1),a				; store into the instruction after .chk_psg (self-modifying code)
-		cp	tPSG3					; is this PSG3?
+		cp	a,tPSG3					; is this PSG3?
 		jr	nz,.getindex				; branch if not
 		push	af
 		or	a,psg_silence
@@ -2090,7 +2090,7 @@ SoundCmd_StopSFX:
 		res chf_mask_bit,(ix+ch_flags)			; clear SFX overriding bit
 		set	chf_rest_bit,(ix+ch_flags)		; set track rest bit
 		ld	a,(ix+ch_type)				; get voice control byte
-		cp	tPSG4
+		cp	a,tPSG4
 	if OptimizeSoundDriver
 		jr	nz,.nexttrack				; branch if this is a noise track
 	else
@@ -2179,7 +2179,7 @@ DoFadeOut:
 		jr	z,.nextpsg				; if not, branch
 		inc	(ix+ch_volume)				; increase volume attenuation
 		ld	a,0Fh+1
-		cp	(ix+ch_volume)				; is it greater than 0Fh?
+		cp	a,(ix+ch_volume)				; is it greater than 0Fh?
 		jp	nc,.sendpsgvol				; branch if not
 		res	chf_enable_bit,(ix+ch_flags)		; stop track
 		jr	.nextpsg
@@ -2721,7 +2721,7 @@ SongCom_RestoreSong:
     if FixBugs
 		; Restore PSG noise type.
 		ld	a,(ix+ch_type)
-		cp	tPSG4					; is this the noise channel?
+		cp	a,tPSG4					; is this the noise channel?
 		jr	nz,.nextpsg				; if not, branch
 		ld	a,(ix+ch_noisemode)
 		ld	(zPSG),a				; restore Noise setting
@@ -3194,7 +3194,7 @@ SongCom_End:
 		res chf_mask_bit,(ix+ch_flags)			; clear 'SFX overriding' bit
 		set	chf_rest_bit,(ix+ch_flags)		; set track rest bit
 		ld	a,(ix+ch_type)				; get voice control byte
-		cp	tPSG4					; is this the noise channel?
+		cp	a,tPSG4					; is this the noise channel?
 		jr	nz,.exit				; branch if not
 		ld	a,(ix+ch_noisemode)			; get noise mode
 		ld	(zPSG),a				; set it

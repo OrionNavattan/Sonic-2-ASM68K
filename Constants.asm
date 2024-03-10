@@ -717,13 +717,13 @@ redraw_topall:		equ 1<<redraw_topall_bit		; $10
 redraw_bottomall:	equ 1<<redraw_bottomall_bit		; $20
 
 ; 16x16 mappings
-blockmap_xflip_bit:	equ $B
-blockmap_yflip_bit:	equ $C
-blockmap_priority_bit:	equ $F
+tilemap_xflip_bit:	equ $B
+tilemap_yflip_bit:	equ $C
+tilemap_priority_bit:	equ $F
 
-blockmap_xflip:		equ 1<<blockmap_xflip_bit		; $800
-blockmap_yflip:		equ 1<<blockmap_yflip_bit		; $1000
-blockmap_hi:			equ 1<<blockmap_priority_bit
+tilemap_xflip:		equ 1<<tilemap_xflip_bit		; $800
+tilemap_yflip:		equ 1<<tilemap_yflip_bit		; $1000
+tilemap_hi:			equ 1<<tilemap_priority_bit	; $8000
 
 ; 128x128 mappings
 chunkmap_xflip_bit:	equ $A
