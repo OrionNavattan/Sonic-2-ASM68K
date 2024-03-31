@@ -500,6 +500,7 @@ ost_tile:		rs.w 1					;  2 ; universal; tile VRAM, palette, priority, and x-flip
 	tile_pal34_bit:	equ 6
 	tile_hi_bit:	equ 7
 
+	; These constants are also used by tilemaps
 	tile_xflip:	equ (1<<tile_xflip_bit)<<8		; $800
 	tile_yflip:	equ (1<<tile_yflip_bit)<<8		; $1000
 	tile_pal1:	equ (0<<tile_xflip_bit)<<8		; 0
@@ -720,10 +721,6 @@ redraw_bottomall:	equ 1<<redraw_bottomall_bit		; $20
 tilemap_xflip_bit:	equ $B
 tilemap_yflip_bit:	equ $C
 tilemap_priority_bit:	equ $F
-
-tilemap_xflip:		equ 1<<tilemap_xflip_bit		; $800
-tilemap_yflip:		equ 1<<tilemap_yflip_bit		; $1000
-tilemap_hi:			equ 1<<tilemap_priority_bit	; $8000
 
 ; 128x128 mappings
 chunkmap_xflip_bit:	equ $A

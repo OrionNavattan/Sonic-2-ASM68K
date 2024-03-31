@@ -1328,7 +1328,7 @@ ReadJoypads:
 		lea	(v_joypad_hold_actual).w,a0		; address where joypad states are written
 		lea	(port_1_data).l,a1			; first joypad port
 		bsr.s	.read					; do the first joypad
-		addq.w	#2,a1					; do the second	joypad
+		addq.w	#port_2_data-port_1_data,a1					; do the second	joypad
 
 	.read:
 		move.b	#0,(a1)					; set port to read 00SA00DU
@@ -2388,7 +2388,7 @@ EniDec_FetchInlineValue:
 		subq.w	#1,d6
 		btst	d6,d5					; is the priority bit set in the inline render flags?
 		beq.s	.skippriority				; if not, branch
-		ori.w	#$8000,d3				; otherwise set priority bit in art tile
+		ori.w	#tile_hi,d3				; otherwise set priority bit in art tile
 
 	.skippriority:
 		add.b	d1,d1					; is the high palette line bit set?
@@ -2396,7 +2396,7 @@ EniDec_FetchInlineValue:
 		subq.w	#1,d6
 		btst	d6,d5
 		beq.s	.skiphighpal
-		addi.w	#$4000,d3				; set second palette line bit
+		addi.w	#tile_pal3,d3				; set second palette line bit
 
 	.skiphighpal:
 		add.b	d1,d1					; is the low palette line bit set?
@@ -2404,7 +2404,7 @@ EniDec_FetchInlineValue:
 		subq.w	#1,d6
 		btst	d6,d5
 		beq.s	.skiplowpal
-		addi.w	#$2000,d3				; set first palette line bit
+		addi.w	#tile_pal2,d3				; set first palette line bit
 
 	.skiplowpal:
 		add.b	d1,d1					; is the vertical flip flag set?
@@ -2412,7 +2412,7 @@ EniDec_FetchInlineValue:
 		subq.w	#1,d6
 		btst	d6,d5
 		beq.s	.skipyflip
-		ori.w	#$1000,d3				; set yflip bit
+		ori.w	#tile_yflip,d3				; set yflip bit
 
 	.skipyflip:
 		add.b	d1,d1					; is the horizontal flip flag set?
@@ -2420,7 +2420,7 @@ EniDec_FetchInlineValue:
 		subq.w	#1,d6
 		btst	d6,d5
 		beq.s	.skipxflip
-		ori.w	#$800,d3				; set xflip bit
+		ori.w	#tile_xflip,d3				; set xflip bit
 
 	.skipxflip:
 		move.w	d5,d1
@@ -85032,35 +85032,35 @@ APM_EHZ_HTZ:	anipat
 		dc.w tile_Art_EHZMountains+$1C+tile_pal4,	tile_Art_EHZMountains+$1E+tile_pal4
 		dc.w tile_Art_EHZMountains+$1D+tile_pal4,	tile_Art_EHZMountains+$1F+tile_pal4
 
-		dc.w tile_Art_EHZPulseBall+tile_pal3,		tile_Art_EHZPulseBall+tilemap_xflip+tile_pal3
-		dc.w tile_Art_EHZPulseBall+1+tile_pal3,		tile_Art_EHZPulseBall+1+tilemap_xflip+tile_pal3
+		dc.w tile_Art_EHZPulseBall+tile_pal3,		tile_Art_EHZPulseBall+tile_xflip+tile_pal3
+		dc.w tile_Art_EHZPulseBall+1+tile_pal3,		tile_Art_EHZPulseBall+1+tile_xflip+tile_pal3
 
 		dc.w tile_Kos_Checkers+tile_pal3,			tile_Art_EHZPulseBall+tile_pal3
 		dc.w tile_Kos_Checkers+1+tile_pal3,			tile_Art_EHZPulseBall+1+tile_pal3
 
-		dc.w tile_Art_EHZPulseBall+tilemap_xflip+tile_pal3,		tile_Kos_Checkers+tilemap_xflip+tile_pal3
-		dc.w tile_Art_EHZPulseBall+1+tilemap_xflip+tile_pal3,	tile_Kos_Checkers+1+tilemap_xflip+tile_pal3
+		dc.w tile_Art_EHZPulseBall+tile_xflip+tile_pal3,		tile_Kos_Checkers+tile_xflip+tile_pal3
+		dc.w tile_Art_EHZPulseBall+1+tile_xflip+tile_pal3,	tile_Kos_Checkers+1+tile_xflip+tile_pal3
 
-		dc.w tile_Art_Flowers1+tile_pal4,						tile_Art_Flowers1+tilemap_xflip+tile_pal4
-		dc.w tile_Art_Flowers1+1+tile_pal4,						tile_Art_Flowers1+1+tilemap_xflip+tile_pal4
+		dc.w tile_Art_Flowers1+tile_pal4,						tile_Art_Flowers1+tile_xflip+tile_pal4
+		dc.w tile_Art_Flowers1+1+tile_pal4,						tile_Art_Flowers1+1+tile_xflip+tile_pal4
 
-		dc.w tile_Art_Flowers2+tile_pal4+tilemap_hi,			tile_Art_Flowers2+tilemap_xflip+tile_pal4+tilemap_hi
-		dc.w tile_Art_Flowers2+1+tile_pal4+tilemap_hi,			tile_Art_Flowers2+1+tilemap_xflip+tile_pal4+tilemap_hi
+		dc.w tile_Art_Flowers2+tile_pal4+tile_hi,			tile_Art_Flowers2+tile_xflip+tile_pal4+tile_hi
+		dc.w tile_Art_Flowers2+1+tile_pal4+tile_hi,			tile_Art_Flowers2+1+tile_xflip+tile_pal4+tile_hi
 
-		dc.w tile_Art_Flowers3+tile_pal4,						tile_Art_Flowers3+tilemap_xflip+tile_pal4
-		dc.w tile_Art_Flowers3+1+tile_pal4,						tile_Art_Flowers3+1+tilemap_xflip+tile_pal4
+		dc.w tile_Art_Flowers3+tile_pal4,						tile_Art_Flowers3+tile_xflip+tile_pal4
+		dc.w tile_Art_Flowers3+1+tile_pal4,						tile_Art_Flowers3+1+tile_xflip+tile_pal4
 
-		dc.w tile_Art_Flowers4+tile_pal4+tilemap_hi,			tile_Art_Flowers4+tilemap_xflip+tile_pal4+tilemap_hi
-		dc.w tile_Art_Flowers4+1+tile_pal4+tilemap_hi,			tile_Art_Flowers4+1+tilemap_xflip+tile_pal4+tilemap_hi
+		dc.w tile_Art_Flowers4+tile_pal4+tile_hi,			tile_Art_Flowers4+tile_xflip+tile_pal4+tile_hi
+		dc.w tile_Art_Flowers4+1+tile_pal4+tile_hi,			tile_Art_Flowers4+1+tile_xflip+tile_pal4+tile_hi
 		anipat_end
 ; ===========================================================================
 
 APM_MTZ:	anipat
-		dc.w tile_Art_MTZAnimBack1+tile_pal2,		tile_Art_MTZAnimBack1+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack1+1+tile_pal2,		tile_Art_MTZAnimBack1+1+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+tile_pal2,		tile_Art_MTZAnimBack1+tile_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+1+tile_pal2,		tile_Art_MTZAnimBack1+1+tile_xflip+tile_pal2
 
-		dc.w tile_Art_MTZAnimBack1+2+tile_pal2,		tile_Art_MTZAnimBack1+2+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack1+3+tile_pal2,		tile_Art_MTZAnimBack1+3+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+2+tile_pal2,		tile_Art_MTZAnimBack1+2+tile_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+3+tile_pal2,		tile_Art_MTZAnimBack1+3+tile_xflip+tile_pal2
 
 		dc.w tile_Art_MTZCylinder+$E+tile_pal4,		tile_Art_MTZCylinder+$E+tile_pal4
 		dc.w tile_Art_MTZCylinder+$F+tile_pal4,		tile_Art_MTZCylinder+$F+tile_pal4
@@ -85086,53 +85086,53 @@ APM_MTZ:	anipat
 		dc.w tile_Art_MTZCylinder+tile_pal4,		tile_Art_MTZCylinder+tile_pal4
 		dc.w tile_Art_MTZCylinder+1+tile_pal4,		tile_Art_MTZCylinder+1+tile_pal4
 
-		dc.w tile_Art_MTZAnimBack1+4+tile_pal2,		tile_Art_MTZAnimBack1+4+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack1+5+tile_pal2,		tile_Art_MTZAnimBack1+5+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+4+tile_pal2,		tile_Art_MTZAnimBack1+4+tile_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack1+5+tile_pal2,		tile_Art_MTZAnimBack1+5+tile_xflip+tile_pal2
 
-		dc.w tile_Art_MTZAnimBack2+tile_pal2,		tile_Art_MTZAnimBack2+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack2+1+tile_pal2,		tile_Art_MTZAnimBack2+1+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+tile_pal2,		tile_Art_MTZAnimBack2+tile_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+1+tile_pal2,		tile_Art_MTZAnimBack2+1+tile_xflip+tile_pal2
 
-		dc.w tile_Art_MTZAnimBack2+2+tile_pal2,		tile_Art_MTZAnimBack2+2+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack2+3+tile_pal2,		tile_Art_MTZAnimBack2+3+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+2+tile_pal2,		tile_Art_MTZAnimBack2+2+tile_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+3+tile_pal2,		tile_Art_MTZAnimBack2+3+tile_xflip+tile_pal2
 
-		dc.w tile_Art_MTZAnimBack2+4+tile_pal2,		tile_Art_MTZAnimBack2+4+tilemap_xflip+tile_pal2
-		dc.w tile_Art_MTZAnimBack2+5+tile_pal2,		tile_Art_MTZAnimBack2+5+tilemap_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+4+tile_pal2,		tile_Art_MTZAnimBack2+4+tile_xflip+tile_pal2
+		dc.w tile_Art_MTZAnimBack2+5+tile_pal2,		tile_Art_MTZAnimBack2+5+tile_xflip+tile_pal2
 
-		dc.w tile_LevelArt+tile_pal3+tilemap_hi,	tile_LevelArt+tile_pal3+tilemap_hi
-		dc.w tile_Art_Lava+tile_pal3+tilemap_hi,	tile_Art_Lava+1+tile_pal3+tilemap_hi
+		dc.w tile_LevelArt+tile_pal3+tile_hi,	tile_LevelArt+tile_pal3+tile_hi
+		dc.w tile_Art_Lava+tile_pal3+tile_hi,	tile_Art_Lava+1+tile_pal3+tile_hi
 
-		dc.w tile_LevelArt+tile_pal3+tilemap_hi,	tile_LevelArt+tile_pal3+tilemap_hi
-		dc.w tile_Art_Lava+2+tile_pal3+tilemap_hi,	tile_Art_Lava+3+tile_pal3+tilemap_hi
+		dc.w tile_LevelArt+tile_pal3+tile_hi,	tile_LevelArt+tile_pal3+tile_hi
+		dc.w tile_Art_Lava+2+tile_pal3+tile_hi,	tile_Art_Lava+3+tile_pal3+tile_hi
 
-		dc.w tile_Art_Lava+4+tile_pal3+tilemap_hi,	tile_Art_Lava+5+tile_pal3+tilemap_hi
-		dc.w tile_Art_Lava+8+tile_pal3+tilemap_hi,	tile_Art_Lava+9+tile_pal3+tilemap_hi
+		dc.w tile_Art_Lava+4+tile_pal3+tile_hi,	tile_Art_Lava+5+tile_pal3+tile_hi
+		dc.w tile_Art_Lava+8+tile_pal3+tile_hi,	tile_Art_Lava+9+tile_pal3+tile_hi
 
-		dc.w tile_Art_Lava+6+tile_pal3+tilemap_hi,	tile_Art_Lava+7+tile_pal3+tilemap_hi
-		dc.w tile_Art_Lava+$A+tile_pal3+tilemap_hi,	tile_Art_Lava+$B+tile_pal3+tilemap_hi
+		dc.w tile_Art_Lava+6+tile_pal3+tile_hi,	tile_Art_Lava+7+tile_pal3+tile_hi
+		dc.w tile_Art_Lava+$A+tile_pal3+tile_hi,	tile_Art_Lava+$B+tile_pal3+tile_hi
 
-		dc.w tile_Art_MTZCylinder+$E+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$E+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+$F+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$F+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+$E+tile_pal4+tile_hi,		tile_Art_MTZCylinder+$E+tile_pal4+tile_hi
+		dc.w tile_Art_MTZCylinder+$F+tile_pal4+tile_hi,		tile_Art_MTZCylinder+$F+tile_pal4+tile_hi
 
-		dc.w tile_Art_MTZCylinder+$C+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$C+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+$D+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$D+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+$C+tile_pal4+tile_hi,		tile_Art_MTZCylinder+$C+tile_pal4+tile_hi
+		dc.w tile_Art_MTZCylinder+$D+tile_pal4+tile_hi,		tile_Art_MTZCylinder+$D+tile_pal4+tile_hi
 
-		dc.w tile_Art_MTZCylinder+$A+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$A+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+$B+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+$B+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+$A+tile_pal4+tile_hi,		tile_Art_MTZCylinder+$A+tile_pal4+tile_hi
+		dc.w tile_Art_MTZCylinder+$B+tile_pal4+tile_hi,		tile_Art_MTZCylinder+$B+tile_pal4+tile_hi
 
-		dc.w tile_Art_MTZCylinder+8+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+8+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+9+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+9+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+8+tile_pal4+tile_hi,		tile_Art_MTZCylinder+8+tile_pal4+tile_hi
+		dc.w tile_Art_MTZCylinder+9+tile_pal4+tile_hi,		tile_Art_MTZCylinder+9+tile_pal4+tile_hi
 
-		dc.w tile_Art_MTZCylinder+6+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+6+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+7+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+7+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+6+tile_pal4+tile_hi,		tile_Art_MTZCylinder+6+tile_pal4+tile_hi
+		dc.w tile_Art_MTZCylinder+7+tile_pal4+tile_hi,		tile_Art_MTZCylinder+7+tile_pal4+tile_hi
 
-		dc.w tile_Art_MTZCylinder+4+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+4+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+5+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+5+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+4+tile_pal4+tile_hi,		tile_Art_MTZCylinder+4+tile_pal4+tile_hi
+		dc.w tile_Art_MTZCylinder+5+tile_pal4+tile_hi,		tile_Art_MTZCylinder+5+tile_pal4+tile_hi
 
-		dc.w tile_Art_MTZCylinder+2+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+2+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+3+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+3+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+2+tile_pal4+tile_hi,		tile_Art_MTZCylinder+2+tile_pal4+tile_hi
+		dc.w tile_Art_MTZCylinder+3+tile_pal4+tile_hi,		tile_Art_MTZCylinder+3+tile_pal4+tile_hi
 
-		dc.w tile_Art_MTZCylinder+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+tile_pal4+tilemap_hi
-		dc.w tile_Art_MTZCylinder+1+tile_pal4+tilemap_hi,		tile_Art_MTZCylinder+1+tile_pal4+tilemap_hi
+		dc.w tile_Art_MTZCylinder+tile_pal4+tile_hi,		tile_Art_MTZCylinder+tile_pal4+tile_hi
+		dc.w tile_Art_MTZCylinder+1+tile_pal4+tile_hi,		tile_Art_MTZCylinder+1+tile_pal4+tile_hi
 		anipat_end
 ; ===========================================================================
 
@@ -85284,11 +85284,11 @@ APM_HPZ:	anipat
 ; ===========================================================================
 
 APM_OOZ:	anipat
-		dc.w tile_Art_OOZPulseBall+tilemap_hi, 					tile_Art_OOZPulseBall+2+tilemap_hi
-		dc.w tile_Art_OOZPulseBall+1+tilemap_hi, 				tile_Art_OOZPulseBall+3+tilemap_hi
+		dc.w tile_Art_OOZPulseBall+tile_hi, 					tile_Art_OOZPulseBall+2+tile_hi
+		dc.w tile_Art_OOZPulseBall+1+tile_hi, 				tile_Art_OOZPulseBall+3+tile_hi
 
-		dc.w tile_Art_OOZSquareBall1+tile_pal4+tilemap_hi,		tile_Art_OOZSquareBall1+1+tile_pal4+tilemap_hi
-		dc.w tile_Art_OOZSquareBall1+2+tile_pal4+tilemap_hi, 	tile_Art_OOZSquareBall1+3+tile_pal4+tilemap_hi
+		dc.w tile_Art_OOZSquareBall1+tile_pal4+tile_hi,		tile_Art_OOZSquareBall1+1+tile_pal4+tile_hi
+		dc.w tile_Art_OOZSquareBall1+2+tile_pal4+tile_hi, 	tile_Art_OOZSquareBall1+3+tile_pal4+tile_hi
 
 	if Revision=2
 		; Same deal as with HPZ's blocks, except they were changed to use palette line 3.
@@ -85305,29 +85305,29 @@ APM_OOZ:	anipat
 		dc.w tile_Art_OOZSquareBall2+3+tile_pal4,		tile_LevelArt
 	endc
 
-		dc.w tile_Art_Oil1+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+1+tilemap_hi
-		dc.w tile_Art_Oil1+8+tile_pal3+tilemap_hi, 		tile_Art_Oil1+tile_pal3+9+tilemap_hi
+		dc.w tile_Art_Oil1+tile_pal3+tile_hi,		tile_Art_Oil1+tile_pal3+1+tile_hi
+		dc.w tile_Art_Oil1+8+tile_pal3+tile_hi, 		tile_Art_Oil1+tile_pal3+9+tile_hi
 
-		dc.w tile_Art_Oil1+2+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+3+tilemap_hi
-		dc.w tile_Art_Oil1+$A+tile_pal3+tilemap_hi, 	tile_Art_Oil1+tile_pal3+$B+tilemap_hi
+		dc.w tile_Art_Oil1+2+tile_pal3+tile_hi,		tile_Art_Oil1+tile_pal3+3+tile_hi
+		dc.w tile_Art_Oil1+$A+tile_pal3+tile_hi, 	tile_Art_Oil1+tile_pal3+$B+tile_hi
 
-		dc.w tile_Art_Oil1+4+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+5+tilemap_hi
-		dc.w tile_Art_Oil1+$C+tile_pal3+tilemap_hi, 	tile_Art_Oil1+tile_pal3+$D+tilemap_hi
+		dc.w tile_Art_Oil1+4+tile_pal3+tile_hi,		tile_Art_Oil1+tile_pal3+5+tile_hi
+		dc.w tile_Art_Oil1+$C+tile_pal3+tile_hi, 	tile_Art_Oil1+tile_pal3+$D+tile_hi
 
-		dc.w tile_Art_Oil1+6+tile_pal3+tilemap_hi,		tile_Art_Oil1+tile_pal3+7+tilemap_hi
-		dc.w tile_Art_Oil1+$E+tile_pal3+tilemap_hi, 	tile_Art_Oil1+tile_pal3+$F+tilemap_hi
+		dc.w tile_Art_Oil1+6+tile_pal3+tile_hi,		tile_Art_Oil1+tile_pal3+7+tile_hi
+		dc.w tile_Art_Oil1+$E+tile_pal3+tile_hi, 	tile_Art_Oil1+tile_pal3+$F+tile_hi
 
-		dc.w tile_Art_Oil2+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+1+tilemap_hi
-		dc.w tile_Art_Oil2+8+tile_pal3+tilemap_hi, 		tile_Art_Oil2+tile_pal3+9+tilemap_hi
+		dc.w tile_Art_Oil2+tile_pal3+tile_hi,		tile_Art_Oil2+tile_pal3+1+tile_hi
+		dc.w tile_Art_Oil2+8+tile_pal3+tile_hi, 		tile_Art_Oil2+tile_pal3+9+tile_hi
 
-		dc.w tile_Art_Oil2+2+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+3+tilemap_hi
-		dc.w tile_Art_Oil2+$A+tile_pal3+tilemap_hi, 	tile_Art_Oil2+tile_pal3+$B+tilemap_hi
+		dc.w tile_Art_Oil2+2+tile_pal3+tile_hi,		tile_Art_Oil2+tile_pal3+3+tile_hi
+		dc.w tile_Art_Oil2+$A+tile_pal3+tile_hi, 	tile_Art_Oil2+tile_pal3+$B+tile_hi
 
-		dc.w tile_Art_Oil2+4+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+5+tilemap_hi
-		dc.w tile_Art_Oil2+$C+tile_pal3+tilemap_hi, 	tile_Art_Oil2+tile_pal3+$D+tilemap_hi
+		dc.w tile_Art_Oil2+4+tile_pal3+tile_hi,		tile_Art_Oil2+tile_pal3+5+tile_hi
+		dc.w tile_Art_Oil2+$C+tile_pal3+tile_hi, 	tile_Art_Oil2+tile_pal3+$D+tile_hi
 
-		dc.w tile_Art_Oil2+6+tile_pal3+tilemap_hi,		tile_Art_Oil2+tile_pal3+7+tilemap_hi
-		dc.w tile_Art_Oil2+$E+tile_pal3+tilemap_hi, 	tile_Art_Oil2+tile_pal3+$F+tilemap_hi
+		dc.w tile_Art_Oil2+6+tile_pal3+tile_hi,		tile_Art_Oil2+tile_pal3+7+tile_hi
+		dc.w tile_Art_Oil2+$E+tile_pal3+tile_hi, 	tile_Art_Oil2+tile_pal3+$F+tile_hi
 		anipat_end
 ; ===========================================================================
 
@@ -85368,29 +85368,29 @@ APM_CNZ:	anipat
 		dc.w tile_Art_SlotPics3+$A,	tile_Art_SlotPics3+$E
 		dc.w tile_Art_SlotPics3+$B,	tile_Art_SlotPics3+$F
 
-		dc.w tile_Art_CNZFlipPanels2+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2+4+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2+1+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+5+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels2+4+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels2+1+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels2+5+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels2+8+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$C+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2+9+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$D+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+8+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels2+$C+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels2+9+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels2+$D+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels2+2+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+6+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2+3+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+7+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+2+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels2+6+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels2+3+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels2+7+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels2+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$E+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2+$F+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2+$A+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels2+$E+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels2+$B+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels2+$F+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels1+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1+4+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1+1+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+5+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels1+4+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels1+1+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels1+5+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels1+8+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$C+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1+9+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$D+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+8+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels1+$C+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels1+9+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels1+$D+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels1+2+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+6+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1+3+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+7+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+2+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels1+6+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels1+3+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels1+7+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels1+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$E+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1+$F+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1+$A+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels1+$E+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels1+$B+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels1+$F+tile_pal4+tile_hi
 		anipat_end
 ; ===========================================================================
 
@@ -85431,29 +85431,29 @@ APM_CNZ_2P:	anipat
 		dc.w tile_Art_SlotPics3_2p+$A,	tile_Art_SlotPics3_2p+$E
 		dc.w tile_Art_SlotPics3_2p+$B,	tile_Art_SlotPics3_2p+$F
 
-		dc.w tile_Art_CNZFlipPanels2_2p+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+4+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2_2p+1+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+5+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels2_2p+4+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+1+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels2_2p+5+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels2_2p+8+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+$C+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2_2p+9+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+$D+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+8+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels2_2p+$C+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+9+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels2_2p+$D+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels2_2p+2+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+6+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2_2p+3+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels2_2p+7+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+2+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels2_2p+6+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+3+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels2_2p+7+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels2_2p+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2_2p+$E+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels2_2p+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels2_2p+$F+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+$A+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels2_2p+$E+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels2_2p+$B+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels2_2p+$F+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels1_2p+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+4+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1_2p+1+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+5+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels1_2p+4+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+1+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels1_2p+5+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels1_2p+8+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+$C+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1_2p+9+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+$D+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+8+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels1_2p+$C+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+9+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels1_2p+$D+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels1_2p+2+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+6+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1_2p+3+tile_pal4+tilemap_hi,		tile_Art_CNZFlipPanels1_2p+7+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+2+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels1_2p+6+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+3+tile_pal4+tile_hi,		tile_Art_CNZFlipPanels1_2p+7+tile_pal4+tile_hi
 
-		dc.w tile_Art_CNZFlipPanels1_2p+$A+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1_2p+$E+tile_pal4+tilemap_hi
-		dc.w tile_Art_CNZFlipPanels1_2p+$B+tile_pal4+tilemap_hi,	tile_Art_CNZFlipPanels1_2p+$F+tile_pal4+tilemap_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+$A+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels1_2p+$E+tile_pal4+tile_hi
+		dc.w tile_Art_CNZFlipPanels1_2p+$B+tile_pal4+tile_hi,	tile_Art_CNZFlipPanels1_2p+$F+tile_pal4+tile_hi
 		anipat_end
 ; ===========================================================================
 
@@ -85470,22 +85470,22 @@ APM_DEZ:	anipat
 ; ===========================================================================
 
 APM_ARZ:	anipat
-		dc.w tile_Art_Waterfall3+tile_pal3+tilemap_hi,		tile_Art_Waterfall3+1+tile_pal3+tilemap_hi
-		dc.w tile_Art_Waterfall3+2+tile_pal3+tilemap_hi,	tile_Art_Waterfall3+3+tile_pal3+tilemap_hi
+		dc.w tile_Art_Waterfall3+tile_pal3+tile_hi,		tile_Art_Waterfall3+1+tile_pal3+tile_hi
+		dc.w tile_Art_Waterfall3+2+tile_pal3+tile_hi,	tile_Art_Waterfall3+3+tile_pal3+tile_hi
 
-		dc.w tile_Art_Waterfall2+tile_pal3+tilemap_hi,		tile_Art_Waterfall2+1+tile_pal3+tilemap_hi
-		dc.w tile_Art_Waterfall2+2+tile_pal3+tilemap_hi,	tile_Art_Waterfall2+3+tile_pal3+tilemap_hi
+		dc.w tile_Art_Waterfall2+tile_pal3+tile_hi,		tile_Art_Waterfall2+1+tile_pal3+tile_hi
+		dc.w tile_Art_Waterfall2+2+tile_pal3+tile_hi,	tile_Art_Waterfall2+3+tile_pal3+tile_hi
 
-		dc.w tile_Art_Waterfall1_1+tile_pal3+tilemap_hi,	tile_Art_Waterfall1_1+1+tile_pal3+tilemap_hi
-		dc.w tile_Art_Waterfall1_1+2+tile_pal3+tilemap_hi,	tile_Art_Waterfall1_1+3+tile_pal3+tilemap_hi
+		dc.w tile_Art_Waterfall1_1+tile_pal3+tile_hi,	tile_Art_Waterfall1_1+1+tile_pal3+tile_hi
+		dc.w tile_Art_Waterfall1_1+2+tile_pal3+tile_hi,	tile_Art_Waterfall1_1+3+tile_pal3+tile_hi
 
 	if FixBugs
-		dc.w tile_Art_Waterfall1_2+tile_pal3+tilemap_hi,		tile_Art_Waterfall1_2+1+tile_pal3+tilemap_hi
-		dc.w tile_Art_Waterfall1_2+2+tile_pal3+tilemap_hi,		tile_Art_Waterfall1_2+3+tile_pal3+tilemap_hi
+		dc.w tile_Art_Waterfall1_2+tile_pal3+tile_hi,		tile_Art_Waterfall1_2+1+tile_pal3+tile_hi
+		dc.w tile_Art_Waterfall1_2+2+tile_pal3+tile_hi,		tile_Art_Waterfall1_2+3+tile_pal3+tile_hi
 	else
 		; Those '+$C's shouldn't be here; these are invalid animation entries for waterfalls.
-		dc.w tile_Art_Waterfall1_2+tile_pal3+tilemap_hi+$C,		tile_Art_Waterfall1_2+1+tile_pal3+tilemap_hi+$C
-		dc.w tile_Art_Waterfall1_2+2+tile_pal3+tilemap_hi+$C,	tile_Art_Waterfall1_2+3+tile_pal3+tilemap_hi+$C
+		dc.w tile_Art_Waterfall1_2+tile_pal3+tile_hi+$C,		tile_Art_Waterfall1_2+1+tile_pal3+tile_hi+$C
+		dc.w tile_Art_Waterfall1_2+2+tile_pal3+tile_hi+$C,	tile_Art_Waterfall1_2+3+tile_pal3+tile_hi+$C
 	endc
 
 		dc.w tile_Art_Waterfall3+tile_pal3,			tile_Art_Waterfall3+1+tile_pal3
