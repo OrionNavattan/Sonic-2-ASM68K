@@ -954,7 +954,7 @@ Credits_Loop3E:
 	smpsLoop            $00, $0A, Credits_Loop3E
 	dc.b	nRst, $60
 	smpsAlterPitch      $F4
-	smpsAlterVol        $FE
+	smpsPSGAlterVolS2   $FE
 	smpsPSGvoice        fTone_01
 	smpsCall            Credits_Call28
 	dc.b	nA3, nD4, $06, nG3, $0C, nA3, nA3, nD4, $06, nRst, nD4, nFs3
@@ -1087,7 +1087,7 @@ Credits_Loop39:
 	smpsLoop            $00, $0A, Credits_Loop39
 	dc.b	nRst, $60
 	smpsPSGvoice        $00
-	
+
 	if FixMusicAndSFXDataBugs
 	smpsAlterPitch      $0C
 	else
@@ -1099,7 +1099,7 @@ Credits_Loop39:
 	endif
 	smpsPSGAlterVol     $FF
 	smpsAlterPitch      $E8
-	
+
 	dc.b	nRst, $60
 	smpsCall            Credits_Call11
 	smpsAlterPitch      $18
@@ -1112,13 +1112,13 @@ Credits_Loop39:
 	smpsPSGAlterVol     $FC
 	dc.b	nRst, nC4, nRst, nC4, nRst, nC4, $18, $08, nC4, $04
 	smpsPSGAlterVol     $01
-	
+
 	if FixMusicAndSFXDataBugs=0
 	; If the above bug is fixed, then this line needs removing (the track
 	; will already be two octaves higher).
 	smpsAlterPitch      $18
 	endif
-	
+
 	smpsPSGvoice        fTone_05
 	smpsAlterNote       $01
 	dc.b	nRst, $60, nRst, nRst, nRst, nRst, nRst, nRst, $0C, nE6, $06, nRst
