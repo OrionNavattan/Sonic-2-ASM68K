@@ -1096,7 +1096,7 @@ Credits_Loop39:
 	; $C, causing the note to be too low and underflow the sound driver's
 	; frequency table, producing invalid notes.
 	smpsAlterPitch      $F4
-	endc
+	endif
 	smpsPSGAlterVol     $FF
 	smpsAlterPitch      $E8
 	
@@ -1117,7 +1117,7 @@ Credits_Loop39:
 	; If the above bug is fixed, then this line needs removing (the track
 	; will already be two octaves higher).
 	smpsAlterPitch      $18
-	endc
+	endif
 	
 	smpsPSGvoice        fTone_05
 	smpsAlterNote       $01
