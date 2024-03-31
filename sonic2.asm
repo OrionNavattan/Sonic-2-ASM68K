@@ -34,8 +34,11 @@ Revision: equ 1
 ; known appearances, without any of the implementation-specific bugs) which contains even more fixes
 	endc
 
-FixBugs: equ 0
+; FixBugs is set in the build scripts!
 ; If 1, enables a number of engine and gameplay bug-fixes, including some in the music and sound driver.
+
+FixMusicAndSFXDataBugs:	equ FixBugs
+; Seperate flag for compatibilty with other disassemblies
 
 OptimizeSoundDriver: equ 0
 ; If 1, enables a number of optimizations in the sound driver.

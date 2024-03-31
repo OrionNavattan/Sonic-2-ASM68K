@@ -1088,7 +1088,7 @@ Credits_Loop39:
 	dc.b	nRst, $60
 	smpsPSGvoice        $00
 	
-	if FixBugs
+	if FixMusicAndSFXDataBugs
 	smpsAlterPitch      $0C
 	else
 	; This is wrong: it should convert from EHZ 2P's PSG2 transpose ($D0)
@@ -1113,7 +1113,7 @@ Credits_Loop39:
 	dc.b	nRst, nC4, nRst, nC4, nRst, nC4, $18, $08, nC4, $04
 	smpsPSGAlterVol     $01
 	
-	if FixBugs=0
+	if FixMusicAndSFXDataBugs=0
 	; If the above bug is fixed, then this line needs removing (the track
 	; will already be two octaves higher).
 	smpsAlterPitch      $18

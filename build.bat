@@ -1,18 +1,22 @@
 @echo off
 
+rem BE SURE THIS IS THE SAME IN BOTH SCRIPTS!
+rem If 1, enables a number of engine and gameplay bug-fixes, including some in the music, sfx, and sound driver.
+set	/a FixBugs=0 
+
 rem Assemble the compressed music in three sections. This is a workaround for ASM68K's seeming inability to output more than 13 binary files in a single run.
 rem Even so, still ridiculously fast.
-axm68k /m /k /p "sound\Compressed Music 1.asm", "sound\Compressed Music.bin" >"sound\errors 1.txt", ,"sound\Compressed Music 1.lst"
+axm68k /m /k /p /e FixBugs=%FixBugs% "sound\Compressed Music 1.asm", "sound\Compressed Music.bin" >"sound\errors 1.txt", ,"sound\Compressed Music 1.lst"
 type "sound\errors 1.txt"
 
 IF NOT EXIST "sound\Compressed Music.bin" PAUSE & EXIT 2
 
-axm68k /m /k /p "sound\Compressed Music 2.asm", "sound\Compressed Music.bin" >"sound\errors 2.txt", ,"sound\Compressed Music 2.lst"
+axm68k /m /k /p /e FixBugs=%FixBugs% "sound\Compressed Music 2.asm", "sound\Compressed Music.bin" >"sound\errors 2.txt", ,"sound\Compressed Music 2.lst"
 type "sound\errors 2.txt"
 
 IF NOT EXIST "sound\Compressed Music.bin" PAUSE & EXIT 2
 
-axm68k /m /k /p "sound\Compressed Music 3.asm", "sound\Compressed Music.bin" >"sound\errors 3.txt", ,"sound\Compressed Music 3.lst"
+axm68k /m /k /p /e FixBugs=%FixBugs% "sound\Compressed Music 3.asm", "sound\Compressed Music.bin" >"sound\errors 3.txt", ,"sound\Compressed Music 3.lst"
 type "sound\errors 3.txt"
 
 IF NOT EXIST "sound\Compressed Music.bin" PAUSE & EXIT 2
@@ -41,7 +45,7 @@ rem for %%f in ("mappings\planes\*.unc") do "build tools\enicmp.exe" "%%f" "mapp
 
 rem assemble final rom, outputting the sound driver and input data for S2 SoundDriver Compress to a separate file
 IF EXIST s2built.bin move /Y s2built.bin s2built.prev.bin >NUL
-axm68k /m /k /p sonic2.asm, s2built.bin >errors.txt, , sonic2.lst
+axm68k /m /k /p /e FixBugs=%FixBugs% sonic2.asm, s2built.bin >errors.txt, , sonic2.lst
 type errors.txt
 
 IF NOT EXIST s2built.bin PAUSE & EXIT 2
