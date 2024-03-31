@@ -14,7 +14,7 @@
 ; and the 68k code can likewise use the labels and equates defined in here.
 ; This is essential, as they contain references to each other's addresses.
 ;
-; if you want to add significant amounts of extra code to this driver,
+; If you want to add significant amounts of extra code to this driver,
 ; try putting your code as far down as possible, after the function zSaxDec_End.
 ; That will make you less likely to run into space shortages from dislocated data alignment.
 
