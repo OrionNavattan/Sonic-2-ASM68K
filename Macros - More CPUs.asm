@@ -107,7 +107,7 @@ adc:		macro
 		endc
 
 		; "adc a,x" or "adc x"
-		if narg=2 & ~strcmp("\1","a") ;& strcmp("\2","a")	; filter out illegal destinations
+		if narg=2 & ~strcmp("\1","a")			;& strcmp("\2","a")	; filter out illegal destinations
 			z80_error	"adc","Illegal addressing mode or unexpected end of line","\_"
 			mexit
 		elseif narg=2 & strcmp("\1","a")
@@ -461,7 +461,7 @@ jp:		macro
 			mexit
 			endc
 
-			num: equ \1					; jp n
+			num: equ \1				; jp n
 			dc.b $c3
 			endc
 			if narg=2
@@ -491,7 +491,7 @@ jr:		macro
 		z80_error	"jr","Illegal branch condition","\_"
 		mexit
 		endc
-		num: equ \1		; jr n
+		num: equ \1					; jr n
 		dc.b $18
 		endc
 		if narg=2
@@ -513,7 +513,7 @@ ld:		macro
 			mexit
 		endc
 		if strcmp("\1","a")
-			if (strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ ")	; filter out illegal sources
+			if (strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ ") ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -553,7 +553,7 @@ ld:		macro
 			endc
 		elseif strcmp("\1","b")
 
-			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ "))	; filter out illegal sources
+			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ ")) ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -578,7 +578,7 @@ ld:		macro
 			dc.b $6, num
 			endc
 		elseif strcmp("\1","c")
-			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ "))	; filter out illegal sources
+			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ ")) ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -602,7 +602,7 @@ ld:		macro
 			dc.b $e, num
 			endc
 		elseif strcmp("\1","d")
-			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ "))	; filter out illegal sources
+			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ ")) ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -626,7 +626,7 @@ ld:		macro
 			dc.b $16, num
 			endc
 		elseif strcmp("\1","e")
-			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ "))	; filter out illegal sources
+			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ ")) ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -650,7 +650,7 @@ ld:		macro
 			dc.b $1e, num
 			endc
 		elseif strcmp("\1","h")
-			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ "))	; filter out illegal sources
+			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ ")) ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -666,7 +666,7 @@ ld:		macro
 			dc.b $26, num
 			endc
 		elseif strcmp("\1","l")
-			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ "))	; filter out illegal sources
+			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r ","\2\ ")) ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -681,14 +681,14 @@ ld:		macro
 			num: equ \2
 			dc.b $2e, num
 			endc
-		elseif strcmp("\1","i")		; ld i,a
+		elseif strcmp("\1","i")				; ld i,a
 			if strcmp("\2","a")
 			dc.w $ed47
 			else
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
-		elseif strcmp("\1","r")		; ld r,a
+		elseif strcmp("\1","r")				; ld r,a
 			if	strcmp("\2","a")
 			dc.w $ed4f
 			else
@@ -696,7 +696,7 @@ ld:		macro
 			mexit
 			endc
 		elseif strcmp("\1","ixh")|strcmp("\1","ixu")
-			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r h l ","\2\ "))	; filter out illegal sources
+			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r h l ","\2\ ")) ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -712,7 +712,7 @@ ld:		macro
 			dc.b $dd, $26, num
 			endc
 		elseif strcmp("\1","ixl")
-			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r h l ","\2\ "))	; filter out illegal sources
+			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r h l ","\2\ ")) ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -728,7 +728,7 @@ ld:		macro
 			dc.b $dd, $2e, num
 			endc
 		elseif strcmp("\1","iyh")|strcmp("\1","iyu")
-			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r h l ","\2\ "))	; filter out illegal sources
+			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r h l ","\2\ ")) ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -744,7 +744,7 @@ ld:		macro
 			dc.b $fd, $26, num
 			endc
 		elseif strcmp("\1","iyl")
-			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r h l ","\2\ "))	; filter out illegal sources
+			if ((strlen("\2")=2)&instr("bc de hl sp ix iy ","\2\ "))|((strlen("\2")=1)&instr("i r h l ","\2\ ")) ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -760,7 +760,7 @@ ld:		macro
 			dc.b $fd, $2e, num
 			endc
 		elseif strcmp("\1","bc")
-			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ")	; filter out illegal sources
+			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ") ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -774,7 +774,7 @@ ld:		macro
 			dc.b $1, num&$ff, (num>>8)&$ff
 			endc
 		elseif strcmp("\1","de")
-			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ")	; filter out illegal sources
+			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ") ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -788,7 +788,7 @@ ld:		macro
 			dc.b $11, num&$ff, (num>>8)&$ff
 			endc
 		elseif strcmp("\1","hl")
-			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ")	; filter out illegal sources
+			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ") ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -802,7 +802,7 @@ ld:		macro
 			dc.b $21, num&$ff, (num>>8)&$ff
 			endc
 		elseif strcmp("\1","sp")
-			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ")	; filter out illegal sources
+			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ") ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -824,7 +824,7 @@ ld:		macro
 				endc
 			endc
 		elseif strcmp("\1","ix")
-			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ")	; filter out illegal sources
+			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ") ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc
@@ -838,7 +838,7 @@ ld:		macro
 			dc.b $dd, $21, num&$ff, (num>>8)&$ff
 			endc
 		elseif strcmp("\1","iy")
-			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ")	; filter out illegal sources
+			if instr("a b c d e h l (hl) ixh ixu ixl iyh iyu iyl i r ","\2\ ") ; filter out illegal sources
 			z80_error	"ld","Illegal addressing mode","\_"
 			mexit
 			endc

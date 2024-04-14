@@ -161,7 +161,6 @@ ym_ams_fms_pan:			equ 0B4h			; bits 0-2 set frequency sensitivity; bits 4-5 set 
 	fms_settings:		equ 7
 	ams_settings:		equ $30
 
-
 ; ---------------------------------------------------------------------------
 ; SMPS header offsets
 ; ---------------------------------------------------------------------------

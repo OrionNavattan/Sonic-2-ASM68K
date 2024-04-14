@@ -1003,7 +1003,7 @@ PSGDoVolFX:
 		inc	(ix+ch_flutter)				; increment PSG flutter value
 		or	a					; is flutter valeu negative?
 		jp	p,.gotflutter				; branch if not
-		cp	a,evcHold					; is it the terminator?
+		cp	a,evcHold				; is it the terminator?
 		jr	z,VolEnvCmd_Hold			; if so, branch (we hold at this flutter value, i.e. no more changes in ch_volume)
 
 	.gotflutter:
@@ -2179,7 +2179,7 @@ DoFadeOut:
 		jr	z,.nextpsg				; if not, branch
 		inc	(ix+ch_volume)				; increase volume attenuation
 		ld	a,0Fh+1
-		cp	a,(ix+ch_volume)				; is it greater than 0Fh?
+		cp	a,(ix+ch_volume)			; is it greater than 0Fh?
 		jp	nc,.sendpsgvol				; branch if not
 		res	chf_enable_bit,(ix+ch_flags)		; stop track
 		jr	.nextpsg

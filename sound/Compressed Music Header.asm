@@ -4,7 +4,7 @@
 		opt	ws+					; allow statements to contain white-spaces
 		opt	w+					; print warnings
 
-MusHeader:	equ 1		; let Sound Equates.asm know we're assembled compressed music
+MusHeader:	equ 1						; let Sound Equates.asm know we're assembled compressed music
 
 FixMusicAndSFXDataBugs:	equ FixBugs
 
