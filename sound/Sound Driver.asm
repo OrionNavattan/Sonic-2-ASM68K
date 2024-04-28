@@ -2760,6 +2760,7 @@ SongCom_ChannelTick:
 
 ; ---------------------------------------------------------------------------
 ; Track command: change FM channel volume
+; Also supports PSG tracks in this driver
 
 ; input:
 ;	a = delta to new volume

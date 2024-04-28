@@ -153,6 +153,22 @@ CheckedChannelPointer macro location
 	endm
 
 ; ---------------------------------------------------------------------------
+; Macro for setting command values
+PutTrackCom:	macro name
+	if ~def(com_\name)
+	inform 2,"Song uses command smps\name\, but it was not defined!"
+	endc
+
+	if com_\name>$FF				; check for multi-byte commands
+	dc.b com_\name>>8			; high byte of extended commands (normally $FF)
+	endc
+
+	dc.b com_\name&$FF
+	endm
+
+
+
+; ---------------------------------------------------------------------------
 ; Header Macros
 smpsHeaderStartSong macro ver,sourcesmps2asmver
 
@@ -297,7 +313,8 @@ smpsHeaderSFXChannel macro chanid,location,pitch,vol
 ; Co-ord Flag Macros and Equates
 ; E0xx - Panning, AMS, FMS
 smpsPan macro direction,amsfms
-	dc.b $E0,direction+amsfms
+	PutTrackCom	Pan
+	dc.b direction+amsfms
 	endm
 
 panNone equ $00
@@ -308,30 +325,32 @@ panCenter equ $C0
 
 ; E1xx - Set channel detune to val
 smpsDetune macro val
-	dc.b $E1,\val
+	PutTrackCom	Detune
+	dc.b \val
 	endm
 
 ; E2xx - Useless
 smpsNop macro val
 	if SonicDriverVer<3
-		dc.b $E2,\val
+		PutTrackCom	Nop
+		dc.b \val
 	endc
 	endm
 
 ; Return (used after smpsCall)
-smpsReturn macro val
-	if SonicDriverVer>=3
-		dc.b $F9
-	else
-		dc.b $E3
-	endc
-	endm
+smpsReturn macros ;val
+	;if SonicDriverVer>=3
+		PutTrackCom	Return
+	;else
+	;	dc.b $E3
+	;endc
+	;endm
 
 ; Fade in previous song (ie. 1-Up)
 smpsFade macro val
 	if SonicDriverVer>=3
-		dc.b $E2
-		ifarg val
+		PutTrackCom	RestoreSong
+		ifarg \val
 			dc.b \val
 		else
 			dc.b $FF
@@ -342,7 +361,7 @@ smpsFade macro val
 	elseif (SourceDriver>=3)&(strlen("\val"))&(strcmp("\val","$FF"))
 ; This is one of those weird S3+ "fades" that we don't need
 	else
-		dc.b $E4
+		PutTrackCom	RestoreSong
 	endc
 	endm
 
@@ -350,69 +369,83 @@ smpsFade macro val
 smpsChanTempoDiv macro val
 	if SonicDriverVer>=5
 ; New flag unique to Flamewing's modified S&K driver
-		dc.b $FF,$08,\val
+	;	dc.b $FF,$08,\val
+		PutTrackCom	ChanTempoDiv
+		dc.b \val
 	elseif SonicDriverVer>=3
 		inform 3,"Coord. Flag to set tempo divider of a single channel does not exist in S3 driver. Use Flamewing's modified S&K sound driver instead."
 	else
-		dc.b $E5,\val
+		PutTrackCom	ChanTempoDiv
+		dc.b \val
 	endc
 	endm
 
 ; E6xx - Alter Volume by xx
 smpsAlterVol macro val
-	dc.b $E6,\val
+	PutTrackCom	FMAlterVol
+	dc.b \val
 	endm
 
 ; E7 - Prevent attack of next note
-smpsNoAttack	equ $E7
+smpsNoAttack	equ com_NoAttack
 
 ; E8xx - Set note fill to xx
 smpsNoteFill macro val
 	if (SonicDriverVer>=5)&(SourceDriver<3)
 ; Unique to Flamewing's modified driver
-		dc.b $FF,$0A,\val
+	;	dc.b $FF,$0A,\val
+	PutTrackCom	NoteFill2
+	dc.b \val
 	else
 		if (SonicDriverVer>=3)&(SourceDriver<3)
 			inform 1,"Note fill will not work as intended unless you divide the fill value by the tempo divider or complain to Flamewing to add an appropriate coordination flag for it."
 		elseif (SonicDriverVer<3)&(SourceDriver>=3)
 			inform 1,"Note fill will not work as intended unless you multiply the fill value by the tempo divider or complain to Flamewing to add an appropriate coordination flag for it."
 		endc
-		dc.b $E8,\val
+		PutTrackCom	NoteFill
+		dc.b \val
 	endc
 	endm
 
 ; Add xx to channel pitch
 smpsChangeTransposition macro val
-	if SonicDriverVer>=3
-		dc.b $FB,\val
-	else
-		dc.b $E9,\val
-	endc
+	PutTrackCom	ChangeTransposition
+	dc.b \val
+;	if SonicDriverVer>=3
+;		dc.b $FB,\val
+;	else
+;		dc.b $E9,\val
+;	endc
 	endm
 
 ; Set music tempo modifier to xx
 smpsSetTempoMod macro val
-	if SonicDriverVer>=3
-		dc.b $FF,$00
-	else
-		dc.b $EA
-	endc
+;	if SonicDriverVer>=3
+;		dc.b $FF,$00
+;	else
+;		dc.b $EA
+	PutTrackCom	SetTempoMod
+;	endc
 	convertMainTempoMod \val
 	endm
 
 ; Set music tempo divider to xx
 smpsSetTempoDiv macro val
-	if SonicDriverVer>=3
-		dc.b $FF,$04,val
-	else
-		dc.b $EB,\val
-	endc
+;	if SonicDriverVer>=3
+;		dc.b $FF,$04,val
+;	else
+;		dc.b $EB,\val
+;	endc
+	PutTrackCom	SetTempoDiv
+	dc.b \val
 	endm
 
 ; ECxx - Set Volume to xx
 smpsSetVol macro val
 	if SonicDriverVer>=3
-		dc.b $E4,\val
+		PutTrackCom	SetVol
+		dc.b \val
+	;	dc.b $E4,\val
 	else
 		inform 3,"Coord. Flag to set volume (instead of volume attenuation) does not exist in S1 or S2 drivers. Complain to Flamewing to add it."
 	endc
@@ -420,7 +453,8 @@ smpsSetVol macro val
 
 ; Works on all drivers
 smpsPSGAlterVol macro vol
-	dc.b $EC,\vol
+	PutTrackCom	PSGAlterVol
+	dc.b \vol
 	endm
 
 smpsPSGAlterVolS2 macro vol
@@ -435,7 +469,7 @@ smpsPSGAlterVolS2 macro vol
 ; Clears pushing sound flag in S1
 smpsClearPush macro
 	if SonicDriverVer=1
-		dc.b $ED
+		PutTrackCom	ClearPush
 	else
 		inform 3,"Coord. Flag to clear S1 push block flag does not exist in S2 or S3 drivers. Complain to Flamewing to add it."
 	endc
@@ -444,25 +478,26 @@ smpsClearPush macro
 ; Stops special SFX (S1 only) and restarts overridden music track
 smpsStopSpecial macro
 	if SonicDriverVer=1
-		dc.b $EE
+		PutTrackCom	StopSpecial
 	else
-		inform 2,"Coord. Flag to stop special SFX does not exist in S2 or S3 drivers. Complain to Flamewing to add it. With adequate caution, smpsStop can do this job."
+		inform 1,"Coord. Flag to stop special SFX does not exist in S2 or S3 drivers. Complain to Flamewing to add it. With adequate caution, smpsStop can do this job."
 		smpsStop
 	endc
 	endm
 
 ; EFxx[yy] - Set Voice of FM channel to xx; xx < 0 means yy present
 smpsFMvoice macro voice,songID
+	PutTrackCom	FMvoice
 	if (SonicDriverVer>=3)&(strlen("\songID")>0)
-		dc.b $EF,\voice|$80,\songID+$81
+		dc.b \voice|$80,\songID+$81
 	else
-		dc.b $EF,\voice
+		dc.b \voice
 	endc
 	endm
 
 ; F0wwxxyyzz - Modulation - ww: wait time - xx: modulation speed - yy: change per step - zz: number of steps
 smpsModSet macro wait,speed,change,step
-	dc.b	$F0
+	PutTrackCom	ModSet
 	if (SonicDriverVer>=3)&(SourceDriver<3)
 		dc.b \wait+1,\speed,\change,((\step+1)*\speed)&$FF
 	elseif (SonicDriverVer<3)&(SourceDriver>=3)
@@ -478,44 +513,45 @@ smpsModSet macro wait,speed,change,step
 
 ; Turn on Modulation
 smpsModOn macro type
+	PutTrackCom	ModOn
 	if SonicDriverVer>=3
 		if strlen("\type")>0
-			dc.b $F4,\type
+			dc.b \type
 		else
-			dc.b $F4,$80
+			dc.b $80
 		endc
-	else
-		dc.b $F1
 	endc
 	endm
 
 ; F2 - End of channel
-smpsStop macro
-	dc.b $F2
-	endm
+smpsStop macros
+	PutTrackCom Stop
 
 ; F3xx - PSG waveform to xx
 smpsPSGform macro form
-	dc.b $F3,\form
+	PutTrackCom	PSGform
+	dc.b \form
 	endm
 
 ; Turn off Modulation
 smpsModOff macro
-	if SonicDriverVer>=3
-		dc.b $FA
-	else
-		dc.b $F4
-	endc
+	PutTrackCom	ModOff
+;	if SonicDriverVer>=3
+;		dc.b $FA
+;	else
+;		dc.b $F4
+;	endc
 	endm
 
 ; F5xx - PSG voice to xx
 smpsPSGvoice macro voice
-	dc.b $F5,\voice
+	PutTrackCom	PSGvoice
+	dc.b \voice
 	endm
 
 ; F6xxxx - Jump to xxxx
 smpsJump macro loc
-	dc.b $F6
+	PutTrackCom	Jump
 	if SonicDriverVer<>1
 		z80_ptr \loc
 	else
@@ -525,7 +561,7 @@ smpsJump macro loc
 
 ; F7xxyyzzzz - Loop back to zzzz yy times, xx being the loop index for loop recursion fixing
 smpsLoop macro index,loops,loc
-	dc.b	$F7
+	PutTrackCom	Loop
 	dc.b	index,loops
 	if SonicDriverVer<>1
 		z80_ptr \loc
@@ -536,7 +572,7 @@ smpsLoop macro index,loops,loc
 
 ; F8xxxx - Call pattern at xxxx, saving return point
 smpsCall macro loc
-	dc.b	$F8
+	PutTrackCom	Call
 	if SonicDriverVer<>1
 		z80_ptr \loc
 	else
@@ -548,76 +584,91 @@ smpsCall macro loc
 ; Alter Volume
 smpsFMAlterVol macro val1,val2
 	if (SonicDriverVer>=3)&(strlen("\val2")>0)
-		dc.b $E5,\val1,\val2
+		PutTrackCom FMAlterVol2
+		dc.b \val1,\val2
 	else
-		dc.b $E6,\val1
+		PutTrackCom FMAlterVol
+		dc.b \val1
 	endc
 	endm
+
 
 ; S3/S&K/S3D-only coordination flags
 	if SonicDriverVer>=3
 ; Silences FM channel then stops as per smpsStop
-smpsStopFM macro
-	dc.b $E3
-	endm
+smpsStopFM macros
+	PutTrackCom StopFM
+;	dc.b $E3
+;	endm
 
 ; Spindash Rev
-smpsSpindashRev macro
-	dc.b $E9
-	endm
+smpsSpindashRev macros
+	PutTrackCom	SpindashRev
+;	dc.b $E9
+;	endm
 
 smpsPlayDACSample macro sample
-	dc.b $EA,(\sample&$7F)
+	PutTrackCom	PlayDACSample
+	dc.b (\sample&$7F)
 	endm
 
 smpsConditionalJump macro index,loc
-	dc.b $EB
+	PutTrackCom ConditionalJump
+;	dc.b $EB
 	dc.b \index
 	z80_ptr	\loc
 	endm
 
 ; Set note values to xx-$40
 smpsSetNote macro val
-	dc.b $ED,\val
+	PutTrackCom	ConditionalJump
+	dc.b \val
 	endm
 
 smpsFMICommand macro reg,val
-	dc.b $EE,\reg,\val
+	PutTrackCom	FMICommand
+	dc.b \reg,\val
 	endm
 
 ; Set Modulation
 smpsModChange2 macro fmmod,psgmod
-	dc.b $F1,\fmmod,\psgmod
+	PutTrackCom	smpsModChange2
+	dc.b \fmmod,\psgmod
 	endm
 
 ; Set Modulation
 smpsModChange macro val
-	dc.b $F4,\val
+	PutTrackCom	ModChange
+	dc.b \val
 	endm
 
 ; FCxxxx - Jump to xxxx
 smpsContinuousLoop macro loc
-	dc.b $FC
+	PutTrackCom	ContinuousLoop
 	z80_ptr	\loc
 	endm
 
 smpsAlternateSMPS macro flag
-	dc.b $FD,\flag
+	PutTrackCom	AlternateSMPS
+	dc.b \flag
 	endm
 
 smpsFM3SpecialMode macro ind1,ind2,ind3,ind4
-	dc.b $FE,\ind1,\ind2,\ind3,\ind4
+	PutTrackCom	FM3SpecialMode
+	dc.b \ind1,\ind2,\ind3,\ind4
 	endm
 
 smpsPlaySound macro index
 	if SonicDriverVer>=5
 		inform 1,"smpsPlaySound only plays SFX in Flamedriver ; use smpsPlayMusic to play music or fade effects."
 	endc
-	dc.b $FF,$01,\index
+	PutTrackCom	PlaySound
+	dc.b \index
 	endm
 
 smpsHaltMusic macro flag
-	dc.b $FF,$02,\flag
+	PutTrackCom	HaltMusic
+	dc.b \flag
 	endm
 
 smpsCopyData macro data,len
@@ -628,33 +679,38 @@ smpsCopyData macro data,len
 	endm
 
 smpsSSGEG macro op1,op2,op3,op4
-	dc.b $FF,$05,\op1,\op3,\op2,\op4
+	PutTrackCom	SSGEG
+	dc.b \op1,\op3,\op2,\op4
 	endm
 
 smpsFMVolEnv macro tone,mask
-	dc.b $FF,$06,\tone,\mask
+	PutTrackCom	FMVolEnv
+	dc.b \tone,\mask
 	endm
 
-smpsResetSpindashRev macro val
-	dc.b $FF,$07
-	endm
+smpsResetSpindashRev macros
+	PutTrackCom	ResetSpindashRev
 
 ; Flags ported from other drivers.
 	if SonicDriverVer>=5
 smpsChanFMCommand macro reg,val
-	dc.b $FF,$09,\reg,\val
+	PutTrackCom	ChanFMCommand
+	dc.b \reg,\val
 	endm
 
 smpsPitchSlide macro enable
-	dc.b $FF,$0B,\enable
+	PutTrackCom	PitchSlide
+	dc.b \enable
 	endm
 
 smpsSetLFO macro enable,amsfms
-	dc.b $FF,$0C,\enable,\amsfms
+	PutTrackCom	SetLFO
+	dc.b \enable,\amsfms
 	endm
 
 smpsPlayMusic macro index
-	dc.b $FF,$0D,\index
+	PutTrackCom	PlayMusic
+	dc.b \index
 	endm
 	endc
 
@@ -669,7 +725,7 @@ smpsMaxRelRate macro
 		smpsFMICommand $88,$0F
 		smpsFMICommand $8C,$0F
 	else
-		dc.b $F9
+		PutTrackCom	MaxRelRate
 	endc
 	endm
 ; ---------------------------------------------------------------------------

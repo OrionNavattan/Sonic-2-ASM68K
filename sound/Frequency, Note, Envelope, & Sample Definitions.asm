@@ -496,15 +496,15 @@ TrackCommand:	macro	func
 		\func	Ret,Return				; Subroutine return
 		\func	RestoreSong				; Restore previous song
 		\func	ChannelTick,ChanTempoDiv		; Set tick multiplier for channel
-		\func	VolAddFM,AlterVol			; FM volume add
+		\func	VolAddFM,FMAlterVol			; FM volume add
 		\func	Tie,NoAttack				; Do not key off. Can be used to tie two notes together (extend delay, run commands, set new note, etc)
 		\func	Gate,NoteFill				; Set note gate timer (frames)
 		\func	TransAdd,ChangeTransposition		; Transposition add
 		\func	TempoSet,SetTempoMod			; Set tempo (affected by tick multiplier!)
 		\func	SongTick,SetTempoDiv			; Set tick multiplier for song
 		\func	VolAddPSG,PSGAlterVol			; PSG volume add
-		\func	ClearPush,NullCmd1			; unused, was Sonic 1's ClearPush
-		\func	EndBack,NullCmd2			; unused, was Sonic 1's StopSpecial
+		\func	ClearPush			; unused, was Sonic 1's ClearPush
+		\func	EndBack,StopSpecial			; unused, was Sonic 1's StopSpecial
 		\func	Voice,FMvoice				; Load FM voice
 		\func	Vib,ModSet				; Set automatic vibrate (aka, modulation)
 		\func	VibOn,ModOn				; Enable automatic vibrate (without parameter set)
