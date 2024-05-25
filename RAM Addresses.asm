@@ -11,7 +11,7 @@
 ;ram_start:				equ __rs
 v_128x128_tiles:		rs.b $8000			;   $FFFF0000 ; 128x128 tile mappings ($8000 bytes); also used as decompression buffer for level tiles; referenced by both a full 32 bit address and by 24 bit addresses.
 v_level_layout:         rs.b sizeof_level			; $FFFF8000 ; level and background layouts ($1000 bytes)
-v_16x16_tiles:          rs.w sizeof_16x16_all			; $FFFF9000 ; 16x16 tile mappings ($C00 bytes)
+v_16x16_tiles:          rs.b sizeof_16x16_all			; $FFFF9000 ; 16x16 tile mappings ($C00 bytes)
 v_bgscroll_buffer:      rs.b $200				; $FFFFA800 ; used by some layer deformation routines
 v_nem_gfx_buffer:       rs.b $200				; $FFFFAA00 ; ; Nemesis graphics decompression buffer
 v_sprite_queue:         rs.b sizeof_priority*countof_priority	; $FFFFAC00 ; sprite display queue, first section is highest priority ($400 bytes; 8 sections of $80 bytes)

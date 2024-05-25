@@ -5,7 +5,7 @@
 sizeof_128x128:     equ $80					; size of one 128x128 tile
 countof_128x128:    equ $100					; max number of 128x128 tiles
 sizeof_128x128_all: equ sizeof_128x128*countof_128x128		; ($8000 bytes)
-sizeof_16x16:		equ 8					; size of one 16x16 tile
+sizeof_16x16:		equ 16					; size of one 16x16 tile
 countof_16x16:		equ $180				; max number of 16x16 tiles
 sizeof_16x16_all:   equ sizeof_16x16*countof_16x16		; size of all 16x16 tiles ($C00)
 sizeof_ost:		    equ $40				; size of one OST in bytes

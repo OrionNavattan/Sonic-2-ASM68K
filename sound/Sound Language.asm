@@ -159,8 +159,8 @@ PutTrackCom:	macro name
 	inform 2,"Song uses command smps\name\, but it was not defined!"
 	endc
 
-	if com_\name>$FF				; check for multi-byte commands
-	dc.b com_\name>>8			; high byte of extended commands (normally $FF)
+	if com_\name>$FF					; check for multi-byte commands
+	dc.b com_\name>>8					; high byte of extended commands (normally $FF)
 	endc
 
 	dc.b com_\name&$FF

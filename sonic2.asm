@@ -4755,7 +4755,7 @@ Level_TtlCardLoop:
 		clear_ram	hscroll,hscroll_end		; clear the h-scroll buffer
 
 		bsr.w	LevelArtLoad				; load level art
-		jsrto	LevelBlockMapsLoad,JmpTo_LevelBlockMapsLoad ; load 16x16 block maps, 128x128 chunk maps, and secondary level PLC
+		jsrto	LevelDataLoad,JmpTo_LevelDataLoad	; load 16x16 block maps, 128x128 chunk maps, and secondary level PLC
 		jsr	(AnimatedBlocksLoad).l			; load animated 16x16 blocks and HTZ's distant background cliff art if applicable
 		jsrto DrawTilesAtStart,JmpTo_DrawTilesAtStart	; draw the initial background state
 		jsr	(ConvertCollisionArray).l		; unused development leftover
@@ -6122,8 +6122,8 @@ LevelArtLoad:
 	endc
 
 	if RemoveJmpTos=0
-JmpTo_LevelBlockMapsLoad:
-		jmp	(LevelBlockMapsLoad).l
+JmpTo_LevelDataLoad:
+		jmp	(LevelDataLoad).l
 JmpTo_DeformLayers:
 		jmp	(DeformLayers).l
 JmpTo_AnimateLevelGFX:
@@ -18855,223 +18855,271 @@ DrawTilesAtStart_LoadFull_512x256:
 		rts
    	endc
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to load basic level data (16x16 and 128x128 maps, level layouts,
+; 2nd PLC, and level-specific palettes
 
-LevelBlockMapsLoad:
+;	uses d0.l, d1.l, d2.l, a0, a1, a2
+; ---------------------------------------------------------------------------
+
+LevelDataLoad:
 		moveq	#0,d0
-		move.b	(v_zone).w,d0
-		add.w	d0,d0
+		move.b	(v_zone).w,d0				; get zone number
+		add.w	d0,d0					; multiply by 12
 		add.w	d0,d0
 		move.w	d0,d1
 		add.w	d0,d0
 		add.w	d1,d0
-		lea	(LevelHeaders).l,a2
-		lea	(a2,d0.w),a2
-		move.l	a2,-(sp)
-		addq.w	#4,a2
-		move.l	(a2)+,d0
+		lea	(LevelHeaders).l,a2			; address of level headers
+		lea	(a2,d0.w),a2				; jump to relevant level header
+		pushr	a2					; save address to stack
+		addq.w	#4,a2					; skip to PLC2 ID + 16x16 mappings pointer
+		move.l	(a2)+,d0				; load pointer
 		andi.l	#$FFFFFF,d0
-		movea.l	d0,a0
-		lea	(v_16x16_tiles).w,a1
-		jsrto	KosDec,JmpTo_KosDec
-		cmpi.b	#id_HTZ,(v_zone).w
-		bne.s	loc_E40C
-		lea	($FFFF9980).w,a1
-		lea	(BM16_HTZ).l,a0
+		movea.l	d0,a0					; a0 = 16x16 mappings pointer
+		lea	(v_16x16_tiles).w,a1			; RAM address for 16x16 maps
 		jsrto	KosDec,JmpTo_KosDec
 
-loc_E40C:
-		tst.w	(f_two_player).w
-		beq.s	loc_E430
-		lea	(v_16x16_tiles).w,a1
-		move.w	#$BFF,d2
+		cmpi.b	#id_HTZ,(v_zone).w			; are we loading HTZ?
+		bne.s	.notHTZ					; branch if not
 
-loc_E41A:
-		move.w	(a1),d0
+		lea	(v_16x16_tiles+$980).w,a1		; start address of HTZ patch in block table
+		lea	(BM16_HTZ).l,a0				; HTZ patch for EHZ block map
+		jsrto	KosDec,JmpTo_KosDec			; load the patch
+
+	.notHTZ:
+		tst.w	(f_two_player).w			; is it two player mode?
+		beq.s	.not2P					; branch if not
+
+		lea	(v_16x16_tiles).w,a1
+		move.w	#(sizeof_16x16_all/2)-1,d2
+
+	.adjust2P:
+		; Halve the tile index on each block for 2P mode.
+		move.w	(a1),d0					; read one entry
 		move.w	d0,d1
-		andi.w	#-$800,d0
-		andi.w	#$7FF,d1
-		lsr.w	#1,d1
-		or.w	d1,d0
-		move.w	d0,(a1)+
-		dbf	d2,loc_E41A
+		andi.w	#tile_settings,d0			; d0 = tile settings
+		andi.w	#tile_vram,d1				; d1 =  VRAM index
+		lsr.w	#1,d1					; divide VRAM index by 2
+		or.w	d1,d0					; merge settings and adjusted index
+		move.w	d0,(a1)+				; write to block table
+		dbf	d2,.adjust2P				; repeat for entire block table
 
-loc_E430:
-		move.l	(a2)+,d0
+	.not2P:
+		move.l	(a2)+,d0				; d0 = palette ID + 128x128 mappings pointer
 		andi.l	#$FFFFFF,d0
-		movea.l	d0,a0
-		lea	(v_128x128_tiles).l,a1
-		jsrto	KosDec,JmpTo_KosDec
-		bsr.w	sub_E462
-		movea.l	(sp)+,a2
-		addq.w	#4,a2
-		moveq	#0,d0
-		move.b	(a2),d0
-		beq.s	loc_E456
-		jsrto	AddPLC,JmpTo_AddPLC
+		movea.l	d0,a0					; a0 = 128x128 mappings pointer
+		lea	(v_128x128_tiles).l,a1			; RAM address for 256x256 mappings
+		jsrto	KosDec,JmpTo_KosDec			; decompress the chunk map
 
-loc_E456:
-		addq.w	#4,a2
+		bsr.w	LevelLayoutLoad				; load level layout (doesn't involve level headers)
+		popr.l	a2
+		addq.w	#4,a2					; retrieve level header address from stack
+		moveq	#0,d0					; jump to 2nd PLC
+		move.b	(a2),d0					; read 2nd PLC id
+		beq.s	.skipPLC				; branch if 0
+		jsrto	AddPLC,JmpTo_AddPLC			; load pattern load cues
+
+	.skipPLC:
+		addq.w	#4,a2					; jump to palette ID
 		moveq	#0,d0
-		move.b	(a2),d0
-		jsrto	PalLoad_Now,JmpTo_PalLoad_Now
+		move.b	(a2),d0					; read palette id
+		jsrto	PalLoad_Now,JmpTo_PalLoad_Now		; load palette
 		rts
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Level	layout loading subroutine
+; ---------------------------------------------------------------------------
 
-
-sub_E462:
+LevelLayoutLoad:
 		moveq	#0,d0
-		move.w	(v_zone).w,d0
-		ror.b	#1,d0
-		lsr.w	#6,d0
+		move.w	(v_zone).w,d0				; get zone & act numbers as word
+		ror.b	#1,d0					; move act number (bit 0) next to zone number
+		lsr.w	#6,d0					; d0 = zone/act expressed as one byte
 		lea	(LevelIndex).l,a0
 		move.w	(a0,d0.w),d0
-		lea	(a0,d0.l),a0
-		lea	(v_level_layout).w,a1
-		jmpto	KosDec,JmpTo_KosDec
+		lea	(a0,d0.l),a0				; jump to actual layout data
+		lea	(v_level_layout).w,a1			; RAM address for level layout
+		jmpto	KosDec,JmpTo_KosDec			; decompress the layout
 
-; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Unused level layout routine
+
+; This loads layout data in Sonic 1's format. However, it behaves differently
+; from the routine in that game in that it repeats rows of the source data
+; in order to fill the destination rows.
+; ---------------------------------------------------------------------------
+
+;LevelLayoutLoad_S1:
 		lea	(v_level_layout).w,a3
-		move.w	#$3FF,d1
+		move.w	#(sizeof_level/4)-1,d1
 		moveq	#0,d0
 
-loc_E48C:
-		move.l	d0,(a3)+
-		dbf	d1,loc_E48C
-		lea	(v_level_layout).w,a3
+	.clear:
+		move.l	d0,(a3)+				; clear the level layout buffer
+		dbf	d1,.clear
+
+		lea	(v_level_layout).w,a3			; RAM address for level layout
 		moveq	#0,d1
-		bsr.w	sub_E4A2
-		lea	($FFFF8080).w,a3
+		bsr.w	LevelLayoutLoad2			; load foreground layout into RAM
+		lea	(v_level_layout+level_max_width).w,a3	; RAM address for background layout
 		moveq	#2,d1
+		; fall through to load backgroudn layout
 
-; ===========================================================================
-
-
-sub_E4A2:
+LevelLayoutLoad2:
 		moveq	#0,d0
-		move.w	(v_zone).w,d0
-		ror.b	#1,d0
-		lsr.w	#5,d0
-		add.w	d1,d0
+		move.w	(v_zone).w,d0				; get zone & act numbers as word
+		ror.b	#1,d0					; move act number (bit 0) next to zone number
+		lsr.w	#5,d0					; d0 = zone/act expressed as one byte
+		add.w	d1,d0					; add d1: 0 for level; 2 for background
 		lea	(LevelIndex).l,a1
 		move.w	(a1,d0.w),d0
-		lea	(a1,d0.l),a1
+		lea	(a1,d0.l),a1				; jump to actual level data
 		moveq	#0,d1
 		move.w	d1,d2
-		move.b	(a1)+,d1
-		move.b	(a1)+,d2
-		move.l	d1,d5
-		addq.l	#1,d5
-		moveq	#0,d3
-		move.w	#$80,d3
-		divu.w	d5,d3
-		subq.w	#1,d3
+		move.b	(a1)+,d1				; load cropped level width (in tiles)
+		move.b	(a1)+,d2				; load cropped level height (in tiles)
 
-loc_E4D2:
+		move.l	d1,d5
+		addq.l	#1,d5					; cropped width + 1
+		moveq	#0,d3
+		move.w	#level_max_width,d3			; maximum width of level
+		divu.w	d5,d3					; d3 = number of times to repeat source row to fill destination row
+		subq.w	#1,d3					; minus 1 for loop counter
+
+	.loop_dest_row:
 		movea.l	a3,a0
 		move.w	d3,d4
 
-loc_E4D6:
-		move.l	a1,-(sp)
+	.loop_src_row:
+		pushr.l	a1					; back up source row start
 		move.w	d1,d0
 
-loc_E4DA:
-		move.b	(a1)+,(a0)+
-		dbf	d0,loc_E4DA
-		movea.l	(sp)+,a1
-		dbf	d4,loc_E4D6
-		lea	(a1,d5.w),a1
-		lea	$100(a3),a3
-		dbf	d2,loc_E4D2
+	.loop_tile:
+		move.b	(a1)+,(a0)+				; load layout data
+		dbf	d0,.loop_tile				; repeat for length of source row
+		popr.l	a1					; return to start of source row
+		dbf	d4,.loop_src_row			; repeat source row until destination row is filled
+		lea	(a1,d5.w),a1				; next row in source
+		lea	sizeof_levelrow(a3),a3			; next row in destination
+		dbf	d2,.loop_dest_row			; repeat for number of destinaton rows
 		rts
 
-; ===========================================================================
-		lea	($FE0000).l,a1
-		lea	($FE0080).l,a2
-		lea	(v_128x128_tiles).l,a3
-		move.w	#$3F,d1
+; ---------------------------------------------------------------------------
+; Unused subroutine to convert level chunks from Sonic 1/CD 256x256 to
+; Sonic 2/3K 128x128 format
+; ---------------------------------------------------------------------------
 
-loc_E50A:
-		bsr.w	sub_E59C
-		bsr.w	sub_E59C
-		dbf	d1,loc_E50A
-		lea	($FE0000).l,a1
-		lea	($FF0000).l,a2
-		move.w	#$3F,d1
+v_conversion_buffer:	equ $FE0000				; possibly additional RAM in a development unit?
 
-loc_E526:
-		move.w	#0,(a2)+
-		dbf	d1,loc_E526
-		move.w	#$3FBF,d1
+ConvertChunks:
+		lea	(v_conversion_buffer).l,a1		; conversion buffer
+		lea	(v_conversion_buffer+sizeof_128x128).l,a2 ; each 256x256 tile becomes two consecutive 128x28 tiles
+		lea	(v_128x128_tiles).l,a3			; source of chunks to convert
+		move.w	#(countof_128x128/4)-1,d1		; convert 64 chunks (one 256x256 > four 128x128)
 
-loc_E532:
-		move.w	(a1)+,(a2)+
-		dbf	d1,loc_E532
+	.convert:
+		bsr.w	ConvertChunks_DoHalf
+		bsr.w	ConvertChunks_DoHalf			; convert one chunk
+		dbf	d1,.convert				; repeat for all chunks
+
+		lea	(v_conversion_buffer).l,a1		; converted chunks
+		lea	(v_128x128_tiles&$FFFFFF).l,a2		; final destination
+		move.w	#(sizeof_128x128/2)-1,d1
+
+	.fillblank:
+		move.w	#0,(a2)+				; insert one blank chunk at the start of the table
+		dbf	d1,.fillblank
+
+		move.w	#(((countof_128x128-1)*sizeof_128x128)/2)-1,d1
+
+	.copyfinal:
+		move.w	(a1)+,(a2)+				; copy converted chunks into table after blank one
+		dbf	d1,.copyfinal
 		rts
-; ===========================================================================
-		lea	($FE0000).l,a1
-		lea	(v_128x128_tiles).l,a3
-		moveq	#$1F,d0
 
-loc_E548:
-		move.l	(a1)+,(a3)+
-		dbf	d0,loc_E548
-		moveq	#0,d7
-		lea	($FE0000).l,a1
-		move.w	#$FF,d5
+; ---------------------------------------------------------------------------
+; Unused subroutine to copy converted chunks from buffer to destination,
+; checking for and eliminating duplicate chunks in the process. Ends in
+; infinite loop once all chunks are checked. Likely would have been used in
+; place of the lines in the above routine below the first dbf d1.
 
-loc_E55A:
+; output:
+;	d7 = count of unique chunks copied to chunk table - 1
+; ---------------------------------------------------------------------------
+
+ConvertChunks_CheckDuplicates:
+		lea	(v_conversion_buffer).l,a1		; converted chunks still in buffer
+		lea	(v_128x128_tiles).l,a3			; source chunks still in chunk table
+		moveq	#(sizeof_128x128/4)-1,d0
+
+	.copyone:
+		move.l	(a1)+,(a3)+				; copy first chunk
+		dbf	d0,.copyone
+
+		moveq	#0,d7					; counter for verified chunks
+		lea	(v_conversion_buffer).l,a1
+		move.w	#countof_128x128-1,d5			; check all 256 output chunks
+
+.nextchunk:
 		lea	(v_128x128_tiles).l,a3
 		move.w	d7,d6
 
-loc_E562:
-		movem.l	a1-a3,-(sp)
-		move.w	#$3F,d0
+.nextcomparison:
+		pushr.l	a1-a3
+		move.w	#(sizeof_128x128/2)-1,d0		; check one chunk
 
-loc_E56A:
-		cmpm.w	(a1)+,(a3)+
-		bne.s	loc_E580
-		dbf	d0,loc_E56A
-		movem.l	(sp)+,a1-a3
-		adda.w	#$80,a1
-		dbf	d5,loc_E55A
-		bra.s	loc_E59A
+	.checkchunk:
+		cmpm.w	(a1)+,(a3)+				; compare one word of chunk
+		bne.s	.nomatch				; bail if they don't match
+		dbf	d0,.checkchunk				; loop for entire chunk
+
+	;.match
+		popr.l	a1-a3
+		adda.w	#sizeof_128x128,a1			; advance to next source chunk
+		dbf	d5,.nextchunk
+		bra.s	.done
 ; ===========================================================================
 
-loc_E580:
-		movem.l	(sp)+,a1-a3
-		adda.w	#$80,a3
-		dbf	d6,loc_E562
-		moveq	#$1F,d0
+.nomatch:
+		popr.l	a1-a3
+		adda.w	#sizeof_128x128,a3			; advance to next converted chunk
+		dbf	d6,.nextcomparison
 
-loc_E58E:
-		move.l	(a1)+,(a3)+
-		dbf	d0,loc_E58E
-		addq.l	#1,d7
-		dbf	d5,loc_E55A
+;.noduplicate:
+		moveq	#(sizeof_128x128/4)-1,d0
 
-loc_E59A:
-		bra.s	loc_E59A
+	.copy:
+		move.l	(a1)+,(a3)+				; copy verified chunk to chunk table
+		dbf	d0,.copy
 
-; ===========================================================================
+		addq.l	#1,d7					; increment chunk count
+		dbf	d5,.nextchunk
 
+.done:
+		bra.s	.done					; stay here forever
 
-sub_E59C:
-		moveq	#7,d0
+; ---------------------------------------------------------------------------
+; Part of chunk converter: converts one half of a 256x256 chunk into halves
+; of two 128x128 chunks.
+; ---------------------------------------------------------------------------
 
-loc_E59E:
+ConvertChunks_DoHalf:
+		moveq	#8-1,d0					; 8 rows per chunk
+
+	.loop:
 		rept 4
-		move.l	(a3)+,(a1)+
+		move.l	(a3)+,(a1)+				; do one row of output chunk one
 		endr
 		rept 4
-		move.l	(a3)+,(a2)+
+		move.l	(a3)+,(a2)+				; do one row of output chunk two
 		endr
-		dbf	d0,loc_E59E
-		adda.w	#$80,a1
-		adda.w	#$80,a2
+		dbf	d0,.loop
+
+		adda.w	#sizeof_128x128,a1
+		adda.w	#sizeof_128x128,a2
 		rts
-
 ; ===========================================================================
 
 	if Revision=0
@@ -84971,7 +85019,7 @@ AnimatedBlocksLoad:
 anipat:	macro *
 		\*: equ *
 		current_anipat:	equs "\*"
-		dc.w ((sizeof_16x16_all*2)-sizeof_\*_Blocks)	; start offset of animated blocks in v_16x16_tiles
+		dc.w (sizeof_16x16_all-sizeof_\*_Blocks)	; start offset of animated blocks in v_16x16_tiles
 		dc.w (sizeof_\*_Blocks/2)-1			; loops to copy blocks in word-length moves
 	\*_Blocks:
 		endm
