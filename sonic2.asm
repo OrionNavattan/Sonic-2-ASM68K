@@ -2786,7 +2786,7 @@ PCycle_OOZ:
 ; ===========================================================================
 
 PCycle_MCZ:
-		tst.b	(v_current_boss).w			; is the MCZ boss fight in progress?
+		tst.b	(v_bosscol_routine).w			; is the MCZ boss fight in progress?
 		bne.s	.exit					; if so, exit
 		subq.w	#1,(v_palcycle_time).w			; decrement timer
 		bpl.s	.exit					; if time remains, exit
@@ -2844,7 +2844,7 @@ PCycle_CNZ:
 		move.w	(a0,d0.w),(a1)+				; copy two final colors
 
 	.chk_boss:
-		tst.b	(v_current_boss).w			; is the boss fight in progress?
+		tst.b	(v_bosscol_routine).w			; is the boss fight in progress?
 		beq.w	.exit					; if not, exit
 		subq.w	#1,(v_palcycle_time2).w			; decrement timer
 		bpl.w	.exit					; if time remains, exit
@@ -14231,7 +14231,7 @@ LevelParameterLoad:
 		clr.w	(v_bg2_redraw_direction_p2_copy).w
 		clr.w	(v_bg3_redraw_direction_p2_copy).w
 		clr.b	(f_disable_scrolling).w
-		clr.b	(f_screen_shake_htz).w
+		clr.b	(f_htz_earthquake).w
 		clr.b	(f_screen_shake).w
 		clr.b	(f_disable_scroll_p1).w
 		clr.b	(f_disable_scroll_p2).w
@@ -14608,9 +14608,9 @@ LPL_InitBG_ARZ:
 		muls.w	#$119,d1
 		asr.l	#8,d1					; d1 = (v_camera_x_pos*$119)/$100
 		move.w	d1,(v_bg1_x_pos).w			; clear background positions
-		move.w	d1,(v_camera_arz_bg_x_pos).w
+		move.w	d1,(v_arz_bg_x_pos).w
 		clr.w	(v_bg1_x_pos+2).w
-		clr.w	(v_camera_arz_bg_x_pos+2).w
+		clr.w	(v_arz_bg_x_pos+2).w
 		clr.l	(v_bg2_y_pos).w
 		clr.l	(v_bg3_y_pos).w
 		rts
@@ -14685,7 +14685,7 @@ DeformLayers:
 	.not_tails_alone_Y:
 		bsr.w	UpdateCamera_Y				; update camera y pos
 		lea	(v_fg_y_redraw_flag).w,a2
-		bsr.w	UpdateVScrollFlags			; update vertical redraw flags
+		bsr.w	UpdateFG_Y				; update vertical redraw flags
 
 	.chk_2P:
 		tst.w	(f_two_player).w
@@ -14709,7 +14709,7 @@ DeformLayers:
 		move.w	(v_camera_y_shift_p2).w,d3
 		bsr.w	UpdateCamera_Y				; update camera y pos
 		lea	(v_fg_y_redraw_flag_p2).w,a2
-		bsr.w	UpdateVScrollFlags			; update vertical redraw flags
+		bsr.w	UpdateFG_Y				; update vertical redraw flags
 
 .skip_2P:
 		bsr.w	DynamicLevelEvents			; run DLE (updating level boundaries, loading bosses, and running CNZ's slot machines)
@@ -14784,6 +14784,7 @@ Deform_TitleScreen:
 		andi.w	#$1F,d1					; d1 = index
 		lea	Deform_Ripple_Data(pc),a2
 		lea	(a2,d1.w),a2				; a2 = start location in ripple data
+
 		move.w	#16-1,d1				; 16 lines that scroll with camera and 'ripple'
 	.lines_194_208:
 		move.b	(a2)+,d0				; get offset value from ripple data
@@ -15147,13 +15148,13 @@ Deform_WFZ:
 		move.w	(v_bg_x_pos_diff).w,d4			; get BG x pos change since last frame
 		ext.l	d4
 		asl.l	#8,d4					; multiply by 256
-		moveq	#2,d6
-		bsr.w	UpdateBG_X2				; update bg x pos and set redraw flags
+		moveq	#redraw_left_bit,d6
+		bsr.w	UpdateBG_X_Block1			; update bg x pos and set redraw flags
 		move.w	(v_bg_y_pos_diff).w,d5			; get BG y pos change since last frame
 		ext.l	d5
 		lsl.l	#8,d5					; multiply by 256
 		moveq	#6,d6
-		bsr.w	UpdateBG_Y_Absolute			; update bg y pos and set redraw flags
+		bsr.w	UpdateBG_Y2				; update bg y pos and set redraw flags
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w	; update VSRAM buffer
 		move.l	(v_bg1_x_pos).w,d0
 		move.l	d0,d1
@@ -15336,8 +15337,8 @@ Deform_HTZ:
 		tst.w	(f_two_player).w
 		bne.w	Deform_HTZ_2P				; branch if by miracle it's 2P mode
 
-		tst.b	(f_screen_shake_htz).w
-		bne.w	HTZ_Screen_Shake			; branch if the screen is shaking due to an earthquake
+		tst.b	(f_htz_earthquake).w
+		bne.w	Deform_HTZ_ScreenShake			; branch if in an earthquake
 
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w	; update VSRAM buffer
 		lea	(v_hscroll_buffer).w,a1
@@ -15348,7 +15349,7 @@ Deform_HTZ:
 		move.w	d2,d0					; foreground value in high word, background value in low word
 		asr.w	#3,d0					; divide background value by 8
 
-		move.w	#128-1,d1				; 128 lines of cliffs and mountains (the distant blue mountains are also animated via dynamic reloading)
+		move.w	#128-1,d1				; 128 lines of cliffs and mountains (the distant blue mountains are also affected by dynamic reloading)
 	.lines_1_128:
 		move.l	d0,(a1)+
 		dbf	d1,.lines_1_128
@@ -15359,7 +15360,6 @@ Deform_HTZ:
 		move.w	(v_bgscroll_buffer+$22).w,d0		; get seed value
 		addq.w	#4,(v_bgscroll_buffer+$22).w		; increment for next frame
 		sub.w	d0,d2					; d2 = delta between camera x and cloud scroll value
-
 
 		; This big block of code divides and then multiplies the delta by roughly 2.28,
 		; effectively subtracting 'delta modulo 2.28' from the delta.
@@ -15424,7 +15424,7 @@ Deform_HTZ:
 		swap	d3					; swap back
 		dbf	d1,.bufferloop
 
-		; Rest of the screen is the background clouds.
+		; Rest of the screen is the background clouds (also affected by dynamic reloading).
 		add.l	d0,d0
 		add.l	d0,d0					; multiply delta by 4
 		move.w	d3,d4					; combine new background value with foreground value
@@ -15506,49 +15506,59 @@ Deform_HTZ:
 ; ===========================================================================
 
 ;loc_CA92:
-HTZ_Screen_Shake:
-		move.w	(v_bg_x_pos_diff).w,d4
+Deform_HTZ_ScreenShake:
+		move.w	(v_bg_x_pos_diff).w,d4			; get bg x pos difference (calculated earlier by DLE code)
 		ext.l	d4
-		lsl.l	#8,d4
-		moveq	#2,d6
-		bsr.w	UpdateBG_X2
-		move.w	(v_bg_y_pos_diff).w,d5
+		lsl.l	#8,d4					; multiply by 256
+		moveq	#redraw_left_bit,d6
+		bsr.w	UpdateBG_X_Block1			; update bg X pos
+
+		move.w	(v_bg_y_pos_diff).w,d5			; get bg y pos difference
 		ext.l	d5
-		lsl.l	#8,d5
-		moveq	#0,d6
-		bsr.w	UpdateBG_Y_Absolute
-		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
+		lsl.l	#8,d5					; multiply by 256
+		moveq	#redraw_top_bit,d6
+		bsr.w	UpdateBG_Y2				; update BG y pos
+
+		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w	; prepare VSRAM buffer
 		move.w	(v_camera_y_pos).w,(v_fg_y_pos_vsram).w
+
+	if FixBugs=0
+		; Redundant.
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
+	endc
+
 		moveq	#0,d2
-		tst.b	(f_screen_shake).w
-		beq.s	loc_CAEE
-		move.w	(v_frame_counter).w,d0
-		andi.w	#$3F,d0
+		tst.b	(f_screen_shake).w			; is the screen shaking?
+		beq.s	.no_shake				; branch if not
+
+		; Make the screen shake by messing with the VScroll and camera pos copy values
+		move.w	(v_frame_counter).w,d0			; get frame counter
+		andi.w	#$3F,d0					; (only lowest 6 bits)
 		lea_	Deform_Ripple_Data,a1
-		lea	(a1,d0.w),a1
+		lea	(a1,d0.w),a1				; a1 = start location in ripple data
 		moveq	#0,d0
-		move.b	(a1)+,d0
-		add.w	d0,(v_fg_y_pos_vsram).w
+		move.b	(a1)+,d0				; get value from ripple data
+		add.w	d0,(v_fg_y_pos_vsram).w			; add to VSRAM values and camera y pos copy
 		add.w	d0,(v_bg_y_pos_vsram).w
 		add.w	d0,(v_camera_y_pos_copy2).w
-		move.b	(a1)+,d2
-		add.w	d2,(v_camera_x_pos_copy2).w
+		move.b	(a1)+,d2				; get second value
+		add.w	d2,(v_camera_x_pos_copy2).w		; add to camera x pos copy value
 
-loc_CAEE:
+	.no_shake:
+		; Update HScroll values (no parallax).
 		lea	(v_hscroll_buffer).w,a1
-		move.w	#224-1,d1
+		move.w	#screen_height-1,d1			; all 224 lines
 		move.w	(v_camera_x_pos).w,d0
-		add.w	d2,d0
-		neg.w	d0
+		add.w	d2,d0					; add second value from ripple data
+		neg.w	d0					; negate to make fg scroll offset
 		swap	d0
 		move.w	(v_bg1_x_pos).w,d0
-		add.w	d2,d0
+		add.w	d2,d0					; same as above
 		neg.w	d0
 
-loc_CB08:
+	.loop:
 		move.l	d0,(a1)+
-		dbf	d1,loc_CB08
+		dbf	d1,.loop
 		rts
 ; ===========================================================================
 
@@ -15604,13 +15614,13 @@ Deform_HPZ:
 		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
 		asl.l	#6,d4
-		moveq	#2,d6
-		bsr.w	UpdateBG_X2
+		moveq	#redraw_left_bit,d6
+		bsr.w	UpdateBG_X_Block1
 		move.w	(v_camera_y_diff).w,d5
 		ext.l	d5
 		asl.l	#7,d5
 		moveq	#6,d6
-		bsr.w	UpdateBG_Y_Absolute
+		bsr.w	UpdateBG_Y2
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
 		lea	(v_bgscroll_buffer).w,a1
 		move.w	(v_camera_x_pos).w,d2
@@ -15696,7 +15706,7 @@ Deform_OOZ:
 		move.l	(v_bg1_y_pos).w,d3
 		add.l	d3,d0
 		moveq	#4,d6
-		bsr.w	UpdateBG_Y_Absolute2
+		bsr.w	UpdateBG_Y_Absolute
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
 		lea	($FFFFE380).w,a1
 		move.w	(v_camera_x_pos).w,d0
@@ -15821,7 +15831,7 @@ loc_CD4C:
 loc_CD54:
 		swap	d0
 		moveq	#6,d6
-		bsr.w	UpdateBG_Y_Absolute2
+		bsr.w	UpdateBG_Y_Absolute
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
 		moveq	#0,d2
 		tst.b	(f_screen_shake).w
@@ -16727,9 +16737,9 @@ byte_D48A:
 Deform_ARZ:
 		move.w	(v_camera_x_diff).w,d4
 		ext.l	d4
-		muls.w	#$119,d4
-		moveq	#2,d6
-		bsr.w	UpdateBG_Y_Absolute_ARZ
+		muls.w	#281,d4
+		moveq	#redraw_left_bit,d6
+		bsr.w	UpdateBG_X_Absolute_ARZ
 		move.w	(v_camera_y_diff).w,d5
 		ext.l	d5
 		asl.l	#7,d5
@@ -16739,7 +16749,7 @@ Deform_ARZ:
 
 loc_D4CE:
 		moveq	#6,d6
-		bsr.w	UpdateBG_Y_Absolute
+		bsr.w	UpdateBG_Y2
 		move.w	(v_bg1_y_pos).w,(v_bg_y_pos_vsram).w
 		moveq	#0,d2
 		tst.b	(f_screen_shake).w
@@ -16895,7 +16905,7 @@ Deform_SCZ:
 		move.w	d0,(a1)
 		move.w	d1,(a4)
 		lea	(v_fg_y_redraw_flag).w,a2
-		bsr.w	UpdateVScrollFlags
+		bsr.w	UpdateFG_Y
 		move.w	(v_camera_x_diff).w,d4
 		beq.s	loc_D638
 		move.w	#$100,d4
@@ -17107,7 +17117,11 @@ UCX_SetScreen:
 		move.w	d1,(a4)					; set distance for camera movement
 		rts
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to	update camera and redraw flags as player moves vertically
+
+;	uses d0, d1, d3, d4
+; ---------------------------------------------------------------------------
 
 UpdateCamera_Y:
 		moveq	#0,d1
@@ -17265,7 +17279,7 @@ UCY_SetScreen:
 		rts
 
 ; ---------------------------------------------------------------------------
-; Subroutine to set vertical scroll flags
+; Subroutine to update foreground vertical redraw flag
 
 ; inputs (exact variables will change based on if it's player 1 or 2):
 ;	a1 = v_camera_y_pos
@@ -17276,7 +17290,7 @@ UCY_SetScreen:
 ;	uses d0, d1
 ; ---------------------------------------------------------------------------
 
-UpdateVScrollFlags:
+UpdateFG_Y:
 		move.w	(a1),d0
 		andi.w	#$10,d0
 		move.b	(a2),d1
@@ -17296,213 +17310,250 @@ UpdateVScrollFlags:
 	.return:
 		rts
 
+; ---------------------------------------------------------------------------
+; Subroutine to	update bg position and redraw flags
 
-; ===========================================================================
+; input:
+;	d4 = background x diff
+;	d5 = background y diff
 
-; SetHorizVertiScrollFlagsBG:
+;	uses d0, d1, d2, d3
+; ---------------------------------------------------------------------------
+
 UpdateBG_XY:
+;UpdateBG_X:
 		move.l	(v_bg1_x_pos).w,d2
-		move.l	d2,d0
-		add.l	d4,d0
-		move.l	d0,(v_bg1_x_pos).w
+		move.l	d2,d0					; save old bg position
+		add.l	d4,d0					; apply difference
+		move.l	d0,(v_bg1_x_pos).w			; update bg position
 		move.l	d0,d1
 		swap	d1
 		andi.w	#$10,d1
 		move.b	(v_bg1_x_redraw_flag).w,d3
 		eor.b	d3,d1
-		bne.s	UpdateBG_Y
+		bne.s	UpdateBG_Y				; insufficient change to redraw bg horizontally
 		eori.b	#$10,(v_bg1_x_redraw_flag).w
-		sub.l	d2,d0
-		bpl.s	loc_D8C8
-		bset	#2,(v_bg1_redraw_direction).w
+		sub.l	d2,d0					; new bg pos minus old
+		bpl.s	.redraw_right				; branch if positive (i.e. moving right)
+		bset	#redraw_left_bit,(v_bg1_redraw_direction).w
 		bra.s	UpdateBG_Y
 
-	loc_D8C8:
-		bset	#3,(v_bg1_redraw_direction).w
+	.redraw_right:
+		bset	#redraw_right_bit,(v_bg1_redraw_direction).w
 
 UpdateBG_Y:
 		move.l	(v_bg1_y_pos).w,d3
-		move.l	d3,d0
-		add.l	d5,d0
-		move.l	d0,(v_bg1_y_pos).w
+		move.l	d3,d0					; save old bg position
+		add.l	d5,d0					; apply difference
+		move.l	d0,(v_bg1_y_pos).w			; update bg position
 		move.l	d0,d1
 		swap	d1
 		andi.w	#$10,d1
 		move.b	(v_bg1_y_redraw_flag).w,d2
 		eor.b	d2,d1
-		bne.s	locret_D902
+		bne.s	.return					; insufficient change to redraw bg vertically
 		eori.b	#$10,(v_bg1_y_redraw_flag).w
-		sub.l	d3,d0
-		bpl.s	loc_D8FC
-		bset	#0,(v_bg1_redraw_direction).w
+		sub.l	d3,d0					; new bg pos minus old
+		bpl.s	.redraw_bottom				; branch if positive (i.e. moving down)
+		bset	#redraw_top_bit,(v_bg1_redraw_direction).w
 		rts
 
-	loc_D8FC:
-		bset	#1,(v_bg1_redraw_direction).w
+	.redraw_bottom:
+		bset	#redraw_bottom_bit,(v_bg1_redraw_direction).w
 
-	locret_D902:
+	.return:
 		rts
 
+; ---------------------------------------------------------------------------
+; Subroutine to	update only the horizontal bg position and redraw flags
+; Used by HTZ, WFZ, and HPZ.
 
-; ===========================================================================
+; input:
+;	d4 = background x diff
+;	d6 = bit to set for redraw direction
 
-; SetHorizScrollFlagsBG:
-UpdateBG_X2:
+; uses d0, d1, d2, d3, d6
+; ---------------------------------------------------------------------------
+
+UpdateBG_X_Block1:						; identical to this routine in Sonic 1, though not used in the same way
 		move.l	(v_bg1_x_pos).w,d2
-		move.l	d2,d0
-		add.l	d4,d0
-		move.l	d0,(v_bg1_x_pos).w
+		move.l	d2,d0					; save old bg position
+		add.l	d4,d0					; apply difference
+		move.l	d0,(v_bg1_x_pos).w			; update bg position
 		move.l	d0,d1
 		swap	d1
 		andi.w	#$10,d1
 		move.b	(v_bg1_x_redraw_flag).w,d3
 		eor.b	d3,d1
-		bne.s	locret_D936
+		bne.s	.return					; insufficient change to redraw bg horizontally
 		eori.b	#$10,(v_bg1_x_redraw_flag).w
-		sub.l	d2,d0
-		bpl.s	loc_D930
-		bset	d6,(v_bg1_redraw_direction).w
-		bra.s	locret_D936
+		sub.l	d2,d0					; new bg pos minus old
+		bpl.s	.redraw_right				; branch if positive (i.e. moving right)
+		bset	d6,(v_bg1_redraw_direction).w		; d6 = redraw_left_bit
+		bra.s	.return
 
-	loc_D930:
-		addq.b	#1,d6
+	.redraw_right:
+		addq.b	#redraw_right_bit-redraw_left_bit,d6	; d6 = redraw_right_bit
 		bset	d6,(v_bg1_redraw_direction).w
 
-	locret_D936:
+	.return:
 		rts
 
+; ---------------------------------------------------------------------------
+; Subroutine to	update only the vertical bg position and redraw flags
+; UpdateBG_Y_Absolute assumes a pre-calculated new position
 
-; ===========================================================================
+; input:
+;	d0 = new background y position (UpdateBG_Y_Absolute only)
+;	d5 = background y diff
+;	d6 = bit to set for redraw direction
 
-; SetHorizScrollFlagsBG:
-UpdateBG_Y_Absolute:
+; uses d0, d1, d2, d3, d6
+; ---------------------------------------------------------------------------
+
+UpdateBG_Y2:
 		move.l	(v_bg1_y_pos).w,d3
-		move.l	d3,d0
-		add.l	d5,d0
+		move.l	d3,d0					; save old bg position
+		add.l	d5,d0					; apply difference
 
-UpdateBG_Y_Absolute2:
-		move.l	d0,(v_bg1_y_pos).w
+	UpdateBG_Y_Absolute:
+		move.l	d0,(v_bg1_y_pos).w			; update bg position
 		move.l	d0,d1
 		swap	d1
 		andi.w	#$10,d1
 		move.b	(v_bg1_y_redraw_flag).w,d2
 		eor.b	d2,d1
-		bne.s	locret_D96A
+		bne.s	.return					; insufficient change to redraw bg vertically
 		eori.b	#$10,(v_bg1_y_redraw_flag).w
-		sub.l	d3,d0
-		bpl.s	loc_D964
-		bset	d6,(v_bg1_redraw_direction).w
+		sub.l	d3,d0					; new bg pos minus old
+		bpl.s	.redraw_bottom				; branch if positive (i.e. moving down)
+		bset	d6,(v_bg1_redraw_direction).w		; d6 = redraw_top_bit
 		rts
 
-	loc_D964:
-		addq.b	#1,d6
+	.redraw_bottom:
+		addq.b	#redraw_bottom_bit-redraw_top_bit,d6	; d6 = redraw_bottom_bit
 		bset	d6,(v_bg1_redraw_direction).w
 
-	locret_D96A:
+	.return:
 		rts
 
+; ---------------------------------------------------------------------------
+; Custom vertical bg position and redraw flag update routine for ARZ
 
-; ===========================================================================
+; input:
+;	d4 = background x diff (v_camera_x_diff * 281)
+;	d6 = bit to set for redraw direction
 
-;SetHorizScrollFlagsBG_ARZ:
-UpdateBG_Y_Absolute_ARZ:
-		move.l	(v_camera_arz_bg_x_pos).w,d0
-		add.l	d4,d0
-		move.l	d0,(v_camera_arz_bg_x_pos).w
+; uses d0, d1, d2, d3, d6
+; ---------------------------------------------------------------------------
+
+UpdateBG_X_Absolute_ARZ:
+		move.l	(v_arz_bg_x_pos).w,d0
+		add.l	d4,d0					; apply difference
+		move.l	d0,(v_arz_bg_x_pos).w			; update bg position
 		lea	(v_bg1_x_pos).w,a1
 		move.w	(a1),d2
-		move.w	(v_camera_arz_bg_x_pos).w,d0
-		sub.w	d2,d0
-		bcs.s	loc_D988
-		bhi.s	loc_D994
-		rts
+		move.w	(v_arz_bg_x_pos).w,d0
+		sub.w	d2,d0					; new bg pos minus old
+		bcs.s	.moved_right				; branch if moved right
+		bhi.s	.moved_left				; branch if moved left
+		rts						; exit if no movement
 
-	loc_D988:
-		cmpi.w	#-$10,d0
-		bgt.s	loc_D99E
-		move.w	#-$10,d0
-		bra.s	loc_D99E
+	.moved_right:
+		cmpi.w	#-16,d0
+		bgt.s	.skip_cap				; branch if bg moved less than 16px
+		move.w	#-16,d0					; cap at 16
+		bra.s	.skip_cap
 
 
-	loc_D994:
+	.moved_left:
 		cmpi.w	#$10,d0
-		bcs.s	loc_D99E
-		move.w	#$10,d0
+		bcs.s	.skip_cap				; branch if bg moved less than 16px
+		move.w	#$10,d0					; cap at 16
 
-	loc_D99E:
+	.skip_cap:
 		add.w	(a1),d0
-		move.w	d0,(a1)
+		move.w	d0,(a1)					; update bg position
 		move.w	d0,d1
+		; Below here, identical to UpdateBG_X_Block1
 		andi.w	#$10,d1
 		move.b	(v_bg1_x_redraw_flag).w,d3
 		eor.b	d3,d1
-		bne.s	locret_D9C6
+		bne.s	.return					; insufficient change to redraw bg horizontally
 		eori.b	#$10,(v_bg1_x_redraw_flag).w
-		sub.w	d2,d0
-		bpl.s	loc_D9C0
-		bset	d6,(v_bg1_redraw_direction).w
-		bra.s	locret_D9C6
+		sub.w	d2,d0					; new bg pos minus old
+		bpl.s	.redraw_right				; branch if positive (i.e. moving right)
+		bset	d6,(v_bg1_redraw_direction).w		; d6 = redraw_left_bit
+		bra.s	.return
 
-	loc_D9C0:
-		addq.b	#1,d6
-		bset	d6,(v_bg1_redraw_direction).w
+	.redraw_right:
+		addq.b	#redraw_right_bit-redraw_left_bit,d6
+		bset	d6,(v_bg1_redraw_direction).w		; d6 = redraw_right_bit
 
-	locret_D9C6:
+	.return:
 		rts
 
+; ---------------------------------------------------------------------------
+; Subroutine to update bg position and redraw flags for bg block 2
+; Used only by CPZ.
 
-; ===========================================================================
-; SetHorizScrollFlagsBG2:
+; input:
+;	d4 = background x diff
+;	d6 = bit to set for redraw direction
+; ---------------------------------------------------------------------------
+
 UpdateBG_X_Block2:
 		move.l	(v_bg2_x_pos).w,d2
-		move.l	d2,d0
-		add.l	d4,d0
-		move.l	d0,(v_bg2_x_pos).w
+		move.l	d2,d0					; save old bg position
+		add.l	d4,d0					; apply difference
+		move.l	d0,(v_bg2_x_pos).w			; update bg position
 		move.l	d0,d1
 		swap	d1
 		andi.w	#$10,d1
 		move.b	(v_bg2_x_redraw_flag).w,d3
 		eor.b	d3,d1
-		bne.s	locret_D9FA
+		bne.s	.return					; insufficient change to redraw bg horizontally
 		eori.b	#$10,(v_bg2_x_redraw_flag).w
-		sub.l	d2,d0
-		bpl.s	loc_D9F4
-		bset	d6,(v_bg2_redraw_direction).w
-		bra.s	locret_D9FA
+		sub.l	d2,d0					; new bg pos minus old
+		bpl.s	.redraw_right				; branch if positive (i.e. moving right)
+		bset	d6,(v_bg2_redraw_direction).w		; d6 = redraw_left_bit
+		bra.s	.return
 
-	loc_D9F4:
-		addq.b	#1,d6
+	.redraw_right:
+		addq.b	#redraw_right_bit-redraw_left_bit,d6	; d6 = redraw_right_bit
 		bset	d6,(v_bg2_redraw_direction).w
 
-	locret_D9FA:
+	.return:
 		rts
 
+; ---------------------------------------------------------------------------
+; Unused Sonic 1 leftover - this updated BG block 3 in GHZ, MZ, amd SBZ
+; ---------------------------------------------------------------------------
 
-; ===========================================================================
-; Unused Sonic 1 leftover - code to update BG block 3
-;UpdateBG_X_Block3:
+UpdateBG_X_Block3:
 		move.l	(v_bg3_x_pos).w,d2
-		move.l	d2,d0
-		add.l	d4,d0
-		move.l	d0,(v_bg3_x_pos).w
+		move.l	d2,d0					; save old bg position
+		add.l	d4,d0					; apply difference
+		move.l	d0,(v_bg3_x_pos).w			; update bg position
 		move.l	d0,d1
 		swap	d1
 		andi.w	#$10,d1
 		move.b	(v_bg3_x_redraw_flag).w,d3
 		eor.b	d3,d1
-		bne.s	locret_DA2E
+		bne.s	.return					; insufficient change to redraw bg horizontally
 		eori.b	#$10,(v_bg3_x_redraw_flag).w
-		sub.l	d2,d0
-		bpl.s	loc_DA28
-		bset	d6,(v_bg3_redraw_direction).w
-		bra.s	locret_DA2E
+		sub.l	d2,d0					; new bg pos minus old
+		bpl.s	.redraw_right				; branch if positive (i.e. moving right)
+		bset	d6,(v_bg3_redraw_direction).w		; d6 = redraw_left_bit
+		bra.s	.return
 
-	loc_DA28:
-		addq.b	#1,d6
+	.redraw_right:
+		addq.b	#redraw_right_bit-redraw_left_bit,d6	; d6 = redraw_right_bit
 		bset	d6,(v_bg3_redraw_direction).w
 
-	locret_DA2E:
+	.return:
 		rts
+
 ; ===========================================================================
 ; Unused Sonic 1 leftover: first ten lines of that game's version of
 ; DrawTilesWhenMoving.
@@ -18942,7 +18993,6 @@ LevelLayoutLoad:
 		lea	(v_level_layout).w,a1			; RAM address for level layout
 		jmpto	KosDec,JmpTo_KosDec			; decompress the layout
 
-
 ; ---------------------------------------------------------------------------
 ; Unused level layout routine
 
@@ -18965,7 +19015,7 @@ LevelLayoutLoad:
 		bsr.w	LevelLayoutLoad2			; load foreground layout into RAM
 		lea	(v_level_layout+level_max_width).w,a3	; RAM address for background layout
 		moveq	#2,d1
-		; fall through to load backgroudn layout
+		; fall through to load background layout
 
 LevelLayoutLoad2:
 		moveq	#0,d0
@@ -19007,7 +19057,7 @@ LevelLayoutLoad2:
 		rts
 
 ; ---------------------------------------------------------------------------
-; Unused subroutine to convert level chunks from Sonic 1/CD 256x256 to
+; Unused subroutine to convert level chunks from Sonic 1/CD 256x256 format to
 ; Sonic 2/3K 128x128 format
 ; ---------------------------------------------------------------------------
 
@@ -19138,52 +19188,56 @@ JmpTo_KosDec:
 		align 4
 	endc
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Dynamic level events
 
+;	uses d0.l, d1.l
+; ---------------------------------------------------------------------------
 
 DynamicLevelEvents:
 		moveq	#0,d0
 		move.b	(v_zone).w,d0
 		add.w	d0,d0
 		move.w	DLE_Index(pc,d0.w),d0
-		jsr	DLE_Index(pc,d0.w)
+		jsr	DLE_Index(pc,d0.w)			; run level-specific events
 		moveq	#2,d1
-		move.w	(v_boundary_bottom_next).w,d0
+		move.w	(v_boundary_bottom_next).w,d0		; new boundary y pos is written here
 		sub.w	(v_boundary_bottom).w,d0
-		beq.s	locret_E60E
-		bcc.s	loc_E610
+		beq.s	.keep_boundary				; branch if boundary is where it should be
+		bcc.s	.move_boundary_down			; branch if new boundary is below current one
+
 		neg.w	d1
 		move.w	(v_camera_y_pos).w,d0
 		cmp.w	(v_boundary_bottom_next).w,d0
-		bls.s	loc_E604
-		move.w	d0,(v_boundary_bottom).w
-		andi.w	#-2,(v_boundary_bottom).w
+		bls.s	.camera_below				; branch if camera y pos is above boundary
+		move.w	d0,(v_boundary_bottom).w		; match boundary to camera
+		andi.w	#-2,(v_boundary_bottom).w		; round down to nearest 2px
 
-loc_E604:
-		add.w	d1,(v_boundary_bottom).w
+	.camera_below:
+		add.w	d1,(v_boundary_bottom).w		; move boundary up 2px
 		move.b	#1,(f_boundary_bottom_change).w
 
-locret_E60E:
+	.keep_boundary:
 		rts
 ; ===========================================================================
 
-loc_E610:
+.move_boundary_down:
 		move.w	(v_camera_y_pos).w,d0
 		addi_.w	#8,d0
 		cmp.w	(v_boundary_bottom).w,d0
-		bcs.s	loc_E62A
-		btst	#1,($FFFFB022).w
-		beq.s	loc_E62A
+		bcs.s	.down_2px				; branch if boundary is at least 8px below camera
+		btst	#status_air_bit,(v_ost_player1+ost_primary_status).w
+		beq.s	.down_2px				; branch if player 1 isn't in the air
 		add.w	d1,d1
-		add.w	d1,d1
+		add.w	d1,d1					; boundary moves 8px instead of 2px
 
-loc_E62A:
-		add.w	d1,(v_boundary_bottom).w
+	.down_2px:
+		add.w	d1,(v_boundary_bottom).w		; move boundary down 2px (or 8px)
 		move.b	#1,(f_boundary_bottom_change).w
 		rts
 
 ; ===========================================================================
-DLE_Index:	index offset(*),,2
+DLE_Index:	index offset(*)
 		ptr DLE_EHZ					; 0
 		ptr DLE_Zone1					; 1, rts
 		ptr DLE_WZ					; 2, rts
@@ -19206,97 +19260,99 @@ DLE_Index:	index offset(*),,2
 
 DLE_EHZ:
 		tst.b	(v_act).w
-		bne.s	loc_E660
+		bne.s	DLE_EHZ2				; branch if it's act 2 (no DLE in act 1)
 		rts
 ; ===========================================================================
 
-loc_E660:
+DLE_EHZ2:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_E66E(pc,d0.w),d0
-		jmp	off_E66E(pc,d0.w)
+		move.w	DLE_EHZ2x(pc,d0.w),d0
+		jmp	DLE_EHZ2x(pc,d0.w)
 ; ===========================================================================
-off_E66E:	index offset(*),,2
-		ptr loc_E676					; 0
-		ptr loc_E6B0					; 2
-		ptr loc_E6EE					; 4
-		ptr loc_E738					; 6
+DLE_EHZ2x:	index offset(*),,2
+		ptr DLE_EHZ2_Main				; 0
+		ptr DLE_EHZ2_BossDelay				; 2
+		ptr DLE_EHZ2_BossLoad				; 4
+		ptr DLE_EHZ2_BossDefeat				; 6
 ; ===========================================================================
 
-loc_E676:
+DLE_EHZ2_Main:
 		tst.w	(f_two_player).w
-		bne.s	loc_E6A2
+		bne.s	.2p_mode				; branch if in 2p mode
 		cmpi.w	#$2780,(v_camera_x_pos).w
-		bcs.s	locret_E6A0
-		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		bcs.s	.exit					; branch if camera is left of $2780 (start of boss arena)
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w	; set left boundary to current position
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$390,(v_boundary_bottom_next).w
 		move.w	#$390,(v_boundary_bottom_p2).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; goto DLE_EHZ2_BossDelay next
 
-locret_E6A0:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_E6A2:
+.2p_mode:
 		move.w	#$2920,(v_boundary_right).w
 		move.w	#$2920,(v_boundary_right_p2).w
 		rts
 ; ===========================================================================
 
-loc_E6B0:
+DLE_EHZ2_BossDelay:
 		cmpi.w	#$28F0,(v_camera_x_pos).w
-		bcs.s	locret_E6EC
-		move.w	#$28F0,(v_boundary_left).w
+		bcs.s	.exit					; branch if camera is left of $28F0
+
+		move.w	#$28F0,(v_boundary_left).w		; lock screen x to boss arena
 		move.w	#$2940,(v_boundary_right).w
 		move.w	#$28F0,(v_boundary_left_p2).w
 		move.w	#$2940,(v_boundary_right_p2).w
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$F9,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+		addq.b	#2,(v_dle_routine).w			; goto DLE_EHZ2_BossLoad next
+		move.w	#cmd_Fade,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; fade out level music
 		clr.b	(v_boss_spawn_delay).w
-		move.b	#2,(v_current_boss).w
-		moveq	#$29,d0
-		jsrto	AddPLC,JmpTo2_AddPLC
+		move.b	#id_BossCol_EHZ,(v_bosscol_routine).w	; set boss colision routine
+		moveq	#id_PLC_EHZBoss,d0
+		jsrto	AddPLC,JmpTo2_AddPLC			; load boss PLCs
 
-locret_E6EC:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_E6EE:
+DLE_EHZ2_BossLoad:
 		cmpi.w	#$388,(v_camera_y_pos).w
-		bcs.s	loc_E702
+		bcs.s	.skip_boundary				; branch if camera is above $388
 		move.w	#$388,(v_boundary_top).w
 		move.w	#$388,(v_boundary_top_p2).w
 
-loc_E702:
-		addq.b	#1,(v_boss_spawn_delay).w
-		cmpi.b	#$5A,(v_boss_spawn_delay).w
-		bcs.s	locret_E736
-		jsrto	FindFreeObj,JmpTo_FindFreeObj
-		bne.s	loc_E72A
-		move.b	#id_BossEmeraldHill,ost_id(a1)
-		move.b	#-$7F,ost_subtype(a1)
+	.skip_boundary:
+		addq.b	#1,(v_boss_spawn_delay).w		; increment delay timer
+		cmpi.b	#90,(v_boss_spawn_delay).w		; have we waited 90 frames?
+		bcs.s	.exit					; branch if not
+
+		jsrto	FindFreeObj,JmpTo_FindFreeObj		; find free OST slot
+		bne.s	.fail					; branch if not found
+		move.b	#id_BossEmeraldHill,ost_id(a1)		; load EHZ boss object
+		move.b	#$81,ost_subtype(a1)
 		move.w	#$29D0,ost_x_pos(a1)
 		move.w	#$426,ost_y_pos(a1)
 
-loc_E72A:
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$93,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+	.fail:
+		addq.b	#2,(v_dle_routine).w			; go to DLE_EHZ2_BossDefeat next
+		move.w	#mus_Boss,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; play boss music
 
-locret_E736:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_E738:
-		tst.b	(v_boss_status).w
-		beq.s	locret_E750
-		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+DLE_EHZ2_BossDefeat:
+		tst.b	(v_boss_status).w			; has the boss been defeated?
+		beq.s	.exit					; branch if not
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w	; set left boundary to current position
 		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 
-locret_E750:
+	.exit:
 		rts
 ; ===========================================================================
 
@@ -19319,85 +19375,86 @@ DLE_MTZ12:
 DLE_MTZ3:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_E768(pc,d0.w),d0
-		jmp	off_E768(pc,d0.w)
+		move.w	DLE_MTZ3x(pc,d0.w),d0
+		jmp	DLE_MTZ3x(pc,d0.w)
 ; ===========================================================================
-off_E768:		index offset(*),,2
-		ptr loc_E772					; 0
-		ptr loc_E792					; 2
-		ptr loc_E7B8					; 4
-		ptr loc_E7F6					; 6
-		ptr loc_E82E					; 8
+DLE_MTZ3x:		index offset(*),,2
+		ptr DLE_MTZ3_Main				; 0
+		ptr DLE_MTZ3_Main2				; 2
+		ptr DLE_MTZ3_BossDelay				; 4
+		ptr DLE_MTZ3_BossLoad				; 6
+		ptr DLE_MTZ3_LockScreen				; 8
 ; ===========================================================================
 
-loc_E772:
+DLE_MTZ3_Main:
 		cmpi.w	#$2530,(v_camera_x_pos).w
-		bcs.s	locret_E790
+		bcs.s	.exit					; branch if camera is left of $2530
 		move.w	#$500,(v_boundary_bottom).w
 		move.w	#$450,(v_boundary_bottom_next).w
 		move.w	#$450,(v_boundary_bottom_p2).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_MTZ3_Main2 next
 
-locret_E790:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_E792:
+DLE_MTZ3_Main2:
 		cmpi.w	#$2980,(v_camera_x_pos).w
-		bcs.s	locret_E7B6
-		move.w	(v_camera_x_pos).w,(v_boundary_left).w
+		bcs.s	.exit					; branch if camera is left of $2980
+		move.w	(v_camera_x_pos).w,(v_boundary_left).w	; set left boundary to current position
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$400,(v_boundary_bottom_next).w
 		move.w	#$400,(v_boundary_bottom_p2).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_MTZ3_BossDelay next
 
-locret_E7B6:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_E7B8:
+DLE_MTZ3_BossDelay:
 		cmpi.w	#$2A80,(v_camera_x_pos).w
-		bcs.s	locret_E7F4
-		move.w	#$2AB0,(v_boundary_left).w
+		bcs.s	.exit					; branch if camera is left of $2A80
+		move.w	#$2AB0,(v_boundary_left).w		; lock camera horizontally
 		move.w	#$2AB0,(v_boundary_right).w
 		move.w	#$2AB0,(v_boundary_left_p2).w
 		move.w	#$2AB0,(v_boundary_right_p2).w
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$F9,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
-		clr.b	(v_boss_spawn_delay).w
-		move.b	#7,(v_current_boss).w
-		moveq	#$2E,d0
-		jsrto	AddPLC,JmpTo2_AddPLC
+		addq.b	#2,(v_dle_routine).w			; go to DLE_MTZ3_BossLoad next
+		move.w	#cmd_Fade,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; fade out level music
 
-locret_E7F4:
+		clr.b	(v_boss_spawn_delay).w
+		move.b	#id_BossCol_MTZ,(v_bosscol_routine).w	; set boss colision routine
+		moveq	#id_PLC_MTZBoss,d0
+		jsrto	AddPLC,JmpTo2_AddPLC			; load boss PLCs
+
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_E7F6:
+DLE_MTZ3_BossLoad:
 		cmpi.w	#$400,(v_camera_y_pos).w
-		bcs.s	loc_E80A
-		move.w	#$400,(v_boundary_top).w
+		bcs.s	.skip_boundary				; branch if camera is above $400
+		move.w	#$400,(v_boundary_top).w		; lock camera vertically
 		move.w	#$400,(v_boundary_top_p2).w
 
-loc_E80A:
-		addq.b	#1,(v_boss_spawn_delay).w
-		cmpi.b	#$5A,(v_boss_spawn_delay).w
-		bcs.s	locret_E82C
-		jsrto	FindFreeObj,JmpTo_FindFreeObj
-		bne.s	loc_E820
-		move.b	#id_BossMetropolis,ost_id(a1)
+	.skip_boundary:
+		addq.b	#1,(v_boss_spawn_delay).w		; increment delay timer
+		cmpi.b	#90,(v_boss_spawn_delay).w
+		bcs.s	.exit					; branch if we haven't waited 90 frames
+		jsrto	FindFreeObj,JmpTo_FindFreeObj		; find free OST slot
+		bne.s	.fail					; branch if not found
+		move.b	#id_BossMetropolis,ost_id(a1)		; load MTZ boss object
 
-loc_E820:
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$93,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+	.fail:
+		addq.b	#2,(v_dle_routine).w			; go to DLE_MTZ3_LockScreen next
+		move.w	#mus_Boss,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; play boss music
 
-locret_E82C:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_E82E:
+DLE_MTZ3_LockScreen:
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
@@ -19407,156 +19464,158 @@ loc_E82E:
 DLE_WFZ:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_E862(pc,d0.w),d0
-		jsr	off_E862(pc,d0.w)
-		move.w	($FFFFF660).w,d0
-		move.w	off_E85C(pc,d0.w),d0
-		jmp	off_E85C(pc,d0.w)
+		move.w	DLE_WFZx(pc,d0.w),d0
+		jsr	DLE_WFZx(pc,d0.w)
+		move.w	(v_wfz_dle_subrout).w,d0
+		move.w	DLE_WFZx2(pc,d0.w),d0
+		jmp	DLE_WFZx2(pc,d0.w)
 ; ===========================================================================
-off_E85C:	index offset(*),,2
-		ptr loc_E94A					; 0
-		ptr loc_E96C					; 2
-		ptr locret_E984					; 4
+DLE_WFZx2:	index offset(*),,2
+		ptr DLE_WFZ_2_0					; 0
+		ptr DLE_WFZ_2_2					; 2
+		ptr DLE_WFZ_2_Null				; 4
 
-off_E862:	index offset(*),,2
-		ptr loc_E86A					; 0
-		ptr loc_E88E					; 2
-		ptr loc_E8C0					; 4
-		ptr loc_E904					; 6
+DLE_WFZx:	index offset(*),,2
+		ptr DLE_WFZ_Init				; 0
+		ptr DLE_WFZ_2					; 2
+		ptr DLE_WFZ_4					; 4
+		ptr DLE_WFZ_6					; 6
 ; ===========================================================================
 
-loc_E86A:
-		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w
+DLE_WFZ_Init:
+		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w	; set initial BG pos
 		move.l	(v_camera_y_pos).w,(v_bg1_y_pos).w
 		moveq	#0,d0
-		move.w	d0,(v_bg_x_pos_diff).w
+		move.w	d0,(v_bg_x_pos_diff).w			; clear all bg pos diffs and offsets
 		move.w	d0,(v_bg_y_pos_diff).w
 		move.w	d0,(v_camera_x_pos_offset).w
 		move.w	d0,(v_camera_y_pos_offset).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_WFZ_2 next
 		rts
 ; ===========================================================================
 
-loc_E88E:
+DLE_WFZ_2:
 		cmpi.w	#$2BC0,(v_camera_x_pos).w
-		bcs.s	loc_E8A8
+		bcs.s	.update_diffs				; branch if camera is left of $2Bc0
 		cmpi.w	#$580,(v_camera_y_pos).w
-		bcs.s	loc_E8A8
-		addq.b	#2,(v_dle_routine).w
-		move.w	#0,($FFFFF662).w
+		bcs.s	.update_diffs				; branch if camera is above $580
+		addq.b	#2,(v_dle_routine).w			; go to DLE_WFZ_4 next
+		move.w	#0,(v_wfz_bg_y_speed).w			; initialize BG y speed
 
-loc_E8A8:
-		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
+	.update_diffs:
+		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w	; update bg pos diffs
 		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
-		bra.w	sub_EB78
+		bra.w	CalcBGDiffs
 ; ===========================================================================
 
-loc_E8C0:
+DLE_WFZ_4:
 		cmpi.w	#$800,(v_camera_x_pos_offset).w
-		beq.s	loc_E8CC
-		addq.w	#2,(v_camera_x_pos_offset).w
+		beq.s	.not800					; branch if x offset is $800
+		addq.w	#2,(v_camera_x_pos_offset).w		; add 2 to offset
 
-loc_E8CC:
+	.not800:
 		cmpi.w	#$600,(v_camera_x_pos_offset).w
-		blt.s	loc_E8EC
-		move.w	($FFFFF662).w,d0
+		blt.s	.lessthan600				; branch if x offset is less than $600
+		move.w	(v_wfz_bg_y_speed).w,d0
 		moveq	#4,d1
 		cmpi.w	#$840,d0
-		bcc.s	loc_E8E6
-		add.w	d1,d0
-		move.w	d0,($FFFFF662).w
+		bcc.s	.greater_equ840				; branch if bg y speed is $840 or higher
+		add.w	d1,d0					; add 4 to y speed
+		move.w	d0,(v_wfz_bg_y_speed).w
 
-loc_E8E6:
-		lsr.w	#8,d0
-		add.w	d0,(v_camera_y_pos_offset).w
+	.greater_equ840:
+		lsr.w	#8,d0					; divide by 256
+		add.w	d0,(v_camera_y_pos_offset).w		; add to y offset
 
-loc_E8EC:
-		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
+	.lessthan600:
+		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w	; update bg pos diffs
 		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
-		bra.w	sub_EB78
+		bra.w	CalcBGDiffs
 ; ===========================================================================
 
-loc_E904:
+DLE_WFZ_6:
 		cmpi.w	#-$2C0,(v_camera_x_pos_offset).w
-		beq.s	loc_E932
-		subi_.w	#2,(v_camera_x_pos_offset).w
+		beq.s	.updatediffs				; branch if x offset has reached -$2C0
+		subi_.w	#2,(v_camera_x_pos_offset).w		; subtract 2 from offset
 		cmpi.w	#$1B81,(v_camera_y_pos_offset).w
-		beq.s	loc_E932
-		move.w	($FFFFF662).w,d0
-		beq.s	loc_E92C
+		beq.s	.updatediffs				; branch if y offset has reached $1B81
+		move.w	(v_wfz_bg_y_speed).w,d0
+		beq.s	.no_y_speed				; branch if bg y speed has reached 0
 		moveq	#4,d1
 		neg.w	d1
-		add.w	d1,d0
-		move.w	d0,($FFFFF662).w
-		lsr.w	#8,d0
+		add.w	d1,d0					; subtract 4 from bg y speed
+		move.w	d0,(v_wfz_bg_y_speed).w
+		lsr.w	#8,d0					; divide by 256
 
-loc_E92C:
+	.no_y_speed:
 		addq.w	#1,d0
-		add.w	d0,(v_camera_y_pos_offset).w
+		add.w	d0,(v_camera_y_pos_offset).w		; add to y offset
 
-loc_E932:
-		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
+	.updatediffs:
+		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w	; update bg pos diffs
 		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
-		bra.w	sub_EB78
+		bra.w	CalcBGDiffs
 ; ===========================================================================
 
-loc_E94A:
+DLE_WFZ_2_0:
 		cmpi.w	#$2880,(v_camera_x_pos).w
-		bcs.s	locret_E96A
+		bcs.s	.exit					; branch if camera is left of $2880
 		cmpi.w	#$400,(v_camera_y_pos).w
-		bcs.s	locret_E96A
-		addq.w	#2,($FFFFF660).w
-		moveq	#$3E,d0
-		jsrto	AddPLC,JmpTo2_AddPLC
+		bcs.s	.exit					; branch if camera is above $400
+		addq.w	#2,(v_wfz_dle_subrout).w		; go to DLE_WFZ_2_2 next
+		moveq	#id_PLC_WFZBoss,d0
+		jsrto	AddPLC,JmpTo2_AddPLC			; load boss PLCs
 		move.w	#$2880,(v_boundary_left).w
 
-locret_E96A:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_E96C:
+DLE_WFZ_2_2:
 		cmpi.w	#$500,(v_camera_y_pos).w
-		bcs.s	locret_E982
-		addq.w	#2,($FFFFF660).w
-		st.b	(f_lock_controls).w
-		moveq	#$3F,d0
-		jsrto	AddPLC,JmpTo2_AddPLC
+		bcs.s	.exit					; branch if camera is above $500
+		addq.w	#2,(v_wfz_dle_subrout).w		; go tp DLE_WFZ_2_Null next
+		st.b	(f_lock_controls).w			; lock controls
+		moveq	#id_PLC_Tornado,d0
+		jsrto	AddPLC,JmpTo2_AddPLC			; load Tornado PLCs
 
-locret_E982:
+	.exit:
 		rts
 ; ===========================================================================
 
-locret_E984:
+DLE_WFZ_2_Null:
 		rts
 ; ===========================================================================
 
 DLE_HTZ:
 		tst.b	(v_act).w
-		bne.w	loc_EBEA
+		bne.w	DLE_HTZ2				; branch if it's act 2
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_E99C(pc,d0.w),d0
-		jmp	off_E99C(pc,d0.w)
+		move.w	DLE_HTZ1x(pc,d0.w),d0
+		jmp	DLE_HTZ1x(pc,d0.w)
 ; ===========================================================================
-off_E99C:	index offset(*),,2
-		ptr loc_E9A2					; 0
-		ptr loc_EA0E					; 2
-		ptr loc_EB14					; 4
+DLE_HTZ1x:	index offset(*),,2
+		ptr DLE_HTZ1_LeftOfEarthquake			; 0
+		ptr DLE_HTZ1_Earthquake				; 2
+		ptr DLE_HTZ1_RightOfEarthquake			; 4
 ; ===========================================================================
 
-loc_E9A2:
+DLE_HTZ1_LeftOfEarthquake:
 		cmpi.w	#$400,(v_camera_y_pos).w
-		bcs.s	loc_E9EA
+		bcs.s	.no_earthquake				; branch if camera is above $400
 		cmpi.w	#$1800,(v_camera_x_pos).w
-		bcs.s	loc_E9EA
-		move.b	#1,(f_screen_shake_htz).w
-		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w
+		bcs.s	.no_earthquake				; branch if camera is left of $1800
+
+	;.prepare_earthquake:
+		move.b	#1,(f_htz_earthquake).w			; enable screen shaking
+		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w	; initalize BG positions and offsets
 		move.l	(v_camera_y_pos).w,(v_bg1_y_pos).w
 		moveq	#0,d0
 		move.w	d0,(v_bg_x_pos_diff).w
@@ -19565,116 +19624,121 @@ loc_E9A2:
 		move.w	#$140,(v_camera_y_pos_offset).w
 		subi.w	#$100,(v_bg1_y_pos).w
 		move.w	#0,(v_htz_terrain_delay).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_HTZ1_Earthquake next
 
-locret_E9E8:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_E9EA:
-		tst.b	(f_screen_shake_htz).w
-		beq.s	locret_E9E8
-		move.w	#$200,d0
-		moveq	#0,d1
+.no_earthquake:
+		tst.b	(f_htz_earthquake).w			; did we just exit earthquake zone heading left?
+		beq.s	.exit					; branch if not
+
+		move.w	#$200,d0				; target x pos
+		moveq	#0,d1					; target y pos
 		move.w	d1,(v_bg_x_pos_diff).w
 		move.w	d1,(v_bg_y_pos_diff).w
-		bsr.w	sub_EB78
-		or.w	d0,d1
-		bne.s	locret_E9E8
-		move.b	#0,(f_screen_shake_htz).w
+		bsr.w	CalcBGDiffs
+		or.w	d0,d1					; have the bg differences reached 0?
+		bne.s	.exit					; if not, keep running screen shaking until they do
+		move.b	#0,(f_htz_earthquake).w			; disable screen shaking
 		rts
 ; ===========================================================================
 
-loc_EA0E:
+DLE_HTZ1_Earthquake:
 		cmpi.w	#$1978,(v_camera_x_pos).w
-		bcs.w	loc_EAA0
+		bcs.w	.finish					; branch if camera is left of $1978
 		cmpi.w	#$1E00,(v_camera_x_pos).w
-		bcs.s	loc_EA28
-		move.b	#0,(f_screen_shake).w
-		bra.s	loc_EAA0
+		bcs.s	.keep_shaking				; branch if camera is left of $1E00
+		move.b	#0,(f_screen_shake).w			; disable screen shaking
+		bra.s	.finish
 ; ===========================================================================
 
-loc_EA28:
+	.keep_shaking:
 		tst.b	(v_htz_terrain_direction).w
-		bne.s	loc_EA58
+		bne.s	.sinking				; branch if terrain is sinking
 		cmpi.w	#$140,(v_camera_y_pos_offset).w
-		beq.s	loc_EA82
+		beq.s	.flip					; branch if camera y offset has reached $140
 		move.w	(v_frame_counter).w,d0
 		move.w	d0,d1
 		andi.w	#3,d0
-		bne.s	loc_EAA0
+		bne.s	.finish					; increment camera y offset every 8 frames
 		addq.w	#1,(v_camera_y_pos_offset).w
 		andi.w	#$3F,d1
-		bne.s	loc_EAA0
-		move.w	#$E1,d0
+		bne.s	.finish
+		move.w	#sfx_Rumbling2,d0			; play rumbling SFX every 64 frames
 		jsr	(PlaySound).l
-		bra.s	loc_EAA0
+		bra.s	.finish
 ; ===========================================================================
 
-loc_EA58:
+	.sinking:
 		cmpi.w	#$E0,(v_camera_y_pos_offset).w
-		beq.s	loc_EA82
+		beq.s	.flip					; branch if camera y offset has reached $E0
 		move.w	(v_frame_counter).w,d0
 		move.w	d0,d1
 		andi.w	#3,d0
-		bne.s	loc_EAA0
+		bne.s	.finish					; decrement camera y offset every 8 frames
 		subq.w	#1,(v_camera_y_pos_offset).w
 		andi.w	#$3F,d1
-		bne.s	loc_EAA0
-		move.w	#$E1,d0
+		bne.s	.finish
+		move.w	#sfx_Rumbling2,d0			; play rumbling SFX every 64 frames
 		jsr	(PlaySound).l
-		bra.s	loc_EAA0
+		bra.s	.finish
 ; ===========================================================================
 
-loc_EA82:
+	.flip:
 		move.b	#0,(f_screen_shake).w
-		subq.w	#1,(v_htz_terrain_delay).w
-		bpl.s	loc_EAA0
-		move.w	#$78,(v_htz_terrain_delay).w
-		eori.b	#1,(v_htz_terrain_direction).w
-		move.b	#1,(f_screen_shake).w
+		subq.w	#1,(v_htz_terrain_delay).w		; decrement delay counter
+		bpl.s	.finish					; branch if time remains
 
-loc_EAA0:
+		move.w	#120,(v_htz_terrain_delay).w		; wait 120 frames
+		eori.b	#1,(v_htz_terrain_direction).w		; change terrain direction
+		move.b	#1,(f_screen_shake).w			; enable screen shaking
+
+.finish:
 		cmpi.w	#$1800,(v_camera_x_pos).w
-		bcs.s	loc_EAC8
+		bcs.s	.exit_left				; branch if camera is left of $1800
 		cmpi.w	#$1F00,(v_camera_x_pos).w
-		bcc.s	loc_EAEE
-		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
+		bcc.s	.exit_right				; branch if camera is right of $1F00
+
+		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w	; update bg pos diffs
 		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
-		bra.w	sub_EB78
+		bra.w	CalcBGDiffs
 ; ===========================================================================
 
-loc_EAC8:
+	.exit_left:
 		move.l	#$4000000,(v_bg1_x_pos).w
 		moveq	#0,d0
 		move.l	d0,(v_bg1_y_pos).w
 		move.l	d0,(v_camera_x_pos_offset).w
 		move.b	d0,(v_htz_terrain_direction).w
-		subq.b	#2,(v_dle_routine).w
-		move.w	#$F8,d0
+		subq.b	#2,(v_dle_routine).w			; go to DLE_HTZ1_LeftOfEarthquake next
+		move.w	#cmd_StopSFX,d0				; stop rumbling SFX
 		jsr	(PlaySound).l
 		rts
 ; ===========================================================================
 
-loc_EAEE:
+	.exit_right:
 		move.l	#$4000000,(v_bg1_x_pos).w
 		moveq	#0,d0
 		move.l	d0,(v_bg1_y_pos).w
 		move.l	d0,(v_camera_x_pos_offset).w
 		move.b	d0,(v_htz_terrain_direction).w
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$F8,d0
+		addq.b	#2,(v_dle_routine).w			; go to DLE_HTZ1_RighttOfEarthquake next
+		move.w	#cmd_StopSFX,d0				; stop rumbling SFX
 		jsr	(PlaySound).l
 		rts
 ; ===========================================================================
 
-loc_EB14:
+DLE_HTZ1_RightOfEarthquake:
 		cmpi.w	#$1F00,(v_camera_x_pos).w
-		bcc.s	loc_EB54
-		move.b	#1,(f_screen_shake_htz).w
-		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w
+		bcc.s	.no_earthquake				; branch if camera is left of $1F00
+
+	;.prepare_earthquake:
+		move.b	#1,(f_htz_earthquake).w			; enable screen shaking
+		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w	; initalize BG positions and offsets
 		move.l	(v_camera_y_pos).w,(v_bg1_y_pos).w
 		moveq	#0,d0
 		move.w	d0,(v_bg_x_pos_diff).w
@@ -19683,109 +19747,124 @@ loc_EB14:
 		move.w	#$140,(v_camera_y_pos_offset).w
 		subi.w	#$100,(v_bg1_y_pos).w
 		move.w	#0,(v_htz_terrain_delay).w
-		subq.b	#2,(v_dle_routine).w
+		subq.b	#2,(v_dle_routine).w			; go to DLE_HTZ1_Earthquake next
 
-locret_EB52:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_EB54:
-		tst.b	(f_screen_shake_htz).w
-		beq.s	locret_EB52
-		move.w	#$200,d0
-		moveq	#0,d1
+.no_earthquake:
+		tst.b	(f_htz_earthquake).w			; did we just exit earthquake zone heading right?
+		beq.s	.exit					; branch if not
+
+		move.w	#$200,d0				; target x pos
+		moveq	#0,d1					; target y pos
 		move.w	d1,(v_bg_x_pos_diff).w
 		move.w	d1,(v_bg_y_pos_diff).w
-		bsr.w	sub_EB78
-		or.w	d0,d1
-		bne.s	locret_EB52
-		move.b	#0,(f_screen_shake_htz).w
+		bsr.w	CalcBGDiffs
+		or.w	d0,d1					; have the bg differences reached 0?
+		bne.s	.exit					; if not, keep running screen shaking until they do
+		move.b	#0,(f_htz_earthquake).w			; disable screen shaking
 		rts
 
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Subroutine to calculate background scroll differences, capping to 16 pixels
+; per frame in either direction. Used by HTZ earthquakes and WFZ/DEZ
+; transistion to determine how much of the background needs to be reloaded.
 
+; input:
+;	d0.w = target x pos of background
+;	d1.w = target y pos of background
+; ---------------------------------------------------------------------------
 
-sub_EB78:
-		sub.w	(v_bg1_x_pos).w,d0
+CalcBGDiffs:
+		sub.w	(v_bg1_x_pos).w,d0			; subtract bg x pos and camera offset from target pos
 		sub.w	(v_camera_x_pos_offset).w,d0
-		bpl.s	loc_EB8E
-		cmpi.w	#-$10,d0
-		bgt.s	loc_EB8C
-		move.w	#-$10,d0
+		bpl.s	.going_right				; branch if camera is moving right
+		cmpi.w	#-16,d0
+		bgt.s	.skip_x_cap				; branch if bg moved 16px or less
+		move.w	#-16,d0					; cap at 16px
 
-loc_EB8C:
-		bra.s	loc_EB98
+	.skip_x_cap:
+		bra.s	.move_x
 ; ===========================================================================
 
-loc_EB8E:
-		cmpi.w	#$10,d0
-		bcs.s	loc_EB98
-		move.w	#$10,d0
+	.going_right:
+		cmpi.w	#16,d0
+		bcs.s	.move_x					; branch if bg moved 16px or less
+		move.w	#16,d0					; cap at 16px
 
-loc_EB98:
-		move.b	d0,(v_bg_x_pos_diff).w
-		sub.w	(v_bg1_y_pos).w,d1
+.move_x:
+		move.b	d0,(v_bg_x_pos_diff).w			; set x difference
+
+		sub.w	(v_bg1_y_pos).w,d1			; subtract bg y pos and camera offset from target pos
 		sub.w	(v_camera_y_pos_offset).w,d1
-		bpl.s	loc_EBB2
-		cmpi.w	#-$10,d1
-		bgt.s	loc_EBB0
-		move.w	#-$10,d1
+		bpl.s	.going_down				; branch if camera is moving down
+		cmpi.w	#-16,d1
+		bgt.s	.skip_y_cap				; branch if bg moved 16px or less
+		move.w	#-16,d1					; cap at 16px
 
-loc_EBB0:
-		bra.s	loc_EBBC
+	.skip_y_cap:
+		bra.s	.move_y
 ; ===========================================================================
 
-loc_EBB2:
+.going_down:
 		cmpi.w	#$10,d1
-		bcs.s	loc_EBBC
-		move.w	#$10,d1
+		bcs.s	.move_y					; branch if bg moved 16px or less
+		move.w	#$10,d1					; cap at 16px
 
-loc_EBBC:
-		move.b	d1,(v_bg_y_pos_diff).w
+.move_y:
+		move.b	d1,(v_bg_y_pos_diff).w			; set y difference
 		rts
 
-; ===========================================================================
-		btst	#0,(v_joypad2_hold_actual).w
-		beq.s	loc_EBD4
-		tst.w	(v_camera_y_pos_offset).w
-		beq.s	loc_EBD4
-		subq.w	#1,(v_camera_y_pos_offset).w
+; ---------------------------------------------------------------------------
+; Unused development leftover; allows player 2's controller to manipulate
+; the y pos offset. Was likely used to test the HTZ and WFZ scroll code.
+; ---------------------------------------------------------------------------
 
-loc_EBD4:
-		btst	#1,(v_joypad2_hold_actual).w
-		beq.s	locret_EBE8
-		cmpi.w	#$700,(v_camera_y_pos_offset).w
-		beq.s	locret_EBE8
-		addq.w	#1,(v_camera_y_pos_offset).w
+		btst	#bitUp,(v_joypad2_hold_actual).w	; did player 2 press up?
+		beq.s	.chkdown				; branch if not
+		tst.w	(v_camera_y_pos_offset).w		; is the y offset 0?
+		beq.s	.chkdown				; branch if so
+		subq.w	#1,(v_camera_y_pos_offset).w		; decrement y offset
 
-locret_EBE8:
+	.chkdown:
+		btst	#bitDn,(v_joypad2_hold_actual).w	; did player 2 press down?
+		beq.s	.exit					; branch if not
+		cmpi.w	#$700,(v_camera_y_pos_offset).w		; is y pos offset $700?
+		beq.s	.exit					; branch if so
+		addq.w	#1,(v_camera_y_pos_offset).w		; inecrement y offset
+
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_EBEA:
-		bsr.w	sub_EF66
+DLE_HTZ2:
+		bsr.w	DLE_HTZ2_Prepare
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_EBFC(pc,d0.w),d0
-		jmp	off_EBFC(pc,d0.w)
+		move.w	DLE_HTZ2x(pc,d0.w),d0
+		jmp	DLE_HTZ2x(pc,d0.w)
 ; ===========================================================================
-off_EBFC:	index offset(*),,2
-		ptr loc_EC0E					; 0
-		ptr loc_EC90					; 2
-		ptr loc_ED96					; 4
-		ptr loc_EDFA					; 6
-		ptr loc_EEF8					; 8
-		ptr loc_EF84					; $A
-		ptr loc_EFAA					; $C
-		ptr loc_EFE8					; $E
-		ptr loc_F020					; $10
+DLE_HTZ2x:	index offset(*),,2
+		ptr DLE_HTZ2_LeftOfEarthquake			; 0
+		ptr DLE_HTZ2_Earthquake_Top			; 2
+		ptr DLE_HTZ2_RightOfEarthquake_Top		; 4
+		ptr DLE_HTZ2_Earthquake_Bottom			; 6
+		ptr DLE_HTZ2_RightOfEarthquake_Bottom		; 8
+		ptr DLE_HTZ2_BossCutoff				; $A
+		ptr DLE_HTZ2_BossDelay				; $C
+		ptr DLE_HTZ2_BossLoad				; $E
+		ptr DLE_HTZ2_BossEnd				; $10
 ; ===========================================================================
 
-loc_EC0E:
+DLE_HTZ2_LeftOfEarthquake:
 		cmpi.w	#$14C0,(v_camera_x_pos).w
-		bcs.s	loc_EC6C
-		move.b	#1,(f_screen_shake_htz).w
-		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w
+		bcs.s	.no_earthquake				; branch if camera is left of $14C0
+
+	;.prepare_earthquake:
+		move.b	#1,(f_htz_earthquake).w			; enable screen shaking
+		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w	; initalize BG positions and offsets
 		move.l	(v_camera_y_pos).w,(v_bg1_y_pos).w
 		moveq	#0,d0
 		move.w	d0,(v_bg_x_pos_diff).w
@@ -19794,122 +19873,129 @@ loc_EC0E:
 		move.w	#$2C0,(v_camera_y_pos_offset).w
 		subi.w	#$100,(v_bg1_y_pos).w
 		move.w	#0,(v_htz_terrain_delay).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_HTZ2_Earthquake_Top next
+
 		cmpi.w	#$380,(v_camera_y_pos).w
-		bcs.s	locret_EC6A
-		move.w	#-$680,(v_camera_x_pos_offset).w
+		bcs.s	.exit					; branch if camera is above $380
+
+	;.bottom_earthquake:
+		move.w	#-$680,(v_camera_x_pos_offset).w	; different values for bottom earthquake
 		addi.w	#$480,(v_bg1_x_pos).w
 		move.w	#$300,(v_camera_y_pos_offset).w
-		addq.b	#6,(v_dle_routine).w
+		addq.b	#6,(v_dle_routine).w			; go to DLE_HTZ2_RightOfEarthquake_Bottom next (which will immediately advance to DLE_HTZ2_Earthquake_Bottom)
 
-locret_EC6A:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_EC6C:
-		tst.b	(f_screen_shake_htz).w
-		beq.s	locret_EC6A
-		move.w	#$200,d0
-		moveq	#0,d1
+.no_earthquake:
+		tst.b	(f_htz_earthquake).w			; did we just exit earthquake zone heading left?
+		beq.s	.exit					; branch if not
+
+		move.w	#$200,d0				; target x pos
+		moveq	#0,d1					; target y pos
 		move.w	d1,(v_bg_x_pos_diff).w
 		move.w	d1,(v_bg_y_pos_diff).w
-		bsr.w	sub_EB78
-		or.w	d0,d1
-		bne.s	locret_EC6A
-		move.b	#0,(f_screen_shake_htz).w
+		bsr.w	CalcBGDiffs
+		or.w	d0,d1					; have the bg differences reached 0?
+		bne.s	.exit					; if not, keep running screen shaking until they do
+		move.b	#0,(f_htz_earthquake).w			; disable screen shaking
 		rts
 ; ===========================================================================
 
-loc_EC90:
+DLE_HTZ2_Earthquake_Top:
 		cmpi.w	#$1678,(v_camera_x_pos).w
-		bcs.w	loc_ED22
+		bcs.w	.finish					; branch if camera is left of $1678
 		cmpi.w	#$1A00,(v_camera_x_pos).w
-		bcs.s	loc_ECAA
-		move.b	#0,(f_screen_shake).w
-		bra.s	loc_ED22
+		bcs.s	.keep_shaking				; branch if camera is left of $1A00
+		move.b	#0,(f_screen_shake).w			; disable screen shaking
+		bra.s	.finish
 ; ===========================================================================
 
-loc_ECAA:
+	.keep_shaking:
 		tst.b	(v_htz_terrain_direction).w
-		bne.s	loc_ECDA
+		bne.s	.sinking				; branch if terrain is sinking
 		cmpi.w	#$2C0,(v_camera_y_pos_offset).w
-		beq.s	loc_ED04
+		beq.s	.flip					; branch if camera y offset has reached $2C0
 		move.w	(v_frame_counter).w,d0
 		move.w	d0,d1
 		andi.w	#3,d0
-		bne.s	loc_ED22
+		bne.s	.finish					; increment camera y offset every 8 frames
 		addq.w	#1,(v_camera_y_pos_offset).w
 		andi.w	#$3F,d1
-		bne.s	loc_ED22
-		move.w	#$E1,d0
+		bne.s	.finish
+		move.w	#sfx_Rumbling2,d0			; play rumbling SFX every 64 frames
 		jsr	(PlaySound).l
-		bra.s	loc_ED22
+		bra.s	.finish
 ; ===========================================================================
 
-loc_ECDA:
-		cmpi.w	#0,(v_camera_y_pos_offset).w
-		beq.s	loc_ED04
+	.sinking:
+		cmpi.w	#0,(v_camera_y_pos_offset).w		; (could be tst.w)
+		beq.s	.flip					; branch if camera y offset has reached 0
 		move.w	(v_frame_counter).w,d0
 		move.w	d0,d1
 		andi.w	#3,d0
-		bne.s	loc_ED22
+		bne.s	.finish					; decrement camera y offset every 8 frames
 		subq.w	#1,(v_camera_y_pos_offset).w
 		andi.w	#$3F,d1
-		bne.s	loc_ED22
-		move.w	#$E1,d0
+		bne.s	.finish
+		move.w	#sfx_Rumbling2,d0			; play rumbling SFX every 64 frames
 		jsr	(PlaySound).l
-		bra.s	loc_ED22
+		bra.s	.finish
 ; ===========================================================================
 
-loc_ED04:
+	.flip:
 		move.b	#0,(f_screen_shake).w
-		subq.w	#1,(v_htz_terrain_delay).w
-		bpl.s	loc_ED22
-		move.w	#$78,(v_htz_terrain_delay).w
-		eori.b	#1,(v_htz_terrain_direction).w
-		move.b	#1,(f_screen_shake).w
+		subq.w	#1,(v_htz_terrain_delay).w		; decrement delay counter
+		bpl.s	.finish					; branch if time remains
 
-loc_ED22:
+		move.w	#120,(v_htz_terrain_delay).w		; wait 120 frames
+		eori.b	#1,(v_htz_terrain_direction).w		; change terrain direction
+		move.b	#1,(f_screen_shake).w			; enable screen shaking
+
+.finish:
 		cmpi.w	#$14C0,(v_camera_x_pos).w
-		bcs.s	loc_ED4A
+		bcs.s	.exit_left				; branch if camera is left of $14C0
 		cmpi.w	#$1B00,(v_camera_x_pos).w
-		bcc.s	loc_ED70
+		bcc.s	.exit_right				; branch if camera is right of $1B00
 		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
 		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
-		bra.w	sub_EB78
+		bra.w	CalcBGDiffs
 ; ===========================================================================
 
-loc_ED4A:
+	.exit_left:
 		move.l	#$4000000,(v_bg1_x_pos).w
 		moveq	#0,d0
 		move.l	d0,(v_bg1_y_pos).w
 		move.l	d0,(v_camera_x_pos_offset).w
 		move.b	d0,(v_htz_terrain_direction).w
-		subq.b	#2,(v_dle_routine).w
-		move.w	#$F8,d0
+		subq.b	#2,(v_dle_routine).w			; go to DLE_HTZ2_LeftOfEarthquake next
+		move.w	#cmd_StopSFX,d0				; stop rumbling SFX
 		jsr	(PlaySound).l
 		rts
 ; ===========================================================================
 
-loc_ED70:
+	.exit_right:
 		move.l	#$4000000,(v_bg1_x_pos).w
 		moveq	#0,d0
 		move.l	d0,(v_bg1_y_pos).w
 		move.l	d0,(v_camera_x_pos_offset).w
 		move.b	d0,(v_htz_terrain_direction).w
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$F8,d0
+		addq.b	#2,(v_dle_routine).w			; go to DLE_HTZ2_RightOfEarthquake_Top next
+		move.w	#cmd_StopSFX,d0				; stop rumbling SFX
 		jsr	(PlaySound).l
 		rts
 ; ===========================================================================
 
-loc_ED96:
+DLE_HTZ2_RightOfEarthquake_Top:
 		cmpi.w	#$1B00,(v_camera_x_pos).w
-		bcc.s	loc_EDD6
-		move.b	#1,(f_screen_shake_htz).w
-		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w
+		bcc.s	.no_earthquake				; branch if camera is right of $1B00
+
+	;prepare_earthquake:
+		move.b	#1,(f_htz_earthquake).w			; enable screen shaking
+		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w	; initalize BG positions and offsets
 		move.l	(v_camera_y_pos).w,(v_bg1_y_pos).w
 		moveq	#0,d0
 		move.w	d0,(v_bg_x_pos_diff).w
@@ -19918,111 +20004,114 @@ loc_ED96:
 		move.w	#$2C0,(v_camera_y_pos_offset).w
 		subi.w	#$100,(v_bg1_y_pos).w
 		move.w	#0,(v_htz_terrain_delay).w
-		subq.b	#2,(v_dle_routine).w
+		subq.b	#2,(v_dle_routine).w			; go to DLE_HTZ2_Earthquake_Top next
 
-locret_EDD4:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_EDD6:
-		tst.b	(f_screen_shake_htz).w
-		beq.s	locret_EDD4
-		move.w	#$200,d0
-		moveq	#0,d1
+.no_earthquake:
+		tst.b	(f_htz_earthquake).w			; did we just exit earthquake zone heading right?
+		beq.s	.exit					; branch if not
+
+		move.w	#$200,d0				; target x pos
+		moveq	#0,d1					; target y pos
 		move.w	d1,(v_bg_x_pos_diff).w
 		move.w	d1,(v_bg_y_pos_diff).w
-		bsr.w	sub_EB78
-		or.w	d0,d1
-		bne.s	locret_EDD4
-		move.b	#0,(f_screen_shake_htz).w
+		bsr.w	CalcBGDiffs
+		or.w	d0,d1					; have the bg differences reached 0?
+		bne.s	.exit					; if not, keep running screen shaking until they do
+		move.b	#0,(f_htz_earthquake).w			; disable screen shaking
 		rts
 ; ===========================================================================
 
-loc_EDFA:
+DLE_HTZ2_Earthquake_Bottom:
 		cmpi.w	#$15F0,(v_camera_x_pos).w
-		bcs.w	loc_EE84
+		bcs.w	.finish					; branch if camera is left of $15F0
 		cmpi.w	#$1AC0,(v_camera_x_pos).w
-		bcc.s	loc_EE84
+		bcc.s	.finish					; branch if camera is right of $1AC0
 		tst.b	(v_htz_terrain_direction).w
-		bne.s	loc_EE3C
+		bne.s	.sinking				; branch if terrain is sinking
 		cmpi.w	#$300,(v_camera_y_pos_offset).w
-		beq.s	loc_EE66
+		beq.s	.flip					; branch if camera y offset has reached $300
 		move.w	(v_frame_counter).w,d0
 		move.w	d0,d1
 		andi.w	#3,d0
-		bne.s	loc_EE84
-		addq.w	#1,(v_camera_y_pos_offset).w
+		bne.s	.finish
+		addq.w	#1,(v_camera_y_pos_offset).w		; increment camera y offset every 8 frames
 		andi.w	#$3F,d1
-		bne.s	loc_EE84
-		move.w	#$E1,d0
+		bne.s	.finish
+		move.w	#sfx_Rumbling2,d0			; play rumbling SFX every 64 frames
 		jsr	(PlaySound).l
-		bra.s	loc_EE84
+		bra.s	.finish
 ; ===========================================================================
 
-loc_EE3C:
+	.sinking:
 		cmpi.w	#0,(v_camera_y_pos_offset).w
-		beq.s	loc_EE66
+		beq.s	.flip					; branch if camera y offset has reached 0
 		move.w	(v_frame_counter).w,d0
 		move.w	d0,d1
 		andi.w	#3,d0
-		bne.s	loc_EE84
-		subq.w	#1,(v_camera_y_pos_offset).w
+		bne.s	.finish
+		subq.w	#1,(v_camera_y_pos_offset).w		; decrement camera y offset every 8 frames
 		andi.w	#$3F,d1
-		bne.s	loc_EE84
-		move.w	#$E1,d0
+		bne.s	.finish
+		move.w	#sfx_Rumbling2,d0			; play rumbling SFX every 64 frames
 		jsr	(PlaySound).l
-		bra.s	loc_EE84
+		bra.s	.finish
 ; ===========================================================================
 
-loc_EE66:
+	.flip:
 		move.b	#0,(f_screen_shake).w
-		subq.w	#1,(v_htz_terrain_delay).w
-		bpl.s	loc_EE84
-		move.w	#$78,(v_htz_terrain_delay).w
-		eori.b	#1,(v_htz_terrain_direction).w
-		move.b	#1,(f_screen_shake).w
+		subq.w	#1,(v_htz_terrain_delay).w		; decrement delay counter
+		bpl.s	.finish					; branch if time remains
+		move.w	#120,(v_htz_terrain_delay).w		; wait 120 frames
+		eori.b	#1,(v_htz_terrain_direction).w		; change terrain direction
+		move.b	#1,(f_screen_shake).w			; enable screen shaking
 
-loc_EE84:
+.finish:
 		cmpi.w	#$14C0,(v_camera_x_pos).w
-		bcs.s	loc_EEAC
+		bcs.s	.exit_left				; branch if camera is left of $14C0
 		cmpi.w	#$1B00,(v_camera_x_pos).w
-		bcc.s	loc_EED2
+		bcc.s	.exit_right				; branch if camera is right of $1B00
 		move.w	(v_camera_x_diff).w,(v_bg_x_pos_diff).w
 		move.w	(v_camera_y_diff).w,(v_bg_y_pos_diff).w
 		move.w	(v_camera_x_pos).w,d0
 		move.w	(v_camera_y_pos).w,d1
-		bra.w	sub_EB78
+		bra.w	CalcBGDiffs
 ; ===========================================================================
 
-loc_EEAC:
+	.exit_left:
 		move.l	#$4000000,(v_bg1_x_pos).w
 		moveq	#0,d0
 		move.l	d0,(v_bg1_y_pos).w
 		move.l	d0,(v_camera_x_pos_offset).w
 		move.b	d0,(v_htz_terrain_direction).w
-		subq.b	#6,(v_dle_routine).w
-		move.w	#$F8,d0
+		subq.b	#6,(v_dle_routine).w			; go to DLE_HTZ2_LeftOfEarthquake next
+		move.w	#cmd_StopSFX,d0				; stop rumbling SFX
 		jsr	(PlaySound).l
 		rts
 ; ===========================================================================
 
-loc_EED2:
+	.exit_right:
 		move.l	#$4000000,(v_bg1_x_pos).w
 		moveq	#0,d0
 		move.l	d0,(v_bg1_y_pos).w
 		move.l	d0,(v_camera_x_pos_offset).w
 		move.b	d0,(v_htz_terrain_direction).w
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$F8,d0
+		addq.b	#2,(v_dle_routine).w			; go to DLE_HTZ2_RightOfEarthquake_Bottom next
+		move.w	#cmd_StopSFX,d0				; stop rumbling SFX
 		jsr	(PlaySound).l
 		rts
 ; ===========================================================================
 
-loc_EEF8:
+DLE_HTZ2_RightOfEarthquake_Bottom:
 		cmpi.w	#$1B00,(v_camera_x_pos).w
-		bcc.s	loc_EF40
-		move.b	#1,(f_screen_shake_htz).w
-		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w
+		bcc.s	.no_earthquake				; branch if camera is right of $1B00
+
+	;prepare_earthquake:
+		move.b	#1,(f_htz_earthquake).w			; enable screen shaking
+		move.l	(v_camera_x_pos).w,(v_bg1_x_pos).w	; initalize BG positions and offsets
 		move.l	(v_camera_y_pos).w,(v_bg1_y_pos).w
 		moveq	#0,d0
 		move.w	d0,(v_bg_x_pos_diff).w
@@ -20032,119 +20121,121 @@ loc_EEF8:
 		move.w	#$300,(v_camera_y_pos_offset).w
 		subi.w	#$100,(v_bg1_y_pos).w
 		move.w	#0,(v_htz_terrain_delay).w
-		subq.b	#2,(v_dle_routine).w
+		subq.b	#2,(v_dle_routine).w			; go to DLE_HTZ2_Earthquake_Bottom next
 
-locret_EF3E:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_EF40:
-		tst.b	(f_screen_shake_htz).w
-		beq.s	locret_EF3E
-		move.w	#$200,d0
-		moveq	#0,d1
+.no_earthquake:
+		tst.b	(f_htz_earthquake).w			; did we just exit earthquake zone heading right?
+		beq.s	.exit					; branch if not
+
+		move.w	#$200,d0				; target x pos
+		moveq	#0,d1					; target y pos
 		move.w	d1,(v_bg_x_pos_diff).w
 		move.w	d1,(v_bg_y_pos_diff).w
-		bsr.w	sub_EB78
-		or.w	d0,d1
-		bne.s	locret_EF3E
-		move.b	#0,(f_screen_shake_htz).w
+		bsr.w	CalcBGDiffs
+		or.w	d0,d1					; have the bg differences reached 0?
+		bne.s	.exit					; if not, keep running screen shaking until they do
+		move.b	#0,(f_htz_earthquake).w			; disable screen shaking
 		rts
 ; ===========================================================================
-		rts
+		rts						; dead code
 
 ; ===========================================================================
 
 
-sub_EF66:
+DLE_HTZ2_Prepare:
 		cmpi.w	#$2B00,(v_camera_x_pos).w
-		bcs.s	locret_EF82
-		cmpi.b	#$A,(v_dle_routine).w
-		bge.s	locret_EF82
-		move.b	#$A,(v_dle_routine).w
-		move.b	#0,(f_screen_shake_htz).w
+		bcs.s	.exit					; branch if camera is left of $2B00
+		cmpi.b	#id_DLE_HTZ2_BossCutoff,(v_dle_routine).w
+		bge.s	.exit					; branch if we've reached the boss arena (should be unsigned branch)
+		move.b	#id_DLE_HTZ2_BossCutoff,(v_dle_routine).w ; go to DLE_HTZ2_BossCutoff next
+		move.b	#0,(f_htz_earthquake).w			; disable screen shaking
 
-locret_EF82:
+	.exit:
 		rts
 
 ; ===========================================================================
 
-loc_EF84:
+DLE_HTZ2_BossCutoff:
 		cmpi.w	#$2C50,(v_camera_x_pos).w
-		bcs.s	locret_EFA8
+		bcs.s	.exit					; branch if camera is left of $2C50
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$480,(v_boundary_bottom_next).w
 		move.w	#$480,(v_boundary_bottom_p2).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_HTZ2_BossDelay next
 
-locret_EFA8:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_EFAA:
+DLE_HTZ2_BossDelay:
 		cmpi.w	#$2EDF,(v_camera_x_pos).w
-		bcs.s	locret_EFE6
+		bcs.s	.exit					; branch if camera is left of $2EDF
+
 		move.w	#$2EE0,(v_boundary_left).w
 		move.w	#$2F5E,(v_boundary_right).w
 		move.w	#$2EE0,(v_boundary_left_p2).w
 		move.w	#$2F5E,(v_boundary_right_p2).w
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$F9,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+		addq.b	#2,(v_dle_routine).w			; go to DLE_HTZ2_BossLoad next
+		move.w	#cmd_Fade,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; fade out level music
 		clr.b	(v_boss_spawn_delay).w
-		move.b	#3,(v_current_boss).w
-		moveq	#$2A,d0
-		jmpto	AddPLC,JmpTo2_AddPLC
+		move.b	#id_BossCol_HTZ,(v_bosscol_routine).w	; set boss colision routine
+		moveq	#id_PLC_HTZBoss,d0
+		jmpto	AddPLC,JmpTo2_AddPLC			; load boss PLCs
 ; ===========================================================================
 
-locret_EFE6:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_EFE8:
+DLE_HTZ2_BossLoad:
 		cmpi.w	#$478,(v_camera_y_pos).w
-		bcs.s	loc_EFFC
+		bcs.s	.skip_top				; branch if camera is above $478
 		move.w	#$478,(v_boundary_top).w
 		move.w	#$478,(v_boundary_top_p2).w
 
-loc_EFFC:
-		addq.b	#1,(v_boss_spawn_delay).w
-		cmpi.b	#$5A,(v_boss_spawn_delay).w
+	.skip_top:
+		addq.b	#1,(v_boss_spawn_delay).w		; increment delay counter
+		cmpi.b	#90,(v_boss_spawn_delay).w
+		bcs.s	.exit					; branch if we haven't waited 90 frames
 
-loc_F006:
-		bcs.s	locret_F01E
-		jsrto	FindFreeObj,JmpTo_FindFreeObj
-		bne.s	loc_F012
-		move.b	#id_BossHillTop,ost_id(a1)
+		jsrto	FindFreeObj,JmpTo_FindFreeObj		; find free OST slot
+		bne.s	.fail					; branch if not found
+		move.b	#id_BossHillTop,ost_id(a1)		; load HTZ boss object
 
-loc_F012:
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$93,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+	.fail:
+		addq.b	#2,(v_dle_routine).w			; go to DLE_HTZ2_BossEnd next
+		move.w	#mus_Boss,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; play boss music
 
-locret_F01E:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F020:
-		tst.b	(v_boss_status).w
-		beq.s	locret_F058
+DLE_HTZ2_BossEnd:
+		tst.b	(v_boss_status).w			; has the boss been defeated?
+		beq.s	.exit					; branch if not
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		cmpi.w	#$30E0,(v_camera_x_pos).w
-		bcs.s	locret_F058
+		bcs.s	.exit					; branch if camera is left of $30E0
+
 		cmpi.w	#$428,(v_boundary_top).w
-		bcs.s	loc_F04C
-		subq.w	#2,(v_boundary_top).w
+		bcs.s	.skip					; branch if top boundary hasn't reached $428
+		subq.w	#2,(v_boundary_top).w			; decrement top boundary
 
-loc_F04C:
+	.skip:
 		cmpi.w	#$430,(v_boundary_bottom_next).w
-		bcs.s	locret_F058
-		subq.w	#2,(v_boundary_bottom_next).w
+		bcs.s	.exit					; branch if bottom boundary hasn't reached $430
+		subq.w	#2,(v_boundary_bottom_next).w		; decrement bottom boundary
 
-locret_F058:
+	.exit:
 		rts
 ; ===========================================================================
 
@@ -20158,197 +20249,199 @@ DLE_Zone9:
 
 DLE_OOZ:
 		tst.b	(v_act).w
-		bne.s	loc_F066
+		bne.s	DLE_OOZ2				; no DLE in act 1
 		rts
 ; ===========================================================================
 
-loc_F066:
+DLE_OOZ2:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_F074(pc,d0.w),d0
-		jmp	off_F074(pc,d0.w)
+		move.w	DLE_OOZ2x(pc,d0.w),d0
+		jmp	DLE_OOZ2x(pc,d0.w)
 ; ===========================================================================
-off_F074:	index offset(*),,2
-		ptr loc_F07C					; 0
-		ptr loc_F0A8					; 2
-		ptr loc_F0EC					; 4
-		ptr loc_F124					; 6
+DLE_OOZ2x:	index offset(*),,2
+		ptr DLE_OOZ2_BossCutoff				; 0
+		ptr DLE_OOZ2_BossDelay				; 2
+		ptr DLE_OOZ2_BossLoad				; 4
+		ptr DLE_OOZ2_BossEnd				; 6
 ; ===========================================================================
 
-loc_F07C:
+DLE_OOZ2_BossCutoff:
 		cmpi.w	#$2668,(v_camera_x_pos).w
-		bcs.s	locret_F0A6
+		bcs.s	.exit					; branch if camera is left of $2668
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
-		move.w	#$2D8,($FFFFB38C).w
+		move.w	#$2D8,(v_ost_oil+ost_y_pos).w		; set height of oil platform
 		move.w	#$1E0,(v_boundary_bottom_next).w
 		move.w	#$1E0,(v_boundary_bottom_p2).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_OOZ2_BossDelay next
 
-locret_F0A6:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F0A8:
+DLE_OOZ2_BossDelay:
 		cmpi.w	#$2880,(v_camera_x_pos).w
-		bcs.s	locret_F0EA
+		bcs.s	.exit					; branch if camera is left of $2880
 		move.w	#$2880,(v_boundary_left).w
 		move.w	#$28C0,(v_boundary_right).w
 		move.w	#$2880,(v_boundary_left_p2).w
 		move.w	#$28C0,(v_boundary_right_p2).w
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$F9,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+		addq.b	#2,(v_dle_routine).w			; go to DLE_OOZ2_BossLoad next
+		move.w	#cmd_Fade,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; fade out level music
 		clr.b	(v_boss_spawn_delay).w
-		move.b	#8,(v_current_boss).w
-		moveq	#$2F,d0
-		jsrto	AddPLC,JmpTo2_AddPLC
-		moveq	#$25,d0
-		jsrto	PalLoad_Now,JmpTo2_PalLoad_Now
+		move.b	#id_BossCol_OOZ,(v_bosscol_routine).w	; set boss colision routine
+		moveq	#id_PLC_OOZBoss,d0
+		jsrto	AddPLC,JmpTo2_AddPLC			; load boss PLCs
+		moveq	#id_Pal_OOZ_B,d0
+		jsrto	PalLoad_Now,JmpTo2_PalLoad_Now		; load boss palette
 
-locret_F0EA:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F0EC:
+DLE_OOZ2_BossLoad:
 		cmpi.w	#$1D8,(v_camera_y_pos).w
-		bcs.s	loc_F100
+		bcs.s	.skip_top				; branch if camera is above $1D8
 		move.w	#$1D8,(v_boundary_top).w
 		move.w	#$1D8,(v_boundary_top_p2).w
 
-loc_F100:
-		addq.b	#1,(v_boss_spawn_delay).w
-		cmpi.b	#$5A,(v_boss_spawn_delay).w
-		bcs.s	locret_F122
-		jsrto	FindFreeObj,JmpTo_FindFreeObj
-		bne.s	loc_F116
-		move.b	#id_BossOilOcean,ost_id(a1)
+	.skip_top:
+		addq.b	#1,(v_boss_spawn_delay).w		; increment delay counter
+		cmpi.b	#90,(v_boss_spawn_delay).w
+		bcs.s	.exit					; branch if we haven't waited 90 frames
 
-loc_F116:
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$93,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+		jsrto	FindFreeObj,JmpTo_FindFreeObj		; find free OST slot
+		bne.s	.fail					; branch if not found
+		move.b	#id_BossOilOcean,ost_id(a1)		; load OOZ boss object
 
-locret_F122:
+	.fail:
+		addq.b	#2,(v_dle_routine).w			; go to DLE_OOZ2_BossEnd next
+		move.w	#mus_Boss,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; play boss music
+
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F124:
-		tst.b	(v_boss_status).w
-		beq.s	locret_F13C
+DLE_OOZ2_BossEnd:
+		tst.b	(v_boss_status).w			; has the boss been defeated?
+		beq.s	.exit					; branch if not
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 
-locret_F13C:
+	.exit:
 		rts
 ; ===========================================================================
 
 DLE_MCZ:
 		tst.b	(v_act).w
-		bne.s	loc_F146
+		bne.s	DLE_MCZ2				; no DLE in act 1
 		rts
 ; ===========================================================================
 
-loc_F146:
+DLE_MCZ2:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_F154(pc,d0.w),d0
-		jmp	off_F154(pc,d0.w)
+		move.w	DLE_MCZ2x(pc,d0.w),d0
+		jmp	DLE_MCZ2x(pc,d0.w)
 ; ===========================================================================
-off_F154:	index offset(*),,2
-		ptr loc_F15C					; 0
-		ptr loc_F196					; 2
-		ptr loc_F206					; 4
-		ptr loc_F23E					; 6
+DLE_MCZ2x:	index offset(*),,2
+		ptr DLE_MCZ2_BossCutoff				; 0
+		ptr DLE_MCZ2_BossDelay				; 2
+		ptr DLE_MCZ2_BossLoad				; 4
+		ptr DLE_MCZ2_BossRumble				; 6
 ; ===========================================================================
 
-loc_F15C:
+DLE_MCZ2_BossCutoff:
 		tst.w	(f_two_player).w
-		bne.s	loc_F188
+		bne.s	.2p_mode				; branch if we're in two-player mode
 		cmpi.w	#$2080,(v_camera_x_pos).w
-		bcs.s	locret_F186
+		bcs.s	.exit					; branch if camera is left of $2080
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$5D0,(v_boundary_bottom_next).w
 		move.w	#$5D0,(v_boundary_bottom_p2).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_MCZ2_BossDelay next
 
-locret_F186:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F188:
-		move.w	#$2100,(v_boundary_right).w
+.2p_mode:
+		move.w	#$2100,(v_boundary_right).w		; set right boundary for two-player mode
 		move.w	#$2100,(v_boundary_right_p2).w
 		rts
 ; ===========================================================================
 
-loc_F196:
+DLE_MCZ2_BossDelay:
 		cmpi.w	#$20F0,(v_camera_x_pos).w
-		bcs.s	locret_F204
+		bcs.s	.exit					; branch if camera is left of $20F0
 		move.w	#$20F0,(v_boundary_right).w
 		move.w	#$20F0,(v_boundary_left).w
 		move.w	#$20F0,(v_boundary_right_p2).w
 		move.w	#$20F0,(v_boundary_left_p2).w
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$F9,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+		addq.b	#2,(v_dle_routine).w			; go to DLE_MCZ2_BossLoad next
+		move.w	#cmd_Fade,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; fade out level music
 		clr.b	(v_boss_spawn_delay).w
-		move.l	#$6C000002,(vdp_control_port).l
+		vdp_comm.l	move,vram_FallingRocks,vram,write,(vdp_control_port).l ; set VDP to VRAM write at $AC00
 		lea	(vdp_data_port).l,a6
-		lea	(Art_FallingRocks).l,a2
-		moveq	#7,d0
+		lea	(Art_FallingRocks).l,a2			; uncompressed art
+		moveq	#(sizeof_Art_FallingRocks/(8*4))-1,d0
 
-	loc_F1DE:
+	.load_art:
 		rept 8
-		move.l	(a2)+,(a6)
+		move.l	(a2)+,(a6)				; copy $20 bytes of tile data per loop
 		endr
-		dbf	d0,loc_F1DE
+		dbf	d0,.load_art
 
-		move.b	#5,(v_current_boss).w
-		moveq	#$2C,d0
-		jsrto	AddPLC,JmpTo2_AddPLC
-		moveq	#$19,d0
-		jsrto	PalLoad_Now,JmpTo2_PalLoad_Now
+		move.b	#id_BossCol_MCZ,(v_bosscol_routine).w	; set boss collision routine
+		moveq	#id_PLC_MCZBoss,d0
+		jsrto	AddPLC,JmpTo2_AddPLC			; load boss PLCs
+		moveq	#id_Pal_MCZ_B,d0
+		jsrto	PalLoad_Now,JmpTo2_PalLoad_Now		; load boss palette
 
-locret_F204:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F206:
+DLE_MCZ2_BossLoad:
 		cmpi.w	#$5C8,(v_camera_y_pos).w
-		bcs.s	loc_F21A
+		bcs.s	.skip_top				; branch if camera is above $5C8
 		move.w	#$5C8,(v_boundary_top).w
 		move.w	#$5C8,(v_boundary_top_p2).w
 
-loc_F21A:
-		addq.b	#1,(v_boss_spawn_delay).w
-		cmpi.b	#$5A,(v_boss_spawn_delay).w
-		bcs.s	locret_F23C
-		jsrto	FindFreeObj,JmpTo_FindFreeObj
-		bne.s	loc_F230
-		move.b	#id_BossMysticCave,ost_id(a1)
+	.skip_top:
+		addq.b	#1,(v_boss_spawn_delay).w		; increment delay counter
+		cmpi.b	#90,(v_boss_spawn_delay).w
+		bcs.s	.exit					; branch if we haven't waited 90 frames
 
-loc_F230:
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$93,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+		jsrto	FindFreeObj,JmpTo_FindFreeObj		; find free OST slot
+		bne.s	.fail					; branch if not found
+		move.b	#id_BossMysticCave,ost_id(a1)		; load MCZ boss object
 
-locret_F23C:
+	.fail:
+		addq.b	#2,(v_dle_routine).w			; go to DLE_MCZ2_BossRumble
+		move.w	#mus_Boss,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; play boss music
+
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F23E:
+DLE_MCZ2_BossRumble:
 		tst.b	(f_screen_shake).w
-		beq.s	loc_F256
+		beq.s	.not_shaking				; branch if screen isn't shaking
 		move.w	(v_frame_counter).w,d0
 		andi.w	#$1F,d0
-		bne.s	loc_F256
+		bne.s	.not_shaking
 		move.w	#sfx_Rumbling2,d0
-		jsrto	PlaySound,JmpTo3_PlaySound
+		jsrto	PlaySound,JmpTo3_PlaySound		; play rumbling SFX every 32 frames
 
-loc_F256:
+	.not_shaking:
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
@@ -20356,181 +20449,181 @@ loc_F256:
 ; ===========================================================================
 
 DLE_CNZ:
-		jsr	(SlotMachine).l
+		jsr	(SlotMachine).l				; run the slot machines
 		tst.b	(v_act).w
-		bne.s	loc_F278
+		bne.s	DLE_CNZ2				; no other DLE in act 1
 		rts
 ; ===========================================================================
 
-loc_F278:
+DLE_CNZ2:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_F286(pc,d0.w),d0
-		jmp	off_F286(pc,d0.w)
+		move.w	DLE_CNZ2x(pc,d0.w),d0
+		jmp	DLE_CNZ2x(pc,d0.w)
 ; ===========================================================================
-off_F286:	index offset(*),,2
-		ptr loc_F28E					; 0
-		ptr loc_F2CE					; 2
-		ptr loc_F318					; 4
-		ptr loc_F350					; 6
+DLE_CNZ2x:	index offset(*),,2
+		ptr DLE_CNZ2_BossCutoff				; 0
+		ptr DLE_CNZ2_BossDelay				; 2
+		ptr DLE_CNZ2_BossLoad				; 4
+		ptr DLE_CNZ2_PostBoss				; 6
 ; ===========================================================================
 
-loc_F28E:
+DLE_CNZ2_BossCutoff:
 		tst.w	(f_two_player).w
-		bne.s	loc_F2C0
+		bne.s	.2p_mode				; branch if we're in two-player mode
 		cmpi.w	#$27C0,(v_camera_x_pos).w
-		bcs.s	locret_F2BE
+		bcs.s	.exit					; branch if camera is left of $27C0
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$62E,(v_boundary_bottom_next).w
 		move.w	#$62E,(v_boundary_bottom_p2).w
-		move.b	#-7,($FFFF8C54).w
-		addq.b	#2,(v_dle_routine).w
+		move.b	#$F9,(v_level_layout+$C54).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_CNZ2_BossDelay next
 
-locret_F2BE:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F2C0:
-		move.w	#$26A0,(v_boundary_right).w
+.2p_mode:
+		move.w	#$26A0,(v_boundary_right).w		; set right boundary for two-player mode
 		move.w	#$26A0,(v_boundary_right_p2).w
 		rts
 ; ===========================================================================
 
-loc_F2CE:
+DLE_CNZ2_BossDelay:
 		cmpi.w	#$2890,(v_camera_x_pos).w
-		bcs.s	locret_F316
-		move.b	#-7,($FFFF8C50).w
+		bcs.s	.exit					; branch if camera is left of $2890
+		move.b	#$F9,(v_level_layout+$C50).w
 		move.w	#$2860,(v_boundary_left).w
 		move.w	#$28E0,(v_boundary_right).w
 		move.w	#$2860,(v_boundary_left_p2).w
 		move.w	#$28E0,(v_boundary_right_p2).w
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$F9,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+		addq.b	#2,(v_dle_routine).w			; go to DLE_CNZ2_BossLoad next
+		move.w	#cmd_Fade,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; fade out level music
 		clr.b	(v_boss_spawn_delay).w
-		move.b	#6,(v_current_boss).w
-		moveq	#$2D,d0
-		jsrto	AddPLC,JmpTo2_AddPLC
-		moveq	#$1A,d0
-		jsrto	PalLoad_Now,JmpTo2_PalLoad_Now
+		move.b	#id_BossCol_CNZ,(v_bosscol_routine).w	; set boss collision routine
+		moveq	#id_PLC_CNZBoss,d0
+		jsrto	AddPLC,JmpTo2_AddPLC			; load boss PLCs
+		moveq	#id_Pal_CNZ_B,d0
+		jsrto	PalLoad_Now,JmpTo2_PalLoad_Now		; load boss palette
 
-locret_F316:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F318:
+DLE_CNZ2_BossLoad:
 		cmpi.w	#$4E0,(v_camera_y_pos).w
-		bcs.s	loc_F32C
+		bcs.s	.skip_top				; branch if camera is above $4E0
 		move.w	#$4E0,(v_boundary_top).w
 		move.w	#$4E0,(v_boundary_top_p2).w
 
-loc_F32C:
-		addq.b	#1,(v_boss_spawn_delay).w
-		cmpi.b	#$5A,(v_boss_spawn_delay).w
-		bcs.s	locret_F34E
-		jsrto	FindFreeObj,JmpTo_FindFreeObj
-		bne.s	loc_F342
-		move.b	#id_BossCasinoNight,ost_id(a1)
+	.skip_top:
+		addq.b	#1,(v_boss_spawn_delay).w		; increment delay counter
+		cmpi.b	#90,(v_boss_spawn_delay).w
+		bcs.s	.exit					; branch if we haven't waited 90 frames
+		jsrto	FindFreeObj,JmpTo_FindFreeObj		; find free OST slot
+		bne.s	.fail					; branch if not found
+		move.b	#id_BossCasinoNight,ost_id(a1)		; load CNZ boss object
 
-loc_F342:
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$93,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+	.fail:
+		addq.b	#2,(v_dle_routine).w			; go to DLE_CNZ2_PostBoss next
+		move.w	#mus_Boss,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; play boss music
 
-locret_F34E:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F350:
+DLE_CNZ2_PostBoss:
 		cmpi.w	#$2A00,(v_camera_x_pos).w
-		bcs.s	locret_F376
+		bcs.s	.exit					; branch if camera is left of $2A00
 		move.w	#$5D0,(v_boundary_bottom_next).w
 		move.w	#$5D0,(v_boundary_bottom_p2).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 
-locret_F376:
+	.exit:
 		rts
 ; ===========================================================================
 
 DLE_CPZ:
 		tst.b	(v_act).w
-		bne.s	loc_F380
+		bne.s	DLE_CPZ2				; no DLE in act 1
 		rts
 ; ===========================================================================
 
-loc_F380:
+DLE_CPZ2:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_F38E(pc,d0.w),d0
-		jmp	off_F38E(pc,d0.w)
+		move.w	DLE_CPZ2x(pc,d0.w),d0
+		jmp	DLE_CPZ2x(pc,d0.w)
 ; ===========================================================================
-off_F38E:	index offset(*),,2
-		ptr loc_F396					; 0
-		ptr loc_F3BC					; 2
-		ptr loc_F3FA					; 4
-		ptr loc_F432					; 6
+DLE_CPZ2x:	index offset(*),,2
+		ptr DLE_CPZ2_BossCutoff				; 0
+		ptr DLE_CPZ2_BossDelay				; 2
+		ptr DLE_CPZ2_BossLoad				; 4
+		ptr DLE_CPZ2_PostBoss				; 6
 ; ===========================================================================
 
-loc_F396:
+DLE_CPZ2_BossCutoff:
 		cmpi.w	#$2680,(v_camera_x_pos).w
-		bcs.s	locret_F3BA
+		bcs.s	.exit					; branch if camera is left of $2680
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$450,(v_boundary_bottom_next).w
 		move.w	#$450,(v_boundary_bottom_p2).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_CPZ2_BossDelay next
 
-locret_F3BA:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F3BC:
+DLE_CPZ2_BossDelay:
 		cmpi.w	#$2A20,(v_camera_x_pos).w
-		bcs.s	locret_F3F8
+		bcs.s	.exit					; branch if camera is above $2A20
 		move.w	#$2A20,(v_boundary_left).w
 		move.w	#$2A20,(v_boundary_right).w
 		move.w	#$2A20,(v_boundary_left_p2).w
 		move.w	#$2A20,(v_boundary_right_p2).w
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$F9,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+		addq.b	#2,(v_dle_routine).w			; go to DLE_CPZ2_BossLoad next
+		move.w	#cmd_Fade,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; fade out level music
 		clr.b	(v_boss_spawn_delay).w
-		move.b	#1,(v_current_boss).w
-		moveq	#$28,d0
-		jmpto	AddPLC,JmpTo2_AddPLC
+		move.b	#id_BossCol_CPZ,(v_bosscol_routine).w	; set boss collison routine
+		moveq	#id_PLC_CPZBoss,d0
+		jmpto	AddPLC,JmpTo2_AddPLC			; load boss PLCs
 ; ===========================================================================
 
-locret_F3F8:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F3FA:
+DLE_CPZ2_BossLoad:
 		cmpi.w	#$448,(v_camera_y_pos).w
-		bcs.s	loc_F40E
+		bcs.s	.skip_top				; branch if camera is below $448
 		move.w	#$448,(v_boundary_top).w
 		move.w	#$448,(v_boundary_top_p2).w
 
-loc_F40E:
-		addq.b	#1,(v_boss_spawn_delay).w
-		cmpi.b	#$5A,(v_boss_spawn_delay).w
-		bcs.s	locret_F430
-		jsrto	FindFreeObj,JmpTo_FindFreeObj
-		bne.s	loc_F424
-		move.b	#id_BossChemicalPlant,ost_id(a1)
+	.skip_top:
+		addq.b	#1,(v_boss_spawn_delay).w		; increment delay counter
+		cmpi.b	#90,(v_boss_spawn_delay).w
+		bcs.s	.exit					; branch if we haven't waited 90 frames
+		jsrto	FindFreeObj,JmpTo_FindFreeObj		; find free OST slot
+		bne.s	.fail					; branch if not found
+		move.b	#id_BossChemicalPlant,ost_id(a1)	; load CPZ boss object
 
-loc_F424:
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$93,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+	.fail:
+		addq.b	#2,(v_dle_routine).w			; go to DLE_CPZ2_PostBoss next
+		move.w	#mus_Boss,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; play boss music
 
-locret_F430:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F432:
+DLE_CPZ2_PostBoss:
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
@@ -20540,144 +20633,144 @@ loc_F432:
 DLE_DEZ:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_F454(pc,d0.w),d0
-		jmp	off_F454(pc,d0.w)
+		move.w	DLE_DEZx(pc,d0.w),d0
+		jmp	DLE_DEZx(pc,d0.w)
 ; ===========================================================================
-off_F454:	index offset(*),,2
-		ptr loc_F45E					; 0
-		ptr locret_F490					; 2
-		ptr loc_F492					; 4
-		ptr loc_F4AC					; 6
-		ptr locret_F4CE					; 8
+DLE_DEZx:	index offset(*),,2
+		ptr DLE_DEZ_MechaSonicLoad			; 0
+		ptr DLE_DEZ_Wait				; 2
+		ptr DLE_DEZ_LoadEggRoboPLCs			; 4
+		ptr DLE_DEZ_EggRoboArena			; 6
+		ptr DLE_DEZ_Done				; 8
 ; ===========================================================================
 
-loc_F45E:
+DLE_DEZ_MechaSonicLoad:
 		move.w	#$140,d0
 		cmp.w	(v_camera_x_pos).w,d0
-		bhi.s	locret_F48E
-		addq.b	#2,(v_dle_routine).w
-		jsrto	FindFreeObj,JmpTo_FindFreeObj
-		bne.s	locret_F48E
-		move.b	#id_MechaSonic,ost_id(a1)
-		move.b	#$48,ost_subtype(a1)
+		bhi.s	.exit					; branch if camera is left of $140
+		addq.b	#2,(v_dle_routine).w			; go to DLE_DEZ_Wait next
+		jsrto	FindFreeObj,JmpTo_FindFreeObj		; find free OST slot
+		bne.s	.exit					; branch if not found
+		move.b	#id_MechaSonic,ost_id(a1)		; load Mecha Sonic object
+		move.b	#id_SubData_MechSonic,ost_subdata_ptr(a1)
 		move.w	#$348,ost_x_pos(a1)
 		move.w	#$A0,ost_y_pos(a1)
-		moveq	#$30,d0
-		jmpto	AddPLC,JmpTo2_AddPLC
+		moveq	#id_PLC_FieryExplosion,d0
+		jmpto	AddPLC,JmpTo2_AddPLC			; load fiery explosion PLCs
 ; ===========================================================================
 
-locret_F48E:
+	.exit:
 		rts
 ; ===========================================================================
 
-locret_F490:
-		rts
+DLE_DEZ_Wait:
+		rts						; wait until Mecha Sonic is defeated
 ; ===========================================================================
 
-loc_F492:
+DLE_DEZ_LoadEggRoboPLCs:
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		cmpi.w	#$300,(v_camera_x_pos).w
-		bcs.s	locret_F4AA
+		bcs.s	.exit					; branch if camera is left of $300
 		addq.b	#2,(v_dle_routine).w
-		moveq	#$31,d0
-		jmpto	AddPLC,JmpTo2_AddPLC
+		moveq	#id_PLC_DEZBoss,d0
+		jmpto	AddPLC,JmpTo2_AddPLC			; load EggRobo PLCs
 ; ===========================================================================
 
-locret_F4AA:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F4AC:
+DLE_DEZ_EggRoboArena:
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	#$680,d0
 		cmp.w	(v_camera_x_pos).w,d0
-		bhi.s	locret_F4CC
-		addq.b	#2,(v_dle_routine).w
+		bhi.s	.exit					; branch if camera is left of $680
+		addq.b	#2,(v_dle_routine).w			; go to DLE_DEZ_Done next
 		move.w	d0,(v_boundary_left).w
 		addi.w	#$C0,d0
 		move.w	d0,(v_boundary_right).w
 
-locret_F4CC:
+	.exit:
 		rts
 ; ===========================================================================
 
-locret_F4CE:
+DLE_DEZ_Done:
 		rts
 ; ===========================================================================
 
 DLE_ARZ:
 		tst.b	(v_act).w
-		bne.s	loc_F4D8
+		bne.s	DLE_ARZ2				; no DLE in act 1
 		rts
 ; ===========================================================================
 
-loc_F4D8:
+DLE_ARZ2:
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_F4E6(pc,d0.w),d0
-		jmp	off_F4E6(pc,d0.w)
+		move.w	DLE_ARZ2x(pc,d0.w),d0
+		jmp	DLE_ARZ2x(pc,d0.w)
 ; ===========================================================================
-off_F4E6:	index offset(*),,2
-		ptr loc_F4EE					; 0
-		ptr loc_F520					; 2
-		ptr loc_F55C					; 4
-		ptr loc_F58A					; 6
+DLE_ARZ2x:	index offset(*),,2
+		ptr DLE_ARZ2_BossCutoff				; 0
+		ptr DLE_ARZ_BossLoad				; 2
+		ptr DLE_ARZ2_DelayMusic				; 4
+		ptr DLE_ARZ_PostBoss				; 6
 ; ===========================================================================
 
-loc_F4EE:
+DLE_ARZ2_BossCutoff:
 		cmpi.w	#$2810,(v_camera_x_pos).w
-		bcs.s	locret_F51E
+		bcs.s	.exit					; branch if camera is left of $2810
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
 		move.w	#$400,(v_boundary_bottom_next).w
 		move.w	#$400,(v_boundary_bottom_p2).w
-		addq.b	#2,(v_dle_routine).w
-		move.b	#4,(v_current_boss).w
-		moveq	#$2B,d0
-		jsrto	AddPLC,JmpTo2_AddPLC
+		addq.b	#2,(v_dle_routine).w			; go to DLE_ARZ_BossLoad next
+		move.b	#id_BossCol_ARZ,(v_bosscol_routine).w	; set boss collision routine
+		moveq	#id_PLC_ARZBoss,d0
+		jsrto	AddPLC,JmpTo2_AddPLC			; load boss PLCs
 
-locret_F51E:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F520:
+DLE_ARZ_BossLoad:
 		cmpi.w	#$2A40,(v_camera_x_pos).w
-		bcs.s	locret_F55A
+		bcs.s	.exit					; branch if camera is left of $2A40
 		move.w	#$2A40,(v_boundary_right).w
 		move.w	#$2A40,(v_boundary_left).w
 		move.w	#$2A40,(v_boundary_right_p2).w
 		move.w	#$2A40,(v_boundary_left_p2).w
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$F9,d0
-		jsrto	PlayMusic,JmpTo3_PlayMusic
+		addq.b	#2,(v_dle_routine).w			; go to DLE_ARZ2_DelayMusic next
+		move.w	#cmd_Fade,d0
+		jsrto	PlayMusic,JmpTo3_PlayMusic		; fade out level music
 		clr.b	(v_boss_spawn_delay).w
-		jsrto	FindFreeObj,JmpTo_FindFreeObj
-		bne.s	locret_F55A
-		move.b	#id_BossAquaticRuin,ost_id(a1)
+		jsrto	FindFreeObj,JmpTo_FindFreeObj		; find free OST slot
+		bne.s	.exit					; branch if not found
+		move.b	#id_BossAquaticRuin,ost_id(a1)		; load ARZ boss object
 
-locret_F55A:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F55C:
+DLE_ARZ2_DelayMusic:
 		cmpi.w	#$3F8,(v_camera_y_pos).w
-		bcs.s	loc_F570
+		bcs.s	.skip_top				; branch if camera is above $3F8
 		move.w	#$3F8,(v_boundary_top).w
 		move.w	#$3F8,(v_boundary_top_p2).w
 
-loc_F570:
-		addq.b	#1,(v_boss_spawn_delay).w
-		cmpi.b	#$5A,(v_boss_spawn_delay).w
-		bcs.s	locret_F588
-		addq.b	#2,(v_dle_routine).w
-		move.w	#$93,d0
+	.skip_top:
+		addq.b	#1,(v_boss_spawn_delay).w		; increment delay counter
+		cmpi.b	#90,(v_boss_spawn_delay).w
+		bcs.s	.exit					; branch if we haven't waited 90 frames
+		addq.b	#2,(v_dle_routine).w			; go to DLE_ARZ2_
+		move.w	#mus_Boss,d0
 		jsrto	PlayMusic,JmpTo3_PlayMusic
 
-locret_F588:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F58A:
+DLE_ARZ_PostBoss:
 		move.w	(v_camera_x_pos).w,(v_boundary_left).w
 		move.w	(v_boundary_right).w,(v_boundary_right_p2).w
 		move.w	(v_camera_x_pos).w,(v_boundary_left_p2).w
@@ -20685,63 +20778,63 @@ loc_F58A:
 ; ===========================================================================
 
 DLE_SCZ:
-		tst.b	(v_act).w
-		bne.w	locret_F624
+		tst.b	(v_act).w				; pointless, as there's only 1 act
+		bne.w	DLE_SCZ_Null
 		moveq	#0,d0
 		move.b	(v_dle_routine).w,d0
-		move.w	off_F5B4(pc,d0.w),d0
-		jmp	off_F5B4(pc,d0.w)
+		move.w	DLE_SCZx(pc,d0.w),d0
+		jmp	DLE_SCZx(pc,d0.w)
 ; ===========================================================================
-off_F5B4:	index offset(*),,2
-		ptr loc_F5BE					; 0
-		ptr loc_F5D0					; 2
-		ptr loc_F5F0					; 4
-		ptr loc_F60A					; 6
-		ptr locret_F622					; 8
+DLE_SCZx:	index offset(*),,2
+		ptr DLE_SCZ_1					; 0	; flying right and level
+		ptr DLE_SCZ_2					; 2	; flying diagonally in front of Wing Fortress
+		ptr DLE_SCZ_3					; 4	; flying right and level
+		ptr DLE_SCZ_4					; 6
+		ptr DLE_SCZ_Done				; 8
 ; ===========================================================================
 
-loc_F5BE:
-		move.w	#1,(v_tornado_x_vel).w
-		move.w	#0,(v_tornado_y_vel).w
-		addq.b	#2,(v_dle_routine).w
+DLE_SCZ_1:
+		move.w	#1,(v_tornado_x_vel).w			; Tornado flies to right...
+		move.w	#0,(v_tornado_y_vel).w			; ...and holds altitude
+		addq.b	#2,(v_dle_routine).w			; go to DLE_SCZ_2 next
 		rts
 ; ===========================================================================
 
-loc_F5D0:
+DLE_SCZ_2:
 		cmpi.w	#$1180,(v_camera_x_pos).w
-		bcs.s	locret_F5EE
-		move.w	#-1,(v_tornado_x_vel).w
-		move.w	#1,(v_tornado_y_vel).w
+		bcs.s	.exit					; branch if camera is left of $1180
+		move.w	#-1,(v_tornado_x_vel).w			; Tornado flies to left...
+		move.w	#1,(v_tornado_y_vel).w			; ...and descends
 		move.w	#$500,(v_boundary_bottom_next).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_SCZ_3 next
 
-locret_F5EE:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F5F0:
+DLE_SCZ_3:
 		cmpi.w	#$500,(v_camera_y_pos).w
-		bcs.s	locret_F608
-		move.w	#1,(v_tornado_x_vel).w
-		move.w	#0,(v_tornado_y_vel).w
-		addq.b	#2,(v_dle_routine).w
+		bcs.s	.exit					; branch if camera is above $500
+		move.w	#1,(v_tornado_x_vel).w			; Tornado flies to to right...
+		move.w	#0,(v_tornado_y_vel).w			; ...and levels out
+		addq.b	#2,(v_dle_routine).w			; go to DLE_SCZ_4 next
 
-locret_F608:
+	.exit:
 		rts
 ; ===========================================================================
 
-loc_F60A:
+DLE_SCZ_4:
 		cmpi.w	#$1400,(v_camera_x_pos).w
-		bcs.s	locret_F622
-		move.w	#0,(v_tornado_x_vel).w
+		bcs.s	DLE_SCZ_Done				; branch if camera is left of $1400
+		move.w	#0,(v_tornado_x_vel).w			; Tornado stalls. :P
 		move.w	#0,(v_tornado_y_vel).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to DLE_SCZ_Done next
 
-locret_F622:
+DLE_SCZ_Done:
 		rts
 ; ===========================================================================
 
-locret_F624:
+DLE_SCZ_Null:
 		rts
 ; ===========================================================================
 
@@ -24616,7 +24709,7 @@ Pow_Invinc:
 		bne.s	locret_12AA4				; if yes, exit
 		bset	#1,$2B(a1)				; make character invincible
 		move.w	#20*60,$32(a1)				; for 20 seconds (20 seconds * 60 frames per second)
-		tst.b	(v_current_boss).w			; don't change music during boss battles
+		tst.b	(v_bosscol_routine).w			; don't change music during boss battles
 		bne.s	.nomusic
 		cmpi.b	#air_alert,ost_air_left(a1)		; or when drowning
 		bls.s	.nomusic
@@ -34412,7 +34505,7 @@ Sonic_Display:
 		beq.s	.chkshoes				; branch if 0 (expired)
 		subq.w	#1,ost_invincible_time(a0)		; decrement timer
 		bne.s	.chkshoes				; branch if time remains
-		tst.b	(v_current_boss).w			; are we at a boss?
+		tst.b	(v_bosscol_routine).w			; are we at a boss?
 		bne.s	.removeinvincible			; if so, don't change the music
 		cmpi.b	#air_alert,ost_air_left(a0)		; is air < $C?
 		bcs.s	.removeinvincible			; if so, don't change the music
@@ -35328,7 +35421,7 @@ Sonic_LevelBound:
 		bhi.s	loc_1A9BA
 		move.w	(v_boundary_right).w,d0
 		addi.w	#$128,d0
-		tst.b	(v_current_boss).w
+		tst.b	(v_bosscol_routine).w
 		bne.s	loc_1A9A2
 		addi.w	#$40,d0
 
@@ -37288,7 +37381,7 @@ loc_1BA6A:
 		beq.s	loc_1BA9C
 		subq.w	#1,$32(a0)
 		bne.s	loc_1BA9C
-		tst.b	(v_current_boss).w
+		tst.b	(v_bosscol_routine).w
 		bne.s	loc_1BA96
 		cmpi.b	#air_alert,ost_air_left(a0)
 		bcs.s	loc_1BA96
@@ -38390,7 +38483,7 @@ loc_1C55A:
 		bhi.s	loc_1C5A0
 		move.w	(v_boundary_right_p2).w,d0
 		addi.w	#$128,d0
-		tst.b	(v_current_boss).w
+		tst.b	(v_bosscol_routine).w
 		bne.s	loc_1C588
 		addi.w	#$40,d0
 
@@ -40158,7 +40251,7 @@ ResumeMusic:
 		move.w	#mus_SuperSonic,d0			; play Super theme
 
 .notsuper:
-		tst.b	(v_current_boss).w			; are we in a boss fight?
+		tst.b	(v_bosscol_routine).w			; are we in a boss fight?
 		beq.s	.playselected				; if not, branch
 		move.w	#mus_Boss,d0				; play the boss theme
 
@@ -47428,7 +47521,7 @@ loc_23944:
 		move.b	ost_subtype(a0),d0
 		move.w	off_23968(pc,d0.w),d1
 		jsr	off_23968(pc,d1.w)
-		tst.b	(f_screen_shake_htz).w
+		tst.b	(f_htz_earthquake).w
 		beq.w	JmpTo2_DespawnObject3
 		rts
 ; ===========================================================================
@@ -75590,7 +75683,7 @@ loc_397BA:
 		move.w	#$224,d0
 		move.w	d0,(v_boundary_left).w
 		move.w	d0,(v_boundary_right).w
-		move.b	#9,(v_current_boss).w
+		move.b	#id_BossCol_Null,(v_bosscol_routine).w
 		moveq	#-7,d0
 		jsrto	PlaySound,JmpTo12_PlaySound
 		jmpto	DisplaySprite,JmpTo45_DisplaySprite
@@ -75976,7 +76069,7 @@ loc_39B92:
 
 loc_39BA4:
 		move.w	#$1000,(v_boundary_right).w
-		addq.b	#2,(v_dle_routine).w
+		addq.b	#2,(v_dle_routine).w			; go to loc_loc_F492 next
 	if FixBugs
 		move.w	(v_level_music).w,d0
 	else
@@ -83250,7 +83343,7 @@ ReactToItem:
 		jsrto	React_CNZBumpers,JmpTo_React_CNZBumpers
 
 	.notCNZ:
-		tst.b	(v_current_boss).w
+		tst.b	(v_bosscol_routine).w
 		bne.w	loc_3F666
 		move.w	ost_x_pos(a0),d2
 		move.w	ost_y_pos(a0),d3
@@ -83416,7 +83509,7 @@ loc_3F6A2:
 ; ===========================================================================
 
 loc_3F6AE:
-		bsr.w	loc_3FA2C
+		bsr.w	BossCollision
 		andi.w	#$3F,d0
 		beq.s	loc_3F6A2
 		add.w	d0,d0
@@ -83798,41 +83891,42 @@ loc_3FA22:
 		bra.w	loc_3F78C
 ; ===========================================================================
 
-loc_3FA2C:
-		cmpi.b	#$F,d0
-		bne.s	locret_3FA46
+BossCollision:
+		cmpi.b	#id_col_24x24,d0
+		bne.s	.exit
 		moveq	#0,d0
-		move.b	(v_current_boss).w,d0
-		beq.s	locret_3FA46
+		move.b	(v_bosscol_routine).w,d0
+		beq.s	.exit
 		subq.w	#1,d0
 		add.w	d0,d0
-		move.w	off_3FA48(pc,d0.w),d0
-		jmp	off_3FA48(pc,d0.w)
+		move.w	BossCol_Index(pc,d0.w),d0
+		jmp	BossCol_Index(pc,d0.w)
 ; ===========================================================================
 
-locret_3FA46:
+	.exit:
 		rts
 ; ===========================================================================
-off_3FA48:	index offset(*),1,1
-		ptr loc_3FA5A					; 1
-		ptr loc_3FA5A					; 2
-		ptr loc_3FA60					; 3
-		ptr loc_3FAC8					; 4
-		ptr loc_3FAFE					; 5
-		ptr loc_3FB8A					; 6
-		ptr loc_3FBC4					; 7
-		ptr loc_3FBCA					; 8
-		ptr locret_3FA5E				; 9
+BossCol_Index:	index offset(*),1,1
+		ptr BossCol_CPZ					; 1
+		ptr BossCol_EHZ					; 2
+		ptr BossCol_HTZ					; 3
+		ptr BossCol_ARZ					; 4
+		ptr BossCol_MCZ					; 5
+		ptr BossCol_CNZ					; 6
+		ptr BossCol_MTZ					; 7
+		ptr BossCol_OOZ					; 8
+		ptr BossCol_Null				; 9
 ; ===========================================================================
 
-loc_3FA5A:
+BossCol_EHZ:
+BossCol_CPZ:
 		move.b	ost_col_type(a1),d0
 
-locret_3FA5E:
+BossCol_Null:
 		rts
 ; ===========================================================================
 
-loc_3FA60:
+BossCol_HTZ:
 		tst.b	(v_boss_collision_routine).w
 		bne.s	loc_3FA68
 		rts
@@ -83890,7 +83984,7 @@ byte_3FAC0:
 		dc.b   8					; 7
 ; ===========================================================================
 
-loc_3FAC8:
+BossCol_ARZ:
 		move.w	d7,-(sp)
 		move.w	ost_x_pos(a1),d0
 		move.w	ost_y_pos(a1),d7
@@ -83912,7 +84006,7 @@ loc_3FAF6:
 		rts
 ; ===========================================================================
 
-loc_3FAFE:
+BossCol_MCZ:
 		sf.b	ost_boss_hurtplayer(a1)
 		cmpi.b	#1,(v_boss_collision_routine).w
 		blt.s	loc_3FB46
@@ -83972,7 +84066,7 @@ locret_3FB88:
 		rts
 ; ===========================================================================
 
-loc_3FB8A:
+BossCol_CNZ:
 		tst.b	(v_boss_collision_routine).w
 		beq.s	loc_3FBBE
 		move.w	d7,-(sp)
@@ -83995,12 +84089,12 @@ loc_3FBBE:
 		rts
 ; ===========================================================================
 
-loc_3FBC4:
+BossCol_MTZ:
 		move.b	ost_col_type(a1),d0
 		rts
 ; ===========================================================================
 
-loc_3FBCA:
+BossCol_OOZ:
 		cmpi.b	#1,(v_boss_collision_routine).w
 		blt.s	loc_3FC46
 		beq.s	loc_3FC1C
@@ -84388,7 +84482,7 @@ Dynamic_HTZ_Clouds:
 ; ===========================================================================
 
 Dynamic_CNZ:
-		tst.b	(v_current_boss).w
+		tst.b	(v_bosscol_routine).w
 		beq.s	.chk_2p					; skip animations if boss fight is in progress
 		rts
 ; ===========================================================================
@@ -84402,7 +84496,7 @@ Dynamic_CNZ:
 ; ===========================================================================
 
 Dynamic_ARZ:
-		tst.b	(v_current_boss).w
+		tst.b	(v_bosscol_routine).w
 		beq.s	Dynamic_Normal				; skip animations if boss fight is in progress
 		rts
 

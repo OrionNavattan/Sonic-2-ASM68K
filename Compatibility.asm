@@ -229,7 +229,7 @@ Camera_BG_Y_pos_diff:	equ	v_bg_y_pos_diff
 Camera_X_pos_diff_P2:	equ	v_camera_x_diff_p2
 Camera_Y_pos_diff_P2:	equ	v_camera_y_diff_p2
 
-Screen_Shaking_Flag_HTZ:	equ	f_screen_shake_htz
+Screen_Shaking_Flag_HTZ:	equ	f_htz_earthquake
 Screen_Shaking_Flag:		equ	f_screen_shake
 Scroll_lock:				equ	f_disable_scroll_p1
 Scroll_lock_P2:				equ	f_disable_scroll_p2
@@ -359,7 +359,7 @@ Ctrl_2_Press_Logical:		equ	v_joypad2_press
 Sonic_Look_delay_counter	equ	v_sonic_look_delay_counter
 Tails_Look_delay_counter:	equ	v_tails_look_delay_counter
 Super_Sonic_frame_count:	equ	v_super_sonic_frame_count
-Camera_ARZ_BG_X_pos:		equ	v_camera_arz_bg_x_pos
+Camera_ARZ_BG_X_pos:		equ	v_arz_bg_x_pos
 
 Plc_Buffer:			equ v_plc_buffer
 Plc_Buffer_Reg0:	equ v_nem_mode_ptr
@@ -447,7 +447,7 @@ PalChangeSpeed:		equ v_palfade_time
 Collision_addr:		equ v_collision_index_ptr
 Boss_defeated_flag:	equ v_boss_status
 
-Current_Boss_ID:	equ	v_current_boss
+Current_Boss_ID:	equ	v_bosscol_routine
 
 MTZ_Platform_Cog_X:			equ	v_mtz_platform_cog_x_pos
 MTZCylinder_Angle_Sonic:	equ	v_mtz_cylinder_angle_sonic

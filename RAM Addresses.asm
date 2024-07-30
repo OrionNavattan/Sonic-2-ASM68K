@@ -210,7 +210,7 @@ v_camera_x_diff_p2:		rs.w 1				; $FFFFEEB8 ; (new x pos - old x pos) * 256
 v_camera_y_diff_p2:		rs.w 1				; $FFFFEEBA ; (new y pos - old y pos) * 256
 				ramblocksize camera_diffs_p2
 
-f_screen_shake_htz:		rs.b 1				; $FFFFEEBC ; flag to activate screen shaking code in HTZ's layer deformation routine
+f_htz_earthquake:		rs.b 1				; $FFFFEEBC ; flag to activate screen shaking code in HTZ's layer deformation routine
 f_screen_shake: 			rs.b 1			; $FFFFEEBD ; flag to activate screen shaking code (if existent) in layer deformation routine
 f_disable_scroll_p1:			rs.b 1			; $FFFFEEBE ; flag to disable horizontal scrolling for entire screen in 1P or top half in 2P
 f_disable_scroll_p2:		rs.b 1				; $FFFFEEBF ; flag to disable horizontal scrolling for bottom half of screen in 2P
@@ -367,7 +367,7 @@ v_joypad2_press:		    equ __rs-1			; $FFFFF66B ; joypad 2 input - pressed, can b
 v_sonic_look_delay_counter:	rs.w 1				; $FFFFF66C ; timer for delay until Sonic looks up while up is pressed
 v_tails_look_delay_counter:	rs.w 1				; $FFFFF66E ; timer for delay until Tails looks up while up is pressed
 v_super_sonic_frame_count:	rs.w 1				; $FFFFF670
-v_camera_arz_bg_x_pos:		rs.l 1				; $FFFFF672
+v_arz_bg_x_pos:		rs.l 1					; $FFFFF672
 							rs.b $A	; $FFFFF676-$FFFFF67F ; unused
 					rsblockend misc_level_variables
 
@@ -516,7 +516,7 @@ v_collision_index_ptr:		rs.l 1				; $FFFFF796 ; ROM address for collision index 
 							rs.b $D	; $FFFFF79A-$FFFFF7A6 ; unused
 v_boss_status:				rs.b 1			; $FFFFF7A7 ; flag indicating the level boss has been defeated
 							rs.b 2	; $FFFFF7A8-$FFFFF7A9 ; unused
-v_current_boss:				rs.b 1			; $FFFFF7AA ; ID of current boss, used by boss collision and palette cycling routines. Also used as a flag to indicate a boss fight is in progress
+v_bosscol_routine:				rs.b 1		; $FFFFF7AA ; ID of current boss collision routine. Also used as a flag to indicate a boss fight is in progress
 							rs.b 5	; $FFFFF7AB-$FFFFF7AF ; unused
 v_mtz_platform_cog_x_pos:	rs.w 1				; $FFFFF7B0 ; x_pos of moving MTZ platform for cog animation
 v_mtz_cylinder_angle_sonic:		rs.b 1			; $FFFFF7B2 ; angle of Sonic while in MTZ rotating mesh cylinders
@@ -545,7 +545,7 @@ v_camera_x_pos_coarse_p2:		rs.w 1			; $FFFFF7DC
 	ramblocksize	v_camera_x_pos_coarse_p2
 
 v_tails_last_frame_id:			rs.b 1			; $FFFFF7DE ; Tails' previous frame id; compared with current frame to determine if graphics need updating. can be set to a dummy value like -1 to force a refresh DMA.
-v_tailstails_last_frame_id:		rs.b 1			; $FFFFF7DF ; Previous frame id of Tails' tails; compared with current frame to determine if graphics need updating. can be set to a dummy value like -1 to force a refresh DMA.
+v_tailstails_last_frame_id:		rs.b 1			; $FFFFF7DF ; previous frame id of Tails' tails; compared with current frame to determine if graphics need updating. can be set to a dummy value like -1 to force a refresh DMA.
 v_button_state:					rs.b $10	; $FFFFF7E0 ; 16 byte flag array, #subtype byte set when button/vine of respective subtype activated
 v_anim_counters:				rs.b $10	; $FFFFF7F0-$FFFFF7FF; counters for zone animation scripts; two bytes for each script; low byte is duration counter; high byte is frame ID
 	zoneanim_duration:		equ 0
@@ -574,8 +574,8 @@ v_pal_dry_line4:			equ v_pal_dry+(sizeof_pal*3) ; $FFFFFB60
 				rsblock		palette_fade_buffer
 v_pal_dry_next:				rs.w sizeof_pal_all/2	; $FFFFFB80 ; This is used by the screen-fading subroutines.
 v_pal_dry_next_line1:		equ v_pal_dry_next
-v_pal_dry_next_line2:		equ v_pal_dry_next+sizeof_pal	; $FFFFFBA0 ; While v_pal_dry contains the blacked-out palette caused by the fading,
-v_pal_dry_next_line3:		equ v_pal_dry_next+(sizeof_pal*2) ; $FFFFFBC0 ; v_pal_dry_next will contain the palette the screen will ultimately fade in to.
+v_pal_dry_next_line2:		equ v_pal_dry_next+sizeof_pal	; $FFFFFBA0 ; while v_pal_dry contains the blacked-out palette caused by the fading...
+v_pal_dry_next_line3:		equ v_pal_dry_next+(sizeof_pal*2) ; $FFFFFBC0 ; ...v_pal_dry_next will contain the palette the screen will ultimately fade in to.
 v_pal_dry_next_line4:		equ v_pal_dry_next+(sizeof_pal*3) ; $FFFFFBE0
 				rsblockend		palette_fade_buffer
 
@@ -586,7 +586,7 @@ v_respawn_list:				rs.b 2			; $FFFFFC00 ; respawn table indices of the next obje
 
 	ramblocksize	v_respawn_list				; required for teleport table
 
-v_respawn_data:				rs.b $BE		; $FFFFFC02	; For stock S2, $80 is enough
+v_respawn_data:				rs.b $BE		; $FFFFFC02	; for stock S2, $80 is enough
 	ramblocksize	v_respawn_data
 
 				rsalign 4
