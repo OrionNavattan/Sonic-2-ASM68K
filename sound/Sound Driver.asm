@@ -1323,7 +1323,7 @@ SoundCmd_Sega:
 		ld	(ym_reg_d0),a				; send to DAC
 		inc	hl					; advance pointer
 		nop
-		ld	b,(1+(53693175/15/(16500)-(146/2)+(13/2))/13) ; 146 Z80 cycles for every two bytes of PCM data
+		ld	b,(1+(Z80_clock/16500-(146/2)+(13/2))/13) ; 146 Z80 cycles for every two bytes of PCM data
 
 		djnz	*					; delay loop
 
@@ -1335,7 +1335,7 @@ SoundCmd_Sega:
 		ld	(ym_reg_d0),a				; send to DAC
 		inc	hl					; Advance pointer
 		nop
-		ld	b,(1+(53693175/15/(16500)-(146/2)+(13/2))/13) ; 146 Z80 cycles for every two bytes of PCM data
+		ld	b,(1+(Z80_clock/16500-(146/2)+(13/2))/13) ; 146 Z80 cycles for every two bytes of PCM data
 
 		djnz	*					; delay loop
 
@@ -3484,9 +3484,9 @@ DACPtrTbl:
 GenDacPlaylist:	macro	name,src,samplerate
 
 	ifarg \src						; if this is a duplicate with a different pitch
-		db	d\src,(1+(53693175/15/(\samplerate)-(289/2)+(13/2))/13) ; 289 Z80 cycles for every two bytes of PCM data
+		db	d\src,(1+(Z80_clock/(\samplerate)-(289/2)+(13/2))/13) ; 289 Z80 cycles for every two bytes of PCM data
 	else
-		db	d\name,(1+(53693175/15/(\samplerate)-(289/2)+(13/2))/13) ; 289 Z80 cycles for every two bytes of PCM data
+		db	d\name,(1+(Z80_clock/(\samplerate)-(289/2)+(13/2))/13) ; 289 Z80 cycles for every two bytes of PCM data
 	endc
 	endm
 

@@ -183,8 +183,13 @@ sizeof_vsram:		equ $50
 sizeof_z80_ram:		equ z80_ram_end-z80_ram			; $2000
 sizeof_z80_bank:	equ $8000				; size of switchable Z80 rom window
 
+; Clock frequencies
+master_clock:		equ 53693175				; NTSC master oscillator frequency in hertz
+M68000_clock:		equ master_clock/7
+Z80_clock:			equ master_clock/15
+
 ; ---------------------------------------------------------------------------
-; stop the Z80
+; Stop the Z80
 ; ---------------------------------------------------------------------------
 
 stopZ80:	macros
@@ -201,7 +206,7 @@ waitZ80:	macro
 		endm
 
 ; ---------------------------------------------------------------------------
-; start the Z80
+; Start the Z80
 ; ---------------------------------------------------------------------------
 
 startZ80:	macros
@@ -218,14 +223,14 @@ resetZ80_release: macros
 		move.w	#$100,(z80_reset).l
 
 ; ---------------------------------------------------------------------------
-; disable interrupts
+; Disable interrupts
 ; ---------------------------------------------------------------------------
 
 disable_ints:	macros
 		move	#$2700,sr
 
 ; ---------------------------------------------------------------------------
-; enable interrupts
+; Enable interrupts
 ; ---------------------------------------------------------------------------
 
 enable_ints:	macros
