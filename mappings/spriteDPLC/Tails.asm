@@ -1,772 +1,789 @@
+; -------------------------------------------------------------------------------
+; Dynamic pattern load cues - Tails and Tails' tails
+; -------------------------------------------------------------------------------
+
 DPLC_Tails:	index offset(*)
-	ptr	DPLC_Tails_0116
-	ptr	DPLC_Tails_0118
-	ptr	DPLC_Tails_011E
-	ptr	DPLC_Tails_0124
-	ptr	DPLC_Tails_012A
-	ptr	DPLC_Tails_0130
-	ptr	DPLC_Tails_0134
-	ptr	DPLC_Tails_0138
-	ptr	DPLC_Tails_013E
-	ptr	DPLC_Tails_0144
-	ptr	DPLC_Tails_0148
-	ptr	DPLC_Tails_014C
-	ptr	DPLC_Tails_0150
-	ptr	DPLC_Tails_0154
-	ptr	DPLC_Tails_0158
-	ptr	DPLC_Tails_0160
-	ptr	DPLC_Tails_0168
-	ptr	DPLC_Tails_0170
-	ptr	DPLC_Tails_0178
-	ptr	DPLC_Tails_0180
-	ptr	DPLC_Tails_0188
-	ptr	DPLC_Tails_0190
-	ptr	DPLC_Tails_0198
-	ptr	DPLC_Tails_01A0
-	ptr	DPLC_Tails_01A8
-	ptr	DPLC_Tails_01B0
-	ptr	DPLC_Tails_01B8
-	ptr	DPLC_Tails_01C0
-	ptr	DPLC_Tails_01C8
-	ptr	DPLC_Tails_01D0
-	ptr	DPLC_Tails_01D8
-	ptr	DPLC_Tails_01E0
-	ptr	DPLC_Tails_01E8
-	ptr	DPLC_Tails_01F0
-	ptr	DPLC_Tails_01F8
-	ptr	DPLC_Tails_0200
-	ptr	DPLC_Tails_0208
-	ptr	DPLC_Tails_0210
-	ptr	DPLC_Tails_0218
-	ptr	DPLC_Tails_021E
-	ptr	DPLC_Tails_0226
-	ptr	DPLC_Tails_022C
-	ptr	DPLC_Tails_0234
-	ptr	DPLC_Tails_023A
-	ptr	DPLC_Tails_0242
-	ptr	DPLC_Tails_0248
-	ptr	DPLC_Tails_0250
-	ptr	DPLC_Tails_0256
-	ptr	DPLC_Tails_025C
-	ptr	DPLC_Tails_0256
-	ptr	DPLC_Tails_0262
-	ptr	DPLC_Tails_0268
-	ptr	DPLC_Tails_026E
-	ptr	DPLC_Tails_0276
-	ptr	DPLC_Tails_027E
-	ptr	DPLC_Tails_0286
-	ptr	DPLC_Tails_028E
-	ptr	DPLC_Tails_0296
-	ptr	DPLC_Tails_029E
-	ptr	DPLC_Tails_02A6
-	ptr	DPLC_Tails_02AE
-	ptr	DPLC_Tails_02A6
-	ptr	DPLC_Tails_02B6
-	ptr	DPLC_Tails_02BE
-	ptr	DPLC_Tails_02C6
-	ptr	DPLC_Tails_02CE
-	ptr	DPLC_Tails_02D6
-	ptr	DPLC_Tails_02DE
-	ptr	DPLC_Tails_02E6
-	ptr	DPLC_Tails_02EE
-	ptr	DPLC_Tails_02F6
-	ptr	DPLC_Tails_02FA
-	ptr	DPLC_Tails_02FE
-	ptr	DPLC_Tails_0302
-	ptr	DPLC_Tails_0306
-	ptr	DPLC_Tails_030A
-	ptr	DPLC_Tails_030E
-	ptr	DPLC_Tails_0312
-	ptr	DPLC_Tails_0316
-	ptr	DPLC_Tails_031A
-	ptr	DPLC_Tails_031E
-	ptr	DPLC_Tails_0322
-	ptr	DPLC_Tails_0326
-	ptr	DPLC_Tails_032A
-	ptr	DPLC_Tails_032E
-	ptr	DPLC_Tails_0332
-	ptr	DPLC_Tails_0336
-	ptr	DPLC_Tails_033A
-	ptr	DPLC_Tails_033E
-	ptr	DPLC_Tails_0342
-	ptr	DPLC_Tails_0348
-	ptr	DPLC_Tails_034E
-	ptr	DPLC_Tails_0352
-	ptr	DPLC_Tails_0356
-	ptr	DPLC_Tails_035A
-	ptr	DPLC_Tails_035A
-	ptr	DPLC_Tails_0360
-	ptr	DPLC_Tails_0364
-	ptr	DPLC_Tails_0368
-	ptr	DPLC_Tails_036C
-	ptr	DPLC_Tails_0372
-	ptr	DPLC_Tails_0378
-	ptr	DPLC_Tails_037E
-	ptr	DPLC_Tails_0384
-	ptr	DPLC_Tails_038A
-	ptr	DPLC_Tails_0390
-	ptr	DPLC_Tails_0396
-	ptr	DPLC_Tails_039C
-	ptr	DPLC_Tails_03A0
-	ptr	DPLC_Tails_03A6
-	ptr	DPLC_Tails_03AC
-	ptr	DPLC_Tails_03B2
-	ptr	DPLC_Tails_03AC
-	ptr	DPLC_Tails_03B8
-	ptr	DPLC_Tails_03B8
-	ptr	DPLC_Tails_03BE
-	ptr	DPLC_Tails_03C4
-	ptr	DPLC_Tails_03C8
-	ptr	DPLC_Tails_03CC
-	ptr	DPLC_Tails_03D2
-	ptr	DPLC_Tails_03D6
-	ptr	DPLC_Tails_03DA
-	ptr	DPLC_Tails_03DE
-	ptr	DPLC_Tails_03E2
-	ptr	DPLC_Tails_03E6
-	ptr	DPLC_Tails_03EA
-	ptr	DPLC_Tails_03EE
-	ptr	DPLC_Tails_03F2
-	ptr	DPLC_Tails_03F8
-	ptr	DPLC_Tails_0302
-	ptr	DPLC_Tails_0306
-	ptr	DPLC_Tails_030A
-	ptr	DPLC_Tails_030E
-	ptr	DPLC_Tails_03FE
-	ptr	DPLC_Tails_0404
-	ptr	DPLC_Tails_0302
-	ptr	DPLC_Tails_0306
-	ptr	DPLC_Tails_030A
-	ptr	DPLC_Tails_030E
+	ptr	DPLC_Tails_Blank
+	ptr	DPLC_Tails_Stand
+	ptr	DPLC_Tails_Blink1
+	ptr	DPLC_Tails_Blink2
+	ptr	DPLC_Tails_LookUp
+	ptr	DPLC_Tails_Wait
+	ptr	DPLC_Tails_Yawn1
+	ptr	DPLC_Tails_Yawn2
+	ptr	DPLC_Tails_Yawn3
+	ptr	DPLC_Tails_Tails1
+	ptr	DPLC_Tails_Tails2
+	ptr	DPLC_Tails_Tails3
+	ptr	DPLC_Tails_Tails4
+	ptr	DPLC_Tails_Tails5
+	ptr	DPLC_Tails_Walk11
+	ptr	DPLC_Tails_Walk12
+	ptr	DPLC_Tails_Walk13
+	ptr	DPLC_Tails_Walk14
+	ptr	DPLC_Tails_Walk15
+	ptr	DPLC_Tails_Walk16
+	ptr	DPLC_Tails_Walk17
+	ptr	DPLC_Tails_Walk18
+	ptr	DPLC_Tails_Walk21
+	ptr	DPLC_Tails_Walk22
+	ptr	DPLC_Tails_Walk23
+	ptr	DPLC_Tails_Walk24
+	ptr	DPLC_Tails_Walk25
+	ptr	DPLC_Tails_Walk26
+	ptr	DPLC_Tails_Walk27
+	ptr	DPLC_Tails_Walk28
+	ptr	DPLC_Tails_Walk31
+	ptr	DPLC_Tails_Walk32
+	ptr	DPLC_Tails_Walk33
+	ptr	DPLC_Tails_Walk34
+	ptr	DPLC_Tails_Walk35
+	ptr	DPLC_Tails_Walk36
+	ptr	DPLC_Tails_Walk37
+	ptr	DPLC_Tails_Walk38
+	ptr	DPLC_Tails_Walk41
+	ptr	DPLC_Tails_Walk42
+	ptr	DPLC_Tails_Walk43
+	ptr	DPLC_Tails_Walk44
+	ptr	DPLC_Tails_Walk45
+	ptr	DPLC_Tails_Walk46
+	ptr	DPLC_Tails_Walk47
+	ptr	DPLC_Tails_Walk48
+	ptr	DPLC_Tails_Run11
+	ptr	DPLC_Tails_Run12
+	ptr	DPLC_Tails_Run13
+	ptr	DPLC_Tails_Run14
+	ptr	DPLC_Tails_Run15
+	ptr	DPLC_Tails_Run16
+	ptr	DPLC_Tails_Run21
+	ptr	DPLC_Tails_Run22
+	ptr	DPLC_Tails_Run23
+	ptr	DPLC_Tails_Run24
+	ptr	DPLC_Tails_Run25
+	ptr	DPLC_Tails_Run26
+	ptr	DPLC_Tails_Run31
+	ptr	DPLC_Tails_Run32
+	ptr	DPLC_Tails_Run33
+	ptr	DPLC_Tails_Run34
+	ptr	DPLC_Tails_Run35
+	ptr	DPLC_Tails_Run36
+	ptr	DPLC_Tails_Run41
+	ptr	DPLC_Tails_Run42
+	ptr	DPLC_Tails_Run43
+	ptr	DPLC_Tails_Run44
+	ptr	DPLC_Tails_Run45
+	ptr	DPLC_Tails_Run46
+	ptr	DPLC_Tails_Roll1
+	ptr	DPLC_Tails_Roll2
+	ptr	DPLC_Tails_Roll3
+	ptr	DPLC_Tails_TailsRoll11
+	ptr	DPLC_Tails_TailsRoll12
+	ptr	DPLC_Tails_TailsRoll13
+	ptr	DPLC_Tails_TailsRoll14
+	ptr	DPLC_Tails_TailsRoll21
+	ptr	DPLC_Tails_TailsRoll22
+	ptr	DPLC_Tails_TailsRoll23
+	ptr	DPLC_Tails_TailsRoll24
+	ptr	DPLC_Tails_TailsRoll31
+	ptr	DPLC_Tails_TailsRoll32
+	ptr	DPLC_Tails_TailsRoll33
+	ptr	DPLC_Tails_TailsRoll34
+	ptr	DPLC_Tails_TailsRoll41
+	ptr	DPLC_Tails_TailsRoll42
+	ptr	DPLC_Tails_TailsRoll43
+	ptr	DPLC_Tails_TailsRoll44
+	ptr	DPLC_Tails_Spring1
+	ptr	DPLC_Tails_Spring2
+	ptr	DPLC_Tails_Duck
+	ptr	DPLC_Tails_Hurt
+	ptr	DPLC_Tails_Death
+	ptr	DPLC_Tails_Fly1
+	ptr	DPLC_Tails_Fly2
+	ptr	DPLC_Tails_Spindash1
+	ptr	DPLC_Tails_Spindash2
+	ptr	DPLC_Tails_Spindash3
+	ptr	DPLC_Tails_Push1
+	ptr	DPLC_Tails_Push2
+	ptr	DPLC_Tails_Push3
+	ptr	DPLC_Tails_Push4
+	ptr	DPLC_Tails_Stop1
+	ptr	DPLC_Tails_Stop2
+	ptr	DPLC_Tails_Balance1
+	ptr	DPLC_Tails_Balance2
+	ptr	DPLC_Tails_Slide
+	ptr	DPLC_Tails_Hang1
+	ptr	DPLC_Tails_Hang2
+	ptr	DPLC_Tails_Float1
+	ptr	DPLC_Tails_Float2
+	ptr	DPLC_Tails_Float3
+	ptr	DPLC_Tails_Float4
+	ptr	DPLC_Tails_Float5
+	ptr	DPLC_Tails_Float6
+	ptr	DPLC_Tails_GetAir
+	ptr	DPLC_Tails_Tumble1
+	ptr	DPLC_Tails_Tumble2
+	ptr	DPLC_Tails_Tumble3
+	ptr	DPLC_Tails_Tumble4
+	ptr	DPLC_Tails_Tumble5
+	ptr	DPLC_Tails_Tumble6
+	ptr	DPLC_Tails_Tumble7
+	ptr	DPLC_Tails_Tumble8
+	ptr	DPLC_Tails_Tumble9
+	ptr	DPLC_Tails_Tumble10
+	ptr	DPLC_Tails_Tumble11
+	ptr	DPLC_Tails_Tumble12
+	ptr	DPLC_TailsTails_Spindash1
+	ptr	DPLC_TailsTails_Spindash2
+	ptr	DPLC_TailsTails_Spindash3
+	ptr	DPLC_TailsTails_Spindash4
+	ptr	DPLC_Tails_Vine1
+	ptr	DPLC_Tails_Vine2
+	ptr	DPLC_TailsTails_Pushing1
+	ptr	DPLC_TailsTails_Pushing2
+	ptr	DPLC_TailsTails_Pushing3
+	ptr	DPLC_TailsTails_Pushing4
 
-DPLC_Tails_0116:	dplcheader
-DPLC_Tails_0116_End
+DPLC_Tails_Blank:	dplcheader
+DPLC_Tails_Blank_End
 
-DPLC_Tails_0118:	dplcheader
+DPLC_Tails_Stand:	dplcheader
 	dplc_entry	6, 0
 	dplc_entry	6, 6
-DPLC_Tails_0118_End
+DPLC_Tails_Stand_End
 
-DPLC_Tails_011E:	dplcheader
+DPLC_Tails_Blink1:	dplcheader
 	dplc_entry	6, $C
 	dplc_entry	6, 6
-DPLC_Tails_011E_End
+DPLC_Tails_Blink1_End
 
-DPLC_Tails_0124:	dplcheader
+DPLC_Tails_Blink2:	dplcheader
 	dplc_entry	6, $12
 	dplc_entry	6, 6
-DPLC_Tails_0124_End
+DPLC_Tails_Blink2_End
 
-DPLC_Tails_012A:	dplcheader
+DPLC_Tails_LookUp:	dplcheader
 	dplc_entry	6, $18
 	dplc_entry	6, 6
-DPLC_Tails_012A_End
+DPLC_Tails_LookUp_End
 
-DPLC_Tails_0130:	dplcheader
+DPLC_Tails_Wait:	dplcheader
 	dplc_entry	$C, $1E
-DPLC_Tails_0130_End
+DPLC_Tails_Wait_End
 
-DPLC_Tails_0134:	dplcheader
+DPLC_Tails_Yawn1:	dplcheader
 	dplc_entry	$C, $2A
-DPLC_Tails_0134_End
+DPLC_Tails_Yawn1_End
 
-DPLC_Tails_0138:	dplcheader
+DPLC_Tails_Yawn2:	dplcheader
 	dplc_entry	6, $36
 	dplc_entry	6, $3C
-DPLC_Tails_0138_End
+DPLC_Tails_Yawn2_End
 
-DPLC_Tails_013E:	dplcheader
+DPLC_Tails_Yawn3:	dplcheader
 	dplc_entry	6, $36
 	dplc_entry	6, $42
-DPLC_Tails_013E_End
+DPLC_Tails_Yawn3_End
 
-DPLC_Tails_0144:	dplcheader
+DPLC_Tails_Tails1:	dplcheader
 	dplc_entry	8, $48
-DPLC_Tails_0144_End
+DPLC_Tails_Tails1_End
 
-DPLC_Tails_0148:	dplcheader
+DPLC_Tails_Tails2:	dplcheader
 	dplc_entry	$C, $50
-DPLC_Tails_0148_End
+DPLC_Tails_Tails2_End
 
-DPLC_Tails_014C:	dplcheader
+DPLC_Tails_Tails3:	dplcheader
 	dplc_entry	$C, $5C
-DPLC_Tails_014C_End
+DPLC_Tails_Tails3_End
 
-DPLC_Tails_0150:	dplcheader
+DPLC_Tails_Tails4:	dplcheader
 	dplc_entry	6, $68
-DPLC_Tails_0150_End
+DPLC_Tails_Tails4_End
 
-DPLC_Tails_0154:	dplcheader
+DPLC_Tails_Tails5:	dplcheader
 	dplc_entry	$C, $6E
-DPLC_Tails_0154_End
+DPLC_Tails_Tails5_End
 
-DPLC_Tails_0158:	dplcheader
+DPLC_Tails_Walk11:	dplcheader
 	dplc_entry	6, $7A
 	dplc_entry	8, $80
 	dplc_entry	6, $CA
-DPLC_Tails_0158_End
+DPLC_Tails_Walk11_End
 
-DPLC_Tails_0160:	dplcheader
+DPLC_Tails_Walk12:	dplcheader
 	dplc_entry	6, $88
 	dplc_entry	8, $8E
 	dplc_entry	6, $D0
-DPLC_Tails_0160_End
+DPLC_Tails_Walk12_End
 
-DPLC_Tails_0168:	dplcheader
+DPLC_Tails_Walk13:	dplcheader
 	dplc_entry	6, $96
 	dplc_entry	6, $9C
 	dplc_entry	6, $D6
-DPLC_Tails_0168_End
+DPLC_Tails_Walk13_End
 
-DPLC_Tails_0170:	dplcheader
+DPLC_Tails_Walk14:	dplcheader
 	dplc_entry	6, $A2
 	dplc_entry	6, $A8
 	dplc_entry	6, $DC
-DPLC_Tails_0170_End
+DPLC_Tails_Walk14_End
 
-DPLC_Tails_0178:	dplcheader
+DPLC_Tails_Walk15:	dplcheader
 	dplc_entry	6, $7A
 	dplc_entry	8, $AE
 	dplc_entry	6, $CA
-DPLC_Tails_0178_End
+DPLC_Tails_Walk15_End
 
-DPLC_Tails_0180:	dplcheader
+DPLC_Tails_Walk16:	dplcheader
 	dplc_entry	6, $88
 	dplc_entry	8, $B6
 	dplc_entry	6, $D0
-DPLC_Tails_0180_End
+DPLC_Tails_Walk16_End
 
-DPLC_Tails_0188:	dplcheader
+DPLC_Tails_Walk17:	dplcheader
 	dplc_entry	6, $96
 	dplc_entry	6, $BE
 	dplc_entry	6, $D6
-DPLC_Tails_0188_End
+DPLC_Tails_Walk17_End
 
-DPLC_Tails_0190:	dplcheader
+DPLC_Tails_Walk18:	dplcheader
 	dplc_entry	6, $A2
 	dplc_entry	6, $C4
 	dplc_entry	6, $DC
-DPLC_Tails_0190_End
+DPLC_Tails_Walk18_End
 
-DPLC_Tails_0198:	dplcheader
+DPLC_Tails_Walk21:	dplcheader
 	dplc_entry	2, $E2
 	dplc_entry	4, $E4
 	dplc_entry	$C, $E8
-DPLC_Tails_0198_End
+DPLC_Tails_Walk21_End
 
-DPLC_Tails_01A0:	dplcheader
+DPLC_Tails_Walk22:	dplcheader
 	dplc_entry	4, $F4
 	dplc_entry	$C, $F8
 	dplc_entry	4, $104
-DPLC_Tails_01A0_End
+DPLC_Tails_Walk22_End
 
-DPLC_Tails_01A8:	dplcheader
+DPLC_Tails_Walk23:	dplcheader
 	dplc_entry	4, $108
 	dplc_entry	4, $10C
 	dplc_entry	$C, $110
-DPLC_Tails_01A8_End
+DPLC_Tails_Walk23_End
 
-DPLC_Tails_01B0:	dplcheader
+DPLC_Tails_Walk24:	dplcheader
 	dplc_entry	2, $11C
 	dplc_entry	$10, $11E
 	dplc_entry	2, $12E
-DPLC_Tails_01B0_End
+DPLC_Tails_Walk24_End
 
-DPLC_Tails_01B8:	dplcheader
+DPLC_Tails_Walk25:	dplcheader
 	dplc_entry	2, $E2
 	dplc_entry	4, $E4
 	dplc_entry	$C, $130
-DPLC_Tails_01B8_End
+DPLC_Tails_Walk25_End
 
-DPLC_Tails_01C0:	dplcheader
+DPLC_Tails_Walk26:	dplcheader
 	dplc_entry	4, $F4
 	dplc_entry	$C, $13C
 	dplc_entry	4, $148
-DPLC_Tails_01C0_End
+DPLC_Tails_Walk26_End
 
-DPLC_Tails_01C8:	dplcheader
+DPLC_Tails_Walk27:	dplcheader
 	dplc_entry	4, $108
 	dplc_entry	4, $10C
 	dplc_entry	$C, $14C
-DPLC_Tails_01C8_End
+DPLC_Tails_Walk27_End
 
-DPLC_Tails_01D0:	dplcheader
+DPLC_Tails_Walk28:	dplcheader
 	dplc_entry	2, $11C
 	dplc_entry	$10, $158
 	dplc_entry	2, $168
-DPLC_Tails_01D0_End
+DPLC_Tails_Walk28_End
 
-DPLC_Tails_01D8:	dplcheader
+DPLC_Tails_Walk31:	dplcheader
 	dplc_entry	8, $16A
 	dplc_entry	8, $172
 	dplc_entry	8, $1CA
-DPLC_Tails_01D8_End
+DPLC_Tails_Walk31_End
 
-DPLC_Tails_01E0:	dplcheader
+DPLC_Tails_Walk32:	dplcheader
 	dplc_entry	8, $17A
 	dplc_entry	8, $182
 	dplc_entry	8, $1D2
-DPLC_Tails_01E0_End
+DPLC_Tails_Walk32_End
 
-DPLC_Tails_01E8:	dplcheader
+DPLC_Tails_Walk33:	dplcheader
 	dplc_entry	8, $18A
 	dplc_entry	8, $192
 	dplc_entry	8, $1DA
-DPLC_Tails_01E8_End
+DPLC_Tails_Walk33_End
 
-DPLC_Tails_01F0:	dplcheader
+DPLC_Tails_Walk34:	dplcheader
 	dplc_entry	8, $19A
 	dplc_entry	8, $1A2
 	dplc_entry	8, $5BE
-DPLC_Tails_01F0_End
+DPLC_Tails_Walk34_End
 
-DPLC_Tails_01F8:	dplcheader
+DPLC_Tails_Walk35:	dplcheader
 	dplc_entry	8, $16A
 	dplc_entry	8, $1AA
 	dplc_entry	8, $1CA
-DPLC_Tails_01F8_End
+DPLC_Tails_Walk35_End
 
-DPLC_Tails_0200:	dplcheader
+DPLC_Tails_Walk36:	dplcheader
 	dplc_entry	8, $17A
 	dplc_entry	8, $1B2
 	dplc_entry	8, $1D2
-DPLC_Tails_0200_End
+DPLC_Tails_Walk36_End
 
-DPLC_Tails_0208:	dplcheader
+DPLC_Tails_Walk37:	dplcheader
 	dplc_entry	8, $18A
 	dplc_entry	8, $1BA
 	dplc_entry	8, $1DA
-DPLC_Tails_0208_End
+DPLC_Tails_Walk37_End
 
-DPLC_Tails_0210:	dplcheader
+DPLC_Tails_Walk38:	dplcheader
 	dplc_entry	8, $19A
 	dplc_entry	8, $1C2
 	dplc_entry	8, $5BE
-DPLC_Tails_0210_End
+DPLC_Tails_Walk38_End
 
-DPLC_Tails_0218:	dplcheader
+DPLC_Tails_Walk41:	dplcheader
 	dplc_entry	2, $1EA
 	dplc_entry	$10, $1EC
-DPLC_Tails_0218_End
+DPLC_Tails_Walk41_End
 
-DPLC_Tails_021E:	dplcheader
+DPLC_Tails_Walk42:	dplcheader
 	dplc_entry	4, $1FC
 	dplc_entry	2, $200
 	dplc_entry	$10, $202
-DPLC_Tails_021E_End
+DPLC_Tails_Walk42_End
 
-DPLC_Tails_0226:	dplcheader
+DPLC_Tails_Walk43:	dplcheader
 	dplc_entry	2, $212
 	dplc_entry	$10, $214
-DPLC_Tails_0226_End
+DPLC_Tails_Walk43_End
 
-DPLC_Tails_022C:	dplcheader
+DPLC_Tails_Walk44:	dplcheader
 	dplc_entry	2, $224
 	dplc_entry	2, $226
 	dplc_entry	$10, $228
-DPLC_Tails_022C_End
+DPLC_Tails_Walk44_End
 
-DPLC_Tails_0234:	dplcheader
+DPLC_Tails_Walk45:	dplcheader
 	dplc_entry	2, $1EA
 	dplc_entry	$10, $238
-DPLC_Tails_0234_End
+DPLC_Tails_Walk45_End
 
-DPLC_Tails_023A:	dplcheader
+DPLC_Tails_Walk46:	dplcheader
 	dplc_entry	2, $248
 	dplc_entry	2, $200
 	dplc_entry	$10, $24A
-DPLC_Tails_023A_End
+DPLC_Tails_Walk46_End
 
-DPLC_Tails_0242:	dplcheader
+DPLC_Tails_Walk47:	dplcheader
 	dplc_entry	2, $212
 	dplc_entry	$10, $25A
-DPLC_Tails_0242_End
+DPLC_Tails_Walk47_End
 
-DPLC_Tails_0248:	dplcheader
+DPLC_Tails_Walk48:	dplcheader
 	dplc_entry	2, $26A
 	dplc_entry	2, $224
 	dplc_entry	$10, $26C
-DPLC_Tails_0248_End
+DPLC_Tails_Walk48_End
 
-DPLC_Tails_0250:	dplcheader
+DPLC_Tails_Run11:	dplcheader
 	dplc_entry	$10, $27C
 	dplc_entry	8, $29C
-DPLC_Tails_0250_End
+DPLC_Tails_Run11_End
 
-DPLC_Tails_0256:	dplcheader
+DPLC_Tails_Run14:
+DPLC_Tails_Run12:	dplcheader
 	dplc_entry	$10, $28C
 	dplc_entry	4, $2A4
-DPLC_Tails_0256_End
+DPLC_Tails_Run12_End
 
-DPLC_Tails_025C:	dplcheader
+DPLC_Tails_Run13:	dplcheader
 	dplc_entry	$10, $27C
 	dplc_entry	4, $2A8
-DPLC_Tails_025C_End
+DPLC_Tails_Run13_End
 
-DPLC_Tails_0262:	dplcheader
+DPLC_Tails_Run15:	dplcheader
 	dplc_entry	$10, $27C
 	dplc_entry	8, $2AC
-DPLC_Tails_0262_End
+DPLC_Tails_Run15_End
 
-DPLC_Tails_0268:	dplcheader
+DPLC_Tails_Run16:	dplcheader
 	dplc_entry	$10, $28C
 	dplc_entry	8, $2AC
-DPLC_Tails_0268_End
+DPLC_Tails_Run16_End
 
-DPLC_Tails_026E:	dplcheader
+DPLC_Tails_Run21:	dplcheader
 	dplc_entry	2, $2B4
 	dplc_entry	$C, $2B6
 	dplc_entry	$C, $2D2
-DPLC_Tails_026E_End
+DPLC_Tails_Run21_End
 
-DPLC_Tails_0276:	dplcheader
+DPLC_Tails_Run22:	dplcheader
 	dplc_entry	4, $2C2
 	dplc_entry	$C, $2C6
 	dplc_entry	4, $2DE
-DPLC_Tails_0276_End
+DPLC_Tails_Run22_End
 
-DPLC_Tails_027E:	dplcheader
+DPLC_Tails_Run23:	dplcheader
 	dplc_entry	2, $2B4
 	dplc_entry	$C, $2B6
 	dplc_entry	4, $2E2
-DPLC_Tails_027E_End
+DPLC_Tails_Run23_End
 
-DPLC_Tails_0286:	dplcheader
+DPLC_Tails_Run24:	dplcheader
 	dplc_entry	4, $2C2
 	dplc_entry	$C, $2C6
 	dplc_entry	4, $2E6
-DPLC_Tails_0286_End
+DPLC_Tails_Run24_End
 
-DPLC_Tails_028E:	dplcheader
+DPLC_Tails_Run25:	dplcheader
 	dplc_entry	2, $2B4
 	dplc_entry	$C, $2B6
 	dplc_entry	$C, $2EA
-DPLC_Tails_028E_End
+DPLC_Tails_Run25_End
 
-DPLC_Tails_0296:	dplcheader
+DPLC_Tails_Run26:	dplcheader
 	dplc_entry	4, $2C2
 	dplc_entry	$C, $2C6
 	dplc_entry	$C, $2EA
-DPLC_Tails_0296_End
+DPLC_Tails_Run26_End
 
-DPLC_Tails_029E:	dplcheader
+DPLC_Tails_Run31:	dplcheader
 	dplc_entry	6, $2F6
 	dplc_entry	8, $2FC
 	dplc_entry	8, $312
-DPLC_Tails_029E_End
+DPLC_Tails_Run31_End
 
-DPLC_Tails_02A6:	dplcheader
+DPLC_Tails_Run34:
+DPLC_Tails_Run32:	dplcheader
 	dplc_entry	6, $304
 	dplc_entry	8, $30A
 	dplc_entry	4, $31E
-DPLC_Tails_02A6_End
+DPLC_Tails_Run32_End
 
-DPLC_Tails_02AE:	dplcheader
+DPLC_Tails_Run33:	dplcheader
 	dplc_entry	6, $2F6
 	dplc_entry	8, $2FC
 	dplc_entry	4, $31A
-DPLC_Tails_02AE_End
+DPLC_Tails_Run33_End
 
-DPLC_Tails_02B6:	dplcheader
+DPLC_Tails_Run35:	dplcheader
 	dplc_entry	6, $2F6
 	dplc_entry	8, $2FC
 	dplc_entry	8, $322
-DPLC_Tails_02B6_End
+DPLC_Tails_Run35_End
 
-DPLC_Tails_02BE:	dplcheader
+DPLC_Tails_Run36:	dplcheader
 	dplc_entry	6, $304
 	dplc_entry	8, $30A
 	dplc_entry	8, $322
-DPLC_Tails_02BE_End
+DPLC_Tails_Run36_End
 
-DPLC_Tails_02C6:	dplcheader
+DPLC_Tails_Run41:	dplcheader
 	dplc_entry	$C, $32A
 	dplc_entry	4, $336
 	dplc_entry	$C, $2D2
-DPLC_Tails_02C6_End
+DPLC_Tails_Run41_End
 
-DPLC_Tails_02CE:	dplcheader
+DPLC_Tails_Run42:	dplcheader
 	dplc_entry	$C, $33A
 	dplc_entry	4, $346
 	dplc_entry	4, $2DE
-DPLC_Tails_02CE_End
+DPLC_Tails_Run42_End
 
-DPLC_Tails_02D6:	dplcheader
+DPLC_Tails_Run43:	dplcheader
 	dplc_entry	$C, $32A
 	dplc_entry	4, $336
 	dplc_entry	4, $2E2
-DPLC_Tails_02D6_End
+DPLC_Tails_Run43_End
 
-DPLC_Tails_02DE:	dplcheader
+DPLC_Tails_Run44:	dplcheader
 	dplc_entry	$C, $33A
 	dplc_entry	4, $346
 	dplc_entry	4, $2E6
-DPLC_Tails_02DE_End
+DPLC_Tails_Run44_End
 
-DPLC_Tails_02E6:	dplcheader
+DPLC_Tails_Run45:	dplcheader
 	dplc_entry	$C, $32A
 	dplc_entry	4, $336
 	dplc_entry	$C, $2EA
-DPLC_Tails_02E6_End
+DPLC_Tails_Run45_End
 
-DPLC_Tails_02EE:	dplcheader
+DPLC_Tails_Run46:	dplcheader
 	dplc_entry	$C, $33A
 	dplc_entry	4, $346
 	dplc_entry	$C, $2EA
-DPLC_Tails_02EE_End
+DPLC_Tails_Run46_End
 
-DPLC_Tails_02F6:	dplcheader
+DPLC_Tails_Roll1:	dplcheader
 	dplc_entry	$10, $34A
-DPLC_Tails_02F6_End
+DPLC_Tails_Roll1_End
 
-DPLC_Tails_02FA:	dplcheader
+DPLC_Tails_Roll2:	dplcheader
 	dplc_entry	$10, $35A
-DPLC_Tails_02FA_End
+DPLC_Tails_Roll2_End
 
-DPLC_Tails_02FE:	dplcheader
+DPLC_Tails_Roll3:	dplcheader
 	dplc_entry	$10, $36A
-DPLC_Tails_02FE_End
+DPLC_Tails_Roll3_End
 
-DPLC_Tails_0302:	dplcheader
+DPLC_TailsTails_Spindash1:
+DPLC_TailsTails_Pushing1:
+DPLC_Tails_TailsRoll11:	dplcheader
 	dplc_entry	6, $CA
-DPLC_Tails_0302_End
+DPLC_Tails_TailsRoll11_End
 
-DPLC_Tails_0306:	dplcheader
+DPLC_TailsTails_Spindash2:
+DPLC_TailsTails_Pushing2:
+DPLC_Tails_TailsRoll12:	dplcheader
 	dplc_entry	6, $D0
-DPLC_Tails_0306_End
+DPLC_Tails_TailsRoll12_End
 
-DPLC_Tails_030A:	dplcheader
+DPLC_TailsTails_Spindash3:
+DPLC_TailsTails_Pushing3:
+DPLC_Tails_TailsRoll13:	dplcheader
 	dplc_entry	6, $D6
-DPLC_Tails_030A_End
+DPLC_Tails_TailsRoll13_End
 
-DPLC_Tails_030E:	dplcheader
+DPLC_TailsTails_Spindash4:
+DPLC_TailsTails_Pushing4:
+DPLC_Tails_TailsRoll14:	dplcheader
 	dplc_entry	6, $DC
-DPLC_Tails_030E_End
+DPLC_Tails_TailsRoll14_End
 
-DPLC_Tails_0312:	dplcheader
+DPLC_Tails_TailsRoll21:	dplcheader
 	dplc_entry	6, $37A
-DPLC_Tails_0312_End
+DPLC_Tails_TailsRoll21_End
 
-DPLC_Tails_0316:	dplcheader
+DPLC_Tails_TailsRoll22:	dplcheader
 	dplc_entry	6, $380
-DPLC_Tails_0316_End
+DPLC_Tails_TailsRoll22_End
 
-DPLC_Tails_031A:	dplcheader
+DPLC_Tails_TailsRoll23:	dplcheader
 	dplc_entry	6, $386
-DPLC_Tails_031A_End
+DPLC_Tails_TailsRoll23_End
 
-DPLC_Tails_031E:	dplcheader
+DPLC_Tails_TailsRoll24:	dplcheader
 	dplc_entry	6, $38C
-DPLC_Tails_031E_End
+DPLC_Tails_TailsRoll24_End
 
-DPLC_Tails_0322:	dplcheader
+DPLC_Tails_TailsRoll31:	dplcheader
 	dplc_entry	8, $1CA
-DPLC_Tails_0322_End
+DPLC_Tails_TailsRoll31_End
 
-DPLC_Tails_0326:	dplcheader
+DPLC_Tails_TailsRoll32:	dplcheader
 	dplc_entry	8, $1D2
-DPLC_Tails_0326_End
+DPLC_Tails_TailsRoll32_End
 
-DPLC_Tails_032A:	dplcheader
+DPLC_Tails_TailsRoll33:	dplcheader
 	dplc_entry	8, $1DA
-DPLC_Tails_032A_End
+DPLC_Tails_TailsRoll33_End
 
-DPLC_Tails_032E:	dplcheader
+DPLC_Tails_TailsRoll34:	dplcheader
 	dplc_entry	8, $5BE
-DPLC_Tails_032E_End
+DPLC_Tails_TailsRoll34_End
 
-DPLC_Tails_0332:	dplcheader
+DPLC_Tails_TailsRoll41:	dplcheader
 	dplc_entry	8, $392
-DPLC_Tails_0332_End
+DPLC_Tails_TailsRoll41_End
 
-DPLC_Tails_0336:	dplcheader
+DPLC_Tails_TailsRoll42:	dplcheader
 	dplc_entry	8, $39A
-DPLC_Tails_0336_End
+DPLC_Tails_TailsRoll42_End
 
-DPLC_Tails_033A:	dplcheader
+DPLC_Tails_TailsRoll43:	dplcheader
 	dplc_entry	8, $3A2
-DPLC_Tails_033A_End
+DPLC_Tails_TailsRoll43_End
 
-DPLC_Tails_033E:	dplcheader
+DPLC_Tails_TailsRoll44:	dplcheader
 	dplc_entry	8, $3AA
-DPLC_Tails_033E_End
+DPLC_Tails_TailsRoll44_End
 
-DPLC_Tails_0342:	dplcheader
+DPLC_Tails_Spring1:	dplcheader
 	dplc_entry	4, $3B2
 	dplc_entry	$C, $3B6
-DPLC_Tails_0342_End
+DPLC_Tails_Spring1_End
 
-DPLC_Tails_0348:	dplcheader
+DPLC_Tails_Spring2:	dplcheader
 	dplc_entry	4, $3B2
 	dplc_entry	$C, $3C2
-DPLC_Tails_0348_End
+DPLC_Tails_Spring2_End
 
-DPLC_Tails_034E:	dplcheader
+DPLC_Tails_Duck:	dplcheader
 	dplc_entry	$C, $3CE
-DPLC_Tails_034E_End
+DPLC_Tails_Duck_End
 
-DPLC_Tails_0352:	dplcheader
+DPLC_Tails_Hurt:	dplcheader
 	dplc_entry	$10, $3DA
-DPLC_Tails_0352_End
+DPLC_Tails_Hurt_End
 
-DPLC_Tails_0356:	dplcheader
+DPLC_Tails_Death:	dplcheader
 	dplc_entry	$10, $3EA
-DPLC_Tails_0356_End
+DPLC_Tails_Death_End
 
-DPLC_Tails_035A:	dplcheader
+DPLC_Tails_Fly2:
+DPLC_Tails_Fly1:	dplcheader
 	dplc_entry	$10, $3FA
 	dplc_entry	8, $40A
-DPLC_Tails_035A_End
+DPLC_Tails_Fly1_End
 
-DPLC_Tails_0360:	dplcheader
+DPLC_Tails_Spindash1:	dplcheader
 	dplc_entry	$10, $412
-DPLC_Tails_0360_End
+DPLC_Tails_Spindash1_End
 
-DPLC_Tails_0364:	dplcheader
+DPLC_Tails_Spindash2:	dplcheader
 	dplc_entry	$10, $422
-DPLC_Tails_0364_End
+DPLC_Tails_Spindash2_End
 
-DPLC_Tails_0368:	dplcheader
+DPLC_Tails_Spindash3:	dplcheader
 	dplc_entry	$10, $432
-DPLC_Tails_0368_End
+DPLC_Tails_Spindash3_End
 
-DPLC_Tails_036C:	dplcheader
+DPLC_Tails_Push1:	dplcheader
 	dplc_entry	6, $442
 	dplc_entry	8, $448
-DPLC_Tails_036C_End
+DPLC_Tails_Push1_End
 
-DPLC_Tails_0372:	dplcheader
+DPLC_Tails_Push2:	dplcheader
 	dplc_entry	6, $442
 	dplc_entry	6, $450
-DPLC_Tails_0372_End
+DPLC_Tails_Push2_End
 
-DPLC_Tails_0378:	dplcheader
+DPLC_Tails_Push3:	dplcheader
 	dplc_entry	6, $442
 	dplc_entry	6, $456
-DPLC_Tails_0378_End
+DPLC_Tails_Push3_End
 
-DPLC_Tails_037E:	dplcheader
+DPLC_Tails_Push4:	dplcheader
 	dplc_entry	6, $442
 	dplc_entry	6, $45C
-DPLC_Tails_037E_End
+DPLC_Tails_Push4_End
 
-DPLC_Tails_0384:	dplcheader
+DPLC_Tails_Stop1:	dplcheader
 	dplc_entry	6, $462
 	dplc_entry	8, $468
-DPLC_Tails_0384_End
+DPLC_Tails_Stop1_End
 
-DPLC_Tails_038A:	dplcheader
+DPLC_Tails_Stop2:	dplcheader
 	dplc_entry	6, $470
 	dplc_entry	8, $476
-DPLC_Tails_038A_End
+DPLC_Tails_Stop2_End
 
-DPLC_Tails_0390:	dplcheader
+DPLC_Tails_Balance1:	dplcheader
 	dplc_entry	2, $47E
 	dplc_entry	$C, $480
-DPLC_Tails_0390_End
+DPLC_Tails_Balance1_End
 
-DPLC_Tails_0396:	dplcheader
+DPLC_Tails_Balance2:	dplcheader
 	dplc_entry	6, $48C
 	dplc_entry	8, $492
-DPLC_Tails_0396_End
+DPLC_Tails_Balance2_End
 
-DPLC_Tails_039C:	dplcheader
+DPLC_Tails_Slide:	dplcheader
 	dplc_entry	$10, $49A
-DPLC_Tails_039C_End
+DPLC_Tails_Slide_End
 
-DPLC_Tails_03A0:	dplcheader
+DPLC_Tails_Hang1:	dplcheader
 	dplc_entry	$10, $4AA
 	dplc_entry	4, $4BA
-DPLC_Tails_03A0_End
+DPLC_Tails_Hang1_End
 
-DPLC_Tails_03A6:	dplcheader
+DPLC_Tails_Hang2:	dplcheader
 	dplc_entry	$10, $4BE
 	dplc_entry	4, $4CE
-DPLC_Tails_03A6_End
+DPLC_Tails_Hang2_End
 
-DPLC_Tails_03AC:	dplcheader
+DPLC_Tails_Float3:
+DPLC_Tails_Float1:	dplcheader
 	dplc_entry	4, $4D2
 	dplc_entry	$C, $4D6
-DPLC_Tails_03AC_End
+DPLC_Tails_Float1_End
 
-DPLC_Tails_03B2:	dplcheader
+DPLC_Tails_Float2:	dplcheader
 	dplc_entry	8, $4E2
 	dplc_entry	8, $4E2
-DPLC_Tails_03B2_End
+DPLC_Tails_Float2_End
 
-DPLC_Tails_03B8:	dplcheader
+DPLC_Tails_Float5:
+DPLC_Tails_Float4:	dplcheader
 	dplc_entry	8, $4EA
 	dplc_entry	4, $4F2
-DPLC_Tails_03B8_End
+DPLC_Tails_Float4_End
 
-DPLC_Tails_03BE:	dplcheader
+DPLC_Tails_Float6:	dplcheader
 	dplc_entry	4, $4F6
 	dplc_entry	$C, $4FA
-DPLC_Tails_03BE_End
+DPLC_Tails_Float6_End
 
-DPLC_Tails_03C4:	dplcheader
+DPLC_Tails_GetAir:	dplcheader
 	dplc_entry	$10, $506
-DPLC_Tails_03C4_End
+DPLC_Tails_GetAir_End
 
-DPLC_Tails_03C8:	dplcheader
+DPLC_Tails_Tumble1:	dplcheader
 	dplc_entry	$C, $516
-DPLC_Tails_03C8_End
+DPLC_Tails_Tumble1_End
 
-DPLC_Tails_03CC:	dplcheader
+DPLC_Tails_Tumble2:	dplcheader
 	dplc_entry	4, $522
 	dplc_entry	$C, $526
-DPLC_Tails_03CC_End
+DPLC_Tails_Tumble2_End
 
-DPLC_Tails_03D2:	dplcheader
+DPLC_Tails_Tumble3:	dplcheader
 	dplc_entry	$C, $532
-DPLC_Tails_03D2_End
+DPLC_Tails_Tumble3_End
 
-DPLC_Tails_03D6:	dplcheader
+DPLC_Tails_Tumble4:	dplcheader
 	dplc_entry	$C, $53E
-DPLC_Tails_03D6_End
+DPLC_Tails_Tumble4_End
 
-DPLC_Tails_03DA:	dplcheader
+DPLC_Tails_Tumble5:	dplcheader
 	dplc_entry	$C, $54A
-DPLC_Tails_03DA_End
+DPLC_Tails_Tumble5_End
 
-DPLC_Tails_03DE:	dplcheader
+DPLC_Tails_Tumble6:	dplcheader
 	dplc_entry	$C, $556
-DPLC_Tails_03DE_End
+DPLC_Tails_Tumble6_End
 
-DPLC_Tails_03E2:	dplcheader
+DPLC_Tails_Tumble7:	dplcheader
 	dplc_entry	$C, $562
-DPLC_Tails_03E2_End
+DPLC_Tails_Tumble7_End
 
-DPLC_Tails_03E6:	dplcheader
+DPLC_Tails_Tumble8:	dplcheader
 	dplc_entry	$C, $56E
-DPLC_Tails_03E6_End
+DPLC_Tails_Tumble8_End
 
-DPLC_Tails_03EA:	dplcheader
+DPLC_Tails_Tumble9:	dplcheader
 	dplc_entry	$C, $57A
-DPLC_Tails_03EA_End
+DPLC_Tails_Tumble9_End
 
-DPLC_Tails_03EE:	dplcheader
+DPLC_Tails_Tumble10:	dplcheader
 	dplc_entry	$C, $586
-DPLC_Tails_03EE_End
+DPLC_Tails_Tumble10_End
 
-DPLC_Tails_03F2:	dplcheader
+DPLC_Tails_Tumble11:	dplcheader
 	dplc_entry	6, $592
 	dplc_entry	4, $598
-DPLC_Tails_03F2_End
+DPLC_Tails_Tumble11_End
 
-DPLC_Tails_03F8:	dplcheader
+DPLC_Tails_Tumble12:	dplcheader
 	dplc_entry	8, $59C
 	dplc_entry	4, $5A4
-DPLC_Tails_03F8_End
+DPLC_Tails_Tumble12_End
 
-DPLC_Tails_03FE:	dplcheader
+DPLC_Tails_Vine1:	dplcheader
 	dplc_entry	6, $5A8
 	dplc_entry	8, $5AE
-DPLC_Tails_03FE_End
+DPLC_Tails_Vine1_End
 
-DPLC_Tails_0404:	dplcheader
+DPLC_Tails_Vine2:	dplcheader
 	dplc_entry	6, $5A8
 	dplc_entry	8, $5B6
-DPLC_Tails_0404_End
+DPLC_Tails_Vine2_End
 
 	even

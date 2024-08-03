@@ -429,8 +429,8 @@ CharacterAnimations:		macro	func
 		\func	 , ,	GetUp,Dummy2			; $B
 		\func	 , ,	BalanceOut2,Dummy3		; $C
 		\func	 ,c,	Stop				; $D
-		\func	 ,c,	Float1				; $E
-		\func	 ,c,	Float2				; $F
+		\func	 ,c,	Grabbed				; $E
+		\func	 ,c,	Float				; $F
 		\func	 ,c,	Spring				; $10
 		\func	 ,c,	Hang1				; $11
 		\func	 , ,	Spindash2,Blink			; $12
@@ -691,7 +691,7 @@ ost_parent2:	equ $2C						; same as above
 
 ; ---------------------------------------------------------------------------
 
-; Animation script flags
+; Animation script flags - universal
 afEnd:		equ $FF						; return to beginning of animation
 afBackFlag:	equ $FE						; go back (specified number) bytes
 afChange:	equ $FD						; run specified animation id in next byte
@@ -700,6 +700,12 @@ afReset:	equ $FB						; reset animation and increment secondary routine counter
 af2ndRoutine:	equ $FA						; increment secondary routine counter
 afxflip:	equ $20
 afyflip:	equ $40
+
+; Animation script flags - player-specific
+afWalkRun:	equ $FF						; trigger special handling for walk and run animations
+afRoll:		equ $FE						; trigger special handling for Sonic's rolling animations
+afPush:		equ $FD						; trigger special handling for pushing animations
+afTTRoll:	equ $FC						; trigger special handling for Tails' tails' rolling animations
 
 ; 16x16 row/column redraw flags (v_fg_redraw_direction)
 redraw_top_bit:		equ 0

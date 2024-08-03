@@ -36699,7 +36699,7 @@ SonicAnimations:	macro	flag1,flag2,sonic,tails
 ; ===========================================================================
 
 Ani_Son_Walk:
-		dc.b $FF
+		dc.b afWalkRun
 		dc.b id_Frame_Sonic_Walk13
 		dc.b id_Frame_Sonic_Walk14
 		dc.b id_Frame_Sonic_Walk15
@@ -36711,7 +36711,7 @@ Ani_Son_Walk:
 		dc.b afEnd
 
 Ani_Son_Run:
-		dc.b $FF
+		dc.b afWalkRun
 		dc.b id_Frame_Sonic_Run11
 		dc.b id_Frame_Sonic_Run12
 		dc.b id_Frame_Sonic_Run13
@@ -36724,7 +36724,7 @@ Ani_Son_Run:
 		rev02even
 
 Ani_Son_Roll1:
-		dc.b $FE
+		dc.b afRoll
 		dc.b id_Frame_Sonic_Roll1
 		dc.b id_Frame_Sonic_Roll5
 		dc.b id_Frame_Sonic_Roll2
@@ -36737,7 +36737,7 @@ Ani_Son_Roll1:
 		rev02even
 
 Ani_Son_Roll2:
-		dc.b $FE
+		dc.b afRoll
 		dc.b id_Frame_Sonic_Roll1
 		dc.b id_Frame_Sonic_Roll5
 		dc.b id_Frame_Sonic_Roll2
@@ -36750,14 +36750,12 @@ Ani_Son_Roll2:
 		rev02even
 
 Ani_Son_Pushing:
-		dc.b $FD
+		dc.b afPush
 		dc.b id_Frame_Sonic_Push1
 		dc.b id_Frame_Sonic_Push2
 		dc.b id_Frame_Sonic_Push3
 		dc.b id_Frame_Sonic_Push4
 		dc.b afEnd
-
-		; Pointless beyond here.
 		dc.b afEnd
 		dc.b afEnd
 		dc.b afEnd
@@ -36892,7 +36890,7 @@ Ani_Son_Stop:
 		dc.b afChange,id_Ani_Son_Walk
 		rev02even
 
-Ani_Son_Float1:
+Ani_Son_Grabbed:
 		dc.b 7
 		dc.b id_Frame_Sonic_Float1
 		dc.b id_Frame_Sonic_Float6
@@ -36900,7 +36898,7 @@ Ani_Son_Float1:
 
 		rev02even
 
-Ani_Son_Float2:
+Ani_Son_Float:
 		dc.b 7
 		dc.b id_Frame_Sonic_Float1
 		dc.b id_Frame_Sonic_Float2
@@ -37037,7 +37035,7 @@ SuperSonicAnimations:	macro		flag1,flag2,sonic,tails
 ; ===========================================================================
 
 Ani_SupSon_Walk:
-		dc.b $FF
+		dc.b afWalkRun
 		dc.b id_Frame_SuperSonic_Walk13
 		dc.b id_Frame_SuperSonic_Walk14
 		dc.b id_Frame_SuperSonic_Walk15
@@ -37050,7 +37048,7 @@ Ani_SupSon_Walk:
 		rev02even
 
 Ani_SupSon_Run:
-		dc.b $FF
+		dc.b afWalkRun
 		dc.b id_Frame_SuperSonic_Run1
 		dc.b id_Frame_SuperSonic_Run1_QuillUp
 		dc.b afEnd
@@ -37063,7 +37061,7 @@ Ani_SupSon_Run:
 		rev02even
 
 Ani_SupSon_Pushing:
-		dc.b $FD
+		dc.b afPush
 		dc.b id_Frame_SuperSonic_Push1
 		dc.b id_Frame_SuperSonic_Push2
 		dc.b id_Frame_SuperSonic_Push3
@@ -39300,6 +39298,7 @@ loc_1CDB6:
 ; ---------------------------------------------------------------------------
 ; Tails when he's drowning
 ; ---------------------------------------------------------------------------
+
 Tails_Drown:
 		bsr.w	SpeedToPos
 		addi.w	#$10,ost_y_vel(a0)
@@ -39564,7 +39563,7 @@ loc_1D00E:
 		lsr.b	#3,d0
 		andi.b	#$C,d0
 		move.b	d0,d3
-		lea	(byte_1D2E8).l,a1
+		lea	(Ani_TT_Roll).l,a1
 		move.b	#3,ost_anim_time(a0)
 		bsr.w	loc_1CE12
 		add.b	d3,ost_frame(a0)
@@ -39578,9 +39577,9 @@ TailsAnimations:	macro		flag1,flag2,sonic,tails
 		if stricmp ("\flag2","n")			; Tails does not use this animation
 		else
 		ifarg \tails
-		ptr	Ani_Tails_\tails			; Tails has a different animation from Sonic
+		ptr	Ani_Tails_\tails			; Tails uses a different script for this animation
 		else
-		ptr	Ani_Tails_\sonic			; Tails shares an animation with Sonic
+		ptr	Ani_Tails_\sonic			; Tails shares this animation script with Sonic
 		endc
 		endc
 		endm
@@ -39588,54 +39587,310 @@ TailsAnimations:	macro		flag1,flag2,sonic,tails
 		CharacterAnimations		TailsAnimations	; generate pointers and IDs for Tails' animations
 ; ===========================================================================
 
-Ani_Tails_Walk:	dc.b $FF,$10,$11,$12,$13,$14,$15, $E, $F,$FF	; 0
+Ani_Tails_Walk:
+		dc.b afWalkRun
+		dc.b id_Frame_Tails_Walk13
+		dc.b id_Frame_Tails_Walk14
+		dc.b id_Frame_Tails_Walk15
+		dc.b id_Frame_Tails_Walk16
+		dc.b id_Frame_Tails_Walk17
+		dc.b id_Frame_Tails_Walk18
+		dc.b id_Frame_Tails_Walk11
+		dc.b id_Frame_Tails_Walk12
+		dc.b afEnd
 
-Ani_Tails_Run:	dc.b $FF,$2E,$2F,$30,$31,$FF,$FF,$FF,$FF,$FF	; 0
+Ani_Tails_Run:
+		dc.b afWalkRun
+		dc.b id_Frame_Tails_Run11
+		dc.b id_Frame_Tails_Run12
+		dc.b id_Frame_Tails_Run13
+		dc.b id_Frame_Tails_Run14
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
 
-Ani_Tails_Roll1:	dc.b   1,$48,$47,$46,$FF		; 0
-Ani_Tails_Roll2:	dc.b   1,$48,$47,$46,$FF		; 0
-Ani_Tails_Pushing:	dc.b $FD,$63,$64,$65,$66,$FF,$FF,$FF,$FF,$FF ; 0
+Ani_Tails_Roll1:
+		dc.b 1
+		dc.b id_Frame_Tails_Roll3
+		dc.b id_Frame_Tails_Roll2
+		dc.b id_Frame_Tails_Roll1
+		dc.b afEnd
+
+Ani_Tails_Roll2:
+		dc.b 1
+		dc.b id_Frame_Tails_Roll3
+		dc.b id_Frame_Tails_Roll2
+		dc.b id_Frame_Tails_Roll1
+		dc.b afEnd
+
+Ani_Tails_Pushing:
+		dc.b afPush
+		dc.b id_Frame_Tails_Push1
+		dc.b id_Frame_Tails_Push2
+		dc.b id_Frame_Tails_Push3
+		dc.b id_Frame_Tails_Push4
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
 
 Ani_Tails_Wait:
-		dc.b   7,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  3,  2,  1,  1,  1 ; 0
-		dc.b   1,  1,  1,  1,  1,  3,  2,  1,  1,  1,  1,  1,  1,  1,  1,  1 ; 16
-		dc.b   5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5 ; 32
-		dc.b   6,  7,  8,  7,  8,  7,  8,  7,  8,  7,  8,  6,$FE,$1C ; 48
+		dc.b 7
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Blink2
+		dc.b id_Frame_Tails_Blink1
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Blink2
+		dc.b id_Frame_Tails_Blink1
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Stand
+		backdest id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Yawn1
+		dc.b id_Frame_Tails_Yawn2
+		dc.b id_Frame_Tails_Yawn3
+		dc.b id_Frame_Tails_Yawn2
+		dc.b id_Frame_Tails_Yawn3
+		dc.b id_Frame_Tails_Yawn2
+		dc.b id_Frame_Tails_Yawn3
+		dc.b id_Frame_Tails_Yawn2
+		dc.b id_Frame_Tails_Yawn3
+		dc.b id_Frame_Tails_Yawn2
+		dc.b id_Frame_Tails_Yawn3
+		dc.b id_Frame_Tails_Yawn1
+		afback
+
 Ani_Tails_Balance:
-		dc.b   9,$69,$69,$6A,$6A,$69,$69,$6A,$6A,$69,$69,$6A,$6A,$69,$69,$6A ; 0
-		dc.b $6A,$69,$69,$6A,$6A,$69,$6A,$FF		; 16
-Ani_Tails_LookUp:	dc.b $3F,  4,$FF			; 0
-Ani_Tails_Duck:	dc.b $3F,$5B,$FF				; 0
-Ani_Tails_Spindash:	dc.b   0,$60,$61,$62,$FF		; 0
-Ani_Tails_Dummy1:	dc.b $3F,$82,$FF			; 0
-Ani_Tails_Dummy2:	dc.b   7,  8,  8,  9,$FD,  5		; 0
-Ani_Tails_Dummy3:	dc.b   7,  9,$FD,  5			; 0
-Ani_Tails_Stop:	dc.b   7,$67,$68,$67,$68,$FD,  0		; 0
-Ani_Tails_Float1:	dc.b   9,$6E,$73,$FF			; 0
-Ani_Tails_Float2:	dc.b   9,$6E,$6F,$70,$71,$72,$FF	; 0
-Ani_Tails_Spring:	dc.b   3,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$59,$5A,$FD,  0 ; 0
+		dc.b 9
+		rept 5
+		dc.b id_Frame_Tails_Balance1
+		dc.b id_Frame_Tails_Balance1
+		dc.b id_Frame_Tails_Balance2
+		dc.b id_Frame_Tails_Balance2
+		endr
+		dc.b id_Frame_Tails_Balance1
+		dc.b id_Frame_Tails_Balance2
+		dc.b afEnd
 
-Ani_Tails_Hang1:	dc.b   5,$6C,$6D,$FF			; 0
-Ani_Tails_Blink:	dc.b  $F,  1,  2,  3,$FE,  1		; 0
-Ani_Tails_Blink2:	dc.b  $F,  1,  2,$FE,  1		; 0
-Ani_Tails_Hang2:	dc.b $13,$85,$86,$FF			; 0
-Ani_Tails_Bubble:	dc.b  $B,$74,$74,$12,$13,$FD,  0	; 0
-Ani_Tails_Burnt:	dc.b $20,$5D,$FF			; 0
-Ani_Tails_Drown:	dc.b $2F,$5D,$FF			; 0
-Ani_Tails_Death:	dc.b   3,$5D,$FF			; 0
-Ani_Tails_Hurt:	dc.b   3,$5D,$FF				; 0
-Ani_Tails_Hurt2:	dc.b   3,$5C,$FF			; 0
-Ani_Tails_OilSlide:	dc.b   9,$6B,$5C,$FF			; 0
-Ani_Tails_Blank:	dc.b $77,  0,$FD,  0
-Ani_Tails_Dummy4:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,$FF ; 0
-Ani_Tails_Dummy5:	dc.b   3,  1,  2,  3,  4,  5,  6,  7,  8,$FF ; 0
-Ani_Tails_HaulAss:	dc.b $FF,$32,$33,$FF,$FF,$FF,$FF,$FF,$FF,$FF ; 0
+Ani_Tails_LookUp:
+		dc.b $3F
+		dc.b id_Frame_Tails_LookUp
+		dc.b afEnd
 
-Ani_Tails_Fly:	dc.b   1,$5E,$5F,$FF				; 0
+Ani_Tails_Duck:
+		dc.b $3F
+		dc.b id_Frame_Tails_Duck
+		dc.b afEnd
+
+Ani_Tails_Spindash:
+		dc.b 0
+		dc.b id_Frame_Tails_Spindash1
+		dc.b id_Frame_Tails_Spindash2
+		dc.b id_Frame_Tails_Spindash3
+		dc.b afEnd
+
+Ani_Tails_Dummy1:
+		dc.b $3F
+		dc.b id_Frame_TailsTails_Spindash2
+		dc.b afEnd
+
+Ani_Tails_Dummy2:
+		dc.b 7
+		dc.b id_Frame_Tails_Yawn3
+		dc.b id_Frame_Tails_Yawn3
+		dc.b id_Frame_Tails_Tails1
+		dc.b afChange,id_Ani_Tails_Wait
+
+Ani_Tails_Dummy3:
+		dc.b 7
+		dc.b id_Frame_Tails_Tails1
+		dc.b afChange,id_Ani_Tails_Wait
+
+Ani_Tails_Stop:
+		dc.b 7
+		dc.b id_Frame_Tails_Stop1
+		dc.b id_Frame_Tails_Stop2
+		dc.b id_Frame_Tails_Stop1
+		dc.b id_Frame_Tails_Stop2
+		dc.b afChange,id_Ani_Tails_Walk
+
+Ani_Tails_Grabbed:
+		dc.b 9
+		dc.b id_Frame_Tails_Float1
+		dc.b id_Frame_Tails_Float6
+		dc.b afEnd
+
+Ani_Tails_Float:
+		dc.b 9
+		dc.b id_Frame_Tails_Float1
+		dc.b id_Frame_Tails_Float2
+		dc.b id_Frame_Tails_Float3
+		dc.b id_Frame_Tails_Float4
+		dc.b id_Frame_Tails_Float5
+		dc.b afEnd
+
+Ani_Tails_Spring:
+		dc.b 3
+		rept 6
+		dc.b id_Frame_Tails_Spring1
+		dc.b id_Frame_Tails_Spring2
+		endr
+		dc.b afChange,id_Ani_Tails_Walk
+
+Ani_Tails_Hang1:
+		dc.b 5
+		dc.b id_Frame_Tails_Hang1
+		dc.b id_Frame_Tails_Hang2
+		dc.b afEnd
+
+Ani_Tails_Blink:
+		dc.b $F
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Blink1
+		backdest id_Frame_Tails_Blink2
+		afBack
+
+Ani_Tails_Blink2:
+		dc.b $F
+		dc.b id_Frame_Tails_Stand
+		backdest id_Frame_Tails_Blink1
+		afBack
+
+Ani_Tails_Hang2:
+		dc.b $13
+		dc.b id_Frame_Tails_Vine1
+		dc.b id_Frame_Tails_Vine2
+		dc.b afEnd
+
+Ani_Tails_Bubble:
+		dc.b $B
+		dc.b id_Frame_Tails_GetAir
+		dc.b id_Frame_Tails_GetAir
+		dc.b id_Frame_Tails_Walk15
+		dc.b id_Frame_Tails_Walk16
+		dc.b afChange,id_Ani_Tails_Walk
+
+Ani_Tails_Burnt:
+		dc.b $20
+		dc.b id_Frame_Tails_Death
+		dc.b afEnd
+
+Ani_Tails_Drown:
+		dc.b $2F
+		dc.b id_Frame_Tails_Death
+		dc.b afEnd
+
+Ani_Tails_Death:
+		dc.b 3
+		dc.b id_Frame_Tails_Death
+		dc.b afEnd
+
+Ani_Tails_Hurt:
+		dc.b 3
+		dc.b id_Frame_Tails_Death
+		dc.b afEnd
+
+Ani_Tails_Hurt2:
+		dc.b 3
+		dc.b id_Frame_Tails_Hurt
+		dc.b afEnd
+
+Ani_Tails_OilSlide:
+		dc.b 9
+		dc.b id_Frame_Tails_Slide
+		dc.b id_Frame_Tails_Hurt
+		dc.b afEnd
+
+Ani_Tails_Blank:
+		dc.b $77
+		dc.b id_Frame_Tails_Blank
+		dc.b afChange,id_Ani_Tails_Walk
+
+Ani_Tails_Dummy4:
+		dc.b 3
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Blink1
+		dc.b id_Frame_Tails_Blink2
+		dc.b id_Frame_Tails_LookUp
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Yawn1
+		dc.b id_Frame_Tails_Yawn2
+		dc.b id_Frame_Tails_Yawn3
+		dc.b afEnd
+
+Ani_Tails_Dummy5:
+		dc.b 3
+		dc.b id_Frame_Tails_Stand
+		dc.b id_Frame_Tails_Blink1
+		dc.b id_Frame_Tails_Blink2
+		dc.b id_Frame_Tails_LookUp
+		dc.b id_Frame_Tails_Wait
+		dc.b id_Frame_Tails_Yawn1
+		dc.b id_Frame_Tails_Yawn2
+		dc.b id_Frame_Tails_Yawn3
+		dc.b afEnd
+
+Ani_Tails_HaulAss:
+		dc.b afWalkRun
+		dc.b id_Frame_Tails_Run15
+		dc.b id_Frame_Tails_Run16
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+		dc.b afEnd
+
+Ani_Tails_Fly:
+		dc.b 1
+		dc.b id_Frame_Tails_Fly1
+		dc.b id_Frame_Tails_Fly2
+		dc.b afEnd
 
 ; ===========================================================================
 
-loc_1D184:
+TailsTails_LoadGFX:
 		moveq	#0,d0
 		move.b	ost_frame(a0),d0
 		cmp.b	(v_tailstails_last_frame_id).w,d0
@@ -39685,7 +39940,7 @@ Tails_LoadGFX:
 
 locret_1D1FE:
 		rts
-; ===========================================================================
+
 ; ----------------------------------------------------------------------------
 ; Object 05 - Tails' tails
 ; ----------------------------------------------------------------------------
@@ -39693,16 +39948,20 @@ locret_1D1FE:
 TailsTails:
 		moveq	#0,d0
 		move.b	ost_primary_routine(a0),d0
-		move.w	off_1D20E(pc,d0.w),d1
-		jmp	off_1D20E(pc,d1.w)
+		move.w	TailsTails_Index(pc,d0.w),d1
+		jmp	TailsTails_Index(pc,d1.w)
 ; ===========================================================================
-off_1D20E:	index offset(*),,2
-		ptr loc_1D212					; 0
-		ptr loc_1D23A					; 2
+TailsTails_Index:	index offset(*),,2
+		ptr TailsTails_Main				; 0
+		ptr TailsTails_Update				; 2
+
+		rsobj TailsTails,$30
+ost_tt_tails_anim_prev:	rs.b 1					; $30; Tails' previous animation
+		rsobjend
 ; ===========================================================================
 
-loc_1D212:
-		addq.b	#2,ost_primary_routine(a0)
+TailsTails_Main:
+		addq.b	#2,ost_primary_routine(a0)		; go to TailsTails_Update next
 		move.l	#Map_Tails,ost_mappings(a0)
 		move.w	#tile_Tails_Tails,ost_tile(a0)
 		bsr.w	AdjustVRAM2P
@@ -39710,20 +39969,20 @@ loc_1D212:
 		move.b	#$18,ost_displaywidth(a0)
 		move.b	#render_rel,ost_render(a0)
 
-loc_1D23A:
-		movea.w	$3E(a0),a2
-		move.b	ost_angle(a2),ost_angle(a0)
+TailsTails_Update:
+		movea.w	ost_parent1(a0),a2			; a2 = Tails object
+		move.b	ost_angle(a2),ost_angle(a0)		; match angle, status, and position
 		move.b	ost_primary_status(a2),ost_primary_status(a0)
 		move.w	ost_x_pos(a2),ost_x_pos(a0)
 		move.w	ost_y_pos(a2),ost_y_pos(a0)
 		andi.w	#tile_draw,ost_tile(a0)
 		tst.w	ost_tile(a2)
-		bpl.s	loc_1D268
-		ori.w	#tile_hi,ost_tile(a0)
+		bpl.s	.not_hi					; branch if Tails doesn't have priority
+		ori.w	#tile_hi,ost_tile(a0)			; Tails' namesakes inherit his priority
 
-loc_1D268:
+	.not_hi:
 		moveq	#0,d0
-		move.b	ost_anim(a2),d0
+		move.b	ost_anim(a2),d0				; d0 = Tails' current animation
 	if FixBugs
 		; Tails doesn't actually have to be pushing against something for his
 		; tails to animate as if he is. This is because status_pushing_bit is
@@ -39731,66 +39990,181 @@ loc_1D268:
 		; necessarily have to be pushing against it. To fix this, we have to
 		; check if Tails is displaying any of his pushing sprites. This is
 		; exactly how this bug is fixed in Sonic 3 & Knuckles.
-		cmpi.b	#$63,ost_frame(a2)
-		bcs.s	loc_1D278
-		cmpi.b	#$66,ost_frame(a2)
-		bhi.s	loc_1D278
+		cmpi.b	#id_Frame_Tails_Push1,ost_frame(a2)
+		bcs.s	.not_pushing
+		cmpi.b	#id_Frame_Tails_Push4,ost_frame(a2)
+		bhi.s	.not_pushing
 	else
 		btst	#status_pushing_bit,ost_primary_status(a2)
-		beq.s	loc_1D278
+		beq.s	.not_pushing				; branch if Tails is not pushing (unreliable; see above)
 	endc
-		moveq	#4,d0
+		moveq	#id_Ani_Tails_Pushing,d0		; force pushing animation
 
-loc_1D278:
-		cmp.b	$30(a0),d0
-		beq.s	loc_1D288
-		move.b	d0,$30(a0)
-		move.b	AniSelect_TailsTails(pc,d0.w),ost_anim(a0)
+	.not_pushing:
+		cmp.b	ost_tt_tails_anim_prev(a0),d0		; did Tails' animaton just change?
+		beq.s	.display				; branch if not
+		move.b	d0,ost_tt_tails_anim_prev(a0)
+		move.b	AniSelect_TailsTails(pc,d0.w),ost_anim(a0) ; select animation script based on Tails' current animation
 
-loc_1D288:
+	.display:
 		lea	(Ani_TailsTails).l,a1
 		bsr.w	loc_1CDCA
-		bsr.w	loc_1D184
+		bsr.w	TailsTails_LoadGFX
 		jsr	(DisplaySprite).l			; could be jmp
 		rts
-; ===========================================================================
+
+; ----------------------------------------------------------------------------
+; Animation selection table - Tails' tails
+; Selects animation for Tails' tails based on ID of Tails' current animation
+; ----------------------------------------------------------------------------
+
 AniSelect_TailsTails:
-		dc.b   0,  0,  3,  3,  9,  1,  0,  2,  1,  7,  0,  0,  0,  8,  0,  0 ; 0
-		dc.b   0,  0,  0,  0, $A,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 ; 16
-		dc.b   0,  0					; 32
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Walk
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Walk
+		dc.b id_Ani_TT_Roll				; Ani_Tails_Roll1
+		dc.b id_Ani_TT_Roll				; Ani_Tails_Roll1
+		dc.b id_Ani_TT_Pushing				; Ani_Tails_Pushing
+		dc.b id_Ani_TT_Swish				; Ani_Tails_Wait
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Balance
+		dc.b id_Ani_TT_Flick				; Ani_Tails_LookUp
+		dc.b id_Ani_TT_Swish				; Ani_Tails_Duck
+		dc.b id_Ani_TT_Spindash				; Ani_Tails_Spindash
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Dummy1
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Dummy2
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Dummy3
+		dc.b id_Ani_TT_Skidding				; Ani_Tails_Stop
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Grabbed
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Float
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Spring
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Hang1
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Blink1
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Blink2
+		dc.b id_Ani_TT_Hanging				; Ani_Tails_Hang2
+		dc.b id_Ani_TT_Blank				; Ani_Tails_GetAir
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Burnt
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Drown
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Death
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Hurt
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Hurt2
+		dc.b id_Ani_TT_Blank				; Ani_Tails_OilSlide
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Blank
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Dummy4
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Dummy5
+		dc.b id_Ani_TT_Blank				; Ani_Tails_HaulAss
+		dc.b id_Ani_TT_Blank				; Ani_Tails_Fly
+		even
+
+; ----------------------------------------------------------------------------
+; Animation script - Tails' tails
+; ----------------------------------------------------------------------------
 
 Ani_TailsTails:	index offset(*)
-		ptr byte_1D2D6					; 0
-		ptr byte_1D2D9					; 1
-		ptr byte_1D2E0					; 2
-		ptr byte_1D2E8					; 3
-		ptr byte_1D2EE					; 4
-		ptr byte_1D2F4					; 5
-		ptr byte_1D2FA					; 6
-		ptr byte_1D300					; 7
-		ptr byte_1D306					; 8
-		ptr byte_1D30C					; 9
-		ptr byte_1D312					; 10
-byte_1D2D6:	dc.b $20,  0,$FF				; 0
-byte_1D2D9:	dc.b   7,  9, $A, $B, $C, $D,$FF		; 0
-byte_1D2E0:	dc.b   3,  9, $A, $B, $C, $D,$FD,  1		; 0
-byte_1D2E8:	dc.b $FC,$49,$4A,$4B,$4C,$FF			; 0
-byte_1D2EE:	dc.b   3,$4D,$4E,$4F,$50,$FF			; 0
-byte_1D2F4:	dc.b   3,$51,$52,$53,$54,$FF			; 0
-byte_1D2FA:	dc.b   3,$55, $56, $57, $58, $FF		; 0
-byte_1D300:	dc.b   2,$81,$82,$83,$84,$FF			; 0
-byte_1D306:	dc.b   2,$87,$88,$89,$8A,$FF			; 0
-byte_1D30C:	dc.b   9,$87,$88,$89,$8A,$FF			; 0
-byte_1D312:	dc.b   9,$81,$82,$83,$84,$FF			; 0
-; ===========================================================================
+		ptr Ani_TT_Blank				; 0
+		ptr Ani_TT_Swish				; 1
+		ptr Ani_TT_Flick				; 2
+		ptr Ani_TT_Roll					; 3; adjusted for direction if necessary
+		ptr Ani_TT_Roll_UpRight				; 4
+		ptr Ani_TT_Roll_Up				; 5
+		ptr Ani_TT_Roll_UpLeft				; 6
+		ptr Ani_TT_Spindash				; 7
+		ptr Ani_TT_Skidding				; 8
+		ptr Ani_TT_Pushing				; 9
+		ptr Ani_TT_Hanging				; 10
 
+Ani_TT_Blank:
+		dc.b $20
+		dc.b id_Frame_Tails_Blank
+		dc.b afEnd
+
+Ani_TT_Swish:
+		dc.b 7
+		dc.b id_Frame_Tails_Tails1
+		dc.b id_Frame_Tails_Tails2
+		dc.b id_Frame_Tails_Tails3
+		dc.b id_Frame_Tails_Tails4
+		dc.b id_Frame_Tails_Tails5
+		dc.b afEnd
+
+Ani_TT_Flick:
+		dc.b 3
+		dc.b id_Frame_Tails_Tails1
+		dc.b id_Frame_Tails_Tails2
+		dc.b id_Frame_Tails_Tails3
+		dc.b id_Frame_Tails_Tails4
+		dc.b id_Frame_Tails_Tails5
+		dc.b afChange,id_Ani_TT_Swish
+
+Ani_TT_Roll:
+		dc.b afTTRoll
+		dc.b id_Frame_Tails_TailsRoll11
+		dc.b id_Frame_Tails_TailsRoll12
+		dc.b id_Frame_Tails_TailsRoll13
+		dc.b id_Frame_Tails_TailsRoll14
+		dc.b afEnd
+
+Ani_TT_Roll_UpRight:
+		dc.b 3
+		dc.b id_Frame_Tails_TailsRoll21
+		dc.b id_Frame_Tails_TailsRoll22
+		dc.b id_Frame_Tails_TailsRoll23
+		dc.b id_Frame_Tails_TailsRoll24
+		dc.b afEnd
+
+Ani_TT_Roll_Up:
+		dc.b 3
+		dc.b id_Frame_Tails_TailsRoll31
+		dc.b id_Frame_Tails_TailsRoll32
+		dc.b id_Frame_Tails_TailsRoll33
+		dc.b id_Frame_Tails_TailsRoll34
+		dc.b afEnd
+
+Ani_TT_Roll_UpLeft:
+		dc.b 3
+		dc.b id_Frame_Tails_TailsRoll41
+		dc.b id_Frame_Tails_TailsRoll42
+		dc.b id_Frame_Tails_TailsRoll43
+		dc.b id_Frame_Tails_TailsRoll44
+		dc.b afEnd
+
+Ani_TT_Spindash:
+		dc.b 2
+		dc.b id_Frame_TailsTails_Spindash1
+		dc.b id_Frame_TailsTails_Spindash2
+		dc.b id_Frame_TailsTails_Spindash3
+		dc.b id_Frame_TailsTails_Spindash4
+		dc.b afEnd
+
+Ani_TT_Skidding:
+		dc.b 2
+		dc.b id_Frame_TailsTails_Pushing1
+		dc.b id_Frame_TailsTails_Pushing2
+		dc.b id_Frame_TailsTails_Pushing3
+		dc.b id_Frame_TailsTails_Pushing4
+		dc.b afEnd
+
+Ani_TT_Pushing:
+		dc.b 9
+		dc.b id_Frame_TailsTails_Pushing1
+		dc.b id_Frame_TailsTails_Pushing2
+		dc.b id_Frame_TailsTails_Pushing3
+		dc.b id_Frame_TailsTails_Pushing4
+		dc.b afEnd
+
+Ani_TT_Hanging:
+		dc.b 9
+		dc.b id_Frame_TailsTails_Spindash1
+		dc.b id_Frame_TailsTails_Spindash2
+		dc.b id_Frame_TailsTails_Spindash3
+		dc.b id_Frame_TailsTails_Spindash4
+		dc.b afEnd
+		even
+; ===========================================================================
 
 JmpTo2_KillCharacter:
 		jmp	(KillCharacter).l
 
 		align 4
 
-; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 0A - drowning countdown numbers, small bubbles that float out of
 ; Sonic and Tails' mouths, and small bubbles made by Chop Chop
@@ -75011,7 +75385,7 @@ Grab_GrabCharacter:
 		move.b	#$81,ost_obj_control(a1)		; lock their controls
 		clr.w	ost_x_vel(a1)				; stop their movement
 		clr.w	ost_y_vel(a1)
-		move.b	#$E,ost_anim(a1)			; use floating animation
+		move.b	#id_Ani_Grabbed,ost_anim(a1)		; use grabbed animation
 	if FixBugs
 		; If the player gets grabbed while charging a spindash, they won't
 		; exit their spindash state: the dust graphic will still appear,
