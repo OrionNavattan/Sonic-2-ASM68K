@@ -2,146 +2,151 @@
 ; Sprite mappings - Tails and Tails' tails
 ; -------------------------------------------------------------------------------
 
-Map_Tails:	index offset(*)
-		ptr	Frame_Tails_Blank
-		ptr	Frame_Tails_Stand
-		ptr	Frame_Tails_Blink1
-		ptr	Frame_Tails_Blink2
-		ptr	Frame_Tails_LookUp			; 4
-		ptr	Frame_Tails_Wait
-		ptr	Frame_Tails_Yawn1
-		ptr	Frame_Tails_Yawn2
-		ptr	Frame_Tails_Yawn3			; 8
-		ptr	Frame_Tails_Tails1
-		ptr	Frame_Tails_Tails2
-		ptr	Frame_Tails_Tails3
-		ptr	Frame_Tails_Tails4			; $C
-		ptr	Frame_Tails_Tails5
-		ptr	Frame_Tails_Walk11
-		ptr	Frame_Tails_Walk12
-		ptr	Frame_Tails_Walk13			; $10
-		ptr	Frame_Tails_Walk14
-		ptr	Frame_Tails_Walk15
-		ptr	Frame_Tails_Walk16
-		ptr	Frame_Tails_Walk17			; $14
-		ptr	Frame_Tails_Walk18
-		ptr	Frame_Tails_Walk21
-		ptr	Frame_Tails_Walk22
-		ptr	Frame_Tails_Walk23			; $18
-		ptr	Frame_Tails_Walk24
-		ptr	Frame_Tails_Walk25
-		ptr	Frame_Tails_Walk26
-		ptr	Frame_Tails_Walk27			; $1C
-		ptr	Frame_Tails_Walk28
-		ptr	Frame_Tails_Walk31
-		ptr	Frame_Tails_Walk32
-		ptr	Frame_Tails_Walk33			; $20
-		ptr	Frame_Tails_Walk34
-		ptr	Frame_Tails_Walk35
-		ptr	Frame_Tails_Walk36
-		ptr	Frame_Tails_Walk37			; $24
-		ptr	Frame_Tails_Walk38
-		ptr	Frame_Tails_Walk41
-		ptr	Frame_Tails_Walk42
-		ptr	Frame_Tails_Walk43			; $28
-		ptr	Frame_Tails_Walk44
-		ptr	Frame_Tails_Walk45
-		ptr	Frame_Tails_Walk46
-		ptr	Frame_Tails_Walk47			; $2C
-		ptr	Frame_Tails_Walk48
-		ptr	Frame_Tails_Run11
-		ptr	Frame_Tails_Run12
-		ptr	Frame_Tails_Run13			; $30
-		ptr	Frame_Tails_Run14
-		ptr	Frame_Tails_Run15
-		ptr	Frame_Tails_Run16
-		ptr	Frame_Tails_Run21			; $34
-		ptr	Frame_Tails_Run22
-		ptr	Frame_Tails_Run23
-		ptr	Frame_Tails_Run24
-		ptr	Frame_Tails_Run25			; $38
-		ptr	Frame_Tails_Run26
-		ptr	Frame_Tails_Run31
-		ptr	Frame_Tails_Run32
-		ptr	Frame_Tails_Run33			; $3C
-		ptr	Frame_Tails_Run34			; duplicate frame (_Tails_Run32)
-		ptr	Frame_Tails_Run35
-		ptr	Frame_Tails_Run36
-		ptr	Frame_Tails_Run41			; $40
-		ptr	Frame_Tails_Run42
-		ptr	Frame_Tails_Run43
-		ptr	Frame_Tails_Run44
-		ptr	Frame_Tails_Run45			; $44
-		ptr	Frame_Tails_Run46
-		ptr	Frame_Tails_Roll1
-		ptr	Frame_Tails_Roll2
-		ptr	Frame_Tails_Roll3			; $48
-		ptr	Frame_Tails_TailsRoll11
-		ptr	Frame_Tails_TailsRoll12
-		ptr	Frame_Tails_TailsRoll13
-		ptr	Frame_Tails_TailsRoll14			; $4C
-		ptr	Frame_Tails_TailsRoll21
-		ptr	Frame_Tails_TailsRoll22
-		ptr	Frame_Tails_TailsRoll23
-		ptr	Frame_Tails_TailsRoll24			; $50
-		ptr	Frame_Tails_TailsRoll31
-		ptr	Frame_Tails_TailsRoll32
-		ptr	Frame_Tails_TailsRoll33
-		ptr	Frame_Tails_TailsRoll34			; $54
-		ptr	Frame_Tails_TailsRoll41
-		ptr	Frame_Tails_TailsRoll42
-		ptr	Frame_Tails_TailsRoll43
-		ptr	Frame_Tails_TailsRoll44			; $58
-		ptr	Frame_Tails_Spring1
-		ptr	Frame_Tails_Spring2
-		ptr	Frame_Tails_Duck
-		ptr	Frame_Tails_Hurt			; $5C
-		ptr	Frame_Tails_Death
-		ptr	Frame_Tails_Fly1
-		ptr	Frame_Tails_Fly2
-		ptr	Frame_Tails_Spindash1			; $60
-		ptr	Frame_Tails_Spindash2
-		ptr	Frame_Tails_Spindash3
-		ptr	Frame_Tails_Push1
-		ptr	Frame_Tails_Push2			; $64
-		ptr	Frame_Tails_Push3
-		ptr	Frame_Tails_Push4
-		ptr	Frame_Tails_Stop1
-		ptr	Frame_Tails_Stop2			; $68
-		ptr	Frame_Tails_Balance1
-		ptr	Frame_Tails_Balance2
-		ptr	Frame_Tails_Slide
-		ptr	Frame_Tails_Hang1			; $6C
-		ptr	Frame_Tails_Hang2
-		ptr	Frame_Tails_Float1
-		ptr	Frame_Tails_Float2
-		ptr	Frame_Tails_Float3			; $70
-		ptr	Frame_Tails_Float4
-		ptr	Frame_Tails_Float5
-		ptr	Frame_Tails_Float6
-		ptr	Frame_Tails_GetAir			; $74
-		ptr	Frame_Tails_Tumble1
-		ptr	Frame_Tails_Tumble2
-		ptr	Frame_Tails_Tumble3
-		ptr	Frame_Tails_Tumble4			; $78
-		ptr	Frame_Tails_Tumble5
-		ptr	Frame_Tails_Tumble6
-		ptr	Frame_Tails_Tumble7
-		ptr	Frame_Tails_Tumble8			; $7C
-		ptr	Frame_Tails_Tumble9
-		ptr	Frame_Tails_Tumble10
-		ptr	Frame_Tails_Tumble11
-		ptr	Frame_Tails_Tumble12			; $80
-		ptr	Frame_TailsTails_Spindash1		; duplicate DPLC sequence (_Tails_TailsRoll11-14)
-		ptr	Frame_TailsTails_Spindash2
-		ptr	Frame_TailsTails_Spindash3
-		ptr	Frame_TailsTails_Spindash4
-		ptr	Frame_Tails_Vine1
-		ptr	Frame_Tails_Vine2
-		ptr	Frame_TailsTails_Pushing1		; duplicate DPLC sequence (_Tails_TailsRoll11-14)
-		ptr	Frame_TailsTails_Pushing2
-		ptr	Frame_TailsTails_Pushing3
-		ptr	Frame_TailsTails_Pushing4
+Tails_Sprites:	macro
+		index offset(*)
+		ptr	\1_Tails_Blank
+		ptr	\1_Tails_Stand
+		ptr	\1_Tails_Blink1
+		ptr	\1_Tails_Blink2
+		ptr	\1_Tails_LookUp				; 4
+		ptr	\1_Tails_Wait
+		ptr	\1_Tails_Yawn1
+		ptr	\1_Tails_Yawn2
+		ptr	\1_Tails_Yawn3				; 8
+		ptr	\1_Tails_Tails1
+		ptr	\1_Tails_Tails2
+		ptr	\1_Tails_Tails3
+		ptr	\1_Tails_Tails4				; $C
+		ptr	\1_Tails_Tails5
+		ptr	\1_Tails_Walk11
+		ptr	\1_Tails_Walk12
+		ptr	\1_Tails_Walk13				; $10
+		ptr	\1_Tails_Walk14
+		ptr	\1_Tails_Walk15
+		ptr	\1_Tails_Walk16
+		ptr	\1_Tails_Walk17				; $14
+		ptr	\1_Tails_Walk18
+		ptr	\1_Tails_Walk21
+		ptr	\1_Tails_Walk22
+		ptr	\1_Tails_Walk23				; $18
+		ptr	\1_Tails_Walk24
+		ptr	\1_Tails_Walk25
+		ptr	\1_Tails_Walk26
+		ptr	\1_Tails_Walk27				; $1C
+		ptr	\1_Tails_Walk28
+		ptr	\1_Tails_Walk31
+		ptr	\1_Tails_Walk32
+		ptr	\1_Tails_Walk33				; $20
+		ptr	\1_Tails_Walk34
+		ptr	\1_Tails_Walk35
+		ptr	\1_Tails_Walk36
+		ptr	\1_Tails_Walk37				; $24
+		ptr	\1_Tails_Walk38
+		ptr	\1_Tails_Walk41
+		ptr	\1_Tails_Walk42
+		ptr	\1_Tails_Walk43				; $28
+		ptr	\1_Tails_Walk44
+		ptr	\1_Tails_Walk45
+		ptr	\1_Tails_Walk46
+		ptr	\1_Tails_Walk47				; $2C
+		ptr	\1_Tails_Walk48
+		ptr	\1_Tails_Run11
+		ptr	\1_Tails_Run12
+		ptr	\1_Tails_Run13				; $30
+		ptr	\1_Tails_Run14
+		ptr	\1_Tails_Run15
+		ptr	\1_Tails_Run16
+		ptr	\1_Tails_Run21				; $34
+		ptr	\1_Tails_Run22
+		ptr	\1_Tails_Run23
+		ptr	\1_Tails_Run24
+		ptr	\1_Tails_Run25				; $38
+		ptr	\1_Tails_Run26
+		ptr	\1_Tails_Run31
+		ptr	\1_Tails_Run32
+		ptr	\1_Tails_Run33				; $3C
+		ptr	\1_Tails_Run34				; duplicate frame (_Tails_Run32)
+		ptr	\1_Tails_Run35
+		ptr	\1_Tails_Run36
+		ptr	\1_Tails_Run41				; $40
+		ptr	\1_Tails_Run42
+		ptr	\1_Tails_Run43
+		ptr	\1_Tails_Run44
+		ptr	\1_Tails_Run45				; $44
+		ptr	\1_Tails_Run46
+		ptr	\1_Tails_Roll1
+		ptr	\1_Tails_Roll2
+		ptr	\1_Tails_Roll3				; $48
+		ptr	\1_Tails_TailsRoll11
+		ptr	\1_Tails_TailsRoll12
+		ptr	\1_Tails_TailsRoll13
+		ptr	\1_Tails_TailsRoll14			; $4C
+		ptr	\1_Tails_TailsRoll21
+		ptr	\1_Tails_TailsRoll22
+		ptr	\1_Tails_TailsRoll23
+		ptr	\1_Tails_TailsRoll24			; $50
+		ptr	\1_Tails_TailsRoll31
+		ptr	\1_Tails_TailsRoll32
+		ptr	\1_Tails_TailsRoll33
+		ptr	\1_Tails_TailsRoll34			; $54
+		ptr	\1_Tails_TailsRoll41
+		ptr	\1_Tails_TailsRoll42
+		ptr	\1_Tails_TailsRoll43
+		ptr	\1_Tails_TailsRoll44			; $58
+		ptr	\1_Tails_Spring1
+		ptr	\1_Tails_Spring2
+		ptr	\1_Tails_Duck
+		ptr	\1_Tails_Hurt				; $5C
+		ptr	\1_Tails_Death
+		ptr	\1_Tails_Fly1
+		ptr	\1_Tails_Fly2
+		ptr	\1_Tails_Spindash1			; $60
+		ptr	\1_Tails_Spindash2
+		ptr	\1_Tails_Spindash3
+		ptr	\1_Tails_Push1
+		ptr	\1_Tails_Push2				; $64
+		ptr	\1_Tails_Push3
+		ptr	\1_Tails_Push4
+		ptr	\1_Tails_Stop1
+		ptr	\1_Tails_Stop2				; $68
+		ptr	\1_Tails_Balance1
+		ptr	\1_Tails_Balance2
+		ptr	\1_Tails_Slide
+		ptr	\1_Tails_Hang1				; $6C
+		ptr	\1_Tails_Hang2
+		ptr	\1_Tails_Float1
+		ptr	\1_Tails_Float2
+		ptr	\1_Tails_Float3				; $70
+		ptr	\1_Tails_Float4
+		ptr	\1_Tails_Float5
+		ptr	\1_Tails_Float6
+		ptr	\1_Tails_GetAir				; $74
+		ptr	\1_Tails_Tumble1
+		ptr	\1_Tails_Tumble2
+		ptr	\1_Tails_Tumble3
+		ptr	\1_Tails_Tumble4			; $78
+		ptr	\1_Tails_Tumble5
+		ptr	\1_Tails_Tumble6
+		ptr	\1_Tails_Tumble7
+		ptr	\1_Tails_Tumble8			; $7C
+		ptr	\1_Tails_Tumble9
+		ptr	\1_Tails_Tumble10
+		ptr	\1_Tails_Tumble11
+		ptr	\1_Tails_Tumble12			; $80
+		ptr	\1_TailsTails_Spindash1			; duplicate DPLC sequence (_Tails_TailsRoll11-14)
+		ptr	\1_TailsTails_Spindash2
+		ptr	\1_TailsTails_Spindash3
+		ptr	\1_TailsTails_Spindash4
+		ptr	\1_Tails_Vine1
+		ptr	\1_Tails_Vine2
+		ptr	\1_TailsTails_Pushing1			; duplicate DPLC sequence (_Tails_TailsRoll11-14)
+		ptr	\1_TailsTails_Pushing2
+		ptr	\1_TailsTails_Pushing3
+		ptr	\1_TailsTails_Pushing4
+		endm
+
+Map_Tails:
+		Tails_Sprites	Frame				; generate the pointer index
 
 Frame_Tails_Blank:	spritemap
 		endsprite
