@@ -654,9 +654,12 @@ ost_spindash_counter:						; $3A ;
 ost_restart_time:			rs.w 1			; $3A ; time until level restarts
 ost_jump:					rs.b 1		; $3C ; 1 if Sonic/Tails is jumping
 ost_interact:				rs.b 1			; $3D ; OST index of object player stands on
-ost_top_solid_bit:			rs.b 1			; $3E ; the bit to check for top solidity (either $C or $E)
-ost_lrb_solid_bit:			rs.w 1			; $3F ; ; the bit to check for left/right/bottom solidity (either $D or $F)
-
+ost_top_solid_bit:			rs.b 1			; $3E ; the bit to check for top solidity (either $C or $E); i.e., which collison plane to check against
+	primary_solid_top_bit:		equ $C
+	secondary_solid_top_bit:	equ $E
+ost_lrb_solid_bit:			rs.w 1			; $3F ; the bit to check for left/right/bottom solidity (either $D or $F) i.e., which collison plane to check against
+	primary_solid_lrb_bit:		equ $D
+	secondary_solid_lrb_bit:	equ $F
 
 ; Boss object variables
 ost_boss_subtype: 		equ $A				;  subtype counter for all bosses except EHZ and CPZ; also determines primary routine

@@ -5555,7 +5555,7 @@ MDemo_On:
 		move.b	(a1),d0					; get joypad state from demo
 		lea	(v_joypad_hold_actual).w,a0		; (a0) = actual joypad state
 		move.b	d0,d1
-    if FixBugs
+	if FixBugs
 		; In Revision 0 of Sonic 1, this instruction was 'move.b (a0),d2'. The
 		; purpose of this is to XOR the current frame's input with the
 		; previous frame's input to determine which inputs had been pressed
@@ -34391,9 +34391,9 @@ Sonic_Main:	; Routine 0
 		lea	(v_sonic_max_speed).w,a2
 		bsr.w	ApplySpeedSettings
 	else
-		move.w	#sonic_max_speed,(v_sonic_max_speed).w
-		move.w	#sonic_acceleration,(v_sonic_acceleration).w
-		move.w	#sonic_deceleration,(v_sonic_deceleration).w
+		move.w	#sonic_max_speed,(v_sonic_max_speed).w	; Sonic's top speed
+		move.w	#sonic_acceleration,(v_sonic_acceleration).w ; Sonic's acceleration
+		move.w	#sonic_deceleration,(v_sonic_deceleration).w ; Sonic's deceleration
 	endc
 		tst.b	(v_last_lamppost).w			; are we starting from a starpost?
 		bne.s	.lamppost				; branch if so
@@ -42338,7 +42338,7 @@ ConvertCollisionArray:
 
 Player_CalcRoomAhead:
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0) ; is player on plane 0?
+		cmpi.b	#primary_solid_top_bit,ost_top_solid_bit(a0) ; is player on plane 0?
 		beq.s	.useprimary				; if so, branch
 		move.l	#v_secondary_collision,(v_collision_index_ptr).w ; use secondary collision
 
@@ -42406,7 +42406,7 @@ Player_CalcRoomAhead:
 
 Player_CalcHeadroom:
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0) ; is player on plane 0?
+		cmpi.b	#primary_solid_top_bit,ost_top_solid_bit(a0) ; is player on plane 0?
 		beq.s	.useprimary				; if so, branch
 		move.l	#v_secondary_collision,(v_collision_index_ptr).w ; use secondary collision
 
@@ -42438,7 +42438,7 @@ Player_CalcHeadroom:
 
 Player_FindFloor:
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0) ; is player on plane 0?
+		cmpi.b	#primary_solid_top_bit,ost_top_solid_bit(a0) ; is player on plane 0?
 		beq.s	.useprimary				; if so, branch
 		move.l	#v_secondary_collision,(v_collision_index_ptr).w ; use secondary collision
 
@@ -42535,7 +42535,7 @@ Player_SnapAngle:
 		move.w	ost_y_pos(a0),d2
 		subq.w	#4,d2
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a0)
+		cmpi.b	#primary_solid_lrb_bit,ost_lrb_solid_bit(a0)
 		beq.s	.useprimary
 		move.l	#v_secondary_collision,(v_collision_index_ptr).w
 
@@ -42583,7 +42583,7 @@ FindFloorObj_ChkCol_NoX:
 		ext.w	d0
 		add.w	d0,d2					; d2 = y pos of bottom edge of object
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a0) ; is object on plane 0?
+		cmpi.b	#primary_solid_top_bit,ost_top_solid_bit(a0) ; is object on plane 0?
 		beq.s	.useprimary				; if so, branch
 		move.l	#v_secondary_collision,(v_collision_index_ptr).w ; use secondary collision
 
@@ -42614,7 +42614,7 @@ FindFloorObj_ChkCol2:
 		ext.w	d0
 		add.w	d0,d2					; d2 = y pos of bottom edge of object
 		move.l	#v_primary_collision,(v_collision_index_ptr).w
-		cmpi.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; is object on plane 0?
+		cmpi.b	#primary_solid_top_bit,ost_top_solid_bit(a1) ; is object on plane 0?
 		beq.s	.useprimary				; if so, branch
 		move.l	#v_secondary_collision,(v_collision_index_ptr).w ; use secondary collision
 
@@ -44019,12 +44019,12 @@ PSwtch_MainX: ; Routine 2
 	.set_plane1:
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority1				; branch if so
-		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
-		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
+		move.b	#primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_downright_bit,d0
 		beq.s	.set_priority1				; branch if player is being switched to plane 0
-		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
-		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
+		move.b	#secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority1:
 		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
@@ -44056,12 +44056,12 @@ PSwtch_MainX: ; Routine 2
 	.set_plane2:
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority2				; branch if so
-		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
-		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
+		move.b	#primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_upleft_bit,d0
 		beq.s	.set_priority2				; branch if player is being switched to plane 0
-		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
-		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
+		move.b	#secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority2:
 		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
@@ -44108,12 +44108,12 @@ PSwtch_MainY: ; Routine 4
 	.set_plane1:
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority1				; branch if so
-		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
-		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
+		move.b	#primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_downright_bit,d0
 		beq.s	.set_priority1				; branch if player is being switched to plane 0
-		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
-		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
+		move.b	#secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority1:
 		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
@@ -44145,12 +44145,12 @@ PSwtch_MainY: ; Routine 4
 	.set_plane2:
 		btst	#pswtch_priority_only,ost_render(a0)	; are we only changing the player's sprite priority?
 		bne.s	.set_priority2				; branch if so
-		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
-		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#primary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 0
+		move.b	#primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 		btst	#pswtch_upleft_bit,d0
 		beq.s	.set_priority2				; branch if player is being switched to plane 0
-		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
-		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#secondary_solid_top_bit,ost_top_solid_bit(a1) ; set player collision to plane 1
+		move.b	#secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.set_priority2:
 		andi.w	#tile_draw,ost_tile(a1)			; set player's priority to low
@@ -48692,14 +48692,14 @@ PSpring_Vertical_LaunchPlayer:
 		andi.b	#pspring_plane0|pspring_plane1,d0	; only need plane switch bits
 		cmpi.b	#pspring_plane0,d0			; are we moving player to plane 0?
 		bne.s	.not_plane0				; branch if not
-		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 0
-		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#primary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 0
+		move.b	#primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.not_plane0:
 		cmpi.b	#pspring_plane1,d0			; are we moving player to plane 1?
 		bne.s	.playsound				; branch if not
-		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 1
-		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#secondary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 1
+		move.b	#secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.playsound:
 		move.w	#sfx_Spring,d0				; play spring SFX
@@ -48912,14 +48912,14 @@ PSpring_Horiz_LaunchPlayer:
 		andi.b	#pspring_plane0|pspring_plane1,d0	; only need plane switch bits
 		cmpi.b	#pspring_plane0,d0			; are we moving player to plane 0?
 		bne.s	.not_plane0				; branch if not
-		move.b	#chunkmap_primary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 0
-		move.b	#chunkmap_primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#primary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 0
+		move.b	#primary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.not_plane0:
 		cmpi.b	#pspring_plane1,d0			; are we moving player to plane 1?
 		bne.s	.playsound				; branch if not
-		move.b	#chunkmap_secondary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 1
-		move.b	#chunkmap_secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
+		move.b	#secondary_solid_top_bit,ost_top_solid_bit(a1) ; move player to plane 1
+		move.b	#secondary_solid_lrb_bit,ost_lrb_solid_bit(a1)
 
 	.playsound:
 		bclr	#status_pushing_bit,ost_primary_status(a1) ; clear player's pushing flag
