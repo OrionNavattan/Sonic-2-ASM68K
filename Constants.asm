@@ -628,7 +628,11 @@ ost_subspr9_frame:			rs.b 1			; $3F
 ost_flip_angle:				rs.b 1			; $27 ; angle about the x axis (360 degrees = 256) (twist/tumble)
 ost_air_left:				rs.b 1			; $28 ; air left while underwater
 ost_flip_turned:			rs.b 1			; $29 ; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
-ost_obj_control:			rs.b 1			; $2A ; +1 = lock controls, lock player's position & animation; +$80 = no collision with objects
+ost_obj_control:			rs.b 1			; $2A ; flags for locking controls and disabling collision
+	ctrl_pos_lock_bit:			equ 0
+	disable_col_bit:			equ 7
+	ctrl_pos_lock:				equ 1<<ctrl_pos_lock_bit ; 1; lock controls, lock player's position & animation
+	disable_col:				equ 1<<disable_col_bit ; $80; no collision with objects
 ost_secondary_status:		rs.b 1				; $2B ; status flags for powerups and oil slides
 	status_shield_bit:		equ	0		; set if character is equipped with a shield
 	status_invincible_bit:	equ	1			; set if character is invincible

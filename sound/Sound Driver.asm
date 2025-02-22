@@ -5,8 +5,8 @@
 ; Disassembled by Xenowhirl for AS 2007
 ; Additional disassembly work by RAS Oct 2008
 ; RAS' work merged into SVN by Flamewing
-; Ported to AXM68K by OrionNavattan October 2022
-; Labels and styling overhauled by OrionNavattan May 2023
+; Ported to AXM68K by Orion Navattan October 2022
+; Refactored by Orion Navattan May 2023
 
 ; This code is compressed in the ROM, but you can edit it here as uncompressed
 ; and it will automatically be assembled and compressed into the correct place
@@ -23,7 +23,7 @@
 ; used to invoke the program counter in macro parameters due to the use of ASM68K's section
 ; and group functionality, and shadow registers are not indicated  with an apostrophe; e.g.,
 ; ex af,af' is simply written as ex af,af.
-
+; ===========================================================================
 
 ; ---------------------------------------------------------------------------
 ; Perform a bank switch; after using this, the start of z_rom_window points
@@ -231,7 +231,7 @@ UpdateSound:    rsttarget
 		ld	hl,f_pal				; hl = pointer to PAL flag
 		ld	a,(z_abs_vars+f_adjust_pal)		; f_adjust_pal indicates current song needs PAL adjustment
 		and	a,(hl)					; and them together
-		jr	z,.not_pal				; if zero, branch
+		jr	z,.not_pal				; if zero, branch (NTSC console or current track does not need adjustment)
 		ld	hl,v_pal_update_counter			; get update counter
 		dec	(hl)					; decrement
 		jr	nz,.not_pal				; branch if time remains
@@ -565,7 +565,7 @@ FMUpdateTrack:
 
 	.notegoing:
 		call	NoteTimeoutUpdate			; apply "note fill" (time until cut-off); Will not return here if "note fill" expires
-		call	DoModulation				; Update modulation (if modulation doesn't change, we do not return here)
+		call	DoModulation				; update modulation (if modulation doesn't change, we do not return here)
 		jp	FMUpdateFreq				; apply frequency update from modulation
 ; ===========================================================================
 
@@ -1001,7 +1001,7 @@ PSGDoVolFX:
 		ld	h,a					; hl = (hl+(ix+ch_flutter))
 		ld	a,(hl)					; get flutter value
 		inc	(ix+ch_flutter)				; increment PSG flutter value
-		or	a					; is flutter valeu negative?
+		or	a					; is flutter value negative?
 		jp	p,.gotflutter				; branch if not
 		cp	a,evcHold				; is it the terminator?
 		jr	z,VolEnvCmd_Hold			; if so, branch (we hold at this flutter value, i.e. no more changes in ch_volume)
@@ -1333,7 +1333,7 @@ SoundCmd_Sega:
 		jr	nz,.stop				; if not, stop Sega PCM
 		ld	a,(hl)					; get next PCM byte
 		ld	(ym_reg_d0),a				; send to DAC
-		inc	hl					; Advance pointer
+		inc	hl					; advance pointer
 		nop
 		ld	b,(1+(Z80_clock/16500-(146/2)+(13/2))/13) ; 146 Z80 cycles for every two bytes of PCM data
 
@@ -2755,7 +2755,7 @@ SongCom_RestoreSong:
 ; ---------------------------------------------------------------------------
 
 SongCom_ChannelTick:
-		ld	(ix+ch_tick),a				; set tempo divider on this track only
+		ld	(ix+ch_tick),a				; set tempo divisor on this track only
 		ret
 
 ; ---------------------------------------------------------------------------
@@ -3658,5 +3658,5 @@ zSaxDec_End:
 ; End of Z80 'ROM'
 
 		if offset(*)>z_music_data
-			inform 3,"Your Z80 code won't fit before the music RAM. It's %hh bytes past the start of music data at %hh",\offset(*)-z_music_data,z_music_data
+			inform 3,"Your Z80 code won't fit before the music RAM. It's %hh bytes past the start of music data at %hh.",\offset(*)-z_music_data,z_music_data
 		endc

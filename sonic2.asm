@@ -34442,7 +34442,7 @@ Sonic_Control:	; Routine 2
 		move.w	(v_joypad_hold_actual).w,(v_joypad_hold).w ; enable joypad control
 
 	.lock:
-		btst	#0,ost_obj_control(a0)			; are controls and position locked?
+		btst	#ctrl_pos_lock_bit,ost_obj_control(a0)	; are controls and position locked?
 		bne.s	.lock2					; branch if so
 		moveq	#0,d0
 		move.b	ost_primary_status(a0),d0
@@ -40462,7 +40462,7 @@ Drown_Countdown: ; Routine $A
 		bcc.w	.gotomakenum				; if above 0, branch
 
 		; If we're here, the player has drowned.
-		move.b	#$81,ost_obj_control(a2)		; lock player's controls
+		move.b	#ctrl_pos_lock|disable_col,ost_obj_control(a2) ; lock player's controls
 		move.w	#sfx_Drown,d0				; play drowning sound
 		jsr	(PlaySound).l
 		move.b	#11-1,ost_drown_extra_bub(a0)		; spawn 11 additional bubbles as the player drowns
@@ -57932,7 +57932,7 @@ Cage_Detect: ; Subroutine 0
 		move.w	#0,ost_x_vel(a1)			; zero their movement
 		move.w	#0,ost_y_vel(a1)
 		move.w	#0,ost_inertia(a1)
-		move.b	#$81,ost_obj_control(a1)		; lock their controls
+		move.b	#ctrl_pos_lock|disable_col,ost_obj_control(a1) ; lock their controls
 		bset	#status_jump_bit,ost_primary_status(a1)
 		move.b	#$E,ost_height(a1)
 		move.b	#7,ost_width(a1)
@@ -75382,7 +75382,7 @@ Grab_Attack:
 Grab_GrabCharacter:
 		addq.b	#2,ost_secondary_routine(a0)		; go to Grab_AscendWithPlayer next
 		movea.w	ost_grab_player(a0),a1			; a1 = ost of held player
-		move.b	#$81,ost_obj_control(a1)		; lock their controls
+		move.b	#ctrl_pos_lock|disable_col,ost_obj_control(a1) ; lock their controls
 		clr.w	ost_x_vel(a1)				; stop their movement
 		clr.w	ost_y_vel(a1)
 		move.b	#id_Ani_Grabbed,ost_anim(a1)		; use grabbed animation
